@@ -1,0 +1,9 @@
+[
+  {
+    "href": "dashboard",
+    "title": "Inicio",
+    "icon": "home",
+    "permission": null,
+    "params": {}
+  }
+]
