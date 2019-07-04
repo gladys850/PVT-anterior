@@ -1,15 +1,26 @@
-const mix = require('laravel-mix');
+let mix = require('laravel-mix')
+require('laravel-mix-purgecss')
 
-/*
- |--------------------------------------------------------------------------
- | Mix Asset Management
- |--------------------------------------------------------------------------
- |
- | Mix provides a clean, fluent API for defining some Webpack build steps
- | for your Laravel application. By default, we are compiling the Sass
- | file for the application as well as bundling up all the JS files.
- |
- */
+mix.js('resources/assets/js/app.js', 'public/js')
+  .webpackConfig({
+    devtool: "inline-source-map"
+  })
+  .copy('resources/assets/css/roboto-fontface.css', 'public/css')
+  .minify('public/css/roboto-fontface.css')
+  .copy('resources/assets/img', 'public/img', false)
+  .copy('resources/assets/fonts', 'public/fonts', false)
+  .sass('resources/assets/sass/report-print.scss', 'public/css')
+  .minify('public/css/report-print.css')
 
-mix.js('resources/js/app.js', 'public/js')
-    .sass('resources/sass/app.scss', 'public/css');
+if (mix.inProduction()) {
+  mix.version()
+  .purgeCss({
+    enabled: true,
+    globs: [
+      path.join(__dirname, "resources/views/**/*.blade.php"),
+      path.join(__dirname, "resources/assets/js/**/*.vue")
+    ],
+    extensions: ["html", "js", "php", "vue"],
+    whitelistPatterns: [/language/, /hljs/]
+  })
+}
