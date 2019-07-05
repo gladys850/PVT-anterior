@@ -45,7 +45,7 @@
                 primary
                 large
                 block
-                color="success"
+                color="secondary"
               > Ingresar </v-btn>
             </v-card-actions>
           </v-form>

@@ -25,16 +25,16 @@ Vue.use(Vuetify, {
     current: 'ess'
   },
   theme: {
-    primary: "#005D53",
-    secondary: "#009686",
-    tertiary: '#42B2A6',
-    accent: "#5381BD",
-    info: "#0B347F",
-    error: "#FF5F00",
-    danger: '#FA9347',
-    warning: "#FFB339",
-    success: "#006157",
-    normal: '#F5F5F5'
+    primary: '#1565C0',
+    secondary: '#42A5F5',
+    tertiary: '#90CAF9',
+    accent: '#00bcd4',
+    error: '#f44336',
+    warning: '#ffc107',
+    info: '#03a9f4',
+    success: '#4caf50',
+    danger: '#ff6d00',
+    normal: '#009688'
   }
 })
 
