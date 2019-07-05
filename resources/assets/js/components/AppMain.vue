@@ -9,7 +9,7 @@
       fixed
       app
       v-if="$store.getters.user"
-      class="normal pl-0 ml-0 pr-0 mr-0"
+      class="secondary pl-0 ml-0 pr-0 mr-0"
     >
       <v-list>
         <div v-for="item in menuLeft" :key="item.title" class="mb-0 mt-0">
