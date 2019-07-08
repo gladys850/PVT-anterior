@@ -1,9 +1,28 @@
 [
   {
-    "href": "dashboard",
+    "href": "dashboardIndex",
     "title": "Inicio",
     "icon": "home",
     "permission": null,
     "params": {}
+  }, {
+    "title": "Acceso",
+    "icon": "vpn_key",
+    "permission": "Administrador",
+    "group": [
+      {
+        "href": "userIndex",
+        "title": "Usuarios",
+        "icon": "group_add",
+        "permission": "Administrador",
+        "params": {}
+      }, {
+        "href": "roleIndex",
+        "title": "Roles",
+        "icon": "security",
+        "permission": "Administrador",
+        "params": {}
+      }
+    ]
   }
 ]

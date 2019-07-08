@@ -8,6 +8,7 @@
       enable-resize-watcher
       fixed
       app
+      dark
       v-if="$store.getters.user"
       class="secondary pl-0 ml-0 pr-0 mr-0"
     >
@@ -17,7 +18,7 @@
             <v-list-tile
               v-if="!item.group"
               :to="{ name: item.href, query: item.params }"
-              active-class="tertiary"
+              active-class="tertiary black--text"
               @click.stop="miniVariant = true"
               @mouseover="miniVariant = false"
               @mouseout="miniVariant = true"
@@ -46,7 +47,7 @@
                     v-if="checkPermission(group)"
                     :key="group.title"
                     :to="{ name: group.href, query: group.params }"
-                    active-class="tertiary"
+                    active-class="tertiary black--text"
                     @click.stop="miniVariant = true"
                     @mouseover="miniVariant = false"
                     @mouseout="miniVariant = true"
@@ -128,13 +129,13 @@ export default {
     bar() {
       if (process.env.NODE_ENV == 'production') {
         return {
-          color: `primary white--text`,
-          text: `PLATAFORMA VIRTUAL DE TRÁMITES`
+          color: `error white--text`,
+          text: `PLATAFORMA VIRTUAL DE TRÁMITES (VERSIÓN DE PRUEBA)`
         }
       } else {
         return {
-          color: `error white--text`,
-          text: `PLATAFORMA VIRTUAL DE TRÁMITES (VERSIÓN DE PRUEBA)`
+          color: `primary white--text`,
+          text: `PLATAFORMA VIRTUAL DE TRÁMITES`
         }
       }
     }
@@ -155,7 +156,7 @@ export default {
       }
     },
     checkPermission(item) {
-      return item.permission == null || this.$store.getters.permissions.includes(item.permission) || (this.$store.getters.role == 'admin' && item.permission != '!admin') || (this.$store.getters.role != 'admin' && item.permission == '!admin') || (this.$store.getters.role == 'admin' && this.$store.getters.id)
+      return item.permission == null || this.$store.getters.permissions.includes(item.permission) || (this.$store.getters.role == 'Administrador' && item.permission != '!Administrador') || (this.$store.getters.role != 'Administrador' && item.permission == '!Administrador') || (this.$store.getters.role == 'Administrador' && this.$store.getters.id)
     }
   },
   created: function() {
@@ -168,5 +169,8 @@ export default {
 .copyleft {
   display:inline-block;
   transform: rotate(180deg);
+}
+.v-list__group__header__prepend-icon .v-icon {
+  color: red;
 }
 </style>

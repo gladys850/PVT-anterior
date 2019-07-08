@@ -1137,6 +1137,7 @@ services:
         - 2375
       networks:
         - backend
+      restart: always
 
 ### NetData ################################################
     netdata:
