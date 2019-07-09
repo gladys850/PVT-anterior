@@ -91,7 +91,7 @@ export default {
 
 <style>
 #background-page {
-  background: linear-gradient(to bottom, #003399 0%, #3399ff 100%);
+  background: linear-gradient(to bottom, #263238 0%, #cfd8dc 100%);
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#6ba872', endColorstr='#07540f', GradientType=0 );
 }
 </style>

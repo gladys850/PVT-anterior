@@ -66,10 +66,6 @@ class AuthController extends Controller
             $token = auth('api')->login($user);
             $ldap->unbind();
             return $this->respondWithToken($token);
-          } else {
-            $token = JWTAuth::fromUser(new User(['username' => $request['username']]));
-            $ldap->unbind();
-            return $this->respondWithToken($token);
           }
         }
         return response()->json([
