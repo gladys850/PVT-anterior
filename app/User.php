@@ -11,6 +11,7 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
 class User extends Authenticatable implements JWTSubject
 {
   use LaratrustUserTrait, Notifiable, SoftDeletes;
+  use Traits\EloquentGetTableNameTrait;
 
   public $timestamps = true;
   public $guarded = ['id'];

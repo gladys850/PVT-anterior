@@ -10,91 +10,63 @@
       </v-toolbar-title>
       <v-toolbar-title v-else>Usuarios</v-toolbar-title>
       <v-spacer></v-spacer>
+      <template v-if="viewType == 'Usuarios'">
+        <v-btn  @click="status = 'active'" :class="this.status == 'active' ? 'primary' : 'normal'" class="mr-0">
+          <div class="font-weight-regular subheading pa-2 white--text">ACTIVOS</div>
+        </v-btn>
+        <v-btn  @click="status = 'inactive'" :class="this.status == 'inactive' ? 'primary' : 'normal'" class="mr-3">
+          <div class="font-weight-regular subheading pa-2 white--text">INACTIVOS</div>
+        </v-btn>
+      </template>
+      <v-divider
+        class="mx-2"
+        inset
+        vertical
+      ></v-divider>
+      <v-flex xs2>
+        <v-text-field
+          v-model="search"
+          append-icon="search"
+          label="Buscar"
+          single-line
+          hide-details
+          full-width
+          clearable
+        ></v-text-field>
+      </v-flex>
     </v-toolbar>
     <v-card>
       <v-card-text>
-        <v-data-table
-          :headers="headers"
-          :items="users"
-          :loading="loading"
-          :pagination.sync="pagination"
-          :total-items="totalUsers"
-          :rows-per-page-items="[10,20,30]"
-        >
-          <template v-slot:items="props">
-            <td class="text-xs-left">{{ props.item.id }}</td>
-            <td class="text-xs-left">{{ props.item.username }}</td>
-            <td class="text-xs-left">{{ props.item.first_name }}</td>
-            <td class="text-xs-left">{{ props.item.last_name }}</td>
-            <td class="text-xs-left">{{ props.item.position }}</td>
-          </template>
-        </v-data-table>
+        <LdapUsers v-if="viewType == 'LDAP'" :bus="bus"/>
+        <DatabaseUsers v-else :bus="bus"/>
       </v-card-text>
     </v-card>
   </v-container>
 </template>
 <script>
-import { timingSafeEqual } from 'crypto';
+import Vue from 'vue'
+import DatabaseUsers from './DatabaseUsers'
+import LdapUsers from './LdapUsers'
+import _ from 'lodash'
 
 export default {
   name: "userIndex",
+  components: {
+    DatabaseUsers,
+    LdapUsers
+  },
   data: () => ({
     viewType: 'Usuarios',
-    loading: true,
-    search: null,
-    status: 'active',
-    pagination: {
-      page: 1,
-      rowsPerPage: 10,
-      sortBy: null,
-      descending: false
-    },
-    users: [],
-    totalUsers: 0,
-    headers: [
-      { text: 'ID', value: 'id', sortable: true },
-      { text: 'Usuario', value: 'username', sortable: false },
-      { text: 'Nombre', value: 'first_name', sortable: false },
-      { text: 'Apellido', value: 'last_name', sortable: false },
-      { text: 'Cargo', value: 'position', sortable: false }
-    ]
+    search: '',
+    bus: new Vue(),
+    status: 'active'
   }),
   watch: {
-    pagination: function(newVal, oldVal) {
-      console.log(newVal)
-      console.log(oldVal)
-
-      if (newVal.page != oldVal.page || newVal.rowsPerPage != oldVal.rowsPerPage || newVal.sortBy != oldVal.sortBy || newVal.descending != oldVal.descending) {
-        this.getUsers()
-      }
-    }
-  },
-  mounted() {
-    this.getUsers();
-  },
-  methods: {
-    async getUsers(params) {
-      try {
-        let res = await axios.get(`user`, {
-          params: {
-            page: this.pagination.page,
-            per_page: this.pagination.rowsPerPage,
-            sortBy: this.pagination.sortBy,
-            direction: this.pagination.descending ? 'desc' : 'asc',
-            status: this.status
-          }
-        })
-        this.users = res.data.data
-        this.totalUsers = res.data.total
-        delete res.data['data']
-        this.pagination.page = res.data.current_page
-        this.pagination.rowsPerPage = parseInt(res.data.per_page)
-        this.pagination.totalItems = res.data.total
-      } catch (e) {
-        console.log(e)
-      } finally {
-        this.loading = false
-      }
+    search: _.debounce(function () {
+      this.bus.$emit('search', this.search)
+    }, 1000),
+    status: function() {
+      this.bus.$emit('status', this.status)
     }
   }
 }

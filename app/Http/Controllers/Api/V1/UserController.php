@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Http\Requests\UserForm;
 use Illuminate\Http\Request;
 use App\User;
@@ -16,10 +17,19 @@ class UserController extends Controller
    */
   public function index(Request $request)
   {
+    $users = User::query();
+    if ($request->has('search')) {
+      if ($request->search != 'null' && $request->search != '') {
+        $search = $request->search;
+        $users = $users->where(function ($query) use ($search) {
+          foreach (Schema::getColumnListing(User::getTableName()) as $column) {
+            $query = $query->orWhere($column, 'ilike', '%' . $search . '%');
+          }
+        });
+      }
+    }
     if ($request->has('status')) {
-      $users = User::whereStatus($request->input('status'));
-    } else {
-      $users = new User();
+      $users = $users->whereStatus($request->input('status'));
     }
     if ($request->has('sortBy')) {
       if ($request->sortBy != 'null') {
@@ -27,6 +37,7 @@ class UserController extends Controller
       }
     }
     return $users->paginate($request->input('per_page') ?? 10);
+    // return response()->json(['sql' => $users->toSql()]);
   }
 
   /**
@@ -74,6 +85,6 @@ class UserController extends Controller
    */
   public function destroy($id)
   {
-    //
+    //TODO when user-actions table have been created
   }
 }
