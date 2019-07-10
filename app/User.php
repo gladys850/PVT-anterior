@@ -11,6 +11,7 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
 class User extends Authenticatable implements JWTSubject
 {
   use LaratrustUserTrait, Notifiable, SoftDeletes;
+  use Traits\EloquentGetTableNameTrait;
 
   public $timestamps = true;
   public $guarded = ['id'];
@@ -21,14 +22,14 @@ class User extends Authenticatable implements JWTSubject
    *
    * @var array
    */
-  protected $fillable = ['city_id', 'first_name', 'last_name', 'phone', 'username', 'password', 'status', 'remember_token', 'position', 'gender', 'is_commission'];
+  protected $fillable = ['city_id', 'first_name', 'last_name', 'phone', 'username', 'password', 'status', 'position', 'gender', 'is_commission'];
 
   /**
    * The attributes that should be hidden for arrays.
    *
    * @var array
    */
-  protected $hidden = ['password'];
+  protected $hidden = ['password', 'remember_token'];
 
   /**
    * Get the identifier that will be stored in the subject claim of the JWT.

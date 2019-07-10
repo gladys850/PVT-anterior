@@ -19,7 +19,7 @@ export const routes = [
   }, {
     path: '*',
     redirect: {
-      name: 'dashboard'
+      name: 'dashboardIndex'
     },
     meta: {
       requiresAuth: true
