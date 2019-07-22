@@ -49,9 +49,7 @@ yarn
 
 ```sh
 composer run-script post-create-project-cmd
-php artisan jwt:secret
 yarn prod
-composer run-script post-autoload-dump
 ```
 
 ## Development
