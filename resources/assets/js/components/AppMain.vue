@@ -102,9 +102,7 @@
       </v-toolbar-items>
     </v-toolbar>
     <v-content>
-      <v-slide-x-transition>
-        <router-view></router-view>
-      </v-slide-x-transition>
+      <router-view></router-view>
     </v-content>
     <v-footer :fixed="true" app>
       <v-spacer></v-spacer>
