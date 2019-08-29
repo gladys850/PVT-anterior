@@ -117,6 +117,7 @@
 import menuLeft from '../menu.json'
 
 export default {
+  name: 'app-index',
   data() {
     return {
       clipped: true,
