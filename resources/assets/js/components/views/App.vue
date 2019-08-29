@@ -112,7 +112,7 @@
 </template>
 
 <script>
-import menuLeft from '../menu.json'
+import menuLeft from '../../menu.json'
 
 export default {
   name: 'app-index',
@@ -139,7 +139,7 @@ export default {
       }
     }
   },
-  name: "AppMain",
+  name: "App",
   methods: {
     logout() {
       this.$store.dispatch("logout");

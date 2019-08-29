@@ -1,21 +1,13 @@
 // Vue instance
 require('./bootstrap')
-window.Vue = require('vue')
 Vue.config.productionTip = false
-import AppMain from './components/AppMain'
+import App from './components/views/App'
 
 // Validator
-import VeeValidate, { Validator } from 'vee-validate'
-import validateEs from 'vee-validate/dist/locale/es'
-Validator.localize('es', validateEs)
-Vue.use(VeeValidate, {
-  locale: 'es',
-})
+import './plugins/vee-validate'
 
 // Vuetify
-import vuetify from './plugins/vuetify';
-import 'roboto-fontface/css/roboto/roboto-fontface.css'
-import '@mdi/font/css/materialdesignicons.css'
+import vuetify from './plugins/vuetify'
 
 // Locale
 import VueI18n from 'vue-i18n'
@@ -24,14 +16,7 @@ const i18n = new VueI18n({
 })
 
 // Router
-import VueRouter from 'vue-router'
-import { routes } from './routes'
-const router = new VueRouter({
-  routes,
-  // hashbang: false,
-  mode: 'history',
-})
-Vue.use(VueRouter)
+import router from './plugins/router'
 
 // Vuex
 import Vuex from 'vuex'
@@ -39,13 +24,7 @@ import StoreData from './store'
 const store = new Vuex.Store(StoreData)
 
 // Moment
-import moment from 'moment-business-days'
-moment.updateLocale('es', require('moment/locale/es'), {
-  workingWeekdays: [1, 2, 3, 4, 5]
-})
-Vue.use(require('vue-moment'), {
-  moment
-})
+import './plugins/moment'
 
 // JWT
 axios.defaults.headers.common['Accept'] = 'application/json'
@@ -92,7 +71,7 @@ new Vue({
   router,
   i18n,
   store,
-  components: { AppMain },
+  components: { App },
   vuetify,
-  render: h => h(AppMain)
+  render: h => h(App)
 }).$mount('#app')
