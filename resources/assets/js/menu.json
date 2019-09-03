@@ -2,25 +2,25 @@
   {
     "href": "dashboardIndex",
     "title": "Inicio",
-    "icon": "home",
+    "icon": "mdi-home",
     "permission": null,
     "params": {}
   }, {
     "title": "Acceso",
-    "icon": "vpn_key",
-    "permission": "Administrador",
+    "icon": "mdi-key",
+    "permission": null,
     "group": [
       {
         "href": "userIndex",
         "title": "Usuarios",
-        "icon": "group_add",
-        "permission": "Administrador",
+        "icon": "mdi-account-outline",
+        "permission": null,
         "params": {}
       }, {
         "href": "roleIndex",
         "title": "Roles",
-        "icon": "security",
-        "permission": "Administrador",
+        "icon": "mdi-shield-lock-outline",
+        "permission": null,
         "params": {}
       }
     ]
