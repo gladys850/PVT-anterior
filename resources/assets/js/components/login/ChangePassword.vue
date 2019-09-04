@@ -62,7 +62,6 @@
         </v-card>
       </template>
     </v-dialog>
-    <!-- <snack ref="toast"/> -->
   </v-row>
 </template>
 <script>
@@ -82,9 +81,7 @@ export default {
   }),
   watch: {
     dialog(val) {
-      if (val) {
-        this.$nextTick(() => this.$refs.oldPassword.focus())
-      } else {
+      if (!val) {
         this.clearForm()
       }
     }
