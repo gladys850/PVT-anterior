@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Hash;
 use App\User;
 
 class UserForm extends FormRequest
@@ -52,7 +53,7 @@ class UserForm extends FormRequest
       'last_name' => 'alpha|min:3',
       'phone' => 'integer|min:7|max:8',
       'username' => 'string|min:3|unique:users,username',
-      'password' => 'string|min:3',
+      'password' => 'string|min:5',
       'position' => 'nullable|string',
       'gender' => 'nullable|in:M,F'
     ];
@@ -98,6 +99,7 @@ class UserForm extends FormRequest
     if (array_key_exists('first_name', $input)) $input['first_name'] = mb_strtoupper($input['first_name']);
     if (array_key_exists('last_name', $input)) $input['last_name'] = mb_strtoupper($input['last_name']);
     if (array_key_exists('position', $input)) $input['position'] = mb_strtoupper($input['position']);
+    if (array_key_exists('password', $input)) $input['password'] = Hash::make($input['password']);
 
     $this->replace($input);
   }

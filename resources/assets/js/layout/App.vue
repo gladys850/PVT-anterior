@@ -4,15 +4,16 @@
     <Appbar :expanded.sync="expandNavbar" v-if="$store.getters.user"/>
     <v-content>
       <router-view></router-view>
+      <div ref="container"></div>
     </v-content>
     <Footer/>
   </v-app>
 </template>
 
 <script>
-import Footer from './Footer'
-import Navbar from './Navbar'
-import Appbar from './Appbar'
+import Footer from '@/layout/Footer'
+import Navbar from '@/layout/Navbar'
+import Appbar from '@/layout/Appbar'
 
 export default {
   name: 'app-index',

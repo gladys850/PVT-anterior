@@ -35,7 +35,7 @@
 
 <script>
 export default {
-  name: "ManteinanceDialog",
+  name: "manteinance-dialog",
   props: {
     positionGroup: {
       type: String,

@@ -1,13 +1,21 @@
 // Vue instance
-require('./bootstrap')
+import '@/bootstrap'
 Vue.config.productionTip = false
-import App from './components/views/App'
+import App from '@/layout/App'
+
+// Toast notification
+import toast from '@/plugins/toast'
+Vue.mixin({
+  methods: {
+    toast: toast
+  }
+})
 
 // Validator
-import './plugins/vee-validate'
+import '@/plugins/vee-validate'
 
 // Vuetify
-import vuetify from './plugins/vuetify'
+import vuetify from '@/plugins/vuetify'
 
 // Locale
 import VueI18n from 'vue-i18n'
@@ -16,15 +24,15 @@ const i18n = new VueI18n({
 })
 
 // Router
-import router from './plugins/router'
+import router from '@/plugins/router'
 
 // Vuex
 import Vuex from 'vuex'
-import StoreData from './store'
+import StoreData from '@/store'
 const store = new Vuex.Store(StoreData)
 
 // Moment
-import './plugins/moment'
+import '@/plugins/moment'
 
 // JWT
 axios.defaults.headers.common['Accept'] = 'application/json'
@@ -40,7 +48,7 @@ axios.interceptors.response.use(response => {
     }
     for (let key in error.response.data.errors) {
       error.response.data.errors[key].forEach(error => {
-        toastr.error(error)
+        toast(error, 'error')
       })
     }
   }
@@ -71,7 +79,6 @@ new Vue({
   router,
   i18n,
   store,
-  components: { App },
   vuetify,
   render: h => h(App)
 }).$mount('#app')

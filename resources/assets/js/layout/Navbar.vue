@@ -52,7 +52,7 @@
   </v-navigation-drawer>
 </template>
 <script>
-import menuItems from '../../menu.json'
+import menuItems from '@/menu.json'
 
 export default {
   name: 'app-navbar',

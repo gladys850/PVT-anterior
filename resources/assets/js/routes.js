@@ -1,8 +1,8 @@
-import IndexLogin from './components/login/Index'
-import Profile from './components/login/Profile'
-import DashboardIndex from './components/dashboard/Index'
-import UserIndex from './components/user/Index'
-import RoleIndex from './components/role/Index'
+import IndexLogin from '@/components/login/Index'
+import Profile from '@/components/login/Profile'
+import DashboardIndex from '@/components/dashboard/Index'
+import UserIndex from '@/components/user/Index'
+import RoleIndex from '@/components/role/Index'
 
 export const routes = [
   {

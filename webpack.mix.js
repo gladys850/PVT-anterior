@@ -1,7 +1,16 @@
 let mix = require('laravel-mix')
 require('laravel-mix-purgecss')
 
-mix.js('resources/assets/js/app.js', 'public/js')
+mix
+.webpackConfig({
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, 'resources/assets/js'),
+      '~': path.resolve(__dirname, 'resources/assets/sass')
+    }
+  }
+})
+.js('resources/assets/js/app.js', 'public/js')
 .options({
   postCss: [
     require('autoprefixer')

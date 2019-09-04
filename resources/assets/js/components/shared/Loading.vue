@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid fill-height style="margin-top: 15%;">
+  <v-container fluid fill-height class="my-5 py-5">
     <v-layout row align-center justify-center>
       <v-progress-circular
         :size="100"
@@ -13,6 +13,6 @@
 
 <script>
 export default {
-  name: 'Loading'
+  name: 'loading'
 }
 </script>

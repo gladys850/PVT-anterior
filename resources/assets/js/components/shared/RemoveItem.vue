@@ -15,7 +15,7 @@
 
 <script>
 export default {
-  name: "RemoveItem",
+  name: "remove-item",
   props: ["url", "bus"],
   data() {
     return {
@@ -35,7 +35,7 @@ export default {
     async remove() {
       try {
         let res = await axios.delete(this.path);
-        this.toastr.success('Eliminado correctamente')
+        this.toast('Eliminado correctamente', 'error')
         this.bus.$emit("removed", Number(this.path.split('/').pop()));
         this.close()
       } catch (e) {
