@@ -8,7 +8,7 @@
 <script>
 
 export default {
-  name: "dashboardIndex",
+  name: "dashboard-index",
   data: () => ({}),
 };
 </script>

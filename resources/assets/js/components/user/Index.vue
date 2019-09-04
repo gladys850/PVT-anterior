@@ -45,8 +45,8 @@
 </template>
 <script>
 import Vue from 'vue'
-import DatabaseUsers from './DatabaseUsers'
-import LdapUsers from './LdapUsers'
+import DatabaseUsers from '@/components/user/DatabaseUsers'
+import LdapUsers from '@/components/user/LdapUsers'
 import _ from 'lodash'
 
 export default {

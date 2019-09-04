@@ -1,43 +1,19 @@
-vendor/
-node_modules/
-npm-debug.log
-/.idea
 /.vscode
-/.vagrant
-yarn-error.log
-
-# Laradock submodule
-laradock/
-
-# Laravel 4 specific
-bootstrap/compiled.php
-app/storage/
-
-# Laravel 5 & Lumen specific
-public/docs
-public/fonts
-public/storage
-public/hot
-public/js/
-public/css/*
-public/img/
-storage/*.key
-.env.*.php
-.env.php
+/node_modules
+/public/mix-manifest.json
+/public/hot
+/public/img
+/public/docs
+/public/fonts
+/public/js
+/public/css
+/public/fonts
+/public/storage
+/storage/*.key
+/vendor
+/laradock/*
+/app/storage/
 .env
-Homestead.yaml
-Homestead.json
-
-# Lock files
-.phpfmt.ini
-
-# Rocketeer PHP task runner and deployment package. https://github.com/rocketeers/rocketeer
-.rocketeer/
-
-# Webpack generated files
-public/css/app.css
-public/js/app.js
-public/mix-manifest.json
-
-# Test files
-*.test
+.phpunit.result.cache
+yarn-error.log
+npm-debug.log

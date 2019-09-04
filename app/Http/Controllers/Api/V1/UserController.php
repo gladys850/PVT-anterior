@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers\Api\V1;
 
-use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Schema;
-use Illuminate\Http\Requests\UserForm;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\UserForm;
 use App\User;
 
 class UserController extends Controller
@@ -72,6 +74,20 @@ class UserController extends Controller
   public function update(UserForm $request, $id)
   {
     $user = User::findOrFail($id);
+    if ($request->has('password')) {
+      if ($request->has('old_password')) {
+        if (!(Auth::user()->id == $id && Hash::check($request->input('old_password'), $user->password))) {
+          return response()->json([
+            'message' => 'Invalid',
+            'errors' => [
+              'type' => ['Contraseña anterior incorrecta'],
+            ],
+          ], 409);
+        }
+      } else {
+        unset($request['password']);
+      }
+    }
     $user->fill($request->all());
     $user->save();
     return $user;
