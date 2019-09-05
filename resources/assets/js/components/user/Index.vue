@@ -1,6 +1,6 @@
 <template>
   <v-container fluid>
-    <v-toolbar dense color="tertiary">
+    <v-toolbar dense flat color="tertiary">
       <v-toolbar-title>Usuarios</v-toolbar-title>
       <v-spacer></v-spacer>
       <v-btn-toggle
@@ -31,21 +31,20 @@
         ></v-text-field>
       </v-flex>
     </v-toolbar>
-    <v-card>
-      <v-card-text>
-        <List :bus="bus"/>
-      </v-card-text>
-    </v-card>
+    <List :bus="bus"/>
+    <RemoveItem :bus="bus"/>
   </v-container>
 </template>
 <script>
 import Vue from 'vue'
 import List from '@/components/user/List'
+import RemoveItem from '@/components/shared/RemoveItem'
 
 export default {
   name: "userIndex",
   components: {
-    List
+    List,
+    RemoveItem
   },
   data: () => ({
     search: '',

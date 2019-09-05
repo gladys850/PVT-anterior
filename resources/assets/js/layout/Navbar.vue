@@ -51,6 +51,7 @@
     </v-list>
   </v-navigation-drawer>
 </template>
+
 <script>
 import menuItems from '@/menu.json'
 

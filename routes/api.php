@@ -21,6 +21,7 @@ Route::group([
     ], function () {
       // User
       Route::resource('user', 'Api\V1\UserController')->only(['index', 'store', 'show', 'update', 'destroy']);
+      Route::get('user/{id}/role', 'Api\V1\UserController@get_roles');
     });
   });
 });

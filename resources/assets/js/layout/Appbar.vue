@@ -14,6 +14,7 @@
     <LoggedUser/>
   </v-app-bar>
 </template>
+
 <script>
 import LoggedUser from '@/layout/LoggedUser'
 

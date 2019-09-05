@@ -20,9 +20,6 @@ class RoleController extends Controller
   public function index()
   {
     $roles = Role::get();
-    foreach ($roles as $role) {
-      $role->permissions = $role->permissions()->pluck('id');
-    }
     return $roles;
   }
 
@@ -35,5 +32,10 @@ class RoleController extends Controller
   public function show($id)
   {
     return Role::with('permissions')->findOrFail($id);
+  }
+
+  public function get_permissions($id) {
+    $role = Role::findOrFail($id);
+    return $role->permissions;
   }
 }

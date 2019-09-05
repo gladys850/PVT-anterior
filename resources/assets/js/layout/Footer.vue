@@ -9,6 +9,7 @@
     <div>MUSERPOL <v-icon class="mdi-flip-h">mdi-copyright</v-icon> - {{ $moment().year() }}</div>
   </v-footer>
 </template>
+
 <script>
 export default {
   name: 'app-footer'

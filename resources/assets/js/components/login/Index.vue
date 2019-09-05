@@ -9,7 +9,10 @@
             contain
           ></v-img>
           <v-card-title primary-title class="justify-center">
-            <div class="display-1 font-weight-thin text-md-center text-uppercase">PLATAFORMA VIRTUAL DE TRÁMITES</div>
+            <div class="display-1 font-weight-thin text-md-center text-uppercase">
+              <p>PLATAFORMA VIRTUAL</p>
+              <p>DE TRÁMITES</p>
+            </div>
           </v-card-title>
           <div class="flex-grow-1"></div>
           <v-card-text>

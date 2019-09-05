@@ -5,15 +5,34 @@
     :loading="loading"
     :options.sync="options"
     :server-items-length="totalUsers"
-    :footer-props="{ itemsPerPageOptions: [10, 20, 30] }"
-    :fixed-header="true"
-    calculate-widths
+    :footer-props="{ itemsPerPageOptions: [8, 15, 30] }"
+    multi-sort
+    single-expand
   >
-    <template v-slot:items="props">
-      <td class="text-xs-left">{{ props.item.username }}</td>
-      <td class="text-xs-left">{{ props.item.first_name }}</td>
-      <td class="text-xs-left">{{ props.item.last_name }}</td>
-      <td class="text-xs-left">{{ props.item.position }}</td>
+    <template v-slot:item="props">
+      <tr :class="props.isExpanded ? 'secondary white--text' : ''">
+        <td @click.stop="getRoles(props)">{{ props.item.username }}</td>
+        <td @click.stop="getRoles(props)">{{ props.item.first_name }}</td>
+        <td @click.stop="getRoles(props)">{{ props.item.last_name }}</td>
+        <td @click.stop="getRoles(props)">{{ props.item.position }}</td>
+        <td>
+          <v-tooltip top>
+            <template v-slot:activator="{ on }">
+              <v-btn fab dark x-small color="error" v-on="on" @click.stop="bus.$emit('openRemoveDialog', props.item.id)">
+                <v-icon>mdi-close</v-icon>
+              </v-btn>
+            </template>
+            <span class="caption">Eliminar</span>
+          </v-tooltip>
+        </td>
+      </tr>
+    </template>
+    <template v-slot:expanded-item="{ headers }">
+      <tr>
+        <td :colspan="headers.length" class="tertiary">
+          123
+        </td>
+      </tr>
     </template>
   </v-data-table>
 </template>
@@ -28,9 +47,9 @@ export default {
     status: 'active',
     options: {
       page: 1,
-      itemsPerPage: 10,
-      sortBy: null,
-      descending: false
+      itemsPerPage: 8,
+      sortBy: ['username'],
+      sortDesc: [false]
     },
     users: [],
     totalUsers: 0,
@@ -40,31 +59,36 @@ export default {
         value: 'username',
         class: ['normal', 'white--text'],
         width: '15%',
-        sortable: false
+        sortable: true
       }, {
         text: 'Nombre',
         value: 'first_name',
         class: ['normal', 'white--text'],
         width: '15%',
-        sortable: false
+        sortable: true
       }, {
         text: 'Apellido',
         value: 'last_name',
         class: ['normal', 'white--text'],
         width: '20%',
-        sortable: false
+        sortable: true
       }, {
         text: 'Cargo',
         value: 'position',
         class: ['normal', 'white--text'],
-        width: '50%',
+        width: '45%',
+        sortable: true
+      }, {
+        text: 'Acciones',
+        class: ['normal', 'white--text'],
+        width: '5%',
         sortable: false
       }
     ]
   }),
   watch: {
     options: function(newVal, oldVal) {
-      if (newVal.page != oldVal.page || newVal.itemsPerPage != oldVal.itemsPerPage || newVal.sortBy != oldVal.sortBy || newVal.descending != oldVal.descending) {
+      if (newVal.page != oldVal.page || newVal.itemsPerPage != oldVal.itemsPerPage || newVal.sortBy != oldVal.sortBy || newVal.sortDesc != oldVal.sortDesc) {
         this.getUsers()
       }
     },
@@ -89,6 +113,9 @@ export default {
     this.getUsers()
   },
   methods: {
+    async getRoles(props) {
+      props.expand(!props.isExpanded)
+    },
     async getUsers(params) {
       try {
         this.loading = true
@@ -97,7 +124,7 @@ export default {
             page: this.options.page,
             per_page: this.options.itemsPerPage,
             sortBy: this.options.sortBy,
-            direction: this.options.descending ? 'desc' : 'asc',
+            sortDesc: this.options.sortDesc,
             status: this.status,
             search: this.search
           }
