@@ -9,14 +9,15 @@
           <template>
             <v-toolbar flat dense color="tertiary">
               <v-toolbar-title>Cambiar contraseña</v-toolbar-title>
-              <div class="flex-grow-1"></div>
+              <v-spacer></v-spacer>
               <v-btn icon @click.stop="close()">
                 <v-icon>mdi-close</v-icon>
               </v-btn>
             </v-toolbar>
           </template>
           <template v-if="!loading">
-            <v-card-text class="mt-5">
+            <v-card-title></v-card-title>
+            <v-card-text>
               <form>
                 <v-text-field
                   v-validate="'required|min:5|max:255'"
@@ -54,7 +55,7 @@
               </form>
             </v-card-text>
             <v-card-actions>
-              <div class="flex-grow-1"></div>
+              <v-spacer></v-spacer>
               <v-btn color="error" @click="updatePassword()">Cambiar contraseña</v-btn>
             </v-card-actions>
           </template>
@@ -93,7 +94,6 @@ export default {
       this.$validator.reset()
     },
     close() {
-      this.clearForm()
       this.dialog = false
     },
     async updatePassword() {

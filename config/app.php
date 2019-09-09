@@ -175,9 +175,6 @@ return [
 
     // Snappy
     Barryvdh\Snappy\ServiceProvider::class,
-
-    // Barcode
-    Milon\Barcode\BarcodeServiceProvider::class
   ],
 
   /*

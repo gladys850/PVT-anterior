@@ -18,7 +18,14 @@
         <td>
           <v-tooltip top>
             <template v-slot:activator="{ on }">
-              <v-btn fab dark x-small color="error" v-on="on" @click.stop="bus.$emit('openRemoveDialog', props.item.id)">
+              <v-btn
+                fab
+                dark
+                x-small
+                color="error"
+                v-on="on"
+                @click.stop="bus.$emit('openRemoveDialog', props.item.id)"
+              >
                 <v-icon>mdi-close</v-icon>
               </v-btn>
             </template>
@@ -39,7 +46,7 @@
 
 <script>
 export default {
-  name: 'users-list',
+  name: 'user-list',
   props: ['bus'],
   data: () => ({
     loading: true,
@@ -144,4 +151,3 @@ export default {
   }
 }
 </script>
-

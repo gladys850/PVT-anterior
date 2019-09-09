@@ -25,11 +25,13 @@
           v-model="search"
           append-icon="mdi-magnify"
           label="Buscar"
+          class="mr-4"
           single-line
           hide-details
           clearable
         ></v-text-field>
       </v-flex>
+      <Add :bus="bus"/>
     </v-toolbar>
     <List :bus="bus"/>
     <RemoveItem :bus="bus"/>
@@ -38,11 +40,13 @@
 <script>
 import Vue from 'vue'
 import List from '@/components/user/List'
+import Add from '@/components/user/Add'
 import RemoveItem from '@/components/shared/RemoveItem'
 
 export default {
-  name: "userIndex",
+  name: "user-index",
   components: {
+    Add,
     List,
     RemoveItem
   },

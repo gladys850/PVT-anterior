@@ -14,7 +14,7 @@
               <p>DE TRÁMITES</p>
             </div>
           </v-card-title>
-          <div class="flex-grow-1"></div>
+          <v-spacer></v-spacer>
           <v-card-text>
             <v-form>
               <v-text-field
