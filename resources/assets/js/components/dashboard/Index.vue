@@ -190,8 +190,8 @@
         </v-card>
   </v-container>
 </template>
-<script>
 
+<script>
 export default {
   name: "dashboard-index",
   data: () => ({

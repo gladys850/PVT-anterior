@@ -10,10 +10,11 @@
   >
     <v-app-bar-nav-icon @click.stop="$emit('update:expanded', !expanded)"></v-app-bar-nav-icon>
     <v-toolbar-title>{{ bar.text }}</v-toolbar-title>
-    <div class="flex-grow-1"></div>
+    <v-spacer></v-spacer>
     <LoggedUser/>
   </v-app-bar>
 </template>
+
 <script>
 import LoggedUser from '@/layout/LoggedUser'
 

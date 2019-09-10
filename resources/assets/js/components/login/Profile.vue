@@ -4,6 +4,7 @@
       <v-toolbar-title>Perfil</v-toolbar-title>
     </v-toolbar>
     <v-card>
+      <v-card-title></v-card-title>
       <v-card-text>
         <v-simple-table dense>
           <tbody>
