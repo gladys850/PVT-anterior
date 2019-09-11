@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UserForm;
 use App\User;
+use Ldap;
 
 class UserController extends Controller
 {
@@ -51,6 +52,12 @@ class UserController extends Controller
     */
     public function store(UserForm $request)
     {
+        if (env("LDAP_AUTHENTICATION")) {
+            $ldap = new Ldap();
+            if (is_null($ldap->get_entry($request->username, 'uid'))) {
+                abort(404);
+            }
+        }
         return User::create($request->all());
     }
 
@@ -102,7 +109,9 @@ class UserController extends Controller
     */
     public function destroy($id)
     {
-        //TODO when user-actions table have been created
+        $user = User::findOrFail($id);
+        $user->forceDelete();
+        return $user;
     }
 
     public function get_roles($id)

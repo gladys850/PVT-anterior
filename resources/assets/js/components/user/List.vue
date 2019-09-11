@@ -11,10 +11,10 @@
   >
     <template v-slot:item="props">
       <tr :class="props.isExpanded ? 'secondary white--text' : ''">
-        <td @click.stop="getRoles(props)">{{ props.item.username }}</td>
-        <td @click.stop="getRoles(props)">{{ props.item.first_name }}</td>
         <td @click.stop="getRoles(props)">{{ props.item.last_name }}</td>
+        <td @click.stop="getRoles(props)">{{ props.item.first_name }}</td>
         <td @click.stop="getRoles(props)">{{ props.item.position }}</td>
+        <td @click.stop="getRoles(props)">{{ props.item.username }}</td>
         <td>
           <v-tooltip top>
             <template v-slot:activator="{ on }">
@@ -24,7 +24,7 @@
                 x-small
                 color="error"
                 v-on="on"
-                @click.stop="bus.$emit('openRemoveDialog', props.item.id)"
+                @click.stop="bus.$emit('openRemoveDialog', `user/${props.item.id}`)"
               >
                 <v-icon>mdi-close</v-icon>
               </v-btn>
@@ -55,27 +55,21 @@ export default {
     options: {
       page: 1,
       itemsPerPage: 8,
-      sortBy: ['username'],
+      sortBy: ['last_name'],
       sortDesc: [false]
     },
     users: [],
     totalUsers: 0,
     headers: [
       {
-        text: 'Usuario',
-        value: 'username',
+        text: 'Apellido',
+        value: 'last_name',
         class: ['normal', 'white--text'],
-        width: '15%',
+        width: '20%',
         sortable: true
       }, {
         text: 'Nombre',
         value: 'first_name',
-        class: ['normal', 'white--text'],
-        width: '15%',
-        sortable: true
-      }, {
-        text: 'Apellido',
-        value: 'last_name',
         class: ['normal', 'white--text'],
         width: '20%',
         sortable: true
@@ -84,6 +78,12 @@ export default {
         value: 'position',
         class: ['normal', 'white--text'],
         width: '45%',
+        sortable: true
+      }, {
+        text: 'Usuario',
+        value: 'username',
+        class: ['normal', 'white--text'],
+        width: '10%',
         sortable: true
       }, {
         text: 'Acciones',
@@ -111,6 +111,12 @@ export default {
     }
   },
   mounted() {
+    this.bus.$on('added', val => {
+      this.getUsers()
+    })
+    this.bus.$on('removed', val => {
+      this.users = this.users.filter(o => o.id != val)
+    })
     this.bus.$on('search', val => {
       this.search = val
     })

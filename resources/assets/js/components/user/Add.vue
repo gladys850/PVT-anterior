@@ -28,23 +28,7 @@
         </v-toolbar>
         <v-card-title></v-card-title>
         <v-card-text>
-          <v-autocomplete
-            v-model="userSelected"
-            label="Usuario"
-            :items="users"
-            :loading="loading"
-            autofocus
-            clearable
-            persistent-hint
-            :hint="userSelected ? userSelected.title : ''"
-            item-text="fullName"
-            return-object
-            open-on-clear
-            validate-on-blur
-            v-validate="'required'"
-            name="usuario"
-            :error-messages="errors.collect('usuario')"
-          ></v-autocomplete>
+          <Ldap :bus="bus" @input="userSelected = $event"/>
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
@@ -60,8 +44,13 @@
 </template>
 
 <script>
+import Ldap from '@/components/user/Ldap'
+
 export default {
   name: 'ldap-list',
+  components: {
+    Ldap
+  },
   props: {
     bus: {
       type: Object,
@@ -71,16 +60,14 @@ export default {
   data: () => ({
     loading: true,
     dialog: false,
-    userSelected: null,
-    users: []
+    userSelected: null
   }),
-  mounted() {
-    this.getUsers()
-  },
   watch: {
     dialog(val) {
       if (!val) {
         this.clearForm()
+      } else {
+        this.bus.$emit('getUsers')
       }
     }
   },
@@ -105,22 +92,11 @@ export default {
             city_id: 1,
             phone: 12345678
           })
-          console.log(res.data)
+          this.toast('Usuario adicionado', 'success')
+          this.bus.$emit('added', res.data)
+          this.clearForm()
+          this.close()
         }
-      } catch (e) {
-        console.log(e)
-      } finally {
-        this.loading = false
-      }
-    },
-    async getUsers(params) {
-      try {
-        this.loading = true
-        let res = await axios.get(`ldap`)
-        this.users = res.data
-        this.users.forEach((item) => {
-          item.fullName = `${item.sn} ${item.givenName}`
-        })
       } catch (e) {
         console.log(e)
       } finally {

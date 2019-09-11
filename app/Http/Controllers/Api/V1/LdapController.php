@@ -11,16 +11,15 @@ class LdapController extends Controller
 {
     public function index()
     {
-        $users=User::get()->pluck('username')->all();
-        $ldap_users = new Ldap();
-        $ldap_users = $ldap_users->list_entries();
-        $ldap_users = collect($ldap_users)->sortBy('uid');
-        $unregistered_users = $ldap_users->pluck('uid')->diff($users);
-        $unregistered_users->each(function ($item) use ($ldap_users) {
-            $ldap_users->filter(function($item) {
-                return $item->uid != $item;
-            });
-        });
-        return response()->json($ldap_users->values());
+        $ldap = new Ldap();
+        $unregistered_users = collect($ldap->list_entries())->pluck('uid')->diff(User::get()->pluck('username')->all());
+        $items = [];
+        foreach($unregistered_users as $user) {
+            $item = $ldap->get_entry($user, 'uid');
+            if (!is_null($item)) {
+                array_push($items, $item);
+            }
+        }
+        return response()->json(collect($items)->sortBy('sn')->values());
     }
 }
