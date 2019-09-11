@@ -5,8 +5,8 @@
     </v-card>
   </v-container>
 </template>
-<script>
 
+<script>
 export default {
   name: "roleIndex",
   data: () => ({}),
