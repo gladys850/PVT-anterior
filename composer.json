@@ -8,6 +8,34 @@
   ],
   "license": "GPL-3.0-only",
   "type": "project",
+  "repositories": [
+    {
+      "type": "package",
+      "package": {
+        "name": "tymon/jwt-auth",
+        "type": "library",
+        "version": "1.0.0-rc.4.2",
+        "dist": {
+          "url": "https://github.com/tymondesigns/jwt-auth/archive/1.0.0-rc.4.1.zip",
+          "type": "zip"
+        },
+        "require": {
+          "illuminate/auth": "^6.0",
+          "illuminate/contracts": "^6.0",
+          "illuminate/http": "^6.0",
+          "illuminate/support": "^6.0",
+          "lcobucci/jwt": "^3.2",
+          "namshi/jose": "^7.0",
+          "nesbot/carbon": "^1.0 || ^2.0"
+        },
+        "autoload": {
+          "classmap": [
+            "src/"
+          ]
+        }
+      }
+    }
+  ],
   "require": {
     "php": "^7.1.22",
     "barryvdh/laravel-cors": "^0.11.3",
@@ -16,12 +44,11 @@
     "fideloper/proxy": "^4.1",
     "h4cc/wkhtmltoimage-amd64": "^0.12.4",
     "h4cc/wkhtmltopdf-amd64": "^0.12.4",
-    "laravel/framework": "^5.8",
+    "laravel/framework": "^6.0",
     "laravel/tinker": "^1.0",
-    "milon/barcode": "^5.3",
     "nesbot/carbon": "^2.14",
     "santigarcor/laratrust": "^5.2",
-    "tymon/jwt-auth": "^1.0.0-rc.3"
+    "tymon/jwt-auth": "^1.0.0-rc.4.2"
   },
   "require-dev": {
     "mpociot/laravel-apidoc-generator": "^3.4",

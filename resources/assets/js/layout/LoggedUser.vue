@@ -26,6 +26,7 @@
     </v-list>
   </v-menu>
 </template>
+
 <script>
 export default {
   name: 'app-logger-user',
