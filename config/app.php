@@ -167,9 +167,6 @@ return [
     // ACL Entrust
     Laratrust\LaratrustServiceProvider::class,
 
-    // ApiDoc Generator
-    Mpociot\ApiDoc\ApiDocGeneratorServiceProvider::class,
-
     // CORS
     Barryvdh\Cors\ServiceProvider::class,
 
