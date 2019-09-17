@@ -24,6 +24,9 @@ Route::group([
             Route::get('user/{id}/role', 'Api\V1\UserController@get_roles');
             // Ldap
             Route::resource('ldap', 'Api\V1\LdapController')->only(['index']);
+             // Affiliate
+            Route::resource('affiliate', 'Api\V1\AffiliateController')->only(['index','store','show','update','destroy']);
         });
+
     });
 });
