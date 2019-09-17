@@ -22,6 +22,12 @@
         "icon": "mdi-shield-lock-outline",
         "permission": null,
         "params": {}
+      },{
+        "href": "affiliateIndex",
+        "title": "Afiliados",
+        "icon": "mdi-account",
+        "permission": null,
+        "params": {}
       }
     ]
   }

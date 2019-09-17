@@ -3,7 +3,7 @@ import Profile from '@/components/login/Profile'
 import DashboardIndex from '@/components/dashboard/Index'
 import UserIndex from '@/components/user/Index'
 import RoleIndex from '@/components/role/Index'
-
+import AffiliateIndex from '@/components/affiliate/Index'
 export const routes = [
   {
     name: 'login',
@@ -42,6 +42,13 @@ export const routes = [
     path: '/role',
     name: 'roleIndex',
     component: RoleIndex,
+    meta: {
+      requiresAuth: true
+    }
+  }, {
+    path: '/affiliate',
+    name: 'affiliateIndex',
+    component: AffiliateIndex,
     meta: {
       requiresAuth: true
     }
