@@ -23,7 +23,7 @@ Route::group([
             Route::resource('user', 'Api\V1\UserController')->only(['index', 'store', 'show', 'update', 'destroy']);
             Route::get('user/{id}/role', 'Api\V1\UserController@get_roles');
             // Ldap
-            Route::resource('ldap', 'Api\V1\LdapController')->only(['index']);
+            Route::get('ldap', 'Api\V1\UserController@unregistered_users');
         });
     });
 });

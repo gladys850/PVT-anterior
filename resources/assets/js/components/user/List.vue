@@ -15,7 +15,24 @@
         <td @click.stop="getRoles(props)">{{ props.item.first_name }}</td>
         <td @click.stop="getRoles(props)">{{ props.item.position }}</td>
         <td @click.stop="getRoles(props)">{{ props.item.username }}</td>
-        <td>
+        <td v-if="active">
+          <v-tooltip top>
+            <template v-slot:activator="{ on }">
+              <v-btn
+                fab
+                dark
+                x-small
+                color="warning"
+                v-on="on"
+                @click.stop="switchActiveUser(props.item.id)"
+              >
+                <v-icon>mdi-cancel</v-icon>
+              </v-btn>
+            </template>
+            <span class="caption">Deshabilitar</span>
+          </v-tooltip>
+        </td>
+        <td v-else>
           <v-tooltip top>
             <template v-slot:activator="{ on }">
               <v-btn
@@ -51,7 +68,7 @@ export default {
   data: () => ({
     loading: true,
     search: '',
-    status: 'active',
+    active: true,
     options: {
       page: 1,
       itemsPerPage: 8,
@@ -104,7 +121,7 @@ export default {
         this.getUsers()
       }
     },
-    status: function(newVal, oldVal) {
+    active: function(newVal, oldVal) {
       if (newVal != oldVal) {
         this.getUsers()
       }
@@ -115,19 +132,32 @@ export default {
       this.getUsers()
     })
     this.bus.$on('removed', val => {
-      this.users = this.users.filter(o => o.id != val)
+      this.getUsers()
     })
     this.bus.$on('search', val => {
       this.search = val
     })
-    this.bus.$on('status', val => {
-      this.status = val
+    this.bus.$on('active', val => {
+      this.active = val
     })
     this.getUsers()
   },
   methods: {
     async getRoles(props) {
-      props.expand(!props.isExpanded)
+      props.expand(!props.isExpanded && this.active)
+    },
+    async switchActiveUser(id) {
+      try {
+        this.loading = true
+        let res = await axios.patch(`user/${id}`, {
+          active: !this.active
+        })
+        this.bus.$emit('removed', id)
+      } catch (e) {
+        console.log(e)
+      } finally {
+        this.loading = false
+      }
     },
     async getUsers(params) {
       try {
@@ -138,7 +168,7 @@ export default {
             per_page: this.options.itemsPerPage,
             sortBy: this.options.sortBy,
             sortDesc: this.options.sortDesc,
-            status: this.status,
+            active: this.active,
             search: this.search
           }
         })

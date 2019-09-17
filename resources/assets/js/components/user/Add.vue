@@ -88,9 +88,7 @@ export default {
             last_name: this.userSelected.sn,
             username: this.userSelected.uid,
             password: this.userSelected.uid,
-            position: this.userSelected.title,
-            city_id: 1,
-            phone: 12345678
+            position: this.userSelected.title
           })
           this.toast('Usuario adicionado', 'success')
           this.bus.$emit('added', res.data)
