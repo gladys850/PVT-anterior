@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UserForm;
 use App\User;
+use Ldap;
 
 class UserController extends Controller
 {
@@ -20,8 +21,8 @@ class UserController extends Controller
     public function index(Request $request)
     {
         $users = User::query();
-        if ($request->has('status')) {
-            $users = $users->whereStatus($request->input('status'));
+        if ($request->has('active')) {
+            $users = $users->whereActive(filter_var($request->active, FILTER_VALIDATE_BOOLEAN), true);
         }
         if ($request->has('search')) {
             if ($request->search != 'null' && $request->search != '') {
@@ -51,6 +52,12 @@ class UserController extends Controller
     */
     public function store(UserForm $request)
     {
+        if (env("LDAP_AUTHENTICATION")) {
+            $ldap = new Ldap();
+            if (is_null($ldap->get_entry($request->username, 'uid'))) {
+                abort(404);
+            }
+        }
         return User::create($request->all());
     }
 
@@ -102,12 +109,37 @@ class UserController extends Controller
     */
     public function destroy($id)
     {
-        //TODO when user-actions table have been created
+        $user = User::findOrFail($id);
+        if ($user->has_records()) {
+            return response()->json([
+				'message' => 'Forbidden',
+				'errors' => [
+					'type' => ['El usuario aún tiene acciones registradas'],
+				]
+			], 403);
+        } else {
+            $user->delete();
+            return $user;
+        }
     }
 
     public function get_roles($id)
     {
         $user = User::findOrFail($id);
         return $user->roles;
+    }
+
+    public function unregistered_users()
+    {
+        $ldap = new Ldap();
+        $unregistered_users = collect($ldap->list_entries())->pluck('uid')->diff(User::get()->pluck('username')->all());
+        $items = [];
+        foreach($unregistered_users as $user) {
+            $item = $ldap->get_entry($user, 'uid');
+            if (!is_null($item)) {
+                array_push($items, $item);
+            }
+        }
+        return response()->json(collect($items)->sortBy('sn')->values());
     }
 }
