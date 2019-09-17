@@ -4,14 +4,14 @@
       <v-toolbar-title>Usuarios</v-toolbar-title>
       <v-spacer></v-spacer>
       <v-btn-toggle
-        v-model="status"
+        v-model="active"
         active-class="primary white--text"
         mandatory
       >
-        <v-btn text value="active">
+        <v-btn text :value="true">
           ACTIVOS
         </v-btn>
-        <v-btn text value="inactive">
+        <v-btn text :value="false">
           INACTIVOS
         </v-btn>
       </v-btn-toggle>
@@ -53,14 +53,14 @@ export default {
   data: () => ({
     search: '',
     bus: new Vue(),
-    status: 'active'
+    active: true
   }),
   watch: {
     search: _.debounce(function () {
       this.bus.$emit('search', this.search)
     }, 1000),
-    status: function() {
-      this.bus.$emit('status', this.status)
+    active: function() {
+      this.bus.$emit('active', this.active)
     }
   }
 }

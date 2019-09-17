@@ -11,11 +11,28 @@
   >
     <template v-slot:item="props">
       <tr :class="props.isExpanded ? 'secondary white--text' : ''">
-        <td @click.stop="getRoles(props)">{{ props.item.username }}</td>
-        <td @click.stop="getRoles(props)">{{ props.item.first_name }}</td>
         <td @click.stop="getRoles(props)">{{ props.item.last_name }}</td>
+        <td @click.stop="getRoles(props)">{{ props.item.first_name }}</td>
         <td @click.stop="getRoles(props)">{{ props.item.position }}</td>
-        <td>
+        <td @click.stop="getRoles(props)">{{ props.item.username }}</td>
+        <td v-if="active">
+          <v-tooltip top>
+            <template v-slot:activator="{ on }">
+              <v-btn
+                fab
+                dark
+                x-small
+                color="warning"
+                v-on="on"
+                @click.stop="switchActiveUser(props.item.id)"
+              >
+                <v-icon>mdi-cancel</v-icon>
+              </v-btn>
+            </template>
+            <span class="caption">Deshabilitar</span>
+          </v-tooltip>
+        </td>
+        <td v-else>
           <v-tooltip top>
             <template v-slot:activator="{ on }">
               <v-btn
@@ -24,7 +41,7 @@
                 x-small
                 color="error"
                 v-on="on"
-                @click.stop="bus.$emit('openRemoveDialog', props.item.id)"
+                @click.stop="bus.$emit('openRemoveDialog', `user/${props.item.id}`)"
               >
                 <v-icon>mdi-close</v-icon>
               </v-btn>
@@ -51,31 +68,25 @@ export default {
   data: () => ({
     loading: true,
     search: '',
-    status: 'active',
+    active: true,
     options: {
       page: 1,
       itemsPerPage: 8,
-      sortBy: ['username'],
+      sortBy: ['last_name'],
       sortDesc: [false]
     },
     users: [],
     totalUsers: 0,
     headers: [
       {
-        text: 'Usuario',
-        value: 'username',
+        text: 'Apellido',
+        value: 'last_name',
         class: ['normal', 'white--text'],
-        width: '15%',
+        width: '20%',
         sortable: true
       }, {
         text: 'Nombre',
         value: 'first_name',
-        class: ['normal', 'white--text'],
-        width: '15%',
-        sortable: true
-      }, {
-        text: 'Apellido',
-        value: 'last_name',
         class: ['normal', 'white--text'],
         width: '20%',
         sortable: true
@@ -84,6 +95,12 @@ export default {
         value: 'position',
         class: ['normal', 'white--text'],
         width: '45%',
+        sortable: true
+      }, {
+        text: 'Usuario',
+        value: 'username',
+        class: ['normal', 'white--text'],
+        width: '10%',
         sortable: true
       }, {
         text: 'Acciones',
@@ -104,24 +121,43 @@ export default {
         this.getUsers()
       }
     },
-    status: function(newVal, oldVal) {
+    active: function(newVal, oldVal) {
       if (newVal != oldVal) {
         this.getUsers()
       }
     }
   },
   mounted() {
+    this.bus.$on('added', val => {
+      this.getUsers()
+    })
+    this.bus.$on('removed', val => {
+      this.getUsers()
+    })
     this.bus.$on('search', val => {
       this.search = val
     })
-    this.bus.$on('status', val => {
-      this.status = val
+    this.bus.$on('active', val => {
+      this.active = val
     })
     this.getUsers()
   },
   methods: {
     async getRoles(props) {
-      props.expand(!props.isExpanded)
+      props.expand(!props.isExpanded && this.active)
+    },
+    async switchActiveUser(id) {
+      try {
+        this.loading = true
+        let res = await axios.patch(`user/${id}`, {
+          active: !this.active
+        })
+        this.bus.$emit('removed', id)
+      } catch (e) {
+        console.log(e)
+      } finally {
+        this.loading = false
+      }
     },
     async getUsers(params) {
       try {
@@ -132,7 +168,7 @@ export default {
             per_page: this.options.itemsPerPage,
             sortBy: this.options.sortBy,
             sortDesc: this.options.sortDesc,
-            status: this.status,
+            active: this.active,
             search: this.search
           }
         })
