@@ -41,22 +41,18 @@ class Affiliate extends Model
         'is_duedate_undefined',
         'due_date'
       ];
-
-      public function users()
-      {
-          return $this->belongsTo(User::class);
-      } 
+ 
       public function category()
       {
-      return $this->belongsTo(categories::class);
+        return $this->belongsTo(Category::class);
       }
       public function degree()
       {
       return $this->belongsTo(Degree::class);
       }
-      public function cities()
+      public function city_identity_card()
       {
-          return $this->belongsTo(City::class);
+        return $this->belongsTo(City::class,'city_identity_card_id', 'id');
       }
       public function affiliate_state()
       {
