@@ -23,8 +23,6 @@
   </v-container>
 </template>
 <script>
-
-//import _ from 'lodash'
 import Vue from 'vue'
 import List from '@/components/affiliate/List'
 
@@ -32,13 +30,10 @@ export default {
   name: "affiliateIndex",
   components: {
     List,
-  //  LdapAffiliates
   },
   data: () => ({
-    //viewType: 'Afiliados',
     search: '',
     bus: new Vue(),
-    //status: 'active'
   }),
   watch: {
     search: _.debounce(function () {

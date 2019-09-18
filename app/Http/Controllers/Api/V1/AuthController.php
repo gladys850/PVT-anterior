@@ -132,8 +132,8 @@ class AuthController extends Controller
     $user = $this->guard()->user();
     $id = $user->id;
     $username = $user->username;
-    $role = $user->roles[0]->name;
-    $permissions = array_unique(array_merge($user->roles[0]->permissions->pluck('name')->toArray(), $user->permissions->pluck('name')->toArray()));
+    $roles = $user->roles()->pluck('name');
+    $permissions = $user->allPermissions()->pluck('name');
 
     if ($user) {
       $ip = request()->ip();
@@ -146,7 +146,7 @@ class AuthController extends Controller
       'expires_in' => auth('api')->factory()->getTTL(),
       'id' => $id,
       'user' => $username,
-      'role' => $role,
+      'roles' => $roles,
       'permissions' => $permissions,
       'message' => 'Indentidad verificada',
     ], 200);

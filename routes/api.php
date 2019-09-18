@@ -30,6 +30,8 @@ Route::group([
             Route::get('module/{id}/role', 'Api\V1\ModuleController@get_roles');
             // Role
             Route::resource('role', 'Api\V1\RoleController')->only(['index']);
+             // Affiliate
+            Route::resource('affiliate', 'Api\V1\AffiliateController')->only(['index','store','show','update','destroy']);
         });
     });
 });

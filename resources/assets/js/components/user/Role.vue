@@ -3,7 +3,6 @@
     <v-tabs
       v-model="selectedModule"
       vertical
-      v-if="!loading"
     >
       <v-tab
         v-for="module in modules"
@@ -24,7 +23,14 @@
             dense
             flat
             shaped
+            v-if="!loading"
           >
+            <v-subheader
+              class="blue--text"
+              v-if="modules.length > 0"
+            >
+              Roles para el módulo {{ modules[selectedModule].name }}
+            </v-subheader>
             <v-row no-gutters>
               <template v-for="(rolesColumn, index) in filteredRoles">
                 <v-col :key="index">
@@ -34,11 +40,12 @@
                     <v-list-item
                       v-for="role in rolesColumn"
                       :key="role.id"
-                      :class="selectedRoles.includes(role.id) ? `info mx-5 my-2` : ``"
+                      class="my-2 py-0"
+                      :class="selectedRoles.includes(role.id) ? `info mx-5` : ``"
                       @click.stop="switchRole(role.id)"
                     >
                       <v-list-item-content :class="selectedRoles.includes(role.id) ? `white--text` : ``">
-                        {{ role.name }}
+                        {{ role.display_name }}
                       </v-list-item-content>
                     </v-list-item>
                   </v-list-item-group>
@@ -49,10 +56,10 @@
               </template>
             </v-row>
           </v-list>
+          <Loading v-else/>
         </v-tab-item>
       </v-tabs-items>
     </v-tabs>
-    <Loading v-else/>
   </div>
 </template>
 

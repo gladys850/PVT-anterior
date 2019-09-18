@@ -23,7 +23,6 @@
     "tymon/jwt-auth": "dev-develop"
   },
   "require-dev": {
-    "mpociot/laravel-apidoc-generator": "^3.4",
     "beyondcode/laravel-dump-server": "^1.2",
     "filp/whoops": "^2.3",
     "fzaninotto/faker": "^1.8",

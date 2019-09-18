@@ -7,6 +7,7 @@ use Laratrust\Models\LaratrustRole;
 class Role extends LaratrustRole
 {
     public $timestamps = true;
+    protected $hidden = ['pivot'];
     public $guarded = ['id', 'correlative'];
     protected $fillable = ['module_id', 'name', 'action'];
 
