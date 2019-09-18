@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UserForm;
 use App\User;
+use App\Role;
 use Ldap;
 
 class UserController extends Controller
@@ -126,7 +127,17 @@ class UserController extends Controller
     public function get_roles($id)
     {
         $user = User::findOrFail($id);
-        return $user->roles;
+        return $user->roles()->pluck('role_id');
+    }
+
+    public function set_roles(Request $request, $id)
+    {
+        foreach ($request->roles as $role) {
+            Role::findOrFail($role);
+        }
+        $user = User::findOrFail($id);
+        $user->syncRoles($request->roles);
+        return $user->roles()->pluck('role_id');
     }
 
     public function unregistered_users()

@@ -19,19 +19,7 @@ class RoleController extends Controller
     */
     public function index()
     {
-        $roles = Role::get();
-        return $roles;
-    }
-
-    /**
-    * Display the specified role.
-    *
-    * @param  \App\Role  $role
-    * @return \Illuminate\Http\Response
-    */
-    public function show($id)
-    {
-        return Role::with('permissions')->findOrFail($id);
+        return Role::orderBy('name')->get();
     }
 
     public function get_permissions($id) {
