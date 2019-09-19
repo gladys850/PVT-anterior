@@ -4,6 +4,7 @@ import DashboardIndex from '@/components/dashboard/Index'
 import UserIndex from '@/components/user/Index'
 import RoleIndex from '@/components/role/Index'
 import AffiliateIndex from '@/components/affiliate/Index'
+import AffiliateAdd from '@/components/affiliate/Add'
 export const routes = [
   {
     name: 'login',
@@ -49,6 +50,13 @@ export const routes = [
     path: '/affiliate',
     name: 'affiliateIndex',
     component: AffiliateIndex,
+    meta: {
+      requiresAuth: true
+    }
+  }, {
+    path: '/add',
+    name: 'affiliateAdd',
+    component: AffiliateAdd,
     meta: {
       requiresAuth: true
     }
