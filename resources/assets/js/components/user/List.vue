@@ -11,10 +11,10 @@
   >
     <template v-slot:item="props">
       <tr :class="props.isExpanded ? 'secondary white--text' : ''">
-        <td @click.stop="getRoles(props)">{{ props.item.last_name }}</td>
-        <td @click.stop="getRoles(props)">{{ props.item.first_name }}</td>
-        <td @click.stop="getRoles(props)">{{ props.item.position }}</td>
-        <td @click.stop="getRoles(props)">{{ props.item.username }}</td>
+        <td @click.stop="expand(props)">{{ props.item.last_name }}</td>
+        <td @click.stop="expand(props)">{{ props.item.first_name }}</td>
+        <td @click.stop="expand(props)">{{ props.item.position }}</td>
+        <td @click.stop="expand(props)">{{ props.item.username }}</td>
         <td v-if="active">
           <v-tooltip top>
             <template v-slot:activator="{ on }">
@@ -53,8 +53,8 @@
     </template>
     <template v-slot:expanded-item="{ headers }">
       <tr>
-        <td :colspan="headers.length" class="tertiary">
-          123
+        <td :colspan="headers.length" class="px-0">
+          <Role :user.sync="selectedUser"/>
         </td>
       </tr>
     </template>
@@ -62,9 +62,19 @@
 </template>
 
 <script>
+import Role from '@/components/user/Role'
+
 export default {
   name: 'user-list',
-  props: ['bus'],
+  components: {
+    Role
+  },
+  props: {
+    bus: {
+      type: Object,
+      required: true
+    }
+  },
   data: () => ({
     loading: true,
     search: '',
@@ -76,6 +86,7 @@ export default {
       sortDesc: [false]
     },
     users: [],
+    selectedUser: 0,
     totalUsers: 0,
     headers: [
       {
@@ -143,8 +154,9 @@ export default {
     this.getUsers()
   },
   methods: {
-    async getRoles(props) {
+    expand(props) {
       props.expand(!props.isExpanded && this.active)
+      if (this.selectedUser != props.item.id) this.selectedUser = props.item.id
     },
     async switchActiveUser(id) {
       try {

@@ -26,57 +26,48 @@ class AuthController extends Controller
    */
   public function store(AuthForm $request)
   {
-    if ($request['username'] == 'admin') {
-      $token = auth('api')->attempt(request(['username', 'password']));
-
-      if ($token) {
-        return $this->respondWithToken($token);
-      }
-    }
-
-    $user = User::whereUsername($request['username'])->first();
-    if ($user) {
-      if ($user->status != 'active') {
-        return response()->json([
-          'message' => 'No autorizado',
-          'errors' => [
-            'type' => ['Usuario desactivado'],
-          ],
-        ], 401);
-      }
-    }
-
-    if (!env("LDAP_AUTHENTICATION")) {
-      $token = auth('api')->attempt(request(['username', 'password']));
-
-      if ($token) {
-        return $this->respondWithToken($token);
-      }
+    $token = false;
+    if ($request->username == 'admin') {
+      $token = Auth::attempt($request->all());
     } else {
-      $ldap = new Ldap();
-
-      if ($ldap->connection && $ldap->verify_open_port()) {
-        if ($ldap->bind($request['username'], $request['password'])) {
-          $user = User::where('username', $request['username'])->where('status', 'active')->first();
-          if ($user) {
-            if (!Hash::check($request['password'], $user->password)) {
-              $user->password = Hash::make($request['password']);
-              $user->save();
+      $user = User::whereUsername($request->username)->first();
+      if ($user) {
+        if (!$user->active) {
+          return response()->json([
+            'message' => 'No autorizado',
+            'errors' => [
+              'type' => ['Usuario desactivado'],
+            ],
+          ], 401);
+        } else {
+          if (!env("LDAP_AUTHENTICATION")) {
+            $token = Auth::attempt($request->all());
+          } else {
+            $ldap = new Ldap();
+            if ($ldap->verify_open_port()) {
+              if ($ldap->bind($request->username, $request->password)) {
+                if (!Hash::check($request->password, $user->password)) {
+                  $user->password = Hash::make($request->password);
+                  $user->save();
+                }
+                $token = Auth::login($user);
+                $ldap->unbind();
+              }
             }
-            $token = auth('api')->login($user);
-            $ldap->unbind();
-            return $this->respondWithToken($token);
           }
         }
-        return response()->json([
-          'message' => 'No autorizado',
-          'errors' => [
-            'type' => ['Usuario o contraseña incorrectos'],
-          ],
-        ], 401);
       }
     }
-
+    if ($token) {
+      \Log::info("Usuario ".Auth::user()->username." autenticado desde la dirección ".request()->ip());
+      return response()->json([
+        'message' => 'Authenticated successfully',
+        'token' => $token,
+        'token_type' => 'Bearer',
+        'roles' => array_values(array_filter($user->roles()->pluck('name')->toArray())),
+        'permissions' => array_values(array_filter($user->allPermissions()->pluck('name')->toArray()))
+      ], 200);
+    }
     return response()->json([
       'message' => 'No autorizado',
       'errors' => [
@@ -94,7 +85,7 @@ class AuthController extends Controller
    */
   public function show()
   {
-    return response()->json(auth('api')->user());
+    return response()->json(Auth::user());
   }
 
   /**
@@ -104,7 +95,7 @@ class AuthController extends Controller
    */
   public function destroy()
   {
-    auth('api')->logout();
+    Auth::logout();
     return response()->json([
       'message' => 'Logged out successfully',
     ], 201);
@@ -117,39 +108,7 @@ class AuthController extends Controller
    */
   public function update()
   {
-    return $this->respondWithToken(auth('api')->refresh());
-  }
-
-  /**
-   * Get the token array structure.
-   *
-   * @param  string $token
-   *
-   * @return \Illuminate\Http\JsonResponse
-   */
-  protected function respondWithToken($token)
-  {
-    $user = $this->guard()->user();
-    $id = $user->id;
-    $username = $user->username;
-    $role = $user->roles[0]->name;
-    $permissions = array_unique(array_merge($user->roles[0]->permissions->pluck('name')->toArray(), $user->permissions->pluck('name')->toArray()));
-
-    if ($user) {
-      $ip = request()->ip();
-      \Log::info("Usuario $username autenticado desde la dirección $ip");
-    }
-
-    return response()->json([
-      'token' => $token,
-      'token_type' => 'Bearer',
-      'expires_in' => auth('api')->factory()->getTTL(),
-      'id' => $id,
-      'user' => $username,
-      'role' => $role,
-      'permissions' => $permissions,
-      'message' => 'Indentidad verificada',
-    ], 200);
+    return $this->respondWithToken(Auth::refresh());
   }
 
   public function guard()

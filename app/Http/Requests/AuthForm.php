@@ -23,21 +23,17 @@ class AuthForm extends FormRequest
 	 */
 	public function rules()
 	{
+		$this->sanitize();
 		return [
 			'username' => 'required|min:4|max:255',
 			'password' => 'required|min:4|max:255',
 		];
 	}
 
-	public function messages()
-	{
-		return [
-			'username.required' => 'El campo de usuario no puede estar vacío',
-			'username.min' => 'El número mínimo de caracteres es 5',
-			'username.max' => 'El número máximo de caracteres es 255',
-			'password.required' => 'El campo de contraseña no puede estar vacío',
-			'password.min' => 'El número mínimo de caracteres es 5',
-			'password.max' => 'El número máximo de caracteres es 255',
-		];
-	}
+	public function sanitize()
+    {
+        $input = $this->all();
+        if (array_key_exists('username', $input)) $input['username'] = mb_strtolower($input['username']);
+        $this->replace($input);
+    }
 }

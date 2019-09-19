@@ -16,7 +16,6 @@ class LaratrustSetupTables extends Migration
     Schema::table('permissions', function (Blueprint $table) {
       $table->string('name')->nullable();
       $table->string('display_name')->nullable();
-      $table->string('description')->nullable();
     });
 
     // Create table for associating permissions to users (Many To Many Polymorphic)
@@ -41,7 +40,7 @@ class LaratrustSetupTables extends Migration
   {
     Schema::dropIfExists('user_permissions');
     Schema::table('permissions', function (Blueprint $table) {
-      $table->dropColumn(['name', 'display_name', 'description']);
+      $table->dropColumn(['name', 'display_name']);
     });
   }
 }

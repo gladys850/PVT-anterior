@@ -7,6 +7,7 @@ use Laratrust\Models\LaratrustPermission;
 class Permission extends LaratrustPermission
 {
   public $timestamps = true;
+  protected $hidden = ['pivot'];
   public $guarded = ['id'];
   protected $fillable = ['name', 'display_name', 'description'];
 

@@ -4,6 +4,7 @@ import DashboardIndex from '@/components/dashboard/Index'
 import UserIndex from '@/components/user/Index'
 import RoleIndex from '@/components/role/Index'
 import AffiliateIndex from '@/components/affiliate/Index'
+
 export const routes = [
   {
     name: 'login',

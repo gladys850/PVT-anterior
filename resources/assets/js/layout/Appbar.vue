@@ -31,7 +31,7 @@ export default {
   },
   computed: {
     bar() {
-      if (process.env.NODE_ENV == 'production') {
+      if (process.env.NODE_ENV != 'production') {
         return {
           color: `error`,
           text: `PLATAFORMA VIRTUAL DE TRÁMITES (VERSIÓN DE PRUEBA)`
