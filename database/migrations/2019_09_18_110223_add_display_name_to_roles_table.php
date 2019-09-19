@@ -27,6 +27,7 @@ class AddDisplayNameToRolesTable extends Migration
         {
             DB::table('roles')->where('id', $item['id'])->update(['name' => Str::slug($item['display_name'], '-')]);
         }
+        DB::table('roles')->where('display_name', 'Administrador')->update(['name' => 'admin']);
     }
 
     /**

@@ -22,6 +22,17 @@ class RoleController extends Controller
         return Role::orderBy('name')->get();
     }
 
+    /**
+    * Display the specified resource.
+    *
+    * @param  \App\Role  $role
+    * @return \Illuminate\Http\Response
+    */
+    public function show($id)
+    {
+        return Role::findOrFail($id);
+    }
+
     public function get_permissions($id) {
         $role = Role::findOrFail($id);
         return $role->permissions;

@@ -54,7 +54,7 @@ return [
         | NOTE: Currently the database check does not use cache.
         |
         */
-        'enabled' => true,
+        'enabled' => false,
 
         /*
         |--------------------------------------------------------------------------
@@ -131,7 +131,7 @@ return [
         /**
          * Team model
          */
-        'team' => 'App\Team',
+        // 'team' => 'App\Team',
 
     ],
 
@@ -203,7 +203,7 @@ return [
         /**
          * Role foreign key on Laratrust's role_user and permission_user tables.
          */
-        'team' => 'team_id',
+        // 'team' => 'team_id',
 
     ],
 
@@ -244,13 +244,13 @@ return [
              * you can do it by setting the key and the content of the message
              * If the message content is empty it won't be added to the redirection.
              */
-            'redirect' => [
-                'url' => '/login',
-                'message' => [
-                    'key' => 'error',
-                    'content' => ''
-                ]
-            ]
+            // 'redirect' => [
+            //     'url' => '/login',
+            //     'message' => [
+            //         'key' => 'error',
+            //         'content' => ''
+            //     ]
+            // ]
         ]
     ],
 

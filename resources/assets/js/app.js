@@ -44,7 +44,9 @@ axios.interceptors.response.use(response => {
   if (error.response) {
     if (error.response.status == 401) {
       store.dispatch('logout')
-      router.push('login')
+      if (router.currentRoute.name != 'login') {
+        router.push('login')
+      }
     }
     for (let key in error.response.data.errors) {
       error.response.data.errors[key].forEach(error => {

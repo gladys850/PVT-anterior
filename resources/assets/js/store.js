@@ -1,4 +1,5 @@
-import moment from 'moment';
+import moment from 'moment'
+import jwt from 'jsonwebtoken'
 
 export default {
   state: {
@@ -21,13 +22,13 @@ export default {
       return JSON.parse(state.id)
     },
     user(state) {
-      return JSON.parse(state.user)
+      return state.user
     },
     roles(state) {
-      return JSON.parse(state.roles)
+      return state.roles.split(',')
     },
     permissions(state) {
-      return JSON.parse(state.permissions)
+      return state.permissions.split(',')
     },
     dateNow(state) {
       return state.dateNow
@@ -36,48 +37,45 @@ export default {
       return state.token
     },
     tokenExpired(state) {
-      let token = localStorage.getItem('token')
+      let token = jwt.decode(state.token.value)
       if (token) {
-        let base64 = token.split('.')[1]
-        token = decodeURIComponent(atob(base64).split('').map(c => {
-            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
-        }).join(''))
-        return moment().isAfter(moment.unix(JSON.parse(token).exp))
+        return moment().isAfter(moment.unix(token.exp))
       }
     }
   },
   mutations: {
     'logout': function (state) {
+      localStorage.removeItem('id')
       localStorage.removeItem('user')
+      localStorage.removeItem('roles')
+      localStorage.removeItem('permissions')
       localStorage.removeItem('token')
       localStorage.removeItem('token_type')
-      localStorage.removeItem('roles')
-      localStorage.removeItem('id')
-      localStorage.removeItem('permissions')
       state.id = null
       state.user = null
       state.roles = []
       state.permissions = []
     },
     'login': function (state, data) {
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("token_type", data.token_type);
-      localStorage.setItem("id", JSON.stringify(data.id));
-      localStorage.setItem("user", JSON.stringify(data.user));
-      localStorage.setItem("roles", JSON.stringify(data.roles));
-      localStorage.setItem("permissions", JSON.stringify(data.permissions));
-      state.user = localStorage.getItem('id');
-      state.user = localStorage.getItem('user');
-      state.roles = localStorage.getItem('roles');
-      state.permissions = localStorage.getItem('permissions');
+      let payload = jwt.decode(data.token)
+      localStorage.setItem('id', payload.id)
+      localStorage.setItem('user', payload.user)
+      localStorage.setItem('roles', data.roles)
+      localStorage.setItem('permissions', data.permissions)
+      localStorage.setItem('token', data.token)
+      localStorage.setItem('token_type', data.token_type)
+      state.id = payload.id
+      state.user = payload.user
+      state.roles = data.roles
+      state.permissions = data.permissions
       state.token = {
-        type: localStorage.getItem('token_type'),
-        value: localStorage.getItem('token')
+        type: data.token_type,
+        value: data.token
       }
-      axios.defaults.headers.common['Authorization'] = `${state.token.type} ${state.token.value}`
+      axios.defaults.headers.common['Authorization'] = `${data.token_type} ${data.token}`
     },
     'setDate': function(state, newValue) {
-      state.dateNow = newValue;
+      state.dateNow = newValue
     }
   },
   actions: {

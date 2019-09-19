@@ -70,7 +70,12 @@ class UserController extends Controller
     */
     public function show($id)
     {
-        return User::findOrFail($id);
+        $user = User::findOrFail($id);
+        if (Auth::user()->id == $id || Auth::user()->can('show-user')) {
+            return $user;
+        } else {
+            abort(401);
+        }
     }
 
     /**
@@ -124,10 +129,16 @@ class UserController extends Controller
         }
     }
 
+    public function get_permissions($id)
+    {
+        $user = User::findOrFail($id);
+        return $user->allPermissions()->pluck('id');
+    }
+
     public function get_roles($id)
     {
         $user = User::findOrFail($id);
-        return $user->roles()->pluck('role_id');
+        return $user->roles()->pluck('id');
     }
 
     public function set_roles(Request $request, $id)
@@ -137,7 +148,7 @@ class UserController extends Controller
         }
         $user = User::findOrFail($id);
         $user->syncRoles($request->roles);
-        return $user->roles()->pluck('role_id');
+        return $user->roles()->pluck('id');
     }
 
     public function unregistered_users()

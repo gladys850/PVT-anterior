@@ -13,7 +13,7 @@ class DateController extends Controller
    *
    * @return \Illuminate\Http\Response
    */
-  public function show()
+  public function index()
   {
     return response()->json([
       'now' => Carbon::now()->format('Y-m-d'),
