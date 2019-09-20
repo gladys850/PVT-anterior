@@ -9,20 +9,39 @@
     :fixed-header="true"
     calculate-widths
   >
-    <template v-slot:items="props">
-      <td class="text-xs-left">{{ props.item.first_name }}</td>
-      <td class="text-xs-left">{{ props.item.second_name}}</td>
-      <td class="text-xs-left">{{ props.item.last_name }}</td>
+    <template v-slot:item="props">
+    <tr>
+      <td class="text-xs-left">{{ props.item.first_name }} </td>
+       <td class="text-xs-left">{{ props.item.last_name }}</td>
       <td class="text-xs-left">{{ props.item.mothers_last_name }}</td>
       <td class="text-xs-left">{{ props.item.identity_card }}</td>
-      <td>edita</td>
+     <td >
+        <v-btn
+        fab
+        dark
+        x-small
+        :to="{name:'affiliateAdd'}"
+        color="warning"
+        >
+          <v-icon>mdi-eye</v-icon>
+        </v-btn>
+       
+        </td>
+      </tr>
     </template>
   </v-data-table>
 </template>
 
 <script>
+
+import Add from '@/components/affiliate/Add'
+import List from '@/components/affiliate/List'
 export default {
   name: 'affiliates-list',
+  components: {
+  Add,
+  List,
+  },
   props: ['bus'],
   data: () => ({
     loading: true,
@@ -41,18 +60,18 @@ export default {
         text: 'Nombre',
         value: 'first_name', 
         class: ['normal', 'white--text'],
-        width: '5%',
+        width: '35%',
         sortable: false 
       },{ 
         text: 'Apellido Paterno', 
         value: 'last_name', 
         class: ['normal', 'white--text'],
-        width: '5%',
+        width: '25%',
         sortable: false 
       },{ text: 'Apellido Materno',
         value: 'mothers_last_name', 
         class: ['normal', 'white--text'],
-        width: '10%',
+        width: '25%',
         sortable: false 
       },{ 
         text: 'Nro. de CI',
@@ -60,6 +79,11 @@ export default {
         class: ['normal', 'white--text'],
         width: '15%',
         sortable: false 
+      },{ 
+        text: 'Accion',
+        class: ['normal', 'white--text'],
+        width: '5%',
+        sortable: false
       }
     
     ]
