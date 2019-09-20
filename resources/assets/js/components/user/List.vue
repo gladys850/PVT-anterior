@@ -11,10 +11,10 @@
   >
     <template v-slot:item="props">
       <tr :class="props.isExpanded ? 'secondary white--text' : ''">
-        <td @click.stop="expand(props)">{{ props.item.last_name }}</td>
-        <td @click.stop="expand(props)">{{ props.item.first_name }}</td>
-        <td @click.stop="expand(props)">{{ props.item.position }}</td>
-        <td @click.stop="expand(props)">{{ props.item.username }}</td>
+        <td @click.stop="expand(props)">{{ props.item.last_name | uppercase }}</td>
+        <td @click.stop="expand(props)">{{ props.item.first_name | uppercase }}</td>
+        <td @click.stop="expand(props)">{{ props.item.position | uppercase }}</td>
+        <td @click.stop="expand(props)">{{ props.item.username | lowercase }}</td>
         <td v-if="active">
           <v-tooltip top>
             <template v-slot:activator="{ on }">
@@ -33,6 +33,22 @@
           </v-tooltip>
         </td>
         <td v-else>
+          <v-tooltip top>
+            <template v-slot:activator="{ on }">
+              <v-btn
+                fab
+                dark
+                x-small
+                color="success"
+                class="mr-2"
+                v-on="on"
+                @click.stop="switchActiveUser(props.item.id)"
+              >
+                <v-icon>mdi-sync</v-icon>
+              </v-btn>
+            </template>
+            <span class="caption">Habilitar</span>
+          </v-tooltip>
           <v-tooltip top>
             <template v-slot:activator="{ on }">
               <v-btn
@@ -93,19 +109,19 @@ export default {
         text: 'Apellido',
         value: 'last_name',
         class: ['normal', 'white--text'],
-        width: '20%',
+        width: '15%',
         sortable: true
       }, {
         text: 'Nombre',
         value: 'first_name',
         class: ['normal', 'white--text'],
-        width: '20%',
+        width: '15%',
         sortable: true
       }, {
         text: 'Cargo',
         value: 'position',
         class: ['normal', 'white--text'],
-        width: '45%',
+        width: '50%',
         sortable: true
       }, {
         text: 'Usuario',
@@ -116,7 +132,7 @@ export default {
       }, {
         text: 'Acciones',
         class: ['normal', 'white--text'],
-        width: '5%',
+        width: '10%',
         sortable: false
       }
     ]
