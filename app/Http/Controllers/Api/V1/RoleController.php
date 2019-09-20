@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 use App\Role;
 
 /** @resource Role
@@ -35,6 +36,12 @@ class RoleController extends Controller
 
     public function get_permissions($id) {
         $role = Role::findOrFail($id);
-        return $role->permissions;
+        return $role->permissions()->where('name', '!=', null)->get()->pluck('id');
+    }
+
+    public function set_permissions(Request $request, $id) {
+        $role = Role::findOrFail($id);
+        $role->syncPermissions($request->permissions);
+        return $role->permissions()->where('name', '!=', null)->get()->pluck('id');
     }
 }
