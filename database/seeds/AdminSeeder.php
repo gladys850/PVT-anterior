@@ -27,11 +27,8 @@ class AdminSeeder extends Seeder
         'city_id' => City::first()->id
       ]);
     }
-
-    $role = Role::whereName('Administrador')->first();
-
+    $role = Role::whereName('admin')->first();
     $user->roles()->sync($role);
-
     $permisions = Permission::get()->toArray();
     $role->attachPermissions($permisions);
   }

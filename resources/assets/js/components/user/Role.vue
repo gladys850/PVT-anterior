@@ -21,34 +21,43 @@
         >
           <v-list
             dense
-            flat
-            shaped
             v-if="!loading"
           >
-            <v-subheader
-              class="blue--text"
-              v-if="modules.length > 0"
-            >
-              Roles para el módulo {{ modules[selectedModule].name }}
+            <v-subheader v-if="modules.length > 0">
+              <span v-if="filteredRoles.length == 0">
+                No se encontraron roles para el módulo
+              </span>
+              <span v-else>
+                Roles para el módulo
+              </span>
+              <span class="font-weight-bold">
+                &nbsp;{{ modules[selectedModule].name }}
+              </span>
             </v-subheader>
             <v-row no-gutters>
               <template v-for="(rolesColumn, index) in filteredRoles">
                 <v-col :key="index">
-                  <v-list-item-group
-                    multiple
+                  <div
+                    v-for="role in rolesColumn"
+                    :key="role.id"
+                    class="my-3"
                   >
-                    <v-list-item
-                      v-for="role in rolesColumn"
-                      :key="role.id"
-                      class="my-2 py-0"
-                      :class="selectedRoles.includes(role.id) ? `info mx-5` : ``"
-                      @click.stop="switchRole(role.id)"
-                    >
-                      <v-list-item-content :class="selectedRoles.includes(role.id) ? `white--text` : ``">
+                    <v-hover v-slot:default="{ hover }">
+                      <v-chip
+                        :class="hover ? 'elevation-4' : 'elevation-0'"
+                        :color="selectedRoles.includes(role.id) ? 'info' : 'secondary'"
+                        dark
+                        style="width: 230px;"
+                        :outlined="!selectedRoles.includes(role.id)"
+                        @click.stop="switchRole(role.id)"
+                      >
+                        <v-avatar left v-if="selectedRoles.includes(role.id)">
+                          <v-icon>mdi-checkbox-marked-circle</v-icon>
+                        </v-avatar>
                         {{ role.display_name }}
-                      </v-list-item-content>
-                    </v-list-item>
-                  </v-list-item-group>
+                      </v-chip>
+                    </v-hover>
+                  </div>
                 </v-col>
               </template>
               <template v-for="n in (filteredRoles.length == 1) ? 2 : ((filteredRoles.length == 2) ? 1 : 0)">
@@ -90,9 +99,9 @@ export default {
       if (val != 0) this.getUserRoles(val)
       if (this.modules.length > 0) this.selectedModule = 0
     },
-    selectedModule: function(newVal, oldVal) {
+    selectedModule: async function(newVal, oldVal) {
       if (newVal != oldVal) {
-        this.filteredRoles = _.chunk(this.roles.filter(o => o.module_id == this.modules[newVal].id), 8)
+        this.filteredRoles = _.chunk(this.roles.filter(o => o.module_id === this.modules[newVal].id), 8)
       }
     }
   },
