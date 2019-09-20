@@ -64,8 +64,8 @@ class AuthController extends Controller
         'message' => 'Authenticated successfully',
         'token' => $token,
         'token_type' => 'Bearer',
-        'roles' => array_values(array_filter($user->roles()->pluck('name')->toArray())),
-        'permissions' => array_values(array_filter($user->allPermissions()->pluck('name')->toArray()))
+        'roles' => array_values(array_filter(Auth::user()->roles()->pluck('name')->toArray())),
+        'permissions' => array_values(array_filter(Auth::user()->allPermissions()->pluck('name')->toArray()))
       ], 200);
     }
     return response()->json([
