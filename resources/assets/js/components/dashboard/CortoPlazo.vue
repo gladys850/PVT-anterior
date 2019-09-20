@@ -64,21 +64,20 @@
                 <v-text-field
                 label="Introduzca plazo"
                 v-model="plazo_meses"
-                v-validate.initial="`required|numeric|min_value:1|max_value:${max_plazo}`"          
+                v-validate.initial="`required|numeric|min_value:1|max_value:36`"          
                 :error-messages="errors.collect('meses plazo')"
                 data-vv-name="meses plazo"
                 ></v-text-field>
-              
-            
                 Monto Maximo Sugerido
                 <v-text-field
                 label="Introduzca monto"
                 v-model ="monto_solicitado"  
-                v-validate.initial="`required|numeric|min_value:1|max_value:${monto_maximo}`"
+                v-validate.initial="`required|numeric|min_value:2001|max_value:25000`"
                 :error-messages="errors.collect('monto solicitado')"
                 data-vv-name="monto solicitado"
                 ></v-text-field>
-             
+                <p class="red--text">{{ monto_solicitado<2000 ? "(Para acceder a un prestamo de Corto Plazo el monto debe ser mayor a 2000)" :monto_solicitado>25000 ? "(Para acceder a un prestamo de Corto Plazo el monto debe ser menor a 25000)":"" }}</p>
+           
             </fieldset>
           </v-flex>
           <v-flex xs3 class="px-2">
@@ -102,8 +101,8 @@
 export default {
   name: "dashboard-index",
   data: () => ({
-    boletas: [0,0,0],
-    bonos: [0,0,0,0],
+    boletas: [null,null,null],
+    bonos: [null,null,null,null],
     plazo_meses : 24,
     monto_solicitado : null,
     loanTypeSelected:null,
@@ -113,21 +112,7 @@ export default {
       this.$validator.validateAll()
     },
   },
-  computed: {
-      max_amount() { 
-        if (this.monto_solicitado > this.monto_maximo) {
-            this.monto_solicitado=this.monto_maximo 
-            } 
-            //console.log('monto maximo:'+ this.monto_maximo)
-            //console.log('monto sol :'+this.monto_solicitado)
-           return this.monto_maximo    
-        },
-      max_plazo() {
-        if (this.plazo_meses > 24) {
-          this.plazo_meses = 24
-        }
-        return this.plazo_meses
-      },
+  computed: {   
       suma_bono() {
         if (this.bonos.length > 0) {
             return this.bonos.reduce((a, b) => { return Number(a) + Number(b) }) 
@@ -159,13 +144,13 @@ export default {
            total_bono = this.bonos.reduce((a, b) => { return Number(a) + Number(b) }) 
          }
          liquido_calificacion = promedio -total_bono
-          var monto_maximo = (1-(1/Math.pow((1+0.01666),24)))*(0.5*liquido_calificacion)/0.01666
+          var monto_maximo = (1-(1/Math.pow((1+0.01666),this.plazo_meses)))*(0.5*liquido_calificacion)/0.01666
           if (monto_maximo > 25000){
             monto_maximo = 25000
           } else {
             monto_maximo = Math.trunc(Math.round(Math.floor(monto_maximo))/1000)*1000
           }
-          var cuota_maxima = (((0.01666)/(1-(1/Math.pow((1+0.01666),24))))*monto_maximo)
+          var cuota_maxima = (((0.01666)/(1-(1/Math.pow((1+0.01666),this.plazo_meses))))*monto_maximo)
           return cuota_maxima
          }else{
            return 0
@@ -181,7 +166,7 @@ export default {
            total_bono = this.bonos.reduce((a, b) => { return Number(a) + Number(b) }) 
          }
          liquido_calificacion = promedio -total_bono
-          var monto_maximo = (1-(1/Math.pow((1+0.01666),24)))*(0.5*liquido_calificacion)/0.01666
+          var monto_maximo = (1-(1/Math.pow((1+0.01666),this.plazo_meses)))*(0.5*liquido_calificacion)/0.01666
           if (monto_maximo > 25000){
             monto_maximo = 25000
           } else {

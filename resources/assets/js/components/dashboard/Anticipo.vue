@@ -50,7 +50,7 @@
                 <v-text-field
                 label="Introduzca plazo"
                 v-model="plazo_meses_lp"
-                v-validate.initial="`required|numeric|min_value:1|max_value:96`"          
+                v-validate.initial="`required|numeric|min_value:1|max_value:2`"          
                 :error-messages="errors.collect('meses plazo')"
                 data-vv-name="meses plazo"
                 ></v-text-field>
@@ -60,11 +60,11 @@
                 <v-text-field
                 label="Introduzca monto"
                 v-model ="monto_solicitado"
-                v-validate.initial="'required|numeric|min_value:25001|max_value:150000'"
+                v-validate.initial="'required|numeric|min_value:1|max_value:2000'"
                 :error-messages="errors.collect('monto solicitado')"
                 data-vv-name="monto solicitado"
                 ></v-text-field>
-                <p class="red--text">{{ monto_solicitado<25000 ? "(Para acceder a un prestamo a Largo Plazo el monto debe ser mayor a 25000)" :monto_solicitado>150000 ? "(Para acceder a un prestamo de Largo Plazo el monto debe ser menor a 150000)":"" }}</p>
+                <p class="red--text">{{ monto_solicitado>2000 ? "(Para acceder a un Anticipo el monto debe ser menor a 2000)" :"" }}</p>
               </template>
             </fieldset>
           </v-flex>
@@ -75,7 +75,7 @@
               <p>TOTAL BONOS: {{ suma_bono }}</p>
               <p>LIQUIDO PARA CALIFICACION: {{ liquido_pagable-suma_bono }}</p>
               <p>CALCULO DE CUOTA: {{ calcular_cuota_LP}}</p>  
-              <p class="red--text">{{ liquido_pagable>0 ? (calcular_cuota_LP/(liquido_pagable-suma_bono)*100)>50 ? "( EL INDICE DE ENDEUDAMIENTO NO PUEDE EXCEDER EL 50 % )" :"" : "" }}</p>
+              <p class="red--text">{{ liquido_pagable>0 ? (calcular_cuota_LP/(liquido_pagable-suma_bono)*100)>90 ? "( EL INDICE DE ENDEUDAMIENTO NO PUEDE EXCEDER EL 90 % )" :"" : "" }}</p>
               <p>INDICE DE ENDEUDAMIENTO: {{ liquido_pagable>0 ? (calcular_cuota_LP/(liquido_pagable-suma_bono)*100) : 0 }}</p>
               <p>MONTO MAXIMO SUGERIDO : {{monto_maximo_LP}}</p>
             </fieldset>
@@ -94,7 +94,7 @@ export default {
   data: () => ({
     boletas: [null],
     bonos: [null,null,null,null],
-    plazo_meses_lp: 60,
+    plazo_meses_lp: 2,
     monto_solicitado : null,
     loanTypeSelected:null,
   }),
@@ -104,13 +104,8 @@ export default {
     },
   },
   computed: {
-        max_plazo() {
-        if (this.plazo_meses_lp> 96) {
-          this.plazo_meses_lp = 96   
-        }
-        return this.plazo_meses_lp
-      },
-   suma_bono() {
+
+      suma_bono() {
       if (this.bonos.length > 0) {
         return this.bonos.reduce((a, b) => { return Number(a) + Number(b) }) 
       } else {
@@ -126,12 +121,11 @@ export default {
       },
         calcular_cuota_LP()
       {
-       // console.log(this.plazo_meses);
        if (this.plazo_meses_lp >0 && this.monto_solicitado>0){
         var resultado = 0;
-        return (((0.011)/(1-(1/Math.pow((1+0.011),this.plazo_meses_lp))))*this.monto_solicitado)
-      } else{
-          var monto_maximo=0
+        return (((0.03)/(1-(1/Math.pow((1+0.03),this.plazo_meses_lp))))*this.monto_solicitado)
+         
+       } else{
           var cuota_maxima=0
          if (this.boletas.length > 0) {
          let total_bono = 0
@@ -141,30 +135,38 @@ export default {
            total_bono = this.bonos.reduce((a, b) => { return Number(a) + Number(b) }) 
          }
          liquido_calificacion = promedio -total_bono
-          monto_maximo = (1-(1/Math.pow((1+0.011),this.plazo_meses_lp)))*(0.5*liquido_calificacion)/0.011
-          monto_maximo = Math.trunc(Math.round(Math.floor(monto_maximo))/1000)*1000
-          var cuota_maxima = (((0.011)/(1-(1/Math.pow((1+0.011),this.plazo_meses_lp))))*monto_maximo)
+          var monto_maximo = (1-(1/Math.pow((1+0.03),this.plazo_meses_lp)))*(0.9*liquido_calificacion)/0.03
+          if (monto_maximo > 2000){
+            monto_maximo = 2000
+          } else {
+            monto_maximo = Math.trunc(Math.round(Math.floor(monto_maximo))/1000)*1000
+          }
+          var cuota_maxima = (((0.03)/(1-(1/Math.pow((1+0.03),this.plazo_meses_lp))))*monto_maximo)
+           console.log(cuota_maxima)
           return cuota_maxima
          }else{
            return 0
-         }  
+         }
        }
       },
       monto_maximo_LP() {
-         var monto_maximo=0
-         if (this.boletas.length > 0) {
+             if (this.boletas.length > 0) {
          let total_bono = 0
          var liquido_calificacion=0;
-         var promedio = this.boletas.reduce((a, b) => { return Number(a) + Number(b) }) 
+         var promedio = this.boletas.reduce((a, b) => { return Number(a) + Number(b) }) / this.boletas.length
          if (this.bonos.length > 0) {
            total_bono = this.bonos.reduce((a, b) => { return Number(a) + Number(b) }) 
          }
          liquido_calificacion = promedio -total_bono
-          monto_maximo = (1-(1/Math.pow((1+0.011),this.plazo_meses_lp)))*(0.5*liquido_calificacion)/0.011
-          monto_maximo = Math.trunc(Math.round(Math.floor(monto_maximo))/1000)*1000
+          var monto_maximo = (1-(1/Math.pow((1+0.03),this.plazo_meses_lp)))*(0.9*liquido_calificacion)/0.03
+          if (monto_maximo > 2000){
+            monto_maximo = 2000
+          } else {
+            monto_maximo = Math.trunc(Math.round(Math.floor(monto_maximo))/1000)*1000
+          }
          }
-         this.monto_solicitado = monto_maximo
-        return monto_maximo
+          this.monto_solicitado = monto_maximo
+          return monto_maximo
       }
          }
 };

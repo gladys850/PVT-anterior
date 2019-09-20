@@ -5,6 +5,7 @@ import UserIndex from '@/components/user/Index'
 import RoleIndex from '@/components/role/Index'
 import AffiliateIndex from '@/components/affiliate/Index'
 import AffiliateAdd from '@/components/affiliate/Add'
+
 export const routes = [
   {
     name: 'login',
