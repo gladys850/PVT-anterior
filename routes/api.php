@@ -31,6 +31,7 @@ Route::group([
             // Role
             Route::resource('role', 'Api\V1\RoleController')->only(['index', 'show']);
             Route::get('role/{id}/permission', 'Api\V1\RoleController@get_permissions');
+            Route::post('role/{id}/permission', 'Api\V1\RoleController@set_permissions');
             // Permission
             Route::resource('permission', 'Api\V1\PermissionController')->only(['index']);
              // Affiliate

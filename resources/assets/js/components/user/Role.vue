@@ -95,11 +95,11 @@ export default {
     filteredRoles: []
   }),
   watch: {
-    user: function(val) {
+    user(val) {
       if (val != 0) this.getUserRoles(val)
       if (this.modules.length > 0) this.selectedModule = 0
     },
-    selectedModule: async function(newVal, oldVal) {
+    selectedModule(newVal, oldVal) {
       if (newVal != oldVal) {
         this.filteredRoles = _.chunk(this.roles.filter(o => o.module_id === this.modules[newVal].id), 8)
       }
@@ -122,8 +122,10 @@ export default {
           roles: this.selectedRoles
         })
         this.selectedRoles = res.data
+        this.toast('Actualizado correctamente', 'success')
       } catch (e) {
         console.log(e)
+        this.selectedRoles = this.selectedRoles.filter(o => o != id)
       } finally {
         this.loading = false
       }
