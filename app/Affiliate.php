@@ -62,10 +62,14 @@ class Affiliate extends Model
       {
           return $this->belongsTo(City::class, 'city_birth_id', 'id');
       }
-      //address 
+      public function pension_entity()
+      {
+          return $this->belongsTo(PensionEntity::class);
+      }
+      //address polimorficas
       public function address()
       {
-        return $this->morphToMany('\Address', 'addressable')->withTimestamps();
+        return $this->morphToMany(Address::class, 'addressable')->withTimestamps();
       }
 
 }
