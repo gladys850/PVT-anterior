@@ -8,8 +8,8 @@ class Role extends LaratrustRole
 {
     public $timestamps = true;
     protected $hidden = ['pivot'];
-    public $guarded = ['id', 'correlative'];
-    protected $fillable = ['module_id', 'name', 'action'];
+    public $guarded = ['id'];
+    protected $fillable = ['module_id', 'name', 'display_name'];
 
     public function module()
     {

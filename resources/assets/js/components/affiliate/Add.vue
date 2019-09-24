@@ -441,8 +441,12 @@ import List from '@/components/affiliate/List'
     search: _.debounce(function () {
       this.bus.$emit('search', this.search)
     }, 1000),
+  },
+  beforeMount() {
+    Echo.channel('fingerprint').listen('.saved', (e) => {
+      console.log(e)
+    })
   }
-  
   }
 </script>
 

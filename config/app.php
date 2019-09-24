@@ -160,18 +160,16 @@ return [
     // App\Providers\BroadcastServiceProvider::class,
     App\Providers\EventServiceProvider::class,
     App\Providers\RouteServiceProvider::class,
-
     // JWT auth
     Tymon\JWTAuth\Providers\LaravelServiceProvider::class,
-
     // ACL Entrust
     Laratrust\LaratrustServiceProvider::class,
-
     // CORS
     Barryvdh\Cors\ServiceProvider::class,
-
     // Snappy
     Barryvdh\Snappy\ServiceProvider::class,
+    // Broadcast
+    App\Providers\BroadcastServiceProvider::class
   ],
 
   /*
@@ -220,7 +218,6 @@ return [
     'URL' => Illuminate\Support\Facades\URL::class,
     'Validator' => Illuminate\Support\Facades\Validator::class,
     'View' => Illuminate\Support\Facades\View::class,
-
     // JWT Auth Facades
     'JWTAuth' => Tymon\JWTAuth\Facades\JWTAuth::class,
     'JWTFactory' => Tymon\JWTAuth\Facades\JWTFactory::class,
