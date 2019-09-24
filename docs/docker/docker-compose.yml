@@ -507,6 +507,7 @@ services:
         - "${REDIS_PORT}:6379"
       networks:
         - backend
+      restart: always
 
 ### Redis Cluster ##########################################
     redis-cluster:
@@ -904,6 +905,7 @@ services:
       networks:
         - frontend
         - backend
+      restart: always
 
 ### Solr ################################################
     solr:

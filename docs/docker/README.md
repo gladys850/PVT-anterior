@@ -32,13 +32,13 @@ cd laradock
 * Up the compose with nginx server
 
 ```sh
-docker-compose up -d --build nginx php-fpm workspace mosquitto
+docker-compose up -d --build nginx php-fpm workspace laravel-echo-server redis
 ```
 
 * Instead you can use apache2 server
 
 ```sh
-docker-compose up -d --build apache2 php-fpm workspace mosquitto
+docker-compose up -d --build apache2 php-fpm workspace laravel-echo-server redis
 ```
 
 * To tail the logs
