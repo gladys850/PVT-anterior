@@ -4,6 +4,12 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Affiliate;
 use App\User;
+use App\Category;
+use App\Degreee;
+use App\City;
+use App\Hierarchy;
+use App\AffiliateState;
+use App\AffiliateStateType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Hash;
@@ -20,8 +26,7 @@ class AffiliateController extends Controller
     */
     public function index(Request $request)
     {
-        //return Affiliate::paginate(10);
-        $affiliates = Affiliate::query();
+      $affiliates = Affiliate::with('city_identity_card')->with('degree')->with('category')->with('affiliate_state')->with('city_birth');
         if ($request->has('search')) {
             if ($request->search != 'null' && $request->search != '') {
                 $search = $request->search;
@@ -39,6 +44,8 @@ class AffiliateController extends Controller
         }
         return $affiliates->paginate($request->input('per_page') ?? 10);
     }
+    //foreach($affiliates as $a) {$a->affiliate_state ? $a->affiliate_state_type : null;}
+
     /**
     * Store a newly created resource in storage.
     *
@@ -86,6 +93,9 @@ class AffiliateController extends Controller
     public function destroy($id)
     {
         //
+        $affiliate = Affiliate::findOrFail($id);
+        $affiliate->delete();
+        return $affiliate;
     }
 
     public function fingerprint_saved(Request $request, $id)

@@ -39,4 +39,9 @@ Route::group([
             Route::patch('affiliate/{id}/fingerprint', 'Api\V1\AffiliateController@fingerprint_saved');
         });
     });
-});
+           
+            //Route::resource('city', 'Api\V1\CityController')->only(['index', 'show']);        
+            Route::resource('affiliate', 'Api\V1\AffiliateController');
+            //index recordController
+            Route::resource('record', 'Api\V1\RecordController')->only(['index']);
+ });
