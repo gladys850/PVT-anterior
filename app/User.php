@@ -120,4 +120,10 @@ class User extends Authenticatable implements JWTSubject
             return true;
         }
     }
+    // add records 
+    public function records()
+    {
+        return $this->hasMany(Record::class);
+    }
+
 }

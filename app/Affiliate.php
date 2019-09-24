@@ -58,4 +58,23 @@ class Affiliate extends Model
       {
           return $this->belongsTo(AffiliateState::class);
       }
+      public function city_birth()
+      {
+          return $this->belongsTo(City::class, 'city_birth_id', 'id');
+      }
+      public function pension_entity()
+      {
+          return $this->belongsTo(PensionEntity::class);
+      }
+      // add records 
+      public function records()
+      {
+          return $this->morphMany(Record::class, 'recordable');
+      }
+      //address
+      public function address()
+      {
+        return $this->morphToMany(Address::class, 'addressable');
+      }
+
 }

@@ -9,7 +9,7 @@
         :key="module.id"
         class="grey lighten-5"
       >
-        {{ module.name }}
+        {{ module.display_name }}
       </v-tab>
       <v-tabs-items
         v-model="selectedModule"

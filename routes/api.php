@@ -36,6 +36,12 @@ Route::group([
             Route::resource('permission', 'Api\V1\PermissionController')->only(['index']);
              // Affiliate
             Route::resource('affiliate', 'Api\V1\AffiliateController')->only(['index','store','show','update','destroy']);
+            Route::patch('affiliate/{id}/fingerprint', 'Api\V1\AffiliateController@fingerprint_saved');
         });
     });
-});
+           
+            //Route::resource('city', 'Api\V1\CityController')->only(['index', 'show']);        
+            Route::resource('affiliate', 'Api\V1\AffiliateController');
+            //index recordController
+            Route::resource('record', 'Api\V1\RecordController')->only(['index']);
+ });
