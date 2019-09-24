@@ -66,10 +66,15 @@ class Affiliate extends Model
       {
           return $this->belongsTo(PensionEntity::class);
       }
-      //address polimorficas
+      // add records 
+      public function records()
+      {
+          return $this->morphMany(Record::class, 'recordable');
+      }
+      //address
       public function address()
       {
-        return $this->morphToMany(Address::class, 'addressable')->withTimestamps();
+        return $this->morphToMany(Address::class, 'addressable');
       }
 
 }

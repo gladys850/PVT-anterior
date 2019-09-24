@@ -40,11 +40,14 @@ Route::group([
 
         });
     });
+           
+            //Route::resource('city', 'Api\V1\CityController')->only(['index', 'show']);        
             Route::resource('affiliate', 'Api\V1\AffiliateController');
-             // City
-            //Route::resource('city', 'Api\V1\CityController')->only(['index', 'show']);
+            //index recordController
+            Route::resource('record', 'Api\V1\RecordController')->only(['index']);
+        
 
-
+          
 
 
 

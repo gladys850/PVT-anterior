@@ -26,6 +26,7 @@ class AffiliateController extends Controller
     {
        //return Affiliate::paginate(10);
        $affiliates = Affiliate::with('city_identity_card')->with('degree')->with('category')->with('affiliate_state')->with('city_birth');
+       //$affiliates=Affiliate::query();
         if ($request->has('search')) {
             if ($request->search != 'null' && $request->search != '') {
               $search = $request->search;
@@ -54,30 +55,6 @@ class AffiliateController extends Controller
     public function store(AffiliateForm $request)
     {
         return Affiliate::create($request->all());
-
-       /* Affiliate::create([
-          'user_id' => Auth::user()->id,
-          'identity_card' => $request->identity_card,
-          'last_name' => $request->last_name,
-          'mothers_last_name' => $request->mothers_last_name,
-          'first_name' => $request->first_name,
-          'second_name' => $request->second_name,
-          'city_identity_card_id' => $request->city_identity_card_id,
-          'surname_husband' => $request->surname_husband,
-          'nua' => $request->nua,
-          'phone_number' => $request->phone_number,
-          'cell_phone_number' => $request->cell_phone_number,
-          'due_date' => $due_date,
-          'gender' => $request->gender,
-          'birth_date' => $request->birth_date,
-          'civil_status' => $request->civil_status,
-          'type' => $request->type,
-          'category_id' => $request->category_id,
-          'pension_entity_id' => $request->pension_entity_id,
-          'degree_id' => $request->degree_id,
-          'is_duedate_undefined' => $verificate,
-          'city_birth_id' => $request->city_birth_id
-      ]);*/
     }
 
     /**
