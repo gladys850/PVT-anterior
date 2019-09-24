@@ -32,13 +32,13 @@ cd laradock
 * Up the compose with nginx server
 
 ```sh
-docker-compose up -d --build nginx php-fpm
+docker-compose up -d --build nginx php-fpm workspace mosquitto
 ```
 
 * Instead you can use apache2 server
 
 ```sh
-docker-compose up -d --build apache2 php-fpm
+docker-compose up -d --build apache2 php-fpm workspace mosquitto
 ```
 
 * To tail the logs
@@ -58,29 +58,29 @@ docker-compose ps
 * Install needed fonts into `php-fpm` container
 
 ```sh
-docker-compose exec php-fpm /var/www/install-roboto-fonts.sh
+docker-compose exec --user laradock php-fpm /var/www/install-roboto-fonts.sh
 ```
 
 * Within the container called `workspace` you need to run
 
 ```sh
-docker-compose exec workspace composer run-script post-root-package-install
+docker-compose exec --user laradock workspace composer run-script post-root-package-install
 ```
 
 ```sh
-docker-compose exec workspace composer install
+docker-compose exec --user laradock workspace composer install
 ```
 
 * To change the application to development mode you need to run
 
 ```sh
-docker-compose exec workspace yarn dev
+docker-compose exec --user laradock workspace yarn dev
 ```
 
 * Generate laravel's session and jwt auth keys
 
 ```sh
-docker-compose exec workspace composer run-script post-create-project-cmd
+docker-compose exec --user laradock workspace composer run-script post-create-project-cmd
 ```
 
 * Modify `.env` file according to the right credentials
