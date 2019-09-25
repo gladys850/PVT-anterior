@@ -42,12 +42,12 @@ class AffiliateController extends Controller
                 $affiliates = $affiliates->orderBy($request->sortBy, $request->input('direction') ?? 'asc');
             }
         }
-        return $affiliates->paginate($request->input('per_page') ?? 10)->each(function ($affiliate) {
-            $affiliate->picture_saved;
-            $affiliate->fingerprint_saved;
-        });
+        $affiliates = $affiliates->paginate($request->per_page ?? 10);
+        foreach ($affiliates as $affiliate) {
+            $this->append_data($affiliate);
+        }
+        return $affiliates;
     }
-    //foreach($affiliates as $a) {$a->affiliate_state ? $a->affiliate_state_type : null;}
 
     /**
     * Store a newly created resource in storage.
@@ -69,8 +69,7 @@ class AffiliateController extends Controller
     public function show($id)
     {
         $affiliate = Affiliate::findOrFail($id);
-        $affiliate->picture_saved;
-        $affiliate->fingerprint_saved;
+        $this->append_data($affiliate);
         return $affiliate;
     }
 
@@ -112,5 +111,10 @@ class AffiliateController extends Controller
         return response()->json([
             'message' => 'Message broadcasted'
         ], 200);
+    }
+
+    private function append_data($affiliate) {
+        $affiliate->picture_saved;
+        $affiliate->fingerprint_saved;
     }
 }
