@@ -47,4 +47,4 @@ Route::group([
            
             //Route::resource('city', 'Api\V1\CityController')->only(['index', 'show']);        
             //index recordController
-);
+});
