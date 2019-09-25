@@ -9,6 +9,8 @@ Route::group([
     Route::resource('date', 'Api\V1\DateController')->only(['index']);
     // Affiliate
     Route::resource('affiliate', 'Api\V1\AffiliateController')->only(['show']);
+    // City
+    Route::resource('city', 'Api\V1\cityController')->only(['index']);
     // Fingerprint
     Route::patch('affiliate/{id}/fingerprint', 'Api\V1\AffiliateController@fingerprint_saved');
     // Record
