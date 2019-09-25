@@ -26,7 +26,7 @@ class AffiliateController extends Controller
     */
     public function index(Request $request)
     {
-      $affiliates = Affiliate::with('city_identity_card')->with('degree')->with('category')->with('affiliate_state')->with('city_birth');
+        $affiliates = Affiliate::query();
         if ($request->has('search')) {
             if ($request->search != 'null' && $request->search != '') {
                 $search = $request->search;
@@ -42,7 +42,10 @@ class AffiliateController extends Controller
                 $affiliates = $affiliates->orderBy($request->sortBy, $request->input('direction') ?? 'asc');
             }
         }
-        return $affiliates->paginate($request->input('per_page') ?? 10);
+        return $affiliates->paginate($request->input('per_page') ?? 10)->each(function ($affiliate) {
+            $affiliate->picture_saved;
+            $affiliate->fingerprint_saved;
+        });
     }
     //foreach($affiliates as $a) {$a->affiliate_state ? $a->affiliate_state_type : null;}
 
@@ -65,7 +68,10 @@ class AffiliateController extends Controller
     */
     public function show($id)
     {
-        return Affiliate::findOrFail($id);
+        $affiliate = Affiliate::findOrFail($id);
+        $affiliate->picture_saved;
+        $affiliate->fingerprint_saved;
+        return $affiliate;
     }
 
     /**
