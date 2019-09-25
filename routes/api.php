@@ -10,7 +10,16 @@ Route::group([
     // Affiliate
     Route::resource('affiliate', 'Api\V1\AffiliateController')->only(['show']);
     // City
-    Route::resource('city', 'Api\V1\cityController')->only(['index']);
+    Route::resource('city', 'Api\V1\CityController')->only(['index']);
+    // state
+    Route::resource('affiliateState', 'Api\V1\AffiliateStateController')->only(['index']);
+    Route::get('AffiliateState/{id}/affiliateStateType', 'Api\V1\AffiliateStateController@get_affiliateStateType');
+    // Degree
+    Route::resource('degree', 'Api\V1\DegreeController')->only(['index']);
+    //pension Entity
+    Route::resource('pensionEntity', 'Api\V1\PensionEntityController')->only(['index']);
+    //category
+    Route::resource('category', 'Api\V1\CategoryController');
     // Fingerprint
     Route::patch('affiliate/{id}/fingerprint', 'Api\V1\AffiliateController@fingerprint_saved');
     // Record
