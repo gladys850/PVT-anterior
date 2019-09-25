@@ -100,7 +100,7 @@ class AffiliateController extends Controller
 
     public function fingerprint_saved(Request $request, $id)
     {
-        $affiliate = Affiliate::findOrFail($request->affiliate_id);
+        $affiliate = Affiliate::findOrFail($id);
         $user = User::findOrFail($request->user_id);
         event(new FingerprintSavedEvent($affiliate, $user, $request->success));
         return response()->json([

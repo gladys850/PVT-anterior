@@ -7,6 +7,14 @@ Route::group([
     // Login
     Route::resource('auth', 'Api\V1\AuthController')->only(['store']);
     Route::resource('date', 'Api\V1\DateController')->only(['index']);
+    // Affiliate
+    Route::resource('affiliate', 'Api\V1\AffiliateController')->only(['show']);
+    // City
+    Route::resource('city', 'Api\V1\cityController')->only(['index']);
+    // Fingerprint
+    Route::patch('affiliate/{id}/fingerprint', 'Api\V1\AffiliateController@fingerprint_saved');
+    // Record
+    Route::resource('record', 'Api\V1\RecordController')->only(['index']);
 
     // With credentials
     Route::group([
@@ -35,13 +43,10 @@ Route::group([
             // Permission
             Route::resource('permission', 'Api\V1\PermissionController')->only(['index']);
              // Affiliate
-            Route::resource('affiliate', 'Api\V1\AffiliateController')->only(['index','store','show','update','destroy']);
-            Route::patch('affiliate/{id}/fingerprint', 'Api\V1\AffiliateController@fingerprint_saved');
+            Route::resource('affiliate', 'Api\V1\AffiliateController')->only(['index', 'store', 'update', 'destroy']);
         });
     });
            
             //Route::resource('city', 'Api\V1\CityController')->only(['index', 'show']);        
-            Route::resource('affiliate', 'Api\V1\AffiliateController');
             //index recordController
-            Route::resource('record', 'Api\V1\RecordController')->only(['index']);
- });
+});
