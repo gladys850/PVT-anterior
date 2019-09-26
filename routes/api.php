@@ -9,8 +9,19 @@ Route::group([
     Route::resource('date', 'Api\V1\DateController')->only(['index']);
     // Affiliate
     Route::resource('affiliate', 'Api\V1\AffiliateController')->only(['show']);
+    // City
+    Route::resource('city', 'Api\V1\CityController')->only(['index']);
+    // state
+    Route::resource('affiliateState', 'Api\V1\AffiliateStateController')->only(['index']);
+    Route::get('AffiliateState/{id}/affiliateStateType', 'Api\V1\AffiliateStateController@get_affiliateStateType');
+    // Degree
+    Route::resource('degree', 'Api\V1\DegreeController')->only(['index']);
+    //pension Entity
+    Route::resource('pensionEntity', 'Api\V1\PensionEntityController')->only(['index']);
+    //category
+    Route::resource('category', 'Api\V1\CategoryController');
     // Fingerprint
-    Route::patch('affiliate/{id}/fingerprint', 'Api\V1\AffiliateController@fingerprint_saved');
+    Route::get('affiliate/{id}/fingerprint', 'Api\V1\AffiliateController@fingerprint_saved');
     // Record
     Route::resource('record', 'Api\V1\RecordController')->only(['index']);
 
@@ -42,6 +53,7 @@ Route::group([
             Route::resource('permission', 'Api\V1\PermissionController')->only(['index']);
              // Affiliate
             Route::resource('affiliate', 'Api\V1\AffiliateController')->only(['index', 'store', 'update', 'destroy']);
+            Route::patch('affiliate/{id}/fingerprint', 'Api\V1\AffiliateController@fingerprint_updated');
         });
     });
            

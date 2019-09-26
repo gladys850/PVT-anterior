@@ -12,24 +12,25 @@
     <template v-slot:item="props">
     <tr>
       <td class="text-xs-left">{{ props.item.first_name }} </td>
-       <td class="text-xs-left">{{ props.item.last_name }}</td>
+      <td class="text-xs-left">{{ props.item.last_name }}</td>
       <td class="text-xs-left">{{ props.item.mothers_last_name }}</td>
       <td class="text-xs-left">{{ props.item.identity_card }}</td>
       <td>
         <v-icon class="mr-1" :color="props.item.picture_saved ? 'success' : 'error'">mdi-camera</v-icon>
         <v-icon class="ml-1" :color="props.item.fingerprint_saved ? 'success' : 'error'">mdi-fingerprint</v-icon>
       </td>
-     <td >
+    
+      <td >
         <v-btn
-        fab
-        dark
-        x-small
-        :to="{name:'affiliateAdd'}"
-        color="warning"
+          fab
+          dark
+          x-small
+          :to="{ name: 'affiliateAdd', params: { id: props.item.id }}"
+          color="warning"
         >
-          <v-icon>mdi-eye</v-icon>
+        <v-icon>mdi-eye</v-icon>
         </v-btn>
-        </td>
+      </td>
       </tr>
     </template>
   </v-data-table>
@@ -92,10 +93,8 @@ export default {
         class: ['normal', 'white--text'],
         width: '5%',
         sortable: false
-      }
-    
+      }    
     ]
-
   }),
   watch: {
     options: function(newVal, oldVal) {
