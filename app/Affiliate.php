@@ -7,6 +7,9 @@ use Laratrust\Traits\LaratrustUserTrait;
 class Affiliate extends Model
 {
     use Traits\EloquentGetTableNameTrait;
+
+    protected $appends = ['picture_saved', 'fingerprint_saved'];
+
     protected $fillable = [
         'user_id',
         'affiliate_state_id',
@@ -42,6 +45,16 @@ class Affiliate extends Model
         'due_date'
       ];
  
+    public function getPictureSavedAttribute()
+    {
+        return false;
+    }
+
+    public function getFingerprintSavedAttribute()
+    {
+        return true;
+    }
+
       public function category()
       {
         return $this->belongsTo(Category::class);
