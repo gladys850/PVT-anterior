@@ -65,7 +65,6 @@
                         :return-value.sync="dateVencimiento"
                         transition="scale-transition"
                         offset-y
-                        full-width
                         min-width="290px"
                       >
                         <template v-slot:activator="{ on }">
@@ -92,7 +91,6 @@
                         :return-value.sync="dateNacimiento"
                         transition="scale-transition"
                         offset-y
-                        full-width
                         min-width="290px"
                       >
                         <template v-slot:activator="{ on }">
@@ -134,7 +132,6 @@
                         :return-value.sync="dateFallesimiento"
                         transition="scale-transition"
                         offset-y
-                        full-width
                         min-width="290px"
                       >
                         <template v-slot:activator="{ on }">
@@ -230,6 +227,10 @@
               <v-btn color="primary">
                 Adicionar Foto
               </v-btn>
+              <v-btn color="primary" @click.stop="captureFingerprint = true" v-if="affiliate.hasOwnProperty('id')">
+                <v-icon left>mdi-fingerprint</v-icon>
+                Capturar huella
+              </v-btn>
               <v-btn color="primary">
                 Informacion Conyugue
               </v-btn>
@@ -253,7 +254,6 @@
                 :return-value.sync="dateIngreso"
                 transition="scale-transition"
                 offset-y
-                full-width
                 min-width="290px"
               > 
                 <template v-slot:activator="{ on }">
@@ -319,7 +319,6 @@
                 :return-value.sync="dateDesvinculacion"
                 transition="scale-transition"
                 offset-y
-                full-width
                 min-width="290px"
               >
                 <template v-slot:activator="{ on }">
@@ -354,13 +353,35 @@
         </v-col>
       </v-row>
     </v-form>
+    <v-dialog
+      v-model="captureFingerprint"
+      persistent
+      width="400"
+    >
+      <v-card
+        color="primary"
+        class="py-3"
+        dark
+      >
+        <v-card-text>
+          <div class="subtitle-1 font-weight-light">Continue el proceso en el equipo biométrico ...</div>
+          <v-progress-linear
+            indeterminate
+            color="white"
+            class="mt-4"
+          ></v-progress-linear>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 
 <script>
 import List from '@/components/affiliate/List'
-  export default {
-   data: () => ({
+
+export default {
+  data: () => ({
+    captureFingerprint: false,
       Lugar: [
       'La Paz',
       'Oruro',
@@ -434,8 +455,8 @@ import List from '@/components/affiliate/List'
         menu3: false,
         menu4: false,
   }),
-   components: {
-  List,
+  components: {
+    List
   },
   watch: {
     search: _.debounce(function () {
@@ -443,8 +464,8 @@ import List from '@/components/affiliate/List'
     }, 1000),
   },
   beforeMount() {
-    Echo.channel('fingerprint').listen('.saved', (e) => {
-      console.log(e)
+    Echo.channel('fingerprint').listen('.saved', (data) => {
+      this.captureFingerprint = false
     })
   }
   }
