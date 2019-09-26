@@ -15,6 +15,10 @@
        <td class="text-xs-left">{{ props.item.last_name }}</td>
       <td class="text-xs-left">{{ props.item.mothers_last_name }}</td>
       <td class="text-xs-left">{{ props.item.identity_card }}</td>
+      <td>
+        <v-icon class="mr-1" :color="props.item.picture_saved ? 'success' : 'error'">mdi-camera</v-icon>
+        <v-icon class="ml-1" :color="props.item.fingerprint_saved ? 'success' : 'error'">mdi-fingerprint</v-icon>
+      </td>
      <td >
         <v-btn
         fab
@@ -25,7 +29,6 @@
         >
           <v-icon>mdi-eye</v-icon>
         </v-btn>
-       
         </td>
       </tr>
     </template>
@@ -60,7 +63,7 @@ export default {
         text: 'Nombre',
         value: 'first_name', 
         class: ['normal', 'white--text'],
-        width: '35%',
+        width: '30%',
         sortable: false 
       },{ 
         text: 'Apellido Paterno', 
@@ -79,6 +82,11 @@ export default {
         class: ['normal', 'white--text'],
         width: '15%',
         sortable: false 
+      }, {
+        text: 'Biométrico',
+        class: ['normal', 'white--text'],
+        width: '5%',
+        sortable: false
       },{ 
         text: 'Accion',
         class: ['normal', 'white--text'],

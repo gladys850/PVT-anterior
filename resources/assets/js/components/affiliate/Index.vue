@@ -23,11 +23,7 @@
           <v-icon>mdi-plus</v-icon>
         </v-btn>
     </v-toolbar>
-    <v-card>
-      <v-card-text>
-            <List :bus="bus"/>
-      </v-card-text>
-    </v-card>
+    <List :bus="bus"/>
   </v-container>
 </template>
 <script>
