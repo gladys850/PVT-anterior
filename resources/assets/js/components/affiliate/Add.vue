@@ -526,16 +526,19 @@ export default {
       this.bus.$emit('search', this.search)
     }, 1000),
   },
+  destroyed() {
+    Echo.leave('fingerprint')
+  },
   beforeMount() {
     this.getCities();
     this.getDegree();
     this.getPensionEntity();
     if (this.$route.params.id != 'new') {
-      Echo.channel('fingerprint').listen('.saved', (data) => {
-        if (data.affiliate_id == this.affiliate.id && data.user_id == this.$store.getters.id) {
+      Echo.channel('fingerprint').listen('.saved', (msg) => {
+        if (msg.data.affiliate_id == this.affiliate.id && msg.data.user_id == this.$store.getters.id) {
           this.fingerprintCapture = false
           this.fingerprintSaved = true
-          this.fingerprintSucess = JSON.parse(data.success)
+          this.fingerprintSucess = JSON.parse(msg.data.success)
         }
       })
     }
@@ -549,9 +552,7 @@ export default {
     async fingerprintCaptureStart() {
       try {
         this.fingerprintCapture = true
-        let res = await axios.patch(`affiliate/${this.affiliate.id}/fingerprint`)
-        console.log(res.data)
-        
+        await axios.patch(`affiliate/${this.affiliate.id}/fingerprint`)
       } catch (e) {
         console.log(e)
         this.toast('Error al comunicarse con el dispositivo de captura de huellas', 'error')

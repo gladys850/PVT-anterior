@@ -38,7 +38,6 @@
   </v-container>
 </template>
 <script>
-import Vue from 'vue'
 import List from '@/components/user/List'
 import Add from '@/components/user/Add'
 import RemoveItem from '@/components/shared/RemoveItem'

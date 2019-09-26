@@ -123,7 +123,7 @@ class AffiliateController extends Controller
             $affiliate->records()->create([
                 'user_id' => Auth::user()->id,
                 'record_type_id' => $record_type->id,
-                'action' => 'inició la captura de la huellas del afiliado'
+                'action' => 'inició la captura de huellas'
             ]);
             return $affiliate->records()->latest()->first();
         }
