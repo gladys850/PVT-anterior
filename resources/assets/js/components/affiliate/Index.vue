@@ -18,7 +18,7 @@
           fab
           dark
           x-small
-          :to="{name:'affiliateAdd'}"
+          :to="{ name: 'affiliateAdd', params: { id:'new'}}"
         >
           <v-icon>mdi-plus</v-icon>
         </v-btn>
@@ -27,7 +27,6 @@
   </v-container>
 </template>
 <script>
-import Vue from 'vue'
 import List from '@/components/affiliate/List'
 import Add from '@/components/affiliate/Add'
 

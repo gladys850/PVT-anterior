@@ -9,6 +9,6 @@ class DegreeController extends Controller
 {
     public function index()
     {
-        return Degre::get();
+        return Degree::get();
     }
 }

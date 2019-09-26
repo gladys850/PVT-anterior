@@ -55,7 +55,7 @@ export const routes = [
       requiresAuth: true
     }
   }, {
-    path: '/add',
+    path: '/affiliate/:id',
     name: 'affiliateAdd',
     component: AffiliateAdd,
     meta: {
