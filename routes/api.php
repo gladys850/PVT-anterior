@@ -36,7 +36,7 @@ Route::group([
             'middleware' => 'role:admin'
         ], function () {
             // User
-            Route::resource('user', 'Api\V1\UserController')->only(['index', 'store', 'show', 'update', 'destroy']);
+            Route::resource('user', 'Api\V1\UserController');
             Route::get('user/{id}/role', 'Api\V1\UserController@get_roles');
             Route::post('user/{id}/role', 'Api\V1\UserController@set_roles');
             Route::get('user/{id}/permission', 'Api\V1\UserController@get_permissions');
