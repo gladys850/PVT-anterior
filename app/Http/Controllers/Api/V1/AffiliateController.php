@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Affiliate;
+use App\RecordType;
 use App\User;
 use App\Category;
 use App\Degreee;
@@ -11,6 +12,7 @@ use App\Hierarchy;
 use App\AffiliateState;
 use App\AffiliateStateType;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Controllers\Controller;
@@ -111,6 +113,21 @@ class AffiliateController extends Controller
         return response()->json([
             'message' => 'Message broadcasted'
         ], 200);
+    }
+
+    public function fingerprint_updated(Request $request, $id)
+    {
+        $affiliate = Affiliate::findOrFail($id);
+        $record_type = RecordType::whereName('datos-personales')->first();
+        if ($record_type) {
+            $affiliate->records()->create([
+                'user_id' => Auth::user()->id,
+                'record_type_id' => $record_type->id,
+                'action' => 'inició la captura de huellas'
+            ]);
+            return $affiliate->records()->latest()->first();
+        }
+        abort(404);
     }
 
     private function append_data($affiliate) {

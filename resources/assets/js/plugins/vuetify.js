@@ -1,4 +1,3 @@
-import Vue from 'vue'
 import Vuetify from 'vuetify'
 import es from 'vuetify/es5/locale/es'
 import 'vuetify/dist/vuetify.min.css'

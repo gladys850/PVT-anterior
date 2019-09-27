@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+// use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\ServiceProvider;
 use Carbon\Carbon;
@@ -20,6 +21,9 @@ class AppServiceProvider extends ServiceProvider
         Validator::extend('alpha_spaces', function ($attribute, $value) {
             return preg_match('/^[\pL\s]+$/u', $value);
         });
+        // Relation::morphMap([
+        //     'affiliates' => 'App\Affiliate'
+        // ]);
     }
 
     /**
