@@ -11,12 +11,12 @@ use App\City;
 use App\Hierarchy;
 use App\AffiliateState;
 use App\AffiliateStateType;
+use App\Http\Requests\AffiliateForm;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Requests\AffiliateForm;
 use App\Events\FingerprintSavedEvent;
 
 class AffiliateController extends Controller
@@ -57,7 +57,7 @@ class AffiliateController extends Controller
     * @param  \Illuminate\Http\Request  $request
     * @return \Illuminate\Http\Response
     */
-    public function store(AffiliateForm $request)
+    public function store(Request $request)
     {
         return Affiliate::create($request->all());
     }
@@ -82,7 +82,7 @@ class AffiliateController extends Controller
     * @param  \App\Affiliate  $affiliate
     * @return \Illuminate\Http\Response
     */
-    public function update(AffiliateForm $request, $id)
+    public function update(Request $request, $id)
     {
         //
         $affiliate = Affiliate::findOrFail($id);
