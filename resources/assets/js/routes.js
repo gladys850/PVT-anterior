@@ -5,6 +5,7 @@ import UserIndex from '@/components/user/Index'
 import RoleIndex from '@/components/role/Index'
 import AffiliateIndex from '@/components/affiliate/Index'
 import AffiliateAdd from '@/components/affiliate/Add'
+import RecordIndex from '@/components/record/Index'
 
 export const routes = [
   {
@@ -58,6 +59,13 @@ export const routes = [
     path: '/affiliate/:id',
     name: 'affiliateAdd',
     component: AffiliateAdd,
+    meta: {
+      requiresAuth: true
+    }
+  }, {
+    path: '/record',
+    name: 'recordIndex',
+    component: RecordIndex,
     meta: {
       requiresAuth: true
     }
