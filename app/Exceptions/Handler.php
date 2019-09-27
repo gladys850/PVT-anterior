@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Illuminate\Support\Facades\Log;
 
 class Handler extends ExceptionHandler
 {
@@ -61,7 +60,7 @@ class Handler extends ExceptionHandler
 		} elseif ($exception instanceof \PDOException) {
 			$db_code = trim($exception->getCode());
 			$code = 400;
-			LOG::error('PDOException: ' . $db_code);
+			\Log::error('PDOException: ' . $db_code);
 			switch (intval($db_code)) {
 				case 23505:
 					$error_message = 'Solicitud inválida';
@@ -125,7 +124,7 @@ class Handler extends ExceptionHandler
 					], $exception->getStatusCode());
 			}
 		} else {
-			LOG::error('Error inesperado: ' . $exception);
+			\Log::error('Error inesperado: ' . $exception);
 		}
 		return parent::render($request, $exception);
 	}

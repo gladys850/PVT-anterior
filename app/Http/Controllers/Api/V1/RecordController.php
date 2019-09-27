@@ -19,16 +19,6 @@ class RecordController extends Controller
         if ($request->has('user_id')) {
             $records = $records->whereUserId($request->user_id);
         }
-        if ($request->has('search')) {
-            if ($request->search != 'null' && $request->search != '') {
-                $search = $request->search;
-                $records = $records->where(function ($query) use ($search) {
-                    foreach (Schema::getColumnListing(Record::getTableName()) as $column) {
-                        $query = $query->orWhere($column, 'ilike', '%' . $search . '%');
-                    }
-                });
-            }
-        }
         if ($request->has('sortBy')) {
             if (count($request->sortBy) > 0 && count($request->sortDesc) > 0) {
                 foreach ($request->sortBy as $i => $sort) {

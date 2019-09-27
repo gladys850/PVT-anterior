@@ -30,5 +30,11 @@
         "params": {}
       }
     ]
+  }, {
+    "href": "recordIndex",
+    "title": "Actividad",
+    "icon": "mdi-format-list-checkbox",
+    "permission": null,
+    "params": {}
   }
 ]

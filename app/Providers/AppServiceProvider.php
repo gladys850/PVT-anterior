@@ -6,6 +6,8 @@ namespace App\Providers;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\ServiceProvider;
 use Carbon\Carbon;
+use App\Observers\RecordObserver;
+use App\Record;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -21,6 +23,7 @@ class AppServiceProvider extends ServiceProvider
         Validator::extend('alpha_spaces', function ($attribute, $value) {
             return preg_match('/^[\pL\s]+$/u', $value);
         });
+        Record::observe(RecordObserver::class);
         // Relation::morphMap([
         //     'affiliates' => 'App\Affiliate'
         // ]);
