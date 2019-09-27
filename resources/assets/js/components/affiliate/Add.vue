@@ -242,6 +242,15 @@
               <v-btn type="file" color="primary">
                 Adicionar Foto
               </v-btn>
+              <v-btn
+                color="primary"
+                @click.stop="fingerprintCaptureStart()" v-if="affiliate.hasOwnProperty('id')"
+                :disabled="fingerprintSucess"
+              >
+                <v-icon left>mdi-fingerprint</v-icon>
+                <span v-if="fingerprintSucess">Huella capturada</span>
+                <span v-else>Capturar huella</span>
+              </v-btn>
               <v-btn color="primary">
                 Informacion Conyugue
               </v-btn>
@@ -378,6 +387,50 @@
             </v-row>
         </v-col>
       </v-row>
+    <v-dialog
+      v-model="fingerprintCapture"
+      persistent
+      width="400"
+    >
+      <v-card
+        color="primary"
+        class="py-3"
+        dark
+      >
+        <v-card-text>
+          <div class="subtitle-1 font-weight-light">Continue el proceso en el equipo biométrico ...</div>
+          <v-progress-linear
+            indeterminate
+            color="white"
+            class="mt-4"
+          ></v-progress-linear>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
+    <v-dialog
+      v-model="fingerprintSaved"
+      width="500"
+    >
+      <v-card>
+        <v-alert :type="fingerprintSucess ? 'success' : 'error'" class="ma-0">
+          <div v-if="fingerprintSucess">
+            Las huellas se registraron correctamente
+          </div>
+          <div v-else>
+            Error al capturar las huellas, vuelva a realizar el proceso
+          </div>
+        </v-alert>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="primary"
+            @click.stop="fingerprintSaved = false"
+          >
+            Cerrar
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 
@@ -385,6 +438,9 @@
 import List from '@/components/affiliate/List'
   export default {
   data: () => ({
+    fingerprintCapture: false,
+    fingerprintSaved: false,
+    fingerprintSucess: null,
     affiliate: {
     first_name: null,
     second_name:null,
@@ -404,6 +460,10 @@ import List from '@/components/affiliate/List'
     },
     loading: true,
     cities: [],
+    Genero: [
+      'Femenino',
+      'Masculino'
+    ],
     civil: [
       { name:"Soltero",
         value:"S"
@@ -449,15 +509,24 @@ import List from '@/components/affiliate/List'
       this.bus.$emit('search', this.search)
     }, 1000),
   },
+  destroyed() {
+    Echo.leave('fingerprint')
+  },
   beforeMount() {
     this.getCategory();
     this.getCities();
     this.getDegree();
     this.getPensionEntity();
     this.getAffiliateState();
-    Echo.channel('fingerprint').listen('.saved', (e) => {
-      console.log(e)
-    })
+    if (this.$route.params.id != 'new') {
+      Echo.channel('fingerprint').listen('.saved', (msg) => {
+        if (msg.data.affiliate_id == this.affiliate.id && msg.data.user_id == this.$store.getters.id) {
+          this.fingerprintCapture = false
+          this.fingerprintSaved = true
+          this.fingerprintSucess = JSON.parse(msg.data.success)
+        }
+      })
+    }
   },
   mounted() {
     (this.$route.params.id=='new')?this.titulo='Nuevo Afiliado':this.titulo='Editar Afiliado'
@@ -490,6 +559,16 @@ import List from '@/components/affiliate/List'
     } finally {
       this.loading = false
     }
+    },
+    async fingerprintCaptureStart() {
+      try {
+        this.fingerprintCapture = true
+        await axios.patch(`affiliate/${this.affiliate.id}/fingerprint`)
+      } catch (e) {
+        console.log(e)
+        this.toast('Error al comunicarse con el dispositivo de captura de huellas', 'error')
+        this.fingerprintCapture = false
+      }
     },
     async getCategory() {
     try {
@@ -565,4 +644,3 @@ import List from '@/components/affiliate/List'
   }
   }
 </script>
-

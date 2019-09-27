@@ -71,19 +71,28 @@ docker-compose exec --user laradock workspace composer run-script post-root-pack
 docker-compose exec --user laradock workspace composer install
 ```
 
-* To change the application to development mode you need to run
-
-```sh
-docker-compose exec --user laradock workspace yarn dev
-```
-
 * Generate laravel's session and jwt auth keys
 
 ```sh
 docker-compose exec --user laradock workspace composer run-script post-create-project-cmd
 ```
 
+* Change the laravel-echo-server to production mode
+
+```sh
+docker-compose exec laravel-echo-server sed -i 's/\"devMode\":.*/\"devMode\": false,/g' laravel-echo-server.json
+docker-compose restart laravel-echo-server
+```
+
 * Modify `.env` file according to the right credentials
+
+## Continue the development
+
+* Change the application to development mode
+
+```sh
+docker-compose exec --user laradock workspace yarn dev
+```
 
 ## Issues
 

@@ -8,7 +8,7 @@ class Affiliate extends Model
 {
     use Traits\EloquentGetTableNameTrait;
 
-    protected $appends = ['picture_saved', 'fingerprint_saved'];
+    protected $appends = ['picture_saved', 'fingerprint_saved', 'full_name'];
 
     protected $fillable = [
         'user_id',
@@ -53,6 +53,11 @@ class Affiliate extends Model
     public function getFingerprintSavedAttribute()
     {
         return true;
+    }
+
+    public function getFullNameAttribute()
+    {
+      return preg_replace('/[[:blank:]]+/', ' ', join(' ', [$this->first_name, $this->second_name, $this->last_name, $this->mothers_last_name]));
     }
 
       public function category()

@@ -21,7 +21,7 @@ Route::group([
     //category
     Route::resource('category', 'Api\V1\CategoryController');
     // Fingerprint
-    Route::patch('affiliate/{id}/fingerprint', 'Api\V1\AffiliateController@fingerprint_saved');
+    Route::get('affiliate/{id}/fingerprint', 'Api\V1\AffiliateController@fingerprint_saved');
     // Record
     Route::resource('record', 'Api\V1\RecordController')->only(['index']);
 
@@ -53,6 +53,7 @@ Route::group([
             Route::resource('permission', 'Api\V1\PermissionController')->only(['index']);
              // Affiliate
             Route::resource('affiliate', 'Api\V1\AffiliateController')->only(['index', 'store', 'update', 'destroy']);
+            Route::patch('affiliate/{id}/fingerprint', 'Api\V1\AffiliateController@fingerprint_updated');
         });
     });
            

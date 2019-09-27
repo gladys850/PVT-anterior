@@ -48,9 +48,11 @@ class FingerprintSavedEvent implements ShouldBroadcastNow
     public function broadcastWith()
     {
         return [
-            'affiliate_id' => $this->affiliate->id,
-            'user_id' => $this->user->id,
-            'success' => $this->status
+            'data' => [
+                'affiliate_id' => $this->affiliate->id,
+                'user_id' => $this->user->id,
+                'success' => $this->status
+            ]
         ];
     }
 }
