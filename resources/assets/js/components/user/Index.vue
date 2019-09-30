@@ -31,7 +31,7 @@
           clearable
         ></v-text-field>
       </v-flex>
-      <Add :bus="bus"/>
+      <Fab :bus="bus"/>
     </v-toolbar>
     <List :bus="bus"/>
     <RemoveItem :bus="bus"/>
@@ -39,13 +39,13 @@
 </template>
 <script>
 import List from '@/components/user/List'
-import Add from '@/components/user/Add'
+import Fab from '@/components/user/Fab'
 import RemoveItem from '@/components/shared/RemoveItem'
 
 export default {
   name: "user-index",
   components: {
-    Add,
+    Fab,
     List,
     RemoveItem
   },

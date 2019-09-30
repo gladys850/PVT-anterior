@@ -8,6 +8,9 @@ Vue.filter('uppercase', value => {
 Vue.filter('lowercase', value => {
 	return value.toLowerCase()
 })
+Vue.filter('capitalize', value => {
+  return value.toLowerCase().split(' ').map(word => `${word.charAt(0).toUpperCase()}${word.slice(1)}`).join(' ')
+})
 Vue.filter('datetime', value => {
 	return moment(value).format('LLL')
 })

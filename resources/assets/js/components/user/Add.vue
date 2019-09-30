@@ -1,55 +1,20 @@
 <template>
-  <div style="margin-right: -20px;" class="mt-3">
-    <v-speed-dial
-      v-model="fab"
-      direction="left"
-      transition="slide-x-reverse-transition"
-      top
-      right
-    >
-      <template v-slot:activator>
+  <div>
+    <v-tooltip top>
+      <template v-slot:activator="{ on }">
         <v-btn
-          v-model="fab"
-          color="info"
-          dark
           fab
-          small
+          dark
+          x-small
+          v-on="on"
+          color="success"
+          @click.stop="dialog = true"
         >
-          <v-icon v-if="fab">mdi-close</v-icon>
-          <v-icon v-else>mdi-account-circle</v-icon>
+          <v-icon>mdi-plus</v-icon>
         </v-btn>
       </template>
-      <v-tooltip top>
-        <template v-slot:activator="{ on }">
-          <v-btn
-            fab
-            dark
-            x-small
-            v-on="on"
-            color="success"
-            @click.stop="dialog = true; fab = false"
-          >
-            <v-icon>mdi-plus</v-icon>
-          </v-btn>
-        </template>
-        <span>Añadir usuario</span>
-      </v-tooltip>
-      <v-tooltip top>
-        <template v-slot:activator="{ on }">
-          <v-btn
-            fab
-            dark
-            x-small
-            color="danger"
-            v-on="on"
-            @click.stop="fab = false"
-          >
-            <v-icon>mdi-sync</v-icon>
-          </v-btn>
-        </template>
-        <span>Sincronizar con LDAP</span>
-      </v-tooltip>
-    </v-speed-dial>
+      <span>Añadir usuario</span>
+    </v-tooltip>
     <v-dialog
       v-model="dialog"
       width="500"
@@ -84,7 +49,7 @@
 import Ldap from '@/components/user/Ldap'
 
 export default {
-  name: 'ldap-list',
+  name: 'ldap-add',
   components: {
     Ldap
   },
@@ -97,7 +62,6 @@ export default {
   data: () => ({
     loading: true,
     dialog: false,
-    fab: false,
     userSelected: null
   }),
   watch: {
@@ -112,14 +76,14 @@ export default {
   methods: {
     clearForm() {
       this.userSelected = null
-      this.$validator.reset()
     },
     close() {
       this.dialog = false
+      this.$emit('closeFab')
     },
     async saveUser() {
       try {
-        if (await this.$validator.validateAll()) {
+        if (this.userSelected) {
           this.loading = true
           let res = await axios.post(`user`, {
             first_name: this.userSelected.givenName,
@@ -132,6 +96,8 @@ export default {
           this.bus.$emit('added', res.data)
           this.clearForm()
           this.close()
+        } else {
+          this.toast('Debe seleccionar un usuario', 'danger')
         }
       } catch (e) {
         console.log(e)
@@ -142,4 +108,3 @@ export default {
   }
 }
 </script>
-
