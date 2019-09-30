@@ -165,7 +165,7 @@ class UserController extends Controller
     public function synchronize_users()
     {
         $ldap = new Ldap();
-        $discharged_users = collect(User::whereActive(true)->get()->pluck('username')->all())->diff(collect($ldap->list_entries())->pluck('uid'));
+        $discharged_users = collect(User::where('username', '!=', 'admin')->whereActive(true)->get()->pluck('username')->all())->diff(collect($ldap->list_entries())->pluck('uid'));
         $items = [];
         foreach($discharged_users as $user) {
             array_push($items, User::whereUsername($user)->first());

@@ -28,7 +28,7 @@
             <v-icon>mdi-close</v-icon>
           </v-btn>
         </v-toolbar>
-        <v-card-text>
+        <v-card-text style="overflow: scroll; overflow-x: hidden; height: 320px;">
           <v-list dense>
             <v-list-item two-line v-for="user in users" :key="user.id">
               <v-list-item-content>
