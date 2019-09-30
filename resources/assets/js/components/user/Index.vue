@@ -20,12 +20,12 @@
         inset
         vertical
       ></v-divider>
-      <v-flex xs2>
+      <v-flex xs3>
         <v-text-field
           v-model="search"
           append-icon="mdi-magnify"
           label="Buscar"
-          class="mr-4"
+          class="mr-5 pr-5"
           single-line
           hide-details
           clearable
