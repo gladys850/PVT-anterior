@@ -157,11 +157,19 @@ class UserController extends Controller
         $unregistered_users = collect($ldap->list_entries())->pluck('uid')->diff(User::get()->pluck('username')->all());
         $items = [];
         foreach($unregistered_users as $user) {
-            $item = $ldap->get_entry($user, 'uid');
-            if (!is_null($item)) {
-                array_push($items, $item);
-            }
+            array_push($items, $ldap->get_entry($user, 'uid'));
         }
         return response()->json(collect($items)->sortBy('sn')->values());
+    }
+
+    public function synchronize_users()
+    {
+        $ldap = new Ldap();
+        $discharged_users = collect(User::whereActive(true)->get()->pluck('username')->all())->diff(collect($ldap->list_entries())->pluck('uid'));
+        $items = [];
+        foreach($discharged_users as $user) {
+            array_push($items, User::whereUsername($user)->first());
+        }
+        return response()->json(collect($items)->sortBy('last_name')->values());
     }
 }
