@@ -114,7 +114,7 @@ class User extends Authenticatable implements JWTSubject
 
     public function has_records()
     {
-        if ($this->affiliate_records()->first() || $this->affiliate_records_pvt()->first() || $this->eco_com_records()->first() || $this->procedure_records()->first() || $this->quota_aid_records()->first() || $this->ret_fun_records()->first() || $this->sequences_records()->first() || $this->wf_records()->first() || $this->wf_records_bck()->first()) {
+        if ($this->affiliate_records()->first() || $this->affiliate_records_pvt()->first() || $this->eco_com_records()->first() || $this->procedure_records()->first() || $this->quota_aid_records()->first() || $this->ret_fun_records()->first() || $this->sequences_records()->first() || $this->wf_records()->first() || $this->wf_records_bck()->first() || $this->records()->first()) {
             return true;
         } else {
             return false;

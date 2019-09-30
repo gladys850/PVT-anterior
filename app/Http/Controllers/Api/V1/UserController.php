@@ -21,7 +21,7 @@ class UserController extends Controller
     */
     public function index(Request $request)
     {
-        $users = User::query();
+        $users = User::where('username', '!=', 'admin');
         if ($request->has('active')) {
             $users = $users->whereActive(filter_var($request->active, FILTER_VALIDATE_BOOLEAN), true);
         }
@@ -116,7 +116,7 @@ class UserController extends Controller
     public function destroy($id)
     {
         $user = User::findOrFail($id);
-        if ($user->has_records()) {
+        if ($user->has_records() || $user->username == 'admin') {
             return response()->json([
 				'message' => 'Forbidden',
 				'errors' => [
