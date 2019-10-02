@@ -6,8 +6,6 @@
     :options.sync="options"
     :server-items-length="totalAffiliates"
     :footer-props="{ itemsPerPageOptions: [10, 20, 40] }"
-    :fixed-header="true"
-    calculate-widths
   >
     <template v-slot:item="props">
     <tr>
@@ -64,7 +62,7 @@ export default {
         text: 'Nombre',
         value: 'first_name', 
         class: ['normal', 'white--text'],
-        width: '25%',
+        width: '20%',
         sortable: false 
       },{ 
         text: 'Apellido Paterno', 
@@ -86,7 +84,7 @@ export default {
       }, {
         text: 'Biométrico',
         class: ['normal', 'white--text'],
-        width: '10%',
+        width: '15%',
         sortable: false
       },{ 
         text: 'Accion',
