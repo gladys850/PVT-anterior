@@ -41,7 +41,8 @@ Route::group([
             Route::post('user/{id}/role', 'Api\V1\UserController@set_roles');
             Route::get('user/{id}/permission', 'Api\V1\UserController@get_permissions');
             // Ldap
-            Route::get('ldap', 'Api\V1\UserController@unregistered_users');
+            Route::get('ldap/unregistered', 'Api\V1\UserController@unregistered_users');
+            Route::get('ldap/sync', 'Api\V1\UserController@synchronize_users');
             // Module
             Route::resource('module', 'Api\V1\ModuleController')->only(['index']);
             Route::get('module/{id}/role', 'Api\V1\ModuleController@get_roles');
