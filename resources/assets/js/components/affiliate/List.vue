@@ -37,9 +37,9 @@
 </template>
 
 <script>
-
 import Add from '@/components/affiliate/Add'
 import List from '@/components/affiliate/List'
+
 export default {
   name: 'affiliates-list',
   components: {
@@ -64,18 +64,18 @@ export default {
         text: 'Nombre',
         value: 'first_name', 
         class: ['normal', 'white--text'],
-        width: '30%',
+        width: '25%',
         sortable: false 
       },{ 
         text: 'Apellido Paterno', 
         value: 'last_name', 
         class: ['normal', 'white--text'],
-        width: '25%',
+        width: '20%',
         sortable: false 
       },{ text: 'Apellido Materno',
         value: 'mothers_last_name', 
         class: ['normal', 'white--text'],
-        width: '25%',
+        width: '20%',
         sortable: false 
       },{ 
         text: 'Nro. de CI',
@@ -86,12 +86,12 @@ export default {
       }, {
         text: 'Biométrico',
         class: ['normal', 'white--text'],
-        width: '5%',
+        width: '10%',
         sortable: false
       },{ 
         text: 'Accion',
         class: ['normal', 'white--text'],
-        width: '5%',
+        width: '10%',
         sortable: false
       }    
     ]

@@ -1,7 +1,6 @@
 import moment from 'moment'
 import jwt from 'jsonwebtoken'
 import VuexPersistence from 'vuex-persist'
-import schedule from 'node-schedule'
 
 const vuexLocal = new VuexPersistence({
   key: 'pvt',
@@ -20,7 +19,8 @@ export default {
       type: null,
       value: null,
       expiration: null
-    }
+    },
+    breadcrumbs: []
   },
   getters: {
     ldapAuth(state) {
@@ -48,6 +48,9 @@ export default {
       if (state.token.expiration) {
         return moment().isAfter(state.token.expiration)
       }
+    },
+    breadcrumbs(state) {
+      return state.breadcrumbs
     }
   },
   mutations: {

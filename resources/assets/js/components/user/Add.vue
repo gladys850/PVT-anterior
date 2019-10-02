@@ -7,7 +7,7 @@
           dark
           x-small
           v-on="on"
-          color="success"
+          color="info"
           @click.stop="dialog = true"
         >
           <v-icon>mdi-plus</v-icon>

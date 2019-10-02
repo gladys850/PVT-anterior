@@ -10,7 +10,7 @@
       <template v-slot:activator>
         <v-btn
           v-model="fab"
-          color="info"
+          color="success"
           dark
           fab
           small
