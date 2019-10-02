@@ -1,7 +1,9 @@
 <template>
   <v-container fluid>
     <v-toolbar dense color="tertiary">
-      <v-toolbar-title>Afiliados </v-toolbar-title>
+      <v-toolbar-title>
+        <Breadcrumbs/>
+      </v-toolbar-title>
       <v-spacer></v-spacer>
       <v-divider
         class="mx-2"
@@ -31,7 +33,7 @@
             absolute
             v-on="on"
             style="margin-right: -9px;"
-            :to="{ name: 'affiliateAdd', params: { id:'new'}}"
+            :to="{ name: 'affiliateAdd', params: { id:'new'} }"
           >
             <v-icon>mdi-plus</v-icon>
           </v-btn>
@@ -43,21 +45,31 @@
   </v-container>
 </template>
 <script>
+import Breadcrumbs from '@/components/shared/Breadcrumbs'
 import List from '@/components/affiliate/List'
 
 export default {
   name: "affiliateIndex",
   components: {
+    Breadcrumbs,
     List
   },
   data: () => ({
     search: '',
-    bus: new Vue(),
+    bus: new Vue()
   }),
+  beforeMount() {
+    this.$store.commit('setBreadcrumbs', [
+      {
+        text: 'Afiliados',
+        to: { name: 'affiliateIndex' }
+      }
+    ])
+  },
   watch: {
     search: _.debounce(function () {
       this.bus.$emit('search', this.search)
-    }, 1000),
+    }, 1000)
   }
 }
 </script>

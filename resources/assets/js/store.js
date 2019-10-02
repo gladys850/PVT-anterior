@@ -87,6 +87,12 @@ export default {
         expiration: moment.unix(jwt.decode(data.token).exp).format()
       }
       axios.defaults.headers.common['Authorization'] = `${data.token_type} ${data.token}`
+    },
+    setBreadcrumbs(state, data) {
+      state.breadcrumbs = data
+    },
+    addBreadcrumb(state, index, data) {
+      state.breadcrumbs[index] = data
     }
   },
   actions: {
