@@ -65,12 +65,12 @@
         </v-tab>
 
         <v-tab-item
-          :value="'tab-1'"
-        >
-          <v-card flat tile >
-            <v-card-text>{{ text }}</v-card-text>
-          </v-card>
-        </v-tab-item>
+        :value="'tab-1'"
+      >
+        <v-card flat tile >
+          <v-card-text>{{affiliate.first_name}}</v-card-text>
+        </v-card>
+      </v-tab-item>
         <v-tab-item
           :value="'tab-2'"
         >
@@ -82,7 +82,7 @@
           :value="'tab-3'"
         >
           <v-card flat tile >
-            <v-card-text>{{ text2 }}</v-card-text>
+            <v-card-text><PoliceData/></v-card-text>
           </v-card>
         </v-tab-item>
           <v-tab-item
@@ -105,16 +105,21 @@
 </template>
 <script>
 import Breadcrumbs from '@/components/shared/Breadcrumbs'
-import Profile from './Profile'
+import Profile from '@/components/affiliate/Profile'
+import PoliceData from '@/components/affiliate/PoliceData'
 
 export default {
   name: "affiliate-index",
   components: {
     Breadcrumbs,
-    Profile
+    Profile,
+    PoliceData
   },
   data () {
     return {
+    affiliate:{
+      first_name:null
+      },
       tab: null,
       text: 'hola',
       text1: 'como ',
@@ -136,6 +141,24 @@ export default {
         to: { name: 'affiliateAdd', params: { id:'new'} }
       }
     ])
+  },
+  mounted() {
+    if (this.$route.params.id != 'new') {
+      this.getAffiliate(this.$route.params.id)
+    }
+  },
+  methods: {
+  async getAffiliate(id) {
+    try {
+      this.loading = true
+      let res = await axios.get(`affiliate/${id}`)
+      this.affiliate = res.data
+    } catch (e) {
+      console.log(e)
+    } finally {
+      this.loading = false
+    }
   }
+}
 }
 </script>
