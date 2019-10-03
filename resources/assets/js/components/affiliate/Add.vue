@@ -131,28 +131,40 @@ export default {
       tabs: 3
     }
   },
-  beforeMount() {
-    this.$store.commit('setBreadcrumbs', [
-      {
-        text: 'Afiliados',
-        to: { name: 'affiliateIndex' }
-      }, {
-        text: 'Nuevo',
-        to: { name: 'affiliateAdd', params: { id:'new'} }
-      }
-    ])
-  },
   mounted() {
     if (this.$route.params.id != 'new') {
       this.getAffiliate(this.$route.params.id)
+    } else {
+      this.setBreadcrumbs()
     }
   },
   methods: {
+    setBreadcrumbs() {
+      let breadcrumbs = [
+        {
+          text: 'Afiliados',
+          to: { name: 'affiliateIndex' }
+        }
+      ]
+      if (this.$route.params.id == 'new') {
+        breadcrumbs.push({
+          text: 'Nuevo Afiliado',
+          to: { name: 'affiliateAdd', params: { id: 'new' } }
+        })
+      } else {
+        breadcrumbs.push({
+          text: this.$options.filters.fullName(this.affiliate),
+          to: { name: 'affiliateAdd', params: { id: this.affiliate.id } }
+        })
+      }
+      this.$store.commit('setBreadcrumbs', breadcrumbs)
+    },
   async getAffiliate(id) {
     try {
       this.loading = true
       let res = await axios.get(`affiliate/${id}`)
       this.affiliate = res.data
+      this.setBreadcrumbs()
     } catch (e) {
       console.log(e)
     } finally {

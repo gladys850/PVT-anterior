@@ -9,7 +9,7 @@
       <v-breadcrumbs-item
         class="v-toolbar__title"
         :to="props.item.to"
-        active-class="font-weight-bold"
+        active-class="font-weight-regular"
       >
         {{ props.item.text }}
       </v-breadcrumbs-item>
