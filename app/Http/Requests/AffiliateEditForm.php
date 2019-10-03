@@ -1,9 +1,10 @@
 <?php
 
 namespace App\Http\Requests;
+
 use Illuminate\Foundation\Http\FormRequest;
-use App\Affiliate;
-class AffiliateForm extends FormRequest
+
+class AffiliateEditForm extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -14,6 +15,7 @@ class AffiliateForm extends FormRequest
     {
         return true;
     }
+
     /**
      * Get the validation rules that apply to the request.
      *
@@ -22,25 +24,7 @@ class AffiliateForm extends FormRequest
     public function rules()
     {
         $this->sanitize();
-
-        return [
-            'identity_card' => 'required|unique:affiliates',
-            'city_identity_card_id' => 'required|min:1',
-            'first_name' => 'required',
-            'last_name' => 'required',
-            'gender' => 'required',
-            'birth_date' => 'required',
-            'city_birth_id' => 'required',
-            'pension_entity_id' => 'required',
-            'degree_id'=> 'required',
-            'affiliate_state_id'=>'required',
-            'phone_number'=>'integer|nullable',
-            'cell_phone_number'=>'integer|nullable'
-        ];
-    }
-    public function messages(){
-        return [
-        ];
+        return[];
     }
     public function sanitize(){
         $input = $this->all();
@@ -52,9 +36,9 @@ class AffiliateForm extends FormRequest
         if (array_key_exists('identity_card', $input)) $input['identity_card'] = mb_strtoupper($input['identity_card']);
         $this->replace($input);
     } 
+    public function messages()
+	{
+		return [];
+	}
+
 }
-
-
-
-
-

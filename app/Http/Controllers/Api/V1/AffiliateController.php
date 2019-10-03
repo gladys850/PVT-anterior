@@ -12,12 +12,15 @@ use App\Hierarchy;
 use App\AffiliateState;
 use App\AffiliateStateType;
 use App\Http\Requests\AffiliateForm;
+use App\Http\Requests\AffiliateEditForm;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Controllers\Controller;
 use App\Events\FingerprintSavedEvent;
+use Illuminate\Support\Facades\Storage;
+
 
 class AffiliateController extends Controller
 {
@@ -57,9 +60,10 @@ class AffiliateController extends Controller
     * @param  \Illuminate\Http\Request  $request
     * @return \Illuminate\Http\Response
     */
-    public function store(Request $request)
+    public function store(AffiliateForm $request)
     {
         return Affiliate::create($request->all());
+        //$affiliate->phone_number = trim(implode(",", $request->phone_number));
     }
 
     /**
@@ -82,9 +86,8 @@ class AffiliateController extends Controller
     * @param  \App\Affiliate  $affiliate
     * @return \Illuminate\Http\Response
     */
-    public function update(Request $request, $id)
+    public function update(AffiliateEditForm $request, $id)
     {
-        //
         $affiliate = Affiliate::findOrFail($id);
         $affiliate->fill($request->all());
         $affiliate->save();
@@ -134,4 +137,40 @@ class AffiliateController extends Controller
         $affiliate->picture_saved;
         $affiliate->fingerprint_saved;
     }
+    public function PictureImageprint(Request $request, $id)
+    {
+      return response()->json([
+        'files' => [
+          [
+            'name' => $id.'_perfil.png',
+            'content' => base64_encode(Storage::disk('ftp')->get($id.'_perfil.png')),
+            'format' => Storage::disk('ftp')->mimeType($id.'_perfil.png')
+          ]
+        ]
+          ],404);
+    }
+    public function FingerImageprint(Request $request, $id) 
+    {
+      return response()->json([
+        'files' => [
+          [
+            'name' => $id.'_left_four.png',
+            'content' => base64_encode(Storage::disk('ftp')->get($id.'_left_four.png')),
+            'format' => Storage::disk('ftp')->mimeType($id.'_left_four.png')
+          ],
+          [
+            'name' => $id.'_right_four.png',
+            'content' => base64_encode(Storage::disk('ftp')->get($id.'_right_four.png')),
+            'format' => Storage::disk('ftp')->mimeType($id.'_right_four.png')
+          ],
+          [
+            'name' => $id.'_thumbs.png',
+            'content' => base64_encode(Storage::disk('ftp')->get($id.'_thumbs.png')),
+            'format' => Storage::disk('ftp')->mimeType($id.'_thumbs.png')
+          ]
+          ]
+
+        ],404);
+    }
+    
 }
