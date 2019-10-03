@@ -86,7 +86,7 @@ class AffiliateController extends Controller
     * @param  \App\Affiliate  $affiliate
     * @return \Illuminate\Http\Response
     */
-    public function update(AffiliateEditForm $request, $id)
+    public function update(AffiliateForm $request, $id)
     {
         $affiliate = Affiliate::findOrFail($id);
         $affiliate->fill($request->all());
