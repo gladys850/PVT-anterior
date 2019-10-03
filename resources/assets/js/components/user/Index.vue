@@ -20,18 +20,18 @@
         inset
         vertical
       ></v-divider>
-      <v-flex xs2>
+      <v-flex xs3>
         <v-text-field
           v-model="search"
           append-icon="mdi-magnify"
           label="Buscar"
-          class="mr-4"
+          class="mr-5 pr-5"
           single-line
           hide-details
           clearable
         ></v-text-field>
       </v-flex>
-      <Add :bus="bus"/>
+      <Fab :bus="bus"/>
     </v-toolbar>
     <List :bus="bus"/>
     <RemoveItem :bus="bus"/>
@@ -39,13 +39,13 @@
 </template>
 <script>
 import List from '@/components/user/List'
-import Add from '@/components/user/Add'
+import Fab from '@/components/user/Fab'
 import RemoveItem from '@/components/shared/RemoveItem'
 
 export default {
   name: "user-index",
   components: {
-    Add,
+    Fab,
     List,
     RemoveItem
   },
