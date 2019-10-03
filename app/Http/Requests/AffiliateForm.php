@@ -22,25 +22,34 @@ class AffiliateForm extends FormRequest
     public function rules()
     {
         $this->sanitize();
-
-        return [
-            'identity_card' => 'required|unique:affiliates',
-            'city_identity_card_id' => 'required|min:1',
-            'first_name' => 'required',
-            'last_name' => 'required',
-            'gender' => 'required',
-            'birth_date' => 'required',
-            'city_birth_id' => 'required',
-            'pension_entity_id' => 'required',
-            'degree_id'=> 'required',
-            'affiliate_state_id'=>'required',
+        $rules = [
+            'first_name' => 'alpha_spaces|min:3',
+            'last_name' => 'alpha_spaces|min:3',
+            'gender' => '',
+            'birth_date' => '',
             'phone_number'=>'integer|nullable',
-            'cell_phone_number'=>'integer|nullable'
+            'cell_phone_number'=>'integer|nullable',
+            'city_birth_id' => '',
+            'pension_entity_id' => '',
+            'degree_id'=> '',
+            'affiliate_state_id'=>'',
+            'identity_card' => 'unique:affiliates',
+            'city_identity_card_id' => ''
         ];
-    }
-    public function messages(){
-        return [
-        ];
+        switch ($this->method()) {
+            case 'POST': {
+                foreach (array_slice($rules, 0, 12) as $key => $rule) {
+                    $rules[$key] = implode('|', ['required', $rule]);
+                }
+                return $rules;
+            }
+              
+            case 'PUT':
+            case 'PATCH':{
+                return $rules;
+            }
+        }
+
     }
     public function sanitize(){
         $input = $this->all();
