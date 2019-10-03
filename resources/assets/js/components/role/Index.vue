@@ -61,7 +61,7 @@
                     :class="hover ? 'elevation-4' : 'elevation-0'"
                     :color="selectedPermissions.includes(permission.id) ? 'info' : 'secondary'"
                     dark
-                    style="width: 180px;"
+                    style="width: 280px;"
                     :outlined="!selectedPermissions.includes(permission.id)"
                     @click.stop="switchPermission(permission.id)"
                   >

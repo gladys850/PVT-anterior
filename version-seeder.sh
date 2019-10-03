@@ -5,4 +5,6 @@ php artisan migrate
 
 # Seeders
 php artisan db:seed --class=UserPermissionSeeder
+php artisan db:seed --class=AffiliatePermissionSeeder
+php artisan db:seed --class=LoanReceiptSeeder
 php artisan db:seed --class=AdminSeeder

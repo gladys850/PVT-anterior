@@ -30,6 +30,6 @@ class AdminSeeder extends Seeder
     $role = Role::whereName('admin')->first();
     $user->roles()->sync($role);
     $permisions = Permission::get()->toArray();
-    $role->attachPermissions($permisions);
+    $role->syncPermissions($permisions);
   }
 }
