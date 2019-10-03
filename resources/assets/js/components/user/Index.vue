@@ -31,7 +31,7 @@
           clearable
         ></v-text-field>
       </v-flex>
-      <Fab :bus="bus"/>
+      <Fab v-if="['create-user', 'update-user'].some(i => $store.getters.permissions.includes(i))" :bus="bus"/>
     </v-toolbar>
     <List :bus="bus"/>
     <RemoveItem :bus="bus"/>

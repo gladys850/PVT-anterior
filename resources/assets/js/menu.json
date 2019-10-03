@@ -9,12 +9,12 @@
     "href": "affiliateIndex",
     "title": "Afiliados",
     "icon": "mdi-account",
-    "permission": null,
+    "permission": "show-affiliate",
     "params": {}
   }, {
     "title": "Acceso",
     "icon": "mdi-key",
-    "permission": null,
+    "permission": "show-user",
     "group": [
       {
         "href": "userIndex",
@@ -26,7 +26,7 @@
         "href": "roleIndex",
         "title": "Roles",
         "icon": "mdi-shield-lock-outline",
-        "permission": null,
+        "permission": "show-role",
         "params": {}
       }
     ]
@@ -34,7 +34,7 @@
     "href": "recordIndex",
     "title": "Actividad",
     "icon": "mdi-format-list-checkbox",
-    "permission": null,
+    "permission": "show-record",
     "params": {}
   }
 ]

@@ -19,8 +19,8 @@
           <v-icon v-else>mdi-account-circle</v-icon>
         </v-btn>
       </template>
-      <Add :bus="bus" @closeFab="fab = false"/>
-      <Sync :bus="bus" @closeFab="fab = false"/>
+      <Add v-if="$store.getters.permissions.includes('create-user')" :bus="bus" @closeFab="fab = false"/>
+      <Sync v-if="$store.getters.permissions.includes('update-user')" :bus="bus" @closeFab="fab = false"/>
     </v-speed-dial>
   </div>
 </template>

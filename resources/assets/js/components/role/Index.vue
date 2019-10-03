@@ -119,17 +119,19 @@ export default {
   methods: {
     async switchPermission(id) {
       try {
-        this.loading = true
-        if (this.selectedPermissions.includes(id)) {
-          this.selectedPermissions = this.selectedPermissions.filter(o => o != id)
-        } else {
-          this.selectedPermissions.push(id)
+        if (this.$store.getters.permissions.includes('update-role')) {
+          this.loading = true
+          if (this.selectedPermissions.includes(id)) {
+            this.selectedPermissions = this.selectedPermissions.filter(o => o != id)
+          } else {
+            this.selectedPermissions.push(id)
+          }
+          let res = await axios.post(`role/${this.selectedRole}/permission`, {
+            permissions: this.selectedPermissions
+          })
+          this.selectedPermissions = res.data
+          this.toast('Actualizado correctamente', 'success')
         }
-        let res = await axios.post(`role/${this.selectedRole}/permission`, {
-          permissions: this.selectedPermissions
-        })
-        this.selectedPermissions = res.data
-        this.toast('Actualizado correctamente', 'success')
       } catch (e) {
         console.log(e)
         this.selectedPermissions = this.selectedPermissions.filter(o => o != id)

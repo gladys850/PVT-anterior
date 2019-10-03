@@ -4,7 +4,7 @@ use Illuminate\Database\Seeder;
 use App\Module;
 use App\Role;
 
-class LoanReceiptSeeder extends Seeder
+class LoanReceiptRoleSeeder extends Seeder
 {
     /**
      * Run the database seeds.
