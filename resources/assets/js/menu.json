@@ -6,6 +6,12 @@
     "permission": null,
     "params": {}
   }, {
+    "href": "affiliateIndex",
+    "title": "Afiliados",
+    "icon": "mdi-account",
+    "permission": null,
+    "params": {}
+  }, {
     "title": "Acceso",
     "icon": "mdi-key",
     "permission": null,
@@ -20,12 +26,6 @@
         "href": "roleIndex",
         "title": "Roles",
         "icon": "mdi-shield-lock-outline",
-        "permission": null,
-        "params": {}
-      },{
-        "href": "affiliateIndex",
-        "title": "Afiliados",
-        "icon": "mdi-account",
         "permission": null,
         "params": {}
       }
