@@ -84,8 +84,8 @@ return [
     'mimetypes'      => 'El campo :attribute debe ser un archivo de tipo: :values.',
     'min'          => [
         'numeric' => 'El campo :attribute debe ser al menos :min.',
-        'file'  => 'El campo :attribute debe ser al menos :min kilobytes.',
-        'string'  => 'El campo :attribute debe ser al menos :min caracteres.',
+        'file'  => 'El campo :attribute debe ser de al menos :min kilobytes.',
+        'string'  => 'El campo :attribute debe ser de al menos :min caracteres.',
         'array'   => 'El campo :attribute debe tener al menos :min ítems.',
     ],
     'not_in'         => 'La selección :attribute es inválida.',
@@ -141,6 +141,17 @@ return [
     |
     */
     
-    'attributes' => [],
+    'attributes' => [
+        // User
+        'first_name' => 'Primer Nombre',
+        'last_name' => 'Apellido Paterno',
+        'username' => 'Usuario',
+        'password' => 'Contraseña',
+        'position' => 'Cargo',
+        'active' => 'Activo',
+        // Affiliate
+        'second_name' => 'Segundo Nombre',
+        'mothers_last_name' => 'Apellido Materno',
+    ],
     
 ];
