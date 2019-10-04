@@ -89,14 +89,14 @@
           :value="'tab-4'"
         >
           <v-card flat tile >
-            <v-card-text>{{ text3 }}</v-card-text>
+            <v-card-text><Spouse/></v-card-text>
           </v-card>
         </v-tab-item>
           <v-tab-item
           :value="'tab-5'"
         >
           <v-card flat tile >
-          <v-card-text> {{ text4 }} </v-card-text>
+          <v-card-text><Fingerprint/></v-card-text>
           </v-card>
         </v-tab-item>
       </v-tabs>
@@ -107,13 +107,17 @@
 import Breadcrumbs from '@/components/shared/Breadcrumbs'
 import Profile from '@/components/affiliate/Profile'
 import PoliceData from '@/components/affiliate/PoliceData'
+import Spouse from '@/components/affiliate/Spouse'
+import Fingerprint from '@/components/affiliate/Fingerprint'
 
 export default {
   name: "affiliate-index",
   components: {
     Breadcrumbs,
     Profile,
-    PoliceData
+    PoliceData,
+    Spouse,
+    Fingerprint
   },
   data () {
     return {
@@ -122,9 +126,6 @@ export default {
       },
       tab: null,
       text: 'hola',
-      text1: 'como ',
-      text2: 'estas',
-      text3: 'chau',
       text4: 'huella',
       icons: true,
       vertical: true,
