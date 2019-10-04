@@ -153,7 +153,7 @@ export default {
         })
       } else {
         breadcrumbs.push({
-          text: this.$options.filters.fullName(this.affiliate),
+          text: this.$options.filters.fullName(this.affiliate, true),
           to: { name: 'affiliateAdd', params: { id: this.affiliate.id } }
         })
       }
