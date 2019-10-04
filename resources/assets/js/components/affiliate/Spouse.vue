@@ -5,11 +5,11 @@
               <v-container class="py-0">
                 <v-row>
                   <v-col cols="12">
-                    <v-toolbar-title>DATOS PERSONALES</v-toolbar-title>
+                    <v-toolbar-title>INFORMACION CONYUGE</v-toolbar-title>
                   </v-col>
                     <v-col cols="12" md="6" >
                       <v-text-field
-                      v-model="affiliate.first_name"
+                      v-model="spouse.first_name"
                       class="purple-input"
                       label="Primer Nombre"
                       v-validate.initial="'required|min:1|max:250'"
@@ -19,7 +19,7 @@
                     </v-col>
                     <v-col cols="12" md="6" >
                       <v-text-field
-                      v-model="affiliate.second_name"
+                      v-model="spouse.second_name"
                       label="Segundo Nombre"
                       class="purple-input"
                       data-vv-name="segundo nombre"
@@ -27,7 +27,7 @@
                     </v-col>
                     <v-col cols="12" md="4" >
                       <v-text-field
-                      v-model="affiliate.last_name"
+                      v-model="spouse.last_name"
                       label="Primer Apellido"
                       class="purple-input"
                       v-validate.initial="'min:1|max:250'"
@@ -37,7 +37,7 @@
                     </v-col>
                     <v-col cols="12" md="4" >
                       <v-text-field
-                      v-model="affiliate.mothers_last_name"
+                      v-model="spouse.mothers_last_name"
                       label="Segundo Apellido"
                       class="purple-input"
                       v-validate.initial="'min:1|max:250'"
@@ -46,19 +46,18 @@
                       ></v-text-field>
                     </v-col>
                     <v-col cols="12" md="4" >
-                      <v-select
-                        data-vv-name="Genero"
-                        :items="gender"
-                        item-text="name"
-                        item-value="value"
-                        :loading="loading"
-                        label="Genero"
-                        v-model="affiliate.gender"
-                      ></v-select>
+                      <v-text-field
+                      v-model="spouse.surname_husband"
+                      label="Apellido Casada"
+                      class="purple-input"
+                      v-validate.initial="'min:1|max:250'"
+                      :error-messages="errors.collect('apellido casado')"
+                      data-vv-name="apellido casado"
+                      ></v-text-field>
                     </v-col>
                     <v-col cols="12" md="4" >
                       <v-text-field
-                        v-model="affiliate.identity_card"
+                        v-model="spouse.identity_card"
                         class="purple-input"
                         label="Cedula de Identidad"
                         v-validate.initial="'required|numeric|min:1|max:50'"
@@ -74,29 +73,18 @@
                         item-value="id"
                         :loading="loading"
                         label="Ciudad de Expedición"
-                        v-model="affiliate.city_identity_card_id"
+                        v-model="spouse.city_identity_card_id"
                       ></v-select>
                     </v-col>
                     <v-col cols="12" md="4">
-                      <v-menu
-                        v-model="menu"
-                        :close-on-content-click="false"
-                        :nudge-right="40"
-                        transition="scale-transition"
-                        offset-y
-                        min-width="290px"
-                      >
-                      <template v-slot:activator="{ on }">
-                        <v-text-field
-                          v-model="affiliate.due_date"
-                          label="Fecha Vencimiento CI"
-                          append-icon="mdi-calendar"
-                          readonly
-                          v-on="on"
-                        ></v-text-field>
-                        </template>
-                        <v-date-picker v-model="affiliate.due_date" @input="menu = false"></v-date-picker>
-                      </v-menu>
+                      <v-text-field
+                      v-model="spouse.death_certificate_number"
+                      label="Nro de Certificado de Defuncion "
+                      class="purple-input"
+                      v-validate.initial="'min:1|max:20'"
+                      :error-messages="errors.collect('celular')"
+                      data-vv-name="celular"
+                      ></v-text-field>
                     </v-col>
                     <v-col cols="12" md="4" >
                       <v-menu
@@ -109,14 +97,14 @@
                       >
                       <template v-slot:activator="{ on }">
                         <v-text-field
-                          v-model="affiliate.birth_date"
+                          v-model="spouse.birth_date"
                           label="Fecha Nacimiento"
                           append-icon="mdi-calendar"
                           readonly
                           v-on="on"
                         ></v-text-field>
                         </template>
-                        <v-date-picker v-model="affiliate.birth_date" @input="menu1 = false"></v-date-picker>
+                        <v-date-picker v-model="spouse.birth_date" @input="menu1 = false"></v-date-picker>
                       </v-menu>
                     </v-col>
                     <v-col cols="12" md="4" >
@@ -128,7 +116,7 @@
                         item-value="id"
                         name="nacimiento"
                         label="Lugar de Nacimiento"
-                        v-model="affiliate.city_birth_id"
+                        v-model="spouse.city_birth_id"
                       ></v-select>
                     </v-col>
                     <v-col cols="12" md="4" >
@@ -140,7 +128,7 @@
                         item-value="value"
                         label="Estado Civil"
                         name="estado_civil"
-                        v-model="affiliate.civil_status"
+                        v-model="spouse.civil_status"
                       ></v-select>
                     </v-col>
                     <v-col cols="12" md="6">
@@ -154,19 +142,19 @@
                       >
                       <template v-slot:activator="{ on }">
                         <v-text-field
-                          v-model="affiliate.date_death"
+                          v-model="spouse.date_death"
                           label="Fecha Fallesimiento"
                           append-icon="mdi-calendar"
                           readonly
                           v-on="on"
                         ></v-text-field>
                         </template>
-                        <v-date-picker v-model="affiliate.date_death" @input="menu2 = false"></v-date-picker>
+                        <v-date-picker v-model="spouse.date_death" @input="menu2 = false"></v-date-picker>
                       </v-menu>
                     </v-col>
                     <v-col cols="12" md="6">
                       <v-text-field
-                        v-model="affiliate.reason_death"
+                        v-model="spouse.reason_death"
                         label="Causa Fallecimiento"
                         class="purple-input"
                       ></v-text-field>
@@ -174,94 +162,58 @@
                 </v-row>
               </v-container>
         </v-col>
-          <v-col cols="12" md="5" >
-                <v-container class="py-0">
-                  <v-row>
-                    <v-col cols="12">
-                      <v-toolbar-title>TELÉFONOS</v-toolbar-title>
-                    </v-col>
-                    <v-col cols="12" md="4" >
-                      <v-text-field
-                        v-model="affiliate.phone_number"
-                        label="Telefono"
-                        v-validate.initial="'min:1|max:20'"
-                        :error-messages="errors.collect('telefono')"
-                        data-vv-name="telefono"
-                      ></v-text-field>
-                    </v-col>
-                    <v-col cols="12" md="4" >
-                      <v-text-field
-                        v-model="affiliate.cell_phone_number"
-                        label="Celular"
-                        class="purple-input"
-                        v-validate.initial="'min:1|max:20'"
-                        :error-messages="errors.collect('celular')"
-                        data-vv-name="celular"
-                      ></v-text-field>
-                    </v-col>
-                    <v-col cols="12" md="4" >
-                      <v-text-field
-                        v-model="affiliate.cell_phone_number"
-                        label="Celular"
-                        class="purple-input"
-                        v-validate.initial="'min:1|max:20'"
-                        :error-messages="errors.collect('celular')"
-                        data-vv-name="celular"
-                      ></v-text-field>
-                    </v-col>
-                      <v-col cols="12" md="6">
-                    <v-toolbar-title>DIRECCIÓN DOMICILARIA</v-toolbar-title>
-                  </v-col>
-                    <v-col cols="12" md="3">
-                    <v-btn
-                      fab
-                      dark
-                      x-small
-                      color="info"
-                      bottom
-                      left
-                      :to="{ name: 'affiliateAdd', params: { id:'new'} }"
-                    >
-                      <v-icon>mdi-plus</v-icon>
-                    </v-btn>
-                  </v-col>
-                    <v-col cols="12" md="4" >
-                      <v-select
-                        :items="city"
-                        name="ciudad"
-                        label="Ciudad"
-                        v-model="cityTypeSelected"
-                      ></v-select>
-                    </v-col>
-                    <v-col cols="12" md="4" >
-                      <v-text-field
-                        label="Zona"
-                        class="purple-input"
-                        v-validate.initial="'min:1|max:250'"
-                        :error-messages="errors.collect('zona')"
-                        data-vv-name="zona"
-                      ></v-text-field>
-                    </v-col>
-                    <v-col cols="12" md="4" >
-                      <v-text-field
-                        label="Calle"
-                        class="purple-input"
-                        v-validate.initial="'min:1|max:250'"
-                        :error-messages="errors.collect('calle')"
-                        data-vv-name="calle"
-                      ></v-text-field>
-                    </v-col>
-                    <v-col cols="12" md="4" >
-                      <v-text-field
-                        label="Nro"
-                        class="purple-input"
-                        v-validate.initial="'numeric|min:1|max:10000'"
-                        :error-messages="errors.collect('nro')"
-                        data-vv-name="nro"
-                      ></v-text-field>
-                    </v-col>
-                </v-row>
-              </v-container>
+        <v-col cols="12" md="5" class="v-card-profile" >
+        <v-col cols="12">
+            <v-toolbar-title>INFORMACION DE SERECI</v-toolbar-title>
+          </v-col>
+          <v-col cols="12"  >
+            <v-text-field
+              label="Oficialia"
+              class="purple-input"
+              v-validate.initial="'min:1|max:250'"
+              :error-messages="errors.collect('oficialia')"
+              data-vv-name="oficialia"
+            ></v-text-field>
+          </v-col>
+          <v-col cols="12" >
+            <v-text-field
+              label="Libro"
+              class="purple-input"
+              v-validate.initial="'min:1|max:250'"
+              :error-messages="errors.collect('libro')"
+              data-vv-name="libro"
+            ></v-text-field>
+          </v-col>
+          <v-col cols="12" >
+            <v-text-field
+              label="Partida"
+              class="purple-input"
+              v-validate.initial="'min:1|max:250'"
+              :error-messages="errors.collect('partida')"
+              data-vv-name="partida"
+            ></v-text-field>
+          </v-col>
+          <v-col cols="12"  >
+            <v-menu
+              v-model="menu3"
+              :close-on-content-click="false"
+              :nudge-right="40"
+              transition="scale-transition"
+              offset-y
+              min-width="290px"
+            >
+            <template v-slot:activator="{ on }">
+              <v-text-field
+                v-model="spouse.marriage_date"
+                label="Fecha Matrimonio"
+                append-icon="mdi-calendar"
+                readonly
+                v-on="on"
+              ></v-text-field>
+              </template>
+              <v-date-picker v-model="spouse.marriage_date" @input="menu3 = false"></v-date-picker>
+            </v-menu>
+          </v-col>
         </v-col>
       </v-row>
   </v-container>
@@ -269,9 +221,9 @@
 
 <script>
   export default {
-  name: "affiliate-profile",
+  name: "affiliate-spouse",
   data: () => ({
-  affiliate: {
+  spouse: {
     first_name: null,
     second_name:null,
     last_name: null,
@@ -300,18 +252,9 @@
         value:"D"
       }
     ],
-    gender: [
-      { name:"Femenino",
-        value:"F"
-      },
-      { name:"Masculino",
-        value:"M"
-      }
-    ],
     city: [],
-    cityTypeSelected: null,
       date: null,
-        menu: false,
+        menu3: false,
         menu1: false,
         menu2: false,
       }),

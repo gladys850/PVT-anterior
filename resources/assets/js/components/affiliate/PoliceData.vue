@@ -124,127 +124,34 @@
 </template>
 
 <script>
-import List from '@/components/affiliate/List'
   export default {
+  name: "affiliate-police-data",
   data: () => ({
-    fingerprintCapture: false,
-    fingerprintSaved: false,
-    fingerprintSucess: null,
     affiliate: {
-    first_name: null,
-    second_name:null,
-    last_name: null,
-    mothers_last_name:null,
-    identity_card:null,
-    birth_date:null,
-    date_death:null,
-    reason_death:null,
     date_entry:null,
-    phone_number:null,
-    cell_phone_number:null,
     service_years:null,
     service_months:null,
-    city_identity_card_id:null,
     date_derelict:null
     },
-    loading: true,
-    cities: [],
-    Genero: [
-      'Femenino',
-      'Masculino'
-    ],
-    gender: [
-      { name:"Femenino",
-        value:"F"
-      },
-      { name:"Masculino",
-        value:"M"
-      }
-    ],
     affiliateState: [],
     category: [],
     degree: [],
-    city: [],
     pension_entity: [],
-    cityTypeSelected: null,
-      date: null,
-        menu: false,
-        menu1: false,
-        modal: false,
-        menu2: false,
-        menu3: false,
-        menu4: false,
-        titulo:null
+    menu3: false,
+    menu4: false,
       }),
-  components: {
-  List,
-  },
-  watch: {
-    search: _.debounce(function () {
-      this.bus.$emit('search', this.search)
-    }, 1000),
-  },
-  destroyed() {
-    Echo.leave('fingerprint')
-  },
   beforeMount() {
     this.getCategory();
-    this.getCities();
     this.getDegree();
     this.getPensionEntity();
     this.getAffiliateState();
-    if (this.$route.params.id != 'new') {
-      Echo.channel('fingerprint').listen('.saved', (msg) => {
-        if (msg.data.affiliate_id == this.affiliate.id && msg.data.user_id == this.$store.getters.id) {
-          this.fingerprintCapture = false
-          this.fingerprintSaved = true
-          this.fingerprintSucess = JSON.parse(msg.data.success)
-        }
-      })
-    }
   },
   mounted() {
-    (this.$route.params.id=='new')?this.titulo='Nuevo Afiliado':this.titulo='Editar Afiliado'
     if (this.$route.params.id != 'new') {
       this.getAffiliate(this.$route.params.id)
     }
   },
   methods: {
-    async saveAffiliate() {
-    try {
-      if (await this.$validator.validateAll()) {
-        this.loading = true
-        if (this.$route.params.id != 'new') {
-          let res = await axios.patch(`affiliate/${this.affiliate.id}`, this.affiliate)
-          console.log(res.data)
-          this.$router.push({
-          name: "affiliateIndex"
-          });
-          this.toast('Afiliado modificado', 'success')
-        } else {
-          let res = await axios.post(`affiliate`, this.affiliate)
-          this.toast('Afiliado adicionado', 'success')
-          this.$router.push({
-          name: "affiliateIndex"
-          });console.log(res.data)
-        }
-      }
-    } catch (e) {
-      console.log(e)
-    } finally {
-      this.loading = false
-    }
-    },
-    async fingerprintCaptureStart() {
-      try {
-        this.fingerprintCapture = true
-        await axios.patch(`affiliate/${this.affiliate.id}/fingerprint`)
-      } catch (e) {
-        console.log(e)
-        this.toast('Error al comunicarse con el dispositivo de captura de huellas', 'error')
-        this.fingerprintCapture = false
-      }
-    },
     async getCategory() {
     try {
       this.loading = true
@@ -262,18 +169,6 @@ import List from '@/components/affiliate/List'
       this.loading = true
       let res = await axios.get(`affiliateState`);
       this.affiliateState = res.data;
-    } catch (e) {
-      this.dialog = false;
-      console.log(e);
-    }finally {
-        this.loading = false
-      }
-  },
-    async getCities() {
-    try {
-      this.loading = true
-      let res = await axios.get(`city`);
-      this.cities = res.data;
     } catch (e) {
       this.dialog = false;
       console.log(e);
