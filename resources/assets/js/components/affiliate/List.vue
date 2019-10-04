@@ -5,7 +5,7 @@
     :loading="loading"
     :options.sync="options"
     :server-items-length="totalAffiliates"
-    :footer-props="{ itemsPerPageOptions: [10, 20, 40] }"
+    :footer-props="{ itemsPerPageOptions: [8, 15, 30] }"
   >
     <template v-slot:item="props">
     <tr>
@@ -50,7 +50,7 @@ export default {
     search: '',
     options: {
       page: 1,
-      itemsPerPage: 10,
+      itemsPerPage: 8,
       sortBy: null,
       descending: false
     },

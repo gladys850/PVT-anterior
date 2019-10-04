@@ -1,5 +1,5 @@
 <template>
-  <div style="margin-right: -20px;" class="mt-3">
+  <div style="margin-right: -20px;" class="mt-4">
     <v-speed-dial
       v-model="fab"
       direction="left"
