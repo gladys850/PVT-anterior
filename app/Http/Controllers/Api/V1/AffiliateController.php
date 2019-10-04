@@ -43,8 +43,10 @@ class AffiliateController extends Controller
             }
         }
         if ($request->has('sortBy')) {
-            if ($request->sortBy != 'null') {
-                $affiliates = $affiliates->orderBy($request->sortBy, $request->input('direction') ?? 'asc');
+            if (count($request->sortBy) > 0 && count($request->sortDesc) > 0) {
+                foreach ($request->sortBy as $i => $sort) {
+                    $affiliates = $affiliates->orderBy($sort, filter_var($request->sortDesc[$i], FILTER_VALIDATE_BOOLEAN) ? 'desc' : 'asc');
+                }
             }
         }
         $affiliates = $affiliates->paginate($request->per_page ?? 10);

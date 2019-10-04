@@ -95,7 +95,7 @@ class Affiliate extends Model
       return $this->morphMany(Record::class, 'recordable');
     }
       //address
-    public function address()
+    public function addresses()
     {
       return $this->morphToMany(Address::class, 'addressable');
     }
