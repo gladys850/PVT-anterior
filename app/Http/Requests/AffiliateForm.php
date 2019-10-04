@@ -25,20 +25,23 @@ class AffiliateForm extends FormRequest
         $rules = [
             'first_name' => 'alpha_spaces|min:3',
             'last_name' => 'alpha_spaces|min:3',
-            'gender' => '',
-            'birth_date' => '',
+            'gender' => 'in:M,F',
+            'birth_date' => 'date_format:y/m/d',
+            'city_birth_id' => 'exists:cities,id',
+            'identity_card' => 'unique:affiliates|min:3',
+            'city_identity_card_id' => 'exists:cities,id',
             'phone_number'=>'integer|nullable',
             'cell_phone_number'=>'integer|nullable',
-            'city_birth_id' => '',
-            'pension_entity_id' => '',
-            'degree_id'=> '',
-            'affiliate_state_id'=>'',
-            'identity_card' => 'unique:affiliates',
-            'city_identity_card_id' => ''
+            'civil_status' => 'in:C,D,S,V',
+            'affiliate_state_id' => 'exists:affiliate_state,id',
+            'degree_id' => 'exists:degrees,id',
+            'pension_entity_id' => 'exists:pension_entities,id',
+
+
         ];
         switch ($this->method()) {
             case 'POST': {
-                foreach (array_slice($rules, 0, 12) as $key => $rule) {
+                foreach (array_slice($rules, 0, 7) as $key => $rule) {
                     $rules[$key] = implode('|', ['required', $rule]);
                 }
                 return $rules;
@@ -59,6 +62,10 @@ class AffiliateForm extends FormRequest
         if (array_key_exists('mothers_last_name', $input)) $input['mothers_last_name'] = mb_strtoupper($input['mothers_last_name']);
         if (array_key_exists('reason_death', $input)) $input['reason_death'] = mb_strtoupper($input['reason_death']);
         if (array_key_exists('identity_card', $input)) $input['identity_card'] = mb_strtoupper($input['identity_card']);
+        if (array_key_exists('surname_husband', $input)) $input['surname_husband'] = mb_strtoupper($input['surname_husband']);
+        if (array_key_exists('gender', $input)) $input['gender'] = mb_strtoupper($input['gender']);
+        if (array_key_exists('civil_status', $input)) $input['civil_status'] = mb_strtoupper($input['civil_status']);
+
         $this->replace($input);
     } 
 }
