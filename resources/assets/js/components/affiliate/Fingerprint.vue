@@ -15,15 +15,30 @@
       </v-col>
       <v-col cols="6">
         <v-row justify="center">
-          <v-btn
-            color="primary"
-            @click.stop="fingerprintCaptureStart()" v-if="affiliate.hasOwnProperty('id')"
-            :disabled="fingerprintSucess"
-          >
-            <v-icon left>mdi-fingerprint</v-icon>
-            <span v-if="fingerprintSucess">Huella capturada</span>
-            <span v-else>Capturar huella</span>
-          </v-btn>
+          <v-col cols="12">
+            <v-row justify="center">
+              <v-btn
+                color="primary"
+                @click.stop="fingerprintCaptureStart()" v-if="affiliate.hasOwnProperty('id')"
+                :disabled="fingerprintSucess"
+              >
+                <v-icon left>mdi-fingerprint</v-icon>
+                <span v-if="fingerprintSucess">Huella capturada</span>
+                <span v-else>Capturar huella</span>
+              </v-btn>
+            </v-row>
+          </v-col>
+          <v-row v-if="fingerprints.length > 0">
+            <template v-for="image in fingerprints">
+              <v-col cols="6" :key="image.name">
+                <v-img
+                  :src="`data:image/png;base64,${image.content}`"
+                  contain
+                  aspect-ratio="1.7"
+                ></v-img>
+              </v-col>
+            </template>
+          </v-row>
         </v-row>
       </v-col>
     </v-row>
@@ -84,9 +99,11 @@ export default {
     }
   },
   data: () => ({
+    loading: false,
     fingerprintCapture: false,
     fingerprintSaved: false,
-    fingerprintSucess: null
+    fingerprintSucess: null,
+    fingerprints: []
   }),
   destroyed() {
     Echo.leave('fingerprint')
@@ -97,10 +114,27 @@ export default {
         this.fingerprintCapture = false
         this.fingerprintSaved = true
         this.fingerprintSucess = JSON.parse(msg.data.success)
+        if (this.fingerprintSucess) {
+          this.getFingerprints()
+        }
       }
     })
   },
+  mounted() {
+    if (this.affiliate.fingerprint_saved) this.getFingerprints()
+  },
   methods: {
+    async getFingerprints() {
+      try {
+        this.loading = true
+        let res = await axios.get(`affiliate/${this.affiliate.id}/fingerprint_picture`)
+        this.fingerprints = res.data
+      } catch (e) {
+        console.log(e)
+      } finally {
+        this.loading = false
+      }
+    },
     async fingerprintCaptureStart() {
       try {
         this.fingerprintCapture = true
