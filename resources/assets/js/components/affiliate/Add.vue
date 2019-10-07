@@ -143,7 +143,7 @@ export default {
     }
   },
   mounted() {
-    if (this.$route.params.id != 'new') {
+    if (!isNew) {
       this.getAffiliate(this.$route.params.id)
     } else {
       this.setBreadcrumbs()
