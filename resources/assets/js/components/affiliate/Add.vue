@@ -96,7 +96,7 @@
           :value="'tab-5'"
         >
           <v-card flat tile >
-          <v-card-text><Fingerprint/></v-card-text>
+          <v-card-text><Fingerprint :affiliate.sync="affiliate"/></v-card-text>
           </v-card>
         </v-tab-item>
       </v-tabs>
