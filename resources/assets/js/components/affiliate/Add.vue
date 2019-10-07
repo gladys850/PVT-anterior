@@ -18,7 +18,7 @@
               absolute
               v-on="on"
               style="margin-right: -9px;"
-              :to="{ name: 'affiliateAdd', params: { id:'new'} }"
+              @click.stop="saveAffiliate()"
             >
               <v-icon>mdi-pencil</v-icon>
             </v-btn>
@@ -75,7 +75,7 @@
           :value="'tab-2'"
         >
           <v-card flat tile >
-            <v-card-text><Profile/></v-card-text>
+            <v-card-text><Profile :affiliate.sync="affiliate"/></v-card-text>
           </v-card>
         </v-tab-item>
           <v-tab-item
@@ -109,6 +109,7 @@ import Profile from '@/components/affiliate/Profile'
 import PoliceData from '@/components/affiliate/PoliceData'
 import Spouse from '@/components/affiliate/Spouse'
 import Fingerprint from '@/components/affiliate/Fingerprint'
+import { log } from 'util'
 
 export default {
   name: "affiliate-index",
@@ -121,8 +122,18 @@ export default {
   },
   data () {
     return {
-    affiliate:{
-      first_name:null
+      affiliate:{
+        first_name: null,
+        second_name:null,
+        last_name: null,
+        mothers_last_name:null,
+        identity_card:null,
+        birth_date:null,
+        date_death:null,
+        reason_death:null,
+        phone_number:null,
+        cell_phone_number:null,
+        city_identity_card_id:null,
       },
       tab: null,
       text: 'hola',
@@ -170,6 +181,15 @@ export default {
       console.log(e)
     } finally {
       this.loading = false
+    }
+  },
+  async saveAffiliate() {
+    try {
+      console.log(this.affiliate)
+      
+    } catch (e) {
+      console.log(e)
+      
     }
   }
 }

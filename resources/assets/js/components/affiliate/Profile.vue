@@ -270,20 +270,13 @@
 <script>
   export default {
   name: "affiliate-profile",
+  props: {
+    affiliate: {
+      type: Object,
+      required: true
+    }
+  },
   data: () => ({
-  affiliate: {
-    first_name: null,
-    second_name:null,
-    last_name: null,
-    mothers_last_name:null,
-    identity_card:null,
-    birth_date:null,
-    date_death:null,
-    reason_death:null,
-    phone_number:null,
-    cell_phone_number:null,
-    city_identity_card_id:null,
-    },
     loading: true,
     cities: [],
     civil: [
@@ -318,11 +311,6 @@
   beforeMount() {
     this.getCities();
   },
-  mounted() {
-    if (this.$route.params.id != 'new') {
-      this.getAffiliate(this.$route.params.id)
-    }
-  },
   methods: {
     async getCities() {
     try {
@@ -335,18 +323,7 @@
     }finally {
         this.loading = false
       }
-  },
-    async getAffiliate(id) {
-      try {
-        this.loading = true
-        let res = await axios.get(`affiliate/${id}`)
-        this.affiliate = res.data
-      } catch (e) {
-        console.log(e)
-      } finally {
-        this.loading = false
-      }
-    }
+  }
   }
   }
 </script>
