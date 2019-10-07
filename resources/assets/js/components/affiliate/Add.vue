@@ -12,18 +12,22 @@
               fab
               dark
               small
-              color="success"
+              :color="editable ? 'danger' : 'success'"
               bottom
               right
               absolute
               v-on="on"
               style="margin-right: -9px;"
-              :to="{ name: 'affiliateAdd', params: { id:'new'} }"
+              @click.stop="saveAffiliate()"
             >
-              <v-icon>mdi-pencil</v-icon>
+              <v-icon v-if="editable">mdi-check</v-icon>
+              <v-icon v-else>mdi-pencil</v-icon>
             </v-btn>
           </template>
-          <span>Activar edición</span>
+          <div>
+            <span v-if="editable">Guardar</span>
+            <span v-else>Editar</span>
+          </div>
         </v-tooltip>
       </v-toolbar>
     </v-card-title>
@@ -39,6 +43,7 @@
         <v-tabs-slider></v-tabs-slider>
 
         <v-tab
+          v-show="!isNew"
           :href="`#tab-1`"
         >
           <v-icon v-if="icons">mdi-trending-up</v-icon>
@@ -58,7 +63,8 @@
         >
           <v-icon v-if="icons">mdi-account-heart</v-icon>
         </v-tab>
-            <v-tab
+        <v-tab
+          v-show="!isNew"
           :href="`#tab-5`"
         >
           <v-icon v-if="icons">mdi-fingerprint</v-icon>
@@ -96,7 +102,7 @@
           :value="'tab-5'"
         >
           <v-card flat tile >
-          <v-card-text><Fingerprint :affiliate.sync="affiliate"/></v-card-text>
+          <v-card-text><Fingerprint :affiliate.sync="affiliate" :editable.sync="editable"/></v-card-text>
           </v-card>
         </v-tab-item>
       </v-tabs>
@@ -119,17 +125,21 @@ export default {
     Spouse,
     Fingerprint
   },
-  data () {
-    return {
+  data: () => ({
     affiliate:{
       first_name:null
-      },
-      tab: null,
-      text: 'hola',
-      text4: 'huella',
-      icons: true,
-      vertical: true,
-      tabs: 3
+    },
+    tab: null,
+    text: 'hola',
+    text4: 'huella',
+    icons: true,
+    vertical: true,
+    tabs: 3,
+    editable: false
+  }),
+  computed: {
+    isNew() {
+      return this.$route.params.id == 'new'
     }
   },
   mounted() {
@@ -140,6 +150,25 @@ export default {
     }
   },
   methods: {
+    async saveAffiliate() {
+      try {
+        if (!this.editable) {
+          this.editable = true
+        } else {
+          if (this.isNew) {
+            // New affiliate
+          } else {
+            // Edit affiliate
+          }
+          this.toast('Registro guardado correctamente', 'success')
+          this.editable = false
+        }
+      } catch (e) {
+        console.log(e)
+      } finally {
+        this.loading = false
+      }
+    },
     setBreadcrumbs() {
       let breadcrumbs = [
         {
@@ -147,7 +176,7 @@ export default {
           to: { name: 'affiliateIndex' }
         }
       ]
-      if (this.$route.params.id == 'new') {
+      if (this.isNew) {
         breadcrumbs.push({
           text: 'Nuevo Afiliado',
           to: { name: 'affiliateAdd', params: { id: 'new' } }

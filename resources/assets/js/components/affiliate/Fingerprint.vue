@@ -19,7 +19,7 @@
             <v-row justify="center">
               <v-btn
                 color="primary"
-                @click.stop="fingerprintCaptureStart()" v-if="affiliate.hasOwnProperty('id')"
+                @click.stop="fingerprintCaptureStart()" v-if="editable"
                 :disabled="fingerprintSucess"
               >
                 <v-icon left>mdi-fingerprint</v-icon>
@@ -34,10 +34,15 @@
                 <v-img
                   :src="`data:image/png;base64,${image.content}`"
                   contain
-                  aspect-ratio="1.7"
+                  aspect-ratio="1.8"
                 ></v-img>
               </v-col>
             </template>
+          </v-row>
+          <v-row v-else>
+            <v-col cols="12" class="text-center">
+              Sin registro de huellas
+            </v-col>
           </v-row>
         </v-row>
       </v-col>
@@ -95,6 +100,10 @@ export default {
   props: {
     affiliate: {
       type: Object,
+      required: true
+    },
+    editable: {
+      type: Boolean,
       required: true
     }
   },
