@@ -22,6 +22,8 @@ Route::group([
     Route::resource('category', 'Api\V1\CategoryController');
     // Fingerprint
     Route::get('affiliate/{id}/fingerprint', 'Api\V1\AffiliateController@fingerprint_saved');
+    Route::get('affiliate/{id}/fingerprint_picture', 'Api\V1\AffiliateController@FingerImageprint');
+    Route::get('affiliate/{id}/profile_picture', 'Api\V1\AffiliateController@PictureImageprint');
     // Record
     Route::resource('record', 'Api\V1\RecordController')->only(['index']);
 

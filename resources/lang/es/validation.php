@@ -152,6 +152,12 @@ return [
         // Affiliate
         'second_name' => 'Segundo Nombre',
         'mothers_last_name' => 'Apellido Materno',
+        'birth_date' =>'fecha de nacimiento',
+        'gender' => 'Genero',
+        'city_birth_id' => 'Ciudad de Nacimiento',
+        'city_identity_card_id' =>'Ciudad de expedición',
+        'identity_card' =>'Carnet de Identidad'
+
     ],
     
 ];
