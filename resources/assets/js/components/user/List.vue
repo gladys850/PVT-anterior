@@ -145,6 +145,7 @@ export default {
     },
     search: function(newVal, oldVal) {
       if (newVal != oldVal) {
+        this.options.page = 1
         this.getUsers()
       }
     },

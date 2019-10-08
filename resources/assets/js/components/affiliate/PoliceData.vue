@@ -17,6 +17,7 @@
                 v-model="affiliate.affiliate_state_id"
                 hint="Activo"
                 persistent-hint
+                :readonly="!editable"
               ></v-select>
             </v-col>
             <v-col cols="12" md="5" >
@@ -27,6 +28,7 @@
                 transition="scale-transition"
                 offset-y
                 min-width="290px"
+                :disabled="!editable"
               >
               <template v-slot:activator="{ on }">
                 <v-text-field
@@ -50,26 +52,27 @@
                 label="Categoria"
                 name="categoria"
                 v-model="affiliate.category_id"
+                :readonly="!editable"
               ></v-select>
             </v-col>
             <v-col cols="12" md="6">
               <v-text-field
                 v-model="affiliate.service_years"
                 label="Años de Servicio"
-                class="purple-input"
                 v-validate.initial="'numeric|min:1|max:100'"
                 :error-messages="errors.collect('nro')"
                 data-vv-name="nro"
+                :readonly="!editable"
               ></v-text-field>
             </v-col>
             <v-col cols="12" md="6" >
               <v-text-field
                 v-model="affiliate.service_months"
                 label="Meses de Servicio"
-                class="purple-input"
                 v-validate.initial="'numeric|min:1|max:100'"
                 :error-messages="errors.collect('nro')"
                 data-vv-name="nro"
+                :readonly="!editable"
               ></v-text-field>
             </v-col>
             <v-col cols="12" md="6" >
@@ -82,6 +85,7 @@
                 label="Grado"
                 name="Grado"
                 v-model="affiliate.degree_id"
+                :readonly="!editable"
                 ></v-select>
               </v-col>
             <v-col cols="12" >
@@ -94,6 +98,7 @@
                 label="Ente Gestor"
                 name="Grado"
                 v-model="affiliate.pension_entity_id"
+                :readonly="!editable"
             ></v-select>
             </v-col>
             <v-col cols="12">
@@ -104,6 +109,7 @@
                 transition="scale-transition"
                 offset-y
                 min-width="290px"
+                :disabled="!editable"
               >
               <template v-slot:activator="{ on }">
                 <v-text-field
@@ -127,19 +133,23 @@
   export default {
   name: "affiliate-police-data",
   props: {
-    affiliate: {
-      type: Object,
+    editable: {
+      type: Boolean,
       required: true
     }
   },
   data: () => ({
-    affiliateState: [],
-    category: [],
-    degree: [],
-    pension_entity: [],
-    menu3: false,
-    menu4: false,
-      }),
+    affiliate: {
+      type: Object,
+      required: true,
+      affiliateState: [],
+      category: [],
+      degree: [],
+      pension_entity: [],
+      menu3: false,
+      menu4: false
+      }
+  }),
   beforeMount() {
     this.getCategory();
     this.getDegree();
