@@ -11,7 +11,8 @@
               color="primary"
               v-if="editable"
             >
-              Adicionar Foto
+              <v-icon left>mdi-camera</v-icon>
+              <span>Adicionar Foto</span>
             </v-btn>
             <v-row v-if="profilePictures.length > 0">
               <template v-for="image in profilePictures">
