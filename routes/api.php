@@ -9,6 +9,8 @@ Route::group([
     Route::resource('date', 'Api\V1\DateController')->only(['index']);
     // Affiliate
     Route::resource('affiliate', 'Api\V1\AffiliateController')->only(['show']);
+    //Spouse
+    Route::resource('spouse', 'Api\V1\SpouseController');
     // City
     Route::resource('city', 'Api\V1\CityController')->only(['index']);
     // state
