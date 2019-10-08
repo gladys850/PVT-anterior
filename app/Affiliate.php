@@ -102,5 +102,10 @@ class Affiliate extends Model
     {
       return $this->morphToMany(Address::class, 'addressable');
     }
+    //spouses
+    public function spouse()
+    {
+      return $this->hasMany(Spouse::class);
+    }
 
 }
