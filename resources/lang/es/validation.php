@@ -18,6 +18,8 @@ return [
     'after'        => 'El campo :attribute debe ser una fecha posterior a la fecha :date.',
     'after_or_equal'     => 'El campo :attribute debe ser una fecha posterior o igual a la fecha :date.',
     'alpha'        => 'El campo :attribute solo puede contener letras.',
+    'alpha_spaces'        => 'El campo :attribute solo puede contener letras y espacios.',
+
     'alpha_dash'       => 'El campo :attribute solo puede contener letras, números, y guiones.',
     'alpha_num'      => 'El campo :attribute solo puede contener letras y números.',
     'array'        => 'El campo :attribute debe ser una lista.',
@@ -156,8 +158,20 @@ return [
         'gender' => 'Genero',
         'city_birth_id' => 'Ciudad de Nacimiento',
         'city_identity_card_id' =>'Ciudad de expedición',
-        'identity_card' =>'Carnet de Identidad'
-
+        'identity_card' =>'Carnet de Identidad',
+        'pension_entity_id'=>'Entidad de pensiones',
+        'affiliate_state_id' =>'Estado de Afiliado',
+        'degree_id' => 'Grado',
+        'date_death' => 'Fecha de fallecimiento',
+        'date_entry' => 'Fecha de Ingreso',
+        'date_derelict' => 'Fecha de culminacion',
+        'change_date' => 'Fecha de cambio',
+        //Spouse
+        'affiliate_id' =>'Afiliado',
+        'civil_status' =>'Estado Civil',
+        'marriage_date' =>'Fecha de casamiento',
+        'death_certificate_number' =>'Número de certificado de defunción',
+        'due_date' => 'Fecha de Vencimiento'
     ],
     
 ];
