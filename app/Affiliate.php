@@ -49,7 +49,8 @@ class Affiliate extends Model
 
     public function getPictureSavedAttribute()
     {
-        return Storage::disk('ftp')->exists($this->id.'_perfil.png');
+        $base_path = 'picture/';
+        return Storage::disk('ftp')->exists($base_path . $this->id . '_perfil.jpg');
     }
 
     public function getFingerprintSavedAttribute()
