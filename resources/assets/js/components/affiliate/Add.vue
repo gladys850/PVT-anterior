@@ -88,7 +88,7 @@
           :value="'tab-3'"
         >
           <v-card flat tile >
-            <v-card-text><PoliceData/></v-card-text>
+            <v-card-text><PoliceData :affiliate.sync="affiliate"/></v-card-text>
           </v-card>
         </v-tab-item>
           <v-tab-item
@@ -138,7 +138,11 @@ export default {
       reason_death:null,
       phone_number:null,
       cell_phone_number:null,
-      city_identity_card_id:null
+      city_identity_card_id:null,
+      date_entry:null,
+      service_years:null,
+      service_months:null,
+      date_derelict:null
     },
     tab: null,
     text: 'hola',
@@ -214,13 +218,29 @@ export default {
   },
   async saveAffiliate() {
     try {
-      console.log(this.affiliate)
-      
+      if (await this.$validator.validateAll()) {
+        this.loading = true
+        if (this.$route.params.id != 'new') {
+          let res = await axios.patch(`affiliate/${this.affiliate.id}`, this.affiliate)
+          console.log(res.data)
+          this.$router.push({
+          name: "affiliateIndex"
+          });
+          this.toast('Afiliado modificado', 'success')
+        } else {
+          let res = await axios.post(`affiliate`, this.affiliate)
+          this.toast('Afiliado adicionado', 'success')
+          this.$router.push({
+          name: "affiliateIndex"
+          });console.log(res.data)
+        }
+      }
     } catch (e) {
       console.log(e)
-      
+    } finally {
+      this.loading = false
     }
-  }
+    }
 }
 }
 </script>

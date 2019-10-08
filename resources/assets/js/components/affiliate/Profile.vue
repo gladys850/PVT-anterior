@@ -155,7 +155,7 @@
                       <template v-slot:activator="{ on }">
                         <v-text-field
                           v-model="affiliate.date_death"
-                          label="Fecha Fallesimiento"
+                          label="Fecha Fallecimiento"
                           append-icon="mdi-calendar"
                           readonly
                           v-on="on"
@@ -212,54 +212,53 @@
                       <v-col cols="12" md="6">
                     <v-toolbar-title>DIRECCIÓN DOMICILARIA</v-toolbar-title>
                   </v-col>
-                    <v-col cols="12" md="3">
+                  <v-col cols="12" md="3">
+                    <template>
                     <v-btn
                       fab
                       dark
                       x-small
+                      v-on="on"
                       color="info"
-                      bottom
-                      left
-                      :to="{ name: 'affiliateAdd', params: { id:'new'} }"
+                      @click.stop="dialog = true"
                     >
                       <v-icon>mdi-plus</v-icon>
                     </v-btn>
+                    </template>
+                  <v-dialog
+                    v-model="dialog"
+                    width="500"
+                  >
+                  <v-card>
+                    <v-toolbar dense flat color="tertiary">
+                      <v-toolbar-title>Añadir Dirección</v-toolbar-title>
+                      <v-spacer></v-spacer>
+                      <v-btn icon @click.stop="close()">
+                        <v-icon>mdi-close</v-icon>
+                      </v-btn>
+                    </v-toolbar>
+                    <v-card-title></v-card-title>
+                    <v-card-text>
+                      <AddStreet/>
+                    </v-card-text>
+                    <v-card-actions>
+                      <v-spacer></v-spacer>
+                      <v-btn
+                        color="error"
+                        :disabled="errors.any()"
+                      >Añadir</v-btn>
+                    </v-card-actions>
+                  </v-card>
+                  </v-dialog>
                   </v-col>
-                    <v-col cols="12" md="4" >
-                      <v-select
-                        :items="city"
-                        name="ciudad"
-                        label="Ciudad"
-                        v-model="cityTypeSelected"
-                      ></v-select>
-                    </v-col>
-                    <v-col cols="12" md="4" >
-                      <v-text-field
-                        label="Zona"
-                        class="purple-input"
-                        v-validate.initial="'min:1|max:250'"
-                        :error-messages="errors.collect('zona')"
-                        data-vv-name="zona"
-                      ></v-text-field>
-                    </v-col>
-                    <v-col cols="12" md="4" >
-                      <v-text-field
-                        label="Calle"
-                        class="purple-input"
-                        v-validate.initial="'min:1|max:250'"
-                        :error-messages="errors.collect('calle')"
-                        data-vv-name="calle"
-                      ></v-text-field>
-                    </v-col>
-                    <v-col cols="12" md="4" >
-                      <v-text-field
-                        label="Nro"
-                        class="purple-input"
-                        v-validate.initial="'numeric|min:1|max:10000'"
-                        :error-messages="errors.collect('nro')"
-                        data-vv-name="nro"
-                      ></v-text-field>
-                    </v-col>
+                  <v-col cols="12">
+                  <v-data-table
+                      :headers="headers"
+                      :items="desserts"
+                      hide-default-footer
+                      class="elevation-1"
+                  ></v-data-table>
+                  </v-col>
                 </v-row>
               </v-container>
         </v-col>
@@ -268,6 +267,7 @@
 </template>
 
 <script>
+import AddStreet from '@/components/affiliate/AddStreet'
   export default {
   name: "affiliate-profile",
   props: {
@@ -276,9 +276,39 @@
       required: true
     }
   },
+  components: {
+    AddStreet
+  },
   data: () => ({
     loading: true,
+    dialog: false,
     cities: [],
+    headers: [
+          { text: 'Ciudad', align: 'left', value: 'city_address_id' },
+          { text: 'Zona', align: 'left', value: 'zone' },
+          { text: 'Calle', align: 'left', value: 'street' },
+          { text: 'Nro', align: 'left', value: 'number_address' }
+        ],
+        desserts: [
+          {
+            city_address_id: 'La Paz',
+            zone: 'Cristal I',
+            street: 'Olmos',
+            number_address: 24,
+          },
+          {
+            city_address_id: 'La Paz',
+            zone: 'Anexo 16 de Julio I',
+            street: 'Olmos',
+            number_address: 2364,
+          },
+          {
+            city_address_id: 'La Paz',
+            zone: 'Alto Lima I',
+            street: 'Olmos',
+            number_address: 224,
+          },
+        ],
     civil: [
       { name:"Soltero",
         value:"S"
@@ -312,6 +342,10 @@
     this.getCities();
   },
   methods: {
+    close() {
+      this.dialog = false
+      this.$emit('closeFab')
+    },
     async getCities() {
     try {
       this.loading = true
