@@ -19,7 +19,7 @@
               v-on="on"
               style="margin-right: 45px;"
               @click.stop="resetForm()"
-              v-if="!isNew && editable"
+              v-show="!isNew && editable"
             >
               <v-icon>mdi-close</v-icon>
             </v-btn>
@@ -104,7 +104,7 @@
           :value="'tab-2'"
         >
           <v-card flat tile >
-            <v-card-text><Profile/></v-card-text>
+            <v-card-text><Profile :editable.sync="editable"/></v-card-text>
           </v-card>
         </v-tab-item>
           <v-tab-item
