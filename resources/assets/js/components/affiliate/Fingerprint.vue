@@ -1,46 +1,63 @@
 <template>
   <v-container fluid >
     <v-row>
-      <v-col cols="12">
-        <v-row justify="center">
-          <v-toolbar-title>INFORMACIÓN BIOMÉTRICA</v-toolbar-title>
-        </v-row>
+      <v-col cols="12" class="text-center">
+        <v-toolbar-title>INFORMACIÓN BIOMÉTRICA</v-toolbar-title>
       </v-col>
-      <v-col cols="6">
-        <v-row justify="center">
-          <v-btn type="file" color="primary">
-            Adicionar Foto
-          </v-btn>
-        </v-row>
-      </v-col>
-      <v-col cols="6">
+      <v-col cols="6" class="text-center">
         <v-row justify="center">
           <v-col cols="12">
-            <v-row justify="center">
-              <v-btn
-                color="primary"
-                @click.stop="fingerprintCaptureStart()" v-if="editable"
-                :disabled="fingerprintSucess"
-              >
-                <v-icon left>mdi-fingerprint</v-icon>
-                <span v-if="fingerprintSucess">Huella capturada</span>
-                <span v-else>Capturar huella</span>
-              </v-btn>
+            <v-btn
+              color="primary"
+              v-if="editable"
+            >
+              Adicionar Foto
+            </v-btn>
+            <v-row v-if="profilePictures.length > 0">
+              <template v-for="image in profilePictures">
+                <v-col cols="12" :key="image.name">
+                  <v-avatar
+                    slot="offset"
+                    class="mx-auto d-block elevation-10"
+                    size="250"
+                  >
+                    <img :src="`data:${image.format};base64,${image.content}`">
+                  </v-avatar>
+                </v-col>
+              </template>
             </v-row>
+            <v-col cols="12" v-else>
+              Sin fotografía de perfil
+            </v-col>
+          </v-col>
+        </v-row>
+      </v-col>
+      <v-col cols="6" class="text-center">
+        <v-row justify="center">
+          <v-col cols="12">
+            <v-btn
+              color="primary"
+              @click.stop="fingerprintCaptureStart()" v-if="editable"
+              :disabled="fingerprintSucess"
+            >
+              <v-icon left>mdi-fingerprint</v-icon>
+              <span v-if="fingerprintSucess">Huella capturada</span>
+              <span v-else>Capturar huella</span>
+            </v-btn>
           </v-col>
           <v-row v-if="fingerprints.length > 0">
             <template v-for="image in fingerprints">
-              <v-col cols="6" :key="image.name">
+              <v-col cols="4" :key="image.name">
                 <v-img
-                  :src="`data:image/png;base64,${image.content}`"
+                  :src="`data:${image.format};base64,${image.content}`"
                   contain
-                  aspect-ratio="1.8"
+                  aspect-ratio="1"
                 ></v-img>
               </v-col>
             </template>
           </v-row>
           <v-row v-else>
-            <v-col cols="12" class="text-center">
+            <v-col cols="12">
               Sin registro de huellas
             </v-col>
           </v-row>
@@ -112,7 +129,8 @@ export default {
     fingerprintCapture: false,
     fingerprintSaved: false,
     fingerprintSucess: null,
-    fingerprints: []
+    fingerprints: [],
+    profilePictures: []
   }),
   destroyed() {
     Echo.leave('fingerprint')
@@ -131,8 +149,20 @@ export default {
   },
   mounted() {
     if (this.affiliate.fingerprint_saved) this.getFingerprints()
+    if (this.affiliate.picture_saved) this.getProfilePictures()
   },
   methods: {
+    async getProfilePictures() {
+      try {
+        this.loading = true
+        let res = await axios.get(`affiliate/${this.affiliate.id}/profile_picture`)
+        this.profilePictures = res.data
+      } catch (e) {
+        console.log(e)
+      } finally {
+        this.loading = false
+      }
+    },
     async getFingerprints() {
       try {
         this.loading = true

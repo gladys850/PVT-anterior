@@ -141,15 +141,19 @@ class AffiliateController extends Controller
     }
     public function PictureImageprint(Request $request, $id)
     {
-      return response()->json([
-        'files' => [
-          [
-            'name' => $id.'_perfil.png',
-            'content' => base64_encode(Storage::disk('ftp')->get($id.'_perfil.png')),
-            'format' => Storage::disk('ftp')->mimeType($id.'_perfil.png')
-          ]
-        ]
-          ],404);
+        $files = [];
+        $base_path = 'picture/';
+        $fingerprint_files = ['_perfil.jpg'];
+        foreach ($fingerprint_files as $file) {
+            if (Storage::disk('ftp')->exists($base_path . $id . $file)) {
+                array_push($files, [
+                    'name' => $id . $file,
+                    'content' => base64_encode(Storage::disk('ftp')->get($base_path . $id . $file)),
+                    'format' => Storage::disk('ftp')->mimeType($base_path . $id . $file)
+                ]);
+            }
+        }
+        return $files;
     }
 
     public function FingerImageprint($id)
