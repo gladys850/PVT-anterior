@@ -7,6 +7,8 @@ Route::group([
     // Login
     Route::resource('auth', 'Api\V1\AuthController')->only(['store']);
     Route::resource('date', 'Api\V1\DateController')->only(['index']);
+    //webcam
+    Route::patch('picture/{id}', 'Api\V1\AffiliateController@picture_save');
     // Affiliate
     Route::resource('affiliate', 'Api\V1\AffiliateController')->only(['show']);
     // spouse - affiliate
