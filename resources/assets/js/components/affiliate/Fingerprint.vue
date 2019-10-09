@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid >
+  <v-container fluid>
     <v-row>
       <v-col cols="12" class="text-center">
         <v-toolbar-title>INFORMACIÓN BIOMÉTRICA</v-toolbar-title>
@@ -7,13 +7,11 @@
       <v-col cols="6" class="text-center">
         <v-row justify="center">
           <v-col cols="12">
-            <v-btn
-              color="primary"
-              v-if="editable"
-            >
-              <v-icon left>mdi-camera</v-icon>
-              <span>Adicionar Foto</span>
-            </v-btn>
+            <v-card-text @click="dialog=true" class="text-center">
+              <v-btn type="file" color="primary">
+                  Adicionar Foto
+              </v-btn>
+            </v-card-text>
             <v-row v-if="profilePictures.length > 0">
               <template v-for="image in profilePictures">
                 <v-col cols="12" :key="image.name">
@@ -99,20 +97,29 @@
           </div>
         </v-alert>
         <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn
+         <v-btn
             color="primary"
             @click.stop="fingerprintSaved = false"
           >
-            Cerrar
-          </v-btn>
+            X
+          </v-btn>          
         </v-card-actions>
       </v-card>
+    </v-dialog>
+    <v-dialog v-model="dialog" persistent max-width="1000">
+      <v-card>
+        <v-divider></v-divider>
+        <camara></camara>
+        <v-card-actions>
+        <v-btn color="error" @click="dialog=false">CERRAR</v-btn>
+        </v-card-actions>
+        </v-card>
     </v-dialog>
   </v-container>
 </template>
 
 <script>
+import Cam from '@/components/affiliate/Webcam'
 export default {
   name: 'affiliate-fingerprint',
   props: {
@@ -126,6 +133,8 @@ export default {
     }
   },
   data: () => ({
+    dialog:false,
+    cam: null,
     loading: false,
     fingerprintCapture: false,
     fingerprintSaved: false,
@@ -133,6 +142,9 @@ export default {
     fingerprints: [],
     profilePictures: []
   }),
+  components: {
+    'camara': Cam
+    },
   destroyed() {
     Echo.leave('fingerprint')
   },
