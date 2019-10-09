@@ -26,18 +26,22 @@ class AffiliateForm extends FormRequest
             'first_name' => 'alpha_spaces|min:3',
             'last_name' => 'alpha_spaces|min:3',
             'gender' => 'in:M,F',
-            'birth_date' => 'date_format:y/m/d',
+            'birth_date' => 'date_format:"Y-m-d"',
             'city_birth_id' => 'exists:cities,id',
             'identity_card' => 'unique:affiliates|min:3',
             'city_identity_card_id' => 'exists:cities,id',
-            'phone_number'=>'integer|nullable',
-            'cell_phone_number'=>'integer|nullable',
             'civil_status' => 'in:C,D,S,V',
-            'affiliate_state_id' => 'exists:affiliate_state,id',
+            'affiliate_state_id' => 'exists:affiliate_states,id',
             'degree_id' => 'exists:degrees,id',
             'pension_entity_id' => 'exists:pension_entities,id',
-
-
+            'mothers_last_name' =>'alpha_spaces|min:3',
+            'second_name' =>'alpha_spaces|min:3',
+            'date_death' => 'date_format:"Y-m-d"',
+            'date_entry' => 'date_format:"Y-m-d"',
+            'date_derelict' => 'date_format:"Y-m-d"',
+            'change_date' => 'date_format:"Y-m-d"',
+            'due_date' => 'date_format:"Y-m-d"'
+           
         ];
         switch ($this->method()) {
             case 'POST': {
