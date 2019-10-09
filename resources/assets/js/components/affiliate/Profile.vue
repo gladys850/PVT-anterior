@@ -10,39 +10,39 @@
                     <v-col cols="12" md="6" >
                       <v-text-field
                       v-model="affiliate.first_name"
-                      class="purple-input"
                       label="Primer Nombre"
                       v-validate.initial="'required|min:1|max:250'"
                       :error-messages="errors.collect('primer nombre')"
                       data-vv-name="primer nombre"
+                      :readonly="!editable"
                       ></v-text-field>
                     </v-col>
                     <v-col cols="12" md="6" >
                       <v-text-field
                       v-model="affiliate.second_name"
                       label="Segundo Nombre"
-                      class="purple-input"
                       data-vv-name="segundo nombre"
+                      :readonly="!editable"
                       ></v-text-field>
                     </v-col>
                     <v-col cols="12" md="4" >
                       <v-text-field
                       v-model="affiliate.last_name"
                       label="Primer Apellido"
-                      class="purple-input"
                       v-validate.initial="'min:1|max:250'"
                       :error-messages="errors.collect('primer apellido')"
                       data-vv-name="primer apellido"
+                      :readonly="!editable"
                       ></v-text-field>
                     </v-col>
                     <v-col cols="12" md="4" >
                       <v-text-field
                       v-model="affiliate.mothers_last_name"
                       label="Segundo Apellido"
-                      class="purple-input"
                       v-validate.initial="'min:1|max:250'"
                       :error-messages="errors.collect('segundo apellido')"
                       data-vv-name="segundo apellido"
+                      :readonly="!editable"
                       ></v-text-field>
                     </v-col>
                     <v-col cols="12" md="4" >
@@ -54,16 +54,17 @@
                         :loading="loading"
                         label="Genero"
                         v-model="affiliate.gender"
+                        :readonly="!editable"
                       ></v-select>
                     </v-col>
                     <v-col cols="12" md="4" >
                       <v-text-field
                         v-model="affiliate.identity_card"
-                        class="purple-input"
                         label="Cedula de Identidad"
                         v-validate.initial="'required|numeric|min:1|max:50'"
                         :error-messages="errors.collect('cedula identidad')"
                         data-vv-name="cedula identidad"
+                        :readonly="!editable"
                       ></v-text-field>
                     </v-col>
                     <v-col cols="12" md="4" >
@@ -75,6 +76,7 @@
                         :loading="loading"
                         label="Ciudad de Expedición"
                         v-model="affiliate.city_identity_card_id"
+                        :readonly="!editable"
                       ></v-select>
                     </v-col>
                     <v-col cols="12" md="4">
@@ -85,6 +87,7 @@
                         transition="scale-transition"
                         offset-y
                         min-width="290px"
+                        :disabled="!editable"
                       >
                       <template v-slot:activator="{ on }">
                         <v-text-field
@@ -106,6 +109,7 @@
                         transition="scale-transition"
                         offset-y
                         min-width="290px"
+                        :disabled="!editable"
                       >
                       <template v-slot:activator="{ on }">
                         <v-text-field
@@ -129,6 +133,7 @@
                         name="nacimiento"
                         label="Lugar de Nacimiento"
                         v-model="affiliate.city_birth_id"
+                        :readonly="!editable"
                       ></v-select>
                     </v-col>
                     <v-col cols="12" md="4" >
@@ -141,6 +146,7 @@
                         label="Estado Civil"
                         name="estado_civil"
                         v-model="affiliate.civil_status"
+                        :readonly="!editable"
                       ></v-select>
                     </v-col>
                     <v-col cols="12" md="6">
@@ -151,6 +157,7 @@
                         transition="scale-transition"
                         offset-y
                         min-width="290px"
+                        :disabled="!editable"
                       >
                       <template v-slot:activator="{ on }">
                         <v-text-field
@@ -168,7 +175,7 @@
                       <v-text-field
                         v-model="affiliate.reason_death"
                         label="Causa Fallecimiento"
-                        class="purple-input"
+                        :readonly="!editable"
                       ></v-text-field>
                     </v-col>
                 </v-row>
@@ -187,26 +194,27 @@
                         v-validate.initial="'min:1|max:20'"
                         :error-messages="errors.collect('telefono')"
                         data-vv-name="telefono"
+                        :readonly="!editable"
                       ></v-text-field>
                     </v-col>
                     <v-col cols="12" md="4" >
                       <v-text-field
                         v-model="affiliate.cell_phone_number"
                         label="Celular"
-                        class="purple-input"
                         v-validate.initial="'min:1|max:20'"
                         :error-messages="errors.collect('celular')"
                         data-vv-name="celular"
+                        :readonly="!editable"
                       ></v-text-field>
                     </v-col>
                     <v-col cols="12" md="4" >
                       <v-text-field
                         v-model="affiliate.cell_phone_number"
                         label="Celular"
-                        class="purple-input"
                         v-validate.initial="'min:1|max:20'"
                         :error-messages="errors.collect('celular')"
                         data-vv-name="celular"
+                        :readonly="!editable"
                       ></v-text-field>
                     </v-col>
                       <v-col cols="12" md="6">
@@ -231,33 +239,34 @@
                         name="ciudad"
                         label="Ciudad"
                         v-model="cityTypeSelected"
+                        :readonly="!editable"
                       ></v-select>
                     </v-col>
                     <v-col cols="12" md="4" >
                       <v-text-field
                         label="Zona"
-                        class="purple-input"
                         v-validate.initial="'min:1|max:250'"
                         :error-messages="errors.collect('zona')"
                         data-vv-name="zona"
+                        :readonly="!editable"
                       ></v-text-field>
                     </v-col>
                     <v-col cols="12" md="4" >
                       <v-text-field
                         label="Calle"
-                        class="purple-input"
                         v-validate.initial="'min:1|max:250'"
                         :error-messages="errors.collect('calle')"
                         data-vv-name="calle"
+                        :readonly="!editable"
                       ></v-text-field>
                     </v-col>
                     <v-col cols="12" md="4" >
                       <v-text-field
                         label="Nro"
-                        class="purple-input"
                         v-validate.initial="'numeric|min:1|max:10000'"
                         :error-messages="errors.collect('nro')"
                         data-vv-name="nro"
+                        :readonly="!editable"
                       ></v-text-field>
                     </v-col>
                 </v-row>
@@ -270,6 +279,12 @@
 <script>
   export default {
   name: "affiliate-profile",
+  props: {
+    editable: {
+      type: Boolean,
+      required: true
+    }
+  },
   data: () => ({
   affiliate: {
     first_name: null,

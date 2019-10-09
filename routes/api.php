@@ -11,6 +11,8 @@ Route::group([
     Route::patch('picture/{id}', 'Api\V1\AffiliateController@picture_save');
     // Affiliate
     Route::resource('affiliate', 'Api\V1\AffiliateController')->only(['show']);
+    //Spouse
+    Route::resource('spouse', 'Api\V1\SpouseController');
     // City
     Route::resource('city', 'Api\V1\CityController')->only(['index']);
     // state
