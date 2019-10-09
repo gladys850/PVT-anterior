@@ -80,7 +80,6 @@
                       ></v-select>
                     </v-col>
                     <v-col cols="12" md="4">
-
                       <v-menu
                         v-model="dates.dueDate.show"
                         :close-on-content-click="false"
@@ -88,6 +87,7 @@
                         offset-y
                         max-width="290px"
                         min-width="290px"
+                        :disabled="!editable"
                       >
                         <template v-slot:activator="{ on }">
                           <v-text-field
@@ -96,55 +96,35 @@
                             hint="Día/Mes/Año"
                             persistent-hint
                             append-icon="mdi-calendar"
-                            @blur="parseDate(dates.dueDate.formatted, 'due_date')"
+                            readonly
                             v-on="on"
                           ></v-text-field>
                         </template>
                         <v-date-picker v-model="affiliate.due_date" no-title @input="dates.dueDate.show = false"></v-date-picker>
                       </v-menu>
-
-
-                      <v-menu
-                        v-model="menu"
-                        :close-on-content-click="false"
-                        :nudge-right="40"
-                        transition="scale-transition"
-                        offset-y
-                        min-width="290px"
-                        :disabled="!editable"
-                      >
-                      <template v-slot:activator="{ on }">
-                        <v-text-field
-                          v-model="affiliate.due_date"
-                          label="Fecha Vencimiento CI"
-                          append-icon="mdi-calendar"
-                          readonly
-                          v-on="on"
-                        ></v-text-field>
-                        </template>
-                        <v-date-picker v-model="affiliate.due_date" @input="menu = false"></v-date-picker>
-                      </v-menu>
                     </v-col>
                     <v-col cols="12" md="4" >
                       <v-menu
-                        v-model="menu1"
+                        v-model="dates.birthDate.show"
                         :close-on-content-click="false"
-                        :nudge-right="40"
                         transition="scale-transition"
                         offset-y
+                        max-width="290px"
                         min-width="290px"
                         :disabled="!editable"
                       >
-                      <template v-slot:activator="{ on }">
-                        <v-text-field
-                          v-model="affiliate.birth_date"
-                          label="Fecha Nacimiento"
-                          append-icon="mdi-calendar"
-                          readonly
-                          v-on="on"
-                        ></v-text-field>
+                        <template v-slot:activator="{ on }">
+                          <v-text-field
+                            v-model="dates.birthDate.formatted"
+                            label="Fecha Nacimiento"
+                            hint="Día/Mes/Año"
+                            persistent-hint
+                            append-icon="mdi-calendar"
+                            readonly
+                            v-on="on"
+                          ></v-text-field>
                         </template>
-                        <v-date-picker v-model="affiliate.birth_date" @input="menu1 = false"></v-date-picker>
+                        <v-date-picker v-model="affiliate.birth_date" no-title @input="dates.birthDate.show = false"></v-date-picker>
                       </v-menu>
                     </v-col>
                     <v-col cols="12" md="4" >
@@ -175,24 +155,26 @@
                     </v-col>
                     <v-col cols="12" md="6">
                       <v-menu
-                        v-model="menu2"
+                        v-model="dates.dateDeath.show"
                         :close-on-content-click="false"
-                        :nudge-right="40"
                         transition="scale-transition"
                         offset-y
+                        max-width="290px"
                         min-width="290px"
                         :disabled="!editable"
                       >
-                      <template v-slot:activator="{ on }">
-                        <v-text-field
-                          v-model="affiliate.date_death"
-                          label="Fecha Fallesimiento"
-                          append-icon="mdi-calendar"
-                          readonly
-                          v-on="on"
-                        ></v-text-field>
+                        <template v-slot:activator="{ on }">
+                          <v-text-field
+                            v-model="dates.dateDeath.formatted"
+                            label="Fecha Fallecimiento"
+                            hint="Día/Mes/Año"
+                            persistent-hint
+                            append-icon="mdi-calendar"
+                            readonly
+                            v-on="on"
+                          ></v-text-field>
                         </template>
-                        <v-date-picker v-model="affiliate.date_death" @input="menu2 = false"></v-date-picker>
+                        <v-date-picker v-model="affiliate.date_death" no-title @input="dates.dateDeath.show = false"></v-date-picker>
                       </v-menu>
                     </v-col>
                     <v-col cols="12" md="6">
@@ -353,13 +335,17 @@
       dueDate: {
         formatted: null,
         picker: false
+      },
+      birthDate: {
+        formatted: null,
+        picker: false
+      },
+      dateDeath: {
+        formatted: null,
+        picker: false
       }
-    },
-      date: null,
-        menu: false,
-        menu1: false,
-        menu2: false,
-      }),
+    }
+  }),
   beforeMount() {
     this.getCities();
   },
@@ -370,17 +356,16 @@
   },
   watch: {
     'affiliate.due_date': function(date) {
-      if (!date) return null
-      const [year, month, day] = date.split('-')
-      this.dates.dueDate.formatted = `${day}/${month}/${year}`
+      if (date) this.dates.dueDate.formatted = this.$moment(date).format('L')
+    },
+    'affiliate.birth_date': function(date) {
+      if (date) this.dates.birthDate.formatted = this.$moment(date).format('L')
+    },
+    'affiliate.date_death': function(date) {
+      if (date) this.dates.dateDeath.formatted = this.$moment(date).format('L')
     }
   },
   methods: {
-    parseDate(date, key) {
-      if (!date) return null
-      const [month, day, year] = date.split('/')
-      this.affiliate[key] = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`
-    },
     async getCities() {
     try {
       this.loading = true
