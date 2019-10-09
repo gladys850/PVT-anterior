@@ -22,24 +22,26 @@
             </v-col>
             <v-col cols="12" md="5" >
               <v-menu
-                v-model="menu3"
+                v-model="dates.dateEntry.show"
                 :close-on-content-click="false"
-                :nudge-right="40"
                 transition="scale-transition"
                 offset-y
+                max-width="290px"
                 min-width="290px"
                 :disabled="!editable"
               >
-              <template v-slot:activator="{ on }">
-                <v-text-field
-                  v-model="affiliate.date_entry"
-                  label="Fecha Ingreso a la Institucion Policial"
-                  append-icon="mdi-calendar"
-                  readonly
-                  v-on="on"
-                ></v-text-field>
+                <template v-slot:activator="{ on }">
+                  <v-text-field
+                    v-model="dates.dateEntry.formatted"
+                    label="Fecha Ingreso a la Institucion Policial"
+                    hint="Día/Mes/Año"
+                    persistent-hint
+                    append-icon="mdi-calendar"
+                    readonly
+                    v-on="on"
+                  ></v-text-field>
                 </template>
-                <v-date-picker v-model="affiliate.date_entry" @input="menu3 = false"></v-date-picker>
+                <v-date-picker v-model="affiliate.date_entry" no-title @input="dates.dateEntry.show = false"></v-date-picker>
               </v-menu>
             </v-col>
             <v-col cols="12" md="6" >
@@ -103,24 +105,26 @@
             </v-col>
             <v-col cols="12">
               <v-menu
-                v-model="menu4"
+                v-model="dates.dateDerelict.show"
                 :close-on-content-click="false"
-                :nudge-right="40"
                 transition="scale-transition"
                 offset-y
+                max-width="290px"
                 min-width="290px"
                 :disabled="!editable"
               >
-              <template v-slot:activator="{ on }">
-                <v-text-field
-                v-model="affiliate.date_derelict"
-                label="Fecha Desvinculacion"
-                append-icon="mdi-calendar"
-                readonly
-                v-on="on"
-                ></v-text-field>
+                <template v-slot:activator="{ on }">
+                  <v-text-field
+                    v-model="dates.dateDerelict.formatted"
+                    label="Fecha Desvinculacion"
+                    hint="Día/Mes/Año"
+                    persistent-hint
+                    append-icon="mdi-calendar"
+                    readonly
+                    v-on="on"
+                  ></v-text-field>
                 </template>
-                <v-date-picker v-model="affiliate.date_derelict" @input="menu4 = false"></v-date-picker>
+                <v-date-picker v-model="affiliate.date_derelict" no-title @input="dates.dateDerelict.show = false"></v-date-picker>
               </v-menu>
             </v-col>
           </v-row>
@@ -149,14 +153,30 @@
     category: [],
     degree: [],
     pension_entity: [],
-    menu3: false,
-    menu4: false,
-      }),
+    dates: {
+      dateEntry: {
+        formatted: null,
+        picker: false
+      },
+      dateDerelict: {
+        formatted: null,
+        picker: false
+      }
+    }
+  }),
   beforeMount() {
     this.getCategory();
     this.getDegree();
     this.getPensionEntity();
     this.getAffiliateState();
+  },
+  watch: {
+    'affiliate.date_entry': function(date) {
+      if (date) this.dates.dateEntry.formatted = this.$moment(date).format('L')
+    },
+    'affiliate.date_derelict': function(date) {
+      if (date) this.dates.dateDerelict.formatted = this.$moment(date).format('L')
+    }
   },
   mounted() {
     if (this.$route.params.id != 'new') {
