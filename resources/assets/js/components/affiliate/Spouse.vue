@@ -88,23 +88,26 @@
                     </v-col>
                     <v-col cols="12" md="4" >
                       <v-menu
-                        v-model="menu1"
+                        v-model="dates.birthDate.show"
                         :close-on-content-click="false"
-                        :nudge-right="40"
                         transition="scale-transition"
                         offset-y
+                        max-width="290px"
                         min-width="290px"
+                        :disabled="!editable"
                       >
-                      <template v-slot:activator="{ on }">
-                        <v-text-field
-                          v-model="spouse.birth_date"
-                          label="Fecha Nacimiento"
-                          append-icon="mdi-calendar"
-                          readonly
-                          v-on="on"
-                        ></v-text-field>
+                        <template v-slot:activator="{ on }">
+                          <v-text-field
+                            v-model="dates.birthDate.formatted"
+                            label="Fecha Nacimiento"
+                            hint="Día/Mes/Año"
+                            persistent-hint
+                            append-icon="mdi-calendar"
+                            readonly
+                            v-on="on"
+                          ></v-text-field>
                         </template>
-                        <v-date-picker v-model="spouse.birth_date" @input="menu1 = false"></v-date-picker>
+                        <v-date-picker v-model="spouse.birth_date" no-title @input="dates.birthDate.show = false"></v-date-picker>
                       </v-menu>
                     </v-col>
                     <v-col cols="12" md="4" >
@@ -133,23 +136,26 @@
                     </v-col>
                     <v-col cols="12" md="6">
                       <v-menu
-                        v-model="menu2"
+                        v-model="dates.dateDeath.show"
                         :close-on-content-click="false"
-                        :nudge-right="40"
                         transition="scale-transition"
                         offset-y
+                        max-width="290px"
                         min-width="290px"
+                        :disabled="!editable"
                       >
-                      <template v-slot:activator="{ on }">
-                        <v-text-field
-                          v-model="spouse.date_death"
-                          label="Fecha Fallesimiento"
-                          append-icon="mdi-calendar"
-                          readonly
-                          v-on="on"
-                        ></v-text-field>
+                        <template v-slot:activator="{ on }">
+                          <v-text-field
+                            v-model="dates.dateDeath.formatted"
+                            label="Fecha Fallecimiento"
+                            hint="Día/Mes/Año"
+                            persistent-hint
+                            append-icon="mdi-calendar"
+                            readonly
+                            v-on="on"
+                          ></v-text-field>
                         </template>
-                        <v-date-picker v-model="spouse.date_death" @input="menu2 = false"></v-date-picker>
+                        <v-date-picker v-model="spouse.date_death" no-title @input="dates.dateDeath.show = false"></v-date-picker>
                       </v-menu>
                     </v-col>
                     <v-col cols="12" md="6">
@@ -195,23 +201,26 @@
           </v-col>
           <v-col cols="12"  >
             <v-menu
-              v-model="menu3"
+              v-model="dates.marriageDate.show"
               :close-on-content-click="false"
-              :nudge-right="40"
               transition="scale-transition"
               offset-y
+              max-width="290px"
               min-width="290px"
+              :disabled="!editable"
             >
-            <template v-slot:activator="{ on }">
-              <v-text-field
-                v-model="spouse.marriage_date"
-                label="Fecha Matrimonio"
-                append-icon="mdi-calendar"
-                readonly
-                v-on="on"
-              ></v-text-field>
+              <template v-slot:activator="{ on }">
+                <v-text-field
+                  v-model="dates.marriageDate.formatted"
+                  label="Fecha Matrimonio"
+                  hint="Día/Mes/Año"
+                  persistent-hint
+                  append-icon="mdi-calendar"
+                  readonly
+                  v-on="on"
+                ></v-text-field>
               </template>
-              <v-date-picker v-model="spouse.marriage_date" @input="menu3 = false"></v-date-picker>
+              <v-date-picker v-model="spouse.marriage_date" no-title @input="dates.marriageDate.show = false"></v-date-picker>
             </v-menu>
           </v-col>
         </v-col>
@@ -222,6 +231,12 @@
 <script>
   export default {
   name: "affiliate-spouse",
+  props: {
+    editable: {
+      type: Boolean,
+      required: true
+    }
+  },
   data: () => ({
   spouse: {
     first_name: null,
@@ -253,17 +268,38 @@
       }
     ],
     city: [],
-      date: null,
-        menu3: false,
-        menu1: false,
-        menu2: false,
-      }),
+    dates: {
+      birthDate: {
+        formatted: null,
+        picker: false
+      },
+      dateDeath: {
+        formatted: null,
+        picker: false
+      },
+      marriageDate: {
+        formatted: null,
+        picker: false
+      }
+    }
+  }),
   beforeMount() {
     this.getCities();
   },
   mounted() {
     if (this.$route.params.id != 'new') {
       this.getAffiliate(this.$route.params.id)
+    }
+  },
+  watch: {
+    'spouse.birth_date': function(date) {
+      if (date) this.dates.birthDate.formatted = this.$moment(date).format('L')
+    },
+    'spouse.date_death': function(date) {
+      if (date) this.dates.dateDeath.formatted = this.$moment(date).format('L')
+    },
+    'spouse.marriage_date': function(date) {
+      if (date) this.dates.marriageDate.formatted = this.$moment(date).format('L')
     }
   },
   methods: {
