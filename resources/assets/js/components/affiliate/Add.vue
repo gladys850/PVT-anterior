@@ -118,7 +118,7 @@
           :value="'tab-4'"
         >
           <v-card flat tile >
-            <v-card-text><Spouse/></v-card-text>
+            <v-card-text><Spouse :editable.sync="editable"/></v-card-text>
           </v-card>
         </v-tab-item>
           <v-tab-item
