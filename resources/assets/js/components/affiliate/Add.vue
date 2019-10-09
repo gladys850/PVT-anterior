@@ -104,22 +104,14 @@
           :value="'tab-2'"
         >
           <v-card flat tile >
-<<<<<<< HEAD
-            <v-card-text><Profile :affiliate.sync="affiliate"/></v-card-text>
-=======
-            <v-card-text><Profile :editable.sync="editable"/></v-card-text>
->>>>>>> d00acf43f41174f2c4dbd7c84d95eefb8d44cb5f
+            <v-card-text><Profile :affiliate.sync="affiliate" :editable.sync="editable"/></v-card-text>
           </v-card>
         </v-tab-item>
           <v-tab-item
           :value="'tab-3'"
         >
           <v-card flat tile >
-<<<<<<< HEAD
-            <v-card-text><PoliceData :affiliate.sync="affiliate"/></v-card-text>
-=======
-            <v-card-text><PoliceData :editable.sync="editable"/></v-card-text>
->>>>>>> d00acf43f41174f2c4dbd7c84d95eefb8d44cb5f
+            <v-card-text><PoliceData :affiliate.sync="affiliate" :editable.sync="editable"/></v-card-text>
           </v-card>
         </v-tab-item>
           <v-tab-item
