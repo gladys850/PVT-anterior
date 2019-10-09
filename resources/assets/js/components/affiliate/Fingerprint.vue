@@ -97,12 +97,13 @@
           </div>
         </v-alert>
         <v-card-actions>
-         <v-btn
+          <v-spacer></v-spacer>
+          <v-btn
             color="primary"
             @click.stop="fingerprintSaved = false"
           >
-            X
-          </v-btn>          
+            Cerrar
+          </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
