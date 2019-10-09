@@ -80,6 +80,30 @@
                       ></v-select>
                     </v-col>
                     <v-col cols="12" md="4">
+
+                      <v-menu
+                        v-model="dates.dueDate.show"
+                        :close-on-content-click="false"
+                        transition="scale-transition"
+                        offset-y
+                        max-width="290px"
+                        min-width="290px"
+                      >
+                        <template v-slot:activator="{ on }">
+                          <v-text-field
+                            v-model="dates.dueDate.formatted"
+                            label="Fecha Vencimiento CI"
+                            hint="Día/Mes/Año"
+                            persistent-hint
+                            append-icon="mdi-calendar"
+                            @blur="parseDate(dates.dueDate.formatted, 'due_date')"
+                            v-on="on"
+                          ></v-text-field>
+                        </template>
+                        <v-date-picker v-model="affiliate.due_date" no-title @input="dates.dueDate.show = false"></v-date-picker>
+                      </v-menu>
+
+
                       <v-menu
                         v-model="menu"
                         :close-on-content-click="false"
@@ -325,6 +349,12 @@
     ],
     city: [],
     cityTypeSelected: null,
+    dates: {
+      dueDate: {
+        formatted: null,
+        picker: false
+      }
+    },
       date: null,
         menu: false,
         menu1: false,
@@ -338,7 +368,19 @@
       this.getAffiliate(this.$route.params.id)
     }
   },
+  watch: {
+    'affiliate.due_date': function(date) {
+      if (!date) return null
+      const [year, month, day] = date.split('-')
+      this.dates.dueDate.formatted = `${day}/${month}/${year}`
+    }
+  },
   methods: {
+    parseDate(date, key) {
+      if (!date) return null
+      const [month, day, year] = date.split('/')
+      this.affiliate[key] = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`
+    },
     async getCities() {
     try {
       this.loading = true
