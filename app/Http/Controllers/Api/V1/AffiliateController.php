@@ -184,7 +184,8 @@ class AffiliateController extends Controller
     $image = str_replace('data:image/jpeg;base64,', '', $image);
     $image = str_replace(' ', '+', $image);
     $imageName = $code.'_perfil.'.'jpg';
-    Storage::disk('ftp')->put($imageName,base64_decode($image),$base_path);
+
+    Storage::disk('ftp')->put($base_path.$imageName, base64_decode($image));
 
     }
     //get information spouse
