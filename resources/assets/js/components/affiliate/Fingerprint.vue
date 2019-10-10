@@ -8,9 +8,19 @@
         <v-row justify="center">
           <v-col cols="12">
             <v-card-text @click="dialog=true" class="text-center">
-              <v-btn type="file" color="primary">
+              <v-btn
+              color="primary"
+              @click="dialog=true" v-if="editable"
+              :disabled="PictureSucess"
+            >
+              <v-icon left>mdi-camera</v-icon>
+              <span v-if="PictureSucess">Fotografia Capturada</span>
+              <span v-else>Adicionar Fotografia</span>
+            </v-btn>
+              <!--<v-btn type="file" color="primary">
                   Adicionar Foto
-              </v-btn>
+              </v-btn>-->
+              
             </v-card-text>
             <v-row v-if="profilePictures.length > 0">
               <template v-for="image in profilePictures">
@@ -20,7 +30,7 @@
                     class="mx-auto d-block elevation-10"
                     size="250"
                   >
-                    <img :src="`data:${image.format};base64,${image.content}`">
+                    <v-img :src="`data:${image.format};base64,${image.content}`"/>
                   </v-avatar>
                 </v-col>
               </template>
@@ -97,23 +107,27 @@
           </div>
         </v-alert>
         <v-card-actions>
-         <v-btn
+          <v-spacer></v-spacer>
+          <v-btn
             color="primary"
             @click.stop="fingerprintSaved = false"
           >
-            X
-          </v-btn>          
+            Cerrar
+          </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
     <v-dialog v-model="dialog" persistent max-width="1000">
       <v-card>
-        <v-divider></v-divider>
+        <v-toolbar dense flat color="tertiary">
+          <v-toolbar-title>REGISTRO DE LA FOTOGRAFIA</v-toolbar-title>
+          <v-spacer></v-spacer>
+          <v-btn icon @click="dialog=false">
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+        </v-toolbar>
         <camara></camara>
-        <v-card-actions>
-        <v-btn color="error" @click="dialog=false">CERRAR</v-btn>
-        </v-card-actions>
-        </v-card>
+      </v-card>
     </v-dialog>
   </v-container>
 </template>
@@ -137,6 +151,7 @@ export default {
     cam: null,
     loading: false,
     fingerprintCapture: false,
+    pictureSucess: false,
     fingerprintSaved: false,
     fingerprintSucess: null,
     fingerprints: [],
