@@ -12,12 +12,12 @@
                         item-value="id"
                         :loading="loading"
                         label="Ciudad"
-                        v-model="spouse.city_identity_card_id"
+                        v-model="addresses.city_address_id"
                       ></v-select>
                     </v-col>
                     <v-col cols="12" md="7">
                       <v-text-field
-                      v-model="spouse.death_certificate_number"
+                      v-model="addresses.zone"
                       label="Zona"
                       class="purple-input"
                       v-validate.initial="'min:1|max:20'"
@@ -27,7 +27,7 @@
                     </v-col>
                     <v-col cols="12" md="9">
                       <v-text-field
-                      v-model="spouse.death_certificate_number"
+                      v-model="addresses.street"
                       label="Calle/Avenida"
                       class="purple-input"
                       v-validate.initial="'min:1|max:20'"
@@ -37,7 +37,7 @@
                     </v-col>
                     <v-col cols="12" md="3">
                       <v-text-field
-                      v-model="spouse.death_certificate_number"
+                      v-model="addresses.number_address"
                       label="Nro"
                       class="purple-input"
                       v-validate.initial="'min:1|max:20'"
@@ -54,42 +54,16 @@
 
 <script>
   export default {
-  name: "affiliate-spouse",
+  name: "affiliate-addresses",
   data: () => ({
-  spouse: {
-    first_name: null,
-    second_name:null,
-    last_name: null,
-    mothers_last_name:null,
-    identity_card:null,
-    birth_date:null,
-    date_death:null,
-    reason_death:null,
-    phone_number:null,
-    cell_phone_number:null,
-    city_identity_card_id:null,
-    },
     loading: true,
+    addresses: {
+    zone: null,
+    street:null,
+    number_address: null,
+    city_address_id:null,
+    },
     cities: [],
-    civil: [
-      { name:"Soltero",
-        value:"S"
-      },
-      { name:"Casado",
-        value:"C"
-      },
-      { name:"Viudo",
-        value:"V"
-      },
-      { name:"Divorciado",
-        value:"D"
-      }
-    ],
-    city: [],
-      date: null,
-        menu3: false,
-        menu1: false,
-        menu2: false,
       }),
   beforeMount() {
     this.getCities();

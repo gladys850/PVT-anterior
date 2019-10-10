@@ -7694,7 +7694,14 @@ vue-template-es2015-compiler@^1.9.0:
   resolved "https://registry.yarnpkg.com/vue-template-es2015-compiler/-/vue-template-es2015-compiler-1.9.1.tgz#1ee3bc9a16ecbf5118be334bb15f9c46f82f5825"
   integrity sha512-4gDntzrifFnCEvyoO8PqyJDmguXgVPxKiIxrBKjIowvL9l+N66196+72XVYR8BBf1Uv1Fgt3bGevJ+sEmxfZzw==
 
-vue@^2.6.10:
+vue-web-cam@^1.8.0:
+  version "1.8.0"
+  resolved "https://registry.yarnpkg.com/vue-web-cam/-/vue-web-cam-1.8.0.tgz#387e605f9ebcc3eaa93d607c648a7eca589fafc0"
+  integrity sha512-CYAZXJA2oR6ljrdfCbIgrGKgiFZFloPZ8KJk3+YjpUzNhDNPY9JHJ8F52h3XBoxALuMXUqyOvY0awij7YEe70g==
+  dependencies:
+    vue "^2.5.17"
+
+vue@^2.5.17, vue@^2.6.10:
   version "2.6.10"
   resolved "https://registry.yarnpkg.com/vue/-/vue-2.6.10.tgz#a72b1a42a4d82a721ea438d1b6bf55e66195c637"
   integrity sha512-ImThpeNU9HbdZL3utgMCq0oiMzAkt1mcgy3/E6zWC/G6AaQoeuFdsl9nDhTDU3X1R6FK7nsIUuRACVcjI+A2GQ==

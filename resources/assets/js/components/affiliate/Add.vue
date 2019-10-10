@@ -199,6 +199,7 @@ export default {
         } else {
           if (this.isNew) {
             // New affiliate
+            
           } else {
             // Edit affiliate
           }

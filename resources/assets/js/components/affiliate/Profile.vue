@@ -221,18 +221,21 @@
                     <v-toolbar-title>DIRECCIÓN DOMICILARIA</v-toolbar-title>
                   </v-col>
                   <v-col cols="12" md="3">
-                    <template>
-                    <v-btn
-                      fab
-                      dark
-                      x-small
-                      v-on="on"
-                      color="info"
-                      @click.stop="dialog = true"
-                    >
-                      <v-icon>mdi-plus</v-icon>
-                    </v-btn>
-                    </template>
+                    <v-tooltip top>
+                      <template v-slot:activator="{ on }">
+                        <v-btn
+                          fab
+                          dark
+                          x-small
+                          v-on="on"
+                          color="info"
+                          @click.stop="dialog = true"
+                        >
+                          <v-icon>mdi-plus</v-icon>
+                        </v-btn>
+                      </template>
+                      <span>Añadir Direccion</span>
+                    </v-tooltip>
                   <v-dialog
                     v-model="dialog"
                     width="500"
@@ -251,7 +254,7 @@
                     </v-card-text>
                     <v-card-actions>
                       <v-spacer></v-spacer>
-                      <v-btn
+                      <v-btn @click.stop="close()"
                         color="error"
                         :disabled="errors.any()"
                       >Añadir</v-btn>
@@ -282,15 +285,15 @@ import AddStreet from '@/components/affiliate/AddStreet'
     affiliate: {
       type: Object,
       required: true
-    }
+    },
+      editable: {
+      type: Boolean,
+      required: true
+    },
   },
   components: {
     AddStreet
   },
-    editable: {
-      type: Boolean,
-      required: true
-    },
   data: () => ({
     loading: true,
     dialog: false,

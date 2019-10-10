@@ -168,6 +168,7 @@
           </v-col>
           <v-col cols="12"  >
             <v-text-field
+              v-model="spouse.official"
               label="Oficialia"
               class="purple-input"
               v-validate.initial="'min:1|max:250'"
@@ -177,6 +178,7 @@
           </v-col>
           <v-col cols="12" >
             <v-text-field
+              v-model="spouse.book"
               label="Libro"
               class="purple-input"
               v-validate.initial="'min:1|max:250'"
@@ -186,6 +188,7 @@
           </v-col>
           <v-col cols="12" >
             <v-text-field
+              v-model="spouse.departure"
               label="Partida"
               class="purple-input"
               v-validate.initial="'min:1|max:250'"
@@ -263,7 +266,7 @@
   },
   mounted() {
     if (this.$route.params.id != 'new') {
-      this.getAffiliate(this.$route.params.id)
+      this.getSpouse(this.$route.params.id)
     }
   },
   methods: {
@@ -279,11 +282,11 @@
         this.loading = false
       }
   },
-    async getAffiliate(id) {
+    async getSpouse(id) {
       try {
         this.loading = true
-        let res = await axios.get(`affiliate/${id}`)
-        this.affiliate = res.data
+        let res = await axios.get(`affiliate/${id}/spouse`)
+        this.spouse = res.data
       } catch (e) {
         console.log(e)
       } finally {
