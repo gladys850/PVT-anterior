@@ -138,7 +138,6 @@ import Profile from '@/components/affiliate/Profile'
 import PoliceData from '@/components/affiliate/PoliceData'
 import Spouse from '@/components/affiliate/Spouse'
 import Fingerprint from '@/components/affiliate/Fingerprint'
-import { log } from 'util'
 
 export default {
   name: "affiliate-index",
