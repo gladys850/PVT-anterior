@@ -30,7 +30,7 @@
                     class="mx-auto d-block elevation-10"
                     size="250"
                   >
-                    <img :src="`data:${image.format};base64,${image.content}`">
+                    <v-img :src="`data:${image.format};base64,${image.content}`"/>
                   </v-avatar>
                 </v-col>
               </template>
