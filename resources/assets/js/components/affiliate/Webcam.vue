@@ -1,5 +1,5 @@
 <template>
-<div class="container" style="margin:20px">
+<div class="container" style="margin-left:10px">
     <div class="row">
     <div class="col-md-6">
         <h2>FOTOGRAFIA</h2>
@@ -46,7 +46,7 @@
     <div class="col-md-6">
         <h2>IMAGEN CAPTURADA</h2>
         <figure class="figure">
-        <img :src="img" class="img-responsive" width="90%" height="90%" style="border:5px solid #ddd">
+        <img :src="img" class="img-responsive" width="95%" height="95%" style="border:5px solid #ddd">
         </figure>
         <v-btn @click="savePicture()"
                 :disabled="errors.any()"

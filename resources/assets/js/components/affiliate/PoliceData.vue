@@ -47,7 +47,7 @@
             <v-col cols="12" md="6" >
               <v-select
                 :loading="loading"
-                data-vv-name="Categoria"
+                data-vv-name="categoria"
                 :items="category"
                 item-text="name"
                 item-value="id"
@@ -137,18 +137,16 @@
   export default {
   name: "affiliate-police-data",
   props: {
+    affiliate: {
+      type: Object,
+      required: true
+    },
     editable: {
       type: Boolean,
       required: true
-    }
+    },
   },
   data: () => ({
-    affiliate: {
-    date_entry:null,
-    service_years:null,
-    service_months:null,
-    date_derelict:null
-    },
     affiliateState: [],
     category: [],
     degree: [],
@@ -164,6 +162,32 @@
       }
     }
   }),
+  computed: {
+    getCalculateCategory(){
+    let years = this.affiliate.service_years;
+    let months = this.affiliate.service_months;
+    if(this.affiliate.service_years==null ||this.affiliate.service_months ==null )
+    {
+      return this.affiliate.category_id
+    }
+    else{
+      if (years < 0 || years >100  ) {
+          return "error";
+        }
+        else{
+          if (months > 0) {
+          years++;
+        }
+        let categoria = this.category.find(c =>{
+          return c.from <= years && c.to >= years
+        })
+        if(!!categoria){
+          this.affiliate.category_id = categoria.id
+        }
+        }
+    }
+  },
+  },
   beforeMount() {
     this.getCategory();
     this.getDegree();
@@ -232,17 +256,6 @@
         this.loading = false
       }
     },
-    async getAffiliate(id) {
-      try {
-        this.loading = true
-        let res = await axios.get(`affiliate/${id}`)
-        this.affiliate = res.data
-      } catch (e) {
-        console.log(e)
-      } finally {
-        this.loading = false
-      }
-    }
   }
   }
 </script>

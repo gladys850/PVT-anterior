@@ -31,15 +31,17 @@ class SpouseForm extends FormRequest
             'birth_date' => 'date_format:"Y-m-d"',
             'city_birth_id' => 'exists:cities,id', 
             'affiliate_id' => 'exists:affiliates,id', 
+            'identity_card' => 'unique:spouses|min:3',
             'second_name' =>'alpha_spaces|min:3',
             'mothers_last_name' =>'alpha_spaces|min:3',
             'civil_status' => 'in:C,D,S,V',
             'due_date' => 'date_format:"Y-m-d"',
-            'marriage_date' => 'date_format:"Y-m-d"'
+            'marriage_date' => 'date_format:"Y-m-d"',
+
         ];
         switch ($this->method()) {
             case 'POST': {
-                foreach (array_slice($rules, 0, 6) as $key => $rule) {
+                foreach (array_slice($rules, 0, 7) as $key => $rule) {
                     $rules[$key] = implode('|', ['required', $rule]);
                 }
                 return $rules;
