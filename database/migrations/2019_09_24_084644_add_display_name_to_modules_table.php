@@ -17,16 +17,10 @@ class AddDisplayNameToModulesTable extends Migration
         Schema::table('modules', function (Blueprint $table) {
             $table->renameColumn('name', 'display_name');
         });
-
         Schema::table('modules', function (Blueprint $table) {
             $table->string('name')->nullable();
+            $table->string('shortened')->nullable();
         });
-
-        $all = json_decode(DB::table('modules')->get(), true);
-        foreach ($all as $item)
-        {
-            DB::table('modules')->where('id', $item['id'])->update(['name' => Str::slug($item['display_name'], '-')]);
-        }
     }
 
     /**
@@ -39,7 +33,6 @@ class AddDisplayNameToModulesTable extends Migration
         Schema::table('modules', function (Blueprint $table) {
             $table->dropColumn('name');
         });
-
         Schema::table('modules', function (Blueprint $table) {
             $table->renameColumn('display_name', 'name');
         });

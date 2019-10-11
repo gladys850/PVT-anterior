@@ -39,7 +39,7 @@ Route::group([
         Route::resource('auth', 'Api\V1\AuthController')->only(['show', 'update', 'destroy']);
         // Admin routes
         Route::group([
-            'middleware' => 'role:admin'
+            'middleware' => 'role:TE-admin'
         ], function () {
             // User
             Route::resource('user', 'Api\V1\UserController');

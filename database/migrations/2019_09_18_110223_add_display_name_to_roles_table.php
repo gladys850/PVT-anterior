@@ -21,13 +21,6 @@ class AddDisplayNameToRolesTable extends Migration
         Schema::table('roles', function (Blueprint $table) {
             $table->string('name')->nullable();
         });
-
-        $all = json_decode(DB::table('roles')->get(), true);
-        foreach ($all as $item)
-        {
-            DB::table('roles')->where('id', $item['id'])->update(['name' => Str::slug($item['display_name'], '-')]);
-        }
-        DB::table('roles')->where('display_name', 'Administrador')->update(['name' => 'admin']);
     }
 
     /**

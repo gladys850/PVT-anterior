@@ -27,7 +27,7 @@ class AdminSeeder extends Seeder
         'city_id' => City::first()->id
       ]);
     }
-    $role = Role::whereName('admin')->first();
+    $role = Role::whereName('TE-admin')->first();
     $user->roles()->sync($role);
     $role->syncPermissions(['create-user', 'update-user', 'show-user', 'delete-user', 'show-record', 'delete-record', 'update-role', 'show-role']);
   }
