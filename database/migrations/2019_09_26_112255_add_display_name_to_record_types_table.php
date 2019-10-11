@@ -21,12 +21,6 @@ class AddDisplayNameToRecordTypesTable extends Migration
         Schema::table('record_types', function (Blueprint $table) {
             $table->string('name')->nullable();
         });
-
-        $all = json_decode(DB::table('record_types')->get(), true);
-        foreach ($all as $item)
-        {
-            DB::table('record_types')->where('id', $item['id'])->update(['name' => Str::slug($item['display_name'], '-')]);
-        }
     }
 
     /**

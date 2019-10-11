@@ -4,6 +4,9 @@
 php artisan migrate
 
 # Seeders
+php artisan db:seed --class=RecordTypeNameSeeder
+php artisan db:seed --class=ModuleNameSeeder
+php artisan db:seed --class=RoleNameSeeder
 php artisan db:seed --class=RolePermissionSeeder
 php artisan db:seed --class=UserPermissionSeeder
 php artisan db:seed --class=RecordPermissionSeeder

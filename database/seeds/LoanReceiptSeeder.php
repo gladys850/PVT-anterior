@@ -18,7 +18,7 @@ class LoanReceiptRoleSeeder extends Seeder
 
         if ($module) {
             $role = Role::firstOrCreate([
-                'name' => 'area-de-recepcion',
+                'name' => $module->shortened . '-' . 'area-de-recepcion',
                 'display_name' => 'Área de Recepción',
                 'action' => 'Recepcionado',
                 'module_id' => $module->id
