@@ -104,14 +104,14 @@
           :value="'tab-2'"
         >
           <v-card flat tile >
-            <v-card-text><Profile :editable.sync="editable"/></v-card-text>
+            <v-card-text><Profile :affiliate.sync="affiliate" :editable.sync="editable"/></v-card-text>
           </v-card>
         </v-tab-item>
           <v-tab-item
           :value="'tab-3'"
         >
           <v-card flat tile >
-            <v-card-text><PoliceData :editable.sync="editable"/></v-card-text>
+            <v-card-text><PoliceData :affiliate.sync="affiliate" :editable.sync="editable"/></v-card-text>
           </v-card>
         </v-tab-item>
           <v-tab-item
@@ -150,7 +150,21 @@ export default {
   },
   data: () => ({
     affiliate:{
-      first_name:null
+      first_name: null,
+      second_name:null,
+      last_name: null,
+      mothers_last_name:null,
+      identity_card:null,
+      birth_date:null,
+      date_death:null,
+      reason_death:null,
+      phone_number:null,
+      cell_phone_number:null,
+      city_identity_card_id:null,
+      date_entry:null,
+      service_years:null,
+      service_months:null,
+      date_derelict:null
     },
     tab: null,
     text: 'hola',
@@ -184,6 +198,7 @@ export default {
         } else {
           if (this.isNew) {
             // New affiliate
+            
           } else {
             // Edit affiliate
           }
@@ -228,6 +243,31 @@ export default {
         this.loading = false
       }
     }
-  }
+  },
+  async saveAffiliate() {
+    try {
+      if (await this.$validator.validateAll()) {
+        this.loading = true
+        if (this.$route.params.id != 'new') {
+          let res = await axios.patch(`affiliate/${this.affiliate.id}`, this.affiliate)
+          console.log(res.data)
+          this.$router.push({
+          name: "affiliateIndex"
+          });
+          this.toast('Afiliado modificado', 'success')
+        } else {
+          let res = await axios.post(`affiliate`, this.affiliate)
+          this.toast('Afiliado adicionado', 'success')
+          this.$router.push({
+          name: "affiliateIndex"
+          });console.log(res.data)
+        }
+      }
+    } catch (e) {
+      console.log(e)
+    } finally {
+      this.loading = false
+    }
+    }
 }
 </script>
