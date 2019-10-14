@@ -17,7 +17,7 @@
                 v-model="affiliate.affiliate_state_id"
                 hint="Activo"
                 persistent-hint
-                :readonly="!editable"
+                :readonly="!secondaryPermission"
               ></v-select>
             </v-col>
             <v-col cols="12" md="5" >
@@ -28,7 +28,7 @@
                 offset-y
                 max-width="290px"
                 min-width="290px"
-                :disabled="!editable"
+                :disabled="!secondaryPermission"
               >
                 <template v-slot:activator="{ on }">
                   <v-text-field
@@ -54,7 +54,7 @@
                 label="Categoria"
                 name="categoria"
                 v-model="affiliate.category_id"
-                :readonly="!editable"
+                :readonly="!primaryPermission"
               ></v-select>
             </v-col>
             <v-col cols="12" md="6">
@@ -64,7 +64,7 @@
                 v-validate.initial="'numeric|min:1|max:100'"
                 :error-messages="errors.collect('nro')"
                 data-vv-name="nro"
-                :readonly="!editable"
+                :readonly="!primaryPermission"
               ></v-text-field>
             </v-col>
             <v-col cols="12" md="6" >
@@ -74,7 +74,7 @@
                 v-validate.initial="'numeric|min:1|max:100'"
                 :error-messages="errors.collect('nro')"
                 data-vv-name="nro"
-                :readonly="!editable"
+                :readonly="!primaryPermission"
               ></v-text-field>
             </v-col>
             <v-col cols="12" md="6" >
@@ -87,7 +87,7 @@
                 label="Grado"
                 name="Grado"
                 v-model="affiliate.degree_id"
-                :readonly="!editable"
+                :readonly="!primaryPermission"
                 ></v-select>
               </v-col>
             <v-col cols="12" >
@@ -100,7 +100,7 @@
                 label="Ente Gestor"
                 name="Grado"
                 v-model="affiliate.pension_entity_id"
-                :readonly="!editable"
+                :readonly="!secondaryPermission"
             ></v-select>
             </v-col>
             <v-col cols="12">
@@ -111,7 +111,7 @@
                 offset-y
                 max-width="290px"
                 min-width="290px"
-                :disabled="!editable"
+                :disabled="!secondaryPermission"
               >
                 <template v-slot:activator="{ on }">
                   <v-text-field
@@ -187,6 +187,20 @@
         }
     }
   },
+    secondaryPermission() {
+      if (this.affiliate.id) {
+        return this.editable && this.$store.getters.permissions.includes('update-affiliate-secondary')
+      } else {
+        return this.editable && this.$store.getters.permissions.includes('create-affiliate')
+      }
+    },
+    primaryPermission() {
+      if (this.affiliate.id) {
+        return this.editable && this.$store.getters.permissions.includes('update-affiliate-primary')
+      } else {
+        return this.editable && this.$store.getters.permissions.includes('create-affiliate')
+      }
+    }
   },
   beforeMount() {
     this.getCategory();
@@ -200,11 +214,6 @@
     },
     'affiliate.date_derelict': function(date) {
       if (date) this.dates.dateDerelict.formatted = this.$moment(date).format('L')
-    }
-  },
-  mounted() {
-    if (this.$route.params.id != 'new') {
-      this.getAffiliate(this.$route.params.id)
     }
   },
   methods: {

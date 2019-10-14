@@ -235,55 +235,52 @@
                           x-small
                           v-on="on"
                           color="info"
-                          @click.stop="dialog = true"
+                          @click.stop="bus.$emit('openDialog', {})"
                         >
                           <v-icon>mdi-plus</v-icon>
                         </v-btn>
                       </template>
                       <span>Añadir Direccion</span>
                     </v-tooltip>
-                  <v-dialog
-                    v-model="dialog"
-                    width="500"
-                  >
-                  <v-card>
-                    <v-toolbar dense flat color="tertiary">
-                      <v-toolbar-title>Añadir Dirección</v-toolbar-title>
-                      <v-spacer></v-spacer>
-                      <v-btn icon @click.stop="close()">
-                        <v-icon>mdi-close</v-icon>
-                      </v-btn>
-                    </v-toolbar>
-                    <v-card-title></v-card-title>
-                    <v-card-text>
-                      <AddStreet/>
-                    </v-card-text>
-                    <v-card-actions>
-                      <v-spacer></v-spacer>
-                      <v-btn @click.stop="close()"
-                        color="error"
-                        :disabled="errors.any()"
-                      >Añadir</v-btn>
-                    </v-card-actions>
-                  </v-card>
-                  </v-dialog>
+                  
                   </v-col>
                   <v-col cols="12">
                   <v-data-table
-                      :headers="headers"
-                      :items="desserts"
-                      hide-default-footer
-                      class="elevation-1"
-                  ></v-data-table>
+                    :headers="headers"
+                    :items="desserts"
+                    hide-default-footer
+                    class="elevation-1"
+                    v-if="cities.length > 0"
+                  >
+                    <template v-slot:item="props">
+                      <tr>
+                        <td>{{ cities.find(o => o.id == props.item.city_address_id).name }}</td>
+                        <td>{{ props.item.zone }}</td>
+                        <td>{{ props.item.street }}</td>
+                        <td>{{ props.item.number_address }}</td>
+                        <td>
+                          <v-btn text icon color="info" @click.stop="bus.$emit('openDialog', props.item)">
+                            <v-icon>mdi-pencil</v-icon>
+                          </v-btn>
+                          <v-btn text icon color="error" @click.stop="bus.$emit('openRemoveDialog', `address/${props.item.id}`)">
+                            <v-icon>mdi-delete</v-icon>
+                          </v-btn>
+                        </td>
+                      </tr>
+                    </template>
+                  </v-data-table>
                   </v-col>
                 </v-row>
               </v-container>
         </v-col>
       </v-row>
+      <AddStreet :bus="bus" :cities="cities"/>
+      <RemoveItem :bus="bus"/>
   </v-container>
 </template>
 
 <script>
+import RemoveItem from '@/components/shared/RemoveItem'
 import AddStreet from '@/components/affiliate/AddStreet'
   export default {
   name: "affiliate-profile",
@@ -298,7 +295,8 @@ import AddStreet from '@/components/affiliate/AddStreet'
     },
   },
   components: {
-    AddStreet
+    AddStreet,
+    RemoveItem
   },
   data: () => ({
     loading: true,
@@ -308,23 +306,27 @@ import AddStreet from '@/components/affiliate/AddStreet'
           { text: 'Ciudad', align: 'left', value: 'city_address_id' },
           { text: 'Zona', align: 'left', value: 'zone' },
           { text: 'Calle', align: 'left', value: 'street' },
-          { text: 'Nro', align: 'left', value: 'number_address' }
+          { text: 'Nro', align: 'left', value: 'number_address' },
+          { text: 'Acciones', align: 'center' }
         ],
         desserts: [
           {
-            city_address_id: 'La Paz',
+            id: 1,
+            city_address_id: 1,
             zone: 'Cristal I',
             street: 'Olmos',
             number_address: 24,
           },
           {
-            city_address_id: 'La Paz',
+            id: 2,
+            city_address_id: 2,
             zone: 'Anexo 16 de Julio I',
             street: 'Olmos',
             number_address: 2364,
           },
           {
-            city_address_id: 'La Paz',
+            id: 3,
+            city_address_id: 3,
             zone: 'Alto Lima I',
             street: 'Olmos',
             number_address: 224,
@@ -367,15 +369,21 @@ import AddStreet from '@/components/affiliate/AddStreet'
         formatted: null,
         picker: false
       }
-    }
+    },
+    bus: new Vue()
   }),
   beforeMount() {
     this.getCities();
   },
   mounted() {
-    if (this.$route.params.id != 'new') {
-      this.getAffiliate(this.$route.params.id)
-    }
+    this.bus.$on('saveAddress', (address) => {
+      let index = this.desserts.findIndex(o=> o.id == address.id)
+      if (index == -1) {
+        this.desserts.unshift(address)
+      } else {
+        this.desserts[index] = address
+      }
+    })
   },
   watch: {
     'affiliate.due_date': function(date) {
