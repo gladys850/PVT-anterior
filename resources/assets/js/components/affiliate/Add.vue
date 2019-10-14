@@ -166,7 +166,6 @@ export default {
       service_months:null,
       date_derelict:null
     },
-    tab: null,
     text: 'hola',
     text4: 'huella',
     icons: true,
@@ -177,12 +176,19 @@ export default {
   computed: {
     isNew() {
       return this.$route.params.id == 'new'
+    },
+    tab: {
+      get: function() {
+        return this.isNew ? 'tab-2' : 'tab-1'
+      },
+      set: function(val) {}
     }
   },
   mounted() {
     if (!this.isNew) {
       this.resetForm()
     } else {
+      this.editable = true
       this.setBreadcrumbs()
     }
   },

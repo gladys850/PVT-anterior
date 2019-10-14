@@ -372,11 +372,6 @@ import AddStreet from '@/components/affiliate/AddStreet'
   beforeMount() {
     this.getCities();
   },
-  mounted() {
-    if (this.$route.params.id != 'new') {
-      this.getAffiliate(this.$route.params.id)
-    }
-  },
   watch: {
     'affiliate.due_date': function(date) {
       if (date) this.dates.dueDate.formatted = this.$moment(date).format('L')

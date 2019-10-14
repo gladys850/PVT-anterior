@@ -14,6 +14,8 @@ use Ldap;
 
 class UserController extends Controller
 {
+    private $db_users = ['admin', 'asistente'];
+
     /**
     * Display a listing of the resource.
     *
@@ -21,7 +23,7 @@ class UserController extends Controller
     */
     public function index(Request $request)
     {
-        $users = User::where('username', '!=', 'admin');
+        $users = User::where('username', '!=', $this->db_users[0]);
         if ($request->has('active')) {
             $users = $users->whereActive(filter_var($request->active, FILTER_VALIDATE_BOOLEAN), true);
         }
@@ -116,7 +118,11 @@ class UserController extends Controller
     public function destroy($id)
     {
         $user = User::findOrFail($id);
-        if ($user->has_records() || $user->username == 'admin') {
+        $has_records = $user->has_records();
+        foreach($this->db_users as $user) {
+            $has_records |= User::whereUsername($user)->exists();
+        }
+        if ($has_records) {
             return response()->json([
 				'message' => 'Forbidden',
 				'errors' => [
@@ -165,7 +171,11 @@ class UserController extends Controller
     public function synchronize_users()
     {
         $ldap = new Ldap();
-        $discharged_users = collect(User::where('username', '!=', 'admin')->whereActive(true)->get()->pluck('username')->all())->diff(collect($ldap->list_entries())->pluck('uid'));
+        $discharged_users = collect(User::where(function($query) {
+            foreach($this->db_users as $user) {
+                $query->where('username', '!=', $user);
+            }
+        })->whereActive(true)->get()->pluck('username')->all())->diff(collect($ldap->list_entries())->pluck('uid'));
         $items = [];
         foreach($discharged_users as $user) {
             array_push($items, User::whereUsername($user)->first());
