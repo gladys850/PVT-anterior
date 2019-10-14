@@ -12,6 +12,7 @@ use App\Hierarchy;
 use App\AffiliateState;
 use App\AffiliateStateType;
 use App\Spouse;
+use App\Address;
 use App\Http\Requests\AffiliateForm;
 use App\Http\Requests\AffiliateEditForm;
 use Illuminate\Http\Request;
@@ -189,9 +190,16 @@ class AffiliateController extends Controller
 
     }
     //get information spouse
-    public function get_affiliate_spouse($affiliate_id){
+    public function spouse_get($affiliate_id){
         $spouse = Spouse::where('affiliate_id',$affiliate_id)->first();
         return ($spouse);
-    }    
+    }  
+    //addresses
+      public function addresses_get($affiliate_id){
+        $affiliate=Affiliate::find($affiliate_id);
+        $addreses = $affiliate->addresses()->orderByDesc('created_at')->get();
+        return $addreses;
+    }
+ 
     
 }
