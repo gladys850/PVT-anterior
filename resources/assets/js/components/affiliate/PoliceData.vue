@@ -8,6 +8,7 @@
               </v-col>
             <v-col cols="12" md="7" >
               <v-select
+                dense
                 :loading="loading"
                 :items="affiliateState"
                 data-vv-name="Estado"
@@ -17,7 +18,8 @@
                 v-model="affiliate.affiliate_state_id"
                 hint="Activo"
                 persistent-hint
-                :readonly="!secondaryPermission"
+                :readonly="!editable || !permission.secondary"
+                :outlined="editable && permission.secondary"
               ></v-select>
             </v-col>
             <v-col cols="12" md="5" >
@@ -28,10 +30,12 @@
                 offset-y
                 max-width="290px"
                 min-width="290px"
-                :disabled="!secondaryPermission"
+                :disabled="!editable || !permission.secondary"
+                :outlined="editable && permission.secondary"
               >
                 <template v-slot:activator="{ on }">
                   <v-text-field
+                    dense
                     v-model="dates.dateEntry.formatted"
                     label="Fecha Ingreso a la Institucion Policial"
                     hint="Día/Mes/Año"
@@ -39,6 +43,7 @@
                     append-icon="mdi-calendar"
                     readonly
                     v-on="on"
+                    :outlined="editable && permission.secondary"
                   ></v-text-field>
                 </template>
                 <v-date-picker v-model="affiliate.date_entry" no-title @input="dates.dateEntry.show = false"></v-date-picker>
@@ -46,6 +51,7 @@
             </v-col>
             <v-col cols="12" md="6" >
               <v-select
+                dense
                 :loading="loading"
                 data-vv-name="categoria"
                 :items="category"
@@ -54,31 +60,40 @@
                 label="Categoria"
                 name="categoria"
                 v-model="affiliate.category_id"
-                :readonly="!primaryPermission"
+                :readonly="!editable || !permission.primary"
+                :outlined="editable && permission.primary"
+                :disabled="editable && !permission.primary"
               ></v-select>
             </v-col>
             <v-col cols="12" md="6">
               <v-text-field
+                dense
                 v-model="affiliate.service_years"
                 label="Años de Servicio"
                 v-validate.initial="'numeric|min:1|max:100'"
                 :error-messages="errors.collect('nro')"
                 data-vv-name="nro"
-                :readonly="!primaryPermission"
+                :readonly="!editable || !permission.primary"
+                :outlined="editable && permission.primary"
+                :disabled="editable && !permission.primary"
               ></v-text-field>
             </v-col>
             <v-col cols="12" md="6" >
               <v-text-field
+                dense
                 v-model="affiliate.service_months"
                 label="Meses de Servicio"
                 v-validate.initial="'numeric|min:1|max:100'"
                 :error-messages="errors.collect('nro')"
                 data-vv-name="nro"
-                :readonly="!primaryPermission"
+                :readonly="!editable || !permission.primary"
+                :outlined="editable && permission.primary"
+                :disabled="editable && !permission.primary"
               ></v-text-field>
             </v-col>
             <v-col cols="12" md="6" >
               <v-select
+                dense
                 :loading="loading"
                 data-vv-name="Grado"
                 :items="degree"
@@ -87,11 +102,14 @@
                 label="Grado"
                 name="Grado"
                 v-model="affiliate.degree_id"
-                :readonly="!primaryPermission"
+                :readonly="!editable || !permission.primary"
+                :outlined="editable && permission.primary"
+                :disabled="editable && !permission.primary"
                 ></v-select>
               </v-col>
             <v-col cols="12" >
               <v-select
+                dense
                 :loading="loading"
                 data-vv-name="Gestor"
                 :items="pension_entity"
@@ -100,7 +118,8 @@
                 label="Ente Gestor"
                 name="Grado"
                 v-model="affiliate.pension_entity_id"
-                :readonly="!secondaryPermission"
+                :readonly="!editable || !permission.secondary"
+                :outlined="editable && permission.secondary"
             ></v-select>
             </v-col>
             <v-col cols="12">
@@ -111,10 +130,11 @@
                 offset-y
                 max-width="290px"
                 min-width="290px"
-                :disabled="!secondaryPermission"
+                :disabled="!editable || !permission.secondary"
               >
                 <template v-slot:activator="{ on }">
                   <v-text-field
+                    dense
                     v-model="dates.dateDerelict.formatted"
                     label="Fecha Desvinculacion"
                     hint="Día/Mes/Año"
@@ -122,6 +142,7 @@
                     append-icon="mdi-calendar"
                     readonly
                     v-on="on"
+                    :outlined="editable && permission.secondary"
                   ></v-text-field>
                 </template>
                 <v-date-picker v-model="affiliate.date_derelict" no-title @input="dates.dateDerelict.show = false"></v-date-picker>
@@ -145,6 +166,10 @@
       type: Boolean,
       required: true
     },
+    permission: {
+      type: Object,
+      required: true
+    }
   },
   data: () => ({
     affiliateState: [],
@@ -186,20 +211,6 @@
         }
         }
     }
-  },
-    secondaryPermission() {
-      if (this.affiliate.id) {
-        return this.editable && this.$store.getters.permissions.includes('update-affiliate-secondary')
-      } else {
-        return this.editable && this.$store.getters.permissions.includes('create-affiliate')
-      }
-    },
-    primaryPermission() {
-      if (this.affiliate.id) {
-        return this.editable && this.$store.getters.permissions.includes('update-affiliate-primary')
-      } else {
-        return this.editable && this.$store.getters.permissions.includes('create-affiliate')
-      }
     }
   },
   beforeMount() {

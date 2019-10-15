@@ -46,7 +46,7 @@
           <v-col cols="12">
             <v-btn
               color="primary"
-              @click.stop="fingerprintCaptureStart()" v-if="editable"
+              @click.stop="fingerprintCaptureStart()" v-if="editable && permission.secondary"
               :disabled="fingerprintSucess"
             >
               <v-icon left>mdi-fingerprint</v-icon>
@@ -143,6 +143,10 @@ export default {
     },
     editable: {
       type: Boolean,
+      required: true
+    },
+    permission: {
+      type: Object,
       required: true
     }
   },

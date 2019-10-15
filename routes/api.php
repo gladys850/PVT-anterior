@@ -48,6 +48,19 @@ Route::group([
     ], function () {
         // Logout and refresh token
         Route::resource('auth', 'Api\V1\AuthController')->only(['show', 'update', 'destroy']);
+        Route::group([ 'middleware' => 'permission:show-affiliate' ], function () {
+            Route::resource('affiliate', 'Api\V1\AffiliateController')->only(['index']);
+        });
+        Route::group([ 'middleware' => 'permission:create-affiliate' ], function () {
+            Route::resource('affiliate', 'Api\V1\AffiliateController')->only(['store']);
+        });
+        Route::group([ 'middleware' => 'permission:update-affiliate-secondary|update-affiliate-primary' ], function () {
+            Route::resource('affiliate', 'Api\V1\AffiliateController')->only(['update']);
+            Route::patch('affiliate/{id}/fingerprint', 'Api\V1\AffiliateController@fingerprint_updated');
+        });
+        Route::group([ 'middleware' => 'permission:delete-affiliate' ], function () {
+            Route::resource('affiliate', 'Api\V1\AffiliateController')->only(['destroy']);
+        });
         // Admin routes
         Route::group([
             'middleware' => 'role:TE-admin'
@@ -69,12 +82,6 @@ Route::group([
             Route::post('role/{id}/permission', 'Api\V1\RoleController@set_permissions');
             // Permission
             Route::resource('permission', 'Api\V1\PermissionController')->only(['index']);
-             // Affiliate
-            Route::resource('affiliate', 'Api\V1\AffiliateController')->only(['index', 'store', 'update', 'destroy']);
-            Route::patch('affiliate/{id}/fingerprint', 'Api\V1\AffiliateController@fingerprint_updated');
         });
     });
-           
-            //Route::resource('city', 'Api\V1\CityController')->only(['index', 'show']);        
-            //index recordController
 });
