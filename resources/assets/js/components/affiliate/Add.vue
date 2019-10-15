@@ -111,14 +111,27 @@
           :value="'tab-3'"
         >
           <v-card flat tile >
-            <v-card-text><PoliceData :affiliate.sync="affiliate" :editable.sync="editable"/></v-card-text>
+            <v-card-text>
+              <PoliceData
+                v-if="!reload"
+                :affiliate.sync="affiliate"
+                :editable.sync="editable"
+                :permission="permission"
+              />
+            </v-card-text>
           </v-card>
         </v-tab-item>
           <v-tab-item
           :value="'tab-4'"
         >
           <v-card flat tile >
-            <v-card-text><Spouse :editable.sync="editable"/></v-card-text>
+            <v-card-text>
+              <Spouse
+                v-if="!reload"
+                :editable.sync="editable"
+                :permission="permission"
+              />
+            </v-card-text>
           </v-card>
         </v-tab-item>
           <v-tab-item
@@ -171,7 +184,8 @@ export default {
     icons: true,
     vertical: true,
     tabs: 3,
-    editable: false
+    editable: false,
+    reload: false
   }),
   computed: {
     isNew() {
@@ -182,6 +196,26 @@ export default {
         return this.isNew ? 'tab-2' : 'tab-1'
       },
       set: function(val) {}
+    },
+    permission() {
+      return {
+        primary: this.primaryPermission,
+        secondary: this.secondaryPermission
+      }
+    },
+    secondaryPermission() {
+      if (this.affiliate.id) {
+        return this.$store.getters.permissions.includes('update-affiliate-secondary')
+      } else {
+        return this.$store.getters.permissions.includes('create-affiliate')
+      }
+    },
+    primaryPermission() {
+      if (this.affiliate.id) {
+        return this.$store.getters.permissions.includes('update-affiliate-primary')
+      } else {
+        return this.$store.getters.permissions.includes('create-affiliate')
+      }
     }
   },
   mounted() {
@@ -196,6 +230,10 @@ export default {
     resetForm() {
       this.getAffiliate(this.$route.params.id)
       this.editable = false
+      this.reload = true
+      this.$nextTick(() => {
+        this.reload = false
+      })
     },
     async saveAffiliate() {
       try {

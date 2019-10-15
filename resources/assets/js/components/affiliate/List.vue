@@ -66,7 +66,7 @@ export default {
         text: 'Nro. de CI',
         value: 'identity_card',
         class: ['normal', 'white--text'],
-        width: '20%',
+        width: '30%',
         sortable: false 
       }, {
         text: 'Biométrico',
@@ -76,7 +76,7 @@ export default {
       },{ 
         text: 'Accion',
         class: ['normal', 'white--text'],
-        width: '20%',
+        width: '10%',
         sortable: false
       }    
     ]
