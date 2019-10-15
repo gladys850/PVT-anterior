@@ -138,7 +138,12 @@
           :value="'tab-5'"
         >
           <v-card flat tile >
-          <v-card-text><Fingerprint :affiliate.sync="affiliate" :editable.sync="editable"/></v-card-text>
+          <v-card-text>
+            <Fingerprint
+              :permission="permission"
+              :affiliate.sync="affiliate"
+              :editable.sync="editable"
+            /></v-card-text>
           </v-card>
         </v-tab-item>
       </v-tabs>
