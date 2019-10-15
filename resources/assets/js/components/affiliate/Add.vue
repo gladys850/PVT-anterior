@@ -28,7 +28,7 @@
             <span>Cancelar</span>
           </div>
         </v-tooltip>
-        <v-tooltip top>
+        <v-tooltip top v-if="tab != 'tab-1'">
           <template v-slot:activator="{ on }">
             <v-btn
               fab
@@ -65,6 +65,7 @@
         <v-tabs-slider></v-tabs-slider>
 
         <v-tab
+          v-if="!editable"
           v-show="!isNew"
           :href="`#tab-1`"
         >
@@ -190,17 +191,12 @@ export default {
     vertical: true,
     tabs: 3,
     editable: false,
-    reload: false
+    reload: false,
+    tab: 'tab-1'
   }),
   computed: {
     isNew() {
       return this.$route.params.id == 'new'
-    },
-    tab: {
-      get: function() {
-        return this.isNew ? 'tab-2' : 'tab-1'
-      },
-      set: function(val) {}
     },
     permission() {
       return {
@@ -227,6 +223,7 @@ export default {
     if (!this.isNew) {
       this.resetForm()
     } else {
+      this.tab = 'tab-2'
       this.editable = true
       this.setBreadcrumbs()
     }
