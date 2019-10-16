@@ -165,13 +165,18 @@ return [
         'date_death' => 'Fecha de fallecimiento',
         'date_entry' => 'Fecha de Ingreso',
         'date_derelict' => 'Fecha de culminacion',
-        'change_date' => 'Fecha de cambio',
+        'surname_husband' => 'Apellido del esposo',
+
         //Spouse
         'affiliate_id' =>'Afiliado',
         'civil_status' =>'Estado Civil',
         'marriage_date' =>'Fecha de casamiento',
         'death_certificate_number' =>'Número de certificado de defunción',
-        'due_date' => 'Fecha de Vencimiento'
+        'due_date' => 'Fecha de Vencimiento',
+        'reason_death' => 'Motivo de Fallecimiento',
+        'death_certificate_number' => 'Número de certificado de defunción',
+        //address
+        'city_address_id' =>'Ciudad de Dirección'
     ],
     
 ];
