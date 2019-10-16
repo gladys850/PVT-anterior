@@ -105,7 +105,14 @@
           :value="'tab-2'"
         >
           <v-card flat tile >
-            <v-card-text><Profile :affiliate.sync="affiliate" :editable.sync="editable"/></v-card-text>
+            <v-card-text>
+              <Profile
+                v-if="!reload"
+                :affiliate.sync="affiliate"
+                :editable.sync="editable"
+                :permission="permission"
+              />
+            </v-card-text>
           </v-card>
         </v-tab-item>
           <v-tab-item
