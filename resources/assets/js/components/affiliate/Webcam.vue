@@ -8,8 +8,8 @@
             :device-id="deviceId"
             width="90%"
             height="90%"
-            @started="onStarted" 
-            @stopped="onStopped" 
+            @started="onStarted"
+            @stopped="onStopped"
             @error="onError"
             @cameras="onCameras"
             @camera-change="onCameraChange" />
@@ -19,8 +19,8 @@
         <!--<div class="col-md-12">
             <select v-model="camera">
             <option>-- Select Device --</option>
-            <option v-for="device in devices" 
-            :key="device.deviceId" 
+            <option v-for="device in devices"
+            :key="device.deviceId"
             :value="device.deviceId">{{ device.label }}</option>
             </select>
         </div>-->
@@ -34,7 +34,7 @@
                 color="error"
                 @click.onStop="onStop()"
             >STOP CAMARA</v-btn>
-            
+
             <v-btn
                 color="accent"
                 @click.onStar="onStart()"
@@ -91,9 +91,9 @@ watch: {
     }
     }
 },
-beforeMount(){
-    this.getAffiliate();
-},
+/*beforeMount(){
+   this.getAffiliate();
+},*/
 mounted(){
     this.getAffiliate(this.$route.params.id)
 },
@@ -127,7 +127,7 @@ methods: {
     },
     async savePicture() {
     try {
-        this.img = this.$refs.webcam.capture();
+        //this.img = this.$refs.webcam.capture();
         this.$route.params.id
         console.log(this.img)
         //let res = await axios.patch(`affiliate/${this.affiliate.id}`, this.img)
@@ -135,7 +135,7 @@ methods: {
         let rest = await axios.patch(`picture/${this.affiliate.id}`, {
         'image': this.img
         })
-        console.log(rest)      
+        console.log(rest)
         this.toast('Fotografias Adicionada', 'success')
     } catch (e) {
     console.log(e)
@@ -143,13 +143,13 @@ methods: {
     this.loading = false
     }
     },
-    
+
     async getAffiliate(id) {
     try {
         this.loading = true
         let res = await axios.get(`affiliate/${id}`)
         this.affiliate = res.data
-    } catch (e) {      
+    } catch (e) {
         console.log(e)
     } finally {
         this.loading = false
@@ -157,4 +157,4 @@ methods: {
     }
 }
 };
-</script> 
+</script>
