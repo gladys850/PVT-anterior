@@ -61,7 +61,7 @@
                       <v-text-field
                         v-model="affiliate.identity_card"
                         label="Cedula de Identidad"
-                        v-validate.initial="'required|numeric|min:1|max:50'"
+                        v-validate.initial="'required|min:1|max:50'"
                         :error-messages="errors.collect('cedula identidad')"
                         data-vv-name="cedula identidad"
                         :readonly="!editable"
@@ -205,17 +205,17 @@
                     </v-col>
                     <v-col cols="12" md="4" >
                       <v-text-field
-                        v-model="affiliate.cell_phone_number"
+                        v-model="getTelefono[0]"
                         label="Celular"
                         v-validate.initial="'min:1|max:20'"
                         :error-messages="errors.collect('celular')"
-                        data-vv-name="celular"
+                        data-vv-name="celular1"
                         :readonly="!editable"
                       ></v-text-field>
                     </v-col>
                     <v-col cols="12" md="4" >
                       <v-text-field
-                        v-model="affiliate.cell_phone_number"
+                        v-model="getTelefono[1]"
                         label="Celular"
                         v-validate.initial="'min:1|max:20'"
                         :error-messages="errors.collect('celular')"
@@ -240,34 +240,33 @@
                           <v-icon>mdi-plus</v-icon>
                         </v-btn>
                       </template>
-                      <span>Añadir Direccion</span>
+                      <span>Añadir Dirección</span>
                     </v-tooltip>
-                  
                   </v-col>
                   <v-col cols="12">
                   <v-data-table
-                    :headers="headers"
-                    :items="desserts"
-                    hide-default-footer
-                    class="elevation-1"
-                    v-if="cities.length > 0"
+                      :headers="headers"
+                      :items="desserts"
+                      hide-default-footer
+                      class="elevation-1"
+                      v-if="cities.length > 0"
                   >
-                    <template v-slot:item="props">
-                      <tr>
-                        <td>{{ cities.find(o => o.id == props.item.city_address_id).name }}</td>
+                  <template v-slot:item="props">
+                  <tr>
+                    <td>{{ cities.find(o => o.id == props.item.city_address_id).name }}</td>
                         <td>{{ props.item.zone }}</td>
                         <td>{{ props.item.street }}</td>
                         <td>{{ props.item.number_address }}</td>
                         <td>
-                          <v-btn text icon color="info" @click.stop="bus.$emit('openDialog', props.item)">
-                            <v-icon>mdi-pencil</v-icon>
-                          </v-btn>
-                          <v-btn text icon color="error" @click.stop="bus.$emit('openRemoveDialog', `address/${props.item.id}`)">
-                            <v-icon>mdi-delete</v-icon>
-                          </v-btn>
-                        </td>
-                      </tr>
-                    </template>
+                          <v-btn text icon color="warning" @click.stop="bus.$emit('openDialog', props.item)">
+                          <v-icon>mdi-pencil</v-icon>
+                        </v-btn>
+                        <v-btn text icon color="error" @click.stop="bus.$emit('openRemoveDialog', `address/${props.item.id}`)">
+                          <v-icon>mdi-delete</v-icon>
+                        </v-btn>
+                    </td>
+                    </tr>
+                  </template>
                   </v-data-table>
                   </v-col>
                 </v-row>
@@ -372,11 +371,30 @@ import AddStreet from '@/components/affiliate/AddStreet'
     },
     bus: new Vue()
   }),
+  computed: {
+    getTelefono(){
+    if(this.affiliate.cell_phone_number==null)
+    {
+      console.log('entroooooooo')
+return 0
+    }
+    else
+    {
+let telefono = this.affiliate.cell_phone_number;
+    return telefono.split(',');
+    }
+  },
+  },
   beforeMount() {
     this.getCities();
   },
   mounted() {
-    this.bus.$on('saveAddress', (address) => {
+    if (this.affiliate.id) {
+      this.formatDate('dueDate', this.affiliate.due_date)
+      this.formatDate('birthDate', this.affiliate.birth_date)
+      this.formatDate('dateDeath', this.affiliate.date_death)
+    }
+      this.bus.$on('saveAddress', (address) => {
       let index = this.desserts.findIndex(o=> o.id == address.id)
       if (index == -1) {
         this.desserts.unshift(address)
@@ -387,19 +405,26 @@ import AddStreet from '@/components/affiliate/AddStreet'
   },
   watch: {
     'affiliate.due_date': function(date) {
-      if (date) this.dates.dueDate.formatted = this.$moment(date).format('L')
+      this.formatDate('dueDate', date)
     },
     'affiliate.birth_date': function(date) {
-      if (date) this.dates.birthDate.formatted = this.$moment(date).format('L')
+      this.formatDate('birthDate', date)
     },
     'affiliate.date_death': function(date) {
-      if (date) this.dates.dateDeath.formatted = this.$moment(date).format('L')
+      this.formatDate('dateDeath', date)
     }
   },
   methods: {
     close() {
       this.dialog = false
       this.$emit('closeFab')
+    },
+    formatDate(key, date) {
+      if (date) {
+        this.dates[key].formatted = this.$moment(date).format('L')
+      } else {
+        this.dates[key].formatted = null
+      }
     },
     async getCities() {
     try {
