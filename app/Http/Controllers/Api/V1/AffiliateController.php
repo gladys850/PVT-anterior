@@ -14,7 +14,6 @@ use App\AffiliateStateType;
 use App\Spouse;
 use App\Address;
 use App\Http\Requests\AffiliateForm;
-use App\Http\Requests\AffiliateEditForm;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Schema;
@@ -192,14 +191,20 @@ class AffiliateController extends Controller
     //get information spouse
     public function spouse_get($affiliate_id){
         $spouse = Spouse::where('affiliate_id',$affiliate_id)->first();
+        if(!$spouse) abort (404);
         return ($spouse);
     }  
     //addresses
-      public function addresses_get($affiliate_id){
+    public function addresses_get($affiliate_id){
         $affiliate=Affiliate::find($affiliate_id);
         $addreses = $affiliate->addresses()->orderByDesc('created_at')->get();
         return $addreses;
     }
- 
-    
+    public function addresses_update(Request $request,$affiliate_id){
+       // $addresses=[8570,10371,18];
+        foreach($request->addresses as $dir) {
+            if(!Address::whereId($dir)->exists()) abort (404); 
+        }
+        return Affiliate::find($affiliate_id)->addresses()->sync($request->addresses); 
+    }
 }

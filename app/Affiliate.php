@@ -100,7 +100,7 @@ class Affiliate extends Model
       //address
     public function addresses()
     {
-      return $this->morphToMany(Address::class, 'addressable');
+      return $this->morphToMany(Address::class, 'addressable')->withTimestamps();
     }
     //spouses
     public function spouse()
