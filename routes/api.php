@@ -13,11 +13,18 @@ Route::group([
     Route::resource('affiliate', 'Api\V1\AffiliateController')->only(['show']);
     // spouse - affiliate
     Route::get('affiliate/{affiliate_id}/spouse', 'Api\V1\AffiliateController@spouse_get');
+    //address - affiliate
+    Route::get('affiliate/{affiliate_id}/address', 'Api\V1\AffiliateController@addresses_get');
+    Route::patch('affiliate/{affiliate_id}/address', 'Api\V1\AffiliateController@addresses_update');
+    //addres
+    Route::post('address', 'Api\V1\AddressController@store');
+    Route::delete('address/{id}', 'Api\V1\AddressController@destroy');
+    Route::patch('address/{id}', 'Api\V1\AddressController@update');
     //Spouse
     //Route::resource('spouse', 'Api\V1\SpouseController');
     Route::post('spouse', 'Api\V1\SpouseController@store');
-    Route::delete('spouse/{spouse_id}', 'Api\V1\SpouseController@destroy');
-    Route::patch('spouse/{spouse_id}', 'Api\V1\SpouseController@update');
+    Route::delete('spouse/{id}', 'Api\V1\SpouseController@destroy');
+    Route::patch('spouse/{id}', 'Api\V1\SpouseController@update');
     // City
     Route::resource('city', 'Api\V1\CityController')->only(['index']);
     // state
@@ -35,10 +42,7 @@ Route::group([
     Route::get('affiliate/{id}/profile_picture', 'Api\V1\AffiliateController@PictureImageprint');
     // Record
     Route::resource('record', 'Api\V1\RecordController')->only(['index']);
-     //address
-    //Route::post('address','Api\V1\AddressController@store');
-     Route::get('affiliate/{affiliate_id}/addresses', 'Api\V1\AffiliateController@addresses_get');
-     Route::patch('affiliate/{affiliate_id}/addresses_update', 'Api\V1\AffiliateController@addresses_update');
+     
 
 
 
