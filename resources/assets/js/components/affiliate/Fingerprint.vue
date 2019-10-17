@@ -11,16 +11,16 @@
               <v-btn
               color="primary"
               @click="dialog=true" v-if="editable"
-              :disabled="PictureSucess"
+              :disabled="pictureSucess"
             >
               <v-icon left>mdi-camera</v-icon>
-              <span v-if="PictureSucess">Fotografia Capturada</span>
+              <span v-if="pictureSucess">Fotografia Capturada</span>
               <span v-else>Adicionar Fotografia</span>
             </v-btn>
               <!--<v-btn type="file" color="primary">
                   Adicionar Foto
               </v-btn>-->
-              
+
             </v-card-text>
             <v-row v-if="profilePictures.length > 0">
               <template v-for="image in profilePictures">
