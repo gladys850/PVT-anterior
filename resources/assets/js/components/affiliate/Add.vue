@@ -28,7 +28,7 @@
             <span>Cancelar</span>
           </div>
         </v-tooltip>
-        <v-tooltip top>
+        <v-tooltip top v-if="tab != 'tab-1'">
           <template v-slot:activator="{ on }">
             <v-btn
               fab
@@ -65,6 +65,7 @@
         <v-tabs-slider></v-tabs-slider>
 
         <v-tab
+          v-if="!editable"
           v-show="!isNew"
           :href="`#tab-1`"
         >
@@ -104,7 +105,14 @@
           :value="'tab-2'"
         >
           <v-card flat tile >
-            <v-card-text><Profile :affiliate.sync="affiliate" :editable.sync="editable"/></v-card-text>
+            <v-card-text>
+              <Profile
+                v-if="!reload"
+                :affiliate.sync="affiliate"
+                :editable.sync="editable"
+                :permission="permission"
+              />
+            </v-card-text>
           </v-card>
         </v-tab-item>
           <v-tab-item
@@ -128,6 +136,7 @@
             <v-card-text>
               <Spouse
                 v-if="!reload"
+                :spouse.sync="spouse"
                 :editable.sync="editable"
                 :permission="permission"
               />
@@ -184,24 +193,44 @@ export default {
       service_months:null,
       date_derelict:null
     },
-    text: 'hola',
-    text4: 'huella',
+    spouse: {
+    affiliate_id: null,
+    first_name: null,
+    second_name:null,
+    last_name: null,
+    mothers_last_name:null,
+    identity_card:null,
+    birth_date:null,
+    date_death:null,
+    reason_death:null,
+    phone_number:null,
+    cell_phone_number:null,
+    city_identity_card_id:null,
+    death_certificate_number:null,
+    city_birth_id:null,
+    civil_status:null,
+    official:null,
+    book:null,
+    departure:null,
+    marriage_date:null
+    },
     icons: true,
     vertical: true,
     tabs: 3,
     editable: false,
-    reload: false
+    reload: false,
+    tab: 'tab-1'
   }),
   computed: {
     isNew() {
       return this.$route.params.id == 'new'
-    },
+          },
     tab: {
       get: function() {
         return this.isNew ? 'tab-2' : 'tab-1'
       },
       set: function(val) {}
-    },
+      },
     permission() {
       return {
         primary: this.primaryPermission,
@@ -213,9 +242,9 @@ export default {
         return this.$store.getters.permissions.includes('update-affiliate-secondary')
       } else {
         return this.$store.getters.permissions.includes('create-affiliate')
-      }
-    },
-    primaryPermission() {
+    }
+  },
+  primaryPermission() {
       if (this.affiliate.id) {
         return this.$store.getters.permissions.includes('update-affiliate-primary')
       } else {
@@ -227,6 +256,7 @@ export default {
     if (!this.isNew) {
       this.resetForm()
     } else {
+      this.tab = 'tab-2'
       this.editable = true
       this.setBreadcrumbs()
     }
@@ -234,10 +264,11 @@ export default {
   methods: {
     resetForm() {
       this.getAffiliate(this.$route.params.id)
+      this.getSpouse(this.$route.params.id)
       this.editable = false
       this.reload = true
       this.$nextTick(() => {
-        this.reload = false
+      this.reload = false
       })
     },
     async saveAffiliate() {
@@ -246,10 +277,31 @@ export default {
           this.editable = true
         } else {
           if (this.isNew) {
-            // New affiliate
-            
+          // New affiliate
+          await axios.post(`affiliate`, this.affiliate)
+          this.toast('Afiliado adicionado', 'success')
+          this.$router.push({
+          name: "affiliateIndex"
+          });
+          console.log(res.data)
           } else {
-            // Edit affiliate
+          // Edit affiliate
+          await axios.patch(`affiliate/${this.affiliate.id}`, this.affiliate)
+      if (this.spouse.id)
+      {
+        console.log('entro aqui')
+        this.spouse.affiliate_id=this.affiliate.id
+            await axios.patch(`spouse/${this.spouse.id}`, this.spouse)
+      }
+      else{
+         console.log('entro aqui2')
+            await axios.post(`spouse`, this.spouse)
+   
+      }
+          this.$router.push({
+          name: "affiliateIndex"
+          });
+          this.toast('Afiliado modificado', 'success')
           }
           this.toast('Registro guardado correctamente', 'success')
           this.editable = false
@@ -291,32 +343,18 @@ export default {
       } finally {
         this.loading = false
       }
+    },
+    async getSpouse(id) {
+      try {
+        this.loading = true
+        let res = await axios.get(`affiliate/${id}/spouse`)
+        this.spouse = res.data
+      } catch (e) {
+        console.log(e)
+      } finally {
+        this.loading = false
+      }
     }
   },
-  async saveAffiliate() {
-    try {
-      if (await this.$validator.validateAll()) {
-        this.loading = true
-        if (this.$route.params.id != 'new') {
-          let res = await axios.patch(`affiliate/${this.affiliate.id}`, this.affiliate)
-          console.log(res.data)
-          this.$router.push({
-          name: "affiliateIndex"
-          });
-          this.toast('Afiliado modificado', 'success')
-        } else {
-          let res = await axios.post(`affiliate`, this.affiliate)
-          this.toast('Afiliado adicionado', 'success')
-          this.$router.push({
-          name: "affiliateIndex"
-          });console.log(res.data)
-        }
-      }
-    } catch (e) {
-      console.log(e)
-    } finally {
-      this.loading = false
-    }
-    }
 }
 </script>

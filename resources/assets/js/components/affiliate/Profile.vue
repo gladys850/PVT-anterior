@@ -9,44 +9,57 @@
                   </v-col>
                     <v-col cols="12" md="6" >
                       <v-text-field
+                        dense
                       v-model="affiliate.first_name"
                       label="Primer Nombre"
                       v-validate.initial="'required|min:1|max:250'"
                       :error-messages="errors.collect('primer nombre')"
                       data-vv-name="primer nombre"
-                      :readonly="!editable"
+                      :readonly="!editable || !permission.primary"
+                      :outlined="editable && permission.primary"
+                      :disabled="editable && !permission.primary"
                       ></v-text-field>
                     </v-col>
                     <v-col cols="12" md="6" >
                       <v-text-field
+                        dense
                       v-model="affiliate.second_name"
                       label="Segundo Nombre"
                       data-vv-name="segundo nombre"
-                      :readonly="!editable"
+                      :readonly="!editable || !permission.primary"
+                      :outlined="editable && permission.primary"
+                      :disabled="editable && !permission.primary"
                       ></v-text-field>
                     </v-col>
                     <v-col cols="12" md="4" >
                       <v-text-field
+                        dense
                       v-model="affiliate.last_name"
                       label="Primer Apellido"
                       v-validate.initial="'min:1|max:250'"
                       :error-messages="errors.collect('primer apellido')"
                       data-vv-name="primer apellido"
-                      :readonly="!editable"
+                      :readonly="!editable || !permission.primary"
+                      :outlined="editable && permission.primary"
+                      :disabled="editable && !permission.primary"
                       ></v-text-field>
                     </v-col>
                     <v-col cols="12" md="4" >
                       <v-text-field
+                        dense
                       v-model="affiliate.mothers_last_name"
                       label="Segundo Apellido"
                       v-validate.initial="'min:1|max:250'"
                       :error-messages="errors.collect('segundo apellido')"
                       data-vv-name="segundo apellido"
-                      :readonly="!editable"
+                      :readonly="!editable || !permission.primary"
+                      :outlined="editable && permission.primary"
+                      :disabled="editable && !permission.primary"
                       ></v-text-field>
                     </v-col>
                     <v-col cols="12" md="4" >
                       <v-select
+                        dense
                         data-vv-name="Genero"
                         :items="gender"
                         item-text="name"
@@ -54,21 +67,27 @@
                         :loading="loading"
                         label="Genero"
                         v-model="affiliate.gender"
-                        :readonly="!editable"
+                        :readonly="!editable || !permission.primary"
+                        :outlined="editable && permission.primary"
+                        :disabled="editable && !permission.primary"
                       ></v-select>
                     </v-col>
                     <v-col cols="12" md="4" >
                       <v-text-field
+                        dense
                         v-model="affiliate.identity_card"
                         label="Cedula de Identidad"
-                        v-validate.initial="'required|numeric|min:1|max:50'"
+                        v-validate.initial="'required|min:1|max:50'"
                         :error-messages="errors.collect('cedula identidad')"
                         data-vv-name="cedula identidad"
-                        :readonly="!editable"
+                        :readonly="!editable || !permission.primary"
+                        :outlined="editable && permission.primary"
+                        :disabled="editable && !permission.primary"
                       ></v-text-field>
                     </v-col>
                     <v-col cols="12" md="4" >
                       <v-select
+                        dense
                         data-vv-name="Ciudad de Expedición"
                         :items="cities"
                         item-text="name"
@@ -76,7 +95,9 @@
                         :loading="loading"
                         label="Ciudad de Expedición"
                         v-model="affiliate.city_identity_card_id"
-                        :readonly="!editable"
+                        :readonly="!editable || !permission.primary"
+                        :outlined="editable && permission.primary"
+                        :disabled="editable && !permission.primary"
                       ></v-select>
                     </v-col>
                     <v-col cols="12" md="4">
@@ -87,10 +108,11 @@
                         offset-y
                         max-width="290px"
                         min-width="290px"
-                        :disabled="!editable"
+                        :disabled="!editable || !permission.secondary"
                       >
                         <template v-slot:activator="{ on }">
                           <v-text-field
+                            dense
                             v-model="dates.dueDate.formatted"
                             label="Fecha Vencimiento CI"
                             hint="Día/Mes/Año"
@@ -98,6 +120,7 @@
                             append-icon="mdi-calendar"
                             readonly
                             v-on="on"
+                            :outlined="editable && permission.secondary"
                           ></v-text-field>
                         </template>
                         <v-date-picker v-model="affiliate.due_date" no-title @input="dates.dueDate.show = false"></v-date-picker>
@@ -111,10 +134,11 @@
                         offset-y
                         max-width="290px"
                         min-width="290px"
-                        :disabled="!editable"
+                        :disabled="!editable || !permission.primary"
                       >
                         <template v-slot:activator="{ on }">
                           <v-text-field
+                            dense
                             v-model="dates.birthDate.formatted"
                             label="Fecha Nacimiento"
                             hint="Día/Mes/Año"
@@ -122,6 +146,8 @@
                             append-icon="mdi-calendar"
                             readonly
                             v-on="on"
+                            :outlined="editable && permission.primary"
+                            :disabled="editable && !permission.primary"
                           ></v-text-field>
                         </template>
                         <v-date-picker v-model="affiliate.birth_date" no-title @input="dates.birthDate.show = false"></v-date-picker>
@@ -129,6 +155,7 @@
                     </v-col>
                     <v-col cols="12" md="4" >
                       <v-select
+                        dense
                         :loading="loading"
                         data-vv-name="Ciudad de Nacimiento"
                         :items="cities"
@@ -137,11 +164,14 @@
                         name="nacimiento"
                         label="Lugar de Nacimiento"
                         v-model="affiliate.city_birth_id"
-                        :readonly="!editable"
+                        :readonly="!editable || !permission.primary"
+                        :outlined="editable && permission.primary"
+                        :disabled="editable && !permission.primary"
                       ></v-select>
                     </v-col>
                     <v-col cols="12" md="4" >
                       <v-select
+                        dense
                         :loading="loading"
                         data-vv-name="Estado Civil"
                         :items="civil"
@@ -150,7 +180,9 @@
                         label="Estado Civil"
                         name="estado_civil"
                         v-model="affiliate.civil_status"
-                        :readonly="!editable"
+                        :readonly="!editable || !permission.primary"
+                        :outlined="editable && permission.primary"
+                        :disabled="editable && !permission.primary"
                       ></v-select>
                     </v-col>
                     <v-col cols="12" md="6">
@@ -161,10 +193,11 @@
                         offset-y
                         max-width="290px"
                         min-width="290px"
-                        :disabled="!editable"
+                        :disabled="!editable || !permission.secondary"
                       >
                         <template v-slot:activator="{ on }">
                           <v-text-field
+                            dense
                             v-model="dates.dateDeath.formatted"
                             label="Fecha Fallecimiento"
                             hint="Día/Mes/Año"
@@ -172,6 +205,8 @@
                             append-icon="mdi-calendar"
                             readonly
                             v-on="on"
+                            :outlined="editable && permission.secondary"
+                            :disabled="editable && !permission.secondary"
                           ></v-text-field>
                         </template>
                         <v-date-picker v-model="affiliate.date_death" no-title @input="dates.dateDeath.show = false"></v-date-picker>
@@ -179,9 +214,12 @@
                     </v-col>
                     <v-col cols="12" md="6">
                       <v-text-field
+                        dense
                         v-model="affiliate.reason_death"
                         label="Causa Fallecimiento"
-                        :readonly="!editable"
+                        :readonly="!editable || !permission.secondary"
+                        :outlined="editable && permission.secondary"
+                        :disabled="editable && !permission.secondary"
                       ></v-text-field>
                     </v-col>
                 </v-row>
@@ -195,39 +233,47 @@
                     </v-col>
                     <v-col cols="12" md="4" >
                       <v-text-field
+                        dense
                         v-model="affiliate.phone_number"
                         label="Telefono"
                         v-validate.initial="'min:1|max:20'"
                         :error-messages="errors.collect('telefono')"
                         data-vv-name="telefono"
-                        :readonly="!editable"
+                        :readonly="!editable || !permission.secondary"
+                        :outlined="editable && permission.secondary"
+                        :disabled="editable && !permission.secondary"
                       ></v-text-field>
                     </v-col>
                     <v-col cols="12" md="4" >
                       <v-text-field
-                        v-model="affiliate.cell_phone_number"
+                        v-model="getTelefono[0]"
                         label="Celular"
                         v-validate.initial="'min:1|max:20'"
                         :error-messages="errors.collect('celular')"
-                        data-vv-name="celular"
-                        :readonly="!editable"
+                        data-vv-name="celular1"
+                        :readonly="!editable || !permission.secondary"
+                        :outlined="editable && permission.secondary"
+                        :disabled="editable && !permission.secondary"
                       ></v-text-field>
                     </v-col>
                     <v-col cols="12" md="4" >
                       <v-text-field
-                        v-model="affiliate.cell_phone_number"
+                        dense
+                        v-model="getTelefono[1]"
                         label="Celular"
                         v-validate.initial="'min:1|max:20'"
                         :error-messages="errors.collect('celular')"
                         data-vv-name="celular"
-                        :readonly="!editable"
+                        :readonly="!editable || !permission.secondary"
+                        :outlined="editable && permission.secondary"
+                        :disabled="editable && !permission.secondary"
                       ></v-text-field>
                     </v-col>
                       <v-col cols="12" md="6">
                     <v-toolbar-title>DIRECCIÓN DOMICILARIA</v-toolbar-title>
                   </v-col>
                   <v-col cols="12" md="3">
-                    <v-tooltip top>
+                    <v-tooltip top v-if="editable && permission.secondary">
                       <template v-slot:activator="{ on }">
                         <v-btn
                           fab
@@ -240,34 +286,33 @@
                           <v-icon>mdi-plus</v-icon>
                         </v-btn>
                       </template>
-                      <span>Añadir Direccion</span>
+                      <span>Añadir Dirección</span>
                     </v-tooltip>
-                  
                   </v-col>
                   <v-col cols="12">
                   <v-data-table
-                    :headers="headers"
-                    :items="desserts"
-                    hide-default-footer
-                    class="elevation-1"
-                    v-if="cities.length > 0"
+                      :headers="headers"
+                      :items="desserts"
+                      hide-default-footer
+                      class="elevation-1"
+                      v-if="cities.length > 0"
                   >
-                    <template v-slot:item="props">
-                      <tr>
-                        <td>{{ cities.find(o => o.id == props.item.city_address_id).name }}</td>
+                  <template v-slot:item="props">
+                  <tr>
+                    <td>{{ cities.find(o => o.id == props.item.city_address_id).name }}</td>
                         <td>{{ props.item.zone }}</td>
                         <td>{{ props.item.street }}</td>
                         <td>{{ props.item.number_address }}</td>
                         <td>
-                          <v-btn text icon color="info" @click.stop="bus.$emit('openDialog', props.item)">
-                            <v-icon>mdi-pencil</v-icon>
-                          </v-btn>
-                          <v-btn text icon color="error" @click.stop="bus.$emit('openRemoveDialog', `address/${props.item.id}`)">
-                            <v-icon>mdi-delete</v-icon>
-                          </v-btn>
-                        </td>
-                      </tr>
-                    </template>
+                          <v-btn text icon color="warning" @click.stop="bus.$emit('openDialog', props.item)">
+                          <v-icon>mdi-pencil</v-icon>
+                        </v-btn>
+                        <v-btn text icon color="error" @click.stop="bus.$emit('openRemoveDialog', `address/${props.item.id}`)">
+                          <v-icon>mdi-delete</v-icon>
+                        </v-btn>
+                    </td>
+                    </tr>
+                  </template>
                   </v-data-table>
                   </v-col>
                 </v-row>
@@ -293,6 +338,10 @@ import AddStreet from '@/components/affiliate/AddStreet'
       type: Boolean,
       required: true
     },
+    permission: {
+      type: Object,
+      required: true
+    }
   },
   components: {
     AddStreet,
@@ -372,11 +421,30 @@ import AddStreet from '@/components/affiliate/AddStreet'
     },
     bus: new Vue()
   }),
+  computed: {
+    getTelefono(){
+    if(this.affiliate.cell_phone_number==null)
+    {
+      console.log('entroooooooo')
+return 0
+    }
+    else
+    {
+let telefono = this.affiliate.cell_phone_number;
+    return telefono.split(',');
+    }
+  },
+  },
   beforeMount() {
     this.getCities();
   },
   mounted() {
-    this.bus.$on('saveAddress', (address) => {
+    if (this.affiliate.id) {
+      this.formatDate('dueDate', this.affiliate.due_date)
+      this.formatDate('birthDate', this.affiliate.birth_date)
+      this.formatDate('dateDeath', this.affiliate.date_death)
+    }
+      this.bus.$on('saveAddress', (address) => {
       let index = this.desserts.findIndex(o=> o.id == address.id)
       if (index == -1) {
         this.desserts.unshift(address)
@@ -387,19 +455,26 @@ import AddStreet from '@/components/affiliate/AddStreet'
   },
   watch: {
     'affiliate.due_date': function(date) {
-      if (date) this.dates.dueDate.formatted = this.$moment(date).format('L')
+      this.formatDate('dueDate', date)
     },
     'affiliate.birth_date': function(date) {
-      if (date) this.dates.birthDate.formatted = this.$moment(date).format('L')
+      this.formatDate('birthDate', date)
     },
     'affiliate.date_death': function(date) {
-      if (date) this.dates.dateDeath.formatted = this.$moment(date).format('L')
+      this.formatDate('dateDeath', date)
     }
   },
   methods: {
     close() {
       this.dialog = false
       this.$emit('closeFab')
+    },
+    formatDate(key, date) {
+      if (date) {
+        this.dates[key].formatted = this.$moment(date).format('L')
+      } else {
+        this.dates[key].formatted = null
+      }
     },
     async getCities() {
     try {

@@ -76,7 +76,7 @@
                         v-model="spouse.identity_card"
                         class="purple-input"
                         label="Cedula de Identidad"
-                        v-validate.initial="'required|numeric|min:1|max:50'"
+                        v-validate.initial="'required|min:1|max:50'"
                         :error-messages="errors.collect('cedula identidad')"
                         data-vv-name="cedula identidad"
                         :readonly="!editable || !permission.secondary"
@@ -283,6 +283,10 @@
   export default {
   name: "affiliate-spouse",
   props: {
+    spouse: {
+      type: Object,
+      required: true
+    },
     editable: {
       type: Boolean,
       required: true
@@ -293,19 +297,6 @@
     }
   },
   data: () => ({
-  spouse: {
-    first_name: null,
-    second_name:null,
-    last_name: null,
-    mothers_last_name:null,
-    identity_card:null,
-    birth_date:null,
-    date_death:null,
-    reason_death:null,
-    phone_number:null,
-    cell_phone_number:null,
-    city_identity_card_id:null,
-    },
     loading: true,
     cities: [],
     civil: [
@@ -322,7 +313,6 @@
         value:"D"
       }
     ],
-    city: [],
     dates: {
       birthDate: {
         formatted: null,
@@ -340,11 +330,7 @@
   }),
   beforeMount() {
     this.getCities();
-  },
-  mounted() {
-    if (this.$route.params.id != 'new') {
-      this.getSpouse(this.$route.params.id)
-    }
+    console.log(this.spouse);
   },
   watch: {
     'spouse.birth_date': function(date) {
@@ -370,17 +356,6 @@
         this.loading = false
       }
   },
-    async getSpouse(id) {
-      try {
-        this.loading = true
-        let res = await axios.get(`affiliate/${id}/spouse`)
-        this.spouse = res.data
-      } catch (e) {
-        console.log(e)
-      } finally {
-        this.loading = false
-      }
-    }
   }
   }
 </script>

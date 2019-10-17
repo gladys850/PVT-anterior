@@ -13,30 +13,30 @@
       </v-toolbar>
       <v-card-title></v-card-title>
       <v-card-text>
-        <v-container fluid >
+  <v-container fluid >
       <v-row justify="center">
         <v-col cols="12" >
-          <v-container class="py-0">
+              <v-container class="py-0">
                 <v-row>
-                  <v-col cols="12" md="5" >
-                    <v-select
-                      data-vv-name="Ciudad"
-                      :items="cities"
-                      item-text="name"
-                      item-value="id"
-                      label="Ciudad"
-                      v-model="address.city_address_id"
-                    ></v-select>
+                    <v-col cols="12" md="5" >
+                      <v-select
+                        data-vv-name="Ciudad"
+                        :items="cities"
+                        item-text="name"
+                        item-value="id"
+                        label="Ciudad"
+                        v-model="address.city_address_id"
+                      ></v-select>
                     </v-col>
-                  <v-col cols="12" md="7">
-                    <v-text-field
+                    <v-col cols="12" md="7">
+                      <v-text-field
                       v-model="address.zone"
                       label="Zona"
                       class="purple-input"
                       v-validate.initial="'min:1|max:20'"
                       :error-messages="errors.collect('celular')"
                       data-vv-name="zona"
-                    ></v-text-field>
+                      ></v-text-field>
                     </v-col>
                     <v-col cols="12" md="9">
                       <v-text-field
@@ -53,17 +53,17 @@
                       v-model="address.number_address"
                       label="Nro"
                       class="purple-input"
-                      v-validate.initial="'min:1|max:20'"
+                      v-validate.initial="'required|numeric|min:1|max:20'"
                       :error-messages="errors.collect('celular')"
                       data-vv-name="nro"
                       ></v-text-field>
                     </v-col>
                 </v-row>
-              </v-container>
+            </v-container>
         </v-col>
       </v-row>
   </v-container>
-      </v-card-text>
+  </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
         <v-btn @click.stop="close()"
@@ -104,8 +104,8 @@
       this.bus.$emit('saveAddress', this.address)
       this.dialog = false
       this.address = {}
-    },
-    saveAddress() {
+  },
+  saveAddress() {
       if (this.address.id) {
         console.log('PATCH editando')
       } else {
