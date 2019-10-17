@@ -6,7 +6,7 @@
               <v-col cols="12">
                 <v-toolbar-title>INFORMACION POLICIAL</v-toolbar-title>
               </v-col>
-            <v-col cols="12" md="7" >
+            <v-col cols="12" md="4" >
               <v-select
                 dense
                 :loading="loading"
@@ -22,7 +22,7 @@
                 :outlined="editable && permission.secondary"
               ></v-select>
             </v-col>
-            <v-col cols="12" md="5" >
+            <v-col cols="12" md="4" >
               <v-menu
                 v-model="dates.dateEntry.show"
                 :close-on-content-click="false"
@@ -49,7 +49,23 @@
                 <v-date-picker v-model="affiliate.date_entry" no-title @input="dates.dateEntry.show = false"></v-date-picker>
               </v-menu>
             </v-col>
-            <v-col cols="12" md="6" >
+            <v-col cols="12" md="4" >
+            <v-select
+                dense
+                :loading="loading"
+                data-vv-name="Grado"
+                :items="degree"
+                item-text="name"
+                item-value="id"
+                label="Grado"
+                name="Grado"
+                v-model="affiliate.degree_id"
+                :readonly="!editable || !permission.primary"
+                :outlined="editable && permission.primary"
+                :disabled="editable && !permission.primary"
+            ></v-select>
+            </v-col>
+            <v-col cols="12" md="4" >
               <v-select
                 dense
                 :loading="loading"
@@ -65,49 +81,33 @@
                 :disabled="editable && !permission.primary"
               ></v-select>
             </v-col>
-            <v-col cols="12" md="6">
+            <v-col cols="12" md="4">
               <v-text-field
                 dense
                 v-model="affiliate.service_years"
                 label="Años de Servicio"
-                v-validate.initial="'numeric|min:1|max:100'"
+                v-validate.initial="'numeric|min_value:0|max_value:100'"
                 :error-messages="errors.collect('nro')"
-                data-vv-name="nro"
+                data-vv-name="year"
                 :readonly="!editable || !permission.primary"
                 :outlined="editable && permission.primary"
                 :disabled="editable && !permission.primary"
               ></v-text-field>
             </v-col>
-            <v-col cols="12" md="6" >
+            <v-col cols="12" md="4" >
               <v-text-field
                 dense
                 v-model="affiliate.service_months"
                 label="Meses de Servicio"
-                v-validate.initial="'numeric|min:1|max:100'"
+                v-validate.initial="'numeric|min_value:0|max_value:12'"
                 :error-messages="errors.collect('nro')"
-                data-vv-name="nro"
+                data-vv-name="months"
                 :readonly="!editable || !permission.primary"
                 :outlined="editable && permission.primary"
                 :disabled="editable && !permission.primary"
               ></v-text-field>
             </v-col>
-            <v-col cols="12" md="6" >
-              <v-select
-                dense
-                :loading="loading"
-                data-vv-name="Grado"
-                :items="degree"
-                item-text="name"
-                item-value="id"
-                label="Grado"
-                name="Grado"
-                v-model="affiliate.degree_id"
-                :readonly="!editable || !permission.primary"
-                :outlined="editable && permission.primary"
-                :disabled="editable && !permission.primary"
-                ></v-select>
-              </v-col>
-            <v-col cols="12" >
+            <v-col cols="12"  md="6" >
               <v-select
                 dense
                 :loading="loading"
@@ -122,7 +122,7 @@
                 :outlined="editable && permission.secondary"
             ></v-select>
             </v-col>
-            <v-col cols="12">
+            <v-col cols="12"  md="6">
               <v-menu
                 v-model="dates.dateDerelict.show"
                 :close-on-content-click="false"
