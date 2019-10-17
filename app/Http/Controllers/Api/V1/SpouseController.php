@@ -15,7 +15,7 @@ class SpouseController extends Controller
      */
     public function index(Request $request)
     {
-        //
+        
     }
 
     /**
