@@ -9,44 +9,57 @@
                   </v-col>
                     <v-col cols="12" md="6" >
                       <v-text-field
+                        dense
                       v-model="affiliate.first_name"
                       label="Primer Nombre"
                       v-validate.initial="'required|min:1|max:250'"
                       :error-messages="errors.collect('primer nombre')"
                       data-vv-name="primer nombre"
-                      :readonly="!editable"
+                      :readonly="!editable || !permission.primary"
+                      :outlined="editable && permission.primary"
+                      :disabled="editable && !permission.primary"
                       ></v-text-field>
                     </v-col>
                     <v-col cols="12" md="6" >
                       <v-text-field
+                        dense
                       v-model="affiliate.second_name"
                       label="Segundo Nombre"
                       data-vv-name="segundo nombre"
-                      :readonly="!editable"
+                      :readonly="!editable || !permission.primary"
+                      :outlined="editable && permission.primary"
+                      :disabled="editable && !permission.primary"
                       ></v-text-field>
                     </v-col>
                     <v-col cols="12" md="4" >
                       <v-text-field
+                        dense
                       v-model="affiliate.last_name"
                       label="Primer Apellido"
                       v-validate.initial="'min:1|max:250'"
                       :error-messages="errors.collect('primer apellido')"
                       data-vv-name="primer apellido"
-                      :readonly="!editable"
+                      :readonly="!editable || !permission.primary"
+                      :outlined="editable && permission.primary"
+                      :disabled="editable && !permission.primary"
                       ></v-text-field>
                     </v-col>
                     <v-col cols="12" md="4" >
                       <v-text-field
+                        dense
                       v-model="affiliate.mothers_last_name"
                       label="Segundo Apellido"
                       v-validate.initial="'min:1|max:250'"
                       :error-messages="errors.collect('segundo apellido')"
                       data-vv-name="segundo apellido"
-                      :readonly="!editable"
+                      :readonly="!editable || !permission.primary"
+                      :outlined="editable && permission.primary"
+                      :disabled="editable && !permission.primary"
                       ></v-text-field>
                     </v-col>
                     <v-col cols="12" md="4" >
                       <v-select
+                        dense
                         data-vv-name="Genero"
                         :items="gender"
                         item-text="name"
@@ -54,21 +67,27 @@
                         :loading="loading"
                         label="Genero"
                         v-model="affiliate.gender"
-                        :readonly="!editable"
+                        :readonly="!editable || !permission.primary"
+                        :outlined="editable && permission.primary"
+                        :disabled="editable && !permission.primary"
                       ></v-select>
                     </v-col>
                     <v-col cols="12" md="4" >
                       <v-text-field
+                        dense
                         v-model="affiliate.identity_card"
                         label="Cedula de Identidad"
                         v-validate.initial="'required|numeric|min:1|max:50'"
                         :error-messages="errors.collect('cedula identidad')"
                         data-vv-name="cedula identidad"
-                        :readonly="!editable"
+                        :readonly="!editable || !permission.primary"
+                        :outlined="editable && permission.primary"
+                        :disabled="editable && !permission.primary"
                       ></v-text-field>
                     </v-col>
                     <v-col cols="12" md="4" >
                       <v-select
+                        dense
                         data-vv-name="Ciudad de Expedición"
                         :items="cities"
                         item-text="name"
@@ -76,7 +95,9 @@
                         :loading="loading"
                         label="Ciudad de Expedición"
                         v-model="affiliate.city_identity_card_id"
-                        :readonly="!editable"
+                        :readonly="!editable || !permission.primary"
+                        :outlined="editable && permission.primary"
+                        :disabled="editable && !permission.primary"
                       ></v-select>
                     </v-col>
                     <v-col cols="12" md="4">
@@ -87,10 +108,11 @@
                         offset-y
                         max-width="290px"
                         min-width="290px"
-                        :disabled="!editable"
+                        :disabled="!editable || !permission.secondary"
                       >
                         <template v-slot:activator="{ on }">
                           <v-text-field
+                            dense
                             v-model="dates.dueDate.formatted"
                             label="Fecha Vencimiento CI"
                             hint="Día/Mes/Año"
@@ -98,6 +120,7 @@
                             append-icon="mdi-calendar"
                             readonly
                             v-on="on"
+                            :outlined="editable && permission.secondary"
                           ></v-text-field>
                         </template>
                         <v-date-picker v-model="affiliate.due_date" no-title @input="dates.dueDate.show = false"></v-date-picker>
@@ -111,10 +134,11 @@
                         offset-y
                         max-width="290px"
                         min-width="290px"
-                        :disabled="!editable"
+                        :disabled="!editable || !permission.primary"
                       >
                         <template v-slot:activator="{ on }">
                           <v-text-field
+                            dense
                             v-model="dates.birthDate.formatted"
                             label="Fecha Nacimiento"
                             hint="Día/Mes/Año"
@@ -122,6 +146,8 @@
                             append-icon="mdi-calendar"
                             readonly
                             v-on="on"
+                            :outlined="editable && permission.primary"
+                            :disabled="editable && !permission.primary"
                           ></v-text-field>
                         </template>
                         <v-date-picker v-model="affiliate.birth_date" no-title @input="dates.birthDate.show = false"></v-date-picker>
@@ -129,6 +155,7 @@
                     </v-col>
                     <v-col cols="12" md="4" >
                       <v-select
+                        dense
                         :loading="loading"
                         data-vv-name="Ciudad de Nacimiento"
                         :items="cities"
@@ -137,11 +164,14 @@
                         name="nacimiento"
                         label="Lugar de Nacimiento"
                         v-model="affiliate.city_birth_id"
-                        :readonly="!editable"
+                        :readonly="!editable || !permission.primary"
+                        :outlined="editable && permission.primary"
+                        :disabled="editable && !permission.primary"
                       ></v-select>
                     </v-col>
                     <v-col cols="12" md="4" >
                       <v-select
+                        dense
                         :loading="loading"
                         data-vv-name="Estado Civil"
                         :items="civil"
@@ -150,7 +180,9 @@
                         label="Estado Civil"
                         name="estado_civil"
                         v-model="affiliate.civil_status"
-                        :readonly="!editable"
+                        :readonly="!editable || !permission.primary"
+                        :outlined="editable && permission.primary"
+                        :disabled="editable && !permission.primary"
                       ></v-select>
                     </v-col>
                     <v-col cols="12" md="6">
@@ -161,10 +193,11 @@
                         offset-y
                         max-width="290px"
                         min-width="290px"
-                        :disabled="!editable"
+                        :disabled="!editable || !permission.secondary"
                       >
                         <template v-slot:activator="{ on }">
                           <v-text-field
+                            dense
                             v-model="dates.dateDeath.formatted"
                             label="Fecha Fallecimiento"
                             hint="Día/Mes/Año"
@@ -172,6 +205,8 @@
                             append-icon="mdi-calendar"
                             readonly
                             v-on="on"
+                            :outlined="editable && permission.secondary"
+                            :disabled="editable && !permission.secondary"
                           ></v-text-field>
                         </template>
                         <v-date-picker v-model="affiliate.date_death" no-title @input="dates.dateDeath.show = false"></v-date-picker>
@@ -179,9 +214,12 @@
                     </v-col>
                     <v-col cols="12" md="6">
                       <v-text-field
+                        dense
                         v-model="affiliate.reason_death"
                         label="Causa Fallecimiento"
-                        :readonly="!editable"
+                        :readonly="!editable || !permission.secondary"
+                        :outlined="editable && permission.secondary"
+                        :disabled="editable && !permission.secondary"
                       ></v-text-field>
                     </v-col>
                 </v-row>
@@ -195,39 +233,48 @@
                     </v-col>
                     <v-col cols="12" md="4" >
                       <v-text-field
+                        dense
                         v-model="affiliate.phone_number"
                         label="Telefono"
                         v-validate.initial="'min:1|max:20'"
                         :error-messages="errors.collect('telefono')"
                         data-vv-name="telefono"
-                        :readonly="!editable"
+                        :readonly="!editable || !permission.secondary"
+                        :outlined="editable && permission.secondary"
+                        :disabled="editable && !permission.secondary"
                       ></v-text-field>
                     </v-col>
                     <v-col cols="12" md="4" >
                       <v-text-field
+                        dense
                         v-model="affiliate.cell_phone_number"
                         label="Celular"
                         v-validate.initial="'min:1|max:20'"
                         :error-messages="errors.collect('celular')"
                         data-vv-name="celular"
-                        :readonly="!editable"
+                        :readonly="!editable || !permission.secondary"
+                        :outlined="editable && permission.secondary"
+                        :disabled="editable && !permission.secondary"
                       ></v-text-field>
                     </v-col>
                     <v-col cols="12" md="4" >
                       <v-text-field
+                        dense
                         v-model="affiliate.cell_phone_number"
                         label="Celular"
                         v-validate.initial="'min:1|max:20'"
                         :error-messages="errors.collect('celular')"
                         data-vv-name="celular"
-                        :readonly="!editable"
+                        :readonly="!editable || !permission.secondary"
+                        :outlined="editable && permission.secondary"
+                        :disabled="editable && !permission.secondary"
                       ></v-text-field>
                     </v-col>
                       <v-col cols="12" md="6">
                     <v-toolbar-title>DIRECCIÓN DOMICILARIA</v-toolbar-title>
                   </v-col>
                   <v-col cols="12" md="3">
-                    <v-tooltip top>
+                    <v-tooltip top v-if="editable && permission.secondary">
                       <template v-slot:activator="{ on }">
                         <v-btn
                           fab
@@ -242,7 +289,6 @@
                       </template>
                       <span>Añadir Direccion</span>
                     </v-tooltip>
-                  
                   </v-col>
                   <v-col cols="12">
                   <v-data-table
@@ -258,7 +304,7 @@
                         <td>{{ props.item.zone }}</td>
                         <td>{{ props.item.street }}</td>
                         <td>{{ props.item.number_address }}</td>
-                        <td>
+                        <td v-show="editable && permission.secondary">
                           <v-btn text icon color="info" @click.stop="bus.$emit('openDialog', props.item)">
                             <v-icon>mdi-pencil</v-icon>
                           </v-btn>
@@ -293,6 +339,10 @@ import AddStreet from '@/components/affiliate/AddStreet'
       type: Boolean,
       required: true
     },
+    permission: {
+      type: Object,
+      required: true
+    }
   },
   components: {
     AddStreet,

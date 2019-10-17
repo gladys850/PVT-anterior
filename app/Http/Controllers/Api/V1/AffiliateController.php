@@ -192,6 +192,7 @@ class AffiliateController extends Controller
     //get information spouse
     public function spouse_get($affiliate_id){
         $spouse = Spouse::where('affiliate_id',$affiliate_id)->first();
+        if (!$spouse) abort(404);
         return ($spouse);
     }  
     //addresses
