@@ -1,21 +1,21 @@
 <?php
 
 namespace App\Http\Controllers\Api\V1;
-
+use App\Address;
+use App\Http\Requests\AddressForm;
 use App\Http\Controllers\Controller;
-use App\Spouse;
-use App\Http\Requests\SpouseForm;
 use Illuminate\Http\Request;
-class SpouseController extends Controller
+
+class AddressController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index()
     {
-        
+        //
     }
 
     /**
@@ -34,49 +34,59 @@ class SpouseController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(SpouseForm $request)
-    {        
-        return Spouse::create($request->all());
+    public function store(AddressForm $request)
+    {
+        return Address::create($request->all());
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Spouse  $spouse
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function show($id)
     {
-        $spouse = Spouse::findOrFail($id);
-        $this->append_data($spouse);
-        return $spouse;
+        //
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function edit($id)
+    {
+        //
     }
 
     /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Spouse  $spouse
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(SpouseForm $request, $id)
+    public function update(AddressForm $request, $id)
     {
-        $spouse = Spouse::findOrFail($id);
-        $spouse->fill($request->all());
-        $spouse->save();
-        return $spouse;
+        // echo('entro');
+        $address = Address::findOrFail($id);
+        $address->fill($request->all());
+        $address->save();
+        return $address;
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Spouse  $spouse
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
     {
-        $spouse = Spouse::findOrFail($id);
-        $spouse->delete();
-        return $spouse;
+        $address = Address::findOrFail($id);
+        $address->delete();
+        return $address;
     }
 }
