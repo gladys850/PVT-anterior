@@ -109,6 +109,7 @@
               <Profile
                 v-if="!reload"
                 :affiliate.sync="affiliate"
+                :addresses.sync="addresses"
                 :editable.sync="editable"
                 :permission="permission"
               />
@@ -176,6 +177,7 @@ export default {
     Fingerprint
   },
   data: () => ({
+    addresses:[],
     affiliate:{
       first_name: null,
       second_name:null,
@@ -225,12 +227,6 @@ export default {
     isNew() {
       return this.$route.params.id == 'new'
           },
-    tab: {
-      get: function() {
-        return this.isNew ? 'tab-2' : 'tab-1'
-      },
-      set: function(val) {}
-      },
     permission() {
       return {
         primary: this.primaryPermission,
@@ -265,6 +261,7 @@ export default {
     resetForm() {
       this.getAffiliate(this.$route.params.id)
       this.getSpouse(this.$route.params.id)
+      this.getAddress(this.$route.params.id)
       this.editable = false
       this.reload = true
       this.$nextTick(() => {
@@ -280,22 +277,29 @@ export default {
           // New affiliate
           await axios.post(`affiliate`, this.affiliate)
           this.toast('Afiliado adicionado', 'success')
+          await axios.patch(`affiliate/${this.affiliate.id}/address`, {
+            addresses: this.addresses.map(o => o.id)
+          })
           this.$router.push({
           name: "affiliateIndex"
           });
           console.log(res.data)
           } else {
           // Edit affiliate
+           console.log('grabando')
           await axios.patch(`affiliate/${this.affiliate.id}`, this.affiliate)
+          await axios.patch(`affiliate/${this.affiliate.id}/address`, {
+            addresses: this.addresses.map(o => o.id)
+          })
       if (this.spouse.id)
       {
         console.log('entro aqui')
-        this.spouse.affiliate_id=this.affiliate.id
-            await axios.patch(`spouse/${this.spouse.id}`, this.spouse)
+        //this.spouse.affiliate_id=this.affiliate.id
+        //    await axios.patch(`spouse/${this.spouse.id}`, this.spouse)
       }
       else{
          console.log('entro aqui2')
-            await axios.post(`spouse`, this.spouse)
+      //      await axios.post(`spouse`, this.spouse)
    
       }
           this.$router.push({
@@ -349,6 +353,17 @@ export default {
         this.loading = true
         let res = await axios.get(`affiliate/${id}/spouse`)
         this.spouse = res.data
+      } catch (e) {
+        console.log(e)
+      } finally {
+        this.loading = false
+      }
+    },
+    async getAddress(id) {
+      try {
+        this.loading = true
+        let res = await axios.get(`affiliate/${id}/address`)
+        this.addresses = res.data
       } catch (e) {
         console.log(e)
       } finally {

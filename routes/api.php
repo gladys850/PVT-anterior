@@ -17,9 +17,7 @@ Route::group([
     Route::get('affiliate/{affiliate_id}/address', 'Api\V1\AffiliateController@addresses_get');
     Route::patch('affiliate/{affiliate_id}/address', 'Api\V1\AffiliateController@addresses_update');
     //addres
-    Route::post('address', 'Api\V1\AddressController@store');
-    Route::delete('address/{id}', 'Api\V1\AddressController@destroy');
-    Route::patch('address/{id}', 'Api\V1\AddressController@update');
+    Route::resource('address', 'Api\V1\AddressController')->only('store', 'destroy', 'update');
     //Spouse
     //Route::resource('spouse', 'Api\V1\SpouseController');
     Route::post('spouse', 'Api\V1\SpouseController@store');

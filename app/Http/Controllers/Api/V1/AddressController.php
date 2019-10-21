@@ -70,6 +70,7 @@ class AddressController extends Controller
      */
     public function update(AddressForm $request, $id)
     {
+        // echo('entro');
         $address = Address::findOrFail($id);
         $address->fill($request->all());
         $address->save();

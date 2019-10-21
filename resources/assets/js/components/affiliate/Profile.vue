@@ -292,7 +292,7 @@
                   <v-col cols="12">
                   <v-data-table
                       :headers="headers"
-                      :items="desserts"
+                      :items="addresses"
                       hide-default-footer
                       class="elevation-1"
                       v-if="cities.length > 0"
@@ -303,7 +303,7 @@
                         <td>{{ props.item.zone }}</td>
                         <td>{{ props.item.street }}</td>
                         <td>{{ props.item.number_address }}</td>
-                        <td>
+                        <td  v-show="editable && permission.secondary">
                           <v-btn text icon color="warning" @click.stop="bus.$emit('openDialog', props.item)">
                           <v-icon>mdi-pencil</v-icon>
                         </v-btn>
@@ -334,6 +334,10 @@ import AddStreet from '@/components/affiliate/AddStreet'
       type: Object,
       required: true
     },
+    addresses: {
+      type: Array,
+      required: true
+    },
       editable: {
       type: Boolean,
       required: true
@@ -357,29 +361,6 @@ import AddStreet from '@/components/affiliate/AddStreet'
           { text: 'Calle', align: 'left', value: 'street' },
           { text: 'Nro', align: 'left', value: 'number_address' },
           { text: 'Acciones', align: 'center' }
-        ],
-        desserts: [
-          {
-            id: 1,
-            city_address_id: 1,
-            zone: 'Cristal I',
-            street: 'Olmos',
-            number_address: 24,
-          },
-          {
-            id: 2,
-            city_address_id: 2,
-            zone: 'Anexo 16 de Julio I',
-            street: 'Olmos',
-            number_address: 2364,
-          },
-          {
-            id: 3,
-            city_address_id: 3,
-            zone: 'Alto Lima I',
-            street: 'Olmos',
-            number_address: 224,
-          },
         ],
     civil: [
       { name:"Soltero",
@@ -445,11 +426,11 @@ let telefono = this.affiliate.cell_phone_number;
       this.formatDate('dateDeath', this.affiliate.date_death)
     }
       this.bus.$on('saveAddress', (address) => {
-      let index = this.desserts.findIndex(o=> o.id == address.id)
+      let index = this.addresses.findIndex(o=> o.id == address.id)
       if (index == -1) {
-        this.desserts.unshift(address)
+        this.addresses.unshift(address)
       } else {
-        this.desserts[index] = address
+        this.addresses[index] = address
       }
     })
   },
@@ -487,7 +468,7 @@ let telefono = this.affiliate.cell_phone_number;
     }finally {
         this.loading = false
       }
-  }
+  },
   }
   }
 </script>

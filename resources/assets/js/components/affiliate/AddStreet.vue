@@ -33,8 +33,8 @@
                       v-model="address.zone"
                       label="Zona"
                       class="purple-input"
-                      v-validate.initial="'min:1|max:20'"
-                      :error-messages="errors.collect('celular')"
+                      v-validate.initial="'min:1|max:100'"
+                      :error-messages="errors.collect('zona')"
                       data-vv-name="zona"
                       ></v-text-field>
                     </v-col>
@@ -43,8 +43,8 @@
                       v-model="address.street"
                       label="Calle/Avenida"
                       class="purple-input"
-                      v-validate.initial="'min:1|max:20'"
-                      :error-messages="errors.collect('celular')"
+                      v-validate.initial="'min:1|max:100'"
+                      :error-messages="errors.collect('calle')"
                       data-vv-name="calle"
                       ></v-text-field>
                     </v-col>
@@ -53,8 +53,8 @@
                       v-model="address.number_address"
                       label="Nro"
                       class="purple-input"
-                      v-validate.initial="'required|numeric|min:1|max:20'"
-                      :error-messages="errors.collect('celular')"
+                      v-validate.initial="'required|numeric|min:1|max:100'"
+                      :error-messages="errors.collect('nro')"
                       data-vv-name="nro"
                       ></v-text-field>
                     </v-col>
@@ -105,11 +105,28 @@
       this.dialog = false
       this.address = {}
   },
-  saveAddress() {
-      if (this.address.id) {
-        console.log('PATCH editando')
-      } else {
-        console.log('POST creando')
+    async saveAddress() {
+      try{
+          if (this.address.id) {
+          await axios.patch(`address/${this.address.id}`, this.address)
+          this.$router.push({
+          });
+          this.toast('Domicilio Modificado', 'success')
+          console.log(res.data)
+          }
+          else{
+          await axios.post(`address`, this.address)
+          await axios.patch(`affiliate/${this.affiliate.id}/address`, {
+          addresses: this.addresses.map(o => o.id)
+          })
+          this.$router.push({});
+          this.toast('Domicilio Adicionado', 'success')
+          console.log(res.data)
+          }
+      } catch (e) {
+        console.log(e)
+      } finally {
+        this.loading = false
       }
     }
   }
