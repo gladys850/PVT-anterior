@@ -1,7 +1,7 @@
 <template>
   <v-container fluid >
       <v-row justify="center">
-        <v-col cols="12" md="6" >
+        <v-col cols="12" md="7" >
               <v-container class="py-0">
                 <v-row>
                   <v-col cols="12">
@@ -83,7 +83,7 @@
                         :outlined="editable && permission.secondary"
                       ></v-text-field>
                     </v-col>
-                    <v-col cols="12" md="4" >
+                    <v-col cols="12" md="5" >
                       <v-select
                         dense
                         data-vv-name="Ciudad de Expedición"
@@ -97,18 +97,11 @@
                         :outlined="editable && permission.secondary"
                       ></v-select>
                     </v-col>
-                    <v-col cols="12" md="4">
-                      <v-text-field
-                      dense
-                      v-model="spouse.death_certificate_number"
-                      label="Cert. de Defunción"
-                      class="purple-input"
-                      v-validate.initial="'min:1|max:20'"
-                      :error-messages="errors.collect('cert. de defunción')"
-                      data-vv-name="cert. de defunción"
-                      :readonly="!editable || !permission.secondary"
-                      :outlined="editable && permission.secondary"
-                      ></v-text-field>
+                    <v-col cols="12" md="3">
+                      <v-checkbox
+                        v-model="spouse.is_duedate_undefined"
+                        :label="`Indefinido`"
+                      ></v-checkbox>
                     </v-col>
                     <v-col cols="12" md="4" >
                       <v-menu
@@ -166,7 +159,7 @@
                         :outlined="editable && permission.secondary"
                       ></v-select>
                     </v-col>
-                    <v-col cols="12" md="6">
+                    <v-col cols="12" md="4">
                       <v-menu
                         v-model="dates.dateDeath.show"
                         :close-on-content-click="false"
@@ -192,7 +185,7 @@
                         <v-date-picker v-model="spouse.date_death" no-title @input="dates.dateDeath.show = false"></v-date-picker>
                       </v-menu>
                     </v-col>
-                    <v-col cols="12" md="6">
+                    <v-col cols="12" md="4">
                       <v-text-field
                         dense
                         v-model="spouse.reason_death"
@@ -202,10 +195,23 @@
                         :outlined="editable && permission.secondary"
                       ></v-text-field>
                     </v-col>
+                    <v-col cols="12" md="4">
+                      <v-text-field
+                      dense
+                      v-model="spouse.death_certificate_number"
+                      label="Cert. de Defunción"
+                      class="purple-input"
+                      v-validate.initial="'min:1|max:20'"
+                      :error-messages="errors.collect('cert. de defunción')"
+                      data-vv-name="cert. de defunción"
+                      :readonly="!editable || !permission.secondary"
+                      :outlined="editable && permission.secondary"
+                      ></v-text-field>
+                    </v-col>
                 </v-row>
               </v-container>
         </v-col>
-        <v-col cols="12" md="5" class="v-card-profile" >
+        <v-col cols="12" md="4" class="v-card-profile" >
         <v-col cols="12">
             <v-toolbar-title>INFORMACION DE SERECI</v-toolbar-title>
           </v-col>

@@ -109,19 +109,13 @@
       try{
           if (this.address.id) {
           await axios.patch(`address/${this.address.id}`, this.address)
-          this.$router.push({
-          });
           this.toast('Domicilio Modificado', 'success')
           console.log(res.data)
           }
           else{
-          await axios.post(`address`, this.address)
-          await axios.patch(`affiliate/${this.affiliate.id}/address`, {
-          addresses: this.addresses.map(o => o.id)
-          })
-          this.$router.push({});
+          let res = await axios.post(`address`, this.address)
           this.toast('Domicilio Adicionado', 'success')
-          console.log(res.data)
+          this.bus.$emit('saveAddress', res.data)
           }
       } catch (e) {
         console.log(e)
