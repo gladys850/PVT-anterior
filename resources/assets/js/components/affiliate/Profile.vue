@@ -72,7 +72,7 @@
                         :disabled="editable && !permission.primary"
                       ></v-select>
                     </v-col>
-                    <v-col cols="12" md="4" >
+                    <v-col cols="12" md="6" >
                       <v-text-field
                         dense
                         v-model="affiliate.identity_card"
@@ -85,7 +85,7 @@
                         :disabled="editable && !permission.primary"
                       ></v-text-field>
                     </v-col>
-                    <v-col cols="12" md="4" >
+                    <v-col cols="12" md="6" >
                       <v-select
                         dense
                         data-vv-name="Ciudad de Expedición"
@@ -100,7 +100,23 @@
                         :disabled="editable && !permission.primary"
                       ></v-select>
                     </v-col>
-                    <v-col cols="12" md="4">
+                    <v-col cols="12" md="4" >
+                      <v-select
+                        dense
+                        :loading="loading"
+                        data-vv-name="Estado Civil"
+                        :items="civil"
+                        item-text="name"
+                        item-value="value"
+                        label="Estado Civil"
+                        name="estado_civil"
+                        v-model="affiliate.civil_status"
+                        :readonly="!editable || !permission.primary"
+                        :outlined="editable && permission.primary"
+                        :disabled="editable && !permission.primary"
+                      ></v-select>
+                    </v-col>
+                    <v-col cols="12" md="5">
                       <v-menu
                         v-model="dates.dueDate.show"
                         :close-on-content-click="false"
@@ -126,7 +142,13 @@
                         <v-date-picker v-model="affiliate.due_date" no-title @input="dates.dueDate.show = false"></v-date-picker>
                       </v-menu>
                     </v-col>
-                    <v-col cols="12" md="4" >
+                    <v-col cols="12" md="2">
+                      <v-checkbox
+                        v-model="affiliate.is_duedate_undefined"
+                        :label="`Indefinido`"
+                      ></v-checkbox>
+                    </v-col>
+                    <v-col cols="12" md="6" >
                       <v-menu
                         v-model="dates.birthDate.show"
                         :close-on-content-click="false"
@@ -153,7 +175,7 @@
                         <v-date-picker v-model="affiliate.birth_date" no-title @input="dates.birthDate.show = false"></v-date-picker>
                       </v-menu>
                     </v-col>
-                    <v-col cols="12" md="4" >
+                    <v-col cols="12" md="6" >
                       <v-select
                         dense
                         :loading="loading"
@@ -164,22 +186,6 @@
                         name="nacimiento"
                         label="Lugar de Nacimiento"
                         v-model="affiliate.city_birth_id"
-                        :readonly="!editable || !permission.primary"
-                        :outlined="editable && permission.primary"
-                        :disabled="editable && !permission.primary"
-                      ></v-select>
-                    </v-col>
-                    <v-col cols="12" md="4" >
-                      <v-select
-                        dense
-                        :loading="loading"
-                        data-vv-name="Estado Civil"
-                        :items="civil"
-                        item-text="name"
-                        item-value="value"
-                        label="Estado Civil"
-                        name="estado_civil"
-                        v-model="affiliate.civil_status"
                         :readonly="!editable || !permission.primary"
                         :outlined="editable && permission.primary"
                         :disabled="editable && !permission.primary"
@@ -234,22 +240,10 @@
                     <v-col cols="12" md="4" >
                       <v-text-field
                         dense
-                        v-model="affiliate.phone_number"
-                        label="Telefono"
-                        v-validate.initial="'min:1|max:20'"
-                        :error-messages="errors.collect('telefono')"
-                        data-vv-name="telefono"
-                        :readonly="!editable || !permission.secondary"
-                        :outlined="editable && permission.secondary"
-                        :disabled="editable && !permission.secondary"
-                      ></v-text-field>
-                    </v-col>
-                    <v-col cols="12" md="4" >
-                      <v-text-field
                         v-model="getTelefono[0]"
-                        label="Celular"
+                        label="Celular 1"
                         v-validate.initial="'min:1|max:20'"
-                        :error-messages="errors.collect('celular')"
+                        :error-messages="errors.collect('celular1')"
                         data-vv-name="celular1"
                         :readonly="!editable || !permission.secondary"
                         :outlined="editable && permission.secondary"
@@ -260,7 +254,7 @@
                       <v-text-field
                         dense
                         v-model="getTelefono[1]"
-                        label="Celular"
+                        label="Celular 2"
                         v-validate.initial="'min:1|max:20'"
                         :error-messages="errors.collect('celular')"
                         data-vv-name="celular"
@@ -269,8 +263,21 @@
                         :disabled="editable && !permission.secondary"
                       ></v-text-field>
                     </v-col>
+                    <v-col cols="12" md="4" >
+                      <v-text-field
+                        dense
+                        v-model="affiliate.phone_number"
+                        label="Fijo"
+                        v-validate.initial="'min:1|max:20'"
+                        :error-messages="errors.collect('telefono')"
+                        data-vv-name="telefono"
+                        :readonly="!editable || !permission.secondary"
+                        :outlined="editable && permission.secondary"
+                        :disabled="editable && !permission.secondary"
+                      ></v-text-field>
+                    </v-col>
                       <v-col cols="12" md="6">
-                    <v-toolbar-title>DIRECCIÓN DOMICILARIA</v-toolbar-title>
+                    <v-toolbar-title>DOMICILIO</v-toolbar-title>
                   </v-col>
                   <v-col cols="12" md="3">
                     <v-tooltip top v-if="editable && permission.secondary">
@@ -354,6 +361,7 @@ import AddStreet from '@/components/affiliate/AddStreet'
   data: () => ({
     loading: true,
     dialog: false,
+    telefono:[null,null],
     cities: [],
     headers: [
           { text: 'Ciudad', align: 'left', value: 'city_address_id' },
@@ -404,20 +412,21 @@ import AddStreet from '@/components/affiliate/AddStreet'
   }),
   computed: {
     getTelefono(){
-    if(this.affiliate.cell_phone_number==null)
-    {
-      console.log('entroooooooo')
-return 0
-    }
-    else
-    {
-let telefono = this.affiliate.cell_phone_number;
-    return telefono.split(',');
-    }
-  },
+      if(this.affiliate.cell_phone_number==null)
+      {
+        return 0
+      }
+      else
+      {
+        let array=this.affiliate.cell_phone_number.split(',');
+      return array
+      }
+  }
   },
   beforeMount() {
     this.getCities();
+
+    this.updateTelefono();
   },
   mounted() {
     if (this.affiliate.id) {
@@ -426,12 +435,14 @@ let telefono = this.affiliate.cell_phone_number;
       this.formatDate('dateDeath', this.affiliate.date_death)
     }
       this.bus.$on('saveAddress', (address) => {
-      let index = this.addresses.findIndex(o=> o.id == address.id)
-      if (index == -1) {
-        this.addresses.unshift(address)
-      } else {
-        this.addresses[index] = address
-      }
+        if (address.id) {
+          let index = this.addresses.findIndex(o=> o.id == address.id)
+          if (index == -1) {
+            this.addresses.unshift(address)
+          } else {
+            this.addresses[index] = address
+          }
+        }
     })
   },
   watch: {
@@ -469,6 +480,13 @@ let telefono = this.affiliate.cell_phone_number;
         this.loading = false
       }
   },
+    updateTelefono(){
+      this.telefono[0]= this.getTelefono[0];
+      this.telefono[1]= this.getTelefono[1];
+      let celular=this.telefono.join(',')
+      this.affiliate.cell_phone_number=celular
+      return  this.affiliate.cell_phone_number
+    }
   }
   }
 </script>
