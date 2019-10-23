@@ -271,44 +271,39 @@ export default {
     async saveAffiliate() {
       try {
         if (!this.editable) {
-          this.editable = true
+            this.editable = true
         } else {
           if (this.isNew) {
           // New affiliate
-          await axios.post(`affiliate`, this.affiliate)
-          this.toast('Afiliado adicionado', 'success')
-          await axios.patch(`affiliate/${this.affiliate.id}/address`, {
+            await axios.post(`affiliate`, this.affiliate)
+            this.toast('Afiliado adicionado', 'success')
+            await axios.patch(`affiliate/${this.affiliate.id}/address`, {
             addresses: this.addresses.map(o => o.id)
-          })
-          this.$router.push({
-          name: "affiliateIndex"
-          });
-          console.log(res.data)
+            })
+            this.$router.push({
+            name: "affiliateIndex"
+            });
           } else {
-          // Edit affiliate
-           console.log('grabando')
-          await axios.patch(`affiliate/${this.affiliate.id}`, this.affiliate)
-          await axios.patch(`affiliate/${this.affiliate.id}/address`, {
-            addresses: this.addresses.map(o => o.id)
-          })
-      if (this.spouse.id)
-      {
-        console.log('entro aqui')
-        //this.spouse.affiliate_id=this.affiliate.id
-        //    await axios.patch(`spouse/${this.spouse.id}`, this.spouse)
-      }
-      else{
-         console.log('entro aqui2')
-      //      await axios.post(`spouse`, this.spouse)
-   
-      }
-          this.$router.push({
-          name: "affiliateIndex"
-          });
+            // Edit affiliate
+            await axios.patch(`affiliate/${this.affiliate.id}`, this.affiliate)
+            await axios.patch(`affiliate/${this.affiliate.id}/address`, {
+              addresses: this.addresses.map(o => o.id)
+            })
+            if (this.spouse.id)
+            {
+              await axios.patch(`spouse/${this.spouse.id}`, this.spouse)
+            }
+            else{
+              this.spouse.affiliate_id=this.affiliate.id
+              await axios.post(`spouse`, this.spouse)
+            }
+            this.$router.push({
+            name: "affiliateIndex"
+            });
           this.toast('Afiliado modificado', 'success')
           }
-          this.toast('Registro guardado correctamente', 'success')
-          this.editable = false
+        this.toast('Registro guardado correctamente', 'success')
+        this.editable = false
         }
       } catch (e) {
         console.log(e)
