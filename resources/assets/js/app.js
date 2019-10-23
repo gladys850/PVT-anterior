@@ -37,6 +37,9 @@ import '@/plugins/moment'
 // Filters
 import '@/plugins/filters'
 
+// Map
+import '@/plugins/map'
+
 // JWT
 axios.defaults.headers.common['Accept'] = 'application/json'
 axios.defaults.headers.common['Content-Type'] = 'application/json'
