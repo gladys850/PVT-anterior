@@ -5,20 +5,20 @@
       style="height: 480px; width: 800px;"
       :zoom="zoom"
       :center="center"
-      @update:zoom="zoomUpdated"
+      @update:zoom="zoomUpdated(18)"
       @update:center="centerUpdated"
-      @update:bounds="boundsUpdated"
       @dblclick="addMarker"
     >
       <l-tile-layer :url="url"></l-tile-layer>
       <l-geosearch
         :options="geosearchOptions"
+        v-show="address.edit"
       ></l-geosearch>
       <l-control>
         <v-btn
           small
           @click.stop="centerUpdated(marker)"
-          v-if="markerExists"
+          v-show="markerExists"
         >
           Centrar
         </v-btn>
@@ -88,12 +88,8 @@ export default {
     },
   }),
   mounted() {
-    if (this.address.latitude && this.address.longitude) {
-      this.center = [this.address.latitude, this.address.longitude]
-      this.marker = this.center
-    } else {
-      this.changeCity()
-    }
+    this.setMarker()
+    this.changeCity()
   },
   computed: {
     markerExists() {
@@ -112,15 +108,23 @@ export default {
     }
   },
   methods: {
+    setMarker() {
+      if (!this.address.edit) {
+        this.center = [parseFloat(this.address.latitude), parseFloat(this.address.longitude)]
+        this.marker = this.center
+      }
+      this.loading = false
+    },
     changeCity() {
       this.loading = true
       if (this.address.city_address_id) {
         const city = this.cities.find(o => o.id == this.address.city_address_id)
-        if (city.latitude && city.longitude) {
-          this.center = [city.latitude, city.longitude]
+        this.center = [city.latitude, city.longitude]
+        if (city.latitude && city.longitude && this.address.edit) {
           this.zoom = 14
           this.loading = false
         }
+        this.setMarker()
       }
     },
     zoomUpdated(zoom) {
@@ -128,9 +132,6 @@ export default {
     },
     centerUpdated(center) {
       this.center = center
-    },
-    boundsUpdated(bounds) {
-      this.bounds = bounds
     },
     removeMarker() {
       this.marker = []
