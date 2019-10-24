@@ -5,7 +5,8 @@
   >
     <v-card>
       <v-toolbar dense flat color="tertiary">
-        <v-toolbar-title>Añadir Dirección</v-toolbar-title>
+        <v-toolbar-title v-show="address.edit">Añadir Dirección</v-toolbar-title>
+        <v-toolbar-title v-show="!address.edit">Dirección</v-toolbar-title>
         <v-spacer></v-spacer>
         <v-btn icon @click.stop="close()">
           <v-icon>mdi-close</v-icon>
@@ -17,7 +18,7 @@
         <v-col cols="12" >
               <v-container class="py-0">
                 <v-row>
-                    <v-col cols="12" md="3">
+                    <v-col cols="12" md="3" v-show="address.edit">
                       <v-select
                         dense
                         data-vv-name="Ciudad"
@@ -28,7 +29,7 @@
                         v-model="address.city_address_id"
                       ></v-select>
                     </v-col>
-                    <v-col cols="12" md="3">
+                    <v-col cols="12" md="3" v-show="address.edit">
                       <v-text-field
                       dense
                       v-model="address.zone"
@@ -39,7 +40,7 @@
                       data-vv-name="zona"
                       ></v-text-field>
                     </v-col>
-                    <v-col cols="12" md="4">
+                    <v-col cols="12" md="4" v-show="address.edit">
                       <v-text-field
                       dense
                       v-model="address.street"
@@ -50,7 +51,7 @@
                       data-vv-name="calle"
                       ></v-text-field>
                     </v-col>
-                    <v-col cols="12" md="2">
+                    <v-col cols="12" md="2" v-show="address.edit">
                       <v-text-field
                       dense
                       v-model="address.number_address"
@@ -70,7 +71,7 @@
       </v-row>
   </v-container>
   </v-card-text>
-      <v-card-actions>
+      <v-card-actions v-show="address.edit">
         <v-spacer></v-spacer>
         <v-btn @click.stop="close()"
           color="error"
@@ -101,7 +102,7 @@ import LMap from '@/components/affiliate/LMap'
   },
   data: () => ({
     dialog: false,
-    address: {},
+    address: {}
   }),
   mounted() {
     this.bus.$on('openDialog', (address) => {
@@ -124,9 +125,9 @@ import LMap from '@/components/affiliate/LMap'
     async saveAddress() {
       try{
           if (this.address.id) {
-          await axios.patch(`address/${this.address.id}`, this.address)
+          let res = await axios.patch(`address/${this.address.id}`, this.address)
           this.toast('Domicilio Modificado', 'success')
-          console.log(res.data)
+          this.bus.$emit('saveAddress', res.data)
           }
           else{
           let res = await axios.post(`address`, this.address)
