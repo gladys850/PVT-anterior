@@ -16,7 +16,6 @@
                 item-value="id"
                 label="Estado"
                 v-model="affiliate.affiliate_state_id"
-                hint="Activo"
                 persistent-hint
                 :readonly="!editable || !permission.secondary"
                 :outlined="editable && permission.secondary"
@@ -86,8 +85,8 @@
                 dense
                 v-model="affiliate.service_years"
                 label="Años de Servicio"
-                v-validate.initial="'numeric|min_value:0|max_value:100'"
-                :error-messages="errors.collect('nro')"
+                v-validate.initial="`numeric||min_value:0|max_value:100`"
+                :error-messages="errors.collect('year')"
                 data-vv-name="year"
                 :readonly="!editable || !permission.primary"
                 :outlined="editable && permission.primary"
@@ -100,7 +99,7 @@
                 v-model="affiliate.service_months"
                 label="Meses de Servicio"
                 v-validate.initial="'numeric|min_value:0|max_value:12'"
-                :error-messages="errors.collect('nro')"
+                :error-messages="errors.collect('months')"
                 data-vv-name="months"
                 :readonly="!editable || !permission.primary"
                 :outlined="editable && permission.primary"
@@ -211,13 +210,14 @@
         }
         }
     }
-    }
+  }
   },
   beforeMount() {
     this.getCategory();
     this.getDegree();
     this.getPensionEntity();
     this.getAffiliateState();
+    this.getCalculateCategory;
   },
   watch: {
     'affiliate.date_entry': function(date) {
