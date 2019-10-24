@@ -161,20 +161,18 @@ return [
         'identity_card' =>'Carnet de Identidad',
         'pension_entity_id'=>'Entidad de pensiones',
         'affiliate_state_id' =>'Estado de Afiliado',
-        'degree_id' => 'Grado',
+        'degree_id' => 'Grado del Afiliado',
         'date_death' => 'Fecha de fallecimiento',
         'date_entry' => 'Fecha de Ingreso',
         'date_derelict' => 'Fecha de culminacion',
-        'surname_husband' => 'Apellido del esposo',
+        'surname_husband' => 'Apellido del conyugue',
 
         //Spouse
-        'affiliate_id' =>'Afiliado',
         'civil_status' =>'Estado Civil',
         'marriage_date' =>'Fecha de casamiento',
         'death_certificate_number' =>'Número de certificado de defunción',
         'due_date' => 'Fecha de Vencimiento',
         'reason_death' => 'Motivo de Fallecimiento',
-        'death_certificate_number' => 'Número de certificado de defunción',
         //address
         'city_address_id' =>'Ciudad de Dirección'
     ],
