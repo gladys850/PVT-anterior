@@ -91,6 +91,7 @@ class AffiliateForm extends FormRequest
             'civil_status.required' =>'El campo Estado Civil del Afiliado es requerido',
             'civil_status.in' =>'La selección Estado Civil del Afiliado es inválida',
             'identity_card.min' =>'El campo Carnet de Identidad del Afiliado debe ser de almenos :min',
+            'identity_card.required' => 'El campo Carnet de Identidad del Afiliado es requerido',
             'identity_card.unique' =>'El campo Carnet de Identidad del Afiliado ya existe.',
             'pension_entity_id.exists' =>'La selección Entidad de pensiones del Afiliado es inválida.',
             'mothers_last_name.alpha_spaces' =>'El campo Apellido Materno del Afiliado solo puede contener letras y espacios.',
