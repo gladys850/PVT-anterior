@@ -69,4 +69,37 @@ class SpouseForm extends FormRequest
         if (array_key_exists('identity_card', $input)) $input['identity_card'] = mb_strtoupper($input['identity_card']);
         $this->replace($input);
     }
+    public function messages(){
+        return[
+            'first_name.required' => 'El campo Primer Nombre del Conyuge es requerido',
+            'first_name.alpha_spaces' => 'El campo Primer Nombre del Conyuge solo puede contener letras y espacios.',
+            'first_name.min' =>'El campo Primer Nombre del Conyuge debe ser de al menos :min',
+            'last_name.required' => 'El campo Apellido Paterno del Conyuge es requerido',
+            'last_name.alpha_spaces' => 'El campo Apellido Paterno del Conyuge solo puede contener letras y espacios.',
+            'last_name.min' =>'El campo Apellido Paterno del Conyuge debe ser de al menos :min',
+            'city_identity_card_id.required' => 'El campo Ciudad de expedición del Conyuge es requerido',
+            'city_identity_card_id.exists' =>'La selección Ciudad de expedición del Conyuge es inválida',
+            'birth_date.required' =>'Elcampo Fecha de nacimiento del Conyuge es requerido',
+            'birth_date.date_format' =>'El campo fecha de nacimiento del Conyuge no coincide con el formato :format.',
+            'city_birth_id.required' => 'El campo Ciudad de nacimiento del Conyuge es requerido',
+            'city_birth_id.exists' =>'La selección Ciudad de nacimiento del Conyuge es inválida.', 
+            'identity_card.min' =>'El campo Carnet de Identidad del Conyuge debe ser de almenos :min',
+            'identity_card.required' => 'El campo Carnet de Identidad del Conyuge es requerido',
+            'identity_card.unique' =>'El campo Carnet de Identidad del Conyuge ya existe.',
+            'civil_status.required' =>'El campo Estado Civil del Conyuge es requerido',
+            'civil_status.in' =>'La selección Estado Civil del Conyuge es inválida',
+            'second_name.alpha_spaces' =>'El campo Segundo Nombre del Conyuge solo puede contener letras y espacios.',
+            'second_name.min' =>'El campo Segundo Nombre del Conyuge debe ser de al menos :min',
+            'mothers_last_name.alpha_spaces' =>'El campo Apellido Materno del Conyuge solo puede contener letras y espacios.',
+            'mothers_last_name.min' =>'El campo Apellido Materno del Conyuge debe ser de al menos :min',
+            'due_date.date_format' =>'El campo Fecha de vencimiento de CI del Conyuge no coincide con el formato :format.',
+            'marriage_date.date_format' =>'El campo Fecha de casamiento del Conyuge no coincide con el formato :format.',
+            'surname_husband.min' =>'El campo Apellido del Esposo del Conyuge debe ser de al menos :min',
+            'date_death.date_format' =>'El campo fecha de fallecimiento del Conyuge no coincide con el formato :format.',
+            'reason_death.min' => 'El campo Motivo de Fallecimiento del Conyuge debe ser de al menos :min',
+            'death_certificate_number.min' =>'El campo Número de certificado de defunción del Conyuge debe ser de al menos :min',
+            'due_date.date_format' =>'El campo fecha de vencimiento de CI del Conyuge no coincide con el formato :format.',
+
+        ];
+    }
 }
