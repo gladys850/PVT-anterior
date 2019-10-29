@@ -102,8 +102,8 @@ class AffiliateForm extends FormRequest
             'date_entry.date_format' =>'El campo fecha de ingreso del Afiliado no coincide con el formato :format.',
             'date_derelict.date_format' =>'El campo fecha de culminación del Afiliado no coincide con el formato :format.',
             'due_date.date_format' =>'El campo fecha de vencimiento de CI del Afiliado no coincide con el formato :format.',
-            'surname_husband.min' =>'El campo Apellido del conyugue del Afiliado debe ser de al menos :min',
-            'surname_husband.alpha_spaces' =>'El campo Apellido del conyugue del Afiliado solo puede contener letras y espacios.',
+            'surname_husband.min' =>'El campo Apellido del conyuge del Afiliado debe ser de al menos :min',
+            'surname_husband.alpha_spaces' =>'El campo Apellido del conyuge del Afiliado solo puede contener letras y espacios.',
           
         ];
     } 
