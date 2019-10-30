@@ -134,7 +134,7 @@ export default {
             permissions: this.selectedPermissions
           })
           this.selectedPermissions = res.data
-          this.toast('Actualizado correctamente', 'success')
+          this.toastr.success('Actualizado correctamente')
         }
       } catch (e) {
         console.log(e)

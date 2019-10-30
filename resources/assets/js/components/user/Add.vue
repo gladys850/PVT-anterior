@@ -92,12 +92,12 @@ export default {
             password: this.userSelected.uid,
             position: this.userSelected.title
           })
-          this.toast('Usuario adicionado', 'success')
+          this.toastr.success('Usuario adicionado')
           this.bus.$emit('added', res.data)
           this.clearForm()
           this.close()
         } else {
-          this.toast('Debe seleccionar un usuario', 'danger')
+          this.toastr.danger('Debe seleccionar un usuario')
         }
       } catch (e) {
         console.log(e)

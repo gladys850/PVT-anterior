@@ -129,12 +129,12 @@ import LMap from '@/components/affiliate/LMap'
       try{
           if (this.address.id) {
           let res = await axios.patch(`address/${this.address.id}`, this.address)
-          this.toast('Domicilio Modificado', 'success')
+          this.toastr.success('Domicilio Modificado')
           this.bus.$emit('saveAddress', res.data)
           }
           else{
           let res = await axios.post(`address`, this.address)
-          this.toast('Domicilio Adicionado', 'success')
+          this.toastr.success('Domicilio Adicionado')
           this.bus.$emit('saveAddress', res.data)
           }
       } catch (e) {
