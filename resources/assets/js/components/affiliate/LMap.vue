@@ -28,7 +28,7 @@
         :lat-lng="marker"
         v-if="markerExists"
       >
-        <l-popup>
+        <l-popup v-if="edit">
           <v-btn
             text
             small
@@ -67,6 +67,10 @@ export default {
     cities: {
       type: Array,
       required: true
+    },
+    edit: {
+      type: Boolean,
+      default: false
     }
   },
   data: () => ({

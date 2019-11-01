@@ -63,7 +63,7 @@
                       ></v-text-field>
                     </v-col>
                     <v-col cols="12" md="12">
-                      <LMap :address.sync="address" :cities.sync="countryCities"/>
+                      <LMap :address.sync="address" :cities.sync="countryCities" :edit.sync="address.edit"/>
                     </v-col>
                 </v-row>
             </v-container>
