@@ -122,7 +122,7 @@ export default {
           roles: this.selectedRoles
         })
         this.selectedRoles = res.data
-        this.toast('Actualizado correctamente', 'success')
+        this.toastr.success('Actualizado correctamente')
       } catch (e) {
         console.log(e)
         this.selectedRoles = this.selectedRoles.filter(o => o != id)

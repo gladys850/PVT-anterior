@@ -545,10 +545,10 @@ import List from '@/components/affiliate/List'
           this.$router.push({
           name: "affiliateIndex"
           });
-          this.toast('Afiliado modificado', 'success')
+          this.toastr.success('Afiliado modificado')
         } else {
           let res = await axios.post(`affiliate`, this.affiliate)
-          this.toast('Afiliado adicionado', 'success')
+          this.toastr.success('Afiliado adicionado')
           this.$router.push({
           name: "affiliateIndex"
           });console.log(res.data)
@@ -566,7 +566,7 @@ import List from '@/components/affiliate/List'
         await axios.patch(`affiliate/${this.affiliate.id}/fingerprint`)
       } catch (e) {
         console.log(e)
-        this.toast('Error al comunicarse con el dispositivo de captura de huellas', 'error')
+        this.toastr.error('Error al comunicarse con el dispositivo de captura de huellas')
         this.fingerprintCapture = false
       }
     },

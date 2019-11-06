@@ -74,7 +74,7 @@ export default {
       } else {
         this.bus.$emit('getUsers')
         if (this.users.length == 0) {
-          this.toast('No se encontraron bajas', 'info')
+          this.toastr.info('No se encontraron bajas')
           this.close()
         }
       }
@@ -101,7 +101,7 @@ export default {
     },
     synchronizeUsers() {
       this.users.forEach(user => this.switchActiveUser(user.id))
-      this.toast('Sincronización terminada', 'success')
+      this.toastr.success('Sincronización terminada')
       this.close()
     },
     async switchActiveUser(id) {

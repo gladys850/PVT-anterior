@@ -4,12 +4,21 @@ Vue.config.productionTip = false
 import App from '@/layout/App'
 
 // Toast notification
-import toast from '@/plugins/toast'
-Vue.mixin({
-  methods: {
-    toast: toast
-  }
-})
+import toastr from 'toastr'
+import 'toastr/build/toastr.min.css'
+toastr.options = {
+  debug: false,
+  closeButton: true,
+  newestOnTop: true,
+  progressBar: true,
+  timeOut: 6000,
+  fadeIn: 300,
+  fadeOut: 1000,
+  extendedTimeOut: 6000,
+  preventDuplicates: true,
+  positionClass: 'toast-bottom-right'
+}
+Vue.prototype.toastr = toastr
 
 // Validator
 import '@/plugins/vee-validate'
@@ -56,7 +65,7 @@ axios.interceptors.response.use(response => {
     }
     for (let key in error.response.data.errors) {
       error.response.data.errors[key].forEach(error => {
-        toast(error, 'error')
+        toastr.error(error)
       })
     }
   }
