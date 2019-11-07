@@ -17,6 +17,16 @@ class Address extends Model
         'number_address' => null,
     );
 
+    public function getLatitudeAttribute($value)
+    {
+        return floatval($value);
+    }
+
+    public function getLongitudeAttribute($value)
+    {
+        return floatval($value);
+    }
+
     public function affiliate()
     {
     	return $this->belongsToMany(Affiliate::class);

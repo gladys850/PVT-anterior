@@ -108,4 +108,8 @@ class Affiliate extends Model
       return $this->hasMany(Spouse::class);
     }
 
+    public function guarantees()
+    {
+        return $this->belongsToMany(Loan::class, 'loan_guarantors');
+    }
 }

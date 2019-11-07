@@ -288,7 +288,7 @@
                           x-small
                           v-on="on"
                           color="info"
-                          @click.stop="bus.$emit('openDialog', {})"
+                          @click.stop="bus.$emit('openDialog', { edit: true })"
                         >
                           <v-icon>mdi-plus</v-icon>
                         </v-btn>
@@ -307,17 +307,22 @@
                   <template v-slot:item="props">
                   <tr>
                     <td>{{ cities.find(o => o.id == props.item.city_address_id).name }}</td>
-                        <td>{{ props.item.zone }}</td>
-                        <td>{{ props.item.street }}</td>
-                        <td>{{ props.item.number_address }}</td>
-                        <td  v-show="editable && permission.secondary">
-                          <v-btn text icon color="warning" @click.stop="bus.$emit('openDialog', props.item)">
+                      <td>{{ props.item.zone }}</td>
+                      <td>{{ props.item.street }}</td>
+                      <td>{{ props.item.number_address }}</td>
+                      <td v-show="editable && permission.secondary">
+                        <v-btn text icon color="warning" @click.stop="bus.$emit('openDialog', {...props.item, ...{edit: true}})">
                           <v-icon>mdi-pencil</v-icon>
                         </v-btn>
                         <v-btn text icon color="error" @click.stop="bus.$emit('openRemoveDialog', `address/${props.item.id}`)">
                           <v-icon>mdi-delete</v-icon>
                         </v-btn>
-                    </td>
+                      </td>
+                      <td v-show="!editable">
+                        <v-btn v-if="props.item.latitude && props.item.longitude" text icon color="info" @click.stop="bus.$emit('openDialog', {...props.item, ...{edit: false}})">
+                          <v-icon>mdi-google-maps</v-icon>
+                        </v-btn>
+                      </td>
                     </tr>
                   </template>
                   </v-data-table>

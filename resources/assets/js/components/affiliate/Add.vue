@@ -276,7 +276,7 @@ export default {
           if (this.isNew) {
           // New affiliate
             await axios.post(`affiliate`, this.affiliate)
-            this.toast('Afiliado adicionado', 'success')
+            this.toastr.success('Afiliado adicionado')
             await axios.patch(`affiliate/${this.affiliate.id}/address`, {
             addresses: this.addresses.map(o => o.id)
             })
@@ -300,9 +300,9 @@ export default {
             this.$router.push({
             name: "affiliateIndex"
             });
-          this.toast('Afiliado modificado', 'success')
+          this.toastr.success('Afiliado modificado')
           }
-        this.toast('Registro guardado correctamente', 'success')
+        this.toastr.success('Registro guardado correctamente')
         this.editable = false
         }
       } catch (e) {

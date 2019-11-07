@@ -136,7 +136,7 @@ methods: {
         'image': this.img
         })
         console.log(rest)
-        this.toast('Fotografias Adicionada', 'success')
+        this.toastr.success('Fotografias Adicionada')
     } catch (e) {
     console.log(e)
     } finally {

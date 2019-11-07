@@ -102,7 +102,7 @@ export default {
           if (this.newPassword != this.confirmPassword) {
             this.newPassword = this.confirmPassword = null
             this.$refs.newPassword.focus()
-            this.toast('Las contraseñas no coinciden', 'error')
+            this.toastr.error('Las contraseñas no coinciden')
           } else {
             this.loading = true
             if (this.newPassword != this.oldPassword) {
@@ -111,7 +111,7 @@ export default {
                 password: this.newPassword
               })
             }
-            this.toast('Contraseña actualizada correctamente', 'success')
+            this.toastr.success('Contraseña actualizada correctamente')
             this.$store.dispatch("logout")
             this.$router.push("login")
           }

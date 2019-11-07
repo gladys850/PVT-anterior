@@ -212,7 +212,7 @@ export default {
         await axios.patch(`affiliate/${this.affiliate.id}/fingerprint`)
       } catch (e) {
         console.log(e)
-        this.toast('Error al comunicarse con el dispositivo de captura de huellas', 'error')
+        this.toastr.error('Error al comunicarse con el dispositivo de captura de huellas')
         this.fingerprintCapture = false
       }
     }
