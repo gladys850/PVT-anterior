@@ -18,8 +18,8 @@ class Pvt extends Migration
             $table->bigIncrements('id');// id unico
             $table->integer('procedure_modality_id'); // id modalidad
             $table->foreign('procedure_modality_id')->references('id')->on('procedure_modalities');
-            $table->float('annual_interest',3,2); // interes anual  
-            $table->float('penal_interest',3,2); // interes penal     
+            $table->decimal('annual_interest',5,2); // interes anual  
+            $table->decimal('penal_interest',5,2); // interes penal anual    
             $table->timestamps();
         });
         // adicionar para los estados del prestamo
@@ -29,13 +29,6 @@ class Pvt extends Migration
             $table->string('name');
             $table->string('description');
             $table->timestamps(); 
-        });
-       
-        Schema::create('disbursement_types', function (Blueprint $table) 
-        {
-            $table->bigIncrements('id');
-            $table->string('name');
-            $table->timestamps();
         });
     }
 
