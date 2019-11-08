@@ -46,44 +46,19 @@ class Loan extends Model
         return $this->amount_approved - $this->payments()->sum('capital_amortization');
     }
 
-    // Unión de pagos con el mismo número de cuota
-    public function merge_payments($payments)
-    {
-        $merged = new LoanPayment();
-        foreach ($payments as $key => $payment) {
-            if ($key == 0) {
-                $merged = $payment;
-                unset($merged->payment_type);
-                unset($merged->voucher_number);
-                unset($merged->receipt_number);
-                unset($merged->description);
-                unset($merged->created_at);
-                unset($merged->updated_at);
-            } else {
-                $merged->estimated_fee += $payment->estimated_fee;
-                $merged->capital_amortization += $payment->capital_amortization;
-                $merged->interest_amortization += $payment->interest_amortization;
-                $merged->penal_amortization += $payment->penal_amortization;
-                $merged->other_charges += $payment->other_charges;
-            }
-            if (!next($payments)) {
-                $merged->pay_date = $payment->pay_date;
-                $merged->estimated_date = $payment->estimated_date;
-            }
-        }
-    }
-
     public function last_payment()
     {
         return $this->payments()->latest()->first();
     }
 
-    public function last_merged_payment()
+    public function last_quota()
     {
         $latest_quota = $this->last_payment;
         if ($latest_quota) {
             $payments = LoanPayment::whereLoanId($this->id)->whereQuotaNumber($latest_quota->quota_number)->get();
-            return $this->merge_payments($payments);
+            if (count($payments) == 1) return $payments->first();
+            $latest_quota = new LoanPayment();
+            $latest_quota = $latest_quota->merge($payments);
         }
         return $latest_quota;
     }
