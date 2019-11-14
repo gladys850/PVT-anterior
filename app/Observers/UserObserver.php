@@ -2,9 +2,10 @@
 
 namespace App\Observers;
 
+use Illuminate\Support\Facades\Auth;
 use Util;
 use App\User;
-use Illuminate\Http\Request;
+use App\RecordType;
 
 class UserObserver
 {
@@ -16,7 +17,7 @@ class UserObserver
      */
     public function created(User $user)
     {
-        //
+        $this->save_record($user, 'sistema', 'registró');
     }
 
     /**
@@ -35,16 +36,9 @@ class UserObserver
             $action .= (' [' . Util::translate($key) . '] ' . $old[$key] . ' -> ' . $user[$key]);
             if (next($updated_values)) {
                 $action .= ', ';
-            } else {
-                $action .= '.';
             }
         }
-        $controller = new App\Http\Controllers\Api\V1\RecordController;
-        $controller->store(Request::create(null, null, [
-            'action'=> $action,
-            'recordable_type' => 'users',
-            'recordable_id' => $user->id
-        ]));
+        $this->save_record($user, 'sistema', $action);
     }
 
     /**
@@ -55,28 +49,19 @@ class UserObserver
      */
     public function deleted(User $user)
     {
-        //
+        $this->save_record($user, 'sistema', 'eliminó usuario: ' . $user->full_name);
     }
 
-    /**
-     * Handle the user "restored" event.
-     *
-     * @param  \App\User  $user
-     * @return void
-     */
-    public function restored(User $user)
+    private function save_record($user, $type, $action)
     {
-        //
-    }
-
-    /**
-     * Handle the user "force deleted" event.
-     *
-     * @param  \App\User  $user
-     * @return void
-     */
-    public function forceDeleted(User $user)
-    {
-        //
+        $logged_user = Auth::user();
+        $record_type = RecordType::whereName($type)->first();
+        if ($logged_user && $record_type) {
+            $user->records()->create([
+                'user_id' => $logged_user->id,
+                'record_type_id' => $record_type->id,
+                'action' => $action
+            ]);
+        }
     }
 }

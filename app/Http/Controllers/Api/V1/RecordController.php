@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Api\V1;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
 use App\Record;
 
 class RecordController extends Controller
@@ -38,13 +37,7 @@ class RecordController extends Controller
      */
     public function store(Request $request)
     {
-        $user = Auth::user();
-        if ($user) {
-            $record = new Record();
-            $record->fill($request->all());
-            $record->user_id = $user->id;
-            $record->save();
-        }
+        //
     }
 
     /**

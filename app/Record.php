@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Util;
 
 class Record extends Model
 {
@@ -12,10 +13,18 @@ class Record extends Model
 
     public function getActionAttribute()
     {
-        $action = "[{$this->record_type->display_name}] El usuario {$this->user->username} {$this->attributes['action']}";
-        if ($this->recordable instanceof \App\Affiliate) {
-            $affiliate = $this->recordable;
-            $action .= " del afiliado $affiliate->full_name";
+        $action = "[{$this->record_type->display_name}] El usuario {$this->user->username} {$this->attributes['action']}. ";
+        if ($this->recordable) {
+            $action .= Util::translate($this->attributes['recordable_type']);
+            $action .= ': ';
+            switch (get_class($this->recordable)) {
+                case 'App\Affiliate':
+                    $action .= $this->recordable->full_name;
+                    break;
+                case 'App\User':
+                    $action .= $this->recordable->username;
+                    break;
+            }
         }
         unset($this['record_type'], $this['user'], $this['recordable']);
         return $action;

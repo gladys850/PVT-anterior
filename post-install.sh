@@ -4,7 +4,7 @@ rm -rf public/js/app.js
 yarn install --production --force
 yarn prod
 composer dump-autoload
-php artisan vendor:publish
+php artisan vendor:publish --all
 php artisan view:clear
 php artisan route:clear
 php artisan cache:clear

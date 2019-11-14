@@ -40,6 +40,11 @@ class Loan extends Model
         return $this->belongsTo(LoanInterest::class);
     }
 
+    public function interest()
+    {
+        return $this->morphMany(Observable::class, 'observable');
+    }
+
     // Saldo capital
     public function balance()
     {

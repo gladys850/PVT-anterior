@@ -6,6 +6,7 @@ php artisan migrate
 # Seeders
 php artisan db:seed --class=CityGeolocationSeeder
 php artisan db:seed --class=RecordTypeNameSeeder
+php artisan db:seed --class=RecordTypeSistemaSeeder
 php artisan db:seed --class=ModuleNameSeeder
 php artisan db:seed --class=RoleNameSeeder
 php artisan db:seed --class=RolePermissionSeeder
