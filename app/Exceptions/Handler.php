@@ -51,11 +51,14 @@ class Handler extends ExceptionHandler
 	 */
 	public function render($request, Exception $exception)
 	{
+        $message = $exception->getMessage();
+        if (empty($message)) $message = null;
+
 		if ($exception instanceof ModelNotFoundException or $exception instanceof NotFoundHttpException) {
 			return response()->json([
 				'message' => 'Data not found',
 				'errors' => [
-					'type' => ['Recurso no encontrado'],
+					'type' => [$message ?? 'Recurso no encontrado'],
 				]
 			], 404);
 		} elseif ($exception instanceof \PDOException) {
@@ -77,7 +80,7 @@ class Handler extends ExceptionHandler
 			return response()->json([
 				'message' => 'Database error',
 				'errors' => [
-					'type' => [$error_message],
+					'type' => [$message ?? $error_message],
 				]
 			], $code);
 		} elseif ($exception instanceof HttpException) {
@@ -87,14 +90,14 @@ class Handler extends ExceptionHandler
 						'message' => 'Unauthorized',
 						'exception' => $exception,
 						'errors' => [
-							'type' => ['Sesión caducada'],
+							'type' => [$message ?? 'Sesión caducada'],
 						]
 					], $exception->getStatusCode());
 				case 403:
 					return response()->json([
 						'message' => 'Forbidden',
 						'errors' => [
-							'type' => ['No autorizado'],
+							'type' => [$message ?? 'No autorizado'],
 						]
 					], $exception->getStatusCode());
 					break;
@@ -102,7 +105,7 @@ class Handler extends ExceptionHandler
 					return response()->json([
 						'message' => 'Conflict',
 						'errors' => [
-							'type' => ['El registro ya existe'],
+							'type' => [$message ?? 'El registro ya existe'],
 						]
 					], $exception->getStatusCode());
 					break;
@@ -111,7 +114,7 @@ class Handler extends ExceptionHandler
 						'message' => 'Internal Server Error',
 						'exception' => $exception,
 						'errors' => [
-							'type' => ['Error interno del servidor'],
+							'type' => [$message ?? 'Error interno del servidor'],
 						]
 					], $exception->getStatusCode());
 					break;
@@ -120,7 +123,7 @@ class Handler extends ExceptionHandler
 						'message' => 'Internal Server Error',
 						'exception' => $exception,
 						'errors' => [
-							'type' => ['Error ' . $exception->getStatusCode()],
+							'type' => [$message ?? 'Error ' . $exception->getStatusCode()],
 						]
 					], $exception->getStatusCode());
 			}

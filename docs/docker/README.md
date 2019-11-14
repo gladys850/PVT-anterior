@@ -58,7 +58,7 @@ docker-compose ps
 * Install needed fonts into `php-fpm` container
 
 ```sh
-docker-compose exec --user laradock php-fpm /var/www/install-roboto-fonts.sh
+docker-compose exec workspace /var/www/install-roboto-fonts.sh
 ```
 
 * Within the container called `workspace` you need to run

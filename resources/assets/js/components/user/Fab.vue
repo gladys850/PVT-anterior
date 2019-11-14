@@ -20,7 +20,7 @@
         </v-btn>
       </template>
       <Add v-if="$store.getters.permissions.includes('create-user')" :bus="bus" @closeFab="fab = false"/>
-      <Sync v-if="$store.getters.permissions.includes('update-user')" :bus="bus" @closeFab="fab = false"/>
+      <Sync v-if="$store.getters.permissions.includes('update-user') && $store.getters.ldapAuth" :bus="bus" @closeFab="fab = false"/>
     </v-speed-dial>
   </div>
 </template>
