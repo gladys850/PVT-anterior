@@ -33,6 +33,7 @@ class LoanPayment extends Model
         return $diferencia;
 
     // Unión de pagos con el mismo número de cuota
+    }
     public function merge($payments)
     {
         $merged = new LoanPayment();
