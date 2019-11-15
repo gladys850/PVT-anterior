@@ -12,5 +12,13 @@ class LoanInterest extends Model
     {
         return $this->hasMany(Loan::class);
     }
+    public function getAnnualInterestDecimalAttribute()
+    {
+        return $this->annual_interest / 100;
+    }
 
+    public function getPenalInterestDecimalAttribute()
+    {
+        return $this->penal_interest / 100;
+    }
 }
