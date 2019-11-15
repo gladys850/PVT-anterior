@@ -25,7 +25,7 @@ class LoanStateSeeder extends Seeder
             
         ];
         foreach ($states as $state) {
-            LoanState::firstOrcreate($state[0],$state[1]);
+            LoanState::firstOrCreate($state[0],$state[1]);
         }
         
     }
