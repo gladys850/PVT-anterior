@@ -166,7 +166,6 @@ import Profile from '@/components/affiliate/Profile'
 import PoliceData from '@/components/affiliate/PoliceData'
 import Spouse from '@/components/affiliate/Spouse'
 import Fingerprint from '@/components/affiliate/Fingerprint'
-
 export default {
   name: "affiliate-index",
   components: {
@@ -280,9 +279,6 @@ export default {
             await axios.patch(`affiliate/${this.affiliate.id}/address`, {
             addresses: this.addresses.map(o => o.id)
             })
-            this.$router.push({
-            name: "affiliateIndex"
-            });
           } else {
             // Edit affiliate
             await axios.patch(`affiliate/${this.affiliate.id}`, this.affiliate)
@@ -297,10 +293,7 @@ export default {
               this.spouse.affiliate_id=this.affiliate.id
               await axios.post(`spouse`, this.spouse)
             }
-            this.$router.push({
-            name: "affiliateIndex"
-            });
-          this.toastr.success('Afiliado modificado')
+          this.toast('Afiliado modificado', 'success')
           }
         this.toastr.success('Registro guardado correctamente')
         this.editable = false
