@@ -15,13 +15,19 @@ class CreateLoanBeneficiariesTable extends Migration
     {
         Schema::create('loan_beneficiaries', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->unsignedBigInteger('loan_id'); // id persona de referencia
-            $table->foreign('loan_id')->references('id')->on('loans'); 
-            $table->string('first_name');
+            $table->unsignedBigInteger('city_identity_card_id')->nullable();  // id lugar de la solicitud 
+            $table->foreign('city_identity_card_id')->references('id')->on('cities');
+            $table->string('identity_card')->nullable();;
             $table->string('last_name');
-            $table->string('mothers_last')->nullable(); 
+            $table->string('mothers_last_name')->nullable(); 
+            $table->string('first_name');
             $table->string('second_name')->nullable(); 
-            $table->integer('identity_card');
+            $table->string('surname_husband')->nullable(); 
+            $table->date('birth_date')->nullable();
+            $table->enum('gender', ['M', 'F'])->nullable();; // genero 
+            $table->enum('civil_status', ['C', 'S', 'V', 'D'])->nullable(); //estado civil
+            $table->string('phone_number')->nullable(); 
+            $table->string('cell_phone_number')->nullable(); 
             $table->timestamps();
           
         });

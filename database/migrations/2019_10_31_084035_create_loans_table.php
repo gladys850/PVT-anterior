@@ -16,13 +16,13 @@ class CreateLoansTable extends Migration
         Schema::create('loans', function (Blueprint $table) {
             $table->bigIncrements('id');// id unico
             //$table->string('wf_state_id'); // 
-            $table->integer('disbursable_id');
-            $table->integer('disbursable_type'); //afiliado, conyugue, beneficio
+            $table->integer('disbursable_id');// id affiliado, id espouse, id beneficiary
+            $table->string('disbursable_type'); // a quien se hara del desembolso//afiliado, conyugue, beneficiario
             $table->unsignedBigInteger('procedure_modality_id'); // id modalidad
             $table->foreign('procedure_modality_id')->references('id')->on('procedure_modalities');
             $table->integer('amount_disbursement'); // monto a desembolsar
             $table->integer('parent_loand_id')->nullable();  // id padre , loan padre
-            $table->enum('parent_reason', ['refinanciado', 'reprogramado']);// para indicar si es reprogramado y refinanciado 
+            $table->enum('parent_reason', ['refinanciado', 'reprogramado'])->nullable();;// para indicar si es reprogramado y refinanciado 
             $table->date('request_date'); //fecha de solicitud
             $table->smallInteger('amount_request'); // monto solicitado
             $table->unsignedBigInteger('city_id');  // id lugar de la solicitud 
@@ -38,7 +38,7 @@ class CreateLoansTable extends Migration
             $table->date('disbursement_date'); //fecha de desembolso
             $table->unsignedBigInteger('disbursement_type_id'); // id tipo de desembolso   
             $table->foreign('disbursement_type_id')->references('id')->on('payment_types'); 
-            $table->date('modification_date'); // fecha de modificacion del tramite 
+            $table->date('modification_date')->nullable();; // fecha de modificacion del tramite 
           //  $table-> enum('mora', 'en proceso','aprobado','anulado','rechazado','desembolsado','liduidado','amortizando'); //estados del tramite suponiendo que es nuevo tramite 
             $table->timestamps();
         });

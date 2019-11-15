@@ -13,13 +13,14 @@ class CreatePersonalReferenceTable extends Migration
      */
     public function up()
     {
-        Schema::create('personal_reference', function (Blueprint $table) {
+        Schema::create('personal_references', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedBigInteger('loan_id'); // id persona de referencia
             $table->foreign('loan_id')->references('id')->on('loans'); 
             $table->string('full_name');
-            $table->string('address')->nullable();;
-            $table->integer('cell_phone')->nullable();;
+            $table->string('address')->nullable();
+            $table->string('phone_number')->nullable(); 
+            $table->string('cell_phone_number')->nullable(); 
             $table->timestamps();
         });
     }
@@ -31,6 +32,6 @@ class CreatePersonalReferenceTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('personal_reference');
+        Schema::dropIfExists('personal_references');
     }
 }

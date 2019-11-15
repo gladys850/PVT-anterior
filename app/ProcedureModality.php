@@ -14,5 +14,8 @@ class ProcedureModality extends Model
         'shortened',
         'is_valid'
     ];
-
+    public function procedure_documents()
+    {
+        return $this->belongsToMany(ProcedureDocument::class, 'procedure_requirements');
+    }
 }

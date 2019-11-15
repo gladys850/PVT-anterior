@@ -16,8 +16,8 @@ class CreateLoanGuarantorsTable extends Migration
         Schema::create('loan_guarantors', function (Blueprint $table) {
             $table->integer('loan_id')->unsigned();
             $table->foreign('loan_id')->references('id')->on('loans');
-            $table->integer('guarantor_id')->unsigned(); //  affiliate_id
-            $table->foreign('guarantor_id')->references('id')->on('affiliates');
+            $table->integer('affiliate_id')->unsigned(); //  es para el registro del garante que debe ser un afiliado
+            $table->foreign('affiliate_id')->references('id')->on('affiliates');
         });
     }
 

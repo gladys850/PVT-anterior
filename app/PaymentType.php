@@ -8,7 +8,10 @@ class PaymentType extends Model
 {
     public $timestamps = false;
 
-    protected $fillable = [
-        'name'
-    ];
+    public $fillable = ['name'];
+    public function loans()
+    {
+        return $this->hasMany(Loan::class);
+    }
+
 }
