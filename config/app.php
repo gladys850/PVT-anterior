@@ -156,7 +156,9 @@ return [
         // Snappy
         Barryvdh\Snappy\ServiceProvider::class,
         // Broadcast
-        App\Providers\BroadcastServiceProvider::class
+        App\Providers\BroadcastServiceProvider::class,
+        // Log viewer
+        Rap2hpoutre\LaravelLogViewer\LaravelLogViewerServiceProvider::class
     ],
 
     /*
