@@ -13,4 +13,10 @@ class ProcedureRequirement extends Model
         'procedure_document_id',
         'number'
     ];
+  
+        public function procedure_document()
+    {
+        return $this->belongsTo(ProcedureDocument::class);
+    }
+
 }
