@@ -100,23 +100,7 @@
                         :disabled="editable && !permission.primary"
                       ></v-select>
                     </v-col>
-                    <v-col cols="12" md="4" >
-                      <v-select
-                        dense
-                        :loading="loading"
-                        data-vv-name="Estado Civil"
-                        :items="civil"
-                        item-text="name"
-                        item-value="value"
-                        label="Estado Civil"
-                        name="estado_civil"
-                        v-model="affiliate.civil_status"
-                        :readonly="!editable || !permission.primary"
-                        :outlined="editable && permission.primary"
-                        :disabled="editable && !permission.primary"
-                      ></v-select>
-                    </v-col>
-                    <v-col cols="12" md="5">
+                    <v-col cols="12" md="5" v-if="affiliate.is_duedate_undefined==false">
                       <v-menu
                         v-model="dates.dueDate.show"
                         :close-on-content-click="false"
@@ -142,9 +126,28 @@
                         <v-date-picker v-model="affiliate.due_date" no-title @input="dates.dueDate.show = false"></v-date-picker>
                       </v-menu>
                     </v-col>
-                    <v-col cols="12" md="2">
+                    <v-col cols="12" md="4" >
+                      <v-select
+                        dense
+                        :loading="loading"
+                        data-vv-name="Estado Civil"
+                        :items="civil"
+                        item-text="name"
+                        item-value="value"
+                        label="Estado Civil"
+                        name="estado_civil"
+                        v-model="affiliate.civil_status"
+                        :readonly="!editable || !permission.primary"
+                        :outlined="editable && permission.primary"
+                        :disabled="editable && !permission.primary"
+                      ></v-select>
+                    </v-col>
+                    <v-col cols="12" md="3">
                       <v-checkbox
                         v-model="affiliate.is_duedate_undefined"
+                        :readonly="!editable || !permission.primary"
+                        :outlined="editable && permission.primary"
+                        :disabled="editable && !permission.primary"
                         :label="`Indefinido`"
                       ></v-checkbox>
                     </v-col>
@@ -335,7 +338,6 @@
       <RemoveItem :bus="bus"/>
   </v-container>
 </template>
-
 <script>
 import RemoveItem from '@/components/shared/RemoveItem'
 import AddStreet from '@/components/affiliate/AddStreet'

@@ -100,6 +100,8 @@
                     <v-col cols="12" md="3">
                       <v-checkbox
                         v-model="spouse.is_duedate_undefined"
+                        :readonly="!editable || !permission.secondary"
+                        :outlined="editable && permission.secondary"
                         :label="`Indefinido`"
                       ></v-checkbox>
                     </v-col>
@@ -284,7 +286,6 @@
       </v-row>
   </v-container>
 </template>
-
 <script>
   export default {
   name: "affiliate-spouse",
