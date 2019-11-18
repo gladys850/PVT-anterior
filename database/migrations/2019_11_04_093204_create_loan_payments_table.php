@@ -28,7 +28,7 @@ class CreateLoanPaymentsTable extends Migration
             $table->float('penal_payment',10,2)->nullable(); //pago penal
             $table->float('accumulation_interest',10,2)->nullable(); // otros cobros, interes acumulado
             $table->integer('voucher_number')->nullable(); // numero de comprobante
-            $table->enum('payment_type', ['EFECTIVO', 'CHEQUE', 'DESCUENTO AUTOMATICO','DEPOSITO EN CUENTA']); // tipos de pago 
+            $table->enum('payment_type', ['EFECTIVO', 'CHEQUE', 'DESCUENTO AUTOMATICO','DEPOSITO EN CUENTA','NO PAGADO']); // tipos de pago 
             $table->integer('receipt_number')->nullable(); // numero de recibo
             $table->string('description')->nullable(); // descripcion del pago 
             $table->timestamps();
