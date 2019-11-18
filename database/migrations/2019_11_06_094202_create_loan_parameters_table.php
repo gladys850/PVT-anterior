@@ -15,7 +15,7 @@ class CreateLoanParametersTable extends Migration
     {
         Schema::create('loan_parameters', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->date('offset_date'); //fecha de desface
+            $table->integer('offset_day'); //dia de desface
             $table->integer('livelihood_amount')->nullable(); ; // cantidad de sustento-->inf. estadistica
             $table->timestamps();
         });
