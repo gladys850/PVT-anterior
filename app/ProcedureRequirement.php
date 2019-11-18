@@ -6,8 +6,17 @@ use Illuminate\Database\Eloquent\Model;
 
 class ProcedureRequirement extends Model
 {
-    public function procedure_document()
+    public $timestamps = false;
+
+    protected $fillable = [
+        'procedure_modality_id',
+        'procedure_document_id',
+        'number'
+    ];
+  
+        public function procedure_document()
     {
         return $this->belongsTo(ProcedureDocument::class);
     }
+
 }

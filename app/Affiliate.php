@@ -92,7 +92,7 @@ class Affiliate extends Model
     {
       return $this->belongsTo(PensionEntity::class);
     }
-      // add records 
+      // add records
     public function records()
     {
       return $this->morphMany(Record::class, 'recordable');
@@ -107,7 +107,27 @@ class Affiliate extends Model
     {
       return $this->hasMany(Spouse::class);
     }
-
+    //contributions
+    public function contribution()
+    {
+      return $this->hasMany(Contribution::class);
+    }
+    public function findContributions($affiliate_id, $boolean)
+    {
+      $boletas=array();
+      if($boolean==true)
+      {
+        $contribution = Contribution::where('affiliate_id', '=', $affiliate_id)->get()->last();
+        return $contribution;
+      }
+      else{
+        $contribution= Contribution::where('affiliate_id', '=', $affiliate_id)->orderBy('month_year', 'desc')->get()->toArray();
+        $boletas[0]=$contribution[0];
+        $boletas[1]=$contribution[1];
+        $boletas[2]=$contribution[2];
+        return $boletas;
+      }
+    }
     public function guarantees()
     {
         return $this->belongsToMany(Loan::class, 'loan_guarantors');
