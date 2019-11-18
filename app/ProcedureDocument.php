@@ -8,11 +8,11 @@ class ProcedureDocument extends Model
 {
     public function procedure_requirements()
     {
-        return $this->hasMany('Muserpol\Models\ProcedureRequirement');
+        return $this->hasMany(ProcedureDocument::class);
     }
 
     public function scanned_documents()
     {
-        return $this->hasMany('Muserpol\Models\ScannedDocument');
+        return $this->hasMany(ScannedDocument::class);
     }
 }
