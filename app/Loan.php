@@ -83,7 +83,7 @@ class Loan extends Model
         return $this->belongsTo(LoanInterest::class);
     }
 
-    public function interest()
+    public function observations()
     {
         return $this->morphMany(Observable::class, 'observable');
     }
