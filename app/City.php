@@ -18,7 +18,6 @@ class City extends Model
   {
     return floatval($value);
   }
-
   public function users()
   {
     return $this->hasMany(User::class);
@@ -26,5 +25,10 @@ class City extends Model
   public function affiliates_with_identity_cards()
 	{
 		return $this->hasMany(Affiliate::class,'city_identity_card_id','id');
-	}
+  }
+  public function loans()
+	{
+		return $this->hasMany(Loan::class);
+  }
+  
 }

@@ -9,17 +9,59 @@ class Loan extends Model
 {
     public $timestamps = true;
     public $guarded = ['id'];
-
+    public $fillable = [
+        'disbursable_id',
+        'disbursable_type',
+		'procedure_modality_id',
+		'amount_disbursement',
+		'parent_loand_id',
+        'parent_reason',
+        'request_date',
+        'amount_request',
+        'city_id',
+        'insterest_loan_id',
+        'loan_state_id',
+        'amount_aproved',
+        'loan_term',
+        'disbursement_date',
+        'disbursement_type_id',
+        'modification_date',
+        
+	];
     public function state()
     {
-        return $this->belongsTo(LoanState::class);
+      return $this->belongsTo(LoanState::class, 'loan_state_id','id');
     }
-
+    public function city()
+    {
+      return $this->belongsTo(City::class);
+    }
+    public function payment_type()
+    {
+      return $this->belongsTo(PaymentType::class,'disbursement_type_id','id');
+    }
+    public function loan_interest()
+    {
+      return $this->belongsTo(LoanInterest::class,'interest_loan_id','id');
+    }
     public function guarantors()
     {
         return $this->belongsToMany(Affiliate::class, 'loan_guarantors');
     }
-
+    public function loan_affiliates()
+    {
+        return $this->belongsToMany(Affiliate::class, 'loan_affiliates');
+    }
+ 
+    /*public function submitted_documents()
+    {
+      return $this->hasMany(LoanSubmitedDocument::class);
+    }*/
+    public function modality()
+    {
+      return $this->belongsTo(ProcedureModality::class,'procedure_modality_id', 'id');
+    }
+    //$loan=Loan::first() ; $loan->modality->procedure_documents// listar requisitos de acuerdo a una modalidad
     public function defaulted()
     {
         return $this->penal_interest > 0 ? true : false;
@@ -39,6 +81,11 @@ class Loan extends Model
     public function interest()
     {
         return $this->belongsTo(LoanInterest::class);
+    }
+
+    public function observations()
+    {
+        return $this->morphMany(Observable::class, 'observable');
     }
 
     // Saldo capital

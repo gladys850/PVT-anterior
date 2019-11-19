@@ -132,4 +132,9 @@ class Affiliate extends Model
     {
         return $this->belongsToMany(Loan::class, 'loan_guarantors');
     }
+    //document
+    public function submitted_documents()
+    {
+      return $this->hasMany(AffiliateSubmittedDocument::class);
+    }
 }
