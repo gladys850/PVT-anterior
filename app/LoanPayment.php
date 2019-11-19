@@ -60,4 +60,26 @@ class LoanPayment extends Model
         }
         return $merged;
     }
+    public function quota_date($loan_id)
+    {   $c=1;
+        $quota_date=[];
+        $loan=Loan::find($loan_id);
+        $date_disbursement=$loan->disbursement_date;
+        $num_quota=$loan->loan_term;
+        $loanParameter=(LoanParameter::all())->last();
+        $offsetday=$loanParameter->offset_day;
+        $last_day=Carbon::parse($date_disbursement)->endOfMonth();
+        $number_day=Carbon::parse($date_disbursement)->diffInDays(Carbon::parse($last_day));
+        $next_quota=$last_day;
+        if($number_day>=$offsetday){
+            $quota_date[$c]=$next_quota->format('d-m-Y');
+        }else{$c=0;
+        }
+        while($c<$num_quota){
+            $c=$c+1;     
+            $next_quota=Carbon::parse($next_quota)->addWeek()->endOfMonth();
+            $quota_date[$c]=$next_quota->format('d-m-Y');
+        } 
+        return $quota_date;
+    }
 }

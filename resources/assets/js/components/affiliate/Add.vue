@@ -94,6 +94,13 @@
           <v-icon v-if="icons">mdi-fingerprint</v-icon>
         </v-tab>
 
+        <v-tab
+          v-show="!isNew"
+          :href="`#tab-6`"
+        >
+          <v-icon v-if="icons">mdi-file</v-icon>
+        </v-tab>
+
         <v-tab-item
         :value="'tab-1'"
       >
@@ -144,12 +151,24 @@
             </v-card-text>
           </v-card>
         </v-tab-item>
-          <v-tab-item
+        <v-tab-item
           :value="'tab-5'"
         >
           <v-card flat tile >
           <v-card-text>
             <Fingerprint
+              :permission="permission"
+              :affiliate.sync="affiliate"
+              :editable.sync="editable"
+            /></v-card-text>
+          </v-card>
+        </v-tab-item>
+        <v-tab-item
+          :value="'tab-6'"
+        >
+          <v-card flat tile >
+          <v-card-text>
+            <Document
               :permission="permission"
               :affiliate.sync="affiliate"
               :editable.sync="editable"
@@ -166,6 +185,8 @@ import Profile from '@/components/affiliate/Profile'
 import PoliceData from '@/components/affiliate/PoliceData'
 import Spouse from '@/components/affiliate/Spouse'
 import Fingerprint from '@/components/affiliate/Fingerprint'
+import Document from '@/components/affiliate/Document'
+
 export default {
   name: "affiliate-index",
   components: {
@@ -173,7 +194,8 @@ export default {
     Profile,
     PoliceData,
     Spouse,
-    Fingerprint
+    Fingerprint,
+    Document
   },
   data: () => ({
     addresses:[],
