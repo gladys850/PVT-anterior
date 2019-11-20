@@ -1,7 +1,6 @@
 <?php
 
 return [
-    
     /*
     |--------------------------------------------------------------------------
     | Validation Language Lines
@@ -12,7 +11,6 @@ return [
     | as the size rules. Feel free to tweak each of these messages here.
     |
     */
-    
     'accepted'       => 'El campo :attribute debe aceptarse.',
     'active_url'       => 'El campo :attribute no es una URL válida.',
     'after'        => 'El campo :attribute debe ser una fecha posterior a la fecha :date.',
@@ -114,7 +112,7 @@ return [
     'unique'         => 'El campo :attribute ya existe.',
     'uploaded'       => 'Fallo al cargar :attribute.',
     'url'          => 'El formato del campo :attribute es inválido.',
-    
+
     /*
     |--------------------------------------------------------------------------
     | Custom Validation Language Lines
@@ -125,13 +123,12 @@ return [
     | specify a specific custom language line for a given attribute rule.
     |
     */
-    
     'custom' => [
         'attribute-name' => [
             'rule-name' => 'custom-message',
         ],
     ],
-    
+
     /*
     |--------------------------------------------------------------------------
     | Custom Validation Attributes
@@ -142,7 +139,6 @@ return [
     | of "email". This simply helps us make messages a little cleaner.
     |
     */
-    
     'attributes' => [
         // User
         'first_name' => 'Primer Nombre',
@@ -166,7 +162,6 @@ return [
         'date_entry' => 'Fecha de Ingreso',
         'date_derelict' => 'Fecha de culminacion',
         'surname_husband' => 'Apellido del conyugue',
-
         //Spouse
         'civil_status' =>'Estado Civil',
         'marriage_date' =>'Fecha de casamiento',
@@ -175,6 +170,5 @@ return [
         'reason_death' => 'Motivo de Fallecimiento',
         //address
         'city_address_id' =>'Ciudad de Dirección'
-    ],
-    
+    ]
 ];

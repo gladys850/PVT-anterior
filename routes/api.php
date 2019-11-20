@@ -40,8 +40,10 @@ Route::group([
     Route::get('affiliate/{id}/profile_picture', 'Api\V1\AffiliateController@PictureImageprint');
     // Record
     Route::resource('record', 'Api\V1\RecordController')->only(['index']);
-     
 
+    //document
+    Route::get('document/{affiliate_id}', 'Api\V1\ScannedDocumentController@create_document');
+    Route::resource('procedureDocument', 'Api\V1\ProcedureDocumentController')->only(['index']);
 
 
     // With credentials
@@ -63,6 +65,7 @@ Route::group([
         Route::group([ 'middleware' => 'permission:delete-affiliate' ], function () {
             Route::resource('affiliate', 'Api\V1\AffiliateController')->only(['destroy']);
         });
+
         // Admin routes
         Route::group([
             'middleware' => 'role:TE-admin'
