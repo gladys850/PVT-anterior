@@ -86,7 +86,7 @@ export default {
         if (this.userSelected) {
           this.loading = true
           let res = await axios.post(`user`, {
-            first_name: this.userSelected.givenName,
+            first_name: this.userSelected.givenname,
             last_name: this.userSelected.sn,
             username: this.userSelected.uid,
             password: this.userSelected.uid,
