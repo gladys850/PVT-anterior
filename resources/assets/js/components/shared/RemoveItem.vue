@@ -26,16 +26,16 @@ export default {
   }),
   methods: {
     close() {
-      this.path = ''
       this.dialog = false
+      this.path = ''
       this.bus.$emit('closeRemoveDialog')
     },
     async remove() {
       try {
         let res = await axios.delete(this.path)
         this.toastr.success('Eliminado correctamente')
-        this.bus.$emit('removed', Number(this.path.split('/').pop()))
         this.close()
+        this.bus.$emit('removed', Number(this.path.split('/').pop()))
       } catch (e) {
         console.log(e);
       }

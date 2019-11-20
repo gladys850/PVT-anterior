@@ -53,7 +53,7 @@ export default {
         let res = await axios.get(`ldap/unregistered`)
         this.users = res.data
         this.users.forEach((item) => {
-          item.fullName = `${item.sn} ${item.givenName}`
+          item.fullName = `${item.sn} ${item.givenname}`
         })
       } catch (e) {
         console.log(e)
