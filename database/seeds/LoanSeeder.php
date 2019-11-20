@@ -256,7 +256,6 @@ class LoanSeeder extends Seeder
             'shortened'=>$modality['shortened']
           ]);
           foreach ($modality['requirements'] as $requirement) {
-            \Log::info($requirement);
             $new_document = ProcedureDocument::firstOrCreate([
               'name'=>$requirement['name']
             ]);
