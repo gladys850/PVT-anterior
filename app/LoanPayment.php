@@ -63,22 +63,6 @@ class LoanPayment extends Model
                 'dias_penal'=>$interest_penal,
                 'dias_cumulado'=>$interest_acumulado];
     }
-    public function current_interest($loan_id, $estimated_date, $estimated_date_last, $quota)
-    {
-        $loanPayment=LoanPayment::where('loan_id', '=', $loan_id)->get()->toArray();
-        if($quota==1)
-        {
-            $loan=Loan::find($loan_id);
-            $date_disbursement=$loan->disbursement_date;
-            $diferencia = Carbon::parse($date_disbursement)->diffInDays(Carbon::parse($estimated_date));
-            $diferencia=$diferencia+1;
-        }
-        else{
-            $i=$quota-1;
-            $diferencia = Carbon::parse($estimated_date_last)->diffInDays(Carbon::parse($estimated_date));
-        }
-        return $diferencia;
-    }
     // Unión de pagos con el mismo número de cuota
     public function merge($payments)
     {
@@ -127,5 +111,21 @@ class LoanPayment extends Model
             $quota_date[$c]=$next_quota->format('d-m-Y');
         } 
         return $quota_date;
+    }
+    public function current_interest($loan_id, $estimated_date, $estimated_date_last, $quota)
+    {
+        $loanPayment=LoanPayment::where('loan_id', '=', $loan_id)->get()->toArray();
+        if($quota==1)
+        {
+            $loan=Loan::find($loan_id);
+            $date_disbursement=$loan->disbursement_date;
+            $diferencia = Carbon::parse($date_disbursement)->diffInDays(Carbon::parse($estimated_date));
+            $diferencia=$diferencia+1;
+        }
+        else{
+            $i=$quota-1;
+            $diferencia = Carbon::parse($estimated_date_last)->diffInDays(Carbon::parse($estimated_date));
+        }
+        return $diferencia;
     }
 }
