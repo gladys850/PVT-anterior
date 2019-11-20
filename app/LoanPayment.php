@@ -13,27 +13,57 @@ class LoanPayment extends Model
     {
         return $this->belongsTo(Loan::class);
     }
-    public function current_interest($loan_id, $quota)
+    public function days_interest($loan_id, $estimated_date)
     {
-        $loanPayment=LoanPayment::where('loan_id', '=', $loan_id)->get()->toArray();
-        if($quota==1)
+        $loanPayment=LoanPayment::where('loan_id', '=', $loan_id)->orderBy('quota_number', 'asc')->get()->toArray();
+        $quota=count($loanPayment);
+        if($quota==0)
         {
             $loan=Loan::find($loan_id);
             $date_disbursement=$loan->disbursement_date;
-            $date_first_quota=$loanPayment[0]['estimated_date'];
-            $diferencia = Carbon::parse($date_disbursement)->diffInDays(Carbon::parse($date_first_quota));
-        }
-        else{
-            $i=$quota-1;
-            $j=$i-1;
-            $date_quota=$loanPayment[$i]['estimated_date'];
-            $date_next_quota=$loanPayment[$j]['estimated_date'];
-            $diferencia = Carbon::parse($date_quota)->diffInDays(Carbon::parse($date_next_quota));
-        }
-        return $diferencia;
+            $diferencia = Carbon::parse($date_disbursement)->diffInDays(Carbon::parse($estimated_date));
+            $diferencia=$diferencia+1;
+            if($diferencia>31)
+            {   $interest_corriente=Carbon::parse($estimated_date)->endOfDay()->day;
+                $interest_penal=0;
+                $interest_acumulado=$diferencia-Carbon::parse($estimated_date)->endOfDay()->day;
 
-    // Unión de pagos con el mismo número de cuota
+            }
+            else
+            {   $interest_corriente=$diferencia;
+                $interest_penal=0;
+                $interest_acumulado=0;
+            }
+        }
+        else
+        {
+            $i=$quota-1;
+            $date_quota=$loanPayment[$i]['pay_date'];
+            $diferencia = Carbon::parse($date_quota)->diffInDays(Carbon::parse($estimated_date));
+            if($diferencia>91)
+            {   $interest_corriente=Carbon::parse($estimated_date)->endOfDay()->day;
+                $interest_penal=$diferencia-31;
+                $interest_acumulado=$diferencia;
+            }
+            else
+            {
+                if($diferencia>31)
+                {   $interest_corriente=Carbon::parse($estimated_date)->endOfDay()->day;
+                    $interest_penal=0;
+                    $interest_acumulado=$diferencia-Carbon::parse($estimated_date)->endOfDay()->day;
+                }
+                else
+                {   $interest_corriente=Carbon::parse($estimated_date)->endOfDay()->day;
+                    $interest_penal=0;
+                    $interest_acumulado=0;
+                }
+            }
+        }
+        return  ['dias_corriente'=>$interest_corriente,
+                'dias_penal'=>$interest_penal,
+                'dias_cumulado'=>$interest_acumulado];
     }
+    // Unión de pagos con el mismo número de cuota
     public function merge($payments)
     {
         $merged = new LoanPayment();
