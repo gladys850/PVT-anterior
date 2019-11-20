@@ -6,6 +6,18 @@ use Config;
 
 class Util
 {
+    public static function bool_to_string($value)
+    {
+        if (is_bool($value)) {
+            if ($value) {
+                $value = 'SI';
+            } else {
+                $value = 'NO';
+            }
+        }
+        return $value;
+    }
+
     public static function translate($string)
     {
         $translation = static::translate_table($string);
@@ -27,7 +39,7 @@ class Util
 
     public static function translate_attribute($string)
     {
-        $translations_file = include "resources/lang/es/validation.php";
+        $translations_file = include(app_path().'/resources/lang/es/validation.php');
         if (array_key_exists($string, $translations_file['attributes'])) {
             return $translations_file['attributes'][$string];
         } else {

@@ -33,7 +33,7 @@ class UserObserver
         $action = 'editó';
         $updated_values = $user->getDirty();
         foreach ($updated_values as $key => $value) {
-            $action .= (' [' . Util::translate($key) . '] ' . $old[$key] . ' -> ' . $user[$key]);
+            $action .= (' [' . Util::translate($key) . '] ' . Util::bool_to_string($old[$key]) . ' -> ' . Util::bool_to_string($user[$key]));
             if (next($updated_values)) {
                 $action .= ', ';
             }
