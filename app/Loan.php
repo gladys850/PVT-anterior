@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Carbon;
+use Util;
 
 class Loan extends Model
 {
@@ -67,12 +68,6 @@ class Loan extends Model
         return $this->penal_interest > 0 ? true : false;
     }
 
-    // Cálculo de días de interés penal
-    public function penal_interest_days()
-    {
-        return rand(0, 3);
-    }
-
     public function payments()
     {
         return $this->hasMany(LoanPayment::class)->orderBy('quota_number')->orderBy('created_at');
@@ -80,7 +75,7 @@ class Loan extends Model
 
     public function interest()
     {
-        return $this->belongsTo(LoanInterest::class);
+        return $this->belongsTo(LoanInterest::class, 'loan_interest_id', 'id');
     }
 
     public function observations()
@@ -89,9 +84,13 @@ class Loan extends Model
     }
 
     // Saldo capital
-    public function balance()
+    public function getBalanceAttribute()
     {
-        return $this->amount_approved - $this->payments()->sum('capital_amortization');
+        $balance = $this->amount_disbursement ?? $this->amount_aproved;
+        if ($this->payments()->count() > 0) {
+            $balance -= $this->payments()->sum('capital_payment');
+        }
+        return Util::round($balance);
     }
 
     public function last_payment()
@@ -101,7 +100,7 @@ class Loan extends Model
 
     public function last_quota()
     {
-        $latest_quota = $this->last_payment;
+        $latest_quota = $this->last_payment();
         if ($latest_quota) {
             $payments = LoanPayment::whereLoanId($this->id)->whereQuotaNumber($latest_quota->quota_number)->get();
             if (count($payments) == 1) return $payments->first();
@@ -111,38 +110,43 @@ class Loan extends Model
         return $latest_quota;
     }
 
-    public function quota()
+    public function getEstimatedQuotaAttribute()
     {
-        $interest = $this->interest;
-        $monthly_interest = $interest->annual_interest_decimal / 12;
-        return $monthly_interest * $this->amount_approved / (1 - 1 / (1 + pow($monthly_interest, $this->loan_term)));
+        $monthly_interest = $this->interest->monthly_current_interest;
+        return Util::round($monthly_interest * ($this->amount_disbursement ?? $this->amount_aproved) / (1 - 1 / pow((1 + $monthly_interest), $this->loan_term)));
     }
 
     public function next_payment()
     {
-        $interest = $this->interest;
-        $quota = new LoanPayment();
-        $year_days = 365;
-        // Establecer número de cuota
-        if (!$this->last_payment) {
+        $quota = $this->last_quota();
+        if (!$quota) {
+            $quota = new LoanPayment();
+            $quota->estimated_date = LoanPayment::quota_date($this->id)[1];
+            $current_date = Carbon::now();
+            if (Carbon::parse($quota->estimated_date)->month != $current_date->month) $quota->estimated_date = $current_date->endOfMonth();
             $quota->quota_number = 1;
         } else {
-            $quota->quota_number = $this->last_payment->quota_number + 1;
+            $quota->estimated_date = Carbon::now()->endOfMonth()->toDateString();
+            $quota->quota_number = $latest_quota->quota_number + 1;
         }
+        $interest = $this->interest;
+        $interest_days = LoanPayment::days_interest($this->id, $quota->estimated_date);
+
         // Calcular intereses
-        $balance_interest = $quota->balance * $interest->annual_interest_decimal * $this->current_interest / $year_days;
-        $quota->interest_amortization = $balance_interest * $this->current_interest;
-        $quota->penal_amortization = $balance_interest * $this->accumulated_interest;
-        $quota->other_charges = $interest->penal_interest_decimal * $this->penal_interest;
+        $quota->balance = $this->balance;
+        $quota->interest_payment = Util::round($quota->balance * $interest->daily_current_interest * $interest_days['dias_corriente']);
+        $quota->penal_payment = Util::round($quota->balance * $interest->daily_penal_interest * $interest_days['dias_penal']);
+        $quota->accumulation_interest = Util::round($quota->balance * $interest->daily_current_interest * $interest_days['dias_acumulado']);
         // Calcular amortización de capital
-        $total_interests = $quota->interest_amortization + $quota->penal_amortization + $quota->other_charges;
-        if (($quota->balance + $total_interests) > $this->quota) {
-            $quota->capital_amortization = $quota->balance - $total_interests;
+        $total_interests = $quota->interest_payment + $quota->penal_payment + $quota->accumulation_interest;
+        if (($quota->balance + $total_interests) > $this->estimated_quota) {
+            $quota->capital_payment = $this->estimated_quota - $total_interests;
         } else {
-            $quota->capital_amortization = $quota->balance;
+            $quota->capital_payment = $quota->balance;
         }
         // Calcular monto total de la cuota
-        $quota->estimated_fee = $quota->capital_amortization + $total_interests;
+        $quota->estimated_fee = $quota->capital_payment + $total_interests;
+        $quota->next_balance = $quota->balance - $quota->capital_payment;
         return $quota;
     }
 }

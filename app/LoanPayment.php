@@ -13,7 +13,7 @@ class LoanPayment extends Model
     {
         return $this->belongsTo(Loan::class);
     }
-    public function days_interest($loan_id, $estimated_date)
+    public static function days_interest($loan_id, $estimated_date)
     {
         $loanPayment=LoanPayment::where('loan_id', '=', $loan_id)->orderBy('quota_number', 'asc')->get()->toArray();
         $quota=count($loanPayment);
@@ -61,7 +61,7 @@ class LoanPayment extends Model
         }
         return  ['dias_corriente'=>$interest_corriente,
                 'dias_penal'=>$interest_penal,
-                'dias_cumulado'=>$interest_acumulado];
+                'dias_acumulado'=>$interest_acumulado];
     }
     // Unión de pagos con el mismo número de cuota
     public function merge($payments)
@@ -90,7 +90,7 @@ class LoanPayment extends Model
         }
         return $merged;
     }
-    public function quota_date($loan_id)
+    public static function quota_date($loan_id)
     {   $c=1;
         $quota_date=[];
         $loan=Loan::find($loan_id);
