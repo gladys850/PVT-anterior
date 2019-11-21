@@ -46,4 +46,14 @@ class Util
             return null;
         }
     }
+
+    public static function round($value)
+    {
+        return round($value, 2, PHP_ROUND_HALF_EVEN);
+    }
+
+    public static function money_format($value)
+    {
+        return number_format($value, 2, ',', '.');
+    }
 }
