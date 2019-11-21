@@ -8,7 +8,9 @@ use Util;
 
 class Loan extends Model
 {
+    protected $appends = ['balance', 'estimated_quota', 'defaulted'];
     public $timestamps = true;
+    protected $hidden = ['pivot'];
     public $guarded = ['id'];
     public $fillable = [
         'disbursable_id',
@@ -41,19 +43,17 @@ class Loan extends Model
     {
       return $this->belongsTo(PaymentType::class,'disbursement_type_id','id');
     }
-    public function loan_interest()
-    {
-      return $this->belongsTo(LoanInterest::class,'interest_loan_id','id');
-    }
+
     public function guarantors()
     {
-        return $this->belongsToMany(Affiliate::class, 'loan_guarantors');
+        return $this->belongsToMany(Affiliate::class, 'loan_affiliates')->whereGuarantor(true);
     }
-    public function loan_affiliates()
+
+    public function lenders()
     {
-        return $this->belongsToMany(Affiliate::class, 'loan_affiliates');
+        return $this->belongsToMany(Affiliate::class, 'loan_affiliates')->whereGuarantor(false);
     }
- 
+
     /*public function submitted_documents()
     {
       return $this->hasMany(LoanSubmitedDocument::class);
@@ -63,9 +63,9 @@ class Loan extends Model
       return $this->belongsTo(ProcedureModality::class,'procedure_modality_id', 'id');
     }
     //$loan=Loan::first() ; $loan->modality->procedure_documents// listar requisitos de acuerdo a una modalidad
-    public function defaulted()
+    public function getDefaultedAttribute()
     {
-        return $this->penal_interest > 0 ? true : false;
+        return LoanPayment::days_interest($this->id, Carbon::now()->toDateString())['dias_penal'] > 0 ? true : false;
     }
 
     public function payments()
@@ -112,6 +112,7 @@ class Loan extends Model
     public function getEstimatedQuotaAttribute()
     {
         $monthly_interest = $this->interest->monthly_current_interest;
+        unset($this->interest);
         return Util::round($monthly_interest * $this->amount_disbursement / (1 - 1 / pow((1 + $monthly_interest), $this->loan_term)));
     }
 

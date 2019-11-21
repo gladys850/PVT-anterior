@@ -26,7 +26,7 @@ class Kernel extends ConsoleKernel
     {
         $schedule->call(function () {
             app()->call([app()->make('App\Http\Controllers\Api\V1\LoanController'), 'switch_states']);
-        })->daily();
+        })->monthly();
     }
 
     /**
