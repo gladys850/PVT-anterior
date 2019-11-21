@@ -86,7 +86,7 @@ class Loan extends Model
     // Saldo capital
     public function getBalanceAttribute()
     {
-        $balance = $this->amount_disbursement ?? $this->amount_aproved;
+        $balance = $this->amount_disbursement;
         if ($this->payments()->count() > 0) {
             $balance -= $this->payments()->sum('capital_payment');
         }
@@ -103,7 +103,6 @@ class Loan extends Model
         $latest_quota = $this->last_payment();
         if ($latest_quota) {
             $payments = LoanPayment::whereLoanId($this->id)->whereQuotaNumber($latest_quota->quota_number)->get();
-            if (count($payments) == 1) return $payments->first();
             $latest_quota = new LoanPayment();
             $latest_quota = $latest_quota->merge($payments);
         }
@@ -113,7 +112,7 @@ class Loan extends Model
     public function getEstimatedQuotaAttribute()
     {
         $monthly_interest = $this->interest->monthly_current_interest;
-        return Util::round($monthly_interest * ($this->amount_disbursement ?? $this->amount_aproved) / (1 - 1 / pow((1 + $monthly_interest), $this->loan_term)));
+        return Util::round($monthly_interest * $this->amount_disbursement / (1 - 1 / pow((1 + $monthly_interest), $this->loan_term)));
     }
 
     public function next_payment()
@@ -123,12 +122,19 @@ class Loan extends Model
             $quota = new LoanPayment();
             $quota->estimated_date = LoanPayment::quota_date($this->id)[1];
             $current_date = Carbon::now();
-            if (Carbon::parse($quota->estimated_date)->month != $current_date->month) $quota->estimated_date = $current_date->endOfMonth();
+            $last_date = Carbon::parse($quota->estimated_date);
+            if ($last_date->month <= $current_date->month) {
+                $quota->estimated_date = $current_date;
+            } else {
+                $quota->estimated_date = $current_date->addMonth();
+            }
             $quota->quota_number = 1;
         } else {
-            $quota->estimated_date = Carbon::now()->endOfMonth()->toDateString();
-            $quota->quota_number = $latest_quota->quota_number + 1;
+            $quota->estimated_date = Carbon::now();
+            $quota->quota_number = $quota->quota_number + 1;
         }
+        $quota->estimated_date = $quota->estimated_date->endOfMonth()->toDateString();
+        unset($quota->pay_date);
         $interest = $this->interest;
         $interest_days = LoanPayment::days_interest($this->id, $quota->estimated_date);
 
@@ -145,7 +151,7 @@ class Loan extends Model
             $quota->capital_payment = $quota->balance;
         }
         // Calcular monto total de la cuota
-        $quota->estimated_fee = $quota->capital_payment + $total_interests;
+        $quota->quota_estimated = $quota->capital_payment + $total_interests;
         $quota->next_balance = $quota->balance - $quota->capital_payment;
         return $quota;
     }

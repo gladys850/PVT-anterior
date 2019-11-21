@@ -7,7 +7,25 @@ use Carbon;
 
 class LoanPayment extends Model
 {
+    protected $primaryKey = null;
+    public $incrementing = false;
     public $timestamps = true;
+    public $fillable = [
+        'loan_id',
+        'affiliate_id',
+        'pay_date',
+        'estimated_date',
+        'quota_number',
+        'quota_estimated',
+        'capital_payment',
+        'interest_payment',
+        'penal_payment',
+        'accumulation_interest',
+        'voucher_number',
+        'payment_type',
+        'receipt_number',
+        'description'
+    ];
 
     public function loan()
     {
@@ -70,24 +88,18 @@ class LoanPayment extends Model
         foreach ($payments as $key => $payment) {
             if ($key == 0) {
                 $merged = $payment;
-                unset($merged->payment_type);
-                unset($merged->voucher_number);
-                unset($merged->receipt_number);
-                unset($merged->description);
-                unset($merged->created_at);
-                unset($merged->updated_at);
             } else {
-                $merged->estimated_fee += $payment->estimated_fee;
-                $merged->capital_amortization += $payment->capital_amortization;
-                $merged->interest_amortization += $payment->interest_amortization;
-                $merged->penal_amortization += $payment->penal_amortization;
-                $merged->other_charges += $payment->other_charges;
+                $merged->capital_payment += $payment->capital_payment;
+                $merged->interest_payment += $payment->interest_payment;
+                $merged->penal_payment += $payment->penal_payment;
+                $merged->accumulation_interest += $payment->accumulation_interest;
             }
             if (!next($payments)) {
                 $merged->pay_date = $payment->pay_date;
                 $merged->estimated_date = $payment->estimated_date;
             }
         }
+        unset($merged->affiliate_id, $merged->payment_type, $merged->voucher_number, $merged->receipt_number, $merged->description, $merged->created_at, $merged->updated_at);
         return $merged;
     }
     public static function quota_date($loan_id)
