@@ -52,6 +52,29 @@ class User extends Authenticatable implements JWTSubject
         ];
     }
 
+    public function getFullNameAttribute()
+    {
+        return mb_strtoupper(preg_replace('/[[:blank:]]+/', ' ', join(' ', [$this->first_name, $this->last_name])));
+    }
+
+    public function getFirstNameAttribute($value)
+    {
+        if (!$value) return '';
+        return $value;
+    }
+
+    public function getLastNameAttribute($value)
+    {
+        if (!$value) return '';
+        return $value;
+    }
+
+    public function getPositionAttribute($value)
+    {
+        if (!$value) return '';
+        return $value;
+    }
+
     public function city()
     {
         return $this->belongsTo(City::class);
@@ -112,18 +135,27 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasMany(WfRecordBck::class);
     }
 
-    public function has_records()
+    public function has_actions()
     {
-        if ($this->affiliate_records()->first() || $this->affiliate_records_pvt()->first() || $this->eco_com_records()->first() || $this->procedure_records()->first() || $this->quota_aid_records()->first() || $this->ret_fun_records()->first() || $this->sequences_records()->first() || $this->wf_records()->first() || $this->wf_records_bck()->first() || $this->records()->first()) {
+        if ($this->affiliate_records()->first() || $this->affiliate_records_pvt()->first() || $this->eco_com_records()->first() || $this->procedure_records()->first() || $this->quota_aid_records()->first() || $this->ret_fun_records()->first() || $this->sequences_records()->first() || $this->wf_records()->first() || $this->wf_records_bck()->first() || $this->actions()->first() || $this->observables()->first()) {
             return true;
         } else {
             return false;
         }
     }
     // add records 
-    public function records()
+    public function actions()
     {
         return $this->hasMany(Record::class);
     }
 
+    public function records()
+    {
+        return $this->morphMany(Record::class, 'recordable');
+    }
+
+    public function observables()
+    {
+        return $this->hasMany(Observable::class);
+    }
 }

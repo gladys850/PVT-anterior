@@ -118,11 +118,8 @@ class UserController extends Controller
     public function destroy($id)
     {
         $user = User::findOrFail($id);
-        $has_records = $user->has_records();
-        foreach($this->db_users as $user) {
-            $has_records |= User::whereUsername($user)->exists();
-        }
-        if ($has_records) {
+        $has_actions = $user->has_actions();
+        if ($user->has_actions() || in_array($user->username, $this->db_users)) {
             return response()->json([
 				'message' => 'Forbidden',
 				'errors' => [
@@ -130,6 +127,7 @@ class UserController extends Controller
 				]
 			], 403);
         } else {
+            $user->records()->delete();
             $user->delete();
             return $user;
         }
@@ -160,7 +158,7 @@ class UserController extends Controller
     public function unregistered_users()
     {
         $ldap = new Ldap();
-        $unregistered_users = collect($ldap->list_entries())->pluck('uid')->diff(User::get()->pluck('username')->all());
+        $unregistered_users = collect($ldap->get_entries())->pluck('uid')->diff(User::get()->pluck('username')->all());
         $items = [];
         foreach($unregistered_users as $user) {
             array_push($items, $ldap->get_entry($user, 'uid'));
@@ -175,7 +173,7 @@ class UserController extends Controller
             foreach($this->db_users as $user) {
                 $query->where('username', '!=', $user);
             }
-        })->whereActive(true)->get()->pluck('username')->all())->diff(collect($ldap->list_entries())->pluck('uid'));
+        })->whereActive(true)->get()->pluck('username')->all())->diff(collect($ldap->get_entries())->pluck('uid'));
         $items = [];
         foreach($discharged_users as $user) {
             array_push($items, User::whereUsername($user)->first());

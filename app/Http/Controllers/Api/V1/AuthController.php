@@ -51,7 +51,6 @@ class AuthController extends Controller
                   $user->save();
                 }
                 $token = Auth::login($user);
-                $ldap->unbind();
               }
             }
           }
