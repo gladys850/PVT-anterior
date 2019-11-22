@@ -42,26 +42,21 @@ class Loan extends Model
     }
     public function loan_interest()
     {
-      return $this->belongsTo(LoanInterest::class,'interest_loan_id','id');
-    }
-    public function guarantors()
-    {
-        return $this->belongsToMany(Affiliate::class, 'loan_guarantors');
+      return $this->belongsTo(LoanInterest::class,'loan_interest_id','id');
     }
     public function loan_affiliates()
     {
         return $this->belongsToMany(Affiliate::class, 'loan_affiliates');
     }
- 
-    /*public function submitted_documents()
-    {
-      return $this->hasMany(LoanSubmitedDocument::class);
-    }*/
     public function modality()
     {
       return $this->belongsTo(ProcedureModality::class,'procedure_modality_id', 'id');
     }
     //$loan=Loan::first() ; $loan->modality->procedure_documents// listar requisitos de acuerdo a una modalidad
+    public function submitted_documents()
+    {
+      return $this->hasMany(LoanSubmittedDocument::class);
+    }
     public function defaulted()
     {
         return $this->penal_interest > 0 ? true : false;
@@ -77,11 +72,11 @@ class Loan extends Model
     {
         return $this->hasMany(LoanPayment::class)->orderBy('quota_number')->orderBy('created_at');
     }
-
     public function interest()
     {
         return $this->belongsTo(LoanInterest::class);
     }
+   
 
     // Saldo capital
     public function balance()

@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class ProcedureRequirement extends Model
 {
-    public $timestamps = false;
+    public $timestamps = true;
 
     protected $fillable = [
         'procedure_modality_id',

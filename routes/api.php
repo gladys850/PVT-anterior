@@ -45,6 +45,13 @@ Route::group([
     Route::get('document/{affiliate_id}', 'Api\V1\ScannedDocumentController@create_document');
     Route::resource('procedureDocument', 'Api\V1\ProcedureDocumentController')->only(['index']);
 
+    //list of requirements for registered loans
+    Route::get('loan/{loan_id}/requirements', 'Api\V1\LoanController@list_requirements');
+    //submitted_documents
+    Route::get('loan/{loan_id}/submitted_documents', 'Api\V1\LoanController@submitted_documents');
+    //get requirements according to modality
+    Route::get('procedure_modality/{modality_id}/requirements_loan', 'Api\V1\ProcedureModalityController@list_requirements_loan');
+
 
     // With credentials
     Route::group([

@@ -11,21 +11,21 @@ class CreateAmortizationsTable extends Migration
      *
      * @return void
      */
-    public function up()
+    /*public function up()
     {
         Schema::create('amortizations', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->timestamps();
         });
-    }
+    }*/
 
     /**
      * Reverse the migrations.
      *
      * @return void
      */
-    public function down()
+    /*public function down()
     {
         Schema::dropIfExists('amortizations');
-    }
+    }*/
 }

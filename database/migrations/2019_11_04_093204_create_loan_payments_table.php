@@ -22,13 +22,13 @@ class CreateLoanPaymentsTable extends Migration
             $table->date('estimated_date')->nullable(); // fecha estimada de pago
             $table->integer('quota_number')->nullable(); // numero de cuota, cuando sea necesario se repite
             // de las siguientes 5 columnas se obtendra el total pagado
-            $table->float('estimated_fee',10,2)->nullable(); // cuota estimada
+            $table->float('quota_estimated',10,2)->nullable(); // cuota estimada
             $table->float('capital_payment',10,2)->nullable(); // pago de capital
             $table->float('interest_payment',10,2)->nullable(); // pago de interes
             $table->float('penal_payment',10,2)->nullable(); //pago penal
             $table->float('accumulation_interest',10,2)->nullable(); // otros cobros, interes acumulado
             $table->integer('voucher_number')->nullable(); // numero de comprobante
-            $table->enum('payment_type', ['EFECTIVO', 'CHEQUE', 'DESCUENTO AUTOMATICO','DEPOSITO EN CUENTA','NO PAGADO']); // tipos de pago 
+            $table->enum('payment_type', ['EFECTIVO', 'CHEQUE', 'DESCUENTO AUTOMATICO','DEPOSITO EN CUENTA']); // ,'NO PAGADO' tipos de pago 
             $table->integer('receipt_number')->nullable(); // numero de recibo
             $table->string('description')->nullable(); // descripcion del pago 
             $table->timestamps();

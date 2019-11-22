@@ -19,37 +19,42 @@ class LoanSeeder extends Seeder
       
       $data = [
         'procedures' => [
+          'anticipo' => [
+            'type' => ['module_id' => $module->id,'name'=>'Préstamo Anticipo','second_name'=>'Préstamo Anticipo'],
+            'modalities' => [
+                // ANTICIPO SECTOR ACTIVO 
+                ['name'=>'Anticipo sector activo','shortened'=>'ANT-SA','requirements'=>[
+                  ['name' => 'Cédula de Identidad del (la) titular en copia simple.','number'=>1],
+                  ['name' => 'Boleta de pago en copia simple.','number'=>2],  
+                  ['name' => 'Certificado de haberes considerando el último mes percibido.','number'=>2],  // En caso de no contar con la boleta de pago      
+                  ['name' => 'Estado de cuenta original, vigente y emitido por el Banco Unión S.A.','number'=>3], // Nuevo
+                  /*Estos documentos son solicitados por MUSERPOL en caso de ser requeridos*/
+                  ['name' => 'Solicitud de aclaración de datos personales en la Boleta de Pago.','number'=>0],  // En caso de que el afiliado tenga datos erroneos en su boleta de pago
+                  ['name' => 'Certificado de no adeudo, emitido por la instancia correspondiente.','number'=>0],  // en caso de que el afiliado haya tenido deudas de otras entidades (Ej: COMIPOL , COVIPOL)
+                  ['name' => 'Certificado de pago emitido por la entidad correspondiente.','number'=>0],  // en caso de que el afiliado tenga deudas con otras entidades (Ej: COMIPOL , COVIPOL)
+                ]],
+                    // ANTICIPO SECTOR PASIVO Y VIUDAS
+                ['name'=>'Anticipo sector pasivo','shortened'=>'ANT-SP','requirements'=>[
+                  ['name' => 'Cédula de Identidad del (la) titular en copia simple.','number'=>1],
+                  ['name' => 'Boleta de renta de jubilación en copia simple.','number'=>2],// Nuevo
+                  ['name' => 'Ultima boleta de pago con renta en SENASIR original','number'=>2], //Nuevo *caso pasivo con renta de SENASIR, quien solicita el préstamo
+                  ['name' => 'Ultima boleta de pago con renta en AFP original','number'=>2],      //Nuevo *caso pasivo con renta en AFP , quien solicita el préstamo
+                  ['name' => 'Certificado de haberes con siderando el último mes percibido.','number'=>2],  // En caso de no contar con la boleta de pago
+                  ['name' => 'Estado de cuenta original, vigente y emitido por el Banco Unión S.A.','number'=>3], // Nuevo
+                  /*Estos documentos son solicitados por MUSERPOL en caso de ser requeridos*/
+                  ['name' =>'Solicitud de aclaración de datos personales en la Boleta de Pago.','number'=>0],  // En caso de que el afiliado tenga datos erroneos en su boleta de pago  
+                  ['name' => 'Certificado de no adeudo, emitido por la instancia correspondiente.','number'=>0],  // en caso de que el afiliado haya tenido deudas de otras entidades (Ej: COMIPOL , COVIPOL)
+                  ['name' => 'certificado de pago emitido por la entidad correspondiente.','number'=>0],  // en caso de que el afiliado tenga deudas con otras entidades (Ej: COMIPOL , COVIPOL) 
+                  ['name' => 'Certificado de aportes para el Auxilio Mortuorio','number'=>0],  // *caso pasivo con renta en AFP , quien solicita el préstamo
+                  ['name' => 'Memorándum de agradecimiento de servicios en copia simple emitido por el Comando General de la Policía Boliviana.o','number'=>0],  // *caso pasivo con renta en AFP , quien solicita el préstamo
+
+                ]],
+            ]
+          ],
           'corto' => [
             // CORTO PLAZO
             'type' => ['module_id' => $module->id,'name'=>'Préstamo a corto plazo','second_name'=>'Préstamo a corto plazo'],
             'modalities' => [
-              // ANTICIPO SECTOR ACTIVO 
-              ['name'=>'Anticipo sector activo','shortened'=>'ANT-SA','requirements'=>[
-                ['name' => 'Cédula de Identidad del (la) titular en copia simple.','number'=>1],
-                ['name' => 'Boleta de pago en copia simple.','number'=>2],  
-                ['name' => 'Certificado de haberes considerando el último mes percibido.','number'=>2],  // En caso de no contar con la boleta de pago      
-                ['name' => 'Estado de cuenta original, vigente y emitido por el Banco Unión S.A.','number'=>3], // Nuevo
-                /*Estos documentos son solicitados por MUSERPOL en caso de ser requeridos*/
-                ['name' => 'Solicitud de aclaración de datos personales en la Boleta de Pago.','number'=>0],  // En caso de que el afiliado tenga datos erroneos en su boleta de pago
-                ['name' => 'Certificado de no adeudo, emitido por la instancia correspondiente.','number'=>0],  // en caso de que el afiliado haya tenido deudas de otras entidades (Ej: COMIPOL , COVIPOL)
-                ['name' => 'Certificado de pago emitido por la entidad correspondiente.','number'=>0],  // en caso de que el afiliado tenga deudas con otras entidades (Ej: COMIPOL , COVIPOL)
-              ]],
-              // ANTICIPO SECTOR PASIVO Y VIUDAS
-              ['name'=>'Anticipo sector pasivo','shortened'=>'ANT-SP','requirements'=>[
-                ['name' => 'Cédula de Identidad del (la) titular en copia simple.','number'=>1],
-                ['name' => 'Boleta de renta de jubilación en copia simple.','number'=>2],// Nuevo
-                ['name' => 'Ultima boleta de pago con renta en SENASIR original','number'=>2], //Nuevo *caso pasivo con renta de SENASIR, quien solicita el préstamo
-                ['name' => 'Ultima boleta de pago con renta en AFP original','number'=>2],      //Nuevo *caso pasivo con renta en AFP , quien solicita el préstamo
-                ['name' => 'Certificado de haberes con siderando el último mes percibido.','number'=>2],  // En caso de no contar con la boleta de pago
-                ['name' => 'Estado de cuenta original, vigente y emitido por el Banco Unión S.A.','number'=>3], // Nuevo
-                /*Estos documentos son solicitados por MUSERPOL en caso de ser requeridos*/
-                ['name' =>'Solicitud de aclaración de datos personales en la Boleta de Pago.','number'=>0],  // En caso de que el afiliado tenga datos erroneos en su boleta de pago  
-                ['name' => 'Certificado de no adeudo, emitido por la instancia correspondiente.','number'=>0],  // en caso de que el afiliado haya tenido deudas de otras entidades (Ej: COMIPOL , COVIPOL)
-                ['name' => 'certificado de pago emitido por la entidad correspondiente.','number'=>0],  // en caso de que el afiliado tenga deudas con otras entidades (Ej: COMIPOL , COVIPOL) 
-                ['name' => 'Certificado de aportes para el Auxilio Mortuorio','number'=>0],  // *caso pasivo con renta en AFP , quien solicita el préstamo
-                ['name' => 'Memorándum de agradecimiento de servicios en copia simple emitido por el Comando General de la Policía Boliviana.o','number'=>0],  // *caso pasivo con renta en AFP , quien solicita el préstamo
-
-              ]],
               // CORTO PLAZO SECTOR ACTIVO SERVICIO
               ['name'=>'Corto plazo sector activo','shortened'=>'PCP-SA','requirements'=>[
               	['name' => 'Cédula de Identidad del (la) titular en copia simple.','number'=>1],
@@ -161,7 +166,7 @@ class LoanSeeder extends Seeder
 
               ]],
                 // LARGO PLAZO UN SOLO GARANTE SECTOR ACTIVO --Afiliados CPOP
-              ['name'=>'Largo con un solo garante para el sector activo','shortened'=>'PLP-S1G-SA','requirements'=>[
+              ['name'=>'Largo Plazo con un solo garante para el sector activo','shortened'=>'PLP-S1G-SA','requirements'=>[
                 ['name' => 'Cédula de Identidad del (la) titular en copia simple','number'=>1],
                 ['name' => 'Boleta de pago en copia simple.','number'=>2], 
                 ['name' => 'Certificado de años de servicio desglosado en original emitido por el Comando General de la Policía Boliviana','number'=>3],
@@ -177,7 +182,7 @@ class LoanSeeder extends Seeder
               	['name' => 'Certificado de no ingreso a disponibilidad de las letras “C” y “A” en original emitido por el Comando General de la Policía Boliviana.','number'=>0], //verificacion, no encontrarse en disponibilidad de letra A o C o item 0
               ]],            
               // REFINANCIANCIAMIENTO SECTOR ACTIVO CON UN SOLO GARANTE ---> En este caso el garante solo puede ser activo
-              ['name'=>'Refinanciamiento de prestamos a largo Plazo para el sector activo con un solo garante','shortened'=>'PLP-R-SAP','requirements'=>[
+              ['name'=>'Refinanciamiento de prestamos a largo Plazo para el sector activo con un solo garante','shortened'=>'PLP-R-SA','requirements'=>[
                 ['name'=>'Cédula de Identidad del (la) titular en copia simple','number'=>1],
                 ['name' => 'Boleta de pago en copia simple.','number'=>2], 
             		['name' => 'Certificado de años de servicio desglosado en original emitido por el Comando General de la Policía Boliviana','number'=>3],
@@ -214,37 +219,38 @@ class LoanSeeder extends Seeder
                 ['name' => 'Certificado de no adeudo.','number'=>0],  // en caso de que el afiliado haya tenido deudas de otras entidades (Ej: COMIPOL , COVIPOL)
                 ['name' => 'Certificado de pago emitido por la entidad correspondiente.','number'=>0],  // en caso de que el afiliado tenga deudas con otras entidades (Ej: COMIPOL , COVIPOL)
                 ['name' => 'Memorándum de agradecimiento de servicios en copia simple emitido por el Comando General de la Policía Boliviana.','number'=>0],  // *caso pasivo con renta en AFP , quien solicita el préstamo
-
-              ]],
-
-              // LARGO PLAZO GARANTIA HIPOTECARIA
-              ['name'=>'Préstamo con garantia hipotecaria de bien inmueble para el sector activo','shortened'=>'PLP-GH-SA','requirements'=>[
-               	['name'=>'Cédula de Identidad del (la) titular en copia simple','number'=>2],
-            		['name' => 'Certificado de años de servicio desglosado en original emitido por el Comando General de la Policía Boliviana','number'=>3],
-            		['name' => 'Certificado de años de servicio desglosado en fotocopia Legalizada emitido por el Comando General de la Policía Boliviana','number'=>3],
-                ['name' => 'Certificado de años de servicio desglosado en original emitido por el Comando Regional de la Policía Boliviana','number'=>3],
-              	['name' => 'Croquis de ubicación del inmueble','number'=>4], //nuevo
-              	['name' => 'Factura de Luz del Inmueble','number'=>5], //nuevo
-            		['name' => 'Factura de Agua del Inmueble','number'=>5], //nuevo
-            		['name' => 'Folio Real','number'=>6], //nuevo
-            		['name' => 'Informacion rapida del Inmueble','number'=>6], //nuevo
-            		['name' => 'Fotocopia de Testimonio de Propiedad','number'=>7], //nuevo
-            		['name' => 'Fotocopia de Impuestos 3 Ultimos Años','number'=>8], //nuevo
-            		['name' => 'Fotocopia de Plano de lote','number'=>9], //nuevo
-            		['name' => 'Fotocopia de Catastro','number'=>10], //nuevo
-             		['name' => 'Estado de cuenta original, vigente y emitido por el Banco Unión S.A','number'=>11],
-                ['name' => 'Certificado de estado civil en original emitido por el SERECI.','number'=>12],
-                 /*Estos documentos son solicitados por MUSERPOL en caso de ser requeridos*/
-                ['name' => 'Certificado de haberes considerando el último mes percibido.','number'=>0],  // En caso de no tener la boleta de pago
-                ['name' => 'Nota de aclaración de Boleta de Pago.','number'=>0],  // En caso de que el afiliado tenga datos erroneos en su boleta de pago
-                ['name' => 'Certificado de no adeudo.','number'=>0],  // en caso de que el afiliado haya tenido deudas de otras entidades (Ej: COMIPOL , COVIPOL)
-                ['name' => 'Certificado de pago emitido por la entidad correspondiente.','number'=>0]  // en caso de que el afiliado tenga deudas con otras entidades (Ej: COMIPOL , COVIPOL)
-                /**/
-                
-                
-              ]]
+              ]], 
             ]
-          ]
+          ],
+          'hipotecario' => [
+            'type' => ['module_id' => $module->id,'name'=>'Préstamo hipotecario','second_name'=>'Préstamo hipotecario'],
+            'modalities' => [
+               // LARGO PLAZO GARANTIA HIPOTECARIA
+              ['name'=>'Préstamo con garantia hipotecaria de bien inmueble para el sector activo','shortened'=>'PLP-GH-SA','requirements'=>[
+                ['name'=>'Cédula de Identidad del (la) titular en copia simple','number'=>2],
+               ['name' => 'Certificado de años de servicio desglosado en original emitido por el Comando General de la Policía Boliviana','number'=>3],
+               ['name' => 'Certificado de años de servicio desglosado en fotocopia Legalizada emitido por el Comando General de la Policía Boliviana','number'=>3],
+               ['name' => 'Certificado de años de servicio desglosado en original emitido por el Comando Regional de la Policía Boliviana','number'=>3],
+               ['name' => 'Croquis de ubicación del inmueble','number'=>4], //nuevo
+               ['name' => 'Factura de Luz del Inmueble','number'=>5], //nuevo
+               ['name' => 'Factura de Agua del Inmueble','number'=>5], //nuevo
+               ['name' => 'Folio Real','number'=>6], //nuevo
+               ['name' => 'Informacion rapida del Inmueble','number'=>6], //nuevo
+               ['name' => 'Fotocopia de Testimonio de Propiedad','number'=>7], //nuevo
+               ['name' => 'Fotocopia de Impuestos 3 Ultimos Años','number'=>8], //nuevo
+               ['name' => 'Fotocopia de Plano de lote','number'=>9], //nuevo
+               ['name' => 'Fotocopia de Catastro','number'=>10], //nuevo
+                ['name' => 'Estado de cuenta original, vigente y emitido por el Banco Unión S.A','number'=>11],
+               ['name' => 'Certificado de estado civil en original emitido por el SERECI.','number'=>12],
+                /*Estos documentos son solicitados por MUSERPOL en caso de ser requeridos*/
+               ['name' => 'Certificado de haberes considerando el último mes percibido.','number'=>0],  // En caso de no tener la boleta de pago
+               ['name' => 'Nota de aclaración de Boleta de Pago.','number'=>0],  // En caso de que el afiliado tenga datos erroneos en su boleta de pago
+               ['name' => 'Certificado de no adeudo.','number'=>0],  // en caso de que el afiliado haya tenido deudas de otras entidades (Ej: COMIPOL , COVIPOL)
+               ['name' => 'Certificado de pago emitido por la entidad correspondiente.','number'=>0]  // en caso de que el afiliado tenga deudas con otras entidades (Ej: COMIPOL , COVIPOL)
+               /**/
+             ]]  
+            ]
+          ],
         ]
       ];
       foreach ($data['procedures'] as $procedure) {
