@@ -180,9 +180,9 @@ class Loan extends Model
                 'cuota'=>$n,
                 'fecha'=>$fechas[$n],
                 'Dias'=>$dias_interes,
-                'Capital'=>$amortizacion_capital,
-                'Interes'=>$amortizacion_interes,
-                'Saldo Capital'=>$saldo_capital
+                'Capital'=>Util::round($amortizacion_capital),
+                'Interes'=>Util::round($amortizacion_interes),
+                'Saldo Capital'=>Util::round($saldo_capital)
             ];
             $n+=1;
         }
