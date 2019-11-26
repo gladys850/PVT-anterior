@@ -11,6 +11,7 @@ class User extends Authenticatable implements JWTSubject
 {
     use LaratrustUserTrait, Notifiable;
     use Traits\EloquentGetTableNameTrait;
+    use Traits\RelationshipsTrait;
 
     public $timestamps = true;
     public $guarded = ['id'];
@@ -20,7 +21,7 @@ class User extends Authenticatable implements JWTSubject
     *
     * @var array
     */
-    protected $fillable = ['first_name', 'last_name', 'username', 'password', 'active', 'position'];
+    protected $fillable = ['first_name', 'last_name', 'username', 'password', 'active', 'position', 'city_id', 'phone'];
 
     /**
     * The attributes that should be hidden for arrays.

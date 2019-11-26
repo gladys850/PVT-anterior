@@ -15,9 +15,9 @@ class UserObserver
      * @param  \App\User  $user
      * @return void
      */
-    public function created(User $user)
+    public function created(User $object)
     {
-        $this->save_record($user, 'sistema', 'registró');
+        Util::save_record($object, 'sistema', 'registró');
     }
 
     /**
@@ -26,19 +26,9 @@ class UserObserver
      * @param  \App\User  $user
      * @return void
      */
-    public function updating(User $user)
+    public function updating(User $object)
     {
-        $old = new User();
-        $old->fill($user->getOriginal());
-        $action = 'editó';
-        $updated_values = $user->getDirty();
-        foreach ($updated_values as $key => $value) {
-            $action .= (' [' . Util::translate($key) . '] ' . Util::bool_to_string($old[$key]) . ' -> ' . Util::bool_to_string($user[$key]));
-            if (next($updated_values)) {
-                $action .= ', ';
-            }
-        }
-        $this->save_record($user, 'sistema', $action);
+        Util::save_record($object, 'sistema', Util::concat_action($object));
     }
 
     /**
@@ -47,21 +37,8 @@ class UserObserver
      * @param  \App\User  $user
      * @return void
      */
-    public function deleted(User $user)
+    public function deleted(User $object)
     {
-        $this->save_record($user, 'sistema', 'eliminó usuario: ' . $user->full_name);
-    }
-
-    private function save_record($user, $type, $action)
-    {
-        $logged_user = Auth::user();
-        $record_type = RecordType::whereName($type)->first();
-        if ($logged_user && $record_type) {
-            $user->records()->create([
-                'user_id' => $logged_user->id,
-                'record_type_id' => $record_type->id,
-                'action' => $action
-            ]);
-        }
+        Util::save_record($object, 'sistema', 'eliminó usuario: ' . $object->full_name);
     }
 }

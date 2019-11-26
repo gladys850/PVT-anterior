@@ -9,7 +9,9 @@ use Illuminate\Support\Facades\Storage;
 class Affiliate extends Model
 {
     use Traits\EloquentGetTableNameTrait;
+    use Traits\RelationshipsTrait;
 
+    public $relationships = ['City', 'AffiliateState'];
     protected $appends = ['picture_saved', 'fingerprint_saved', 'full_name'];
     protected $hidden = ['pivot'];
     protected $fillable = [

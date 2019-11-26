@@ -10,6 +10,8 @@ use App\Observers\RecordObserver;
 use App\Record;
 use App\Observers\UserObserver;
 use App\User;
+use App\Observers\AffiliateObserver;
+use App\Affiliate;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -32,6 +34,7 @@ class AppServiceProvider extends ServiceProvider
         // Observers
         Record::observe(RecordObserver::class);
         User::observe(UserObserver::class);
+        Affiliate::observe(AffiliateObserver::class);
 
         // Polymorphic relationships
         Relation::morphMap([

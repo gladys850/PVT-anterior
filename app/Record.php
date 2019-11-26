@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
 use Util;
 
@@ -10,6 +11,12 @@ class Record extends Model
     public $timestamps = true;
     public $guarded = ['id'];
     protected $fillable = ['user_id', 'record_type_id', 'recordable_id', 'recordable_type', 'action'];
+
+    public function __construct(array $attributes = array())
+    {
+        parent::__construct($attributes);
+        if (Auth::user()) $this->user_id = Auth::user()->id;
+    }
 
     public function getActionAttribute()
     {
