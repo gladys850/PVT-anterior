@@ -31,6 +31,9 @@ class Record extends Model
                 case 'App\User':
                     $action .= $this->recordable->username;
                     break;
+                case 'App\Role':
+                    $action .= $this->recordable->display_name;
+                    break;
             }
         }
         unset($this['record_type'], $this['user'], $this['recordable']);

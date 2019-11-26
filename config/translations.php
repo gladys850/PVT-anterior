@@ -5,6 +5,8 @@
         'affiliates' => 'Afiliado',
         'spouses' => 'Cónyugue',
         'addresses' => 'Dirección',
+        'roles' => 'Rol',
+        'permissions' => 'Permiso',
         // User
         'first_name' => 'Primer Nombre',
         'last_name' => 'Apellido Paterno',

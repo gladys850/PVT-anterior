@@ -5,6 +5,7 @@ namespace App\Helpers;
 use Carbon;
 use Config;
 use App\RecordType;
+use Illuminate\Support\Str;
 
 class Util
 {
@@ -65,6 +66,27 @@ class Util
     public static function money_format($value)
     {
         return number_format($value, 2, ',', '.');
+    }
+
+    public static function pivot_action($relationName, $pivotIds, $message)
+    {
+        $action = $message . ' ';
+        $action .= self::translate($relationName) . ': ';
+        if (substr($relationName, 0, 4) != 'App\\') {
+            $relationName = 'App\\'.Str::studly(strtolower(Str::singular($relationName)));
+        }
+        if (is_subclass_of($relationName, 'Illuminate\Database\Eloquent\Model')) {
+            $action .= '(';
+            foreach ($pivotIds as $id) {
+                $action .= app($relationName)::find($id)->display_name;
+                if (next($pivotIds)) {
+                    $action .= ', ';
+                } else {
+                    $action .= ')';
+                }
+            }
+        }
+        return $action;
     }
 
     public static function concat_action($object, $message = 'editó')
