@@ -41,16 +41,24 @@ class LoanPayment extends Model
             $date_disbursement=$loan->disbursement_date;
             $diferencia = Carbon::parse($date_disbursement)->diffInDays(Carbon::parse($estimated_date));
             $diferencia=$diferencia+1;
-            if($diferencia>31)
-            {   $interest_corriente=Carbon::parse($estimated_date)->endOfDay()->day;
-                $interest_penal=0;
-                $interest_acumulado=$diferencia-Carbon::parse($estimated_date)->endOfDay()->day;
-
+            if($diferencia>91)
+            {
+                $interest_corriente=Carbon::parse($estimated_date)->endOfDay()->day;
+                $interest_acumulado=$diferencia;
+                $interest_penal=$diferencia-31;
             }
             else
-            {   $interest_corriente=$diferencia;
-                $interest_penal=0;
-                $interest_acumulado=0;
+            {
+                if($diferencia > 31)
+                {   $interest_corriente=Carbon::parse($estimated_date)->endOfDay()->day;
+                    $interest_acumulado=$diferencia-Carbon::parse($estimated_date)->endOfDay()->day;
+                    $interest_penal=0;
+                }
+                else
+                {   $interest_corriente=Carbon::parse($estimated_date)->endOfDay()->day;
+                    $interest_penal=0;
+                    $interest_acumulado=0;
+                }
             }
         }
         else
