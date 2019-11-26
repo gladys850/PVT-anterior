@@ -5,7 +5,6 @@ namespace App\Observers;
 use Illuminate\Support\Facades\Auth;
 use Util;
 use App\User;
-use App\RecordType;
 
 class UserObserver
 {
