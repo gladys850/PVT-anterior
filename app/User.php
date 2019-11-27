@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Fico7489\Laravel\Pivot\Traits\PivotEventTrait;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laratrust\Traits\LaratrustUserTrait;
@@ -9,8 +10,9 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
 
 class User extends Authenticatable implements JWTSubject
 {
-    use LaratrustUserTrait, Notifiable;
+    use PivotEventTrait, LaratrustUserTrait, Notifiable;
     use Traits\EloquentGetTableNameTrait;
+    use Traits\RelationshipsTrait;
 
     public $timestamps = true;
     public $guarded = ['id'];
@@ -20,7 +22,7 @@ class User extends Authenticatable implements JWTSubject
     *
     * @var array
     */
-    protected $fillable = ['first_name', 'last_name', 'username', 'password', 'active', 'position'];
+    protected $fillable = ['first_name', 'last_name', 'username', 'password', 'active', 'position', 'city_id', 'phone'];
 
     /**
     * The attributes that should be hidden for arrays.
