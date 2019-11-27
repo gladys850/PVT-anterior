@@ -154,7 +154,7 @@ class Loan extends Model
         }
         // Calcular monto total de la cuota
         $quota->quota_estimated = $quota->capital_payment + $total_interests;
-        $quota->next_balance = $quota->balance - $quota->capital_payment;
+        $quota->next_balance = Util::round($quota->balance - $quota->capital_payment);
         return $quota;
     }
     public function  plan(){
