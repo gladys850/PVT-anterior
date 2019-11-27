@@ -296,6 +296,7 @@
                           <v-icon>mdi-plus</v-icon>
                         </v-btn>
                       </template>
+                      <v-text-field disabled >{{updateTelefono()}}</v-text-field>
                       <span>Añadir Dirección</span>
                     </v-tooltip>
                   </v-col>
@@ -432,7 +433,6 @@ import AddStreet from '@/components/affiliate/AddStreet'
   },
   beforeMount() {
     this.getCities();
-
     this.updateTelefono();
   },
   mounted() {
