@@ -167,10 +167,11 @@ class Affiliate extends Model
     //document
     public function submitted_documents()
     {
-      return $this->hasMany(AffiliateSubmittedDocument::class);
+        return $this->hasMany(AffiliateSubmittedDocument::class);
     }
-    public function loans()
+
+    public function disbursements()
     {
-        return $this->morphMany(Loan::class,'disbursable');
+        return $this->morphMany(Loan::class, 'disbursable');
     }
 }
