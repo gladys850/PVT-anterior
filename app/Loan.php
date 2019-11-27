@@ -22,7 +22,7 @@ class Loan extends Model
         'request_date',
         'amount_request',
         'city_id',
-        'insterest_loan_id',
+        'loan_interest_id',
         'loan_state_id',
         'amount_aproved',
         'loan_term',
@@ -54,15 +54,16 @@ class Loan extends Model
         return $this->belongsToMany(Affiliate::class, 'loan_affiliates')->whereGuarantor(false);
     }
 
-    /*public function submitted_documents()
-    {
-      return $this->hasMany(LoanSubmitedDocument::class);
-    }*/
     public function modality()
     {
       return $this->belongsTo(ProcedureModality::class,'procedure_modality_id', 'id');
     }
     //$loan=Loan::first() ; $loan->modality->procedure_documents// listar requisitos de acuerdo a una modalidad
+    public function submitted_documents()
+    {
+      return $this->hasMany(LoanSubmittedDocument::class);
+    }
+
     public function getDefaultedAttribute()
     {
         return LoanPayment::days_interest($this->id, Carbon::now()->toDateString())['dias_penal'] > 0 ? true : false;
@@ -72,7 +73,6 @@ class Loan extends Model
     {
         return $this->hasMany(LoanPayment::class)->orderBy('quota_number')->orderBy('created_at');
     }
-
     public function interest()
     {
         return $this->belongsTo(LoanInterest::class, 'loan_interest_id', 'id');
@@ -81,6 +81,11 @@ class Loan extends Model
     public function observations()
     {
         return $this->morphMany(Observable::class, 'observable');
+    }
+    //desembolso --> afiliado, esposa, beneficiario
+    public function disbursable()
+    {
+        return $this->morphTo();
     }
 
     // Saldo capital

@@ -42,6 +42,8 @@ class AppServiceProvider extends ServiceProvider
         // Polymorphic relationships
         Relation::morphMap([
             'affiliates' => 'App\Affiliate',
+            'spouses' => 'App\Spouse',
+            'loan_beneficiaries' => 'App\LoanBeneficiary',
             'users' => 'App\User',
             'roles' => 'App\Role',
             'permissions' => 'App\Permission',
