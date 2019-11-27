@@ -27,8 +27,8 @@ class CreateLoansTable extends Migration
             $table->smallInteger('amount_request'); // monto solicitado
             $table->unsignedBigInteger('city_id');  // id lugar de la solicitud 
             $table->foreign('city_id')->references('id')->on('cities');
-            $table->unsignedBigInteger('interest_loan_id'); // id del interes
-            $table->foreign('interest_loan_id')->references('id')->on('loan_interests'); 
+            $table->unsignedBigInteger('loan_interest_id'); // id del interes
+            $table->foreign('loan_interest_id')->references('id')->on('loan_interests'); 
             $table->unsignedBigInteger('loan_state_id')->nullable(); //id estado del tramite
             $table->foreign('loan_state_id')->references('id')->on('loan_states'); // estado de prestamo
            // $table->integer('contract_id'); // datos del contrato
