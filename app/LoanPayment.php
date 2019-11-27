@@ -115,7 +115,7 @@ class LoanPayment extends Model
         $quota_date=[];
         $loan=Loan::find($loan_id);
         $date_disbursement=$loan->disbursement_date;
-        $num_quota=$loan->loan_term;
+        $num_quota=count($loan->plan());
         $loanParameter=(LoanParameter::all())->last();
         $offsetday=$loanParameter->offset_day;
         $last_day=Carbon::parse($date_disbursement)->endOfMonth();
@@ -133,14 +133,14 @@ class LoanPayment extends Model
         return $quota_date;
     }
 
-    public function current_interest($loan_id, $estimated_date, $estimated_date_last, $quota)
+    public static function current_interest($loan_id, $estimated_date, $estimated_date_last, $quota)
     {
         $loanPayment=LoanPayment::where('loan_id', '=', $loan_id)->get()->toArray();
         if($quota==1)
         {
             $loan=Loan::find($loan_id);
             $date_disbursement=$loan->disbursement_date;
-            $diferencia = Carbon::parse($date_disbursement)->diffInDays(Carbon::parse($estimated_date));
+            $diferencia = Carbon::parse($date_disbursement)->diffInDays(Carbon::parse($estimated_date_last));
             $diferencia=$diferencia+1;
         }
         else{
@@ -149,5 +149,6 @@ class LoanPayment extends Model
         }
         return $diferencia;
     }
+
 
 }
