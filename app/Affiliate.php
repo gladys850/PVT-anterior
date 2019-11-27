@@ -9,9 +9,11 @@ use Illuminate\Support\Facades\Storage;
 class Affiliate extends Model
 {
     use Traits\EloquentGetTableNameTrait;
+    use Traits\RelationshipsTrait;
 
+    public $relationships = ['City', 'AffiliateState'];
     protected $appends = ['picture_saved', 'fingerprint_saved', 'full_name'];
-
+    protected $hidden = ['pivot'];
     protected $fillable = [
         'user_id',
         'affiliate_state_id',
@@ -128,10 +130,40 @@ class Affiliate extends Model
         return $boletas;
       }
     }
+
     public function guarantees()
     {
-        return $this->belongsToMany(Loan::class, 'loan_guarantors');
+        return $this->belongsToMany(Loan::class, 'loan_affiliates')->whereGuarantor(true)->orderBy('loans.created_at', 'desc');
     }
+
+    public function loans()
+    {
+        return $this->belongsToMany(Loan::class, 'loan_affiliates')->whereGuarantor(false)->orderBy('loans.created_at', 'desc');
+    }
+
+    public function active_loans()
+    {
+        return $this->verify_balance($this->loans);
+    }
+
+    public function active_guarantees()
+    {
+        return $this->verify_balance($this->guarantees);
+    }
+
+    private function verify_balance($loans)
+    {
+        $active_loans = [];
+        foreach ($loans as $loan) {
+            $loan->balance = $loan->balance;
+            if ($loan->balance > 0) {
+                $loan->estimated_quota = $loan->estimated_quota;
+                array_push($active_loans, $loan);
+            }
+        }
+        return $active_loans;
+    }
+
     //document
     public function submitted_documents()
     {

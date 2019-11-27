@@ -96,8 +96,8 @@ class LoanController extends Controller
     }
     public function switch_states()
     {
-        $amortizing_state = LoanState::whereName('amortizando')->first();
-        $defaulted_state = LoanState::whereName('mora')->first();
+        $amortizing_state = LoanState::whereName('Amortizando')->first();
+        $defaulted_state = LoanState::whereName('Mora')->first();
 
         // Switch amortizing loans to defaulted
         $amortizing_loans = Loan::whereLoanStateId($amortizing_state->id)->get();

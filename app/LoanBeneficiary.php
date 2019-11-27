@@ -9,7 +9,7 @@ class LoanBeneficiary extends Model
     public $timestamps = true;
     public $fillable = [
      'city_identity_card_id', 
-     'indetity_card',
+     'identity_card',
      'last_name', 
      'mothers_last_name',
      'first_name',
@@ -21,5 +21,5 @@ class LoanBeneficiary extends Model
      'phone_number',
      'cell_phone_number'
     ];   
-
+  
 }

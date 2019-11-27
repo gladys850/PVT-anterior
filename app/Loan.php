@@ -8,7 +8,9 @@ use Util;
 
 class Loan extends Model
 {
+    protected $appends = ['balance', 'estimated_quota', 'defaulted'];
     public $timestamps = true;
+    protected $hidden = ['pivot'];
     public $guarded = ['id'];
     public $fillable = [
         'disbursable_id',
@@ -41,10 +43,17 @@ class Loan extends Model
     {
       return $this->belongsTo(PaymentType::class,'disbursement_type_id','id');
     }
-    public function loan_affiliates()
+
+    public function guarantors()
     {
-        return $this->belongsToMany(Affiliate::class, 'loan_affiliates');
+        return $this->belongsToMany(Affiliate::class, 'loan_affiliates')->whereGuarantor(true);
     }
+
+    public function lenders()
+    {
+        return $this->belongsToMany(Affiliate::class, 'loan_affiliates')->whereGuarantor(false);
+    }
+
     public function modality()
     {
       return $this->belongsTo(ProcedureModality::class,'procedure_modality_id', 'id');
@@ -54,9 +63,10 @@ class Loan extends Model
     {
       return $this->hasMany(LoanSubmittedDocument::class);
     }
-    public function defaulted()
+
+    public function getDefaultedAttribute()
     {
-        return $this->penal_interest > 0 ? true : false;
+        return LoanPayment::days_interest($this->id, Carbon::now()->toDateString())['dias_penal'] > 0 ? true : false;
     }
 
     public function payments()
@@ -107,8 +117,10 @@ class Loan extends Model
     public function getEstimatedQuotaAttribute()
     {
         $monthly_interest = $this->interest->monthly_current_interest;
+        unset($this->interest);
         return Util::round($monthly_interest * $this->amount_disbursement / (1 - 1 / pow((1 + $monthly_interest), $this->loan_term)));
     }
+ 
 
     public function next_payment()
     {
@@ -149,5 +161,38 @@ class Loan extends Model
         $quota->quota_estimated = $quota->capital_payment + $total_interests;
         $quota->next_balance = $quota->balance - $quota->capital_payment;
         return $quota;
+    }
+    public function  plan(){
+        $saldo_capital=$this->amount_disbursement;
+        $interes_diario=$this->interest->daily_current_interest;
+        $cuota_estimada=$this->estimated_quota;
+        $plan=[];
+        $fechas = [];
+        $fechas[] = $this->disbursement_date;
+        $n=1;
+        while($saldo_capital>0) {
+            $fechas[] = Carbon::parse($fechas[$n-1])->startOfMonth()->addMonth()->endOfMonth()->toDateString();
+            $dias_interes=LoanPayment::current_interest($this->id,$fechas[$n-1],$fechas[$n],$n);
+            $amortizacion_interes=$dias_interes*$saldo_capital*$interes_diario;
+            if($cuota_estimada>=$saldo_capital){
+                $amortizacion_capital=$saldo_capital;
+            } else {
+                $amortizacion_capital=$cuota_estimada-$amortizacion_interes;
+            }
+            $total_pagar=$amortizacion_interes+$amortizacion_capital;
+            $saldo_capital=$saldo_capital-$amortizacion_capital;
+
+            $plan[$n][] = [
+                'cuota'=>$n,
+                'fecha'=>$fechas[$n],
+                'Dias'=>$dias_interes,
+                'Capital'=>Util::round($amortizacion_capital),
+                'Interes'=>Util::round($amortizacion_interes),
+                'Saldo Capital'=>Util::round($saldo_capital)
+            ];
+            $n+=1;
+        }
+        return $plan;
+
     }
 }

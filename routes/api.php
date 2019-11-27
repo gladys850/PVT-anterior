@@ -23,6 +23,11 @@ Route::group([
     Route::post('spouse', 'Api\V1\SpouseController@store');
     Route::delete('spouse/{id}', 'Api\V1\SpouseController@destroy');
     Route::patch('spouse/{id}', 'Api\V1\SpouseController@update');
+    //beneficiary
+    Route::post('beneficiary', 'Api\V1\LoanBeneficiaryController@store');
+    Route::get('beneficiary/{id}', 'Api\V1\LoanBeneficiaryController@show');
+    Route::delete('beneficiary/{id}', 'Api\V1\LoanBeneficiaryController@destroy');
+    Route::patch('beneficiary/{id}', 'Api\V1\LoanBeneficiaryController@update');
     // City
     Route::resource('city', 'Api\V1\CityController')->only(['index']);
     // state
@@ -80,7 +85,7 @@ Route::group([
         Route::group([ 'middleware' => 'permission:delete-affiliate' ], function () {
             Route::resource('affiliate', 'Api\V1\AffiliateController')->only(['destroy']);
         });
-
+       
         // Admin routes
         Route::group([
             'middleware' => 'role:TE-admin'

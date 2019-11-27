@@ -3,9 +3,12 @@
 namespace App;
 
 use Laratrust\Models\LaratrustRole;
+use Fico7489\Laravel\Pivot\Traits\PivotEventTrait;
 
 class Role extends LaratrustRole
 {
+    use PivotEventTrait;
+
     public $timestamps = true;
     protected $hidden = ['pivot'];
     public $guarded = ['id'];
@@ -19,5 +22,10 @@ class Role extends LaratrustRole
     public function permissions()
     {
         return $this->belongsToMany(Permission::class, 'role_permissions');
+    }
+
+    public function records()
+    {
+        return $this->morphMany(Record::class, 'recordable');
     }
 }
