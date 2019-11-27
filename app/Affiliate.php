@@ -137,4 +137,8 @@ class Affiliate extends Model
     {
       return $this->hasMany(AffiliateSubmittedDocument::class);
     }
+    public function loans()
+    {
+        return $this->morphMany(Loan::class,'disbursable');
+    }
 }

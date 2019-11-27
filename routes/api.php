@@ -44,6 +44,15 @@ Route::group([
     //document
     Route::get('document/{affiliate_id}', 'Api\V1\ScannedDocumentController@create_document');
     Route::resource('procedureDocument', 'Api\V1\ProcedureDocumentController')->only(['index']);
+    //Loan
+    Route::resource('loan', 'Api\V1\LoanController')->only(['index']);
+    Route::resource('loan', 'Api\V1\LoanController')->only(['show']);
+    Route::resource('loan', 'Api\V1\LoanController')->only(['store']);
+    Route::resource('loan', 'Api\V1\LoanController')->only(['destroy']);
+    Route::resource('loan', 'Api\V1\LoanController')->only(['update']);
+
+    //Route::patch('loan/{loan_id}/persona', 'Api\V1\LoanController@loan_disbursable');
+
 
     //list of requirements for registered loans
     Route::get('loan/{loan_id}/requirements', 'Api\V1\LoanController@list_requirements');
@@ -51,7 +60,6 @@ Route::group([
     Route::get('loan/{loan_id}/submitted_documents', 'Api\V1\LoanController@submitted_documents');
     //get requirements according to modality
     Route::get('procedure_modality/{modality_id}/requirements_loan', 'Api\V1\ProcedureModalityController@list_requirements_loan');
-
 
     // With credentials
     Route::group([

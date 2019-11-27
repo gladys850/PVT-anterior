@@ -20,7 +20,7 @@ class Loan extends Model
         'request_date',
         'amount_request',
         'city_id',
-        'insterest_loan_id',
+        'loan_interest_id',
         'loan_state_id',
         'amount_aproved',
         'loan_term',
@@ -40,10 +40,6 @@ class Loan extends Model
     public function payment_type()
     {
       return $this->belongsTo(PaymentType::class,'disbursement_type_id','id');
-    }
-    public function loan_interest()
-    {
-      return $this->belongsTo(LoanInterest::class,'loan_interest_id','id');
     }
     public function loan_affiliates()
     {
@@ -76,7 +72,11 @@ class Loan extends Model
     {
         return $this->morphMany(Observable::class, 'observable');
     }
-   
+    //desembolso --> afiliado, esposa, beneficiario
+    public function disbursable()
+    {
+        return $this->morphTo();
+    }
 
     // Saldo capital
     public function getBalanceAttribute()
