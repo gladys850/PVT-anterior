@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Fico7489\Laravel\Pivot\Traits\PivotEventTrait;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laratrust\Traits\LaratrustUserTrait;
@@ -9,7 +10,7 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
 
 class User extends Authenticatable implements JWTSubject
 {
-    use LaratrustUserTrait, Notifiable;
+    use PivotEventTrait, LaratrustUserTrait, Notifiable;
     use Traits\EloquentGetTableNameTrait;
     use Traits\RelationshipsTrait;
 
