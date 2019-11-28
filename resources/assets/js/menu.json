@@ -12,6 +12,12 @@
     "permission": "show-affiliate",
     "params": {}
   }, {
+    "href": "loanIndex",
+    "title": "Préstamos",
+    "icon": "mdi-cash-multiple",
+    "permission": "show-loan",
+    "params": {}
+  }, {
     "title": "Acceso",
     "icon": "mdi-key",
     "permission": "show-user",

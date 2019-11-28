@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Record;
+use Util;
 
 class RecordController extends Controller
 {
@@ -15,18 +16,10 @@ class RecordController extends Controller
      */
     public function index(Request $request)
     {
-        $records = Record::query();
-        if ($request->has('user_id')) {
-            $records = $records->whereUserId($request->user_id);
-        }
-        if ($request->has('sortBy')) {
-            if (count($request->sortBy) > 0 && count($request->sortDesc) > 0) {
-                foreach ($request->sortBy as $i => $sort) {
-                    $records = $records->orderBy($sort, filter_var($request->sortDesc[$i], FILTER_VALIDATE_BOOLEAN) ? 'desc' : 'asc');
-                }
-            }
-        }
-        return $records->paginate($request->input('per_page') ?? 10);
+        $filter = [];
+        if ($request->has('user_id')) $filter = ['user_id' => $request->user_id];
+        $data = Util::search_sort(new Record(), $request, $filter);
+        return $data;
     }
 
     /**

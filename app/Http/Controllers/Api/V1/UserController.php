@@ -11,6 +11,7 @@ use App\Http\Requests\UserForm;
 use App\User;
 use App\Role;
 use Ldap;
+use Util;
 
 class UserController extends Controller
 {
@@ -23,28 +24,10 @@ class UserController extends Controller
     */
     public function index(Request $request)
     {
-        $users = User::where('username', '!=', $this->db_users[0]);
-        if ($request->has('active')) {
-            $users = $users->whereActive(filter_var($request->active, FILTER_VALIDATE_BOOLEAN), true);
-        }
-        if ($request->has('search')) {
-            if ($request->search != 'null' && $request->search != '') {
-                $search = $request->search;
-                $users = $users->where(function ($query) use ($search) {
-                    foreach (Schema::getColumnListing(User::getTableName()) as $column) {
-                        $query = $query->orWhere($column, 'ilike', '%' . $search . '%');
-                    }
-                });
-            }
-        }
-        if ($request->has('sortBy')) {
-            if (count($request->sortBy) > 0 && count($request->sortDesc) > 0) {
-                foreach ($request->sortBy as $i => $sort) {
-                    $users = $users->orderBy($sort, filter_var($request->sortDesc[$i], FILTER_VALIDATE_BOOLEAN) ? 'desc' : 'asc');
-                }
-            }
-        }
-        return $users->paginate($request->input('per_page') ?? 10);
+        $filter = [];
+        if ($request->has('active')) $filter = ['active' => filter_var($request->active, FILTER_VALIDATE_BOOLEAN)];
+        $data = Util::search_sort(new User(), $request, $filter);
+        return $data;
     }
 
     /**

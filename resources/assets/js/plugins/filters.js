@@ -14,6 +14,12 @@ Vue.filter('capitalize', value => {
 Vue.filter('datetime', value => {
 	return moment(value).format('LLL')
 })
+Vue.filter('date', value => {
+	return moment(value).format('L')
+})
+Vue.filter('money', value => {
+  return value.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+})
 Vue.filter('fullName', (value, byFirstName = false) => {
   let fullName = []
 	if (byFirstName) {

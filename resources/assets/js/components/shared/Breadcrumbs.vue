@@ -7,7 +7,7 @@
   >
     <template v-slot:item="props">
       <v-breadcrumbs-item
-        class="v-toolbar__title"
+        class="title"
         :to="props.item.to"
         active-class="font-weight-regular"
       >
