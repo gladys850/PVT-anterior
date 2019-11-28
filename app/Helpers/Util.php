@@ -6,6 +6,8 @@ use Carbon;
 use Config;
 use App\RecordType;
 use Illuminate\Support\Str;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Schema;
 
 class Util
 {
@@ -66,6 +68,38 @@ class Util
     public static function money_format($value)
     {
         return number_format($value, 2, ',', '.');
+    }
+
+    public static function search_sort($model, $request, $filter = [])
+    {
+        $query = $model::query();
+        foreach ($filter as $column => $value) {
+            if ($request->has($column)) {
+                $query = $query->where($column, '=', $value);
+            }
+        }
+        if ($request->has('search')) {
+            if ($request->search != 'null' && $request->search != '') {
+                $search = explode(' ', $request->search);
+                $query = $query->where(function ($query) use ($search, $model) {
+                    foreach ($search as $word) {
+                        $query = $query->where(function ($q) use ($word, $model) {
+                            foreach (Schema::getColumnListing($model::getTableName()) as $column) {
+                                $q->orWhere($column, 'ilike', '%' . $word . '%');
+                            }
+                        });
+                    }
+                });
+            }
+        }
+        if ($request->has('sortBy')) {
+            if (count($request->sortBy) > 0 && count($request->sortDesc) > 0) {
+                foreach ($request->sortBy as $i => $sort) {
+                    $query = $query->orderBy($sort, filter_var($request->sortDesc[$i], FILTER_VALIDATE_BOOLEAN) ? 'desc' : 'asc');
+                }
+            }
+        }
+        return $query->paginate($request->per_page ?? 10);
     }
 
     public static function pivot_action($relationName, $pivotIds, $message)

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use Util;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Loan;
@@ -21,26 +22,8 @@ class LoanController extends Controller
     public function index(Request $request)
     {
         //return Loan::get();
-           $loans = Loan::query();
-            if ($request->has('search')) {
-                if ($request->search != 'null' && $request->search != '') {
-                    $search = $request->search;
-                    $loans = $loans->where(function ($query) use ($search) {
-                        foreach (Schema::getColumnListing(Loan::getTableName()) as $column) { 
-                            $query = $query->orWhere($column, 'ilike', '%' . $search . '%');
-                        }
-                    });
-                }
-            }
-            if ($request->has('sortBy')) {
-                if (count($request->sortBy) > 0 && count($request->sortDesc) > 0) {
-                    foreach ($request->sortBy as $i => $sort) {
-                        $loans = $loans->orderBy($sort, filter_var($request->sortDesc[$i], FILTER_VALIDATE_BOOLEAN) ? 'desc' : 'asc');
-                    }
-                }
-            }
-            $loans = $loans->paginate($request->per_page ?? 10);
-            return $loans;
+        $data = Util::search_sort(new Loan(), $request);
+        return $data;
     }
 
     /**

@@ -22,41 +22,28 @@
             clearable
           ></v-text-field>
         </v-flex>
-        <v-tooltip left v-if="$store.getters.permissions.includes('create-affiliate')">
-          <template v-slot:activator="{ on }">
-            <v-btn
-              fab
-              dark
-              small
-              color="success"
-              bottom
-              right
-              absolute
-              v-on="on"
-              style="margin-right: -9px;"
-              :to="{ name: 'affiliateAdd', params: { id:'new'} }"
-            >
-              <v-icon>mdi-plus</v-icon>
-            </v-btn>
-          </template>
-          <span>Nuevo afiliado</span>
-        </v-tooltip>
+        <Fab v-if="$store.getters.permissions.includes('create-loan')"/>
       </v-toolbar>
     </v-card-title>
     <v-card-text>
       <List :bus="bus"/>
     </v-card-text>
+    <RemoveItem :bus="bus"/>
   </v-card>
 </template>
 <script>
 import Breadcrumbs from '@/components/shared/Breadcrumbs'
-import List from '@/components/affiliate/List'
+import RemoveItem from '@/components/shared/RemoveItem'
+import List from '@/components/loan/List'
+import Fab from '@/components/loan/Fab'
 
 export default {
-  name: "affiliateIndex",
+  name: "user-index",
   components: {
     Breadcrumbs,
-    List
+    Fab,
+    List,
+    RemoveItem
   },
   data: () => ({
     search: '',
@@ -65,8 +52,8 @@ export default {
   beforeMount() {
     this.$store.commit('setBreadcrumbs', [
       {
-        text: 'Afiliados',
-        to: { name: 'affiliateIndex' }
+        text: 'Préstamos',
+        to: { name: 'loanIndex' }
       }
     ])
   },

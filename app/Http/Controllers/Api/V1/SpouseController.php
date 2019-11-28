@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Spouse;
 use App\Http\Requests\SpouseForm;
 use Illuminate\Http\Request;
+use Util;
+
 class SpouseController extends Controller
 {
     /**
@@ -15,7 +17,8 @@ class SpouseController extends Controller
      */
     public function index(Request $request)
     {
-        
+        $data = Util::search_sort(new Spouse(), $request);
+        return $data;
     }
 
     /**
