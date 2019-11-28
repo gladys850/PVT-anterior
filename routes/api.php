@@ -19,15 +19,9 @@ Route::group([
     //addres
     Route::resource('address', 'Api\V1\AddressController')->only('store', 'destroy', 'update');
     //Spouse
-    //Route::resource('spouse', 'Api\V1\SpouseController');
-    Route::post('spouse', 'Api\V1\SpouseController@store');
-    Route::delete('spouse/{id}', 'Api\V1\SpouseController@destroy');
-    Route::patch('spouse/{id}', 'Api\V1\SpouseController@update');
+    Route::resource('spouse', 'Api\V1\SpouseController')->only('store', 'destroy', 'update');
     //beneficiary
-    Route::post('beneficiary', 'Api\V1\LoanBeneficiaryController@store');
-    Route::get('beneficiary/{id}', 'Api\V1\LoanBeneficiaryController@show');
-    Route::delete('beneficiary/{id}', 'Api\V1\LoanBeneficiaryController@destroy');
-    Route::patch('beneficiary/{id}', 'Api\V1\LoanBeneficiaryController@update');
+    Route::resource('beneficiary', 'Api\V1\LoanBeneficiaryController')->only('index', 'store', 'show', 'destroy', 'update');
     // City
     Route::resource('city', 'Api\V1\CityController')->only(['index']);
     // state

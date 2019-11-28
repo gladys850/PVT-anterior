@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers\Api\V1;
 use App\LoanBeneficiary;
+use App\Http\Requests\LoanBeneficiaryForm;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Util;
 
 class LoanBeneficiaryController extends Controller
 {
@@ -12,19 +14,10 @@ class LoanBeneficiaryController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+        $data = Util::search_sort(new LoanBeneficiary(), $request);
+        return $data;
     }
 
     /**
@@ -33,7 +26,7 @@ class LoanBeneficiaryController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(LoanBeneficiaryForm $request)
     {
         return LoanBeneficiary::create($request->all());
     }
@@ -46,19 +39,7 @@ class LoanBeneficiaryController extends Controller
      */
     public function show($id)
     {
-        $loan_beneficiary = LoanBeneficiary::findOrFail($id);
-        return $loan_beneficiary;
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
+        return LoanBeneficiary::findOrFail($id);
     }
 
     /**
@@ -68,7 +49,7 @@ class LoanBeneficiaryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(LoanBeneficiaryForm $request, $id)
     {
         $loan_beneficiary = LoanBeneficiary::findOrFail($id);
         $loan_beneficiary->fill($request->all());
