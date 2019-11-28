@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1;
 use App\LoanBeneficiary;
+use App\Http\Requests\LoanBeneficiaryForm;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
@@ -12,19 +13,28 @@ class LoanBeneficiaryController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+        $beneficiaries = LoanBeneficiary::query();
+        if ($request->has('search')) {
+            if ($request->search != 'null' && $request->search != '') {
+                $search = $request->search;
+                $beneficiaries = $beneficiaries->where(function ($query) use ($search) {
+                    foreach (Schema::getColumnListing(LoanBeneficiary::getTableName()) as $column) { 
+                        $query = $query->orWhere($column, 'ilike', '%' . $search . '%');
+                    }
+                });
+            }
+        }
+        if ($request->has('sortBy')) {
+            if (count($request->sortBy) > 0 && count($request->sortDesc) > 0) {
+                foreach ($request->sortBy as $i => $sort) {
+                    $beneficiaries = $beneficiaries->orderBy($sort, filter_var($request->sortDesc[$i], FILTER_VALIDATE_BOOLEAN) ? 'desc' : 'asc');
+                }
+            }
+        }
+        $beneficiaries = $beneficiaries->paginate($request->per_page ?? 10);
+        return $beneficiaries;
     }
 
     /**
@@ -33,7 +43,7 @@ class LoanBeneficiaryController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(LoanBeneficiaryForm $request)
     {
         return LoanBeneficiary::create($request->all());
     }
@@ -46,19 +56,7 @@ class LoanBeneficiaryController extends Controller
      */
     public function show($id)
     {
-        $loan_beneficiary = LoanBeneficiary::findOrFail($id);
-        return $loan_beneficiary;
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
+        return LoanBeneficiary::findOrFail($id);
     }
 
     /**
@@ -68,7 +66,7 @@ class LoanBeneficiaryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(LoanBeneficiaryForm $request, $id)
     {
         $loan_beneficiary = LoanBeneficiary::findOrFail($id);
         $loan_beneficiary->fill($request->all());
