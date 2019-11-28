@@ -5,6 +5,7 @@ use App\LoanBeneficiary;
 use App\Http\Requests\LoanBeneficiaryForm;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Util;
 
 class LoanBeneficiaryController extends Controller
 {
@@ -15,26 +16,8 @@ class LoanBeneficiaryController extends Controller
      */
     public function index(Request $request)
     {
-        $beneficiaries = LoanBeneficiary::query();
-        if ($request->has('search')) {
-            if ($request->search != 'null' && $request->search != '') {
-                $search = $request->search;
-                $beneficiaries = $beneficiaries->where(function ($query) use ($search) {
-                    foreach (Schema::getColumnListing(LoanBeneficiary::getTableName()) as $column) { 
-                        $query = $query->orWhere($column, 'ilike', '%' . $search . '%');
-                    }
-                });
-            }
-        }
-        if ($request->has('sortBy')) {
-            if (count($request->sortBy) > 0 && count($request->sortDesc) > 0) {
-                foreach ($request->sortBy as $i => $sort) {
-                    $beneficiaries = $beneficiaries->orderBy($sort, filter_var($request->sortDesc[$i], FILTER_VALIDATE_BOOLEAN) ? 'desc' : 'asc');
-                }
-            }
-        }
-        $beneficiaries = $beneficiaries->paginate($request->per_page ?? 10);
-        return $beneficiaries;
+        $data = Util::search_sort(new LoanBeneficiary(), $request);
+        return $data;
     }
 
     /**
