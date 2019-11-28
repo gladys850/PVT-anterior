@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use Util;
 use App\Affiliate;
 use App\RecordType;
 use App\User;
@@ -32,29 +33,11 @@ class AffiliateController extends Controller
     */
     public function index(Request $request)
     {
-        $affiliates = Affiliate::query();
-        if ($request->has('search')) {
-            if ($request->search != 'null' && $request->search != '') {
-                $search = $request->search;
-                $affiliates = $affiliates->where(function ($query) use ($search) {
-                    foreach (Schema::getColumnListing(Affiliate::getTableName()) as $column) { 
-                        $query = $query->orWhere($column, 'ilike', '%' . $search . '%');
-                    }
-                });
-            }
-        }
-        if ($request->has('sortBy')) {
-            if (count($request->sortBy) > 0 && count($request->sortDesc) > 0) {
-                foreach ($request->sortBy as $i => $sort) {
-                    $affiliates = $affiliates->orderBy($sort, filter_var($request->sortDesc[$i], FILTER_VALIDATE_BOOLEAN) ? 'desc' : 'asc');
-                }
-            }
-        }
-        $affiliates = $affiliates->paginate($request->per_page ?? 10);
-        foreach ($affiliates as $affiliate) {
+        $data = Util::search_sort(new Affiliate(), $request);
+        foreach ($data as $affiliate) {
             $this->append_data($affiliate);
         }
-        return $affiliates;
+        return $data;
     }
 
     /**

@@ -10,6 +10,7 @@ php artisan db:seed --class=RecordTypeSistemaSeeder
 php artisan db:seed --class=ModuleNameSeeder
 php artisan db:seed --class=RoleNameSeeder
 php artisan db:seed --class=RolePermissionSeeder
+php artisan db:seed --class=LoanPermissionSeeder
 php artisan db:seed --class=UserPermissionSeeder
 php artisan db:seed --class=RecordPermissionSeeder
 php artisan db:seed --class=AffiliatePermissionSeeder
