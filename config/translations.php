@@ -5,6 +5,8 @@
         'affiliates' => 'Afiliado',
         'spouses' => 'Cónyugue',
         'addresses' => 'Dirección',
+        'roles' => 'Rol',
+        'permissions' => 'Permiso',
         // User
         'first_name' => 'Primer Nombre',
         'last_name' => 'Apellido Paterno',
@@ -12,6 +14,8 @@
         'password' => 'Contraseña',
         'position' => 'Cargo',
         'active' => 'Activo',
+        'phone' => 'Teléfono',
+        'city_id' => 'Ciudad',
         // Affiliate
         'second_name' => 'Segundo Nombre',
         'mothers_last_name' => 'Apellido Materno',
@@ -27,6 +31,7 @@
         'date_entry' => 'Fecha de Ingreso',
         'date_derelict' => 'Fecha de culminacion',
         'surname_husband' => 'Apellido del conyugue',
+        'category_id' => 'Categoría',
         // Spouse
         'civil_status' =>'Estado Civil',
         'marriage_date' =>'Fecha de casamiento',

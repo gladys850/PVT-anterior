@@ -315,7 +315,7 @@ export default {
               this.spouse.affiliate_id=this.affiliate.id
               await axios.post(`spouse`, this.spouse)
             }
-          this.toast('Afiliado modificado', 'success')
+            this.editable = false
           }
         this.toastr.success('Registro guardado correctamente')
         this.editable = false

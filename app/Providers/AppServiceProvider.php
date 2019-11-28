@@ -10,6 +10,10 @@ use App\Observers\RecordObserver;
 use App\Record;
 use App\Observers\UserObserver;
 use App\User;
+use App\Observers\AffiliateObserver;
+use App\Affiliate;
+use App\Observers\RoleObserver;
+use App\Role;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -32,11 +36,17 @@ class AppServiceProvider extends ServiceProvider
         // Observers
         Record::observe(RecordObserver::class);
         User::observe(UserObserver::class);
+        Affiliate::observe(AffiliateObserver::class);
+        Role::observe(RoleObserver::class);
 
         // Polymorphic relationships
         Relation::morphMap([
             'affiliates' => 'App\Affiliate',
+            'spouses' => 'App\Spouse',
+            'loan_beneficiaries' => 'App\LoanBeneficiary',
             'users' => 'App\User',
+            'roles' => 'App\Role',
+            'permissions' => 'App\Permission',
         ]);
     }
 

@@ -8,7 +8,9 @@ use Util;
 
 class Loan extends Model
 {
+    protected $appends = ['balance', 'estimated_quota', 'defaulted'];
     public $timestamps = true;
+    protected $hidden = ['pivot'];
     public $guarded = ['id'];
     public $fillable = [
         'disbursable_id',
@@ -20,7 +22,7 @@ class Loan extends Model
         'request_date',
         'amount_request',
         'city_id',
-        'insterest_loan_id',
+        'loan_interest_id',
         'loan_state_id',
         'amount_aproved',
         'loan_term',
@@ -41,38 +43,36 @@ class Loan extends Model
     {
       return $this->belongsTo(PaymentType::class,'disbursement_type_id','id');
     }
-    public function loan_interest()
-    {
-      return $this->belongsTo(LoanInterest::class,'interest_loan_id','id');
-    }
+
     public function guarantors()
     {
-        return $this->belongsToMany(Affiliate::class, 'loan_guarantors');
+        return $this->belongsToMany(Affiliate::class, 'loan_affiliates')->whereGuarantor(true);
     }
-    public function loan_affiliates()
+
+    public function lenders()
     {
-        return $this->belongsToMany(Affiliate::class, 'loan_affiliates');
+        return $this->belongsToMany(Affiliate::class, 'loan_affiliates')->whereGuarantor(false);
     }
- 
-    /*public function submitted_documents()
-    {
-      return $this->hasMany(LoanSubmitedDocument::class);
-    }*/
+
     public function modality()
     {
       return $this->belongsTo(ProcedureModality::class,'procedure_modality_id', 'id');
     }
     //$loan=Loan::first() ; $loan->modality->procedure_documents// listar requisitos de acuerdo a una modalidad
-    public function defaulted()
+    public function submitted_documents()
     {
-        return $this->penal_interest > 0 ? true : false;
+      return $this->hasMany(LoanSubmittedDocument::class);
+    }
+
+    public function getDefaultedAttribute()
+    {
+        return LoanPayment::days_interest($this->id, Carbon::now()->toDateString())['dias_penal'] > 0 ? true : false;
     }
 
     public function payments()
     {
         return $this->hasMany(LoanPayment::class)->orderBy('quota_number')->orderBy('created_at');
     }
-
     public function interest()
     {
         return $this->belongsTo(LoanInterest::class, 'loan_interest_id', 'id');
@@ -81,6 +81,11 @@ class Loan extends Model
     public function observations()
     {
         return $this->morphMany(Observable::class, 'observable');
+    }
+    //desembolso --> afiliado, esposa, beneficiario
+    public function disbursable()
+    {
+        return $this->morphTo();
     }
 
     // Saldo capital
@@ -112,6 +117,7 @@ class Loan extends Model
     public function getEstimatedQuotaAttribute()
     {
         $monthly_interest = $this->interest->monthly_current_interest;
+        unset($this->interest);
         return Util::round($monthly_interest * $this->amount_disbursement / (1 - 1 / pow((1 + $monthly_interest), $this->loan_term)));
     }
  
@@ -153,7 +159,7 @@ class Loan extends Model
         }
         // Calcular monto total de la cuota
         $quota->quota_estimated = $quota->capital_payment + $total_interests;
-        $quota->next_balance = $quota->balance - $quota->capital_payment;
+        $quota->next_balance = Util::round($quota->balance - $quota->capital_payment);
         return $quota;
     }
     public function  plan(){

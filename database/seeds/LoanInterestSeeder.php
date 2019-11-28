@@ -26,17 +26,18 @@ class LoanInterestSeeder extends Seeder
         }
         $data = [
             //corto plazo
-            ['procedure_modality_id' => $procedure_modality[1], 'annual_interest' => 36,'penal_interest' => 6],
-            ['procedure_modality_id' => $procedure_modality[2], 'annual_interest' => 36,'penal_interest' => 6],
+            ['procedure_modality_id' => $procedure_modality[1], 'annual_interest' => 20,'penal_interest' => 6],
+            ['procedure_modality_id' => $procedure_modality[2], 'annual_interest' => 20,'penal_interest' => 6],
             ['procedure_modality_id' => $procedure_modality[3], 'annual_interest' => 20,'penal_interest' => 6],
-            ['procedure_modality_id' => $procedure_modality[4], 'annual_interest' => 20,'penal_interest' => 6],
-            ['procedure_modality_id' => $procedure_modality[5], 'annual_interest' => 20,'penal_interest' => 6],
-           // largo plazo
+            // largo plazo
+            ['procedure_modality_id' => $procedure_modality[4], 'annual_interest' => 13.20, 'penal_interest' => 6],
+            ['procedure_modality_id' => $procedure_modality[5], 'annual_interest' => 13.20, 'penal_interest' => 6],
             ['procedure_modality_id' => $procedure_modality[6], 'annual_interest' => 13.20, 'penal_interest' => 6],
             ['procedure_modality_id' => $procedure_modality[7], 'annual_interest' => 13.20, 'penal_interest' => 6],
             ['procedure_modality_id' => $procedure_modality[8], 'annual_interest' => 13.20, 'penal_interest' => 6],
-            ['procedure_modality_id' => $procedure_modality[9], 'annual_interest' => 13.20, 'penal_interest' => 6],
-            ['procedure_modality_id' => $procedure_modality[10], 'annual_interest' => 13.20, 'penal_interest' => 6],
+            //anticipo
+            ['procedure_modality_id' => $procedure_modality[9], 'annual_interest' => 36,'penal_interest' => 6],
+            ['procedure_modality_id' => $procedure_modality[10], 'annual_interest' => 36,'penal_interest' => 6],
             //hipotecario
             ['procedure_modality_id' => $procedure_modality[11], 'annual_interest' => 9, 'penal_interest' => 6]
         ];

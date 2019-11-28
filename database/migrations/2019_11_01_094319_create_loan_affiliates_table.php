@@ -18,6 +18,8 @@ class CreateLoanAffiliatesTable extends Migration
             $table->foreign('loan_id')->references('id')->on('loans');
             $table->integer('affiliate_id')->unsigned();
             $table->foreign('affiliate_id')->references('id')->on('affiliates');
+            $table->unsignedSmallInteger('payment_porcentage')->default(100);
+			$table->boolean('guarantor')->default(false);
         });
     }
 
