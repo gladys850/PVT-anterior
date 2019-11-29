@@ -15,7 +15,7 @@ class CreateLoansTable extends Migration
     {
         Schema::create('loans', function (Blueprint $table) {
             $table->bigIncrements('id');// id unico
-            //$table->string('wf_state_id'); // 
+            $table->string('code')->nullable();; // para el correlativo
             $table->integer('disbursable_id');// id affiliado, id espouse, id beneficiary
             $table->string('disbursable_type'); // a quien se hara del desembolso//afiliado, conyugue, beneficiario
             $table->unsignedBigInteger('procedure_modality_id'); // id modalidad

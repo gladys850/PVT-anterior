@@ -174,4 +174,5 @@ class Affiliate extends Model
     {
         return $this->morphMany(Loan::class, 'disbursable');
     }
+
 }
