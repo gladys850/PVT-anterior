@@ -50,15 +50,13 @@ Route::group([
     Route::resource('loan', 'Api\V1\LoanController')->only(['destroy']);
     Route::resource('loan', 'Api\V1\LoanController')->only(['update']);
 
-    //Route::patch('loan/{loan_id}/persona', 'Api\V1\LoanController@loan_disbursable');
-
-
     //list of requirements for registered loans
     Route::get('loan/{loan_id}/requirements', 'Api\V1\LoanController@list_requirements');
     //submitted_documents
     Route::get('loan/{loan_id}/submitted_documents', 'Api\V1\LoanController@submitted_documents');
     //get requirements according to modality
     Route::get('procedure_modality/{modality_id}/requirements_loan', 'Api\V1\ProcedureModalityController@list_requirements_loan');
+
 
     // With credentials
     Route::group([
@@ -79,7 +77,7 @@ Route::group([
         Route::group([ 'middleware' => 'permission:delete-affiliate' ], function () {
             Route::resource('affiliate', 'Api\V1\AffiliateController')->only(['destroy']);
         });
-       
+
         // Admin routes
         Route::group([
             'middleware' => 'role:TE-admin'
