@@ -78,13 +78,26 @@ class Util
                 $query = $query->where($column, '=', $value);
             }
         }
+        if ($request->has('search') || $request->has('sortBy')) {
+            $columns = Schema::getColumnListing($model::getTableName());
+        }
         if ($request->has('search')) {
             if ($request->search != 'null' && $request->search != '') {
                 $search = explode(' ', $request->search);
-                $query = $query->where(function ($query) use ($search, $model) {
+                $query = $query->where(function ($query) use ($search, $model, $columns) {
                     foreach ($search as $word) {
-                        $query = $query->where(function ($q) use ($word, $model) {
-                            foreach (Schema::getColumnListing($model::getTableName()) as $column) {
+                        foreach (['d/m/y', 'd-m-y', 'd/m/Y', 'd-m-Y'] as $date_format) {
+                            try {
+                                $date = Carbon::createFromFormat('d/m/Y', $date_format)->format('Y-m-d');
+                                break;
+                            } catch (\Exception $e) {}
+                        }
+                        if ($date) $word = $date;
+
+                        \Log::info($word);
+
+                        $query = $query->where(function ($q) use ($word, $model, $columns) {
+                            foreach ($columns as $column) {
                                 $q->orWhere($column, 'ilike', '%' . $word . '%');
                             }
                         });
@@ -95,6 +108,7 @@ class Util
         if ($request->has('sortBy')) {
             if (count($request->sortBy) > 0 && count($request->sortDesc) > 0) {
                 foreach ($request->sortBy as $i => $sort) {
+                    if (in_array($sort, $columns))
                     $query = $query->orderBy($sort, filter_var($request->sortDesc[$i], FILTER_VALIDATE_BOOLEAN) ? 'desc' : 'asc');
                 }
             }
