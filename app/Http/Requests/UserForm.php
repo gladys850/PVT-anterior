@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use Waavi\Sanitizer\Laravel\SanitizesInput;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Hash;
 use App\User;
