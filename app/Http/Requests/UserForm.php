@@ -8,24 +8,25 @@ use App\User;
 
 class UserForm extends FormRequest
 {
+    use SanitizesInput;
+
     /**
-    * Determine if the user is authorized to make this request.
-    *
-    * @return bool
-    */
+     * Determine if the user is authorized to make this request.
+     *
+     * @return bool
+     */
     public function authorize()
     {
         return true;
     }
 
     /**
-    * Get the validation rules that apply to the request.
-    *
-    * @return array
-    */
+     *  Validation rules to be applied to the input.
+     *
+     *  @return array
+     */
     public function rules()
     {
-        $this->sanitize();
         $rules = [
             'first_name' => 'alpha_spaces|min:3',
             'last_name' => 'alpha_spaces|min:3',
@@ -48,14 +49,27 @@ class UserForm extends FormRequest
         }
     }
 
-    public function sanitize()
+    /**
+     *  Filters to be applied to the input.
+     *
+     *  @return array
+     */
+    public function filters()
     {
-        $input = $this->all();
-        if (array_key_exists('username', $input)) $input['username'] = mb_strtolower($input['username']);
-        if (array_key_exists('first_name', $input)) $input['first_name'] = mb_strtoupper($input['first_name']);
-        if (array_key_exists('position', $input)) $input['position'] = mb_strtoupper($input['position']);
-        if (array_key_exists('last_name', $input)) $input['last_name'] = mb_strtoupper($input['last_name']);
-        if (array_key_exists('password', $input)) $input['password'] = Hash::make($input['password']);
-        $this->replace($input);
+        return [
+            'username' => 'trim|lowercase',
+            'first_name' => 'trim|uppercase',
+            'position' => 'trim|uppercase',
+            'last_name' => 'trim|uppercase',
+            'password' => 'hash',
+        ];
+    }
+
+    public function customFilters() {
+        return [
+            'hash' => function($value, $options = []) {
+                return Hash::make($value);
+            }
+        ];
     }
 }

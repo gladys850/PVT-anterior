@@ -158,7 +158,9 @@ return [
         // Broadcast
         App\Providers\BroadcastServiceProvider::class,
         // Log viewer
-        Rap2hpoutre\LaravelLogViewer\LaravelLogViewerServiceProvider::class
+        Rap2hpoutre\LaravelLogViewer\LaravelLogViewerServiceProvider::class,
+        // Sanitizer
+        Waavi\Sanitizer\Laravel\SanitizerServiceProvider::class
     ],
 
     /*
@@ -221,6 +223,8 @@ return [
         'Carbon' => \Carbon\Carbon::class,
         // Barcode
         'DNS1D' => Milon\Barcode\Facades\DNS1DFacade::class,
-        'DNS2D' => Milon\Barcode\Facades\DNS2DFacade::class
+        'DNS2D' => Milon\Barcode\Facades\DNS2DFacade::class,
+        // Sanitizer
+        'Sanitizer' => Waavi\Sanitizer\Laravel\Facade::class
     ],
 ];
