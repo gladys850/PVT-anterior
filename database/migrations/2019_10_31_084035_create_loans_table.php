@@ -38,7 +38,7 @@ class CreateLoansTable extends Migration
             $table->date('disbursement_date'); //fecha de desembolso
             $table->unsignedBigInteger('disbursement_type_id'); // id tipo de desembolso   
             $table->foreign('disbursement_type_id')->references('id')->on('payment_types'); 
-            $table->date('modification_date')->nullable();; // fecha de modificacion del tramite 
+            $table->date('modification_date')->nullable(); // fecha de modificacion del tramite 
           //  $table-> enum('mora', 'en proceso','aprobado','anulado','rechazado','desembolsado','liduidado','amortizando'); //estados del tramite suponiendo que es nuevo tramite 
             $table->timestamps();
         });
