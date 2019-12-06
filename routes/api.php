@@ -56,6 +56,7 @@ Route::group([
     Route::get('loan/{loan_id}/submitted_documents', 'Api\V1\LoanController@submitted_documents');
     //get requirements according to modality
     Route::get('procedure_modality/{modality_id}/requirements_loan', 'Api\V1\ProcedureModalityController@list_requirements_loan');
+    Route::get('affiliate/{id}/get_contributions/{limit}', 'Api\V1\AffiliateController@get_contributions');
 
 
     // With credentials

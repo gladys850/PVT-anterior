@@ -14,6 +14,7 @@ use App\AffiliateState;
 use App\AffiliateStateType;
 use App\Spouse;
 use App\Address;
+use App\Contribution;
 use App\Http\Requests\AffiliateForm;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -190,4 +191,19 @@ class AffiliateController extends Controller
         }
         return Affiliate::find($affiliate_id)->addresses()->sync($request->addresses); 
     }
+    //ballots
+    public function get_contributions($affiliate_id,$quantity){
+        if(!Contribution::whereAffiliate_id($affiliate_id)->exists()) {
+            abort (404); 
+        }else{
+            $contribution=Contribution::whereAffiliate_id($affiliate_id)->orderBy('month_year','desc')->get();
+            if(count($contribution)>$quantity){
+                $c=0; $ballots=[];
+                while($c<$quantity){ $ballots[$c]=$contribution[$c]; $c++; }
+                return $ballots;
+            }
+            return abort(404); 
+        }
+    }
+  
 }
