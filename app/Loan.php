@@ -8,6 +8,8 @@ use Util;
 
 class Loan extends Model
 {
+    use Traits\EloquentGetTableNameTrait;
+
     protected $appends = ['balance', 'estimated_quota', 'defaulted'];
     public $timestamps = true;
     protected $hidden = ['pivot'];
@@ -182,7 +184,7 @@ class Loan extends Model
             $total_pagar=$amortizacion_interes+$amortizacion_capital;
             $saldo_capital=$saldo_capital-$amortizacion_capital;
 
-            $plan[$n][] = [
+            $plan[] = [
                 'cuota'=>$n,
                 'fecha'=>$fechas[$n],
                 'Dias'=>$dias_interes,

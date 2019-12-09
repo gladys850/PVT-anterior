@@ -31,6 +31,7 @@
     <RemoveItem :bus="bus"/>
   </v-card>
 </template>
+
 <script>
 import Breadcrumbs from '@/components/shared/Breadcrumbs'
 import RemoveItem from '@/components/shared/RemoveItem'

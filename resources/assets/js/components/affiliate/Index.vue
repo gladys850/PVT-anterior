@@ -34,7 +34,7 @@
               absolute
               v-on="on"
               style="margin-right: -9px;"
-              :to="{ name: 'affiliateAdd', params: { id:'new'} }"
+              :to="{ name: 'affiliateAdd', params: { id:'new' } }"
             >
               <v-icon>mdi-plus</v-icon>
             </v-btn>
