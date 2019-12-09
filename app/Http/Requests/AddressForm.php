@@ -2,10 +2,13 @@
 
 namespace App\Http\Requests;
 
+use Waavi\Sanitizer\Laravel\SanitizesInput;
 use Illuminate\Foundation\Http\FormRequest;
 
 class AddressForm extends FormRequest
 {
+    use SanitizesInput;
+
     /**
      * Determine if the user is authorized to make this request.
      *
@@ -23,7 +26,6 @@ class AddressForm extends FormRequest
      */
     public function rules()
     {
-        $this->sanitize();
         $rules = [
             'city_address_id' => 'exists:cities,id',
             'zone' =>'nullable|min:3',
@@ -42,11 +44,13 @@ class AddressForm extends FormRequest
             }
         }
     }
-    public function sanitize(){
-        $input = $this->all();
-        if (array_key_exists('zone', $input)) $input['zone'] = mb_strtoupper($input['zone']);
-        if (array_key_exists('street', $input)) $input['street'] = mb_strtoupper($input['street']);
-        if (array_key_exists('number_address', $input)) $input['number_address'] = mb_strtoupper($input['number_address']);
-        $this->replace($input);
+
+    public function filters()
+    {
+        return [
+            'zone' => 'trim|uppercase',
+            'street' => 'trim|uppercase',
+            'number_address' => 'trim|uppercase'
+        ];
     }
 }

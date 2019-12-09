@@ -5,6 +5,7 @@ import UserIndex from '@/components/user/Index'
 import RoleIndex from '@/components/role/Index'
 import AffiliateIndex from '@/components/affiliate/Index'
 import AffiliateAdd from '@/components/affiliate/Add'
+import LoanAdd from '@/components/loan/Add'
 import RecordIndex from '@/components/record/Index'
 import Camara from '@/components/affiliate/Webcam'
 import LoanIndex from '@/components/loan/Index'
@@ -83,6 +84,13 @@ export const routes = [
     path: '/loan',
     name: 'loanIndex',
     component: LoanIndex,
+    meta: {
+      requiresAuth: true
+    }
+  }, {
+    path: '/loan/:hash',
+    name: 'loanAdd',
+    component: LoanAdd,
     meta: {
       requiresAuth: true
     }

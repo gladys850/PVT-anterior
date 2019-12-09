@@ -2,10 +2,13 @@
 
 namespace App\Http\Requests;
 
+use Waavi\Sanitizer\Laravel\SanitizesInput;
 use Illuminate\Foundation\Http\FormRequest;
 
 class AuthForm extends FormRequest
 {
+    use SanitizesInput;
+
 	/**
 	 * Determine if the user is authorized to make this request.
 	 *
@@ -23,17 +26,16 @@ class AuthForm extends FormRequest
 	 */
 	public function rules()
 	{
-		$this->sanitize();
 		return [
 			'username' => 'required|min:4|max:255',
 			'password' => 'required|min:4|max:255',
 		];
 	}
 
-	public function sanitize()
+    public function filters()
     {
-        $input = $this->all();
-        if (array_key_exists('username', $input)) $input['username'] = mb_strtolower($input['username']);
-        $this->replace($input);
+        return [
+            'username' => 'trim|lowercase'
+        ];
     }
 }
