@@ -205,5 +205,19 @@ class AffiliateController extends Controller
             return abort(404); 
         }
     }
+    // Recabar los ultimos bonos de la ultima boleta
+    public function last_bonuses_ballot($affiliate_id){
+        $bonus=Contribution::whereAffiliate_id($affiliate_id)->get()->last();
+        if($bonus){
+            $data_bonus=[];
+            $data_bonus[1]=$bonus->border_bonus;
+            $data_bonus[2]=$bonus->east_bonus;
+            $data_bonus[3]=$bonus->public_security_bonus;
+            $data_bonus[4]=$bonus->seniority_bonus;
+            return $data_bonus;
+        }else{
+            return abort(404); 
+        }
+    }
   
 }
