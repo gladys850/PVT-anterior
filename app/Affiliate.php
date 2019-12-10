@@ -145,7 +145,6 @@ class Affiliate extends Model
     {
         return $this->verify_balance($this->loans);
     }
-
     public function active_guarantees()
     {
         return $this->verify_balance($this->guarantees);
@@ -174,5 +173,38 @@ class Affiliate extends Model
     {
         return $this->morphMany(Loan::class, 'disbursable');
     }
-
+    // verify if a loan is debt
+    public function debt_payment($loan_id){
+      $payments=(Loan::find($loan_id))->payments;
+      foreach($payments as $pay){ 
+          if(($pay->penal_payment)>0){ $debt=true; }else{ $debt=false; }
+          if($debt){ break;}  
+      }
+      return $debt;
+    } 
+    // verify if an affiliate is cpop
+    public function verify_cpop($id){
+      $affiliate=Affiliate::find($id);$debt_loans=[];$c=1;
+      if($affiliate){
+          $loans_affiliate=$affiliate->loans->sortByDesc('disbursement_date');
+          foreach($loans_affiliate as $loans_affi){ 
+            if($loans_affi->state->name = "liquidado"){
+              $loan_payments_debt= $this->debt_payment($loans_affi->id);
+              if($loan_payments_debt){
+                $debt_loans[$c] = $loans_affi;
+                $c++;
+              }
+            }
+          }
+          if($debt_loans!=[]){
+            $cpop=reset($debt_loans);
+          }else{
+            $cpop=true;
+          }   
+      }else{
+        $cpop=$debt_loans;
+      }
+      return $cpop;  
+    } 
+    
 }
