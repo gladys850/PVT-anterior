@@ -8,5 +8,9 @@ class LoanModalityParameter extends Model
 {
     public $timestamps = true;
     public $fillable = ['procedure_modality_id','debt_index','quantity_ballots'];
+    public function getDecimalIndexAttribute()
+    {
+        return $this->debt_index / (100);
+    }
 
 }

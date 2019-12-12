@@ -11,4 +11,12 @@ class ProcedureType extends Model
         'name',
         'second_name'
       ];
+    public function procedure_modalities()
+    {
+      return $this->belongsTo(ProcedureModality::class,'id','procedure_type_id' );
+    } 
+    public function loan_intervals()
+    {
+      return $this->belongsTo(LoanInterval::class,'id','procedure_type_id');
+    } 
 }

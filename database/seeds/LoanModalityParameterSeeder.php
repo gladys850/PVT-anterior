@@ -25,23 +25,23 @@ class LoanModalityParameterSeeder extends Seeder
         }
         $data = [
             //corto plazo
-            ['procedure_modality_id' => $procedure_modality[1], 'debt_index' => 0.5,'quantity_ballots' => 3],
-            ['procedure_modality_id' => $procedure_modality[2], 'debt_index' => 0.5,'quantity_ballots' => 3],
-            ['procedure_modality_id' => $procedure_modality[3], 'debt_index' => 0.5,'quantity_ballots' => 3],
+            ['procedure_modality_id' => $procedure_modality[1], 'debt_index' => 50,'quantity_ballots' => 3],
+            ['procedure_modality_id' => $procedure_modality[2], 'debt_index' => 50,'quantity_ballots' => 3],
+            ['procedure_modality_id' => $procedure_modality[3], 'debt_index' => 50,'quantity_ballots' => 3],
             // largo plazo
-            ['procedure_modality_id' => $procedure_modality[4], 'debt_index' => 0.5, 'quantity_ballots' => 1],
-            ['procedure_modality_id' => $procedure_modality[5], 'debt_index' => 0.5, 'quantity_ballots' => 1],
-            ['procedure_modality_id' => $procedure_modality[6], 'debt_index' => 0.5, 'quantity_ballots' => 1],
-            ['procedure_modality_id' => $procedure_modality[7], 'debt_index' => 0.5, 'quantity_ballots' => 1],
+            ['procedure_modality_id' => $procedure_modality[4], 'debt_index' => 50, 'quantity_ballots' => 1],
+            ['procedure_modality_id' => $procedure_modality[5], 'debt_index' => 50, 'quantity_ballots' => 1],
+            ['procedure_modality_id' => $procedure_modality[6], 'debt_index' => 50, 'quantity_ballots' => 1],
+            ['procedure_modality_id' => $procedure_modality[7], 'debt_index' => 50, 'quantity_ballots' => 1],
             // largo plazo CPOP
-            ['procedure_modality_id' => $procedure_modality[8], 'debt_index' => 0.6, 'quantity_ballots' => 1],
+            ['procedure_modality_id' => $procedure_modality[8], 'debt_index' => 60, 'quantity_ballots' => 1],
             //anticipo
-            ['procedure_modality_id' => $procedure_modality[9], 'debt_index' => 0.9,'quantity_ballots' => 1],
-            ['procedure_modality_id' => $procedure_modality[10], 'debt_index' => 0.9,'quantity_ballots' => 1],
+            ['procedure_modality_id' => $procedure_modality[9], 'debt_index' => 90,'quantity_ballots' => 1],
+            ['procedure_modality_id' => $procedure_modality[10], 'debt_index' => 90,'quantity_ballots' => 1],
             //hipotecario
-            ['procedure_modality_id' => $procedure_modality[11], 'debt_index' => 0.5, 'quantity_ballots' => 3],
+            ['procedure_modality_id' => $procedure_modality[11], 'debt_index' => 90, 'quantity_ballots' => 3],
             //hipotecario -CPOP
-            ['procedure_modality_id' => $procedure_modality[12], 'debt_index' => 0.6, 'quantity_ballots' => 3]
+            ['procedure_modality_id' => $procedure_modality[12], 'debt_index' => 90, 'quantity_ballots' => 3]
 
         ];
         foreach ($data as $parameter_ballots) {
