@@ -34,7 +34,11 @@ class LoanController extends Controller
      */
     public function store(Request $request)
     {
-        return Loan::create($request->all());
+        $loan = Loan::create($request->all());
+        foreach ($request->affiliates as $affiliate) {
+            $loan->loan_affiliates()->attach($affiliate);//$loan->loan_affiliates()->attach(25, ['payment_porcentage' =>23]);
+        }
+        return $loan;
     }
 
     /**
@@ -62,6 +66,12 @@ class LoanController extends Controller
         $loan = Loan::findOrFail($id);
         $loan->fill($request->all());
         $loan->save();
+        if ($request->affiliates) {
+            $loan->loan_affiliates()->detach();
+            foreach ($request->affiliates as $affiliate) {
+              $loan->loan_affiliates()->attach($affiliate);
+            }
+        }
         return  $loan;
     }
 
@@ -112,7 +122,4 @@ class LoanController extends Controller
         }
         return $name;
     }
-  
-
-
 }
