@@ -158,7 +158,9 @@ return [
         // Broadcast
         App\Providers\BroadcastServiceProvider::class,
         // Log viewer
-        Rap2hpoutre\LaravelLogViewer\LaravelLogViewerServiceProvider::class
+        Rap2hpoutre\LaravelLogViewer\LaravelLogViewerServiceProvider::class,
+        // Barcode
+        Milon\Barcode\BarcodeServiceProvider::class
     ],
 
     /*

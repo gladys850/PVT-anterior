@@ -22,6 +22,9 @@ Route::group([
     Route::resource('spouse', 'Api\V1\SpouseController')->only('store', 'destroy', 'update');
     //beneficiary
     Route::resource('beneficiary', 'Api\V1\LoanBeneficiaryController')->only('index', 'store', 'show', 'destroy', 'update');
+    //loan_request
+    Route::resource('PreSolicitud', 'Api\V1\LoanRequestController')->only(['index', 'store', 'show', 'destroy']);
+    Route::get('pdf/{id}/pre_request', 'Api\V1\LoanRequestController@createpdf');
     // City
     Route::resource('city', 'Api\V1\CityController')->only(['index']);
     // state
@@ -59,7 +62,7 @@ Route::group([
     Route::get('loan/{loan_id}/submitted_documents', 'Api\V1\LoanController@submitted_documents');
     //get requirements according to modality
     Route::get('procedure_modality/{modality_id}/requirements_loan', 'Api\V1\ProcedureModalityController@list_requirements_loan');
-
+ 
     // With credentials
     Route::group([
         'middleware' => 'jwt.auth'
