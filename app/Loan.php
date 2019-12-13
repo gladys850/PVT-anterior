@@ -15,11 +15,12 @@ class Loan extends Model
     protected $hidden = ['pivot'];
     public $guarded = ['id'];
     public $fillable = [
+        'code',
         'disbursable_id',
         'disbursable_type',
 		'procedure_modality_id',
 		'amount_disbursement',
-		'parent_loand_id',
+		'parent_loan_id',
         'parent_reason',
         'request_date',
         'amount_request',

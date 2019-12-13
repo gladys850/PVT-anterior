@@ -10,6 +10,8 @@ use App\LoanState;
 use Illuminate\Support\Facades\Schema;
 use App\LoanSubmittedDocument;
 use App\ProcedureDocument;
+use App\Http\Requests\LoanForm;
+
 
 
 class LoanController extends Controller
@@ -32,7 +34,7 @@ class LoanController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(LoanForm $request)
     {
         $loan = Loan::create($request->all());
         foreach ($request->affiliates as $affiliate) {
@@ -61,7 +63,7 @@ class LoanController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(LoanForm $request, $id)
     {
         $loan = Loan::findOrFail($id);
         $loan->fill($request->all());
