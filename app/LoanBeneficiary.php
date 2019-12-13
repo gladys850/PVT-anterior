@@ -20,6 +20,10 @@ class LoanBeneficiary extends Model
      'civil_status',
      'phone_number',
      'cell_phone_number'
-    ];   
+    ]; 
+    public function disbursements()
+    {
+        return $this->morphMany(Loan::class, 'disbursable');
+    }  
   
 }

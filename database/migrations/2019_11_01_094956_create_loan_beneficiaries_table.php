@@ -17,7 +17,7 @@ class CreateLoanBeneficiariesTable extends Migration
             $table->bigIncrements('id');
             $table->unsignedBigInteger('city_identity_card_id')->nullable();  // id lugar de la solicitud 
             $table->foreign('city_identity_card_id')->references('id')->on('cities');
-            $table->string('identity_card')->nullable();;
+            $table->string('identity_card');
             $table->string('last_name');
             $table->string('mothers_last_name')->nullable(); 
             $table->string('first_name');
