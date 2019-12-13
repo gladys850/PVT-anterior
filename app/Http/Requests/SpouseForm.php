@@ -2,10 +2,13 @@
 
 namespace App\Http\Requests;
 
+use Waavi\Sanitizer\Laravel\SanitizesInput;
 use Illuminate\Foundation\Http\FormRequest;
 
 class SpouseForm extends FormRequest
 {
+    use SanitizesInput;
+
     /**
      * Determine if the user is authorized to make this request.
      *
@@ -23,7 +26,6 @@ class SpouseForm extends FormRequest
      */
     public function rules()
     {
-        $this->sanitize();
         $rules = [
             'first_name' => 'alpha_spaces|min:3',
             'last_name' => 'alpha_spaces|min:3', 
@@ -58,17 +60,20 @@ class SpouseForm extends FormRequest
             }
         }
     }
-    public function sanitize(){
-        $input = $this->all();
-        if (array_key_exists('first_name', $input)) $input['first_name'] = mb_strtoupper($input['first_name']);
-        if (array_key_exists('last_name', $input)) $input['last_name'] = mb_strtoupper($input['last_name']);
-        if (array_key_exists('second_name', $input)) $input['second_name'] = mb_strtoupper($input['second_name']);
-        if (array_key_exists('mothers_last_name', $input)) $input['mothers_last_name'] = mb_strtoupper($input['mothers_last_name']);
-        if (array_key_exists('surname_husband', $input)) $input['surname_husband'] = mb_strtoupper($input['surname_husband']);
-        if (array_key_exists('reason_death', $input)) $input['reason_death'] = mb_strtoupper($input['reason_death']);
-        if (array_key_exists('identity_card', $input)) $input['identity_card'] = mb_strtoupper($input['identity_card']);
-        $this->replace($input);
+
+    public function filters()
+    {
+        return [
+            'first_name' => 'trim|uppercase',
+            'last_name' => 'trim|uppercase',
+            'second_name' => 'trim|uppercase',
+            'mothers_last_name' => 'trim|uppercase',
+            'surname_husband' => 'trim|uppercase',
+            'reason_death' => 'trim|uppercase',
+            'identity_card' => 'trim|uppercase'
+        ];
     }
+
     public function messages(){
         return[
             'first_name.required' => 'El campo Primer Nombre del Conyuge es requerido',

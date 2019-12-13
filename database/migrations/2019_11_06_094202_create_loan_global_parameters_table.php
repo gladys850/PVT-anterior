@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateLoanParametersTable extends Migration
+class CreateLoanGlobalParametersTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreateLoanParametersTable extends Migration
      */
     public function up()
     {
-        Schema::create('loan_parameters', function (Blueprint $table) {
+        Schema::create('loan_global_parameters', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->integer('offset_day'); //dia de desface
             $table->integer('livelihood_amount')->nullable(); ; // cantidad de sustento-->inf. estadistica
@@ -28,6 +28,6 @@ class CreateLoanParametersTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('loan_parameters');
+        Schema::dropIfExists('loan_global_parameters');
     }
 }

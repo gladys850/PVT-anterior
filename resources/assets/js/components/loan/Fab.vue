@@ -11,7 +11,7 @@
         absolute
         v-on="on"
         style="margin-right: -9px;"
-        :to="{ name: 'affiliateAdd', params: { id:'new'} }"
+        :to="{ name: 'loanAdd', params: { hash: 'new' } }"
       >
         <v-icon>mdi-plus</v-icon>
       </v-btn>

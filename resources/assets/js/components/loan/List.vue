@@ -20,11 +20,34 @@
         <td class="text-right">{{ props.item.amount_request | money }}</td>
         <td class="text-right">{{ props.item.amount_disbursement | money }}</td>
         <td class="text-center">
+          <v-menu
+            offset-y
+            close-on-content-click
+          >
+            <template v-slot:activator="{ on }">
+              <v-btn
+                icon
+                small
+                color="primary"
+                v-on="on"
+              >
+                <v-icon>mdi-printer</v-icon>
+              </v-btn>
+            </template>
+            <v-list>
+              <v-list-item
+                v-for="(item, index) in [{title:'uno'},{title:'dos'}]"
+                :key="index"
+              >
+                <v-list-item-title>{{ item.title }}</v-list-item-title>
+              </v-list-item>
+            </v-list>
+          </v-menu>
           <v-tooltip top>
             <template v-slot:activator="{ on }">
               <v-btn
                 icon
-                x-small
+                small
                 color="info"
                 v-on="on"
               >
@@ -66,54 +89,62 @@ export default {
         value: 'id',
         class: ['normal', 'white--text'],
         align: 'center',
+        width: '5%',
         sortable: true
       }, {
         text: 'Fecha solicitud',
         value: 'request_date',
         class: ['normal', 'white--text'],
         align: 'center',
+        width: '10%',
         sortable: true
       }, {
-        text: 'Meses plazo',
+        text: 'Meses Plazo',
         value: 'loan_term',
         class: ['normal', 'white--text'],
         align: 'center',
+        width: '8%',
         sortable: true
       }, {
-        text: 'Fecha de desembolso',
+        text: 'Fecha desembolso',
         value: 'disbursement_date',
         class: ['normal', 'white--text'],
         align: 'center',
+        width: '10%',
         sortable: true
       }, {
         text: 'Saldo capital [Bs]',
         value: 'balance',
         class: ['normal', 'white--text'],
-        align: 'right',
-        sortable: true
+        align: 'center',
+        width: '8%',
+        sortable: false
       }, {
         text: 'Cuota [Bs]',
         value: 'estimated_quota',
         class: ['normal', 'white--text'],
-        align: 'right',
-        sortable: true
+        align: 'center',
+        width: '3%',
+        sortable: false
       }, {
         text: 'Solicitado [Bs]',
         value: 'amount_request',
         class: ['normal', 'white--text'],
-        align: 'right',
+        align: 'center',
+        width: '6%',
         sortable: true
       }, {
         text: 'Desembolso [Bs]',
         value: 'amount_disbursement',
         class: ['normal', 'white--text'],
-        align: 'right',
+        align: 'center',
+        width: '6%',
         sortable: true
       }, {
         text: 'Acciones',
         class: ['normal', 'white--text'],
-        width: '4%',
         align: 'center',
+        width: '11%',
         sortable: false
       }
     ]
