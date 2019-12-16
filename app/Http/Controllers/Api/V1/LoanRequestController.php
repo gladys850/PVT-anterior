@@ -20,11 +20,9 @@ class LoanRequestController extends Controller
      */
     public function index(Request $request)
     {
-      
         $data = Util::search_sort(new LoanRequest(), $request);
         return $data;
     }
-
     /**
      * Show the form for creating a new resource.
      *
@@ -34,7 +32,6 @@ class LoanRequestController extends Controller
     {
         //
     }
-
     /**
      * Store a newly created resource in storage.
      *
@@ -48,12 +45,8 @@ class LoanRequestController extends Controller
         $loan_request->hash=sha1($datos);
         $loan_request->affiliate_id = $request->affiliate_id;
         $loan_request->request=$datos;
-        $loan_request->save();
-
-
-        
+        $loan_request->save();  
     }
-
     /**
      * Display the specified resource.
      *
@@ -62,7 +55,7 @@ class LoanRequestController extends Controller
      */
     public function show($id)
     {
-        return LoanRequest::findOrFail($id);
+        //
     }
 
     /**
@@ -85,11 +78,8 @@ class LoanRequestController extends Controller
      */
     public function update(Request $request, $id)
     { 
-   
-   
+        //
     }
-
-
     /**
      * Remove the specified resource from storage.
      *
@@ -98,17 +88,14 @@ class LoanRequestController extends Controller
      */
     public function destroy($id)
     {
-        $loan_request = LoanRequest::findOrFail($id);
-        $loan_request->delete();
-        return $loan_request;
+        //
     }
     public function createpdf($id_modality){
         $ultimoreg=LoanRequest::latest()->first();
         $hash=$ultimoreg->hash;
         $id_affiliate=$ultimoreg->affiliate_id;
         $affiliate = Affiliate::findOrFail($id_affiliate); 
-        $modality=ProcedureModality::find($id_modality);
-        $name_modality=$modality->name;
+        $name_modality=ProcedureModality::find($id_modality)->name;
         $result=new ProcedureModalityController();
         $result=$result->list_requirements_loan($id_modality)->pluck('name');
         $institution = 'MUTUAL DE SERVICIOS AL POLICÍA "MUSERPOL"';
@@ -121,12 +108,10 @@ class LoanRequestController extends Controller
             'unit' => $unit,
             'hash'  => $hash,
             'data' => $result,
-            'a'=>$a,
-            'affiliate'=>$affiliate,
-            'nommodality'=>$name_modality
+            'a' => $a,
+            'affiliate' => $affiliate,
+            'nommodality' => $name_modality
         ];
-
-    return \PDF::loadView('prerequest', $datas)->download('presolicitud.pdf');
-    }
-    
+    return \PDF::loadView('prerequest', $datas)->download('prerequest.pdf');
+    }  
 }

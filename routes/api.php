@@ -23,7 +23,7 @@ Route::group([
     //beneficiary
     Route::resource('beneficiary', 'Api\V1\LoanBeneficiaryController')->only('index', 'store', 'show', 'destroy', 'update');
     //loan_request
-    Route::resource('PreSolicitud', 'Api\V1\LoanRequestController')->only(['index', 'store', 'show', 'destroy']);
+    Route::resource('pre_request', 'Api\V1\LoanRequestController')->only(['index', 'store', 'show', 'destroy']);
     Route::get('pdf/{id}/pre_request', 'Api\V1\LoanRequestController@createpdf');
     // City
     Route::resource('city', 'Api\V1\CityController')->only(['index']);
