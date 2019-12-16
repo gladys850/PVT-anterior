@@ -220,23 +220,26 @@ class AffiliateController extends Controller
             return abort(404); 
         }
     }
-    public function get_category($id)
+    public function get_category($affiliate_id)
     {
-        if($id!=null){
-            return Category::find($id)->name; 
+        $affiliate=Affiliate::find($affiliate_id);
+        if($affiliate->category_id!=null){
+            return Category::find($affiliate->category_id)->name; 
         }return ""; 
           
     }
-    public function get_degree($id)
+    public function get_degree($affiliate_id)
     {
-        if($id!=null){
-            return Degree::find($id)->name; 
-        } return "";   
+        $affiliate=Affiliate::find($affiliate_id);
+        if($affiliate->degree_id!=null){
+            return Degree::find($affiliate->degree_id)->name; 
+        } return "";  
     }
-    public function get_unit($id)
+    public function get_unit($affiliate_id)
     {
-        if($id!=null){
-            return Unit::find($id)->name;   
+        $affiliate=Affiliate::find($affiliate_id);
+        if($affiliate->unit_id!=null){
+            return Unit::find($affiliate->unit_id)->name;   
         }return "";
     }
 }
