@@ -19,5 +19,10 @@ class ProcedureModality extends Model
     {
         return $this->belongsToMany(ProcedureDocument::class, 'procedure_requirements');
     }
+    public function procedure_type()
+    {
+        return $this->belongsTo(ProcedureType::class);
+    }
+
     
 }

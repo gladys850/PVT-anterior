@@ -39,7 +39,10 @@ class LoanInterestSeeder extends Seeder
             ['procedure_modality_id' => $procedure_modality[9], 'annual_interest' => 36,'penal_interest' => 6],
             ['procedure_modality_id' => $procedure_modality[10], 'annual_interest' => 36,'penal_interest' => 6],
             //hipotecario
-            ['procedure_modality_id' => $procedure_modality[11], 'annual_interest' => 9, 'penal_interest' => 6]
+            ['procedure_modality_id' => $procedure_modality[11], 'annual_interest' => 9, 'penal_interest' => 6],
+            //hipotecario -CPOP
+            ['procedure_modality_id' => $procedure_modality[12], 'annual_interest' => 9, 'penal_interest' => 6]
+
         ];
             foreach ($data as $loan_interest) {
                 LoanInterest::firstOrCreate($loan_interest);

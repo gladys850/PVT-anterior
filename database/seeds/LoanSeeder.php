@@ -166,7 +166,7 @@ class LoanSeeder extends Seeder
 
               ]],
                 // LARGO PLAZO UN SOLO GARANTE SECTOR ACTIVO --Afiliados CPOP
-              ['name'=>'Largo Plazo con un solo garante para el sector activo','shortened'=>'PLP-S1G-SA','requirements'=>[
+              ['name'=>'Largo Plazo con un solo garante para el sector activo - CPOP','shortened'=>'PLP-CPOP','requirements'=>[
                 ['name' => 'Cédula de Identidad del (la) titular en copia simple','number'=>1],
                 ['name' => 'Boleta de pago en copia simple.','number'=>2], 
                 ['name' => 'Certificado de años de servicio desglosado en original emitido por el Comando General de la Policía Boliviana','number'=>3],
@@ -248,7 +248,31 @@ class LoanSeeder extends Seeder
                ['name' => 'Certificado de no adeudo.','number'=>0],  // en caso de que el afiliado haya tenido deudas de otras entidades (Ej: COMIPOL , COVIPOL)
                ['name' => 'Certificado de pago emitido por la entidad correspondiente.','number'=>0]  // en caso de que el afiliado tenga deudas con otras entidades (Ej: COMIPOL , COVIPOL)
                /**/
-             ]]  
+             ]],
+               // LARGO PLAZO GARANTIA HIPOTECARIA CPOP
+               ['name'=>'Préstamo con garantia hipotecaria de bien inmueble para el sector activo CPOP','shortened'=>'PLP-GH-CPOP','requirements'=>[
+               ['name'=>'Cédula de Identidad del (la) titular en copia simple','number'=>2],
+               ['name' => 'Certificado de años de servicio desglosado en original emitido por el Comando General de la Policía Boliviana','number'=>3],
+               ['name' => 'Certificado de años de servicio desglosado en fotocopia Legalizada emitido por el Comando General de la Policía Boliviana','number'=>3],
+               ['name' => 'Certificado de años de servicio desglosado en original emitido por el Comando Regional de la Policía Boliviana','number'=>3],
+               ['name' => 'Croquis de ubicación del inmueble','number'=>4], //nuevo
+               ['name' => 'Factura de Luz del Inmueble','number'=>5], //nuevo
+               ['name' => 'Factura de Agua del Inmueble','number'=>5], //nuevo
+               ['name' => 'Folio Real','number'=>6], //nuevo
+               ['name' => 'Informacion rapida del Inmueble','number'=>6], //nuevo
+               ['name' => 'Fotocopia de Testimonio de Propiedad','number'=>7], //nuevo
+               ['name' => 'Fotocopia de Impuestos 3 Ultimos Años','number'=>8], //nuevo
+               ['name' => 'Fotocopia de Plano de lote','number'=>9], //nuevo
+               ['name' => 'Fotocopia de Catastro','number'=>10], //nuevo
+               ['name' => 'Estado de cuenta original, vigente y emitido por el Banco Unión S.A','number'=>11],
+               ['name' => 'Certificado de estado civil en original emitido por el SERECI.','number'=>12],
+                /*Estos documentos son solicitados por MUSERPOL en caso de ser requeridos*/
+               ['name' => 'Certificado de haberes considerando el último mes percibido.','number'=>0],  // En caso de no tener la boleta de pago
+               ['name' => 'Nota de aclaración de Boleta de Pago.','number'=>0],  // En caso de que el afiliado tenga datos erroneos en su boleta de pago
+               ['name' => 'Certificado de no adeudo.','number'=>0],  // en caso de que el afiliado haya tenido deudas de otras entidades (Ej: COMIPOL , COVIPOL)
+               ['name' => 'Certificado de pago emitido por la entidad correspondiente.','number'=>0]  // en caso de que el afiliado tenga deudas con otras entidades (Ej: COMIPOL , COVIPOL)
+               /**/
+             ]],
             ]
           ],
         ]
