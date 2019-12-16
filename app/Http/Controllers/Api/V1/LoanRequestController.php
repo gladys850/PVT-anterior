@@ -19,8 +19,7 @@ class LoanRequestController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index(Request $request)
-    {
-      
+    { 
         $data = Util::search_sort(new LoanRequest(), $request);
         return $data;
     }
@@ -42,16 +41,13 @@ class LoanRequestController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {      $loan_request = new LoanRequest();
+    {   
+        $loan_request = new LoanRequest();
         $datos = json_encode($request->all());
-  
         $loan_request->hash=sha1($datos);
         $loan_request->affiliate_id = $request->affiliate_id;
         $loan_request->request=$datos;
-        $loan_request->save();
-
-
-        
+        $loan_request->save();    
     }
 
     /**
@@ -62,7 +58,7 @@ class LoanRequestController extends Controller
      */
     public function show($id)
     {
-        return LoanRequest::findOrFail($id);
+
     }
 
     /**
