@@ -42,5 +42,21 @@
         'city_address_id' =>'Ciudad de Dirección',
         // LoanBeneficiary
         'phone_number' =>'Número de teléfono',
-        'cell_phone_number'=>'Numero de Celular'
+        'cell_phone_number'=>'Numero de Celular',
+        //loans
+        'procedure_modality_id'=>'Modalidad de Préstamo',
+        'request_date'=>'Fecha de solicitud',
+        'amount_request'=>'Monto solicitado',
+        'loan_state_id'=>'Estado del prestamo',
+        'code'=>'Codigo',
+        'disbursable_id'=>'Beneficiario',
+        'amount_disbursement'=>'Monto a desembolsar',
+        //'parent_loan_id'=>'',
+        'parent_reason'=>'',
+        'loan_interest_id'=>'Interés',
+        'amount_aproved'=>'Monto aprobado',
+        'loan_term'=>'Plazo en meses',
+        'disbursement_date'=>'Fecha de desembolso',
+        'disbursement_type_id'=>'Tipo de desembolso',
+        'mofification_date'=>'Fecha de modificación'
     ];

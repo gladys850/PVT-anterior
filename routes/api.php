@@ -11,6 +11,9 @@ Route::group([
     Route::patch('picture/{id}', 'Api\V1\AffiliateController@picture_save');
     // Affiliate
     Route::resource('affiliate', 'Api\V1\AffiliateController')->only(['show']);
+    Route::get('affiliate/{id}/degree_name', 'Api\V1\AffiliateController@get_degree');
+    Route::get('affiliate/{id}/category_name', 'Api\V1\AffiliateController@get_category');
+    Route::get('affiliate/{id}/unit_name', 'Api\V1\AffiliateController@get_unit');
     // spouse - affiliate
     Route::get('affiliate/{affiliate_id}/spouse', 'Api\V1\AffiliateController@spouse_get');
     //address - affiliate
@@ -37,6 +40,9 @@ Route::group([
     Route::get('affiliate/{id}/fingerprint', 'Api\V1\AffiliateController@fingerprint_saved');
     Route::get('affiliate/{id}/fingerprint_picture', 'Api\V1\AffiliateController@FingerImageprint');
     Route::get('affiliate/{id}/profile_picture', 'Api\V1\AffiliateController@PictureImageprint');
+    // affiliate information
+    Route::get('affiliate/{id}/affiliate_information', 'Api\V1\AffiliateController@affiliate_information');
+
     // Record
     Route::resource('record', 'Api\V1\RecordController')->only(['index']);
 
@@ -56,7 +62,10 @@ Route::group([
     Route::get('loan/{loan_id}/submitted_documents', 'Api\V1\LoanController@submitted_documents');
     //get requirements according to modality
     Route::get('procedure_modality/{modality_id}/requirements_loan', 'Api\V1\ProcedureModalityController@list_requirements_loan');
-
+    Route::get('affiliate/{id}/get_contributions/{limit}', 'Api\V1\AffiliateController@get_contributions');
+    // collect the latest bonuses from the last ballot
+    Route::get('affiliate/{id}/collect_last_bonus','Api\V1\AffiliateController@last_bonuses_ballot');
+    
 
     // With credentials
     Route::group([

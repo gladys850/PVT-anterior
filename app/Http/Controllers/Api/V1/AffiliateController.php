@@ -7,13 +7,15 @@ use App\Affiliate;
 use App\RecordType;
 use App\User;
 use App\Category;
-use App\Degreee;
+use App\Degree;
 use App\City;
 use App\Hierarchy;
 use App\AffiliateState;
 use App\AffiliateStateType;
 use App\Spouse;
 use App\Address;
+use App\Contribution;
+use App\Unit;
 use App\Http\Requests\AffiliateForm;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -189,5 +191,52 @@ class AffiliateController extends Controller
             if(!Address::whereId($dir)->exists()) abort (404); 
         }
         return Affiliate::find($affiliate_id)->addresses()->sync($request->addresses); 
+    }
+    //ballots
+    public function get_contributions($affiliate_id,$quantity){
+        if(!Contribution::whereAffiliate_id($affiliate_id)->exists()) {
+            abort (404); 
+        }else{
+            $contribution=Contribution::whereAffiliate_id($affiliate_id)->orderBy('month_year','desc')->get();
+            if(count($contribution)>$quantity){
+                $c=0; $ballots=[];
+                while($c<$quantity){ $ballots[$c]=$contribution[$c]; $c++; }
+                return $ballots;
+            }
+            return abort(404); 
+        }
+    }
+    // Recabar los ultimos bonos de la ultima boleta
+    public function last_bonuses_ballot($affiliate_id){
+        $bonus=Contribution::whereAffiliate_id($affiliate_id)->get()->last();
+        if($bonus){
+            $data_bonus=[];
+            $data_bonus[1]=$bonus->border_bonus;
+            $data_bonus[2]=$bonus->east_bonus;
+            $data_bonus[3]=$bonus->public_security_bonus;
+            $data_bonus[4]=$bonus->seniority_bonus;
+            return $data_bonus;
+        }else{
+            return abort(404); 
+        }
+    }
+    public function get_category($id)
+    {
+        if($id!=null){
+            return Category::find($id)->name; 
+        }return ""; 
+          
+    }
+    public function get_degree($id)
+    {
+        if($id!=null){
+            return Degree::find($id)->name; 
+        } return "";   
+    }
+    public function get_unit($id)
+    {
+        if($id!=null){
+            return Unit::find($id)->name;   
+        }return "";
     }
 }
