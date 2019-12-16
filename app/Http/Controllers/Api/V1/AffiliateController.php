@@ -242,4 +242,18 @@ class AffiliateController extends Controller
             return Unit::find($affiliate->unit_id)->name;   
         }return "";
     }
+    public function last_three_loans($affiliate_id){
+        $affiliate = Affiliate::find($affiliate_id);
+        $loans_affiliates=$affiliate->loans;
+        if(count($loans_affiliates)<=3){
+            return $loans_affiliates;
+        }else{
+            $c=0; $loans=[];
+            while($c<3){ 
+                $loans[$c]=$loans_affiliates[$c]; 
+                $c++; 
+            }
+            return $loans;
+        }
+    }
 }
