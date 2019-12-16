@@ -7,7 +7,7 @@ use App\Affiliate;
 use App\RecordType;
 use App\User;
 use App\Category;
-use App\Degreee;
+use App\Degree;
 use App\City;
 use App\Hierarchy;
 use App\AffiliateState;
@@ -15,6 +15,7 @@ use App\AffiliateStateType;
 use App\Spouse;
 use App\Address;
 use App\Contribution;
+use App\Unit;
 use App\Http\Requests\AffiliateForm;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -219,5 +220,23 @@ class AffiliateController extends Controller
             return abort(404); 
         }
     }
-  
+    public function get_category($id)
+    {
+        if($id!=null){
+            return Category::find($id)->name; 
+        }return ""; 
+          
+    }
+    public function get_degree($id)
+    {
+        if($id!=null){
+            return Degree::find($id)->name; 
+        } return "";   
+    }
+    public function get_unit($id)
+    {
+        if($id!=null){
+            return Unit::find($id)->name;   
+        }return "";
+    }
 }
