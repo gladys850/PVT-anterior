@@ -10,6 +10,8 @@ use App\LoanState;
 use Illuminate\Support\Facades\Schema;
 use App\LoanSubmittedDocument;
 use App\ProcedureDocument;
+use App\Http\Requests\LoanForm;
+
 
 
 class LoanController extends Controller
@@ -32,9 +34,13 @@ class LoanController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(LoanForm $request)
     {
-        return Loan::create($request->all());
+        $loan = Loan::create($request->all());
+        foreach ($request->affiliates as $affiliate) {
+            $loan->loan_affiliates()->attach($affiliate);//$loan->loan_affiliates()->attach(25, ['payment_porcentage' =>23]);
+        }
+        return $loan;
     }
 
     /**
@@ -57,11 +63,17 @@ class LoanController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(LoanForm $request, $id)
     {
         $loan = Loan::findOrFail($id);
         $loan->fill($request->all());
         $loan->save();
+        if ($request->affiliates) {
+            $loan->loan_affiliates()->detach();
+            foreach ($request->affiliates as $affiliate) {
+              $loan->loan_affiliates()->attach($affiliate);
+            }
+        }
         return  $loan;
     }
 
@@ -112,7 +124,4 @@ class LoanController extends Controller
         }
         return $name;
     }
-  
-
-
 }
