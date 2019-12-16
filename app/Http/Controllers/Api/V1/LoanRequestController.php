@@ -39,13 +39,13 @@ class LoanRequestController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {      $loan_request = new LoanRequest();
+    {   
+        $loan_request = new LoanRequest();
         $datos = json_encode($request->all());
-  
         $loan_request->hash=sha1($datos);
         $loan_request->affiliate_id = $request->affiliate_id;
         $loan_request->request=$datos;
-        $loan_request->save();  
+        $loan_request->save();
     }
     /**
      * Display the specified resource.
