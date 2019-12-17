@@ -100,14 +100,14 @@ class LoanRequestController extends Controller
         $institution = 'MUTUAL DE SERVICIOS AL POLICÍA "MUSERPOL"';
         $direction = "DIRECCIÔN DE ESTRATEGIAS SOCIALES E INVERSIONES";
         $unit = "UNIDAD DE INVERSIÒN EN PRESTAMOS";
-        $a=0;
+        $c=0;
         $datas = [
             'direction' => $direction,
             'institution' => $institution,
             'unit' => $unit,
             'hash'  => $hash,
             'data' => $result,
-            'a' => $a,
+            'a' => $c,
             'affiliate' => $affiliate,
             'nommodality' => $name_modality
         ];
