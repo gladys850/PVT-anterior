@@ -14,6 +14,7 @@ Route::group([
     Route::get('affiliate/{id}/degree_name', 'Api\V1\AffiliateController@get_degree');
     Route::get('affiliate/{id}/category_name', 'Api\V1\AffiliateController@get_category');
     Route::get('affiliate/{id}/unit_name', 'Api\V1\AffiliateController@get_unit');
+    Route::get('affiliate/{id}/state', 'Api\V1\AffiliateController@get_state');
     // spouse - affiliate
     Route::get('affiliate/{affiliate_id}/spouse', 'Api\V1\AffiliateController@spouse_get');
     //address - affiliate
