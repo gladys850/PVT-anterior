@@ -224,23 +224,23 @@ class AffiliateController extends Controller
     {
         $affiliate=Affiliate::find($affiliate_id);
         if($affiliate->category_id!=null){
-            return Category::find($affiliate->category_id)->name; 
-        }return ""; 
+            return $affiliate->category->name; 
+        }return []; 
           
     }
     public function get_degree($affiliate_id)
     {
         $affiliate=Affiliate::find($affiliate_id);
         if($affiliate->degree_id!=null){
-            return Degree::find($affiliate->degree_id)->name; 
-        } return "";  
+            return $affiliate->degree->name; 
+        } return [];  
     }
     public function get_unit($affiliate_id)
     {
         $affiliate=Affiliate::find($affiliate_id);
         if($affiliate->unit_id!=null){
-            return Unit::find($affiliate->unit_id)->name;   
-        }return "";
+            return $affiliate->unit->name;   
+        }return [];
     }
     public function last_three_loans($affiliate_id){
         $affiliate = Affiliate::find($affiliate_id);
@@ -255,5 +255,17 @@ class AffiliateController extends Controller
             }
             return $loans;
         }
+    }
+    public function get_state($affiliate_id)
+    {
+        $affiliate=Affiliate::find($affiliate_id);
+        if($affiliate->affiliate_state_id!=null){
+            $state=$affiliate->affiliate_state;
+            $state_type= $affiliate->affiliate_state->affiliate_state_type()->first();
+            return [
+                'state'=>$state,
+                'state_type'=>$state_type
+            ];  
+        }return [];
     }
 }

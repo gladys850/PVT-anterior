@@ -13,4 +13,8 @@ class Unit extends Model
         'name',
         'shortened'
     ];
+    public function affiliates()
+    {
+        return $this->hasMany(Affiliate::class);
+    }
 }

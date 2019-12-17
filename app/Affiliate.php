@@ -78,6 +78,10 @@ class Affiliate extends Model
     {
       return $this->belongsTo(Degree::class);
     }
+    public function unit()
+    {
+      return $this->belongsTo(Unit::class);
+    }
     public function city_identity_card()
     {
       return $this->belongsTo(City::class,'city_identity_card_id', 'id');
