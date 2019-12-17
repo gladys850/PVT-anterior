@@ -58,6 +58,8 @@ Route::group([
     Route::resource('loan', 'Api\V1\LoanController')->only(['update']);
     //last_three_loans
     Route::get('affiliate/{id}/last_three_loans','Api\V1\AffiliateController@last_three_loans');
+    //verify if an affiliate can be guarantor
+    Route::get('affiliate/{id}/verify_guarantor','Api\V1\AffiliateController@verify_guarantor');
     //list of requirements for registered loans
     Route::get('loan/{loan_id}/requirements', 'Api\V1\LoanController@list_requirements');
     //submitted_documents
@@ -67,6 +69,7 @@ Route::group([
     Route::get('affiliate/{id}/get_contributions/{limit}', 'Api\V1\AffiliateController@get_contributions');
     // collect the latest bonuses from the last ballot
     Route::get('affiliate/{id}/collect_last_bonus','Api\V1\AffiliateController@last_bonuses_ballot');
+
     // With credentials
     Route::group([
         'middleware' => 'jwt.auth'
