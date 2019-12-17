@@ -8,7 +8,7 @@ class ProcedureDocument extends Model
 {
 
     public $timestamps = false;
-
+    protected $hidden = ['pivot'];
     protected $fillable = ['name'];
   
     public function procedure_requirements()

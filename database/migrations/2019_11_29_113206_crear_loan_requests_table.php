@@ -16,10 +16,11 @@ class CrearLoanRequestsTable extends Migration
         Schema::create('loan_requests', function (Blueprint $table) {
             $table->integer('affiliate_id')->unsigned();
             $table->foreign('affiliate_id')->references('id')->on('affiliates');
-            $table->json('json'); 
-            $table->string('hash_json'); 
-            $table->date('expiration_date'); //fecha de expiracion del registro
+            $table->string('hash');//request convertido a hash
+            $table->primary('hash');
+            $table->json('request'); //datos almacenados en formato json una presolicitud
             $table->timestamps();
+
         });
     }
 

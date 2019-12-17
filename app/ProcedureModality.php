@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class ProcedureModality extends Model
 {
     public $timestamps = false;
+    protected $hidden = ['pivot'];
 
     protected $fillable = [
         'procedure_type_id',

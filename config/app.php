@@ -159,6 +159,8 @@ return [
         App\Providers\BroadcastServiceProvider::class,
         // Log viewer
         Rap2hpoutre\LaravelLogViewer\LaravelLogViewerServiceProvider::class,
+        // Barcode
+        Milon\Barcode\BarcodeServiceProvider::class,
         // Sanitizer
         Waavi\Sanitizer\Laravel\SanitizerServiceProvider::class
     ],

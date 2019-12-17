@@ -26,6 +26,9 @@ Route::group([
     Route::resource('spouse', 'Api\V1\SpouseController')->only('store', 'destroy', 'update');
     //beneficiary
     Route::resource('beneficiary', 'Api\V1\LoanBeneficiaryController')->only('index', 'store', 'show', 'destroy', 'update');
+    //loan_request
+    Route::resource('pre_request', 'Api\V1\LoanRequestController')->only(['index', 'store', 'show', 'destroy']);
+    Route::get('pdf/{id}/pre_request', 'Api\V1\LoanRequestController@createpdf');
     // City
     Route::resource('city', 'Api\V1\CityController')->only(['index']);
     // state
@@ -41,9 +44,6 @@ Route::group([
     Route::get('affiliate/{id}/fingerprint', 'Api\V1\AffiliateController@fingerprint_saved');
     Route::get('affiliate/{id}/fingerprint_picture', 'Api\V1\AffiliateController@FingerImageprint');
     Route::get('affiliate/{id}/profile_picture', 'Api\V1\AffiliateController@PictureImageprint');
-   // last_three_loans
-   Route::get('affiliate/{id}/last_three_loans','Api\V1\AffiliateController@last_three_loans');
-
     // Record
     Route::resource('record', 'Api\V1\RecordController')->only(['index']);
 
@@ -66,8 +66,6 @@ Route::group([
     Route::get('affiliate/{id}/get_contributions/{limit}', 'Api\V1\AffiliateController@get_contributions');
     // collect the latest bonuses from the last ballot
     Route::get('affiliate/{id}/collect_last_bonus','Api\V1\AffiliateController@last_bonuses_ballot');
-    
-
     // With credentials
     Route::group([
         'middleware' => 'jwt.auth'
