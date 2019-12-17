@@ -56,7 +56,8 @@ Route::group([
     Route::resource('loan', 'Api\V1\LoanController')->only(['store']);
     Route::resource('loan', 'Api\V1\LoanController')->only(['destroy']);
     Route::resource('loan', 'Api\V1\LoanController')->only(['update']);
-
+    //last_three_loans
+    Route::get('affiliate/{id}/last_three_loans','Api\V1\AffiliateController@last_three_loans');
     //list of requirements for registered loans
     Route::get('loan/{loan_id}/requirements', 'Api\V1\LoanController@list_requirements');
     //submitted_documents
