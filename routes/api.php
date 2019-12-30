@@ -69,7 +69,8 @@ Route::group([
     Route::get('affiliate/{id}/get_contributions/{limit}', 'Api\V1\AffiliateController@get_contributions');
     // collect the latest bonuses from the last ballot
     Route::get('affiliate/{id}/collect_last_bonus','Api\V1\AffiliateController@last_bonuses_ballot');
-
+    // verify cpop 
+    Route::get('affiliate/{id}/cpop','Api\V1\AffiliateController@cpop');
     // With credentials
     Route::group([
         'middleware' => 'jwt.auth'

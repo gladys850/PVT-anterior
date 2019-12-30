@@ -289,4 +289,14 @@ class AffiliateController extends Controller
             'state'=>$state
         ];      
     }
+    public function cpop($affiliate_id){
+        $affiliate = new Affiliate();
+        $cpop = $affiliate->verify_cpop($affiliate_id);
+        if($cpop==true){
+            $state_cpop = true;
+        }else{
+            $state_cpop = $cpop;
+        }
+        return ['state_cpop'=>$state_cpop];
+    }
 }
