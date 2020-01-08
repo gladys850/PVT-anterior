@@ -88,14 +88,11 @@ class Util
                     foreach ($search as $word) {
                         foreach (['d/m/y', 'd-m-y', 'd/m/Y', 'd-m-Y'] as $date_format) {
                             try {
-                                $date = Carbon::createFromFormat('d/m/Y', $date_format)->format('Y-m-d');
+                                $date = Carbon::createFromFormat($date_format, $word)->format('Y-m-d');
                                 break;
                             } catch (\Exception $e) {}
                         }
-                        if ($date) $word = $date;
-
-                        \Log::info($word);
-
+                        if (isset($date)) $word = $date;
                         $query = $query->where(function ($q) use ($word, $model, $columns) {
                             foreach ($columns as $column) {
                                 $q->orWhere($column, 'ilike', '%' . $word . '%');
