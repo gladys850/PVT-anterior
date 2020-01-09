@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Schema;
 use App\LoanSubmittedDocument;
 use App\ProcedureDocument;
 use App\Http\Requests\LoanForm;
+use Carbon;
 
 
 
@@ -51,9 +52,7 @@ class LoanController extends Controller
      */
     public function show($id)
     {
-        $loan = Loan::findOrFail($id);
-        $this->append_data($loan);
-        return $loan;
+        return Loan::findOrFail($id);
     }
 
     /**
@@ -124,4 +123,31 @@ class LoanController extends Controller
         }
         return $name;
     }
+    public function create_request($loan_id){
+        $loan=new Loan();
+        $amount_disbur=$loan->find($loan_id)->amount_disbursement;
+        $dat= $loan->find($loan_id);
+        $affiliate=$dat->loan_affiliates;
+        $data = [
+            'dat' => $dat,
+            'affiliate' => $affiliate,
+            'amount_disbur' => $amount_disbur
+        ];
+        $year = Carbon::now()->format('Y');
+        $file_name = "Solicitud de ".$year. ".pdf";
+        $options = [
+            'orientation' => 'portrait',
+            'page-width' => '216',
+            'page-height' => '279',
+            'margin-top' => '4',
+            'margin-bottom' => '4',
+            'margin-left' => '5',
+            'margin-right' => '5',
+            'encoding' => 'UTF-8',
+            'user-style-sheet' => public_path('css/report-print.min.css')
+          ];
+          $pdf = PDF::loadView('request',$data);
+          $pdf->setOptions($options);
+          return $pdf->stream($file_name);
+        }
 }
