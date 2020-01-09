@@ -105,7 +105,10 @@
         :value="'tab-1'"
       >
         <v-card flat tile >
-          <v-card-text>{{affiliate.first_name}}</v-card-text>
+          <v-card-text>
+            <Dashboard
+              :affiliate.sync="affiliate"/>
+          </v-card-text>
         </v-card>
       </v-tab-item>
         <v-tab-item
@@ -186,6 +189,7 @@ import PoliceData from '@/components/affiliate/PoliceData'
 import Spouse from '@/components/affiliate/Spouse'
 import Fingerprint from '@/components/affiliate/Fingerprint'
 import Document from '@/components/affiliate/Document'
+import Dashboard from '@/components/affiliate/Dashboard'
 
 export default {
   name: "affiliate-index",
@@ -195,7 +199,8 @@ export default {
     PoliceData,
     Spouse,
     Fingerprint,
-    Document
+    Document,
+    Dashboard
   },
   data: () => ({
     addresses:[],
@@ -214,7 +219,8 @@ export default {
       date_entry:null,
       service_years:null,
       service_months:null,
-      date_derelict:null
+      date_derelict:null,
+      unit_name:null
     },
     spouse: {
     affiliate_id: null,
@@ -379,7 +385,7 @@ export default {
       } finally {
         this.loading = false
       }
-    }
+    },
   },
 }
 </script>
