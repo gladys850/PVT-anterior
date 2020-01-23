@@ -9,7 +9,7 @@
                 <v-text-field
                   label="1a Boleta"
                   v-model="boletas[0]"
-                  v-validate.initial="'required|numeric|min:1|max:10'"
+                  v-validate="'required|numeric|min:1|max:10'"
                   :error-messages="errors.collect('1ra boleta')"
                   data-vv-name="1ra boleta"
                 ></v-text-field>
@@ -50,7 +50,7 @@
                 <v-text-field
                 label="Introduzca plazo"
                 v-model="plazo_meses_lp"
-                v-validate.initial="`required|numeric|min_value:1|max_value:2`"          
+                v-validate="`required|numeric|min_value:1|max_value:2`"
                 :error-messages="errors.collect('meses plazo')"
                 data-vv-name="meses plazo"
                 ></v-text-field>
@@ -60,7 +60,7 @@
                 <v-text-field
                 label="Introduzca monto"
                 v-model ="monto_solicitado"
-                v-validate.initial="'required|numeric|min_value:1|max_value:2000'"
+                v-validate="'required|numeric|min_value:1|max_value:2000'"
                 :error-messages="errors.collect('monto solicitado')"
                 data-vv-name="monto solicitado"
                 ></v-text-field>
@@ -88,8 +88,10 @@
 </template>
 
 <script>
+import { Validator } from 'vee-validate'
 
 export default {
+  inject: ['$validator'],
   name: 'largo-plazo',
   data: () => ({
     boletas: [null],

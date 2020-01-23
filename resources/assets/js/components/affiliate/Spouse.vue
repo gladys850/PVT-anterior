@@ -13,7 +13,7 @@
                       v-model="spouse.first_name"
                       class="purple-input"
                       label="Primer Nombre"
-                      v-validate.initial="'required|min:1|max:250'"
+                      v-validate="'required|min:1|max:250'"
                       :error-messages="errors.collect('primer nombre')"
                       data-vv-name="primer nombre"
                       :readonly="!editable || !permission.secondary"
@@ -37,7 +37,7 @@
                       v-model="spouse.last_name"
                       label="Primer Apellido"
                       class="purple-input"
-                      v-validate.initial="'min:1|max:250'"
+                      v-validate="'min:1|max:250'"
                       :error-messages="errors.collect('primer apellido')"
                       data-vv-name="primer apellido"
                       :readonly="!editable || !permission.secondary"
@@ -50,7 +50,7 @@
                       v-model="spouse.mothers_last_name"
                       label="Segundo Apellido"
                       class="purple-input"
-                      v-validate.initial="'min:1|max:250'"
+                      v-validate="'min:1|max:250'"
                       :error-messages="errors.collect('segundo apellido')"
                       data-vv-name="segundo apellido"
                       :readonly="!editable || !permission.secondary"
@@ -63,7 +63,7 @@
                       v-model="spouse.surname_husband"
                       label="Apellido Casada"
                       class="purple-input"
-                      v-validate.initial="'min:1|max:250'"
+                      v-validate="'min:1|max:250'"
                       :error-messages="errors.collect('apellido casado')"
                       data-vv-name="apellido casado"
                       :readonly="!editable || !permission.secondary"
@@ -76,7 +76,7 @@
                         v-model="spouse.identity_card"
                         class="purple-input"
                         label="Cedula de Identidad"
-                        v-validate.initial="'required|min:1|max:50'"
+                        v-validate="'required|min:1|max:50'"
                         :error-messages="errors.collect('cedula identidad')"
                         data-vv-name="cedula identidad"
                         :readonly="!editable || !permission.secondary"
@@ -203,7 +203,7 @@
                       v-model="spouse.death_certificate_number"
                       label="Cert. de Defunción"
                       class="purple-input"
-                      v-validate.initial="'min:1|max:20'"
+                      v-validate="'min:1|max:20'"
                       :error-messages="errors.collect('cert. de defunción')"
                       data-vv-name="cert. de defunción"
                       :readonly="!editable || !permission.secondary"
@@ -223,7 +223,7 @@
               v-model="spouse.official"
               label="Oficialia"
               class="purple-input"
-              v-validate.initial="'min:1|max:250'"
+              v-validate="'min:1|max:250'"
               :error-messages="errors.collect('oficialia')"
               data-vv-name="oficialia"
               :readonly="!editable || !permission.secondary"
@@ -236,7 +236,7 @@
               v-model="spouse.book"
               label="Libro"
               class="purple-input"
-              v-validate.initial="'min:1|max:250'"
+              v-validate="'min:1|max:250'"
               :error-messages="errors.collect('libro')"
               data-vv-name="libro"
               :readonly="!editable || !permission.secondary"
@@ -249,7 +249,7 @@
               v-model="spouse.departure"
               label="Partida"
               class="purple-input"
-              v-validate.initial="'min:1|max:250'"
+              v-validate="'min:1|max:250'"
               :error-messages="errors.collect('partida')"
               data-vv-name="partida"
               :readonly="!editable || !permission.secondary"
@@ -287,7 +287,10 @@
   </v-container>
 </template>
 <script>
-  export default {
+import { Validator } from 'vee-validate'
+
+export default {
+  inject: ['$validator'],
   name: "affiliate-spouse",
   props: {
     spouse: {

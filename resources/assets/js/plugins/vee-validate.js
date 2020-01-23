@@ -5,4 +5,5 @@ Validator.localize('es', validateEs)
 
 Vue.use(VeeValidate, {
   locale: 'es',
+  inject: false
 })

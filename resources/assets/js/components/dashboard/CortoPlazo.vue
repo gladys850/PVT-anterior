@@ -9,21 +9,21 @@
                 <v-text-field
                   label="1a Boleta"
                   v-model="boletas[0]"
-                  v-validate.initial="'required|numeric|min:1|max:10'"
+                  v-validate="'required|numeric|min:1|max:10'"
                   :error-messages="errors.collect('1ra boleta')"
                   data-vv-name="1ra boleta"
                 ></v-text-field>
                 <v-text-field
                   label="2a Boleta"
                   v-model="boletas[1]"
-                  v-validate.initial="'required|numeric|min:1|max:10'"
+                  v-validate="'required|numeric|min:1|max:10'"
                   :error-messages="errors.collect('2a boleta')"
                   data-vv-name="2a boleta"
                 ></v-text-field>
                 <v-text-field
                   label="3a Boleta"
                   v-model="boletas[2]"
-                  v-validate.initial="'required|numeric|min:1|max:10'"
+                  v-validate="'required|numeric|min:1|max:10'"
                   :error-messages="errors.collect('3ra boleta')"
                   data-vv-name="3ra boleta"
                 ></v-text-field>
@@ -64,7 +64,7 @@
                 <v-text-field
                 label="Introduzca plazo"
                 v-model="plazo_meses"
-                v-validate.initial="`required|numeric|min_value:1|max_value:36`"          
+                v-validate="`required|numeric|min_value:1|max_value:36`"
                 :error-messages="errors.collect('meses plazo')"
                 data-vv-name="meses plazo"
                 ></v-text-field>
@@ -72,7 +72,7 @@
                 <v-text-field
                 label="Introduzca monto"
                 v-model ="monto_solicitado"  
-                v-validate.initial="`required|numeric|min_value:2001|max_value:25000`"
+                v-validate="`required|numeric|min_value:2001|max_value:25000`"
                 :error-messages="errors.collect('monto solicitado')"
                 data-vv-name="monto solicitado"
                 ></v-text-field>
@@ -98,7 +98,10 @@
   </v-container>
 </template>
 <script>
+import { Validator } from 'vee-validate'
+
 export default {
+  inject: ['$validator'],
   name: "dashboard-index",
   data: () => ({
     boletas: [null,null,null],
