@@ -304,5 +304,9 @@ class Loan extends Model
                 'Nota'=>$major_index
              ];       
     }
+    public function calculator_guarantor($ballots,$bonuses){
+        $liquid_qualification = $this->liquid_qualification($ballots,$bonuses);
+        return $liquid_qualification;
+    }
 
 }
