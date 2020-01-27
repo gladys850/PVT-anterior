@@ -43,7 +43,8 @@ return [
             'driver' => 'daily',
             'path' => storage_path('logs/laravel.log'),
             'level' => 'debug',
-            'days' => env('APP_ENV', 'development') == 'production' ? 90 : 7
+            'days' => env('APP_ENV', 'development') == 'production' ? 90 : 7,
+            'permission' => 0666
         ],
         'slack' => [
             'driver' => 'slack',

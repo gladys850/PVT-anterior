@@ -19,7 +19,10 @@
 </template>
 
 <script>
+import { Validator } from 'vee-validate'
+
 export default {
+  inject: ['$validator'],
   name: 'ldap-user-form',
   props: {
     bus: {
