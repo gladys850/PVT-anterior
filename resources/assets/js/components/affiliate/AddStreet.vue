@@ -35,7 +35,7 @@
                       v-model="address.zone"
                       label="Zona"
                       class="purple-input"
-                      v-validate.initial="'min:1|max:100'"
+                      v-validate="'min:1|max:100'"
                       :error-messages="errors.collect('zona')"
                       data-vv-name="zona"
                       ></v-text-field>
@@ -46,7 +46,7 @@
                       v-model="address.street"
                       label="Calle/Avenida"
                       class="purple-input"
-                      v-validate.initial="'min:1|max:100'"
+                      v-validate="'min:1|max:100'"
                       :error-messages="errors.collect('calle')"
                       data-vv-name="calle"
                       ></v-text-field>
@@ -57,7 +57,7 @@
                       v-model="address.number_address"
                       label="Nro"
                       class="purple-input"
-                      v-validate.initial="'numeric|min:1|max:100'"
+                      v-validate="'numeric|min:1|max:100'"
                       :error-messages="errors.collect('nro')"
                       data-vv-name="nro"
                       ></v-text-field>
@@ -83,8 +83,10 @@
 </template>
 <script>
 import LMap from '@/components/affiliate/LMap'
+import { Validator } from 'vee-validate'
 
-  export default {
+export default {
+  inject: ['$validator'],
   name: "affiliate-addresses",
   props: {
     bus: {
