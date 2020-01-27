@@ -29,6 +29,8 @@ Route::group([
     //loan_request
     Route::resource('pre_request', 'Api\V1\LoanRequestController')->only(['index', 'store', 'show', 'destroy']);
     Route::get('pdf/{id}/pre_request', 'Api\V1\LoanRequestController@createpdf');
+    //form_request
+    Route::get('pdf_request/{id}', 'Api\V1\LoanController@create_request');
     // City
     Route::resource('city', 'Api\V1\CityController')->only(['index']);
     // state
@@ -46,7 +48,7 @@ Route::group([
     Route::get('affiliate/{id}/profile_picture', 'Api\V1\AffiliateController@PictureImageprint');
     // Record
     Route::resource('record', 'Api\V1\RecordController')->only(['index']);
-
+    
     //document
     Route::get('document/{affiliate_id}', 'Api\V1\ScannedDocumentController@create_document');
     Route::resource('procedureDocument', 'Api\V1\ProcedureDocumentController')->only(['index']);
