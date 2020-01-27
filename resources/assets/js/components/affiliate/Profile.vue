@@ -86,7 +86,7 @@
                         dense
                         v-model="affiliate.identity_card"
                         label="Cédula de Identidad"
-                        v-validate="'required|alpha_dash|min:5|max:15'"
+                        v-validate="'required|alpha_dash|min_length:5|max_length:15'"
                         :error-messages="errors.collect('identity_card')"
                         data-vv-name="identity_card"
                         data-vv-as="Cédula de Identidad"

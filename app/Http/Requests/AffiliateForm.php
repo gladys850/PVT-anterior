@@ -33,7 +33,7 @@ class AffiliateForm extends FormRequest
             'city_birth_id' => 'exists:cities,id',
             'city_identity_card_id' => 'exists:cities,id',
             'civil_status' => 'in:C,D,S,V',
-            'identity_card' => 'min:5|max:15|integer',
+            'identity_card' => 'digits_between:5,15|integer',
             'affiliate_state_id' => 'nullable|exists:affiliate_states,id',
             'degree_id' => 'nullable|exists:degrees,id',
             'pension_entity_id' => 'nullable|exists:pension_entities,id',
