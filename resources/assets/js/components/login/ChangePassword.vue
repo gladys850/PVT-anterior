@@ -68,8 +68,10 @@
 
 <script>
 import Loading from '@/components/shared/Loading'
+import { Validator } from 'vee-validate'
 
 export default {
+  inject: ['$validator'],
   name: 'change-password',
   components: {
     Loading

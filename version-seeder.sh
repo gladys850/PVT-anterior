@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 
 # Migration
-php artisan migrate
+php artisan migrate --force
 
 # Seeders
 php artisan db:seed --class=CityGeolocationSeeder

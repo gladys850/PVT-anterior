@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class LoanParameter extends Model
+class LoanGlobalParameter extends Model
 {
     public $timestamps = true;
 

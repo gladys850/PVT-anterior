@@ -35,8 +35,8 @@ class AuthController extends Controller
         if (!$user->active) {
           return response()->json([
             'message' => 'No autorizado',
-            'errors' => [
-              'type' => ['Usuario desactivado'],
+            'errors' => (object)[
+              'username' => ['Usuario desactivado'],
             ],
           ], 401);
         } else {
@@ -69,8 +69,8 @@ class AuthController extends Controller
     }
     return response()->json([
       'message' => 'No autorizado',
-      'errors' => [
-        'type' => ['Usuario o contraseña incorrectos'],
+      'errors' => (object)[
+        'username' => ['Usuario o contraseña incorrectos'],
       ],
     ], 401);
   }

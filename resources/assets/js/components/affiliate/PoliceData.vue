@@ -85,7 +85,7 @@
                 dense
                 v-model="affiliate.service_years"
                 label="Años de Servicio"
-                v-validate.initial="`numeric||min_value:0|max_value:100`"
+                v-validate="`numeric||min_value:0|max_value:100`"
                 :error-messages="errors.collect('year')"
                 data-vv-name="year"
                 :readonly="!editable || !permission.primary"
@@ -98,7 +98,7 @@
                 dense
                 v-model="affiliate.service_months"
                 label="Meses de Servicio"
-                v-validate.initial="'numeric|min_value:0|max_value:12'"
+                v-validate="'numeric|min_value:0|max_value:12'"
                 :error-messages="errors.collect('months')"
                 data-vv-name="months"
                 :readonly="!editable || !permission.primary"
@@ -154,7 +154,10 @@
 </template>
 
 <script>
-  export default {
+import { Validator } from 'vee-validate'
+
+export default {
+  inject: ['$validator'],
   name: "affiliate-police-data",
   props: {
     affiliate: {

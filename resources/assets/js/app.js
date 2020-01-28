@@ -57,16 +57,27 @@ axios.interceptors.response.use(response => {
   return response
 }, error => {
   if (error.response) {
-    if (error.response.status == 401) {
-      store.dispatch('logout')
-      if (router.currentRoute.name != 'login') {
-        router.push('login')
+    if ([401, 409].includes(error.response.status)) {
+      if (error.response.data.errors) {
+        for(let key in error.response.data.errors){
+          vm.$validator.errors.add({
+            field: key,
+            msg: error.response.data.errors[key][0]
+          })
+        }
       }
-    }
-    for (let key in error.response.data.errors) {
-      error.response.data.errors[key].forEach(error => {
-        toastr.error(error)
-      })
+      if (error.response.status == 401) {
+        store.dispatch('logout')
+        if (router.currentRoute.name != 'login') {
+          router.push('login')
+        }
+      }
+    } else {
+      for (let key in error.response.data.errors) {
+        error.response.data.errors[key].forEach(error => {
+          toastr.error(error)
+        })
+      }
     }
   }
   return Promise.reject(error)
@@ -92,7 +103,7 @@ if (store.getters.tokenExpired) {
   router.go('login')
 }
 
-new Vue({
+export const vm = new Vue({
   router,
   i18n,
   store,
