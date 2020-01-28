@@ -12,9 +12,10 @@
                         dense
                       v-model="affiliate.first_name"
                       label="Primer Nombre"
-                      v-validate.initial="'required|min:1|max:250'"
-                      :error-messages="errors.collect('primer nombre')"
-                      data-vv-name="primer nombre"
+                      v-validate="'required|alpha_spaces|min:3|max:250'"
+                      :error-messages="errors.collect('first_name')"
+                      data-vv-name="first_name"
+                      data-vv-as="Primer Nombre"
                       :readonly="!editable || !permission.primary"
                       :outlined="editable && permission.primary"
                       :disabled="editable && !permission.primary"
@@ -25,7 +26,10 @@
                         dense
                       v-model="affiliate.second_name"
                       label="Segundo Nombre"
-                      data-vv-name="segundo nombre"
+                      v-validate="'alpha_spaces|min:3|max:250'"
+                      :error-messages="errors.collect('second_name')"
+                      data-vv-name="second_name"
+                      data-vv-as="Segundo Nombre"
                       :readonly="!editable || !permission.primary"
                       :outlined="editable && permission.primary"
                       :disabled="editable && !permission.primary"
@@ -35,10 +39,11 @@
                       <v-text-field
                         dense
                       v-model="affiliate.last_name"
-                      label="Primer Apellido"
-                      v-validate.initial="'min:1|max:250'"
-                      :error-messages="errors.collect('primer apellido')"
-                      data-vv-name="primer apellido"
+                      label="Apellido Paterno"
+                      v-validate="'required|alpha_spaces|min:3|max:250'"
+                      :error-messages="errors.collect('last_name')"
+                      data-vv-name="last_name"
+                      data-vv-as="Apellido Paterno"
                       :readonly="!editable || !permission.primary"
                       :outlined="editable && permission.primary"
                       :disabled="editable && !permission.primary"
@@ -48,10 +53,11 @@
                       <v-text-field
                         dense
                       v-model="affiliate.mothers_last_name"
-                      label="Segundo Apellido"
-                      v-validate.initial="'min:1|max:250'"
-                      :error-messages="errors.collect('segundo apellido')"
-                      data-vv-name="segundo apellido"
+                      label="Apellido Materno"
+                      v-validate="'alpha_spaces|min:3|max:250'"
+                      :error-messages="errors.collect('mothers_last_name')"
+                      data-vv-name="mothers_last_name"
+                      data-vv-as="Apellido Materno"
                       :readonly="!editable || !permission.primary"
                       :outlined="editable && permission.primary"
                       :disabled="editable && !permission.primary"
@@ -60,12 +66,15 @@
                     <v-col cols="12" md="4" >
                       <v-select
                         dense
-                        data-vv-name="Genero"
-                        :items="gender"
+                        v-validate="'required|included:M,F'"
+                        :error-messages="errors.collect('gender')"
+                        data-vv-name="gender"
+                        data-vv-as="Género"
+                        :items="genders"
                         item-text="name"
                         item-value="value"
                         :loading="loading"
-                        label="Genero"
+                        label="Género"
                         v-model="affiliate.gender"
                         :readonly="!editable || !permission.primary"
                         :outlined="editable && permission.primary"
@@ -76,10 +85,11 @@
                       <v-text-field
                         dense
                         v-model="affiliate.identity_card"
-                        label="Cedula de Identidad"
-                        v-validate.initial="'required|min:1|max:50'"
-                        :error-messages="errors.collect('cedula identidad')"
-                        data-vv-name="cedula identidad"
+                        label="Cédula de Identidad"
+                        v-validate="'required|alpha_dash|min_length:5|max_length:15'"
+                        :error-messages="errors.collect('identity_card')"
+                        data-vv-name="identity_card"
+                        data-vv-as="Cédula de Identidad"
                         :readonly="!editable || !permission.primary"
                         :outlined="editable && permission.primary"
                         :disabled="editable && !permission.primary"
@@ -88,7 +98,10 @@
                     <v-col cols="12" md="6" >
                       <v-select
                         dense
-                        data-vv-name="Ciudad de Expedición"
+                        v-validate="'required|integer|min:1'"
+                        :error-messages="errors.collect('city_identity_card_id')"
+                        data-vv-name="city_identity_card_id"
+                        data-vv-as="Ciudad de Expedición"
                         :items="cities"
                         item-text="name"
                         item-value="id"
@@ -130,12 +143,14 @@
                       <v-select
                         dense
                         :loading="loading"
-                        data-vv-name="Estado Civil"
-                        :items="civil"
+                        v-validate="'included:C,D,S,V'"
+                        :error-messages="errors.collect('civil_status')"
+                        data-vv-name="civil_status"
+                        data-vv-as="Estado Civil"
+                        :items="civil_statuses"
                         item-text="name"
                         item-value="value"
                         label="Estado Civil"
-                        name="estado_civil"
                         v-model="affiliate.civil_status"
                         :readonly="!editable || !permission.primary"
                         :outlined="editable && permission.primary"
@@ -173,6 +188,10 @@
                             v-on="on"
                             :outlined="editable && permission.primary"
                             :disabled="editable && !permission.primary"
+                            v-validate="'required'"
+                            :error-messages="errors.collect('birth_date')"
+                            data-vv-name="birth_date"
+                            data-vv-as="Fecha Nacimiento"
                           ></v-text-field>
                         </template>
                         <v-date-picker v-model="affiliate.birth_date" no-title @input="dates.birthDate.show = false"></v-date-picker>
@@ -182,12 +201,14 @@
                       <v-select
                         dense
                         :loading="loading"
-                        data-vv-name="Ciudad de Nacimiento"
+                        v-validate="'integer|min:1'"
+                        :error-messages="errors.collect('city_birth_id')"
+                        data-vv-name="city_birth_id"
+                        data-vv-as="Ciudad de Nacimiento"
                         :items="cities"
                         item-text="name"
                         item-value="id"
-                        name="nacimiento"
-                        label="Lugar de Nacimiento"
+                        label="Ciudad de Nacimiento"
                         v-model="affiliate.city_birth_id"
                         :readonly="!editable || !permission.primary"
                         :outlined="editable && permission.primary"
@@ -245,7 +266,7 @@
                         dense
                         v-model="getTelefono[0]"
                         label="Celular 1"
-                        v-validate.initial="'min:1|max:20'"
+                        v-validate="'min:1|max:20'"
                         :error-messages="errors.collect('celular1')"
                         data-vv-name="celular1"
                         :readonly="!editable || !permission.secondary"
@@ -258,7 +279,7 @@
                         dense
                         v-model="getTelefono[1]"
                         label="Celular 2"
-                        v-validate.initial="'min:1|max:20'"
+                        v-validate="'min:1|max:20'"
                         :error-messages="errors.collect('celular')"
                         data-vv-name="celular"
                         :readonly="!editable || !permission.secondary"
@@ -271,7 +292,7 @@
                         dense
                         v-model="affiliate.phone_number"
                         label="Fijo"
-                        v-validate.initial="'min:1|max:20'"
+                        v-validate="'min:1|max:20'"
                         :error-messages="errors.collect('telefono')"
                         data-vv-name="telefono"
                         :readonly="!editable || !permission.secondary"
@@ -342,7 +363,10 @@
 <script>
 import RemoveItem from '@/components/shared/RemoveItem'
 import AddStreet from '@/components/affiliate/AddStreet'
-  export default {
+import { Validator } from 'vee-validate'
+
+export default {
+  inject: ['$validator'],
   name: "affiliate-profile",
   props: {
     affiliate: {
@@ -366,58 +390,62 @@ import AddStreet from '@/components/affiliate/AddStreet'
     AddStreet,
     RemoveItem
   },
-  data: () => ({
-    loading: true,
-    dialog: false,
-    telefono:[null,null],
-    cities: [],
-    headers: [
-          { text: 'Ciudad', align: 'left', value: 'city_address_id' },
-          { text: 'Zona', align: 'left', value: 'zone' },
-          { text: 'Calle', align: 'left', value: 'street' },
-          { text: 'Nro', align: 'left', value: 'number_address' },
-          { text: 'Acciones', align: 'center' }
-        ],
-    civil: [
-      { name:"Soltero",
-        value:"S"
+  data() {
+    return {
+      loading: true,
+      dialog: false,
+      telefono:[null,null],
+      cities: [],
+      headers: [
+            { text: 'Ciudad', align: 'left', value: 'city_address_id' },
+            { text: 'Zona', align: 'left', value: 'zone' },
+            { text: 'Calle', align: 'left', value: 'street' },
+            { text: 'Nro', align: 'left', value: 'number_address' },
+            { text: 'Acciones', align: 'center' }
+          ],
+      civil_statuses: [
+        { name:"Soltero",
+          value:"S"
+        },
+        { name:"Casado",
+          value:"C"
+        },
+        { name:"Viudo",
+          value:"V"
+        },
+        { name:"Divorciado",
+          value:"D"
+        }
+      ],
+      genders: [
+        {
+          name:"Femenino",
+          value:"F"
+        },
+        {
+          name:"Masculino",
+          value:"M"
+        }
+      ],
+      city: [],
+      cityTypeSelected: null,
+      dates: {
+        dueDate: {
+          formatted: null,
+          picker: false
+        },
+        birthDate: {
+          formatted: null,
+          picker: false
+        },
+        dateDeath: {
+          formatted: null,
+          picker: false
+        }
       },
-      { name:"Casado",
-        value:"C"
-      },
-      { name:"Viudo",
-        value:"V"
-      },
-      { name:"Divorciado",
-        value:"D"
-      }
-    ],
-    gender: [
-      { name:"Femenino",
-        value:"F"
-      },
-      { name:"Masculino",
-        value:"M"
-      }
-    ],
-    city: [],
-    cityTypeSelected: null,
-    dates: {
-      dueDate: {
-        formatted: null,
-        picker: false
-      },
-      birthDate: {
-        formatted: null,
-        picker: false
-      },
-      dateDeath: {
-        formatted: null,
-        picker: false
-      }
-    },
-    bus: new Vue()
-  }),
+      bus: new Vue()
+    }
+  },
   computed: {
     getTelefono(){
       if(this.affiliate.cell_phone_number==null)

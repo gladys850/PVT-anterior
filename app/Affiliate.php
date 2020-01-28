@@ -1,6 +1,7 @@
 <?php
 
 namespace App;
+use Carbon;
 
 use Illuminate\Database\Eloquent\Model;
 use Laratrust\Traits\LaratrustUserTrait;
@@ -191,24 +192,30 @@ class Affiliate extends Model
       $affiliate=Affiliate::find($id);$debt_loans=[];$c=1;
       if($affiliate){
           $loans_affiliate=$affiliate->loans->sortByDesc('disbursement_date');
-          foreach($loans_affiliate as $loans_affi){ 
-            if($loans_affi->state->name = "liquidado"){
-              $loan_payments_debt= $this->debt_payment($loans_affi->id);
-              if($loan_payments_debt){
-                $debt_loans[$c] = $loans_affi;
-                $c++;
+          if(count($loans_affiliate)>0){
+            foreach($loans_affiliate as $loans_affi){ 
+              if($loans_affi->state->name = "liquidado"){
+                $loan_payments_debt= $this->debt_payment($loans_affi->id);
+                if($loan_payments_debt){
+                  $debt_loans[$c] = $loans_affi;
+                  $c++;
+                }
               }
+            }              
+            if($debt_loans!=[]){
+              $cpop=reset($debt_loans);
+            }else{
+              $cpop=true;
             }
+             
+          }else {
+            $cpop=$debt_loans;
           }
-          if($debt_loans!=[]){
-            $cpop=reset($debt_loans);
-          }else{
-            $cpop=true;
-          }   
+           
       }else{
         $cpop=$debt_loans;
       }
       return $cpop;  
     } 
-    
+   
 }

@@ -16,6 +16,8 @@ use App\Spouse;
 use App\Address;
 use App\Contribution;
 use App\Unit;
+use App\Loan;
+use App\LoanGlobalParameter;
 use App\Http\Requests\AffiliateForm;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -267,5 +269,34 @@ class AffiliateController extends Controller
                 'state_type'=>$state_type
             ];  
         }return [];
+    }
+    public function verify_guarantor(Request $request,$affiliate_id){
+        //$ballots=[200]; $bonuses=[24]; $new_quota=100;
+        $affiliate=Affiliate::find($affiliate_id)->active_guarantees();$sum_quota=0;$state = false;
+        foreach($affiliate as $affiliate_loans){ 
+            $sum_quota+= $affiliate_loans->estimated_quota; 
+        }
+        $loan = new Loan();
+        $liquid_qualification = $loan->calculator_guarantor($request->ballots,$request->bonuses);
+        $qualify = $liquid_qualification - $sum_quota - ($request->new_quota);
+        $loan_global_parameter = LoanGlobalParameter::get()->last();
+        if($qualify>$loan_global_parameter->livelihood_amount){
+            $qualify = $qualify;
+            $state = true; 
+        } 
+        return [
+            'qualify'=>$qualify,
+            'state'=>$state
+        ];      
+    }
+    public function cpop($affiliate_id){
+        $affiliate = new Affiliate();
+        $cpop = $affiliate->verify_cpop($affiliate_id);
+        if($cpop==true){
+            $state_cpop = true;
+        }else{
+            $state_cpop = $cpop;
+        }
+        return ['state_cpop'=>$state_cpop];
     }
 }

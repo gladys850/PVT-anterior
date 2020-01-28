@@ -116,8 +116,8 @@ class LoanPayment extends Model
         $loan=Loan::find($loan_id);
         $date_disbursement=$loan->disbursement_date;
         $num_quota=count($loan->plan());
-        $loanParameter=(LoanParameter::all())->last();
-        $offsetday=$loanParameter->offset_day;
+        $loanGlobalParameter=(LoanGlobalParameter::all())->last();
+        $offsetday=$loanGlobalParameter->offset_day;
         $last_day=Carbon::parse($date_disbursement)->endOfMonth();
         $number_day=Carbon::parse($date_disbursement)->diffInDays(Carbon::parse($last_day));
         $next_quota=$last_day;

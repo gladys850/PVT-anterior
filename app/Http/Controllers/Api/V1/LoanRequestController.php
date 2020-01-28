@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\ProcedureModality;
 use Util;
+use Carbon;
 use PDF;
 
 
@@ -101,6 +102,8 @@ class LoanRequestController extends Controller
         $direction = "DIRECCIÔN DE ESTRATEGIAS SOCIALES E INVERSIONES";
         $unit = "UNIDAD DE INVERSIÒN EN PRESTAMOS";
         $c=0;
+        $year = Carbon::now()->format('Y');
+        $file_name = "Presolicitud con CI:".$affiliate->identity_card." de ".$year. ".pdf";
         $datas = [
             'direction' => $direction,
             'institution' => $institution,
@@ -111,6 +114,19 @@ class LoanRequestController extends Controller
             'affiliate' => $affiliate,
             'nommodality' => $name_modality
         ];
-    return \PDF::loadView('prerequest', $datas)->download('prerequest.pdf');
+        $options = [
+            'orientation' => 'portrait',
+            'page-width' => '216',
+            'page-height' => '427',
+            'margin-left' => '0',
+            'margin-right' => '0',
+            'margin-top' => '0',
+            'margin-bottom' => '0',
+            'encoding' => 'UTF-8',
+            'user-style-sheet' => public_path('css/report-print.min.css')
+          ];
+          $pdf = \PDF::loadView('prerequest', $datas);
+          $pdf->setOptions($options);
+          return $pdf->stream($file_name);
     }  
 }

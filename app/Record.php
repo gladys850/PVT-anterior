@@ -8,6 +8,8 @@ use Util;
 
 class Record extends Model
 {
+    use Traits\EloquentGetTableNameTrait;
+
     public $timestamps = true;
     public $guarded = ['id'];
     protected $fillable = ['user_id', 'record_type_id', 'recordable_id', 'recordable_type', 'action'];

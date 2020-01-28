@@ -19,20 +19,20 @@
             <v-form>
               <v-text-field
                 class="pl-5 pr-5"
-                v-validate="'required|min:4|max:255'"
                 @keyup.enter="focusPassword()"
                 v-model="auth.username"
                 prepend-icon="mdi-account"
                 label="Usuario"
-                name="usuario"
-                :error-messages="errors.collect('usuario')"
+                v-validate="'required|min:4|max:255'"
+                :error-messages="errors.collect('username')"
+                data-vv-name="username"
+                data-vv-as="Usuario"
                 autocomplete="on"
                 autofocus
                 required
               ></v-text-field>
               <v-text-field
                 class="pl-5 pr-5 mb-3"
-                v-validate="'required|min:4|max:255'"
                 @keyup.enter="authenticate(auth)"
                 v-model="auth.password"
                 prepend-icon="mdi-key"
@@ -40,8 +40,10 @@
                 type="password"
                 autocomplete="on"
                 ref="password"
-                name="contraseña"
-                :error-messages="errors.collect('contraseña')"
+                v-validate="'required|min:4|max:255'"
+                :error-messages="errors.collect('password')"
+                data-vv-name="password"
+                data-vv-as="Contraseña"
                 required
               ></v-text-field>
             </v-form>
@@ -62,7 +64,10 @@
 </template>
 
 <script>
+import { Validator } from 'vee-validate'
+
 export default {
+  inject: ['$validator'],
   name: "login",
   data() {
     return {
