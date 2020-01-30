@@ -13,8 +13,8 @@ class Affiliate extends Model
     use Traits\RelationshipsTrait;
 
     public $relationships = ['City', 'AffiliateState'];
-    protected $appends = ['picture_saved', 'fingerprint_saved', 'full_name'];
-    protected $hidden = ['pivot'];
+    // protected $appends = ['picture_saved', 'fingerprint_saved', 'full_name'];
+    // protected $hidden = ['pivot'];
     protected $fillable = [
         'user_id',
         'affiliate_state_id',
@@ -69,6 +69,24 @@ class Affiliate extends Model
     public function getFullNameAttribute()
     {
       return preg_replace('/[[:blank:]]+/', ' ', join(' ', [$this->first_name, $this->second_name, $this->last_name, $this->mothers_last_name]));
+    }
+
+    public function getDeadAttribute()
+    {
+        return ($this->date_death != null || $this->reason_death != null || $this->death_certificate_number != null);
+    }
+
+    public function getDefaultedAttribute()
+    {
+        $loans = $this->loans()->whereHas('state', function($q) {
+            $q->where('name', 'Desembolsado ');
+        })->get()->merge($this->guarantees()->whereHas('state', function($q) {
+            $q->where('name', 'Desembolsado ');
+        })->get());
+        foreach ($loans as $loan) {
+            if ($loan->defaulted) return true;
+        }
+        return false;
     }
 
     public function category()
@@ -138,12 +156,12 @@ class Affiliate extends Model
 
     public function guarantees()
     {
-        return $this->belongsToMany(Loan::class, 'loan_affiliates')->whereGuarantor(true)->orderBy('loans.created_at', 'desc');
+        return $this->belongsToMany(Loan::class, 'loan_affiliates')->withPivot(['payment_percentage'])->whereGuarantor(true)->orderBy('loans.created_at', 'desc');
     }
 
     public function loans()
     {
-        return $this->belongsToMany(Loan::class, 'loan_affiliates')->whereGuarantor(false)->orderBy('loans.created_at', 'desc');
+        return $this->belongsToMany(Loan::class, 'loan_affiliates')->withPivot(['payment_percentage'])->whereGuarantor(false)->orderBy('loans.created_at', 'desc');
     }
 
     public function active_loans()

@@ -66,6 +66,8 @@ class AffiliateController extends Controller
     {
         $affiliate = Affiliate::findOrFail($id);
         $this->append_data($affiliate);
+        $affiliate->dead = $affiliate->dead;
+        $affiliate->defaulted = $affiliate->defaulted;
         return $affiliate;
     }
 
@@ -124,9 +126,11 @@ class AffiliateController extends Controller
     }
 
     private function append_data($affiliate) {
-        $affiliate->picture_saved;
-        $affiliate->fingerprint_saved;
+        $affiliate->picture_saved = $affiliate->picture_saved;
+        $affiliate->fingerprint_saved = $affiliate->fingerprint_saved;
+        $affiliate->full_name = $affiliate->full_name;
     }
+
     public function PictureImageprint(Request $request, $id)
     {
         $files = [];
@@ -244,32 +248,29 @@ class AffiliateController extends Controller
             return $affiliate->unit->name;   
         }return [];
     }
-    public function last_three_loans($affiliate_id){
-        $affiliate = Affiliate::find($affiliate_id);
-        $loans_affiliates=$affiliate->loans;
-        if(count($loans_affiliates)<=3){
-            return $loans_affiliates;
-        }else{
-            $c=0; $loans=[];
-            while($c<3){ 
-                $loans[$c]=$loans_affiliates[$c]; 
-                $c++; 
-            }
-            return $loans;
-        }
-    }
-    public function get_state($affiliate_id)
+
+    public function get_loans(Request $request, $id)
     {
-        $affiliate=Affiliate::find($affiliate_id);
-        if($affiliate->affiliate_state_id!=null){
-            $state=$affiliate->affiliate_state;
-            $state_type= $affiliate->affiliate_state->affiliate_state_type()->first();
-            return [
-                'state'=>$state,
-                'state_type'=>$state_type
-            ];  
-        }return [];
+        $affiliate = Affiliate::findOrFail($id);
+        $type = filter_var($request->guarantor, FILTER_VALIDATE_BOOLEAN) ? 'guarantors' : 'lenders';
+        $filters[$type] = [
+            'affiliate_id' => $affiliate->id
+        ];
+        if ($request->has('state')) {
+            $filters['state'] = [
+                'id' => $request->state
+            ];
+        }
+        return Util::search_sort(new Loan(), $request, [], $filters, ['id']);
     }
+
+    public function get_state($id)
+    {
+        $affiliate = Affiliate::findOrFail($id);
+        if ($affiliate->affiliate_state) $affiliate->affiliate_state->affiliate_state_type;
+        return response()->json($affiliate->affiliate_state);
+    }
+
     public function verify_guarantor(Request $request,$affiliate_id){
         //$ballots=[200]; $bonuses=[24]; $new_quota=100;
         $affiliate=Affiliate::find($affiliate_id)->active_guarantees();$sum_quota=0;$state = false;

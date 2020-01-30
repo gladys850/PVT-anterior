@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 
 APP_ENV=$(grep APP_ENV .env | cut -d '=' -f2)
 PROD="production"

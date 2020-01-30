@@ -34,8 +34,7 @@ Route::group([
     // City
     Route::resource('city', 'Api\V1\CityController')->only(['index']);
     // state
-    Route::resource('affiliateState', 'Api\V1\AffiliateStateController')->only(['index']);
-    Route::get('AffiliateState/{id}/affiliateStateType', 'Api\V1\AffiliateStateController@get_affiliateStateType');
+    Route::resource('affiliate_state', 'Api\V1\AffiliateStateController')->only(['index']);
     // Degree
     Route::resource('degree', 'Api\V1\DegreeController')->only(['index']);
     //pension Entity
@@ -58,8 +57,8 @@ Route::group([
     Route::resource('loan', 'Api\V1\LoanController')->only(['store']);
     Route::resource('loan', 'Api\V1\LoanController')->only(['destroy']);
     Route::resource('loan', 'Api\V1\LoanController')->only(['update']);
-    //last_three_loans
-    Route::get('affiliate/{id}/last_three_loans','Api\V1\AffiliateController@last_three_loans');
+    //affiliate lender loans
+    Route::get('affiliate/{id}/loans','Api\V1\AffiliateController@get_loans');
     //verify if an affiliate can be guarantor
     Route::get('affiliate/{id}/verify_guarantor','Api\V1\AffiliateController@verify_guarantor');
     //list of requirements for registered loans
@@ -68,17 +67,21 @@ Route::group([
     Route::get('loan/{loan_id}/submitted_documents', 'Api\V1\LoanController@submitted_documents');
     //get requirements according to modality
     Route::get('procedure_modality/{modality_id}/requirements_loan', 'Api\V1\ProcedureModalityController@list_requirements_loan');
-    Route::get('affiliate/{id}/get_contributions/{limit}', 'Api\V1\AffiliateController@get_contributions');
+    Route::get('affiliate/{id}/contribution/{limit}', 'Api\V1\AffiliateController@get_contributions');
     // collect the latest bonuses from the last ballot
     Route::get('affiliate/{id}/collect_last_bonus','Api\V1\AffiliateController@last_bonuses_ballot');
     // verify cpop 
     Route::get('affiliate/{id}/cpop','Api\V1\AffiliateController@cpop');
+    //LoanIntervals
+    Route::resource('loan_interval', 'Api\V1\LoanIntervalController')->only(['index']);
     // With credentials
     Route::group([
-        'middleware' => 'jwt.auth'
+        'middleware' => 'auth'
     ], function () {
         // Logout and refresh token
-        Route::resource('auth', 'Api\V1\AuthController')->only(['show', 'update', 'destroy']);
+        Route::resource('auth', 'Api\V1\AuthController')->only(['index']);
+        Route::delete('auth', 'Api\V1\AuthController@logout');
+        Route::patch('auth', 'Api\V1\AuthController@refresh');
         Route::group([ 'middleware' => 'permission:show-affiliate' ], function () {
             Route::resource('affiliate', 'Api\V1\AffiliateController')->only(['index']);
         });

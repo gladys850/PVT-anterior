@@ -1,6 +1,7 @@
 import moment from 'moment'
 import jwt from 'jsonwebtoken'
 import VuexPersistence from 'vuex-persist'
+import router from '@/plugins/router'
 
 const vuexLocal = new VuexPersistence({
   key: 'pvt',
@@ -11,15 +12,15 @@ export default {
   state: {
     id: null,
     user: null,
+    username: null,
+    cityId: null,
     roles: [],
     permissions: [],
     ldapAuth: JSON.parse(process.env.MIX_LDAP_AUTHENTICATION),
     dateNow: moment().format('Y-MM-DD'),
-    token: {
-      type: null,
-      value: null,
-      expiration: null
-    },
+    tokenType: localStorage.getItem('token_type') || null,
+    accessToken: localStorage.getItem('access_token') || null,
+    tokenExpiration: localStorage.getItem('token_expiration') || null,
     breadcrumbs: []
   },
   getters: {
@@ -32,6 +33,12 @@ export default {
     user(state) {
       return state.user
     },
+    username(state) {
+      return state.username
+    },
+    cityId(state) {
+      return state.cityId
+    },
     roles(state) {
       return state.roles
     },
@@ -41,12 +48,18 @@ export default {
     dateNow(state) {
       return state.dateNow
     },
-    token(state) {
-      return state.token
+    tokenType(state) {
+      return state.tokenType
+    },
+    accessToken(state) {
+      return state.accessToken
+    },
+    tokenExpiration(state) {
+      return state.tokenExpiration
     },
     tokenExpired(state) {
-      if (state.token.expiration) {
-        return moment().isAfter(state.token.expiration)
+      if (state.tokenExpiration) {
+        return moment().isAfter(state.tokenExpiration)
       }
     },
     breadcrumbs(state) {
@@ -57,36 +70,37 @@ export default {
     logout(state) {
       state.id = null
       state.user = null
+      state.username = null
+      state.cityId = null
       state.roles = []
       state.permissions = []
-      state.token = {
-        type: null,
-        value: null,
-        expiration: null
-      }
+      state.tokenType = null
+      state.accessToken = null
+      state.tokenExpiration = null
     },
     login(state, data) {
       state.id = data.id
       state.user = data.user
+      state.username = data.username
+      state.cityId = data.city_id
       state.roles = data.roles
       state.permissions = data.permissions
-      state.token = {
-        type: data.token_type,
-        value: data.token,
-        expiration: data.exp
-      }
-      axios.defaults.headers.common['Authorization'] = `${data.token_type} ${data.token}`
+      state.accessToken = data.access_token
+      state.tokenType = data.token_type
+      state.tokenExpiration = data.exp
+      axios.defaults.headers.common['Authorization'] = `${data.token_type} ${data.access_token}`
+      router.go({
+        name: 'dashboard'
+      })
     },
     setDate(state, newValue) {
       state.dateNow = newValue
     },
     refreshToken(state, data) {
-      state.token = {
-        type: data.token_type,
-        value: data.token,
-        expiration: moment.unix(jwt.decode(data.token).exp).format()
-      }
-      axios.defaults.headers.common['Authorization'] = `${data.token_type} ${data.token}`
+      state.accessToken = data.access_token
+      state.tokenType = data.token_type
+      state.tokenExpiration = moment.unix(jwt.decode(data.access_token).exp).format()
+      axios.defaults.headers.common['Authorization'] = `${data.token_type} ${data.access_token}`
     },
     setBreadcrumbs(state, data) {
       state.breadcrumbs = data
@@ -100,12 +114,12 @@ export default {
       context.commit('logout')
     },
     login({ commit }, data) {
-      const payload = jwt.decode(data.token)
+      const payload = jwt.decode(data.access_token)
       commit('login', Object.assign({ ...data, ...payload }, { exp: moment.unix(payload.exp).format() }))
     },
     async refresh({ commit, state }) {
       try {
-        const expiration = moment(state.token.expiration)
+        const expiration = moment(state.tokenExpiration)
         const now = moment()
         if (now.isAfter(expiration.clone().subtract(JSON.parse(process.env.MIX_JWT_TTL)/10, 'minutes')) && expiration.isAfter(now)) {
           const res = await axios.patch(`auth/${state.id}`)

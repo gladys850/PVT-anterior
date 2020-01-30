@@ -70,9 +70,26 @@ class Util
         return number_format($value, 2, ',', '.');
     }
 
-    public static function search_sort($model, $request, $filter = [])
+    public static function search_sort($model, $request, $filter = [], $relations = [], $pivot = [])
     {
         $query = $model::query();
+        if (count($relations) > 0) {
+            foreach ($relations as $relation => $constraints) {
+                if (count($pivot) > 0) {
+                    $query = $query->with([$relation => function ($q) use ($pivot) {
+                        $q->select($pivot);
+                    }]);
+                }
+                if (count($constraints) > 0) {
+                    $query = $query->whereHas($relation, function($q) use ($constraints) {
+                        foreach ($constraints as $column => $constraint) {
+                            $q->where($column, $constraint);
+                        }
+                        return $q;
+                    });
+                }
+            }
+        }
         foreach ($filter as $column => $value) {
             if ($request->has($column)) {
                 $query = $query->where($column, '=', $value);
