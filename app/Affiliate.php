@@ -13,8 +13,8 @@ class Affiliate extends Model
     use Traits\RelationshipsTrait;
 
     public $relationships = ['City', 'AffiliateState'];
-    protected $appends = ['picture_saved', 'fingerprint_saved', 'full_name'];
-    protected $hidden = ['pivot'];
+    // protected $appends = ['picture_saved', 'fingerprint_saved', 'full_name'];
+    // protected $hidden = ['pivot'];
     protected $fillable = [
         'user_id',
         'affiliate_state_id',
@@ -138,12 +138,12 @@ class Affiliate extends Model
 
     public function guarantees()
     {
-        return $this->belongsToMany(Loan::class, 'loan_affiliates')->whereGuarantor(true)->orderBy('loans.created_at', 'desc');
+        return $this->belongsToMany(Loan::class, 'loan_affiliates')->withPivot(['payment_porcentage'])->whereGuarantor(true)->orderBy('loans.created_at', 'desc');
     }
 
     public function loans()
     {
-        return $this->belongsToMany(Loan::class, 'loan_affiliates')->whereGuarantor(false)->orderBy('loans.created_at', 'desc');
+        return $this->belongsToMany(Loan::class, 'loan_affiliates')->withPivot(['payment_porcentage'])->whereGuarantor(false)->orderBy('loans.created_at', 'desc');
     }
 
     public function active_loans()

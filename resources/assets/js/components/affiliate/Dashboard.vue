@@ -204,8 +204,14 @@ export default {
     async getLoan(id) {
       try {
         this.loading = true
-        let res = await axios.get(`affiliate/${1}/last_three_loans`)
-        this.loan = res.data
+        let res = await axios.get(`affiliate/${1}/lender`, {
+          params: {
+            sortBy: ['request_date'],
+            sortDesc: [true],
+            per_page: 3
+          }
+        })
+        this.loan = res.data.data
         let num= this.loan.length
         if(num==3){
           this.loan_one=((this.loan[0].balance*100)/this.loan[0].amount_disbursement).toFixed(2)

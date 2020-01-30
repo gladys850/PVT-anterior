@@ -12,7 +12,7 @@ class Loan extends Model
 
     protected $appends = ['balance', 'estimated_quota', 'defaulted'];
     public $timestamps = true;
-    protected $hidden = ['pivot'];
+    // protected $hidden = ['pivot'];
     public $guarded = ['id'];
     public $fillable = [
         'code',
@@ -33,7 +33,8 @@ class Loan extends Model
         'disbursement_type_id',
         'modification_date',
         
-	];
+    ];
+
     public function state()
     {
       return $this->belongsTo(LoanState::class, 'loan_state_id','id');
@@ -49,12 +50,12 @@ class Loan extends Model
 
     public function guarantors()
     {
-        return $this->belongsToMany(Affiliate::class, 'loan_affiliates')->whereGuarantor(true);
+        return $this->belongsToMany(Affiliate::class, 'loan_affiliates')->withPivot(['payment_porcentage'])->whereGuarantor(true);
     }
 
     public function lenders()
     {
-        return $this->belongsToMany(Affiliate::class, 'loan_affiliates')->whereGuarantor(false);
+        return $this->belongsToMany(Affiliate::class, 'loan_affiliates')->withPivot(['payment_porcentage'])->whereGuarantor(false);
     }
     public function loan_affiliates()
     {

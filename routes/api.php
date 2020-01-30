@@ -57,8 +57,8 @@ Route::group([
     Route::resource('loan', 'Api\V1\LoanController')->only(['store']);
     Route::resource('loan', 'Api\V1\LoanController')->only(['destroy']);
     Route::resource('loan', 'Api\V1\LoanController')->only(['update']);
-    //last_three_loans
-    Route::get('affiliate/{id}/last_three_loans','Api\V1\AffiliateController@last_three_loans');
+    //affiliate lender loans
+    Route::get('affiliate/{id}/loans','Api\V1\AffiliateController@get_loans');
     //verify if an affiliate can be guarantor
     Route::get('affiliate/{id}/verify_guarantor','Api\V1\AffiliateController@verify_guarantor');
     //list of requirements for registered loans

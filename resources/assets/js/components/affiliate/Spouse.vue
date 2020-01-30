@@ -339,8 +339,7 @@ export default {
     }
   }),
   beforeMount() {
-    this.getCities();
-    console.log(this.spouse);
+    this.getCities()
   },
   watch: {
     'spouse.birth_date': function(date) {
