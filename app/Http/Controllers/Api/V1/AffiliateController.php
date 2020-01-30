@@ -66,6 +66,8 @@ class AffiliateController extends Controller
     {
         $affiliate = Affiliate::findOrFail($id);
         $this->append_data($affiliate);
+        $affiliate->dead = $affiliate->dead;
+        $affiliate->defaulted = $affiliate->defaulted;
         return $affiliate;
     }
 
@@ -128,6 +130,7 @@ class AffiliateController extends Controller
         $affiliate->fingerprint_saved = $affiliate->fingerprint_saved;
         $affiliate->full_name = $affiliate->full_name;
     }
+
     public function PictureImageprint(Request $request, $id)
     {
         $files = [];
