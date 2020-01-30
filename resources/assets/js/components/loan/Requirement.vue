@@ -51,7 +51,9 @@
   </v-container>
 </template>
 <script>
+import { Validator } from 'vee-validate'
 export default {
+inject: ['$validator'],
 name: "loan-requirement",
 data: () => ({
   boletas: [null,null,null],

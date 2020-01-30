@@ -89,7 +89,9 @@
   </v-flex>
 </template>
 <script>
+import { Validator } from 'vee-validate'
 export default {
+  inject: ['$validator'],
   name: "dashboard-index",
   data: () => ({
     boletas: [null,null,null],
