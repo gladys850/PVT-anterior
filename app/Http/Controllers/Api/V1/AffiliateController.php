@@ -124,8 +124,9 @@ class AffiliateController extends Controller
     }
 
     private function append_data($affiliate) {
-        $affiliate->picture_saved;
-        $affiliate->fingerprint_saved;
+        $affiliate->picture_saved = $affiliate->picture_saved;
+        $affiliate->fingerprint_saved = $affiliate->fingerprint_saved;
+        $affiliate->full_name = $affiliate->full_name;
     }
     public function PictureImageprint(Request $request, $id)
     {
@@ -244,19 +245,20 @@ class AffiliateController extends Controller
             return $affiliate->unit->name;   
         }return [];
     }
-    public function last_three_loans($affiliate_id){
-        $affiliate = Affiliate::find($affiliate_id);
-        $loans_affiliates=$affiliate->loans;
-        if(count($loans_affiliates)<=3){
-            return $loans_affiliates;
-        }else{
-            $c=0; $loans=[];
-            while($c<3){ 
-                $loans[$c]=$loans_affiliates[$c]; 
-                $c++; 
-            }
-            return $loans;
+
+    public function get_loans(Request $request, $id)
+    {
+        $affiliate = Affiliate::findOrFail($id);
+        $type = filter_var($request->guarantor, FILTER_VALIDATE_BOOLEAN) ? 'guarantors' : 'lenders';
+        $filters[$type] = [
+            'affiliate_id' => $affiliate->id
+        ];
+        if ($request->has('state')) {
+            $filters['state'] = [
+                'id' => $request->state
+            ];
         }
+        return Util::search_sort(new Loan(), $request, [], $filters, ['id']);
     }
 
     public function get_state($id)
