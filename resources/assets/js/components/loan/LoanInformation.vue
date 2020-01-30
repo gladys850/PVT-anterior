@@ -6,13 +6,22 @@
         <v-container class="py-0">
           <v-row>
             <v-col cols="12" md="4" class="py-0">
+              Modalidad Prestamo
+            </v-col>
+            <v-col cols="12" md="4" class="py-0">
               Monto Solicitado
             </v-col>
             <v-col cols="12" md="4" class="py-0">
               Plazo Meses
             </v-col>
             <v-col cols="12" md="4" class="py-0">
-              Modalidad Prestamo
+              <v-select
+                dense
+                data-vv-name="modalities"
+                :items="modalities"
+                item-text="name"
+                item-value="value"
+              ></v-select>
             </v-col>
             <v-col cols="12" md="4" class="py-0">
               <v-text-field
@@ -29,15 +38,6 @@
                 :error-messages="errors.collect('plazo')"
                 data-vv-name="plazo"
               ></v-text-field>
-            </v-col>
-            <v-col cols="12" md="4" class="py-0">
-              <v-select
-                dense
-                data-vv-name="modalities"
-                :items="modalities"
-                item-text="name"
-                item-value="value"
-              ></v-select>
             </v-col>
           </v-row>
         </v-container>

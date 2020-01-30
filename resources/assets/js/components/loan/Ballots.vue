@@ -5,10 +5,10 @@
         <v-card>
           <v-container class="py-0">
             <v-row>
-              <v-col cols="12" >
+              <v-col cols="12" md="9" >
                 BOLETAS DE PAGO
               </v-col>
-              <v-col cols="12" md="4" class="py-0" >
+              <v-col cols="12" md="4" class="py-0"  >
                 <v-text-field
                   dense
                   v-model="boletas[0]"
@@ -18,7 +18,7 @@
                   label="1ra Boleta"
                 ></v-text-field>
               </v-col>
-              <v-col cols="12" md="4" class="py-0" >
+              <v-col cols="12" md="4" class="py-0" v-if="visible">
                 <v-text-field
                   dense
                   v-model="boletas[1]"
@@ -28,7 +28,7 @@
                   label="2ra Boleta"
                 ></v-text-field>
               </v-col>
-              <v-col cols="12" md="4" class="py-0" >
+              <v-col cols="12" md="4" class="py-0" v-if="visible" >
                 <v-text-field
                   dense
                   v-model="boletas[3]"
@@ -81,6 +81,25 @@
                   label="Bono Seguridad Ciudadana"
                 ></v-text-field>
               </v-col>
+              <v-col cols="12" md="3" class="py-0">
+                <v-checkbox
+                  v-model="refinanciamiento"
+                  :label="`Refinanciamiento`"
+                ></v-checkbox>
+              </v-col>
+              <v-col cols="12"  md="2"  v-if="refinanciamiento==true" >
+                CUOTA MUSERPOL
+              </v-col>
+              <v-col cols="12" md="2" class="py-0" v-if="refinanciamiento==true">
+                <v-text-field
+                  dense
+                  outlined
+                  v-model="muserpol"
+                  v-validate.initial="'min:1|max:20'"
+                  :error-messages="errors.collect('muserpol')"
+                  data-vv-name="muserpol"
+                ></v-text-field>
+              </v-col>
             </v-row>
           </v-container>
         </v-card>
@@ -99,6 +118,9 @@ export default {
     plazo_meses : 24,
     monto_solicitado : null,
     loanTypeSelected:null,
+    visible: true,
+    refinanciamiento: false,
+    muserpol: null,
   }),
   watch: {
     monto_solicitado() {

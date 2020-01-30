@@ -1,11 +1,30 @@
 <template>
   <v-container fluid>
     <v-card>
+      <v-row justify="center">
+        <v-col cols="12"  >
+          <v-container class="py-0">
+            <v-row>
+              <v-col cols="12" class="py-0">
+                REQUISITOS PARA CORTO PLAZO PASIVO
+              </v-col>
+            </v-row>
+          </v-container>
+        </v-col>
+      </v-row>
       <v-card-text>
+         <v-row justify="center">
+        <v-col cols="12"  >
+          <v-container class="py-0">
+            <v-row>
+              <v-col cols="12" md="8" class="py-0">
+                1.-Comprobante de depósito bancario de Bs.- 15,00 por concepto de adquisición de folder y formularios, en la cuenta fiscal de la MUSERPOL.
+              </v-col>
+            </v-row>
+          </v-container>
+        </v-col>
+      </v-row>
         <v-layout row wrap>
-          <v-flex xs9 class="px-2">
-            <fieldset class="pa-3">
-              <legend class=" mx-2 px-1">REQUISITOS</legend>
               <p>1.-Comprobante de depósito bancario de Bs.- 15,00 por concepto de adquisición de folder y formularios, en la cuenta fiscal de la MUSERPOL.</p>
               <p>2.-Comprobante de depósito bancario de Bs.- 15,00 por concepto de adquisición de folder y formularios, en la cuenta fiscal de la MUSERPOL.</p>
               <p>3.-Comprobante de depósito bancario de Bs.- 15,00 por concepto de adquisición de folder y formularios, en la cuenta fiscal de la MUSERPOL.</p>
@@ -14,42 +33,66 @@
               <p>6.-Comprobante de depósito bancario de Bs.- 15,00 por concepto de adquisición de folder y formularios, en la cuenta fiscal de la MUSERPOL.</p>
               <p>7.-Comprobante de depósito bancario de Bs.- 15,00 por concepto de adquisición de folder y formularios, en la cuenta fiscal de la MUSERPOL.</p>
               <p>8.-Comprobante de depósito bancario de Bs.- 15,00 por concepto de adquisición de folder y formularios, en la cuenta fiscal de la MUSERPOL.</p>
-            </fieldset>
-          </v-flex>
-          <v-flex xs3 class="px-2">
-            <fieldset class="pa-3">
-              <legend class=" mx-2 px-1">Datos del Préstamo</legend>
-                <v-text-field
-                label="Plazo en Meses"
-                v-model="plazo_meses"
-                v-validate.initial="`required|numeric|min_value:1|max_value:36`"
-                :error-messages="errors.collect('plazo')"
-                data-vv-name="plazo"
-                ></v-text-field>
-                <v-text-field
-                label="Monto Maximo Sugerido"
-                v-model ="monto_solicitado"
-                v-validate.initial="`required|numeric|min_value:2001|max_value:25000`"
-                :error-messages="errors.collect('monto_solicitado')"
-                data-vv-name="monto_solicitado"
-                ></v-text-field>
-            </fieldset>
-            <fieldset class="pa-3">
-              <legend class=" mx-2 px-1">Cálculo</legend>
-              <p>PROMEDIO LIQUIDO PAGABLE:  {{ promedio }}</p>
-              <p>TOTAL BONOS: {{ suma_bono }}</p>
-              <p>LIQUIDO PARA CALIFICACION: {{ promedio-suma_bono }}</p>
-              <p>CALCULO DE CUOTA: {{ calcular_cuota }}</p>
-              <p>INDICE DE ENDEUDAMIENTO: {{ promedio>0 ? (calcular_cuota/(promedio-suma_bono)*100 ): 0 }}</p>
-              <p class="red--text">{{ promedio>0 ? (calcular_cuota/(promedio-suma_bono)*100)>50 ? "(LA CUOTA NO PUEDE SER MAYOR AL 50 % )" :"" : "" }}</p>
-              <p>MONTO MAXIMO SUGERIDO : {{monto_maximo}}</p>
-            </fieldset>
-          </v-flex>
+       
+        
         </v-layout>
+
+         <v-container fluid>
+    <v-data-iterator
+      :items="items"
+      :items-per-page.sync="itemsPerPage"
+      hide-default-footer
+    >
+      <template v-slot:header>
+        <v-toolbar
+          class="mb-2"
+          color="indigo darken-5"
+          dark
+          flat
+        >
+          <v-toolbar-title> REQUISITOS PARA CORTO PLAZO PASIVO</v-toolbar-title>
+        </v-toolbar>
+      </template>
+
+      <template v-slot:default="props">
+        <v-row>
+          <v-col
+            v-for="item in props.items"
+            :key="item.name"
+            cols="12"
+            sm="6"
+            md="4"
+            lg="3"
+          >
+            <v-card>
+              <v-card-title class="subheading font-weight-bold">{{item.name   }}</v-card-title>
+
+              <v-divider></v-divider>
+
+              <v-list dense>
+                <v-list-item>
+                  <v-list-item-content>Calories:</v-list-item-content>
+                  <v-list-item-content class="align-end">{{item.name  }}</v-list-item-content>
+                </v-list-item>
+              </v-list>
+            </v-card>
+          </v-col>
+        </v-row>
+      </template>
+    </v-data-iterator>
+  </v-container>
+
+
+
+
       </v-card-text>
     </v-card>
   </v-container>
+  
 </template>
+
+ 
+
 <script>
 import { Validator } from 'vee-validate'
 export default {
@@ -61,6 +104,35 @@ data: () => ({
   plazo_meses : 24,
   monto_solicitado : null,
   loanTypeSelected:null,
+  item:[
+    {
+      name:'3 ultimas boletas de pago con renta en AFP original',
+    },
+    {
+      name:'3 ultimas boletas de pago con renta en SENASIR original',
+    },
+    {
+      name:'Aceptación de Herencia del (la) hermano(a) ante el fallecimiento del (la) titular en copia legalizada emitida por autoridad competente.',
+    },
+    {
+      name:'Aceptación de Herencia del (la) hermano(a) ante el fallecimiento del (la) titular en original emitida por autoridad competente.',
+    },
+    {
+      name:'Boleta de pago en copia simple.',
+    },
+    {
+      name:'Certificación de baja definitiva en original.',
+    },
+    {
+      name:'Certificación Auxilio Mortuorio',
+    },
+    {
+      name:'Certificación de salud en copia legalizada emitida por la Dirección Nacional de Salud y Bienestar Social de la Policía Boliviana.',
+    },
+    {
+      name:'Certificado de años de servicio desglosado en fotocopia Legalizada emitido por el Comando General de la Policía Boliviana',
+    },
+  ],
 }),
 watch: {
   monto_solicitado() {
