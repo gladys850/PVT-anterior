@@ -82,7 +82,7 @@ export default {
       state.id = data.id
       state.user = data.user
       state.username = data.username
-      state.cityId = data.username
+      state.cityId = data.city_id
       state.roles = data.roles
       state.permissions = data.permissions
       state.accessToken = data.access_token
