@@ -28,7 +28,7 @@
                     <div>
                       <span>Añadir Direccion</span>
                     </div>
-                    <div v-if="grabado">
+                    <div >
                       <v-text-field disabled>{{updateTelefono()}} </v-text-field>
                     </div>
                   </v-tooltip>
@@ -137,7 +137,9 @@
 <script>
 import RemoveItem from '@/components/shared/RemoveItem'
 import AddStreet from '@/components/affiliate/AddStreet'
+import { Validator } from 'vee-validate'
   export default {
+  inject: ['$validator'],
   name: "affiliate-personalInformation",
   props: {
     affiliate: {
