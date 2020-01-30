@@ -246,7 +246,7 @@ export default {
     async getAffiliateState() {
     try {
       this.loading = true
-      let res = await axios.get(`affiliateState`);
+      let res = await axios.get(`affiliate_state`);
       this.affiliateState = res.data;
     } catch (e) {
       this.dialog = false;

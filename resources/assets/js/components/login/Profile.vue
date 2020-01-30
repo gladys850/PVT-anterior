@@ -15,7 +15,7 @@
                 <td class="text-left">{{ $store.getters.user }}</td>
                 <td class="font-weight-black text-end pr-5">Roles:</td>
                 <td class="text-left">{{ $store.getters.roles.join(', ') }}</td>
-                <td v-if="!$store.getters.ldapAuth || $store.getters.user == 'admin'">
+                <td v-if="!$store.getters.ldapAuth || $store.getters.username == 'admin'">
                   <ChangePassword/>
                 </td>
               </tr>

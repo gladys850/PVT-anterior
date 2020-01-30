@@ -50,7 +50,11 @@ class User extends Authenticatable implements JWTSubject
     {
         return [
             'id' => $this->id,
-            'user' => $this->username
+            'username' => $this->username,
+            'user' => $this->full_name,
+            'roles' => array_values(array_filter($this->roles()->pluck('name')->toArray())),
+            'permissions' => array_values(array_filter($this->allPermissions()->pluck('name')->toArray())),
+            'city_id' => $this->city
         ];
     }
 

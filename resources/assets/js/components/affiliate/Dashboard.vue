@@ -234,8 +234,8 @@ export default {
         this.loading = true
         let res = await axios.get(`affiliate/${id}/state`)
         this.state_name = res.data
-        this.state_name_type = this.state_name.state_type.name
-        this.state_name_status=this.state_name.state.name
+        this.state_name_type = this.state_name.affiliate_state_type.name
+        this.state_name_status=this.state_name.name
       } catch (e) {
         console.log(e)
       } finally {
