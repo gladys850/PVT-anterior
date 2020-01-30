@@ -25,13 +25,14 @@ class LoanSeeder extends Seeder
                 // ANTICIPO SECTOR ACTIVO 
                 ['name'=>'Anticipo sector activo','shortened'=>'ANT-SA','requirements'=>[
                   ['name' => 'Cédula de Identidad del (la) titular en copia simple.','number'=>1],
-                  ['name' => 'Boleta de pago en copia simple.','number'=>2],  
-                  ['name' => 'Certificado de haberes considerando el último mes percibido.','number'=>2],  // En caso de no contar con la boleta de pago      
-                  ['name' => 'Estado de cuenta original, vigente y emitido por el Banco Unión S.A.','number'=>3], // Nuevo
+                  ['name' => 'Estado de cuenta original, vigente y emitido por el Banco Unión S.A.','number'=>2], // Nuevo
                   /*Estos documentos son solicitados por MUSERPOL en caso de ser requeridos*/
+                  ['name' => 'Boleta de pago en copia simple.','number'=>0],  
+                  ['name' => 'Certificado de haberes considerando el último mes percibido.','number'=>0],  // En caso de no contar con la boleta de pago      
                   ['name' => 'Solicitud de aclaración de datos personales en la Boleta de Pago.','number'=>0],  // En caso de que el afiliado tenga datos erroneos en su boleta de pago
                   ['name' => 'Certificado de no adeudo, emitido por la instancia correspondiente.','number'=>0],  // en caso de que el afiliado haya tenido deudas de otras entidades (Ej: COMIPOL , COVIPOL)
                   ['name' => 'Certificado de pago emitido por la entidad correspondiente.','number'=>0],  // en caso de que el afiliado tenga deudas con otras entidades (Ej: COMIPOL , COVIPOL)
+                  ['name' => 'Conformidad de devolucion de descuento por garantia original o fotocopia legalizada.','number'=>0],
                 ]],
                     // ANTICIPO SECTOR PASIVO Y VIUDAS
                 ['name'=>'Anticipo sector pasivo','shortened'=>'ANT-SP','requirements'=>[
@@ -39,15 +40,15 @@ class LoanSeeder extends Seeder
                   ['name' => 'Boleta de renta de jubilación en copia simple.','number'=>2],// Nuevo
                   ['name' => 'Ultima boleta de pago con renta en SENASIR original','number'=>2], //Nuevo *caso pasivo con renta de SENASIR, quien solicita el préstamo
                   ['name' => 'Ultima boleta de pago con renta en AFP original','number'=>2],      //Nuevo *caso pasivo con renta en AFP , quien solicita el préstamo
-                  ['name' => 'Certificado de haberes con siderando el último mes percibido.','number'=>2],  // En caso de no contar con la boleta de pago
+                  ['name' => 'Certificado de haberes considerando el último mes percibido.','number'=>2],  // En caso de no contar con la boleta de pago
                   ['name' => 'Estado de cuenta original, vigente y emitido por el Banco Unión S.A.','number'=>3], // Nuevo
                   /*Estos documentos son solicitados por MUSERPOL en caso de ser requeridos*/
-                  ['name' =>'Solicitud de aclaración de datos personales en la Boleta de Pago.','number'=>0],  // En caso de que el afiliado tenga datos erroneos en su boleta de pago  
+                  ['name' => 'Solicitud de aclaración de datos personales en la Boleta de Pago.','number'=>0],  // En caso de que el afiliado tenga datos erroneos en su boleta de pago  
                   ['name' => 'Certificado de no adeudo, emitido por la instancia correspondiente.','number'=>0],  // en caso de que el afiliado haya tenido deudas de otras entidades (Ej: COMIPOL , COVIPOL)
-                  ['name' => 'certificado de pago emitido por la entidad correspondiente.','number'=>0],  // en caso de que el afiliado tenga deudas con otras entidades (Ej: COMIPOL , COVIPOL) 
+                  ['name' => 'Certificado de pago emitido por la entidad correspondiente.','number'=>0],  // en caso de que el afiliado tenga deudas con otras entidades (Ej: COMIPOL , COVIPOL) 
                   ['name' => 'Certificado de aportes para el Auxilio Mortuorio','number'=>0],  // *caso pasivo con renta en AFP , quien solicita el préstamo
-                  ['name' => 'Memorándum de agradecimiento de servicios en copia simple emitido por el Comando General de la Policía Boliviana.o','number'=>0],  // *caso pasivo con renta en AFP , quien solicita el préstamo
-
+                  ['name' => 'Memorándum de agradecimiento de servicios en copia simple emitido por el Comando General de la Policía Boliviana.','number'=>0],  // *caso pasivo con renta en AFP , quien solicita el préstamo
+                  ['name' => 'Conformidad de devolucion de descuento por garantia original o fotocopia legalizada.','number'=>0],
                 ]],
             ]
           ],

@@ -88,27 +88,7 @@ class LoanController extends Controller
         $loan->delete();
         return $loan;
     }
-    public function switch_states()
-    {
-        $amortizing_state = LoanState::whereName('Amortizando')->first();
-        $defaulted_state = LoanState::whereName('Mora')->first();
 
-        // Switch amortizing loans to defaulted
-        $amortizing_loans = Loan::whereLoanStateId($amortizing_state->id)->get();
-        foreach ($amortizing_loans as $loan) {
-            if ($loan->defaulted) {
-                $loan->update('loan_state_id', $defaulted_state->id);
-            }
-        }
-
-        // Switch defaulted loans to amortizing
-        $defaulted_loans = Loan::whereLoanStateId($defaulted_state->id)->get();
-        foreach ($defaulted_loans as $loan) {
-            if (!$loan->defaulted) {
-                $loan->update('loan_state_id', $amortizing_state->id);
-            }
-        }
-    }
     //obtener lista de requisitos teniendo registrado un prestamo con una modalidad registrada
     public function list_requirements($loan_id){
        $loan=Loan::find($loan_id) ; 
