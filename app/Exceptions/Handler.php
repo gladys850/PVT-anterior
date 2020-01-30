@@ -9,6 +9,7 @@ use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Auth\AuthenticationException;
 
 class Handler extends ExceptionHandler
 {
@@ -54,7 +55,14 @@ class Handler extends ExceptionHandler
         $message = $exception->getMessage();
         if (empty($message)) $message = null;
 
-		if ($exception instanceof ModelNotFoundException or $exception instanceof NotFoundHttpException) {
+        if ($exception instanceof AuthenticationException) {
+            return response()->json([
+                'message' => 'Unauthenticated',
+				'errors' => [
+					'type' => ['No autorizado para el recurso'],
+				]
+            ], 401);
+        } elseif ($exception instanceof ModelNotFoundException or $exception instanceof NotFoundHttpException) {
 			return response()->json([
 				'message' => 'Data not found',
 				'errors' => [

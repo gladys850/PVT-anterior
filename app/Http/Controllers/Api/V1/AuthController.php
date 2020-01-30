@@ -17,6 +17,18 @@ use Ldap;
 
 class AuthController extends Controller
 {
+   /**
+   * Get the authenticated User.
+   *
+   * Login, return a JsonWebToken to request as "Bearer" Authorization header
+   *
+   * @return \Illuminate\Http\JsonResponse
+   */
+  public function index()
+  {
+    return response()->json(Auth::user());
+  }
+
   /**
    * Get a JWT via given credentials.
    *
@@ -59,13 +71,7 @@ class AuthController extends Controller
     }
     if ($token) {
       \Log::info("Usuario ".Auth::user()->username." autenticado desde la dirección ".request()->ip());
-      return response()->json([
-        'message' => 'Authenticated successfully',
-        'token' => $token,
-        'token_type' => 'Bearer',
-        'roles' => array_values(array_filter(Auth::user()->roles()->pluck('name')->toArray())),
-        'permissions' => array_values(array_filter(Auth::user()->allPermissions()->pluck('name')->toArray()))
-      ], 200);
+      return $token;
     }
     return response()->json([
       'message' => 'No autorizado',
@@ -76,23 +82,11 @@ class AuthController extends Controller
   }
 
   /**
-   * Get the authenticated User.
-   *
-   * Login, return a JsonWebToken to request as "Bearer" Authorization header
-   *
-   * @return \Illuminate\Http\JsonResponse
-   */
-  public function show()
-  {
-    return response()->json(Auth::user());
-  }
-
-  /**
    * Log the user out (Invalidate the token).
    *
    * @return \Illuminate\Http\JsonResponse
    */
-  public function destroy()
+  public function logout()
   {
     Auth::logout();
     return response()->json([
@@ -105,13 +99,9 @@ class AuthController extends Controller
    *
    * @return \Illuminate\Http\JsonResponse
    */
-  public function update()
+  public function refresh()
   {
-    return response()->json([
-      'message' => 'Token refreshed',
-      'token' => Auth::refresh(),
-      'token_type' => 'Bearer'
-    ], 200);
+    return Auth::refresh();
   }
 
   public function guard()

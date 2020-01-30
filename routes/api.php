@@ -34,8 +34,7 @@ Route::group([
     // City
     Route::resource('city', 'Api\V1\CityController')->only(['index']);
     // state
-    Route::resource('affiliateState', 'Api\V1\AffiliateStateController')->only(['index']);
-    Route::get('AffiliateState/{id}/affiliateStateType', 'Api\V1\AffiliateStateController@get_affiliateStateType');
+    Route::resource('affiliate_state', 'Api\V1\AffiliateStateController')->only(['index']);
     // Degree
     Route::resource('degree', 'Api\V1\DegreeController')->only(['index']);
     //pension Entity
@@ -75,10 +74,12 @@ Route::group([
     Route::get('affiliate/{id}/cpop','Api\V1\AffiliateController@cpop');
     // With credentials
     Route::group([
-        'middleware' => 'jwt.auth'
+        'middleware' => 'auth'
     ], function () {
         // Logout and refresh token
-        Route::resource('auth', 'Api\V1\AuthController')->only(['show', 'update', 'destroy']);
+        Route::resource('auth', 'Api\V1\AuthController')->only(['index']);
+        Route::delete('auth', 'Api\V1\AuthController@logout');
+        Route::patch('auth', 'Api\V1\AuthController@refresh');
         Route::group([ 'middleware' => 'permission:show-affiliate' ], function () {
             Route::resource('affiliate', 'Api\V1\AffiliateController')->only(['index']);
         });

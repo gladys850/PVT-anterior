@@ -258,18 +258,14 @@ class AffiliateController extends Controller
             return $loans;
         }
     }
-    public function get_state($affiliate_id)
+
+    public function get_state($id)
     {
-        $affiliate=Affiliate::find($affiliate_id);
-        if($affiliate->affiliate_state_id!=null){
-            $state=$affiliate->affiliate_state;
-            $state_type= $affiliate->affiliate_state->affiliate_state_type()->first();
-            return [
-                'state'=>$state,
-                'state_type'=>$state_type
-            ];  
-        }return [];
+        $affiliate = Affiliate::findOrFail($id);
+        if ($affiliate->affiliate_state) $affiliate->affiliate_state->affiliate_state_type;
+        return response()->json($affiliate->affiliate_state);
     }
+
     public function verify_guarantor(Request $request,$affiliate_id){
         //$ballots=[200]; $bonuses=[24]; $new_quota=100;
         $affiliate=Affiliate::find($affiliate_id)->active_guarantees();$sum_quota=0;$state = false;

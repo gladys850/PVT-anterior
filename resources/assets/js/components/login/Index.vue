@@ -87,10 +87,6 @@ export default {
         if (await this.$validator.validateAll()) {
           let res = await axios.post(`auth`, auth)
           this.$store.dispatch('login', res.data)
-          // this.$store.commit('login', res.data)
-          this.$router.go({
-            name: 'dashboard'
-          })
         }
       } catch (e) {
         console.log(e)
