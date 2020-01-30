@@ -71,6 +71,24 @@ class Affiliate extends Model
       return preg_replace('/[[:blank:]]+/', ' ', join(' ', [$this->first_name, $this->second_name, $this->last_name, $this->mothers_last_name]));
     }
 
+    public function getDeadAttribute()
+    {
+        return ($this->date_death != null || $this->reason_death != null || $this->death_certificate_number != null);
+    }
+
+    public function getDefaultedAttribute()
+    {
+        $loans = $this->loans()->whereHas('state', function($q) {
+            $q->where('name', 'Desembolsado ');
+        })->get()->merge($this->guarantees()->whereHas('state', function($q) {
+            $q->where('name', 'Desembolsado ');
+        })->get());
+        foreach ($loans as $loan) {
+            if ($loan->defaulted) return true;
+        }
+        return false;
+    }
+
     public function category()
     {
       return $this->belongsTo(Category::class);
