@@ -156,12 +156,12 @@ class Affiliate extends Model
 
     public function guarantees()
     {
-        return $this->belongsToMany(Loan::class, 'loan_affiliates')->withPivot(['payment_porcentage'])->whereGuarantor(true)->orderBy('loans.created_at', 'desc');
+        return $this->belongsToMany(Loan::class, 'loan_affiliates')->withPivot(['payment_percentage'])->whereGuarantor(true)->orderBy('loans.created_at', 'desc');
     }
 
     public function loans()
     {
-        return $this->belongsToMany(Loan::class, 'loan_affiliates')->withPivot(['payment_porcentage'])->whereGuarantor(false)->orderBy('loans.created_at', 'desc');
+        return $this->belongsToMany(Loan::class, 'loan_affiliates')->withPivot(['payment_percentage'])->whereGuarantor(false)->orderBy('loans.created_at', 'desc');
     }
 
     public function active_loans()
