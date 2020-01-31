@@ -91,9 +91,7 @@ class Util
             }
         }
         foreach ($filter as $column => $value) {
-            if ($request->has($column)) {
-                $query = $query->where($column, '=', $value);
-            }
+            $query = $query->where($column, '=', $value);
         }
         if ($request->has('search') || $request->has('sortBy')) {
             $columns = Schema::getColumnListing($model::getTableName());
@@ -123,7 +121,7 @@ class Util
             if (count($request->sortBy) > 0 && count($request->sortDesc) > 0) {
                 foreach ($request->sortBy as $i => $sort) {
                     if (in_array($sort, $columns))
-                    $query = $query->orderBy($sort, filter_var($request->sortDesc[$i], FILTER_VALIDATE_BOOLEAN) ? 'desc' : 'asc');
+                    $query = $query->orderBy($sort, self::get_bool($request->sortDesc[$i]) ? 'desc' : 'asc');
                 }
             }
         }
@@ -149,6 +147,11 @@ class Util
             }
         }
         return $action;
+    }
+
+    public static function get_bool($value)
+    {
+        return filter_var($value, FILTER_VALIDATE_BOOLEAN);
     }
 
     public static function concat_action($object, $message = 'editó')

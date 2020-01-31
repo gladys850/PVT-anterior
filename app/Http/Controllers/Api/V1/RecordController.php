@@ -16,8 +16,7 @@ class RecordController extends Controller
      */
     public function index(Request $request)
     {
-        $filter = [];
-        if ($request->has('user_id')) $filter = ['user_id' => $request->user_id];
+        $filter = $request->has('user_id') ? ['user_id' => $request->user_id] : [];
         $data = Util::search_sort(new Record(), $request, $filter);
         return $data;
     }
