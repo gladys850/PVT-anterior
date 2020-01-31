@@ -38,7 +38,7 @@ Route::group([
     // Degree
     Route::resource('degree', 'Api\V1\DegreeController')->only(['index']);
     //pension Entity
-    Route::resource('pensionEntity', 'Api\V1\PensionEntityController')->only(['index']);
+    Route::resource('pension_entity', 'Api\V1\PensionEntityController')->only(['index', 'show']);
     //category
     Route::resource('category', 'Api\V1\CategoryController');
     // Fingerprint

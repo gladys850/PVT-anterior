@@ -270,7 +270,7 @@ export default {
     async getPensionEntity() {
       try {
       this.loading = true
-      let res = await axios.get(`pensionEntity`);
+      let res = await axios.get(`pension_entity`);
       this.pension_entity = res.data;
     } catch (e) {
       this.dialog = false;
