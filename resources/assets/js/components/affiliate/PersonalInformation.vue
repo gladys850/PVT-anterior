@@ -5,65 +5,58 @@
         <v-container  class="ma-0 pa-0" >
           <v-card >
             <v-row  class="ma-0 pa-0">
-              <v-col cols="6" >
-                <v-toolbar-title>DOMICILIO</v-toolbar-title>
-              </v-col>
-              <v-col cols="3"  >
-                <v-tooltip top >
-                  <template v-slot:activator="{ on }">
-                    <v-btn
-                      fab
-                      dark
-                      x-small
-                      color="info"
-                      bottom
-                      right
-                      v-on="on"
-                      style="margin-right: -9px;"
-                      @click.stop="bus.$emit('openDialog', { edit: true })"
-                    >
-                      <v-icon >mdi-plus</v-icon>
-                    </v-btn>
-                  </template>
-                    <div>
-                      <span>Añadir Direccion</span>
-                    </div>
-                    <div >
-                      <v-text-field disabled>{{updateTelefono()}} </v-text-field>
-                    </div>
-                  </v-tooltip>
-              </v-col>
-              <v-col cols="12" class="ma-0 pa-0">
-                <v-data-table
-                    :headers="headers"
-                    :items="addresses"
-                    hide-default-footer
-                    class="elevation-1"
-                    v-if="cities.length > 0"
-                >
+              <v-col cols="12" md="6">
+                    <v-toolbar-title>DOMICILIO</v-toolbar-title>
+                  </v-col>
+                  <v-col cols="12" md="3">
+                    <v-tooltip top v-if="editable && permission.secondary">
+                      <template v-slot:activator="{ on }">
+                        <v-btn
+                          fab
+                          dark
+                          x-small
+                          v-on="on"
+                          color="info"
+                          @click.stop="bus.$emit('openDialog', { edit:true })"
+                        >
+                          <v-icon>mdi-plus</v-icon>
+                        </v-btn>
+                      </template>
+                      <v-text-field disabled >{{updateTelefono()}}</v-text-field>
+                      <span>Añadir Dirección</span>
+                    </v-tooltip>
+                  </v-col>
+                  <v-col cols="12">
+                  <v-data-table
+                      :headers="headers"
+                      :items="addresses"
+                      hide-default-footer
+                      class="elevation-1"
+                      v-if="cities.length > 0"
+                  >
                   <template v-slot:item="props">
-                    <tr>
-                      <td>{{ cities.find(o => o.id == props.item.city_address_id).name }}</td>
+                  <tr>
+                    <td>{{ cities.find(o => o.id == props.item.city_address_id).name }}</td>
                       <td>{{ props.item.zone }}</td>
                       <td>{{ props.item.street }}</td>
                       <td>{{ props.item.number_address }}</td>
-                      <td>
-                        <v-btn text icon color="warning" @click.stop="bus.$emit('openDialog', {...props.item, ...{edit: true}})">
+                      <td v-show="editable && permission.secondary">
+                        <v-btn text icon color="warning" @click.stop="bus.$emit('openDialog', {...props.item, ...{edit:true}})">
                           <v-icon>mdi-pencil</v-icon>
                         </v-btn>
                         <v-btn text icon color="error" @click.stop="bus.$emit('openRemoveDialog', `address/${props.item.id}`)">
                           <v-icon>mdi-delete</v-icon>
                         </v-btn>
                       </td>
-                      <td >
-                        <!--<v-btn v-if="props.item.latitude && props.item.longitude" text icon color="info" @click.stop="bus.$emit('openDialog', {...props.item, ...{edit: false}})">
+                      <td v-show="!editable">
+                        <v-btn v-if="props.item.latitude && props.item.longitude" text icon color="info" @click.stop="bus.$emit('openDialog', {...props.item, ...{edit: false}})">
                           <v-icon>mdi-google-maps</v-icon>
-                        </v-btn>-->
+                        </v-btn>
                       </td>
                     </tr>
                   </template>
-                </v-data-table>
-              </v-col>
+                  </v-data-table>
+                  </v-col>
             </v-row>
           </v-card>
         </v-container>
@@ -82,6 +75,9 @@
                 v-validate.initial="'min:1|max:20'"
                 :error-messages="errors.collect('celular1')"
                 data-vv-name="celular1"
+                :readonly="!editable || !permission.primary"
+                :outlined="editable && permission.primary"
+                :disabled="editable && !permission.primary"
               ></v-text-field>
             </v-col>
             <v-col cols="12" class="py-0" >
@@ -92,6 +88,9 @@
                 v-validate.initial="'min:1|max:20'"
                 :error-messages="errors.collect('celular')"
                 data-vv-name="celular"
+                :readonly="!editable || !permission.primary"
+                :outlined="editable && permission.primary"
+                :disabled="editable && !permission.primary"
               ></v-text-field>
             </v-col>
             <v-col cols="12" class="py-0" >
@@ -102,31 +101,57 @@
                 v-validate.initial="'min:1|max:20'"
                 :error-messages="errors.collect('telefono')"
                 data-vv-name="telefono"
+                :readonly="!editable || !permission.primary"
+                :outlined="editable && permission.primary"
+                :disabled="editable && !permission.primary"
               ></v-text-field>
             </v-col>
           </v-card>
         </v-container>
       </v-col>
       <v-col cols="12" md="1" class="ma-0 pa-0">
+        <v-tooltip top>
+          <template v-slot:activator="{ on }">
+            <v-btn
+              fab
+              dark
+              x-small
+              :color="'error'"
+              bottom
+              right
+              v-on="on"
+              style="margin-right: 45px;"
+              @click.stop="resetForm()"
+              v-show="editable"
+            >
+              <v-icon>mdi-close</v-icon>
+            </v-btn>
+          </template>
+          <div>
+            <span>Cancelar</span>
+          </div>
+        </v-tooltip>
         <v-tooltip top >
           <template v-slot:activator="{ on }">
             <v-btn
               fab
               dark
-              small
-              color="success"
+              x-small
+              :color="editable ? 'danger' : 'success'"
               bottom
               right
               v-on="on"
-              style="margin-right: -9px;"
+              style="margin-right: -9px; margin-top:10px;"
               @click.stop="saveAffiliate()"
             >
-              <v-icon>mdi-pencil</v-icon>
-             </v-btn>
+              <v-icon v-if="editable">mdi-check</v-icon>
+              <v-icon v-else>mdi-pencil</v-icon>
+            </v-btn>
           </template>
           <div>
-            <span >Guardar</span>
-         </div>
+            <span v-if="editable">Guardar</span>
+            <span v-else>Editar</span>
+        </div>
         </v-tooltip>
       </v-col>
     </v-row>
@@ -159,6 +184,7 @@ import { Validator } from 'vee-validate'
     loading: true,
     dialog: false,
     telefono:[null,null],
+    editable: false,
     cities: [],
     headers: [
           { text: 'Ciudad', align: 'left', value: 'city_address_id' },
@@ -172,6 +198,26 @@ import { Validator } from 'vee-validate'
     bus: new Vue()
   }),
   computed: {
+    permission() {
+      return {
+        primary: this.primaryPermission,
+        secondary: this.secondaryPermission
+      }
+    },
+    secondaryPermission() {
+      if (this.affiliate.id) {
+        return this.$store.getters.permissions.includes('update-affiliate-secondary')
+      } else {
+        return this.$store.getters.permissions.includes('create-affiliate')
+    }
+  },
+  primaryPermission() {
+      if (this.affiliate.id) {
+        return this.$store.getters.permissions.includes('update-affiliate-primary')
+      } else {
+        return this.$store.getters.permissions.includes('create-affiliate')
+      }
+    },
     getTelefono(){
       if(this.affiliate.cell_phone_number==null)
       {
@@ -202,6 +248,9 @@ import { Validator } from 'vee-validate'
     })
   },
   methods: {
+    resetForm() {
+      this.editable = false
+    },
     close() {
       this.dialog = false
       this.$emit('closeFab')
@@ -224,6 +273,27 @@ import { Validator } from 'vee-validate'
       let celular=this.telefono.join(',')
       this.affiliate.cell_phone_number=celular
       return  this.affiliate.cell_phone_number
+    },
+      async saveAffiliate() {
+      try {
+        if (!this.editable) {
+          this.editable = true
+          console.log('entro al grabar por verdadero :)')
+        } else {
+        console.log('entro al grabar por falso :)')
+        // Edit affiliate
+            await axios.patch(`affiliate/${this.affiliate.id}`, this.affiliate)
+            await axios.patch(`affiliate/${this.affiliate.id}/address`, {
+              addresses: this.addresses.map(o => o.id)
+            })
+            this.toastr.success('Registro guardado correctamente')
+            this.editable = false
+        }
+      } catch (e) {
+        console.log(e)
+      } finally {
+        this.loading = false
+      }
     },
   }
   }
