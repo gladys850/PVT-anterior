@@ -41,11 +41,22 @@
             :complete="e1 > 4"
             :step="4"
             editable
-          >Requisitos
+          >Resultado Calculo
           </v-stepper-step>
           <v-divider
             v-if="4 !== steps"
             :key="4"
+          ></v-divider>
+          <v-stepper-step
+            :key="`${5}-step`"
+            :complete="e1 > 5"
+            :step="5"
+            editable
+          >Requisitos
+          </v-stepper-step>
+          <v-divider
+            v-if="5 !== steps"
+            :key="5"
           ></v-divider>
         </template>
       </v-stepper-header>
@@ -65,7 +76,7 @@
                   <v-spacer></v-spacer>
                   <v-spacer></v-spacer>
                     <v-col class="py-0">
-                      <v-btn text>Cancel</v-btn>
+                      <v-btn text>Cancelar</v-btn>
                       <v-btn
                         color="primary"
                         @click="nextStep(1)">
@@ -88,7 +99,8 @@
                 <v-spacer></v-spacer>
                 <v-spacer></v-spacer>
                 <v-col class="py-0">
-                  <v-btn text>Cancel</v-btn>
+                  <v-btn text
+                  @click="beforeStep(2)">Atras</v-btn>
                   <v-btn right
                     color="primary"
                     @click="nextStep(2)">
@@ -111,7 +123,8 @@
                 <v-spacer></v-spacer>
                 <v-spacer></v-spacer>
                 <v-col class="py-0">
-                  <v-btn text>Cancel</v-btn>
+                  <v-btn text
+                  @click="beforeStep(3)">Atras</v-btn>
                   <v-btn right
                     color="primary"
                     @click="nextStep(3)">
@@ -127,6 +140,30 @@
           :step="4"
           >
           <v-card color="grey lighten-1">
+            <BallotsResult/>
+            <v-container class="py-0">
+              <v-row>
+                <v-spacer></v-spacer>
+                <v-spacer></v-spacer>
+                <v-spacer></v-spacer>
+                <v-col class="py-0">
+                  <v-btn text
+                    @click="beforeStep(4)">Atras</v-btn>
+                  <v-btn
+                    color="primary"
+                    @click="nextStep(4)">
+                    Continue
+                  </v-btn>
+                </v-col>
+              </v-row>
+            </v-container>
+          </v-card>
+        </v-stepper-content>
+        <v-stepper-content
+          :key="`${5}-content`"
+          :step="5"
+          >
+          <v-card color="grey lighten-1">
             <Requirement/>
             <v-container class="py-0">
               <v-row>
@@ -134,10 +171,11 @@
                 <v-spacer></v-spacer>
                 <v-spacer></v-spacer>
                 <v-col class="py-0">
-                  <v-btn text>Cancel</v-btn>
+                  <v-btn text
+                    @click="beforeStep(5)">Atras</v-btn>
                   <v-btn
                     color="primary"
-                    @click="nextStep(4)">
+                    @click="nextStep(5)">
                     Continue
                   </v-btn>
                 </v-col>
@@ -160,6 +198,7 @@
 <script>
 import Ballots from '@/components/loan/Ballots'
 import Requirement from '@/components/loan/Requirement'
+import BallotsResult from '@/components/loan/BallotsResult'
 import PersonalInformation from '@/components/affiliate/PersonalInformation'
 import LoanInformation from '@/components/loan/LoanInformation'
 import { Validator } from 'vee-validate'
@@ -180,12 +219,13 @@ export default {
     Requirement,
     Ballots,
     PersonalInformation,
-    LoanInformation
+    LoanInformation,
+    BallotsResult
   },
   data () {
     return {
       e1: 1,
-      steps: 4,
+      steps: 5,
 
     reload: false,
     }
@@ -209,6 +249,9 @@ export default {
       } else {
         this.e1 = n + 1
       }
+    },
+    beforeStep (n) {
+      this.e1 = n -1
     },
   },
 }

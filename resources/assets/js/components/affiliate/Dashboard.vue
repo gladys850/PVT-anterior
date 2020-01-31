@@ -204,7 +204,7 @@ export default {
     async getLoan(id) {
       try {
         this.loading = true
-        let res = await axios.get(`affiliate/${1}/lender`, {
+        let res = await axios.get(`affiliate/${1}/loan`, {
           params: {
             sortBy: ['request_date'],
             sortDesc: [true],
