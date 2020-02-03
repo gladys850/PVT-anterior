@@ -16,8 +16,8 @@ class CreateLoansTable extends Migration
         Schema::create('loans', function (Blueprint $table) {
             $table->bigIncrements('id');// id unico
             $table->string('code')->nullable(); // para el correlativo
-            $table->integer('disbursable_id');// id affiliado, id espouse, id beneficiary
-            $table->enum('disbursable_type',['affiliates', 'spouses', 'beneficiaries']); // a quien se hara del desembolso//afiliado, conyugue, beneficiario
+            $table->integer('disbursable_id');// id affiliado, id espouse
+            $table->enum('disbursable_type',['affiliates', 'spouses']); // a quien se hara del desembolso//afiliado, conyugue
             $table->unsignedBigInteger('procedure_modality_id'); // id modalidad
             $table->foreign('procedure_modality_id')->references('id')->on('procedure_modalities');
             $table->integer('amount_disbursement'); // monto a desembolsar
@@ -31,15 +31,11 @@ class CreateLoansTable extends Migration
             $table->foreign('loan_interest_id')->references('id')->on('loan_interests'); 
             $table->unsignedBigInteger('loan_state_id')->nullable(); //id estado del tramite
             $table->foreign('loan_state_id')->references('id')->on('loan_states'); // estado de prestamo
-           // $table->integer('contract_id'); // datos del contrato
             $table->smallInteger('amount_aproved')->nullable(); // monto aprobado
-            //$table->date('deadline'); // fecha tope
             $table->integer('loan_term'); // plazo del prestamo en meses
             $table->date('disbursement_date'); //fecha de desembolso
             $table->unsignedBigInteger('disbursement_type_id'); // id tipo de desembolso   
             $table->foreign('disbursement_type_id')->references('id')->on('payment_types'); 
-            $table->date('modification_date')->nullable(); // fecha de modificacion del tramite 
-          //  $table-> enum('mora', 'en proceso','aprobado','anulado','rechazado','desembolsado','liduidado','amortizando'); //estados del tramite suponiendo que es nuevo tramite 
             $table->timestamps();
         });
     }
