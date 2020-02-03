@@ -67,9 +67,7 @@ Route::group([
     Route::get('loan/{loan_id}/submitted_documents', 'Api\V1\LoanController@submitted_documents');
     //get requirements according to modality
     Route::get('procedure_modality/{modality_id}/requirements_loan', 'Api\V1\ProcedureModalityController@list_requirements_loan');
-    Route::get('affiliate/{id}/contribution/{limit}', 'Api\V1\AffiliateController@get_contributions');
-    // collect the latest bonuses from the last ballot
-    Route::get('affiliate/{id}/collect_last_bonus','Api\V1\AffiliateController@last_bonuses_ballot');
+    Route::get('affiliate/{id}/contribution', 'Api\V1\AffiliateController@get_contributions');
     // verify cpop 
     Route::get('affiliate/{id}/cpop','Api\V1\AffiliateController@cpop');
     //LoanIntervals

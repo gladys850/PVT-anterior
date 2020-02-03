@@ -26,7 +26,7 @@ use Illuminate\Support\Facades\Hash;
 use App\Http\Controllers\Controller;
 use App\Events\FingerprintSavedEvent;
 use Illuminate\Support\Facades\Storage;
-
+use Carbon\CarbonImmutable;
 
 class AffiliateController extends Controller
 {
@@ -198,34 +198,49 @@ class AffiliateController extends Controller
         }
         return Affiliate::find($affiliate_id)->addresses()->sync($request->addresses); 
     }
+
     //ballots
-    public function get_contributions($affiliate_id,$quantity){
-        if(!Contribution::whereAffiliate_id($affiliate_id)->exists()) {
-            abort (404); 
-        }else{
-            $contribution=Contribution::whereAffiliate_id($affiliate_id)->orderBy('month_year','desc')->get();
-            if(count($contribution)>$quantity){
-                $c=0; $ballots=[];
-                while($c<$quantity){ $ballots[$c]=$contribution[$c]; $c++; }
-                return $ballots;
+    public function get_contributions(Request $request, $id)
+    {
+        $affiliate = Affiliate::findOrFail($id);
+        $filters = [
+            'affiliate_id' => $affiliate->id
+        ];
+        $contributions = Util::search_sort(new Contribution(), $request, $filters);
+        if ($request->has('city_id')) {
+            $is_latest = false;
+            $city = City::findOrFail($request->city_id);
+            $offset_day = LoanGlobalParameter::latest()->first()->offset_day;
+            $now = CarbonImmutable::now();
+            if ($now->day <= $offset_day || $city->name != 'LA PAZ') {
+                $before_month = 2;
+            } else {
+                $before_month = 1;
             }
-            return abort(404); 
+            $current_ticket = CarbonImmutable::parse($contributions[0]->month_year);
+            if ($now->startOfMonth()->diffInMonths($current_ticket->startOfMonth()) <= $before_month) {
+                foreach ($contributions as $i => $ticket) {
+                    $is_latest = true;
+                    if ($ticket != $contributions->last()) {
+                        $current_ticket = CarbonImmutable::parse($ticket->month_year);
+                        $next_ticket = CarbonImmutable::parse($contributions[$i+1]->month_year);
+                        if ($current_ticket->startOfMonth()->diffInMonths($next_ticket->startOfMonth()) !== 1) {
+                            $is_latest = false;
+                            break;
+                        }
+                    }
+                }
+            } else {
+                $is_latest = false;
+            }
+            $contributions = collect([
+                'valid' => $is_latest,
+                'diff_months' => $before_month
+            ])->merge($contributions);
         }
+        return $contributions;
     }
-    // Recabar los ultimos bonos de la ultima boleta
-    public function last_bonuses_ballot($affiliate_id){
-        $bonus=Contribution::whereAffiliate_id($affiliate_id)->get()->last();
-        if($bonus){
-            $data_bonus=[];
-            $data_bonus[1]=$bonus->border_bonus;
-            $data_bonus[2]=$bonus->east_bonus;
-            $data_bonus[3]=$bonus->public_security_bonus;
-            $data_bonus[4]=$bonus->seniority_bonus;
-            return $data_bonus;
-        }else{
-            return abort(404); 
-        }
-    }
+
     public function get_category($affiliate_id)
     {
         $affiliate=Affiliate::find($affiliate_id);
@@ -252,16 +267,16 @@ class AffiliateController extends Controller
     public function get_loans(Request $request, $id)
     {
         $affiliate = Affiliate::findOrFail($id);
-        $type = filter_var($request->guarantor, FILTER_VALIDATE_BOOLEAN) ? 'guarantors' : 'lenders';
-        $filters[$type] = [
+        $type = Util::get_bool($request->guarantor) ? 'guarantors' : 'lenders';
+        $relations[$type] = [
             'affiliate_id' => $affiliate->id
         ];
         if ($request->has('state')) {
-            $filters['state'] = [
+            $relations['state'] = [
                 'id' => $request->state
             ];
         }
-        return Util::search_sort(new Loan(), $request, [], $filters, ['id']);
+        return Util::search_sort(new Loan(), $request, [], $relations, ['id']);
     }
 
     public function get_state($id)

@@ -24,8 +24,7 @@ class UserController extends Controller
     */
     public function index(Request $request)
     {
-        $filter = [];
-        if ($request->has('active')) $filter = ['active' => filter_var($request->active, FILTER_VALIDATE_BOOLEAN)];
+        $filter = $request->has('active') ? ['active' => Util::get_bool($request->active)] : [];
         $data = Util::search_sort(new User(), $request, $filter);
         return $data;
     }
