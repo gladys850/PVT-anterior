@@ -304,5 +304,104 @@ class Loan extends Model
         $liquid_qualification = $this->liquid_qualification($ballots,$bonuses);
         return $liquid_qualification;
     }
+    //obtener modalidad teniendo el tipo y el afiliado
+    public function get_modality($modality_id, $affiliate_id){
+        $affiliate = Affiliate::findOrFail($affiliate_id); $modality=null;
+        $modality = ProcedureType::findOrFail($modality_id)->name;
+        if ($affiliate->affiliate_state){
+            $affiliate_state = $affiliate->affiliate_state->name;
+            $affiliate_state_type = $affiliate->affiliate_state->affiliate_state_type->name;
+        } 
+        switch($modality){
+            case 'Préstamo Anticipo':
+                if($affiliate_state_type == "Activo")
+                { 
+                    $modality=ProcedureModality::whereShortened("ANT-SA")->first();
+                }
+                else{
+                    if($affiliate_state_type == "Pasivo"){
+                        $modality=ProcedureModality::whereShortened("ANT-SP")->first();  
+                    }
+                }
+            return response()->json($modality); 
+            break;
+            case 'Préstamo a corto plazo':
+                if($affiliate_state_type == "Activo"){
+                    if($affiliate->active_loans){
+                        $modality = ProcedureModality::whereShortened("PCP-R-SA")->first();//Refinanciamiento corto plazo activo
+                    }else{
+                        if($affiliate_state == "Servicio" || $affiliate_state == "Comisión" )
+                        { 
+                            $modality=ProcedureModality::whereShortened("PCP-SA")->first(); //corto plazo activo 
+                        }else{
+                            $modality=ProcedureModality::whereShortened("PCP-DLA")->first(); // corto plazo activo letra A 
+                        }
+                    }     
+                }else{
+                    if($affiliate_state_type == "Pasivo"){
+                        if($affiliate->afp){
+                            if($affiliate->active_loans){
+                                $modality=ProcedureModality::whereShortened("PCP-R-SP-AFP")->first();
+                                // refi afp pasivo
+                            }else{
+                                $modality=ProcedureModality::whereShortened("PCP-SP-AFP")->first();
+                                //$sub_modality="Prestamo a corto plazo sector pasivo afp";
+                            }
+                              
+                        }else{
+                            if($affiliate->active_loans){
+                                $modality=ProcedureModality::whereShortened("PCP-R-SP-SEN")->first();
+                                // refi senasir pasivo
+                            }else{
+                                $modality=ProcedureModality::whereShortened("PCP-SP-SEN")->first();
+                            }
+                        }                       
+                    }
+                }
+                return response()->json($modality); 
+                break;
+            case 'Préstamo a largo plazo':
+                if($affiliate_state_type == "Activo")
+                {
+                    if($cpop){
+                        if($affiliate->active_loans){
+                            $modality=ProcedureModality::whereShortened("PLP-R-SA")->first();
+                            // Refi largo plazo activo 1 solo garante
+                        }else{
+                            $modality=ProcedureModality::whereShortened("PLP-CPOP")->first();
+                        }
+                    }else{
+                        $modality=ProcedureModality::whereShortened("PLP-GP-SAYADM")->first();
+                    }
+                }
+                else{
+                        if($affiliate_state_type == "Pasivo"){
+                            if($affiliate->active_loans){
+                                if($cpop){
+                                    $modality=ProcedureModality::whereShortened("PLP-R-SP")->first();
+                                    // Refi largo plazo pasivo 1 solo garante
+                                }
+                            }else{
+                                $modality=ProcedureModality::whereShortened("PLP-GP-SP")->first();  
+                            }
+                        }
+                }
+                return response()->json($modality); 
+                break;
+            case 'Préstamo hipotecario':
+                if($affiliate_state_type == "Activo")
+                {
+                    if($cpop){
+                        $modality=ProcedureModality::whereShortened("PLP-GH-CPOP")->first();
+                        //hipotecario CPOP
+                    }else{
+                        $modality=ProcedureModality::whereShortened("PLP-GH-SA")->first();
+                    } 
+                }
+                return response()->json($modality); 
+                break;
+        } 
+             
+    }
 
 }
