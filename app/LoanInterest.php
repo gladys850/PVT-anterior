@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use App\ProcedureModality;
 
 class LoanInterest extends Model
 {
@@ -32,5 +33,10 @@ class LoanInterest extends Model
     public function getMonthlyPenalInterestAttribute()
     {
         return $this->penal_interest / (100 * 12);
+    }
+
+    public function procedure_modality()
+    {
+        return $this->belongsTo(ProcedureModality::class);
     }
 }

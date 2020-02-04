@@ -4,6 +4,8 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use App\ProcedureDocument;
+use App\LoanModalityParameter;
+use App\LoanInterest;
 
 class ProcedureModality extends Model
 {
@@ -19,14 +21,24 @@ class ProcedureModality extends Model
         'is_valid'
     ];
 
+    public function loan_modality_parameter()
+    {
+        return $this->hasOne(LoanModalityParameter::class);
+    }
+
+    public function documents()
+    {
+        return $this->belongsToMany(ProcedureDocument::class, 'procedure_requirements')->withPivot(['number']);
+    }
+
     public function required_documents()
     {
-        return $this->belongsToMany(ProcedureDocument::class, 'procedure_requirements')->withPivot(['number'])->wherePivot('number', '!=', 0);
+        return $this->documents()->wherePivot('number', '!=', 0);
     }
 
     public function optional_documents()
     {
-        return $this->belongsToMany(ProcedureDocument::class, 'procedure_requirements')->withPivot(['number'])->wherePivot('number', 0);
+        return $this->documents()->wherePivot('number', 0);
     }
 
     public function getRequirementsListAttribute()
@@ -46,5 +58,15 @@ class ProcedureModality extends Model
     public function procedure_type()
     {
         return $this->belongsTo(ProcedureType::class);
+    }
+
+    public function loan_interests()
+    {
+        return $this->hasMany(LoanInterest::class)->latest();
+    }
+
+    public function getCurrentInterestAttribute()
+    {
+        return $this->loan_interests()->first();
     }
 }

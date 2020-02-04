@@ -21,6 +21,7 @@ class LoanSeeder extends Seeder
         'procedures' => [
           'anticipo' => [
             'type' => ['module_id' => $module->id,'name'=>'Préstamo Anticipo','second_name'=>'Préstamo Anticipo'],
+            'limits' => ['maximum_amount' => 2000,'minimum_amount' => 200,'maximum_term' => 2,'minimum_term' => 1],
             'modalities' => [
                 // ANTICIPO SECTOR ACTIVO 
                 ['name'=>'Anticipo sector activo','shortened'=>'ANT-SA','requirements'=>[
@@ -33,7 +34,14 @@ class LoanSeeder extends Seeder
                   ['name' => 'Certificado de no adeudo, emitido por la instancia correspondiente.','number'=>0],  // en caso de que el afiliado haya tenido deudas de otras entidades (Ej: COMIPOL , COVIPOL)
                   ['name' => 'Certificado de pago emitido por la entidad correspondiente.','number'=>0],  // en caso de que el afiliado tenga deudas con otras entidades (Ej: COMIPOL , COVIPOL)
                   ['name' => 'Conformidad de devolucion de descuento por garantia original o fotocopia legalizada.','number'=>0],
-                ]],
+                ],
+                'parameters' => [
+                    'debt_index' => 90,
+                    'quantity_ballots' => 1,
+                    'guarantors' => 0
+                ],
+                'interest' => ['annual_interest' => 36,'penal_interest' => 6]
+            ],
                     // ANTICIPO SECTOR PASIVO Y VIUDAS
                 ['name'=>'Anticipo sector pasivo','shortened'=>'ANT-SP','requirements'=>[
                   ['name' => 'Cédula de Identidad del (la) titular en copia simple.','number'=>1],
@@ -49,12 +57,20 @@ class LoanSeeder extends Seeder
                   ['name' => 'Certificado de aportes para el Auxilio Mortuorio','number'=>0],  // *caso pasivo con renta en AFP , quien solicita el préstamo
                   ['name' => 'Memorándum de agradecimiento de servicios en copia simple emitido por el Comando General de la Policía Boliviana.','number'=>0],  // *caso pasivo con renta en AFP , quien solicita el préstamo
                   ['name' => 'Conformidad de devolución de descuento por garantia original o fotocopia legalizada.','number'=>0],
-                ]],
+                ],
+                'parameters' => [
+                    'debt_index' => 90,
+                    'quantity_ballots' => 1,
+                    'guarantors' => 0
+                ],
+                'interest' => ['annual_interest' => 36,'penal_interest' => 6]
+            ],
             ]
           ],
           'corto' => [
             // CORTO PLAZO
             'type' => ['module_id' => $module->id,'name'=>'Préstamo a corto plazo','second_name'=>'Préstamo a corto plazo'],
+            'limits' => ['maximum_amount' => 25000,'minimum_amount' => 2001,'maximum_term' => 30,'minimum_term' => 3],
             'modalities' => [
               // CORTO PLAZO SECTOR ACTIVO SERVICIO
               ['name'=>'Corto plazo sector activo','shortened'=>'PCP-SA','requirements'=>[
@@ -67,7 +83,14 @@ class LoanSeeder extends Seeder
                 ['name' => 'Certificado de no adeudo, emitido por la instancia correspondiente.','number'=>0],  // en caso de que el afiliado haya tenido deudas de otras entidades (Ej: COMIPOL , COVIPOL)
                 ['name' => 'Certificado de pago emitido por la entidad correspondiente.','number'=>0],  // en caso de que el afiliado tenga deudas con otras entidades (Ej: COMIPOL , COVIPOL)
                 ['name' => 'Conformidad de devolución de descuento por garantia original o fotocopia legalizada.','number'=>0],
-              ]],
+              ],
+              'parameters' => [
+                  'debt_index' => 50,
+                  'quantity_ballots' => 3,
+                  'guarantors' => 0
+              ],
+              'interest' => ['annual_interest' => 20,'penal_interest' => 6]
+            ],
               // CORTO PLAZO SECTOR ACTIVO DISPONIBILIDAD LETRA 'A'
               ['name'=>'Corto plazo con disponibilidad de letra "A"','shortened'=>'PCP-DLA','requirements'=>[
                 ['name' => 'Cédula de Identidad del (la) titular en copia simple.','number'=>1],                  
@@ -82,7 +105,14 @@ class LoanSeeder extends Seeder
                 ['name' => 'Certificado de no adeudo, emitido por la instancia correspondiente.','number'=>0],  // en caso de que el afiliado haya tenido deudas de otras entidades (Ej: COMIPOL , COVIPOL)
                 ['name' => 'Certificado de pago emitido por la entidad correspondiente.','number'=>0],  // en caso de que el afiliado tenga deudas con otras entidades (Ej: COMIPOL , COVIPOL)
                 ['name' => 'Conformidad de devolución de descuento por garantia original o fotocopia legalizada.','number'=>0],
-              ]],
+              ],
+              'parameters' => [
+                'debt_index' => 50,
+                'quantity_ballots' => 3,
+                'guarantors' => 0
+              ],
+              'interest' => ['annual_interest' => 20,'penal_interest' => 6]
+            ],
                // CORTO PLAZO SECTOR PASIVO Y VIUDAS AFP
                ['name'=>'Corto plazo el sector pasivo y viudas AFPs','shortened'=>'PCP-SP-AFP','requirements'=>[
                 ['name' => 'Cédula de Identidad del (la) titular en copia simple.','number'=>1],
@@ -95,7 +125,14 @@ class LoanSeeder extends Seeder
                 ['name' => 'Memorándum de agradecimiento de servicios en copia simple emitido por el Comando General de la Policía Boliviana.','number'=>0],  // *caso pasivo con renta en AFP , quien solicita el préstamo
                 ['name' => 'Conformidad de devolución de descuento por garantia original o fotocopia legalizada.','number'=>0],
 
-              ]],
+              ],
+              'parameters' => [
+                'debt_index' => 50,
+                'quantity_ballots' => 3,
+                'guarantors' => 1
+              ],
+              'interest' => ['annual_interest' => 20,'penal_interest' => 6]
+            ],
               // CORTO PLAZO SECTOR PASIVO Y VIUDAS SENASIR
               ['name'=>'Corto plazo el sector pasivo y viudas Senasir','shortened'=>'PCP-SP-SEN','requirements'=>[
                 ['name' => 'Cédula de Identidad del (la) titular en copia simple.','number'=>1],
@@ -107,7 +144,14 @@ class LoanSeeder extends Seeder
                 ['name' => 'Certificado de aportes para el Auxilio Mortuorio de los 3 últimos meses de la unidad de Fondo de Retiro.','number'=>0], // para solicitantes AFPś 
                 ['name' => 'Memorándum de agradecimiento de servicios en copia simple emitido por el Comando General de la Policía Boliviana.','number'=>0],  // *caso pasivo con renta en AFP , quien solicita el préstamo
                 ['name' => 'Conformidad de devolución de descuento por garantia original o fotocopia legalizada.','number'=>0],
-              ]],
+              ],
+              'parameters' => [
+                'debt_index' => 50,
+                'quantity_ballots' => 3,
+                'guarantors' => 0
+              ],
+              'interest' => ['annual_interest' => 20,'penal_interest' => 6]
+            ],
               // REFINANCIAMIENTO ACTIVO 
               ['name'=>'Refinanciamiento de Préstamo a corto plazo para el sector Activo','shortened'=>'PCP-R-SA','requirements'=>[
                 ['name' => 'Cédula de Identidad del (la) titular en copia simple.','number'=>1], 
@@ -119,7 +163,14 @@ class LoanSeeder extends Seeder
                 ['name' => 'Certificado de no adeudo.','number'=>0],  // en caso de que el afiliado haya tenido deudas de otras entidades (Ej: COMIPOL , COVIPOL)
                 ['name' => 'Certificado de pago emitido por la entidad correspondiente.','number'=>0],  // en caso de que el afiliado tenga deudas con otras entidades (Ej: COMIPOL , COVIPOL)
                 ['name' => 'Conformidad de devolución de descuento por garantia original o fotocopia legalizada.','number'=>0],
-              ]],
+              ],
+              'parameters' => [
+                'debt_index' => 50,
+                'quantity_ballots' => 3,
+                'guarantors' => 0
+              ],
+              'interest' => ['annual_interest' => 20,'penal_interest' => 6]
+            ],
                // REFINANCIAMIENTO PASIVOS Y VIUDAS - AFP
                ['name'=>'Refinanciamiento de Préstamo a corto plazo para el sector Pasivo y Viudas AFPs','shortened'=>'PCP-R-SP-AFP','requirements'=>[
                 ['name' => 'Cédula de Identidad del (la) titular en copia simple.','number'=>1], 
@@ -134,9 +185,17 @@ class LoanSeeder extends Seeder
                 ['name' => 'Certificación de aportes voluntarios de los 3 últimos meses de la unidad de Fondo de Retiro.','number'=>0], // para solicitantes AFPś , no se encuentra en sus requisitos pero en una anterior modalidad  se menciona como requisito
                 ['name' => 'Memorándum de agradecimiento de servicios en copia simple emitido por el Comando General de la Policía Boliviana.','number'=>0],  // *caso pasivo con renta en AFP , quien solicita el préstamo
                 ['name' => 'Conformidad de devolución de descuento por garantia original o fotocopia legalizada.','number'=>0],
-              ]],
+              ],
+              'parameters' => [
+                'debt_index' => 50,
+                'quantity_ballots' => 3,
+                'guarantors' => 1
+              ],
+              'interest' => ['annual_interest' => 20,'penal_interest' => 6]
+            ],
               // REFINANCIAMIENTO PASIVOS Y VIUDAS - SENASIR
-              ['name'=>'Refinanciamiento de Préstamo a corto plazo para el sector Pasivo y Viudas Senasir','shortened'=>'PCP-R-SP-SEN','requirements'=>[
+              ['name'=>'Refinanciamiento de Préstamo a corto plazo para el sector Pasivo y Viudas Senasir','shortened'=>'PCP-R-SP-SEN',
+              'requirements'=>[
                 ['name' => 'Cédula de Identidad del (la) titular en copia simple.','number'=>1], 
                 ['name' => '3 ultimas boletas de pago con renta en SENASIR original','number'=>2], //Nuevo *caso pasivo con renta de SENASIR, quien solicita el préstamo
                 ['name' => 'Estado de cuenta original, vigente y emitido por el Banco Unión S.A','number'=>3],
@@ -149,11 +208,19 @@ class LoanSeeder extends Seeder
                 ['name' => 'Certificación de aportes voluntarios de los 3 últimos meses de la unidad de Fondo de Retiro.','number'=>0], // para solicitantes AFPś , no se encuentra en sus requisitos pero en una anterior modalidad  se menciona como requisito
                 ['name' => 'Memorándum de agradecimiento de servicios en copia simple emitido por el Comando General de la Policía Boliviana.','number'=>0],  // *caso pasivo con renta en AFP , quien solicita el préstamo
                 ['name' => 'Conformidad de devolución de descuento por garantia original o fotocopia legalizada.','number'=>0],
-            	]]
+            	],
+                'parameters' => [
+                  'debt_index' => 50,
+                  'quantity_ballots' => 3,
+                  'guarantors' => 0
+                ],
+                'interest' => ['annual_interest' => 20,'penal_interest' => 6]
+            ]
             ],
           ],
           'largo' => [
             'type' => ['module_id' => $module->id,'name'=>'Préstamo a largo plazo','second_name'=>'Préstamo a largo plazo'],
+            'limits' => ['maximum_amount' => 150000,'minimum_amount' => 25001,'maximum_term' => 96,'minimum_term' => 25],
             'modalities' => [
                 // LARGO PLAZO SECTOR ACTIVO Y ADMINISTRATIVO CON GARANTIA PERSONAL(2 GARANTES ACTIVOS)
               ['name'=>'Largo Plazo con garantía personal para el sector activo y personal Adm Policial','shortened'=>'PLP-GP-SAYADM','requirements'=>[
@@ -171,8 +238,15 @@ class LoanSeeder extends Seeder
                 ['name' => 'Folio Real Actualizado o Información rapida del inmueble.','number'=>0],  // en caso de que el plazo sea mayor a 60 meses un prestamo para vivienda pero no hipotecario
                 ['name' => 'Fotocopia de catastro.','number'=>0],  // en caso de que el plazo sea mayor a 60 meses un prestamo para vivienda pero no hipotecario
                 ['name' => 'Conformidad de devolución de descuento por garantia original o fotocopia legalizada.','number'=>0],
-               ]],
-                  // LARGO PLAZO SECTOR PASIVO CON GARANTIA PERSONAL ( 1 o 2 GARANTES ACTIVOS O PASIVOS)
+               ],
+               'parameters' => [
+                 'debt_index' => 50,
+                 'quantity_ballots' => 1,
+                 'guarantors' => 2
+               ],
+               'interest' => ['annual_interest' => 13.2,'penal_interest' => 6]
+            ],
+                  // LARGO PLAZO SECTOR PASIVO CON GARANTIA PERSONAL
               ['name'=>'Largo Plazo con garantía personal para el sector pasivo','shortened'=>'PLP-GP-SP','requirements'=>[
                 ['name' => 'Cédula de Identidad del (la) titular en copia simple','number'=>1],// tambien el o los garantes
                 ['name' => 'Ultima boleta de pago con renta en SENASIR original','number'=>2], //Nuevo *caso pasivo con renta de SENASIR, quien solicita el préstamo; tambien el garante
@@ -189,7 +263,14 @@ class LoanSeeder extends Seeder
                 ['name' => 'Memorándum de agradecimiento de servicios en copia simple emitido por el Comando General de la Policía Boliviana.','number'=>0],  // *caso pasivo con renta en AFP , quien solicita el préstamo
                 ['name' => 'Conformidad de devolución de descuento por garantia original o fotocopia legalizada.','number'=>0],
 
-              ]],
+              ],
+              'parameters' => [
+                'debt_index' => 50,
+                'quantity_ballots' => 1,
+                'guarantors' => 1
+              ],
+              'interest' => ['annual_interest' => 13.2,'penal_interest' => 6]
+            ],
                 // LARGO PLAZO UN SOLO GARANTE SECTOR ACTIVO --Afiliados CPOP
               ['name'=>'Largo Plazo con un solo garante para el sector activo - CPOP','shortened'=>'PLP-CPOP','requirements'=>[
                 ['name' => 'Cédula de Identidad del (la) titular en copia simple','number'=>1],
@@ -206,9 +287,17 @@ class LoanSeeder extends Seeder
                 ['name' => 'Certificado de pago emitido por la entidad correspondiente.','number'=>0],  // en caso de que el afiliado tenga deudas con otras entidades (Ej: COMIPOL , COVIPOL)
                 ['name' => 'Certificado de no ingreso a disponibilidad de las letras “C” y “A” en original emitido por el Comando General de la Policía Boliviana.','number'=>0], //verificacion, no encontrarse en disponibilidad de letra A o C o item 0
                 ['name' => 'Conformidad de devolución de descuento por garantia original o fotocopia legalizada.','number'=>0],
-              ]],            
+              ]
+              ,
+              'parameters' => [
+                'debt_index' => 60,
+                'quantity_ballots' => 1,
+                'guarantors' => 1
+              ],
+              'interest' => ['annual_interest' => 13.2,'penal_interest' => 6]
+            ],            
               // REFINANCIANCIAMIENTO SECTOR ACTIVO CON UN SOLO GARANTE ---> En este caso el garante solo puede ser activo
-              ['name'=>'Refinanciamiento de prestamos a largo Plazo para el sector activo con un solo garante','shortened'=>'PLP-R-SA','requirements'=>[
+              ['name'=>'Refinanciamiento de prestamos a largo Plazo para el sector activo - CPOP','shortened'=>'PLP-R-SA','requirements'=>[
                 ['name'=>'Cédula de Identidad del (la) titular en copia simple','number'=>1],
             		['name' => 'Certificado de años de servicio desglosado en original emitido por el Comando General de la Policía Boliviana','number'=>2],
             		['name' => 'Certificado de años de servicio desglosado en fotocopia Legalizada emitido por el Comando General de la Policía Boliviana','number'=>2],
@@ -223,9 +312,16 @@ class LoanSeeder extends Seeder
                 ['name' => 'Certificado de pago emitido por la entidad correspondiente.','number'=>0],  // en caso de que el afiliado tenga deudas con otras entidades (Ej: COMIPOL , COVIPOL)
                 ['name' => 'Conformidad de devolución de descuento por garantia original o fotocopia legalizada.','number'=>0],
 
-              ]],
+              ],
+              'parameters' => [
+                'debt_index' => 60,
+                'quantity_ballots' => 1,
+                'guarantors' => 1
+              ],
+              'interest' => ['annual_interest' => 13.2,'penal_interest' => 6]
+            ],
                  // REFINANCIANCIAMIENTO SECTOR PASIVO CON UN SOLO GARANTE
-               ['name'=>'Refinanciamiento de prestamos a largo Plazo para el sector pasivo con un solo garante','shortened'=>'PLP-R-SAP','requirements'=>[
+               ['name'=>'Refinanciamiento de prestamos a largo Plazo para el sector pasivo - CPOP','shortened'=>'PLP-R-SAP','requirements'=>[
                 ['name'=>'Cédula de Identidad del (la) titular en copia simple','number'=>1],
                 ['name' => 'Certificado de años de servicio desglosado en original emitido por el Comando General de la Policía Boliviana','number'=>2],
             		['name' => 'Certificado de años de servicio desglosado en fotocopia Legalizada emitido por el Comando General de la Policía Boliviana','number'=>2],
@@ -245,11 +341,19 @@ class LoanSeeder extends Seeder
                 ['name' => 'Memorándum de agradecimiento de servicios en copia simple emitido por el Comando General de la Policía Boliviana.','number'=>0],  // *caso pasivo con renta en AFP , quien solicita el préstamo
                 ['name' => 'Conformidad de devolución de descuento por garantia original o fotocopia legalizada.','number'=>0],
 
-              ]], 
+              ],
+              'parameters' => [
+                'debt_index' => 60,
+                'quantity_ballots' => 1,
+                'guarantors' => 1
+              ],
+              'interest' => ['annual_interest' => 13.2,'penal_interest' => 6]
+            ], 
             ]
           ],
           'hipotecario' => [
             'type' => ['module_id' => $module->id,'name'=>'Préstamo hipotecario','second_name'=>'Préstamo hipotecario'],
+            'limits' => ['maximum_amount' => 700000,'minimum_amount' => 25001,'maximum_term' => 240,'minimum_term' => 25],
             'modalities' => [
                // LARGO PLAZO GARANTIA HIPOTECARIA
               ['name'=>'Préstamo con garantia hipotecaria de bien inmueble para el sector activo','shortened'=>'PLP-GH-SA','requirements'=>[
@@ -277,9 +381,16 @@ class LoanSeeder extends Seeder
                ['name' => 'Conformidad de devolución de descuento por garantia original o fotocopia legalizada.','number'=>0],
 
                /**/
-             ]],
+             ],
+             'parameters' => [
+               'debt_index' => 90,
+               'quantity_ballots' => 3,
+               'guarantors' => 0
+             ],
+             'interest' => ['annual_interest' => 9,'penal_interest' => 6]
+            ],
                // LARGO PLAZO GARANTIA HIPOTECARIA CPOP
-               ['name'=>'Préstamo con garantia hipotecaria de bien inmueble para el sector activo CPOP','shortened'=>'PLP-GH-CPOP','requirements'=>[
+               ['name'=>'Préstamo con garantia hipotecaria de bien inmueble para el sector activo - CPOP','shortened'=>'PLP-GH-CPOP','requirements'=>[
                ['name'=>'Cédula de Identidad del (la) titular en copia simple','number'=>1],
                ['name' => 'Certificado de años de servicio desglosado en original emitido por el Comando General de la Policía Boliviana','number'=>2],
                ['name' => 'Certificado de años de servicio desglosado en fotocopia Legalizada emitido por el Comando General de la Policía Boliviana','number'=>2],
@@ -304,13 +415,21 @@ class LoanSeeder extends Seeder
                ['name' => 'Conformidad de devolución de descuento por garantia original o fotocopia legalizada.','number'=>0],
 
                /**/
-             ]],
+             ],
+             'parameters' => [
+               'debt_index' => 90,
+               'quantity_ballots' => 3,
+               'guarantors' => 0
+             ],
+             'interest' => ['annual_interest' => 9,'penal_interest' => 6]
+            ],
             ]
           ],
         ]
       ];
       foreach ($data['procedures'] as $procedure) {
         $new_procedure = ProcedureType::firstOrCreate($procedure['type']);
+        $new_procedure->loan_interval()->firstOrCreate($procedure['limits']);
         foreach ($procedure['modalities'] as $modality) {
           $new_modality = ProcedureModality::firstOrCreate([
             'procedure_type_id' => $new_procedure->id,
@@ -327,6 +446,8 @@ class LoanSeeder extends Seeder
               'number'=>$requirement['number']
             ]);
           }
+          $new_modality->loan_modality_parameter()->firstOrCreate($modality['parameters']);
+          $new_modality->loan_interests()->firstOrCreate($modality['interest']);
         }
       }
       
