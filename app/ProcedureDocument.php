@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use App\ProcedureModality;
+use App\Loan;
 
 class ProcedureDocument extends Model
 {
@@ -20,5 +21,10 @@ class ProcedureDocument extends Model
     public function scanned_documents()
     {
         return $this->hasMany(ScannedDocument::class);
+    }
+
+    public function loans()
+    {
+        return $this->belongsToMany(Loan::class, 'loan_submitted_documents', 'procedure_document_id')->withPivot('reception_date', 'comment', 'is_valid')->orderBy('pivot_reception_date','desc');
     }
 }

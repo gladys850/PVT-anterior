@@ -133,8 +133,14 @@ export default {
     async getModules() {
       try {
         this.loading = true
-        let res = await axios.get(`module`)
-        this.modules = res.data
+        let res = await axios.get(`module`, {
+          params: {
+            per_page: 100,
+            sortBy: ['name'],
+            sortDesc: [false]
+          }
+        })
+        this.modules = res.data.data
         if (this.modules.length > 0) this.selectedModule = 0
       } catch (e) {
         console.log(e)

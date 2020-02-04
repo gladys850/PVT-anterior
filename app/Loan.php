@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use App\ProcedureDocument;
 use Carbon;
 use Util;
 
@@ -46,6 +47,11 @@ class Loan extends Model
     public function payment_type()
     {
       return $this->belongsTo(PaymentType::class,'disbursement_type_id','id');
+    }
+
+    public function submitted_documents()
+    {
+        return $this->belongsToMany(ProcedureDocument::class, 'loan_submitted_documents', 'loan_id')->withPivot('reception_date', 'comment', 'is_valid')->orderBy('pivot_reception_date','desc');
     }
 
     public function guarantors()
