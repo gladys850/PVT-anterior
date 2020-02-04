@@ -24,9 +24,7 @@ class LoanController extends Controller
      */
     public function index(Request $request)
     {
-        //return Loan::get();
-        $data = Util::search_sort(new Loan(), $request);
-        return $data;
+        return Util::search_sort(new Loan(), $request);
     }
 
     /**

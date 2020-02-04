@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class ProcedureType extends Model
 {
+    use Traits\EloquentGetTableNameTrait;
+
     protected $fillable = [
         'module_id',
         'name',

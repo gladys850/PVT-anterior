@@ -61,6 +61,8 @@ Route::group([
     Route::get('affiliate/{id}/loan','Api\V1\AffiliateController@get_loans');
     //verify if an affiliate can be guarantor
     Route::get('affiliate/{id}/verify_guarantor','Api\V1\AffiliateController@verify_guarantor');
+    // Procedure Type
+    Route::resource('procedure_type', 'Api\V1\ProcedureTypeController')->only(['index', 'show']);
     // Procedure Modality
     Route::resource('procedure_modality', 'Api\V1\ProcedureModalityController')->only(['index', 'show']);
     //list of requirements for procedure modalities
@@ -107,8 +109,9 @@ Route::group([
             Route::get('ldap/unregistered', 'Api\V1\UserController@unregistered_users');
             Route::get('ldap/sync', 'Api\V1\UserController@synchronize_users');
             // Module
-            Route::resource('module', 'Api\V1\ModuleController')->only(['index']);
+            Route::resource('module', 'Api\V1\ModuleController')->only(['index', 'show']);
             Route::get('module/{id}/role', 'Api\V1\ModuleController@get_roles');
+            Route::get('module/{id}/procedure_type', 'Api\V1\ModuleController@get_procedure_types');
             // Role
             Route::resource('role', 'Api\V1\RoleController')->only(['index', 'show']);
             Route::get('role/{id}/permission', 'Api\V1\RoleController@get_permissions');
