@@ -66,11 +66,6 @@ class Loan extends Model
     {
       return $this->belongsTo(ProcedureModality::class,'procedure_modality_id', 'id');
     }
-    //$loan=Loan::first() ; $loan->modality->procedure_documents// listar requisitos de acuerdo a una modalidad
-    public function submitted_documents()
-    {
-      return $this->hasMany(LoanSubmittedDocument::class);
-    }
 
     public function getDefaultedAttribute()
     {

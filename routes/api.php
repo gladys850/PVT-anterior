@@ -38,7 +38,7 @@ Route::group([
     // Degree
     Route::resource('degree', 'Api\V1\DegreeController')->only(['index']);
     //pension Entity
-    Route::resource('pensionEntity', 'Api\V1\PensionEntityController')->only(['index']);
+    Route::resource('pension_entity', 'Api\V1\PensionEntityController')->only(['index', 'show']);
     //category
     Route::resource('category', 'Api\V1\CategoryController');
     // Fingerprint
@@ -61,12 +61,14 @@ Route::group([
     Route::get('affiliate/{id}/loan','Api\V1\AffiliateController@get_loans');
     //verify if an affiliate can be guarantor
     Route::get('affiliate/{id}/verify_guarantor','Api\V1\AffiliateController@verify_guarantor');
-    //list of requirements for registered loans
-    Route::get('loan/{loan_id}/requirements', 'Api\V1\LoanController@list_requirements');
+    // Procedure Type
+    Route::resource('procedure_type', 'Api\V1\ProcedureTypeController')->only(['index', 'show']);
+    // Procedure Modality
+    Route::resource('procedure_modality', 'Api\V1\ProcedureModalityController')->only(['index', 'show']);
+    //list of requirements for procedure modalities
+    Route::get('procedure_modality/{id}/requirements', 'Api\V1\ProcedureModalityController@get_requirements');
     //submitted_documents
     Route::get('loan/{loan_id}/submitted_documents', 'Api\V1\LoanController@submitted_documents');
-    //get requirements according to modality
-    Route::get('procedure_modality/{modality_id}/requirements_loan', 'Api\V1\ProcedureModalityController@list_requirements_loan');
     Route::get('affiliate/{id}/contribution', 'Api\V1\AffiliateController@get_contributions');
     // verify cpop 
     Route::get('affiliate/{id}/cpop','Api\V1\AffiliateController@cpop');
@@ -107,8 +109,9 @@ Route::group([
             Route::get('ldap/unregistered', 'Api\V1\UserController@unregistered_users');
             Route::get('ldap/sync', 'Api\V1\UserController@synchronize_users');
             // Module
-            Route::resource('module', 'Api\V1\ModuleController')->only(['index']);
+            Route::resource('module', 'Api\V1\ModuleController')->only(['index', 'show']);
             Route::get('module/{id}/role', 'Api\V1\ModuleController@get_roles');
+            Route::get('module/{id}/procedure_type', 'Api\V1\ModuleController@get_procedure_types');
             // Role
             Route::resource('role', 'Api\V1\RoleController')->only(['index', 'show']);
             Route::get('role/{id}/permission', 'Api\V1\RoleController@get_permissions');

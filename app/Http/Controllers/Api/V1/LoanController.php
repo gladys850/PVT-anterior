@@ -24,9 +24,7 @@ class LoanController extends Controller
      */
     public function index(Request $request)
     {
-        //return Loan::get();
-        $data = Util::search_sort(new Loan(), $request);
-        return $data;
+        return Util::search_sort(new Loan(), $request);
     }
 
     /**
@@ -89,20 +87,6 @@ class LoanController extends Controller
         return $loan;
     }
 
-    //obtener lista de requisitos teniendo registrado un prestamo con una modalidad registrada
-    public function list_requirements($loan_id){
-       $loan=Loan::find($loan_id) ; 
-       return $loan->modality->procedure_documents;// listar requisitos de acuerdo a una modalidad
-    }
-    // obtener doc. entregados de un prestamo en especifico
-    public function submitted_documents($loan_id){
-        $sub= LoanSubmittedDocument::whereLoan_id($loan_id)->get();
-        $name=[]; $i=1;
-        foreach($sub as $res){ 
-            $name[$i]=ProcedureDocument::find($res->procedure_document_id); $i++; 
-        }
-        return $name;
-    }
     public function create_request($loan_id){
         $loan=new Loan();
         $amount_disbur=$loan->find($loan_id)->amount_disbursement;
