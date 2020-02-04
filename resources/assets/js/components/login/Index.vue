@@ -8,7 +8,7 @@
             aspect-ratio="3.6"
             contain
           ></v-img>
-          <v-card-title primary-title class="justify-center">
+          <v-card-title primary-title class="justify-center text-no-wrap">
             <div class="display-1 font-weight-thin text-md-center text-uppercase">
               <p>PLATAFORMA VIRTUAL</p>
               <p>DE TRÁMITES</p>
