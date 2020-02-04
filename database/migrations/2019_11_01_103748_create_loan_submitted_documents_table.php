@@ -14,16 +14,13 @@ class CreateLoanSubmittedDocumentsTable extends Migration
     public function up()
     {   //para el caso de los documentos
         Schema::create('loan_submitted_documents', function (Blueprint $table) {
-            $table->bigIncrements('id');
-			$table->unsignedBigInteger('loan_id')->unsigned();
+			$table->unsignedBigInteger('loan_id');
             $table->foreign('loan_id')->references('id')->on('loans');
-			$table->unsignedBigInteger('procedure_document_id')->unsigned();
+			$table->unsignedBigInteger('procedure_document_id');
             $table->foreign('procedure_document_id')->references('id')->on('procedure_documents');
-			$table->date('reception_date')->nullable();
+			$table->date('reception_date');
             $table->string('comment')->nullable();
             $table->boolean('is_valid')->default(false);// por defecto 
-            //$table->boolean('is_valid')->default(true);
-			$table->timestamps();
         });
     }
 
