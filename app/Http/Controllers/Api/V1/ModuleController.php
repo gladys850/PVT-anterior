@@ -5,12 +5,13 @@ namespace App\Http\Controllers\Api\V1;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Module;
+use Util;
 
 class ModuleController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return Module::orderBy('name')->get();
+        return Util::search_sort(new Module(), $request);
     }
 
     public function get_roles($id)
