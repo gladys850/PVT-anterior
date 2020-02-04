@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\ProcedureModality;
+use Util;
+
 class ProcedureModalityController extends Controller
 {
     /**
@@ -12,9 +14,11 @@ class ProcedureModalityController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $filter = $request->has('procedure_type_id') ? ['procedure_type_id' => $request->procedure_type_id] : [];
+        $data = Util::search_sort(new ProcedureModality(), $request, $filter);
+        return $data;
     }
 
     /**
@@ -46,7 +50,7 @@ class ProcedureModalityController extends Controller
      */
     public function show($id)
     {
-        //
+        return ProcedureModality::findOrFail($id);
     }
 
     /**
@@ -83,8 +87,8 @@ class ProcedureModalityController extends Controller
         //
     }
     // obtener requisitos de acuerdo a modalidad
-    public function list_requirements_loan($modality_id){
-        $mod= ProcedureModality::find($modality_id);
-        return $mod->procedure_documents;
+    public function get_requirements($id) {
+        $modality = ProcedureModality::findOrFail($id);
+        return $modality->requirements_list;
     }
 }

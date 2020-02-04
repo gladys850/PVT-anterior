@@ -61,12 +61,12 @@ Route::group([
     Route::get('affiliate/{id}/loan','Api\V1\AffiliateController@get_loans');
     //verify if an affiliate can be guarantor
     Route::get('affiliate/{id}/verify_guarantor','Api\V1\AffiliateController@verify_guarantor');
-    //list of requirements for registered loans
-    Route::get('loan/{loan_id}/requirements', 'Api\V1\LoanController@list_requirements');
+    // Procedure Modality
+    Route::resource('procedure_modality', 'Api\V1\ProcedureModalityController')->only(['index', 'show']);
+    //list of requirements for procedure modalities
+    Route::get('procedure_modality/{id}/requirements', 'Api\V1\ProcedureModalityController@get_requirements');
     //submitted_documents
     Route::get('loan/{loan_id}/submitted_documents', 'Api\V1\LoanController@submitted_documents');
-    //get requirements according to modality
-    Route::get('procedure_modality/{modality_id}/requirements_loan', 'Api\V1\ProcedureModalityController@list_requirements_loan');
     Route::get('affiliate/{id}/contribution', 'Api\V1\AffiliateController@get_contributions');
     // verify cpop 
     Route::get('affiliate/{id}/cpop','Api\V1\AffiliateController@cpop');
