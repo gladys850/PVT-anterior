@@ -27,7 +27,10 @@ class UserObserver
      */
     public function updating(User $object)
     {
-        Util::save_record($object, 'sistema', Util::concat_action($object));
+        $user = Auth::user();
+        if ($user) {
+            if ($user->id != $object->id) Util::save_record($object, 'sistema', Util::concat_action($object));
+        }
     }
 
     /**

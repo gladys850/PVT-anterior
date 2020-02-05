@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class ProcedureType extends Model
 {
+    use Traits\EloquentGetTableNameTrait;
+
     protected $fillable = [
         'module_id',
         'name',
@@ -15,8 +17,8 @@ class ProcedureType extends Model
     {
       return $this->belongsTo(ProcedureModality::class,'id','procedure_type_id' );
     } 
-    public function loan_intervals()
+    public function loan_interval()
     {
-      return $this->belongsTo(LoanInterval::class,'id','procedure_type_id');
+        return $this->hasOne(LoanInterval::class);
     } 
 }

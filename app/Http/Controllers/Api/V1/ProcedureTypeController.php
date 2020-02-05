@@ -4,10 +4,10 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\ProcedureModality;
+use App\ProcedureType;
 use Util;
 
-class ProcedureModalityController extends Controller
+class ProcedureTypeController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -16,9 +16,8 @@ class ProcedureModalityController extends Controller
      */
     public function index(Request $request)
     {
-        $filter = $request->has('procedure_type_id') ? ['procedure_type_id' => $request->procedure_type_id] : [];
-        $data = Util::search_sort(new ProcedureModality(), $request, $filter);
-        return $data;
+        $filter = $request->has('module_id') ? ['module_id' => $request->module_id] : [];
+        return Util::search_sort(new ProcedureType(), $request, $filter);
     }
 
     /**
@@ -50,7 +49,7 @@ class ProcedureModalityController extends Controller
      */
     public function show($id)
     {
-        return ProcedureModality::findOrFail($id);
+        //
     }
 
     /**
@@ -85,10 +84,5 @@ class ProcedureModalityController extends Controller
     public function destroy($id)
     {
         //
-    }
-    // obtener requisitos de acuerdo a modalidad
-    public function get_requirements($id) {
-        $modality = ProcedureModality::findOrFail($id);
-        return $modality->requirements_list;
     }
 }

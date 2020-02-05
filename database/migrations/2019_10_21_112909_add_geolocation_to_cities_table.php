@@ -27,7 +27,7 @@ class AddGeolocationToCitiesTable extends Migration
     public function down()
     {
         Schema::table('cities', function (Blueprint $table) {
-            $table->dropColumns(['latitude', 'longitude']);
+            $table->dropColumn(['latitude', 'longitude']);
         });
     }
 }

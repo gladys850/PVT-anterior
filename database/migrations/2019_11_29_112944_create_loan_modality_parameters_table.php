@@ -18,7 +18,8 @@ class CreateLoanModalityParametersTable extends Migration
             $table->unsignedBigInteger('procedure_modality_id'); // id modalidad de prestamo
             $table->foreign('procedure_modality_id')->references('id')->on('procedure_modalities');
             $table->float('debt_index',5,2)->nullable(); // indice de endeudamiento
-            $table->smallInteger('quantity_ballots');// cantidad de boletas
+            $table->unsignedTinyInteger('quantity_ballots');// cantidad de boletas
+            $table->unsignedTinyInteger('guarantors');// cantidad de garantes
             $table->timestamps();
         });
     }

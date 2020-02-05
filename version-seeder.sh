@@ -17,3 +17,5 @@ php artisan db:seed --class=AffiliatePermissionSeeder
 php artisan db:seed --class=LoanReceiptRoleSeeder
 php artisan db:seed --class=LoanStateSeeder
 php artisan db:seed --class=AdminSeeder
+php artisan db:seed --class=LoanSeeder
+php artisan db:seed --class=PaymentTypeSeeder
