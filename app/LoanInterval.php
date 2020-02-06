@@ -13,4 +13,8 @@ class LoanInterval extends Model
     {
         return $this->belongsTo(ProcedureType::class);
     }
+    public function procedure_modalities()
+    {
+      return $this->hasMany(ProcedureModality::class,'procedure_type_id','procedure_type_id' )->with('loan_modality_parameter');
+    } 
 }
