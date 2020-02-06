@@ -113,5 +113,10 @@ class LoanController extends Controller
           $pdf = PDF::loadView('request',$data);
           $pdf->setOptions($options);
           return $pdf->stream($file_name);
-        }
+    }
+
+    public function get_disbursable($id){
+        $disbursable = Loan::findOrFail($id);
+        return $disbursable->disbursable;
+    }
 }
