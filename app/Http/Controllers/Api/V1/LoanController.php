@@ -8,7 +8,6 @@ use Illuminate\Http\Request;
 use App\Loan;
 use App\LoanState;
 use Illuminate\Support\Facades\Schema;
-use App\LoanSubmittedDocument;
 use App\ProcedureDocument;
 use App\Http\Requests\LoanForm;
 use Carbon;
@@ -85,6 +84,23 @@ class LoanController extends Controller
         $loan = Loan::findOrFail($id);
         $loan->delete();
         return $loan;
+    }
+
+    public function submit_documents(Request $request, $id)
+    {
+        $loan = Loan::findOrFail($id);
+        $date = Carbon::now()->toISOString();
+        $documents = [];
+        foreach ($request->documents as $document_id) {
+            $document_id = intval($document_id);
+            ProcedureDocument::findOrFail($document_id);
+            if ($loan->submitted_documents()->whereId($document_id)->doesntExist()) {
+                $documents[$document_id] = [
+                    'reception_date' => $date
+                ];
+            }
+        }
+        return $loan->submitted_documents()->syncWithoutDetaching($documents);
     }
 
     public function create_request($loan_id){

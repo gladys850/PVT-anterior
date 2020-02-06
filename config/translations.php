@@ -45,6 +45,7 @@
         'cell_phone_number'=>'Numero de Celular',
         //loans
         'procedure_modality_id'=>'Modalidad de Préstamo',
+        'procedure_documents' => 'Documento',
         'request_date'=>'Fecha de solicitud',
         'amount_request'=>'Monto solicitado',
         'loan_state_id'=>'Estado del prestamo',

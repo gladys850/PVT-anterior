@@ -51,7 +51,7 @@ class Loan extends Model
 
     public function submitted_documents()
     {
-        return $this->belongsToMany(ProcedureDocument::class, 'loan_submitted_documents', 'loan_id')->withPivot('reception_date', 'comment', 'is_valid')->orderBy('pivot_reception_date','desc');
+        return $this->belongsToMany(ProcedureDocument::class, 'loan_submitted_documents', 'loan_id')->withPivot('reception_date', 'comment', 'is_valid');
     }
 
     public function guarantors()
