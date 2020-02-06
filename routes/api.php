@@ -58,6 +58,8 @@ Route::group([
     Route::resource('loan', 'Api\V1\LoanController')->only(['store']);
     Route::resource('loan', 'Api\V1\LoanController')->only(['destroy']);
     Route::resource('loan', 'Api\V1\LoanController')->only(['update']);
+    //get disbursable - affiliate or spouse for loan
+    Route::get('loan/{id}/disbursable', 'Api\V1\LoanController@get_disbursable');
     //affiliate lender loans
     Route::get('affiliate/{id}/loan','Api\V1\AffiliateController@get_loans');
     //verify if an affiliate can be guarantor
@@ -68,13 +70,14 @@ Route::group([
     Route::resource('procedure_modality', 'Api\V1\ProcedureModalityController')->only(['index', 'show']);
     //list of requirements for procedure modalities
     Route::get('procedure_modality/{id}/requirements', 'Api\V1\ProcedureModalityController@get_requirements');
-    //submitted_documents
-    Route::get('loan/{loan_id}/submitted_documents', 'Api\V1\LoanController@submitted_documents');
+    //contributions
     Route::get('affiliate/{id}/contribution', 'Api\V1\AffiliateController@get_contributions');
     // verify cpop 
     Route::get('affiliate/{id}/cpop','Api\V1\AffiliateController@cpop');
     //LoanIntervals
     Route::resource('loan_interval', 'Api\V1\LoanIntervalController')->only(['index']);
+    //Controller Calculator
+    Route::get('calculator', 'Api\V1\CalculatorController@get_calculator');
     // With credentials
     Route::group([
         'middleware' => 'auth'
