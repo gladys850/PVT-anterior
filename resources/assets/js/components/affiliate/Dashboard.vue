@@ -4,45 +4,34 @@
       <v-col cols="8" class="text-center">
         <v-card color='#EDF2F4' shaped class="mx-5">
             <v-card-title>
-              Préstamos 
+              Prestamos
             </v-card-title>
-            <v-card-subtitle>
-              Últimos préstamos
-            </v-card-subtitle>
             <v-card-text>
-              <v-container>
-                <v-col>
-                  <p class="text-left">Codigo:</p>
+              <div>
+                <v-progress-linear
+                :color="randomColor()"
+                height="15"
+                v-model='this.loan_one'
+                striped
+                ><strong>{{loan_one}}%</strong>
+                </v-progress-linear>
+                <br>
                 <v-progress-linear
                   :color="randomColor()"
                   height="15"
-                  :value='this.loan_one'
-                  stripe
-                ><strong>{{loan_one}}%</strong>
-                </v-progress-linear>
-               </v-col>
-                <v-col>
-                 <p class="text-left">Codigo:</p>
-                <v-progress-linear
-                    :color="randomColor()"
-                    height="15"
-                    :value='this.loan_two'
-                    striped
+                  v-model='this.loan_two'
+                  striped
                 ><strong>{{loan_two}}%</strong>
                 </v-progress-linear>
-               </v-col>
-               <v-col>
-                  <p class="text-left">Codigo:</p>
-                 <v-progress-linear
-                    height="15"
-                    :value='this.loan_three'
-                    striped
-                    :color="randomColor()"
+                <br>
+                <v-progress-linear
+                  height="15"
+                  v-model='this.loan_three'
+                  striped
+                  :color="randomColor()"
                 ><strong>{{loan_three}}%</strong>
                 </v-progress-linear>
-                </v-col>                
-              </v-container>  
-             
+              </div>
               <v-tooltip left>
                   <template v-slot:activator="{ on }">
                     <v-btn
@@ -124,7 +113,6 @@
 
 <script>
 import common from '@/plugins/common'
-
 export default {
   name: 'affiliate-fingerprint',
   props: {
