@@ -91,7 +91,7 @@ class Loan extends Model
     {
         return $this->morphMany(Observable::class, 'observable');
     }
-    //desembolso --> afiliado, esposa, beneficiario
+    //desembolso --> afiliado, esposa
     public function disbursable()
     {
         return $this->morphTo();
@@ -204,112 +204,6 @@ class Loan extends Model
         return $plan;
 
     } 
-    // metodos para la calculadora
-    // suma de numeros, la suma del liquido pagable, bonos
-    public function add_numbers($amounts)
-    {
-        if(count($amounts)>0){
-            $add_result=0;
-            foreach($amounts as $data){ 
-                $add_result+=$data; 
-            }
-            return $add_result;
-        }
-        return 0;
-    }
-    // funcion para sacar el liquido para calificacion
-    public function liquid_qualification($ballots,$bonuses){
-        $average_ballots = $this->average_ballots($ballots);
-        $total_bonuses = $this->add_numbers($bonuses);
-        return ($average_ballots-$total_bonuses);
-    }
-    public function average_ballots($ballots){
-        if(count($ballots)>0){
-           return ($this->add_numbers($ballots))/count($ballots);
-        }
-        return 0;
-    }
-    //funcion para sacar la cuota estimada con la calculadora
-    public function quota_calculator($ballots,$bonuses,$modality_id,$months_term,$amount_request){
-        if($modality_id !=null){
-            $loan_intervals= (ProcedureModality::find($modality_id))->procedure_type->loan_intervals;
-            $interest_rate=(LoanInterest::where('procedure_modality_id', '=',$modality_id)->latest()->first())->monthly_current_interest; 
-            if($amount_request>0 && $months_term ==null){
-                return ((($interest_rate)/(1-(1/pow((1+$interest_rate),$loan_intervals->maximum_term))))*$amount_request);   
-            }if($amount_request ==null && $months_term>0){
-                    $maximum_qualified_amount = $this->maximum_amount($modality_id,$ballots,$bonuses,$months_term);
-                    return ((($interest_rate)/(1-(1/pow((1+$interest_rate),$months_term))))*$maximum_qualified_amount);   
-                }if ($months_term>0 && $amount_request>0){
-                        return ((($interest_rate)/(1-(1/pow((1+$interest_rate),$months_term))))*$amount_request);   
-                    }else{
-                        if(count($ballots)>0){
-                            $maximum_qualified_amount = $this->maximum_amount($modality_id,$ballots,$bonuses,$months_term);
-                            $estimated_quota=((($interest_rate)/(1-(1/pow((1+$interest_rate),$loan_intervals->maximum_term))))*$maximum_qualified_amount);
-                            return $estimated_quota;
-                        }else{
-                            return 0;
-                        }
-                    }
-        }else{
-             return 0;
-        } 
-    }
-    // monto maximo
-    public function maximum_amount($modality_id,$ballots,$bonuses,$months_term){ 
-        if($modality_id!=null){
-            $interest_rate=(LoanInterest::where('procedure_modality_id', '=',$modality_id)->latest()->first())->monthly_current_interest;
-            $loan_intervals= (ProcedureModality::find($modality_id))->procedure_type->loan_intervals;
-            $debt_index=(LoanModalityParameter::where('procedure_modality_id', '=',$modality_id)->latest()->first())->decimal_index;
-            $liquid_qualification = $this->liquid_qualification($ballots,$bonuses);
-            if($months_term ==null){
-                $months_term = $loan_intervals->maximum_term;
-            }
-            $maximum_qualified_amount = (1-(1/pow((1+$interest_rate),$months_term)))*($debt_index*$liquid_qualification)/$interest_rate;
-            $maximum_qualified_amount=floor(round(floor($maximum_qualified_amount))/1000)*1000;
-            if ($maximum_qualified_amount > ($loan_intervals->maximum_amount)){
-                $maximum_qualified_amount = $loan_intervals->maximum_amount;
-            } else {
-                $maximum_qualified_amount = $maximum_qualified_amount; 
-            }
-            return $maximum_qualified_amount;
-        }else{
-            return 0;
-        }   
-    }
-    public function calculator($ballots,$bonuses,$modality_id,$months_term,$amount_request)
-    {
-        //$ballots = [2000];$bonuses = [24,24,1000,300]; $modality_id=47;$months_term=null;$amount_request=null;
-        $payable_liquid_average= $this->average_ballots($ballots);
-        $total_bonuses=$this->add_numbers($bonuses);
-        $liquid_qualification=$this->liquid_qualification($ballots,$bonuses);
-        $quota_calculation = $this->quota_calculator($ballots,$bonuses,$modality_id, $months_term, $amount_request);
-        $maximum_suggested_amount = $this->maximum_amount($modality_id,$ballots,$bonuses,$months_term);
-        if($payable_liquid_average!=0){
-            $index_calculated =$quota_calculation/(($this->average_ballots($ballots))-($this->add_numbers($bonuses)))*100 ;
-            $debt_index=(LoanModalityParameter::where('procedure_modality_id', '=',$modality_id)->latest()->first())->debt_index;
-            if($index_calculated > $debt_index){
-                $major_index="El índice de Endeudamiento no debe ser mayor que el : " .$debt_index." %";
-            }else{
-                $major_index="El índice de Endeudamiento es menor que el : " .$debt_index."%";
-            }
-
-        }else{
-            $index_calculated=0;
-        }
-        return[
-                'promedio liquido pagable'=>$payable_liquid_average,
-                'total bonos'=>$total_bonuses,
-                'liquido para calificacion'=>$liquid_qualification,
-                'calculo de cuota'=>$quota_calculation,
-                'indice de endeudamiento'=>$index_calculated,
-                'monto maximo sugerido'=>  $maximum_suggested_amount,
-                'Nota'=>$major_index
-             ];       
-    }
-    public function calculator_guarantor($ballots,$bonuses){
-        $liquid_qualification = $this->liquid_qualification($ballots,$bonuses);
-        return $liquid_qualification;
-    }
     //obtener modalidad teniendo el tipo y el afiliado
     public function get_modality($modality_id, $affiliate_id){
         $affiliate = Affiliate::findOrFail($affiliate_id); $modality=null;
@@ -333,7 +227,7 @@ class Loan extends Model
             break;
             case 'Préstamo a corto plazo':
                 if($affiliate_state_type == "Activo"){
-                    if($affiliate->active_loans){
+                    if($affiliate->active_loans()){
                         $modality = ProcedureModality::whereShortened("PCP-R-SA")->first();//Refinanciamiento corto plazo activo
                     }else{
                         if($affiliate_state == "Servicio" || $affiliate_state == "Comisión" )
@@ -346,7 +240,7 @@ class Loan extends Model
                 }else{
                     if($affiliate_state_type == "Pasivo"){
                         if($affiliate->afp){
-                            if($affiliate->active_loans){
+                            if($affiliate->active_loans()){
                                 $modality=ProcedureModality::whereShortened("PCP-R-SP-AFP")->first();
                                 // refi afp pasivo
                             }else{
@@ -355,7 +249,7 @@ class Loan extends Model
                             }
                               
                         }else{
-                            if($affiliate->active_loans){
+                            if($affiliate->active_loans()){
                                 $modality=ProcedureModality::whereShortened("PCP-R-SP-SEN")->first();
                                 // refi senasir pasivo
                             }else{
@@ -370,7 +264,7 @@ class Loan extends Model
                 if($affiliate_state_type == "Activo")
                 {
                     if($cpop){
-                        if($affiliate->active_loans){
+                        if($affiliate->active_loans()){
                             $modality=ProcedureModality::whereShortened("PLP-R-SA")->first();
                             // Refi largo plazo activo 1 solo garante
                         }else{
@@ -382,7 +276,7 @@ class Loan extends Model
                 }
                 else{
                         if($affiliate_state_type == "Pasivo"){
-                            if($affiliate->active_loans){
+                            if($affiliate->active_loans()){
                                 if($cpop){
                                     $modality=ProcedureModality::whereShortened("PLP-R-SP")->first();
                                     // Refi largo plazo pasivo 1 solo garante
