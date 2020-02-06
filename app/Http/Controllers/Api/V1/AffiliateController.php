@@ -293,7 +293,7 @@ class AffiliateController extends Controller
             $sum_quota+= $affiliate_loans->estimated_quota; 
         }
         $loan = new Loan();
-        $liquid_qualification = $loan->calculator_guarantor($request->ballots,$request->bonuses);
+        $liquid_qualification = $loan->liquid_qualification($request->ballots,$request->bonuses);// se debe modificar
         $qualify = $liquid_qualification - $sum_quota - ($request->new_quota);
         $loan_global_parameter = LoanGlobalParameter::get()->last();
         if($qualify>$loan_global_parameter->livelihood_amount){

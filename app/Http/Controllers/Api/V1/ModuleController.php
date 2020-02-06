@@ -11,7 +11,8 @@ class ModuleController extends Controller
 {
     public function index(Request $request)
     {
-        return Util::search_sort(new Module(), $request);
+        $filter = $request->has('name') ? ['name' => $request->name] : [];
+        return Util::search_sort(new Module(), $request, $filter);
     }
 
     public function show($id)
