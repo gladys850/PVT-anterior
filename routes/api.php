@@ -6,14 +6,14 @@ Route::group([
 ], function () {
     // Login
     Route::resource('auth', 'Api\V1\AuthController')->only(['store']);
-    Route::resource('date', 'Api\V1\DateController')->only(['index']);
+    Route::resource('config', 'Api\V1\ConfigController')->only(['index']);
     //webcam
     Route::patch('picture/{id}', 'Api\V1\AffiliateController@picture_save');
     // Affiliate
     Route::resource('affiliate', 'Api\V1\AffiliateController')->only(['show']);
-    Route::get('affiliate/{id}/degree_name', 'Api\V1\AffiliateController@get_degree');
-    Route::get('affiliate/{id}/category_name', 'Api\V1\AffiliateController@get_category');
-    Route::get('affiliate/{id}/unit_name', 'Api\V1\AffiliateController@get_unit');
+    Route::get('affiliate/{id}/degree', 'Api\V1\AffiliateController@get_degree');
+    Route::get('affiliate/{id}/category', 'Api\V1\AffiliateController@get_category');
+    Route::get('affiliate/{id}/unit', 'Api\V1\AffiliateController@get_unit');
     Route::get('affiliate/{id}/state', 'Api\V1\AffiliateController@get_state');
     // spouse - affiliate
     Route::get('affiliate/{affiliate_id}/spouse', 'Api\V1\AffiliateController@spouse_get');
