@@ -221,7 +221,6 @@ class Loan extends Model
                         $modality=ProcedureModality::whereShortened("ANT-SP")->first();  
                     }
                 }
-            return response()->json($modality); 
             break;
             case 'Préstamo a corto plazo':
                 if($affiliate_state_type == "Activo"){
@@ -256,7 +255,6 @@ class Loan extends Model
                         }                       
                     }
                 }
-                return response()->json($modality); 
                 break;
             case 'Préstamo a largo plazo':
                 if($affiliate_state_type == "Activo")
@@ -284,7 +282,6 @@ class Loan extends Model
                             }
                         }
                 }
-                return response()->json($modality); 
                 break;
             case 'Préstamo hipotecario':
                 if($affiliate_state_type == "Activo")
@@ -296,10 +293,11 @@ class Loan extends Model
                         $modality=ProcedureModality::whereShortened("PLP-GH-SA")->first();
                     } 
                 }
-                return response()->json($modality); 
                 break;
             } 
         }
+        if ($modality) $modality->loan_modality_parameter;
+        return response()->json($modality);
              
     }
 

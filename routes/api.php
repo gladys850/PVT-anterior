@@ -77,7 +77,7 @@ Route::group([
     //LoanIntervals
     Route::resource('loan_interval', 'Api\V1\LoanIntervalController')->only(['index']);
     //get modality
-    Route::get('affiliate/{id}/loan_modality', 'Api\V1\AffiliateController@get_loan_modality');
+    Route::post('affiliate/{id}/loan_modality', 'Api\V1\AffiliateController@get_loan_modality');
     //Controller Calculator
     Route::resource('calculator', 'Api\V1\CalculatorController')->only(['store']);
     // With credentials
