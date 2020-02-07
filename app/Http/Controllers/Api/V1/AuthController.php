@@ -13,12 +13,12 @@ use Ldap;
 /** @group Autenticación
 * Abre el acceso a la aplicación mediante llaves JSON WebToken de tipo Bearer
 */
-
 class AuthController extends Controller
 {
     /**
     * Usuario autenticado
     * Devuelve el usuario actualmente autenticado
+    * @authenticated
     * @response
     * {
     *     "id": 127,
@@ -34,7 +34,6 @@ class AuthController extends Controller
     *     "phone": 65432101,
     *     "active": true
     * }
-    * @authenticated
     */
     public function index()
     {
@@ -101,11 +100,11 @@ class AuthController extends Controller
     /**
     * Cerrar sesión
     * El token se deshabilita
+    * @authenticated
     * @response
     * {
     *     "message": "Logged out successfully"
     * }
-    * @authenticated
     */
     public function logout()
     {
@@ -118,13 +117,13 @@ class AuthController extends Controller
     /**
     * Refrescar token
     * El token actual se deshabilita y se genera otro para alargando el tiempo de sesión
+    * @authenticated
     * @response
     * {
     *     "access_token": "a35fd...",
     *     "token_type": "bearer",
     *     "expires_in": 18000
     * }
-    * @authenticated
     */
     public function refresh()
     {

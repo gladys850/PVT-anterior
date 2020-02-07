@@ -180,7 +180,7 @@ export default {
       try {
         this.loading = true
         let res = await axios.get(`module`)
-        this.modules = res.data
+        this.modules = res.data.data
       } catch (e) {
         console.log(e)
       } finally {

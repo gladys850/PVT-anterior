@@ -14,6 +14,7 @@
 import Footer from '@/layout/Footer'
 import Navbar from '@/layout/Navbar'
 import Appbar from '@/layout/Appbar'
+import Config from '@/services/ConfigService'
 
 export default {
   name: 'app-index',
@@ -26,21 +27,15 @@ export default {
     expandNavbar: false,
   }),
   name: "app-index",
-  methods: {
-    async getDate() {
-      try {
-        let res = await axios.get(`/date`)
-        this.$store.commit("setDate", res.data.now)
-      } catch (e) {
-        console.log(e)
-        this.$store.commit("setDate", this.$moment().format("YYYY-MM-DD"))
-      }
-    }
-  },
   created() {
-    this.getDate()
+    const config = new Config()
+    config.get().then((data) => {
+      this.$store.commit("setDate", data.date)
+    }).catch(() => {
+      this.$store.commit("setDate", this.$moment().format("YYYY-MM-DD"))
+    })
   }
-};
+}
 </script>
 
 <style>
