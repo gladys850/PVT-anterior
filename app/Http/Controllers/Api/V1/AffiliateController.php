@@ -316,7 +316,7 @@ class AffiliateController extends Controller
         }
         return ['state_cpop'=>$state_cpop];
     }
-    public function get_modality(Request $request,$id){
+    public function get_loan_modality(Request $request,$id){
         $affiliate = Affiliate::findOrFail($id);
         $modality_name = ProcedureType::findOrFail($request->procedure_type_id)->name;
         $loan = new Loan();
