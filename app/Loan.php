@@ -131,7 +131,7 @@ class Loan extends Model
     }
  
 
-    public function next_payment()
+    public function getNextPaymentAttribute()
     {
         $quota = $this->last_quota();
         if (!$quota) {
@@ -205,14 +205,12 @@ class Loan extends Model
 
     } 
     //obtener modalidad teniendo el tipo y el afiliado
-    public function get_modality($modality_id, $affiliate_id){
-        $affiliate = Affiliate::findOrFail($affiliate_id); $modality=null;
-        $modality = ProcedureType::findOrFail($modality_id)->name;
+    public function get_modality($modality_name, $affiliate){
+        $modality=null;
         if ($affiliate->affiliate_state){
             $affiliate_state = $affiliate->affiliate_state->name;
-            $affiliate_state_type = $affiliate->affiliate_state->affiliate_state_type->name;
-        } 
-        switch($modality){
+            $affiliate_state_type = $affiliate->affiliate_state->affiliate_state_type->name; 
+        switch($modality_name){
             case 'Préstamo Anticipo':
                 if($affiliate_state_type == "Activo")
                 { 
@@ -300,7 +298,8 @@ class Loan extends Model
                 }
                 return response()->json($modality); 
                 break;
-        } 
+            } 
+        }
              
     }
 
