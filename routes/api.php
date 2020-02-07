@@ -76,8 +76,10 @@ Route::group([
     Route::get('affiliate/{id}/cpop','Api\V1\AffiliateController@cpop');
     //LoanIntervals
     Route::resource('loan_interval', 'Api\V1\LoanIntervalController')->only(['index']);
+    //get modality
+    Route::get('affiliate/{id}/loan_modality', 'Api\V1\AffiliateController@get_loan_modality');
     //Controller Calculator
-    Route::get('calculator', 'Api\V1\CalculatorController@get_calculator');
+    Route::resource('calculator', 'Api\V1\CalculatorController')->only(['store']);
     // With credentials
     Route::group([
         'middleware' => 'auth'

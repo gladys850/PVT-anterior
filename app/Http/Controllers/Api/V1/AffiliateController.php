@@ -18,6 +18,7 @@ use App\Contribution;
 use App\Unit;
 use App\Loan;
 use App\LoanGlobalParameter;
+use App\ProcedureType;
 use App\Http\Requests\AffiliateForm;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -314,5 +315,12 @@ class AffiliateController extends Controller
             $state_cpop = $cpop;
         }
         return ['state_cpop'=>$state_cpop];
+    }
+    public function get_loan_modality(Request $request,$id){
+        $affiliate = Affiliate::findOrFail($id);
+        $modality_name = ProcedureType::findOrFail($request->procedure_type_id)->name;
+        $loan = new Loan();
+        return $loan->get_modality($modality_name,$affiliate);
+       
     }
 }
