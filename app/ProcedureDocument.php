@@ -8,6 +8,7 @@ use App\Loan;
 
 class ProcedureDocument extends Model
 {
+    use Traits\EloquentGetTableNameTrait;
 
     public $timestamps = false;
     // protected $hidden = ['pivot'];

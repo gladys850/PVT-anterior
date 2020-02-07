@@ -13,6 +13,7 @@
 /vendor
 /laradock/*
 /app/storage/
+/resources/docs/
 .env
 .phpunit.result.cache
 yarn-error.log

@@ -51,6 +51,7 @@ Route::group([
     //document
     Route::get('document/{affiliate_id}', 'Api\V1\ScannedDocumentController@create_document');
     Route::resource('procedureDocument', 'Api\V1\ProcedureDocumentController')->only(['index']);
+    Route::post('loan/{id}/document', 'Api\V1\LoanController@submit_documents');
     //Loan
     Route::resource('loan', 'Api\V1\LoanController')->only(['index']);
     Route::resource('loan', 'Api\V1\LoanController')->only(['show']);
