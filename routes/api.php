@@ -16,9 +16,9 @@ Route::group([
     Route::get('affiliate/{id}/unit', 'Api\V1\AffiliateController@get_unit');
     Route::get('affiliate/{id}/state', 'Api\V1\AffiliateController@get_state');
     // spouse - affiliate
-    Route::get('affiliate/{affiliate_id}/spouse', 'Api\V1\AffiliateController@spouse_get');
+    Route::get('affiliate/{id}/spouse', 'Api\V1\AffiliateController@get_spouse');
     //address - affiliate
-    Route::get('affiliate/{affiliate_id}/address', 'Api\V1\AffiliateController@addresses_get');
+    Route::get('affiliate/{id}/address', 'Api\V1\AffiliateController@get_addresses');
     Route::patch('affiliate/{affiliate_id}/address', 'Api\V1\AffiliateController@addresses_update');
     //addres
     Route::resource('address', 'Api\V1\AddressController')->only('store', 'destroy', 'update');

@@ -559,18 +559,77 @@ class AffiliateController extends Controller
     Storage::disk('ftp')->put($base_path.$imageName, base64_decode($image));
 
     }
-    //get information spouse
-    public function spouse_get($affiliate_id){
-        $spouse = Spouse::where('affiliate_id',$affiliate_id)->first();
-        if(!$spouse) abort (404);
-        return ($spouse);
-    }  
-    //addresses
-    public function addresses_get($affiliate_id){
-        $affiliate=Affiliate::find($affiliate_id);
-        $addreses = $affiliate->addresses()->orderByDesc('created_at')->get();
-        return $addreses;
+
+    /**
+    * Cónyugue
+    * Devuelve los datos del o la cónyugue en caso de que el afiliado hubiese fallecido
+    * @urlParam id required ID de afiliado. Example: 12
+    * @response
+    * {
+    *     "id": 42,
+    *     "user_id": 47,
+    *     "affiliate_id": 12,
+    *     "city_identity_card_id": 2,
+    *     "identity_card": "1048652",
+    *     "registration": "",
+    *     "last_name": "FORTUN",
+    *     "mothers_last_name": null,
+    *     "first_name": "MARIA",
+    *     "second_name": "LUISA",
+    *     "surname_husband": "VDA. DE VILLALBA",
+    *     "civil_status": "V",
+    *     "birth_date": "1947-06-08",
+    *     "date_death": null,
+    *     "reason_death": "",
+    *     "created_at": "2017-06-08 11:56:17",
+    *     "updated_at": "2019-06-14 11:25:21",
+    *     "deleted_at": null,
+    *     "city_birth_id": 2,
+    *     "death_certificate_number": "",
+    *     "due_date": null,
+    *     "is_duedate_undefined": true,
+    *     "official": "600",
+    *     "book": "0024-64",
+    *     "departure": "143",
+    *     "marriage_date": "1964-12-12"
+    * }
+    */
+    public function get_spouse($id) {
+        $spouse = Spouse::where('affiliate_id',$id)->first();
+        return response()->json($spouse);
     }
+
+    /**
+    * Direcciones
+    * Devuelve la lista de direcciones del afiliado
+    * @urlParam id required ID de afiliado. Example: 1
+    * @response
+    * [
+    *     {
+    *         "id": 6291,
+    *         "city_address_id": 2,
+    *         "zone": "CENTRAL",
+    *         "street": "URB. LOYOLA",
+    *         "number_address": "2",
+    *         "created_at": "2019-06-12 17:08:45",
+    *         "updated_at": "2019-06-12 17:08:45",
+    *         "latitude": 0,
+    *         "longitude": 0,
+    *         "pivot": {
+    *             "addressable_id": 1,
+    *             "address_id": 6291,
+    *             "addressable_type": "affiliates",
+    *             "created_at": "2019-06-12 17:08:45",
+    *             "updated_at": "2019-06-12 17:08:45"
+    *         }
+    *     }
+    * ]
+    */
+    public function get_addresses($id) {
+        $affiliate = Affiliate::findOrFail($id);
+        return $affiliate->addresses()->orderByDesc('created_at')->get();
+    }
+
     public function addresses_update(Request $request,$affiliate_id){
        // $addresses=[8570,10371,18];
         foreach($request->addresses as $dir) {
