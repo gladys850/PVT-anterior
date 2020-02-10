@@ -199,10 +199,58 @@ class AffiliateController extends Controller
     }
 
     /**
-    * Display the specified resource.
-    *
-    * @param  \App\Affiliate  $affiliate
-    * @return \Illuminate\Http\Response
+    * Detalle de afiliado
+    * Devuelve el detalle de un afiliado mediante su ID
+    * @queryParam id ID de afiliado. Example: 54
+    * @response
+    * {
+    *     "id": 54,
+    *     "user_id": 47,
+    *     "affiliate_state_id": 5,
+    *     "city_identity_card_id": 5,
+    *     "city_birth_id": 7,
+    *     "degree_id": 12,
+    *     "unit_id": 1,
+    *     "category_id": 8,
+    *     "pension_entity_id": 2,
+    *     "identity_card": "678681",
+    *     "registration": "570702HGT",
+    *     "type": "Comando",
+    *     "last_name": "HIDALGO",
+    *     "mothers_last_name": "GOMEZ",
+    *     "first_name": "TRIFON",
+    *     "second_name": null,
+    *     "surname_husband": null,
+    *     "gender": "M",
+    *     "civil_status": "C",
+    *     "birth_date": "1957-07-02",
+    *     "date_entry": "1981-01-01",
+    *     "date_death": null,
+    *     "reason_death": null,
+    *     "date_derelict": "2017-12-01",
+    *     "reason_derelict": null,
+    *     "change_date": "2017-12-01",
+    *     "phone_number": "(6) 435-896",
+    *     "cell_phone_number": "(754)-41119",
+    *     "afp": true,
+    *     "nua": 9439900,
+    *     "item": 28709,
+    *     "created_at": "2017-06-01 10:42:18",
+    *     "updated_at": "2019-10-18 15:52:59",
+    *     "deleted_at": null,
+    *     "service_years": 37,
+    *     "service_months": 0,
+    *     "death_certificate_number": "",
+    *     "due_date": null,
+    *     "is_duedate_undefined": true,
+    *     "affiliate_registration_number": null,
+    *     "file_code": "",
+    *     "picture_saved": false,
+    *     "fingerprint_saved": false,
+    *     "full_name": "TRIFON HIDALGO GOMEZ",
+    *     "dead": false,
+    *     "defaulted": false
+    * }
     */
     public function show($id)
     {
@@ -214,11 +262,83 @@ class AffiliateController extends Controller
     }
 
     /**
-    * Update the specified resource in storage.
-    *
-    * @param  \Illuminate\Http\Request  $request
-    * @param  \App\Affiliate  $affiliate
-    * @return \Illuminate\Http\Response
+    * Actualizar afiliado
+    * Actualizar datos personales de afiliado
+    * @urlParam id required ID de afiliado. Example: 54
+    * @bodyParam first_name string Primer nombre. Example: JUAN
+    * @bodyParam last_name string Apellido paterno. Example: PINTO
+    * @bodyParam gender string Género (M,F). Example: M
+    * @bodyParam birth_date date Fecha de nacimiento (AÑO-MES-DÍA). Example: 1980-05-02
+    * @bodyParam city_birth_id integer ID de ciudad de nacimiento. Example: 10
+    * @bodyParam city_identity_card_id integer ID de ciudad del CI. Example: 4
+    * @bodyParam civil_status string Estado civil (S,C,D,V). Example: C
+    * @bodyParam identity_card string Carnet de identidad. Example: 165134-1L
+    * @bodyParam affiliate_state_id integer ID de estado de afiliado. Example: 2
+    * @bodyParam degree_id integer ID del grado policial. Example: 4
+    * @bodyParam unit_id integer ID de unidad de destino. Example: 7
+    * @bodyParam category_id integer ID de categoría. Example: 9
+    * @bodyParam pension_entity_id integer ID de entidad de pensiones. Example: 1
+    * @bodyParam registration string Matrícula. Example: 870914VBW
+    * @bodyParam type string Tipo de destino (Comando, Batallón). Example: Comando
+    * @bodyParam second_name string Segundo nombre. Example: ROBERTO
+    * @bodyParam mothers_last_name string Apellido materno. Example: ROJAS
+    * @bodyParam surname_husband string Apellido de casada. Example: PAREDES
+    * @bodyParam date_entry date Fecha de ingreso a la policía. Example: 1980-05-20
+    * @bodyParam date_death date Fecha de fallecimiento. Example: 2018-09-21
+    * @bodyParam death_certificate_number date Fecha de certificado de defunción. Example: 2018-09-23
+    * @bodyParam reason_death string Causa de fallecimiento. Example: Embolia
+    * @bodyParam date_derelict date Fecha de baja de la policía. Example: 2017-12-30
+    * @bodyParam reason_derelict string Causa de baja de la policía. Example: Proceso administrativo
+    * @bodyParam due_date date Fecha de vencimiento del CI. Example: 2018-01-05
+    * @bodyParam is_duedate_undefined boolean Si la fecha de vencimiento de CI es indefinido . Example: false
+    * @bodyParam change_date date Fecha de cambio. Example: 2015-02-03
+    * @bodyParam phone_number integer Número de teléfono fijo. Example: 2254101
+    * @bodyParam cell_phone_number array Números de celular. Example: [76543210,65432101]
+    * @bodyParam afp boolean Si el afiliado aporta a AFP(true) o SENASIR(false). Example: true
+    * @bodyParam nua integer Número NUA. Example: 26271503
+    * @bodyParam item integer Número de ítem policial. Example: 32706
+    * @bodyParam service_years integer Años de servicio. Example: 6
+    * @bodyParam service_months integer Meses de servicio. Example: 4
+    * @bodyParam affiliate_registration_number integer Número único de registro de afiliado. Example: 10512
+    * @bodyParam file_code string Código de folder de afiliado. Example: AFW-12
+    * @authenticated
+    * @response
+    * {
+    *     "first_name": "JUAN",
+    *     "last_name": "PINTO",
+    *     "gender": "M",
+    *     "birth_date": "1980-05-02",
+    *     "city_birth_id": 10,
+    *     "city_identity_card_id": 4,
+    *     "civil_status": "C",
+    *     "identity_card": "165134-1L",
+    *     "affiliate_state_id": 2,
+    *     "degree_id": 4,
+    *     "unit_id": 7,
+    *     "category_id": 9,
+    *     "pension_entity_id": 1,
+    *     "registration": "870925VBW",
+    *     "type": "Comando",
+    *     "second_name": "ROBERTO",
+    *     "mothers_last_name": "ROJAS",
+    *     "surname_husband": "PAREDES",
+    *     "date_entry": "1980-05-20",
+    *     "date_death": "2018-09-21",
+    *     "reason_death": "EMBOLIA",
+    *     "date_derelict": "2017-12-30",
+    *     "reason_derelict": "Proceso administrativo",
+    *     "due_date": "2018-01-05",
+    *     "is_duedate_undefined": false,
+    *     "change_date": "2015-02-03",
+    *     "phone_number": 2254101,
+    *     "cell_phone_number": "[76543210,65432101]",
+    *     "afp": true,
+    *     "nua": 26271503,
+    *     "item": 32706,
+    *     "updated_at": "2020-02-07 15:31:31",
+    *     "created_at": "2020-02-07 15:31:31",
+    *     "id": 54
+    * }
     */
     public function update(AffiliateForm $request, $id)
     {
@@ -229,10 +349,54 @@ class AffiliateController extends Controller
     }
 
     /**
-    * Remove the specified resource from storage.
-    *
-    * @param  \App\Affiliate  $affiliate
-    * @return \Illuminate\Http\Response
+    * Eliminar afiliado
+    * Elimina un afiliado solo en caso de que no hubiese iniciado ningún trámite
+    * @urlParam id required ID de afiliado. Example: 54
+    * @authenticated
+    * @response
+    * {
+    *     "id": 58662,
+    *     "user_id": null,
+    *     "affiliate_state_id": 2,
+    *     "city_identity_card_id": 4,
+    *     "city_birth_id": 10,
+    *     "degree_id": 4,
+    *     "unit_id": 7,
+    *     "category_id": 9,
+    *     "pension_entity_id": 1,
+    *     "identity_card": "165134-1L",
+    *     "registration": "870925VBW",
+    *     "type": "Comando",
+    *     "last_name": "PINTO",
+    *     "mothers_last_name": "ROJAS",
+    *     "first_name": "JUAN",
+    *     "second_name": "ROBERTO",
+    *     "surname_husband": "PAREDES",
+    *     "gender": "M",
+    *     "civil_status": "C",
+    *     "birth_date": "1980-05-02",
+    *     "date_entry": "1980-05-20",
+    *     "date_death": "2018-09-21",
+    *     "reason_death": "EMBOLIA",
+    *     "date_derelict": "2017-12-30",
+    *     "reason_derelict": "Proceso administrativo",
+    *     "change_date": "2015-02-03",
+    *     "phone_number": "2254101",
+    *     "cell_phone_number": "[76543210,65432101]",
+    *     "afp": true,
+    *     "nua": 26271503,
+    *     "item": 32706,
+    *     "created_at": "2020-02-07 15:31:31",
+    *     "updated_at": "2020-02-07 15:31:31",
+    *     "deleted_at": null,
+    *     "service_years": null,
+    *     "service_months": null,
+    *     "death_certificate_number": null,
+    *     "due_date": "2018-01-05",
+    *     "is_duedate_undefined": false,
+    *     "affiliate_registration_number": null,
+    *     "file_code": null
+    * }
     */
     public function destroy($id)
     {
@@ -242,17 +406,59 @@ class AffiliateController extends Controller
         return $affiliate;
     }
 
+    /**
+    * Finalizar captura de huellas
+    * Finaliza la captura de huellas en el dispositivo biométrico y envía un mensaje con el estado mediante sockets en el canal: fingerprint; el ejemplo es el de la respuesta con código 201
+    * @urlParam id required ID de afiliado. Example: 2
+    * @queryParam user_id required required ID de usuario que realizó la captura. Example: 23
+    * @response 200
+    * {
+    *     "message": "Message broadcasted"
+    * }
+    * @response 201
+    * {
+    *    "data": {
+    *        "affiliate_id": 2,
+    *        "user_id": 23,
+    *        "success": true
+    *    }
+    * }
+    */
     public function fingerprint_saved(Request $request, $id)
     {
         $affiliate = Affiliate::findOrFail($id);
+        $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'success' => 'required|boolean'
+        ]);
         $user = User::findOrFail($request->user_id);
-        event(new FingerprintSavedEvent($affiliate, $user, $request->success));
-        return response()->json([
-            'message' => 'Message broadcasted'
-        ], 200);
+        if ($user->active) {
+            event(new FingerprintSavedEvent($affiliate, $user, $request->success));
+            return response()->json([
+                'message' => 'Message broadcasted'
+            ], 200);
+        } else {
+            abort(401);
+        }
     }
 
-    public function fingerprint_updated(Request $request, $id)
+    /**
+    * Registrar huellas
+    * Inicia la captura de huellas en el dispositivo biométrico, la respuesta es enviada también mediante sockets en el canal: record; dicha difusión contiene la misma información que la respuesta de ejemplo
+    * @urlParam id required ID de afiliado. Example: 2
+    * @response
+    * {
+    *     "id": 4726,
+    *     "user_id": 127,
+    *     "record_type_id": 5,
+    *     "recordable_id": 2,
+    *     "recordable_type": "affiliates",
+    *     "action": "[Datos Personales] El usuario admin inició la captura de huellas. Afiliado: RAFAEL GONZALO BORJA LLANOS",
+    *     "created_at": "2020-02-10 09:15:15",
+    *     "updated_at": "2020-02-10 09:15:15"
+    * }
+    */
+    public function fingerprint_updated($id)
     {
         $affiliate = Affiliate::findOrFail($id);
         $record_type = RecordType::whereName('datos-personales')->first();
@@ -267,12 +473,26 @@ class AffiliateController extends Controller
         abort(404);
     }
 
+    // Append additional to affiliate
     private function append_data($affiliate) {
         $affiliate->picture_saved = $affiliate->picture_saved;
         $affiliate->fingerprint_saved = $affiliate->fingerprint_saved;
         $affiliate->full_name = $affiliate->full_name;
     }
 
+    /**
+    * Imagen perfil afiliado
+    * Devuelve el listado con los nombres de los archivos de imagen, el contenido en base64 y el formato
+    * @urlParam id required ID de afiliado. Example: 2
+    * @response
+    * [
+    *     {
+    *         "name": "2_perfil.jpg",
+    *         "content": "4AAQSkZJR...",
+    *         "format": "image/jpeg"
+    *     }
+    * ]
+    */
     public function PictureImageprint(Request $request, $id)
     {
         $files = [];
@@ -290,6 +510,24 @@ class AffiliateController extends Controller
         return $files;
     }
 
+    /**
+    * Imagen huellas afiliado
+    * Devuelve el listado con los nombres de los archivos de imagen, el contenido en base64 y el formato
+    * @urlParam id required ID de afiliado. Example: 2
+    * @response
+    * [
+    *     {
+    *         "name": "2_left_four.png",
+    *         "content": "iVBORw0K...",
+    *         "format": "image/png"
+    *     },
+    *     {
+    *         "name": "2_thumbs.png",
+    *         "content": "AIMcAAQA...",
+    *         "format": "image/png"
+    *     }, {}
+    * ]
+    */
     public function FingerImageprint($id)
     {
         $files = [];
@@ -344,7 +582,7 @@ class AffiliateController extends Controller
     /**
     * Boletas de pago
     * Devuelve el listado de las boletas de pago de un afiliado
-    * @urlParam id ID de afiliado
+    * @urlParam id required ID de afiliado
     * @queryParam sortBy Vector de ordenamiento. Example: [month_year]
     * @queryParam sortDesc Vector de orden descendente(true) o ascendente(false). Example: [true]
     * @queryParam per_page Número de datos por página. Example: 3
