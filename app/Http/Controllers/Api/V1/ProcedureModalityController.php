@@ -7,13 +7,13 @@ use Illuminate\Http\Request;
 use App\ProcedureModality;
 use Util;
 
-/** @group Modalidad de procedimientos
-* Procedimientos agrupados por modalidad de acuerdo a filtro de tipo de procedimiento
+/** @group Modalidad de trámites
+* Trámites agrupados por modalidad de acuerdo a filtro de tipo de procedimiento
 */
 class ProcedureModalityController extends Controller
 {
     /**
-    * Lista de procedimientos
+    * Lista de trámites
     * Devuelve el listado con los datos paginados
     * @queryParam procedure_type_id Filtro de ID del tipo de procedimiento. Example: 9
     * @queryParam sortBy Vector de ordenamiento. Example: [name]

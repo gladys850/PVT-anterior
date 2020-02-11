@@ -60,8 +60,8 @@
                   </div>
                 </v-col>
               </template>
-              <template v-for="n in (filteredRoles.length == 1) ? 2 : ((filteredRoles.length == 2) ? 1 : 0)">
-                <v-col :key="n"></v-col>
+              <template v-for="(n, index) in (filteredRoles.length == 1) ? 2 : ((filteredRoles.length == 2) ? 1 : 0)">
+                <v-col :key="index"></v-col>
               </template>
             </v-row>
           </v-list>
