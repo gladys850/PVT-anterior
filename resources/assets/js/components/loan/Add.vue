@@ -108,7 +108,7 @@ export default {
     ]
     if (this.isNew) {
       breadcrumbs.push({
-        text: 'Nuevo PrestamoAfiliado',
+        text: ''+ this.$options.filters.fullName(this.affiliate, true),
         to: { name: 'loanIndex', params: { id: 'new' } }
       })
     } else {
