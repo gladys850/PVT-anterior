@@ -12,7 +12,8 @@
       <v-container>
         <div  >
           <v-expansion-panels  :focusable="true">
-            <v-expansion-panel>
+            <v-expansion-panel
+              :expand="true">
               <v-expansion-panel-header>
                 TITULAR
                 <template v-slot:actions >
@@ -26,7 +27,7 @@
               </v-expansion-panel-content>
             </v-expansion-panel>
 
-            <v-expansion-panel>
+            <v-expansion-panel v-if="ocultar">
               <v-expansion-panel-header disable-icon-rotate>
                 GARANTES
                 <template v-slot:actions>
@@ -65,6 +66,7 @@ export default {
       phone_number:null,
       cell_phone_number:null
     },
+    ocultar:false,
   }),
   computed: {
     isNew() {
