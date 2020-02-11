@@ -162,7 +162,9 @@ return [
         // Barcode
         Milon\Barcode\BarcodeServiceProvider::class,
         // Sanitizer
-        Waavi\Sanitizer\Laravel\SanitizerServiceProvider::class
+        Waavi\Sanitizer\Laravel\SanitizerServiceProvider::class,
+        // ApiDoc Generator
+        Mpociot\ApiDoc\ApiDocGeneratorServiceProvider::class
     ],
 
     /*

@@ -15,7 +15,7 @@ class LoanIntervalController extends Controller
      */
     public function index()
     {
-       return LoanInterval::orderByDesc('maximum_amount')->get();
+        return LoanInterval::orderByDesc('maximum_amount')->get();
     }
 
     /**

@@ -6,14 +6,14 @@ Route::group([
 ], function () {
     // Login
     Route::resource('auth', 'Api\V1\AuthController')->only(['store']);
-    Route::resource('date', 'Api\V1\DateController')->only(['index']);
+    Route::resource('config', 'Api\V1\ConfigController')->only(['index']);
     //webcam
     Route::patch('picture/{id}', 'Api\V1\AffiliateController@picture_save');
     // Affiliate
     Route::resource('affiliate', 'Api\V1\AffiliateController')->only(['show']);
-    Route::get('affiliate/{id}/degree_name', 'Api\V1\AffiliateController@get_degree');
-    Route::get('affiliate/{id}/category_name', 'Api\V1\AffiliateController@get_category');
-    Route::get('affiliate/{id}/unit_name', 'Api\V1\AffiliateController@get_unit');
+    Route::get('affiliate/{id}/degree', 'Api\V1\AffiliateController@get_degree');
+    Route::get('affiliate/{id}/category', 'Api\V1\AffiliateController@get_category');
+    Route::get('affiliate/{id}/unit', 'Api\V1\AffiliateController@get_unit');
     Route::get('affiliate/{id}/state', 'Api\V1\AffiliateController@get_state');
     // spouse - affiliate
     Route::get('affiliate/{affiliate_id}/spouse', 'Api\V1\AffiliateController@spouse_get');
@@ -51,12 +51,15 @@ Route::group([
     //document
     Route::get('document/{affiliate_id}', 'Api\V1\ScannedDocumentController@create_document');
     Route::resource('procedureDocument', 'Api\V1\ProcedureDocumentController')->only(['index']);
+    Route::post('loan/{id}/document', 'Api\V1\LoanController@submit_documents');
     //Loan
     Route::resource('loan', 'Api\V1\LoanController')->only(['index']);
     Route::resource('loan', 'Api\V1\LoanController')->only(['show']);
     Route::resource('loan', 'Api\V1\LoanController')->only(['store']);
     Route::resource('loan', 'Api\V1\LoanController')->only(['destroy']);
     Route::resource('loan', 'Api\V1\LoanController')->only(['update']);
+    //get disbursable - affiliate or spouse for loan
+    Route::get('loan/{id}/disbursable', 'Api\V1\LoanController@get_disbursable');
     //affiliate lender loans
     Route::get('affiliate/{id}/loan','Api\V1\AffiliateController@get_loans');
     //verify if an affiliate can be guarantor
@@ -67,13 +70,16 @@ Route::group([
     Route::resource('procedure_modality', 'Api\V1\ProcedureModalityController')->only(['index', 'show']);
     //list of requirements for procedure modalities
     Route::get('procedure_modality/{id}/requirements', 'Api\V1\ProcedureModalityController@get_requirements');
-    //submitted_documents
-    Route::get('loan/{loan_id}/submitted_documents', 'Api\V1\LoanController@submitted_documents');
+    //contributions
     Route::get('affiliate/{id}/contribution', 'Api\V1\AffiliateController@get_contributions');
     // verify cpop 
     Route::get('affiliate/{id}/cpop','Api\V1\AffiliateController@cpop');
     //LoanIntervals
     Route::resource('loan_interval', 'Api\V1\LoanIntervalController')->only(['index']);
+    //get modality
+    Route::post('affiliate/{id}/loan_modality', 'Api\V1\AffiliateController@get_loan_modality');
+    //Controller Calculator
+    Route::resource('calculator', 'Api\V1\CalculatorController')->only(['store']);
     // With credentials
     Route::group([
         'middleware' => 'auth'

@@ -70,6 +70,7 @@ return [
              * Note that the route must be referenced by name here (wildcards are supported).
              */
             'exclude' => [
+                'logs'
                 // 'users.create', 'admin.*'
             ],
 

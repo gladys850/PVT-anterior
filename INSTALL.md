@@ -63,7 +63,7 @@ php artisan db:seed --class=DatabaseProductionSeeder
 * To generate the documentation
 
 ```sh
-php artisan api:generate --output="public/docs" --routePrefix="api/*" --actAsUserId=1
+php artisan api:generate
 ```
 
-* To view the documentation unput in your web browser URL: [http://server:port/docs/](http://localhost:8888/docs/)
+* To view the documentation unput in your web browser URL: [http://server:port/docs/](http://localhost/docs/)

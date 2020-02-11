@@ -4,7 +4,7 @@
       <v-col cols="8" class="text-center">
         <v-card color='#EDF2F4' shaped class="mx-5">
             <v-card-title>
-              Prestamos
+              Préstamos
             </v-card-title>
             <v-card-text>
               <div>
@@ -170,8 +170,8 @@ export default {
     async getDegree_name(id) {
       try {
         this.loading = true
-        let res = await axios.get(`affiliate/${id}/degree_name`)
-        this.degree_name = res.data
+        let res = await axios.get(`affiliate/${id}/degree`)
+        this.degree_name = res.data.name
       } catch (e) {
         console.log(e)
       } finally {
@@ -181,8 +181,8 @@ export default {
       async getCategory_name(id) {
       try {
         this.loading = true
-        let res = await axios.get(`affiliate/${id}/category_name`)
-        this.category_name = res.data
+        let res = await axios.get(`affiliate/${id}/category`)
+        this.category_name = res.data.name
       } catch (e) {
         console.log(e)
       } finally {
@@ -192,8 +192,8 @@ export default {
       async getUnit_name(id) {
       try {
         this.loading = true
-        let res = await axios.get(`affiliate/${id}/unit_name`)
-        this.unit_name = res.data
+        let res = await axios.get(`affiliate/${id}/unit`)
+        this.unit_name = res.data.name
       } catch (e) {
         console.log(e)
       } finally {

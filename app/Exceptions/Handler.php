@@ -3,8 +3,8 @@
 namespace App\Exceptions;
 
 use Exception;
+use Util;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -63,10 +63,23 @@ class Handler extends ExceptionHandler
 				]
             ], 401);
         } elseif ($exception instanceof ModelNotFoundException or $exception instanceof NotFoundHttpException) {
+            preg_match('/[^ ]*$/', $message, $id);
+            if (count($id) > 0) {
+                $id = $id[0];
+                preg_match('#\[(.*?)\]#', $message, $model);
+                if (count($model) > 1) {
+                    $message = $model[1]::getTableName();
+                    $message = ': ' . Util::translate($message) . ' ' . $id;
+                } else {
+                    $message = '';
+                }
+            } else {
+                $message = '';
+            }
 			return response()->json([
 				'message' => 'Data not found',
 				'errors' => [
-					'type' => [$message ?? 'Recurso no encontrado'],
+					'type' => ['Recurso no encontrado' . $message],
 				]
 			], 404);
 		} elseif ($exception instanceof \PDOException) {
