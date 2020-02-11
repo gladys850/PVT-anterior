@@ -15,6 +15,8 @@ Route::group([
     Route::resource('category', 'Api\V1\CategoryController')->only('index');
     Route::resource('procedure_type', 'Api\V1\ProcedureTypeController')->only('index', 'show');
     Route::resource('procedure_modality', 'Api\V1\ProcedureModalityController')->only('index', 'show');
+    Route::resource('module', 'Api\V1\ModuleController')->only('index', 'show');
+    Route::get('module/{id}/procedure_type', 'Api\V1\ModuleController@get_procedure_types');
 
 
     // Biométrico
@@ -144,9 +146,7 @@ Route::group([
             Route::get('ldap/unregistered', 'Api\V1\UserController@unregistered_users');
             Route::get('ldap/sync', 'Api\V1\UserController@synchronize_users');
             // Módulo
-            Route::resource('module', 'Api\V1\ModuleController')->only('index', 'show');
             Route::get('module/{id}/role', 'Api\V1\ModuleController@get_roles');
-            Route::get('module/{id}/procedure_type', 'Api\V1\ModuleController@get_procedure_types');
             // Rol
             Route::resource('role', 'Api\V1\RoleController')->only('index', 'show');
             Route::get('role/{id}/permission', 'Api\V1\RoleController@get_permissions');
