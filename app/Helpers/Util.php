@@ -90,8 +90,9 @@ class Util
                 }
             }
         }
-        foreach ($filter as $column => $value) {
-            $query = $query->where($column, '=', $value);
+        foreach ($filter as $column => $constraint) {
+            if (!is_array($constraint)) $constraint = ['=', $constraint];
+            $query = $query->where($column, $constraint[0], $constraint[1]);
         }
         if ($request->has('search') || $request->has('sortBy')) {
             $columns = Schema::getColumnListing($model::getTableName());

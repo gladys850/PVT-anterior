@@ -14,6 +14,7 @@ php artisan db:seed --class=LoanPermissionSeeder
 php artisan db:seed --class=UserPermissionSeeder
 php artisan db:seed --class=RecordPermissionSeeder
 php artisan db:seed --class=AffiliatePermissionSeeder
+php artisan db:seed --class=AddressPermissionSeeder
 php artisan db:seed --class=LoanReceiptRoleSeeder
 php artisan db:seed --class=LoanStateSeeder
 php artisan db:seed --class=AdminSeeder

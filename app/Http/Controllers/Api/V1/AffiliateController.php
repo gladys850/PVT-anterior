@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use \Waavi\Sanitizer\Sanitizer;
 use Util;
 use App\Affiliate;
 use App\RecordType;
@@ -143,11 +144,11 @@ class AffiliateController extends Controller
     * @bodyParam date_derelict date Fecha de baja de la policía. Example: 2017-12-30
     * @bodyParam reason_derelict string Causa de baja de la policía. Example: Proceso administrativo
     * @bodyParam due_date date Fecha de vencimiento del CI. Example: 2018-01-05
-    * @bodyParam is_duedate_undefined boolean Si la fecha de vencimiento de CI es indefinido . Example: false
+    * @bodyParam is_duedate_undefined boolean Si la fecha de vencimiento de CI es indefinido . Example: 0
     * @bodyParam change_date date Fecha de cambio. Example: 2015-02-03
     * @bodyParam phone_number integer Número de teléfono fijo. Example: 2254101
     * @bodyParam cell_phone_number array Números de celular. Example: [76543210,65432101]
-    * @bodyParam afp boolean Si el afiliado aporta a AFP(true) o SENASIR(false). Example: true
+    * @bodyParam afp boolean Si el afiliado aporta a AFP(1) o SENASIR(0). Example: 1
     * @bodyParam nua integer Número NUA. Example: 26271503
     * @bodyParam item integer Número de ítem policial. Example: 32706
     * @bodyParam service_years integer Años de servicio. Example: 6
@@ -258,6 +259,7 @@ class AffiliateController extends Controller
         $this->append_data($affiliate);
         $affiliate->dead = $affiliate->dead;
         $affiliate->defaulted = $affiliate->defaulted;
+        $affiliate->cpop = $affiliate->cpop;
         return $affiliate;
     }
 
@@ -290,11 +292,11 @@ class AffiliateController extends Controller
     * @bodyParam date_derelict date Fecha de baja de la policía. Example: 2017-12-30
     * @bodyParam reason_derelict string Causa de baja de la policía. Example: Proceso administrativo
     * @bodyParam due_date date Fecha de vencimiento del CI. Example: 2018-01-05
-    * @bodyParam is_duedate_undefined boolean Si la fecha de vencimiento de CI es indefinido . Example: false
+    * @bodyParam is_duedate_undefined boolean Si la fecha de vencimiento de CI es indefinido . Example: 0
     * @bodyParam change_date date Fecha de cambio. Example: 2015-02-03
     * @bodyParam phone_number integer Número de teléfono fijo. Example: 2254101
     * @bodyParam cell_phone_number array Números de celular. Example: [76543210,65432101]
-    * @bodyParam afp boolean Si el afiliado aporta a AFP(true) o SENASIR(false). Example: true
+    * @bodyParam afp boolean Si el afiliado aporta a AFP(1) o SENASIR(0). Example: 1
     * @bodyParam nua integer Número NUA. Example: 26271503
     * @bodyParam item integer Número de ítem policial. Example: 32706
     * @bodyParam service_years integer Años de servicio. Example: 6
@@ -458,7 +460,7 @@ class AffiliateController extends Controller
     *     "updated_at": "2020-02-10 09:15:15"
     * }
     */
-    public function fingerprint_updated($id)
+    public function update_fingerprint($id)
     {
         $affiliate = Affiliate::findOrFail($id);
         $record_type = RecordType::whereName('datos-personales')->first();
@@ -493,7 +495,7 @@ class AffiliateController extends Controller
     *     }
     * ]
     */
-    public function PictureImageprint(Request $request, $id)
+    public function get_profile_images(Request $request, $id)
     {
         $files = [];
         $base_path = 'picture/';
@@ -528,7 +530,7 @@ class AffiliateController extends Controller
     *     }, {}
     * ]
     */
-    public function FingerImageprint($id)
+    public function get_fingerprint_images($id)
     {
         $files = [];
         $base_path = 'picture/';
@@ -600,7 +602,7 @@ class AffiliateController extends Controller
     }
 
     /**
-    * Direcciones
+    * Obtener direcciones
     * Devuelve la lista de direcciones del afiliado
     * @urlParam id required ID de afiliado. Example: 1
     * @response
@@ -622,7 +624,7 @@ class AffiliateController extends Controller
     *             "created_at": "2019-06-12 17:08:45",
     *             "updated_at": "2019-06-12 17:08:45"
     *         }
-    *     }
+    *     }, {}
     * ]
     */
     public function get_addresses($id) {
@@ -630,23 +632,99 @@ class AffiliateController extends Controller
         return $affiliate->addresses()->orderByDesc('created_at')->get();
     }
 
-    public function addresses_update(Request $request,$affiliate_id){
-       // $addresses=[8570,10371,18];
-        foreach($request->addresses as $dir) {
-            if(!Address::whereId($dir)->exists()) abort (404); 
+    /**
+    * Actualizar direcciones
+    * Actualiza el listado de direcciones de un afiliado
+    * @urlParam id required ID de afiliado. Example: 12
+    * @queryParam addresses required array Lista de IDs de direcciones. Example: [12,17]
+    * @response
+    * {
+    *     "attached": [
+    *         12,
+    *         17
+    *     ],
+    *     "detached": [
+    *         6291
+    *     ],
+    *     "updated": []
+    * }
+    */
+    public function update_addresses(Request $request, $id) {
+        $affiliate = Affiliate::findOrFail($id);
+        $request->validate([
+            'addresses' => 'required|array'
+        ]);
+        foreach($request->addresses as $address) {
+            if(Address::whereId($address)->doesntExist()) abort (404);
         }
-        return Affiliate::find($affiliate_id)->addresses()->sync($request->addresses); 
+        return $affiliate->addresses()->sync($request->addresses);
     }
 
     /**
     * Boletas de pago
-    * Devuelve el listado de las boletas de pago de un afiliado
-    * @urlParam id required ID de afiliado
+    * Devuelve el listado de las boletas de pago de un afiliado, si se envía el ID de ciudad además devuelve un booleano para identificar si la petición contiene las últimas boletas y la diferencia de meses que se utilizó para la operación
+    * @urlParam id required ID de afiliado. Example: 1
+    * @queryParam city_id ID de la ciudad de solicitud. Example: 4
     * @queryParam sortBy Vector de ordenamiento. Example: [month_year]
     * @queryParam sortDesc Vector de orden descendente(true) o ascendente(false). Example: [true]
     * @queryParam per_page Número de datos por página. Example: 3
     * @queryParam page Número de página. Example: 1
     * @authenticated
+    * @response
+    * {
+    *     "valid": false,
+    *     "diff_months": 1,
+    *     "current_page": 1,
+    *     "data": [
+    *         {
+    *             "id": 4461601,
+    *             "user_id": 1,
+    *             "affiliate_id": 1,
+    *             "degree_id": 7,
+    *             "unit_id": 1,
+    *             "breakdown_id": 10,
+    *             "category_id": 8,
+    *             "month_year": "2012-10-01",
+    *             "item": "27446",
+    *             "type": "Planilla",
+    *             "base_wage": "3195.00",
+    *             "seniority_bonus": "3195.00",
+    *             "study_bonus": "639.00",
+    *             "position_bonus": "0.00",
+    *             "border_bonus": "0.00",
+    *             "east_bonus": "0.00",
+    *             "public_security_bonus": "470.00",
+    *             "deceased": "0",
+    *             "natality": "0",
+    *             "lactation": "0",
+    *             "prenatal": "0",
+    *             "subsidy": "0.00",
+    *             "gain": "7499.00",
+    *             "payable_liquid": "5157.20",
+    *             "quotable": "7029.00",
+    *             "retirement_fund": "130.04",
+    *             "mortuary_quota": "45.69",
+    *             "subtotal": null,
+    *             "interest": null,
+    *             "total": "175.73",
+    *             "created_at": "2017-06-02 17:04:59",
+    *             "updated_at": "2017-06-02 17:04:59",
+    *             "deleted_at": null,
+    *             "contribution_type_id": null,
+    *             "valid": true
+    *         }, {}
+    *     ],
+    *     "first_page_url": "http://127.0.0.1/api/v1/affiliate/1/contribution?page=1",
+    *     "from": 1,
+    *     "last_page": 55,
+    *     "last_page_url": "http://127.0.0.1/api/v1/affiliate/1/contribution?page=55",
+    *     "next_page_url": "http://127.0.0.1/api/v1/affiliate/1/contribution?page=2",
+    *     "path": "http://127.0.0.1/api/v1/affiliate/1/contribution",
+    *     "per_page": "3",
+    *     "prev_page_url": null,
+    *     "to": 3,
+    *     "total": 165
+    * }
     */
     public function get_contributions(Request $request, $id)
     {
@@ -689,25 +767,139 @@ class AffiliateController extends Controller
         return $contributions;
     }
 
+    /**
+    * Categoría
+    * Devuelve la categoría policial del afiliado
+    * @urlParam id required ID de afiliado. Example: 12
+    * @authenticated
+    * @response
+    * {
+    *     "id": 8,
+    *     "from": 29,
+    *     "to": 100,
+    *     "name": "100%",
+    *     "percentage": "1.00"
+    * }
+    */
     public function get_category($id)
     {
         $affiliate = Affiliate::findOrFail($id);
         return $affiliate->category;
     }
+
+    /**
+    * Grado
+    * Devuelve el grado policial del afiliado
+    * @urlParam id required ID de afiliado. Example: 12
+    * @authenticated
+    * @response
+    * {
+    *     "id": 8,
+    *     "hierarchy_id": 2,
+    *     "code": "03",
+    *     "name": "TENIENTE CORONEL",
+    *     "shortened": "TCNL.",
+    *     "correlative": 8
+    * }
+    */
     public function get_degree($id)
     {
         $affiliate = Affiliate::findOrFail($id);
         return $affiliate->degree;
     }
+
+    /**
+    * Unidad
+    * Devuelve la unidad policial donde está destinado el afiliado
+    * @urlParam id required ID de afiliado. Example: 12
+    * @authenticated
+    * @response
+    * {
+    *     "id": 1,
+    *     "breakdown_id": 10,
+    *     "district": "CHUQUISACA",
+    *     "code": "10182",
+    *     "name": "COMANDO DEPARTAMENTAL CHUQUISACA",
+    *     "shortened": "C.D.PN.CH.",
+    *     "created_at": "2017-06-01 10:41:04",
+    *     "updated_at": "2017-06-01 10:41:04",
+    *     "deleted_at": null
+    * }
+    */
     public function get_unit($id)
     {
         $affiliate = Affiliate::findOrFail($id);
         return $affiliate->unit;
     }
 
+    /** @group Préstamos
+    * Préstamos por afiliado
+    * Devuelve la lista de préstamos o garantías del afiliado
+    * @urlParam id required ID de afiliado. Example: 12
+    * @queryParam guarantor required Préstamos para el afiliado como garante(1) o como titular(0). Example: 1
+    * @queryParam state ID de loan_state_id para filtrar por estado de préstamos. Example: 3
+    * @authenticated
+    * @response
+    * {
+    *     "current_page": 1,
+    *     "data": [
+    *         {
+    *             "id": 1,
+    *             "code": "PMTO1",
+    *             "disbursable_id": 1,
+    *             "disbursable_type": "affiliates",
+    *             "procedure_modality_id": 32,
+    *             "amount_disbursement": 2000,
+    *             "disbursement_date": "2018-11-23",
+    *             "parent_loan_id": 0,
+    *             "parent_reason": null,
+    *             "request_date": "2018-11-23",
+    *             "amount_request": 2000,
+    *             "city_id": 1,
+    *             "loan_interest_id": 1,
+    *             "loan_state_id": 3,
+    *             "amount_aproved": 2000,
+    *             "loan_term": 2,
+    *             "disbursement_type_id": 1,
+    *             "created_at": null,
+    *             "updated_at": null,
+    *             "balance": 2000,
+    *             "estimated_quota": 1045.22,
+    *             "defaulted": true,
+    *             "lenders": [
+    *                 {
+    *                     "id": 3,
+    *                     "pivot": {
+    *                         "loan_id": 1,
+    *                         "affiliate_id": 3,
+    *                         "payment_percentage": 100
+    *                     }
+    *                 }, {}
+    *             ],
+    *             "state": {
+    *                 "id": 3
+    *             }
+    *         }
+    *     ],
+    *     "first_page_url": "http://127.0.0.1/api/v1/affiliate/5/loan?page=1",
+    *     "from": 1,
+    *     "last_page": 1,
+    *     "last_page_url": "http://127.0.0.1/api/v1/affiliate/5/loan?page=1",
+    *     "next_page_url": null,
+    *     "path": "http://127.0.0.1/api/v1/affiliate/5/loan",
+    *     "per_page": 10,
+    *     "prev_page_url": null,
+    *     "to": 1,
+    *     "total": 1
+    * }
+    */
     public function get_loans(Request $request, $id)
     {
         $affiliate = Affiliate::findOrFail($id);
+        $request->validate([
+            'guarantor' => 'required|boolean',
+            'state' => 'integer'
+        ]);
         $type = Util::get_bool($request->guarantor) ? 'guarantors' : 'lenders';
         $relations[$type] = [
             'affiliate_id' => $affiliate->id
@@ -720,6 +912,22 @@ class AffiliateController extends Controller
         return Util::search_sort(new Loan(), $request, [], $relations, ['id']);
     }
 
+    /**
+    * Estado
+    * Devuelve el estado policial del afiliado
+    * @urlParam id required ID de afiliado. Example: 5
+    * @authenticated
+    * @response
+    * {
+    *     "id": 4,
+    *     "affiliate_state_type_id": 2,
+    *     "name": "Fallecido",
+    *     "affiliate_state_type": {
+    *         "id": 2,
+    *         "name": "Pasivo"
+    *     }
+    * }
+    */
     public function get_state($id)
     {
         $affiliate = Affiliate::findOrFail($id);
@@ -727,40 +935,34 @@ class AffiliateController extends Controller
         return response()->json($affiliate->affiliate_state);
     }
 
-    public function verify_guarantor(Request $request,$affiliate_id){
-        //$ballots=[200]; $bonuses=[24]; $new_quota=100;
-        $affiliate=Affiliate::find($affiliate_id)->active_guarantees();$sum_quota=0;$state = false;
-        foreach($affiliate as $affiliate_loans){ 
-            $sum_quota+= $affiliate_loans->estimated_quota; 
-        }
-        $loan = new Loan();
-        $liquid_qualification = $loan->liquid_qualification($request->ballots,$request->bonuses);// se debe modificar
-        $qualify = $liquid_qualification - $sum_quota - ($request->new_quota);
-        $loan_global_parameter = LoanGlobalParameter::get()->last();
-        if($qualify>$loan_global_parameter->livelihood_amount){
-            $qualify = $qualify;
-            $state = true; 
-        } 
-        return [
-            'qualify'=>$qualify,
-            'state'=>$state
-        ];      
-    }
-    public function cpop($affiliate_id){
-        $affiliate = new Affiliate();
-        $cpop = $affiliate->verify_cpop($affiliate_id);
-        if($cpop==true){
-            $state_cpop = true;
-        }else{
-            $state_cpop = $cpop;
-        }
-        return ['state_cpop'=>$state_cpop];
-    }
-    public function get_loan_modality(Request $request,$id){
+    /** @group Préstamos
+    * Modalidad por afiliado
+    * Devuelve la modalidad de trámite evaluando al afiliado y el tipo de trámite
+    * @urlParam id required ID de afiliado. Example: 5
+    * @queryParam procedure_type_id required ID de tipo de trámite. Example: 9
+    * @queryParam external_discount required Booleano de descuento en otras entidades. Example: 0
+    * @authenticated
+    * @response
+    * {
+    *     "id": 33,
+    *     "procedure_type_id": 9,
+    *     "name": "Anticipo sector pasivo",
+    *     "shortened": "ANT-SP",
+    *     "is_valid": true,
+    *     "loan_modality_parameter": {
+    *         "id": 2,
+    *         "procedure_modality_id": 33,
+    *         "debt_index": "90",
+    *         "quantity_ballots": 1,
+    *         "guarantors": 0,
+    *         "created_at": "2020-02-04 16:25:48",
+    *         "updated_at": "2020-02-04 16:25:48"
+    *     }
+    * }
+    */
+    public function get_loan_modality(Request $request, $id) {
         $affiliate = Affiliate::findOrFail($id);
-        $modality_name = ProcedureType::findOrFail($request->procedure_type_id)->name;
-        $loan = new Loan();
-        return $loan->get_modality($modality_name,$affiliate);
-       
+        $modality = ProcedureType::findOrFail($request->procedure_type_id);
+        return Loan::get_modality($modality->name, $affiliate);
     }
 }

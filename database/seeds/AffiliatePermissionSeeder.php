@@ -14,20 +14,17 @@ class AffiliatePermissionSeeder extends Seeder
     {
         $permissions = [
             [
-                'name' => 'create-affiliate',
-                'display_name' => 'Crear afiliados'
+                'name' => 'create-address',
+                'display_name' => 'Crear dirección'
             ], [
-                'name' => 'update-affiliate-primary',
-                'display_name' => 'Editar datos principales de afiliados'
+                'name' => 'update-address',
+                'display_name' => 'Editar datos de dirección'
             ], [
-                'name' => 'update-affiliate-secondary',
-                'display_name' => 'Editar datos secundarios de afiliados'
+                'name' => 'show-address',
+                'display_name' => 'Ver direcciones'
             ], [
-                'name' => 'show-affiliate',
-                'display_name' => 'Ver afiliados'
-            ], [
-                'name' => 'delete-affiliate',
-                'display_name' => 'Eliminar afiliados'
+                'name' => 'delete-address',
+                'display_name' => 'Eliminar dirección'
             ]
         ];
         foreach ($permissions as $permission) {

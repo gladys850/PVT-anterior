@@ -205,7 +205,7 @@ class Loan extends Model
 
     } 
     //obtener modalidad teniendo el tipo y el afiliado
-    public function get_modality($modality_name, $affiliate){
+    public static function get_modality($modality_name, $affiliate){
         $modality=null;
         if ($affiliate->affiliate_state){
             $affiliate_state = $affiliate->affiliate_state->name;
