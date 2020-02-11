@@ -7,13 +7,13 @@ use Illuminate\Http\Request;
 use App\ProcedureType;
 use Util;
 
-/** @group Tipos de procedimientos
-* Procedimientos agrupados por tipo de acuerdo a un filtro de modalidad
+/** @group Tipos de trámites
+* Trámites agrupados por tipo de acuerdo a un filtro de modalidad
 */
 class ProcedureTypeController extends Controller
 {
     /**
-    * Lista de procedimientos
+    * Lista de trámites
     * Devuelve el listado con los datos paginados
     * @queryParam module_id Filtro de ID del módulo. Example: 6
     * @queryParam sortBy Vector de ordenamiento. Example: [name]
@@ -26,24 +26,24 @@ class ProcedureTypeController extends Controller
     *     "current_page": 1,
     *     "data": [
     *         {
-    *             "id": 3,
-    *             "module_id": 4,
-    *             "name": "Pago Cuota Mortuoria",
-    *             "created_at": null,
-    *             "updated_at": null,
-    *             "second_name": "Cuota Mortuoria"
+    *             "id": 9,
+    *             "module_id": 6,
+    *             "name": "Préstamo Anticipo",
+    *             "created_at": "2020-02-04 16:25:47",
+    *             "updated_at": "2020-02-04 16:25:47",
+    *             "second_name": "Préstamo Anticipo"
     *         }, {}
     *     ],
     *     "first_page_url": "http://127.0.0.1/api/v1/procedure_type?page=1",
     *     "from": 1,
-    *     "last_page": 6,
-    *     "last_page_url": "http://127.0.0.1/api/v1/procedure_type?page=6",
-    *     "next_page_url": "http://127.0.0.1/api/v1/procedure_type?page=2",
+    *     "last_page": 1,
+    *     "last_page_url": "http://127.0.0.1/api/v1/procedure_type?page=1",
+    *     "next_page_url": null,
     *     "path": "http://127.0.0.1/api/v1/procedure_type",
-    *     "per_page": "2",
+    *     "per_page": 10,
     *     "prev_page_url": null,
-    *     "to": 2,
-    *     "total": 12
+    *     "to": 4,
+    *     "total": 4
     * }
      */
     public function index(Request $request)
