@@ -6,12 +6,27 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\City;
 
+/** @group Ciudades
+* Datos de las ciudades disponibles en el sistema
+*/
 class CityController extends Controller
 {
     /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
+    * Lista de ciudades
+    * Devuelve el listado de las ciudades
+    * @response
+    * [
+    *     {
+    *         "id": 1,
+    *         "name": "BENI",
+    *         "first_shortened": "BE",
+    *         "second_shortened": "BEN",
+    *         "third_shortened": "BNI",
+    *         "to_bank": "BE",
+    *         "latitude": -14.834909060283,
+    *         "longitude": -64.904201030731
+    *     }, {}
+    * ]
      */
     public function index()
     {
