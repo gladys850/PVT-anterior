@@ -75,7 +75,7 @@
         <v-spacer></v-spacer>
         <v-btn @click.stop="adicionar()"
           color="error"
-          :disabled="errors.any()"
+          :disabled="errors.collect('zona').length>0||errors.collect('calle').length>0||errors.collect('nro').length>0"
         >Guardar</v-btn>
       </v-card-actions>
     </v-card>
@@ -110,6 +110,7 @@ export default {
       this.address = address
       this.dialog = true
     })
+    this.$validator.validateAll()
   },
   computed: {
     countryCities() {
