@@ -30,8 +30,8 @@ html {
 body {
 	@extend %extend_1;
 	//Instead of the line below you could use @include border-radius($radius, $vertical-radius)
-	border-radius: 0.75em;
-	border: 1px solid $color_shark_approx;
+	// border-radius: 0.75em;
+	// border: 1px solid $color_shark_approx;
 	// page-break-after: avoid;
 }
 table {
@@ -288,6 +288,9 @@ tr {
 .w-85 {
 	width: 85%;
 }
+.w-90 {
+	width: 90%;
+}
 .w-100 {
 	width: 100%;
 }
@@ -376,6 +379,10 @@ tr {
 .my-50 {
 	margin-top: 50px;
 	margin-bottom: 50px;
+}
+.my-20 {
+	margin-top: 20px;
+	margin-bottom: 20px;
 }
 .my-10 {
 	margin-top: 10px;

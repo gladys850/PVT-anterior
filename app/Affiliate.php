@@ -50,10 +50,20 @@ class Affiliate extends Model
         'due_date'
       ];
 
+    public function getTitleAttribute()
+    {
+        return $this->degree->shortened;
+    }
+
     public function getPictureSavedAttribute()
     {
         $base_path = 'picture/';
         return Storage::disk('ftp')->exists($base_path . $this->id . '_perfil.jpg');
+    }
+
+    public function getIdentityCardExtAttribute()
+    {
+        return $this->identity_card . ' ' . $this->city_identity_card->first_shortened;
     }
 
     public function getFingerprintSavedAttribute()
@@ -128,9 +138,13 @@ class Affiliate extends Model
       return $this->morphToMany(Address::class, 'addressable')->withTimestamps();
     }
     //spouses
-    public function spouse()
+    public function spouses()
     {
       return $this->hasMany(Spouse::class);
+    }
+    public function getSpouseAttribute()
+    {
+      return $this->spouses()->first();
     }
     //contributions
     public function contributions()

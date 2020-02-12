@@ -20,7 +20,7 @@ class LoanSeeder extends Seeder
       $data = [
         'procedures' => [
           'anticipo' => [
-            'type' => ['module_id' => $module->id,'name'=>'Préstamo Anticipo','second_name'=>'Préstamo Anticipo'],
+            'type' => ['module_id' => $module->id,'name'=>'Préstamo Anticipo','second_name'=>'Anticipo'],
             'limits' => ['maximum_amount' => 2000,'minimum_amount' => 200,'maximum_term' => 2,'minimum_term' => 1],
             'modalities' => [
                 // ANTICIPO SECTOR ACTIVO 
@@ -69,7 +69,7 @@ class LoanSeeder extends Seeder
           ],
           'corto' => [
             // CORTO PLAZO
-            'type' => ['module_id' => $module->id,'name'=>'Préstamo a corto plazo','second_name'=>'Préstamo a corto plazo'],
+            'type' => ['module_id' => $module->id,'name'=>'Préstamo a corto plazo','second_name'=>'Corto plazo'],
             'limits' => ['maximum_amount' => 25000,'minimum_amount' => 2001,'maximum_term' => 30,'minimum_term' => 3],
             'modalities' => [
               // CORTO PLAZO SECTOR ACTIVO SERVICIO
@@ -219,7 +219,7 @@ class LoanSeeder extends Seeder
             ],
           ],
           'largo' => [
-            'type' => ['module_id' => $module->id,'name'=>'Préstamo a largo plazo','second_name'=>'Préstamo a largo plazo'],
+            'type' => ['module_id' => $module->id,'name'=>'Préstamo a largo plazo','second_name'=>'Largo plazo'],
             'limits' => ['maximum_amount' => 150000,'minimum_amount' => 25001,'maximum_term' => 96,'minimum_term' => 25],
             'modalities' => [
                 // LARGO PLAZO SECTOR ACTIVO Y ADMINISTRATIVO CON GARANTIA PERSONAL(2 GARANTES ACTIVOS)
@@ -297,7 +297,7 @@ class LoanSeeder extends Seeder
               'interest' => ['annual_interest' => 13.2,'penal_interest' => 6]
             ],            
               // REFINANCIANCIAMIENTO SECTOR ACTIVO CON UN SOLO GARANTE ---> En este caso el garante solo puede ser activo
-              ['name'=>'Refinanciamiento de prestamos a largo Plazo para el sector activo - CPOP','shortened'=>'PLP-R-SA','requirements'=>[
+              ['name'=>'Refinanciamiento de prestamos a largo Plazo para el sector activo - CPOP','shortened'=>'PLP-R-SA-CPOP','requirements'=>[
                 ['name'=>'Cédula de Identidad del (la) titular en copia simple','number'=>1],
             		['name' => 'Certificado de años de servicio desglosado en original emitido por el Comando General de la Policía Boliviana','number'=>2],
             		['name' => 'Certificado de años de servicio desglosado en fotocopia Legalizada emitido por el Comando General de la Policía Boliviana','number'=>2],
@@ -321,7 +321,7 @@ class LoanSeeder extends Seeder
               'interest' => ['annual_interest' => 13.2,'penal_interest' => 6]
             ],
                  // REFINANCIANCIAMIENTO SECTOR PASIVO CON UN SOLO GARANTE
-               ['name'=>'Refinanciamiento de prestamos a largo Plazo para el sector pasivo - CPOP','shortened'=>'PLP-R-SAP','requirements'=>[
+               ['name'=>'Refinanciamiento de prestamos a largo Plazo para el sector pasivo - CPOP','shortened'=>'PLP-R-SAP-CPOP','requirements'=>[
                 ['name'=>'Cédula de Identidad del (la) titular en copia simple','number'=>1],
                 ['name' => 'Certificado de años de servicio desglosado en original emitido por el Comando General de la Policía Boliviana','number'=>2],
             		['name' => 'Certificado de años de servicio desglosado en fotocopia Legalizada emitido por el Comando General de la Policía Boliviana','number'=>2],
@@ -352,7 +352,7 @@ class LoanSeeder extends Seeder
             ]
           ],
           'hipotecario' => [
-            'type' => ['module_id' => $module->id,'name'=>'Préstamo hipotecario','second_name'=>'Préstamo hipotecario'],
+            'type' => ['module_id' => $module->id,'name'=>'Préstamo hipotecario','second_name'=>'Hipotecario'],
             'limits' => ['maximum_amount' => 700000,'minimum_amount' => 25001,'maximum_term' => 240,'minimum_term' => 25],
             'modalities' => [
                // LARGO PLAZO GARANTIA HIPOTECARIA

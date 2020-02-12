@@ -202,7 +202,7 @@ class AffiliateController extends Controller
     /**
     * Detalle de afiliado
     * Devuelve el detalle de un afiliado mediante su ID
-    * @queryParam id ID de afiliado. Example: 54
+    * @urlParam affiliate required ID de afiliado. Example: 54
     * @response
     * {
     *     "id": 54,
@@ -345,7 +345,12 @@ class AffiliateController extends Controller
     public function update(AffiliateForm $request, $id)
     {
         $affiliate = Affiliate::findOrFail($id);
-        $affiliate->fill($request->all());
+        if (!Auth::user()->can('update-affiliate-primary') && ($request->has('phone_number') || $request->has('cell_phone_number'))) {
+            $update = $request->only(['phone_number', 'cell_phone_number']);
+        } else {
+            $update = $request->all();
+        }
+        $affiliate->fill($update);
         $affiliate->save();
         return  $affiliate;
     }

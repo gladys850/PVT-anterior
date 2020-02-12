@@ -25,6 +25,22 @@ class Spouse extends Model
         'reason_death',
         'city_birth_id'
     ];
+
+    public function getTitleAttribute()
+    {
+        return 'Vd' . ($this->affiliate->gender == 'M' ? 'a' : 'o') . '.';
+    }
+
+    public function getIdentityCardExtAttribute()
+    {
+        return $this->identity_card . ' ' . $this->city_identity_card->first_shortened;
+    }
+
+    public function getFullNameAttribute()
+    {
+        return preg_replace('/[[:blank:]]+/', ' ', join(' ', [$this->first_name, $this->second_name, $this->last_name, $this->mothers_last_name]));
+    }
+
     public function affiliate()
     {
         return $this->belongsTo(Affiliate::class);
