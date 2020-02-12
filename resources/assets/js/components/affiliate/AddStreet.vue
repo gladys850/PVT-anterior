@@ -73,10 +73,6 @@
   </v-card-text>
       <v-card-actions v-show="address.edit">
         <v-spacer></v-spacer>
-        <!-- <v-btn @click.stop="adicionar()"
-          color="error"
-          :disabled="errors.any()"
-        >Guardar</v-btn> -->
         <v-btn @click.stop="adicionar()"
           color="error"
           :disabled="errors.collect('zona').length>0||errors.collect('calle').length>0||errors.collect('nro').length>0"
