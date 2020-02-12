@@ -3,7 +3,6 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-use App\ProcedureDocument;
 use Carbon;
 use Util;
 
@@ -35,6 +34,21 @@ class Loan extends Model
         'modification_date',
         
     ];
+
+    function __construct()
+    {
+        $state = LoanState::whereName('En Proceso')->first();
+        if ($state) {
+            $this->loan_state_id = $state->id;
+            $this->request_date = Carbon::now();
+        }
+    }
+
+    public function setProcedureModalityIdAttribute($id)
+    {
+        $this->attributes['procedure_modality_id'] = $id;
+        $this->attributes['loan_interest_id'] = $this->modality->current_interest->id;
+    }
 
     public function state()
     {
