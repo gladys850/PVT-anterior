@@ -10,10 +10,11 @@
               <div>
                 <h1 v-if="loan.length === 0">NO TIENE PRÉSTAMOS REGISTRADOS</h1>
                     <ul style="list-style: none;" class="pa-0">
-                      <li v-for="item in loan" :key="item.id" class="pb-2" >
-                        <strong>Cód. préstamo: </strong> {{ item.code }} | 
-                        <strong>Desembolsado: </strong> {{ item.amount_disbursement }} | 
-                        <strong>Total pagado: </strong> {{ item.balance }}                      
+                      <li v-for="(item,index) in loan" :key="item.id" class="pb-2" >
+                        <div v-if="index<3">
+                          <strong>Cód. préstamo: </strong> {{ item.code }} | 
+                          <strong>Desembolsado: </strong> {{ item.amount_disbursement }} | 
+                          <strong>Total pagado: </strong> {{ item.balance }}                      
                           <v-progress-linear 
                               :color="randomColor()"
                               height="15"
@@ -21,7 +22,8 @@
                               striped
                           >
                           <strong>Porcentaje pagado: {{ ((item.balance*100)/item.amount_disbursement).toFixed(2) }}%</strong>
-                          </v-progress-linear>                     
+                          </v-progress-linear>
+                        </div>
                       </li>
                     </ul>
               </div>
@@ -44,6 +46,26 @@
                   </template>
                   <span>Nuevo trámite</span>
                 </v-tooltip>
+                <v-tooltip left  v-if="loan.length > 0">
+                  <template v-slot:activator="{ on }">
+                    <v-btn
+                      fab
+                      dark
+                      small
+                      color="warning"
+                      v-on="on"                      
+                      class="mr-8"
+                      absolute
+                      bottom
+                      right
+                      @click="clickShowLoans()"
+                    >
+                      <v-icon>mdi-eye</v-icon>
+                    </v-btn>
+                  </template>
+                  <span>Ver préstamos</span>
+                </v-tooltip>
+
               </v-card-text>
             </v-card>
       </v-col>
@@ -248,6 +270,9 @@ export default {
         this.loading = false
       }
     },
+    clickShowLoans(){
+      this.$router.push('/loan')
+    }
   }
 }
 </script>
