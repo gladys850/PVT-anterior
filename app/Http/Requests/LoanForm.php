@@ -40,7 +40,6 @@ class LoanForm extends FormRequest
             'disbursement_date'=>'nullable|date_format:"Y-m-d"',
             'parent_loan_id'=>'nullable|exists:loans,id',
             'parent_reason'=> 'nullable|min:3',
-            'request_date'=>'nullable|date_format:"Y-m-d"',
             'loan_interest_id'=>'nullable|exists:loan_interests,id',
             'loan_state_id'=>'nullable|exists:loan_states,id',
             'amount_aproved'=>'nullable|integer',

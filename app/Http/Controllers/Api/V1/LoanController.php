@@ -35,11 +35,52 @@ class LoanController extends Controller
      */
     public function store(LoanForm $request)
     {
-        $loan = Loan::create($request->all());
-        foreach ($request->affiliates as $affiliate) {
-            $loan->loan_affiliates()->attach($affiliate);//$loan->loan_affiliates()->attach(25, ['payment_porcentage' =>23]);
+        if($request->lenders){
+            $lenders_guarantors = array_merge($request->lenders,$request->guarantors);
+            foreach($lenders_guarantors as $affiliate) {
+                if(!Affiliate::whereId($affiliate)->exists()) abort (404); 
+            }
+            $loan = new Loan($request->all());
+            $affiliate = Affiliate::findOrFail($request->disbursable_id);
+            if($affiliate->dead){
+                $spouse = $affiliate->spouse; 
+                if($spouse){
+                    $loan->disbursable_id = $spouse->id;
+                    $loan->disbursable_type = 'spouses' ; 
+                }
+            }
+            $loan->loan_state_id;
+            $loan->request_date;
+            //return $loan->loan_interest_id;
+            return $loan->procedure_modality_id=$request->procedure_modality_id;
+            $loan->save();
+
+
+            
+            $request->lenders = collect($request->lenders)->unique();
+            $request->guarantors = collect($request->guarantors)->unique();
+            $request->guarantors = $request->guarantors->diff($request->lenders);
+            $res = new Loan();
+            $percentage = $res->percentage($request->lenders);
+            foreach ($request->lenders as $affiliate) {
+                $affiliates[$affiliate] = [
+                    'payment_percentage' =>$percentage,
+                    'guarantor' => false
+                ];
+            }
+            if($request->guarantors){
+                $percentage = $res->percentage($request->guarantors);
+                foreach ($request->guarantors as $affiliate) {
+                    $affiliates[$affiliate] = [
+                        'payment_percentage' =>$percentage,
+                        'guarantor' => true
+                    ];
+                }
+            }
+            $loan->loan_affiliates()->sync($affiliates);
+            return $loan;
         }
-        return $loan;
+        abort(404);
     }
 
     /**
@@ -62,16 +103,38 @@ class LoanController extends Controller
      */
     public function update(LoanForm $request, $id)
     {
-        $loan = Loan::findOrFail($id);
-        $loan->fill($request->all());
-        $loan->save();
-        if ($request->affiliates) {
-            $loan->loan_affiliates()->detach();
-            foreach ($request->affiliates as $affiliate) {
-              $loan->loan_affiliates()->attach($affiliate);
+        if($request->lenders){
+            $loan = Loan::findOrFail($id);
+            $loan->fill($request->all());
+            $loan->save();
+            $lenders_guarantors = array_merge($request->lenders,$request->guarantors);
+            foreach($lenders_guarantors as $affiliate) {
+                if(!Affiliate::whereId($affiliate)->exists()) abort (404); 
             }
+            $request->lenders = collect($request->lenders)->unique();
+            $request->guarantors = collect($request->guarantors)->unique();
+            $request->guarantors = $request->guarantors->diff($request->lenders);
+            $res = new Loan();
+            $percentage = $res->percentage($request->lenders);
+            foreach ($request->lenders as $affiliate) {
+                $affiliates[$affiliate] = [
+                    'payment_percentage' =>$percentage,
+                    'guarantor' => false
+                ];
+            }
+            if($request->guarantors){
+                $percentage = $res->percentage($request->guarantors);
+                foreach ($request->guarantors as $affiliate) {
+                    $affiliates[$affiliate] = [
+                        'payment_percentage' =>$percentage,
+                        'guarantor' => true
+                    ];
+                }
+            }
+            $loan->loan_affiliates()->sync($affiliates);
+            return $loan;
         }
-        return  $loan;
+        abort(404);
     }
 
     /**
@@ -83,6 +146,7 @@ class LoanController extends Controller
     public function destroy($id)
     {
         $loan = Loan::findOrFail($id);
+        $loan->loan_affiliates()->sync([]);
         $loan->delete();
         return $loan;
     }
