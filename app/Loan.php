@@ -10,7 +10,7 @@ class Loan extends Model
 {
     use Traits\EloquentGetTableNameTrait;
 
-    protected $appends = ['balance', 'estimated_quota', 'defaulted'];
+    // protected $appends = ['balance', 'estimated_quota', 'defaulted'];
     public $timestamps = true;
     // protected $hidden = ['pivot'];
     public $guarded = ['id'];

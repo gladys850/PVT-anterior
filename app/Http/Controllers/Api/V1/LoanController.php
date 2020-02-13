@@ -17,6 +17,12 @@ use Carbon;
 
 class LoanController extends Controller
 {
+    private function append_data($loan) {
+        $loan->balance = $loan->balance;
+        $loan->estimated_quota = $loan->estimated_quota;
+        $loan->defaulted = $loan->defaulted;
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -24,7 +30,11 @@ class LoanController extends Controller
      */
     public function index(Request $request)
     {
-        return Util::search_sort(new Loan(), $request);
+        $loan = new Loan($request->all());
+        foreach ($loan as $item) {
+            $this->append_data($item);
+        }
+        return $data;
     }
 
     /**
@@ -89,7 +99,9 @@ class LoanController extends Controller
      */
     public function show($id)
     {
-        return Loan::findOrFail($id);
+        $item = Loan::findOrFail($id);
+        $this->append_data($item);
+        return $item;
     }
 
     /**
