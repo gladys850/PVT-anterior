@@ -27,10 +27,8 @@ class LoanForm extends FormRequest
     {
         $rules = [
             'procedure_modality_id'=>'exists:procedure_modalities,id',
-            'request_date'=>'date_format:"Y-m-d"',
             'amount_request'=>'integer',
             'city_id'=>'exists:cities,id',
-            'loan_state_id'=>'exists:loan_states,id',
             'code'=>'nullable', 
             'disbursable_id'=>'nullable',
             'disbursable_type'=>'nullable',  
@@ -47,7 +45,7 @@ class LoanForm extends FormRequest
 
         switch ($this->method()) {
             case 'POST': {
-                foreach (array_slice($rules, 0, 5) as $key => $rule) {
+                foreach (array_slice($rules, 0, 3) as $key => $rule) {
                     $rules[$key] = implode('|', ['required', $rule]);
                 }
                 return $rules;

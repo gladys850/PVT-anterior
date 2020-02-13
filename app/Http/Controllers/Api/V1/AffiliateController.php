@@ -110,8 +110,8 @@ class AffiliateController extends Controller
     public function index(Request $request)
     {
         $data = Util::search_sort(new Affiliate(), $request);
-        foreach ($data as $affiliate) {
-            $this->append_data($affiliate);
+        foreach ($data as $item) {
+            $this->append_data($item);
         }
         return $data;
     }
