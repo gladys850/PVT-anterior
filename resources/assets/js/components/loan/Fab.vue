@@ -1,23 +1,5 @@
 <template>
-  <v-tooltip left>
-    <template v-slot:activator="{ on }">
-      <v-btn
-        fab
-        dark
-        small
-        color="success"
-        bottom
-        right
-        absolute
-        v-on="on"
-        style="margin-right: -9px;"
-        :to="{ name: 'loanAdd', params: { hash: 'new' } }"
-      >
-        <v-icon>mdi-plus</v-icon>
-      </v-btn>
-    </template>
-    <span>Nuevo trámite</span>
-  </v-tooltip>
+
 </template>
 
 <script>

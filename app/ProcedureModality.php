@@ -49,7 +49,7 @@ class ProcedureModality extends Model
                     unset($element['pivot']);
                 });
             })->values(),
-            'optional' => $this->required_documents->each(function($element) {
+            'optional' => $this->optional_documents->each(function($element) {
                 unset($element['pivot']);
             })
         ];

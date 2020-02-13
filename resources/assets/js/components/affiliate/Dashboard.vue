@@ -8,29 +8,24 @@
             </v-card-title>
             <v-card-text>
               <div>
-                <v-progress-linear
-                :color="randomColor()"
-                height="15"
-                v-model='this.loan_one'
-                striped
-                ><strong>{{loan_one}}%</strong>
-                </v-progress-linear>
-                <br>
-                <v-progress-linear
-                  :color="randomColor()"
-                  height="15"
-                  v-model='this.loan_two'
-                  striped
-                ><strong>{{loan_two}}%</strong>
-                </v-progress-linear>
-                <br>
-                <v-progress-linear
-                  height="15"
-                  v-model='this.loan_three'
-                  striped
-                  :color="randomColor()"
-                ><strong>{{loan_three}}%</strong>
-                </v-progress-linear>
+                <h1 v-if="loan.length === 0">NO TIENE PRÉSTAMOS REGISTRADOS</h1>
+                    <ul style="list-style: none;" class="pa-0">
+                      <li v-for="(item,index) in loan" :key="item.id" class="pb-2" >
+                        <div v-if="index<3">
+                          <strong>Cód. préstamo: </strong> {{ item.code }} | 
+                          <strong>Desembolsado: </strong> {{ item.amount_disbursement }} | 
+                          <strong>Total pagado: </strong> {{ item.balance }}                      
+                          <v-progress-linear 
+                              :color="randomColor()"
+                              height="15"
+                              :value= '((item.balance*100)/item.amount_disbursement).toFixed(2)'
+                              striped
+                          >
+                          <strong>Porcentaje pagado: {{ ((item.balance*100)/item.amount_disbursement).toFixed(2) }}%</strong>
+                          </v-progress-linear>
+                        </div>
+                      </li>
+                    </ul>
               </div>
               <v-tooltip left>
                   <template v-slot:activator="{ on }">
@@ -51,6 +46,26 @@
                   </template>
                   <span>Nuevo trámite</span>
                 </v-tooltip>
+                <v-tooltip left  v-if="loan.length > 0">
+                  <template v-slot:activator="{ on }">
+                    <v-btn
+                      fab
+                      dark
+                      small
+                      color="warning"
+                      v-on="on"                      
+                      class="mr-8"
+                      absolute
+                      bottom
+                      right
+                      @click="clickShowLoans()"
+                    >
+                      <v-icon>mdi-eye</v-icon>
+                    </v-btn>
+                  </template>
+                  <span>Ver préstamos</span>
+                </v-tooltip>
+
               </v-card-text>
             </v-card>
       </v-col>
@@ -60,17 +75,40 @@
         >
           <v-card-title class="ma-0 pa-0">
             <v-col cols="6">
-            <v-row >
-              <template v-for="image in profilePictures">
-                <v-col cols="12" :key="image.name">
-                  <v-avatar
+           <v-row>
+              <div >
+
+                <div v-if="profilePictures.length > 0">
+                <v-avatar
                     class="mx-auto d-block elevation-3"
                     size="125"
                   >
-                    <v-img :src="`data:${image.format};base64,${image.content}`"/>
+                    <v-img :src="`data:${profilePictures[0].format};base64,${profilePictures[0].content}`"/>
                   </v-avatar>
-                </v-col>
-              </template>
+                  
+              </div>
+              <div v-else>
+                <v-avatar                    
+                    class="mx-auto d-block elevation-3"
+                    size="125"
+                  >
+                    <v-icon
+                      size="125"
+                      color="black"
+                      
+                      v-if="affiliate.gender==='M'">
+                      mdi-face
+                    </v-icon>
+                    <v-icon
+                      size="125"
+                      color="black"
+                      
+                      v-else>
+                      mdi-face-woman
+                    </v-icon>
+                  </v-avatar>
+              </div>
+              </div>
             </v-row>
           </v-col>
           <v-col cols="4" class="red--text text--lighten-5 ma-0 pa-0">
@@ -113,7 +151,6 @@
 
 <script>
 import common from '@/plugins/common'
-
 export default {
   name: 'affiliate-fingerprint',
   props: {
@@ -154,7 +191,7 @@ export default {
       this.getLoan(this.$route.params.id)
       this.getState_name(this.$route.params.id)
     }
-    console.log('este es el id '+this.$route.params.id)
+
   },
   methods: {
     async getProfilePictures(id) {
@@ -204,7 +241,7 @@ export default {
     async getLoan(id) {
       try {
         this.loading = true
-        let res = await axios.get(`affiliate/${1}/loan`, {
+        let res = await axios.get(`affiliate/${id}/loan`, {
           params: {
             sortBy: ['request_date'],
             sortDesc: [true],
@@ -213,22 +250,7 @@ export default {
         })
         this.loan = res.data.data
         let num= this.loan.length
-        if(num==3){
-          this.loan_one=((this.loan[0].balance*100)/this.loan[0].amount_disbursement).toFixed(2)
-          this.loan_two=((this.loan[1].balance*100)/this.loan[1].amount_disbursement).toFixed(2)
-          this.loan_three=((this.loan[2].balance*100)/this.loan[2].amount_disbursement).toFixed(2)
-        }else{
-          if(num==2){
-            this.loan_one=((this.loan[0].balance*100)/this.loan[0].amount_disbursement).toFixed(2)
-            this.loan_two=((this.loan[1].balance*100)/this.loan[1].amount_disbursement).toFixed(2)
-          }else{
-            if(num==1){
-              this.loan_one=((this.loan[0].balance*100)/this.loan[0].amount_disbursement).toFixed(2)
-              }else{
-                this.loan_one=null
-              }
-          }
-        }
+
       } catch (e) {
         console.log(e)
       } finally {
@@ -248,6 +270,9 @@ export default {
         this.loading = false
       }
     },
+    clickShowLoans(){
+      this.$router.push('/loan')
+    }
   }
 }
 </script>

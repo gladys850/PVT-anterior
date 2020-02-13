@@ -59,10 +59,9 @@ Route::group([
             'middleware' => 'permission:create-affiliate'
         ], function () {
             Route::resource('affiliate', 'Api\V1\AffiliateController')->only('store');
-            Route::resource('spouse', 'Api\V1\SpouseController')->only('store');
         });
         Route::group([
-            'middleware' => 'permission:update-affiliate-primary'
+            'middleware' => 'permission:update-affiliate-primary|update-affiliate-secondary'
         ], function () {
             Route::resource('affiliate', 'Api\V1\AffiliateController')->only('update');
             Route::resource('spouse', 'Api\V1\SpouseController')->only('update');
@@ -70,6 +69,7 @@ Route::group([
         Route::group([
             'middleware' => 'permission:update-affiliate-secondary'
         ], function () {
+            Route::resource('spouse', 'Api\V1\SpouseController')->only('store');
             Route::patch('affiliate/{id}/fingerprint', 'Api\V1\AffiliateController@update_fingerprint');
             Route::patch('affiliate/{id}/address', 'Api\V1\AffiliateController@update_addresses');
             Route::resource('beneficiary', 'Api\V1\LoanBeneficiaryController')->only('index', 'store', 'show', 'destroy', 'update');
@@ -96,6 +96,7 @@ Route::group([
         ], function () {
             Route::resource('loan', 'Api\V1\LoanController')->only('store');
             Route::post('loan/{id}/document', 'Api\V1\LoanController@submit_documents');
+            Route::get('loan/print/requirements', 'Api\V1\LoanController@print_requirements');
             Route::get('affiliate/{id}/loan_modality', 'Api\V1\AffiliateController@get_loan_modality');
         });
         Route::group([
