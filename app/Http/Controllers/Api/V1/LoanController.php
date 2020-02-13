@@ -35,12 +35,14 @@ class LoanController extends Controller
      */
     public function store(LoanForm $request)
     {
+        return new Loan();
         if($request->lenders){
             $lenders_guarantors = array_merge($request->lenders,$request->guarantors);
             foreach($lenders_guarantors as $affiliate) {
                 if(!Affiliate::whereId($affiliate)->exists()) abort (404); 
             }
             $loan = new Loan($request->all());
+            return $loan;
             $affiliate = Affiliate::findOrFail($request->disbursable_id);
             if($affiliate->dead){
                 $spouse = $affiliate->spouse; 
@@ -49,10 +51,6 @@ class LoanController extends Controller
                     $loan->disbursable_type = 'spouses' ; 
                 }
             }
-            $loan->loan_state_id;
-            $loan->request_date;
-            //return $loan->loan_interest_id;
-            return $loan->procedure_modality_id=$request->procedure_modality_id;
             $loan->save();
 
 
