@@ -16,9 +16,9 @@ class CreateLoansTable extends Migration
         Schema::create('loans', function (Blueprint $table) {
             $table->bigIncrements('id');// id unico
             $table->string('code')->nullable(); // para el correlativo
-            $table->integer('disbursable_id')->nullable();// id affiliado, id espouse
-            $table->enum('disbursable_type',['affiliates', 'spouses'])->nullable(); // a quien se hara del desembolso//afiliado, conyugue
-            $table->unsignedBigInteger('procedure_modality_id')->nullable(false); // id modalidad
+            $table->integer('disbursable_id');// id affiliado, id espouse
+            $table->enum('disbursable_type',['affiliates', 'spouses']); // a quien se hara del desembolso//afiliado, conyugue
+            $table->unsignedBigInteger('procedure_modality_id'); // id modalidad
             $table->foreign('procedure_modality_id')->references('id')->on('procedure_modalities');
             $table->integer('amount_disbursement')->nullable(); // monto a desembolsar
             $table->date('disbursement_date')->nullable(); //fecha de desembolso
