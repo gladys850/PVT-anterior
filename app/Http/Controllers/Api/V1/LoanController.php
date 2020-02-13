@@ -30,7 +30,7 @@ class LoanController extends Controller
      */
     public function index(Request $request)
     {
-        $loan = Loan::create($request->all());
+        $loan = new Loan($request->all());
         foreach ($loan as $item) {
             $this->append_data($item);
         }
