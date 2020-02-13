@@ -35,8 +35,9 @@ class Loan extends Model
         
     ];
 
-    function __construct()
+    function __construct(array $attributes = [])
     {
+        parent::__construct($attributes);
         $state = LoanState::whereName('En Proceso')->first();
         if ($state) {
             $this->loan_state_id = $state->id;
