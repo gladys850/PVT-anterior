@@ -6,11 +6,9 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Role;
 
-/** @resource Role
-*
-* Resource to retrieve and show Role data
+/** @group Roles
+* Datos de los roles disponibles en el sistema
 */
-
 class RoleController extends Controller
 {
     /**

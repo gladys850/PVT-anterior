@@ -9,18 +9,13 @@ use Util;
 use App\ProcedureModality;
 use App\Loan;
 
-
-
-
-
+/** @group Préstamos
+*/
 class CalculatorController extends Controller
 {
     /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
+    * Calculadora
+    */
     public function store(Request $request)
     {
         $procedure_modality = ProcedureModality::findOrFail($request->procedure_modality_id);

@@ -7,6 +7,9 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Util;
 
+/** @group Personas referencia préstamos
+* Datos de las personas de referencia para trámites de préstamos
+*/
 class LoanBeneficiaryController extends Controller
 {
     /**

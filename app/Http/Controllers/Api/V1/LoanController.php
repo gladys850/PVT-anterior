@@ -15,6 +15,9 @@ use App\ProcedureModality;
 use App\Http\Requests\LoanForm;
 use Carbon;
 
+/** @group Préstamos
+* Datos de los trámites de préstamos y sus relaciones
+*/
 class LoanController extends Controller
 {
     private function append_data($loan) {

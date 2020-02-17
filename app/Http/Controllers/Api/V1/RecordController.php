@@ -7,6 +7,8 @@ use App\Http\Controllers\Controller;
 use App\Record;
 use Util;
 
+/** @group Usuarios
+*/
 class RecordController extends Controller
 {
     /**
