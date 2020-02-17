@@ -920,6 +920,8 @@ class AffiliateController extends Controller
             $loan->balance = $loan->balance;
             $loan->estimated_quota = $loan->estimated_quota;
             $loan->defaulted = $loan->defaulted;
+            $loan->lenders = $loan->lenders;
+            $loan->guarantors = $loan->guarantors;
         }
         return $data;
     }
