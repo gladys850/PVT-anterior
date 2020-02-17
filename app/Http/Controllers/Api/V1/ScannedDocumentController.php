@@ -9,7 +9,7 @@ use App\AffiliateSubmittedDocument;
 use App\ScannedDocument;
 use App\ProcedureDocument;
 
-/** @group INDEFINIDO */
+/** @group INDEFINIDO (TODO) */
 class ScannedDocumentController extends Controller
 {
     /**
