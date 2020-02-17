@@ -12,9 +12,21 @@ use App\Http\Controllers\Controller;
 class PermissionController extends Controller
 {
     /**
-    * Display a listing of the resource.
-    *
-    * @return \Illuminate\Http\Response
+    * Lista de permisos
+    * Devuelve el listado de los permisos disponibles en el sistema
+    * @authenticated
+    * @response
+    * [
+    *     {
+    *         "id": 596,
+    *         "operation_id": null,
+    *         "action_id": null,
+    *         "created_at": "2020-02-13 16:26:58",
+    *         "updated_at": "2020-02-13 16:26:58",
+    *         "name": "create-address",
+    *         "display_name": "Crear dirección"
+    *     }, {}
+    * ]
     */
     public function index()
     {

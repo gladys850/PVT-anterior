@@ -9,7 +9,6 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UserForm;
 use App\User;
-use App\Role;
 use Ldap;
 use Util;
 
@@ -276,9 +275,6 @@ class UserController extends Controller
             'roles' => 'required|array',
             'roles.*.id' => 'required|integer|exists:roles,id'
         ]);
-        foreach ($request->roles as $role) {
-            Role::findOrFail($role);
-        }
         $user = User::findOrFail($id);
         $user->syncRoles($request->roles);
         return $user->roles()->pluck('id');
