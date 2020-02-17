@@ -14,7 +14,6 @@ use App\Hierarchy;
 use App\AffiliateState;
 use App\AffiliateStateType;
 use App\Spouse;
-use App\Address;
 use App\Contribution;
 use App\Unit;
 use App\Loan;
@@ -658,11 +657,9 @@ class AffiliateController extends Controller
     public function update_addresses(Request $request, $id) {
         $affiliate = Affiliate::findOrFail($id);
         $request->validate([
-            'addresses' => 'required|array'
+            'addresses' => 'required|array',
+            'addresses.*' => 'exists:addresses,id'
         ]);
-        foreach($request->addresses as $address) {
-            if(Address::whereId($address)->doesntExist()) abort (404);
-        }
         return $affiliate->addresses()->sync($request->addresses);
     }
 
@@ -882,6 +879,16 @@ class AffiliateController extends Controller
     *                     }
     *                 }, {}
     *             ],
+    *             "guarantors": [
+    *                 {
+    *                     "id": 7,
+    *                     "pivot": {
+    *                         "loan_id": 1,
+    *                         "affiliate_id": 7,
+    *                         "payment_percentage": 100
+    *                     }
+    *                 }, {}
+    *             ],
     *             "state": {
     *                 "id": 3
     *             }
@@ -915,7 +922,15 @@ class AffiliateController extends Controller
                 'id' => $request->state
             ];
         }
-        return Util::search_sort(new Loan(), $request, [], $relations, ['id']);
+        $data = Util::search_sort(new Loan(), $request, [], $relations, ['id']);
+        foreach ($data as $loan) {
+            $loan->balance = $loan->balance;
+            $loan->estimated_quota = $loan->estimated_quota;
+            $loan->defaulted = $loan->defaulted;
+            $loan->lenders = $loan->lenders;
+            $loan->guarantors = $loan->guarantors;
+        }
+        return $data;
     }
 
     /**
