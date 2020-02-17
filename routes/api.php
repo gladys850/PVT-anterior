@@ -13,17 +13,18 @@ Route::group([
     Route::resource('degree', 'Api\V1\DegreeController')->only('index');
     Route::resource('pension_entity', 'Api\V1\PensionEntityController')->only('index', 'show');
     Route::resource('category', 'Api\V1\CategoryController')->only('index');
-    Route::resource('procedure_type', 'Api\V1\ProcedureTypeController')->only('index', 'show');
+    Route::resource('procedure_type', 'Api\V1\ProcedureTypeController')->only('index');
     Route::resource('procedure_modality', 'Api\V1\ProcedureModalityController')->only('index', 'show');
     Route::resource('module', 'Api\V1\ModuleController')->only('index', 'show');
     Route::get('module/{id}/procedure_type', 'Api\V1\ModuleController@get_procedure_types');
-
-
     // Biométrico
+    Route::get('affiliate/{id}/fingerprint', 'Api\V1\AffiliateController@fingerprint_saved');
+
+
+    // INDEFINIDO (TODO)
     //webcam
     Route::patch('picture/{id}', 'Api\V1\AffiliateController@picture_save');
     // Fingerprint
-    Route::get('affiliate/{id}/fingerprint', 'Api\V1\AffiliateController@fingerprint_saved');
     //document
     Route::get('document/{affiliate_id}', 'Api\V1\ScannedDocumentController@create_document');
     Route::resource('procedureDocument', 'Api\V1\ProcedureDocumentController')->only('index');
@@ -44,7 +45,7 @@ Route::group([
             'middleware' => 'permission:show-affiliate'
         ], function () {
             Route::resource('affiliate', 'Api\V1\AffiliateController')->only('index');
-            Route::resource('spouse', 'Api\V1\SpouseController')->only('index');
+            Route::resource('spouse', 'Api\V1\SpouseController')->only('index', 'show');
             Route::get('affiliate/{id}/degree', 'Api\V1\AffiliateController@get_degree');
             Route::get('affiliate/{id}/category', 'Api\V1\AffiliateController@get_category');
             Route::get('affiliate/{id}/unit', 'Api\V1\AffiliateController@get_unit');
@@ -144,8 +145,10 @@ Route::group([
             Route::post('user/{id}/role', 'Api\V1\UserController@set_roles');
             Route::get('user/{id}/permission', 'Api\V1\UserController@get_permissions');
             // Ldap
-            Route::get('ldap/unregistered', 'Api\V1\UserController@unregistered_users');
-            Route::get('ldap/sync', 'Api\V1\UserController@synchronize_users');
+            if (env("LDAP_AUTHENTICATION")) {
+                Route::get('user/ldap/unregistered', 'Api\V1\UserController@unregistered_users');
+                Route::get('user/ldap/sync', 'Api\V1\UserController@synchronize_users');
+            }
             // Módulo
             Route::get('module/{id}/role', 'Api\V1\ModuleController@get_roles');
             // Rol

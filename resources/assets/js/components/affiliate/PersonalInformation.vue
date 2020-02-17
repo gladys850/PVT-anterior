@@ -72,12 +72,13 @@
                 dense
                 v-model="getTelefono[0]"
                 label="Celular 1"
-                v-validate.initial="'min:1|max:20'"
+                v-validate.initial="'numeric|min:1|max:20'"
                 :error-messages="errors.collect('celular1')"
                 data-vv-name="celular1"
-                :readonly="!editable || !permission.primary"
-                :outlined="editable && permission.primary"
-                :disabled="editable && !permission.primary"
+                :readonly="!editable || !permission.secondary"
+                :outlined="editable && permission.secondary"
+                :disabled="editable && !permission.secondary"
+
               ></v-text-field>
             </v-col>
             <v-col cols="12" class="py-0" >
@@ -85,12 +86,12 @@
                 dense
                 v-model="getTelefono[1]"
                 label="Celular 2"
-                v-validate.initial="'min:1|max:20'"
+                v-validate.initial="'numeric|min:1|max:20'"
                 :error-messages="errors.collect('celular')"
                 data-vv-name="celular"
-                :readonly="!editable || !permission.primary"
-                :outlined="editable && permission.primary"
-                :disabled="editable && !permission.primary"
+                :readonly="!editable || !permission.secondary"
+                :outlined="editable && permission.secondary"
+                :disabled="editable && !permission.secondary" 
               ></v-text-field>
             </v-col>
             <v-col cols="12" class="py-0" >
@@ -98,12 +99,12 @@
                 dense
                 v-model="affiliate.phone_number"
                 label="Fijo"
-                v-validate.initial="'min:1|max:20'"
+                v-validate.initial="'numeric|min:1|max:20'"
                 :error-messages="errors.collect('telefono')"
                 data-vv-name="telefono"
-                :readonly="!editable || !permission.primary"
-                :outlined="editable && permission.primary"
-                :disabled="editable && !permission.primary"
+                :readonly="!editable || !permission.secondary"
+                :outlined="editable && permission.secondary"
+                :disabled="editable && !permission.secondary" 
               ></v-text-field>
             </v-col>
           </v-card>
@@ -274,20 +275,23 @@ import { Validator } from 'vee-validate'
       this.affiliate.cell_phone_number=celular
       return  this.affiliate.cell_phone_number
     },
-      async saveAffiliate() {
+    async saveAffiliate() {
       try {
         if (!this.editable) {
           this.editable = true
           console.log('entro al grabar por verdadero :)')
         } else {
-        console.log('entro al grabar por falso :)')
-        // Edit affiliate
-            await axios.patch(`affiliate/${this.affiliate.id}`, this.affiliate)
-            await axios.patch(`affiliate/${this.affiliate.id}/address`, {
-              addresses: this.addresses.map(o => o.id)
-            })
-            this.toastr.success('Registro guardado correctamente')
-            this.editable = false
+          console.log('entro al grabar por falso :)')
+          // Edit affiliate
+
+          //await axios.patch(`affiliate/${this.affiliate.id}`, this.affiliate)
+          await axios.patch(`affiliate/${this.affiliate.id}`, {phone_number: this.affiliate.phone_number, cell_phone_number: this.affiliate.cell_phone_number})
+
+          await axios.patch(`affiliate/${this.affiliate.id}/address`, {
+            addresses: this.addresses.map(o => o.id)
+          })
+          this.toastr.success('Registro guardado correctamente')
+          this.editable = false
         }
       } catch (e) {
         console.log(e)

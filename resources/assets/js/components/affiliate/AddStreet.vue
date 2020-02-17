@@ -35,7 +35,7 @@
                       v-model="address.zone"
                       label="Zona"
                       class="purple-input"
-                      v-validate="'min:1|max:100'"
+                      v-validate="'min:3|max:100'"
                       :error-messages="errors.collect('zona')"
                       data-vv-name="zona"
                       ></v-text-field>
@@ -46,7 +46,7 @@
                       v-model="address.street"
                       label="Calle/Avenida"
                       class="purple-input"
-                      v-validate="'min:1|max:100'"
+                      v-validate="'min:3|max:100'"
                       :error-messages="errors.collect('calle')"
                       data-vv-name="calle"
                       ></v-text-field>

@@ -6,13 +6,26 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\LoanInterval;
 
+/** @group Préstamos
+*/
 class LoanIntervalController extends Controller
 {
     /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    * Intérvalos
+    * Devuelve el listado de los intérvalos de montos y plazos por tipo de trámite de préstamo
+    * @authenticated
+    * @response
+    * [
+    *     {
+    *         "id": 4,
+    *         "maximum_amount": 700000,
+    *         "minimum_amount": 25001,
+    *         "maximum_term": 240,
+    *         "minimum_term": 25,
+    *         "procedure_type_id": 12
+    *     }, {}
+    * ]
+    */
     public function index()
     {
         return LoanInterval::orderByDesc('maximum_amount')->get();

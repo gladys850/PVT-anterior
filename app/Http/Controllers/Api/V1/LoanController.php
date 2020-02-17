@@ -16,7 +16,7 @@ use App\Http\Requests\LoanForm;
 use Carbon;
 
 /** @group Préstamos
- * Datos de los préstamos y métodos para obtener y establecer sus relaciones.
+* Datos de los trámites de préstamos y sus relaciones
 */
 class LoanController extends Controller
 {
@@ -178,41 +178,139 @@ class LoanController extends Controller
     /**
     * Detalle de Préstamo
     * Devuelve el detalle de un préstamo mediante su ID
-    * @urlParam loan required ID de préstamo. Example: 1
+    * @urlParam loan required ID de préstamo. Example: 4
     * @response
     * {
-    *    "id": 1,
+    *    "id": 4,
     *    "code": null,
-    *    "disbursable_id": 1453,
-    *    "disbursable_type": "spouses",
-    *    "procedure_modality_id": 32,
-    *    "amount_disbursement": 2000,
-    *    "disbursement_date": "2020-02-13",
+    *    "disbursable_id": 1,
+    *    "disbursable_type": "affiliates",
+    *    "procedure_modality_id": 35,
+    *    "amount_disbursement": 3000,
+    *    "disbursement_date": "2020-02-01",
     *    "parent_loan_id": null,
     *    "parent_reason": null,
-    *    "request_date": "2020-02-13",
-    *    "amount_request": 2000,
+    *    "request_date": "2020-02-17",
+    *    "amount_request": 3000,
     *    "city_id": 2,
-    *    "loan_interest_id": 1,
+    *    "loan_interest_id": 4,
     *    "loan_state_id": 1,
-    *    "amount_aproved": null,
+    *    "amount_aproved": 3000,
     *    "loan_term": 3,
     *    "disbursement_type_id": 1,
-    *    "created_at": "2020-02-13 16:30:03",
-    *    "updated_at": "2020-02-13 16:53:39",
-    *    "balance": 2000,
-    *    "estimated_quota": 707.06,
-    *    "defaulted": false
+    *    "created_at": "2020-02-17 14:52:40",
+    *    "updated_at": "2020-02-17 14:52:40",
+    *    "balance": 3000,
+    *    "estimated_quota": 1033.52,
+    *    "defaulted": false,
+    *    "lenders": [
+    *        {
+    *            "id": 6,
+    *            "user_id": 11,
+    *            "affiliate_state_id": 4,
+    *            "city_identity_card_id": 4,
+    *            "city_birth_id": 2,
+    *            "degree_id": 7,
+    *            "unit_id": 1,
+    *            "category_id": 8,
+    *            "pension_entity_id": 2,
+    *            "identity_card": "2022760",
+    *            "registration": "500718RRA",
+    *            "type": "Comando",
+    *            "last_name": "RODRIGUEZ",
+    *            "mothers_last_name": "ROLDAN",
+    *            "first_name": "ALBERTO",
+    *            "second_name": null,
+    *            "surname_husband": null,
+    *            "gender": "M",
+    *            "civil_status": "C",
+    *            "birth_date": "1950-07-18",
+    *            "date_entry": "1972-01-01",
+    *            "date_death": "2015-08-08",
+    *            "reason_death": "TRAUMATISMO CRANEO ENCEFÁLICO GRAVE",
+    *            "date_derelict": null,
+    *            "reason_derelict": null,
+    *            "change_date": "2016-07-01",
+    *            "phone_number": "(6) 423-792",
+    *            "cell_phone_number": "(603)-18901",
+    *            "afp": true,
+    *            "nua": 17346472,
+    *            "item": 27468,
+    *            "created_at": "2017-06-01 10:42:18",
+    *            "updated_at": "2018-09-05 07:59:09",
+    *            "deleted_at": null,
+    *            "service_years": null,
+    *            "service_months": null,
+    *            "death_certificate_number": "59244",
+    *            "due_date": null,
+    *            "is_duedate_undefined": true,
+    *            "affiliate_registration_number": null,
+    *            "file_code": null,
+    *            "pivot": {
+    *                "loan_id": 4,
+    *                "affiliate_id": 6,
+    *                "payment_percentage": "50"
+    *            }
+    *        },
+    *        {
+    *            "id": 7,
+    *            "user_id": 4,
+    *            "affiliate_state_id": 5,
+    *            "city_identity_card_id": 4,
+    *            "city_birth_id": 3,
+    *            "degree_id": 7,
+    *            "unit_id": 19,
+    *            "category_id": 8,
+    *            "pension_entity_id": 2,
+    *            "identity_card": "091748",
+    *            "registration": "470815UUN",
+    *            "type": "Comando",
+    *            "last_name": "UNZUETA",
+    *            "mothers_last_name": "UNZUETA",
+    *            "first_name": "NAPOLEON",
+    *            "second_name": null,
+    *            "surname_husband": null,
+    *            "gender": "M",
+    *            "civil_status": "D",
+    *            "birth_date": "1947-08-15",
+    *            "date_entry": "1970-01-01",
+    *            "date_death": null,
+    *            "reason_death": "",
+    *            "date_derelict": null,
+    *            "reason_derelict": null,
+    *            "change_date": "2016-07-01",
+    *            "phone_number": "(4) 341-032",
+    *            "cell_phone_number": "(762)-12245",
+    *            "afp": true,
+    *            "nua": 20188250,
+    *            "item": 5734,
+    *            "created_at": "2017-06-01 10:42:18",
+    *            "updated_at": "2018-09-05 07:59:09",
+    *            "deleted_at": null,
+    *            "service_years": 41,
+    *            "service_months": 3,
+    *            "death_certificate_number": "",
+    *            "due_date": null,
+    *            "is_duedate_undefined": true,
+    *            "affiliate_registration_number": null,
+    *            "file_code": null,
+    *            "pivot": {
+    *                "loan_id": 4,
+    *                "affiliate_id": 7,
+    *                "payment_percentage": "50"
+    *            }
+    *    }
+    * ],
+    * "guarantors": []
     * }
     */
     public function show($id)
     {
-        $loan = Loan::findOrFail($id);
-        $this->append_data($loan);
-        $loan->balance = $loan->balance;
-        $loan->estimated_quota = $loan->estimated_quota;
-        $loan->defaulted = $loan->defaulted;
-        return $loan;
+        $item = Loan::findOrFail($id);
+        $item->lenders;
+        $item->guarantors;
+        $this->append_data($item);
+        return $item;
     }
 
     /**
