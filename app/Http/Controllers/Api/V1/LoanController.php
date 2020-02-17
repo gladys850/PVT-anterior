@@ -15,6 +15,9 @@ use App\ProcedureModality;
 use App\Http\Requests\LoanForm;
 use Carbon;
 
+/** @group Préstamos
+* Datos de los trámites de préstamos y sus relaciones
+*/
 class LoanController extends Controller
 {
     private function append_data($loan) {
@@ -30,8 +33,8 @@ class LoanController extends Controller
      */
     public function index(Request $request)
     {
-        $loan = new Loan($request->all());
-        foreach ($loan as $item) {
+        $data = Util::search_sort(new Loan(), $request);
+        foreach ($data as $item) {
             $this->append_data($item);
         }
         return $data;

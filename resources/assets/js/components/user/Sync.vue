@@ -91,7 +91,7 @@ export default {
     async getUsers() {
       try {
         this.loading = true
-        let res = await axios.get(`ldap/sync`)
+        let res = await axios.get(`user/ldap/sync`)
         this.users = res.data
       } catch (e) {
         console.log(e)

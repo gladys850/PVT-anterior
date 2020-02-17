@@ -53,7 +53,7 @@ export default {
     async getUsers(params) {
       try {
         this.loading = true
-        let res = await axios.get(`ldap/unregistered`)
+        let res = await axios.get(`user/ldap/unregistered`)
         this.users = res.data
         this.users.forEach((item) => {
           item.fullName = `${item.sn} ${item.givenname}`
