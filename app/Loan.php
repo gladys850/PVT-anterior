@@ -127,11 +127,10 @@ class Loan extends Model
         return $this->payments()->latest()->first();
     }
 
-     // percentage
-     public function percentage($dato)
+    public function percentage($dato)
     {
         if(count($dato)>0){
-            return Util::round(100/count($dato));
+            return Util::round(1/count($dato)*100);
         }  
     }
 
