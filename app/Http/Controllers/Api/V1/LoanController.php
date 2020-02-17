@@ -64,6 +64,8 @@ class LoanController extends Controller
     public function show($id)
     {
         $item = Loan::findOrFail($id);
+        $item->lenders;
+        $item->guarantors;
         $this->append_data($item);
         return $item;
     }

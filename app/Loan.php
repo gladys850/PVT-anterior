@@ -71,13 +71,14 @@ class Loan extends Model
 
     public function guarantors()
     {
-        return $this->belongsToMany(Affiliate::class, 'loan_affiliates')->withPivot(['payment_percentage'])->whereGuarantor(true);
+        return $this->loan_affiliates()->withPivot('payment_percentage')->whereGuarantor(true);
     }
 
     public function lenders()
     {
-        return $this->belongsToMany(Affiliate::class, 'loan_affiliates')->withPivot(['payment_percentage'])->whereGuarantor(false);
+        return $this->loan_affiliates()->withPivot('payment_percentage')->whereGuarantor(false);
     }
+
     public function loan_affiliates()
     {
         return $this->belongsToMany(Affiliate::class, 'loan_affiliates');
