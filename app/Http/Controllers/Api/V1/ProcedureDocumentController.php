@@ -6,13 +6,12 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\ProcedureDocument;
 
+/** @group INDEFINIDO */
 class ProcedureDocumentController extends Controller
 {
     /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    * @response
+    */
     public function index()
     {
         return ProcedureDocument::orderBy('name')->get();

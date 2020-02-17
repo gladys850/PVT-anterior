@@ -552,6 +552,7 @@ class AffiliateController extends Controller
         return $files;
     }
 
+    /** @group INDEFINIDO */
     public function picture_save(Request $request, $id)
     {
     //$picture=$request->all();
