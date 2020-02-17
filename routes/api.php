@@ -39,6 +39,7 @@ Route::group([
         Route::delete('auth', 'Api\V1\AuthController@logout');
         Route::get('procedure_modality/{id}/requirements', 'Api\V1\ProcedureModalityController@get_requirements');
         Route::resource('calculator', 'Api\V1\CalculatorController')->only('store');
+        Route::resource('role', 'Api\V1\RoleController')->only('index', 'show');
 
         // Afiliado
         Route::group([
@@ -151,8 +152,6 @@ Route::group([
             }
             // Módulo
             Route::get('module/{id}/role', 'Api\V1\ModuleController@get_roles');
-            // Rol
-            Route::resource('role', 'Api\V1\RoleController')->only('index', 'show');
             Route::get('role/{id}/permission', 'Api\V1\RoleController@get_permissions');
             Route::post('role/{id}/permission', 'Api\V1\RoleController@set_permissions');
             // Permiso
