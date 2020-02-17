@@ -130,16 +130,16 @@ export default {
  {
     async getBallots(id) {
     try {
-      this.loading = true
       let res = await axios.get(`affiliate/${id}/contribution`, {
         params:{
-          city_id: 4,
+          city_id: this.$store.getters.cityId,
           sortBy: ['month_year'],
           sortDesc: ['true'],
           per_page: this.num,
           page: 1,
         }
       })
+      console.log('respuesta de la ciudad')
       if(this.num>1)
       {
         this.visible=true
