@@ -915,7 +915,13 @@ class AffiliateController extends Controller
                 'id' => $request->state
             ];
         }
-        return Util::search_sort(new Loan(), $request, [], $relations, ['id']);
+        $data = Util::search_sort(new Loan(), $request, [], $relations, ['id']);
+        foreach ($data as $loan) {
+            $loan->balance = $loan->balance;
+            $loan->estimated_quota = $loan->estimated_quota;
+            $loan->defaulted = $loan->defaulted;
+        }
+        return $data;
     }
 
     /**
