@@ -14,7 +14,6 @@ use App\Hierarchy;
 use App\AffiliateState;
 use App\AffiliateStateType;
 use App\Spouse;
-use App\Address;
 use App\Contribution;
 use App\Unit;
 use App\Loan;
@@ -658,11 +657,9 @@ class AffiliateController extends Controller
     public function update_addresses(Request $request, $id) {
         $affiliate = Affiliate::findOrFail($id);
         $request->validate([
-            'addresses' => 'required|array'
+            'addresses' => 'required|array',
+            'addresses.*' => 'exists:addresses,id'
         ]);
-        foreach($request->addresses as $address) {
-            if(Address::whereId($address)->doesntExist()) abort (404);
-        }
         return $affiliate->addresses()->sync($request->addresses);
     }
 

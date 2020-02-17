@@ -88,7 +88,7 @@ class RoleController extends Controller
     public function set_permissions(Request $request, $id) {
         $request->validate([
             'permissions' => 'required|array',
-            'permissions.*.id' => 'required|integer|exists:permissions,id'
+            'permissions.*' => 'exists:permissions,id'
         ]);
         $role = Role::findOrFail($id);
         $role->syncPermissions($request->permissions);

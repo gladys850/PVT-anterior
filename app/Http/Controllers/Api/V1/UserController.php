@@ -260,7 +260,7 @@ class UserController extends Controller
     * Establecer roles de usuario
     * Asignar roles a un usuario
     * @urlParam id required ID de usuario. Example: 69
-    * @bodyParam roles array required Vector con los objetos de roles. Example: [{id:37},{id:42},{id:7}]
+    * @bodyParam roles array required Vector con los objetos de roles. Example: [37,42,7]
     * @authenticated
     * @response
     * [
@@ -273,7 +273,7 @@ class UserController extends Controller
     {
         $request->validate([
             'roles' => 'required|array',
-            'roles.*.id' => 'required|integer|exists:roles,id'
+            'roles.*' => 'exists:roles,id'
         ]);
         $user = User::findOrFail($id);
         $user->syncRoles($request->roles);
