@@ -46,9 +46,11 @@
 </template>
 
 <script>
+import { Validator } from 'vee-validate'
 import Ldap from '@/components/user/Ldap'
 
 export default {
+  inject: ['$validator'],
   name: 'ldap-add',
   components: {
     Ldap

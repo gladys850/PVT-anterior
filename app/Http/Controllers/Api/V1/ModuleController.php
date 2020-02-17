@@ -51,17 +51,67 @@ class ModuleController extends Controller
         return Util::search_sort(new Module(), $request, $filter);
     }
 
+    /**
+    * Detalle de módulo
+    * Devuelve el detalle de un módulo mediante su ID
+    * @urlParam module required ID de afiliado. Example: 3
+    * @authenticated
+    * @response
+    * {
+    *     "id": 3,
+    *     "display_name": "Fondo de Retiro",
+    *     "description": "Unidad de Fondo de Retiro",
+    *     "name": "fondo-de-retiro",
+    *     "shortened": "FR"
+    * }
+    */
     public function show($id)
     {
         return Module::findOrFail($id);
     }
 
+    /**
+    * Roles asociados al módulo
+    * Devuelve la lista de roles asociados a un módulo
+    * @urlParam module required ID del módulo. Example: 3
+    * @authenticated
+    * @response
+    * [
+    *     {
+    *         "id": 30,
+    *         "module_id": 3,
+    *         "display_name": "Regional Santa Cruz",
+    *         "action": "Recepcionado",
+    *         "created_at": "1958-07-21 00:00:00",
+    *         "updated_at": "2020-01-21 15:53:23",
+    *         "correlative": "32/2020",
+    *         "name": "FR-regional-santa-cruz"
+    *     }, {}
+    * ]
+    */
     public function get_roles($id)
     {
         $module = Module::findOrFail($id);
         return $module->roles;
     }
 
+    /**
+    * Tipos de trámite asociados al módulo
+    * Devuelve la lista de tipos de trámites asociados a un módulo
+    * @urlParam module required ID del módulo. Example: 3
+    * @authenticated
+    * @response
+    * [
+    *     {
+    *         "id": 2,
+    *         "module_id": 3,
+    *         "name": "Beneficio de Pago de Fondo de Retiro Policial Solidario",
+    *         "created_at": null,
+    *         "updated_at": null,
+    *         "second_name": "Fondo de Retiro"
+    *     }, {}
+    * ]
+    */
     public function get_procedure_types($id)
     {
         $module = Module::findOrFail($id);

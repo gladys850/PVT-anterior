@@ -139,7 +139,7 @@ class AffiliateController extends Controller
     * @bodyParam surname_husband string Apellido de casada. Example: PAREDES
     * @bodyParam date_entry date Fecha de ingreso a la policía. Example: 1980-05-20
     * @bodyParam date_death date Fecha de fallecimiento. Example: 2018-09-21
-    * @bodyParam death_certificate_number date Fecha de certificado de defunción. Example: 2018-09-23
+    * @bodyParam death_certificate_number string Número de certificado de defunción. Example: 180923-ATR
     * @bodyParam reason_death string Causa de fallecimiento. Example: Embolia
     * @bodyParam date_derelict date Fecha de baja de la policía. Example: 2017-12-30
     * @bodyParam reason_derelict string Causa de baja de la policía. Example: Proceso administrativo

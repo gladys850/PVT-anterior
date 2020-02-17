@@ -13,7 +13,7 @@ use Util;
 class ProcedureModalityController extends Controller
 {
     /**
-    * Lista de trámites
+    * Lista de modalidad de trámites
     * Devuelve el listado con los datos paginados
     * @queryParam procedure_type_id Filtro de ID del tipo de procedimiento. Example: 9
     * @queryParam sortBy Vector de ordenamiento. Example: [name]
@@ -74,11 +74,19 @@ class ProcedureModalityController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+    * Detalle de una modalidad de trámite
+    * Devuelve el detalle de una modalidad de trámite mediante su ID
+    * @urlParam procedure_modality required ID de la modalidad de trámite. Example: 4
+    * @authenticated
+    * @response
+    * {
+    *     "id": 4,
+    *     "procedure_type_id": 2,
+    *     "name": "Fallecimiento",
+    *     "shortened": "FRPS - FALL",
+    *     "is_valid": true
+    * }
+    */
     public function show($id)
     {
         return ProcedureModality::findOrFail($id);
