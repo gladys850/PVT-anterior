@@ -882,6 +882,16 @@ class AffiliateController extends Controller
     *                     }
     *                 }, {}
     *             ],
+    *             "guarantors": [
+    *                 {
+    *                     "id": 7,
+    *                     "pivot": {
+    *                         "loan_id": 1,
+    *                         "affiliate_id": 7,
+    *                         "payment_percentage": 100
+    *                     }
+    *                 }, {}
+    *             ],
     *             "state": {
     *                 "id": 3
     *             }
