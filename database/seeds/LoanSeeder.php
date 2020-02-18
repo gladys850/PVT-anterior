@@ -321,7 +321,7 @@ class LoanSeeder extends Seeder
               'interest' => ['annual_interest' => 13.2,'penal_interest' => 6]
             ],
                  // REFINANCIANCIAMIENTO SECTOR PASIVO CON UN SOLO GARANTE
-               ['name'=>'Refinanciamiento de prestamos a largo Plazo para el sector pasivo - CPOP','shortened'=>'PLP-R-SAP-CPOP','requirements'=>[
+               ['name'=>'Refinanciamiento de prestamos a largo Plazo para el sector pasivo - CPOP','shortened'=>'PLP-R-SP-CPOP','requirements'=>[
                 ['name'=>'Cédula de Identidad del (la) titular en copia simple','number'=>1],
                 ['name' => 'Certificado de años de servicio desglosado en original emitido por el Comando General de la Policía Boliviana','number'=>2],
             		['name' => 'Certificado de años de servicio desglosado en fotocopia Legalizada emitido por el Comando General de la Policía Boliviana','number'=>2],

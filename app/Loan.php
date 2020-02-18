@@ -128,7 +128,7 @@ class Loan extends Model
         return $this->payments()->latest()->first();
     }
 
-    public function percentage($dato)
+    public static function get_percentage($dato)
     {
         if(count($dato)>0){
             return Util::round(1/count($dato)*100);
@@ -282,9 +282,9 @@ class Loan extends Model
             case 'Préstamo a largo plazo':
                 if($affiliate_state_type == "Activo")
                 {
-                    if($cpop){
+                    if($affiliate->cpop){
                         if($affiliate->active_loans()){
-                            $modality=ProcedureModality::whereShortened("PLP-R-SA")->first();
+                            $modality=ProcedureModality::whereShortened("PLP-R-SA-CPOP")->first();
                             // Refi largo plazo activo 1 solo garante
                         }else{
                             $modality=ProcedureModality::whereShortened("PLP-CPOP")->first();
@@ -296,8 +296,8 @@ class Loan extends Model
                 else{
                         if($affiliate_state_type == "Pasivo"){
                             if($affiliate->active_loans()){
-                                if($cpop){
-                                    $modality=ProcedureModality::whereShortened("PLP-R-SP")->first();
+                                if($affiliate->cpop){
+                                    $modality=ProcedureModality::whereShortened("PLP-R-SP-CPOP")->first();
                                     // Refi largo plazo pasivo 1 solo garante
                                 }
                             }else{
@@ -309,7 +309,7 @@ class Loan extends Model
             case 'Préstamo hipotecario':
                 if($affiliate_state_type == "Activo")
                 {
-                    if($cpop){
+                    if($affiliate->cpop){
                         $modality=ProcedureModality::whereShortened("PLP-GH-CPOP")->first();
                         //hipotecario CPOP
                     }else{
@@ -322,6 +322,17 @@ class Loan extends Model
         if ($modality) $modality->loan_modality_parameter;
         return response()->json($modality);
              
+    }
+    //correlativo
+    public static function get_code(){
+        $loan = $loan=Loan::get()->first();
+        if($loan==null){
+            $loan_id = 0;
+        }else{
+            $loan_id = Loan::get()->last()->id;
+        }
+        $code = implode(["PTMO",str_pad($loan_id+1,6,'0',STR_PAD_LEFT),"-",Carbon::now()->year]);
+        return $code;
     }
 
 }

@@ -148,12 +148,12 @@ class LoanController extends Controller
                     $loan->disbursable_type = 'spouses' ; 
                 }
             }
+            $loan->code = Loan::get_code();
             $loan->save();
             $request->lenders = collect($request->lenders)->unique();
             $request->guarantors = collect($request->guarantors)->unique();
             $request->guarantors = $request->guarantors->diff($request->lenders);
-            $res = new Loan();
-            $percentage = $res->percentage($request->lenders);
+            $percentage = Loan::get_percentage($request->lenders);
             foreach ($request->lenders as $affiliate) {
                 $affiliates[$affiliate] = [
                     'payment_percentage' =>$percentage,
@@ -161,7 +161,7 @@ class LoanController extends Controller
                 ];
             }
             if($request->guarantors){
-                $percentage = $res->percentage($request->guarantors);
+                $percentage = Loan::get_percentage($request->guarantors);
                 foreach ($request->guarantors as $affiliate) {
                     $affiliates[$affiliate] = [
                         'payment_percentage' =>$percentage,
@@ -251,57 +251,9 @@ class LoanController extends Controller
     *                "affiliate_id": 6,
     *                "payment_percentage": "50"
     *            }
-    *        },
-    *        {
-    *            "id": 7,
-    *            "user_id": 4,
-    *            "affiliate_state_id": 5,
-    *            "city_identity_card_id": 4,
-    *            "city_birth_id": 3,
-    *            "degree_id": 7,
-    *            "unit_id": 19,
-    *            "category_id": 8,
-    *            "pension_entity_id": 2,
-    *            "identity_card": "091748",
-    *            "registration": "470815UUN",
-    *            "type": "Comando",
-    *            "last_name": "UNZUETA",
-    *            "mothers_last_name": "UNZUETA",
-    *            "first_name": "NAPOLEON",
-    *            "second_name": null,
-    *            "surname_husband": null,
-    *            "gender": "M",
-    *            "civil_status": "D",
-    *            "birth_date": "1947-08-15",
-    *            "date_entry": "1970-01-01",
-    *            "date_death": null,
-    *            "reason_death": "",
-    *            "date_derelict": null,
-    *            "reason_derelict": null,
-    *            "change_date": "2016-07-01",
-    *            "phone_number": "(4) 341-032",
-    *            "cell_phone_number": "(762)-12245",
-    *            "afp": true,
-    *            "nua": 20188250,
-    *            "item": 5734,
-    *            "created_at": "2017-06-01 10:42:18",
-    *            "updated_at": "2018-09-05 07:59:09",
-    *            "deleted_at": null,
-    *            "service_years": 41,
-    *            "service_months": 3,
-    *            "death_certificate_number": "",
-    *            "due_date": null,
-    *            "is_duedate_undefined": true,
-    *            "affiliate_registration_number": null,
-    *            "file_code": null,
-    *            "pivot": {
-    *                "loan_id": 4,
-    *                "affiliate_id": 7,
-    *                "payment_percentage": "50"
-    *            }
-    *    }
-    * ],
-    * "guarantors": []
+    *        },{}
+    *   ],
+    *   "guarantors": []
     * }
     */
     public function show($id)
@@ -383,8 +335,7 @@ class LoanController extends Controller
             $request->lenders = collect($request->lenders)->unique();
             $request->guarantors = collect($request->guarantors)->unique();
             $request->guarantors = $request->guarantors->diff($request->lenders);
-            $res = new Loan();
-            $percentage = $res->percentage($request->lenders);
+            $percentage = Loan::get_percentage($request->lenders);
             foreach ($request->lenders as $affiliate) {
                 $affiliates[$affiliate] = [
                     'payment_percentage' =>$percentage,
@@ -392,7 +343,7 @@ class LoanController extends Controller
                 ];
             }
             if($request->guarantors){
-                $percentage = $res->percentage($request->guarantors);
+                $percentage = Loan::get_percentage($request->guarantors);
                 foreach ($request->guarantors as $affiliate) {
                     $affiliates[$affiliate] = [
                         'payment_percentage' =>$percentage,
