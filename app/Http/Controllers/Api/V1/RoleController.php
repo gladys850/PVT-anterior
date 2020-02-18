@@ -14,6 +14,7 @@ class RoleController extends Controller
     /**
     * Lista de roles
     * Devuelve el listado de los roles disponibles en el sistema
+    * @queryParam name string Filtrar roles por nombre. Example: PRE-area-de-recepcion
     * @authenticated
     * @response
     * [
@@ -29,9 +30,11 @@ class RoleController extends Controller
     *     }, {}
     * ]
     */
-    public function index()
+    public function index(Request $request)
     {
-        return Role::orderBy('name')->get();
+        $query = Role::orderBy('name');
+        if ($request->has('name')) $query = $query->whereName($request->name);
+        return $query->get();
     }
 
     /**

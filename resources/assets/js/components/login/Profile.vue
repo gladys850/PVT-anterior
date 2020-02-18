@@ -14,7 +14,17 @@
                 <td class="font-weight-black text-end pr-5">Usuario:</td>
                 <td class="text-left">{{ $store.getters.user }}</td>
                 <td class="font-weight-black text-end pr-5">Roles:</td>
-                <td class="text-left">{{ $store.getters.roles.join(', ') }}</td>
+                <td class="text-left">
+                  <ul v-if="!loading">
+                    <li
+                      v-for="role in roles"
+                      :key="role.id"
+                    >
+                      {{ role.display_name }}
+                    </li>
+                  </ul>
+                  <Loading v-else/>
+                </td>
                 <td v-if="!$store.getters.ldapAuth || $store.getters.username == 'admin'">
                   <ChangePassword/>
                 </td>
@@ -29,11 +39,41 @@
 
 <script>
 import ChangePassword from '@/components/login/ChangePassword'
+import Loading from '@/components/shared/Loading'
 
 export default {
   name: "Profile",
+  data() {
+    return {
+      loading: true,
+      roles: []
+    }
+  },
   components: {
-    ChangePassword
+    ChangePassword,
+    Loading
+  },
+  mounted() {
+    this.$store.getters.roles.forEach(role => {
+      this.getRole(role)
+    })
+  },
+  methods: {
+    async getRole(name) {
+      try {
+        this.loading = true
+        let res = await axios.get(`role`, {
+          params: {
+            name: name
+          }
+        })
+        if (res.data.length) this.roles.push(res.data[0])
+      } catch (e) {
+        console.log(e)
+      } finally {
+        this.loading = false
+      }
+    }
   }
 }
 </script>
