@@ -121,7 +121,7 @@ export default {
     refinanciamiento: false,
     muserpol: null,
     boletas1:null,
-    num:3
+    num:3,
   }),
    beforeMount() {
     this.getBallots(this.$route.query.affiliate_id);
@@ -134,12 +134,11 @@ export default {
         params:{
           city_id: this.$store.getters.cityId,
           sortBy: ['month_year'],
-          sortDesc: ['true'],
+          sortDesc: [1],
           per_page: this.num,
           page: 1,
         }
       })
-      console.log('respuesta de la ciudad')
       if(this.num>1)
       {
         this.visible=true

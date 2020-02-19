@@ -92,7 +92,9 @@
           :step="2"
         >
           <v-card color="grey lighten-1">
-            <LoanInformation/>
+            <LoanInformation
+            :modalities.sync="modalities"
+            />
             <v-container class="py-0">
               <v-row>
                 <v-spacer></v-spacer>
@@ -213,7 +215,7 @@ export default {
     addresses: {
       type: Array,
       required: true
-    }
+    },
   },
   components: {
     Requirement,
@@ -226,8 +228,7 @@ export default {
     return {
       e1: 1,
       steps: 5,
-
-    reload: false,
+      modalities: [],
     }
   },
   computed: {
@@ -242,6 +243,9 @@ export default {
       }
     },
   },
+  beforeMount(){
+    this.getProcedureType();
+  },
   methods: {
     nextStep (n) {
       if (n === this.steps) {
@@ -253,6 +257,27 @@ export default {
     beforeStep (n) {
       this.e1 = n -1
     },
+    async getProcedureType() {
+      try {
+        let resp = await axios.get(`module`,{
+          params: {
+            name: 'prestamos',
+            sortBy: ['name'],
+            sortDesc: ['false'],
+            per_page: 10,
+            page: 1
+            }
+        })
+        this.modulo= resp.data.data[0].id
+        let res = await axios.get(`module/${this.modulo}/procedure_type`)
+        this.modalities = res.data
+      } catch (e) {
+        console.log(e)
+      } finally {
+        this.loading = false
+      }
+    },
+
   },
 }
 </script>

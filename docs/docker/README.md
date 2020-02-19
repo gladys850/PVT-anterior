@@ -17,6 +17,7 @@ git submodule update --init --recursive
 * Copy the modified files to laradock folder
 
 ```sh
+cp -f docs/docker/php-fpm/Dockerfile laradock/php-fpm/
 cp -f docs/docker/docker-compose.yml laradock/
 cp -f docs/docker/env-example laradock/.env
 ```
@@ -29,16 +30,16 @@ cd laradock
 
 * Modify `.env` file with desired data
 
+* Build the images
+
+```sh
+docker-compose build --parallel nginx php-fpm workspace laravel-echo-server redis
+```
+
 * Up the compose with nginx server
 
 ```sh
 docker-compose up -d --build nginx php-fpm workspace laravel-echo-server redis
-```
-
-* Instead you can use apache2 server
-
-```sh
-docker-compose up -d --build apache2 php-fpm workspace laravel-echo-server redis
 ```
 
 * To tail the logs
@@ -85,6 +86,12 @@ docker-compose restart laravel-echo-server
 ```
 
 * Modify `.env` file according to the right credentials
+
+* Transpile javascripts code
+
+```sh
+docker-compose exec --user laradock workspace yarn prod
+```
 
 ## Continue the development
 
