@@ -15,7 +15,7 @@ class CreateLoanPaymentsTable extends Migration
     { // table amortization
         Schema::create('loan_payments', function (Blueprint $table) {
             $table->unsignedBigInteger('loan_id'); 
-            $table->foreign('loan_id')->references('id')->on('loans'); 
+            $table->foreign('loan_id')->references('id')->on('loans')->onDelete('cascade');
             $table->unsignedBigInteger('affiliate_id'); // registro del depositante  
             $table->foreign('affiliate_id')->references('id')->on('affiliates');
             $table->date('pay_date')->nullable(); // fecha de pago

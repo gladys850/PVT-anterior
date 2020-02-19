@@ -16,11 +16,12 @@ class CreatePersonalReferenceTable extends Migration
         Schema::create('personal_references', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedBigInteger('loan_id'); // id persona de referencia
-            $table->foreign('loan_id')->references('id')->on('loans'); 
+            $table->foreign('loan_id')->references('id')->on('loans')->onDelete('cascade');
             $table->string('full_name');
             $table->string('address')->nullable();
             $table->string('phone_number')->nullable(); 
             $table->string('cell_phone_number')->nullable(); 
+
             $table->timestamps();
         });
     }

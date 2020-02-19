@@ -14,13 +14,13 @@ class LoanStateSeeder extends Seeder
     public function run()
     {
         $states = [
-            [['name' => 'En Proceso'],['description' => 'Prestamo en tramite' ]],
-            [['name' => 'Anulado '],['description' => 'Tramite del prestamo Anulado' ]],
-            [['name' => 'Desembolsado '],['description' => 'Dinero Desembolsado' ]],
-            [['name' => 'Liquidado '],['description' => 'Pago de la deuda en su totalidad' ]], 
+            ['name' => 'En Proceso', 'description' => 'Prestamo en tramite' ],
+            ['name' => 'Anulado', 'description' => 'Tramite del prestamo Anulado' ],
+            ['name' => 'Desembolsado', 'description' => 'Dinero Desembolsado' ],
+            ['name' => 'Liquidado', 'description' => 'Pago de la deuda en su totalidad' ]
         ];
         foreach ($states as $state) {
-            LoanState::firstOrCreate($state[0],$state[1]);
+            LoanState::firstOrCreate($state);
         }
         
     }
