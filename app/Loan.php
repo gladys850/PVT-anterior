@@ -325,7 +325,7 @@ class Loan extends Model
     }
     //correlativo
     public static function get_code(){
-        $loan = $loan=Loan::get()->first();
+        $loan = Loan::get()->first();
         if($loan==null){
             $loan_id = 0;
         }else{
