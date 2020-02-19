@@ -52,42 +52,27 @@
 </template>
 <script>
 import { Validator } from 'vee-validate'
+import Ballots from '@/components/loan/Ballots'
   export default {
   inject: ['$validator'],
   name: "loan-information",
   data: () => ({
-    modalities: [],
-    loanTypeSelected:null,
     monto:null,
     plazo:null,
     interval:[],
+    loanTypeSelected:null,
 
   }),
+  props: {
+    modalities: {
+      type: Array,
+      required: true
+    },
+  },
   beforeMount() {
-    this.getProcedureType();
     this.getLoanIntervals()
   },
   methods: {
-    async getProcedureType() {
-      try {
-        let resp = await axios.get(`module`,{
-          params: {
-            name: 'prestamos',
-            sortBy: ['name'],
-            sortDesc: ['false'],
-            per_page: 10,
-            page: 1
-            }
-        })
-        this.modulo= resp.data.data[0].id
-        let res = await axios.get(`module/${this.modulo}/procedure_type`)
-        this.modalities = res.data
-      } catch (e) {
-        console.log(e)
-      } finally {
-        this.loading = false
-      }
-    },
     Onchange(){
       for (this.i = 0; this.i< this.interval.length; this.i++) {
         if(this.loanTypeSelected==this.interval[this.i].procedure_type_id)

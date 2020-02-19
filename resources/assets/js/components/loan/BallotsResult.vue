@@ -19,13 +19,15 @@
                         v-validate.initial="`required|numeric|min_value:1|max_value:36`"
                         :error-messages="errors.collect('plazo')"
                         data-vv-name="plazo"
+                        v-on:keyup.enter="Calculator()"
                       ></v-text-field>
                       <v-text-field
                         label="Monto Maximo Sugerido"
                         v-model ="monto_maximo_sugerido"
-                        v-validate.initial="`required|numeric|min_value:2001|max_value:25000`"
+                        v-validate.initial="`required|numeric`"
                         :error-messages="errors.collect('monto_solicitado')"
                         data-vv-name="monto_solicitado"
+                        v-on:keyup.enter="Calculator()"
                       ></v-text-field>
                     </fieldset>
                   </v-flex>
@@ -82,7 +84,7 @@ data: () => ({
   liquido_para_calificacion:null,
   calculo_de_cuota:null,
   indice_endeudamiento:null,
-  monto_maximo_sugerido:null,
+  monto_maximo_sugerido:9358,
 }),
 beforeMount(){
 this.Calculator()
@@ -93,8 +95,8 @@ methods:{
       this.loading = true
       let res = await axios.post(`calculator`, {
         procedure_modality_id: 34,
-        months_term: 30,
-        amount_request:9130,
+        months_term: this.plazo_meses,
+        amount_request:9358,
         affiliate_id:this.$route.query.affiliate_id,
         contributions: [
           {
