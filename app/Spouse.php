@@ -31,6 +31,11 @@ class Spouse extends Model
         return 'Vd' . ($this->affiliate->gender == 'M' ? 'a' : 'o') . '.';
     }
 
+    public function getGenderAttribute()
+    {
+        return $this->affiliate->gender == 'M' ? 'F' : 'M';
+    }
+
     public function getIdentityCardExtAttribute()
     {
         return $this->identity_card . ' ' . $this->city_identity_card->first_shortened;
