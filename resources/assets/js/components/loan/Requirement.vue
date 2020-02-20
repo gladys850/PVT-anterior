@@ -5,7 +5,7 @@
         <template v-slot:header>
           <v-toolbar class="mb-0" color="ternary" dark flat>
             <v-toolbar-title>
-              REQUISITOS PARA ANTICIPO {{selected_document}}
+              REQUISITOS PARA ANTICIPO
               <v-btn
                 @click.stop="saveRequirement()"
                 color="success"
@@ -20,7 +20,7 @@
                 <v-col cols="12" class="py-0" v-for="(doc,j) in group" :key="doc.id">
                   <v-list dense class="py-0">
                     <v-list-item class="py-0">
-                      {{'Lon='+group.length}} {{'ID='+ doc.id}}
+                      <!--{{'Lon='+group.length}} {{'ID='+ doc.id}}-->
                       <v-col cols="1" class="py-0">
                         <v-list-item-content class="align-end font-weight-light">
                           <div v-if="group.length == 1">
@@ -141,7 +141,9 @@ export default {
     async saveRequirement() {
       try {
         this.loading = true;    
-        await axios.post(`loan/${id}/document`);
+        await axios.post(`loan/${5}/document`,{
+              documents:this.selected.concat(this.radios.filter(Boolean)) 
+          });
         this.toastr.success("Se guardó satisfactoriamente los requisitos");
       } catch (e) {
         console.log(e);
