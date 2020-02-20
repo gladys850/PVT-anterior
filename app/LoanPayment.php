@@ -37,7 +37,7 @@ class LoanPayment extends Model
         $quota=count($loanPayment);
         if($quota==0)
         {
-            $loan=Loan::find($loan_id);
+            $loan=Loan::findOrFail($loan_id);
             $date_disbursement=$loan->disbursement_date;
             $diferencia = Carbon::parse($date_disbursement)->diffInDays(Carbon::parse($estimated_date));
             $diferencia=$diferencia+1;

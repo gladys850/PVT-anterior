@@ -50,7 +50,7 @@
               <v-col cols="12" md="3" >
                 <v-text-field
                   dense
-                  v-model="border_bonus"
+                  v-model="bonos[0]"
                   v-validate.initial="'min:1|max:20'"
                   :error-messages="errors.collect('1erBono')"
                   data-vv-name="1erBono"
@@ -62,7 +62,7 @@
               <v-col cols="12" md="3">
                 <v-text-field
                   dense
-                  v-model="east_bonus"
+                  v-model="bonos[1]"
                   v-validate.initial="'min:1|max:20'"
                   :error-messages="errors.collect('2doBono')"
                   data-vv-name="2doBono"
@@ -74,7 +74,7 @@
               <v-col cols="12" md="3" >
                 <v-text-field
                   dense
-                  v-model="seniority_bonus"
+                  v-model="bonos[2]"
                   v-validate.initial="'min:1|max:20'"
                   :error-messages="errors.collect('3erBono')"
                   data-vv-name="3erBono"
@@ -86,7 +86,7 @@
               <v-col cols="12" md="3">
                 <v-text-field
                   dense
-                  v-model="public_security_bonus"
+                  v-model="bonos[3]"
                   v-validate.initial="'min:1|max:20'"
                   :error-messages="errors.collect('4toBono')"
                   data-vv-name="4toBono"
@@ -94,6 +94,9 @@
                   :readonly="!editar"
                   :outlined="editar"
                 ></v-text-field>
+              </v-col>
+              <v-col cols="12" md="3">
+                {{'holasss'+this.modality.loan_modality_parameter.quantity_ballots+this.visible}}
               </v-col>
             </v-row>
           </v-container>
@@ -108,23 +111,31 @@ export default {
   inject: ['$validator'],
   name: "dashboard-index",
   data: () => ({
-    payable_liquid: [null,null,null],
-    seniority_bonus: null,
-    border_bonus: null,
-    public_security_bonus: null,
-    east_bonus: null,
-    plazo_meses : 24,
-    monto_solicitado : null,
-    loanTypeSelected:null,
-    visible: null,
     editar:true,
-    refinanciamiento: false,
-    muserpol: null,
-    boletas1:null,
-    num:3
+    num:3,
   }),
-   beforeMount() {
-    this.getBallots(this.$route.query.affiliate_id);
+   props: {
+    modality: {
+      type: Object,
+      required: true
+    },
+    bonos: {
+      type: Array,
+      required: true
+    },
+    payable_liquid: {
+      type: Array,
+      required: true
+    },
+    visible: {
+      type: Boolean,
+      required: true
+    },
+  },
+    mounted(){
+ this.getBallots(this.$route.query.affiliate_id);
+  console.log(this.num+'este es el numero de boleta')
+ 
   },
   methods:
  {
@@ -134,26 +145,22 @@ export default {
         params:{
           city_id: this.$store.getters.cityId,
           sortBy: ['month_year'],
-          sortDesc: ['true'],
+          sortDesc: [1],
           per_page: this.num,
           page: 1,
         }
       })
-      console.log('respuesta de la ciudad')
-      if(this.num>1)
-      {
-        this.visible=true
-      }
+      console.log('entro al metodo de boletas'+this.num)
       if(res.data.valid)
       {
         this.editar=false
-        this.datos=res.data.data
+       this.datos=res.data.data
         for (this.i = 0; this.i< this.datos.length; this.i++) {
           this.payable_liquid[this.i]= this.datos[this.i].payable_liquid,
-          this.seniority_bonus= this.datos[0].seniority_bonus,
-          this.border_bonus= this.datos[0].border_bonus,
-          this.public_security_bonus= this.datos[0].public_security_bonus,
-          this.east_bonus= this.datos[0].east_bonus
+          this.bonos[0]= this.datos[0].border_bonus,
+          this.bonos[1]= this.datos[0].east_bonus,
+          this.bonos[2]= this.datos[0].seniority_bonus,
+          this.bonos[3]= this.datos[0].public_security_bonus
         }
       }
     } catch (e) {
@@ -161,7 +168,7 @@ export default {
     } finally {
       this.loading = false
     }
-  },
+  }
  }
 };
 </script>

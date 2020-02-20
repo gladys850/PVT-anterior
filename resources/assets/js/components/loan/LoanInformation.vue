@@ -12,7 +12,7 @@
               Monto Solicitado
             </v-col>
             <v-col cols="12" md="4" class="py-0">
-              Plazo Meses
+              Plazo Mesesss
             </v-col>
             <v-col cols="12" md="4" class="py-0">
               <v-select
@@ -41,7 +41,8 @@
                 :error-messages="errors.collect('plazo')"
                 data-vv-name="plazo"
                 v-model="plazo"
-              ></v-text-field>
+              > {{datos}}</v-text-field>
+             
             </v-col>
           </v-row>
         </v-container>
@@ -52,42 +53,31 @@
 </template>
 <script>
 import { Validator } from 'vee-validate'
+import Ballots from '@/components/loan/Ballots'
   export default {
   inject: ['$validator'],
   name: "loan-information",
   data: () => ({
-    modalities: [],
-    loanTypeSelected:null,
     monto:null,
     plazo:null,
     interval:[],
+    loanTypeSelected:null
 
   }),
+  props: {
+    modalities: {
+      type: Array,
+      required: true
+    },
+    datos: {
+      type: Array,
+      required: true
+    },
+  },
   beforeMount() {
-    this.getProcedureType();
     this.getLoanIntervals()
   },
   methods: {
-    async getProcedureType() {
-      try {
-        let resp = await axios.get(`module`,{
-          params: {
-            name: 'prestamos',
-            sortBy: ['name'],
-            sortDesc: ['false'],
-            per_page: 10,
-            page: 1
-            }
-        })
-        this.modulo= resp.data.data[0].id
-        let res = await axios.get(`module/${this.modulo}/procedure_type`)
-        this.modalities = res.data
-      } catch (e) {
-        console.log(e)
-      } finally {
-        this.loading = false
-      }
-    },
     Onchange(){
       for (this.i = 0; this.i< this.interval.length; this.i++) {
         if(this.loanTypeSelected==this.interval[this.i].procedure_type_id)
@@ -96,6 +86,11 @@ import { Validator } from 'vee-validate'
           this.plazo= this.interval[this.i].maximum_term
         }
       }
+
+          console.log(this.datos+'este son los datos')
+         this.datos[0]=this.loanTypeSelected,
+          this.datos[1]=this.monto,
+          this.datos[2]=this.plazo
     },
     async getLoanIntervals() {
       try {
