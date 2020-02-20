@@ -584,6 +584,23 @@ class LoanController extends Controller
         $city_birth = $city_birth = ($disbursable->city_birth)? $disbursable->city_birth->name:'LUGAR DE NACIMIENTO NO REGISTRADO'; ; 
         $last_address = $loan->loan_affiliates->first()->addresses->last();
         $address = ($last_address)? ($last_address->zone.' '.$last_address->street.' '.$last_address->number_address): 'DIRECCIÓN DOMICILIARIA NO REGISTRADA';
+        $employees = [
+            ['position' => 'Director General Ejecutivo'],
+            ['position' => 'Director de Asuntos Administrativos']
+        ];
+        foreach ($employees as $key => $employee) {
+            $request = collect(json_decode(file_get_contents(env("RRHH_URL") . '/position?name=' . $employee['position']), true));
+            if ($request->count() == 1) {
+                $position = $request->first();
+            } else {
+                abort(404);
+            }
+            $request = collect(json_decode(file_get_contents(implode('/', [env("RRHH_URL"), 'position', $position['id'], 'employee'])), true));
+            $employees[$key]['name'] = preg_replace('/[[:blank:]]+/', ' ', implode(' ', [$request['first_name'], $request['second_name'], $request['last_name'], $request['mothers_last_name']]));
+            $employees[$key]['identity_card'] = $request['identity_card'];
+            $request = collect(json_decode(file_get_contents(implode('/', [env("RRHH_URL"), 'city', $request['city_identity_card_id']])), true));
+            $employees[$key]['identity_card'] .= ' ' . $request['shortened'];
+        }
         $date = Carbon::now();
         $data = [
             'header' => [
@@ -591,8 +608,8 @@ class LoanController extends Controller
                 'unity' => 'UNIDAD DE INVERSIÓN EN PRÉSTAMOS',
                 'table' => []
             ],
-
-            'title' => $procedure_modality,
+            'employees' => $employees,
+            'title' => $procedure_modality->name,
             'loan' => $loan,
             'estimated_quota' => $estimated_quota,
             'gender' => $disbursable->gender,
