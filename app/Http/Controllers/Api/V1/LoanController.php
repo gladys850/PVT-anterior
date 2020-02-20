@@ -500,11 +500,11 @@ class LoanController extends Controller
     * Impresión de los requisitos
     * Devuelve un pdf de los requisitos acorde a una modalidad
     * @queryParam lenders required array Lista de IDs de afiliados Titular de préstamo. Example: [1,6]
-    * @bodyParam procedure_modality_id integer required ID de la modalidad del préstamo. Example: 35
-    * @bodyParam city_id integer required ID de la ciudad. Example: 2
-    * @bodyParam amount_request integer monto solicitado. Example: 5000
-    * @bodyParam loan_term integer plazo. Example: 3
-    * @bodyParam parent_loan_id integer ID de préstamo padre. Example: 1
+    * @queryParam procedure_modality_id integer required ID de la modalidad del préstamo. Example: 35
+    * @queryParam city_id integer required ID de la ciudad. Example: 2
+    * @queryParam amount_request integer monto solicitado. Example: 5000
+    * @queryParam loan_term integer plazo. Example: 3
+    * @queryParam parent_loan_id integer ID de préstamo padre. Example: 1
     * @authenticated
     */
     public function print_requirements(Request $request)
