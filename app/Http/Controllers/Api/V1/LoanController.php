@@ -474,8 +474,8 @@ class LoanController extends Controller
     * }
     */
     public function get_disbursable($id){
-        $disbursable = Loan::findOrFail($id);
-        return $disbursable->disbursable;
+        $loan = Loan::findOrFail($id);
+        return $loan->disbursable;
     }
 
     private function verify_spouse_disbursable($disbursable_id)
@@ -501,7 +501,6 @@ class LoanController extends Controller
     * Devuelve un pdf de los requisitos acorde a una modalidad
     * @queryParam lenders required array Lista de IDs de afiliados Titular de préstamo. Example: [1,6]
     * @bodyParam procedure_modality_id integer required ID de la modalidad del préstamo. Example: 35
-    * @bodyParam disbursable_id integer required ID de afiliado a quien se hara el desembolso. Example: 1
     * @bodyParam city_id integer required ID de la ciudad. Example: 2
     * @bodyParam amount_request integer monto solicitado. Example: 5000
     * @bodyParam loan_term integer plazo. Example: 3
@@ -510,7 +509,6 @@ class LoanController extends Controller
     */
     public function print_requirements(Request $request)
     {
-        
         $parent_loan = $request->has('parent_loan_id') ? Loan::find($request->parent_loan_id) : null;
         $lenders = [];
         foreach ($request->lenders as $lender) {
@@ -532,7 +530,6 @@ class LoanController extends Controller
             'lenders' => $lenders,
             'procedure_modality' => $procedure_modality,
             'city' => City::findOrFail($request->city_id),
-            'disbursable' => $this->verify_spouse_disbursable($request->disbursable_id),
             'parent_loan' => $parent_loan,
             'amount_request' => $request->amount_request,
             'loan_term' => $request->loan_term
@@ -552,6 +549,60 @@ class LoanController extends Controller
             'user-style-sheet' => public_path('css/report-print.min.css')
         ];
         $pdf = \PDF::loadView('procedure_modality.requirements', $data);
+        $pdf->setOptions($options);
+        return $pdf->stream($file_name);
+    }
+    /**
+    * Impresión de Contrato Anticipo
+    * Devuelve un pdf del contrato acorde a un préstamo y cuota
+    * @queryParam estimated_quota float required cuota estimada obtenida de la calculadora  . Example: 389.21
+    * @bodyParam loan_id integer required ID del préstamo. Example: 1
+    * @authenticated
+    */
+    public function print_contract_advance(Request $request){
+        $loan = Loan::findOrFail($request->loan_id);
+        $estimated_quota = $request->estimated_quota;
+        $procedure_modality = ProcedureModality::findOrFail($loan->procedure_modality_id);
+        $disbursable = $loan->disbursable;// persona a quien se hizo el desembolso
+        $identity_card_ext = ($disbursable->city_identity_card)? $disbursable->identity_card_ext:'CARNET DE INDENTIDAD NO REGISTRADO' ;
+        $city_identity_card = ($disbursable->city_identity_card)? $disbursable->city_identity_card->name:'LUGAR DE RESIDENCIA NO REGISTRADO';
+        $city_birth = $city_birth = ($disbursable->city_birth)? $disbursable->city_birth->name:'LUGAR DE NACIMIENTO NO REGISTRADO'; ; 
+        $last_address = $loan->loan_affiliates->first()->addresses->last();
+        $address = ($last_address)? ($last_address->zone.' '.$last_address->street.' '.$last_address->number_address): 'DIRECCIÓN DOMICILIARIA NO REGISTRADA';
+        $date = Carbon::now();
+        $data = [
+            'header' => [
+                'direction' => 'DIRECCIÓN DE ESTRATEGIAS SOCIALES E INVERSIONES',
+                'unity' => 'UNIDAD DE INVERSIÓN EN PRÉSTAMOS',
+                'table' => []
+            ],
+
+            'title' => $procedure_modality,
+            'loan' => $loan,
+            'estimated_quota' => $estimated_quota,
+            'gender' => $disbursable->gender,
+            'address' => $address,
+            'city_birth' => $city_birth,
+            'city_identity_card' => $city_identity_card,
+            'identity_card' => $identity_card_ext,
+            'civil_status' => Util::getCivilStatus($disbursable->civil_status,$disbursable->gender),
+            'lender' => $disbursable->first_name.' '.$disbursable->second_name.' '.$disbursable->last_name.' '.$disbursable->mothers_last_name,
+                    ];
+        $file_name = implode('_', ['contrato', 'anticipo']) . '.pdf';
+        $footerHtml = view()->make('partials.footer')->with(array('paginator' => true, 'print_date' => true, 'date' => Carbon::now()->ISOFormat('L H:m')))->render();
+        $options = [
+            'orientation' => 'portrait',
+            'page-width' => '216',
+            'page-height' => '279',
+            'margin-top' => '8',
+            'margin-bottom' => '16',
+            'margin-left' => '5',
+            'margin-right' => '8',
+            'encoding' => 'UTF-8',
+            'footer-html' => $footerHtml,
+            'user-style-sheet' => public_path('css/report-print.min.css')
+        ];
+        $pdf = \PDF::loadView('loan.contracts.advance', $data);
         $pdf->setOptions($options);
         return $pdf->stream($file_name);
     }

@@ -4,8 +4,8 @@
     <meta charset="utf-8">
 </head>
 
-<body class="w-100 uppercase">
-    <table>
+<body class="w-100">
+    <table class="uppercase">
         <tr>
             <th class="w-20 text-left no-padding no-margins align-middle">
                 <div class="text-left">
