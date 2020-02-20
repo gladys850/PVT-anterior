@@ -51,6 +51,11 @@ class Loan extends Model
         $this->attributes['loan_interest_id'] = $this->modality->current_interest->id;
     }
 
+    public function tags()
+    {
+        return $this->morphMany(Taggable::class, 'taggable');
+    }
+
     public function state()
     {
       return $this->belongsTo(LoanState::class, 'loan_state_id','id');

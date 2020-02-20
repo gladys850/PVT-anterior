@@ -190,4 +190,18 @@ class LoanController extends Controller
         $pdf->setOptions($options);
         return $pdf->stream($file_name);
     }
+
+    // TODO
+    public function switch_states()
+    {
+        $loans = Loan::whereHas('state', function($query) {
+            $query->whereName('Desembolsado');
+        })->get();
+        foreach ($loans as $loan) {
+            if ($loan->defaulted) {
+                // Verify if it has defaulted tag
+                // Attach defaulted tag
+            } // Else detach defaulted tag
+        }
+    }
 }
