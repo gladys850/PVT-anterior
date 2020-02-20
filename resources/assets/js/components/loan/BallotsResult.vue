@@ -55,6 +55,7 @@
               <p>CALCULO DE CUOTA: {{ calculo_de_cuota }}</p>
               <p>INDICE DE ENDEUDAMIENTO: {{indice_endeudamiento }}</p>
               <p>MONTO MAXIMO SUGERIDO : {{monto_maximo_sugerido}}</p>
+               <p>{{calculo}}</p>
             </fieldset>
           </v-flex>
         </v-layout>
@@ -84,8 +85,19 @@ data: () => ({
   liquido_para_calificacion:null,
   calculo_de_cuota:null,
   indice_endeudamiento:null,
-  monto_maximo_sugerido:9358,
+  calculo:null,
+  monto_maximo_sugerido:25000,
 }),
+  props: {
+    bonos: {
+      type: Array,
+      required: true
+    },
+    payable_liquid: {
+      type: Array,
+      required: true
+    },
+  },
 beforeMount(){
 this.Calculator()
 },
@@ -96,25 +108,26 @@ methods:{
       let res = await axios.post(`calculator`, {
         procedure_modality_id: 34,
         months_term: this.plazo_meses,
-        amount_request:9358,
+        amount_request:this.monto_maximo_sugerido,
         affiliate_id:this.$route.query.affiliate_id,
         contributions: [
           {
-            payable_liquid: 2419.30,
-            seniority_bonus: 1305.60,
-            border_bonus: 0.00,
-            public_security_bonus: 0.00,
-            east_bonus: 0.00
+            payable_liquid: this.payable_liquid[0],
+            seniority_bonus:  this.bonos[2],
+            border_bonus: this.bonos[0],
+            public_security_bonus: this.bonos[3],
+            east_bonus:this.bonos[1]
           },
           {
-            payable_liquid: 2270.00
+            payable_liquid: this.payable_liquid[1]
           },
           {
-            payable_liquid: 1563.00
+            payable_liquid: this.payable_liquid[2]
           }
         ]
       })
  this.calculo= res.data
+
  this.promedio_liquido_pagable=this.calculo.promedio_liquido_pagable
  this.total_bonos=this.calculo.total_bonos
  this.liquido_para_calificacion=this.calculo.liquido_para_calificacion

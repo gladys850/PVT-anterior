@@ -94,6 +94,7 @@
           <v-card color="grey lighten-1">
             <LoanInformation
             :modalities.sync="modalities"
+            :datos.sync="datos"
             />
             <v-container class="py-0">
               <v-row>
@@ -118,7 +119,12 @@
           :step="3"
         >
           <v-card color="grey lighten-1">
-            <Ballots/>
+            <Ballots
+            :modality.sync="modality"
+            :bonos.sync="bonos"
+            :payable_liquid="payable_liquid"
+            :visible.sync="visible"
+            />
             <v-container class="py-0">
               <v-row>
                 <v-spacer></v-spacer>
@@ -142,7 +148,10 @@
           :step="4"
           >
           <v-card color="grey lighten-1">
-            <BallotsResult/>
+            <BallotsResult
+            :bonos.sync="bonos"
+            :payable_liquid.sync="payable_liquid"
+            :modality.sync="modality"/>
             <v-container class="py-0">
               <v-row>
                 <v-spacer></v-spacer>
@@ -224,13 +233,32 @@ export default {
     LoanInformation,
     BallotsResult
   },
-  data () {
-    return {
-      e1: 1,
+   data: () => ({
+    
+   e1: 1,
       steps: 5,
       modalities: [],
-    }
-  },
+      datos:[],
+      payable_liquid:[],
+      bonos:[0,0,0,0],
+      visible:false,
+      modality:{
+        id: null,
+        procedure_type_id: null,
+        name: null,
+        shortened: null,
+        is_valid:null,
+        loan_modality_parameter: {
+          id: null,
+          procedure_modality_id: null,
+          debt_index:null,
+          quantity_ballots: null,
+          guarantors: null
+        }
+      },
+   
+  }),
+ 
   computed: {
     isNew() {
       return this.$route.params.hash == 'new'
@@ -246,13 +274,31 @@ export default {
   beforeMount(){
     this.getProcedureType();
   },
+  mounted(){
+ 
+ this.getProcedureType();
+  },
   methods: {
     nextStep (n) {
       if (n === this.steps) {
         this.e1 = 1
       } else {
+        if(n==2)
+        {
+        console.log(this.getLoanModality(this.$route.query.affiliate_id)+'entro')
+        }
+        if(n==3)
+        {
+        console.log(this.bonos[0]+'estos son los bonos')
+console.log(this.bonos[1]+'estos son los bonos')
+console.log(this.bonos[2]+'estos son los bonos')
+console.log(this.bonos[3]+'estos son los bonos')
+
+        console.log(this.payable_liquid+'estos son los liquidos')
+        }
+        
         this.e1 = n + 1
-      }
+     }
     },
     beforeStep (n) {
       this.e1 = n -1
@@ -277,6 +323,27 @@ export default {
         this.loading = false
       }
     },
+    async getLoanModality(id) {
+    try {
+      let resp = await axios.get(`affiliate/${id}/loan_modality`,{
+        params: {
+          procedure_type_id: this.datos[0],
+          external_discount:0,
+          }
+      })
+      this.modality= resp.data
+      if(this.modality.loan_modality_parameter.quantity_ballots>1)
+      {
+         this.visible=true
+      }else{
+         this.visible=false
+      }
+     } catch (e) {
+      console.log(e)
+    } finally {
+      this.loading = false
+    }
+  },
 
   },
 }
