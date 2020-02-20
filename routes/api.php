@@ -4,6 +4,11 @@ Route::group([
     'middleware' => 'api',
     'prefix' => 'v1',
 ], function () {
+    Route::get('loan/print/contract_advance', 'Api\V1\LoanController@print_contract_advance');
+
+
+
+
     // Rutas abiertas
     Route::resource('auth', 'Api\V1\AuthController')->only('store');
     Route::resource('config', 'Api\V1\ConfigController')->only('index');

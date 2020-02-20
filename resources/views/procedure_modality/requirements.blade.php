@@ -15,7 +15,7 @@
 
     <table class="table-info w-100 text-center uppercase my-20">
         <tr class="bg-grey-darker text-xxs text-white">
-            <td class="w-75">Solicitante{{ count($lenders) > 0 ? 's' : '' }}</td>
+            <td class="w-75">Solicitante{{ count($lenders) > 1 ? 's' : '' }}</td>
             <td class="w-25">CI</td>
         </tr>
         @foreach ($lenders as $lender)

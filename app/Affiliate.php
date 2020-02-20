@@ -65,7 +65,7 @@ class Affiliate extends Model
     {
         return $this->identity_card . ' ' . $this->city_identity_card->first_shortened;
     }
-
+   
     public function getFingerprintSavedAttribute()
     {
         $base_path = 'picture/';
