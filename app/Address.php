@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Util;
 
 class Address extends Model
 {
@@ -16,6 +17,16 @@ class Address extends Model
         'street' => null,
         'number_address' => null,
     );
+
+    public function getFullAddressAttribute($value)
+    {
+        if (!$this->number_address || Util::trim_spaces($this->number_address) == '') {
+            $number = 'S/N';
+        } else {
+            $number = 'Nº ' . $this->number_address;
+        }
+        return Util::trim_spaces(implode(' ', [$this->zone, $this->street, $number]));
+    }
 
     public function getLatitudeAttribute($value)
     {

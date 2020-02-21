@@ -32,7 +32,7 @@
                 <p>De mi mayor consideracion:</p>
             </div>
             <div class="no-padding no-margins text-justify">
-            <p>El objetivo de la presente es para solicitar un Prestamo con garantia de Personal por un monto de <b>Bs.</b>{{$dat->amount_disbursement}}(________________________________00/100)Bolivianos a un plazo de____ meses el cual que sera aprobado conforme con los procedimientos del Reglamento de Prestamos vigente en la MUSERPOL.</p>
+            <p>El objetivo de la presente es para solicitar un Prestamo con garantia de Personal por un monto de <b>Bs.</b>{{$dat->amount_approved}}(________________________________00/100)Bolivianos a un plazo de____ meses el cual que sera aprobado conforme con los procedimientos del Reglamento de Prestamos vigente en la MUSERPOL.</p>
             <p>El destino del prestamo es para ____________________________________</p>
             <p>Siendo los datos, de mi persona y los garantes los siguientes:</p>
             </div>

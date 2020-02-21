@@ -13,15 +13,15 @@
                       <li v-for="(item,index) in loan" :key="item.id" class="pb-2" >
                         <div v-if="index<3">
                           <strong>Cód. préstamo: </strong> {{ item.code }} | 
-                          <strong>Desembolsado: </strong> {{ item.amount_disbursement }} | 
+                          <strong>Desembolsado: </strong> {{ item.amount_approved }} | 
                           <strong>Total pagado: </strong> {{ item.balance }}                      
                           <v-progress-linear 
                               :color="randomColor()"
                               height="15"
-                              :value= '((item.balance*100)/item.amount_disbursement).toFixed(2)'
+                              :value= '((item.balance*100)/item.amount_approved).toFixed(2)'
                               striped
                           >
-                          <strong>Porcentaje pagado: {{ ((item.balance*100)/item.amount_disbursement).toFixed(2) }}%</strong>
+                          <strong>Porcentaje pagado: {{ ((item.balance*100)/item.amount_approved).toFixed(2) }}%</strong>
                           </v-progress-linear>
                         </div>
                       </li>
