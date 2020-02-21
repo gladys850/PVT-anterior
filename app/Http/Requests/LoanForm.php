@@ -36,13 +36,12 @@ class LoanForm extends FormRequest
             'lenders'=>'array|exists:affiliates,id',
             'guarantors'=>'array|exists:affiliates,id',
             'code'=>'nullable', 
-            'amount_disbursement'=>'nullable|integer',
             'disbursement_date'=>'nullable|date_format:"Y-m-d"',
             'parent_loan_id'=>'nullable|exists:loans,id',
             'parent_reason'=> 'nullable|in:refinanciado,reprogramado',
             'loan_interest_id'=>'exists:loan_interests,id',
             'loan_state_id'=>'exists:loan_states,id',
-            'amount_aproved'=>'nullable|integer',
+            'amount_approved'=>'nullable|integer',
 
        ];  
 

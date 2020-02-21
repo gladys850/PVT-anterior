@@ -10,12 +10,11 @@
     @include('partials.header', $header)
 <div class="text-right">
     <p class="center">
-    La Paz, {{ Carbon::parse($request_date)->isoFormat('LL') }}
+    La Paz, {{ Carbon::now()->isoFormat('LL') }}
     </p>
 </div>
 <div><br><br>
     <div>Señor</div>
-    --------------------------------------
     <div style="text-transform: uppercase;" class="font-semibold leading-tight   m-b-10 text-xs">
         <div><b>DIRECTOR GENERAL EJECUTIVO</b></div>
         <div><b>MUSERPOL</b></div>
@@ -40,7 +39,7 @@
             
         </div><br>
         <div>
-            El destino del préstamo es para .......................................
+            El destino del préstamo es para <b>Salud</b>
         </div><br><br>
         <div>
             Siendo mis datos personales los siguientes:
@@ -49,31 +48,50 @@
     <div>
 
         <table class="table-info w-100 text-center uppercase my-20">
-        <tr class="bg-grey-darker text-xxs text-white">
-            <td class="w-75">Solicitante</td>
-            <td class="w-25">CI</td>
-        </tr>
-        <tr>
-            <td class="data-row py-5">X</td>
-            <td class="data-row py-5">Y</td>
-        </tr>
-      
-    </table>
+            <tr class="bg-grey-darker text-xxs text-white">
+                <td class="w-65">Solicitante</td>
+                <td class="w-20">CI</td>
+                <td class="w-25">Años de Servicio</td>
+            </tr>
+            @foreach ($lenders as $lender)
+            <tr>
+                <td class="data-row py-5">{{ $lender->title }} {{ $lender->full_name }}</td>
+                <td class="data-row py-5">{{ ($lender->identity_card_ext) }}</td>
+                <td class="data-row py-5">X</td>
+
+            </tr>
+            @endforeach
+        </table>
+        <table class="table-info w-100 text-center uppercase my-20">
+            <tr class="bg-grey-darker text-xxs text-white">
+                <td class="w-60">Direccion Domiciliaria</td>
+            </tr>
+            <tr>
+                <td class="data-row py-5">{{$address}}</td>
+            </tr>
+        </table>
     </div>
     <div>
-        <div>Nro. Cuenta del Banco Union..........................................</div>
+        <div>Nro. Cuenta del Banco Union 100000415258865</div><br>
         <div style="text-transform: uppercase;" class="font-semibold leading-tight   m-b-10 text-xs"><b>LA PRESENTE SOLICITUD CONSTITUYE DECLARACION JURADA, CONDIGNANDOSE LOS DATOS COMO FIDEDIGNOS POR LOS INTERESADOS.</b></div>
     </div>
     <div>
         <div>A tal efecto, adjunto los requisito solicitados.</div>
         <div>Sin otro particular, me despido de usted con las consideraciones mas distinguidas.</div>
-    </div>
-</div><br><br>
+    </div><br><br><br>
+</div><br>
 <div class="block">
         <div class='text-center'>
-            _____________________________<br> 
+            .................................................<br> 
             FIRMA SOLICITANTE<br>    
-        </div>
+        </div><br>
+        <div class='text-center'>
+        @foreach ($lenders as $lender)
+        <tr>
+            <td>{{ $lender->title }} {{ $lender->full_name }}</td>
+        </tr>
+        @endforeach
+        </div>   
 </div>
 </body>
 </html>

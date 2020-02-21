@@ -6,6 +6,7 @@ use Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Laratrust\Traits\LaratrustUserTrait;
 use Illuminate\Support\Facades\Storage;
+use Util;
 
 class Affiliate extends Model
 {
@@ -63,9 +64,16 @@ class Affiliate extends Model
 
     public function getIdentityCardExtAttribute()
     {
-        return $this->identity_card . ' ' . $this->city_identity_card->first_shortened;
+        $data = $this->identity_card;
+        if ($this->city_identity_card) $data .= ' ' . $this->city_identity_card->first_shortened;
+        return $data;
     }
-   
+
+    public function getCivilStatusAttribute($value)
+    {
+        return Util::get_civil_status($value, $this->gender);
+    }
+
     public function getFingerprintSavedAttribute()
     {
         $base_path = 'picture/';
@@ -137,6 +145,12 @@ class Affiliate extends Model
     {
       return $this->morphToMany(Address::class, 'addressable')->withTimestamps();
     }
+
+    public function getAddressAttribute()
+    {
+        return $this->addresses()->latest()->first();
+    }
+
     //spouses
     public function spouses()
     {
