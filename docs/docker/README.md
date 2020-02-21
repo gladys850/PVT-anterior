@@ -39,7 +39,7 @@ docker-compose build --parallel nginx php-fpm workspace laravel-echo-server redi
 * Up the compose with nginx server
 
 ```sh
-docker-compose up -d --build nginx php-fpm workspace laravel-echo-server redis
+docker-compose up -d nginx php-fpm workspace laravel-echo-server redis
 ```
 
 * To tail the logs
@@ -60,6 +60,13 @@ docker-compose ps
 
 ```sh
 docker-compose exec workspace /var/www/install-roboto-fonts.sh
+```
+
+* Install spanish language support
+
+```sh
+docker-compose exec php-fpm /var/www/install-spanish-locale.sh
+docker-compose exec workspace /var/www/install-spanish-locale.sh
 ```
 
 * Within the container called `workspace` you need to run

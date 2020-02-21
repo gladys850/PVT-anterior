@@ -9,16 +9,16 @@
 <body>
 <div class="block">
     <div class="font-semibold leading-tight text-center m-b-10 text-xs">
-        CONTRATO DE PRÉSTAMO <font style="text-transform: uppercase;">{{ $title->name }}</font>
+        CONTRATO DE PRÉSTAMO <font style="text-transform: uppercase;">{{ $title }}</font>
         <div>Nº {{ $loan->code }}</div>
     </div>
 </div>
 <div class="block text-justify">
     <div>
-        Conste en el presente contrato de préstamo de {{ $title->name }}, que al solo reconocimiento de firmas y rúbricas ante autoridad competente será elevado a Instrumento Público, por lo que las partes que intervienen lo suscriben al tenor de las siguientes claúsulas y condiciones:
+        Conste en el presente contrato de préstamo de {{ $title }}, que al solo reconocimiento de firmas y rúbricas ante autoridad competente será elevado a Instrumento Público, por lo que las partes que intervienen lo suscriben al tenor de las siguientes claúsulas y condiciones:
     </div>
     <div>
-       <b>PRIMERA.- (DE LAS PARTES):</b> Intervienen en el presente contrato, por una parte como acreedor la Mutual de Servicios al Policía (MUSERPOL), representada legalmente por el Director General Ejecutivo Cnl. XXXX-NOMBRE-CORONEL con C.I. XXXXX-LP y su Director de Asuntos Administrativos Lic. XXXX-NOMBRE-LAZO con C.I. XXXXXX-LP, que para fines de este contrato en adelante se denominará MUSERPOL con domiciliio en la Z. Sopocachi, Av. 6 de Agosto Nº 2354 y por otra parte como {{$gender ? ($gender == 'M' ? ' DEUDOR ' : ' DEUDORA ') : ' DEUDOR(A) '}} {{ $lender }}, con C.I. {{ $identity_card }}, {{ $civil_status }}, mayor de edad, hábil por derecho, natural de {{ $city_birth }}, vecino de {{ $city_identity_card }} y con domicilio especial en {{ $address }}, en adelante {{$gender ? ($gender == 'M' ? ' denominado ' : ' denominada ') : ' denominado(a) '}} PRESTATARIO.
+       <b>PRIMERA.- (DE LAS PARTES):</b> Intervienen en el presente contrato, por una parte como acreedor la Mutual de Servicios al Policía (MUSERPOL), representada legalmente por el {{ $employees[0]['position'] }} Cnl. {{ $employees[0]['name'] }} con C.I. {{ $employees[0]['identity_card'] }} y su {{ $employees[1]['position'] }} Lic. {{ $employees[1]['name'] }} con C.I. {{ $employees[1]['identity_card'] }}, que para fines de este contrato en adelante se denominará MUSERPOL con domiciliio en la Z. Sopocachi, Av. 6 de Agosto Nº 2354 y por otra parte como {{$gender ? ($gender == 'M' ? ' DEUDOR ' : ' DEUDORA ') : ' DEUDOR(A) '}} {{ $lender }}, con C.I. {{ $identity_card }}, {{ $civil_status }}, mayor de edad, hábil por derecho, natural de {{ $city_birth }}, vecino de {{ $city_identity_card }} y con domicilio especial en {{ $address }}, en adelante {{$gender ? ($gender == 'M' ? ' denominado ' : ' denominada ') : ' denominado(a) '}} PRESTATARIO.
     </div>
     <div>
        <b>SEGUNDA.- (DEL OBJETO):</b>  El objeto del presente contrato es el préstamo de dinero que MUSERPOL otorga al PRESTATARIO conforme a niveles de aprobación respectivos, en la suma de Bs. {{ $loan->amount_request }} ({{ Util::convertir($loan->amount_request) }} Bolivianos).
@@ -82,7 +82,7 @@
         En caso de incumplimiento de los pagos mensuales estipulados en el presente contrato que generen mora de la obligación, el PRESTATARIO no tendrá dercho a acceder a otro crédito hasta la cancelación total de la deuda.
     </div>
     <div>
-        <b>DÉCIMA.- (DE LA CONFORMIDAD Y ACEPTACIÓN):</b> Por una parte en calidad de acreedora la MUSERPOL, representada por su Director General Ejecutivo Cnl. XXXXX-MAE y su Director de Asuntos Administrativos Lic. XXXX-NOMBRE-LAZO y por otra parte en calidad de deudor(a) XXXXX-GENERO(el la) XXXXXX-NOMBRE-DISBURSABLE de generales ya señaladas como PRESTATARIO; damos nuestra plena conformidad con todas y cada una de las cláusulas precedentes, obligándolos a su fiel y estricto cumplimiento. En señal de lo cual suscribimos el presente contrato de préstamo de dinero en manifestación de nuestra libre y espontánea voluntad y sin que medie vicio de consentimiento alguno.
+        <b>DÉCIMA.- (DE LA CONFORMIDAD Y ACEPTACIÓN):</b> Por una parte en calidad de acreedora la MUSERPOL, representada por su {{ $employees[0]['position'] }} Cnl. {{ $employees[0]['name'] }} y su {{ $employees[1]['position'] }} Lic. {{ $employees[1]['name'] }} y por otra parte en calidad de deudor(a) XXXXX-GENERO(el la) XXXXXX-NOMBRE-DISBURSABLE de generales ya señaladas como PRESTATARIO; damos nuestra plena conformidad con todas y cada una de las cláusulas precedentes, obligándolos a su fiel y estricto cumplimiento. En señal de lo cual suscribimos el presente contrato de préstamo de dinero en manifestación de nuestra libre y espontánea voluntad y sin que medie vicio de consentimiento alguno.
     </div><br><br>
     <div class="text-center">
         <p class="center">
@@ -102,16 +102,16 @@
     <div>    
         <div style='float:left' class='text-center px-75' >
             _____________________________<br>
-            XXXXXXX_NOMBRE-LAZO <br>
-            C.I. {{ $identity_card }}<br>           
-            <b>Director de Asuntos Administrativos</b><br>
-             MUSERPOL
+            {{ $employees[1]['name'] }} <br>
+            C.I. {{ $employees[1]['identity_card'] }}<br>
+            <b>{{ $employees[1]['position'] }}</b><br>
+            MUSERPOL
         </div>
         <div style='float:right' class='text-center px-75'>
             _____________________________<br>
-            Cnl. XXXXX-MAE <br>
-            C.I. {{ $identity_card }}<br>           
-            <b>Director General Ejecutivo<b><br>
+            {{ $employees[0]['name'] }} <br>
+            C.I. {{ $employees[0]['identity_card'] }}<br>
+            <b>{{ $employees[0]['position'] }}</b><br>
             MUSERPOL
         </div>
          
