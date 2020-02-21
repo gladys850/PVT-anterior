@@ -567,18 +567,6 @@ class LoanController extends Controller
     * @authenticated
     * @response
     */
-<<<<<<< HEAD
-    public function print_contract_advance($id){
-        $loan = Loan::findOrFail($id);
-        $estimated_quota = "";//$request->estimated_quota;
-        $procedure_modality = ProcedureModality::findOrFail($loan->procedure_modality_id);
-        $disbursable = $loan->disbursable;// persona a quien se hizo el desembolso
-        $identity_card_ext = ($disbursable->city_identity_card)? $disbursable->identity_card_ext:'CARNET DE INDENTIDAD NO REGISTRADO' ;
-        $city_identity_card = ($disbursable->city_identity_card)? $disbursable->city_identity_card->name:'LUGAR DE RESIDENCIA NO REGISTRADO';
-        $city_birth = $city_birth = ($disbursable->city_birth)? $disbursable->city_birth->name:'LUGAR DE NACIMIENTO NO REGISTRADO'; ; 
-        $last_address = $loan->loan_affiliates->first()->addresses->last();
-        $address = ($last_address)? ($last_address->zone.' '.$last_address->street.' '.$last_address->number_address): 'DIRECCIÓN DOMICILIARIA NO REGISTRADA';
-=======
     public function print_contract($id)
     {
         $loan = Loan::findOrFail($id);
@@ -587,7 +575,6 @@ class LoanController extends Controller
         foreach ($loan->lenders as $lender) {
             $lenders[] = self::verify_spouse_disbursable($lender->id);
         }
->>>>>>> 279060ae9110c40250a75fc94a5dc84ab5b6c2a5
         $employees = [
             ['position' => 'Director General Ejecutivo'],
             ['position' => 'Director de Asuntos Administrativos']
