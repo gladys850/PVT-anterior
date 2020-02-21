@@ -12,7 +12,7 @@
               Monto Solicitado
             </v-col>
             <v-col cols="12" md="4" class="py-0">
-              Plazo Meses
+              Plazo Mesesss
             </v-col>
             <v-col cols="12" md="4" class="py-0">
               <v-select
@@ -41,7 +41,8 @@
                 :error-messages="errors.collect('plazo')"
                 data-vv-name="plazo"
                 v-model="plazo"
-              ></v-text-field>
+              > {{datos}}</v-text-field>
+             
             </v-col>
           </v-row>
         </v-container>
@@ -60,11 +61,15 @@ import Ballots from '@/components/loan/Ballots'
     monto:null,
     plazo:null,
     interval:[],
-    loanTypeSelected:null,
+    loanTypeSelected:null
 
   }),
   props: {
     modalities: {
+      type: Array,
+      required: true
+    },
+    datos: {
       type: Array,
       required: true
     },
@@ -81,6 +86,11 @@ import Ballots from '@/components/loan/Ballots'
           this.plazo= this.interval[this.i].maximum_term
         }
       }
+
+          console.log(this.datos+'este son los datos')
+         this.datos[0]=this.loanTypeSelected,
+          this.datos[1]=this.monto,
+          this.datos[2]=this.plazo
     },
     async getLoanIntervals() {
       try {
