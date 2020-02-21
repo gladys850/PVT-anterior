@@ -11,6 +11,11 @@ use Illuminate\Support\Facades\Schema;
 
 class Util
 {
+    public static function trim_spaces($string)
+    {
+        return preg_replace('/[[:blank:]]+/', ' ', $string);
+    }
+
     public static function bool_to_string($value)
     {
         if (is_bool($value)) {
@@ -65,9 +70,15 @@ class Util
         return round($value, 2, PHP_ROUND_HALF_EVEN);
     }
 
-    public static function money_format($value)
+    public static function money_format($value, $literal = false)
     {
-        return number_format($value, 2, ',', '.');
+        if ($literal) {
+            $f = new \NumberFormatter('es', \NumberFormatter::SPELLOUT);
+            $data = $f->format(intval($value)) . ' ' . explode('.', number_format(round($value, 2), 2))[1] . '/100';
+        } else {
+            $data = number_format($value, 2, ',', '.');
+        }
+        return $data;
     }
 
     public static function search_sort($model, $request, $filter = [], $relations = [], $pivot = [])
@@ -214,145 +225,57 @@ class Util
             $record->save();
         }
     }
-    private static $UNIDADES = [
-        '',
-        'UN ',
-        'DOS ',
-        'TRES ',
-        'CUATRO ',
-        'CINCO ',
-        'SEIS ',
-        'SIETE ',
-        'OCHO ',
-        'NUEVE ',
-        'DIEZ ',
-        'ONCE ',
-        'DOCE ',
-        'TRECE ',
-        'CATORCE ',
-        'QUINCE ',
-        'DIECISEIS ',
-        'DIECISIETE ',
-        'DIECIOCHO ',
-        'DIECINUEVE ',
-        'VEINTE '
-      ];
-      private static $DECENAS = [
-        'VEINTI',
-        'TREINTA ',
-        'CUARENTA ',
-        'CINCUENTA ',
-        'SESENTA ',
-        'SETENTA ',
-        'OCHENTA ',
-        'NOVENTA ',
-        'CIEN '
-      ];
-      private static $CENTENAS = [
-        'CIENTO ',
-        'DOSCIENTOS ',
-        'TRESCIENTOS ',
-        'CUATROCIENTOS ',
-        'QUINIENTOS ',
-        'SEISCIENTOS ',
-        'SETECIENTOS ',
-        'OCHOCIENTOS ',
-        'NOVECIENTOS '
-      ];
-    public static function convertir($number, $moneda = '', $centimos = '')
+
+    public static function male_female($gender, $capìtalize = false)
     {
-        $converted = '';
-        $decimales = '';
-        if (($number < 0) || ($number > 999999999)) {
-        return 'No es posible convertir el numero a letras';
-        }
-        $div_decimales = explode(',', $number);
-        if (count($div_decimales) > 1) {
-        $number = $div_decimales[0];
-        $decNumberStr = (string)$div_decimales[1];
-        if (strlen($decNumberStr) == 2) {
-            $decNumberStrFill = str_pad($decNumberStr, 9, '0', STR_PAD_LEFT);
-            $decCientos = substr($decNumberStrFill, 6);
-            $decimales = self::convertGroup($decCientos);
-        }
-        }
-        $numberStr = (string)$number;
-        $numberStrFill = str_pad($numberStr, 9, '0', STR_PAD_LEFT);
-        $millones = substr($numberStrFill, 0, 3);
-        $miles = substr($numberStrFill, 3, 3);
-        $cientos = substr($numberStrFill, 6);
-        if (intval($millones) > 0) {
-        if ($millones == '001') {
-            $converted .= 'UN MILLON ';
-        } else if (intval($millones) > 0) {
-            $converted .= sprintf('%sMILLONES ', self::convertGroup($millones));
-        }
-        }
-        if (intval($miles) > 0) {
-        if ($miles == '001') {
-            $converted .= 'UN MIL ';
-        } else if (intval($miles) > 0) {
-            $converted .= sprintf('%sMIL ', self::convertGroup($miles));
-        }
-        }
-        if (intval($cientos) > 0) {
-        if ($cientos == '001') {
-            $converted .= 'UN ';
-        } else if (intval($cientos) > 0) {
-            $converted .= sprintf('%s ', self::convertGroup($cientos));
-        }
-        }
-        if (empty($decimales)) {
-        // $valor_convertido = $converted . mb_strtoupper($moneda);
-        $valor_convertido = $converted . '00/100';
+        if ($gender) {
+            $ending = strtoupper($gender) == 'M' ? 'o' : 'a';
         } else {
-        $valor_convertido = $converted . mb_strtoupper($moneda) . ($div_decimales[1]) . '/100';
-        // $valor_convertido = $converted . mb_strtoupper($moneda) . ' CON ' . $decimales . ' ' . mb_strtoupper($centimos);
+            $ending = strtoupper($gender) == 'M' ? 'el' : 'la';
         }
-        return $valor_convertido;
+        if ($capìtalize) $ending = strtoupper($ending);
+        return $ending;
     }
 
-    private static function convertGroup($n)
+    public static function get_civil_status($status, $gender = null)
     {
-        $output = '';
-        if ($n == '100') {
-        $output = "CIEN ";
-        } else if ($n[0] !== '0') {
-        $output = self::$CENTENAS[$n[0] - 1];
+        $status = self::trim_spaces($status);
+        switch ($status) {
+            case 'S':
+            case 's':
+                $status = 'solter';
+                break;
+            case 'D':
+            case 'd':
+                $status = 'divorciad';
+                break;
+            case 'C':
+            case 'c':
+                $status = 'casad';
+                break;
+            case 'V':
+            case 'v':
+                $status = 'viud';
+                break;
+            default:
+                return '';
+                break;
         }
-        $k = intval(substr($n, 1));
-        if ($k <= 20) {
-        $output .= self::$UNIDADES[$k];
+        if (is_null($gender) || is_bool($gender) || $gender == '') {
+            $status .= 'o(a)';
         } else {
-        if (($k > 30) && ($n[2] !== '0')) {
-            $output .= sprintf('%sY %s', self::$DECENAS[intval($n[1]) - 2], self::$UNIDADES[intval($n[2])]);
-        } else {
-            $output .= sprintf('%s%s', self::$DECENAS[intval($n[1]) - 2], self::$UNIDADES[intval($n[2])]);
+            switch ($gender) {
+                case 'M':
+                case 'm':
+                case 'F':
+                case 'f':
+                    $status .= self::male_female($gender);
+                    break;
+                default:
+                    return '';
+                    break;
+            }
         }
-        }
-        return $output;
-    }
-    public static function getCivilStatus($est, $gender)
-    {
-      switch ($est) {
-        case 'S':
-          return $gender ? ($gender == 'M' ? ' SOLTERO ' : ' SOLTERA ') : ' SOLTERO(A) ';
-          break;
-        case 'D ':
-          return $gender ? ($gender == 'M' ? ' DIVORCIADO ' : ' DIVORCIADA ') : ' DIVORCIADO(A) ';
-          break;
-        case 'C':
-          return $gender ? ($gender == 'M' ? ' CASADO ' : ' CASADA ') : ' CASADO(A) ';
-          break;
-        case 'V':
-          return $gender ? ($gender == 'M' ? ' VIUDO ' : ' VIUDA ') : ' VIUDO(A) ';
-          break;
-        case 'S':
-          return $gender ? ($gender == 'M' ? ' SOLTERO ' : ' SOLTERA ') : ' SOLTERO(A) ';
-          break;
-        default:
-          return ' ';
-          break;
-      }
+        return $status;
     }
 }

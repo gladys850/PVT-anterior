@@ -19,7 +19,6 @@ class Loan extends Model
         'disbursable_id',
         'disbursable_type',
 		'procedure_modality_id',
-		'amount_disbursement',
 		'parent_loan_id',
         'parent_reason',
         'request_date',
@@ -27,7 +26,7 @@ class Loan extends Model
         'city_id',
         'loan_interest_id',
         'loan_state_id',
-        'amount_aproved',
+        'amount_approved',
         'loan_term',
         'disbursement_date',
         'disbursement_type_id',
@@ -121,7 +120,7 @@ class Loan extends Model
     // Saldo capital
     public function getBalanceAttribute()
     {
-        $balance = $this->amount_disbursement;
+        $balance = $this->amount_approved;
         if ($this->payments()->count() > 0) {
             $balance -= $this->payments()->sum('capital_payment');
         }
@@ -155,7 +154,7 @@ class Loan extends Model
     {
         $monthly_interest = $this->interest->monthly_current_interest;
         unset($this->interest);
-        return Util::round($monthly_interest * $this->amount_disbursement / (1 - 1 / pow((1 + $monthly_interest), $this->loan_term)));
+        return Util::round($monthly_interest * $this->amount_approved / (1 - 1 / pow((1 + $monthly_interest), $this->loan_term)));
     }
  
 
@@ -200,7 +199,7 @@ class Loan extends Model
         return $quota;
     }
     public function  plan(){
-        $saldo_capital=$this->amount_disbursement;
+        $saldo_capital=$this->amount_approved;
         $interes_diario=$this->interest->daily_current_interest;
         $cuota_estimada=$this->estimated_quota;
         $plan=[];

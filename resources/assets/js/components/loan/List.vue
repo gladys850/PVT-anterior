@@ -18,7 +18,7 @@
         <td class="text-right">{{ props.item.balance | money }}</td>
         <td class="text-right">{{ props.item.estimated_quota | money }}</td>
         <td class="text-right">{{ props.item.amount_request | money }}</td>
-        <td class="text-right">{{ props.item.amount_disbursement | money }}</td>
+        <td class="text-right">{{ props.item.amount_approved | money }}</td>
         <td class="text-center">
           <v-menu
             offset-y
@@ -135,7 +135,7 @@ export default {
         sortable: true
       }, {
         text: 'Desembolso [Bs]',
-        value: 'amount_disbursement',
+        value: 'amount_approved',
         class: ['normal', 'white--text'],
         align: 'center',
         width: '6%',
