@@ -6,16 +6,12 @@
           <v-toolbar class="mb-0" color="ternary" dark flat>
             <v-toolbar-title>
               REQUISITOS PARA ANTICIPO
-              <v-btn
-                @click.stop="saveRequirement()"
-                color="success"
-              >Guardar Requisitos</v-btn>
             </v-toolbar-title>
           </v-toolbar>
         </template>
         <template>
           <v-row>
-            <v-col v-for="(group,i) in items" :key="i" cols="12" class="py-1">
+            <v-col v-for="(group,i) in items" :key="i" cols="11" class="py-1">
               <v-card>
                 <v-col cols="12" class="py-0" v-for="(doc,j) in group" :key="doc.id">
                   <v-list dense class="py-0">
@@ -56,6 +52,88 @@
                   </v-list>
                 </v-col>
               </v-card>
+            </v-col>
+            <v-col cols="12" md="1" class="ma-0 pa-0">
+              <v-tooltip top >
+                <template v-slot:activator="{ on }">
+                  <v-btn
+                    fab
+                    dark
+                    small
+                    :color="'secundary'"
+                    bottom
+                    right
+                    v-on="on"
+                    style="margin-right: 10px; margin-left: 6px; margin-top:-640px;"
+                    @click.stop="getRequirementPrint()"
+                  >
+                      <v-icon>mdi-printer-settings</v-icon>
+                  </v-btn>
+                </template>
+                <div>
+                   <span>Imprimir Requisitos</span>
+              </div>
+              </v-tooltip>
+              <v-tooltip top>
+                <template v-slot:activator="{ on }">
+                  <v-btn
+                    fab
+                    dark
+                    small
+                    :color="'info'"
+                    bottom
+                    right
+                    v-on="on"
+                    style="margin-right: 5px; margin-left: 6px; margin-top:-600px; "
+                    @click.stop="getRequirementPrint()"
+                  >
+                      <v-icon >mdi-book-open-page-variant</v-icon>
+                  </v-btn>
+                </template>
+                <div>
+                  <span>Gerenar Formulario</span>
+                </div>
+              </v-tooltip>
+              <v-tooltip top>
+                <template v-slot:activator="{ on }">
+                  <v-btn
+                    fab
+                    dark
+                    small
+                    :color="'success'"
+                    bottom
+                    right
+                    v-on="on"
+                    style="margin-right: 5px; margin-left: 6px; margin-top:-560px;"
+                    @click.stop="saveLoan()"
+                  >
+                      <v-icon>mdi-content-save-all</v-icon>
+                  </v-btn>
+                </template>
+                <div>
+                  <span>Guardar Tramite</span>
+                </div>
+              </v-tooltip>
+                <v-tooltip top>
+                <template v-slot:activator="{ on }">
+                  <v-btn
+                    fab
+                    dark
+                    small
+                    :color="'danger'"
+                    bottom
+                    right
+                    v-on="on"
+                    style="margin-right: 5px; margin-left: 6px; margin-top:-510px;"
+                    @click.stop="getRequirementPrint()"
+                  >
+                      <v-icon >mdi-file-download</v-icon>
+                  </v-btn>
+                </template>
+                <div>
+                  <span>Gerenar Contrato</span>
+                </div>
+              </v-tooltip>
             </v-col>
           </v-row>
         </template>
@@ -113,8 +191,18 @@ export default {
     selected: [],
     radios: []
   }),
+  props: {
+    modality: {
+      type: Object,
+      required: true
+    },
+     datos: {
+      type: Array,
+      required: true
+    }
+  },
   beforeMount() {
-    this.getRequirement(9);
+    this.getRequirement(33);
   },
   methods: {
     selectDoc1(id, j, i) {
@@ -138,20 +226,55 @@ export default {
         this.loading = false;
       }
     },
-    async saveRequirement() {
+     async getRequirementPrint() {
       try {
-        this.loading = true;    
-        await axios.post(`loan/${5}/document`,{
-              documents:this.selected.concat(this.radios.filter(Boolean)) 
-          });
-        this.toastr.success("Se guardó satisfactoriamente los requisitos");
+        let res = await axios.get(`loan/print/requirements`, {
+          params :{
+            lenders: [this.$route.query.affiliate_id],
+            procedure_modality_id:this.modality.id,
+            city_id: this.$store.getters.cityId,
+            amount_request: this.datos[1],
+            loan_term: this.datos[2],
+          },
+          responseType: 'arraybuffer'
+        })
+        let blob = new Blob([res.data], {
+          type: "application/pdf"
+        })
+        printJS(window.URL.createObjectURL(blob))
       } catch (e) {
         console.log(e);
-        console.log('fallo ');
       } finally {
         this.loading = false;
       }
+    },
+    async saveLoan() {
+      try {
+        let res= await axios.post(`loan`,{
+          lenders: [this.$route.query.affiliate_id],
+          guarantors: [],
+          disbursable_id: this.$route.query.affiliate_id,
+          disbursable_type: 'affiliates',
+          procedure_modality_id:this.modality.id,
+          amount_request: 3000,
+          city_id: this.$store.getters.cityId,
+          loan_term: 3,
+          disbursement_type_id: 1,
+          amount_disbursement: 3000,
+        });
+        this.loan=res.data
+
+        await axios.post(`loan/${this.loan.id}/document`,{
+              documents:this.selected.concat(this.radios.filter(Boolean)) 
+          });
+        this.toastr.success("Se guardó satisfactoriamente el grabado")
+      } catch (e) {
+      console.log(e);
+      console.log('fallo ');
+      } finally {
+      this.loading = false;
+      }
+      },
     }
-  }
 };
 </script>
