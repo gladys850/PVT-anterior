@@ -559,9 +559,9 @@ class LoanController extends Controller
     * @bodyParam loan_id integer required ID del préstamo. Example: 1
     * @authenticated
     */
-    public function print_contract_advance(Request $request){
-        $loan = Loan::findOrFail($request->loan_id);
-        $estimated_quota = $request->estimated_quota;
+    public function print_contract_advance($id){
+        $loan = Loan::findOrFail($id);
+        $estimated_quota = "";//$request->estimated_quota;
         $procedure_modality = ProcedureModality::findOrFail($loan->procedure_modality_id);
         $disbursable = $loan->disbursable;// persona a quien se hizo el desembolso
         $identity_card_ext = ($disbursable->city_identity_card)? $disbursable->identity_card_ext:'CARNET DE INDENTIDAD NO REGISTRADO' ;
@@ -603,6 +603,45 @@ class LoanController extends Controller
             'user-style-sheet' => public_path('css/report-print.min.css')
         ];
         $pdf = \PDF::loadView('loan.contracts.advance', $data);
+        $pdf->setOptions($options);
+        return $pdf->stream($file_name);
+    }
+    public function print_form(Request $request)
+    {
+        $loan = Loan::findOrFail($request->loan_id);
+        $procedure_modality = ProcedureModality::findOrFail($loan->procedure_modality_id);
+        $date = Carbon::now();
+        $data = [
+            'header' => [
+                'direction' => 'DIRECCIÓN DE ESTRATEGIAS SOCIALES E INVERSIONES',
+                'unity' => 'UNIDAD DE INVERSIÓN EN PRÉSTAMOS',
+                'table' => [
+                    ['Tipo', $procedure_modality->procedure_type->second_name],
+                    ['Modalidad', $procedure_modality->shortened],
+                    ['Usuario', auth()->user()->username ?? 'prueba']
+                ]
+            ],
+            'title' => 'Ref. :SOLICITUD DE PRÉSTAMO '.$procedure_modality->procedure_type->second_name,
+            'procedure_modality' => $procedure_modality,
+            'amount_request' => $loan->amount_request,
+            'loan_term' => $loan->loan_term,
+            'request_date' => $loan->request_date
+        ];
+        $file_name = implode('_', ['solicitud', 'prestamo']) . '.pdf';
+        $footerHtml = view()->make('partials.footer')->with(array('paginator' => true, 'print_date' => true, 'date' => Carbon::now()->ISOFormat('L H:m')))->render();
+        $options = [
+            'orientation' => 'portrait',
+            'page-width' => '216',
+            'page-height' => '279',
+            'margin-top' => '8',
+            'margin-bottom' => '16',
+            'margin-left' => '5',
+            'margin-right' => '7',
+            'encoding' => 'UTF-8',
+            'footer-html' => $footerHtml,
+            'user-style-sheet' => public_path('css/report-print.min.css')
+        ];
+        $pdf = \PDF::loadView('loan.forms.advance_form', $data);
         $pdf->setOptions($options);
         return $pdf->stream($file_name);
     }
