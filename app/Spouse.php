@@ -57,6 +57,11 @@ class Spouse extends Model
         return $this->affiliate->address;
     }
 
+    public function getCellPhoneNumberAttribute()
+    {
+        return $this->affiliate->cell_phone_number;
+    }
+
     public function affiliate()
     {
         return $this->belongsTo(Affiliate::class);
