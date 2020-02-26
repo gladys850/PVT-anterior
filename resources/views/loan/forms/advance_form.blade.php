@@ -15,14 +15,14 @@
 </div>
 <div><br><br>
     <div>Señor</div>
-    <div style="text-transform: uppercase;" class="font-semibold leading-tight   m-b-10 text-xs">
-        <div><b>DIRECTOR GENERAL EJECUTIVO</b></div>
-        <div><b>MUSERPOL</b></div>
+    <div class="font-semibold leading-tight m-b-10 text-xs font-bold uppercase">
+        <div>DIRECTOR GENERAL EJECUTIVO</div>
+        <div>MUSERPOL</div>
     </div>
     <div>Presente.- </div>
 </div><br><br><br>
-<div style = "block" class="">
-    <div style="text-transform: uppercase;" class="font-semibold leading-tight text-right px-100 m-b-10 text-xs">{{ $title }}</div>
+<div style="block" class="">
+    <div class="uppercase font-semibold leading-tight text-right px-100 m-b-10 text-xs">{{ $title }}</div>
 </div>
 <div class="block text-justify">
     <div>
@@ -33,7 +33,7 @@
             El objeto de la presente es para solicitar un Préstamo por un monto de Bs. {{ $amount_requested }} (<span class="uppercase">{{ Util::money_format($amount_requested, true) }}</span> Bolivianos) a un plazo de {{$loan_term}} meses,el cual que será aprobado  conforme con los procedimientos del Reglamento de Préstamos vigente en la MUSERPOL.
         </div><br>
         <div>
-            El destino del préstamo es para <b><span class="lowercase">{{ $destination }}</span></b>.
+            El destino del préstamo es para <span class="lowercase font-bold">{{ $destination }}</span>.
         </div><br><br>
         <div>
             Siendo mis datos personales los siguientes:
@@ -67,7 +67,7 @@
             </tr>
             <tr>
                 <td colspan = "2" class="data-row py-5">{{ $lender->full_unit }}</td>
-                <td style ="text-transform: none"colspan="2" class="data-row py-5">{{ ($payment_type->name=='Deposito Bancario')? ' Cta. Banco Union: ' .$account_number: $payment_type->name}}</td>
+                <td colspan="2" class="data-row py-5 normal-case">{{ ($payment_type->name=='Deposito Bancario')? ' Cta. Banco Union: ' .$account_number: $payment_type->name}}</td>
             </tr>
             @endforeach
         </table>
@@ -76,7 +76,7 @@
             <td class="data-row py-5"></td>
             </tr>
             <tr>
-                <td class="font-semibold leading-tight text-center px-100 m-b-10 text-xs py-10" ><b>LA PRESENTE SOLICITUD CONSTITUYE DECLARACION JURADA, CONDIGNANDOSE LOS DATOS COMO FIDEDIGNOS POR LOS INTERESADOS.</b></td>
+                <td class="font-semibold leading-tight text-center px-100 m-b-10 text-xs py-10 font-bold">LA PRESENTE SOLICITUD CONSTITUYE DECLARACION JURADA, CONDIGNANDOSE LOS DATOS COMO FIDEDIGNOS POR LOS INTERESADOS.</td>
             </tr>
         
         </table>
