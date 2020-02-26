@@ -6,10 +6,7 @@
           <v-toolbar class="mb-0" color="ternary" dark flat>
             <v-toolbar-title>
               REQUISITOS PARA ANTICIPO
-              <v-btn
-                @click.stop="saveRequirement()"
-                color="success"
-              >Guardar Requisitos</v-btn>
+              <v-btn @click.stop="saveRequirement()" color="success">Guardar Requisitos</v-btn>
             </v-toolbar-title>
           </v-toolbar>
         </template>
@@ -61,11 +58,37 @@
         </template>
       </v-data-iterator>
 
-      <v-toolbar-title class="align-end font-weight-black text-center">
+      <v-toolbar-title class="align-end font-weight-black text-center my-2" >
         <h3>Documentos Opcionales</h3>
       </v-toolbar-title>
       <v-divider></v-divider>
-      <v-data-iterator :items="optional" hide-default-footer>
+      <v-data-iterator
+        :items="optional"
+        :search="search"
+      >
+        <!--filter- -->
+        <template v-slot:header>
+          <v-toolbar color="ternary" info flat class="mb-1">
+            <v-text-field
+              v-model="search"
+              prepend-inner-icon="mdi-search-web"
+              label="Buscar"
+            ></v-text-field>
+          </v-toolbar>
+        </template>
+
+        <!--<template v-slot:default="props">
+          <v-row>
+            <v-col v-for="item in props.items" :key="item.name" cols="12" sm="6" md="4" lg="3">
+              <v-card>
+                <v-card-title class="subheading font-weight-bold">{{ item.id }}</v-card-title>
+
+                <v-divider></v-divider>
+              </v-card>
+            </v-col>
+          </v-row>
+        </template>-->
+        <!--fin filter -->
         <template v-slot:default="props">
           <v-row>
             <v-col v-for="(item,index) in props.items" :key="index" cols="12" class="py-1">
@@ -74,16 +97,21 @@
                   <v-list-item class="py-0">
                     <v-col cols="1" class="py-0">
                       <v-list-item-content class="align-end font-weight-light">
-                        <h1>{{index+1}}</h1>
+                        <h4>{{item.id}}</h4>
                       </v-list-item-content>
                     </v-col>
 
-                    <v-col cols="9" class="py-0">
-                      <v-list-item-content class="align-end font-weight-light">{{item['name']}}</v-list-item-content>
+                    <v-col cols="10" class="py-0">
+                      <v-list-item-content class="align-end font-weight-light">{{item.name}}</v-list-item-content>
                     </v-col>
 
                     <v-col cols="1" class="py-0">
-                      <v-checkbox color="info" v-model="selected1" :value="item['id']"></v-checkbox>
+                      <v-checkbox
+                        color="info"
+                        v-model="selectedOpc"
+                        :value="item.id"
+                        @change="selectDoc2(item.id)"
+                      ></v-checkbox>
                     </v-col>
                   </v-list-item>
                 </v-list>
@@ -109,22 +137,30 @@ export default {
     prueba: null,
     cont: 0,
     checks: [],
-    selected1: [],
+    selectedOpc: [],
     selected: [],
-    radios: []
+    radios: [],
+
+    search: "",
+    filter: []
   }),
   beforeMount() {
-    this.getRequirement(9);
+    this.getRequirement(6);
   },
   methods: {
-    selectDoc1(id, j, i) {
+    selectDoc1(id) {
       setTimeout(() => {
-        console.log("ID=" + id + " J=" + j + " I=" + i);
-        console.log(this.selected + "=>vector ckeck");
+        //console.log("ID=" + id + " J=" + j + " I=" + i);
+        //console.log(this.selected + "=>vector ckeck");
         console.log(this.radios.filter(Boolean) + "=>vector radio");
-        console.log(this.selected.concat(this.radios.filter(Boolean)));
+        console.log(
+          this.selectedOpc.concat(
+            this.selectedOpc.concat(this.selected.concat(this.radios.filter(Boolean)))
+          )
+        );
       }, 500);
     },
+
     async getRequirement(id) {
       try {
         this.loading = true;
@@ -140,14 +176,15 @@ export default {
     },
     async saveRequirement() {
       try {
-        this.loading = true;    
-        await axios.post(`loan/${5}/document`,{
-              documents:this.selected.concat(this.radios.filter(Boolean)) 
-          });
+        this.loading = true;
+        await axios.post(`loan/${6}/document`, {
+          documents: this.selectedOpc.concat(
+            this.selected.concat(this.radios.filter(Boolean))
+          )
+        });
         this.toastr.success("Se guardó satisfactoriamente los requisitos");
       } catch (e) {
         console.log(e);
-        console.log('fallo ');
       } finally {
         this.loading = false;
       }
