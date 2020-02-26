@@ -44,7 +44,6 @@ class LoanController extends Controller
     *             "disbursable_id": 1453,
     *             "disbursable_type": "spouses",
     *             "procedure_modality_id": 32,
-    *             "amount_disbursement": 2000,
     *             "disbursement_date": "2020-02-13",
     *             "parent_loan_id": null,
     *             "parent_reason": null,
@@ -53,7 +52,7 @@ class LoanController extends Controller
     *             "city_id": 4,
     *             "loan_interest_id": 1,
     *             "loan_state_id": 1,
-    *             "amount_aproved": null,
+    *             "amount_approved": null,
     *             "loan_term": 3,
     *             "disbursement_type_id": 1,
     *             "created_at": "2020-02-13 16:32:43",
@@ -96,11 +95,10 @@ class LoanController extends Controller
     * @bodyParam disbursement_type_id integer required Tipo de desembolso. Example: 1
     * @queryParam lenders required array Lista de IDs de afiliados Titular de préstamo. Example: [1,6]
     * @queryParam guarantors required array Lista de IDs de afiliados Garante de préstamo. Example: []
-    * @bodyParam amount_disbursement integer Monto desembolsado. Example: 3000
     * @bodyParam disbursement_date date Fecha de desembolso. Example: 2020-02-01
     * @bodyParam parent_loan_id integer ID de Préstamo Padre. Example: 1
     * @bodyParam parent_reason enum (refinanciado,reprogramado)  . Example: refinanciado
-    * @bodyParam amount_aproved integer Monto Provado. Example: 3000
+    * @bodyParam amount_approved integer Monto Provado. Example: 3000
     * @authenticated
     * @response
     * {
@@ -113,11 +111,10 @@ class LoanController extends Controller
     *    "loan_term": 3,
     *    "disbursement_type_id": 1,
     *    "code": null,
-    *    "amount_disbursement": "3000",
     *    "disbursement_date": "2020-02-01",
     *    "parent_loan_id": "1",
     *    "parent_reason": null,
-    *    "amount_aproved": "3000",
+    *    "amount_approved": "3000",
     *    "loan_state_id": 1,
     *    "request_date": "2020-02-17T13:38:18.562649Z",
     *    "updated_at": "2020-02-17 09:38:18",
@@ -186,7 +183,6 @@ class LoanController extends Controller
     *    "disbursable_id": 1,
     *    "disbursable_type": "affiliates",
     *    "procedure_modality_id": 35,
-    *    "amount_disbursement": 3000,
     *    "disbursement_date": "2020-02-01",
     *    "parent_loan_id": null,
     *    "parent_reason": null,
@@ -195,7 +191,7 @@ class LoanController extends Controller
     *    "city_id": 2,
     *    "loan_interest_id": 4,
     *    "loan_state_id": 1,
-    *    "amount_aproved": 3000,
+    *    "amount_approved": 3000,
     *    "loan_term": 3,
     *    "disbursement_type_id": 1,
     *    "created_at": "2020-02-17 14:52:40",
@@ -278,11 +274,10 @@ class LoanController extends Controller
     * @bodyParam disbursement_type_id integer required Tipo de desembolso. Example: 1
     * @queryParam lenders required array Lista de IDs de afiliados Titular de préstamo. Example: [1,6]
     * @queryParam guarantors required array Lista de IDs de afiliados Garante de préstamo. Example: []
-    * @bodyParam amount_disbursement integer Monto desembolsado. Example: 3000
     * @bodyParam disbursement_date date Fecha de desembolso. Example: 2020-02-01
     * @bodyParam parent_loan_id integer ID de Préstamo Padre. Example: 1
     * @bodyParam parent_reason enum (refinanciado,reprogramado)  . Example: refinanciado
-    * @bodyParam amount_aproved integer Monto Aprobado. Example: 3000
+    * @bodyParam amount_approved integer Monto Aprobado. Example: 3000
     * @authenticated
     * @response
     * {
@@ -291,7 +286,6 @@ class LoanController extends Controller
     *    "disbursable_id": "1",
     *    "disbursable_type": "affiliates",
     *    "procedure_modality_id": 35,
-    *    "amount_disbursement": "3000",
     *    "disbursement_date": "2020-02-01",
     *    "parent_loan_id": null,
     *    "parent_reason": null,
@@ -300,7 +294,7 @@ class LoanController extends Controller
     *    "city_id": 2,
     *    "loan_interest_id": 4,
     *    "loan_state_id": 1,
-    *    "amount_aproved": "3000",
+    *    "amount_approved": "3000",
     *    "loan_term": 3,
     *    "disbursement_type_id": 1,
     *    "created_at": "2020-02-17 10:37:48",
@@ -368,7 +362,6 @@ class LoanController extends Controller
     *    "disbursable_id": 1,
     *    "disbursable_type": "affiliates",
     *    "procedure_modality_id": 35,
-    *    "amount_disbursement": 3000,
     *    "disbursement_date": "2020-02-01",
     *    "parent_loan_id": null,
     *    "parent_reason": null,
@@ -377,7 +370,7 @@ class LoanController extends Controller
     *    "city_id": 2,
     *    "loan_interest_id": 4,
     *    "loan_state_id": 1,
-    *    "amount_aproved": 3000,
+    *    "amount_approved": 3000,
     *    "loan_term": 3,
     *    "disbursement_type_id": 1,
     *    "created_at": "2020-02-17 10:37:48",
@@ -474,11 +467,11 @@ class LoanController extends Controller
     * }
     */
     public function get_disbursable($id){
-        $disbursable = Loan::findOrFail($id);
-        return $disbursable->disbursable;
+        $loan = Loan::findOrFail($id);
+        return $loan->disbursable;
     }
 
-    private function verify_spouse_disbursable($disbursable_id)
+    public static function verify_spouse_disbursable($disbursable_id)
     {
         $affiliate = Affiliate::findOrFail($disbursable_id);
         if ($affiliate->dead) {
@@ -500,21 +493,19 @@ class LoanController extends Controller
     * Impresión de los requisitos
     * Devuelve un pdf de los requisitos acorde a una modalidad
     * @queryParam lenders required array Lista de IDs de afiliados Titular de préstamo. Example: [1,6]
-    * @bodyParam procedure_modality_id integer required ID de la modalidad del préstamo. Example: 35
-    * @bodyParam disbursable_id integer required ID de afiliado a quien se hara el desembolso. Example: 1
-    * @bodyParam city_id integer required ID de la ciudad. Example: 2
-    * @bodyParam amount_request integer monto solicitado. Example: 5000
-    * @bodyParam loan_term integer plazo. Example: 3
-    * @bodyParam parent_loan_id integer ID de préstamo padre. Example: 1
+    * @queryParam procedure_modality_id integer required ID de la modalidad del préstamo. Example: 35
+    * @queryParam city_id integer required ID de la ciudad. Example: 2
+    * @queryParam amount_request integer monto solicitado. Example: 5000
+    * @queryParam loan_term integer plazo. Example: 3
+    * @queryParam parent_loan_id integer ID de préstamo padre. Example: 1
     * @authenticated
     */
     public function print_requirements(Request $request)
     {
-        
         $parent_loan = $request->has('parent_loan_id') ? Loan::find($request->parent_loan_id) : null;
         $lenders = [];
         foreach ($request->lenders as $lender) {
-            array_push($lenders, $this->verify_spouse_disbursable($lender)->disbursable);
+            array_push($lenders, self::verify_spouse_disbursable($lender)->disbursable);
         }
         $procedure_modality = ProcedureModality::findOrFail($request->procedure_modality_id);
         $date = Carbon::now();
@@ -532,7 +523,6 @@ class LoanController extends Controller
             'lenders' => $lenders,
             'procedure_modality' => $procedure_modality,
             'city' => City::findOrFail($request->city_id),
-            'disbursable' => $this->verify_spouse_disbursable($request->disbursable_id),
             'parent_loan' => $parent_loan,
             'amount_request' => $request->amount_request,
             'loan_term' => $request->loan_term
@@ -552,6 +542,83 @@ class LoanController extends Controller
             'user-style-sheet' => public_path('css/report-print.min.css')
         ];
         $pdf = \PDF::loadView('procedure_modality.requirements', $data);
+        $pdf->setOptions($options);
+        return $pdf->stream($file_name);
+    }
+
+    // TODO
+    public function switch_states()
+    {
+        $loans = Loan::whereHas('state', function($query) {
+            $query->whereName('Desembolsado');
+        })->get();
+        foreach ($loans as $loan) {
+            if ($loan->defaulted) {
+                // Verify if it has defaulted tag
+                // Attach defaulted tag
+            } // Else detach defaulted tag
+        }
+    }
+
+    /**
+    * Impresión de Contrato
+    * Devuelve un pdf del contrato acorde a un ID de préstamo
+    * @queryParam loan_id integer required ID del préstamo. Example: 1
+    * @authenticated
+    * @response
+    */
+    public function print_contract($id)
+    {
+        $loan = Loan::findOrFail($id);
+        $procedure_modality = $loan->modality;
+        $lenders = [];
+        foreach ($loan->lenders as $lender) {
+            $lenders[] = self::verify_spouse_disbursable($lender->id);
+        }
+        $employees = [
+            ['position' => 'Director General Ejecutivo'],
+            ['position' => 'Director de Asuntos Administrativos']
+        ];
+        foreach ($employees as $key => $employee) {
+            $request = collect(json_decode(file_get_contents(env("RRHH_URL") . '/position?name=' . $employee['position']), true));
+            if ($request->count() == 1) {
+                $position = $request->first();
+            } else {
+                abort(404);
+            }
+            $request = collect(json_decode(file_get_contents(implode('/', [env("RRHH_URL"), 'position', $position['id'], 'employee'])), true));
+            $employees[$key]['name'] = Util::trim_spaces(implode(' ', [$request['first_name'], $request['second_name'], $request['last_name'], $request['mothers_last_name']]));
+            $employees[$key]['identity_card'] = $request['identity_card'];
+            $request = collect(json_decode(file_get_contents(implode('/', [env("RRHH_URL"), 'city', $request['city_identity_card_id']])), true));
+            $employees[$key]['identity_card'] .= ' ' . $request['shortened'];
+        }
+        $date = Carbon::now();
+        $data = [
+            'header' => [
+                'direction' => 'DIRECCIÓN DE ESTRATEGIAS SOCIALES E INVERSIONES',
+                'unity' => 'UNIDAD DE INVERSIÓN EN PRÉSTAMOS',
+                'table' => []
+            ],
+            'employees' => $employees,
+            'title' => $procedure_modality->name,
+            'loan' => $loan,
+            'lenders' => $lenders
+        ];
+        $file_name = implode('_', ['contrato', 'anticipo']) . '.pdf';
+        $footerHtml = view()->make('partials.footer')->with(array('paginator' => true, 'print_date' => true, 'date' => Carbon::now()->ISOFormat('L H:m')))->render();
+        $options = [
+            'orientation' => 'portrait',
+            'page-width' => '216',
+            'page-height' => '279',
+            'margin-top' => '8',
+            'margin-bottom' => '16',
+            'margin-left' => '5',
+            'margin-right' => '8',
+            'encoding' => 'UTF-8',
+            'footer-html' => $footerHtml,
+            'user-style-sheet' => public_path('css/report-print.min.css')
+        ];
+        $pdf = \PDF::loadView('loan.contracts.advance', $data);
         $pdf->setOptions($options);
         return $pdf->stream($file_name);
     }

@@ -100,6 +100,7 @@ Route::group([
             Route::post('loan/{id}/document', 'Api\V1\LoanController@submit_documents');
             Route::get('loan/print/requirements', 'Api\V1\LoanController@print_requirements');
             Route::get('affiliate/{id}/loan_modality', 'Api\V1\AffiliateController@get_loan_modality');
+            Route::get('loan/{id}/print/contract', 'Api\V1\LoanController@print_contract');
         });
         Route::group([
             'middleware' => 'permission:update-loan'

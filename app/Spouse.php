@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Laratrust\Traits\LaratrustUserTrait;
+use Util;
 
 class Spouse extends Model
 {
@@ -26,6 +27,11 @@ class Spouse extends Model
         'city_birth_id'
     ];
 
+    public function getCivilStatusAttribute($value)
+    {
+        return Util::get_civil_status($value, $this->gender);
+    }
+
     public function getTitleAttribute()
     {
         return 'Vd' . ($this->affiliate->gender == 'M' ? 'a' : 'o') . '.';
@@ -44,6 +50,11 @@ class Spouse extends Model
     public function getFullNameAttribute()
     {
         return preg_replace('/[[:blank:]]+/', ' ', join(' ', [$this->first_name, $this->second_name, $this->last_name, $this->mothers_last_name]));
+    }
+
+    public function getAddressAttribute()
+    {
+        return $this->affiliate->address;
     }
 
     public function affiliate()

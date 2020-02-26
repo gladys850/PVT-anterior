@@ -3,6 +3,9 @@ import '@/bootstrap'
 Vue.config.productionTip = false
 import App from '@/layout/App'
 
+// Print PDF
+import print from 'print-js'
+
 // Toast notification
 import toastr from 'toastr'
 import 'toastr/build/toastr.min.css'

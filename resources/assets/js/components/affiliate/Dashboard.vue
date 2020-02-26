@@ -13,6 +13,7 @@
                       <li v-for="(item,index) in loan" :key="item.id" class="pb-2" >
                         <div v-if="index<3">
                           <strong>Cód. préstamo: </strong> {{ item.code }} | 
+<<<<<<< HEAD
                           <strong>Desembolsado: </strong> {{ item.amount_disbursement }} | 
                           <strong>Total pagado: </strong> {{ item.amount_disbursement - item.balance }}                      
                           <v-progress-linear 

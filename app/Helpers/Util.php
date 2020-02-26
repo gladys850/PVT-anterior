@@ -11,6 +11,11 @@ use Illuminate\Support\Facades\Schema;
 
 class Util
 {
+    public static function trim_spaces($string)
+    {
+        return preg_replace('/[[:blank:]]+/', ' ', $string);
+    }
+
     public static function bool_to_string($value)
     {
         if (is_bool($value)) {
@@ -65,9 +70,15 @@ class Util
         return round($value, 2, PHP_ROUND_HALF_EVEN);
     }
 
-    public static function money_format($value)
+    public static function money_format($value, $literal = false)
     {
-        return number_format($value, 2, ',', '.');
+        if ($literal) {
+            $f = new \NumberFormatter('es', \NumberFormatter::SPELLOUT);
+            $data = $f->format(intval($value)) . ' ' . explode('.', number_format(round($value, 2), 2))[1] . '/100';
+        } else {
+            $data = number_format($value, 2, ',', '.');
+        }
+        return $data;
     }
 
     public static function search_sort($model, $request, $filter = [], $relations = [], $pivot = [])
@@ -213,5 +224,58 @@ class Util
             $record->record_type()->associate($record_type);
             $record->save();
         }
+    }
+
+    public static function male_female($gender, $capìtalize = false)
+    {
+        if ($gender) {
+            $ending = strtoupper($gender) == 'M' ? 'o' : 'a';
+        } else {
+            $ending = strtoupper($gender) == 'M' ? 'el' : 'la';
+        }
+        if ($capìtalize) $ending = strtoupper($ending);
+        return $ending;
+    }
+
+    public static function get_civil_status($status, $gender = null)
+    {
+        $status = self::trim_spaces($status);
+        switch ($status) {
+            case 'S':
+            case 's':
+                $status = 'solter';
+                break;
+            case 'D':
+            case 'd':
+                $status = 'divorciad';
+                break;
+            case 'C':
+            case 'c':
+                $status = 'casad';
+                break;
+            case 'V':
+            case 'v':
+                $status = 'viud';
+                break;
+            default:
+                return '';
+                break;
+        }
+        if (is_null($gender) || is_bool($gender) || $gender == '') {
+            $status .= 'o(a)';
+        } else {
+            switch ($gender) {
+                case 'M':
+                case 'm':
+                case 'F':
+                case 'f':
+                    $status .= self::male_female($gender);
+                    break;
+                default:
+                    return '';
+                    break;
+            }
+        }
+        return $status;
     }
 }
