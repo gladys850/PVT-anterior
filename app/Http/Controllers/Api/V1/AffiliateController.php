@@ -416,7 +416,7 @@ class AffiliateController extends Controller
     * Finalizar captura de huellas
     * Finaliza la captura de huellas en el dispositivo biométrico y envía un mensaje con el estado mediante sockets en el canal: fingerprint; el ejemplo es el de la respuesta con código 201
     * @urlParam id required ID de afiliado. Example: 2
-    * @queryParam user_id required required ID de usuario que realizó la captura. Example: 23
+    * @queryParam user_id required ID de usuario que realizó la captura. Example: 23
     * @response 200
     * {
     *     "message": "Message broadcasted"
@@ -641,7 +641,7 @@ class AffiliateController extends Controller
     * Actualizar direcciones
     * Actualiza el listado de direcciones de un afiliado
     * @urlParam id required ID de afiliado. Example: 12
-    * @queryParam addresses required array Lista de IDs de direcciones. Example: [12,17]
+    * @queryParam addresses required Lista de IDs de direcciones. Example: [12,17]
     * @response
     * {
     *     "attached": [
@@ -657,7 +657,7 @@ class AffiliateController extends Controller
     public function update_addresses(Request $request, $id) {
         $affiliate = Affiliate::findOrFail($id);
         $request->validate([
-            'addresses' => 'required|array',
+            'addresses' => 'required|array|min:1',
             'addresses.*' => 'exists:addresses,id'
         ]);
         return $affiliate->addresses()->sync($request->addresses);

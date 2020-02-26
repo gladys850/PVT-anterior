@@ -44,7 +44,6 @@ class Loan extends Model
             $this->loan_state_id = $state->id;
         }
         $latest_loan = DB::table('loans')->orderBy('created_at', 'desc')->limit(1)->first();
-        $interest = LoanInterest::latest()->first();
         if (!$latest_loan) $latest_loan = (object)['id' => 0];
         $this->code = implode(['PTMO', str_pad($latest_loan->id + 1, 6, '0', STR_PAD_LEFT), '-', Carbon::now()->year]);
     }
