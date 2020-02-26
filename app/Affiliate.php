@@ -69,6 +69,13 @@ class Affiliate extends Model
         return $data;
     }
 
+    public function getFullUnitAttribute()
+    {
+        $data = "";
+        if ($this->unit) $data .= ' ' . $this->unit->district.' - '.$this->unit->name.' ('.$this->unit->shortened.')';
+        return $data;
+    }
+
     public function getCivilStatusAttribute($value)
     {
         return Util::get_civil_status($value, $this->gender);

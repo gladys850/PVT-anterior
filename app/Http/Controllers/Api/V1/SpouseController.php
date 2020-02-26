@@ -69,8 +69,7 @@ class SpouseController extends Controller
     */
     public function index(Request $request)
     {
-        $data = Util::search_sort(new Spouse(), $request);
-        return $data;
+        return Util::search_sort(new Spouse(), $request);
     }
 
     /**

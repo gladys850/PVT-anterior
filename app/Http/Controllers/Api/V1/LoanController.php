@@ -12,6 +12,7 @@ use App\LoanState;
 use Illuminate\Support\Facades\Schema;
 use App\ProcedureDocument;
 use App\ProcedureModality;
+use App\PaymentType;
 use App\Http\Requests\LoanForm;
 use Carbon;
 
@@ -575,7 +576,7 @@ class LoanController extends Controller
         $procedure_modality = $loan->modality;
         $lenders = [];
         foreach ($loan->lenders as $lender) {
-            $lenders[] = self::verify_spouse_disbursable($lender->id);
+            array_push($lenders, self::verify_spouse_disbursable($lender)->disbursable);
         }
         $employees = [
             ['position' => 'Director General Ejecutivo'],
@@ -623,5 +624,74 @@ class LoanController extends Controller
         $pdf = \PDF::loadView('loan.contracts.advance', $data);
         $pdf->setOptions($options);
         return $pdf->stream($file_name);
+    }
+    /**
+    * Impresión del formulario Anticipo
+    * Devuelve un pdf del Formulario de solicitud
+    * @queryParam lenders required array Lista de IDs de afiliados Titular de préstamo. Example: [529]
+    * @queryParam procedure_modality_id required integer ID de la modalidad del préstamo. Example: 32
+    * @queryParam amount_requested required integer monto solicitado. Example: 2000
+    * @queryParam disbursement_type_id required integer Tipo de desembolso. Example: 2
+    * @queryParam loan_term required integer plazo. Example: 2
+    * @queryParam destination required string destino de préstamo. Example: Salud
+    * @queryParam account_number string número de cuenta de Banco Unión. Example: 1-9334298
+    * @authenticated
+    */
+    public function print_form(Request $request)
+    {
+        $request->validate([
+            'disbursement_type_id' => 'required|exists:payment_types,id',
+            'procedure_modality_id' => 'required|exists:procedure_modalities,id',
+            'amount_requested'=>'required|integer|min:200|max:2000',
+            'lenders'=>'required|array|max:1|exists:affiliates,id',
+            'loan_term'=>'required|integer|min:1|max:2',
+            'destination'=>'required|string',
+            'account_number'=>'nullable|string',
+        ]);
+        $procedure_modality = ProcedureModality::findOrFail($request->procedure_modality_id);
+        $payment_type = PaymentType::findOrFail($request->disbursement_type_id);
+        
+        $lenders = [];
+        foreach ($request->lenders as $lender) {
+            array_push($lenders, $this->verify_spouse_disbursable($lender)->disbursable);
+        }
+        $date = Carbon::now();
+        $data = [
+            'header' => [
+                'direction' => 'DIRECCIÓN DE ESTRATEGIAS SOCIALES E INVERSIONES',
+                'unity' => 'UNIDAD DE INVERSIÓN EN PRÉSTAMOS',
+                'table' => [
+                    ['Tipo', $procedure_modality->procedure_type->second_name],
+                    ['Modalidad', $procedure_modality->shortened],
+                    ['Usuario', auth()->user()->username ?? 'prueba']
+                ]
+            ],
+            'title' => 'Ref. : SOLICITUD DE PRÉSTAMO '.$procedure_modality->procedure_type->second_name,
+            'procedure_modality' => $procedure_modality,
+            'lenders' => $lenders,
+            'amount_requested' => $request->amount_requested,
+            'loan_term' => $request->loan_term,
+            'destination' => $request->destination,
+            'account_number' => $request->account_number,
+            'payment_type' => $payment_type
+        ];
+        $file_name = implode('_', ['solicitud', 'prestamo_anticipo']) . '.pdf';
+        $footerHtml = view()->make('partials.footer')->with(array('paginator' => true, 'print_date' => true, 'date' => Carbon::now()->ISOFormat('L H:m')))->render();
+        $options = [
+            'orientation' => 'portrait',
+            'page-width' => '216',
+            'page-height' => '279',
+            'margin-top' => '8',
+            'margin-bottom' => '16',
+            'margin-left' => '15',
+            'margin-right' => '20',
+            'encoding' => 'UTF-8',
+            'footer-html' => $footerHtml,
+            'user-style-sheet' => public_path('css/report-print.min.css')
+        ];
+        $pdf = \PDF::loadView('loan.forms.advance_form', $data);
+        $pdf->setOptions($options);
+        return $pdf->stream($file_name);
+        return 0;
     }
 }
