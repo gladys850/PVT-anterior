@@ -618,11 +618,11 @@ class LoanController extends Controller
     * Impresión del formulario Anticipo
     * Devuelve un pdf del Formulario de solicitud
     * @queryParam lenders required array Lista de IDs de afiliados Titular de préstamo. Example: [529]
-    * @queryParam procedure_modality_id integer required ID de la modalidad del préstamo. Example: 32
-    * @queryParam amount_requested integer required monto solicitado. Example: 2000
-    * @queryParam disbursement_type_id integer required Tipo de desembolso. Example: 2
-    * @queryParam loan_term integer required plazo. Example: 2
-    * @queryParam destination string required destino de préstamo. Example: Salud
+    * @queryParam procedure_modality_id required integer ID de la modalidad del préstamo. Example: 32
+    * @queryParam amount_requested required integer monto solicitado. Example: 2000
+    * @queryParam disbursement_type_id required integer Tipo de desembolso. Example: 2
+    * @queryParam loan_term required integer plazo. Example: 2
+    * @queryParam destination required string destino de préstamo. Example: Salud
     * @queryParam account_number string número de cuenta de Banco Unión. Example: 1-9334298
     * @authenticated
     */
