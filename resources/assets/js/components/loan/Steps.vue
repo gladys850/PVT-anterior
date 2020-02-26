@@ -151,7 +151,9 @@
             <BallotsResult
             :bonos.sync="bonos"
             :payable_liquid.sync="payable_liquid"
-            :modality.sync="modality"/>
+            :modality.sync="modality"
+            :datos.sync="datos"
+            />
             <v-container class="py-0">
               <v-row>
                 <v-spacer></v-spacer>
@@ -175,7 +177,9 @@
           :step="5"
           >
           <v-card color="grey lighten-1">
-            <Requirement/>
+            <Requirement
+            :modality.sync="modality"
+            :datos.sync="datos"/>
             <v-container class="py-0">
               <v-row>
                 <v-spacer></v-spacer>
@@ -270,9 +274,6 @@ export default {
         this.e1 = val
       }
     },
-  },
-  beforeMount(){
-    this.getProcedureType();
   },
   mounted(){
  

@@ -49,7 +49,7 @@ class LoanController extends Controller
     *             "parent_loan_id": null,
     *             "parent_reason": null,
     *             "request_date": "2020-02-13",
-    *             "amount_request": 2000,
+    *             "amount_requested": 2000,
     *             "city_id": 4,
     *             "loan_interest_id": 1,
     *             "loan_state_id": 1,
@@ -84,22 +84,19 @@ class LoanController extends Controller
         return $data;
     }
 
-     /**
+    /**
     * Nuevo préstamo
     * Inserta nuevo préstamo
-    * @bodyParam disbursable_id integer required ID de afiliado a quien se hara el desembolso. Example: 1
-    * @bodyParam disbursable_type string required (affiliates,spouses). Example: affiliates
     * @bodyParam procedure_modality_id integer required ID de modalidad. Example: 35
-    * @bodyParam amount_request integer required monto solicitado. Example: 3000
+    * @bodyParam amount_requested integer required monto solicitado. Example: 3000
     * @bodyParam city_id integer required ID de la ciudad. Example: 2
     * @bodyParam loan_term integer required plazo. Example: 3
     * @bodyParam disbursement_type_id integer required Tipo de desembolso. Example: 1
-    * @queryParam lenders required array Lista de IDs de afiliados Titular de préstamo. Example: [1,6]
-    * @queryParam guarantors required array Lista de IDs de afiliados Garante de préstamo. Example: []
-    * @bodyParam disbursement_date date Fecha de desembolso. Example: 2020-02-01
+    * @bodyParam lenders required array Lista de IDs de afiliados Titular de préstamo. Example: [1,6]
+    * @bodyParam guarantors array Lista de IDs de afiliados Garante de préstamo. Example: [3,4]
     * @bodyParam parent_loan_id integer ID de Préstamo Padre. Example: 1
-    * @bodyParam parent_reason enum (refinanciado,reprogramado)  . Example: refinanciado
-    * @bodyParam amount_approved integer Monto Provado. Example: 3000
+    * @bodyParam parent_reason enum (refinanciado, reprogramado) Tipo de trámite hijo. Example: refinanciado
+    * @bodyParam disbursable_id integer ID de afiliado a quien se desembolsará. Example: 1
     * @authenticated
     * @response
     * {
@@ -107,7 +104,7 @@ class LoanController extends Controller
     *    "disbursable_type": "affiliates",
     *    "procedure_modality_id": 35,
     *    "loan_interest_id": 4,
-    *    "amount_request": 3000,
+    *    "amount_requested": 3000,
     *    "city_id": 2,
     *    "loan_term": 3,
     *    "disbursement_type_id": 1,
@@ -132,45 +129,30 @@ class LoanController extends Controller
     */
     public function store(LoanForm $request)
     {
-        if($request->lenders){
-            $lenders_guarantors = array_merge($request->lenders,$request->guarantors);
-            foreach($lenders_guarantors as $affiliate) {
-                if(!Affiliate::whereId($affiliate)->exists()) abort (404); 
-            }
-            $loan = new Loan($request->all());
-            $affiliate = Affiliate::findOrFail($request->disbursable_id);
-            if($affiliate->dead){
-                $spouse = $affiliate->spouse; 
-                if($spouse){
-                    $loan->disbursable_id = $spouse->id;
-                    $loan->disbursable_type = 'spouses' ; 
-                }
-            }
-            $loan->code = Loan::get_code();
-            $loan->save();
-            $request->lenders = collect($request->lenders)->unique();
-            $request->guarantors = collect($request->guarantors)->unique();
-            $request->guarantors = $request->guarantors->diff($request->lenders);
-            $percentage = Loan::get_percentage($request->lenders);
-            foreach ($request->lenders as $affiliate) {
+        $saved = $this->save_loan($request);
+        $loan = $saved->loan;
+        $request = $saved->request;
+        $request->lenders = collect($request->lenders);
+        $request->guarantors = collect($request->guarantors);
+        $request->guarantors = $request->guarantors->diff($request->lenders);
+        $percentage = Loan::get_percentage($request->lenders);
+        foreach ($request->lenders as $affiliate) {
+            $affiliates[$affiliate] = [
+                'payment_percentage' =>$percentage,
+                'guarantor' => false
+            ];
+        }
+        if($request->guarantors){
+            $percentage = Loan::get_percentage($request->guarantors);
+            foreach ($request->guarantors as $affiliate) {
                 $affiliates[$affiliate] = [
                     'payment_percentage' =>$percentage,
-                    'guarantor' => false
+                    'guarantor' => true
                 ];
             }
-            if($request->guarantors){
-                $percentage = Loan::get_percentage($request->guarantors);
-                foreach ($request->guarantors as $affiliate) {
-                    $affiliates[$affiliate] = [
-                        'payment_percentage' =>$percentage,
-                        'guarantor' => true
-                    ];
-                }
-            }
-            $loan->loan_affiliates()->sync($affiliates);
-            return $loan;
         }
-        abort(404);
+        $loan->loan_affiliates()->sync($affiliates);
+        return $loan;
     }
 
     /**
@@ -188,7 +170,7 @@ class LoanController extends Controller
     *    "parent_loan_id": null,
     *    "parent_reason": null,
     *    "request_date": "2020-02-17",
-    *    "amount_request": 3000,
+    *    "amount_requested": 3000,
     *    "city_id": 2,
     *    "loan_interest_id": 4,
     *    "loan_state_id": 1,
@@ -269,7 +251,7 @@ class LoanController extends Controller
     * @bodyParam disbursable_id integer required ID de afiliado a quien se hara el desembolso. Example: 1
     * @bodyParam disbursable_type string required (affiliates,spouses). Example: affiliates
     * @bodyParam procedure_modality_id integer required ID de modalidad. Example: 35
-    * @bodyParam amount_request integer required monto solicitado. Example: 5000
+    * @bodyParam amount_requested integer required monto solicitado. Example: 5000
     * @bodyParam city_id integer required ID de la ciudad. Example: 2
     * @bodyParam loan_term integer required plazo. Example: 3
     * @bodyParam disbursement_type_id integer required Tipo de desembolso. Example: 1
@@ -291,7 +273,7 @@ class LoanController extends Controller
     *    "parent_loan_id": null,
     *    "parent_reason": null,
     *    "request_date": "2020-02-17",
-    *    "amount_request": 5000,
+    *    "amount_requested": 5000,
     *    "city_id": 2,
     *    "loan_interest_id": 4,
     *    "loan_state_id": 1,
@@ -311,45 +293,30 @@ class LoanController extends Controller
     */
     public function update(LoanForm $request, $id)
     {
-        if($request->lenders){
-            $lenders_guarantors = array_merge($request->lenders,$request->guarantors);
-            foreach($lenders_guarantors as $affiliate) {
-                if(!Affiliate::whereId($affiliate)->exists()) abort (404); 
-            }
-            $loan = Loan::findOrFail($id);
-            $loan->fill($request->all());
-            $affiliate = Affiliate::findOrFail($request->disbursable_id);
-            if($affiliate->dead){
-                $spouse = $affiliate->spouse; 
-                if($spouse){
-                    $loan->disbursable_id = $spouse->id;
-                    $loan->disbursable_type = 'spouses' ; 
-                }
-            }
-            $loan->save();
-            $request->lenders = collect($request->lenders)->unique();
-            $request->guarantors = collect($request->guarantors)->unique();
-            $request->guarantors = $request->guarantors->diff($request->lenders);
-            $percentage = Loan::get_percentage($request->lenders);
-            foreach ($request->lenders as $affiliate) {
+        $saved = $this->save_loan($request);
+        $loan = $saved->loan;
+        $request = $saved->request;
+        $request->lenders = collect($request->lenders)->unique();
+        $request->guarantors = collect($request->guarantors)->unique();
+        $request->guarantors = $request->guarantors->diff($request->lenders);
+        $percentage = Loan::get_percentage($request->lenders);
+        foreach ($request->lenders as $affiliate) {
+            $affiliates[$affiliate] = [
+                'payment_percentage' =>$percentage,
+                'guarantor' => false
+            ];
+        }
+        if($request->guarantors){
+            $percentage = Loan::get_percentage($request->guarantors);
+            foreach ($request->guarantors as $affiliate) {
                 $affiliates[$affiliate] = [
                     'payment_percentage' =>$percentage,
-                    'guarantor' => false
+                    'guarantor' => true
                 ];
             }
-            if($request->guarantors){
-                $percentage = Loan::get_percentage($request->guarantors);
-                foreach ($request->guarantors as $affiliate) {
-                    $affiliates[$affiliate] = [
-                        'payment_percentage' =>$percentage,
-                        'guarantor' => true
-                    ];
-                }
-            }
-            $loan->loan_affiliates()->sync($affiliates);
-            return $loan;
         }
-        abort(404);
+        $loan->loan_affiliates()->sync($affiliates);
+        return $loan;
     }
 
     /**
@@ -367,7 +334,7 @@ class LoanController extends Controller
     *    "parent_loan_id": null,
     *    "parent_reason": null,
     *    "request_date": "2020-02-17",
-    *    "amount_request": 5000,
+    *    "amount_requested": 5000,
     *    "city_id": 2,
     *    "loan_interest_id": 4,
     *    "loan_state_id": 1,
@@ -384,6 +351,30 @@ class LoanController extends Controller
         $loan->loan_affiliates()->sync([]);
         $loan->delete();
         return $loan;
+    }
+
+    private function save_loan(Request $request, $id = null)
+    {
+        if (!$request->has('guarantors')) $request->guarantors = [];
+        $request->lenders = array_unique($request->lenders);
+        $request->guarantors = array_unique($request->guarantors);
+        if (!$request->has('disbursable_id')) {
+            $disbursable_id = $request->lenders[0];
+        } else {
+            if (!in_array($request->disbursable_id, $request->lenders)) abort(404);
+            $disbursable_id = $request->disbursable_id;
+        }
+        if ($id) {
+            $loan = Loan::findOrFail($id);
+            $loan->fill(array_merge($request->all(), (array)self::verify_spouse_disbursable($disbursable_id)));
+        } else {
+            $loan = new Loan(array_merge($request->all(), (array)self::verify_spouse_disbursable($disbursable_id), ['amount_approved' => $request->amount_requested]));
+        }
+        $loan->save();
+        return (object)[
+            'request' => $request,
+            'loan' => $loan
+        ];
     }
 
     /**
@@ -496,7 +487,7 @@ class LoanController extends Controller
     * @queryParam lenders required array Lista de IDs de afiliados Titular de préstamo. Example: [1,6]
     * @queryParam procedure_modality_id integer required ID de la modalidad del préstamo. Example: 35
     * @queryParam city_id integer required ID de la ciudad. Example: 2
-    * @queryParam amount_request integer monto solicitado. Example: 5000
+    * @queryParam amount_requested integer monto solicitado. Example: 5000
     * @queryParam loan_term integer plazo. Example: 3
     * @queryParam parent_loan_id integer ID de préstamo padre. Example: 1
     * @authenticated
@@ -525,7 +516,7 @@ class LoanController extends Controller
             'procedure_modality' => $procedure_modality,
             'city' => City::findOrFail($request->city_id),
             'parent_loan' => $parent_loan,
-            'amount_request' => $request->amount_request,
+            'amount_requested' => $request->amount_requested,
             'loan_term' => $request->loan_term
         ];
         $file_name = implode('_', ['solicitud', 'prestamo']) . '.pdf';
@@ -605,7 +596,7 @@ class LoanController extends Controller
             'loan' => $loan,
             'lenders' => $lenders
         ];
-        $file_name = implode('_', ['contrato', 'anticipo']) . '.pdf';
+        $file_name = implode('_', ['contrato', $procedure_modality->shortened, $id]) . '.pdf';
         $footerHtml = view()->make('partials.footer')->with(array('paginator' => true, 'print_date' => true, 'date' => Carbon::now()->ISOFormat('L H:m')))->render();
         $options = [
             'orientation' => 'portrait',

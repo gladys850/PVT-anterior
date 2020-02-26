@@ -856,7 +856,7 @@ class AffiliateController extends Controller
     *             "parent_loan_id": 0,
     *             "parent_reason": null,
     *             "request_date": "2018-11-23",
-    *             "amount_request": 2000,
+    *             "amount_requested": 2000,
     *             "city_id": 1,
     *             "loan_interest_id": 1,
     *             "loan_state_id": 3,

@@ -33,7 +33,6 @@
                   </v-flex>
                 </v-layout>
               </v-col>
-              
             <v-col cols="12" md="4">
               <v-card-text class="py-0">
               <v-layout row wrap>
@@ -55,15 +54,13 @@
               <p>CALCULO DE CUOTA: {{ calculo_de_cuota }}</p>
               <p>INDICE DE ENDEUDAMIENTO: {{indice_endeudamiento }}</p>
               <p>MONTO MAXIMO SUGERIDO : {{monto_maximo_sugerido}}</p>
-               <p>{{calculo}}</p>
             </fieldset>
           </v-flex>
         </v-layout>
         </v-card-text>
             </v-col>
               <v-col cols="12" md="1" class="ma-0 pa-0">
-
-      </v-col>
+              </v-col>
             </v-row>
           </v-container >
         </v-col>
@@ -77,7 +74,7 @@ export default {
 inject: ['$validator'],
 name: "loan-requirement",
 data: () => ({
-  plazo_meses : 30,
+  plazo_meses :2,
   monto_solicitado : null,
   loanTypeSelected:null,
   promedio_liquido_pagable:null,
@@ -86,7 +83,7 @@ data: () => ({
   calculo_de_cuota:null,
   indice_endeudamiento:null,
   calculo:null,
-  monto_maximo_sugerido:25000,
+  monto_maximo_sugerido:2000
 }),
   props: {
     bonos: {
@@ -97,18 +94,26 @@ data: () => ({
       type: Array,
       required: true
     },
+     modality: {
+      type: Object,
+      required: true
+    },
+    datos: {
+      type: Array,
+      required: true
+    }
   },
-beforeMount(){
-this.Calculator()
+mounted(){
+ this.Calculator()
 },
 methods:{
   async Calculator() {
     try {
-      this.loading = true
+      console.log('entro a calculadora')
       let res = await axios.post(`calculator`, {
-        procedure_modality_id: 34,
+        procedure_modality_id:this.modality.id,
         months_term: this.plazo_meses,
-        amount_request:this.monto_maximo_sugerido,
+        amount_requested:this.monto_maximo_sugerido,
         affiliate_id:this.$route.query.affiliate_id,
         contributions: [
           {
@@ -127,7 +132,7 @@ methods:{
         ]
       })
  this.calculo= res.data
-
+console.log('entro a calculadora'+this.calculo)
  this.promedio_liquido_pagable=this.calculo.promedio_liquido_pagable
  this.total_bonos=this.calculo.total_bonos
  this.liquido_para_calificacion=this.calculo.liquido_para_calificacion
