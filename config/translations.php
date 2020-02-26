@@ -47,7 +47,7 @@
         'procedure_modality_id'=>'Modalidad de Préstamo',
         'procedure_documents' => 'Documento',
         'request_date'=>'Fecha de solicitud',
-        'amount_request'=>'Monto solicitado',
+        'amount_requested'=>'Monto solicitado',
         'loan_state_id'=>'Estado del prestamo',
         'code'=>'Codigo',
         'disbursable_id'=>'Beneficiario',
