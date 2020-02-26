@@ -634,8 +634,8 @@ class LoanController extends Controller
             'amount_requested'=>'required|integer|min:200|max:2000',
             'lenders'=>'required|array|max:1|exists:affiliates,id',
             'loan_term'=>'required|integer|min:1|max:2',
+            'destination'=>'required|string',
             'account_number'=>'nullable|string',
-            'destination'=>'nullable|string' 
         ]);
         $procedure_modality = ProcedureModality::findOrFail($request->procedure_modality_id);
         $payment_type = PaymentType::findOrFail($request->disbursement_type_id);
