@@ -52,11 +52,22 @@
             :complete="e1 > 5"
             :step="5"
             editable
-          >Requisitos
+          >Datos Formulario
           </v-stepper-step>
           <v-divider
             v-if="5 !== steps"
             :key="5"
+          ></v-divider>
+           <v-stepper-step
+            :key="`${6}-step`"
+            :complete="e1 > 6"
+            :step="6"
+            editable
+          >Requisitos
+          </v-stepper-step>
+          <v-divider
+            v-if="6 !== steps"
+            :key="6"
           ></v-divider>
         </template>
       </v-stepper-header>
@@ -177,8 +188,8 @@
           :step="5"
           >
           <v-card color="grey lighten-1">
-            <Requirement
-            :modality.sync="modality"
+            <FormInformation
+            :modalities.sync="modalities"
             :datos.sync="datos"/>
             <v-container class="py-0">
               <v-row>
@@ -191,6 +202,32 @@
                   <v-btn
                     color="primary"
                     @click="nextStep(5)">
+                    Continue
+                  </v-btn>
+                </v-col>
+              </v-row>
+            </v-container>
+          </v-card>
+        </v-stepper-content>
+         <v-stepper-content
+          :key="`${6}-content`"
+          :step="6"
+          >
+          <v-card color="grey lighten-1">
+            <Requirement
+            :modality.sync="modality"
+            :datos.sync="datos"/>
+            <v-container class="py-0">
+              <v-row>
+                <v-spacer></v-spacer>
+                <v-spacer></v-spacer>
+                <v-spacer></v-spacer>
+                <v-col class="py-0">
+                  <v-btn text
+                    @click="beforeStep(6)">Atras</v-btn>
+                  <v-btn
+                    color="primary"
+                    @click="nextStep(6)">
                     Continue
                   </v-btn>
                 </v-col>
@@ -216,6 +253,7 @@ import Requirement from '@/components/loan/Requirement'
 import BallotsResult from '@/components/loan/BallotsResult'
 import PersonalInformation from '@/components/affiliate/PersonalInformation'
 import LoanInformation from '@/components/loan/LoanInformation'
+import FormInformation from '@/components/loan/FormInformation'
 import { Validator } from 'vee-validate'
 export default {
   inject: ['$validator'],
@@ -235,12 +273,13 @@ export default {
     Ballots,
     PersonalInformation,
     LoanInformation,
+    FormInformation,
     BallotsResult
   },
    data: () => ({
     
    e1: 1,
-      steps: 5,
+      steps: 6,
       modalities: [],
       datos:[],
       payable_liquid:[],
@@ -275,9 +314,9 @@ export default {
       }
     },
   },
-  mounted(){
- 
+  beforeMount(){
  this.getProcedureType();
+
   },
   methods: {
     nextStep (n) {
@@ -291,13 +330,11 @@ export default {
         if(n==3)
         {
         console.log(this.bonos[0]+'estos son los bonos')
-console.log(this.bonos[1]+'estos son los bonos')
-console.log(this.bonos[2]+'estos son los bonos')
-console.log(this.bonos[3]+'estos son los bonos')
-
+        console.log(this.bonos[1]+'estos son los bonos')
+        console.log(this.bonos[2]+'estos son los bonos')
+        console.log(this.bonos[3]+'estos son los bonos')
         console.log(this.payable_liquid+'estos son los liquidos')
         }
-        
         this.e1 = n + 1
      }
     },
