@@ -4,11 +4,6 @@ Route::group([
     'middleware' => 'api',
     'prefix' => 'v1',
 ], function () {
-    Route::get('loan/print/contract_advance', 'Api\V1\LoanController@print_contract_advance');
-
-
-
-
     // Rutas abiertas
     Route::resource('auth', 'Api\V1\AuthController')->only('store');
     Route::resource('config', 'Api\V1\ConfigController')->only('index');
@@ -105,6 +100,8 @@ Route::group([
             Route::post('loan/{id}/document', 'Api\V1\LoanController@submit_documents');
             Route::get('loan/print/requirements', 'Api\V1\LoanController@print_requirements');
             Route::get('affiliate/{id}/loan_modality', 'Api\V1\AffiliateController@get_loan_modality');
+            Route::get('loan/print/form', 'Api\V1\LoanController@print_form');
+            Route::get('loan/{id}/print/contract', 'Api\V1\LoanController@print_contract');
         });
         Route::group([
             'middleware' => 'permission:update-loan'

@@ -113,7 +113,7 @@ methods:{
       let res = await axios.post(`calculator`, {
         procedure_modality_id:this.modality.id,
         months_term: this.plazo_meses,
-        amount_request:this.monto_maximo_sugerido,
+        amount_requested:this.monto_maximo_sugerido,
         affiliate_id:this.$route.query.affiliate_id,
         contributions: [
           {

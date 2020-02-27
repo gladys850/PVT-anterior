@@ -9,25 +9,33 @@
 <body>
 <div class="block">
     <div class="font-semibold leading-tight text-center m-b-10 text-xs">
-        CONTRATO DE PRÉSTAMO <font style="text-transform: uppercase;">{{ $title->name }}</font>
+        CONTRATO DE PRÉSTAMO <font style="text-transform: uppercase;">{{ $title }}</font>
         <div>Nº {{ $loan->code }}</div>
     </div>
 </div>
 <div class="block text-justify">
     <div>
-        Conste en el presente contrato de préstamo de {{ $title->name }}, que al solo reconocimiento de firmas y rúbricas ante autoridad competente será elevado a Instrumento Público, por lo que las partes que intervienen lo suscriben al tenor de las siguientes claúsulas y condiciones:
+        Conste en el presente contrato de préstamo de {{ $title }}, que al solo reconocimiento de firmas y rúbricas ante autoridad competente será elevado a Instrumento Público, por lo que las partes que intervienen lo suscriben al tenor de las siguientes claúsulas y condiciones:
     </div>
     <div>
-       <b>PRIMERA.- (DE LAS PARTES):</b> Intervienen en el presente contrato, por una parte como acreedor la Mutual de Servicios al Policía (MUSERPOL), representada legalmente por el Director General Ejecutivo Cnl. XXXX-NOMBRE-CORONEL con C.I. XXXXX-LP y su Director de Asuntos Administrativos Lic. XXXX-NOMBRE-LAZO con C.I. XXXXXX-LP, que para fines de este contrato en adelante se denominará MUSERPOL con domiciliio en la Z. Sopocachi, Av. 6 de Agosto Nº 2354 y por otra parte como {{$gender ? ($gender == 'M' ? ' DEUDOR ' : ' DEUDORA ') : ' DEUDOR(A) '}} {{ $lender }}, con C.I. {{ $identity_card }}, {{ $civil_status }}, mayor de edad, hábil por derecho, natural de {{ $city_birth }}, vecino de {{ $city_identity_card }} y con domicilio especial en {{ $address }}, en adelante {{$gender ? ($gender == 'M' ? ' denominado ' : ' denominada ') : ' denominado(a) '}} PRESTATARIO.
+        <b>PRIMERA.- (DE LAS PARTES):</b> Intervienen en el presente contrato, por una parte como acreedor la Mutual de Servicios al Policía (MUSERPOL), representada legalmente por el {{ $employees[0]['position'] }} Cnl. {{ $employees[0]['name'] }} con C.I. {{ $employees[0]['identity_card'] }} y su {{ $employees[1]['position'] }} Lic. {{ $employees[1]['name'] }} con C.I. {{ $employees[1]['identity_card'] }}, que para fines de este contrato en adelante se denominará MUSERPOL con domiciliio en la Z. Sopocachi, Av. 6 de Agosto Nº 2354 y por otra parte como
+
+        @if (count($lenders) == 1)
+        @php ($lender = $lenders[0]->disbursable)
+        @php ($male_female = Util::male_female($lender->gender))
+        <span>
+            DEUDOR{{ $lender->gender == 'M' ? '' : 'A' }} {{ $lender->full_name }}, con C.I. {{ $lender->identity_card_ext }}, {{ $lender->civil_status }}, mayor de edad, hábil por derecho, natural de {{ $lender->city_birth->name }}, vecin{{ $male_female }} de {{ $lender->city_identity_card->name }} y con domicilio especial en {{ $lender->address->full_address }}, en adelante denominad{{ $male_female }} PRESTATARIO.
+        </span>
+        @endif
     </div>
     <div>
-       <b>SEGUNDA.- (DEL OBJETO):</b>  El objeto del presente contrato es el préstamo de dinero que MUSERPOL otorga al PRESTATARIO conforme a niveles de aprobación respectivos, en la suma de Bs. {{ $loan->amount_request }} ({{ Util::convertir($loan->amount_request) }} Bolivianos).
+        <b>SEGUNDA.- (DEL OBJETO):</b>  El objeto del presente contrato es el préstamo de dinero que MUSERPOL otorga al PRESTATARIO conforme a niveles de aprobación respectivos, en la suma de Bs. {{ $loan->amount_requested }} (<span class="uppercase">{{ Util::money_format($loan->amount_requested, true) }}</span> Bolivianos).
     </div>
     <div>
-        <b>TERCERA.- (DEL INTERÉS):</b> El préstamo objeto del presente contrato, devengará un interés ordinario del {{ $loan->interest->annual_interest }} % anual sobre saldo deudor, el mismo que se recargará con el interés penal en caso de mora de una o más amortizaciones. Esta tasa de interés podrá ser modificada en cualquier momento de acuerdo a las condiciones financieras que adopte MUSERPOL.
+        <b>TERCERA.- (DEL INTERÉS):</b> El préstamo objeto del presente contrato, devengará un interés ordinario del {{ $loan->interest->annual_interest }}% anual sobre saldo deudor, el mismo que se recargará con el interés penal en caso de mora de una o más amortizaciones. Esta tasa de interés podrá ser modificada en cualquier momento de acuerdo a las condiciones financieras que adopte MUSERPOL.
     </div>
     <div>
-        <b>CUARTA.- (DEL DESEMBOLSO, DEL PLAZO Y LA CUOTA DE AMORTIZACIÓN):</b> El desembolso del préstamo se acredita mediante comprobante escrito en el que conste el abono efectuado a favor del PRESTATARIO, o a través de una cuenta bancaria del Banco Unión a solicitud del PRESTATARIO, reconociendo ambas partes que el amparo de este procedimiento se cumple satisfactoriamente la exigencia contenida en el artículo 1331 del Código de Comercio. El plazo fijo e inprorrogable para el cumplimiento de la obligación contraida por el PRESTATARIO en virtud al préstamo otorgado es de {{ $loan->loan_term }} meses computables a partir de la fecha de desembolso. La cuota de amortización mensual es de Bs. {{ $estimated_quota }} ({{ Util::convertir($estimated_quota) }} Bolivianos).
+        <b>CUARTA.- (DEL DESEMBOLSO, DEL PLAZO Y LA CUOTA DE AMORTIZACIÓN):</b> El desembolso del préstamo se acredita mediante comprobante escrito en el que conste el abono efectuado a favor del PRESTATARIO, o a través de una cuenta bancaria del Banco Unión a solicitud del PRESTATARIO, reconociendo ambas partes que el amparo de este procedimiento se cumple satisfactoriamente la exigencia contenida en el artículo 1331 del Código de Comercio. El plazo fijo e inprorrogable para el cumplimiento de la obligación contraida por el PRESTATARIO en virtud al préstamo otorgado es de {{ $loan->loan_term }} meses computables a partir de la fecha de desembolso. La cuota de amortización mensual es de Bs. {{ $loan->estimated_quota }} (<span class="uppercase">{{ Util::money_format($loan->estimated_quota, true) }}</span> Bolivianos).
     </div>
     <div>
         Los intereses generados entre la fecha del desembolso del préstamo y la fecha del primer pago serán cobrados con la primera cuota; conforme los establece el reglamento de préstamos.
@@ -54,7 +62,7 @@
         </ol>
     </div>
     <div>
-       <b>SÉPTIMA.- (OBLIGACIONES DEL PRESTATARIO):</b> Conforme al Artículo 30 del Reglamento de Préstamos, las partes reconocen expresamente como obligaciones del PRESTATARIO, lo siguiente:
+        <b>SÉPTIMA.- (OBLIGACIONES DEL PRESTATARIO):</b> Conforme al Artículo 30 del Reglamento de Préstamos, las partes reconocen expresamente como obligaciones del PRESTATARIO, lo siguiente:
     </div>
     <div>
         <ol type="a">
@@ -82,7 +90,12 @@
         En caso de incumplimiento de los pagos mensuales estipulados en el presente contrato que generen mora de la obligación, el PRESTATARIO no tendrá dercho a acceder a otro crédito hasta la cancelación total de la deuda.
     </div>
     <div>
-        <b>DÉCIMA.- (DE LA CONFORMIDAD Y ACEPTACIÓN):</b> Por una parte en calidad de acreedora la MUSERPOL, representada por su Director General Ejecutivo Cnl. XXXXX-MAE y su Director de Asuntos Administrativos Lic. XXXX-NOMBRE-LAZO y por otra parte en calidad de deudor(a) XXXXX-GENERO(el la) XXXXXX-NOMBRE-DISBURSABLE de generales ya señaladas como PRESTATARIO; damos nuestra plena conformidad con todas y cada una de las cláusulas precedentes, obligándolos a su fiel y estricto cumplimiento. En señal de lo cual suscribimos el presente contrato de préstamo de dinero en manifestación de nuestra libre y espontánea voluntad y sin que medie vicio de consentimiento alguno.
+        <b>DÉCIMA.- (DE LA CONFORMIDAD Y ACEPTACIÓN):</b> Por una parte en calidad de acreedora la MUSERPOL, representada por su {{ $employees[0]['position'] }} Cnl. {{ $employees[0]['name'] }} y su {{ $employees[1]['position'] }} Lic. {{ $employees[1]['name'] }} y por otra parte en calidad de 
+        @if (count($lenders) == 1)
+        <span>
+            DEUDOR{{ $lender->gender == 'M' ? '' : 'A' }} {{ $lender->full_name }} de generales ya señaladas como PRESTATARIO; damos nuestra plena conformidad con todas y cada una de las cláusulas precedentes, obligándolos a su fiel y estricto cumplimiento. En señal de lo cual suscribimos el presente contrato de préstamo de dinero en manifestación de nuestra libre y espontánea voluntad y sin que medie vicio de consentimiento alguno.
+        </span>
+        @endif
     </div><br><br>
     <div class="text-center">
         <p class="center">
@@ -93,28 +106,34 @@
 <div class="block">
     <div>
         <div class='text-center'>
-            _____________________________<br> 
-            {{ $lender }}<br>
-            C.I. {{ $identity_card }}<br>
+            @for ($i=0; $i<strlen($lender->full_name); $i++)
+            _
+            @endfor
+            <br>
+            {{ $lender->full_name }}<br>
+            C.I. {{ $lender->identity_card_ext }}<br>
             PRESTATARIO<br><br>
         </div>
     </div>
-    <div>    
-        <div style='float:left' class='text-center px-75' >
-            _____________________________<br>
-            XXXXXXX_NOMBRE-LAZO <br>
-            C.I. {{ $identity_card }}<br>           
-            <b>Director de Asuntos Administrativos</b><br>
-             MUSERPOL
-        </div>
-        <div style='float:right' class='text-center px-75'>
-            _____________________________<br>
-            Cnl. XXXXX-MAE <br>
-            C.I. {{ $identity_card }}<br>           
-            <b>Director General Ejecutivo<b><br>
-            MUSERPOL
-        </div>
-         
+    <div class="m-t-30 w-100">
+        <table>
+            <tr>
+                @foreach ($employees as $key => $employee)
+                <td>
+                    <div class='text-center'>
+                        @for ($i=0; $i<strlen($employee['name']); $i++)
+                        _
+                        @endfor
+                        <br>
+                        {{ $employee['name'] }} <br>
+                        C.I. {{ $employee['identity_card'] }}<br>
+                        <b>{{ $employee['position'] }}</b><br>
+                        MUSERPOL
+                    </div>
+                @endforeach
+                </td>
+            </tr>
+        </table>
     </div>
 </div>
 </body>

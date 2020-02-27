@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 
 # Migration
 php artisan migrate --force
@@ -20,3 +20,4 @@ php artisan db:seed --class=LoanStateSeeder
 php artisan db:seed --class=AdminSeeder
 php artisan db:seed --class=LoanSeeder
 php artisan db:seed --class=PaymentTypeSeeder
+php artisan db:seed --class=TagSeeder

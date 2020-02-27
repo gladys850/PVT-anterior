@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
 use Carbon;
 use Util;
@@ -19,15 +20,14 @@ class Loan extends Model
         'disbursable_id',
         'disbursable_type',
 		'procedure_modality_id',
-		'amount_disbursement',
 		'parent_loan_id',
         'parent_reason',
         'request_date',
-        'amount_request',
+        'amount_requested',
         'city_id',
         'loan_interest_id',
         'loan_state_id',
-        'amount_aproved',
+        'amount_approved',
         'loan_term',
         'disbursement_date',
         'disbursement_type_id',
@@ -38,17 +38,25 @@ class Loan extends Model
     function __construct(array $attributes = [])
     {
         parent::__construct($attributes);
+        $this->request_date = Carbon::now();
         $state = LoanState::whereName('En Proceso')->first();
         if ($state) {
             $this->loan_state_id = $state->id;
-            $this->request_date = Carbon::now();
         }
+        $latest_loan = DB::table('loans')->orderBy('created_at', 'desc')->limit(1)->first();
+        if (!$latest_loan) $latest_loan = (object)['id' => 0];
+        $this->code = implode(['PTMO', str_pad($latest_loan->id + 1, 6, '0', STR_PAD_LEFT), '-', Carbon::now()->year]);
     }
 
     public function setProcedureModalityIdAttribute($id)
     {
         $this->attributes['procedure_modality_id'] = $id;
         $this->attributes['loan_interest_id'] = $this->modality->current_interest->id;
+    }
+
+    public function tags()
+    {
+        return $this->morphMany(Taggable::class, 'taggable');
     }
 
     public function state()
@@ -116,7 +124,7 @@ class Loan extends Model
     // Saldo capital
     public function getBalanceAttribute()
     {
-        $balance = $this->amount_disbursement;
+        $balance = $this->amount_approved;
         if ($this->payments()->count() > 0) {
             $balance -= $this->payments()->sum('capital_payment');
         }
@@ -150,7 +158,7 @@ class Loan extends Model
     {
         $monthly_interest = $this->interest->monthly_current_interest;
         unset($this->interest);
-        return Util::round($monthly_interest * $this->amount_disbursement / (1 - 1 / pow((1 + $monthly_interest), $this->loan_term)));
+        return Util::round($monthly_interest * $this->amount_approved / (1 - 1 / pow((1 + $monthly_interest), $this->loan_term)));
     }
  
 
@@ -195,7 +203,7 @@ class Loan extends Model
         return $quota;
     }
     public function  plan(){
-        $saldo_capital=$this->amount_disbursement;
+        $saldo_capital=$this->amount_approved;
         $interes_diario=$this->interest->daily_current_interest;
         $cuota_estimada=$this->estimated_quota;
         $plan=[];
@@ -323,16 +331,4 @@ class Loan extends Model
         return response()->json($modality);
              
     }
-    //correlativo
-    public static function get_code(){
-        $loan = Loan::get()->first();
-        if($loan==null){
-            $loan_id = 0;
-        }else{
-            $loan_id = Loan::get()->last()->id;
-        }
-        $code = implode(["PTMO",str_pad($loan_id+1,6,'0',STR_PAD_LEFT),"-",Carbon::now()->year]);
-        return $code;
-    }
-
 }
