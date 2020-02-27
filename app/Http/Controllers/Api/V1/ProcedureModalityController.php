@@ -48,8 +48,7 @@ class ProcedureModalityController extends Controller
     public function index(Request $request)
     {
         $filter = $request->has('procedure_type_id') ? ['procedure_type_id' => $request->procedure_type_id] : [];
-        $data = Util::search_sort(new ProcedureModality(), $request, $filter);
-        return $data;
+        return Util::search_sort(new ProcedureModality(), $request, $filter);
     }
 
     /**

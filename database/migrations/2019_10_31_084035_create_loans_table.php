@@ -24,7 +24,7 @@ class CreateLoansTable extends Migration
             $table->integer('parent_loan_id')->nullable();  // id padre , loan padre
             $table->enum('parent_reason', ['refinanciado', 'reprogramado'])->nullable();// para indicar si es reprogramado y refinanciado 
             $table->date('request_date'); //fecha de solicitud
-            $table->BigInteger('amount_request'); // monto solicitado
+            $table->BigInteger('amount_requested'); // monto solicitado
             $table->unsignedBigInteger('city_id');  // id lugar de la solicitud 
             $table->foreign('city_id')->references('id')->on('cities');
             $table->unsignedBigInteger('loan_interest_id')->nullable(false); // id del interes
@@ -35,6 +35,7 @@ class CreateLoansTable extends Migration
             $table->integer('loan_term'); // plazo del prestamo en meses
             $table->unsignedBigInteger('disbursement_type_id'); // id tipo de desembolso   
             $table->foreign('disbursement_type_id')->references('id')->on('payment_types'); 
+            $table->string('account_number'); // numero de cuenta en caso de ser deposito en cuenta
             $table->timestamps();
         });
     }

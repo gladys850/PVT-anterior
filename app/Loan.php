@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
 use Carbon;
 use Util;
@@ -22,7 +23,7 @@ class Loan extends Model
 		'parent_loan_id',
         'parent_reason',
         'request_date',
-        'amount_request',
+        'amount_requested',
         'city_id',
         'loan_interest_id',
         'loan_state_id',
@@ -37,11 +38,14 @@ class Loan extends Model
     function __construct(array $attributes = [])
     {
         parent::__construct($attributes);
+        $this->request_date = Carbon::now();
         $state = LoanState::whereName('En Proceso')->first();
         if ($state) {
             $this->loan_state_id = $state->id;
-            $this->request_date = Carbon::now();
         }
+        $latest_loan = DB::table('loans')->orderBy('created_at', 'desc')->limit(1)->first();
+        if (!$latest_loan) $latest_loan = (object)['id' => 0];
+        $this->code = implode(['PTMO', str_pad($latest_loan->id + 1, 6, '0', STR_PAD_LEFT), '-', Carbon::now()->year]);
     }
 
     public function setProcedureModalityIdAttribute($id)
@@ -327,16 +331,4 @@ class Loan extends Model
         return response()->json($modality);
              
     }
-    //correlativo
-    public static function get_code(){
-        $loan = Loan::get()->first();
-        if($loan==null){
-            $loan_id = 0;
-        }else{
-            $loan_id = Loan::get()->last()->id;
-        }
-        $code = implode(["PTMO",str_pad($loan_id+1,6,'0',STR_PAD_LEFT),"-",Carbon::now()->year]);
-        return $code;
-    }
-
 }

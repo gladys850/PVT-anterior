@@ -41,7 +41,7 @@
             @endif
         </tr>
         <tr>
-            <td class="data-row py-5">{{ Util::money_format($amount_request) }} <span class="capitalize">Bs.</span></td>
+            <td class="data-row py-5">{{ Util::money_format($amount_requested) }} <span class="capitalize">Bs.</span></td>
             <td class="data-row py-5">{{ $loan_term }} <span class="capitalize">Meses</span></td>
             @if ($parent_loan)
             <td class="data-row py-5">{{ $parent_loan->code }}</td>

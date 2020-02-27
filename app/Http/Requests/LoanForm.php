@@ -26,28 +26,28 @@ class LoanForm extends FormRequest
     public function rules()
     {
         $rules = [
-            'disbursable_id'=>'integer',
-            'disbursable_type'=>'in:affiliates,spouses',
             'procedure_modality_id'=>'integer|exists:procedure_modalities,id',  
-            'amount_request'=>'integer',
+            'amount_requested'=>'integer|min:200|max:700000',
             'city_id'=>'integer|exists:cities,id',
             'loan_term'=>'integer',
             'disbursement_type_id'=>'exists:payment_types,id',
-            'lenders'=>'array|exists:affiliates,id',
+            'lenders'=>'array|min:1|exists:affiliates,id',
             'guarantors'=>'array|exists:affiliates,id',
+            'disbursable_id'=>'integer',
+            'disbursable_type'=>'in:affiliates,spouses',
+            'account_number'=>'nullable|string',
             'code'=>'nullable', 
             'disbursement_date'=>'nullable|date_format:"Y-m-d"',
             'parent_loan_id'=>'nullable|exists:loans,id',
             'parent_reason'=> 'nullable|in:refinanciado,reprogramado',
             'loan_interest_id'=>'exists:loan_interests,id',
             'loan_state_id'=>'exists:loan_states,id',
-            'amount_approved'=>'nullable|integer',
-
+            'amount_approved'=>'integer|min:200|max:700000'
        ];  
 
         switch ($this->method()) {
             case 'POST': {
-                foreach (array_slice($rules, 0, 8) as $key => $rule) {
+                foreach (array_slice($rules, 0, 6) as $key => $rule) {
                     $rules[$key] = implode('|', ['required', $rule]);
                 }
                 return $rules;

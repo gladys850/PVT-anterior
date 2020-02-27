@@ -240,7 +240,7 @@ export default {
             lenders: [this.$route.query.affiliate_id],
             procedure_modality_id: this.modality.id,
             city_id: this.$store.getters.cityId,
-            amount_request: this.datos[1],
+            amount_requested: this.datos[1],
             loan_term: this.datos[2]
           },
           responseType: "arraybuffer"
@@ -263,7 +263,7 @@ export default {
           disbursable_id: this.$route.query.affiliate_id,
           disbursable_type: "affiliates",
           procedure_modality_id: this.modality.id,
-          amount_request: 3000,
+          amount_requested: 3000,
           city_id: this.$store.getters.cityId,
           loan_term: 3,
           disbursement_type_id: 1,
