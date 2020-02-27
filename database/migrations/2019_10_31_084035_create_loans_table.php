@@ -35,7 +35,7 @@ class CreateLoansTable extends Migration
             $table->integer('loan_term'); // plazo del prestamo en meses
             $table->unsignedBigInteger('disbursement_type_id'); // id tipo de desembolso   
             $table->foreign('disbursement_type_id')->references('id')->on('payment_types'); 
-            $table->string('account_number'); // numero de cuenta en caso de ser deposito en cuenta
+            $table->integer('account_number')->nullable(); // numero de cuenta en caso de ser deposito en cuenta
             $table->timestamps();
         });
     }
