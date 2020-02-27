@@ -77,6 +77,7 @@ import Ballots from '@/components/loan/Ballots'
   beforeMount() {
     this.getLoanIntervals()
   },
+
   methods: {
     Onchange(){
       for (this.i = 0; this.i< this.interval.length; this.i++) {
