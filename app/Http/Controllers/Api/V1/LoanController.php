@@ -565,7 +565,7 @@ class LoanController extends Controller
         $procedure_modality = $loan->modality;
         $lenders = [];
         foreach ($loan->lenders as $lender) {
-            array_push($lenders, self::verify_spouse_disbursable($lender)->disbursable);
+            $lenders[] = self::verify_spouse_disbursable($lender->id);
         }
         $employees = [
             ['position' => 'Director General Ejecutivo'],
@@ -631,11 +631,11 @@ class LoanController extends Controller
         $request->validate([
             'disbursement_type_id' => 'required|exists:payment_types,id',
             'procedure_modality_id' => 'required|exists:procedure_modalities,id',
-            'amount_requested'=>'required|integer|min:200|max:2000',
+            'amount_requested'=>'required|integer|min:200|max:700000',
             'lenders'=>'required|array|max:1|exists:affiliates,id',
-            'loan_term'=>'required|integer|min:1|max:2',
+            'loan_term'=>'required|integer|min:1|max:240',
             'destination'=>'required|string',
-            'account_number'=>'nullable|string',
+            'account_number'=>'nullable|integer',
         ]);
         $procedure_modality = ProcedureModality::findOrFail($request->procedure_modality_id);
         $payment_type = PaymentType::findOrFail($request->disbursement_type_id);
