@@ -4,9 +4,7 @@
       <v-data-iterator :items="items" hide-default-footer>
         <template v-slot:header>
           <v-toolbar class="mb-0" color="ternary" dark flat>
-            <v-toolbar-title>
-              REQUISITOS PARA ANTICIPO
-            </v-toolbar-title>
+            <v-toolbar-title>REQUISITOS PARA ANTICIPO</v-toolbar-title>
           </v-toolbar>
         </template>
         <template>
@@ -54,7 +52,7 @@
               </v-card>
             </v-col>
             <v-col cols="12" md="1" class="ma-0 pa-0">
-              <v-tooltip top >
+              <v-tooltip top>
                 <template v-slot:activator="{ on }">
                   <v-btn
                     fab
@@ -67,12 +65,12 @@
                     style="margin-right: 10px; margin-left: 6px; margin-top:-640px;"
                     @click.stop="getRequirementPrint()"
                   >
-                      <v-icon>mdi-printer-settings</v-icon>
+                    <v-icon>mdi-printer-settings</v-icon>
                   </v-btn>
                 </template>
                 <div>
-                   <span>Imprimir Requisitos</span>
-              </div>
+                  <span>Imprimir Requisitos</span>
+                </div>
               </v-tooltip>
               <v-tooltip top>
                 <template v-slot:activator="{ on }">
@@ -87,7 +85,7 @@
                     style="margin-right: 5px; margin-left: 6px; margin-top:-600px; "
                     @click.stop="getRequirementPrint()"
                   >
-                      <v-icon >mdi-book-open-page-variant</v-icon>
+                    <v-icon>mdi-book-open-page-variant</v-icon>
                   </v-btn>
                 </template>
                 <div>
@@ -107,14 +105,14 @@
                     style="margin-right: 5px; margin-left: 6px; margin-top:-560px;"
                     @click.stop="saveLoan()"
                   >
-                      <v-icon>mdi-content-save-all</v-icon>
+                    <v-icon>mdi-content-save-all</v-icon>
                   </v-btn>
                 </template>
                 <div>
                   <span>Guardar Tramite</span>
                 </div>
               </v-tooltip>
-                <v-tooltip top>
+              <v-tooltip top>
                 <template v-slot:activator="{ on }">
                   <v-btn
                     fab
@@ -127,7 +125,7 @@
                     style="margin-right: 5px; margin-left: 6px; margin-top:-510px;"
                     @click.stop="getRequirementPrint()"
                   >
-                      <v-icon >mdi-file-download</v-icon>
+                    <v-icon>mdi-file-download</v-icon>
                   </v-btn>
                 </template>
                 <div>
@@ -139,64 +137,41 @@
         </template>
       </v-data-iterator>
 
-      <v-toolbar-title class="align-end font-weight-black text-center my-2" >
+      <v-toolbar-title class="align-end font-weight-black text-center my-2">
         <h3>Documentos Opcionales</h3>
       </v-toolbar-title>
-      <v-divider></v-divider>
-      <v-data-iterator
-        :items="optional"
-        :search="search"
-      >
-        <!--filter- -->
-        <template v-slot:header>
-          <v-toolbar color="ternary" info flat class="mb-1">
-            <v-text-field
-              v-model="search"
-              prepend-inner-icon="mdi-search-web"
-              label="Buscar"
-            ></v-text-field>
-          </v-toolbar>
-        </template>
 
-        <!--<template v-slot:default="props">
+      <v-data-iterator :items="optional" hide-default-footer>
+        <template>
           <v-row>
-            <v-col v-for="item in props.items" :key="item.name" cols="12" sm="6" md="4" lg="3">
-              <v-card>
-                <v-card-title class="subheading font-weight-bold">{{ item.id }}</v-card-title>
+            <v-col cols="11" class="ma-5 ma-5">
+              <v-autocomplete
+                dense
+                filled
+                label="Busqué escoja una opción"
+                v-model="selectedValue"
+                :items="optional"
+                item-text="name"
+                item-value="id"
+                @change="addOptionalDocument(selectedValue)"
+              ></v-autocomplete>
 
-                <v-divider></v-divider>
-              </v-card>
-            </v-col>
-          </v-row>
-        </template>-->
-        <!--fin filter -->
-        <template v-slot:default="props">
-          <v-row>
-            <v-col v-for="(item,index) in props.items" :key="index" cols="12" class="py-1">
-              <v-card>
-                <v-list dense class="py-0">
-                  <v-list-item class="py-0">
-                    <v-col cols="1" class="py-0">
-                      <v-list-item-content class="align-end font-weight-light">
-                        <h4>{{item.id}}</h4>
-                      </v-list-item-content>
-                    </v-col>
-
-                    <v-col cols="10" class="py-0">
-                      <v-list-item-content class="align-end font-weight-light">{{item.name}}</v-list-item-content>
-                    </v-col>
-
-                    <v-col cols="1" class="py-0">
-                      <v-checkbox
-                        color="info"
-                        v-model="selectedOpc"
-                        :value="item.id"
-                        @change="selectDoc2(item.id)"
-                      ></v-checkbox>
-                    </v-col>
-                  </v-list-item>
-                </v-list>
-              </v-card>
+              <v-divider></v-divider>
+              <div class="align-end font-weight-light">
+                <div v-for="(idDoc, index) of selectedOpc" :key="index">
+                  <div>
+                    <div>
+                      <div>
+                        {{index+1 + ". "}} {{(optional.find((item) => item.id === idDoc)).name}}
+                        <v-btn text icon color="error" @click="deleteOptionalDocument(index)">
+                          <v-icon>mdi-delete</v-icon>
+                        </v-btn>
+                      </div>
+                      <v-divider></v-divider>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </v-col>
           </v-row>
         </template>
@@ -221,16 +196,14 @@ export default {
     selectedOpc: [],
     selected: [],
     radios: [],
-
-    search: "",
-    filter: []
+    selectedValue: null
   }),
   props: {
     modality: {
       type: Object,
       required: true
     },
-     datos: {
+    datos: {
       type: Array,
       required: true
     }
@@ -243,12 +216,7 @@ export default {
       setTimeout(() => {
         //console.log("ID=" + id + " J=" + j + " I=" + i);
         //console.log(this.selected + "=>vector ckeck");
-        console.log(this.radios.filter(Boolean) + "=>vector radio");
-        console.log(
-          this.selectedOpc.concat(
-            this.selectedOpc.concat(this.selected.concat(this.radios.filter(Boolean)))
-          )
-        );
+        //console.log(this.radios.filter(Boolean) + "=>vector radio");
       }, 500);
     },
 
@@ -265,22 +233,22 @@ export default {
         this.loading = false;
       }
     },
-     async getRequirementPrint() {
+    async getRequirementPrint() {
       try {
         let res = await axios.get(`loan/print/requirements`, {
-          params :{
+          params: {
             lenders: [this.$route.query.affiliate_id],
-            procedure_modality_id:this.modality.id,
+            procedure_modality_id: this.modality.id,
             city_id: this.$store.getters.cityId,
             amount_request: this.datos[1],
-            loan_term: this.datos[2],
+            loan_term: this.datos[2]
           },
-          responseType: 'arraybuffer'
-        })
+          responseType: "arraybuffer"
+        });
         let blob = new Blob([res.data], {
           type: "application/pdf"
-        })
-        printJS(window.URL.createObjectURL(blob))
+        });
+        printJS(window.URL.createObjectURL(blob));
       } catch (e) {
         console.log(e);
       } finally {
@@ -289,31 +257,46 @@ export default {
     },
     async saveLoan() {
       try {
-        let res= await axios.post(`loan`,{
+        let res = await axios.post(`loan`, {
           lenders: [this.$route.query.affiliate_id],
           guarantors: [],
           disbursable_id: this.$route.query.affiliate_id,
-          disbursable_type: 'affiliates',
-          procedure_modality_id:this.modality.id,
+          disbursable_type: "affiliates",
+          procedure_modality_id: this.modality.id,
           amount_request: 3000,
           city_id: this.$store.getters.cityId,
           loan_term: 3,
           disbursement_type_id: 1,
-          amount_disbursement: 3000,
+          amount_disbursement: 3000
         });
-        this.loan=res.data
-
-        await axios.post(`loan/${this.loan.id}/document`,{
-              documents:this.selected.concat(this.radios.filter(Boolean)) 
-          });
-        this.toastr.success("Se guardó satisfactoriamente el grabado")
+        this.loan = res.data;
+        await axios.post(`loan/${this.loan.id}/document`, {
+          documents: this.selected.concat(this.radios.filter(Boolean))
+        });
+        this.toastr.success("Se guardó satisfactoriamente el grabado");
+        console.log(
+          this.selectedOpc.concat(
+            this.selected.concat(this.radios.filter(Boolean))
+          )
+        );
       } catch (e) {
-      console.log(e);
-      console.log('fallo ');
+        console.log(e);
       } finally {
-      this.loading = false;
+        this.loading = false;
       }
-      },
+    },
+
+    addOptionalDocument(i) {
+      if (this.selectedOpc.indexOf(i) === -1) {
+        this.selectedOpc.push(i);
+        //console.log("I= " + i);
+        //console.log("selectedOpc " + this.selectedOpc);
+      }
+      this.selectedValue = " ";
+    },
+    deleteOptionalDocument(i) {
+      this.selectedOpc.splice(i, 1);
     }
+  }
 };
 </script>
