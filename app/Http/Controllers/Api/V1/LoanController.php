@@ -7,7 +7,9 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Affiliate;
 use App\City;
+use App\User;
 use App\Loan;
+use App\Tag;
 use App\LoanState;
 use Illuminate\Support\Facades\Schema;
 use App\ProcedureDocument;
@@ -489,8 +491,8 @@ class LoanController extends Controller
     * @queryParam lenders required Lista de IDs de afiliados Titular de préstamo. Example: [1,6]
     * @queryParam procedure_modality_id required ID de la modalidad del préstamo. Example: 35
     * @queryParam city_id required ID de la ciudad. Example: 2
-    * @queryParam amount_requested required monto solicitado. Example: 5000
-    * @queryParam loan_term required plazo. Example: 3
+    * @queryParam amount_requested required Monto solicitado. Example: 5000
+    * @queryParam loan_term required Plazo. Example: 3
     * @queryParam parent_loan_id integer ID de préstamo padre. Example: 1
     * @authenticated
     */
@@ -549,17 +551,42 @@ class LoanController extends Controller
         return $pdf->stream($file_name);
     }
 
-    // TODO
     public function switch_states()
     {
+        $user = User::whereUsername('admin')->first();
+        $amortizing_tag = Tag::whereSlug('amortizando')->first();
+        $defaulted_tag = Tag::whereSlug('mora')->first();
+
+        // Switch amortizing loans to defaulted
         $loans = Loan::whereHas('state', function($query) {
             $query->whereName('Desembolsado');
+        })->whereHas('tags', function($q) {
+            $q->whereSlug('amortizando');
         })->get();
         foreach ($loans as $loan) {
             if ($loan->defaulted) {
-                // Verify if it has defaulted tag
-                // Attach defaulted tag
-            } // Else detach defaulted tag
+                $loan->tags()->detach($amortizing_tag);
+                $loan->tags()->attach([$defaulted_tag->id => [
+                    'user_id' => $user->id,
+                    'date' => Carbon::now()
+                ]]);
+            }
+        }
+
+        // Switch defaulted loans to amortizing
+        $loans = Loan::whereHas('state', function($query) {
+            $query->whereName('Desembolsado');
+        })->whereHas('tags', function($q) {
+            $q->whereSlug('mora');
+        })->get();
+        foreach ($loans as $loan) {
+            if (!$loan->defaulted) {
+                $loan->tags()->detach($defaulted_tag);
+                $loan->tags()->attach([$amortizing_tag->id => [
+                    'user_id' => $user->id,
+                    'date' => Carbon::now()
+                ]]);
+            }
         }
     }
 
@@ -628,13 +655,13 @@ class LoanController extends Controller
     /**
     * Impresión del formulario Anticipo
     * Devuelve un pdf del Formulario de solicitud
-    * @queryParam lenders required array Lista de IDs de afiliados Titular de préstamo. Example: [529]
-    * @queryParam procedure_modality_id required integer ID de la modalidad del préstamo. Example: 32
-    * @queryParam amount_requested required integer monto solicitado. Example: 2000
-    * @queryParam disbursement_type_id required integer Tipo de desembolso. Example: 2
-    * @queryParam loan_term required integer plazo. Example: 2
-    * @queryParam destination required string destino de préstamo. Example: Salud
-    * @queryParam account_number string número de cuenta de Banco Unión. Example: 1-9334298
+    * @queryParam lenders required Lista de IDs de afiliados Titular de préstamo. Example: [529]
+    * @queryParam procedure_modality_id required ID de la modalidad del préstamo. Example: 32
+    * @queryParam amount_requested required monto solicitado. Example: 2000
+    * @queryParam disbursement_type_id required Tipo de desembolso. Example: 2
+    * @queryParam loan_term required Plazo. Example: 2
+    * @queryParam destination required Destino de préstamo. Example: salud
+    * @queryParam account_number Número de cuenta de Banco Unión. Example: 1-9334298
     * @authenticated
     */
     public function print_form(Request $request)
