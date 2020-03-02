@@ -103,9 +103,6 @@ data: () => ({
       required: true
     }
   },
-mounted(){
- this.Calculator()
-},
 methods:{
   async Calculator() {
     try {

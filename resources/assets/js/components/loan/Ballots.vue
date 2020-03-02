@@ -112,7 +112,6 @@ export default {
   name: "dashboard-index",
   data: () => ({
     editar:true,
-    num:3,
   }),
    props: {
     modality: {
@@ -132,10 +131,9 @@ export default {
       required: true
     },
   },
-    mounted(){
- this.getBallots(this.$route.query.affiliate_id);
-  console.log(this.num+'este es el numero de boleta')
- 
+  mounted(){
+    this.getBallots(this.$route.query.affiliate_id);
+    console.log(this.modality.loan_modality_parameter.quantity_ballots+'este es el numero de boleta')
   },
   methods:
  {
@@ -146,11 +144,10 @@ export default {
           city_id: this.$store.getters.cityId,
           sortBy: ['month_year'],
           sortDesc: [1],
-          per_page: this.num,
+          per_page: this.modality.loan_modality_parameter.quantity_ballots,
           page: 1,
         }
       })
-      console.log('entro al metodo de boletas'+this.num)
       if(res.data.valid)
       {
         this.editar=false

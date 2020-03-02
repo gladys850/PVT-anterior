@@ -83,7 +83,7 @@
                     right
                     v-on="on"
                     style="margin-right: 5px; margin-left: 6px; margin-top:-600px; "
-                    @click.stop="getRequirementPrint()"
+                    @click.stop="getFormPrint()"
                   >
                     <v-icon>mdi-book-open-page-variant</v-icon>
                   </v-btn>
@@ -123,7 +123,7 @@
                     right
                     v-on="on"
                     style="margin-right: 5px; margin-left: 6px; margin-top:-510px;"
-                    @click.stop="getRequirementPrint()"
+                    @click.stop="getContractPrint()"
                   >
                     <v-icon>mdi-file-download</v-icon>
                   </v-btn>
@@ -206,6 +206,10 @@ export default {
     datos: {
       type: Array,
       required: true
+    },
+    formulario: {
+      type: Array,
+      required: true
     }
   },
   beforeMount() {
@@ -255,6 +259,48 @@ export default {
         this.loading = false;
       }
     },
+    async getFormPrint() {
+    try {
+      let res = await axios.get(`loan/print/form`, {
+        params :{
+          lenders : [this.$route.query.affiliate_id],
+          procedure_modality_id:this.modality.id,
+          amount_requested: this.datos[1],
+          disbursement_type_id: this.formulario[0],
+          loan_term:this.datos[2],
+          destination: this.formulario[2],
+          account_number: this.formulario[1],
+          },
+        responseType: 'arraybuffer'
+        })
+        let blob = new Blob([res.data], {
+        type: "application/pdf"
+      })
+        printJS(window.URL.createObjectURL(blob))
+    } catch (e) {
+    console.log(e);
+    } finally {
+        this.loading = false;
+      }
+    },
+    async getContractPrint() {
+      try {
+      let res = await axios.get(`loan/${3}/print/contract`, {
+      params:{
+      loan_id:3
+      },
+      responseType: 'arraybuffer'
+      })
+      let blob = new Blob([res.data], {
+      type: "application/pdf"
+      })
+      printJS(window.URL.createObjectURL(blob))
+      } catch (e) {
+      console.log(e);
+      } finally {
+      this.loading = false;
+      }
+    },
     async saveLoan() {
       try {
         let res = await axios.post(`loan`, {
@@ -266,8 +312,8 @@ export default {
           amount_requested: 3000,
           city_id: this.$store.getters.cityId,
           loan_term: 3,
-          disbursement_type_id: 1,
-          amount_disbursement: 3000
+          disbursement_type_id: 1
+
         });
         this.loan = res.data;
         await axios.post(`loan/${this.loan.id}/document`, {
