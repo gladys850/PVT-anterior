@@ -494,7 +494,7 @@ class LoanController extends Controller
     * @queryParam city_id required ID de la ciudad. Example: 2
     * @queryParam amount_requested required Monto solicitado. Example: 5000
     * @queryParam loan_term required Plazo. Example: 3
-    * @queryParam parent_loan_id integer ID de préstamo padre. Example: 1
+    * @queryParam parent_loan_id ID de préstamo padre. Example: 1
     * @authenticated
     */
     public function print_requirements(Request $request)
@@ -620,7 +620,7 @@ class LoanController extends Controller
         $procedure_modality = $loan->modality;
         $lenders = [];
         foreach ($loan->lenders as $lender) {
-            array_push($lenders, self::verify_spouse_disbursable($lender)->disbursable);
+            $lenders[] = self::verify_spouse_disbursable($lender->id);
         }
         $employees = [
             ['position' => 'Director General Ejecutivo'],
@@ -686,11 +686,11 @@ class LoanController extends Controller
         $request->validate([
             'disbursement_type_id' => 'required|exists:payment_types,id',
             'procedure_modality_id' => 'required|exists:procedure_modalities,id',
-            'amount_requested'=>'required|integer|min:200|max:2000',
+            'amount_requested'=>'required|integer|min:200|max:700000',
             'lenders'=>'required|array|max:1|exists:affiliates,id',
-            'loan_term'=>'required|integer|min:1|max:2',
+            'loan_term'=>'required|integer|min:1|max:240',
             'destination'=>'required|string',
-            'account_number'=>'nullable|string',
+            'account_number'=>'nullable|integer',
         ]);
         $procedure_modality = ProcedureModality::findOrFail($request->procedure_modality_id);
         $payment_type = PaymentType::findOrFail($request->disbursement_type_id);

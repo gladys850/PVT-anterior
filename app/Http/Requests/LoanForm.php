@@ -35,7 +35,7 @@ class LoanForm extends FormRequest
             'guarantors'=>'array|exists:affiliates,id',
             'disbursable_id'=>'integer',
             'disbursable_type'=>'in:affiliates,spouses',
-            'account_number'=>'nullable|string',
+            'account_number'=>'nullable|integer',
             'code'=>'nullable', 
             'disbursement_date'=>'nullable|date_format:"Y-m-d"',
             'parent_loan_id'=>'nullable|exists:loans,id',
