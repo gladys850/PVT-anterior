@@ -678,7 +678,7 @@ class LoanController extends Controller
     * @queryParam disbursement_type_id required Tipo de desembolso. Example: 2
     * @queryParam loan_term required Plazo. Example: 2
     * @queryParam destination required Destino de préstamo. Example: salud
-    * @queryParam account_number Número de cuenta de Banco Unión. Example: 1-9334298
+    * @queryParam account_number Número de cuenta de Banco Unión. Example: 19334298
     * @authenticated
     */
     public function print_form(Request $request)
@@ -697,7 +697,7 @@ class LoanController extends Controller
         
         $lenders = [];
         foreach ($request->lenders as $lender) {
-            array_push($lenders, $this->verify_spouse_disbursable($lender)->disbursable);
+            array_push($lenders, self::verify_spouse_disbursable($lender)->disbursable);
         }
         $date = Carbon::now();
         $data = [
@@ -719,7 +719,7 @@ class LoanController extends Controller
             'account_number' => $request->account_number,
             'payment_type' => $payment_type
         ];
-        $file_name = implode('_', ['solicitud', 'prestamo_anticipo']) . '.pdf';
+        $file_name = implode('_', ['formulario', 'solicitud_prestamo']) . '.pdf';
         $footerHtml = view()->make('partials.footer')->with(array('paginator' => true, 'print_date' => true, 'date' => Carbon::now()->ISOFormat('L H:m')))->render();
         $options = [
             'orientation' => 'portrait',
@@ -733,7 +733,7 @@ class LoanController extends Controller
             'footer-html' => $footerHtml,
             'user-style-sheet' => public_path('css/report-print.min.css')
         ];
-        $pdf = \PDF::loadView('loan.forms.advance_form', $data);
+        $pdf = \PDF::loadView('loan.forms.request_form', $data);
         $pdf->setOptions($options);
         return $pdf->stream($file_name);
         return 0;
