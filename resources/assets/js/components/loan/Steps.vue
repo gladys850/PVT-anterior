@@ -189,8 +189,7 @@
           >
           <v-card color="grey lighten-1">
             <FormInformation
-            :modalities.sync="modalities"
-            :datos.sync="datos"/>
+            :formulario.sync="formulario"/>
             <v-container class="py-0">
               <v-row>
                 <v-spacer></v-spacer>
@@ -216,7 +215,8 @@
           <v-card color="grey lighten-1">
             <Requirement
             :modality.sync="modality"
-            :datos.sync="datos"/>
+            :datos.sync="datos"
+            :formulario.sync="formulario"/>
             <v-container class="py-0">
               <v-row>
                 <v-spacer></v-spacer>
@@ -277,31 +277,29 @@ export default {
     BallotsResult
   },
    data: () => ({
-    
-   e1: 1,
-      steps: 6,
-      modalities: [],
-      datos:[],
-      payable_liquid:[],
-      bonos:[0,0,0,0],
-      visible:false,
-      modality:{
+    e1: 1,
+    steps: 6,
+    modalities: [],
+    datos:[],
+    payable_liquid:[],
+    bonos:[0,0,0,0],
+    visible:false,
+    modality:{
+      id: null,
+      procedure_type_id: null,
+      name: null,
+      shortened: null,
+      is_valid:null,
+      loan_modality_parameter: {
         id: null,
-        procedure_type_id: null,
-        name: null,
-        shortened: null,
-        is_valid:null,
-        loan_modality_parameter: {
-          id: null,
-          procedure_modality_id: null,
-          debt_index:null,
-          quantity_ballots: null,
-          guarantors: null
-        }
-      },
-   
+        procedure_modality_id: null,
+        debt_index:null,
+        quantity_ballots: null,
+        guarantors: null
+      }
+    },
+    formulario:[]
   }),
- 
   computed: {
     isNew() {
       return this.$route.params.hash == 'new'
@@ -335,6 +333,13 @@ export default {
         console.log(this.bonos[3]+'estos son los bonos')
         console.log(this.payable_liquid+'estos son los liquidos')
         }
+         if(n==5)
+        {
+        console.log(this.formulario[0]+'estos son los bonos')
+        console.log(this.formulario[1]+'estos son los bonos')
+               console.log(this.formulario[2]+'estos son los bonos')
+        }
+      
         this.e1 = n + 1
      }
     },
@@ -381,8 +386,7 @@ export default {
     } finally {
       this.loading = false
     }
-  },
-
+  }
   },
 }
 </script>
