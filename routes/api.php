@@ -18,6 +18,12 @@ Route::group([
     Route::resource('procedure_modality', 'Api\V1\ProcedureModalityController')->only('index', 'show');
     Route::resource('module', 'Api\V1\ModuleController')->only('index', 'show');
     Route::get('module/{id}/procedure_type', 'Api\V1\ModuleController@get_procedure_types');
+    // Parametros globales de préstamos
+    Route::resource('global_parameter', 'Api\V1\LoanGlobalParameterController')->only('index', 'show');
+    Route::resource('global_parameter', 'Api\V1\LoanGlobalParameterController')->only('store');
+    Route::resource('global_parameter', 'Api\V1\LoanGlobalParameterController')->only('update');
+    Route::resource('global_parameter', 'Api\V1\LoanGlobalParameterController')->only('destroy');    
+    
     // Biométrico
     Route::get('affiliate/{id}/fingerprint', 'Api\V1\AffiliateController@fingerprint_saved');
 
