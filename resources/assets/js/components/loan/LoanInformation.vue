@@ -17,6 +17,7 @@
             <v-col cols="12" md="4" class="py-0">
               <v-select
                 dense
+                v-validate="'required'"
                 v-model="loanTypeSelected"
                 data-vv-name="modalities"
                 :onchange="Onchange()"
@@ -28,6 +29,7 @@
             <v-col cols="12" md="4" class="py-0">
               <v-text-field
                 dense
+                readonly
                 v-validate.initial="'min:1|max:20'"
                 :error-messages="errors.collect('monto')"
                 data-vv-name="monto"
@@ -37,12 +39,12 @@
             <v-col cols="12" md="4" class="py-0" >
               <v-text-field
                 dense
+                readonly
                 v-validate.initial="'min:1|max:20'"
                 :error-messages="errors.collect('plazo')"
                 data-vv-name="plazo"
                 v-model="plazo"
-              > {{datos}}</v-text-field>
-             
+              ></v-text-field>
             </v-col>
           </v-row>
         </v-container>
