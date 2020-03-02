@@ -494,7 +494,7 @@ class LoanController extends Controller
     * @queryParam city_id required ID de la ciudad. Example: 2
     * @queryParam amount_requested required Monto solicitado. Example: 5000
     * @queryParam loan_term required Plazo. Example: 3
-    * @queryParam parent_loan_id integer ID de préstamo padre. Example: 1
+    * @queryParam parent_loan_id ID de préstamo padre. Example: 1
     * @authenticated
     */
     public function print_requirements(Request $request)
