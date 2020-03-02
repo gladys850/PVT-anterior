@@ -11,6 +11,7 @@ use App\User;
 use App\Loan;
 use App\Tag;
 use App\LoanState;
+use App\RecordType;
 use Illuminate\Support\Facades\Schema;
 use App\ProcedureDocument;
 use App\ProcedureModality;
@@ -556,6 +557,8 @@ class LoanController extends Controller
         $user = User::whereUsername('admin')->first();
         $amortizing_tag = Tag::whereSlug('amortizando')->first();
         $defaulted_tag = Tag::whereSlug('mora')->first();
+        $defaulted_loans = 0;
+        $amortizing_loans = 0;
 
         // Switch amortizing loans to defaulted
         $loans = Loan::whereHas('state', function($query) {
@@ -570,6 +573,14 @@ class LoanController extends Controller
                     'user_id' => $user->id,
                     'date' => Carbon::now()
                 ]]);
+                $defaulted_loans++;
+                foreach ($loan->lenders as $lender) {
+                    $lender->records()->create([
+                        'user_id' => $user->id,
+                        'record_type_id' => RecordType::whereName('etiquetas')->first()->id,
+                        'action' => 'etiquetó en mora'
+                    ]);
+                }
             }
         }
 
@@ -586,8 +597,14 @@ class LoanController extends Controller
                     'user_id' => $user->id,
                     'date' => Carbon::now()
                 ]]);
+                $amortizing_loans++;
             }
         }
+
+        return response()->json([
+            'defaulted' => $defaulted_loans,
+            'amortizing' => $amortizing_loans
+        ]);
     }
 
     /**

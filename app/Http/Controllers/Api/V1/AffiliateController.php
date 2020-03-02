@@ -467,11 +467,10 @@ class AffiliateController extends Controller
     public function update_fingerprint($id)
     {
         $affiliate = Affiliate::findOrFail($id);
-        $record_type = RecordType::whereName('datos-personales')->first();
         if ($record_type) {
             $affiliate->records()->create([
                 'user_id' => Auth::user()->id,
-                'record_type_id' => $record_type->id,
+                'record_type_id' => RecordType::whereName('datos-personales')->first()->id,
                 'action' => 'inició la captura de huellas'
             ]);
             return $affiliate->records()->latest()->first();
