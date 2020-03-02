@@ -14,6 +14,7 @@ Route::group([
     Route::resource('pension_entity', 'Api\V1\PensionEntityController')->only('index', 'show');
     Route::resource('category', 'Api\V1\CategoryController')->only('index');
     Route::resource('procedure_type', 'Api\V1\ProcedureTypeController')->only('index');
+    Route::resource('payment_type', 'Api\V1\PaymentTypeController')->only('index');
     Route::resource('procedure_modality', 'Api\V1\ProcedureModalityController')->only('index', 'show');
     Route::resource('module', 'Api\V1\ModuleController')->only('index', 'show');
     Route::get('module/{id}/procedure_type', 'Api\V1\ModuleController@get_procedure_types');
