@@ -40,7 +40,7 @@
         'reason_death' => 'Motivo de Fallecimiento',
         // Address
         'city_address_id' =>'Ciudad de Dirección',
-        // LoanBeneficiary
+        // Personal Reference
         'phone_number' =>'Número de teléfono',
         'cell_phone_number'=>'Numero de Celular',
         //loans
