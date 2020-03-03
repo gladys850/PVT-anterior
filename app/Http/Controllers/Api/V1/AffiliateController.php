@@ -39,7 +39,7 @@ class AffiliateController extends Controller
     * Devuelve el listado con los datos paginados
     * @queryParam search Parámetro de búsqueda. Example: TORRE
     * @queryParam sortBy Vector de ordenamiento. Example: [last_name]
-    * @queryParam sortDesc Vector de orden descendente(true) o ascendente(false). Example: [false]
+    * @queryParam sortDesc Vector de orden descendente(true) o ascendente(false). Example: [0]
     * @queryParam per_page Número de datos por página. Example: 8
     * @queryParam page Número de página. Example: 1
     * @authenticated
@@ -668,7 +668,7 @@ class AffiliateController extends Controller
     * @urlParam id required ID de afiliado. Example: 1
     * @queryParam city_id ID de la ciudad de solicitud. Example: 4
     * @queryParam sortBy Vector de ordenamiento. Example: [month_year]
-    * @queryParam sortDesc Vector de orden descendente(true) o ascendente(false). Example: [true]
+    * @queryParam sortDesc Vector de orden descendente(true) o ascendente(false). Example: [1]
     * @queryParam per_page Número de datos por página. Example: 3
     * @queryParam page Número de página. Example: 1
     * @authenticated
@@ -959,7 +959,7 @@ class AffiliateController extends Controller
     * Devuelve la modalidad de trámite evaluando al afiliado y el tipo de trámite
     * @urlParam id required ID de afiliado. Example: 5
     * @queryParam procedure_type_id ID de tipo de trámite. Example: 9
-    * @queryParam external_discount Booleano de descuento en otras entidades. Example: true
+    * @queryParam external_discount Booleano de descuento en otras entidades. Example: 1
     * @authenticated
     * @response
     * {
