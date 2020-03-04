@@ -738,7 +738,7 @@ class AffiliateController extends Controller
         if ($request->has('city_id')) {
             $is_latest = false;
             $city = City::findOrFail($request->city_id);
-            $offset_day = LoanGlobalParameter::latest()->first()->offset_day;
+            $offset_day = LoanGlobalParameter::latest()->first()->offset_ballot_day;
             $now = CarbonImmutable::now();
             if ($now->day <= $offset_day || $city->name != 'LA PAZ') {
                 $before_month = 2;

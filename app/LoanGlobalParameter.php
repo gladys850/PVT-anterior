@@ -9,7 +9,8 @@ class LoanGlobalParameter extends Model
     public $timestamps = true;
 
     protected $fillable = [
-        'offset_day',
+        'offset_ballot_day',
+        'offset_interest_day',
         'livelihood_amount',
     ];
 }
