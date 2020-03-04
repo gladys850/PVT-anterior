@@ -4,6 +4,7 @@ Route::group([
     'middleware' => 'api',
     'prefix' => 'v1',
 ], function () {
+
     // Rutas abiertas
     Route::resource('auth', 'Api\V1\AuthController')->only('store');
     Route::resource('config', 'Api\V1\ConfigController')->only('index');
@@ -81,7 +82,7 @@ Route::group([
             Route::resource('spouse', 'Api\V1\SpouseController')->only('store');
             Route::patch('affiliate/{id}/fingerprint', 'Api\V1\AffiliateController@update_fingerprint');
             Route::patch('affiliate/{id}/address', 'Api\V1\AffiliateController@update_addresses');
-            Route::resource('beneficiary', 'Api\V1\LoanBeneficiaryController')->only('index', 'store', 'show', 'destroy', 'update');
+            Route::resource('personal_reference', 'Api\V1\PersonalReferenceController')->only('index', 'store', 'show', 'destroy', 'update');
         });
         Route::group([
             'middleware' => 'permission:delete-affiliate'

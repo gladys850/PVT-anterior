@@ -43,7 +43,6 @@ class AppServiceProvider extends ServiceProvider
         Relation::morphMap([
             'affiliates' => 'App\Affiliate',
             'spouses' => 'App\Spouse',
-            'beneficiaries' => 'App\LoanBeneficiary',
             'users' => 'App\User',
             'roles' => 'App\Role',
             'loans' => 'App\Loan'
