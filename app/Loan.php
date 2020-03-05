@@ -32,7 +32,7 @@ class Loan extends Model
         'disbursement_date',
         'disbursement_type_id',
         'modification_date',
-        
+        'account_number'
     ];
 
     function __construct(array $attributes = [])
