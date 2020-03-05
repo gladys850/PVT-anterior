@@ -13,7 +13,7 @@ class LoanGlobalParameterSeeder extends Seeder
     public function run()
     {
         $global_parameters = [
-            ['offset_day' => 15, 'livelihood_amount' => 510]
+            ['offset_ballot_day' => 7, 'offset_interest_day' => 15, 'livelihood_amount' => 510]
         ];
         foreach ($global_parameters as $global_parameter) {
             LoanGlobalParameter::firstOrCreate($global_parameter);

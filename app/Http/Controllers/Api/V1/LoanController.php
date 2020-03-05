@@ -296,7 +296,7 @@ class LoanController extends Controller
     */
     public function update(LoanForm $request, $id)
     {
-        $saved = $this->save_loan($request);
+        $saved = $this->save_loan($request, $id);
         $loan = $saved->loan;
         $request = $saved->request;
         $request->lenders = collect($request->lenders)->unique();
