@@ -4,6 +4,7 @@ Route::group([
     'middleware' => 'api',
     'prefix' => 'v1',
 ], function () {
+
     // Rutas abiertas
     Route::resource('auth', 'Api\V1\AuthController')->only('store');
     Route::resource('config', 'Api\V1\ConfigController')->only('index');
@@ -18,6 +19,12 @@ Route::group([
     Route::resource('procedure_modality', 'Api\V1\ProcedureModalityController')->only('index', 'show');
     Route::resource('module', 'Api\V1\ModuleController')->only('index', 'show');
     Route::get('module/{id}/procedure_type', 'Api\V1\ModuleController@get_procedure_types');
+    // Parametros globales de préstamos
+    Route::resource('global_parameter', 'Api\V1\LoanGlobalParameterController')->only('index', 'show');
+    Route::resource('global_parameter', 'Api\V1\LoanGlobalParameterController')->only('store');
+    Route::resource('global_parameter', 'Api\V1\LoanGlobalParameterController')->only('update');
+    Route::resource('global_parameter', 'Api\V1\LoanGlobalParameterController')->only('destroy');    
+    
     // Biométrico
     Route::get('affiliate/{id}/fingerprint', 'Api\V1\AffiliateController@fingerprint_saved');
 
@@ -75,7 +82,7 @@ Route::group([
             Route::resource('spouse', 'Api\V1\SpouseController')->only('store');
             Route::patch('affiliate/{id}/fingerprint', 'Api\V1\AffiliateController@update_fingerprint');
             Route::patch('affiliate/{id}/address', 'Api\V1\AffiliateController@update_addresses');
-            Route::resource('beneficiary', 'Api\V1\LoanBeneficiaryController')->only('index', 'store', 'show', 'destroy', 'update');
+            Route::resource('personal_reference', 'Api\V1\PersonalReferenceController')->only('index', 'store', 'show', 'destroy', 'update');
         });
         Route::group([
             'middleware' => 'permission:delete-affiliate'

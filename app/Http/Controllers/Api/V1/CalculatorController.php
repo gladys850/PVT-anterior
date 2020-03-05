@@ -10,14 +10,57 @@ use App\ProcedureModality;
 use App\Loan;
 
 /** @group Préstamos
+* Simulador de la calculadora 
 */
 class CalculatorController extends Controller
 {
-    /**
+    /** 
     * Calculadora
+    * @bodyParam procedure_modality_id integer required ID de modalidad. Example: 32
+    * @bodyParam amount_requested integer required monto solicitado. Example: 2000
+    * @bodyParam months_term integer required plazo. Example: 2
+    * @bodyParam affiliate_id integer required ID del afiliado. Example: 1
+    * @bodyParam contributions[0].payable_liquid integer required Líquido pagable. Example: 2000
+    * @bodyParam contributions[0].seniotity_bonus integer required Bono Cargo . Example: 0.00
+    * @bodyParam contributions[0].border_bonus integer required Bono Frontera . Example: 0.00
+    * @bodyParam contributions[0].public_security_bonus integer required Bono Seguridad Ciudadana . Example: 0.00
+    * @bodyParam contributions[0].east_bonus integer required Bono Oriente. Example: 0.00
+    * @bodyParam contributions[1].payable_liquid integer Líquido pagable. Example: 2270
+    * @bodyParam contributions[1].seniotity_bonus integer Bono Cargo . Example: 0.00
+    * @bodyParam contributions[1].border_bonus integer Bono Frontera . Example: 0.00
+    * @bodyParam contributions[1].public_security_bonus integer Bono Seguridad Ciudadana . Example: 0.00
+    * @bodyParam contributions[1].east_bonus integer Bono Oriente. Example: 0.00
+    * @bodyParam contributions[2].payable_liquid integer Líquido pagable. Example: 1563
+    * @bodyParam contributions[2].seniotity_bonus integer Bono Cargo . Example: 0.00
+    * @bodyParam contributions[2].border_bonus integer Bono Frontera . Example: 0.00
+    * @bodyParam contributions[2].public_security_bonus integer Bono Seguridad Ciudadana . Example: 0.00
+    * @bodyParam contributions[2].east_bonus integer Bono Oriente. Example: 0.00
+    * @authenticated
+    * @response
+    * {
+    *    "promedio_liquido_pagable": 1944,
+    *    "total_bonos": 0,
+    *    "liquido_para_calificacion": 1944,
+    *    "calculo_de_cuota": "1.045,22",
+    *    "indice_endeudamiento": 53,
+    *    "monto_maximo_sugerido": 2000,
+    *    "valido": true
+    * }
     */
     public function store(Request $request)
     {
+        $request->validate([
+            'procedure_modality_id' => 'required|exists:procedure_modalities,id',
+            'amount_requested'=>'required|integer|min:200|max:700000',
+            'months_term'=>'required|integer|min:1|max:240',
+            'affiliate_id'=>'required|integer|exists:affiliates,id',
+            'contributions' =>'required|array|min:1',
+            'contributions.*.payable_liquid' => 'required',
+            'contributions.*.border_bonus' => 'required',
+            'contributions.*.seniority_bonus' => 'required',
+            'contributions.*.public_security_bonus' => 'required',
+            'contributions.*.east_bonus' => 'required',
+        ]);
         $procedure_modality = ProcedureModality::findOrFail($request->procedure_modality_id);
         $limit = $procedure_modality->procedure_type->loan_interval;
         $amount_requested = $request->amount_requested;$months_term = $request->months_term;
@@ -46,7 +89,7 @@ class CalculatorController extends Controller
                 $index_calculated = 0;
             }
             return response()->json([
-                'promedio_liquido_pagable'=>$payable_liquid_average,
+                'promedio_liquido_pagable'=>round($payable_liquid_average),
                 'total_bonos'=>$total_bonuses,
                 'liquido_para_calificacion'=>round($liquid_qualification),
                 'calculo_de_cuota'=>Util::money_format($quota_calculation),
@@ -57,7 +100,7 @@ class CalculatorController extends Controller
         }else{ abort (404);} 
     }
     // funcion para sacar el liquido para calificacion
-    public function liquid_qualification($payable_liquid_average,$total_bonuses,$affiliate,$parent_quota=0){
+    private function liquid_qualification($payable_liquid_average,$total_bonuses,$affiliate,$parent_quota=0){
         $active_guarantees = $affiliate->active_guarantees();$sum_quota_guarantor=0;
         foreach($active_guarantees as $res){ 
             $sum_quota_guarantor+= ($res->estimated_quota*$res->pivot->payment_percentage)/100;
@@ -65,7 +108,7 @@ class CalculatorController extends Controller
         return ($payable_liquid_average-$total_bonuses-$sum_quota_guarantor+$parent_quota);
     }
     //funcion para sacar la cuota estimada con la calculadora
-    public function quota_calculator($procedure_modality,$months_term,$amount_requested,$liquid_qualification){
+    private function quota_calculator($procedure_modality,$months_term,$amount_requested,$liquid_qualification){
         $loan_interval = $procedure_modality->procedure_type->loan_interval;
         $interest_rate = $procedure_modality->current_interest->monthly_current_interest; 
         if($amount_requested>0 && $months_term ==null){
@@ -78,7 +121,7 @@ class CalculatorController extends Controller
         }
     }
     // monto maximo
-    public function maximum_amount($procedure_modality,$months_term,$liquid_qualification){ 
+    private function maximum_amount($procedure_modality,$months_term,$liquid_qualification){ 
         $interest_rate = $procedure_modality->current_interest->monthly_current_interest;
         $loan_interval = $procedure_modality->procedure_type->loan_interval;
         $debt_index = $procedure_modality->loan_modality_parameter->decimal_index;

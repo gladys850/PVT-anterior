@@ -11,17 +11,19 @@
             <v-col cols="12" md="3">
               <v-select
                 dense
+                v-validate="'required'"
                 v-model="loanTypeSelected"
-                data-vv-name="modalities"
+                data-vv-name="payment_types"
+                :onchange="Onchange()"
                 :items="payment_types"
                 item-text="name"
                 item-value="id"
               ></v-select>
             </v-col>
-             <v-col cols="12" md="2" class="py-0">
+             <v-col cols="12" md="2" class="py-0" v-show="visible">
               <label> Nro de Cuenta:</label>
             </v-col>
-            <v-col cols="12" md="4">
+            <v-col cols="12" md="4"  v-show="visible">
               <v-text-field
                 dense
                 outlined
@@ -31,6 +33,7 @@
                 v-model="cuenta"
               ></v-text-field>
             </v-col>
+            <v-col cols="12" md="6" v-show="espacio"></v-col>
             <v-col cols="12" md="2" class="py-0">
               <label> Destino del Prestamo:</label>
             </v-col>
@@ -53,41 +56,47 @@
 </template>
 <script>
 import { Validator } from 'vee-validate'
-import Ballots from '@/components/loan/Ballots'
   export default {
   inject: ['$validator'],
   name: "loan-information",
   data: () => ({
     cuenta:null,
     destino:null,
+    visible:false,
+    espacio:true,
     loanTypeSelected:null,
-    payment_types:[{
-      id:1,
-      name:'Efectivo'
-    },
-    {
-      id:2,
-      name:'Deposito Bancario'
-    }
-
-    ]
-
+    payment_types:[]
   }),
   props: {
-    datos: {
+    formulario: {
       type: Array,
       required: true
-    },
+    }
   },
-  beforeMount() {
-    this.getLoanIntervals()
+  beforeMount(){
+    this.getPaymentTypes()
   },
   methods: {
-    async getPaymentTypes() {
+   Onchange(){
+        if(this.loanTypeSelected==2)
+        {
+          this.visible=true,
+          this.espacio=false
+        }else{
+          this.visible=false,
+          this.espacio=true
+        }
+        this.formulario[0]=this.loanTypeSelected,
+        this.formulario[1]=this.cuenta,
+        this.formulario[2]=this.destino
+    },
+     async getPaymentTypes() {
       try {
-        let res = await axios.get(`loan_interval`)
+        this.loading = true
+        let res = await axios.get(`payment_type`)
         this.payment_types = res.data
-       } catch (e) {
+        console.log(this.payment_types+'este es el tipo de desembolso');
+      } catch (e) {
         console.log(e)
       } finally {
         this.loading = false

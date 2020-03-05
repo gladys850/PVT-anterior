@@ -4,9 +4,9 @@ namespace App\Http\Requests;
 
 use Waavi\Sanitizer\Laravel\SanitizesInput;
 use Illuminate\Foundation\Http\FormRequest;
-use App\LoanBeneficiary;
+use App\PersonalReference;
 
-class LoanBeneficiaryForm extends FormRequest
+class PersonalReferenceForm extends FormRequest
 {
     use SanitizesInput;
 
@@ -28,16 +28,16 @@ class LoanBeneficiaryForm extends FormRequest
     public function rules()
     {
         $rules = [
-            'city_identity_card_id'=>'exists:cities,id', 
-            'identity_card'=>'min:3|unique:loan_beneficiaries',
-            'last_name'=>'alpha_spaces|min:3', 
-            'mothers_last_name'=>'nullable|alpha_spaces|min:3',
-            'first_name'=>'alpha_spaces|min:3',
+            'city_identity_card_id'=>'integer|exists:cities,id', 
+            'identity_card'=>'string|min:3',
+            'last_name'=>'string|alpha_spaces|min:3', 
+            'mothers_last_name'=>'string|nullable|alpha_spaces|min:3',
+            'first_name'=>'string|alpha_spaces|min:3',
             'birth_date'=>'date_format:"Y-m-d"',
-            'gender'=> 'in:M,F',
-            'civil_status'=>'in:C,D,S,V',
-            'second_name'=>'nullable|alpha_spaces|min:3',
-            'surname_husband'=>'nullable|alpha_spaces|min:3',
+            'gender'=> 'string|in:M,F',
+            'civil_status'=>'string|in:C,D,S,V',
+            'second_name'=>'string|nullable|alpha_spaces|min:3',
+            'surname_husband'=>'string|nullable|alpha_spaces|min:3',
             'phone_number'=>'nullable',
             'cell_phone_number'=>'nullable'
        ];  
