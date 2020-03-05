@@ -4,6 +4,7 @@ Route::group([
     'middleware' => 'api',
     'prefix' => 'v1',
 ], function () {
+    Route::get('loan/print/requirements', 'Api\V1\LoanController@print_requirements');
 
     // Rutas abiertas
     Route::resource('auth', 'Api\V1\AuthController')->only('store');
@@ -24,7 +25,7 @@ Route::group([
     Route::resource('global_parameter', 'Api\V1\LoanGlobalParameterController')->only('store');
     Route::resource('global_parameter', 'Api\V1\LoanGlobalParameterController')->only('update');
     Route::resource('global_parameter', 'Api\V1\LoanGlobalParameterController')->only('destroy');    
-    
+
     // Biométrico
     Route::get('affiliate/{id}/fingerprint', 'Api\V1\AffiliateController@fingerprint_saved');
 
@@ -106,7 +107,7 @@ Route::group([
         ], function () {
             Route::resource('loan', 'Api\V1\LoanController')->only('store');
             Route::post('loan/{id}/document', 'Api\V1\LoanController@submit_documents');
-            Route::get('loan/print/requirements', 'Api\V1\LoanController@print_requirements');
+            //Route::get('loan/print/requirements', 'Api\V1\LoanController@print_requirements');
             Route::get('affiliate/{id}/loan_modality', 'Api\V1\AffiliateController@get_loan_modality');
             Route::get('loan/print/form', 'Api\V1\LoanController@print_form');
             Route::get('loan/{id}/print/contract', 'Api\V1\LoanController@print_contract');

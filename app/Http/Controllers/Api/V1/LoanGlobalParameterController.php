@@ -58,8 +58,8 @@ class LoanGlobalParameterController extends Controller
     * @authenticated
     * @response
     * {
-    *     "offset_day":7, 
-    *     "livelihood_amount":500 
+    *     "offset_day":7,
+    *     "livelihood_amount":500
     * }
     */
     public function store(Request $request)

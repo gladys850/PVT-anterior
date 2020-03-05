@@ -90,7 +90,7 @@ class PersonalReferenceController extends Controller
     *   "cell_phone_number": 76543210,
     *   "updated_at": "2020-03-03 18:16:43",
     *   "created_at": "2020-03-03 18:16:43",
-    *   "id": 5 
+    *   "id": 5
     * }
     */
     public function store(PersonalReferenceForm $request)
@@ -103,7 +103,7 @@ class PersonalReferenceController extends Controller
     * Devuelve el detalle de una Referencia Personal mediante su ID
     * @urlParam personal_reference required ID de Referencia Personal. Example: 5
     * @response
-    * {  
+    * {
     *    "id": 5,
     *    "city_identity_card_id": 5,
     *    "identity_card": "165134-1R",
@@ -143,7 +143,7 @@ class PersonalReferenceController extends Controller
     * @bodyParam cell_phone_number integer Número de celular. Example: 76543210
     * @authenticated
     * @response
-    * {  
+    * {
     *    "id": 5,
     *    "city_identity_card_id": 5,
     *    "identity_card": "165134-1R",
@@ -174,7 +174,7 @@ class PersonalReferenceController extends Controller
     * @urlParam id required ID de Persona de Referencia. Example: 5
     * @authenticated
     * @response
-    * {  
+    * {
     *    "id": 5,
     *    "city_identity_card_id": 5,
     *    "identity_card": "165134-1R",
