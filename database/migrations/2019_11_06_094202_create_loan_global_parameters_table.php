@@ -15,7 +15,8 @@ class CreateLoanGlobalParametersTable extends Migration
     {
         Schema::create('loan_global_parameters', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->integer('offset_day'); //dia de desface
+            $table->integer('offset_ballot_day'); //dia de desface de boletas
+            $table->integer('offset_interest_day'); //dia de desface de interes por desembolso
             $table->integer('livelihood_amount')->nullable(); ; // cantidad de sustento-->inf. estadistica
             $table->timestamps();
         });

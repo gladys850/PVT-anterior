@@ -27,7 +27,8 @@ class LoanGlobalParameterController extends Controller
     *    "data": [
     *        {
     *            "id": 1,
-    *            "offset_day": 7,
+    *            "offset_ballot_day": 7,
+    *            "offset_interest_day": 15,
     *            "livelihood_amount": 510,
     *            "created_at": "2020-02-27 16:29:10",
     *            "updated_at": "2020-02-27 16:29:10"
@@ -53,12 +54,14 @@ class LoanGlobalParameterController extends Controller
     /**
     * Nuevo Parametro Global de Préstamo
     * Inserta nuevo Parametro Global de préstamo
-    * @bodyParam offset_day integer required fecha de corte. Example: 7
+    * @bodyParam offset_ballot_day integer required Fecha de corte para boletas. Example: 7
+    * @bodyParam offset_interest_day integer required Fecha de corte para interés. Example: 15
     * @bodyParam livelihood_amount integer required monto de subsistencia. Example: 500
     * @authenticated
     * @response
     * {
-    *     "offset_day":7, 
+    *     "offset_ballot_day": 7,
+    *     "offset_interest_day": 15,
     *     "livelihood_amount":500 
     * }
     */
