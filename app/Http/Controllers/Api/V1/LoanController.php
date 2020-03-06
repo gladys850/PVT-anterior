@@ -415,6 +415,70 @@ class LoanController extends Controller
     }
 
     /**
+    * Actualización de documentos presentados
+    * Actualiza los datos para cada documento presentado
+    * @urlParam loan_id required ID de préstamo. Example: 8
+    * @urlParam document_id required ID de préstamo. Example: 40
+    * @bodyParam is_valid boolean required Validez del documento. Example: true
+    * @bodyParam comment string Comentario para añadir a la presentación. Example: Documento actualizado a la gestión actual
+    * @response
+    * [
+    *     {
+    *         "id": 40,
+    *         "name": "Cédula de Identidad del (la) titular en copia simple.",
+    *         "created_at": "2019-04-02 21:25:32",
+    *         "updated_at": null,
+    *         "expire_date": null,
+    *         "pivot": {
+    *             "loan_id": 8,
+    *             "procedure_document_id": 40,
+    *             "reception_date": "2020-03-06",
+    *             "comment": "Documento actualizado a la gestión actual",
+    *             "is_valid": true
+    *         }
+    *     }, {}
+    * ]
+    */
+    public function update_document(Request $request, $loan_id, $document_id)
+    {
+        $request->validate([
+            'is_valid' => 'required|boolean',
+            'comment' => 'string|nullable|min:1'
+        ]);
+        $loan = Loan::findOrFail($loan_id);
+        $loan->submitted_documents()->updateExistingPivot($document_id, $request->all());
+        return $loan->submitted_documents;
+    }
+
+    /**
+    * Lista de documentos presentados
+    * Obtiene la lista de los documentos presentados para el trámite
+    * @urlParam id required ID de préstamo. Example: 8
+    * @response
+    * [
+    *     {
+    *         "id": 40,
+    *         "name": "Cédula de Identidad del (la) titular en copia simple.",
+    *         "created_at": "2019-04-02 21:25:32",
+    *         "updated_at": null,
+    *         "expire_date": null,
+    *         "pivot": {
+    *             "loan_id": 8,
+    *             "procedure_document_id": 40,
+    *             "reception_date": "2020-03-06",
+    *             "comment": "Documento actualizado a la gestión actual",
+    *             "is_valid": true
+    *         }
+    *     }, {}
+    * ]
+    */
+    public function get_documents($id)
+    {
+        $loan = Loan::findOrFail($id);
+        return $loan->submitted_documents;
+    }
+
+    /**
     * Desembolso Afiliado
     * Devuelve los datos del o la cónyugue en caso de que hubiera fallecido a quien se hace el desembolso del préstamo
     * @urlParam id required ID de préstamo. Example: 2
