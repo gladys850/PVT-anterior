@@ -29,7 +29,7 @@ use App\Events\FingerprintSavedEvent;
 use Illuminate\Support\Facades\Storage;
 use Carbon\CarbonImmutable;
 
-/** @group Datos Afiliado
+/** @group Afiliados
 * Datos de los afiliados y métodos para obtener y establecer sus relaciones
 */
 class AffiliateController extends Controller
