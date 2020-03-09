@@ -554,7 +554,7 @@ class LoanController extends Controller
     /**
     * Impresión de los documentos presentados
     * Devuelve un pdf de los documentos presentados para un préstamo registrado
-    * @urlParam loan required ID de préstamo. Example: 6
+    * @urlParam id required ID del préstamo. Example: 6
     * @queryParam copies Número de copias del documento. Example: 2
     * @authenticated
     */
@@ -658,7 +658,7 @@ class LoanController extends Controller
     /**
     * Impresión de Contrato
     * Devuelve un pdf del contrato acorde a un ID de préstamo
-    * @queryParam loan_id required ID del préstamo. Example: 1
+    * @urlParam id required ID del préstamo. Example: 6
     * @queryParam copies Número de copias del documento. Example: 2
     * @authenticated
     * @response
