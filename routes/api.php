@@ -4,7 +4,6 @@ Route::group([
     'middleware' => 'api',
     'prefix' => 'v1',
 ], function () {
-
     // Rutas abiertas
     Route::resource('auth', 'Api\V1\AuthController')->only('store');
     Route::resource('config', 'Api\V1\ConfigController')->only('index');
@@ -23,8 +22,8 @@ Route::group([
     Route::resource('global_parameter', 'Api\V1\LoanGlobalParameterController')->only('index', 'show');
     Route::resource('global_parameter', 'Api\V1\LoanGlobalParameterController')->only('store');
     Route::resource('global_parameter', 'Api\V1\LoanGlobalParameterController')->only('update');
-    Route::resource('global_parameter', 'Api\V1\LoanGlobalParameterController')->only('destroy');    
-    
+    Route::resource('global_parameter', 'Api\V1\LoanGlobalParameterController')->only('destroy');
+
     // Biométrico
     Route::get('affiliate/{id}/fingerprint', 'Api\V1\AffiliateController@fingerprint_saved');
 

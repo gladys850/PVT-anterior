@@ -10,11 +10,11 @@ use App\ProcedureModality;
 use App\Loan;
 
 /** @group Préstamos
-* Simulador de la calculadora 
+* Simulador de la calculadora
 */
 class CalculatorController extends Controller
 {
-    /** 
+    /**
     * Calculadora
     * @bodyParam procedure_modality_id integer required ID de modalidad. Example: 32
     * @bodyParam amount_requested integer required monto solicitado. Example: 2000
@@ -97,12 +97,12 @@ class CalculatorController extends Controller
                 'monto_maximo_sugerido'=>round($maximum_suggested_amount),
                 'valido' => intval($index_calculated) <= ($procedure_modality->loan_modality_parameter->decimal_index)*100
             ]);
-        }else{ abort (404);} 
+        }else{ abort (404);}
     }
     // funcion para sacar el liquido para calificacion
     private function liquid_qualification($payable_liquid_average,$total_bonuses,$affiliate,$parent_quota=0){
         $active_guarantees = $affiliate->active_guarantees();$sum_quota_guarantor=0;
-        foreach($active_guarantees as $res){ 
+        foreach($active_guarantees as $res){
             $sum_quota_guarantor+= ($res->estimated_quota*$res->pivot->payment_percentage)/100;
         }
         return ($payable_liquid_average-$total_bonuses-$sum_quota_guarantor+$parent_quota);
@@ -110,18 +110,18 @@ class CalculatorController extends Controller
     //funcion para sacar la cuota estimada con la calculadora
     private function quota_calculator($procedure_modality,$months_term,$amount_requested,$liquid_qualification){
         $loan_interval = $procedure_modality->procedure_type->loan_interval;
-        $interest_rate = $procedure_modality->current_interest->monthly_current_interest; 
+        $interest_rate = $procedure_modality->current_interest->monthly_current_interest;
         if($amount_requested>0 && $months_term ==null){
-            return ((($interest_rate)/(1-(1/pow((1+$interest_rate),$loan_interval->maximum_term))))*$amount_requested);   
+            return ((($interest_rate)/(1-(1/pow((1+$interest_rate),$loan_interval->maximum_term))))*$amount_requested);
         }if($amount_requested ==null && $months_term>0){
             $maximum_qualified_amount = $this->maximum_amount($modality_id,$months_term,$liquid_qualification);
-            return ((($interest_rate)/(1-(1/pow((1+$interest_rate),$months_term))))*$maximum_qualified_amount);   
+            return ((($interest_rate)/(1-(1/pow((1+$interest_rate),$months_term))))*$maximum_qualified_amount);
         }if ($months_term>0 && $amount_requested>0){
-            return ((($interest_rate)/(1-(1/pow((1+$interest_rate),$months_term))))*$amount_requested);   
+            return ((($interest_rate)/(1-(1/pow((1+$interest_rate),$months_term))))*$amount_requested);
         }
     }
     // monto maximo
-    private function maximum_amount($procedure_modality,$months_term,$liquid_qualification){ 
+    private function maximum_amount($procedure_modality,$months_term,$liquid_qualification){
         $interest_rate = $procedure_modality->current_interest->monthly_current_interest;
         $loan_interval = $procedure_modality->procedure_type->loan_interval;
         $debt_index = $procedure_modality->loan_modality_parameter->decimal_index;
@@ -132,7 +132,7 @@ class CalculatorController extends Controller
         if ($maximum_qualified_amount > ($loan_interval->maximum_amount)){
             $maximum_qualified_amount = $loan_interval->maximum_amount;
         } else {
-            $maximum_qualified_amount = $maximum_qualified_amount; 
+            $maximum_qualified_amount = $maximum_qualified_amount;
         }
         return $maximum_qualified_amount;
     }
