@@ -90,45 +90,47 @@ class LoanController extends Controller
     /**
     * Nuevo préstamo
     * Inserta nuevo préstamo
-    * @bodyParam procedure_modality_id integer required ID de modalidad. Example: 35
-    * @bodyParam amount_requested integer required monto solicitado. Example: 3000
-    * @bodyParam city_id integer required ID de la ciudad. Example: 2
-    * @bodyParam loan_term integer required plazo. Example: 3
+    * @bodyParam procedure_modality_id integer required ID de modalidad. Example: 32
+    * @bodyParam amount_requested integer required monto solicitado. Example: 2000
+    * @bodyParam city_id integer required ID de la ciudad. Example: 3
+    * @bodyParam loan_term integer required plazo. Example: 2
     * @bodyParam disbursement_type_id integer required Tipo de desembolso. Example: 1
-    * @bodyParam lenders required array Lista de IDs de afiliados Titular de préstamo. Example: [1,6]
-    * @bodyParam guarantors array Lista de IDs de afiliados Garante de préstamo. Example: [3,4]
+    * @bodyParam lenders array required Lista de IDs de afiliados Titular de préstamo. Example: [5146]
+    * @bodyParam guarantors array Lista de IDs de afiliados Garante de préstamo. Example: []
+    * @bodyParam disbursement_date date Fecha de desembolso. Example: 2020-02-01
     * @bodyParam parent_loan_id integer ID de Préstamo Padre. Example: 1
     * @bodyParam parent_reason enum (refinanciado, reprogramado) Tipo de trámite hijo. Example: refinanciado
-    * @bodyParam disbursable_id integer ID de afiliado a quien se desembolsará. Example: 1
+    * @bodyParam account_number integer Número de cuenta en Banco Union. Example: 586621345
     * @authenticated
     * @response
-    * {
-    *    "disbursable_id": "1",
-    *    "disbursable_type": "affiliates",
-    *    "procedure_modality_id": 35,
-    *    "loan_interest_id": 4,
-    *    "amount_requested": 3000,
-    *    "city_id": 2,
-    *    "loan_term": 3,
-    *    "disbursement_type_id": 1,
-    *    "code": null,
-    *    "disbursement_date": "2020-02-01",
-    *    "parent_loan_id": "1",
-    *    "parent_reason": null,
-    *    "amount_approved": "3000",
-    *    "loan_state_id": 1,
-    *    "request_date": "2020-02-17T13:38:18.562649Z",
-    *    "updated_at": "2020-02-17 09:38:18",
-    *    "created_at": "2020-02-17 09:38:18",
-    *    "id": 5,
-    *    "modality": {
-    *        "id": 35,
-    *        "procedure_type_id": 10,
-    *        "name": "Corto plazo con disponibilidad de letra \"A\"",
-    *        "shortened": "PCP-DLA",
-    *        "is_valid": true
-    *    }
-    * }
+    *   {
+    *   "procedure_modality_id": 32,
+    *   "loan_interest_id": 1,
+    *   "amount_requested": 2000,
+    *   "city_id": 3,
+    *   "loan_term": 2,
+    *   "disbursement_type_id": 1,
+    *   "disbursement_date": "2020-02-01",
+    *   "parent_loan_id": 1,
+    *   "parent_reason": "refinanciado",
+    *   "account_number": 586621345,
+    *   "disbursable_type": "affiliates",
+    *   "disbursable_id": 5146,
+    *   "amount_approved": 2000,
+    *   "request_date": "2020-03-05T20:27:23.900575Z",
+    *   "loan_state_id": 1,
+    *   "code": "PTMO000017-2020",
+    *   "updated_at": "2020-03-05 16:27:23",
+    *   "created_at": "2020-03-05 16:27:23",
+    *   "id": 17,
+    *   "modality": {
+    *       "id": 32,
+    *       "procedure_type_id": 9,
+    *       "name": "Anticipo sector activo",
+    *       "shortened": "ANT-SA",
+    *       "is_valid": true
+    *   }
+    }
     */
     public function store(LoanForm $request)
     {
@@ -250,48 +252,47 @@ class LoanController extends Controller
     /**
     * Actualizar préstamo
     * Actualizar datos principales de préstamo
-    * @urlParam id required ID de préstamo. Example: 1
-    * @bodyParam disbursable_id integer required ID de afiliado a quien se hara el desembolso. Example: 1
-    * @bodyParam disbursable_type string required (affiliates,spouses). Example: affiliates
-    * @bodyParam procedure_modality_id integer required ID de modalidad. Example: 35
-    * @bodyParam amount_requested integer required monto solicitado. Example: 5000
-    * @bodyParam city_id integer required ID de la ciudad. Example: 2
-    * @bodyParam loan_term integer required plazo. Example: 3
+    * @urlParam id required ID de préstamo. Example: 17
+    * @bodyParam procedure_modality_id integer required ID de modalidad. Example: 32
+    * @bodyParam amount_requested integer required monto solicitado. Example: 2000
+    * @bodyParam city_id integer required ID de la ciudad. Example: 4
+    * @bodyParam loan_term integer required plazo. Example: 2
     * @bodyParam disbursement_type_id integer required Tipo de desembolso. Example: 1
-    * @bodyParam lenders array required Lista de IDs de afiliados Titular de préstamo. Example: [1,6]
+    * @bodyParam lenders array required Lista de IDs de afiliados Titular de préstamo. Example: [5146]
     * @bodyParam guarantors array Lista de IDs de afiliados Garante de préstamo. Example: []
     * @bodyParam disbursement_date date Fecha de desembolso. Example: 2020-02-01
     * @bodyParam parent_loan_id integer ID de Préstamo Padre. Example: 1
-    * @bodyParam parent_reason enum (refinanciado,reprogramado)  . Example: refinanciado
-    * @bodyParam amount_approved integer Monto Aprobado. Example: 3000
+    * @bodyParam parent_reason enum (refinanciado, reprogramado) Tipo de trámite hijo. Example: refinanciado
+    * @bodyParam account_number integer Número de cuenta en Banco Union. Example: 586621345
     * @authenticated
     * @response
     * {
-    *    "id": 1,
-    *    "code": null,
-    *    "disbursable_id": "1",
-    *    "disbursable_type": "affiliates",
-    *    "procedure_modality_id": 35,
-    *    "disbursement_date": "2020-02-01",
-    *    "parent_loan_id": null,
-    *    "parent_reason": null,
-    *    "request_date": "2020-02-17",
-    *    "amount_requested": 5000,
-    *    "city_id": 2,
-    *    "loan_interest_id": 4,
-    *    "loan_state_id": 1,
-    *    "amount_approved": "3000",
-    *    "loan_term": 3,
-    *    "disbursement_type_id": 1,
-    *    "created_at": "2020-02-17 10:37:48",
-    *    "updated_at": "2020-02-17 10:39:41",
-    *    "modality": {
-    *        "id": 35,
-    *        "procedure_type_id": 10,
-    *        "name": "Corto plazo con disponibilidad de letra \"A\"",
-    *        "shortened": "PCP-DLA",
-    *        "is_valid": true
-    *    }
+    *     "id": 17,
+    *     "code": "PTMO000017-2020",
+    *     "disbursable_id": 5146,
+    *     "disbursable_type": "affiliates",
+    *     "procedure_modality_id": 32,
+    *     "disbursement_date": "2020-02-01",
+    *     "parent_loan_id": 1,
+    *     "parent_reason": "refinanciado",
+    *     "request_date": "2020-03-05",
+    *     "amount_requested": 2000,
+    *     "city_id": 4,
+    *     "loan_interest_id": 1,
+    *     "loan_state_id": 1,
+    *     "amount_approved": 2000,
+    *     "loan_term": 2,
+    *     "disbursement_type_id": 1,
+    *     "account_number": 586621345,
+    *     "created_at": "2020-03-05 16:27:23",
+    *     "updated_at": "2020-03-05 16:34:04",
+    *     "modality": {
+    *         "id": 32,
+    *         "procedure_type_id": 9,
+    *         "name": "Anticipo sector activo",
+    *         "shortened": "ANT-SA",
+    *         "is_valid": true
+    *     }
     * }
     */
     public function update(LoanForm $request, $id)

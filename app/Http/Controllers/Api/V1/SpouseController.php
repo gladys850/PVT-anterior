@@ -133,7 +133,7 @@ class SpouseController extends Controller
     * }
     */
     public function store(SpouseForm $request)
-    {        
+    {
         return Spouse::create($request->all());
     }
 

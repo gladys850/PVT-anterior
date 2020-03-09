@@ -22,8 +22,12 @@ Route::group([
     Route::resource('global_parameter', 'Api\V1\LoanGlobalParameterController')->only('index', 'show');
     Route::resource('global_parameter', 'Api\V1\LoanGlobalParameterController')->only('store');
     Route::resource('global_parameter', 'Api\V1\LoanGlobalParameterController')->only('update');
+<<<<<<< HEAD
     Route::resource('global_parameter', 'Api\V1\LoanGlobalParameterController')->only('destroy');    
 
+=======
+    Route::resource('global_parameter', 'Api\V1\LoanGlobalParameterController')->only('destroy');
+>>>>>>> 1d692e5574ff612bf5e221e9a66c2a13e07ce8d4
 
     // Biométrico
     Route::get('affiliate/{id}/fingerprint', 'Api\V1\AffiliateController@fingerprint_saved');
