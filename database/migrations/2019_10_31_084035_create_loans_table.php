@@ -22,7 +22,7 @@ class CreateLoansTable extends Migration
             $table->foreign('procedure_modality_id')->references('id')->on('procedure_modalities');
             $table->date('disbursement_date')->nullable(); //fecha de desembolso
             $table->integer('parent_loan_id')->nullable();  // id padre , loan padre
-            $table->enum('parent_reason', ['refinanciado', 'reprogramado'])->nullable();// para indicar si es reprogramado y refinanciado 
+            $table->enum('parent_reason', ['REFINANCIAMIENTO', 'REPROGRAMACIÓN'])->nullable();// para indicar si es reprogramación y refinanciamiento 
             $table->date('request_date'); //fecha de solicitud
             $table->BigInteger('amount_requested'); // monto solicitado
             $table->unsignedBigInteger('city_id');  // id lugar de la solicitud 
