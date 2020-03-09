@@ -28,24 +28,26 @@
 
     <table class="table-info w-100 text-center uppercase my-20">
         <tr class="bg-grey-darker text-xxs text-white">
-            <td colspan="{{ $loan->parent_loan ? 3 : 2 }}">Modalidad de trámite</td>
+            <td>Código Tŕamite</td>
+            <td colspan="{{ $loan->parent_loan ? 2 : 1 }}">Modalidad de trámite</td>
         </tr>
         <tr>
-            <td colspan="{{ $loan->parent_loan ? 3 : 2 }}" class="data-row py-5">{{ $loan->modality->name }}</td>
+            <td class="data-row py-5">{{ $loan->code }}</td>
+            <td colspan="{{ $loan->parent_loan ? 2 : 1 }}" class="data-row py-5">{{ $loan->modality->name }}</td>
         </tr>
         <tr class="bg-grey-darker text-xxs text-white">
-            <td>Monto solicitado</td>
-            <td>Plazo</td>
             @if ($loan->parent_loan)
             <td>Trámite origen</td>
             @endif
+            <td>Monto solicitado</td>
+            <td>Plazo</td>
         </tr>
         <tr>
-            <td class="data-row py-5">{{ Util::money_format($loan->amount_requested) }} <span class="capitalize">Bs.</span></td>
-            <td class="data-row py-5">{{ $loan->loan_term }} <span class="capitalize">Meses</span></td>
             @if ($loan->parent_loan)
             <td class="data-row py-5">{{ $loan->parent_loan->code }}</td>
             @endif
+            <td class="data-row py-5">{{ Util::money_format($loan->amount_requested) }} <span class="capitalize">Bs.</span></td>
+            <td class="data-row py-5">{{ $loan->loan_term }} <span class="capitalize">Meses</span></td>
         </tr>
     </table>
 
@@ -61,5 +63,29 @@
             </tr>
         @endforeach
     </table>
+
+    <div class="block m-t-100">
+        <table>
+            <tbody>
+                <tr>
+                    <td width="50%">
+                        @include('partials.signature_box', [
+                            'full_name' => $lender->full_name,
+                            'identity_card' => $lender->identity_card_ext,
+                            'position' => 'SOLICITANTE'
+                        ])
+                    </td>
+                    <td width="50%">
+                        @php($user = Auth::user())>
+                        @include('partials.signature_box', [
+                            'full_name' => $user->full_name,
+                            'position' => $user->position,
+                            'employee' => true
+                        ])
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 </body>
 </html>
