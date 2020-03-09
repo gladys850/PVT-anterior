@@ -28,55 +28,36 @@
 
     <table class="table-info w-100 text-center uppercase my-20">
         <tr class="bg-grey-darker text-xxs text-white">
-            <td colspan="{{ $parent_loan ? 3 : 2 }}">Modalidad de préstamo</td>
+            <td colspan="{{ $loan->parent_loan ? 3 : 2 }}">Modalidad de trámite</td>
         </tr>
         <tr>
-            <td colspan="{{ $parent_loan ? 3 : 2 }}" class="data-row py-5">{{ $procedure_modality->name }}</td>
+            <td colspan="{{ $loan->parent_loan ? 3 : 2 }}" class="data-row py-5">{{ $loan->modality->name }}</td>
         </tr>
         <tr class="bg-grey-darker text-xxs text-white">
             <td>Monto solicitado</td>
             <td>Plazo</td>
-            @if ($parent_loan)
+            @if ($loan->parent_loan)
             <td>Trámite origen</td>
             @endif
         </tr>
         <tr>
-            <td class="data-row py-5">{{ Util::money_format($amount_requested) }} <span class="capitalize">Bs.</span></td>
-            <td class="data-row py-5">{{ $loan_term }} <span class="capitalize">Meses</span></td>
-            @if ($parent_loan)
-            <td class="data-row py-5">{{ $parent_loan->code }}</td>
+            <td class="data-row py-5">{{ Util::money_format($loan->amount_requested) }} <span class="capitalize">Bs.</span></td>
+            <td class="data-row py-5">{{ $loan->loan_term }} <span class="capitalize">Meses</span></td>
+            @if ($loan->parent_loan)
+            <td class="data-row py-5">{{ $loan->parent_loan->code }}</td>
             @endif
         </tr>
     </table>
 
-    <div class="block">
-        <div class="font-semibold leading-tight text-center m-b-10 text-xs">Documentos a presentar</div>
-    </div>
-
     <table class="table-info w-100 text-center uppercase my-20">
         <tr class="bg-grey-darker text-xxs text-white">
-            <td colspan="2">Requeridos</td>
+            <td colspan="3">Documentos presentados</td>
         </tr>
-        @foreach ($procedure_modality->requirements_list['required'] as $key => $group)
-            @foreach ($group as $i => $document)
-                <tr>
-                    @if ($i == array_key_first($group->all()))
-                    <td class="data-row py-5 w-10" rowspan="{{ count($group) }}">{{ $key + 1 }}</td>
-                    @endif
-                    <td class="data-row py-5 w-90">{{ $document->name }}</td>
-                </tr>
-            @endforeach
-        @endforeach
-    </table>
-
-    <table class="table-info w-100 text-center uppercase my-20">
-        <tr class="bg-grey-darker text-xxs text-white">
-            <td colspan="2">Opcionales</td>
-        </tr>
-        @foreach ($procedure_modality->requirements_list['optional'] as $key => $document)
+        @foreach ($loan->submitted_documents as $key => $document)
             <tr>
                 <td class="data-row py-5 w-10">{{ $key + 1 }}</td>
-                <td class="data-row py-5 w-90">{{ $document->name }}</td>
+                <td class="data-row py-5 w-85">{{ $document->name }}</td>
+                <td class="data-row py-5 w-5">&#10003;</td>
             </tr>
         @endforeach
     </table>

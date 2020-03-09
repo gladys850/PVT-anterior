@@ -59,6 +59,11 @@ class Loan extends Model
         return $this->morphToMany(Tag::class, 'taggable')->withPivot('user_id', 'date')->withTimestamps();
     }
 
+    public function parent_loan()
+    {
+        return $this->belongsTo(Loan::class);
+    }
+
     public function state()
     {
       return $this->belongsTo(LoanState::class, 'loan_state_id','id');
