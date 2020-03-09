@@ -99,6 +99,7 @@ Route::group([
             Route::get('loan/{id}/disbursable', 'Api\V1\LoanController@get_disbursable');
             Route::resource('loan_interval', 'Api\V1\LoanIntervalController')->only('index');
             Route::get('affiliate/{id}/loan','Api\V1\AffiliateController@get_loans');
+            Route::get('loan/{id}/document','Api\V1\LoanController@get_documents');
         });
         Route::group([
             'middleware' => 'permission:create-loan'
@@ -114,6 +115,7 @@ Route::group([
             'middleware' => 'permission:update-loan'
         ], function () {
             Route::resource('loan', 'Api\V1\LoanController')->only('update');
+            Route::patch('loan/{loan_id}/document/{document_id}', 'Api\V1\LoanController@update_document');
         });
         Route::group([
             'middleware' => 'permission:delete-loan'
