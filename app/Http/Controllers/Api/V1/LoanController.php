@@ -99,7 +99,7 @@ class LoanController extends Controller
     * @bodyParam guarantors array Lista de IDs de afiliados Garante de préstamo. Example: []
     * @bodyParam disbursement_date date Fecha de desembolso. Example: 2020-02-01
     * @bodyParam parent_loan_id integer ID de Préstamo Padre. Example: 1
-    * @bodyParam parent_reason enum (refinanciado, reprogramado) Tipo de trámite hijo. Example: refinanciado
+    * @bodyParam parent_reason enum (REFINANCIAMIENTO, REPROGRAMACIÓN) Tipo de trámite hijo. Example: REFINANCIAMIENTO
     * @bodyParam account_number integer Número de cuenta en Banco Union. Example: 586621345
     * @authenticated
     * @response
@@ -112,7 +112,7 @@ class LoanController extends Controller
     *   "disbursement_type_id": 1,
     *   "disbursement_date": "2020-02-01",
     *   "parent_loan_id": 1,
-    *   "parent_reason": "refinanciado",
+    *   "parent_reason": "REFINANCIAMIENTO",
     *   "account_number": 586621345,
     *   "disbursable_type": "affiliates",
     *   "disbursable_id": 5146,
@@ -262,7 +262,7 @@ class LoanController extends Controller
     * @bodyParam guarantors array Lista de IDs de afiliados Garante de préstamo. Example: []
     * @bodyParam disbursement_date date Fecha de desembolso. Example: 2020-02-01
     * @bodyParam parent_loan_id integer ID de Préstamo Padre. Example: 1
-    * @bodyParam parent_reason enum (refinanciado, reprogramado) Tipo de trámite hijo. Example: refinanciado
+    * @bodyParam parent_reason enum (REFINANCIAMIENTO, REPROGRAMACIÓN) Tipo de trámite hijo. Example: REFINANCIAMIENTO
     * @bodyParam account_number integer Número de cuenta en Banco Union. Example: 586621345
     * @authenticated
     * @response
@@ -274,7 +274,7 @@ class LoanController extends Controller
     *     "procedure_modality_id": 32,
     *     "disbursement_date": "2020-02-01",
     *     "parent_loan_id": 1,
-    *     "parent_reason": "refinanciado",
+    *     "parent_reason": "REFINANCIAMIENTO",
     *     "request_date": "2020-03-05",
     *     "amount_requested": 2000,
     *     "city_id": 4,
@@ -368,11 +368,12 @@ class LoanController extends Controller
             if (!in_array($request->disbursable_id, $request->lenders)) abort(404);
             $disbursable_id = $request->disbursable_id;
         }
+        $disbursable = Affiliate::findOrFail($disbursable_id);
         if ($id) {
             $loan = Loan::findOrFail($id);
-            $loan->fill(array_merge($request->all(), (array)self::verify_spouse_disbursable($disbursable_id)));
+            $loan->fill(array_merge($request->all(), (array)self::verify_spouse_disbursable($disbursable)));
         } else {
-            $loan = new Loan(array_merge($request->all(), (array)self::verify_spouse_disbursable($disbursable_id), ['amount_approved' => $request->amount_requested]));
+            $loan = new Loan(array_merge($request->all(), (array)self::verify_spouse_disbursable($disbursable), ['amount_approved' => $request->amount_requested]));
         }
         $loan->save();
         return (object)[
@@ -533,9 +534,8 @@ class LoanController extends Controller
         return $loan->disbursable;
     }
 
-    public static function verify_spouse_disbursable($disbursable_id)
+    public static function verify_spouse_disbursable(Affiliate $affiliate)
     {
-        $affiliate = Affiliate::findOrFail($disbursable_id);
         if ($affiliate->dead) {
             $spouse = $affiliate->spouse;
             if ($spouse) return (object)[
@@ -552,55 +552,38 @@ class LoanController extends Controller
     }
 
     /**
-    * Impresión de los requisitos
-    * Devuelve un pdf de los requisitos acorde a una modalidad
-    * @queryParam lenders required Lista de IDs de afiliados Titular de préstamo. Example: [1,6]
-    * @queryParam procedure_modality_id required ID de la modalidad del préstamo. Example: 35
-    * @queryParam city_id required ID de la ciudad. Example: 2
-    * @queryParam amount_requested required Monto solicitado. Example: 5000
-    * @queryParam loan_term required Plazo. Example: 3
-    * @queryParam parent_loan_id ID de préstamo padre. Example: 1
+    * Impresión de los documentos presentados
+    * Devuelve un pdf de los documentos presentados para un préstamo registrado
+    * @urlParam id required ID del préstamo. Example: 6
+    * @queryParam copies Número de copias del documento. Example: 2
     * @authenticated
     */
-    public function print_requirements(Request $request)
+    public function print_documents(Request $request, $id)
     {
-        $request->validate([
-            'lenders' => 'required|array|min:1',
-            'lenders.*' => 'exists:affiliates,id',
-            'procedure_modality_id' => 'integer|required|exists:procedure_modalities,id',
-            'city_id' => 'integer|required|exists:cities,id',
-            'amount_requested' => 'integer|required|min:200|max:700000',
-            'loan_term' => 'integer|required|min:2|max:240',
-            'parent_loan_id' => 'integer|exists:loans,id'
-        ]);
-        $parent_loan = $request->has('parent_loan_id') ? Loan::findOrFail($request->parent_loan_id) : null;
+        $loan = Loan::findOrFail($id);
         $lenders = [];
-        foreach ($request->lenders as $lender) {
+        foreach ($loan->lenders as $lender) {
             array_push($lenders, self::verify_spouse_disbursable($lender)->disbursable);
         }
-        $procedure_modality = ProcedureModality::findOrFail($request->procedure_modality_id);
         $date = Carbon::now();
         $data = [
             'header' => [
                 'direction' => 'DIRECCIÓN DE ESTRATEGIAS SOCIALES E INVERSIONES',
                 'unity' => 'UNIDAD DE INVERSIÓN EN PRÉSTAMOS',
                 'table' => [
-                    ['Tipo', $procedure_modality->procedure_type->second_name],
-                    ['Modalidad', $procedure_modality->shortened],
+                    ['Tipo', $loan->modality->procedure_type->second_name],
+                    ['Modalidad', $loan->modality->shortened],
                     ['Usuario', auth()->user()->username ?? 'prueba']
                 ]
             ],
-            'title' => 'REQUISITOS PARA SOLICITUD DE ' . ($parent_loan ? 'REFINANCIAMIENTO' : 'PRÉSTAMO'),
-            'lenders' => $lenders,
-            'procedure_modality' => $procedure_modality,
-            'city' => City::findOrFail($request->city_id),
-            'parent_loan' => $parent_loan,
-            'amount_requested' => $request->amount_requested,
-            'loan_term' => $request->loan_term
+            'title' => 'DOCUMENTOS PRESENTADOS PARA SOLICITUD DE ' . ($loan->parent_loan ? $loan->parent_reason : 'PRÉSTAMO'),
+            'loan' => $loan,
+            'lenders' => $lenders
         ];
         $file_name = implode('_', ['solicitud', 'prestamo']) . '.pdf';
         $footerHtml = view()->make('partials.footer')->with(array('paginator' => true, 'print_date' => true, 'date' => Carbon::now()->ISOFormat('L H:m')))->render();
         $options = [
+            'copies' => $request->copies ?? 1,
             'orientation' => 'portrait',
             'page-width' => '216',
             'page-height' => '279',
@@ -612,7 +595,7 @@ class LoanController extends Controller
             'footer-html' => $footerHtml,
             'user-style-sheet' => public_path('css/report-print.min.css')
         ];
-        $pdf = \PDF::loadView('procedure_modality.requirements', $data);
+        $pdf = \PDF::loadView('loan.forms.submitted_documents', $data);
         $pdf->setOptions($options);
         return $pdf->stream($file_name);
     }
@@ -675,34 +658,35 @@ class LoanController extends Controller
     /**
     * Impresión de Contrato
     * Devuelve un pdf del contrato acorde a un ID de préstamo
-    * @queryParam loan_id required ID del préstamo. Example: 1
+    * @urlParam id required ID del préstamo. Example: 6
+    * @queryParam copies Número de copias del documento. Example: 2
     * @authenticated
     * @response
     */
-    public function print_contract($id)
+    public function print_contract(Request $request, $id)
     {
         $loan = Loan::findOrFail($id);
         $procedure_modality = $loan->modality;
         $lenders = [];
         foreach ($loan->lenders as $lender) {
-            $lenders[] = self::verify_spouse_disbursable($lender->id);
+            $lenders[] = self::verify_spouse_disbursable($lender);
         }
         $employees = [
             ['position' => 'Director General Ejecutivo'],
             ['position' => 'Director de Asuntos Administrativos']
         ];
         foreach ($employees as $key => $employee) {
-            $request = collect(json_decode(file_get_contents(env("RRHH_URL") . '/position?name=' . $employee['position']), true));
-            if ($request->count() == 1) {
-                $position = $request->first();
+            $req = collect(json_decode(file_get_contents(env("RRHH_URL") . '/position?name=' . $employee['position']), true));
+            if ($req->count() == 1) {
+                $position = $req->first();
             } else {
                 abort(404);
             }
-            $request = collect(json_decode(file_get_contents(implode('/', [env("RRHH_URL"), 'position', $position['id'], 'employee'])), true));
-            $employees[$key]['name'] = Util::trim_spaces(implode(' ', [$request['first_name'], $request['second_name'], $request['last_name'], $request['mothers_last_name']]));
-            $employees[$key]['identity_card'] = $request['identity_card'];
-            $request = collect(json_decode(file_get_contents(implode('/', [env("RRHH_URL"), 'city', $request['city_identity_card_id']])), true));
-            $employees[$key]['identity_card'] .= ' ' . $request['shortened'];
+            $req = collect(json_decode(file_get_contents(implode('/', [env("RRHH_URL"), 'position', $position['id'], 'employee'])), true));
+            $employees[$key]['name'] = Util::trim_spaces(implode(' ', [$req['first_name'], $req['second_name'], $req['last_name'], $req['mothers_last_name']]));
+            $employees[$key]['identity_card'] = $req['identity_card'];
+            $req = collect(json_decode(file_get_contents(implode('/', [env("RRHH_URL"), 'city', $req['city_identity_card_id']])), true));
+            $employees[$key]['identity_card'] .= ' ' . $req['shortened'];
         }
         $date = Carbon::now();
         $data = [
@@ -719,6 +703,7 @@ class LoanController extends Controller
         $file_name = implode('_', ['contrato', $procedure_modality->shortened, $id]) . '.pdf';
         $footerHtml = view()->make('partials.footer')->with(array('paginator' => true, 'print_date' => true, 'date' => Carbon::now()->ISOFormat('L H:m')))->render();
         $options = [
+            'copies' => $request->copies ?? 1,
             'orientation' => 'portrait',
             'page-width' => '216',
             'page-height' => '279',
@@ -735,8 +720,8 @@ class LoanController extends Controller
         return $pdf->stream($file_name);
     }
     /**
-    * Impresión del formulario Anticipo
-    * Devuelve un pdf del Formulario de solicitud
+    * Formulario de solicitud
+    * Devuelve el pdf del Formulario de solicitud
     * @queryParam lenders required Lista de IDs de afiliados Titular de préstamo. Example: [529]
     * @queryParam procedure_modality_id required ID de la modalidad del préstamo. Example: 32
     * @queryParam amount_requested required monto solicitado. Example: 2000
@@ -744,6 +729,7 @@ class LoanController extends Controller
     * @queryParam loan_term required Plazo. Example: 2
     * @queryParam destination required Destino de préstamo. Example: salud
     * @queryParam account_number Número de cuenta de Banco Unión. Example: 19334298
+    * @queryParam copies Número de copias del documento. Example: 2
     * @authenticated
     */
     public function print_form(Request $request)
@@ -787,6 +773,7 @@ class LoanController extends Controller
         $file_name = implode('_', ['formulario', 'solicitud_prestamo']) . '.pdf';
         $footerHtml = view()->make('partials.footer')->with(array('paginator' => true, 'print_date' => true, 'date' => Carbon::now()->ISOFormat('L H:m')))->render();
         $options = [
+            'copies' => $request->copies ?? 1,
             'orientation' => 'portrait',
             'page-width' => '216',
             'page-height' => '279',

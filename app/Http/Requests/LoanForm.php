@@ -36,10 +36,9 @@ class LoanForm extends FormRequest
             'disbursable_id'=>'integer',
             'disbursable_type'=>'string|in:affiliates,spouses',
             'account_number'=>'nullable|integer',
-            'code'=>'nullable',
             'disbursement_date'=>'nullable|date_format:"Y-m-d"',
             'parent_loan_id'=>'integer|nullable|exists:loans,id',
-            'parent_reason'=> 'string|nullable|in:refinanciado,reprogramado',
+            'parent_reason'=> 'string|nullable|in:REFINANCIAMIENTO,REPROGRAMACIÓN',
             'loan_interest_id'=>'exists:loan_interests,id',
             'loan_state_id'=>'exists:loan_states,id',
             'amount_approved'=>'integer|min:200|max:700000'
@@ -62,7 +61,7 @@ class LoanForm extends FormRequest
     public function filters()
     {
         return [
-            //'code' => 'trim|uppercase',
+            'parent_reason' => 'trim|uppercase'
         ];
     }
 }

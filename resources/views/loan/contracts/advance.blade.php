@@ -102,34 +102,26 @@
         La Paz, {{ Carbon::parse($loan->request_date)->isoFormat('LL') }}
         </p>
     </div>
-</div><br><br><br><br> 
-<div class="block">
+</div>
+<div class="block m-t-100">
     <div>
-        <div class='text-center'>
-            @for ($i=0; $i<strlen($lender->full_name); $i++)
-            _
-            @endfor
-            <br>
-            {{ $lender->full_name }}<br>
-            C.I. {{ $lender->identity_card_ext }}<br>
-            PRESTATARIO<br><br>
-        </div>
+        @include('partials.signature_box', [
+            'full_name' => $lender->full_name,
+            'identity_card' => $lender->identity_card_ext,
+            'position' => 'PRESTATARIO'
+        ])
     </div>
-    <div class="m-t-30 w-100">
+    <div class="m-t-75 w-100">
         <table>
             <tr>
                 @foreach ($employees as $key => $employee)
                 <td>
-                    <div class='text-center'>
-                        @for ($i=0; $i<strlen($employee['name']); $i++)
-                        _
-                        @endfor
-                        <br>
-                        {{ $employee['name'] }} <br>
-                        C.I. {{ $employee['identity_card'] }}<br>
-                        <b>{{ $employee['position'] }}</b><br>
-                        MUSERPOL
-                    </div>
+                    @include('partials.signature_box', [
+                        'full_name' => $employee['name'],
+                        'identity_card' => $employee['identity_card'],
+                        'position' => $employee['position'],
+                        'employee' => true
+                    ])
                 @endforeach
                 </td>
             </tr>
