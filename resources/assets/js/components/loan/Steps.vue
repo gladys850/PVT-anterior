@@ -136,7 +136,6 @@
               :bonos.sync="bonos"
               :payable_liquid.sync="payable_liquid"
               :modality.sync="modality"
-              :datos.sync="datos"
               :calculos.sync="calculos"
             />
             <v-container class="py-0">
@@ -190,7 +189,8 @@
           >
           <v-card color="grey lighten-1">
             <FormInformation
-            :formulario.sync="formulario"/>
+            :formulario.sync="formulario"
+            :datos.sync="datos"/>
             <v-container class="py-0">
               <v-row>
                 <v-spacer></v-spacer>
@@ -230,7 +230,7 @@
                   <v-btn
                     color="primary"
                     :to="{ name: 'affiliateIndex'}">
-                    Guardar
+                    Finalizar
                   </v-btn>
                 </v-col>
               </v-row>
@@ -329,35 +329,34 @@ export default {
     nextStep (n) {
       if (n == this.steps) {
         this.e1 = 1
-       
-      } 
+      }
       else {
         if(n==1)
         {
-    this.getLoanModality(this.$route.query.affiliate_id)
-        console.log(this.getLoanModality(this.$route.query.affiliate_id)+'paso1')
-     
+          this.getLoanModality(this.$route.query.affiliate_id)
+          console.log(this.getLoanModality(this.$route.query.affiliate_id)+'paso1 con la modalidad')
         }
         if(n==2)
         {
-        this.Calculator()
+          this.Calculator()
+          console.log(this.datos[0]+'modalidad')
+          console.log(this.datos[1]+'monto')
+          console.log(this.datos[2]+'plazo')
         }
         if(n==3)
         {
-          this.Calculator()
-        console.log(this.bonos[0]+'estos son los bonos')
-        console.log(this.bonos[1]+'estos son los bonos')
-        console.log(this.bonos[2]+'estos son los bonos')
-        console.log(this.bonos[3]+'estos son los bonos')
-        console.log(this.payable_liquid+'estos son los liquidos')
+          console.log(this.bonos[0]+'estos son los bonos')
+          console.log(this.bonos[1]+'estos son los bonos')
+          console.log(this.bonos[2]+'estos son los bonos')
+          console.log(this.bonos[3]+'estos son los bonos')
+          console.log(this.payable_liquid+'estos son los liquidos')
         }
          if(n==5)
         {
-        console.log(this.formulario[0]+'estos son los bonos')
-        console.log(this.formulario[1]+'estos son los bonos')
-               console.log(this.formulario[2]+'estos son los bonos')
+          console.log(this.formulario[0]+'deposito')
+          console.log(this.formulario[1]+'cuenta')
+          console.log(this.formulario[2]+'destino')
         }
-      
         this.e1 = n + 1
      }
     },
@@ -442,7 +441,6 @@ export default {
       })
  this.calculos= res.data
  this.calculos.plazo=this.datos[2]
-console.log('entro a calculadora'+this.calculos)
 } catch (e) {
       console.log(e)
     } finally {

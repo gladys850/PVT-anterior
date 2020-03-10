@@ -54,7 +54,6 @@
               <p>CALCULO DE CUOTA: {{ calculos.calculo_de_cuota }}</p>
               <p>INDICE DE ENDEUDAMIENTO: {{calculos.indice_endeudamiento }}</p>
               <p>MONTO MAXIMO SUGERIDO : {{calculos.monto_maximo_sugerido}}</p>
-              <p>MONTO MAXIMO SUGERIDO : {{calculos}}</p>
             </fieldset>
           </v-flex>
         </v-layout>
@@ -74,17 +73,6 @@ import { Validator } from 'vee-validate'
 export default {
 inject: ['$validator'],
 name: "loan-requirement",
-data: () => ({
-  plazo_meses :2,
-  monto_solicitado : null,
-  loanTypeSelected:null,
-  promedio_liquido_pagable:null,
-  total_bonos:null,
-  liquido_para_calificacion:null,
-  calculo_de_cuota:null,
-  indice_endeudamiento:null,
-  monto_maximo_sugerido:2000
-}),
   props: {
     bonos: {
       type: Array,
@@ -96,10 +84,6 @@ data: () => ({
     },
      modality: {
       type: Object,
-      required: true
-    },
-    datos: {
-      type: Array,
       required: true
     },
     calculos: {
