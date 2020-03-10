@@ -31,7 +31,6 @@
                 dense
                 readonly
                 v-validate.initial="'min:1|max:20'"
-                :error-messages="errors.collect('monto')"
                 data-vv-name="monto"
                 v-model="monto"
               ></v-text-field>
@@ -41,7 +40,6 @@
                 dense
                 readonly
                 v-validate.initial="'min:1|max:20'"
-                :error-messages="errors.collect('plazo')"
                 data-vv-name="plazo"
                 v-model="plazo"
               ></v-text-field>

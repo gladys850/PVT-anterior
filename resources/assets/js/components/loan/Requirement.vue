@@ -52,7 +52,7 @@
               </v-card>
             </v-col>
             <v-col cols="12" md="1" class="ma-0 pa-0">
-              <v-tooltip top>
+              <!--v-tooltip top>
                 <template v-slot:activator="{ on }">
                   <v-btn
                     fab
@@ -71,7 +71,7 @@
                 <div>
                   <span>Imprimir Requisitos</span>
                 </div>
-              </v-tooltip>
+              </v-tooltip-->
               <v-tooltip top>
                 <template v-slot:activator="{ on }">
                   <v-btn
@@ -129,7 +129,7 @@
                   </v-btn>
                 </template>
                 <div>
-                  <span>Gerenar Contrato</span>
+                  <span>Generar Contrato</span>
                 </div>
               </v-tooltip>
             </v-col>
@@ -265,16 +265,10 @@ export default {
     },
     async getFormPrint() {
     try {
-      let res = await axios.get(`loan/print/form`, {
-        params :{
-          lenders : [this.$route.query.affiliate_id],
-          procedure_modality_id:this.modality.id,
-          amount_requested: this.datos[1],
-          disbursement_type_id: this.formulario[0],
-          loan_term:this.datos[2],
-          destination: this.formulario[2],
-          account_number: this.formulario[1],
-          },
+      let res = await axios.get(`loan/${8}/print/form`, {
+        params:{
+         copies: 2
+        },
         responseType: 'arraybuffer'
         })
         let blob = new Blob([res.data], {
@@ -287,32 +281,34 @@ export default {
         this.loading = false;
       }
     },
-    async saveLoan() {
+     async saveLoan() {
       try {
         let res = await axios.post(`loan`, {
+          copies: 2,
+          responseType: "arraybuffer",
           lenders: [this.$route.query.affiliate_id],
           guarantors: [],
           disbursable_id: this.$route.query.affiliate_id,
           disbursable_type: "affiliates",
           procedure_modality_id: this.modality.id,
-          amount_requested: 2000,
+          amount_requested: this.calculos.monto_maximo_sugerido,
           city_id: this.$store.getters.cityId,
-          loan_term: 2,
-          disbursement_type_id: 1
-
+          loan_term: this.calculos.plazo,
+          disbursement_type_id: this.formulario[0],
+          account_number: this.formulario[1],
+          loan_destination_id: this.formulario[2]
         });
-        this.loan = res.data;
-        await axios.post(`loan/${this.loan.id}/document`, {
-          documents: this.selectedOpc.concat(
+          this.loan = res.data;
+            await axios.post(`loan/${this.loan.id}/document`, {
+            documents: this.selectedOpc.concat(
             this.selected.concat(this.radios.filter(Boolean))
           )
         });
-        this.toastr.success("Se guardó satisfactoriamente el grabado");
-        console.log(
-          this.selectedOpc.concat(
-            this.selected.concat(this.radios.filter(Boolean))
-          )
-        );
+        printJS({
+          printable: res.data.attachment.content,
+          type: res.data.attachment.type,
+          base64: true
+        })
       } catch (e) {
         console.log(e);
       } finally {
@@ -321,13 +317,10 @@ export default {
     },
     async getContractPrint() {
       try {
-        let res1 = await axios.get(`loan/${5}/print/contract`, {
+        let res1 = await axios.get(`loan/${8}/print/contract`, {
       responseType: 'arraybuffer'
       })
-        let res2 = await axios.get(`loan/${5}/print/documents`, {
-          params: {
-            copies: 3
-          },
+        let res2 = await axios.get(`loan/${8}/print/documents`, {
       responseType: 'arraybuffer'
       })
         let blob1 = new Blob([res1.data], {
