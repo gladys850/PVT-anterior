@@ -113,7 +113,6 @@ class Affiliate extends Model
         }
         return false;
     }
-
     public function category()
     {
       return $this->belongsTo(Category::class);

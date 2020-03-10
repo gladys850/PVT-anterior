@@ -27,7 +27,7 @@
               <v-text-field
                 dense
                 outlined
-                v-validate.initial="'min:1|max:20'"
+                v-validate.initial="'numeric|min:1|max:20'"
                 :error-messages="errors.collect('cuenta')"
                 data-vv-name="cuenta"
                 v-model="cuenta"
@@ -37,15 +37,16 @@
             <v-col cols="12" md="2" class="py-0">
               <label> Destino del Prestamo:</label>
             </v-col>
-            <v-col cols="12" md="9"  >
-              <v-text-field
+            <v-col cols="12" md="6"  >
+               <v-select
                 dense
-                outlined
-                v-validate.initial="'min:1|max:20'"
-                :error-messages="errors.collect('destino')"
+                v-validate="'required'"
                 data-vv-name="destino"
-                v-model="destino"
-              ></v-text-field>
+                v-model="loanTypeSelected2"
+                :items="destino"
+                item-text="name"
+                item-value="id"
+              ></v-select>
             </v-col>
           </v-row>
         </v-container>
@@ -61,34 +62,47 @@ import { Validator } from 'vee-validate'
   name: "loan-information",
   data: () => ({
     cuenta:null,
-    destino:null,
+    destino:[],
     visible:false,
     espacio:true,
     loanTypeSelected:null,
+    loanTypeSelected2:null,
     payment_types:[]
   }),
   props: {
     formulario: {
       type: Array,
       required: true
-    }
+    },
+    datos: {
+      type: Array,
+      required: true
+    },
   },
   beforeMount(){
     this.getPaymentTypes()
   },
+  mounted(){
+    this.getLoanDestination()
+  },
   methods: {
    Onchange(){
-        if(this.loanTypeSelected==2)
-        {
-          this.visible=true,
-          this.espacio=false
-        }else{
-          this.visible=false,
-          this.espacio=true
-        }
+      for (this.i = 0; this.i< this.payment_types.length; this.i++) {
+        if(this.loanTypeSelected==this.payment_types[this.i].id)
+          {
+            if(this.payment_types[this.i].name=='Deposito Bancario')
+              {
+                this.visible=true,
+                this.espacio=false
+              }else{
+                this.visible=false,
+                this.espacio=true
+              }
+          }
+      }
         this.formulario[0]=this.loanTypeSelected,
         this.formulario[1]=this.cuenta,
-        this.formulario[2]=this.destino
+        this.formulario[2]=this.loanTypeSelected2
     },
      async getPaymentTypes() {
       try {
@@ -96,6 +110,18 @@ import { Validator } from 'vee-validate'
         let res = await axios.get(`payment_type`)
         this.payment_types = res.data
         console.log(this.payment_types+'este es el tipo de desembolso');
+      } catch (e) {
+        console.log(e)
+      } finally {
+        this.loading = false
+      }
+    },
+     async getLoanDestination() {
+      try {
+        this.loading = true
+        let res = await axios.get(`procedure_type/${9}/loan_destination`)
+        this.destino = res.data
+        console.log(this.destino+'estos son los destinos');
       } catch (e) {
         console.log(e)
       } finally {

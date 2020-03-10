@@ -95,9 +95,6 @@
                   :outlined="editar"
                 ></v-text-field>
               </v-col>
-              <v-col cols="12" md="3">
-                {{'holasss'+this.modality.loan_modality_parameter.quantity_ballots+this.visible}}
-              </v-col>
             </v-row>
           </v-container>
         </v-card>
