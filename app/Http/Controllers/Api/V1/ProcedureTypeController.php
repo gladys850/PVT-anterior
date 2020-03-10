@@ -117,4 +117,34 @@ class ProcedureTypeController extends Controller
     {
         //
     }
+
+    /**
+    * Listado de destinos de préstamo por modalidad
+    * Obtiene la lista de destinos de préstamos por modalidad
+    * @urlParam id required ID de la modalidad. Example: 9
+    * @authenticated
+    * @response
+    * [
+    *   {
+    *       "id": 1,
+    *       "procedure_type_id": 9,
+    *       "name": "Salud",
+    *       "description": "Salud",
+    *       "created_at": null,
+    *       "updated_at": null
+    *   },
+    *   {
+    *       "id": 2,
+    *       "procedure_type_id": 9,
+    *       "name": "Consumo",
+    *       "description": "Consumo",
+    *       "created_at": null,
+    *       "updated_at": null
+    *   }
+    * ]
+    */
+    public function get_destination($id)
+    {
+        return ProcedureType::findOrFail($id)->loan_destination;
+    }
 }

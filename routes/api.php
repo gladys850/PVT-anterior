@@ -18,12 +18,6 @@ Route::group([
     Route::resource('procedure_modality', 'Api\V1\ProcedureModalityController')->only('index', 'show');
     Route::resource('module', 'Api\V1\ModuleController')->only('index', 'show');
     Route::get('module/{id}/procedure_type', 'Api\V1\ModuleController@get_procedure_types');
-    // Parametros globales de préstamos
-    Route::resource('global_parameter', 'Api\V1\LoanGlobalParameterController')->only('index', 'show');
-    Route::resource('global_parameter', 'Api\V1\LoanGlobalParameterController')->only('store');
-    Route::resource('global_parameter', 'Api\V1\LoanGlobalParameterController')->only('update');
-    Route::resource('global_parameter', 'Api\V1\LoanGlobalParameterController')->only('destroy');
-
     // Biométrico
     Route::get('affiliate/{id}/fingerprint', 'Api\V1\AffiliateController@fingerprint_saved');
 
@@ -47,6 +41,7 @@ Route::group([
         Route::get('procedure_modality/{id}/requirements', 'Api\V1\ProcedureModalityController@get_requirements');
         Route::resource('calculator', 'Api\V1\CalculatorController')->only('store');
         Route::resource('role', 'Api\V1\RoleController')->only('index', 'show');
+        Route::resource('global_parameter', 'Api\V1\LoanGlobalParameterController')->only('index', 'show', 'store', 'update', 'destroy');
 
         // Afiliado
         Route::group([
@@ -100,6 +95,7 @@ Route::group([
             Route::resource('loan_interval', 'Api\V1\LoanIntervalController')->only('index');
             Route::get('affiliate/{id}/loan','Api\V1\AffiliateController@get_loans');
             Route::get('loan/{id}/document','Api\V1\LoanController@get_documents');
+            Route::get('procedure_type/{id}/loan_destination', 'Api\V1\ProcedureTypeController@get_destination');
         });
         Route::group([
             'middleware' => 'permission:create-loan'
@@ -108,7 +104,7 @@ Route::group([
             Route::post('loan/{id}/document', 'Api\V1\LoanController@submit_documents');
             Route::get('loan/{id}/print/documents', 'Api\V1\LoanController@print_documents');
             Route::get('affiliate/{id}/loan_modality', 'Api\V1\AffiliateController@get_loan_modality');
-            Route::get('loan/print/form', 'Api\V1\LoanController@print_form');
+            Route::get('loan/{id}/print/form', 'Api\V1\LoanController@print_form');
             Route::get('loan/{id}/print/contract', 'Api\V1\LoanController@print_contract');
         });
         Route::group([

@@ -985,6 +985,7 @@ class AffiliateController extends Controller
             'external_discount' => 'boolean|nullable',
         ]);
         $affiliate = Affiliate::findOrFail($id);
+        if(!$affiliate->affiliate_state) abort(404);
         $modality = ProcedureType::findOrFail($request->procedure_type_id);
         return Loan::get_modality($modality->name, $affiliate);
     }
