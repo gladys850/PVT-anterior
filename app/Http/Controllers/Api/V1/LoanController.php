@@ -102,6 +102,7 @@ class LoanController extends Controller
     * @bodyParam parent_loan_id integer ID de Préstamo Padre. Example: 1
     * @bodyParam parent_reason enum (REFINANCIAMIENTO, REPROGRAMACIÓN) Tipo de trámite hijo. Example: REFINANCIAMIENTO
     * @bodyParam account_number integer Número de cuenta en Banco Union. Example: 586621345
+    * @bodyParam loan_destination_id integer required ID destino de Préstamo. Example: 1
     * @authenticated
     * @response
     *   {
@@ -111,6 +112,7 @@ class LoanController extends Controller
     *   "city_id": 3,
     *   "loan_term": 2,
     *   "disbursement_type_id": 1,
+    *   "loan_destination_id": 1,
     *   "disbursement_date": "2020-02-01",
     *   "parent_loan_id": 1,
     *   "parent_reason": "REFINANCIAMIENTO",
@@ -131,6 +133,7 @@ class LoanController extends Controller
     *       "shortened": "ANT-SA",
     *       "is_valid": true
     *   }
+    * }
     */
     public function store(LoanForm $request)
     {
@@ -270,6 +273,7 @@ class LoanController extends Controller
     * @bodyParam parent_loan_id integer ID de Préstamo Padre. Example: 1
     * @bodyParam parent_reason enum (REFINANCIAMIENTO, REPROGRAMACIÓN) Tipo de trámite hijo. Example: REFINANCIAMIENTO
     * @bodyParam account_number integer Número de cuenta en Banco Union. Example: 586621345
+    * @bodyParam loan_destination_id integer required ID destino de Préstamo. Example: 1
     * @authenticated
     * @response
     * {
@@ -289,6 +293,7 @@ class LoanController extends Controller
     *     "amount_approved": 2000,
     *     "loan_term": 2,
     *     "disbursement_type_id": 1,
+    *     "loan_destination_id": 1,
     *     "account_number": 586621345,
     *     "created_at": "2020-03-05 16:27:23",
     *     "updated_at": "2020-03-05 16:34:04",
@@ -697,35 +702,20 @@ class LoanController extends Controller
         if ($standalone) return Util::pdf_to_base64([$view], $file_name, 'letter', $request->copies ?? 1);
         return $view;
     }
+
     /**
-    * Formulario de solicitud
-    * Devuelve el pdf del Formulario de solicitud
-    * @queryParam lenders required Lista de IDs de afiliados Titular de préstamo. Example: [529]
-    * @queryParam procedure_modality_id required ID de la modalidad del préstamo. Example: 32
-    * @queryParam amount_requested required monto solicitado. Example: 2000
-    * @queryParam disbursement_type_id required Tipo de desembolso. Example: 2
-    * @queryParam loan_term required Plazo. Example: 2
-    * @queryParam destination required Destino de préstamo. Example: salud
-    * @queryParam account_number Número de cuenta de Banco Unión. Example: 19334298
+    * Impresión de Formulario de solicitud
+    * Devuelve el pdf del Formulario de solicitud acorde a un ID de préstamo
+    * @urlParam id required ID del préstamo. Example: 1
     * @queryParam copies Número de copias del documento. Example: 2
     * @authenticated
     */
     public function print_form(Request $request, $id, $standalone = true)
     {
-        $request->validate([
-            'disbursement_type_id' => 'required|exists:payment_types,id',
-            'procedure_modality_id' => 'required|exists:procedure_modalities,id',
-            'amount_requested'=>'required|integer|min:200|max:700000',
-            'lenders'=>'required|array|max:1|exists:affiliates,id',
-            'loan_term'=>'required|integer|min:1|max:240',
-            'destination'=>'required|string',
-            'account_number'=>'nullable|integer',
-        ]);
-        $procedure_modality = ProcedureModality::findOrFail($request->procedure_modality_id);
-        $payment_type = PaymentType::findOrFail($request->disbursement_type_id);
-        
+        $loan = Loan::findOrFail($id);
+        $procedure_modality = $loan->modality;
         $lenders = [];
-        foreach ($request->lenders as $lender) {
+        foreach ($loan->lenders as $lender) {
             array_push($lenders, self::verify_spouse_disbursable($lender)->disbursable);
         }
         $date = Carbon::now();
@@ -740,13 +730,8 @@ class LoanController extends Controller
                 ]
             ],
             'title' => 'Ref. : SOLICITUD DE PRÉSTAMO '.$procedure_modality->procedure_type->second_name,
-            'procedure_modality' => $procedure_modality,
-            'lenders' => $lenders,
-            'amount_requested' => $request->amount_requested,
-            'loan_term' => $request->loan_term,
-            'destination' => $request->destination,
-            'account_number' => $request->account_number,
-            'payment_type' => $payment_type
+            'loan' => $loan,
+            'lenders' => $lenders
         ];
         $file_name = implode('_', ['formulario', 'solicitud_prestamo']) . '.pdf';
         $view = view()->make('loan.forms.request_form')->with($data)->render();

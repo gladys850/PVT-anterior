@@ -12,7 +12,7 @@
               Monto Solicitado
             </v-col>
             <v-col cols="12" md="4" class="py-0">
-              Plazo Mesesss
+              Plazo Meses
             </v-col>
             <v-col cols="12" md="4" class="py-0">
               <v-select
@@ -31,7 +31,6 @@
                 dense
                 readonly
                 v-validate.initial="'min:1|max:20'"
-                :error-messages="errors.collect('monto')"
                 data-vv-name="monto"
                 v-model="monto"
               ></v-text-field>
@@ -41,7 +40,6 @@
                 dense
                 readonly
                 v-validate.initial="'min:1|max:20'"
-                :error-messages="errors.collect('plazo')"
                 data-vv-name="plazo"
                 v-model="plazo"
               ></v-text-field>
@@ -89,7 +87,6 @@ import Ballots from '@/components/loan/Ballots'
           this.plazo= this.interval[this.i].maximum_term
         }
       }
-
           console.log(this.datos+'este son los datos')
          this.datos[0]=this.loanTypeSelected,
           this.datos[1]=this.monto,

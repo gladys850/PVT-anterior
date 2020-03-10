@@ -32,6 +32,7 @@ class LoanForm extends FormRequest
             'loan_term'=>'integer|min:2|max:240',
             'disbursement_type_id'=>'integer|exists:payment_types,id',
             'lenders'=>'array|min:1|exists:affiliates,id',
+            'loan_destination_id'=>'integer|exists:loan_destinations,id',
             'guarantors'=>'array|exists:affiliates,id',
             'disbursable_id'=>'integer',
             'disbursable_type'=>'string|in:affiliates,spouses',
@@ -46,7 +47,7 @@ class LoanForm extends FormRequest
 
         switch ($this->method()) {
             case 'POST': {
-                foreach (array_slice($rules, 0, 6) as $key => $rule) {
+                foreach (array_slice($rules, 0, 7) as $key => $rule) {
                     $rules[$key] = implode('|', ['required', $rule]);
                 }
                 return $rules;

@@ -45,8 +45,7 @@ class LoanSeeder extends Seeder
                     // ANTICIPO SECTOR PASIVO Y VIUDAS
                 ['name'=>'Anticipo sector pasivo','shortened'=>'ANT-SP','requirements'=>[
                   ['name' => 'Cédula de Identidad del (la) titular en copia simple.','number'=>1],
-                  ['name' => 'Ultima boleta de pago con renta en SENASIR en copia simple.','number'=>2], //Nuevo *caso pasivo con renta de SENASIR, quien solicita el préstamo
-                  ['name' => 'Ultima boleta de pago con renta en AFP en copia simple.','number'=>2],      //Nuevo *caso pasivo con renta en AFP , quien solicita el préstamo
+                  ['name' => 'Ultima boleta de pago en copia simple.','number'=>2], //Nuevo *caso pasivo con renta de SENASIR, o AFP
                   ['name' => 'Certificado de haberes considerando el último mes percibido.','number'=>2],  // En caso de no contar con la boleta de pago
                   ['name' => 'Estado de cuenta original, vigente y emitido por el Banco Unión S.A.','number'=>3], // Nuevo
                   ['name' => 'Formulario de Calificación y Aprobación de Préstamos FORM/CAYAP/PTMO/UIP/004.','number'=>4],
@@ -261,13 +260,11 @@ class LoanSeeder extends Seeder
                   // LARGO PLAZO SECTOR PASIVO CON GARANTIA PERSONAL
               ['name'=>'Largo Plazo con garantía personal para el sector pasivo','shortened'=>'PLP-GP-SP','requirements'=>[
                 ['name' => 'Cédula de Identidad del (la) titular en copia simple.','number'=>1],// del solicitante y los garantes
-                ['name' => 'Ultima boleta de pago con renta en SENASIR en copia simple.','number'=>2], //Nuevo *caso pasivo con renta de SENASIR, quien solicita el préstamo; tambien el garante
-                ['name' => 'Ultima boleta de pago con renta en AFP en copia simple.','number'=>2],      //Nuevo *caso pasivo con renta en AFP , quien solicita el préstamo
+                ['name' => 'Ultima boleta de pago en copia simple.','number'=>2],
                 ['name' => 'Certificado de haberes considerando el último mes percibido.','number'=>2],  // En caso de no tener la boleta de pago
                 ['name' => 'Estado de cuenta original, vigente y emitido por el Banco Unión S.A','number'=>3],
                 ['name' => 'Formulario de Calificación y Aprobación de Préstamos FORM/CAYAP/PTMO/UIP/004.','number'=>4],
                 /*Estos documentos son solicitados por MUSERPOL en caso de ser requeridos*/
-                ['name' => 'Última Boleta de pago en copia simple.','number'=>0], // caso de que el garante sea un afiliado activo
                 ['name' => 'Certificado de aportes para el Auxilio Mortuorio de los 3 últimos meses de la unidad de Fondo de Retiro.','number'=>0], // para solicitantes AFPś
                 ['name' => 'Solicitud de aclaración de datos personales en la Boleta de Pago.','number'=>0],  // En caso de que el afiliado tenga datos erroneos en su boleta de pago
                 ['name' => 'Certificado de no adeudo, emitido por la instancia correspondiente','number'=>0],  // en caso de que el afiliado haya tenido deudas de otras entidades (Ej: COMIPOL , COVIPOL)
@@ -340,8 +337,7 @@ class LoanSeeder extends Seeder
                  // REFINANCIANCIAMIENTO SECTOR PASIVO CON UN SOLO GARANTE
               ['name'=>'Refinanciamiento de prestamos a largo Plazo para el sector pasivo - CPOP','shortened'=>'PLP-R-SP-CPOP','requirements'=>[
                 ['name' => 'Cédula de Identidad del (la) titular en copia simple','number'=>1],
-                ['name' => 'Ultima boleta de pago con renta en SENASIR en copia simple.','number'=>2], //Nuevo *caso pasivo con renta de SENASIR, quien solicita el préstamo; tambien el garante
-                ['name' => 'Ultima boleta de pago con renta en AFP en copia simple.','number'=>2],      //Nuevo *caso pasivo con renta en AFP , quien solicita el préstamo
+                ['name' => 'Ultima boleta de pago en copia simple.','number'=>2],
                 ['name' => 'Certificado de haberes considerando el último mes percibido.','number'=>2],  // En caso de no tener la boleta de pago
                 ['name' => 'Certificado de años de servicio desglosado en original emitido por el Comando General de la Policía Boliviana','number'=>3],
             		['name' => 'Certificado de años de servicio desglosado en fotocopia Legalizada emitido por el Comando General de la Policía Boliviana','number'=>3],
@@ -350,7 +346,6 @@ class LoanSeeder extends Seeder
                 ['name' => 'Formulario de Calificación y Aprobación de Préstamos FORM/CAYAP/PTMO/UIP/004.','number'=>5],
                 /*condiciones COP MUSERPOL*/
                 /*Estos documentos son solicitados por MUSERPOL en caso de ser requeridos*/
-                ['name' => 'Último Boleta de pago en copia simple.','number'=>0], // caso de que el garante sea un afiliado activo
                 ['name' => 'Certificado de aportes para el Auxilio Mortuorio de los 3 últimos meses de la unidad de Fondo de Retiro.','number'=>0], // para solicitantes AFPś
                 ['name' => 'Solicitud de aclaración de datos personales en la Boleta de Pago.','number'=>0],  // En caso de que el afiliado tenga datos erroneos en su boleta de pago
                 ['name' => 'Certificado de no adeudo, emitido por la instancia correspondiente','number'=>0],  // en caso de que el afiliado haya tenido deudas de otras entidades (Ej: COMIPOL , COVIPOL)
