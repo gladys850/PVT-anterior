@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use Illuminate\Support\Facades\Storage;
 use Util;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -159,6 +160,12 @@ class LoanController extends Controller
             }
         }
         $loan->loan_affiliates()->sync($affiliates);
+        $file_name = implode('_', ['solicitud', 'prestamo', $loan->id]) . '.pdf';
+        $loan->attachment = Util::pdf_to_base64([
+            $this->print_form(new Request([]), $loan->id, $standalone=false),
+            $this->print_documents(new Request([]), $loan->id, $standalone=false),
+            $this->print_contract(new Request([]), $loan->id, $standalone=false)
+        ], $file_name, 'letter', $request->copies ?? 1);
         return $loan;
     }
 
@@ -562,7 +569,7 @@ class LoanController extends Controller
     * @queryParam copies Número de copias del documento. Example: 2
     * @authenticated
     */
-    public function print_documents(Request $request, $id)
+    public function print_documents(Request $request, $id, $standalone = true)
     {
         $loan = Loan::findOrFail($id);
         $lenders = [];
@@ -585,23 +592,9 @@ class LoanController extends Controller
             'lenders' => $lenders
         ];
         $file_name = implode('_', ['solicitud', 'prestamo']) . '.pdf';
-        $footerHtml = view()->make('partials.footer')->with(array('paginator' => true, 'print_date' => true, 'date' => Carbon::now()->ISOFormat('L H:m')))->render();
-        $options = [
-            'copies' => $request->copies ?? 1,
-            'orientation' => 'portrait',
-            'page-width' => '216',
-            'page-height' => '279',
-            'margin-top' => '8',
-            'margin-bottom' => '16',
-            'margin-left' => '5',
-            'margin-right' => '7',
-            'encoding' => 'UTF-8',
-            'footer-html' => $footerHtml,
-            'user-style-sheet' => public_path('css/report-print.min.css')
-        ];
-        $pdf = \PDF::loadView('loan.forms.submitted_documents', $data);
-        $pdf->setOptions($options);
-        return $pdf->stream($file_name);
+        $view = view()->make('loan.forms.submitted_documents')->with($data)->render();
+        if ($standalone) return Util::pdf_to_base64([$view], $file_name, 'letter', $request->copies ?? 1);
+        return $view;
     }
 
     public function switch_states()
@@ -667,7 +660,7 @@ class LoanController extends Controller
     * @authenticated
     * @response
     */
-    public function print_contract(Request $request, $id)
+    public function print_contract(Request $request, $id, $standalone = true)
     {
         $loan = Loan::findOrFail($id);
         $procedure_modality = $loan->modality;
@@ -705,23 +698,9 @@ class LoanController extends Controller
             'lenders' => $lenders
         ];
         $file_name = implode('_', ['contrato', $procedure_modality->shortened, $id]) . '.pdf';
-        $footerHtml = view()->make('partials.footer')->with(array('paginator' => true, 'print_date' => true, 'date' => Carbon::now()->ISOFormat('L H:m')))->render();
-        $options = [
-            'copies' => $request->copies ?? 1,
-            'orientation' => 'portrait',
-            'page-width' => '216',
-            'page-height' => '279',
-            'margin-top' => '8',
-            'margin-bottom' => '16',
-            'margin-left' => '5',
-            'margin-right' => '8',
-            'encoding' => 'UTF-8',
-            'footer-html' => $footerHtml,
-            'user-style-sheet' => public_path('css/report-print.min.css')
-        ];
-        $pdf = \PDF::loadView('loan.contracts.advance', $data);
-        $pdf->setOptions($options);
-        return $pdf->stream($file_name);
+        $view = view()->make('loan.contracts.advance')->with($data)->render();
+        if ($standalone) return Util::pdf_to_base64([$view], $file_name, 'letter', $request->copies ?? 1);
+        return $view;
     }
 
     /**
@@ -731,7 +710,7 @@ class LoanController extends Controller
     * @queryParam copies Número de copias del documento. Example: 2
     * @authenticated
     */
-    public function print_form(Request $request, $id)
+    public function print_form(Request $request, $id, $standalone = true)
     {
         $loan = Loan::findOrFail($id);
         $procedure_modality = $loan->modality;
@@ -755,23 +734,8 @@ class LoanController extends Controller
             'lenders' => $lenders
         ];
         $file_name = implode('_', ['formulario', 'solicitud_prestamo']) . '.pdf';
-        $footerHtml = view()->make('partials.footer')->with(array('paginator' => true, 'print_date' => true, 'date' => Carbon::now()->ISOFormat('L H:m')))->render();
-        $options = [
-            'copies' => $request->copies ?? 1,
-            'orientation' => 'portrait',
-            'page-width' => '216',
-            'page-height' => '279',
-            'margin-top' => '8',
-            'margin-bottom' => '16',
-            'margin-left' => '15',
-            'margin-right' => '20',
-            'encoding' => 'UTF-8',
-            'footer-html' => $footerHtml,
-            'user-style-sheet' => public_path('css/report-print.min.css')
-        ];
-        $pdf = \PDF::loadView('loan.forms.request_form', $data);
-        $pdf->setOptions($options);
-        return $pdf->stream($file_name);
-        return 0;
+        $view = view()->make('loan.forms.request_form')->with($data)->render();
+        if ($standalone) return Util::pdf_to_base64([$view], $file_name, 'letter', $request->copies ?? 1);
+        return $view;
     }
 }

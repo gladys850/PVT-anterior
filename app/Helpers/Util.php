@@ -8,6 +8,7 @@ use App\RecordType;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Schema;
+use File;
 
 class Util
 {
@@ -277,5 +278,33 @@ class Util
             }
         }
         return $status;
+    }
+
+    public static function pdf_to_base64($views, $file_name, $size = 'letter', $copies = 1)
+    {
+        $footerHtml = view()->make('partials.footer')->with(array('paginator' => true, 'print_date' => true, 'date' => Carbon::now()->ISOFormat('L H:m')))->render();
+        $options = $size == 'letter' ? [
+            'copies' => $copies ?? 1,
+            'orientation' => 'portrait',
+            'page-width' => '216',
+            'page-height' => '279',
+            'margin-top' => '8',
+            'margin-bottom' => '16',
+            'margin-left' => '5',
+            'margin-right' => '7',
+            'encoding' => 'UTF-8',
+            'footer-html' => $footerHtml,
+            'user-style-sheet' => public_path('css/report-print.min.css')
+        ] : [
+            //TODO
+        ];
+        \PDF::loadHTML($views)->setOptions($options)->save($file_name);
+        $content = base64_encode(file_get_contents($file_name));
+        File::delete($file_name);
+        return [
+            'content' => $content,
+            'type' => 'pdf',
+            'file_name' => $file_name
+        ];
     }
 }

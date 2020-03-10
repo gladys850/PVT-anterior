@@ -69,7 +69,7 @@
                   <span>Imprimir Requisitos</span>
                 </div>
               </v-tooltip-->
-              <v-tooltip top>
+              <!--v-tooltip top>
                 <template v-slot:activator="{ on }">
                   <v-btn
                     fab
@@ -88,7 +88,7 @@
                 <div>
                   <span>Gerenar Formulario</span>
                 </div>
-              </v-tooltip>
+              </v-tooltip-->
               <v-tooltip top>
                 <template v-slot:activator="{ on }">
                   <v-btn
@@ -99,7 +99,7 @@
                     bottom
                     right
                     v-on="on"
-                    style="margin-right: 5px; margin-left: 6px; margin-top:-560px;"
+                    style="margin-right: 5px; margin-left: 6px; margin-top:-520px;"
                     @click.stop="saveLoan()"
                   >
                     <v-icon>mdi-content-save-all</v-icon>
@@ -109,7 +109,7 @@
                   <span>Guardar Tramite</span>
                 </div>
               </v-tooltip>
-              <v-tooltip top>
+              <!--v-tooltip top>
                 <template v-slot:activator="{ on }">
                   <v-btn
                     fab
@@ -128,7 +128,7 @@
                 <div>
                   <span>Generar Contrato</span>
                 </div>
-              </v-tooltip>
+              </v-tooltip-->
             </v-col>
           </v-row>
         </template>
