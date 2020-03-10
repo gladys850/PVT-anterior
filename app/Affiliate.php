@@ -113,18 +113,6 @@ class Affiliate extends Model
         }
         return false;
     }
-
-    public function getCategoryContributionAttribute()
-    {
-      $category = "";
-      if($this->contributions != null){
-        $contribution = $this->contributions->last();
-        if($contribution->base_wage>0)
-          $category = $contribution->seniority_bonus*100/$contribution->base_wage;
-      }
-      return $category;
-    }
-
     public function category()
     {
       return $this->belongsTo(Category::class);
