@@ -1,73 +1,117 @@
 <template>
-  <v-container fluid >
+  <v-container fluid>
+    <v-card dense color="grey lighten-3">
+
+      <v-row class="ma-0 px-1 py-0">
+        <v-col cols="3">
+          <small>Cédula de Identidad</small>
+          <br />
+          {{affiliate.identity_card}}
+        </v-col>
+
+        <v-col cols="2">
+          <small>Categoría</small>
+          <br />
+          {{this.category_name}}
+        </v-col>
+
+        <v-col cols="3">
+          <small>Estado</small>
+          <br />
+          {{this.state_name_type +' ('+ this.state_name_status+')'}}
+        </v-col>
+
+        <v-col cols="4">
+          <small>Grado</small>
+          <br />
+          {{this.degree_name}}
+        </v-col>
+      </v-row>
+    </v-card>
     <v-row justify="center">
-      <v-col cols="12" md="8" >
-        <v-container  class="ma-0 pa-0" >
-          <v-card >
-            <v-row  class="ma-0 pa-0">
+      <v-col cols="12" md="8">
+        <v-container class="ma-0 pa-0">
+          <v-card>
+            <v-row class="ma-0 pa-0">
               <v-col cols="12" md="6">
-                    <v-toolbar-title>DOMICILIO</v-toolbar-title>
-                  </v-col>
-                  <v-col cols="12" md="3">
-                    <v-tooltip top v-if="editable && permission.secondary">
-                      <template v-slot:activator="{ on }">
-                        <v-btn
-                          fab
-                          dark
-                          x-small
-                          v-on="on"
-                          color="info"
-                          @click.stop="bus.$emit('openDialog', { edit:true })"
-                        >
-                          <v-icon>mdi-plus</v-icon>
-                        </v-btn>
-                      </template>
-                      <v-text-field disabled >{{updateTelefono()}}</v-text-field>
-                      <span>Añadir Dirección</span>
-                    </v-tooltip>
-                  </v-col>
-                  <v-col cols="12">
-                  <v-data-table
-                      :headers="headers"
-                      :items="addresses"
-                      hide-default-footer
-                      class="elevation-1"
-                      v-if="cities.length > 0"
-                  >
+                <v-toolbar-title>DOMICILIO</v-toolbar-title>
+              </v-col>
+              <v-col cols="12" md="3">
+                <v-tooltip top v-if="editable && permission.secondary">
+                  <template v-slot:activator="{ on }">
+                    <v-btn
+                      fab
+                      dark
+                      x-small
+                      v-on="on"
+                      color="info"
+                      @click.stop="bus.$emit('openDialog', { edit:true })"
+                    >
+                      <v-icon>mdi-plus</v-icon>
+                    </v-btn>
+                  </template>
+                  <v-text-field disabled>{{updateTelefono()}}</v-text-field>
+                  <span>Añadir Dirección</span>
+                </v-tooltip>
+              </v-col>
+              <v-col cols="12">
+                <v-data-table
+                  :headers="headers"
+                  :items="addresses"
+                  hide-default-footer
+                  class="elevation-1"
+                  v-if="cities.length > 0"
+                >
                   <template v-slot:item="props">
-                  <tr>
-                    <td>{{ cities.find(o => o.id == props.item.city_address_id).name }}</td>
+                    <tr>
+                      <td>{{ cities.find(o => o.id == props.item.city_address_id).name }}</td>
                       <td>{{ props.item.zone }}</td>
                       <td>{{ props.item.street }}</td>
                       <td>{{ props.item.number_address }}</td>
                       <td v-show="editable && permission.secondary">
-                        <v-btn text icon color="warning" @click.stop="bus.$emit('openDialog', {...props.item, ...{edit:true}})">
+                        <v-btn
+                          text
+                          icon
+                          color="warning"
+                          @click.stop="bus.$emit('openDialog', {...props.item, ...{edit:true}})"
+                        >
                           <v-icon>mdi-pencil</v-icon>
                         </v-btn>
-                        <v-btn text icon color="error" @click.stop="bus.$emit('openRemoveDialog', `address/${props.item.id}`)">
+                        <v-btn
+                          text
+                          icon
+                          color="error"
+                          @click.stop="bus.$emit('openRemoveDialog', `address/${props.item.id}`)"
+                        >
                           <v-icon>mdi-delete</v-icon>
                         </v-btn>
                       </td>
                       <td v-show="!editable">
-                        <v-btn v-if="props.item.latitude && props.item.longitude" text icon color="info" @click.stop="bus.$emit('openDialog', {...props.item, ...{edit: false}})">
+                        <v-btn
+                          v-if="props.item.latitude && props.item.longitude"
+                          text
+                          icon
+                          color="info"
+                          @click.stop="bus.$emit('openDialog', {...props.item, ...{edit: false}})"
+                        >
                           <v-icon>mdi-google-maps</v-icon>
                         </v-btn>
                       </td>
                     </tr>
                   </template>
-                  </v-data-table>
-                  </v-col>
+                </v-data-table>
+              </v-col>
             </v-row>
           </v-card>
         </v-container>
       </v-col>
       <v-col cols="12" md="3">
-        <v-container  class="ma-0 pa-0">
+        <v-container class="ma-0 pa-0">
           <v-card>
-            <v-col cols="12" class="py-2" >
+            <v-col cols="12" class="py-2">
               <v-toolbar-title>TELÉFONOS</v-toolbar-title>
             </v-col>
-            <v-col cols="12"  class="py-0" >
+            <v-col cols="12" class="py-0">
               <v-text-field
                 dense
                 v-model="getTelefono[0]"
@@ -78,11 +122,11 @@
                 :readonly="!editable || !permission.secondary"
                 :outlined="editable && permission.secondary"
                 :disabled="editable && !permission.secondary"
-
               ></v-text-field>
             </v-col>
-            <v-col cols="12" class="py-0" >
-              <v-text-field class = "text-right"
+            <v-col cols="12" class="py-0">
+              <v-text-field
+                class="text-right"
                 dense
                 v-model="getTelefono[1]"
                 label="Celular 2"
@@ -91,10 +135,10 @@
                 data-vv-name="celular"
                 :readonly="!editable || !permission.secondary"
                 :outlined="editable && permission.secondary"
-                :disabled="editable && !permission.secondary" 
+                :disabled="editable && !permission.secondary"
               ></v-text-field>
             </v-col>
-            <v-col cols="12" class="py-0" >
+            <v-col cols="12" class="py-0">
               <v-text-field
                 dense
                 v-model="affiliate.phone_number"
@@ -104,7 +148,7 @@
                 data-vv-name="telefono"
                 :readonly="!editable || !permission.secondary"
                 :outlined="editable && permission.secondary"
-                :disabled="editable && !permission.secondary" 
+                :disabled="editable && !permission.secondary"
               ></v-text-field>
             </v-col>
           </v-card>
@@ -132,7 +176,7 @@
             <span>Cancelar</span>
           </div>
         </v-tooltip>
-        <v-tooltip top >
+        <v-tooltip top>
           <template v-slot:activator="{ on }">
             <v-btn
               fab
@@ -152,20 +196,20 @@
           <div>
             <span v-if="editable">Guardar</span>
             <span v-else>Editar</span>
-        </div>
+          </div>
         </v-tooltip>
       </v-col>
     </v-row>
-    <AddStreet :bus="bus" :cities="cities"/>
-    <RemoveItem :bus="bus"/>
+    <AddStreet :bus="bus" :cities="cities" />
+    <RemoveItem :bus="bus" />
   </v-container>
 </template>
 <script>
-import RemoveItem from '@/components/shared/RemoveItem'
-import AddStreet from '@/components/affiliate/AddStreet'
-import { Validator } from 'vee-validate'
-  export default {
-  inject: ['$validator'],
+import RemoveItem from "@/components/shared/RemoveItem";
+import AddStreet from "@/components/affiliate/AddStreet";
+import { Validator } from "vee-validate";
+export default {
+  inject: ["$validator"],
   name: "affiliate-personalInformation",
   props: {
     affiliate: {
@@ -184,18 +228,22 @@ import { Validator } from 'vee-validate'
   data: () => ({
     loading: true,
     dialog: false,
-    telefono:[null,null],
+    telefono: [null, null],
     editable: false,
     cities: [],
     headers: [
-          { text: 'Ciudad', align: 'left', value: 'city_address_id' },
-          { text: 'Zona', align: 'left', value: 'zone' },
-          { text: 'Calle', align: 'left', value: 'street' },
-          { text: 'Nro', align: 'left', value: 'number_address' },
-          { text: 'Acciones', align: 'center' }
-        ],
+      { text: "Ciudad", align: "left", value: "city_address_id" },
+      { text: "Zona", align: "left", value: "zone" },
+      { text: "Calle", align: "left", value: "street" },
+      { text: "Nro", align: "left", value: "number_address" },
+      { text: "Acciones", align: "center" }
+    ],
     city: [],
     cityTypeSelected: null,
+    category_name: null,
+    state_name_type: null,
+    state_name_status: null,
+    degree_name: null,
     bus: new Vue()
   }),
   computed: {
@@ -203,102 +251,143 @@ import { Validator } from 'vee-validate'
       return {
         primary: this.primaryPermission,
         secondary: this.secondaryPermission
-      }
+      };
     },
     secondaryPermission() {
       if (this.affiliate.id) {
-        return this.$store.getters.permissions.includes('update-affiliate-secondary')
+        return this.$store.getters.permissions.includes(
+          "update-affiliate-secondary"
+        );
       } else {
-        return this.$store.getters.permissions.includes('create-affiliate')
-    }
-  },
-  primaryPermission() {
-      if (this.affiliate.id) {
-        return this.$store.getters.permissions.includes('update-affiliate-primary')
-      } else {
-        return this.$store.getters.permissions.includes('create-affiliate')
+        return this.$store.getters.permissions.includes("create-affiliate");
       }
     },
-    getTelefono(){
-      if(this.affiliate.cell_phone_number==null)
-      {
-        return 0
+    primaryPermission() {
+      if (this.affiliate.id) {
+        return this.$store.getters.permissions.includes(
+          "update-affiliate-primary"
+        );
+      } else {
+        return this.$store.getters.permissions.includes("create-affiliate");
       }
-      else
-      {
-        let array=this.affiliate.cell_phone_number.split(',');
-      return array
+    },
+    getTelefono() {
+      if (this.affiliate.cell_phone_number == null) {
+        return 0;
+      } else {
+        let array = this.affiliate.cell_phone_number.split(",");
+        return array;
       }
-  }
+    }
   },
   beforeMount() {
     this.getCities();
     this.updateTelefono();
-
+    this.getCategory_name(this.affiliate.id);
+    this.getState_name(this.affiliate.id);
+    this.getDegree_name(this.affiliate.id);
   },
   mounted() {
-      this.bus.$on('saveAddress', (address) => {
-        if (address.id) {
-          let index = this.addresses.findIndex(o=> o.id == address.id)
-          if (index == -1) {
-            this.addresses.unshift(address)
-          } else {
-            this.addresses[index] = address
-          }
+    this.bus.$on("saveAddress", address => {
+      if (address.id) {
+        let index = this.addresses.findIndex(o => o.id == address.id);
+        if (index == -1) {
+          this.addresses.unshift(address);
+        } else {
+          this.addresses[index] = address;
         }
-    })
+      }
+    });
   },
   methods: {
     resetForm() {
-      this.editable = false
+      this.editable = false;
     },
     close() {
-      this.dialog = false
-      this.$emit('closeFab')
+      this.dialog = false;
+      this.$emit("closeFab");
     },
     async getCities() {
-    try {
-      this.loading = true
-      let res = await axios.get(`city`);
-      this.cities = res.data;
-    } catch (e) {
-      this.dialog = false;
-      console.log(e);
-    }finally {
-        this.loading = false
+      try {
+        this.loading = true;
+        let res = await axios.get(`city`);
+        this.cities = res.data;
+      } catch (e) {
+        this.dialog = false;
+        console.log(e);
+      } finally {
+        this.loading = false;
       }
-  },
-    updateTelefono(){
-      this.telefono[0]= this.getTelefono[0];
-      this.telefono[1]= this.getTelefono[1];
-      let celular=this.telefono.join(',')
-      this.affiliate.cell_phone_number=celular
-      return  this.affiliate.cell_phone_number
+    },
+    updateTelefono() {
+      this.telefono[0] = this.getTelefono[0];
+      this.telefono[1] = this.getTelefono[1];
+      let celular = this.telefono.join(",");
+      this.affiliate.cell_phone_number = celular;
+      return this.affiliate.cell_phone_number;
     },
     async saveAffiliate() {
       try {
         if (!this.editable) {
-          this.editable = true
-          console.log('entro al grabar por verdadero :)')
+          this.editable = true;
+          console.log("entro al grabar por verdadero :)");
         } else {
-          console.log('entro al grabar por falso :)')
+          console.log("entro al grabar por falso :)");
           // Edit affiliate
 
           //await axios.patch(`affiliate/${this.affiliate.id}`, this.affiliate)
-          await axios.patch(`affiliate/${this.affiliate.id}`, {phone_number: this.affiliate.phone_number, cell_phone_number: this.affiliate.cell_phone_number})
+          await axios.patch(`affiliate/${this.affiliate.id}`, {
+            phone_number: this.affiliate.phone_number,
+            cell_phone_number: this.affiliate.cell_phone_number
+          });
 
           await axios.patch(`affiliate/${this.affiliate.id}/address`, {
             addresses: this.addresses.map(o => o.id)
-          })
-          this.toastr.success('Registro guardado correctamente')
-          this.editable = false
+          });
+          this.toastr.success("Registro guardado correctamente");
+          this.editable = false;
         }
       } catch (e) {
-        console.log(e)
+        console.log(e);
       } finally {
-        this.loading = false
+        this.loading = false;
       }
     },
+    async getCategory_name(id) {
+      try {
+        this.loading = true;
+        let res = await axios.get(`affiliate/${id}/category`);
+        this.category_name = res.data.name;
+      } catch (e) {
+        console.log(e);
+      } finally {
+        this.loading = false;
+      }
+    },
+    async getState_name(id) {
+      try {
+        this.loading = true;
+        let res = await axios.get(`affiliate/${id}/state`);
+        this.state_name = res.data;
+        this.state_name_type = this.state_name.affiliate_state_type.name;
+        this.state_name_status = this.state_name.name;
+      } catch (e) {
+        console.log(e);
+      } finally {
+        this.loading = false;
+      }
+    },
+    async getDegree_name(id) {
+      try {
+        this.loading = true;
+        let res = await axios.get(`affiliate/${id}/degree`);
+        this.degree_name = res.data.name;
+      } catch (e) {
+        console.log(e);
+      } finally {
+        this.loading = false;
+      }
+    }
   }
-  }
+};
 </script>

@@ -14,7 +14,7 @@
                 <v-col cols="12" class="py-0" v-for="(doc,j) in group" :key="doc.id">
                   <v-list dense class="py-0">
                     <v-list-item class="py-0">
-                      <!--{{'Lon='+group.length}} {{'ID='+ doc.id}}-->
+                      {{'Lon='+group.length}} {{'ID='+ doc.id}}
                       <v-col cols="1" class="py-0">
                         <v-list-item-content class="align-end font-weight-light">
                           <div v-if="group.length == 1">
@@ -164,7 +164,7 @@
                       <div>
                         {{index+1 + ". "}} {{(optional.find((item) => item.id === idDoc)).name}}
                         <v-btn text icon color="error" @click="deleteOptionalDocument(index)">
-                          <v-icon>mdi-delete</v-icon>
+                          x
                         </v-btn>
                       </div>
                       <v-divider></v-divider>
@@ -196,7 +196,8 @@ export default {
     selectedOpc: [],
     selected: [],
     radios: [],
-    selectedValue: null
+    selectedValue: null, 
+    idRequirements:[]
   }),
   props: {
     modality: {
@@ -303,7 +304,7 @@ export default {
     },
     async saveLoan() {
       try {
-        let res = await axios.post(`loan`, {
+        /*let res = await axios.post(`loan`, {
           lenders: [this.$route.query.affiliate_id],
           guarantors: [],
           disbursable_id: this.$route.query.affiliate_id,
@@ -314,19 +315,23 @@ export default {
           loan_term: 3,
           disbursement_type_id: 1
 
-        });
-        this.loan = res.data;
-        await axios.post(`loan/${this.loan.id}/document`, {
-          documents: this.selected.concat(this.radios.filter(Boolean))
-        });
-        this.toastr.success("Se guardó satisfactoriamente el grabado");
-        console.log(
-          this.selectedOpc.concat(
-            this.selected.concat(this.radios.filter(Boolean))
-          )
-        );
+        });*/
+        //this.loan = res.data;
+        this.idRequirements=this.selectedOpc.concat(this.selected.concat(this.radios.filter(Boolean)))
+        if(this.idRequirements.length ===this.items.length){           
+          await axios.post(`loan/${5}/document`, {            
+            documents: this.selectedOpc.concat(this.selected.concat(this.radios.filter(Boolean)))
+          });
+          this.toastr.success("Se guardó satisfactoriamente el grabado");
+          console.log(this.idRequirements +"lomg= "+this.idRequirements.length+" items="+this.items.length);
+          console.log(this.idRequirements.length ===this.items.length);
+        }else{
+          this.toastr.error("Falta marcar requisitos, todos los requisitos deben ser presentados");
+        }
+
       } catch (e) {
         console.log(e);
+        console.log('error');
       } finally {
         this.loading = false;
       }
