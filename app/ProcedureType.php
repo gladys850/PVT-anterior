@@ -16,9 +16,15 @@ class ProcedureType extends Model
     public function procedure_modalities()
     {
       return $this->belongsTo(ProcedureModality::class,'id','procedure_type_id' );
-    } 
+    }
+
     public function loan_interval()
     {
         return $this->hasOne(LoanInterval::class);
-    } 
+    }
+
+    public function loan_destination()
+    {
+        return $this->hasMany(LoanDestination::class,'procedure_type_id','id');
+    }
 }

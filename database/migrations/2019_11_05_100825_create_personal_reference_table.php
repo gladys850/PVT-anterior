@@ -19,11 +19,11 @@ class CreatePersonalReferenceTable extends Migration
             $table->foreign('city_identity_card_id')->references('id')->on('cities');
             $table->string('identity_card');
             $table->string('last_name');
-            $table->string('mothers_last_name')->nullable(); 
+            $table->string('mothers_last_name')->nullable();
             $table->string('first_name');
             $table->string('second_name')->nullable(); 
             $table->string('surname_husband')->nullable(); 
-            $table->date('birth_date')->nullable();
+            $table->date('birth_date');
             $table->enum('gender', ['M', 'F'])->nullable();
             $table->enum('civil_status', ['C', 'S', 'V', 'D'])->nullable();
             $table->string('phone_number')->nullable(); 
