@@ -72,7 +72,7 @@
                 dense
                 v-model="getTelefono[0]"
                 label="Celular 1"
-                v-validate.initial="'numeric|min:1|max:20'"
+                v-validate.initial="'min:1|max:20'"
                 :error-messages="errors.collect('celular1')"
                 data-vv-name="celular1"
                 :readonly="!editable || !permission.secondary"
@@ -86,7 +86,7 @@
                 dense
                 v-model="getTelefono[1]"
                 label="Celular 2"
-                v-validate.initial="'numeric|min:1|max:20'"
+                v-validate.initial="'min:1|max:20'"
                 :error-messages="errors.collect('celular')"
                 data-vv-name="celular"
                 :readonly="!editable || !permission.secondary"
@@ -99,7 +99,7 @@
                 dense
                 v-model="affiliate.phone_number"
                 label="Fijo"
-                v-validate.initial="'numeric|min:1|max:20'"
+                v-validate.initial="'min:1|max:20'"
                 :error-messages="errors.collect('telefono')"
                 data-vv-name="telefono"
                 :readonly="!editable || !permission.secondary"

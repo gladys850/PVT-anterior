@@ -27,7 +27,7 @@
               <v-text-field
                 dense
                 outlined
-                v-validate.initial="'min:1|max:20'"
+                v-validate.initial="'numeric|min:1|max:20'"
                 :error-messages="errors.collect('cuenta')"
                 data-vv-name="cuenta"
                 v-model="cuenta"
@@ -78,7 +78,7 @@ import { Validator } from 'vee-validate'
   },
   methods: {
    Onchange(){
-        if(this.loanTypeSelected==2)
+        if(this.loanTypeSelected==1)
         {
           this.visible=true,
           this.espacio=false
