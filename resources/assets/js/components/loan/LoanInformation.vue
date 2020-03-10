@@ -12,7 +12,7 @@
               Monto Solicitado
             </v-col>
             <v-col cols="12" md="4" class="py-0">
-              Plazo Mesesss
+              Plazo Meses
             </v-col>
             <v-col cols="12" md="4" class="py-0">
               <v-select
@@ -89,7 +89,6 @@ import Ballots from '@/components/loan/Ballots'
           this.plazo= this.interval[this.i].maximum_term
         }
       }
-
           console.log(this.datos+'este son los datos')
          this.datos[0]=this.loanTypeSelected,
           this.datos[1]=this.monto,

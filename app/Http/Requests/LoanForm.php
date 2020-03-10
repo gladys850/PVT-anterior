@@ -26,28 +26,28 @@ class LoanForm extends FormRequest
     public function rules()
     {
         $rules = [
-            'procedure_modality_id'=>'integer|exists:procedure_modalities,id',  
+            'procedure_modality_id'=>'integer|exists:procedure_modalities,id',
             'amount_requested'=>'integer|min:200|max:700000',
             'city_id'=>'integer|exists:cities,id',
             'loan_term'=>'integer|min:2|max:240',
-            'disbursement_type_id'=>'exists:payment_types,id',
+            'disbursement_type_id'=>'integer|exists:payment_types,id',
             'lenders'=>'array|min:1|exists:affiliates,id',
+            'loan_destination_id'=>'integer|exists:loan_destinations,id',
             'guarantors'=>'array|exists:affiliates,id',
             'disbursable_id'=>'integer',
-            'disbursable_type'=>'in:affiliates,spouses',
+            'disbursable_type'=>'string|in:affiliates,spouses',
             'account_number'=>'nullable|integer',
-            'code'=>'nullable', 
             'disbursement_date'=>'nullable|date_format:"Y-m-d"',
-            'parent_loan_id'=>'nullable|exists:loans,id',
-            'parent_reason'=> 'nullable|in:refinanciado,reprogramado',
+            'parent_loan_id'=>'integer|nullable|exists:loans,id',
+            'parent_reason'=> 'string|nullable|in:REFINANCIAMIENTO,REPROGRAMACIÓN',
             'loan_interest_id'=>'exists:loan_interests,id',
             'loan_state_id'=>'exists:loan_states,id',
             'amount_approved'=>'integer|min:200|max:700000'
-       ];  
+    ];
 
         switch ($this->method()) {
             case 'POST': {
-                foreach (array_slice($rules, 0, 6) as $key => $rule) {
+                foreach (array_slice($rules, 0, 7) as $key => $rule) {
                     $rules[$key] = implode('|', ['required', $rule]);
                 }
                 return $rules;
@@ -62,7 +62,7 @@ class LoanForm extends FormRequest
     public function filters()
     {
         return [
-            //'code' => 'trim|uppercase',
+            'parent_reason' => 'trim|uppercase'
         ];
     }
 }

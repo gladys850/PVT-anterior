@@ -41,6 +41,7 @@ Route::group([
         Route::get('procedure_modality/{id}/requirements', 'Api\V1\ProcedureModalityController@get_requirements');
         Route::resource('calculator', 'Api\V1\CalculatorController')->only('store');
         Route::resource('role', 'Api\V1\RoleController')->only('index', 'show');
+        Route::resource('global_parameter', 'Api\V1\LoanGlobalParameterController')->only('index', 'show', 'store', 'update', 'destroy');
 
         // Afiliado
         Route::group([
@@ -75,7 +76,7 @@ Route::group([
             Route::resource('spouse', 'Api\V1\SpouseController')->only('store');
             Route::patch('affiliate/{id}/fingerprint', 'Api\V1\AffiliateController@update_fingerprint');
             Route::patch('affiliate/{id}/address', 'Api\V1\AffiliateController@update_addresses');
-            Route::resource('beneficiary', 'Api\V1\LoanBeneficiaryController')->only('index', 'store', 'show', 'destroy', 'update');
+            Route::resource('personal_reference', 'Api\V1\PersonalReferenceController')->only('index', 'store', 'show', 'destroy', 'update');
         });
         Route::group([
             'middleware' => 'permission:delete-affiliate'
@@ -93,21 +94,24 @@ Route::group([
             Route::get('loan/{id}/disbursable', 'Api\V1\LoanController@get_disbursable');
             Route::resource('loan_interval', 'Api\V1\LoanIntervalController')->only('index');
             Route::get('affiliate/{id}/loan','Api\V1\AffiliateController@get_loans');
+            Route::get('loan/{id}/document','Api\V1\LoanController@get_documents');
+            Route::get('procedure_type/{id}/loan_destination', 'Api\V1\ProcedureTypeController@get_destination');
         });
         Route::group([
             'middleware' => 'permission:create-loan'
         ], function () {
             Route::resource('loan', 'Api\V1\LoanController')->only('store');
             Route::post('loan/{id}/document', 'Api\V1\LoanController@submit_documents');
-            Route::get('loan/print/requirements', 'Api\V1\LoanController@print_requirements');
+            Route::get('loan/{id}/print/documents', 'Api\V1\LoanController@print_documents');
             Route::get('affiliate/{id}/loan_modality', 'Api\V1\AffiliateController@get_loan_modality');
-            Route::get('loan/print/form', 'Api\V1\LoanController@print_form');
+            Route::get('loan/{id}/print/form', 'Api\V1\LoanController@print_form');
             Route::get('loan/{id}/print/contract', 'Api\V1\LoanController@print_contract');
         });
         Route::group([
             'middleware' => 'permission:update-loan'
         ], function () {
             Route::resource('loan', 'Api\V1\LoanController')->only('update');
+            Route::patch('loan/{loan_id}/document/{document_id}', 'Api\V1\LoanController@update_document');
         });
         Route::group([
             'middleware' => 'permission:delete-loan'

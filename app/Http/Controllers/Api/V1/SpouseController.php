@@ -8,7 +8,7 @@ use App\Http\Requests\SpouseForm;
 use Illuminate\Http\Request;
 use Util;
 
-/** @group Datos Cónyugue
+/** @group Cónyugues
 * Datos de los cónyugues y métodos para obtener y establecer sus relaciones
 */
 class SpouseController extends Controller
@@ -133,7 +133,7 @@ class SpouseController extends Controller
     * }
     */
     public function store(SpouseForm $request)
-    {        
+    {
         return Spouse::create($request->all());
     }
 

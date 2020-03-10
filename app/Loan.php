@@ -32,7 +32,8 @@ class Loan extends Model
         'disbursement_date',
         'disbursement_type_id',
         'modification_date',
-        
+        'account_number',
+        'loan_destination_id'
     ];
 
     function __construct(array $attributes = [])
@@ -59,17 +60,22 @@ class Loan extends Model
         return $this->morphToMany(Tag::class, 'taggable')->withPivot('user_id', 'date')->withTimestamps();
     }
 
+    public function parent_loan()
+    {
+        return $this->belongsTo(Loan::class);
+    }
+
     public function state()
     {
       return $this->belongsTo(LoanState::class, 'loan_state_id','id');
     }
     public function city()
     {
-      return $this->belongsTo(City::class);
+        return $this->belongsTo(City::class);
     }
     public function payment_type()
     {
-      return $this->belongsTo(PaymentType::class,'disbursement_type_id','id');
+        return $this->belongsTo(PaymentType::class,'disbursement_type_id','id');
     }
 
     public function submitted_documents()
@@ -99,7 +105,7 @@ class Loan extends Model
 
     public function getDefaultedAttribute()
     {
-        return LoanPayment::days_interest($this->id, Carbon::now()->toDateString())['dias_penal'] > 0 ? true : false;
+        return LoanPayment::days_interest($this)['penal'] > 0 ? true : false;
     }
 
     public function payments()
@@ -121,6 +127,10 @@ class Loan extends Model
         return $this->morphTo();
     }
 
+    public function destination()
+    {
+        return $this->belongsTo(LoanDestination::class, 'loan_destination_id', 'id');
+    }
     // Saldo capital
     public function getBalanceAttribute()
     {
@@ -183,15 +193,15 @@ class Loan extends Model
         $quota->estimated_date = $quota->estimated_date->endOfMonth()->toDateString();
         unset($quota->pay_date);
         $interest = $this->interest;
-        $interest_days = LoanPayment::days_interest($this->id, $quota->estimated_date);
+        $interest_days = LoanPayment::days_interest($this, $quota->estimated_date);
 
         // Calcular intereses
         $quota->balance = $this->balance;
-        $quota->interest_payment = Util::round($quota->balance * $interest->daily_current_interest * $interest_days['dias_corriente']);
-        $quota->penal_payment = Util::round($quota->balance * $interest->daily_penal_interest * $interest_days['dias_penal']);
-        $quota->accumulation_interest = Util::round($quota->balance * $interest->daily_current_interest * $interest_days['dias_acumulado']);
+        $quota->interest_payment = Util::round($quota->balance * $interest->daily_current_interest * $interest_days['current']);
+        $quota->penal_payment = Util::round($quota->balance * $interest->daily_penal_interest * $interest_days['penal']);
+        $quota->accumulated_interest = Util::round($quota->balance * $interest->daily_current_interest * $interest_days['accumulated']);
         // Calcular amortización de capital
-        $total_interests = $quota->interest_payment + $quota->penal_payment + $quota->accumulation_interest;
+        $total_interests = $quota->interest_payment + $quota->penal_payment + $quota->accumulated_interest;
         if (($quota->balance + $total_interests) > $this->estimated_quota) {
             $quota->capital_payment = $this->estimated_quota - $total_interests;
         } else {

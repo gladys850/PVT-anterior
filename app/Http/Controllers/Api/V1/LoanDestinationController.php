@@ -1,26 +1,31 @@
 <?php
 
 namespace App\Http\Controllers\Api\V1;
-use App\LoanBeneficiary;
-use App\Http\Requests\LoanBeneficiaryForm;
+
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Util;
+use App\LoanDestination;
 
-/** @group Personas referencia préstamos
-* Datos de las personas de referencia para trámites de préstamos
-*/
-class LoanBeneficiaryController extends Controller
+class LoanDestinationController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index()
     {
-        $data = Util::search_sort(new LoanBeneficiary(), $request);
-        return $data;
+        return LoanDestination::orderBy('name')->get();
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create()
+    {
+        //
     }
 
     /**
@@ -29,9 +34,9 @@ class LoanBeneficiaryController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(LoanBeneficiaryForm $request)
+    public function store(Request $request)
     {
-        return LoanBeneficiary::create($request->all());
+        //
     }
 
     /**
@@ -42,7 +47,18 @@ class LoanBeneficiaryController extends Controller
      */
     public function show($id)
     {
-        return LoanBeneficiary::findOrFail($id);
+        //
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function edit($id)
+    {
+        //
     }
 
     /**
@@ -52,12 +68,9 @@ class LoanBeneficiaryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(LoanBeneficiaryForm $request, $id)
+    public function update(Request $request, $id)
     {
-        $loan_beneficiary = LoanBeneficiary::findOrFail($id);
-        $loan_beneficiary->fill($request->all());
-        $loan_beneficiary->save();
-        return  $loan_beneficiary;
+        //
     }
 
     /**
@@ -68,8 +81,6 @@ class LoanBeneficiaryController extends Controller
      */
     public function destroy($id)
     {
-        $loan_beneficiary = LoanBeneficiary::findOrFail($id);
-        $loan_beneficiary->delete();
-        return $loan_beneficiary;
+        //
     }
 }

@@ -29,7 +29,7 @@ use App\Events\FingerprintSavedEvent;
 use Illuminate\Support\Facades\Storage;
 use Carbon\CarbonImmutable;
 
-/** @group Datos Afiliado
+/** @group Afiliados
 * Datos de los afiliados y métodos para obtener y establecer sus relaciones
 */
 class AffiliateController extends Controller
@@ -39,7 +39,7 @@ class AffiliateController extends Controller
     * Devuelve el listado con los datos paginados
     * @queryParam search Parámetro de búsqueda. Example: TORRE
     * @queryParam sortBy Vector de ordenamiento. Example: [last_name]
-    * @queryParam sortDesc Vector de orden descendente(true) o ascendente(false). Example: [false]
+    * @queryParam sortDesc Vector de orden descendente(true) o ascendente(false). Example: [0]
     * @queryParam per_page Número de datos por página. Example: 8
     * @queryParam page Número de página. Example: 1
     * @authenticated
@@ -668,7 +668,7 @@ class AffiliateController extends Controller
     * @urlParam id required ID de afiliado. Example: 1
     * @queryParam city_id ID de la ciudad de solicitud. Example: 4
     * @queryParam sortBy Vector de ordenamiento. Example: [month_year]
-    * @queryParam sortDesc Vector de orden descendente(true) o ascendente(false). Example: [true]
+    * @queryParam sortDesc Vector de orden descendente(true) o ascendente(false). Example: [1]
     * @queryParam per_page Número de datos por página. Example: 3
     * @queryParam page Número de página. Example: 1
     * @authenticated
@@ -738,7 +738,7 @@ class AffiliateController extends Controller
         if ($request->has('city_id')) {
             $is_latest = false;
             $city = City::findOrFail($request->city_id);
-            $offset_day = LoanGlobalParameter::latest()->first()->offset_day;
+            $offset_day = LoanGlobalParameter::latest()->first()->offset_ballot_day;
             $now = CarbonImmutable::now();
             if ($now->day <= $offset_day || $city->name != 'LA PAZ') {
                 $before_month = 2;
@@ -958,8 +958,8 @@ class AffiliateController extends Controller
     * Modalidad por afiliado
     * Devuelve la modalidad de trámite evaluando al afiliado y el tipo de trámite
     * @urlParam id required ID de afiliado. Example: 5
-    * @queryParam procedure_type_id required ID de tipo de trámite. Example: 9
-    * @queryParam external_discount required Booleano de descuento en otras entidades. Example: 0
+    * @queryParam procedure_type_id ID de tipo de trámite. Example: 9
+    * @queryParam external_discount Booleano de descuento en otras entidades. Example: 1
     * @authenticated
     * @response
     * {
@@ -980,7 +980,12 @@ class AffiliateController extends Controller
     * }
     */
     public function get_loan_modality(Request $request, $id) {
+        $request->validate([
+            'procedure_type_id' => 'required|integer|exists:procedure_types,id',
+            'external_discount' => 'boolean|nullable',
+        ]);
         $affiliate = Affiliate::findOrFail($id);
+        if(!$affiliate->affiliate_state) abort(404);
         $modality = ProcedureType::findOrFail($request->procedure_type_id);
         return Loan::get_modality($modality->name, $affiliate);
     }
