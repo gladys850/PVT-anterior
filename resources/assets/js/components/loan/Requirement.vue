@@ -277,7 +277,9 @@ export default {
     },
      async saveLoan() {
       try {
-          let res = await axios.post(`loan`, {
+        let res = await axios.post(`loan`, {
+          copies: 2,
+          responseType: "arraybuffer",
           lenders: [this.$route.query.affiliate_id],
           guarantors: [],
           disbursable_id: this.$route.query.affiliate_id,
@@ -291,18 +293,16 @@ export default {
           loan_destination_id: this.formulario[2]
         });
           this.loan = res.data;
-          this.idRequirements=this.selected.concat(this.radios.filter(Boolean))
-          if(this.idRequirements.length === this.items.length){           
-            await axios.post(`loan/${this.loan.id}/document`, {            
-              documents: this.selectedOpc.concat(this.selected.concat(this.radios.filter(Boolean)))
-            });
-            this.toastr.success("Se guardó satisfactoriamente el grabado");
-            console.log(this.idRequirements +"lomg= "+this.idRequirements.length+" items="+this.items.length);
-            console.log(this.idRequirements.length ===this.items.length);
-          }else{
-            this.toastr.error("Falta seleccionar requisitos, todos los requisitos deben ser presentados");
-          }
-
+            await axios.post(`loan/${this.loan.id}/document`, {
+            documents: this.selectedOpc.concat(
+            this.selected.concat(this.radios.filter(Boolean))
+          )
+        });
+        printJS({
+          printable: res.data.attachment.content,
+          type: res.data.attachment.type,
+          base64: true
+        })
       } catch (e) {
         console.log(e);
       } finally {
