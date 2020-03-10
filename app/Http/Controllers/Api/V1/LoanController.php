@@ -132,7 +132,7 @@ class LoanController extends Controller
     *       "shortened": "ANT-SA",
     *       "is_valid": true
     *   }
-    }
+    * }
     */
     public function store(LoanForm $request)
     {
@@ -725,7 +725,7 @@ class LoanController extends Controller
     }
 
     /**
-    * Formulario de solicitud
+    * Impresión de Formulario de solicitud
     * Devuelve el pdf del Formulario de solicitud acorde a un ID de préstamo
     * @urlParam id required ID del préstamo. Example: 1
     * @queryParam copies Número de copias del documento. Example: 2

@@ -58,7 +58,7 @@
             </tr>
             <tr>
                 <td colspan = "2" class="data-row py-5"></td>
-                <td class="data-row py-5">{{ $lender->category }}</td>
+                <td class="data-row py-5">{{ $lender->category->name }}</td>
             </tr>
             <tr class="bg-grey-darker text-xxs text-white">
                 <td colspan = "2" class="w-50">Domilicio actual</td>
@@ -96,19 +96,44 @@
                 <td class="font-semibold text-center  text-xs py-10">LA PRESENTE SOLICITUD CONSTITUYE DECLARACION JURADA, CONDIGNANDOSE LOS DATOS COMO FIDEDIGNOS POR LOS INTERESADOS.</td>
             </tr>
         </table>
-    </div><br>
+    </div>
     <div>
         <div>A tal efecto, adjunto los requisitos solicitados.</div>
         <div>Sin otro particular, me despido de usted con las consideraciones mas distinguidas.</div>
     </div>
 </div>
-<p class="text-center align-bottom" style= "width: 900px;height: 200px; display: table-cell;">
+<div class="block m-t-100">
+        <table>
+            <tbody>
+                <tr>
+                    <td width="50%">
+                    @foreach ($lenders as $lender)
+                        @include('partials.signature_box', [
+                            'full_name' => $lender->full_name,
+                            'identity_card' => $lender->identity_card_ext,
+                            'position' => 'SOLICITANTE'
+                        ])
+                    @endforeach
+                    </td>
+                    <td width="50%">
+                        @php($user = Auth::user())
+                        @include('partials.signature_box', [
+                            'full_name' => $user->full_name,
+                            'position' => $user->position,
+                            'employee' => true
+                        ])
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+<div class="block text-justify font-bold">
     @foreach ($lenders as $lender)
-        .....................................................................<br>
-        {{ $lender->title }} {{ $lender->full_name }}<br>
-        C.I. N° {{ $lender->identity_card_ext }}<br>
-
+    @php ($male_female = Util::male_female($lender->gender))
+    <div><h5>El suscrito: Asistente de Oficina y/o Responsable Regional y/o Atención al Afiliad{{ $male_female}} de la MUSERPOL, CERTIFICA la AUTENTICIDAD de la firma y documentación presentada por el Afiliad{{ $male_female}}, dando FÉ que la misma fue estampada en mi presencia y en forma voluntaria con puño y letra del Afiliad{{ $male_female}}
+        {{ $lender->title }} {{ $lender->full_name }} C.I. N° {{ $lender->identity_card_ext }}.<br>
     @endforeach
-</p>
+    Asimismo, el solicitante del Préstamo da FÉ de que la documentación y firmas son auténticas y obtenidas lícitamente.</h5></div>
+</div>
 </body>
 </html>
