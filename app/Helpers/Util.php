@@ -8,7 +8,7 @@ use App\RecordType;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Schema;
-use Illuminate\Support\Facades\Storage;
+use File;
 
 class Util
 {
@@ -300,7 +300,7 @@ class Util
         ];
         \PDF::loadHTML($views)->setOptions($options)->save($file_name);
         $content = base64_encode(file_get_contents($file_name));
-        Storage::delete($file_name);
+        File::delete($file_name);
         return [
             'content' => $content,
             'type' => 'pdf',
