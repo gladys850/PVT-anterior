@@ -292,12 +292,18 @@ export default {
           account_number: this.formulario[1],
           loan_destination_id: this.formulario[2]
         });
-          this.loan = res.data;
-            await axios.post(`loan/${this.loan.id}/document`, {
-            documents: this.selectedOpc.concat(
-            this.selected.concat(this.radios.filter(Boolean))
-          )
-        });
+        this.idRequirements=this.selected.concat(this.radios.filter(Boolean))
+        if(this.idRequirements.length ===this.items.length){           
+          await axios.post(`loan/${5}/document`, {            
+            documents: this.selectedOpc.concat(this.selected.concat(this.radios.filter(Boolean)))
+          });
+          this.toastr.success("Se guardó satisfactoriamente el grabado");
+          console.log(this.idRequirements +"lomg= "+this.idRequirements.length+" items="+this.items.length);
+          console.log(this.idRequirements.length ===this.items.length);
+        }else{
+          this.toastr.error("Falta marcar requisitos, todos los requisitos deben ser presentados");
+        }
+        
         printJS({
           printable: res.data.attachment.content,
           type: res.data.attachment.type,
