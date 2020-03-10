@@ -10,11 +10,11 @@
         <template>
           <v-row>
             <v-col v-for="(group,i) in items" :key="i" cols="11" class="py-1">
-              <v-card>
+              <v-card dense>
                 <v-col cols="12" class="py-0" v-for="(doc,j) in group" :key="doc.id">
                   <v-list dense class="py-0">
                     <v-list-item class="py-0">
-                      {{'Lon='+group.length}} {{'ID='+ doc.id}}
+                      <!--{{'Lon='+group.length}} {{'ID='+ doc.id}}-->
                       <v-col cols="1" class="py-0">
                         <v-list-item-content class="align-end font-weight-light">
                           <div v-if="group.length == 1">
@@ -25,24 +25,21 @@
                           </div>
                         </v-list-item-content>
                       </v-col>
-
                       <v-col cols="10" class="py-0">
-                        <v-list-item-content class="align-end font-weight-light">{{doc.name}}</v-list-item-content>
+                        <v-list-item-content class="align-end font-weight-light py-0">{{doc.name}}</v-list-item-content>
                       </v-col>
-
                       <v-col cols="1" class="py-0">
-                        <div v-if="group.length == 1">
-                          <v-checkbox
+                        <div v-if="group.length == 1" class="py-0">
+                          <v-checkbox class="py-0"
                             color="info"
                             v-model="selected"
                             :value="doc.id"
                             @change="selectDoc1(doc.id,j,i)"
                           ></v-checkbox>
                         </div>
-
-                        <div v-if="group.length > 1">
-                          <v-radio-group :mandatory="false" v-model="radios[i]">
-                            <v-radio color="info" :value="doc.id" @change="selectDoc1(doc.id,j,i)"></v-radio>
+                        <div v-if="group.length > 1" class="py-0">
+                          <v-radio-group :mandatory="false" v-model="radios[i]" class="py-0">
+                            <v-radio color="info" :value="doc.id" @change="selectDoc1(doc.id,j,i)" class="py-0"></v-radio>
                           </v-radio-group>
                         </div>
                       </v-col>
@@ -52,7 +49,7 @@
               </v-card>
             </v-col>
             <v-col cols="12" md="1" class="ma-0 pa-0">
-              <v-tooltip top>
+              <!--v-tooltip top>
                 <template v-slot:activator="{ on }">
                   <v-btn
                     fab
@@ -71,7 +68,7 @@
                 <div>
                   <span>Imprimir Requisitos</span>
                 </div>
-              </v-tooltip>
+              </v-tooltip-->
               <v-tooltip top>
                 <template v-slot:activator="{ on }">
                   <v-btn
@@ -129,18 +126,16 @@
                   </v-btn>
                 </template>
                 <div>
-                  <span>Gerenar Contrato</span>
+                  <span>Generar Contrato</span>
                 </div>
               </v-tooltip>
             </v-col>
           </v-row>
         </template>
       </v-data-iterator>
-
       <v-toolbar-title class="align-end font-weight-black text-center my-2">
-        <h3>Documentos Opcionales</h3>
+        <h3>Documentos Adicionales</h3>
       </v-toolbar-title>
-
       <v-data-iterator :items="optional" hide-default-footer>
         <template>
           <v-row>
@@ -155,7 +150,6 @@
                 item-value="id"
                 @change="addOptionalDocument(selectedValue)"
               ></v-autocomplete>
-
               <v-divider></v-divider>
               <div class="align-end font-weight-light">
                 <div v-for="(idDoc, index) of selectedOpc" :key="index">
@@ -164,7 +158,7 @@
                       <div>
                         {{index+1 + ". "}} {{(optional.find((item) => item.id === idDoc)).name}}
                         <v-btn text icon color="error" @click="deleteOptionalDocument(index)">
-                          x
+                          <v-icon>mdi-delete</v-icon>
                         </v-btn>
                       </div>
                       <v-divider></v-divider>
@@ -196,7 +190,7 @@ export default {
     selectedOpc: [],
     selected: [],
     radios: [],
-    selectedValue: null, 
+    selectedValue: null,
     idRequirements:[]
   }),
   props: {
@@ -211,6 +205,10 @@ export default {
     formulario: {
       type: Array,
       required: true
+    },
+    calculos: {
+      type: Object,
+      required: true
     }
   },
   beforeMount() {
@@ -224,7 +222,6 @@ export default {
         //console.log(this.radios.filter(Boolean) + "=>vector radio");
       }, 500);
     },
-
     async getRequirement(id) {
       try {
         this.loading = true;
@@ -262,16 +259,10 @@ export default {
     },
     async getFormPrint() {
     try {
-      let res = await axios.get(`loan/print/form`, {
-        params :{
-          lenders : [this.$route.query.affiliate_id],
-          procedure_modality_id:this.modality.id,
-          amount_requested: this.datos[1],
-          disbursement_type_id: this.formulario[0],
-          loan_term:this.datos[2],
-          destination: this.formulario[2],
-          account_number: this.formulario[1],
-          },
+      let res = await axios.get(`loan/${8}/print/form`, {
+        params:{
+         copies: 2
+        },
         responseType: 'arraybuffer'
         })
         let blob = new Blob([res.data], {
@@ -284,59 +275,62 @@ export default {
         this.loading = false;
       }
     },
-    async getContractPrint() {
+     async saveLoan() {
       try {
-      let res = await axios.get(`loan/${3}/print/contract`, {
-      params:{
-      loan_id:3
-      },
-      responseType: 'arraybuffer'
-      })
-      let blob = new Blob([res.data], {
-      type: "application/pdf"
-      })
-      printJS(window.URL.createObjectURL(blob))
-      } catch (e) {
-      console.log(e);
-      } finally {
-      this.loading = false;
-      }
-    },
-    async saveLoan() {
-      try {
-        /*let res = await axios.post(`loan`, {
+          let res = await axios.post(`loan`, {
           lenders: [this.$route.query.affiliate_id],
           guarantors: [],
           disbursable_id: this.$route.query.affiliate_id,
           disbursable_type: "affiliates",
           procedure_modality_id: this.modality.id,
-          amount_requested: 3000,
+          amount_requested: this.calculos.monto_maximo_sugerido,
           city_id: this.$store.getters.cityId,
-          loan_term: 3,
-          disbursement_type_id: 1
-
-        });*/
-        //this.loan = res.data;
-        this.idRequirements=this.selectedOpc.concat(this.selected.concat(this.radios.filter(Boolean)))
-        if(this.idRequirements.length ===this.items.length){           
-          await axios.post(`loan/${5}/document`, {            
-            documents: this.selectedOpc.concat(this.selected.concat(this.radios.filter(Boolean)))
-          });
-          this.toastr.success("Se guardó satisfactoriamente el grabado");
-          console.log(this.idRequirements +"lomg= "+this.idRequirements.length+" items="+this.items.length);
-          console.log(this.idRequirements.length ===this.items.length);
-        }else{
-          this.toastr.error("Falta marcar requisitos, todos los requisitos deben ser presentados");
-        }
+          loan_term: this.calculos.plazo,
+          disbursement_type_id: this.formulario[0],
+          account_number: this.formulario[1],
+          loan_destination_id: this.formulario[2]
+        });
+          this.loan = res.data;
+          this.idRequirements=this.selected.concat(this.radios.filter(Boolean))
+          if(this.idRequirements.length === this.items.length){           
+            await axios.post(`loan/${this.loan.id}/document`, {            
+              documents: this.selectedOpc.concat(this.selected.concat(this.radios.filter(Boolean)))
+            });
+            this.toastr.success("Se guardó satisfactoriamente el grabado");
+            console.log(this.idRequirements +"lomg= "+this.idRequirements.length+" items="+this.items.length);
+            console.log(this.idRequirements.length ===this.items.length);
+          }else{
+            this.toastr.error("Falta seleccionar requisitos, todos los requisitos deben ser presentados");
+          }
 
       } catch (e) {
         console.log(e);
-        console.log('error');
       } finally {
         this.loading = false;
       }
     },
-
+    async getContractPrint() {
+      try {
+        let res1 = await axios.get(`loan/${8}/print/contract`, {
+      responseType: 'arraybuffer'
+      })
+        let res2 = await axios.get(`loan/${8}/print/documents`, {
+      responseType: 'arraybuffer'
+      })
+        let blob1 = new Blob([res1.data], {
+        type: "application/pdf"
+      })
+        let blob2 = new Blob([res2.data], {
+        type: "application/pdf"
+      })
+        printJS(window.URL.createObjectURL(blob1))
+        printJS(window.URL.createObjectURL(blob2))
+      } catch (e) {
+        console.log(e);
+      } finally {
+        this.loading = false;
+      }
+    },
     addOptionalDocument(i) {
       if (this.selectedOpc.indexOf(i) === -1) {
         this.selectedOpc.push(i);
