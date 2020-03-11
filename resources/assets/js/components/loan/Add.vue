@@ -21,6 +21,8 @@
                 </template>
               </v-expansion-panel-header>
               <v-expansion-panel-content class="pa-0 ml-0"  >
+                <InformationData
+                :affiliate.sync="affiliate"/>
                 <Steps
                 :affiliate.sync="affiliate"
                 :addresses.sync="addresses"/>
@@ -50,6 +52,7 @@ import StepsGuarantor from '@/components/loan/StepsGuarantor'
 import Steps from '@/components/loan/Steps'
 import Ballots from '@/components/loan/Ballots'
 import Breadcrumbs from '@/components/shared/Breadcrumbs'
+import InformationData from '@/components/loan/InformationData'
 import { Validator } from 'vee-validate'
 export default {
   inject: ['$validator'],
@@ -58,7 +61,8 @@ export default {
     Steps,
     Ballots,
     StepsGuarantor,
-    Breadcrumbs
+    Breadcrumbs,
+    InformationData
   },
   data: () => ({
     addresses:[],
