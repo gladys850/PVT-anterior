@@ -8,7 +8,7 @@ use App\RecordType;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Schema;
-use File;
+use Illuminate\Support\Facades\Storage;
 
 class Util
 {
@@ -282,6 +282,9 @@ class Util
 
     public static function pdf_to_base64($views, $file_name, $size = 'letter', $copies = 1)
     {
+        $path = 'tmp';
+        Storage::disk('local')->makeDirectory($path);
+        $storage_path = implode('/', [Storage::disk('local')->path($path), $file_name]);
         $footerHtml = view()->make('partials.footer')->with(array('paginator' => true, 'print_date' => true, 'date' => Carbon::now()->ISOFormat('L H:m')))->render();
         $options = $size == 'letter' ? [
             'copies' => $copies ?? 1,
@@ -298,9 +301,9 @@ class Util
         ] : [
             //TODO
         ];
-        \PDF::loadHTML($views)->setOptions($options)->save($file_name);
-        $content = base64_encode(file_get_contents($file_name));
-        File::delete($file_name);
+        \PDF::loadHTML($views)->setOptions($options)->save($storage_path);
+        $content = base64_encode(file_get_contents($storage_path));
+        Storage::delete(implode('/', [$path, $file_name]));
         return [
             'content' => $content,
             'type' => 'pdf',
