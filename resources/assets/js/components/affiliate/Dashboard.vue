@@ -29,7 +29,7 @@
             </div>
             <v-tooltip
               left
-              v-if="this.state_name_type != 'Baja' && this.state_name_status != 'Fallecido'"
+              v-if="this.state_name_type != 'Baja' && this.state_name_status != 'Fallecido' &&  Object.keys(this.state_name).length != 0"
             >
               <template v-slot:activator="{ on }">
                 <v-btn

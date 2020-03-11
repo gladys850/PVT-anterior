@@ -1,301 +1,352 @@
 <template>
-  <v-container fluid >
-    <v-row justify="center">
-      <v-col cols="12" md="8" >
-        <v-container  class="ma-0 pa-0" >
-          <v-card >
-            <v-row  class="ma-0 pa-0">
-              <v-col cols="12" md="6">
-                    <v-toolbar-title>DOMICILIO</v-toolbar-title>
-                  </v-col>
-                  <v-col cols="12" md="3">
-                    <v-tooltip top v-if="editable && permission.secondary">
-                      <template v-slot:activator="{ on }">
-                        <v-btn
-                          fab
-                          dark
-                          x-small
-                          v-on="on"
-                          color="info"
-                          @click.stop="bus.$emit('openDialog', { edit:true })"
-                        >
-                          <v-icon>mdi-plus</v-icon>
-                        </v-btn>
-                      </template>
-                      <v-text-field disabled >{{updateTelefono()}}</v-text-field>
-                      <span>Añadir Dirección</span>
-                    </v-tooltip>
-                  </v-col>
-                  <v-col cols="12">
-                  <v-data-table
-                      :headers="headers"
-                      :items="addresses"
-                      hide-default-footer
-                      class="elevation-1"
-                      v-if="cities.length > 0"
+  <v-container fluid>
+    <v-card>
+      <v-data-iterator :items="items" hide-default-footer>
+        <template v-slot:header>
+          <v-toolbar class="mb-0" color="ternary" dark flat>
+            <v-toolbar-title>REQUISITOS PARA ANTICIPO</v-toolbar-title>
+          </v-toolbar>
+        </template>
+        <template>
+          <v-row>
+            <v-col v-for="(group,i) in items" :key="i" cols="11" class="py-1">
+              <v-card dense>
+                <v-col cols="12" class="py-0" v-for="(doc,j) in group" :key="doc.id">
+                  <v-list dense class="py-0">
+                    <v-list-item class="py-0">
+                      <!--{{'Lon='+group.length}} {{'ID='+ doc.id}}-->
+                      <v-col cols="1" class="py-0">
+                        <v-list-item-content class="align-end font-weight-light">
+                          <div v-if="group.length == 1">
+                            <h1>{{i+1}}</h1>
+                          </div>
+                          <div v-else>
+                            <h3>{{(i+1) +'.'+(j+1)}}</h3>
+                          </div>
+                        </v-list-item-content>
+                      </v-col>
+                      <v-col cols="10" class="py-0">
+                        <v-list-item-content class="align-end font-weight-light py-0">{{doc.name}}</v-list-item-content>
+                      </v-col>
+                      <v-col cols="1" class="py-0">
+                        <div v-if="group.length == 1" class="py-0">
+                          <v-checkbox class="py-0"
+                            color="info"
+                            v-model="selected"
+                            :value="doc.id"
+                            @change="selectDoc1(doc.id,j,i)"
+                          ></v-checkbox>
+                        </div>
+                        <div v-if="group.length > 1" class="py-0">
+                          <v-radio-group :mandatory="false" v-model="radios[i]" class="py-0">
+                            <v-radio color="info" :value="doc.id" @change="selectDoc1(doc.id,j,i)" class="py-0"></v-radio>
+                          </v-radio-group>
+                        </div>
+                      </v-col>
+                    </v-list-item>
+                  </v-list>
+                </v-col>
+              </v-card>
+            </v-col>
+            <v-col cols="12" md="1" class="ma-0 pa-0">
+              <!--v-tooltip top>
+                <template v-slot:activator="{ on }">
+                  <v-btn
+                    fab
+                    dark
+                    small
+                    :color="'secundary'"
+                    bottom
+                    right
+                    v-on="on"
+                    style="margin-right: 10px; margin-left: 6px; margin-top:-640px;"
+                    @click.stop="getRequirementPrint()"
                   >
-                  <template v-slot:item="props">
-                  <tr>
-                    <td>{{ cities.find(o => o.id == props.item.city_address_id).name }}</td>
-                      <td>{{ props.item.zone }}</td>
-                      <td>{{ props.item.street }}</td>
-                      <td>{{ props.item.number_address }}</td>
-                      <td v-show="editable && permission.secondary">
-                        <v-btn text icon color="warning" @click.stop="bus.$emit('openDialog', {...props.item, ...{edit:true}})">
-                          <v-icon>mdi-pencil</v-icon>
-                        </v-btn>
-                        <v-btn text icon color="error" @click.stop="bus.$emit('openRemoveDialog', `address/${props.item.id}`)">
+                    <v-icon>mdi-printer-settings</v-icon>
+                  </v-btn>
+                </template>
+                <div>
+                  <span>Imprimir Requisitos</span>
+                </div>
+              </v-tooltip-->
+              <!--v-tooltip top>
+                <template v-slot:activator="{ on }">
+                  <v-btn
+                    fab
+                    dark
+                    small
+                    :color="'info'"
+                    bottom
+                    right
+                    v-on="on"
+                    style="margin-right: 5px; margin-left: 6px; margin-top:-600px; "
+                    @click.stop="getFormPrint()"
+                  >
+                    <v-icon>mdi-book-open-page-variant</v-icon>
+                  </v-btn>
+                </template>
+                <div>
+                  <span>Gerenar Formulario</span>
+                </div>
+              </v-tooltip-->
+              <v-tooltip top>
+                <template v-slot:activator="{ on }">
+                  <v-btn
+                    fab
+                    dark
+                    small
+                    :color="'success'"
+                    bottom
+                    right
+                    v-on="on"
+                    style="margin-right: 5px; margin-left: 6px; margin-top:-520px;"
+                    @click.stop="saveLoan()"
+                  >
+                    <v-icon>mdi-content-save-all</v-icon>
+                  </v-btn>
+                </template>
+                <div>
+                  <span>Guardar Tramite</span>
+                </div>
+              </v-tooltip>
+              <!--v-tooltip top>
+                <template v-slot:activator="{ on }">
+                  <v-btn
+                    fab
+                    dark
+                    small
+                    :color="'danger'"
+                    bottom
+                    right
+                    v-on="on"
+                    style="margin-right: 5px; margin-left: 6px; margin-top:-510px;"
+                    @click.stop="getContractPrint()"
+                  >
+                    <v-icon>mdi-file-download</v-icon>
+                  </v-btn>
+                </template>
+                <div>
+                  <span>Generar Contrato</span>
+                </div>
+              </v-tooltip-->
+            </v-col>
+          </v-row>
+        </template>
+      </v-data-iterator>
+      <v-toolbar-title class="align-end font-weight-black text-center my-2">
+        <h3>Documentos Adicionales</h3>
+      </v-toolbar-title>
+      <v-data-iterator :items="optional" hide-default-footer>
+        <template>
+          <v-row>
+            <v-col cols="11" class="ma-5 ma-5">
+              <v-autocomplete
+                dense
+                filled
+                label="Busqué escoja una opción"
+                v-model="selectedValue"
+                :items="optional"
+                item-text="name"
+                item-value="id"
+                @change="addOptionalDocument(selectedValue)"
+              ></v-autocomplete>
+              <v-divider></v-divider>
+              <div class="align-end font-weight-light">
+                <div v-for="(idDoc, index) of selectedOpc" :key="index">
+                  <div>
+                    <div>
+                      <div>
+                        {{index+1 + ". "}} {{(optional.find((item) => item.id === idDoc)).name}}
+                        <v-btn text icon color="error" @click="deleteOptionalDocument(index)">
                           <v-icon>mdi-delete</v-icon>
                         </v-btn>
-                      </td>
-                      <td v-show="!editable">
-                        <v-btn v-if="props.item.latitude && props.item.longitude" text icon color="info" @click.stop="bus.$emit('openDialog', {...props.item, ...{edit: false}})">
-                          <v-icon>mdi-google-maps</v-icon>
-                        </v-btn>
-                      </td>
-                    </tr>
-                  </template>
-                  </v-data-table>
-                  </v-col>
-            </v-row>
-          </v-card>
-        </v-container>
-      </v-col>
-      <v-col cols="12" md="3">
-        <v-container  class="ma-0 pa-0">
-          <v-card>
-            <v-col cols="12" class="py-2" >
-              <v-toolbar-title>TELÉFONOS</v-toolbar-title>
+                      </div>
+                      <v-divider></v-divider>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </v-col>
-            <v-col cols="12"  class="py-0" >
-              <v-text-field
-                dense
-                v-model="getTelefono[0]"
-                label="Celular 1"
-                v-validate.initial="'min:1|max:20'"
-                :error-messages="errors.collect('celular1')"
-                data-vv-name="celular1"
-                :readonly="!editable || !permission.secondary"
-                :outlined="editable && permission.secondary"
-                :disabled="editable && !permission.secondary"
-
-              ></v-text-field>
-            </v-col>
-            <v-col cols="12" class="py-0" >
-              <v-text-field class = "text-right"
-                dense
-                v-model="getTelefono[1]"
-                label="Celular 2"
-                v-validate.initial="'min:1|max:20'"
-                :error-messages="errors.collect('celular')"
-                data-vv-name="celular"
-                :readonly="!editable || !permission.secondary"
-                :outlined="editable && permission.secondary"
-                :disabled="editable && !permission.secondary" 
-              ></v-text-field>
-            </v-col>
-            <v-col cols="12" class="py-0" >
-              <v-text-field
-                dense
-                v-model="affiliate.phone_number"
-                label="Fijo"
-                v-validate.initial="'min:1|max:20'"
-                :error-messages="errors.collect('telefono')"
-                data-vv-name="telefono"
-                :readonly="!editable || !permission.secondary"
-                :outlined="editable && permission.secondary"
-                :disabled="editable && !permission.secondary" 
-              ></v-text-field>
-            </v-col>
-          </v-card>
-        </v-container>
-      </v-col>
-      <v-col cols="12" md="1" class="ma-0 pa-0">
-        <v-tooltip top>
-          <template v-slot:activator="{ on }">
-            <v-btn
-              fab
-              dark
-              x-small
-              :color="'error'"
-              bottom
-              right
-              v-on="on"
-              style="margin-right: 45px;"
-              @click.stop="resetForm()"
-              v-show="editable"
-            >
-              <v-icon>mdi-close</v-icon>
-            </v-btn>
-          </template>
-          <div>
-            <span>Cancelar</span>
-          </div>
-        </v-tooltip>
-        <v-tooltip top >
-          <template v-slot:activator="{ on }">
-            <v-btn
-              fab
-              dark
-              x-small
-              :color="editable ? 'danger' : 'success'"
-              bottom
-              right
-              v-on="on"
-              style="margin-right: -9px; margin-top:10px;"
-              @click.stop="saveAffiliate()"
-            >
-              <v-icon v-if="editable">mdi-check</v-icon>
-              <v-icon v-else>mdi-pencil</v-icon>
-            </v-btn>
-          </template>
-          <div>
-            <span v-if="editable">Guardar</span>
-            <span v-else>Editar</span>
-        </div>
-        </v-tooltip>
-      </v-col>
-    </v-row>
-    <AddStreet :bus="bus" :cities="cities"/>
-    <RemoveItem :bus="bus"/>
+          </v-row>
+        </template>
+      </v-data-iterator>
+    </v-card>
   </v-container>
 </template>
 <script>
-import RemoveItem from '@/components/shared/RemoveItem'
-import AddStreet from '@/components/affiliate/AddStreet'
-import { Validator } from 'vee-validate'
-  export default {
-  inject: ['$validator'],
-  name: "affiliate-personalInformation",
+import { Validator } from "vee-validate";
+export default {
+  inject: ["$validator"],
+  name: "loan-requirement",
+  data: () => ({
+    itemsPerPage: 10,
+    items: [],
+    optional: [],
+    requirement: [],
+    index: [],
+    prueba: null,
+    cont: 0,
+    checks: [],
+    selectedOpc: [],
+    selected: [],
+    radios: [],
+    selectedValue: null
+  }),
   props: {
-    affiliate: {
+    modality: {
       type: Object,
       required: true
     },
-    addresses: {
+    datos: {
       type: Array,
+      required: true
+    },
+    formulario: {
+      type: Array,
+      required: true
+    },
+    calculos: {
+      type: Object,
       required: true
     }
   },
-  components: {
-    AddStreet,
-    RemoveItem
-  },
-  data: () => ({
-    loading: true,
-    dialog: false,
-    telefono:[null,null],
-    editable: false,
-    cities: [],
-    headers: [
-          { text: 'Ciudad', align: 'left', value: 'city_address_id' },
-          { text: 'Zona', align: 'left', value: 'zone' },
-          { text: 'Calle', align: 'left', value: 'street' },
-          { text: 'Nro', align: 'left', value: 'number_address' },
-          { text: 'Acciones', align: 'center' }
-        ],
-    city: [],
-    cityTypeSelected: null,
-    bus: new Vue()
-  }),
-  computed: {
-    permission() {
-      return {
-        primary: this.primaryPermission,
-        secondary: this.secondaryPermission
-      }
-    },
-    secondaryPermission() {
-      if (this.affiliate.id) {
-        return this.$store.getters.permissions.includes('update-affiliate-secondary')
-      } else {
-        return this.$store.getters.permissions.includes('create-affiliate')
-    }
-  },
-  primaryPermission() {
-      if (this.affiliate.id) {
-        return this.$store.getters.permissions.includes('update-affiliate-primary')
-      } else {
-        return this.$store.getters.permissions.includes('create-affiliate')
-      }
-    },
-    getTelefono(){
-      if(this.affiliate.cell_phone_number==null)
-      {
-        return 0
-      }
-      else
-      {
-        let array=this.affiliate.cell_phone_number.split(',');
-      return array
-      }
-  }
-  },
   beforeMount() {
-    this.getCities();
-    this.updateTelefono();
-  },
-  mounted() {
-      this.bus.$on('saveAddress', (address) => {
-        if (address.id) {
-          let index = this.addresses.findIndex(o=> o.id == address.id)
-          if (index == -1) {
-            this.addresses.unshift(address)
-          } else {
-            this.addresses[index] = address
-          }
-        }
-    })
+    this.getRequirement(33);
   },
   methods: {
-    resetForm() {
-      this.editable = false
+    selectDoc1(id) {
+      setTimeout(() => {
+        //console.log("ID=" + id + " J=" + j + " I=" + i);
+        //console.log(this.selected + "=>vector ckeck");
+        //console.log(this.radios.filter(Boolean) + "=>vector radio");
+      }, 500);
     },
-    close() {
-      this.dialog = false
-      this.$emit('closeFab')
-    },
-    async getCities() {
-    try {
-      this.loading = true
-      let res = await axios.get(`city`);
-      this.cities = res.data;
-    } catch (e) {
-      this.dialog = false;
-      console.log(e);
-    }finally {
-        this.loading = false
-      }
-  },
-    updateTelefono(){
-      this.telefono[0]= this.getTelefono[0];
-      this.telefono[1]= this.getTelefono[1];
-      let celular=this.telefono.join(',')
-      this.affiliate.cell_phone_number=celular
-      return  this.affiliate.cell_phone_number
-    },
-    async saveAffiliate() {
+    async getRequirement(id) {
       try {
-        if (!this.editable) {
-          this.editable = true
-          console.log('entro al grabar por verdadero :)')
-        } else {
-          console.log('entro al grabar por falso :)')
-          // Edit affiliate
-          //await axios.patch(`affiliate/${this.affiliate.id}`, this.affiliate)
-          await axios.patch(`affiliate/${this.affiliate.id}`, {phone_number: this.affiliate.phone_number, cell_phone_number: this.affiliate.cell_phone_number})
-          await axios.patch(`affiliate/${this.affiliate.id}/address`, {
-            addresses: this.addresses.map(o => o.id)
-          })
-          this.toastr.success('Registro guardado correctamente')
-          this.editable = false
-        }
+        this.loading = true;
+        let res = await axios.get(`procedure_modality/${id}/requirements`);
+        this.requirement = res.data;
+        this.items = this.requirement.required;
+        this.optional = this.requirement.optional;
       } catch (e) {
-        console.log(e)
+        console.log(e);
       } finally {
-        this.loading = false
+        this.loading = false;
       }
     },
+    async getRequirementPrint() {
+      try {
+        let res = await axios.get(`loan/print/requirements`, {
+          params: {
+            lenders: [this.$route.query.affiliate_id],
+            procedure_modality_id: this.modality.id,
+            city_id: this.$store.getters.cityId,
+            amount_requested: this.datos[1],
+            loan_term: this.datos[2]
+          },
+          responseType: "arraybuffer"
+        });
+        let blob = new Blob([res.data], {
+          type: "application/pdf"
+        });
+        printJS(window.URL.createObjectURL(blob));
+      } catch (e) {
+        console.log(e);
+      } finally {
+        this.loading = false;
+      }
+    },
+    async getFormPrint() {
+    try {
+      let res = await axios.get(`loan/${8}/print/form`, {
+        params:{
+         copies: 2
+        },
+        responseType: 'arraybuffer'
+        })
+        let blob = new Blob([res.data], {
+        type: "application/pdf"
+      })
+        printJS(window.URL.createObjectURL(blob))
+    } catch (e) {
+    console.log(e);
+    } finally {
+        this.loading = false;
+      }
+    },
+     async saveLoan() {
+      try {
+        let res = await axios.post(`loan`, {
+          copies: 2,
+          responseType: "arraybuffer",
+          lenders: [this.$route.query.affiliate_id],
+          guarantors: [],
+          disbursable_id: this.$route.query.affiliate_id,
+          disbursable_type: "affiliates",
+          procedure_modality_id: this.modality.id,
+          amount_requested: this.calculos.monto_maximo_sugerido,
+          city_id: this.$store.getters.cityId,
+          loan_term: this.calculos.plazo,
+          disbursement_type_id: this.formulario[0],
+          account_number: this.formulario[1],
+          loan_destination_id: this.formulario[2]
+        });
+          this.loan = res.data;
+          this.idRequirements=this.selected.concat(this.radios.filter(Boolean))
+          if(this.idRequirements.length === this.items.length){           
+            await axios.post(`loan/${this.loan.id}/document`, {            
+              documents: this.selectedOpc.concat(this.selected.concat(this.radios.filter(Boolean)))
+            });
+            this.toastr.success("Se guardó satisfactoriamente.");
+            console.log(this.idRequirements +"lomg= "+this.idRequirements.length+" items="+this.items.length);
+            console.log(this.idRequirements.length === this.items.length);
+          }else{
+            this.toastr.error("Falta seleccionar requisitos, todos los requisitos deben ser presentados.");
+          }
+        printJS({
+          printable: res.data.attachment.content,
+          type: res.data.attachment.type,
+          base64: true
+        })
+      } catch (e) {
+        console.log(e);
+      } finally {
+        this.loading = false;
+      }
+    },
+    async getContractPrint() {
+      try {
+        let res1 = await axios.get(`loan/${8}/print/contract`, {
+      responseType: 'arraybuffer'
+      })
+        let res2 = await axios.get(`loan/${8}/print/documents`, {
+      responseType: 'arraybuffer'
+      })
+        let blob1 = new Blob([res1.data], {
+        type: "application/pdf"
+      })
+        let blob2 = new Blob([res2.data], {
+        type: "application/pdf"
+      })
+        printJS(window.URL.createObjectURL(blob1))
+        printJS(window.URL.createObjectURL(blob2))
+      } catch (e) {
+        console.log(e);
+      } finally {
+        this.loading = false;
+      }
+    },
+    addOptionalDocument(i) {
+      if (this.selectedOpc.indexOf(i) === -1) {
+        this.selectedOpc.push(i);
+        //console.log("I= " + i);
+        //console.log("selectedOpc " + this.selectedOpc);
+      }
+      this.selectedValue = " ";
+    },
+    deleteOptionalDocument(i) {
+      this.selectedOpc.splice(i, 1);
+    }
   }
-  }
+};
 </script>
