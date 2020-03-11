@@ -98,7 +98,6 @@ class LoanController extends Controller
     * @bodyParam disbursement_type_id integer required Tipo de desembolso. Example: 1
     * @bodyParam lenders array required Lista de IDs de afiliados Titular de préstamo. Example: [5146]
     * @bodyParam guarantors array Lista de IDs de afiliados Garante de préstamo. Example: []
-    * @bodyParam request_date date Fecha de desembolso. Example: 2020-02-01
     * @bodyParam parent_loan_id integer ID de Préstamo Padre. Example: 1
     * @bodyParam parent_reason enum (REFINANCIAMIENTO, REPROGRAMACIÓN) Tipo de trámite hijo. Example: REFINANCIAMIENTO
     * @bodyParam account_number integer Número de cuenta en Banco Union. Example: 586621345
