@@ -4,25 +4,25 @@
 
       <v-row class="ma-0 px-1 py-0">
         <v-col cols="3">
-          <small>Cédula de Identidad</small>
+          <small><strong>Cédula de Identidad</strong></small>
           <br />
           {{affiliate.identity_card}}
         </v-col>
 
         <v-col cols="2">
-          <small>Categoría</small>
+          <small><strong>Categoría</strong></small>
           <br />
           {{this.category_name}}
         </v-col>
 
         <v-col cols="3">
-          <small>Estado</small>
+          <small><strong>Estado</strong></small>
           <br />
           {{this.state_name_type +' ('+ this.state_name_status+')'}}
         </v-col>
 
         <v-col cols="4">
-          <small>Grado</small>
+          <small><strong>Grado</strong></small>
           <br />
           {{this.degree_name}}
         </v-col>
