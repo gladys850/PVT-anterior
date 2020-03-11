@@ -80,7 +80,7 @@
                         ])
                     </td>
                     <td width="50%">
-                        @php($user = Auth::user())>
+                        @php($user = Auth::user())
                         @include('partials.signature_box', [
                             'full_name' => $user->full_name,
                             'position' => $user->position,
