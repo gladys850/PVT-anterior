@@ -42,7 +42,9 @@ class LoanForm extends FormRequest
             'parent_reason'=> 'string|nullable|in:REFINANCIAMIENTO,REPROGRAMACIÓN',
             'loan_interest_id'=>'exists:loan_interests,id',
             'loan_state_id'=>'exists:loan_states,id',
-            'amount_approved'=>'integer|min:200|max:700000'
+            'amount_approved'=>'integer|min:200|max:700000',
+            'documents'=>'required|array|min:1',
+            'documents.*'=>'exists:procedure_documents,id'
     ];
 
         switch ($this->method()) {

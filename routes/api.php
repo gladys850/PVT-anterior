@@ -101,7 +101,6 @@ Route::group([
             'middleware' => 'permission:create-loan'
         ], function () {
             Route::resource('loan', 'Api\V1\LoanController')->only('store');
-            Route::post('loan/{id}/document', 'Api\V1\LoanController@submit_documents');
             Route::get('loan/{id}/print/documents', 'Api\V1\LoanController@print_documents');
             Route::get('affiliate/{id}/loan_modality', 'Api\V1\AffiliateController@get_loan_modality');
             Route::get('loan/{id}/print/form', 'Api\V1\LoanController@print_form');
