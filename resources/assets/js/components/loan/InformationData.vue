@@ -5,34 +5,34 @@
     <v-row>
       <v-col cols="3">
         <small>
-          <strong>Cédula de Identidad</strong>
+          Cédula de Identidad
         </small>
         <br />
-        {{affiliate.identity_card}}
+        <strong>{{affiliate.identity_card}}</strong>
       </v-col>
 
       <v-col cols="2">
         <small>
-          <strong>Categoría</strong>
+          Categoría
         </small>
         <br />
-        {{this.category_name}}
+        <strong>{{this.category_name}}</strong>
       </v-col>
 
       <v-col cols="3">
         <small>
-          <strong>Estado</strong>
+          Estado
         </small>
         <br />
-        {{this.state_name_type +' ('+ this.state_name_status+')'}}
+        <strong>{{this.state_name_type +' ('+ this.state_name_status+')'}}</strong>
       </v-col>
 
       <v-col cols="4">
         <small>
-          <strong>Grado</strong>
+          Grado
         </small>
         <br />
-        {{this.degree_name}}
+        <strong>{{this.degree_name}}</strong>
       </v-col>
     </v-row>
   
