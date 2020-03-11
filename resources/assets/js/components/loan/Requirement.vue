@@ -1,3 +1,4 @@
+
 <template>
   <v-container fluid>
     <v-card>
@@ -25,11 +26,9 @@
                           </div>
                         </v-list-item-content>
                       </v-col>
-
                       <v-col cols="10" class="py-0">
                         <v-list-item-content class="align-end font-weight-light py-0">{{doc.name}}</v-list-item-content>
                       </v-col>
-
                       <v-col cols="1" class="py-0">
                         <div v-if="group.length == 1" class="py-0">
                           <v-checkbox class="py-0"
@@ -39,7 +38,6 @@
                             @change="selectDoc1(doc.id,j,i)"
                           ></v-checkbox>
                         </div>
-
                         <div v-if="group.length > 1" class="py-0">
                           <v-radio-group :mandatory="false" v-model="radios[i]" class="py-0">
                             <v-radio color="info" :value="doc.id" @change="selectDoc1(doc.id,j,i)" class="py-0"></v-radio>
@@ -136,11 +134,9 @@
           </v-row>
         </template>
       </v-data-iterator>
-
       <v-toolbar-title class="align-end font-weight-black text-center my-2">
         <h3>Documentos Adicionales</h3>
       </v-toolbar-title>
-
       <v-data-iterator :items="optional" hide-default-footer>
         <template>
           <v-row>
@@ -155,7 +151,6 @@
                 item-value="id"
                 @change="addOptionalDocument(selectedValue)"
               ></v-autocomplete>
-
               <v-divider></v-divider>
               <div class="align-end font-weight-light">
                 <div v-for="(idDoc, index) of selectedOpc" :key="index">
@@ -196,7 +191,9 @@ export default {
     selectedOpc: [],
     selected: [],
     radios: [],
-    selectedValue: null
+    selectedValue: null,
+    idRequirements:[]
+
   }),
   props: {
     modality: {
@@ -227,7 +224,6 @@ export default {
         //console.log(this.radios.filter(Boolean) + "=>vector radio");
       }, 500);
     },
-
     async getRequirement(id) {
       try {
         this.loading = true;
@@ -299,11 +295,17 @@ export default {
           loan_destination_id: this.formulario[2]
         });
           this.loan = res.data;
-            await axios.post(`loan/${this.loan.id}/document`, {
-            documents: this.selectedOpc.concat(
-            this.selected.concat(this.radios.filter(Boolean))
-          )
-        });
+          this.idRequirements=this.selected.concat(this.radios.filter(Boolean))
+          if(this.idRequirements.length === this.items.length){           
+            await axios.post(`loan/${this.loan.id}/document`, {            
+              documents: this.selectedOpc.concat(this.selected.concat(this.radios.filter(Boolean)))
+            });
+            this.toastr.success("Se guardó satisfactoriamente.");
+            console.log(this.idRequirements +"lomg= "+this.idRequirements.length+" items="+this.items.length);
+            console.log(this.idRequirements.length === this.items.length);
+          }else{
+            this.toastr.error("Falta seleccionar requisitos, todos los requisitos deben ser presentados.");
+          }
         printJS({
           printable: res.data.attachment.content,
           type: res.data.attachment.type,
