@@ -8,7 +8,7 @@ use App\RecordType;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Schema;
-use File;
+use Illuminate\Support\Facades\Storage;
 
 class Util
 {
