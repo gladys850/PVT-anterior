@@ -98,14 +98,15 @@ class LoanController extends Controller
     * @bodyParam disbursement_type_id integer required Tipo de desembolso. Example: 1
     * @bodyParam lenders array required Lista de IDs de afiliados Titular de préstamo. Example: [5146]
     * @bodyParam guarantors array Lista de IDs de afiliados Garante de préstamo. Example: []
-    * @bodyParam disbursement_date date Fecha de desembolso. Example: 2020-02-01
+    * @bodyParam request_date date Fecha de desembolso. Example: 2020-02-01
     * @bodyParam parent_loan_id integer ID de Préstamo Padre. Example: 1
     * @bodyParam parent_reason enum (REFINANCIAMIENTO, REPROGRAMACIÓN) Tipo de trámite hijo. Example: REFINANCIAMIENTO
     * @bodyParam account_number integer Número de cuenta en Banco Union. Example: 586621345
     * @bodyParam loan_destination_id integer required ID destino de Préstamo. Example: 1
+    * @bodyParam documents array required Lista de IDs de Documentos solicitados. Example: [306,305]
     * @authenticated
     * @response
-    *   {
+    * {
     *   "procedure_modality_id": 32,
     *   "loan_interest_id": 1,
     *   "amount_requested": 2000,
@@ -113,18 +114,18 @@ class LoanController extends Controller
     *   "loan_term": 2,
     *   "disbursement_type_id": 1,
     *   "loan_destination_id": 1,
-    *   "disbursement_date": "2020-02-01",
-    *   "parent_loan_id": 1,
-    *   "parent_reason": "REFINANCIAMIENTO",
     *   "account_number": 586621345,
+    *   "request_date": "2020-03-05T20:27:23.900575Z",
     *   "disbursable_type": "affiliates",
     *   "disbursable_id": 5146,
     *   "amount_approved": 2000,
-    *   "request_date": "2020-03-05T20:27:23.900575Z",
     *   "loan_state_id": 1,
     *   "code": "PTMO000017-2020",
+    *   "disbursement_date": "2020-02-01",
     *   "updated_at": "2020-03-05 16:27:23",
     *   "created_at": "2020-03-05 16:27:23",
+    *   "parent_loan_id": 1,
+    *   "parent_reason": "REFINANCIAMIENTO",
     *   "id": 17,
     *   "modality": {
     *       "id": 32,
@@ -132,12 +133,19 @@ class LoanController extends Controller
     *       "name": "Anticipo sector activo",
     *       "shortened": "ANT-SA",
     *       "is_valid": true
+    *   },
+    *   "attachment": {
+    *       "content": "zMTcgM....",
+    *       "type": "pdf",
+    *       "file_name": "solicitud_prestamo_17.pdf"
     *   }
     * }
     */
     public function store(LoanForm $request)
     {
+        // Guardar préstamo
         $saved = $this->save_loan($request);
+        // Enlazar afiliados y garantes
         $loan = $saved->loan;
         $request = $saved->request;
         $request->lenders = collect($request->lenders);
@@ -160,6 +168,18 @@ class LoanController extends Controller
             }
         }
         $loan->loan_affiliates()->sync($affiliates);
+        // Enlazar documentos requeridos y opcionales
+        $date = Carbon::now()->toISOString();
+        $documents = [];
+        foreach ($request->documents as $document_id) {
+            if ($loan->submitted_documents()->whereId($document_id)->doesntExist()) {
+                $documents[$document_id] = [
+                    'reception_date' => $date
+                ];
+            }
+        }
+        $loan->submitted_documents()->syncWithoutDetaching($documents);
+        // Generar PDFs
         $file_name = implode('_', ['solicitud', 'prestamo', $loan->id]) . '.pdf';
         $loan->attachment = Util::pdf_to_base64([
             $this->print_form(new Request([]), $loan->id, $standalone=false),
@@ -391,40 +411,6 @@ class LoanController extends Controller
             'request' => $request,
             'loan' => $loan
         ];
-    }
-
-    /**
-    * Registro de documentos presentados
-    * Registra todos los documentos entregados por parte del prestatario
-    * @urlParam id required ID de préstamo. Example: 2
-    * @queryParam documents required Lista de IDs de Documentos solicitados. Example: [306,305]
-    * @response
-    * {
-    *    "attached": [
-    *        306,
-    *        305
-    *    ],
-    *    "detached": [],
-    *    "updated": []
-    * }
-    */
-    public function submit_documents(Request $request, $id)
-    {
-        $request->validate([
-            'documents' => 'required|array|min:1',
-            'documents.*' => 'exists:procedure_documents,id'
-        ]);
-        $loan = Loan::findOrFail($id);
-        $date = Carbon::now()->toISOString();
-        $documents = [];
-        foreach ($request->documents as $document_id) {
-            if ($loan->submitted_documents()->whereId($document_id)->doesntExist()) {
-                $documents[$document_id] = [
-                    'reception_date' => $date
-                ];
-            }
-        }
-        return $loan->submitted_documents()->syncWithoutDetaching($documents);
     }
 
     /**
