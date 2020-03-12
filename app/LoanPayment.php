@@ -17,7 +17,7 @@ class LoanPayment extends Model
         'pay_date',
         'estimated_date',
         'quota_number',
-        'quota_estimated',
+        'estimated_quota',
         'capital_payment',
         'interest_payment',
         'penal_payment',
@@ -64,7 +64,7 @@ class LoanPayment extends Model
         if ($interest['accumulated'] >= 90) {
             $interest['penal'] = $interest['accumulated'] - $interest['current'];
         }
-        return $interest;
+        return (object)$interest;
     }
 
     // Unión de pagos con el mismo número de cuota
@@ -88,45 +88,26 @@ class LoanPayment extends Model
         unset($merged->affiliate_id, $merged->payment_type, $merged->voucher_number, $merged->receipt_number, $merged->description, $merged->created_at, $merged->updated_at);
         return $merged;
     }
-    public static function quota_date($loan_id)
-    {   $c=1;
-        $quota_date=[];
-        $loan=Loan::find($loan_id);
-        $date_disbursement=$loan->disbursement_date;
-        $num_quota=count($loan->plan());
-        $loanGlobalParameter=(LoanGlobalParameter::all())->last();
-        $offsetday=$loanGlobalParameter->offset_interest_day;
-        $last_day=Carbon::parse($date_disbursement)->endOfMonth();
-        $number_day=Carbon::parse($date_disbursement)->diffInDays(Carbon::parse($last_day));
-        $next_quota=$last_day;
-        if($number_day>=$offsetday){
-            $quota_date[$c]=$next_quota->toDateString();
-        }else{$c=0;
-        }
-        while($c<$num_quota){
-            $c=$c+1;
-            $next_quota=Carbon::parse($next_quota)->addWeek()->endOfMonth()->toDateString();
-            $quota_date[$c]=$next_quota;
-        } 
-        return $quota_date;
-    }
 
-    public static function current_interest($loan_id, $estimated_date, $estimated_date_last, $quota)
+    public static function quota_date(Loan $loan, $first = false)
     {
-        $loanPayment=LoanPayment::where('loan_id', '=', $loan_id)->get()->toArray();
-        if($quota==1)
-        {
-            $loan=Loan::find($loan_id);
-            $date_disbursement=$loan->disbursement_date;
-            $diferencia = Carbon::parse($date_disbursement)->diffInDays(Carbon::parse($estimated_date_last));
-            $diferencia=$diferencia+1;
+        $quota = 1;
+        $latest_quota = $loan->last_payment();
+        $estimated_date = Carbon::now()->endOfMonth();
+        if (!$latest_quota || $first) {
+            $payment_date = $loan->disbursement_date ? $loan->disbursement_date : $loan->request_date;
+            $payment_date = CarbonImmutable::parse($payment_date);
+            if ($estimated_date->lessThan($payment_date) || $first) $estimated_date = $payment_date->endOfMonth();
+            if ($payment_date->day >= LoanGlobalParameter::latest()->first()->offset_interest_day && $estimated_date->diffInMonths($payment_date) == 0) {
+                $estimated_date = $payment_date->startOfMonth()->addMonth()->endOfMonth();
+            }
+        } else {
+            $estimated_date = Carbon::parse($latest_quota->pay_date)->startOfMonth()->addMonth()->endOfMonth();
+            $quota = $latest_quota->quota_number + 1;
         }
-        else{
-            $i=$quota-1;
-            $diferencia = Carbon::parse($estimated_date_last)->diffInDays(Carbon::parse($estimated_date));
-        }
-        return $diferencia;
+        return (object)[
+            'date' => $estimated_date->toDateString(),
+            'quota' => $quota
+        ];
     }
-
-
 }

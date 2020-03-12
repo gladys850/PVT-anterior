@@ -22,7 +22,7 @@ class CreateLoanPaymentsTable extends Migration
             $table->date('estimated_date')->nullable(); // fecha estimada de pago
             $table->integer('quota_number')->nullable(); // numero de cuota, cuando sea necesario se repite
             // de las siguientes 5 columnas se obtendra el total pagado
-            $table->float('quota_estimated',10,2)->nullable(); // cuota estimada
+            $table->float('estimated_quota',10,2)->nullable(); // cuota estimada
             $table->float('capital_payment',10,2)->nullable(); // pago de capital
             $table->float('interest_payment',10,2)->nullable(); // pago de interes
             $table->float('penal_payment',10,2)->nullable(); //pago penal
