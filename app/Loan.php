@@ -105,7 +105,7 @@ class Loan extends Model
 
     public function getDefaultedAttribute()
     {
-        return LoanPayment::days_interest($this)['penal'] > 0 ? true : false;
+        return LoanPayment::days_interest($this)->penal > 0 ? true : false;
     }
 
     public function payments()
@@ -157,7 +157,7 @@ class Loan extends Model
     {
         $latest_quota = $this->last_payment();
         if ($latest_quota) {
-            $payments = LoanPayment::whereLoanId($this->id)->whereQuotaNumber($latest_quota->quota_number)->get();
+            $payments = $this->payments()->whereQuotaNumber($latest_quota->quota_number)->get();
             $latest_quota = new LoanPayment();
             $latest_quota = $latest_quota->merge($payments);
         }
@@ -170,36 +170,20 @@ class Loan extends Model
         unset($this->interest);
         return Util::round($monthly_interest * $this->amount_approved / (1 - 1 / pow((1 + $monthly_interest), $this->loan_term)));
     }
- 
 
     public function getNextPaymentAttribute()
     {
-        $quota = $this->last_quota();
-        if (!$quota) {
-            $quota = new LoanPayment();
-            $quota->estimated_date = LoanPayment::quota_date($this->id)[1];
-            $current_date = Carbon::now();
-            $last_date = Carbon::parse($quota->estimated_date);
-            if ($last_date->month <= $current_date->month) {
-                $quota->estimated_date = $current_date;
-            } else {
-                $quota->estimated_date = $current_date->addMonth();
-            }
-            $quota->quota_number = 1;
-        } else {
-            $quota->estimated_date = Carbon::now();
-            $quota->quota_number = $quota->quota_number + 1;
-        }
-        $quota->estimated_date = $quota->estimated_date->endOfMonth()->toDateString();
-        unset($quota->pay_date);
+        $quota = new LoanPayment();
+        $next_payment = LoanPayment::quota_date($this);
+        $quota->estimated_date = $next_payment->date;
+        $quota->quota_number = $next_payment->quota;
         $interest = $this->interest;
-        $interest_days = LoanPayment::days_interest($this, $quota->estimated_date);
-
+        $quota->interest_days = LoanPayment::days_interest($this, $quota->estimated_date);
         // Calcular intereses
         $quota->balance = $this->balance;
-        $quota->interest_payment = Util::round($quota->balance * $interest->daily_current_interest * $interest_days['current']);
-        $quota->penal_payment = Util::round($quota->balance * $interest->daily_penal_interest * $interest_days['penal']);
-        $quota->accumulated_interest = Util::round($quota->balance * $interest->daily_current_interest * $interest_days['accumulated']);
+        $quota->interest_payment = Util::round($quota->balance * $interest->daily_current_interest * $quota->interest_days->current);
+        $quota->penal_payment = Util::round($quota->balance * $interest->daily_penal_interest * $quota->interest_days->penal);
+        $quota->accumulated_interest = Util::round($quota->balance * $interest->daily_current_interest * $quota->interest_days->accumulated);
         // Calcular amortización de capital
         $total_interests = $quota->interest_payment + $quota->penal_payment + $quota->accumulated_interest;
         if (($quota->balance + $total_interests) > $this->estimated_quota) {
@@ -208,43 +192,47 @@ class Loan extends Model
             $quota->capital_payment = $quota->balance;
         }
         // Calcular monto total de la cuota
-        $quota->quota_estimated = $quota->capital_payment + $total_interests;
+        $quota->estimated_quota = $quota->capital_payment + $total_interests;
         $quota->next_balance = Util::round($quota->balance - $quota->capital_payment);
         return $quota;
     }
-    public function  plan(){
-        $saldo_capital=$this->amount_approved;
-        $interes_diario=$this->interest->daily_current_interest;
-        $cuota_estimada=$this->estimated_quota;
-        $plan=[];
-        $fechas = [];
-        $fechas[] = $this->disbursement_date;
-        $n=1;
-        while($saldo_capital>0) {
-            $fechas[] = Carbon::parse($fechas[$n-1])->startOfMonth()->addMonth()->endOfMonth()->toDateString();
-            $dias_interes=LoanPayment::current_interest($this->id,$fechas[$n-1],$fechas[$n],$n);
-            $amortizacion_interes=$dias_interes*$saldo_capital*$interes_diario;
-            if($cuota_estimada>=$saldo_capital){
-                $amortizacion_capital=$saldo_capital;
-            } else {
-                $amortizacion_capital=$cuota_estimada-$amortizacion_interes;
-            }
-            $total_pagar=$amortizacion_interes+$amortizacion_capital;
-            $saldo_capital=$saldo_capital-$amortizacion_capital;
 
-            $plan[] = [
-                'cuota'=>$n,
-                'fecha'=>$fechas[$n],
-                'Dias'=>$dias_interes,
-                'Capital'=>Util::round($amortizacion_capital),
-                'Interes'=>Util::round($amortizacion_interes),
-                'Saldo Capital'=>Util::round($saldo_capital)
-            ];
-            $n+=1;
+    public function getPlanAttribute() {
+        $plan = [];
+        $daily_interest = $this->interest->daily_current_interest;
+        $balance = $this->amount_approved;
+        $estimated_quota = $this->estimated_quota;
+        for ($i = 0; $i < $this->loan_term; $i++) {
+            if (count($plan) == 0) {
+                $next_payment = LoanPayment::quota_date($this, true);
+            } else {
+                $next_payment = (object)[
+                    'quota' => $plan[$i-1]->quota + 1,
+                    'date' => Carbon::parse($plan[$i-1]->date)->startOfMonth()->addMonth()->endOfMonth()->toDateString()
+                ];
+            }
+            $interest = LoanPayment::days_interest($this, $next_payment->date);
+            $next_interest = Util::round($balance * $interest->current * $daily_interest);
+            if (($balance + $next_interest) > $estimated_quota) {
+                $next_balance = $estimated_quota - $next_interest;
+            } else {
+                $next_balance = $balance;
+            }
+            $next_balance = Util::round($next_balance);
+            $balance = Util::round($balance - $next_balance);
+            array_push($plan, (object)[
+                'quota' => $next_payment->quota,
+                'date' => $next_payment->date,
+                'days' => $interest->current,
+                'estimated_quota' => $estimated_quota,
+                'capital' => $next_balance,
+                'interest' => $next_interest,
+                'next_balance' => $balance
+            ]);
         }
         return $plan;
+    }
 
-    } 
     //obtener modalidad teniendo el tipo y el afiliado
     public static function get_modality($modality_name, $affiliate){
         $modality=null;
