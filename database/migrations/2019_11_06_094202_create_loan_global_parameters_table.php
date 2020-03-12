@@ -17,7 +17,9 @@ class CreateLoanGlobalParametersTable extends Migration
             $table->bigIncrements('id');
             $table->integer('offset_ballot_day'); //dia de desface de boletas
             $table->integer('offset_interest_day'); //dia de desface de interes por desembolso
-            $table->integer('livelihood_amount')->nullable(); ; // cantidad de sustento-->inf. estadistica
+            $table->integer('livelihood_amount')->nullable();// cantidad de sustento-->inf. estadistica
+            $table->integer('min_service_years'); // minimo años de servicio
+            $table->integer('min_service_years_adm'); // minimo años de servicio adm policial
             $table->timestamps();
         });
     }

@@ -38,7 +38,7 @@ class LoanSeeder extends Seeder
                 'parameters' => [
                     'debt_index' => 90,
                     'quantity_ballots' => 1,
-                    'guarantors' => 0
+                    'guarantors' => 0,
                 ],
                 'interest' => ['annual_interest' => 36,'penal_interest' => 6]
             ],
@@ -50,6 +50,7 @@ class LoanSeeder extends Seeder
                   ['name' => 'Estado de cuenta original, vigente y emitido por el Banco Unión S.A.','number'=>3], // Nuevo
                   ['name' => 'Formulario de Calificación y Aprobación de Préstamos FORM/CAYAP/PTMO/UIP/004.','number'=>4],
                   /*Estos documentos son solicitados por MUSERPOL en caso de ser requeridos*/
+                  ['name' => 'Certificado de Renta de jubilación o fotocopia legalizada emitida por el servicio Nacional del Sistema de Reparto.','number'=>0],  //En caso de perdida de boleta de pago
                   ['name' => 'Solicitud de aclaración de datos personales en la Boleta de Pago.','number'=>0],  // En caso de que el afiliado tenga datos erroneos en su boleta de pago
                   ['name' => 'Certificado de no adeudo, emitido por la instancia correspondiente.','number'=>0],  // en caso de que el afiliado haya tenido deudas de otras entidades (Ej: COMIPOL , COVIPOL)
                   ['name' => 'Certificado de pago emitido por la entidad correspondiente.','number'=>0],  // en caso de que el afiliado tenga deudas con otras entidades (Ej: COMIPOL , COVIPOL)
@@ -125,6 +126,7 @@ class LoanSeeder extends Seeder
                 ['name' => 'Estado de cuenta original, vigente y emitido por el Banco Unión S.A.','number'=>5],
                 ['name' => 'Formulario de Calificación y Aprobación de Préstamos FORM/CAYAP/PTMO/UIP/004.','number'=>6],
                   /*Estos documentos son solicitados por MUSERPOL en caso de ser requeridos*/
+                ['name' => 'Certificado de Renta de jubilación o fotocopia legalizada emitida por el servicio Nacional del Sistema de Reparto.','number'=>0],  //En caso de perdida de boleta de pago
                 ['name' => 'Solicitud de aclaración de datos personales en la Boleta de Pago.','number'=>0],  // En caso de que el afiliado tenga datos erroneos en su boleta de pago
                 ['name' => 'Certificado de no adeudo, emitido por la instancia correspondiente','number'=>0],  // en caso de que el afiliado haya tenido deudas de otras entidades (Ej: COMIPOL , COVIPOL)
                 ['name' => 'Certificado de pago emitido por la entidad correspondiente.','number'=>0],  // en caso de que el afiliado tenga deudas con otras entidades (Ej: COMIPOL , COVIPOL)
@@ -135,7 +137,10 @@ class LoanSeeder extends Seeder
               'parameters' => [
                 'debt_index' => 50,
                 'quantity_ballots' => 3,
-                'guarantors' => 1
+                'guarantors' => 1,
+                'min_guarantor_category' =>35,
+                'max_guarantor_category' =>85
+
               ],
               'interest' => ['annual_interest' => 20,'penal_interest' => 6]
             ],
@@ -147,6 +152,7 @@ class LoanSeeder extends Seeder
                 ['name' => 'Estado de cuenta original, vigente y emitido por el Banco Unión S.A.','number'=>3],
                 ['name' => 'Formulario de Calificación y Aprobación de Préstamos FORM/CAYAP/PTMO/UIP/004.','number'=>4],
                   /*Estos documentos son solicitados por MUSERPOL en caso de ser requeridos*/
+                ['name' => 'Certificado de Renta de jubilación o fotocopia legalizada emitida por el servicio Nacional del Sistema de Reparto.','number'=>0],  //En caso de perdida de boleta de pago
                 ['name' => 'Solicitud de aclaración de datos personales en la Boleta de Pago.','number'=>0],  // En caso de que el afiliado tenga datos erroneos en su boleta de pago
                 ['name' => 'Certificado de no adeudo, emitido por la instancia correspondiente','number'=>0],  // en caso de que el afiliado haya tenido deudas de otras entidades (Ej: COMIPOL , COVIPOL)
                 ['name' => 'Certificado de pago emitido por la entidad correspondiente.','number'=>0],  // en caso de que el afiliado tenga deudas con otras entidades (Ej: COMIPOL , COVIPOL)
@@ -190,6 +196,7 @@ class LoanSeeder extends Seeder
                 ['name' => 'Estado de cuenta original, vigente y emitido por el Banco Unión S.A','number'=>5],
                 ['name' => 'Formulario de Calificación y Aprobación de Préstamos FORM/CAYAP/PTMO/UIP/004.','number'=>6],
                 /*Estos documentos son solicitados por MUSERPOL en caso de ser requeridos*/
+                ['name' => 'Certificado de Renta de jubilación o fotocopia legalizada emitida por el servicio Nacional del Sistema de Reparto.','number'=>0],  //En caso de perdida de boleta de pago
                 ['name' => 'Solicitud de aclaración de datos personales en la Boleta de Pago.','number'=>0],  // En caso de que el afiliado tenga datos erroneos en su boleta de pago
                 ['name' => 'Certificado de no adeudo, emitido por la instancia correspondiente','number'=>0],  // en caso de que el afiliado haya tenido deudas de otras entidades (Ej: COMIPOL , COVIPOL)
                 ['name' => 'Certificado de pago emitido por la entidad correspondiente.','number'=>0],  // en caso de que el afiliado tenga deudas con otras entidades (Ej: COMIPOL , COVIPOL)
@@ -199,7 +206,10 @@ class LoanSeeder extends Seeder
               'parameters' => [
                 'debt_index' => 50,
                 'quantity_ballots' => 3,
-                'guarantors' => 1
+                'guarantors' => 1,
+                'min_guarantor_category' =>35,
+                'max_guarantor_category' =>85
+
               ],
               'interest' => ['annual_interest' => 20,'penal_interest' => 6]
             ],
@@ -212,6 +222,7 @@ class LoanSeeder extends Seeder
                 ['name' => 'Estado de cuenta original, vigente y emitido por el Banco Unión S.A','number'=>3],
                 ['name' => 'Formulario de Calificación y Aprobación de Préstamos FORM/CAYAP/PTMO/UIP/004.','number'=>4],
                 /*Estos documentos son solicitados por MUSERPOL en caso de ser requeridos*/
+                ['name' => 'Certificado de Renta de jubilación o fotocopia legalizada emitida por el servicio Nacional del Sistema de Reparto.','number'=>0],  //En caso de perdida de boleta de pago
                 ['name' => 'Solicitud de aclaración de datos personales en la Boleta de Pago.','number'=>0],  // En caso de que el afiliado tenga datos erroneos en su boleta de pago
                 ['name' => 'Certificado de no adeudo, emitido por la instancia correspondiente','number'=>0],  // en caso de que el afiliado haya tenido deudas de otras entidades (Ej: COMIPOL , COVIPOL)
                 ['name' => 'Certificado de pago emitido por la entidad correspondiente.','number'=>0],  // en caso de que el afiliado tenga deudas con otras entidades (Ej: COMIPOL , COVIPOL)
@@ -253,7 +264,9 @@ class LoanSeeder extends Seeder
               'parameters' => [
                 'debt_index' => 50,
                 'quantity_ballots' => 1,
-                'guarantors' => 2
+                'guarantors' => 2,
+                'min_guarantor_category' =>35,
+                'max_guarantor_category' =>100
               ],
               'interest' => ['annual_interest' => 13.2,'penal_interest' => 6]
             ],
@@ -265,6 +278,7 @@ class LoanSeeder extends Seeder
                 ['name' => 'Estado de cuenta original, vigente y emitido por el Banco Unión S.A','number'=>3],
                 ['name' => 'Formulario de Calificación y Aprobación de Préstamos FORM/CAYAP/PTMO/UIP/004.','number'=>4],
                 /*Estos documentos son solicitados por MUSERPOL en caso de ser requeridos*/
+                ['name' => 'Certificado de Renta de jubilación o fotocopia legalizada emitida por el servicio Nacional del Sistema de Reparto.','number'=>0],  //En caso de perdida de boleta de pago
                 ['name' => 'Certificado de aportes para el Auxilio Mortuorio de los 3 últimos meses de la unidad de Fondo de Retiro.','number'=>0], // para solicitantes AFPś
                 ['name' => 'Solicitud de aclaración de datos personales en la Boleta de Pago.','number'=>0],  // En caso de que el afiliado tenga datos erroneos en su boleta de pago
                 ['name' => 'Certificado de no adeudo, emitido por la instancia correspondiente','number'=>0],  // en caso de que el afiliado haya tenido deudas de otras entidades (Ej: COMIPOL , COVIPOL)
@@ -276,7 +290,9 @@ class LoanSeeder extends Seeder
               'parameters' => [
                 'debt_index' => 50,
                 'quantity_ballots' => 1,
-                'guarantors' => 1
+                'guarantors' => 1,
+                'min_guarantor_category' =>35,
+                'max_guarantor_category' =>85
               ],
               'interest' => ['annual_interest' => 13.2,'penal_interest' => 6]
             ],
@@ -302,7 +318,9 @@ class LoanSeeder extends Seeder
               'parameters' => [
                 'debt_index' => 60,
                 'quantity_ballots' => 1,
-                'guarantors' => 1
+                'guarantors' => 1,
+                'min_guarantor_category' =>35,
+                'max_guarantor_category' =>100
               ],
               'interest' => ['annual_interest' => 13.2,'penal_interest' => 6]
             ],
@@ -330,7 +348,9 @@ class LoanSeeder extends Seeder
               'parameters' => [
                 'debt_index' => 60,
                 'quantity_ballots' => 1,
-                'guarantors' => 1
+                'guarantors' => 1,
+                'min_guarantor_category' =>35,
+                'max_guarantor_category' =>100
               ],
               'interest' => ['annual_interest' => 13.2,'penal_interest' => 6]
             ],
@@ -346,6 +366,7 @@ class LoanSeeder extends Seeder
                 ['name' => 'Formulario de Calificación y Aprobación de Préstamos FORM/CAYAP/PTMO/UIP/004.','number'=>5],
                 /*condiciones COP MUSERPOL*/
                 /*Estos documentos son solicitados por MUSERPOL en caso de ser requeridos*/
+                ['name' => 'Certificado de Renta de jubilación o fotocopia legalizada emitida por el servicio Nacional del Sistema de Reparto.','number'=>0],  //En caso de perdida de boleta de pago
                 ['name' => 'Certificado de aportes para el Auxilio Mortuorio de los 3 últimos meses de la unidad de Fondo de Retiro.','number'=>0], // para solicitantes AFPś
                 ['name' => 'Solicitud de aclaración de datos personales en la Boleta de Pago.','number'=>0],  // En caso de que el afiliado tenga datos erroneos en su boleta de pago
                 ['name' => 'Certificado de no adeudo, emitido por la instancia correspondiente','number'=>0],  // en caso de que el afiliado haya tenido deudas de otras entidades (Ej: COMIPOL , COVIPOL)
@@ -356,7 +377,9 @@ class LoanSeeder extends Seeder
               'parameters' => [
                 'debt_index' => 60,
                 'quantity_ballots' => 1,
-                'guarantors' => 1
+                'guarantors' => 1,
+                'min_guarantor_category' =>35,
+                'max_guarantor_category' =>85
               ],
               'interest' => ['annual_interest' => 13.2,'penal_interest' => 6]
             ],
