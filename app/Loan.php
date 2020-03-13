@@ -57,7 +57,7 @@ class Loan extends Model
 
     public function notes()
     {
-        return $this->morphMany(Note::class, 'annontable');
+        return $this->morphMany(Note::class, 'annotable');
     }
 
     public function tags()

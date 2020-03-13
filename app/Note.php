@@ -6,7 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class Note extends Model
 {
-    public function annontable()
+    public $timestamps = true;
+    public $guarded = ['id'];
+    public $fillable = ['annotable_id', 'annotable_type', 'message', 'date'];
+
+    public function annotable()
     {
         return $this->morphTo();
     }
