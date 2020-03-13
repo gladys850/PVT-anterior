@@ -113,11 +113,11 @@ class Affiliate extends Model
         }
         return false;
     }
-    public function getAdministrativoAttribute()
+    public function getAdministrativeAttribute()
     {
       $data = $this->degree;
       if($this->degree)
-        if(stristr($this->degree->name,'administrativo'))
+        if(strstr($this->degree->name,'administrativo'))
         $data = true;
       return $data;
     }
