@@ -234,7 +234,6 @@ import { Validator } from 'vee-validate'
   beforeMount() {
     this.getCities();
     this.updateTelefono();
-
   },
   mounted() {
       this.bus.$on('saveAddress', (address) => {
@@ -283,10 +282,8 @@ import { Validator } from 'vee-validate'
         } else {
           console.log('entro al grabar por falso :)')
           // Edit affiliate
-
           //await axios.patch(`affiliate/${this.affiliate.id}`, this.affiliate)
           await axios.patch(`affiliate/${this.affiliate.id}`, {phone_number: this.affiliate.phone_number, cell_phone_number: this.affiliate.cell_phone_number})
-
           await axios.patch(`affiliate/${this.affiliate.id}/address`, {
             addresses: this.addresses.map(o => o.id)
           })

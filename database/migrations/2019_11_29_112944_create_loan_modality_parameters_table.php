@@ -20,6 +20,8 @@ class CreateLoanModalityParametersTable extends Migration
             $table->float('debt_index',5,2)->nullable(); // indice de endeudamiento
             $table->unsignedTinyInteger('quantity_ballots');// cantidad de boletas
             $table->unsignedTinyInteger('guarantors');// cantidad de garantes
+            $table->unsignedTinyInteger('min_guarantor_category')->nullable();//categoria mínima de garante
+            $table->unsignedTinyInteger('max_guarantor_category')->nullable();//categoria máxima de garante
             $table->timestamps();
         });
     }
