@@ -132,19 +132,11 @@ class ProcedureTypeController extends Controller
     *       "description": "Salud",
     *       "created_at": null,
     *       "updated_at": null
-    *   },
-    *   {
-    *       "id": 2,
-    *       "procedure_type_id": 9,
-    *       "name": "Consumo",
-    *       "description": "Consumo",
-    *       "created_at": null,
-    *       "updated_at": null
-    *   }
+    *   }, {}
     * ]
     */
     public function get_destination($id)
     {
-        return ProcedureType::findOrFail($id)->loan_destination;
+        return ProcedureType::findOrFail($id)->destinations;
     }
 }

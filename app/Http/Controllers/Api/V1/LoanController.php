@@ -103,6 +103,7 @@ class LoanController extends Controller
     * @bodyParam account_number integer Número de cuenta en Banco Union. Example: 586621345
     * @bodyParam loan_destination_id integer required ID destino de Préstamo. Example: 1
     * @bodyParam documents array required Lista de IDs de Documentos solicitados. Example: [306,305]
+    * @bodyParam notes array Lista de notas aclaratorias. Example: [Informe de baja policial, Carta de solicitud]
     * @authenticated
     * @response
     * {
@@ -144,7 +145,7 @@ class LoanController extends Controller
     {
         // Guardar préstamo
         $saved = $this->save_loan($request);
-        // Enlazar afiliados y garantes
+        // Relacionar afiliados y garantes
         $loan = $saved->loan;
         $request = $saved->request;
         $request->lenders = collect($request->lenders);
@@ -167,7 +168,7 @@ class LoanController extends Controller
             }
         }
         $loan->loan_affiliates()->sync($affiliates);
-        // Enlazar documentos requeridos y opcionales
+        // Relacionar documentos requeridos y opcionales
         $date = Carbon::now()->toISOString();
         $documents = [];
         foreach ($request->documents as $document_id) {
@@ -178,6 +179,13 @@ class LoanController extends Controller
             }
         }
         $loan->submitted_documents()->syncWithoutDetaching($documents);
+        // Relacionar notas
+        foreach ($request->notes as $message) {
+            $loan->notes()->create([
+                'message' => $message,
+                'date' => Carbon::now()
+            ]);
+        }
         // Generar PDFs
         $file_name = implode('_', ['solicitud', 'prestamo', $loan->id]) . '.pdf';
         $loan->attachment = Util::pdf_to_base64([

@@ -54,6 +54,7 @@
         'disbursable_type'=>'Beneficiario',
         'lenders'=>'Titular',
         'guarantors'=>'Garante',
+        'loan_destination_id'=>'Destino',
         //'parent_loan_id'=>'',
         'parent_reason'=>'',
         'loan_interest_id'=>'Interés',

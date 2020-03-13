@@ -55,6 +55,11 @@ class Loan extends Model
         $this->attributes['loan_interest_id'] = $this->modality->current_interest->id;
     }
 
+    public function notes()
+    {
+        return $this->morphMany(Note::class, 'annotable');
+    }
+
     public function tags()
     {
         return $this->morphToMany(Tag::class, 'taggable')->withPivot('user_id', 'date')->withTimestamps();
