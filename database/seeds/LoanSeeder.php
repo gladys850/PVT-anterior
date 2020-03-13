@@ -463,7 +463,7 @@ class LoanSeeder extends Seeder
       ];
       foreach ($data['procedures'] as $procedure) {
         $new_procedure = ProcedureType::firstOrCreate($procedure['type']);
-        $new_procedure->loan_interval()->firstOrCreate($procedure['limits']);
+        $new_procedure->interval()->firstOrCreate($procedure['limits']);
         foreach ($procedure['modalities'] as $modality) {
           $new_modality = ProcedureModality::firstOrCreate([
             'procedure_type_id' => $new_procedure->id,
