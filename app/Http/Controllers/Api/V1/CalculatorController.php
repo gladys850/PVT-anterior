@@ -62,7 +62,7 @@ class CalculatorController extends Controller
             'contributions.*.east_bonus' => 'required',
         ]);
         $procedure_modality = ProcedureModality::findOrFail($request->procedure_modality_id);
-        $limit = $procedure_modality->procedure_type->loan_interval;
+        $limit = $procedure_modality->procedure_type->interval;
         $amount_requested = $request->amount_requested;$months_term = $request->months_term;
         if($limit->minimum_amount<=$amount_requested && $amount_requested<=$limit->maximum_amount && $limit->minimum_term<=$months_term && $months_term<=$limit->maximum_term){
             $affiliate = Affiliate::findOrFail($request->affiliate_id);
@@ -109,7 +109,7 @@ class CalculatorController extends Controller
     }
     //funcion para sacar la cuota estimada con la calculadora
     private function quota_calculator($procedure_modality,$months_term,$amount_requested,$liquid_qualification){
-        $loan_interval = $procedure_modality->procedure_type->loan_interval;
+        $loan_interval = $procedure_modality->procedure_type->interval;
         $interest_rate = $procedure_modality->current_interest->monthly_current_interest;
         if($amount_requested>0 && $months_term ==null){
             return ((($interest_rate)/(1-(1/pow((1+$interest_rate),$loan_interval->maximum_term))))*$amount_requested);
@@ -123,7 +123,7 @@ class CalculatorController extends Controller
     // monto maximo
     private function maximum_amount($procedure_modality,$months_term,$liquid_qualification){
         $interest_rate = $procedure_modality->current_interest->monthly_current_interest;
-        $loan_interval = $procedure_modality->procedure_type->loan_interval;
+        $loan_interval = $procedure_modality->procedure_type->interval;
         $debt_index = $procedure_modality->loan_modality_parameter->decimal_index;
         if($months_term ==null){
             $months_term = $loan_interval->maximum_term;
