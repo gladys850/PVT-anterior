@@ -113,6 +113,15 @@ class Affiliate extends Model
         }
         return false;
     }
+    public function getAdministrativeAttribute()
+    {
+      $data = $this->degree;
+      if($this->degree)
+        if(strstr($this->degree->name,'administrativo'))
+        $data = true;
+      return $data;
+    }
+
     public function category()
     {
       return $this->belongsTo(Category::class);

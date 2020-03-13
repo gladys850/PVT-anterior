@@ -58,7 +58,7 @@
             </tr>
             <tr>
                 <td colspan = "2" class="data-row py-5"></td>
-                <td class="data-row py-5">{{ $lender->category->name }}</td>
+                <td class="data-row py-5">{{ $lender->category? $lender->category->name:'' }}</td>
             </tr>
             <tr class="bg-grey-darker text-xxs text-white">
                 <td colspan = "2" class="w-50">Domilicio actual</td>

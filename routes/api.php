@@ -42,6 +42,7 @@ Route::group([
         Route::resource('calculator', 'Api\V1\CalculatorController')->only('store');
         Route::resource('role', 'Api\V1\RoleController')->only('index', 'show');
         Route::resource('global_parameter', 'Api\V1\LoanGlobalParameterController')->only('index', 'show', 'store', 'update', 'destroy');
+        Route::resource('destination', 'Api\V1\LoanDestinationController')->only('index', 'show', 'store', 'update', 'destroy');
 
         // Afiliado
         Route::group([
