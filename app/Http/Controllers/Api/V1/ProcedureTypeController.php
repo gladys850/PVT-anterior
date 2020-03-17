@@ -137,6 +137,6 @@ class ProcedureTypeController extends Controller
     */
     public function get_destiny($id)
     {
-        return ProcedureType::findOrFail($id)->destinys;
+        return ProcedureType::findOrFail($id)->destinies;
     }
 }
