@@ -190,7 +190,6 @@ class LoanController extends Controller
         $file_name = implode('_', ['solicitud', 'prestamo', $loan->id]) . '.pdf';
         $loan->attachment = Util::pdf_to_base64([
             $this->print_form(new Request([]), $loan->id, false),
-            $this->print_documents(new Request([]), $loan->id, false),
             $this->print_contract(new Request([]), $loan->id, false)
         ], $file_name, 'letter', $request->copies ?? 1);
         return $loan;
@@ -555,41 +554,6 @@ class LoanController extends Controller
         ];
     }
 
-    /**
-    * Impresión de los documentos presentados
-    * Devuelve un pdf de los documentos presentados para un préstamo registrado
-    * @urlParam id required ID del préstamo. Example: 6
-    * @queryParam copies Número de copias del documento. Example: 2
-    * @authenticated
-    */
-    public function print_documents(Request $request, $id, $standalone = true)
-    {
-        $loan = Loan::findOrFail($id);
-        $lenders = [];
-        foreach ($loan->lenders as $lender) {
-            array_push($lenders, self::verify_spouse_disbursable($lender)->disbursable);
-        }
-        $date = Carbon::now();
-        $data = [
-            'header' => [
-                'direction' => 'DIRECCIÓN DE ESTRATEGIAS SOCIALES E INVERSIONES',
-                'unity' => 'UNIDAD DE INVERSIÓN EN PRÉSTAMOS',
-                'table' => [
-                    ['Tipo', $loan->modality->procedure_type->second_name],
-                    ['Modalidad', $loan->modality->shortened],
-                    ['Usuario', auth()->user()->username ?? 'prueba']
-                ]
-            ],
-            'title' => 'DOCUMENTOS PRESENTADOS PARA SOLICITUD DE ' . ($loan->parent_loan ? $loan->parent_reason : 'PRÉSTAMO'),
-            'loan' => $loan,
-            'lenders' => $lenders
-        ];
-        $file_name = implode('_', ['solicitud', 'prestamo']) . '.pdf';
-        $view = view()->make('loan.forms.submitted_documents')->with($data)->render();
-        if ($standalone) return Util::pdf_to_base64([$view], $file_name, 'letter', $request->copies ?? 1);
-        return $view;
-    }
-
     public function switch_states()
     {
         $user = User::whereUsername('admin')->first();
@@ -688,7 +652,7 @@ class LoanController extends Controller
             'employees' => $employees,
             'title' => $procedure_modality->name,
             'loan' => $loan,
-            'lenders' => $lenders
+            'lenders' => collect($lenders)
         ];
         $file_name = implode('_', ['contrato', $procedure_modality->shortened, $id]) . '.pdf';
         $view = view()->make('loan.contracts.advance')->with($data)->render();
@@ -706,7 +670,6 @@ class LoanController extends Controller
     public function print_form(Request $request, $id, $standalone = true)
     {
         $loan = Loan::findOrFail($id);
-        $procedure_modality = $loan->modality;
         $lenders = [];
         foreach ($loan->lenders as $lender) {
             array_push($lenders, self::verify_spouse_disbursable($lender)->disbursable);
@@ -717,18 +680,18 @@ class LoanController extends Controller
                 'direction' => 'DIRECCIÓN DE ESTRATEGIAS SOCIALES E INVERSIONES',
                 'unity' => 'UNIDAD DE INVERSIÓN EN PRÉSTAMOS',
                 'table' => [
-                    ['Tipo', $procedure_modality->procedure_type->second_name],
-                    ['Modalidad', $procedure_modality->shortened],
+                    ['Tipo', $loan->modality->procedure_type->second_name],
+                    ['Modalidad', $loan->modality->shortened],
                     ['Usuario', auth()->user()->username ?? 'prueba']
                 ]
             ],
-            'title' => 'Ref. : SOLICITUD DE PRÉSTAMO '.$procedure_modality->procedure_type->second_name,
+            'title' => 'SOLICITUD DE ' . ($loan->parent_loan ? $loan->parent_reason : 'PRÉSTAMO'),
             'loan' => $loan,
-            'lenders' => $lenders
+            'lenders' => collect($lenders)
         ];
-        $file_name = implode('_', ['formulario', 'solicitud_prestamo']) . '.pdf';
+        $file_name = implode('_', ['solicitud', 'prestamo']) . '.pdf';
         $view = view()->make('loan.forms.request_form')->with($data)->render();
-        if ($standalone) return Util::pdf_to_base64([$view], $file_name, 'letter', $request->copies ?? 1);
+        if ($standalone) return Util::pdf_to_base64([$view], $file_name, 'legal', $request->copies ?? 1);
         return $view;
     }
 }

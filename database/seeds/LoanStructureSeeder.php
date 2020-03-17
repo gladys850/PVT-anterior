@@ -6,7 +6,7 @@ use App\ProcedureType;
 use App\ProcedureDocument;
 use App\ProcedureRequirement;
 use App\Module;
-class LoanSeeder extends Seeder
+class LoanStructureSeeder extends Seeder
 {
     /**
      * Run the database seeds.

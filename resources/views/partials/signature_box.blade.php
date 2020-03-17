@@ -6,7 +6,7 @@
 
 <body class="w-100">
     <div class='text-center'>
-        @for ($i=0; $i < strlen($full_name); $i++)
+        @for ($i=0; $i < strlen($full_name) - 8; $i++)
         _
         @endfor
         <br>

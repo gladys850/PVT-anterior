@@ -33,7 +33,8 @@ class Loan extends Model
         'disbursement_type_id',
         'modification_date',
         'account_number',
-        'loan_destination_id'
+        'loan_destination_id',
+        'personal_reference_id'
     ];
 
     function __construct(array $attributes = [])
@@ -53,6 +54,11 @@ class Loan extends Model
     {
         $this->attributes['procedure_modality_id'] = $id;
         $this->attributes['loan_interest_id'] = $this->modality->current_interest->id;
+    }
+
+    public function personal_reference()
+    {
+        return $this->belongsTo(PersonalReference::class);
     }
 
     public function notes()

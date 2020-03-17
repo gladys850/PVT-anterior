@@ -282,21 +282,19 @@ class Util
     public static function pdf_to_base64($views, $file_name, $size = 'letter', $copies = 1)
     {
         $footerHtml = view()->make('partials.footer')->with(array('paginator' => true, 'print_date' => true, 'date' => Carbon::now()->ISOFormat('L H:m')))->render();
-        $options = $size == 'letter' ? [
+        $options = [
             'copies' => $copies ?? 1,
+            'footer-html' => $footerHtml,
+            'user-style-sheet' => public_path('css/report-print.min.css'),
             'orientation' => 'portrait',
-            'page-width' => '216',
-            'page-height' => '279',
             'margin-top' => '8',
             'margin-bottom' => '16',
             'margin-left' => '5',
             'margin-right' => '7',
             'encoding' => 'UTF-8',
-            'footer-html' => $footerHtml,
-            'user-style-sheet' => public_path('css/report-print.min.css')
-        ] : [
-            //TODO
+            'page-width' => '216'
         ];
+        $options['page-height'] = $size == 'letter' ? '279' : '330';
         $content = base64_encode(\PDF::getOutputFromHtml($views, $options));
         return [
             'content' => $content,
