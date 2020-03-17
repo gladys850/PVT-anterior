@@ -16,15 +16,15 @@
                       <v-text-field
                         label="Plazo en Meses"
                         v-model="calculos.plazo"
-                        v-validate.initial="`required|numeric|min_value:1|max_value:36`"
+                        v-validate.initial="`numeric|min_value:1|max_value:25000`"
                         :error-messages="errors.collect('plazo')"
                         data-vv-name="plazo"
                         v-on:keyup.enter="Calculator()"
                       ></v-text-field>
                       <v-text-field
                         label="Monto Maximo Sugerido"
-                        v-model ="calculos.monto_maximo_sugerido"
-                        v-validate.initial="`required|numeric`"
+                        v-model ="calculos.montos"
+                        v-validate.initial="`numeric`"
                         :error-messages="errors.collect('monto_solicitado')"
                         data-vv-name="monto_solicitado"
                         v-on:keyup.enter="Calculator()"
@@ -86,6 +86,10 @@ name: "loan-requirement",
       type: Object,
       required: true
     },
+    modalidad: {
+      type: Object,
+      required: true
+    },
     calculos: {
       type: Object,
       required: true
@@ -95,10 +99,13 @@ methods:{
   async Calculator() {
     try {
       console.log('entro a calculadora')
+      if(this.modalidad.quantity_ballots>1)
+      {
+
       let res = await axios.post(`calculator`, {
-        procedure_modality_id:this.modality.id,
+        procedure_modality_id:this.modalidad.id,
         months_term: this.calculos.plazo,
-        amount_requested:this.calculos.monto_maximo_sugerido,
+        amount_requested:this.calculos.montos,
         affiliate_id:this.$route.query.affiliate_id,
         contributions: [
           {
@@ -124,18 +131,42 @@ methods:{
           }
         ]
       })
- this.calculo= res.data
-console.log('entro a calculadora'+this.calculo)
+      this.calculo= res.data
+      this.calculos.promedio_liquido_pagable=this.calculo.promedio_liquido_pagable
+      this.calculos.total_bonos=this.calculo.total_bonos
+      this.calculos.liquido_para_calificacion=this.calculo.liquido_para_calificacion
+      this.calculos.calculo_de_cuota=this.calculo.calculo_de_cuota
+      this.calculos.indice_endeudamiento=this.calculo.indice_endeudamiento
+      this.calculos.monto_maximo_sugerido=this.calculo.monto_maximo_sugerido
+      this.calculos.plazo=this.calculos.plazo
+      this.calculos.montos=this.calculos.montos
+      }else{
+        let res = await axios.post(`calculator`, {
+        procedure_modality_id:this.modalidad.id,
+        months_term: this.calculos.plazo,
+        amount_requested:this.calculos.montos,
+        affiliate_id:this.$route.query.affiliate_id,
+        contributions: [
+          {
+            payable_liquid: this.payable_liquid[0],
+            seniority_bonus:  this.bonos[2],
+            border_bonus: this.bonos[0],
+            public_security_bonus: this.bonos[3],
+            east_bonus:this.bonos[1]
+          }
+        ]
+      })
+     this.calculo= res.data
+      this.calculos.promedio_liquido_pagable=this.calculo.promedio_liquido_pagable
+      this.calculos.total_bonos=this.calculo.total_bonos
+      this.calculos.liquido_para_calificacion=this.calculo.liquido_para_calificacion
+      this.calculos.calculo_de_cuota=this.calculo.calculo_de_cuota
+      this.calculos.indice_endeudamiento=this.calculo.indice_endeudamiento
+      this.calculos.monto_maximo_sugerido=this.calculo.monto_maximo_sugerido
+      this.calculos.plazo=this.calculos.plazo
 
- this.calculos.promedio_liquido_pagable=this.calculo.promedio_liquido_pagable
- this.calculos.total_bonos=this.calculo.total_bonos
- this.calculos.liquido_para_calificacion=this.calculo.liquido_para_calificacion
- this.calculos.calculo_de_cuota=this.calculo.calculo_de_cuota
- this.calculos.indice_endeudamiento=this.calculo.indice_endeudamiento
- this.calculos.monto_maximo_sugerido=this.calculo.monto_maximo_sugerido
-
-
- this.calculos.plazo=this.calculos.plazo
+      this.calculos.montos=this.calculos.montos
+      }
     } catch (e) {
       console.log(e)
     } finally {
