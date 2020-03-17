@@ -706,3 +706,6 @@ body {
 	counter-increment: number;
 	content: counter(number) ".- ";
 }
+.no-page-break {
+	page-break-inside: avoid;
+}

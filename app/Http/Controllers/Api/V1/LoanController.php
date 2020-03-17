@@ -676,6 +676,21 @@ class LoanController extends Controller
         foreach ($loan->lenders as $lender) {
             array_push($lenders, self::verify_spouse_disbursable($lender)->disbursable);
         }
+        $persons = collect([]);
+        foreach ($lenders as $lender) {
+            $persons->push([
+                'full_name' => implode(' ', [$lender->title, $lender->full_name]),
+                'identity_card' => $lender->identity_card_ext,
+                'position' => 'SOLICITANTE'
+            ]);
+        }
+        foreach ($loan->guarantors as $guarantor) {
+            $persons->push([
+                'full_name' => implode(' ', [$guarantor->title, $guarantor->full_name]),
+                'identity_card' => $guarantor->identity_card_ext,
+                'position' => 'GARANTE'
+            ]);
+        }
         $date = Carbon::now();
         $data = [
             'header' => [
@@ -689,7 +704,8 @@ class LoanController extends Controller
             ],
             'title' => 'SOLICITUD DE ' . ($loan->parent_loan ? $loan->parent_reason : 'PRÉSTAMO'),
             'loan' => $loan,
-            'lenders' => collect($lenders)
+            'lenders' => collect($lenders),
+            'signers' => $persons
         ];
         $file_name = implode('_', ['solicitud', 'prestamo']) . '.pdf';
         $view = view()->make('loan.forms.request_form')->with($data)->render();
