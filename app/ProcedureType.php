@@ -23,7 +23,7 @@ class ProcedureType extends Model
         return $this->hasOne(LoanInterval::class);
     }
 
-    public function destinys()
+    public function destinies()
     {
         return $this->hasMany(LoanDestiny::class);
     }
