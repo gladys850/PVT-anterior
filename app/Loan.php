@@ -111,7 +111,7 @@ class Loan extends Model
 
     public function modality()
     {
-      return $this->belongsTo(ProcedureModality::class,'procedure_modality_id', 'id');
+        return $this->belongsTo(ProcedureModality::class,'procedure_modality_id', 'id');
     }
 
     public function getDefaultedAttribute()

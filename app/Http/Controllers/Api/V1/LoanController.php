@@ -180,11 +180,13 @@ class LoanController extends Controller
         }
         $loan->submitted_documents()->syncWithoutDetaching($documents);
         // Relacionar notas
-        foreach ($request->notes as $message) {
-            $loan->notes()->create([
-                'message' => $message,
-                'date' => Carbon::now()
-            ]);
+        if ($request->notes) {
+            foreach ($request->notes as $message) {
+                $loan->notes()->create([
+                    'message' => $message,
+                    'date' => Carbon::now()
+                ]);
+            }
         }
         // Generar PDFs
         $file_name = implode('_', ['solicitud', 'prestamo', $loan->id]) . '.pdf';

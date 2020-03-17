@@ -292,7 +292,7 @@ export default {
           loan_term: this.calculos.plazo,
           disbursement_type_id: this.formulario[0],
           account_number: this.formulario[1],
-          loan_destination_id: this.formulario[2]
+          loan_destiny_id: this.formulario[2]
         });
           this.loan = res.data;
           this.idRequirements=this.selected.concat(this.radios.filter(Boolean))
