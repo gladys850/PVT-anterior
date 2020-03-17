@@ -42,6 +42,7 @@ class LoanForm extends FormRequest
             'disbursement_date'=>'nullable|date_format:"Y-m-d"',
             'parent_loan_id'=>'integer|nullable|exists:loans,id',
             'parent_reason'=> 'string|nullable|in:REFINANCIAMIENTO,REPROGRAMACIÓN',
+            'personal_reference_id' => 'nullable|exists:personal_references,id',
             'loan_interest_id'=>'exists:loan_interests,id',
             'loan_state_id'=>'exists:loan_states,id',
             'amount_approved'=>'integer|min:200|max:700000',

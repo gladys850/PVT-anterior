@@ -100,6 +100,7 @@ class LoanController extends Controller
     * @bodyParam guarantors array Lista de IDs de afiliados Garante de préstamo. Example: []
     * @bodyParam parent_loan_id integer ID de Préstamo Padre. Example: 1
     * @bodyParam parent_reason enum (REFINANCIAMIENTO, REPROGRAMACIÓN) Tipo de trámite hijo. Example: REFINANCIAMIENTO
+    * @bodyParam personal_reference_id integer ID de referencia personal. Example: 4
     * @bodyParam account_number integer Número de cuenta en Banco Union. Example: 586621345
     * @bodyParam loan_destiny_id integer required ID destino de Préstamo. Example: 1
     * @bodyParam documents array required Lista de IDs de Documentos solicitados. Example: [306,305]
@@ -126,6 +127,7 @@ class LoanController extends Controller
     *   "created_at": "2020-03-05 16:27:23",
     *   "parent_loan_id": 1,
     *   "parent_reason": "REFINANCIAMIENTO",
+    *   "personal_reference_id": 4,
     *   "id": 17,
     *   "modality": {
     *       "id": 32,
@@ -300,6 +302,7 @@ class LoanController extends Controller
     * @bodyParam disbursement_date date Fecha de desembolso. Example: 2020-02-01
     * @bodyParam parent_loan_id integer ID de Préstamo Padre. Example: 1
     * @bodyParam parent_reason enum (REFINANCIAMIENTO, REPROGRAMACIÓN) Tipo de trámite hijo. Example: REFINANCIAMIENTO
+    * @bodyParam personal_reference_id integer ID de referencia personal. Example: 4
     * @bodyParam account_number integer Número de cuenta en Banco Union. Example: 586621345
     * @bodyParam loan_destiny_id integer required ID destino de Préstamo. Example: 1
     * @authenticated
@@ -313,6 +316,7 @@ class LoanController extends Controller
     *     "disbursement_date": "2020-02-01",
     *     "parent_loan_id": 1,
     *     "parent_reason": "REFINANCIAMIENTO",
+    *     "personal_reference_id": 4,
     *     "request_date": "2020-03-05",
     *     "amount_requested": 2000,
     *     "city_id": 4,
