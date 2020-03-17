@@ -36,8 +36,8 @@ class CreateLoansTable extends Migration
             $table->unsignedBigInteger('disbursement_type_id'); // id tipo de desembolso
             $table->foreign('disbursement_type_id')->references('id')->on('payment_types');
             $table->integer('account_number')->nullable(); // numero de cuenta en caso de ser deposito en cuenta
-            $table->unsignedBigInteger('loan_destination_id'); // id tipo de desembolso
-            $table->foreign('loan_destination_id')->references('id')->on('loan_destinations');
+            $table->unsignedBigInteger('loan_destiny_id'); // id tipo de desembolso
+            $table->foreign('loan_destiny_id')->references('id')->on('loan_destinys');
             $table->timestamps();
         });
     }

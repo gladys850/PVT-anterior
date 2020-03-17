@@ -42,7 +42,7 @@ Route::group([
         Route::resource('calculator', 'Api\V1\CalculatorController')->only('store');
         Route::resource('role', 'Api\V1\RoleController')->only('index', 'show');
         Route::resource('global_parameter', 'Api\V1\LoanGlobalParameterController')->only('index', 'show', 'store', 'update', 'destroy');
-        Route::resource('destination', 'Api\V1\LoanDestinationController')->only('index', 'show', 'store', 'update', 'destroy');
+        Route::resource('destiny', 'Api\V1\LoanDestinyController')->only('index', 'show', 'store', 'update', 'destroy');
 
         // Afiliado
         Route::group([
@@ -96,7 +96,7 @@ Route::group([
             Route::resource('loan_interval', 'Api\V1\LoanIntervalController')->only('index');
             Route::get('affiliate/{id}/loan','Api\V1\AffiliateController@get_loans');
             Route::get('loan/{id}/document','Api\V1\LoanController@get_documents');
-            Route::get('procedure_type/{id}/loan_destination', 'Api\V1\ProcedureTypeController@get_destination');
+            Route::get('procedure_type/{id}/loan_destiny', 'Api\V1\ProcedureTypeController@get_destiny');
         });
         Route::group([
             'middleware' => 'permission:create-loan'
