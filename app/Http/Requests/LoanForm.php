@@ -46,7 +46,7 @@ class LoanForm extends FormRequest
             'loan_interest_id'=>'exists:loan_interests,id',
             'loan_state_id'=>'exists:loan_states,id',
             'amount_approved'=>'integer|min:200|max:700000',
-            'notes'=>'array|min:1'
+            'notes'=>'array'
     ];
 
         switch ($this->method()) {

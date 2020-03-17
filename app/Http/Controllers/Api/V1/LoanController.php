@@ -182,7 +182,7 @@ class LoanController extends Controller
         }
         $loan->submitted_documents()->syncWithoutDetaching($documents);
         // Relacionar notas
-        if ($request->notes) {
+        if ($request->has('notes')) {
             foreach ($request->notes as $message) {
                 $loan->notes()->create([
                     'message' => $message,
@@ -715,5 +715,29 @@ class LoanController extends Controller
         $view = view()->make('loan.forms.request_form')->with($data)->render();
         if ($standalone) return Util::pdf_to_base64([$view], $file_name, 'legal', $request->copies ?? 1);
         return $view;
+    }
+
+    /**
+    * Notas aclaratorias
+    * Devuelve la lista de notas relacionadas con el préstamo
+    * @urlParam id required ID de préstamo. Example: 2
+    * @authenticated
+    * @response
+    * [
+    *     {
+    *         "id": 15,
+    *         "annotable_id": 6,
+    *         "annotable_type": "loans",
+    *         "message": "BOLETA DE MAYO 2018",
+    *         "date": "2018-07-21 11:50:14",
+    *         "created_at": "2018-07-21 11:50:14",
+    *         "updated_at": "2018-07-21 11:50:14"
+    *     }, {}
+    * ]
+    */
+    public function get_notes($id)
+    {
+        $loan = Loan::findOrFail($id);
+        $loan->notes;
     }
 }
