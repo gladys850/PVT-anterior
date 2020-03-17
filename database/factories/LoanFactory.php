@@ -38,7 +38,7 @@ $factory->define(Loan::class, function (Faker $faker) {
         'amount_approved' => $amount,
         'loan_term' => $faker->numberBetween($procedure_type->interval->minimum_term,$procedure_type->interval->maximum_term),
         'disbursement_type_id' => PaymentType::whereName('Cheque')->first()->id,
-        'loan_destiny_id' => $procedure_type->destinys->random()->id,
+        'loan_destiny_id' => $procedure_type->destinies->random()->id,
         'created_at' => $faker->dateTime($max = 'now'),
         'updated_at' => $faker->dateTime($max = 'now')
     ];
