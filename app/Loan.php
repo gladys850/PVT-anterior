@@ -33,7 +33,8 @@ class Loan extends Model
         'disbursement_type_id',
         'modification_date',
         'account_number',
-        'loan_destination_id'
+        'loan_destiny_id',
+        'personal_reference_id'
     ];
 
     function __construct(array $attributes = [])
@@ -105,7 +106,7 @@ class Loan extends Model
 
     public function modality()
     {
-      return $this->belongsTo(ProcedureModality::class,'procedure_modality_id', 'id');
+        return $this->belongsTo(ProcedureModality::class,'procedure_modality_id', 'id');
     }
 
     public function getDefaultedAttribute()
@@ -132,9 +133,9 @@ class Loan extends Model
         return $this->morphTo();
     }
 
-    public function destination()
+    public function destiny()
     {
-        return $this->belongsTo(LoanDestination::class, 'loan_destination_id', 'id');
+        return $this->belongsTo(LoanDestiny::class, 'loan_destiny_id', 'id');
     }
     // Saldo capital
     public function getBalanceAttribute()

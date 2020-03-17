@@ -17,10 +17,10 @@ $factory->define(Loan::class, function (Faker $faker) {
     $disbursement_date = $faker->dateTimeBetween($startDate = '-3 months', $endDate = '-1 months', $timezone = null);
     $procedure_type = $module->procedure_types->random();
     $procedure_modality = $procedure_type->procedure_modalities->random();
-    if ($procedure_type->destinations->count() == 0) {
+    if ($procedure_type->destinies->count() == 0) {
         do {
-            $loan_destination = factory(App\LoanDestination::class)->create();
-        } while ($loan_destination->procedure_type_id != $procedure_type->id);
+            $loan_destiny = factory(App\LoanDestiny::class)->create();
+        } while ($loan_destiny->procedure_type_id != $procedure_type->id);
     }
     $amount = intval($faker->numberBetween($procedure_type->interval->minimum_amount,$procedure_type->interval->maximum_amount) / 100) * 100;
     return [
@@ -38,7 +38,7 @@ $factory->define(Loan::class, function (Faker $faker) {
         'amount_approved' => $amount,
         'loan_term' => $faker->numberBetween($procedure_type->interval->minimum_term,$procedure_type->interval->maximum_term),
         'disbursement_type_id' => PaymentType::whereName('Cheque')->first()->id,
-        'loan_destination_id' => $procedure_type->destinations->random()->id,
+        'loan_destiny_id' => $procedure_type->destinies->random()->id,
         'created_at' => $faker->dateTime($max = 'now'),
         'updated_at' => $faker->dateTime($max = 'now')
     ];

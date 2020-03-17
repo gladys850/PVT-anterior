@@ -4,13 +4,13 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\LoanDestination;
+use App\LoanDestiny;
 use Util;
 
 /** @group Préstamos
 * Datos de los destinos de préstamos
 */
-class LoanDestinationController extends Controller
+class LoanDestinyController extends Controller
 {
     /**
     * Lista de destinos de Préstamos
@@ -42,12 +42,12 @@ class LoanDestinationController extends Controller
     *           "updated_at": null
     *       }
     *   ],
-    *   "first_page_url": "http://192.168.2.242/api/v1/destination?page=1",
+    *   "first_page_url": "http://192.168.2.242/api/v1/destiny?page=1",
     *   "from": 1,
     *   "last_page": 1,
-    *   "last_page_url": "http://192.168.2.242/api/v1/destination?page=1",
+    *   "last_page_url": "http://192.168.2.242/api/v1/destiny?page=1",
     *   "next_page_url": null,
-    *   "path": "http://192.168.2.242/api/v1/destination",
+    *   "path": "http://192.168.2.242/api/v1/destiny",
     *   "per_page": 10,
     *   "prev_page_url": null,
     *   "to": 2,
@@ -56,11 +56,7 @@ class LoanDestinationController extends Controller
     */
     public function index(Request $request)
     {
-        $data = Util::search_sort(new LoanDestination(), $request);
-        foreach ($data as $item) {
-            $this->append_data($item);
-        }
-        return $data;
+        return Util::search_sort(new LoanDestiny(), $request);
     }
 
     /**
@@ -82,13 +78,13 @@ class LoanDestinationController extends Controller
     */
     public function store(Request $request)
     {
-        return LoanDestination::create($request->all());
+        return LoanDestiny::create($request->all());
     }
 
     /**
     * Detalle de destino de Préstamo
     * Devuelve el detalle de un destino de préstamo mediante su ID
-    * @urlParam destination required ID de destino de préstamo. Example: 6
+    * @urlParam destiny required ID de destino de préstamo. Example: 6
     * @response
     * {
     *   "id": 6,
@@ -101,7 +97,7 @@ class LoanDestinationController extends Controller
     */
     public function show($id)
     {
-        return LoanDestination::findOrFail($id);
+        return LoanDestiny::findOrFail($id);
     }
 
     /**
@@ -124,10 +120,10 @@ class LoanDestinationController extends Controller
     */
     public function update(Request $request, $id)
     {
-        $destination = LoanDestination::findOrFail($id);
-        $destination->fill($request->all());
-        $destination->save();
-        return  $destination;
+        $destiny = LoanDestiny::findOrFail($id);
+        $destiny->fill($request->all());
+        $destiny->save();
+        return  $destiny;
     }
 
     /**
@@ -146,8 +142,8 @@ class LoanDestinationController extends Controller
     */
     public function destroy($id)
     {
-        $destination = LoanDestination::findOrFail($id);
-        $destination->delete();
-        return $destination;
+        $destiny = LoanDestiny::findOrFail($id);
+        $destiny->delete();
+        return $destiny;
     }
 }

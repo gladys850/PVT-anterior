@@ -101,7 +101,7 @@ class LoanController extends Controller
     * @bodyParam parent_loan_id integer ID de Préstamo Padre. Example: 1
     * @bodyParam parent_reason enum (REFINANCIAMIENTO, REPROGRAMACIÓN) Tipo de trámite hijo. Example: REFINANCIAMIENTO
     * @bodyParam account_number integer Número de cuenta en Banco Union. Example: 586621345
-    * @bodyParam loan_destination_id integer required ID destino de Préstamo. Example: 1
+    * @bodyParam loan_destiny_id integer required ID destino de Préstamo. Example: 1
     * @bodyParam documents array required Lista de IDs de Documentos solicitados. Example: [306,305]
     * @bodyParam notes array Lista de notas aclaratorias. Example: [Informe de baja policial, Carta de solicitud]
     * @authenticated
@@ -113,7 +113,7 @@ class LoanController extends Controller
     *   "city_id": 3,
     *   "loan_term": 2,
     *   "disbursement_type_id": 1,
-    *   "loan_destination_id": 1,
+    *   "loan_destiny_id": 1,
     *   "account_number": 586621345,
     *   "request_date": "2020-03-05T20:27:23.900575Z",
     *   "disbursable_type": "affiliates",
@@ -180,11 +180,13 @@ class LoanController extends Controller
         }
         $loan->submitted_documents()->syncWithoutDetaching($documents);
         // Relacionar notas
-        foreach ($request->notes as $message) {
-            $loan->notes()->create([
-                'message' => $message,
-                'date' => Carbon::now()
-            ]);
+        if ($request->notes) {
+            foreach ($request->notes as $message) {
+                $loan->notes()->create([
+                    'message' => $message,
+                    'date' => Carbon::now()
+                ]);
+            }
         }
         // Generar PDFs
         $file_name = implode('_', ['solicitud', 'prestamo', $loan->id]) . '.pdf';
@@ -300,7 +302,7 @@ class LoanController extends Controller
     * @bodyParam parent_loan_id integer ID de Préstamo Padre. Example: 1
     * @bodyParam parent_reason enum (REFINANCIAMIENTO, REPROGRAMACIÓN) Tipo de trámite hijo. Example: REFINANCIAMIENTO
     * @bodyParam account_number integer Número de cuenta en Banco Union. Example: 586621345
-    * @bodyParam loan_destination_id integer required ID destino de Préstamo. Example: 1
+    * @bodyParam loan_destiny_id integer required ID destino de Préstamo. Example: 1
     * @authenticated
     * @response
     * {
@@ -320,7 +322,7 @@ class LoanController extends Controller
     *     "amount_approved": 2000,
     *     "loan_term": 2,
     *     "disbursement_type_id": 1,
-    *     "loan_destination_id": 1,
+    *     "loan_destiny_id": 1,
     *     "account_number": 586621345,
     *     "created_at": "2020-03-05 16:27:23",
     *     "updated_at": "2020-03-05 16:34:04",

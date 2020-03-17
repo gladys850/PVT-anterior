@@ -34,10 +34,12 @@ class CreateLoansTable extends Migration
             $table->smallInteger('amount_approved')->nullable(); // monto aprobado
             $table->integer('loan_term'); // plazo del prestamo en meses
             $table->unsignedBigInteger('disbursement_type_id'); // id tipo de desembolso
+            $table->unsignedBigInteger('personal_reference_id')->nullable(false); // persona de referencia
+            $table->foreign('personal_reference_id')->references('id')->on('personal_references');
             $table->foreign('disbursement_type_id')->references('id')->on('payment_types');
             $table->integer('account_number')->nullable(); // numero de cuenta en caso de ser deposito en cuenta
-            $table->unsignedBigInteger('loan_destination_id'); // id tipo de desembolso
-            $table->foreign('loan_destination_id')->references('id')->on('loan_destinations');
+            $table->unsignedBigInteger('loan_destiny_id'); // id destino
+            $table->foreign('loan_destiny_id')->references('id')->on('loan_destinies');
             $table->timestamps();
         });
     }

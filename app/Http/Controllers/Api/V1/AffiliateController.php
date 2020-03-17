@@ -260,6 +260,7 @@ class AffiliateController extends Controller
         $affiliate->defaulted = $affiliate->defaulted;
         $affiliate->cpop = $affiliate->cpop;
         $affiliate->identity_card_ext = $affiliate->identity_card_ext;
+        $affiliate->category = $affiliate->category;
         return $affiliate;
     }
 

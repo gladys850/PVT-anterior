@@ -83,7 +83,7 @@ import { Validator } from 'vee-validate'
     this.getPaymentTypes()
   },
   mounted(){
-    this.getLoanDestination()
+    this.getLoanDestiny()
   },
   methods: {
    Onchange(){
@@ -116,10 +116,10 @@ import { Validator } from 'vee-validate'
         this.loading = false
       }
     },
-     async getLoanDestination() {
+     async getLoanDestiny() {
       try {
         this.loading = true
-        let res = await axios.get(`procedure_type/${9}/loan_destination`)
+        let res = await axios.get(`procedure_type/${9}/loan_destiny`)
         this.destino = res.data
         console.log(this.destino+'estos son los destinos');
       } catch (e) {

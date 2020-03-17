@@ -33,7 +33,7 @@
             El objeto de la presente es para solicitar un Préstamo por un monto de Bs. {{ $loan->amount_requested }} (<span class="uppercase">{{ Util::money_format($loan->amount_requested, true) }}</span> Bolivianos) a un plazo de {{$loan->loan_term}} meses,el cual que será aprobado  conforme con los procedimientos del Reglamento de Préstamos vigente en la MUSERPOL.
         </div><br>
         <div>
-            El destino del préstamo es para <span class="lowercase font-bold">{{ $loan->destination->name }}</span>.
+            El destino del préstamo es para <span class="lowercase font-bold">{{ $loan->destiny->name }}</span>.
         </div><br><br>
         <div>
             Siendo mis datos personales los siguientes:
