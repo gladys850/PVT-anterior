@@ -40,17 +40,17 @@ class LoanPayment extends Model
             'penal' => 0,
             'accumulated' => 0
         ];
-        if ($loan->balance == 0) return $interest;
+        if ($loan->balance == 0) return (object)$interest;
         $estimated_date = CarbonImmutable::parse($estimated_date ?? CarbonImmutable::now()->toDateString());
         $latest_quota = $loan->payments()->first();
         if (!$latest_quota) {
             $payment_date = $loan->disbursement_date;
-            if (!$payment_date) return $interest;
+            if (!$payment_date) return (object)$interest;
         } else {
             $payment_date = $latest_quota->pay_date;
         }
         $payment_date = CarbonImmutable::parse($payment_date);
-        if ($estimated_date->lessThan($payment_date)) return $interest;
+        if ($estimated_date->lessThan($payment_date)) return (object)$interest;
         $diff_days = $estimated_date->diffInDays($payment_date) + 1;
         if ($estimated_date->diffInMonths($payment_date) == 0) {
             $interest['current'] = $diff_days;
