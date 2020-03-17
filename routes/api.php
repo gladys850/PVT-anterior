@@ -42,7 +42,7 @@ Route::group([
         Route::resource('calculator', 'Api\V1\CalculatorController')->only('store');
         Route::resource('role', 'Api\V1\RoleController')->only('index', 'show');
         Route::resource('global_parameter', 'Api\V1\LoanGlobalParameterController')->only('index', 'show', 'store', 'update', 'destroy');
-        Route::resource('destiny', 'Api\V1\LoanDestinyController')->only('index', 'show', 'store', 'update', 'destroy');
+        Route::resource('loan_destiny', 'Api\V1\LoanDestinyController')->only('index', 'show', 'store', 'update', 'destroy');
 
         // Afiliado
         Route::group([
@@ -96,6 +96,8 @@ Route::group([
             Route::resource('loan_interval', 'Api\V1\LoanIntervalController')->only('index');
             Route::get('affiliate/{id}/loan','Api\V1\AffiliateController@get_loans');
             Route::get('loan/{id}/document','Api\V1\LoanController@get_documents');
+            Route::get('loan/{id}/note','Api\V1\LoanController@get_notes');
+            Route::resource('note','Api\V1\NoteController')->only('show');
             Route::get('procedure_type/{id}/loan_destiny', 'Api\V1\ProcedureTypeController@get_destiny');
         });
         Route::group([
@@ -141,6 +143,18 @@ Route::group([
             'middleware' => 'permission:show-record'
         ], function () {
             Route::resource('record', 'Api\V1\RecordController')->only('index');
+        });
+
+        // Notas
+        Route::group([
+            'middleware' => 'permission:update-note'
+        ], function () {
+            Route::resource('note', 'Api\V1\NoteController')->only('update');
+        });
+        Route::group([
+            'middleware' => 'permission:delete-note'
+        ], function () {
+            Route::resource('note', 'Api\V1\NoteController')->only('destroy');
         });
 
         // Administrador
