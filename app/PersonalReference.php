@@ -23,6 +23,21 @@ class PersonalReference extends Model
         'cell_phone_number'
     ];
 
+    public function getIdentityCardExtAttribute()
+    {
+        return $this->identity_card . ' ' . $this->city_identity_card->first_shortened;
+    }
+
+    public function getFullNameAttribute()
+    {
+        return preg_replace('/[[:blank:]]+/', ' ', join(' ', [$this->first_name, $this->second_name, $this->last_name, $this->mothers_last_name]));
+    }
+
+    public function city_identity_card()
+    {
+        return $this->belongsTo(City::class, 'city_identity_card_id', 'id');
+    }
+
     public function loans()
     {
         return $this->hasMany(Loan::class);

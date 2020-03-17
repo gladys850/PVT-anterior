@@ -163,7 +163,7 @@
     </div>
     @endif
 
-    @if ($loan->guarantors()->count())
+    @if ($loan->personal_reference)
     <div class="block">
         <div class="font-semibold leading-tight text-left m-b-10 text-xs">{{ $n++ }}. REFERENCIAS PERSONALES</div>
     </div>
@@ -255,7 +255,7 @@
                 El objeto de la presente es para solicitar un Préstamo por un monto de Bs. {{ $loan->amount_requested }} (<span class="uppercase">{{ Util::money_format($loan->amount_requested, true) }}</span> Bolivianos) a un plazo de {{$loan->loan_term}} meses, el cual que será aprobado conforme con los procedimientos del Reglamento de Préstamos vigente en la MUSERPOL.
             </div>
             <div class="m-b-10">
-                El destino del préstamo es <span class="lowercase font-bold">{{ $loan->destination->name }}</span>. A tal efecto, adjunto los requisitos solicitados y declaro que toda la documentación presentada es veraz y fidedigna; en caso de demostrarse cualquier falsedad, distorsión u omisión en la documentación, reconozco que la Unidad de Inversión en Préstamos procederá a la anulación del trámite y podrá efectuar las acciones correspondientes conforme a los Artículo 17 y 18 de del Capítulo II CONSIDERACIONES DEL PRESTATARIO PARA ACCEDER AL PRÉSTAMO del Reglamento de Préstamos vigente..
+                El destino del préstamo es <span class="lowercase font-bold">{{ $loan->destiny->name }}</span>. A tal efecto, adjunto los requisitos solicitados y declaro que toda la documentación presentada es veraz y fidedigna; en caso de demostrarse cualquier falsedad, distorsión u omisión en la documentación, reconozco que la Unidad de Inversión en Préstamos procederá a la anulación del trámite y podrá efectuar las acciones correspondientes conforme a los Artículo 17 y 18 de del Capítulo II CONSIDERACIONES DEL PRESTATARIO PARA ACCEDER AL PRÉSTAMO del Reglamento de Préstamos vigente..
             </div>
             <div class="m-b-10">
                 Sin otro particular, {{ $plural ? 'me despido' : 'nos despedimos'}} de usted con las consideraciones mas distinguidas.

@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class LoanDestination extends Model
+class LoanDestiny extends Model
 {
     use Traits\EloquentGetTableNameTrait;
     public $timestamps = true;

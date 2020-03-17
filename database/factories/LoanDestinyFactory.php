@@ -3,10 +3,10 @@
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
 
 use App\Module;
-use App\LoanDestination;
+use App\LoanDestiny;
 use Faker\Generator as Faker;
 
-$factory->define(LoanDestination::class, function (Faker $faker) {
+$factory->define(LoanDestiny::class, function (Faker $faker) {
     $module = Module::whereName('prestamos')->first();
     return [
         'procedure_type_id' => $module->procedure_types->random()->id,
