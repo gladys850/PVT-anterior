@@ -91,6 +91,7 @@ class Affiliate extends Model
         }
         return boolval($fingerprint_exists);
     }
+
     public function getFullNameAttribute()
     {
       return preg_replace('/[[:blank:]]+/', ' ', join(' ', [$this->first_name, $this->second_name, $this->last_name, $this->mothers_last_name]));
@@ -122,10 +123,23 @@ class Affiliate extends Model
       return $data;
     }
 
-    public function category()
+    public function getCategoryAttribute()
     {
-      return $this->belongsTo(Category::class);
+      $category =  Category::whereId($this->category_id)->first();
+      if(count($this->contributions)>0) {
+        $contribution = $this->contributions->last();
+        if($contribution->base_wage>0) {
+          $contribution_category = intval($contribution->seniority_bonus*100/$contribution->base_wage);
+          $categories = Category::get();
+          foreach($categories as $cat){
+            if(round($cat->percentage*100) == ($contribution_category))
+              $category = $cat;
+          }
+        }
+      }
+      return $category;
     }
+
     public function degree()
     {
       return $this->belongsTo(Degree::class);
