@@ -683,6 +683,7 @@ class LoanController extends Controller
         $persons = collect([]);
         foreach ($lenders as $lender) {
             $persons->push([
+                'id' => $lender->id,
                 'full_name' => implode(' ', [$lender->title, $lender->full_name]),
                 'identity_card' => $lender->identity_card_ext,
                 'position' => 'SOLICITANTE'
@@ -690,6 +691,7 @@ class LoanController extends Controller
         }
         foreach ($loan->guarantors as $guarantor) {
             $persons->push([
+                'id' => $lender->id,
                 'full_name' => implode(' ', [$guarantor->title, $guarantor->full_name]),
                 'identity_card' => $guarantor->identity_card_ext,
                 'position' => 'GARANTE'
