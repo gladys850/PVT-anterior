@@ -345,8 +345,8 @@ class AffiliateController extends Controller
     public function update(AffiliateForm $request, $id)
     {
         $affiliate = Affiliate::findOrFail($id);
-        if (!Auth::user()->can('update-affiliate-primary') && ($request->has('phone_number') || $request->has('cell_phone_number'))) {
-            $update = $request->only(['phone_number', 'cell_phone_number']);
+        if (!Auth::user()->can('update-affiliate-primary') && ($request->has('phone_number') || $request->has('cell_phone_number') || $request->has('city_identity_card_id'))) {
+            $update = $request->only(['phone_number', 'cell_phone_number', 'city_identity_card_id']);
         } else {
             $update = $request->all();
         }

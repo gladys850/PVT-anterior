@@ -83,6 +83,10 @@ class CalculatorController extends Controller
             $liquid_qualification=$this->liquid_qualification($payable_liquid_average,$total_bonuses,$affiliate,$parent_quota);
             $quota_calculation = $this->quota_calculator($procedure_modality, $request->months_term, $amount_requested,$liquid_qualification);
             $maximum_suggested_amount = $this->maximum_amount($procedure_modality,$request->months_term,$liquid_qualification);
+            if($amount_requested>$maximum_suggested_amount){
+                $quota_calculation = $this->quota_calculator($procedure_modality, $request->months_term, $maximum_suggested_amount,$liquid_qualification);
+                $amount_requested = $maximum_suggested_amount;
+            }
             if($payable_liquid_average!=0){
                 $index_calculated =$quota_calculation/($liquid_qualification)*100 ;
             }else{
@@ -94,8 +98,9 @@ class CalculatorController extends Controller
                 'liquido_para_calificacion'=>round($liquid_qualification),
                 'calculo_de_cuota'=>Util::money_format($quota_calculation),
                 'indice_endeudamiento'=>intval($index_calculated),
-                'monto_maximo_sugerido'=>round($maximum_suggested_amount),
-                'valido' => intval($index_calculated) <= ($procedure_modality->loan_modality_parameter->decimal_index)*100
+                'monto solicitado'=>$amount_requested,
+                'monto_maximo_sugerido'=>$maximum_suggested_amount,
+                'valido' => ($index_calculated) <= ($procedure_modality->loan_modality_parameter->decimal_index)*100
             ]);
         }else{ abort (404);}
     }
@@ -134,6 +139,6 @@ class CalculatorController extends Controller
         } else {
             $maximum_qualified_amount = $maximum_qualified_amount;
         }
-        return $maximum_qualified_amount;
+        return intval(round(floor($maximum_qualified_amount))/100)*100;
     }
 }
