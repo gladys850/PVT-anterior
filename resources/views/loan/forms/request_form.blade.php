@@ -272,7 +272,7 @@
                     <td width="50%">
                         @include('partials.signature_box', $person)
                     </td>
-                    @if ($signers->count() % 2 == 1 && $signers->last()->id == $person->id)
+                    @if ($signers->count() % 2 == 1 && $signers->last()['id'] == $person['id'])
                     <td width="50%">
                         @php($user = Auth::user())
                         @include('partials.signature_box', [
