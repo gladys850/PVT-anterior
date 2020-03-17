@@ -17,7 +17,7 @@ $factory->define(Loan::class, function (Faker $faker) {
     $disbursement_date = $faker->dateTimeBetween($startDate = '-3 months', $endDate = '-1 months', $timezone = null);
     $procedure_type = $module->procedure_types->random();
     $procedure_modality = $procedure_type->procedure_modalities->random();
-    if ($procedure_type->destinys->count() == 0) {
+    if ($procedure_type->destinies->count() == 0) {
         do {
             $loan_destiny = factory(App\LoanDestiny::class)->create();
         } while ($loan_destiny->procedure_type_id != $procedure_type->id);
