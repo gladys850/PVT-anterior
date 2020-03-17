@@ -12,9 +12,10 @@
                   <div v-if="index < 3">
                     <strong>Cód.:</strong>
                     {{ item.code }} |
-                    <strong>Total pagado.:</strong>
-
-                    {{ item.amount_approved - item.balance }} / {{ item.amount_approved }}
+                    <strong>Desembolsado:</strong>
+                    {{ item.amount_approved}}
+                    <strong>Saldo capital:</strong>
+                    {{ item.balance  }}
                     <v-progress-linear
                       :color="randomColor()"
                       height="15"
@@ -93,37 +94,29 @@
                 </div>
               </v-row>
             </v-col>
-            <v-col cols="4" class="red--text text--lighten-5 ma-0 pa-0">
+            <v-col cols="5" class="red--text text--lighten-5 ma-0 pa-0">
               <small>
-                ITEM: {{this.category_name}}
+                C.I.: {{affiliate.identity_card_ext}}
                 <br />
-                C.I.: {{affiliate.identity_card}}
+                Categoría: {{this.category_name}}
                 <br />
-                <v-icon color="#EDF2F4">mdi-account</v-icon>
-                {{this.state_name_type}}
+                <!--<v-icon color="#EDF2F4">mdi-account</v-icon>-->
+                Estado:  {{this.state_name_status}}
                 <br />
+                <!--<v-icon color="#EDF2F4">mdi-police-badge</v-icon>-->
               </small>
-              <h6 class="text-center">{{this.state_name_status}}</h6>
             </v-col>
           </v-card-title>
           <v-card-text class="ma-0 pa-0">
-            <title>Prestamos</title>
             <v-col cols="12" color="#EDF2F4" class="red--text text--lighten-5 ma-0 pa-0">
               <center>
-                <v-icon color="#EDF2F4">mdi-police-badge</v-icon>
-                {{this.degree_name}}
+                Grado: {{this.degree_name}}
+                <br/>
+                Unidad: {{this.unit_name}}
                 <br />
-                UNIDAD: {{this.unit_name}}
-                <br />
-                TIPO: {{affiliate.type}}
-              </center>
-            </v-col>
-            <br />
-            <v-col cols="12" color="#EDF2F4" class="red--text text--lighten-5 ma-0 pa-0">
-              <center>
-                <v-icon color="#EDF2F4">mdi-account-heart</v-icon>
-                {{affiliate.civil_status=='C'? 'CASADO':affiliate.civil_status=='S'? 'SOLTERO':affiliate.civil_status=='D'?'DIVORCIADO':'VIUDO'}}
-                <br />
+                <!--TIPO: {{affiliate.type}}-->
+                 <!-- <v-icon color="#EDF2F4">mdi-account-heart</v-icon>-->
+                Estado Civil: {{affiliate.civil_status=='C'? 'CASADO':affiliate.civil_status=='S'? 'SOLTERO':affiliate.civil_status=='D'?'DIVORCIADO':'VIUDO'}}
               </center>
             </v-col>
           </v-card-text>
@@ -226,10 +219,7 @@ export default {
         this.loading = true;
         let res = await axios.get(`affiliate/${id}/loan`, {
           params: {
-            guarantor: 0,
-            sortBy: ["request_date"],
-            sortDesc: [true],
-            per_page: 3
+            guarantor: 0
           }
         });
         this.loan = res.data.data;
