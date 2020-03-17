@@ -93,7 +93,7 @@
                 <div>
                   <span>Gerenar Formulario</span>
                 </div>
-              </v-tooltip
+              </v-tooltip>
               <v-tooltip top>
                 <template v-slot:activator="{ on }">
                   <v-btn
@@ -288,9 +288,9 @@ export default {
       try {
         this.loading = true;
         let res = await axios.get(`procedure_modality/${id}/requirements`);
-        this.requirement = res.data;
-        this.items = this.requirement.required;
-        this.optional = this.requirement.optional;
+        this.requirement = res.data
+        this.items = this.requirement.required
+        this.optional = this.requirement.optional
       } catch (e) {
         console.log(e);
       } finally {
@@ -314,7 +314,7 @@ export default {
         });
         printJS(window.URL.createObjectURL(blob));
       } catch (e) {
-        console.log(e);
+        console.log(e)
       } finally {
         this.loading = false;
       }
@@ -330,9 +330,9 @@ export default {
         let blob = new Blob([res.data], {
           type: "application/pdf"
         });
-        printJS(window.URL.createObjectURL(blob));
+        printJS(window.URL.createObjectURL(blob))
       } catch (e) {
-        console.log(e);
+        console.log(e)
       } finally {
         this.loading = false;
       }
@@ -391,38 +391,38 @@ export default {
         let blob2 = new Blob([res2.data], {
           type: "application/pdf"
         });
-        printJS(window.URL.createObjectURL(blob1));
-        printJS(window.URL.createObjectURL(blob2));
+        printJS(window.URL.createObjectURL(blob1))
+        printJS(window.URL.createObjectURL(blob2))
       } catch (e) {
-        console.log(e);
+        console.log(e)
       } finally {
-        this.loading = false;
+        this.loading = false
       }
     },
     addOptionalDocument(i) {
       //Verifica si no encuentra el valor repetido
       if (this.selectedOpc.indexOf(i) === -1) {
-        this.selectedOpc.push(i);
-        //console.log("I= " + i);
-        console.log("selectedOpc " + this.selectedOpc);
+        this.selectedOpc.push(i)
+        //console.log("I= " + i)
+        console.log("selectedOpc " + this.selectedOpc)
       }
-      this.selectedValue = " ";
+      this.selectedValue = " "
     },
     deleteOptionalDocument(i) {
-      this.selectedOpc.splice(i, 1);
+      this.selectedOpc.splice(i, 1)
     },
     addOtherDocument() {
       if (this.newOther) {
-        this.otherDocuments.push(this.newOther);
-        console.log("other " + this.otherDocuments);
-        this.newOther = "";
+        this.otherDocuments.push(this.newOther)
+        console.log("other " + this.otherDocuments)
+        this.newOther = ""
       } else {
-        console.log("elemento vacio");
+        console.log("elemento vacio")
       }
     },
     deleteOtherDocument(i) {
-      this.otherDocuments.splice(i, 1);
-      console.log("other " + this.otherDocuments);
+      this.otherDocuments.splice(i, 1)
+      console.log("other " + this.otherDocuments)
     }
   }
 };

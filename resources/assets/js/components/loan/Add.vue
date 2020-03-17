@@ -90,7 +90,7 @@ export default {
     this.getAffiliate(this.$route.query.affiliate_id)
     this.getAddress(this.$route.query.affiliate_id)
     this.getDegree_name(this.$route.query.affiliate_id)
-    this.getCategory_name(this.$route.query.affiliate_id);
+    this.getCategory_name(this.$route.query.affiliate_id)
   },
   methods:{
     async getAffiliate(id) {
