@@ -42,12 +42,12 @@ class LoanDestinyController extends Controller
     *           "updated_at": null
     *       }
     *   ],
-    *   "first_page_url": "http://192.168.2.242/api/v1/destiny?page=1",
+    *   "first_page_url": "http://127.0.0.1/api/v1/destiny?page=1",
     *   "from": 1,
     *   "last_page": 1,
-    *   "last_page_url": "http://192.168.2.242/api/v1/destiny?page=1",
+    *   "last_page_url": "http://127.0.0.1/api/v1/destiny?page=1",
     *   "next_page_url": null,
-    *   "path": "http://192.168.2.242/api/v1/destiny",
+    *   "path": "http://127.0.0.1/api/v1/destiny",
     *   "per_page": 10,
     *   "prev_page_url": null,
     *   "to": 2,
@@ -56,7 +56,11 @@ class LoanDestinyController extends Controller
     */
     public function index(Request $request)
     {
-        return Util::search_sort(new LoanDestiny(), $request);
+        $data = Util::search_sort(new LoanDestiny(), $request);
+        foreach ($data as $item) {
+            $this->append_data($item);
+        }
+        return $data;
     }
 
     /**

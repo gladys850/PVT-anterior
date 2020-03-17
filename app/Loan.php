@@ -56,6 +56,11 @@ class Loan extends Model
         $this->attributes['loan_interest_id'] = $this->modality->current_interest->id;
     }
 
+    public function personal_reference()
+    {
+        return $this->belongsTo(PersonalReference::class);
+    }
+
     public function notes()
     {
         return $this->morphMany(Note::class, 'annotable');
