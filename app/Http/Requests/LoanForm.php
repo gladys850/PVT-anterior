@@ -32,7 +32,7 @@ class LoanForm extends FormRequest
             'loan_term'=>'integer|min:2|max:240',
             'disbursement_type_id'=>'integer|exists:payment_types,id',
             'lenders'=>'array|min:1|exists:affiliates,id',
-            'loan_destiny_id'=>'integer|exists:loan_destinys,id',
+            'loan_destiny_id'=>'integer|exists:loan_destinies,id',
             'documents'=>'array|min:1',
             'documents.*'=>'exists:procedure_documents,id',
             'guarantors'=>'array|exists:affiliates,id',
