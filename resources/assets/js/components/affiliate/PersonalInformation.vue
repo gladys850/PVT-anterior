@@ -59,6 +59,35 @@
                   </v-col>
             </v-row>
           </v-card>
+         <v-card>
+            <v-row class="ma-0 pa-0">
+             <v-col cols="12" class="py-2">
+              <v-toolbar-title>CIUDAD EXPEDICIÓN CI.</v-toolbar-title>
+            </v-col>
+              <v-col cols="12" md="6">
+                      <v-text-field
+                        dense
+                        v-model="affiliate.identity_card"
+                        label="Cédula de Identidad"
+                        readonly
+                      ></v-text-field>
+                    </v-col>
+                    <v-col cols="12" md="6" >
+                      <v-select
+                        dense
+                        :items="cities"
+                        item-text="name"
+                        item-value="id"
+                        :loading="loading"
+                        label="Ciudad de Expedición"
+                        v-model="affiliate.city_identity_card_id"
+                        :readonly="!editable || !permission.secondary"
+                        :outlined="editable && permission.secondary"
+                        :disabled="editable && !permission.secondary"
+                      ></v-select>
+                    </v-col>
+            </v-row>
+          </v-card>
         </v-container>
       </v-col>
       <v-col cols="12" md="3">
@@ -108,6 +137,7 @@
               ></v-text-field>
             </v-col>
           </v-card>
+           
         </v-container>
       </v-col>
       <v-col cols="12" md="1" class="ma-0 pa-0">
@@ -283,7 +313,7 @@ import { Validator } from 'vee-validate'
           console.log('entro al grabar por falso :)')
           // Edit affiliate
           //await axios.patch(`affiliate/${this.affiliate.id}`, this.affiliate)
-          await axios.patch(`affiliate/${this.affiliate.id}`, {phone_number: this.affiliate.phone_number, cell_phone_number: this.affiliate.cell_phone_number})
+          await axios.patch(`affiliate/${this.affiliate.id}`, {phone_number: this.affiliate.phone_number, cell_phone_number: this.affiliate.cell_phone_number, city_identity_card_id: this.affiliate.city_identity_card_id})
           await axios.patch(`affiliate/${this.affiliate.id}/address`, {
             addresses: this.addresses.map(o => o.id)
           })

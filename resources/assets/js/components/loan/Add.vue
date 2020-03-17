@@ -15,14 +15,13 @@
             <v-expansion-panel
               :expand="true">
               <v-expansion-panel-header>
-                TITULAR
+                {{"TITULAR: "+this.degree_name}} {{this.$options.filters.fullName(this.affiliate, true)}}
+                <span style="text-align:center; ">CAT. {{this.category_name}}</span>
                 <template v-slot:actions >
                   <v-icon color="teal">mdi-check</v-icon>
                 </template>
               </v-expansion-panel-header>
               <v-expansion-panel-content class="pa-0 ml-0"  >
-                <InformationData
-                :affiliate.sync="affiliate"/>
                 <Steps
                 :affiliate.sync="affiliate"
                 :addresses.sync="addresses"/>
@@ -71,6 +70,8 @@ export default {
       cell_phone_number:null
     },
     ocultar:false,
+    degree_name: null,
+    category_name: null
   }),
   computed: {
     isNew() {
@@ -86,8 +87,10 @@ export default {
     ])
   },
   mounted() {
-    this.getAffiliate(this.$route.query.affiliate_id);
-    this.getAddress(this.$route.query.affiliate_id);
+    this.getAffiliate(this.$route.query.affiliate_id)
+    this.getAddress(this.$route.query.affiliate_id)
+    this.getDegree_name(this.$route.query.affiliate_id)
+    this.getCategory_name(this.$route.query.affiliate_id);
   },
   methods:{
     async getAffiliate(id) {
@@ -106,13 +109,13 @@ export default {
   setBreadcrumbs() {
     let breadcrumbs = [
       {
-        text: 'Prestamos',
+        text: 'Préstamos',
         to: { name: 'loanIndex' }
       }
     ]
     if (this.isNew) {
       breadcrumbs.push({
-        text: ''+ this.$options.filters.fullName(this.affiliate, true),
+        text: 'Nuevo Préstamo',
         to: { name: 'loanIndex', params: { id: 'new' } }
       })
     } else {
@@ -132,6 +135,28 @@ export default {
         console.log(e)
       } finally {
         this.loading = false
+      }
+    },
+    async getDegree_name(id) {
+      try {
+        this.loading = true;
+        let res = await axios.get(`affiliate/${id}/degree`)
+        this.degree_name = res.data.shortened
+      } catch (e) {
+        console.log(e)
+      } finally {
+        this.loading = false
+      }
+    },
+    async getCategory_name(id) {
+      try {
+        this.loading = true;
+        let res = await axios.get(`affiliate/${id}/category`);
+        this.category_name = res.data.name;
+      } catch (e) {
+        console.log(e);
+      } finally {
+        this.loading = false;
       }
     }
   }
