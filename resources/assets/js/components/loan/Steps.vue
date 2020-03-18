@@ -8,7 +8,7 @@
             :complete="e1 > 1"
             :step="1"
             editable
-          >Datos Prestamo
+          >Modalidad
           </v-stepper-step>
           <v-divider
             v-if="1 !== steps"
@@ -19,7 +19,7 @@
             :complete="e1 > 2"
             :step="2"
             editable
-          >Calculo Boletas
+          >Calculo
           </v-stepper-step>
           <v-divider
             v-if="2 !== steps"
@@ -30,7 +30,7 @@
             :complete="e1 > 3"
             :step="3"
             editable
-          >Resultado Calculo
+          >Afiliado
           </v-stepper-step>
           <v-divider
             v-if="3 !== steps"
@@ -41,7 +41,7 @@
             :complete="e1 > 4"
             :step="4"
             editable
-          >Datos Afiliado
+          >Formulario
           </v-stepper-step>
           <v-divider
             v-if="4 !== steps"
@@ -52,22 +52,11 @@
             :complete="e1 > 5"
             :step="5"
             editable
-          >Datos Formulario
+          >Requisitos
           </v-stepper-step>
           <v-divider
             v-if="5 !== steps"
             :key="5"
-          ></v-divider>
-           <v-stepper-step
-            :key="`${6}-step`"
-            :complete="e1 > 6"
-            :step="6"
-            editable
-          >Requisitos
-          </v-stepper-step>
-          <v-divider
-            v-if="6 !== steps"
-            :key="6"
           ></v-divider>
         </template>
       </v-stepper-header>
@@ -77,9 +66,15 @@
           :step="1"
         >
           <v-card color="grey lighten-1">
-            <LoanInformation
+            <Ballots
               :modalities.sync="modalities"
               :datos.sync="datos"
+              :modality.sync="modality"
+              :bonos.sync="bonos"
+              :payable_liquid="payable_liquid"
+              :intervalos.sync="intervalos"
+              :contributions1.sync="contributions1"
+              :modalidad.sync="modalidad"
             />
               <v-container class="py-0">
                 <v-row>
@@ -103,11 +98,13 @@
           :step="2"
         >
           <v-card color="grey lighten-1">
-            <Ballots
-              :modality.sync="modality"
+            <h3 class="text-uppercase text-center">{{modalidad.name}}</h3>
+           <BallotsResult
               :bonos.sync="bonos"
-              :payable_liquid="payable_liquid"
-              :visible.sync="visible"
+              :payable_liquid.sync="payable_liquid"
+              :modality.sync="modality"
+              :calculos.sync="calculos"
+              :modalidad.sync="modalidad"
             />
             <v-container class="py-0">
               <v-row>
@@ -132,11 +129,10 @@
           :step="3"
         >
           <v-card color="grey lighten-1">
-            <BallotsResult
-              :bonos.sync="bonos"
-              :payable_liquid.sync="payable_liquid"
-              :modality.sync="modality"
-              :calculos.sync="calculos"
+             <h3 class="text-uppercase text-center">{{modalidad.name}}</h3>
+           <PersonalInformation
+              :affiliate.sync="affiliate"
+              :addresses.sync="addresses"
             />
             <v-container class="py-0">
               <v-row>
@@ -161,10 +157,10 @@
           :step="4"
           >
           <v-card color="grey lighten-1">
-            <PersonalInformation
-              :affiliate.sync="affiliate"
-              :addresses.sync="addresses"
-            />
+             <h3 class="text-uppercase text-center">{{modalidad.name}}</h3>
+            <FormInformation
+            :formulario.sync="formulario"
+            :datos.sync="datos"/>
             <v-container class="py-0">
               <v-row>
                 <v-spacer></v-spacer>
@@ -188,53 +184,13 @@
           :step="5"
           >
           <v-card color="grey lighten-1">
-            <FormInformation
-            :formulario.sync="formulario"
-            :datos.sync="datos"/>
-            <v-container class="py-0">
-              <v-row>
-                <v-spacer></v-spacer>
-                <v-spacer></v-spacer>
-                <v-spacer></v-spacer>
-                <v-col class="py-0">
-                  <v-btn text
-                    @click="beforeStep(5)">Atras</v-btn>
-                  <v-btn
-                    color="primary"
-                    @click="nextStep(5)">
-                    Siguiente
-                  </v-btn>
-                </v-col>
-              </v-row>
-            </v-container>
-          </v-card>
-        </v-stepper-content>
-         <v-stepper-content
-          :key="`${6}-content`"
-          :step="6"
-          >
-          <v-card color="grey lighten-1">
-            <Requirement
+             <h3 class="text-uppercase text-center">{{modalidad.name}}</h3>
+               <Requirement
             :modality.sync="modality"
             :datos.sync="datos"
             :formulario.sync="formulario"
-            :calculos.sync="calculos"/>
-            <v-container class="py-0">
-              <v-row>
-                <v-spacer></v-spacer>
-                <v-spacer></v-spacer>
-                <v-spacer></v-spacer>
-                <v-col class="py-0">
-                  <v-btn text
-                    @click="beforeStep(6)">Atras</v-btn>
-                  <v-btn
-                    color="primary"
-                    :to="{ name: 'affiliateIndex'}">
-                    Finalizar
-                  </v-btn>
-                </v-col>
-              </v-row>
-            </v-container>
+            :calculos.sync="calculos"
+            :modalidad.sync="modalidad"/>
           </v-card>
         </v-stepper-content>
       </v-stepper-items>
@@ -265,6 +221,10 @@ export default {
       type: Object,
       required: true
     },
+    modalidad: {
+      type: Object,
+      required: true
+    },
     addresses: {
       type: Array,
       required: true
@@ -280,14 +240,14 @@ export default {
   },
    data: () => ({
     e1: 1,
-    steps: 6,
+    steps: 5,
     modalities: [],
     datos:[],
+    intervalos:{},
+    contributions1:[{},{},{} ],
     payable_liquid:[0,0,0],
     bonos:[0,0,0,0],
-    visible:false,
     modality:{
-      id: null,
       procedure_type_id: null,
       name: null,
       shortened: null,
@@ -333,15 +293,18 @@ export default {
       else {
         if(n==1)
         {
-          this.getLoanModality(this.$route.query.affiliate_id)
-          console.log(this.getLoanModality(this.$route.query.affiliate_id)+'paso1 con la modalidad')
+            this.Calculator()
+            console.log(this.modalidad.name+'modalidad')
+       
+                   console.log(this.bonos[0]+'estos son los bonos')
+          console.log(this.bonos[1]+'estos son los bonos')
+          console.log(this.bonos[2]+'estos son los bonos')
+          console.log(this.bonos[3]+'estos son los bonos')
+          console.log(this.payable_liquid+'estos son los liquidos')
         }
         if(n==2)
         {
-          this.Calculator()
-          console.log(this.datos[0]+'modalidad')
-          console.log(this.datos[1]+'monto')
-          console.log(this.datos[2]+'plazo')
+         
         }
         if(n==3)
         {
@@ -384,36 +347,15 @@ export default {
         this.loading = false
       }
     },
-    async getLoanModality(id) {
-    try {
-      let resp = await axios.get(`affiliate/${id}/loan_modality`,{
-        params: {
-          procedure_type_id:this.datos[0],
-          external_discount:0,
-          }
-      })
-      this.modality= resp.data
-      console.log('esta modalidad falta'+this.modality)
-      if(this.modality.loan_modality_parameter.quantity_ballots>1)
-      {
-         this.visible=true
-      }else{
-         this.visible=false
-      }
-       console.log('este es el visible'+this.visible)
-     } catch (e) {
-      console.log(e)
-    } finally {
-      this.loading = false
-    }
-  },
    async Calculator() {
     try {
-      console.log('entro a calculadora')
+      console.log('entro a calculadora'+this.modalidad.quantity_ballots)
+      if(this.modalidad.quantity_ballots>1)
+      {
       let res = await axios.post(`calculator`, {
-        procedure_modality_id:this.modality.id,
-        months_term: this.datos[2],
-        amount_requested:this.datos[1],
+        procedure_modality_id:this.modalidad.id,
+        months_term: this.intervalos.maximum_term,
+        amount_requested:this.intervalos.maximun_amoun,
         affiliate_id:this.$route.query.affiliate_id,
         contributions: [
           {
@@ -439,13 +381,76 @@ export default {
           }
         ]
       })
- this.calculos= res.data
- this.calculos.plazo=this.datos[2]
+        this.calculos= res.data
+        this.calculos.plazo=this.intervalos.maximum_term
+        this.calculos.montos=this.intervalos.maximun_amoun
+      }else{
+        let res = await axios.post(`calculator`, {
+        procedure_modality_id:this.modalidad.id,
+        months_term: this.intervalos.maximum_term,
+        amount_requested:this.intervalos.maximun_amoun,
+        affiliate_id:this.$route.query.affiliate_id,
+        contributions: [
+          {
+            payable_liquid: this.payable_liquid[0],
+            seniority_bonus:  this.bonos[2],
+            border_bonus: this.bonos[0],
+            public_security_bonus: this.bonos[3],
+            east_bonus:this.bonos[1]
+          }
+        ]
+      })
+        this.calculos= res.data
+        this.calculos.plazo=this.intervalos.maximum_term
+        this.calculos.montos=this.intervalos.maximun_amoun
+      }
+ console.log('calculos'+this.calculos)
 } catch (e) {
       console.log(e)
     } finally {
       this.loading = false
     }
+  },
+  Contributios()
+  {
+     console.log(this.payable_liquid.length+'este es la cantidad de boletas')
+    if(this.payable_liquid.length>1)
+    {
+      for (this.i = 0; this.i< this.payable_liquid.length; this.i++) {
+        this.contributions1[this.i].payable_liquid=this.payable_liquid[this.i]
+        if(this.i = 0)
+        {
+          this.contributions1[this.i].border_bonus= this.bonos[0],
+          this.contributions1[this.i].east_bonus= this.bonos[1],
+          this.contributions1[this.i].seniority_bonus= this.bonos[2],
+          this.contributions1[this.i].public_security_bonus= this.bonos[3]
+        }
+        else{
+          this.contributions1[this.i].border_bonus= 0,
+          this.contributions1[this.i].east_bonus= 0,
+          this.contributions1[this.i].seniority_bonus= 0,
+          this.contributions1[this.i].public_security_bonus= 0
+        }
+      }
+    }
+    else{
+        this.contributions1[this.i].payable_liquid=this.payable_liquid[0]
+        this.contributions1[this.i].border_bonus= this.bonos[0],
+        this.contributions1[this.i].east_bonus= this.bonos[1],
+        this.contributions1[this.i].seniority_bonus= this.bonos[2],
+        this.contributions1[this.i].public_security_bonus= this.bonos[3]
+    }
+     /*for (this.i = 0; this.i< this.interval.length; this.i++) {
+        if(this.loanTypeSelected==this.interval[this.i].procedure_type_id)
+        {
+          this.monto= this.interval[this.i].minimum_amount+' - '+this.interval[this.i].maximum_amount,
+          this.plazo= this.interval[this.i].minimum_term+' - '+this.interval[this.i].maximum_term
+          this.intervalos.maximun_amoun=this.interval[this.i].maximum_amount
+          this.intervalos.maximum_term= this.interval[this.i].maximum_term
+          this.intervalos.procedure_type_id= this.loanTypeSelected
+          this.num_type=this.loanTypeSelected
+        }
+      }*/
   }
   },
 }

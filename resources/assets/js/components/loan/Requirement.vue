@@ -40,10 +40,10 @@
                         <div v-if="group.length > 1" class="py-0">
                           <v-radio-group :mandatory="false" v-model="radios[i]" class="py-0">
                             <v-radio
-                              color="info"
-                              :value="doc.id"
-                              @change="selectDoc1(doc.id,j,i)"
-                              class="py-0"
+                            color="info"
+                            :value="doc.id"
+                            @change="selectDoc1(doc.id,j,i)"
+                            class="py-0"
                             ></v-radio>
                           </v-radio-group>
                         </div>
@@ -141,9 +141,9 @@
 
       <v-data-iterator :items="optional" hide-default-footer>
         <template>
-          <v-toolbar-title class="align-end font-weight-black text-center ma-0 px-10 pt-5">
-            <h3>Documentos Adicionales</h3>
-          </v-toolbar-title>
+      <v-toolbar-title class="align-end font-weight-black text-center ma-0 px-10 pt-5">
+        <h3>Documentos Adicionales</h3>
+      </v-toolbar-title>
           <v-row>
             <v-col cols="12" class="ma-0 px-10">
               <v-autocomplete
@@ -167,11 +167,11 @@
                           <h2>X</h2>
                           <!--<v-icon>mdi-marker-cancel</v-icon>-->
                         </v-btn>
-                        <v-divider></v-divider>
-                      </div>
+                      <v-divider></v-divider>
                     </div>
                   </div>
                 </div>
+              </div>
               </div>
             </v-col>
           </v-row>
@@ -222,15 +222,21 @@
         </template>
       </v-data-iterator>
     </v-card>
-    <v-row>
-      <v-spacer></v-spacer>
-      <v-spacer></v-spacer>
-      <v-spacer></v-spacer>
-      <v-col class="py-0">
-        <v-btn text @click="beforeStep(6)">Atras</v-btn>
-        <v-btn color="primary" @click.stop="saveLoan()">Finalizar dentro</v-btn>
-      </v-col>
-    </v-row>
+   <v-row>
+                <v-spacer></v-spacer>
+                <v-spacer></v-spacer>
+                <v-spacer></v-spacer>
+                <v-col class="py-0">
+                  <v-btn text
+                    @click="beforeStep(6)">Atras</v-btn>
+                  <v-btn
+                    color="primary"
+                     @click.stop="saveLoan()"
+                    >
+                    Finalizar
+                  </v-btn>
+                </v-col>
+              </v-row>
   </v-container>
 </template>
 <script>
@@ -268,6 +274,10 @@ export default {
       type: Array,
       required: true
     },
+      modalidad: {
+      type: Object,
+      required: true
+    },
     calculos: {
       type: Object,
       required: true
@@ -288,9 +298,9 @@ export default {
       try {
         this.loading = true;
         let res = await axios.get(`procedure_modality/${id}/requirements`);
-        this.requirement = res.data
-        this.items = this.requirement.required
-        this.optional = this.requirement.optional
+        this.requirement = res.data;
+        this.items = this.requirement.required;
+        this.optional = this.requirement.optional;
       } catch (e) {
         console.log(e);
       } finally {
@@ -302,7 +312,7 @@ export default {
         let res = await axios.get(`loan/print/requirements`, {
           params: {
             lenders: [this.$route.query.affiliate_id],
-            procedure_modality_id: this.modality.id,
+            procedure_modality_id: this.modalidad.id,
             city_id: this.$store.getters.cityId,
             amount_requested: this.datos[1],
             loan_term: this.datos[2]
@@ -314,62 +324,59 @@ export default {
         });
         printJS(window.URL.createObjectURL(blob));
       } catch (e) {
-        console.log(e)
+        console.log(e);
       } finally {
         this.loading = false;
       }
     },
     async getFormPrint() {
-      try {
-        let res = await axios.get(`loan/${8}/print/form`, {
-          params: {
-            copies: 2
-          },
-          responseType: "arraybuffer"
-        });
+    try {
+      let res = await axios.get(`loan/${8}/print/form`, {
+        params:{
+         copies: 2
+        },
+        responseType: 'arraybuffer'
+        })
         let blob = new Blob([res.data], {
-          type: "application/pdf"
-        });
+        type: "application/pdf"
+      })
         printJS(window.URL.createObjectURL(blob))
-      } catch (e) {
-        console.log(e)
-      } finally {
+    } catch (e) {
+    console.log(e);
+    } finally {
         this.loading = false;
       }
     },
-    async saveLoan() {
+     async saveLoan() {
       try {
-        this.idRequirements = this.selected.concat(this.radios.filter(Boolean));
-        if (this.idRequirements.length === this.items.length) {
-          let res = await axios.post(`loan`, {
+        this.idRequirements=this.selected.concat(this.radios.filter(Boolean))
+          if(this.idRequirements.length === this.items.length){
+            let res = await axios.post(`loan`, {
             copies: 2,
             responseType: "arraybuffer",
             lenders: [this.$route.query.affiliate_id],
             guarantors: [],
             disbursable_id: this.$route.query.affiliate_id,
             disbursable_type: "affiliates",
-            procedure_modality_id: this.modality.id,
-            amount_requested: this.calculos.monto_maximo_sugerido,
+            procedure_modality_id: this.modalidad.id,
+            amount_requested: this.calculos.montos,
             city_id: this.$store.getters.cityId,
             loan_term: this.calculos.plazo,
             disbursement_type_id: this.formulario[0],
             account_number: this.formulario[1],
             loan_destiny_id: this.formulario[2],
-            documents: this.selectedOpc.concat(
-              this.selected.concat(this.radios.filter(Boolean))
-            ),
+            documents: this.selectedOpc.concat(this.selected.concat(this.radios.filter(Boolean))),
             notes: this.otherDocuments
-          });
-          printJS({
-            printable: res.data.attachment.content,
-            type: res.data.attachment.type,
-            base64: true
-          });
-          this.$router.push("/loan");
-        } else {
-          this.toastr.error(
-            "Falta seleccionar requisitos, todos los requisitos deben ser presentados."
-          );
+        });
+        printJS({
+          printable: res.data.attachment.content,
+          type: res.data.attachment.type,
+          base64: true
+        })
+        this.$router.push('/loan');
+        }
+        else{
+          this.toastr.error("Falta seleccionar requisitos, todos los requisitos deben ser presentados.");
         }
       } catch (e) {
         console.log(e);
@@ -380,49 +387,49 @@ export default {
     async getContractPrint() {
       try {
         let res1 = await axios.get(`loan/${8}/print/contract`, {
-          responseType: "arraybuffer"
-        });
+      responseType: 'arraybuffer'
+      })
         let res2 = await axios.get(`loan/${8}/print/documents`, {
-          responseType: "arraybuffer"
-        });
+      responseType: 'arraybuffer'
+      })
         let blob1 = new Blob([res1.data], {
-          type: "application/pdf"
-        });
+        type: "application/pdf"
+      })
         let blob2 = new Blob([res2.data], {
-          type: "application/pdf"
-        });
+        type: "application/pdf"
+      })
         printJS(window.URL.createObjectURL(blob1))
         printJS(window.URL.createObjectURL(blob2))
       } catch (e) {
-        console.log(e)
+        console.log(e);
       } finally {
-        this.loading = false
+        this.loading = false;
       }
     },
     addOptionalDocument(i) {
       //Verifica si no encuentra el valor repetido
       if (this.selectedOpc.indexOf(i) === -1) {
-        this.selectedOpc.push(i)
-        //console.log("I= " + i)
-        console.log("selectedOpc " + this.selectedOpc)
+        this.selectedOpc.push(i);
+        //console.log("I= " + i);
+        //console.log("selectedOpc " + this.selectedOpc);
       }
-      this.selectedValue = " "
+      this.selectedValue = " ";
     },
     deleteOptionalDocument(i) {
-      this.selectedOpc.splice(i, 1)
-    },
+      this.selectedOpc.splice(i, 1);
+          },
     addOtherDocument() {
       if (this.newOther) {
-        this.otherDocuments.push(this.newOther)
-        console.log("other " + this.otherDocuments)
-        this.newOther = ""
+        this.otherDocuments.push(this.newOther);
+        console.log("other " + this.otherDocuments);
+        this.newOther = "";
       } else {
-        console.log("elemento vacio")
+        console.log("elemento vacio");
       }
     },
     deleteOtherDocument(i) {
-      this.otherDocuments.splice(i, 1)
-      console.log("other " + this.otherDocuments)
+      this.otherDocuments.splice(i, 1);
+      console.log("other " + this.otherDocuments);
     }
   }
 };
