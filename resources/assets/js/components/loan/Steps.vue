@@ -403,7 +403,9 @@ export default {
         this.calculos= res.data
         this.calculos.plazo=this.intervalos.maximum_term
         this.calculos.montos=this.intervalos.maximun_amoun
+
       }
+
  console.log('calculos'+this.calculos)
 } catch (e) {
       console.log(e)
@@ -417,7 +419,9 @@ export default {
     if(this.payable_liquid.length>1)
     {
       for (this.i = 0; this.i< this.payable_liquid.length; this.i++) {
+
         this.contributions1[this.i].payable_liquid=this.payable_liquid[this.i]
+
         if(this.i = 0)
         {
           this.contributions1[this.i].border_bonus= this.bonos[0],

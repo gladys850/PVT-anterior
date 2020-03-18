@@ -5,19 +5,26 @@
 </head>
 
 <body class="w-100">
-    <div class='text-center'>
-        @for ($i=0; $i < strlen($full_name) - 8; $i++)
-        _
-        @endfor
-        <br>
-        {{ $full_name }}<br>
+    <div class='text-center m-t-100'>
+        <div>
+            <hr style="margin-top: 0; margin-bottom: 0; padding-top: 0; padding-bottom: 0;" width="250px">
+        </div>
+        <div>
+            {{ $full_name }}
+        </div>
         @if(isset($identity_card))
-            C.I. {{ $identity_card }}<br>
+            <div>
+                C.I. {{ $identity_card }}
+            </div>
         @endif
-        <b>{{ $position }}</b>
+        <div class="font-bold">
+            {{ $position }}
+        </div>
         @if(isset($employee))
-        @if($employee)
-            <br>MUSERPOL
+            @if($employee)
+                <div>
+                    MUSERPOL
+                </div>
             @endif
         @endif
     </div>

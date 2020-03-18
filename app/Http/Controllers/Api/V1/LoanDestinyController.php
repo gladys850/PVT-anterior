@@ -56,11 +56,7 @@ class LoanDestinyController extends Controller
     */
     public function index(Request $request)
     {
-        $data = Util::search_sort(new LoanDestiny(), $request);
-        foreach ($data as $item) {
-            $this->append_data($item);
-        }
-        return $data;
+        return Util::search_sort(new LoanDestiny(), $request);
     }
 
     /**

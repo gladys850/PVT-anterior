@@ -255,55 +255,45 @@
                 El objeto de la presente es para solicitar un Préstamo por un monto de Bs. {{ $loan->amount_requested }} (<span class="uppercase">{{ Util::money_format($loan->amount_requested, true) }}</span> Bolivianos) a un plazo de {{$loan->loan_term}} meses, el cual que será aprobado conforme con los procedimientos del Reglamento de Préstamos vigente en la MUSERPOL.
             </div>
             <div class="m-b-10">
-                El destino del préstamo es <span class="lowercase font-bold">{{ $loan->destiny->name }}</span>. A tal efecto, adjunto los requisitos solicitados y declaro que toda la documentación presentada es veraz y fidedigna; en caso de demostrarse cualquier falsedad, distorsión u omisión en la documentación, reconozco que la Unidad de Inversión en Préstamos procederá a la anulación del trámite y podrá efectuar las acciones correspondientes conforme a los Artículo 17 y 18 de del Capítulo II CONSIDERACIONES DEL PRESTATARIO PARA ACCEDER AL PRÉSTAMO del Reglamento de Préstamos vigente..
-            </div>
-            <div class="m-b-10">
-                Sin otro particular, {{ $plural ? 'me despido' : 'nos despedimos'}} de usted con las consideraciones mas distinguidas.
+                El destino del préstamo es <span class="lowercase font-bold">{{ $loan->destiny->name }}</span>. A tal efecto, adjunto los requisitos solicitados y declaro que toda la documentación presentada es veraz y fidedigna; en caso de demostrarse cualquier falsedad, distorsión u omisión en la documentación, reconozco que la Unidad de Inversión en Préstamos procederá a la anulación del trámite y podrá efectuar las acciones correspondientes conforme a los Artículo 17 y 18 de del Capítulo II CONSIDERACIONES DEL PRESTATARIO PARA ACCEDER AL PRÉSTAMO del Reglamento de Préstamos vigente.
             </div>
         </div>
     </div>
 
-    <div class="block">
+    <div class="block no-page-break">
+        <div class="m-b-10">
+            Sin otro particular, {{ $plural ? 'me despido' : 'nos despedimos'}} de usted con las consideraciones mas distinguidas:
+        </div>
         <table>
             <tbody>
-                @foreach ($lenders->chunk(2) as $chunk)
+                @foreach ($signers->chunk(2) as $chunk)
                 <tr class="align-top">
-                    @foreach ($chunk as $lender)
-                    <td>
-                        <div style="margin-top: 100px;">
-                            @include('partials.signature_box', [
-                                'full_name' => implode(' ', [$lender->title, $lender->full_name]),
-                                'identity_card' => $lender->identity_card_ext,
-                                'position' => 'SOLICITANTE'
-                            ])
-                        </div>
+                    @foreach ($chunk as $person)
+                    <td width="50%">
+                        @include('partials.signature_box', $person)
                     </td>
-                    @if ($lenders->count() % 2 == 1 && $lenders->last()->id == $lender->id)
-                    <td>
-                        <div style="margin-top: 100px;">
-                            @php($user = Auth::user())
-                            @include('partials.signature_box', [
-                                'full_name' => $user->full_name,
-                                'position' => $user->position,
-                                'employee' => true
-                            ])
-                        </div>
+                    @if ($signers->count() % 2 == 1 && $signers->last()['id'] == $person['id'])
+                    <td width="50%">
+                        @php($user = Auth::user())
+                        @include('partials.signature_box', [
+                            'full_name' => $user->full_name,
+                            'position' => $user->position,
+                            'employee' => true
+                        ])
                     </td>
                     @endif
                     @endforeach
                 </tr>
                 @endforeach
-                @if ($lenders->count() % 2 == 0)
+                @if ($signers->count() % 2 == 0)
                 <tr>
-                    <td colspan="2">
+                    <td colspan="2" width="100%">
                         @php($user = Auth::user())
-                        <div style="margin-top: 100px;">
-                            @include('partials.signature_box', [
-                                'full_name' => $user->full_name,
-                                'position' => $user->position,
-                                'employee' => true
-                            ])
-                        </div>
+                        @include('partials.signature_box', [
+                            'full_name' => $user->full_name,
+                            'position' => $user->position,
+                            'employee' => true
+                        ])
                     </td>
                 </tr>
                 @endif

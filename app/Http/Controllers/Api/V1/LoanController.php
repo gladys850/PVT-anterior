@@ -100,6 +100,7 @@ class LoanController extends Controller
     * @bodyParam guarantors array Lista de IDs de afiliados Garante de préstamo. Example: []
     * @bodyParam parent_loan_id integer ID de Préstamo Padre. Example: 1
     * @bodyParam parent_reason enum (REFINANCIAMIENTO, REPROGRAMACIÓN) Tipo de trámite hijo. Example: REFINANCIAMIENTO
+    * @bodyParam personal_reference_id integer ID de referencia personal. Example: 4
     * @bodyParam account_number integer Número de cuenta en Banco Union. Example: 586621345
     * @bodyParam loan_destiny_id integer required ID destino de Préstamo. Example: 1
     * @bodyParam documents array required Lista de IDs de Documentos solicitados. Example: [306,305]
@@ -126,6 +127,7 @@ class LoanController extends Controller
     *   "created_at": "2020-03-05 16:27:23",
     *   "parent_loan_id": 1,
     *   "parent_reason": "REFINANCIAMIENTO",
+    *   "personal_reference_id": 4,
     *   "id": 17,
     *   "modality": {
     *       "id": 32,
@@ -180,7 +182,7 @@ class LoanController extends Controller
         }
         $loan->submitted_documents()->syncWithoutDetaching($documents);
         // Relacionar notas
-        if ($request->notes) {
+        if ($request->has('notes')) {
             foreach ($request->notes as $message) {
                 $loan->notes()->create([
                     'message' => $message,
@@ -300,6 +302,7 @@ class LoanController extends Controller
     * @bodyParam disbursement_date date Fecha de desembolso. Example: 2020-02-01
     * @bodyParam parent_loan_id integer ID de Préstamo Padre. Example: 1
     * @bodyParam parent_reason enum (REFINANCIAMIENTO, REPROGRAMACIÓN) Tipo de trámite hijo. Example: REFINANCIAMIENTO
+    * @bodyParam personal_reference_id integer ID de referencia personal. Example: 4
     * @bodyParam account_number integer Número de cuenta en Banco Union. Example: 586621345
     * @bodyParam loan_destiny_id integer required ID destino de Préstamo. Example: 1
     * @authenticated
@@ -313,6 +316,7 @@ class LoanController extends Controller
     *     "disbursement_date": "2020-02-01",
     *     "parent_loan_id": 1,
     *     "parent_reason": "REFINANCIAMIENTO",
+    *     "personal_reference_id": 4,
     *     "request_date": "2020-03-05",
     *     "amount_requested": 2000,
     *     "city_id": 4,
@@ -676,6 +680,23 @@ class LoanController extends Controller
         foreach ($loan->lenders as $lender) {
             array_push($lenders, self::verify_spouse_disbursable($lender)->disbursable);
         }
+        $persons = collect([]);
+        foreach ($lenders as $lender) {
+            $persons->push([
+                'id' => $lender->id,
+                'full_name' => implode(' ', [$lender->title, $lender->full_name]),
+                'identity_card' => $lender->identity_card_ext,
+                'position' => 'SOLICITANTE'
+            ]);
+        }
+        foreach ($loan->guarantors as $guarantor) {
+            $persons->push([
+                'id' => $lender->id,
+                'full_name' => implode(' ', [$guarantor->title, $guarantor->full_name]),
+                'identity_card' => $guarantor->identity_card_ext,
+                'position' => 'GARANTE'
+            ]);
+        }
         $date = Carbon::now();
         $data = [
             'header' => [
@@ -689,11 +710,36 @@ class LoanController extends Controller
             ],
             'title' => 'SOLICITUD DE ' . ($loan->parent_loan ? $loan->parent_reason : 'PRÉSTAMO'),
             'loan' => $loan,
-            'lenders' => collect($lenders)
+            'lenders' => collect($lenders),
+            'signers' => $persons
         ];
         $file_name = implode('_', ['solicitud', 'prestamo']) . '.pdf';
         $view = view()->make('loan.forms.request_form')->with($data)->render();
         if ($standalone) return Util::pdf_to_base64([$view], $file_name, 'legal', $request->copies ?? 1);
         return $view;
+    }
+
+    /**
+    * Notas aclaratorias
+    * Devuelve la lista de notas relacionadas con el préstamo
+    * @urlParam id required ID de préstamo. Example: 2
+    * @authenticated
+    * @response
+    * [
+    *     {
+    *         "id": 15,
+    *         "annotable_id": 6,
+    *         "annotable_type": "loans",
+    *         "message": "BOLETA DE MAYO 2018",
+    *         "date": "2018-07-21 11:50:14",
+    *         "created_at": "2018-07-21 11:50:14",
+    *         "updated_at": "2018-07-21 11:50:14"
+    *     }, {}
+    * ]
+    */
+    public function get_notes($id)
+    {
+        $loan = Loan::findOrFail($id);
+        return $loan->notes;
     }
 }
