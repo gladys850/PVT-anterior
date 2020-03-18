@@ -740,6 +740,6 @@ class LoanController extends Controller
     public function get_notes($id)
     {
         $loan = Loan::findOrFail($id);
-        $loan->notes;
+        return $loan->notes;
     }
 }
