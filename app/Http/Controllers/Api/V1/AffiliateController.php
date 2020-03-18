@@ -960,7 +960,7 @@ class AffiliateController extends Controller
     * Modalidad por afiliado
     * Devuelve la modalidad de trámite evaluando al afiliado y el tipo de trámite
     * @urlParam id required ID de afiliado. Example: 5
-    * @queryParam procedure_type_id ID de tipo de trámite. Example: 9
+    * @queryParam procedure_type_id required ID de tipo de trámite. Example: 9
     * @queryParam external_discount Booleano de descuento en otras entidades. Example: 1
     * @authenticated
     * @response
