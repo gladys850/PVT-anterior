@@ -39,6 +39,7 @@ class LoanStructureSeeder extends Seeder
                     'debt_index' => 90,
                     'quantity_ballots' => 1,
                     'guarantors' => 0,
+                    'quantity_reference_personal' => 0
                 ],
                 'interest' => ['annual_interest' => 36,'penal_interest' => 6]
             ],
@@ -61,7 +62,8 @@ class LoanStructureSeeder extends Seeder
                 'parameters' => [
                     'debt_index' => 90,
                     'quantity_ballots' => 1,
-                    'guarantors' => 0
+                    'guarantors' => 0,
+                    'quantity_reference_personal' => 0
                 ],
                 'interest' => ['annual_interest' => 36,'penal_interest' => 6]
             ],
@@ -88,7 +90,8 @@ class LoanStructureSeeder extends Seeder
               'parameters' => [
                   'debt_index' => 50,
                   'quantity_ballots' => 3,
-                  'guarantors' => 0
+                  'guarantors' => 0,
+                  'quantity_reference_personal' => 1
               ],
               'interest' => ['annual_interest' => 20,'penal_interest' => 6]
             ],
@@ -112,7 +115,8 @@ class LoanStructureSeeder extends Seeder
               'parameters' => [
                 'debt_index' => 50,
                 'quantity_ballots' => 3,
-                'guarantors' => 0
+                'guarantors' => 0,
+                'quantity_reference_personal' => 1
               ],
               'interest' => ['annual_interest' => 20,'penal_interest' => 6]
             ],
@@ -138,8 +142,9 @@ class LoanStructureSeeder extends Seeder
                 'debt_index' => 50,
                 'quantity_ballots' => 3,
                 'guarantors' => 1,
-                'min_guarantor_category' =>35,
-                'max_guarantor_category' =>85
+                'min_guarantor_category' =>0.35,
+                'max_guarantor_category' =>0.85,
+                'quantity_reference_personal' => 0
 
               ],
               'interest' => ['annual_interest' => 20,'penal_interest' => 6]
@@ -162,7 +167,8 @@ class LoanStructureSeeder extends Seeder
               'parameters' => [
                 'debt_index' => 50,
                 'quantity_ballots' => 3,
-                'guarantors' => 0
+                'guarantors' => 0,
+                'quantity_reference_personal' => 1
               ],
               'interest' => ['annual_interest' => 20,'penal_interest' => 6]
             ],
@@ -182,7 +188,8 @@ class LoanStructureSeeder extends Seeder
               'parameters' => [
                 'debt_index' => 50,
                 'quantity_ballots' => 3,
-                'guarantors' => 0
+                'guarantors' => 0,
+                'quantity_reference_personal' => 1
               ],
               'interest' => ['annual_interest' => 20,'penal_interest' => 6]
             ],
@@ -207,8 +214,9 @@ class LoanStructureSeeder extends Seeder
                 'debt_index' => 50,
                 'quantity_ballots' => 3,
                 'guarantors' => 1,
-                'min_guarantor_category' =>35,
-                'max_guarantor_category' =>85
+                'min_guarantor_category' =>0.35,
+                'max_guarantor_category' =>0.85,
+                'quantity_reference_personal' => 0
 
               ],
               'interest' => ['annual_interest' => 20,'penal_interest' => 6]
@@ -232,7 +240,8 @@ class LoanStructureSeeder extends Seeder
                 'parameters' => [
                   'debt_index' => 50,
                   'quantity_ballots' => 3,
-                  'guarantors' => 0
+                  'guarantors' => 0,
+                  'quantity_reference_personal' => 1
                 ],
                 'interest' => ['annual_interest' => 20,'penal_interest' => 6]
             ]
@@ -265,8 +274,9 @@ class LoanStructureSeeder extends Seeder
                 'debt_index' => 50,
                 'quantity_ballots' => 1,
                 'guarantors' => 2,
-                'min_guarantor_category' =>35,
-                'max_guarantor_category' =>100
+                'min_guarantor_category' =>0.35,
+                'max_guarantor_category' =>1.00,
+                'quantity_reference_personal' => 1
               ],
               'interest' => ['annual_interest' => 13.2,'penal_interest' => 6]
             ],
@@ -291,8 +301,9 @@ class LoanStructureSeeder extends Seeder
                 'debt_index' => 50,
                 'quantity_ballots' => 1,
                 'guarantors' => 1,
-                'min_guarantor_category' =>35,
-                'max_guarantor_category' =>85
+                'min_guarantor_category' =>0.35,
+                'max_guarantor_category' =>0.85,
+                'quantity_reference_personal' => 1
               ],
               'interest' => ['annual_interest' => 13.2,'penal_interest' => 6]
             ],
@@ -319,8 +330,9 @@ class LoanStructureSeeder extends Seeder
                 'debt_index' => 60,
                 'quantity_ballots' => 1,
                 'guarantors' => 1,
-                'min_guarantor_category' =>35,
-                'max_guarantor_category' =>100
+                'min_guarantor_category' =>0.35,
+                'max_guarantor_category' =>1.00,
+                'quantity_reference_personal' => 1
               ],
               'interest' => ['annual_interest' => 13.2,'penal_interest' => 6]
             ],
@@ -349,8 +361,9 @@ class LoanStructureSeeder extends Seeder
                 'debt_index' => 60,
                 'quantity_ballots' => 1,
                 'guarantors' => 1,
-                'min_guarantor_category' =>35,
-                'max_guarantor_category' =>100
+                'min_guarantor_category' =>0.35,
+                'max_guarantor_category' =>1.00,
+                'quantity_reference_personal' => 1
               ],
               'interest' => ['annual_interest' => 13.2,'penal_interest' => 6]
             ],
@@ -378,8 +391,9 @@ class LoanStructureSeeder extends Seeder
                 'debt_index' => 60,
                 'quantity_ballots' => 1,
                 'guarantors' => 1,
-                'min_guarantor_category' =>35,
-                'max_guarantor_category' =>85
+                'min_guarantor_category' =>0.35,
+                'max_guarantor_category' =>0.85,
+                'quantity_reference_personal' => 1
               ],
               'interest' => ['annual_interest' => 13.2,'penal_interest' => 6]
             ],
@@ -419,7 +433,8 @@ class LoanStructureSeeder extends Seeder
             'parameters' => [
             'debt_index' => 90,
             'quantity_ballots' => 3,
-            'guarantors' => 0
+            'guarantors' => 0,
+            'quantity_reference_personal' => 1
             ],
             'interest' => ['annual_interest' => 9,'penal_interest' => 6]
             ],
@@ -453,7 +468,8 @@ class LoanStructureSeeder extends Seeder
             'parameters' => [
               'debt_index' => 90,
               'quantity_ballots' => 3,
-              'guarantors' => 0
+              'guarantors' => 0,
+              'quantity_reference_personal' => 1
             ],
             'interest' => ['annual_interest' => 9,'penal_interest' => 6]
             ],
