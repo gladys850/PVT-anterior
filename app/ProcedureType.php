@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
 
 class ProcedureType extends Model
@@ -28,8 +29,20 @@ class ProcedureType extends Model
         return $this->hasMany(LoanDestiny::class);
     }
 
-    public function workflow()
+    public function getRolesAttribute()
     {
-        return $this->belongsToMany(Role::class, 'role_sequences')->withPivot('next_role_id')->orderBy('sequence_number')->orderBy('name');
+        $keys = [
+            "role_id" => 0,
+            "next_role_id" => 1
+        ];
+        $roles = DB::table('role_sequences')->where('procedure_type_id', $this->id)->select(collect($keys)->keys()->toArray())->get()->toArray();
+        $roles = array_map(function($o) use ($keys) {
+            return array_intersect_key((array)$o, $keys);
+        }, $roles);
+        $roles = collect($roles)->flatten()->unique()->values();
+        foreach ($roles as $key => $role) {
+            $roles[$key] = Role::find($role);
+        }
+        return $roles;
     }
 }
