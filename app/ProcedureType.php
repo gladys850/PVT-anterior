@@ -29,7 +29,7 @@ class ProcedureType extends Model
         return $this->hasMany(LoanDestiny::class);
     }
 
-    public function getRolesAttribute()
+    public function getWorkflowAttribute()
     {
         $keys = [
             "role_id" => 0,
@@ -40,9 +40,6 @@ class ProcedureType extends Model
             return array_intersect_key((array)$o, $keys);
         }, $roles);
         $roles = collect($roles)->flatten()->unique()->values();
-        foreach ($roles as $key => $role) {
-            $roles[$key] = Role::find($role);
-        }
-        return $roles;
+        return Role::whereIn('id', $roles)->orderBy('sequence_number')->orderBy('name')->get();
     }
 }
