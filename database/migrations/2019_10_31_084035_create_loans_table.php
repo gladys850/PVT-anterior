@@ -21,7 +21,7 @@ class CreateLoansTable extends Migration
             $table->unsignedBigInteger('procedure_modality_id'); // id modalidad
             $table->foreign('procedure_modality_id')->references('id')->on('procedure_modalities');
             $table->date('disbursement_date')->nullable(); //fecha de desembolso
-            $table->integer('parent_loan_id')->nullable();  // id padre , loan padre
+            $table->unsignedBigInteger('parent_loan_id')->nullable();  // id padre , loan padre
             $table->enum('parent_reason', ['REFINANCIAMIENTO', 'REPROGRAMACIÓN'])->nullable();// para indicar si es reprogramación y refinanciamiento 
             $table->date('request_date'); //fecha de solicitud
             $table->BigInteger('amount_requested'); // monto solicitado
@@ -32,14 +32,16 @@ class CreateLoansTable extends Migration
             $table->unsignedBigInteger('loan_state_id')->nullable(false); //id estado del tramite
             $table->foreign('loan_state_id')->references('id')->on('loan_states'); // estado de prestamo
             $table->smallInteger('amount_approved')->nullable(); // monto aprobado
-            $table->integer('loan_term'); // plazo del prestamo en meses
+            $table->unsignedSmallInteger('loan_term'); // plazo del prestamo en meses
             $table->unsignedBigInteger('disbursement_type_id'); // id tipo de desembolso
             $table->unsignedBigInteger('personal_reference_id')->nullable(); // persona de referencia
             $table->foreign('personal_reference_id')->references('id')->on('personal_references');
             $table->foreign('disbursement_type_id')->references('id')->on('payment_types');
-            $table->integer('account_number')->nullable(); // numero de cuenta en caso de ser deposito en cuenta
+            $table->unsignedBigInteger('account_number')->nullable(); // numero de cuenta en caso de ser deposito en cuenta
             $table->unsignedBigInteger('loan_destiny_id'); // id tipo de desembolso
             $table->foreign('loan_destiny_id')->references('id')->on('loan_destinies');
+            $table->unsignedBigInteger('role_id');  // id rol bandeja actual
+            $table->foreign('role_id')->references('id')->on('roles');
             $table->timestamps();
         });
     }

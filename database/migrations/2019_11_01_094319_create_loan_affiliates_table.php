@@ -14,9 +14,9 @@ class CreateLoanAffiliatesTable extends Migration
     public function up()
     {
         Schema::create('loan_affiliates', function (Blueprint $table) {
-            $table->integer('loan_id')->unsigned();
+            $table->unsignedBigInteger('loan_id')->unsigned();
             $table->foreign('loan_id')->references('id')->on('loans');
-            $table->integer('affiliate_id')->unsigned();
+            $table->unsignedBigInteger('affiliate_id')->unsigned();
             $table->foreign('affiliate_id')->references('id')->on('affiliates');
             $table->float('payment_percentage',5,2)->default(100);
 			$table->boolean('guarantor')->default(false);

@@ -15,11 +15,11 @@ class CreateLoanGlobalParametersTable extends Migration
     {
         Schema::create('loan_global_parameters', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->integer('offset_ballot_day'); //dia de desface de boletas
-            $table->integer('offset_interest_day'); //dia de desface de interes por desembolso
-            $table->integer('livelihood_amount')->nullable();// cantidad de sustento-->inf. estadistica
-            $table->integer('min_service_years'); // minimo años de servicio
-            $table->integer('min_service_years_adm'); // minimo años de servicio adm policial
+            $table->unsignedTinyInteger('offset_ballot_day'); //dia de desface de boletas
+            $table->unsignedTinyInteger('offset_interest_day'); //dia de desface de interes por desembolso
+            $table->unsignedSmallInteger('livelihood_amount')->nullable();// cantidad de sustento-->inf. estadistica
+            $table->unsignedTinyInteger('min_service_years'); // minimo años de servicio
+            $table->unsignedTinyInteger('min_service_years_adm'); // minimo años de servicio adm policial
             $table->timestamps();
         });
     }
