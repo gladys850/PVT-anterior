@@ -228,11 +228,10 @@
                 <v-spacer></v-spacer>
                 <v-col class="py-0">
                   <v-btn text
-                    @click="beforeStep(6)">Atras</v-btn>
+                    @click="beforeStepBus(5)">Atras</v-btn>
                   <v-btn
                     color="primary"
-                     @click.stop="saveLoan()"
-                    >
+                     @click.stop="saveLoan()">
                     Finalizar
                   </v-btn>
                 </v-col>
@@ -281,12 +280,19 @@ export default {
     calculos: {
       type: Object,
       required: true
+    },
+    bus: {
+      type: Object,
+      required: true
     }
   },
   beforeMount() {
     this.getRequirement(33);
   },
   methods: {
+    beforeStepBus(val) {
+      this.bus.$emit('beforeStepBus', val)
+    },
     selectDoc1(id) {
       setTimeout(() => {
         //console.log("ID=" + id + " J=" + j + " I=" + i);

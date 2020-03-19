@@ -186,6 +186,7 @@
           <v-card color="grey lighten-1">
              <h3 class="text-uppercase text-center">{{modalidad.name}}</h3>
                <Requirement
+            :bus="bus"
             :modality.sync="modality"
             :datos.sync="datos"
             :formulario.sync="formulario"
@@ -239,6 +240,7 @@ export default {
     BallotsResult
   },
    data: () => ({
+    bus: new Vue(),
     e1: 1,
     steps: 5,
     modalities: [],
@@ -284,6 +286,9 @@ export default {
   },
   beforeMount(){
     this.getProcedureType();
+    this.bus.$on('beforeStepBus', (val) => {
+      this.beforeStep(val)
+    })
   },
   methods: {
     nextStep (n) {
