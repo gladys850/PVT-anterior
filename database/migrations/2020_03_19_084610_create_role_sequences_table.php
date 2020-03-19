@@ -16,8 +16,8 @@ class CreateRoleSequencesTable extends Migration
         Schema::create('role_sequences', function (Blueprint $table) {
             $table->unsignedBigInteger('procedure_type_id'); // id flujo de trabajo para tipo de trámite
             $table->foreign('procedure_type_id')->references('id')->on('procedure_types');
-            $table->unsignedBigInteger('current_role_id'); // id rol actual
-            $table->foreign('current_role_id')->references('id')->on('roles');
+            $table->unsignedBigInteger('role_id'); // id rol actual
+            $table->foreign('role_id')->references('id')->on('roles');
             $table->unsignedBigInteger('next_role_id'); // id rol siguiente
             $table->foreign('next_role_id')->references('id')->on('roles');
         });
