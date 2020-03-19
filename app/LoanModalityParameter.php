@@ -8,7 +8,15 @@ use App\ProcedureModality;
 class LoanModalityParameter extends Model
 {
     public $timestamps = true;
-    public $fillable = ['procedure_modality_id','debt_index','quantity_ballots','guarantors'];
+    public $fillable = [
+        'procedure_modality_id',
+        'debt_index',
+        'quantity_ballots',
+        'guarantors',
+        'min_guarantor_category',
+        'max_guarantor_category',
+        'personal_reference'
+    ];
 
     public function getDecimalIndexAttribute()
     {
