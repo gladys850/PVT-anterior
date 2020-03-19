@@ -27,4 +27,9 @@ class ProcedureType extends Model
     {
         return $this->hasMany(LoanDestiny::class);
     }
+
+    public function workflow()
+    {
+        return $this->belongsToMany(Role::class, 'role_sequences')->withPivot('next_role_id')->orderBy('sequence_number')->orderBy('name');
+    }
 }

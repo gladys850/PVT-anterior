@@ -88,7 +88,7 @@ Route::group([
 
         // Préstamo
         Route::group([
-            'middleware' => 'permission:show-loan'
+            'middleware' => 'permission:show-loan|show-all-loan'
         ], function () {
             Route::resource('loan', 'Api\V1\LoanController')->only('index');
             Route::resource('loan', 'Api\V1\LoanController')->only('show');

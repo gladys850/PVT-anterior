@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Util;
 use App\Http\Controllers\Controller;
@@ -33,6 +34,7 @@ class LoanController extends Controller
     /**
     * Lista de Préstamos
     * Devuelve el listado con los datos paginados
+    * @queryParam role_id Ver préstamos del rol, si es 0 se muestra la lista completa. Example: 2
     * @queryParam search Parámetro de búsqueda. Example: 3000
     * @queryParam sortBy Vector de ordenamiento. Example: []
     * @queryParam sortDesc Vector de orden descendente(true) o ascendente(false). Example: [true]
@@ -65,7 +67,7 @@ class LoanController extends Controller
     *             "balance": 2000,
     *             "estimated_quota": 707.06,
     *             "defaulted": false
-    *         }, {} 
+    *         }, {}
     *     ],
     *     "first_page_url": "http://127.0.0.1/api/v1/loan?page=1",
     *     "from": 1,
@@ -81,7 +83,32 @@ class LoanController extends Controller
     */
     public function index(Request $request)
     {
-        $data = Util::search_sort(new Loan(), $request);
+        $filters = [];
+        if (!$request->has('role_id')) {
+            if (Auth::user()->can('show-all-loan')) {
+                $request->role_id = 0;
+            } else {
+                $role = Auth::user()->roles()->whereHas('module', function($query) {
+                    return $query->whereName('prestamos');
+                })->orderBy('sequence_number')->orderBy('name')->first();
+                if ($role) {
+                    $request->role_id = $role->id;
+                } else {
+                    abort(403);
+                }
+            }
+        } else {
+            $request->role_id = (integer)$request->role_id;
+            if (($request->role_id == 0 && !Auth::user()->can('show-all-loan')) || ($request->role_id != 0 && !Auth::user()->roles->pluck('id')->contains($request->role_id))) {
+                abort(403);
+            }
+        }
+        if ($request->role_id != 0) {
+            $filters = [
+                'role_id' => $request->role_id
+            ];
+        }
+        $data = Util::search_sort(new Loan(), $request, $filters);
         foreach ($data as $item) {
             $this->append_data($item);
         }
@@ -145,6 +172,14 @@ class LoanController extends Controller
     */
     public function store(LoanForm $request)
     {
+        $roles = Auth::user()->roles()->whereHas('module', function($query) {
+            return $query->whereName('prestamos');
+        })->pluck('id');
+        $procedure_modality = ProcedureModality::findOrFail($request->procedure_modality_id);
+        $request->merge([
+            'role_id' => $procedure_modality->procedure_type->workflow->pluck('id')->intersect($roles)->first()
+        ]);
+        if (!$request->role_id) abort(403);
         // Guardar préstamo
         $saved = $this->save_loan($request);
         // Relacionar afiliados y garantes
@@ -282,10 +317,16 @@ class LoanController extends Controller
     public function show($id)
     {
         $item = Loan::findOrFail($id);
-        $item->lenders;
-        $item->guarantors;
-        $this->append_data($item);
-        return $item;
+        if (Auth::user()->can('show-all-loan') || Auth::user()->roles()->whereHas('module', function($query) {
+            return $query->whereName('prestamos');
+        })->pluck('id')->contains($item->role_id)) {
+            $item->lenders;
+            $item->guarantors;
+            $this->append_data($item);
+            return $item;
+        } else {
+            abort(403);
+        }
     }
 
     /**
