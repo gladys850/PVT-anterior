@@ -14,7 +14,7 @@ class CrearLoanRequestsTable extends Migration
     public function up()
     {
         Schema::create('loan_requests', function (Blueprint $table) {
-            $table->integer('affiliate_id')->unsigned();
+            $table->unsignedBigInteger('affiliate_id')->unsigned();
             $table->foreign('affiliate_id')->references('id')->on('affiliates');
             $table->string('hash');//request convertido a hash
             $table->primary('hash');

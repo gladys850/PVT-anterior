@@ -34,7 +34,8 @@ class Loan extends Model
         'modification_date',
         'account_number',
         'loan_destiny_id',
-        'personal_reference_id'
+        'personal_reference_id',
+        'role_id'
     ];
 
     function __construct(array $attributes = [])
@@ -69,6 +70,11 @@ class Loan extends Model
     public function tags()
     {
         return $this->morphToMany(Tag::class, 'taggable')->withPivot('user_id', 'date')->withTimestamps();
+    }
+
+    public function role()
+    {
+        return $this->belongsTo(Role::class);
     }
 
     public function parent_loan()

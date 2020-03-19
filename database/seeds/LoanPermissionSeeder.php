@@ -21,7 +21,10 @@ class LoanPermissionSeeder extends Seeder
                 'display_name' => 'Editar trámites de préstamo'
             ], [
                 'name' => 'show-loan',
-                'display_name' => 'Ver trámites de préstamo'
+                'display_name' => 'Ver trámites de préstamo para el rol'
+            ], [
+                'name' => 'show-all-loan',
+                'display_name' => 'Ver todos los trámites de préstamo'
             ], [
                 'name' => 'delete-loan',
                 'display_name' => 'Eliminar trámites de préstamo'

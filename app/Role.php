@@ -28,4 +28,9 @@ class Role extends LaratrustRole
     {
         return $this->morphMany(Record::class, 'recordable');
     }
+
+    public function loans()
+    {
+        return $this->hasMany(Loan::class);
+    }
 }

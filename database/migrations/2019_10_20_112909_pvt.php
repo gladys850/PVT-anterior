@@ -16,7 +16,7 @@ class Pvt extends Migration
         Schema::create('loan_interests', function (Blueprint $table) 
         {
             $table->bigIncrements('id');// id unico
-            $table->integer('procedure_modality_id'); // id modalidad
+            $table->unsignedBigInteger('procedure_modality_id'); // id modalidad
             $table->foreign('procedure_modality_id')->references('id')->on('procedure_modalities');
             $table->decimal('annual_interest',5,2); // interes anual  
             $table->decimal('penal_interest',5,2); // interes penal anual    
