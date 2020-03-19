@@ -14,7 +14,7 @@ class AddSequenceNumberToRoles extends Migration
     public function up()
     {
         Schema::table('roles', function (Blueprint $table) {
-        $table->Integer('sequence_number')->nullable();
+            $table->unsignedTinyInteger('sequence_number')->nullable();
         });
     }
 
@@ -26,7 +26,7 @@ class AddSequenceNumberToRoles extends Migration
     public function down()
     {
         Schema::table('roles', function (Blueprint $table) {
-            //
+            $table->dropColumn(['sequence_number']);
         });
     }
 }
