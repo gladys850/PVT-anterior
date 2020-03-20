@@ -4,7 +4,7 @@ use Illuminate\Database\Seeder;
 use App\Role;
 use App\Module;
 
-class RoleSequenceNumber extends Seeder
+class RoleSequenceNumberSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -18,6 +18,30 @@ class RoleSequenceNumber extends Seeder
         foreach($roles as $role)
         {
             switch($role->display_name){
+                case 'Cobranzas':
+                    $role->update(['sequence_number' => 9]);
+                    break;
+                case 'Tesorería':
+                    $role->update(['sequence_number' => 8]);
+                    break;
+                case 'Aprobación Dirección':
+                    $role->update(['sequence_number' => 7]);
+                    break;
+                case 'Aprobación Legal':
+                    $role->update(['sequence_number' => 6]);
+                    break;
+                case 'Revisión Dirección':
+                    $role->update(['sequence_number' => 5]);
+                    break;
+                case 'Jefatura':
+                    $role->update(['sequence_number' => 4]);
+                    break;
+                case 'Revisión Legal':
+                    $role->update(['sequence_number' => 3]);
+                    break;
+                case 'Calificación':
+                    $role->update(['sequence_number' => 2]);
+                    break;
                 case 'Área de Recepción':
                     $role->update(['sequence_number' => 1]);
                     break;
