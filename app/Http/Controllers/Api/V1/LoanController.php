@@ -230,7 +230,7 @@ class LoanController extends Controller
         $loan->attachment = Util::pdf_to_base64([
             $this->print_form(new Request([]), $loan->id, false),
             $this->print_contract(new Request([]), $loan->id, false)
-        ], $file_name, 'letter', $request->copies ?? 1);
+        ], $file_name, 'legal', $request->copies ?? 1);
         return $loan;
     }
 
@@ -703,7 +703,7 @@ class LoanController extends Controller
         ];
         $file_name = implode('_', ['contrato', $procedure_modality->shortened, $id]) . '.pdf';
         $view = view()->make('loan.contracts.advance')->with($data)->render();
-        if ($standalone) return Util::pdf_to_base64([$view], $file_name, 'letter', $request->copies ?? 1);
+        if ($standalone) return Util::pdf_to_base64([$view], $file_name, 'legal', $request->copies ?? 1);
         return $view;
     }
 
