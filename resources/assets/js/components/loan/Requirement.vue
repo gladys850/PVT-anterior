@@ -262,10 +262,6 @@ export default {
     newOther: ""
   }),
   props: {
-    modality: {
-      type: Object,
-      required: true
-    },
     datos: {
       type: Array,
       required: true
@@ -275,6 +271,10 @@ export default {
       required: true
     },
       modalidad: {
+      type: Object,
+      required: true
+    },
+    intervalos: {
       type: Object,
       required: true
     },
