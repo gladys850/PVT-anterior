@@ -35,32 +35,32 @@
               </v-col>
             <v-col cols="12" md="4">
               <v-card-text class="py-0">
-              <v-layout row wrap>
-          <v-flex xs12 class="px-2">
-            <fieldset class="pa-3">
-             <p>PROMEDIO LIQUIDO PAGABLE:{{ calculos.promedio_liquido_pagable}}</p>
-              <p>TOTAL BONOS: {{ calculos.total_bonos }}</p>
-              <p>LIQUIDO PARA CALIFICACION: {{ calculos.liquido_para_calificacion}}</p>
-            </fieldset>
-          </v-flex>
-        </v-layout>
-        </v-card-text>
+                <v-layout row wrap>
+                  <v-flex xs12 class="px-2">
+                    <fieldset class="pa-3">
+                      <p>PROMEDIO LIQUIDO PAGABLE:{{ calculos.promedio_liquido_pagable}}</p>
+                      <p>TOTAL BONOS: {{ calculos.total_bonos }}</p>
+                      <p>LIQUIDO PARA CALIFICACION: {{ calculos.liquido_para_calificacion}}</p>
+                    </fieldset>
+                  </v-flex>
+                </v-layout>
+              </v-card-text>
             </v-col>
             <v-col cols="12" md="4">
               <v-card-text class="py-0">
-              <v-layout row wrap>
-          <v-flex xs12 class="px-2">
-            <fieldset class="pa-3">
-              <p>CALCULO DE CUOTA: {{ calculos.calculo_de_cuota }}</p>
-              <p>INDICE DE ENDEUDAMIENTO: {{calculos.indice_endeudamiento }}</p>
-              <p>MONTO MAXIMO SUGERIDO : {{calculos.monto_maximo_sugerido}}</p>
-            </fieldset>
-          </v-flex>
-        </v-layout>
-        </v-card-text>
+                <v-layout row wrap>
+                  <v-flex xs12 class="px-2">
+                    <fieldset class="pa-3">
+                      <p>CALCULO DE CUOTA: {{ calculos.calculo_de_cuota }}</p>
+                      <p>INDICE DE ENDEUDAMIENTO: {{calculos.indice_endeudamiento }}</p>
+                      <p>MONTO MAXIMO SUGERIDO : {{calculos.monto_maximo_sugerido}}</p>
+                    </fieldset>
+                  </v-flex>
+                </v-layout>
+              </v-card-text>
             </v-col>
-              <v-col cols="12" md="1" class="ma-0 pa-0">
-              </v-col>
+            <v-col cols="12" md="1" class="ma-0 pa-0">
+            </v-col>
             </v-row>
           </v-container >
         </v-col>
@@ -82,10 +82,6 @@ name: "loan-requirement",
       type: Array,
       required: true
     },
-     modality: {
-      type: Object,
-      required: true
-    },
     modalidad: {
       type: Object,
       required: true
@@ -98,10 +94,7 @@ name: "loan-requirement",
 methods:{
   async Calculator() {
     try {
-      console.log('entro a calculadora')
-      if(this.modalidad.quantity_ballots>1)
-      {
-
+      if(this.modalidad.quantity_ballots>1){
       let res = await axios.post(`calculator`, {
         procedure_modality_id:this.modalidad.id,
         months_term: this.calculos.plazo,
@@ -131,22 +124,22 @@ methods:{
           }
         ]
       })
-      this.calculo= res.data
-      this.calculos.promedio_liquido_pagable=this.calculo.promedio_liquido_pagable
-      this.calculos.total_bonos=this.calculo.total_bonos
-      this.calculos.liquido_para_calificacion=this.calculo.liquido_para_calificacion
-      this.calculos.calculo_de_cuota=this.calculo.calculo_de_cuota
-      this.calculos.indice_endeudamiento=this.calculo.indice_endeudamiento
-      this.calculos.monto_maximo_sugerido=this.calculo.monto_maximo_sugerido
-      this.calculos.plazo=this.calculos.plazo
-      this.calculos.montos=this.calculos.montos
+        this.calculo= res.data
+        this.calculos.promedio_liquido_pagable=this.calculo.promedio_liquido_pagable
+        this.calculos.total_bonos=this.calculo.total_bonos
+        this.calculos.liquido_para_calificacion=this.calculo.liquido_para_calificacion
+        this.calculos.calculo_de_cuota=this.calculo.calculo_de_cuota
+        this.calculos.indice_endeudamiento=this.calculo.indice_endeudamiento
+        this.calculos.monto_maximo_sugerido=this.calculo.monto_maximo_sugerido
+        this.calculos.plazo=this.calculos.plazo
+        this.calculos.montos=this.calculos.montos
       }else{
         let res = await axios.post(`calculator`, {
-        procedure_modality_id:this.modalidad.id,
-        months_term: this.calculos.plazo,
-        amount_requested:this.calculos.montos,
-        affiliate_id:this.$route.query.affiliate_id,
-        contributions: [
+          procedure_modality_id:this.modalidad.id,
+          months_term: this.calculos.plazo,
+          amount_requested:this.calculos.montos,
+          affiliate_id:this.$route.query.affiliate_id,
+          contributions: [
           {
             payable_liquid: this.payable_liquid[0],
             seniority_bonus:  this.bonos[2],
@@ -156,16 +149,21 @@ methods:{
           }
         ]
       })
-     this.calculo= res.data
-      this.calculos.promedio_liquido_pagable=this.calculo.promedio_liquido_pagable
-      this.calculos.total_bonos=this.calculo.total_bonos
-      this.calculos.liquido_para_calificacion=this.calculo.liquido_para_calificacion
-      this.calculos.calculo_de_cuota=this.calculo.calculo_de_cuota
-      this.calculos.indice_endeudamiento=this.calculo.indice_endeudamiento
-      this.calculos.monto_maximo_sugerido=this.calculo.monto_maximo_sugerido
-      this.calculos.plazo=this.calculos.plazo
-
-      this.calculos.montos=this.calculos.montos
+        this.calculo= res.data
+        this.calculos.promedio_liquido_pagable=this.calculo.promedio_liquido_pagable
+        this.calculos.total_bonos=this.calculo.total_bonos
+        this.calculos.liquido_para_calificacion=this.calculo.liquido_para_calificacion
+        this.calculos.calculo_de_cuota=this.calculo.calculo_de_cuota
+        this.calculos.indice_endeudamiento=this.calculo.indice_endeudamiento
+        this.calculos.monto_maximo_sugerido=this.calculo.monto_maximo_sugerido
+        this.calculos.plazo=this.calculos.plazo
+        if(this.calculos.montos>this.calculo.monto_maximo_sugerido)
+        {
+        this.calculos.montos=this.calculo.monto_maximo_sugerido
+        }
+        else{
+        this.calculos.montos=this.calculos.montos
+        }
       }
     } catch (e) {
       console.log(e)
