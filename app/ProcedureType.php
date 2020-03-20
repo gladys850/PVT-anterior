@@ -31,15 +31,6 @@ class ProcedureType extends Model
 
     public function getWorkflowAttribute()
     {
-        $keys = [
-            "role_id" => 0,
-            "next_role_id" => 1
-        ];
-        $roles = DB::table('role_sequences')->where('procedure_type_id', $this->id)->select(collect($keys)->keys()->toArray())->get()->toArray();
-        $roles = array_map(function($o) use ($keys) {
-            return array_intersect_key((array)$o, $keys);
-        }, $roles);
-        $roles = collect($roles)->flatten()->unique()->values();
-        return Role::whereIn('id', $roles)->orderBy('sequence_number')->orderBy('name')->get();
+        return RoleSequence::workflow($this->id);
     }
 }
