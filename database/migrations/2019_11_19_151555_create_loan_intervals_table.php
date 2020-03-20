@@ -15,10 +15,10 @@ class CreateLoanIntervalsTable extends Migration
     {
         Schema::create('loan_intervals', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->integer('maximum_amount')->nullable();//monto maximo
-            $table->integer('minimum_amount')->nullable();//monto minimo
-            $table->integer('maximum_term')->nullable();//plazo maximo en meses 
-            $table->integer('minimum_term')->nullable();//plazo minimo en meses
+            $table->unsignedInteger('maximum_amount')->nullable();//monto maximo
+            $table->unsignedSmallInteger('minimum_amount')->nullable();//monto minimo
+            $table->unsignedSmallInteger('maximum_term')->nullable();//plazo maximo en meses 
+            $table->unsignedTinyInteger('minimum_term')->nullable();//plazo minimo en meses
             $table->unsignedBigInteger('procedure_type_id');  // id lugar de la solicitud 
             $table->foreign('procedure_type_id')->references('id')->on('procedure_types');
         });

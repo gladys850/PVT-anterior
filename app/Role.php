@@ -12,7 +12,12 @@ class Role extends LaratrustRole
     public $timestamps = true;
     protected $hidden = ['pivot'];
     public $guarded = ['id'];
-    protected $fillable = ['module_id', 'name', 'display_name'];
+    protected $fillable = ['module_id', 'name', 'display_name', 'sequence_number'];
+
+    public function users()
+    {
+        return $this->belongsToMany(User::class);
+    }
 
     public function module()
     {
@@ -27,5 +32,10 @@ class Role extends LaratrustRole
     public function records()
     {
         return $this->morphMany(Record::class, 'recordable');
+    }
+
+    public function loans()
+    {
+        return $this->hasMany(Loan::class);
     }
 }
