@@ -42,7 +42,7 @@ class RoleSequenceNumberSeeder extends Seeder
                 case 'Calificación':
                     $role->update(['sequence_number' => 2]);
                     break;
-                case 'Área de Recepción':
+                case 'Recepción':
                     $role->update(['sequence_number' => 1]);
                     break;
                 case 'Regional Santa Cruz':
