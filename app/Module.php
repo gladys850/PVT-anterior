@@ -16,7 +16,7 @@ class Module extends Model
 
     public function roles()
     {
-        return $this->hasMany(Role::class);
+        return $this->hasMany(Role::class)->orderBy('sequence_number');
     }
 
     public function procedure_types()
