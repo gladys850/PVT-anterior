@@ -194,7 +194,7 @@
                     bottom
                     right
                     v-on="on"
-                    style="margin-right: 10px; margin-left: 0px; margin-top:10px;"
+                    style="margin-right: 0px; margin-left: 0px; margin-top:10px; "
                     @click.stop="addOtherDocument"
                   >
                     <v-icon>mdi-plus</v-icon>
@@ -250,10 +250,10 @@ export default {
     selectedOpc: [],
     selected: [],
     radios: [],
-    selectedValue: "",
+    selectedValue: null,
     idRequirements: [],
     otherDocuments: [],
-    newOther: ""
+    newOther: null
   }),
   props: {
     datos: {
