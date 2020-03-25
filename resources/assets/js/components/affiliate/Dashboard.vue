@@ -30,7 +30,7 @@
             </div>
             <v-tooltip
               left
-              v-if="this.state_name_type != 'Baja' && this.state_name_status != 'Fallecido' &&  Object.keys(this.state_name).length != 0"
+              v-if="this.state_name_type != 'Baja' && this.state_name_status != 'Fallecido' &&  JSON.stringify(this.state_name) != '{}'"
             >
               <template v-slot:activator="{ on }">
                 <v-btn
@@ -116,7 +116,7 @@
                 <br />
                 <!--TIPO: {{affiliate.type}}-->
                  <!-- <v-icon color="#EDF2F4">mdi-account-heart</v-icon>-->
-                Estado Civil: {{affiliate.civil_status=='C'? 'CASADO':affiliate.civil_status=='S'? 'SOLTERO':affiliate.civil_status=='D'?'DIVORCIADO':'VIUDO'}}
+                Estado Civil: <span class="text-uppercase text-center">{{affiliate.civil_status}}</span>
               </center>
             </v-col>
           </v-card-text>
@@ -219,7 +219,7 @@ export default {
         this.loading = true;
         let res = await axios.get(`affiliate/${id}/loan`, {
           params: {
-            guarantor: 0
+            guarantor:0
           }
         });
         this.loan = res.data.data;

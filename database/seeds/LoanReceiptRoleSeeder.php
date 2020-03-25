@@ -17,7 +17,7 @@ class LoanReceiptRoleSeeder extends Seeder
         Role::flushEventListeners();
         $module = Module::whereName('prestamos')->first();
         $permissions = ['update-affiliate-secondary', 'show-affiliate', 'show-loan', 'create-loan', 'create-address', 'update-address', 'delete-address'];
-        $roles = ['Área de Recepción', 'Regional Santa Cruz', 'Regional Cochabamba', 'Regional Oruro', 'Regional Potosí', 'Regional Sucre', 'Regional Tarija', 'Regional Trinidad', 'Regional Cobija'];
+        $roles = ['Recepción', 'Regional Santa Cruz', 'Regional Cochabamba', 'Regional Oruro', 'Regional Potosí', 'Regional Sucre', 'Regional Tarija', 'Regional Trinidad', 'Regional Cobija'];
 
         if ($module) {
             foreach ($roles as $role) {

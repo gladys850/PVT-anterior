@@ -13,6 +13,8 @@
 
 Route::get('logs', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index');
 
+Route::view('/prueba', 'prueba');
+
 Route::get('{any}', function () {
     return view('index');
 })->where('any', '.*')->name('index.php');

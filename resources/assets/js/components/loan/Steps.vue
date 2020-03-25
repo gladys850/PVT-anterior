@@ -68,29 +68,27 @@
           <v-card color="grey lighten-1">
             <Ballots
               :modalities.sync="modalities"
-              :datos.sync="datos"
-              :modality.sync="modality"
               :bonos.sync="bonos"
               :payable_liquid="payable_liquid"
               :intervalos.sync="intervalos"
               :contributions1.sync="contributions1"
               :modalidad.sync="modalidad"
             />
-              <v-container class="py-0">
-                <v-row>
-                  <v-spacer></v-spacer>
-                  <v-spacer></v-spacer>
-                  <v-spacer></v-spacer>
-                    <v-col class="py-0">
-                      <v-btn text>Cancelar</v-btn>
-                      <v-btn
-                        color="primary"
-                        @click="nextStep(1)">
-                        Siguiente
-                      </v-btn>
-                    </v-col>
-                  </v-row>
-                </v-container>
+            <v-container class="py-0">
+              <v-row>
+                <v-spacer></v-spacer>
+                <v-spacer></v-spacer>
+                <v-spacer></v-spacer>
+                <v-col class="py-0">
+                  <v-btn text>Cancelar</v-btn>
+                  <v-btn
+                    color="primary"
+                    @click="nextStep(1)">
+                    Siguiente
+                  </v-btn>
+                </v-col>
+              </v-row>
+            </v-container>
           </v-card>
         </v-stepper-content>
         <v-stepper-content
@@ -99,10 +97,9 @@
         >
           <v-card color="grey lighten-1">
             <h3 class="text-uppercase text-center">{{modalidad.name}}</h3>
-           <BallotsResult
+            <BallotsResult
               :bonos.sync="bonos"
               :payable_liquid.sync="payable_liquid"
-              :modality.sync="modality"
               :calculos.sync="calculos"
               :modalidad.sync="modalidad"
             />
@@ -129,8 +126,8 @@
           :step="3"
         >
           <v-card color="grey lighten-1">
-             <h3 class="text-uppercase text-center">{{modalidad.name}}</h3>
-           <PersonalInformation
+            <h3 class="text-uppercase text-center">{{modalidad.name}}</h3>
+            <PersonalInformation
               :affiliate.sync="affiliate"
               :addresses.sync="addresses"
             />
@@ -157,10 +154,9 @@
           :step="4"
           >
           <v-card color="grey lighten-1">
-             <h3 class="text-uppercase text-center">{{modalidad.name}}</h3>
+            <h3 class="text-uppercase text-center">{{modalidad.name}}</h3>
             <FormInformation
-            :formulario.sync="formulario"
-            :datos.sync="datos"/>
+              :formulario.sync="formulario"/>
             <v-container class="py-0">
               <v-row>
                 <v-spacer></v-spacer>
@@ -184,14 +180,14 @@
           :step="5"
           >
           <v-card color="grey lighten-1">
-             <h3 class="text-uppercase text-center">{{modalidad.name}}</h3>
-               <Requirement
-            :bus="bus"
-            :modality.sync="modality"
-            :datos.sync="datos"
-            :formulario.sync="formulario"
-            :calculos.sync="calculos"
-            :modalidad.sync="modalidad"/>
+            <h3 class="text-uppercase text-center">{{modalidad.name}}</h3>
+            <Requirement
+              :bus="bus"
+              :datos.sync="datos"
+              :formulario.sync="formulario"
+              :calculos.sync="calculos"
+              :intervalos.sync="intervalos"
+              :modalidad.sync="modalidad"/>
           </v-card>
         </v-stepper-content>
       </v-stepper-items>
@@ -249,19 +245,6 @@ export default {
     contributions1:[{},{},{} ],
     payable_liquid:[0,0,0],
     bonos:[0,0,0,0],
-    modality:{
-      procedure_type_id: null,
-      name: null,
-      shortened: null,
-      is_valid:null,
-      loan_modality_parameter: {
-        id: null,
-        procedure_modality_id: null,
-        debt_index:null,
-        quantity_ballots: null,
-        guarantors: null
-      },
-    },
     formulario:[],
     calculos:{
       promedio_liquido_pagable:0,
@@ -298,32 +281,7 @@ export default {
       else {
         if(n==1)
         {
-            this.Calculator()
-            console.log(this.modalidad.name+'modalidad')
-       
-                   console.log(this.bonos[0]+'estos son los bonos')
-          console.log(this.bonos[1]+'estos son los bonos')
-          console.log(this.bonos[2]+'estos son los bonos')
-          console.log(this.bonos[3]+'estos son los bonos')
-          console.log(this.payable_liquid+'estos son los liquidos')
-        }
-        if(n==2)
-        {
-         
-        }
-        if(n==3)
-        {
-          console.log(this.bonos[0]+'estos son los bonos')
-          console.log(this.bonos[1]+'estos son los bonos')
-          console.log(this.bonos[2]+'estos son los bonos')
-          console.log(this.bonos[3]+'estos son los bonos')
-          console.log(this.payable_liquid+'estos son los liquidos')
-        }
-         if(n==5)
-        {
-          console.log(this.formulario[0]+'deposito')
-          console.log(this.formulario[1]+'cuenta')
-          console.log(this.formulario[2]+'destino')
+          this.Calculator()
         }
         this.e1 = n + 1
      }
@@ -331,6 +289,7 @@ export default {
     beforeStep (n) {
       this.e1 = n -1
     },
+    //Metodo para identificar el modulo
     async getProcedureType() {
       try {
         let resp = await axios.get(`module`,{
@@ -344,7 +303,6 @@ export default {
         })
         this.modulo= resp.data.data[0].id
         let res = await axios.get(`module/${this.modulo}/procedure_type`)
-        console.log(this.modalities+'modalidad')
         this.modalities = res.data
       } catch (e) {
         console.log(e)
@@ -352,103 +310,97 @@ export default {
         this.loading = false
       }
     },
-   async Calculator() {
-    try {
-      console.log('entro a calculadora'+this.modalidad.quantity_ballots)
-      if(this.modalidad.quantity_ballots>1)
-      {
-      let res = await axios.post(`calculator`, {
-        procedure_modality_id:this.modalidad.id,
-        months_term: this.intervalos.maximum_term,
-        amount_requested:this.intervalos.maximun_amoun,
-        affiliate_id:this.$route.query.affiliate_id,
-        contributions: [
-          {
-            payable_liquid: this.payable_liquid[0],
-            seniority_bonus:  this.bonos[2],
-            border_bonus: this.bonos[0],
-            public_security_bonus: this.bonos[3],
-            east_bonus:this.bonos[1]
-          },
-          {
-            payable_liquid: this.payable_liquid[1],
-            seniority_bonus: 0,
-            border_bonus: 0,
-            public_security_bonus: 0,
-            east_bonus:0
-          },
-          {
-            payable_liquid: this.payable_liquid[2],
-            seniority_bonus: 0,
-            border_bonus:0,
-            public_security_bonus: 0,
-            east_bonus:0
-          }
-        ]
-      })
-        this.calculos= res.data
-        this.calculos.plazo=this.intervalos.maximum_term
-        this.calculos.montos=this.intervalos.maximun_amoun
-      }else{
-        let res = await axios.post(`calculator`, {
-        procedure_modality_id:this.modalidad.id,
-        months_term: this.intervalos.maximum_term,
-        amount_requested:this.intervalos.maximun_amoun,
-        affiliate_id:this.$route.query.affiliate_id,
-        contributions: [
-          {
-            payable_liquid: this.payable_liquid[0],
-            seniority_bonus:  this.bonos[2],
-            border_bonus: this.bonos[0],
-            public_security_bonus: this.bonos[3],
-            east_bonus:this.bonos[1]
-          }
-        ]
-      })
-        this.calculos= res.data
-        this.calculos.plazo=this.intervalos.maximum_term
-        this.calculos.montos=this.intervalos.maximun_amoun
-
-      }
-
- console.log('calculos'+this.calculos)
-} catch (e) {
-      console.log(e)
-    } finally {
-      this.loading = false
-    }
-  },
-  Contributios()
-  {
-     console.log(this.payable_liquid.length+'este es la cantidad de boletas')
-    if(this.payable_liquid.length>1)
-    {
-      for (this.i = 0; this.i< this.payable_liquid.length; this.i++) {
-
-        this.contributions1[this.i].payable_liquid=this.payable_liquid[this.i]
-
-        if(this.i = 0)
+    //Metodo para la datos de la calculadora
+    async Calculator() {
+      try {
+        if(this.modalidad.quantity_ballots>1)
         {
-          this.contributions1[this.i].border_bonus= this.bonos[0],
-          this.contributions1[this.i].east_bonus= this.bonos[1],
-          this.contributions1[this.i].seniority_bonus= this.bonos[2],
-          this.contributions1[this.i].public_security_bonus= this.bonos[3]
+          let res = await axios.post(`calculator`, {
+            procedure_modality_id:this.modalidad.id,
+            months_term: this.intervalos.maximum_term,
+            amount_requested:this.intervalos.maximun_amoun,
+            affiliate_id:this.$route.query.affiliate_id,
+            contributions: [
+            {
+              payable_liquid: this.payable_liquid[0],
+              seniority_bonus:  this.bonos[2],
+              border_bonus: this.bonos[0],
+              public_security_bonus: this.bonos[3],
+              east_bonus:this.bonos[1]
+            },
+            {
+              payable_liquid: this.payable_liquid[1],
+              seniority_bonus: 0,
+              border_bonus: 0,
+              public_security_bonus: 0,
+              east_bonus:0
+            },
+            {
+              payable_liquid: this.payable_liquid[2],
+              seniority_bonus: 0,
+              border_bonus:0,
+              public_security_bonus: 0,
+              east_bonus:0
+            }
+          ]
+        })
+        this.calculos= res.data
+        this.calculos.plazo=this.intervalos.maximum_term
+        this.calculos.montos=this.intervalos.maximun_amoun
+        }else{
+          let res = await axios.post(`calculator`, {
+            procedure_modality_id:this.modalidad.id,
+            months_term: this.intervalos.maximum_term,
+            amount_requested:this.intervalos.maximun_amoun,
+            affiliate_id:this.$route.query.affiliate_id,
+            contributions: [
+            {
+              payable_liquid: this.payable_liquid[0],
+              seniority_bonus:  this.bonos[2],
+              border_bonus: this.bonos[0],
+              public_security_bonus: this.bonos[3],
+              east_bonus:this.bonos[1]
+            }
+          ]
+        })
+        this.calculos= res.data
+        this.calculos.plazo=this.intervalos.maximum_term
+        this.calculos.montos=this.intervalos.maximun_amoun
         }
-        else{
-          this.contributions1[this.i].border_bonus= 0,
-          this.contributions1[this.i].east_bonus= 0,
-          this.contributions1[this.i].seniority_bonus= 0,
-          this.contributions1[this.i].public_security_bonus= 0
+      }catch (e) {
+        console.log(e)
+      }finally {
+        this.loading = false
+      }
+    },
+    //metodo para armar las contribuciones del afiliado
+    Contributios()
+    {
+      if(this.payable_liquid.length>1)
+      {
+        for (this.i = 0; this.i< this.payable_liquid.length; this.i++) {
+          this.contributions1[this.i].payable_liquid=this.payable_liquid[this.i]
+          if(this.i = 0){
+            this.contributions1[this.i].border_bonus= this.bonos[0],
+            this.contributions1[this.i].east_bonus= this.bonos[1],
+            this.contributions1[this.i].seniority_bonus= this.bonos[2],
+            this.contributions1[this.i].public_security_bonus= this.bonos[3]
+          }
+          else{
+            this.contributions1[this.i].border_bonus= 0,
+            this.contributions1[this.i].east_bonus= 0,
+            this.contributions1[this.i].seniority_bonus= 0,
+            this.contributions1[this.i].public_security_bonus= 0
+          }
         }
       }
-    }
-    else{
+      else{
         this.contributions1[this.i].payable_liquid=this.payable_liquid[0]
         this.contributions1[this.i].border_bonus= this.bonos[0],
         this.contributions1[this.i].east_bonus= this.bonos[1],
         this.contributions1[this.i].seniority_bonus= this.bonos[2],
         this.contributions1[this.i].public_security_bonus= this.bonos[3]
-    }
+      }
      /*for (this.i = 0; this.i< this.interval.length; this.i++) {
         if(this.loanTypeSelected==this.interval[this.i].procedure_type_id)
         {
@@ -460,7 +412,7 @@ export default {
           this.num_type=this.loanTypeSelected
         }
       }*/
-  }
+    }
   },
 }
 </script>
