@@ -227,8 +227,12 @@
       <v-spacer></v-spacer>
       <v-spacer></v-spacer>
       <v-col class="py-0">
-        <v-btn text @click="beforeStepBus(5)">Atras</v-btn>
-        <v-btn color="primary" @click.stop="saveLoan()">Finalizar</v-btn>
+        <v-btn 
+        text 
+        @click="beforeStepBus(5)">Atras</v-btn>
+        <v-btn 
+        color="primary" 
+        @click.stop="saveLoan()">Finalizar</v-btn>
       </v-col>
     </v-row>
   </v-container>
@@ -286,7 +290,7 @@ export default {
   },
   methods: {
     beforeStepBus(val) {
-      this.bus.$emit("beforeStepBus", val);
+      this.bus.$emit("beforeStepBus", val)
     },
     selectDoc1(id) {
       setTimeout(() => {
@@ -333,15 +337,15 @@ export default {
     async getFormPrint() {
       try {
         let res = await axios.get(`loan/${8}/print/form`, {
-          params: {
+          params:{
             copies: 2
           },
-          responseType: "arraybuffer"
-        });
+          responseType: 'arraybuffer'
+        })
         let blob = new Blob([res.data], {
           type: "application/pdf"
-        });
-        printJS(window.URL.createObjectURL(blob));
+        })
+        printJS(window.URL.createObjectURL(blob))
       } catch (e) {
         console.log(e);
       } finally {
@@ -350,7 +354,7 @@ export default {
     },
     async saveLoan() {
       try {
-        this.idRequirements = this.selected.concat(this.radios.filter(Boolean));
+        this.idRequirements = this.selected.concat(this.radios.filter(Boolean))
         if (this.idRequirements.length === this.items.length) {
           let res = await axios.post(`loan`, {
             copies: 2,
@@ -366,21 +370,18 @@ export default {
             disbursement_type_id: this.formulario[0],
             account_number: this.formulario[1],
             loan_destiny_id: this.formulario[2],
-            documents: this.selectedOpc.concat(
-              this.selected.concat(this.radios.filter(Boolean))
-            ),
+            documents: this.selectedOpc.concat(this.selected.concat(this.radios.filter(Boolean))),
             notes: this.otherDocuments
           });
           printJS({
             printable: res.data.attachment.content,
             type: res.data.attachment.type,
             base64: true
-          });
-          this.$router.push("/loan");
+          })
+          this.$router.push('/loan')
         } else {
-          this.toastr.error(
-            "Falta seleccionar requisitos, todos los requisitos deben ser presentados."
-          );
+          this.toastr.error("Falta seleccionar requisitos, todos los requisitos deben ser presentados."
+          )
         }
       } catch (e) {
         console.log(e);
@@ -391,19 +392,19 @@ export default {
     async getContractPrint() {
       try {
         let res1 = await axios.get(`loan/${8}/print/contract`, {
-          responseType: "arraybuffer"
-        });
+          responseType: 'arraybuffer'
+        })
         let res2 = await axios.get(`loan/${8}/print/documents`, {
-          responseType: "arraybuffer"
-        });
+          responseType: 'arraybuffer'
+        })
         let blob1 = new Blob([res1.data], {
           type: "application/pdf"
-        });
+        })
         let blob2 = new Blob([res2.data], {
           type: "application/pdf"
-        });
-        printJS(window.URL.createObjectURL(blob1));
-        printJS(window.URL.createObjectURL(blob2));
+        })
+        printJS(window.URL.createObjectURL(blob1))
+        printJS(window.URL.createObjectURL(blob2))
       } catch (e) {
         console.log(e);
       } finally {
@@ -415,10 +416,10 @@ export default {
 
       if (this.selectedOpc.indexOf(i) === -1) {
         this.selectedOpc.push(i);
-        this.selectedValue = " ";
-        console.log("I= " + i);
-        console.log("selectedOpc " + this.selectedOpc);
+        //console.log("I= " + i);
+        //console.log("selectedOpc " + this.selectedOpc);
       }
+      this.selectedValue = " ";
     },
     deleteOptionalDocument(i) {
       this.selectedOpc.splice(i, 1);
