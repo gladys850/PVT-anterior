@@ -26,10 +26,13 @@ class AuthForm extends FormRequest
 	 */
 	public function rules()
 	{
-		return [
-			'username' => 'required|min:4|max:255',
-			'password' => 'required|min:4|max:255',
-		];
+		$rules = [
+			'username' => 'required|min:4|max:255'
+        ];
+        if (env('APP_ENV') == 'production') {
+            $rules['password'] = 'required|min:4|max:255';
+        }
+        return $rules;
 	}
 
     public function filters()

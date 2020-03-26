@@ -40,7 +40,7 @@
                 type="password"
                 autocomplete="on"
                 ref="password"
-                v-validate="'required|min:4|max:255'"
+                v-validate="isProduction"
                 :error-messages="errors.collect('password')"
                 data-vv-name="password"
                 data-vv-as="Contraseña"
@@ -77,6 +77,15 @@ export default {
       },
       error: null
     };
+  },
+  computed: {
+    isProduction() {
+      if (process.env.NODE_ENV != 'production') {
+        return ''
+      } else {
+        return 'required|min:4|max:255'
+      }
+    }
   },
   methods: {
     focusPassword() {
