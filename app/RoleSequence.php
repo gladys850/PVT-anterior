@@ -64,7 +64,7 @@ class RoleSequence extends Model
     {
         $roles = self::build_previous_tree($procedure_type_id, $current_role_id);
         $roles = self::get_keys($roles);
-        return Role::whereIn('id', $roles)->orderBy('sequence_number')->orderBy('name')->pluck('id');
+        return Role::whereIn('id', $roles)->orderBy('sequence_number', 'desc')->orderBy('name')->pluck('id');
     }
 
     public static function flow($procedure_type_id, $current_role_id)
