@@ -58,8 +58,12 @@ class Affiliate extends Model
 
     public function getPictureSavedAttribute()
     {
-        $base_path = 'picture/';
-        return Storage::disk('ftp')->exists($base_path . $this->id . '_perfil.jpg');
+        try {
+            $base_path = 'picture/';
+            return Storage::disk('ftp')->exists($base_path . $this->id . '_perfil.jpg');
+        } catch (\Exception $e) {
+            return false;
+        }
     }
 
     public function getIdentityCardExtAttribute()
@@ -83,13 +87,17 @@ class Affiliate extends Model
 
     public function getFingerprintSavedAttribute()
     {
-        $base_path = 'picture/';
-        $fingerprint_pictures = ['_left_four.png', '_right_four.png', '_thumbs.png'];
-        $fingerprint_exists = false;
-        foreach ($fingerprint_pictures as $picture) {
-            $fingerprint_exists |= Storage::disk('ftp')->exists($base_path . $this->id . $picture);
+        try {
+            $base_path = 'picture/';
+            $fingerprint_pictures = ['_left_four.png', '_right_four.png', '_thumbs.png'];
+            $fingerprint_exists = false;
+            foreach ($fingerprint_pictures as $picture) {
+                $fingerprint_exists |= Storage::disk('ftp')->exists($base_path . $this->id . $picture);
+            }
+            return boolval($fingerprint_exists);
+        } catch (\Exception $e) {
+            return false;
         }
-        return boolval($fingerprint_exists);
     }
 
     public function getFullNameAttribute()

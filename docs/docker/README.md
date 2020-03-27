@@ -1,128 +1,123 @@
-# DOCKERIZING THE PROJECT
+# DOCKERIZANDO EL PROYECTO
 
-## Requirements
+## Requisitos
 
 * [Docker](https://docs.docker.com/install/)
 * [Docker Compose](https://docs.docker.com/compose/install/)
-* Internet connection
+* Conexión a internet
 
-## Configuration
+## Configuración
 
-* Within the root project's path, clone laradock submodule
+* Una vez clonado el proyecto, dentro del directorio raíz del mismo se debe clonar el submódulo Laradock:
 
 ```sh
 git submodule update --init --recursive
 ```
 
-* Copy the modified files to laradock folder
+* Copiar las recetas modificadas:
 
 ```sh
-cp -f docs/docker/php-fpm/Dockerfile laradock/php-fpm/
 cp -f docs/docker/docker-compose.yml laradock/
 cp -f docs/docker/env-example laradock/.env
 ```
 
-* Move to laradock's path
+* Ingresar al directorio laradock:
 
 ```sh
 cd laradock
 ```
 
-* Modify `.env` file with desired data
+* Modificar el archivo `.env` de laradock de acuerdo a los puertos que se irán a utilizar.
 
-* Build the images
-
-```sh
-docker-compose build --parallel nginx php-fpm workspace laravel-echo-server redis
-```
-
-* Up the compose with nginx server
+* Generar las imágenes:
 
 ```sh
-docker-compose up -d nginx php-fpm workspace laravel-echo-server redis
+docker-compose build --parallel nginx php-fpm workspace laravel-echo-server redis postgres
 ```
 
-* To tail the logs
+* Levantar los contenedores:
 
 ```sh
-docker-compose logs --follow
+docker-compose up -d nginx laravel-echo-server postgres
 ```
 
-## Install project dependencies
+## Instalar las dependencias
 
-* Within the laradock's path verify which containers are running
+* Verificar que los contenedores se encuentren funcionando:
 
 ```sh
 docker-compose ps
 ```
 
-* Install needed fonts into `php-fpm` container
+* Instalar las fuentes dentro del contenedor `php-fpm`:
 
 ```sh
 docker-compose exec workspace /var/www/install-roboto-fonts.sh
 ```
 
-* Install spanish language support
+* Instalar el soporte para lenguaje español:
 
 ```sh
 docker-compose exec php-fpm /var/www/install-spanish-locale.sh
 docker-compose exec workspace /var/www/install-spanish-locale.sh
 ```
 
-* Within the container called `workspace` you need to run
+* Dentro del contenedor workspace, generar las variables de entorno:
 
 ```sh
 docker-compose exec --user laradock workspace composer run-script post-root-package-install
 ```
 
+* Instalar las dependencias:
+
 ```sh
 docker-compose exec --user laradock workspace composer install
 ```
 
-* Generate laravel's session and jwt auth keys
+* Generar las llaves de sesión y de autenticación:
 
 ```sh
 docker-compose exec --user laradock workspace composer run-script post-create-project-cmd
 ```
 
-* Change the laravel-echo-server to production mode
+* Cambiar el modo de laravel-echo-server a producción
 
 ```sh
 docker-compose exec laravel-echo-server sed -i 's/\"devMode\":.*/\"devMode\": false,/g' laravel-echo-server.json
 docker-compose restart laravel-echo-server
 ```
 
-* Modify `.env` file according to the right credentials
+* Modificar el archivo `.env` de laravel de acuerdo a las credenciales de base de datos, sockets, etc.
 
-* Transpile javascripts code
+* Transpilar el código Javascript
 
 ```sh
 docker-compose exec --user laradock workspace yarn prod
 ```
 
-## Continue the development
+## Para continuar con el desarrollo
 
-* Change the application to development mode
+* Cambiar la variable APP_ENV=development en el archivo `.env` de laravel y transpilar el código Javascript:
 
 ```sh
 docker-compose exec --user laradock workspace yarn dev
 ```
 
-## Issues
+## Problemas comúnes
 
-* If you have error console output you can verify `exited` containers
+* Si se encuentran problemas en la console de error, verificar los contenedores en estado `exited`:
 
 ```sh
-docker ps -a
+docker-compose ps
 ```
 
-* And remove every unused container
+* Eliminar los contenedores que no se encuentren levantados:
 
 ```sh
 docker rm every_unused_container
 ```
 
-* And finally erase all unused containers, builded images, unused networks and volumes
+* En caso de seguir con problemas, eliminar todos los contenedores, imágenes, redes y volúmenes que no se encuentren en uso:
 
 ```sh
 docker container prune
@@ -131,4 +126,4 @@ docker network prune
 docker volume prune
 ```
 
-* Then you can build images and recreate containers from scratch
+* Volver a generar las imágenes desde cero.
