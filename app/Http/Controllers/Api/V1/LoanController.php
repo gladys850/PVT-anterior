@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Schema;
 use App\ProcedureDocument;
 use App\ProcedureModality;
 use App\PaymentType;
+use App\RoleSequence;
 use App\Http\Requests\LoanForm;
 use Carbon;
 
@@ -782,5 +783,29 @@ class LoanController extends Controller
     {
         $loan = Loan::findOrFail($id);
         return $loan->notes;
+    }
+
+    /**
+    * Flujo de trabajo
+    * Devuelve la lista de roles anteriores para observar o posteriores para derivar el trámite
+    * @urlParam id required ID de préstamo. Example: 2
+    * @authenticated
+    * @response
+    * {
+    *     "current": 73,
+    *     "previous": [
+    *         75,
+    *         76
+    *     ],
+    *     "next": [
+    *         79,
+    *         80
+    *     ]
+    * }
+    */
+    public function get_flow($id)
+    {
+        $loan = Loan::findOrFail($id);
+        return response()->json(RoleSequence::flow($loan->modality->procedure_type->id, $loan->role_id));
     }
 }

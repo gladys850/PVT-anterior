@@ -97,6 +97,7 @@ Route::group([
             Route::get('affiliate/{id}/loan','Api\V1\AffiliateController@get_loans');
             Route::get('loan/{id}/document','Api\V1\LoanController@get_documents');
             Route::get('loan/{id}/note','Api\V1\LoanController@get_notes');
+            Route::get('loan/{id}/flow','Api\V1\LoanController@get_flow');
             Route::resource('note','Api\V1\NoteController')->only('show');
             Route::get('procedure_type/{id}/loan_destiny', 'Api\V1\ProcedureTypeController@get_destiny');
         });

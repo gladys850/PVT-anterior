@@ -9,6 +9,7 @@ use App\City;
 use App\LoanState;
 use App\PaymentType;
 use App\Loan;
+use App\Role7;
 use Faker\Generator as Faker;
 
 $factory->define(Loan::class, function (Faker $faker) {
@@ -39,6 +40,7 @@ $factory->define(Loan::class, function (Faker $faker) {
         'loan_term' => $faker->numberBetween($procedure_type->interval->minimum_term,$procedure_type->interval->maximum_term),
         'disbursement_type_id' => PaymentType::whereName('Cheque')->first()->id,
         'loan_destiny_id' => $procedure_type->destinies->random()->id,
+        'role_id' => Role::whereName('PRE-area-de-recepcion')->first(),
         'created_at' => $faker->dateTime($max = 'now'),
         'updated_at' => $faker->dateTime($max = 'now')
     ];
