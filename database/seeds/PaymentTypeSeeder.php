@@ -15,7 +15,8 @@ class PaymentTypeSeeder extends Seeder
         $payment_types = [
             ['name' => 'Deposito Bancario'],
             ['name' => 'Cheque'],
-            ['name' => 'Efectivo']
+            ['name' => 'Efectivo'],
+            ['name' => 'Descuento automático']
         ];
         foreach ($payment_types as $payment_type) {
             PaymentType::firstOrCreate($payment_type);
