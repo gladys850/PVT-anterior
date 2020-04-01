@@ -690,7 +690,6 @@ class LoanController extends Controller
             $req = collect(json_decode(file_get_contents(implode('/', [env("RRHH_URL"), 'city', $req['city_identity_card_id']])), true));
             $employees[$key]['identity_card'] .= ' ' . $req['shortened'];
         }
-        $date = Carbon::now();
         $data = [
             'header' => [
                 'direction' => 'DIRECCIÓN DE ESTRATEGIAS SOCIALES E INVERSIONES',
@@ -739,7 +738,6 @@ class LoanController extends Controller
                 'position' => 'GARANTE'
             ]);
         }
-        $date = Carbon::now();
         $data = [
             'header' => [
                 'direction' => 'DIRECCIÓN DE ESTRATEGIAS SOCIALES E INVERSIONES',
@@ -757,6 +755,42 @@ class LoanController extends Controller
         ];
         $file_name = implode('_', ['solicitud', 'prestamo']) . '.pdf';
         $view = view()->make('loan.forms.request_form')->with($data)->render();
+        if ($standalone) return Util::pdf_to_base64([$view], $file_name, 'legal', $request->copies ?? 1);
+        return $view;
+    }
+
+    /**
+    * Impresión del plan de pagos
+    * Devuelve un pdf del plan de pagos acorde a un ID de préstamo
+    * @urlParam id required ID del préstamo. Example: 6
+    * @queryParam copies Número de copias del documento. Example: 2
+    * @authenticated
+    * @response
+    */
+    public function print_plan(Request $request, $id, $standalone = true)
+    {
+        $loan = Loan::findOrFail($id);
+        $procedure_modality = $loan->modality;
+        $lenders = [];
+        foreach ($loan->lenders as $lender) {
+            $lenders[] = self::verify_spouse_disbursable($lender)->disbursable;
+        }
+        $data = [
+            'header' => [
+                'direction' => 'DIRECCIÓN DE ESTRATEGIAS SOCIALES E INVERSIONES',
+                'unity' => 'UNIDAD DE INVERSIÓN EN PRÉSTAMOS',
+                'table' => [
+                    ['Tipo', $loan->modality->procedure_type->second_name],
+                    ['Modalidad', $loan->modality->shortened],
+                    ['Usuario', auth()->user()->username ?? 'prueba']
+                ]
+            ],
+            'title' => 'PLAN DE PAGOS',
+            'loan' => $loan,
+            'lenders' => collect($lenders)
+        ];
+        $file_name = implode('_', ['plan', $procedure_modality->shortened, $id]) . '.pdf';
+        $view = view()->make('loan.payment_plan')->with($data)->render();
         if ($standalone) return Util::pdf_to_base64([$view], $file_name, 'legal', $request->copies ?? 1);
         return $view;
     }
