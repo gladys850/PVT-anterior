@@ -18,12 +18,14 @@ class LoanPayment extends Model
         'estimated_date',
         'quota_number',
         'estimated_quota',
-        'capital_payment',
-        'interest_payment',
         'penal_payment',
-        'accumulated_interest',
+        'accumulated_payment',
+        'interest_payment',
+        'capital_payment',
+        'penal_remaining',
+        'accumulated_remaining',
         'voucher_number',
-        'payment_type',
+        'payment_type_id',
         'receipt_number',
         'description'
     ];
@@ -33,21 +35,30 @@ class LoanPayment extends Model
         return $this->belongsTo(Loan::class);
     }
 
+    public function payment_type()
+    {
+        return $this->belongsTo(PaymentType::class);
+    }
+
     public static function days_interest(Loan $loan, $estimated_date = null)
     {
         $interest = [
-            'current' => 0,
             'penal' => 0,
-            'accumulated' => 0
+            'accumulated' => 0,
+            'current' => 0
         ];
         if ($loan->balance == 0) return (object)$interest;
         $estimated_date = CarbonImmutable::parse($estimated_date ?? CarbonImmutable::now()->toDateString());
         $latest_quota = $loan->payments()->first();
         if (!$latest_quota) {
             $payment_date = $loan->disbursement_date;
+            $latest_quota = (object)[
+                'penal_remaining' => 0,
+                'accumulated_remaining' => 0
+            ];
             if (!$payment_date) return (object)$interest;
         } else {
-            $payment_date = $latest_quota->pay_date;
+            $payment_date = Carbon::parse($latest_quota->estimated_date)->addDay()->toDateString();
         }
         $payment_date = CarbonImmutable::parse($payment_date);
         if ($estimated_date->lessThan($payment_date)) return (object)$interest;
@@ -61,9 +72,11 @@ class LoanPayment extends Model
             }
         }
         $interest['accumulated'] = $diff_days - $interest['current'];
+        $interest['accumulated'] += $latest_quota->accumulated_remaining;
         if ($interest['accumulated'] >= 90) {
-            $interest['penal'] = $interest['accumulated'] - $interest['current'];
+            $interest['penal'] = $interest['accumulated'];
         }
+        $interest['penal'] += $latest_quota->penal_remaining;
         return (object)$interest;
     }
 
@@ -102,7 +115,7 @@ class LoanPayment extends Model
                 $estimated_date = $payment_date->startOfMonth()->addMonth()->endOfMonth();
             }
         } else {
-            $estimated_date = Carbon::parse($latest_quota->pay_date)->startOfMonth()->addMonth()->endOfMonth();
+            $estimated_date = Carbon::parse($latest_quota->estimated_date)->startOfMonth()->addMonth()->endOfMonth();
             $quota = $latest_quota->quota_number + 1;
         }
         return (object)[
