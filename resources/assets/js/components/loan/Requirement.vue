@@ -6,7 +6,6 @@
           <v-toolbar class="mb-0" color="ternary" dark flat>
             <v-toolbar-title>REQUISITOS PARA ANTICIPO</v-toolbar-title>
           </v-toolbar>
-
           <v-row>
             <v-col v-for="(group,i) in items" :key="i" cols="12" class="py-1">
               <v-card dense>
@@ -40,10 +39,10 @@
                         <div v-if="group.length > 1" class="py-0">
                           <v-radio-group :mandatory="false" v-model="radios[i]" class="py-0">
                             <v-radio
-                            color="info"
-                            :value="doc.id"
-                            @change="selectDoc1(doc.id,j,i)"
-                            class="py-0"
+                              color="info"
+                              :value="doc.id"
+                              @change="selectDoc1(doc.id,j,i)"
+                              class="py-0"
                             ></v-radio>
                           </v-radio-group>
                         </div>
@@ -141,53 +140,50 @@
 
       <v-data-iterator :items="optional" hide-default-footer>
         <template>
-      <v-toolbar-title class="align-end font-weight-black text-center ma-0 px-10 pt-5">
-        <h3>Documentos Adicionales</h3>
-      </v-toolbar-title>
+          <v-toolbar-title class="align-end font-weight-black text-center ma-0 pa-0 pt-5">
+            <h3>Documentos Adicionales</h3>
+          </v-toolbar-title>
           <v-row>
             <v-col cols="12" class="ma-0 px-10">
               <v-autocomplete
                 dense
                 filled
-                label="Busque y elija una opción"
+                label="Búsque y elija el documento"
                 v-model="selectedValue"
                 :items="optional"
                 item-text="name"
                 item-value="id"
                 @change="addOptionalDocument(selectedValue)"
               ></v-autocomplete>
-              <v-divider></v-divider>
               <div class="align-end font-weight-light">
                 <div v-for="(idDoc, index) of selectedOpc" :key="index">
                   <div>
-                    <div>
-                      <div>
-                        {{index+1 + ". "}} {{(optional.find((item) => item.id === idDoc)).name}}
-                        <v-btn text icon color="error" @click="deleteOptionalDocument(index)">
-                          <h2>X</h2>
-                          <!--<v-icon>mdi-marker-cancel</v-icon>-->
-                        </v-btn>
-                      <v-divider></v-divider>
-                    </div>
+                    {{index+1 + ". "}} {{(optional.find((item) => item.id === idDoc)).name}}
+                    <v-btn text icon color="error" @click="deleteOptionalDocument(index)">
+                      <h2>X</h2>
+                      <!--<v-icon>mdi-marker-cancel</v-icon>-->
+                    </v-btn>
+                    <v-divider></v-divider>
                   </div>
                 </div>
-              </div>
               </div>
             </v-col>
           </v-row>
         </template>
         <template>
-          <v-toolbar-title class="align-end font-weight-black text-left ma-0 px-10 pt-5">
+          <v-toolbar-title class="align-end font-weight-black text-left ma-0 pl-8 pt-5">
             <h5>Otros Documentos</h5>
           </v-toolbar-title>
           <v-row>
-            <v-col cols="12" class="ma-0 px-10">
+            <v-col cols="11" class="ma-0 px-10">
               <v-text-field
                 label="Registrar documento"
                 v-model="newOther"
                 @keyup.enter="addOtherDocument"
               ></v-text-field>
               <!--<v-btn color="primary" @click.stop="addOtherDocument">NuevoOtro</v-btn>-->
+            </v-col>
+            <v-col cols="1" class="ma-0 pr-10">
               <v-tooltip top>
                 <template v-slot:activator="{ on }">
                   <v-btn
@@ -198,16 +194,20 @@
                     bottom
                     right
                     v-on="on"
-                    style="margin-right: 5px; margin-left: 160px; margin-top:-220px;"
+                    style="margin-right: 0px; margin-left: 0px; margin-top:10px; "
                     @click.stop="addOtherDocument"
                   >
                     <v-icon>mdi-plus</v-icon>
                   </v-btn>
                 </template>
                 <div>
-                  <span>Agregar otro documento</span>
+                  <span>Agregar documento</span>
                 </div>
               </v-tooltip>
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col cols="12" class="ma-0 px-10">
               <div
                 class="align-end font-weight-light ma-0 pa-0"
                 v-for="(otherDoc, index) of otherDocuments"
@@ -222,21 +222,19 @@
         </template>
       </v-data-iterator>
     </v-card>
-   <v-row>
-                <v-spacer></v-spacer>
-                <v-spacer></v-spacer>
-                <v-spacer></v-spacer>
-                <v-col class="py-0">
-                  <v-btn text
-                    @click="beforeStep(6)">Atras</v-btn>
-                  <v-btn
-                    color="primary"
-                     @click.stop="saveLoan()"
-                    >
-                    Finalizar
-                  </v-btn>
-                </v-col>
-              </v-row>
+    <v-row>
+      <v-spacer></v-spacer>
+      <v-spacer></v-spacer>
+      <v-spacer></v-spacer>
+      <v-col class="py-0">
+        <v-btn 
+        text 
+        @click="beforeStepBus(5)">Atras</v-btn>
+        <v-btn 
+        color="primary" 
+        @click.stop="saveLoan()">Finalizar</v-btn>
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 <script>
@@ -259,13 +257,9 @@ export default {
     selectedValue: null,
     idRequirements: [],
     otherDocuments: [],
-    newOther: ""
+    newOther: null
   }),
   props: {
-    modality: {
-      type: Object,
-      required: true
-    },
     datos: {
       type: Array,
       required: true
@@ -274,11 +268,19 @@ export default {
       type: Array,
       required: true
     },
-      modalidad: {
+    modalidad: {
+      type: Object,
+      required: true
+    },
+    intervalos: {
       type: Object,
       required: true
     },
     calculos: {
+      type: Object,
+      required: true
+    },
+    bus: {
       type: Object,
       required: true
     }
@@ -287,6 +289,9 @@ export default {
     this.getRequirement(33);
   },
   methods: {
+    beforeStepBus(val) {
+      this.bus.$emit("beforeStepBus", val)
+    },
     selectDoc1(id) {
       setTimeout(() => {
         //console.log("ID=" + id + " J=" + j + " I=" + i);
@@ -330,28 +335,28 @@ export default {
       }
     },
     async getFormPrint() {
-    try {
-      let res = await axios.get(`loan/${8}/print/form`, {
-        params:{
-         copies: 2
-        },
-        responseType: 'arraybuffer'
+      try {
+        let res = await axios.get(`loan/${8}/print/form`, {
+          params:{
+            copies: 2
+          },
+          responseType: 'arraybuffer'
         })
         let blob = new Blob([res.data], {
-        type: "application/pdf"
-      })
+          type: "application/pdf"
+        })
         printJS(window.URL.createObjectURL(blob))
-    } catch (e) {
-    console.log(e);
-    } finally {
+      } catch (e) {
+        console.log(e);
+      } finally {
         this.loading = false;
       }
     },
-     async saveLoan() {
+    async saveLoan() {
       try {
-        this.idRequirements=this.selected.concat(this.radios.filter(Boolean))
-          if(this.idRequirements.length === this.items.length){
-            let res = await axios.post(`loan`, {
+        this.idRequirements = this.selected.concat(this.radios.filter(Boolean))
+        if (this.idRequirements.length === this.items.length) {
+          let res = await axios.post(`loan`, {
             copies: 2,
             responseType: "arraybuffer",
             lenders: [this.$route.query.affiliate_id],
@@ -367,16 +372,16 @@ export default {
             loan_destiny_id: this.formulario[2],
             documents: this.selectedOpc.concat(this.selected.concat(this.radios.filter(Boolean))),
             notes: this.otherDocuments
-        });
-        printJS({
-          printable: res.data.attachment.content,
-          type: res.data.attachment.type,
-          base64: true
-        })
-        this.$router.push('/loan');
-        }
-        else{
-          this.toastr.error("Falta seleccionar requisitos, todos los requisitos deben ser presentados.");
+          });
+          printJS({
+            printable: res.data.attachment.content,
+            type: res.data.attachment.type,
+            base64: true
+          })
+          this.$router.push('/loan')
+        } else {
+          this.toastr.error("Falta seleccionar requisitos, todos los requisitos deben ser presentados."
+          )
         }
       } catch (e) {
         console.log(e);
@@ -387,17 +392,17 @@ export default {
     async getContractPrint() {
       try {
         let res1 = await axios.get(`loan/${8}/print/contract`, {
-      responseType: 'arraybuffer'
-      })
+          responseType: 'arraybuffer'
+        })
         let res2 = await axios.get(`loan/${8}/print/documents`, {
-      responseType: 'arraybuffer'
-      })
+          responseType: 'arraybuffer'
+        })
         let blob1 = new Blob([res1.data], {
-        type: "application/pdf"
-      })
+          type: "application/pdf"
+        })
         let blob2 = new Blob([res2.data], {
-        type: "application/pdf"
-      })
+          type: "application/pdf"
+        })
         printJS(window.URL.createObjectURL(blob1))
         printJS(window.URL.createObjectURL(blob2))
       } catch (e) {
@@ -408,6 +413,7 @@ export default {
     },
     addOptionalDocument(i) {
       //Verifica si no encuentra el valor repetido
+
       if (this.selectedOpc.indexOf(i) === -1) {
         this.selectedOpc.push(i);
         //console.log("I= " + i);
@@ -417,7 +423,7 @@ export default {
     },
     deleteOptionalDocument(i) {
       this.selectedOpc.splice(i, 1);
-          },
+    },
     addOtherDocument() {
       if (this.newOther) {
         this.otherDocuments.push(this.newOther);

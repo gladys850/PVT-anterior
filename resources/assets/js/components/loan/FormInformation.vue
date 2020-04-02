@@ -74,13 +74,10 @@ import { Validator } from 'vee-validate'
       type: Array,
       required: true
     },
-    datos: {
-      type: Array,
-      required: true
-    },
   },
   beforeMount(){
     this.getPaymentTypes()
+     this.getLoanDestiny()
   },
   mounted(){
     this.getLoanDestiny()
