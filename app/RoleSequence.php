@@ -8,6 +8,7 @@ class RoleSequence extends Model
 {
     protected $primaryKey = null;
     public $incrementing = false;
+    public $timestamps = false;
 
     public function procedure_type()
     {
