@@ -71,7 +71,7 @@ class CalculatorController extends Controller
                     $q->where('affiliate_id', $affiliate->id);
                 }])->whereId($request->parent_loan_id)->first();
                 if (!$parent_loan) abort(404);
-                $parent_quota = $parent_loan->next_payment->estimated_quota * $parent_loan->lenders[0]->pivot->payment_percentage/100;
+                $parent_quota = $parent_loan->next_payment()->estimated_quota * $parent_loan->lenders[0]->pivot->payment_percentage/100;
                 return $parent_quota;
             } else {
                 $parent_quota = 0;
