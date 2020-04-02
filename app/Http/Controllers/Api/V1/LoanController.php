@@ -391,7 +391,7 @@ class LoanController extends Controller
         $percentage = Loan::get_percentage($request->lenders);
         foreach ($request->lenders as $affiliate) {
             $affiliates[$affiliate] = [
-                'payment_percentage' =>$percentage,
+                'payment_percentage' => $percentage,
                 'guarantor' => false
             ];
         }
@@ -399,7 +399,7 @@ class LoanController extends Controller
             $percentage = Loan::get_percentage($request->guarantors);
             foreach ($request->guarantors as $affiliate) {
                 $affiliates[$affiliate] = [
-                    'payment_percentage' =>$percentage,
+                    'payment_percentage' => $percentage,
                     'guarantor' => true
                 ];
             }

@@ -26,7 +26,7 @@ class Role extends LaratrustRole
 
     public function permissions()
     {
-        return $this->belongsToMany(Permission::class, 'role_permissions');
+        return $this->belongsToMany(Permission::class, 'role_permissions')->withTimestamps();
     }
 
     public function records()
