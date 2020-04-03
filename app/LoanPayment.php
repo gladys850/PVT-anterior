@@ -65,13 +65,11 @@ class LoanPayment extends Model
         $diff_days = $estimated_date->diffInDays($payment_date) + 1;
         if ($estimated_date->diffInMonths($payment_date) == 0) {
             $interest['current'] = $diff_days;
+            $interest['accumulated'] = 0;
         } else {
             $interest['current'] = $estimated_date->day;
-            if ($payment_date->day >= LoanGlobalParameter::latest()->first()->offset_interest_day && $estimated_date->diffInMonths($payment_date) == 1) {
-                $interest['current'] += $payment_date->endOfMonth()->diffInDays($payment_date) + 1;
-            }
         }
-        $interest['accumulated'] = $diff_days - $interest['current'];
+        if ($diff_days > $interest['current']) $interest['accumulated'] = $diff_days - $interest['current'];
         $interest['accumulated'] += $latest_quota->accumulated_remaining;
         if ($interest['accumulated'] >= 90) {
             $interest['penal'] = $interest['accumulated'];
@@ -88,14 +86,16 @@ class LoanPayment extends Model
             if ($key == 0) {
                 $merged = $payment;
             } else {
+                $merged->penal_payment += $payment->penal_payment;
+                $merged->accumulated_payment += $payment->accumulated_payment;
                 $merged->capital_payment += $payment->capital_payment;
                 $merged->interest_payment += $payment->interest_payment;
-                $merged->penal_payment += $payment->penal_payment;
-                $merged->accumulated += $payment->accumulated;
             }
             if (!next($payments)) {
                 $merged->pay_date = $payment->pay_date;
                 $merged->estimated_date = $payment->estimated_date;
+                $merged->penal_remaining = $payment->penal_remaining;
+                $merged->accumulated_remaining = $payment->accumulated_remaining;
             }
         }
         unset($merged->affiliate_id, $merged->payment_type, $merged->voucher_number, $merged->receipt_number, $merged->description, $merged->created_at, $merged->updated_at);
