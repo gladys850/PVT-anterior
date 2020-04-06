@@ -105,7 +105,7 @@ class LoanPayment extends Model
     public static function quota_date(Loan $loan, $first = false)
     {
         $quota = 1;
-        $latest_quota = $loan->last_payment();
+        $latest_quota = $loan->last_payment;
         $estimated_date = Carbon::now()->endOfMonth();
         if (!$latest_quota || $first) {
             $payment_date = $loan->disbursement_date ? $loan->disbursement_date : $loan->request_date;

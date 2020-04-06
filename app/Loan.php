@@ -158,7 +158,7 @@ class Loan extends Model
         return Util::round($balance);
     }
 
-    public function last_payment()
+    public function getLastPaymentAttribute()
     {
         return $this->payments()->latest()->first();
     }
@@ -172,7 +172,7 @@ class Loan extends Model
 
     public function last_quota()
     {
-        $latest_quota = $this->last_payment();
+        $latest_quota = $this->last_payment;
         if ($latest_quota) {
             $payments = $this->payments()->whereQuotaNumber($latest_quota->quota_number)->get();
             $latest_quota = new LoanPayment();

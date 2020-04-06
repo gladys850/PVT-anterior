@@ -913,7 +913,7 @@ class AffiliateController extends Controller
             'guarantor' => 'required|boolean',
             'state' => 'integer'
         ]);
-        $type = Util::get_bool($request->guarantor) ? 'guarantors' : 'lenders';
+        $type = $request->boolean('guarantor') ? 'guarantors' : 'lenders';
         $relations[$type] = [
             'affiliate_id' => $affiliate->id
         ];
