@@ -503,17 +503,19 @@ class AffiliateController extends Controller
     public function get_profile_images(Request $request, $id)
     {
         $files = [];
-        $base_path = 'picture/';
-        $fingerprint_files = ['_perfil.jpg'];
-        foreach ($fingerprint_files as $file) {
-            if (Storage::disk('ftp')->exists($base_path . $id . $file)) {
-                array_push($files, [
-                    'name' => $id . $file,
-                    'content' => base64_encode(Storage::disk('ftp')->get($base_path . $id . $file)),
-                    'format' => Storage::disk('ftp')->mimeType($base_path . $id . $file)
-                ]);
+        try {
+            $base_path = 'picture/';
+            $fingerprint_files = ['_perfil.jpg'];
+            foreach ($fingerprint_files as $file) {
+                if (Storage::disk('ftp')->exists($base_path . $id . $file)) {
+                    array_push($files, [
+                        'name' => $id . $file,
+                        'content' => base64_encode(Storage::disk('ftp')->get($base_path . $id . $file)),
+                        'format' => Storage::disk('ftp')->mimeType($base_path . $id . $file)
+                    ]);
+                }
             }
-        }
+        } catch (\Exception $e) {}
         return $files;
     }
 

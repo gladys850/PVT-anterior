@@ -35,8 +35,8 @@
               </span>
             </v-subheader>
             <v-row no-gutters>
-              <template v-for="(rolesColumn, index) in filteredRoles">
-                <v-col :key="index">
+              <template v-for="rolesColumn in filteredRoles">
+                <v-col :key="filteredRolesIndex(rolesColumn)">
                   <div
                     v-for="role in rolesColumn"
                     :key="role.id"
@@ -110,6 +110,11 @@ export default {
     if (this.user != 0) this.getUserRoles(this.user)
   },
   methods: {
+    filteredRolesIndex(filteredRoles) {
+      return filteredRoles.reduce((acc, item) => {
+        return acc + item.id
+      }, Math.random() * (100 - 1000) + 100)
+    },
     async switchRole(id) {
       try {
         this.loading = true
