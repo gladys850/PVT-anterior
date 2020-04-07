@@ -23,3 +23,5 @@ php artisan db:seed --class=LoanStructureSeeder
 php artisan db:seed --class=PaymentTypeSeeder
 php artisan db:seed --class=TagSeeder
 php artisan db:seed --class=LoanGlobalParameterSeeder
+php artisan db:seed --class=LoanPrintSeeder
+php artisan db:seed --class=LoanDestinySeeder
