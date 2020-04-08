@@ -179,7 +179,7 @@ class LoanController extends Controller
         })->pluck('id');
         $procedure_modality = ProcedureModality::findOrFail($request->procedure_modality_id);
         $request->merge([
-            'role_id' => $procedure_modality->procedure_type->workflow->pluck('role_id')->intersect($roles)->first()
+            'role_id' => $procedure_modality->procedure_type->workflow->pluck('id')->intersect($roles)->first()
         ]);
         if (!$request->role_id) abort(403);
         // Guardar préstamo
