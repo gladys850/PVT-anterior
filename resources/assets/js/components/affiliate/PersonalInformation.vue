@@ -92,52 +92,55 @@
       </v-col>
       <v-col cols="12" md="3">
         <v-container  class="ma-0 pa-0">
+          <ValidationObserver ref="observer">
+          <v-form>
           <v-card>
             <v-col cols="12" class="py-2" >
               <v-toolbar-title>TELÉFONOS</v-toolbar-title>
             </v-col>
             <v-col cols="12"  class="py-0" >
+              <ValidationProvider v-slot="{ errors }" vid="celular1" name="celular1" rules="min:1|max:20">
               <v-text-field
+                :error-messages="errors"
                 dense
                 v-model="getTelefono[0]"
                 label="Celular 1"
-                v-validate.initial="'min:1|max:20'"
-                :error-messages="errors.collect('celular1')"
-                data-vv-name="celular1"
                 :readonly="!editable || !permission.secondary"
                 :outlined="editable && permission.secondary"
                 :disabled="editable && !permission.secondary"
 
               ></v-text-field>
+              </ValidationProvider>
             </v-col>
             <v-col cols="12" class="py-0" >
+              <ValidationProvider v-slot="{ errors }" vid="celular" name="celular" rules="min:1|max:20">
               <v-text-field class = "text-right"
+                :error-messages="errors"
                 dense
                 v-model="getTelefono[1]"
                 label="Celular 2"
-                v-validate.initial="'min:1|max:20'"
-                :error-messages="errors.collect('celular')"
-                data-vv-name="celular"
                 :readonly="!editable || !permission.secondary"
                 :outlined="editable && permission.secondary"
                 :disabled="editable && !permission.secondary" 
               ></v-text-field>
+              </ValidationProvider>
             </v-col>
             <v-col cols="12" class="py-0" >
+              <ValidationProvider v-slot="{ errors }" vid="telefono" name="telefono" rules="min:1|max:20">
               <v-text-field
+                :error-messages="errors"
                 dense
                 v-model="affiliate.phone_number"
                 label="Fijo"
-                v-validate.initial="'min:1|max:20'"
-                :error-messages="errors.collect('telefono')"
-                data-vv-name="telefono"
                 :readonly="!editable || !permission.secondary"
                 :outlined="editable && permission.secondary"
                 :disabled="editable && !permission.secondary" 
               ></v-text-field>
+              </ValidationProvider>
             </v-col>
           </v-card>
-           
+          </v-form>
+          </ValidationObserver>
         </v-container>
       </v-col>
       <v-col cols="12" md="1" class="ma-0 pa-0">
@@ -193,9 +196,8 @@
 <script>
 import RemoveItem from '@/components/shared/RemoveItem'
 import AddStreet from '@/components/affiliate/AddStreet'
-import { Validator } from 'vee-validate'
+
   export default {
-  inject: ['$validator'],
   name: "affiliate-personalInformation",
   props: {
     affiliate: {
