@@ -17,7 +17,14 @@
     "icon": "mdi-cash-multiple",
     "permission": "show-loan",
     "params": {}
-  }, {
+  }, 
+  {
+    "href": "loanIndex",
+    "title": "Calificacion",
+    "icon": "mdi-content-duplicate",
+    "permission": "show-loan",
+    "params": {}
+  },{
     "title": "Acceso",
     "icon": "mdi-key",
     "permission": "show-user",
