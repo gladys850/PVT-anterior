@@ -16,7 +16,7 @@ class RoleSequenceSeeder extends Seeder
     {
         $sequences = [
             'Préstamo Anticipo' => [
-                ['PRE-area-de-recepcion','PRE-regional-santa-cruz', 'PRE-regional-cochabamba', 'PRE-regional-oruro', 'PRE-regional-potosi', 'PRE-regional-sucre', 'PRE-regional-tarija', 'PRE-regional-trinidad', 'PRE-regional-cobija'],
+                ['PRE-regional-santa-cruz', 'PRE-regional-cochabamba', 'PRE-regional-oruro', 'PRE-regional-potosi', 'PRE-regional-sucre', 'PRE-regional-tarija', 'PRE-regional-trinidad', 'PRE-regional-cobija'],
                 ['PRE-calificacion'],
                 ['PRE-revision-legal'],
                 ['PRE-jefatura'],
