@@ -1,5 +1,7 @@
 <template>
   <v-container fluid >
+    <ValidationObserver ref="observer">
+    <v-form>
       <v-row justify="center">
         <v-col cols="12" md="6" >
               <v-container class="py-0">
@@ -8,68 +10,62 @@
                     <v-toolbar-title>DATOS PERSONALES</v-toolbar-title>
                   </v-col>
                     <v-col cols="12" md="6" >
+                      <ValidationProvider v-slot="{ errors }" vid="first_name" name="Primer Nombre" rules="required|alpha_spaces|min:3|max:250">
                       <v-text-field
+                      :error-messages="errors"
                         dense
                       v-model="affiliate.first_name"
                       label="Primer Nombre"
-                      v-validate="'required|alpha_spaces|min:3|max:250'"
-                      :error-messages="errors.collect('first_name')"
-                      data-vv-name="first_name"
-                      data-vv-as="Primer Nombre"
                       :readonly="!editable || !permission.primary"
                       :outlined="editable && permission.primary"
                       :disabled="editable && !permission.primary"
                       ></v-text-field>
+                      </ValidationProvider>
                     </v-col>
                     <v-col cols="12" md="6" >
+                      <ValidationProvider v-slot="{ errors }" vid="second_name" name="Segundo Nombre" rules="alpha_spaces|min:3|max:250">
                       <v-text-field
+                      :error-messages="errors"
                         dense
                       v-model="affiliate.second_name"
                       label="Segundo Nombre"
-                      v-validate="'alpha_spaces|min:3|max:250'"
-                      :error-messages="errors.collect('second_name')"
-                      data-vv-name="second_name"
-                      data-vv-as="Segundo Nombre"
                       :readonly="!editable || !permission.primary"
                       :outlined="editable && permission.primary"
                       :disabled="editable && !permission.primary"
                       ></v-text-field>
+                      </ValidationProvider>
                     </v-col>
                     <v-col cols="12" md="4" >
+                      <ValidationProvider v-slot="{ errors }" vid="last_name" name="Apellido Paterno" rules="required|alpha_spaces|min:3|max:250">
                       <v-text-field
+                      :error-messages="errors"
                         dense
                       v-model="affiliate.last_name"
                       label="Apellido Paterno"
-                      v-validate="'required|alpha_spaces|min:3|max:250'"
-                      :error-messages="errors.collect('last_name')"
-                      data-vv-name="last_name"
-                      data-vv-as="Apellido Paterno"
                       :readonly="!editable || !permission.primary"
                       :outlined="editable && permission.primary"
                       :disabled="editable && !permission.primary"
                       ></v-text-field>
+                      </ValidationProvider>
                     </v-col>
                     <v-col cols="12" md="4" >
+                      <ValidationProvider v-slot="{ errors }" vid="mothers_last_name" name="Apellido Materno" rules="alpha_spaces|min:3|max:250">
                       <v-text-field
+                      :error-messages="errors"
                         dense
                       v-model="affiliate.mothers_last_name"
                       label="Apellido Materno"
-                      v-validate="'alpha_spaces|min:3|max:250'"
-                      :error-messages="errors.collect('mothers_last_name')"
-                      data-vv-name="mothers_last_name"
-                      data-vv-as="Apellido Materno"
                       :readonly="!editable || !permission.primary"
                       :outlined="editable && permission.primary"
                       :disabled="editable && !permission.primary"
                       ></v-text-field>
+                      </ValidationProvider>
                     </v-col>
                     <v-col cols="12" md="4" >
+                      <ValidationProvider v-slot="{ errors }" vid="gender" name="Género" rules="required|oneOf:M,F">
                       <v-select
+                        :error-messages="errors"
                         dense
-                        v-validate="'required|included:M,F'"
-                        :error-messages="errors.collect('gender')"
-                        data-vv-name="gender"
-                        data-vv-as="Género"
                         :items="genders"
                         item-text="name"
                         item-value="value"
@@ -80,28 +76,26 @@
                         :outlined="editable && permission.primary"
                         :disabled="editable && !permission.primary"
                       ></v-select>
+                      </ValidationProvider>
                     </v-col>
                     <v-col cols="12" md="6" >
+                      <ValidationProvider v-slot="{ errors }" vid="identity_card" name="Cédula de Identidad" rules="required|alpha_dash|min:5|max:15">
                       <v-text-field
+                        :error-messages="errors"
                         dense
                         v-model="affiliate.identity_card"
                         label="Cédula de Identidad"
-                        v-validate="'required|alpha_dash|min:5|max:15'"
-                        :error-messages="errors.collect('identity_card')"
-                        data-vv-name="identity_card"
-                        data-vv-as="Cédula de Identidad"
                         :readonly="!editable || !permission.primary"
                         :outlined="editable && permission.primary"
                         :disabled="editable && !permission.primary"
                       ></v-text-field>
+                      </ValidationProvider>
                     </v-col>
                     <v-col cols="12" md="6" >
+                      <ValidationProvider v-slot="{ errors }" vid="city_identity_card_id" name="Ciudad de Expedición" rules="required|integer|min:1">
                       <v-select
+                        :error-messages="errors"
                         dense
-                        v-validate="'required|integer|min:1'"
-                        :error-messages="errors.collect('city_identity_card_id')"
-                        data-vv-name="city_identity_card_id"
-                        data-vv-as="Ciudad de Expedición"
                         :items="cities"
                         item-text="name"
                         item-value="id"
@@ -112,6 +106,7 @@
                         :outlined="editable && permission.primary"
                         :disabled="editable && !permission.primary"
                       ></v-select>
+                      </ValidationProvider>
                     </v-col>
                     <v-col cols="12" md="5" v-if="affiliate.is_duedate_undefined==false">
                       <v-menu
@@ -140,13 +135,11 @@
                       </v-menu>
                     </v-col>
                     <v-col cols="12" md="4" >
+                      <ValidationProvider v-slot="{ errors }" vid="civil_status" name="Estado Civil" rules="oneOf:C,D,S,V">
                       <v-select
+                        :error-messages="errors"
                         dense
                         :loading="loading"
-                        v-validate="'included:C,D,S,V'"
-                        :error-messages="errors.collect('civil_status')"
-                        data-vv-name="civil_status"
-                        data-vv-as="Estado Civil"
                         :items="civil_statuses"
                         item-text="name"
                         item-value="value"
@@ -156,6 +149,7 @@
                         :outlined="editable && permission.primary"
                         :disabled="editable && !permission.primary"
                       ></v-select>
+                      </ValidationProvider>
                     </v-col>
                     <v-col cols="12" md="3">
                       <v-checkbox
@@ -177,7 +171,9 @@
                         :disabled="!editable || !permission.primary"
                       >
                         <template v-slot:activator="{ on }">
+                          <ValidationProvider v-slot="{ errors }" vid="birth_date" name="Fecha Nacimiento" rules="required">
                           <v-text-field
+                            :error-messages="errors"
                             dense
                             v-model="dates.birthDate.formatted"
                             label="Fecha Nacimiento"
@@ -188,23 +184,18 @@
                             v-on="on"
                             :outlined="editable && permission.primary"
                             :disabled="editable && !permission.primary"
-                            v-validate="'required'"
-                            :error-messages="errors.collect('birth_date')"
-                            data-vv-name="birth_date"
-                            data-vv-as="Fecha Nacimiento"
                           ></v-text-field>
+                          </ValidationProvider>
                         </template>
                         <v-date-picker v-model="affiliate.birth_date" no-title @input="dates.birthDate.show = false"></v-date-picker>
                       </v-menu>
                     </v-col>
                     <v-col cols="12" md="6" >
+                      <ValidationProvider v-slot="{ errors }" vid="city_birth_id" name="Ciudad de Nacimiento" rules="integer|min:1">
                       <v-select
+                        :error-messages="errors"
                         dense
                         :loading="loading"
-                        v-validate="'integer|min:1'"
-                        :error-messages="errors.collect('city_birth_id')"
-                        data-vv-name="city_birth_id"
-                        data-vv-as="Ciudad de Nacimiento"
                         :items="cities"
                         item-text="name"
                         item-value="id"
@@ -214,6 +205,7 @@
                         :outlined="editable && permission.primary"
                         :disabled="editable && !permission.primary"
                       ></v-select>
+                      </ValidationProvider>
                     </v-col>
                     <v-col cols="12" md="6">
                       <v-menu
@@ -262,43 +254,43 @@
                       <v-toolbar-title>TELÉFONOS</v-toolbar-title>
                     </v-col>
                     <v-col cols="12" md="4" >
+                      <ValidationProvider v-slot="{ errors }" name="celular1" rules="min:1|max:20">
                       <v-text-field
+                        :error-messages="errors"
                         dense
                         v-model="getTelefono[0]"
                         label="Celular 1"
-                        v-validate="'min:1|max:20'"
-                        :error-messages="errors.collect('celular1')"
-                        data-vv-name="celular1"
                         :readonly="!editable || !permission.secondary"
                         :outlined="editable && permission.secondary"
                         :disabled="editable && !permission.secondary"
                       ></v-text-field>
+                      </ValidationProvider>
                     </v-col>
                     <v-col cols="12" md="4" >
+                      <ValidationProvider v-slot="{ errors }" name="celular" rules="min:1|max:20">
                       <v-text-field
+                        :error-messages="errors"
                         dense
                         v-model="getTelefono[1]"
                         label="Celular 2"
-                        v-validate="'min:1|max:20'"
-                        :error-messages="errors.collect('celular')"
-                        data-vv-name="celular"
                         :readonly="!editable || !permission.secondary"
                         :outlined="editable && permission.secondary"
                         :disabled="editable && !permission.secondary"
                       ></v-text-field>
+                      </ValidationProvider>
                     </v-col>
                     <v-col cols="12" md="4" >
+                      <ValidationProvider v-slot="{ errors }" name="telefono" rules="min:1|max:20">
                       <v-text-field
+                        :error-messages="errors"
                         dense
                         v-model="affiliate.phone_number"
                         label="Fijo"
-                        v-validate="'min:1|max:20'"
-                        :error-messages="errors.collect('telefono')"
-                        data-vv-name="telefono"
                         :readonly="!editable || !permission.secondary"
                         :outlined="editable && permission.secondary"
                         :disabled="editable && !permission.secondary"
                       ></v-text-field>
+                      </ValidationProvider>
                     </v-col>
                       <v-col cols="12" md="6">
                     <v-toolbar-title>DOMICILIO</v-toolbar-title>
@@ -356,6 +348,8 @@
               </v-container>
         </v-col>
       </v-row>
+    </v-form>
+    </ValidationObserver>
       <AddStreet :bus="bus" :cities="cities"/>
       <RemoveItem :bus="bus"/>
   </v-container>
@@ -363,10 +357,8 @@
 <script>
 import RemoveItem from '@/components/shared/RemoveItem'
 import AddStreet from '@/components/affiliate/AddStreet'
-import { Validator } from 'vee-validate'
 
 export default {
-  inject: ['$validator'],
   name: "affiliate-profile",
   props: {
     affiliate: {
