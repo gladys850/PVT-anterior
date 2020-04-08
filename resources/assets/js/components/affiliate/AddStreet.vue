@@ -17,55 +17,58 @@
       <v-row justify="center">
         <v-col cols="12" >
               <v-container class="py-0">
-                <v-row>
-                    <v-col cols="12" md="3" v-show="address.edit">
-                      <v-select
-                        dense
-                        data-vv-name="Ciudad"
-                        :items="countryCities"
-                        item-text="name"
-                        item-value="id"
-                        label="Ciudad"
-                        v-model="address.city_address_id"
-                      ></v-select>
-                    </v-col>
-                    <v-col cols="12" md="3" v-show="address.edit">
-                      <v-text-field
-                      dense
-                      v-model="address.zone"
-                      label="Zona"
-                      class="purple-input"
-                      v-validate="'min:3|max:100'"
-                      :error-messages="errors.collect('zona')"
-                      data-vv-name="zona"
-                      ></v-text-field>
-                    </v-col>
-                    <v-col cols="12" md="4" v-show="address.edit">
-                      <v-text-field
-                      dense
-                      v-model="address.street"
-                      label="Calle/Avenida"
-                      class="purple-input"
-                      v-validate="'min:3|max:100'"
-                      :error-messages="errors.collect('calle')"
-                      data-vv-name="calle"
-                      ></v-text-field>
-                    </v-col>
-                    <v-col cols="12" md="2" v-show="address.edit">
-                      <v-text-field
-                      dense
-                      v-model="address.number_address"
-                      label="Nro"
-                      class="purple-input"
-                      v-validate="'numeric|min:1|max:100'"
-                      :error-messages="errors.collect('nro')"
-                      data-vv-name="nro"
-                      ></v-text-field>
-                    </v-col>
-                    <v-col cols="12" md="12">
-                      <LMap :address.sync="address" :cities.sync="countryCities" :edit.sync="address.edit"/>
-                    </v-col>
-                </v-row>
+                <ValidationObserver ref="observer">
+                  <v-form>
+                    <v-row>
+                      <v-col cols="12" md="3" v-show="address.edit">
+                        <v-select
+                          dense
+                          :items="countryCities"
+                          item-text="name"
+                          item-value="id"
+                          label="Ciudad"
+                          v-model="address.city_address_id"
+                        ></v-select>
+                      </v-col>
+                      <v-col cols="12" md="3" v-show="address.edit">
+                        <ValidationProvider v-slot="{ errors }" vid="zone" name="zona" rules="min:3|max:100">
+                          <v-text-field
+                          :error-messages="errors"
+                          dense
+                          v-model="address.zone"
+                          label="Zona"
+                          class="purple-input"
+                          ></v-text-field>
+                        </ValidationProvider>
+                      </v-col>
+                      <v-col cols="12" md="4" v-show="address.edit">
+                        <ValidationProvider v-slot="{ errors }" vid="street" name="calle" rules="min:3|max:100">
+                          <v-text-field
+                          :error-messages="errors"
+                          dense
+                          v-model="address.street"
+                          label="Calle/Avenida"
+                          class="purple-input"
+                          ></v-text-field>
+                        </ValidationProvider>
+                      </v-col>
+                      <v-col cols="12" md="2" v-show="address.edit">
+                        <ValidationProvider v-slot="{ errors }" vid="number_address" name="nro" rules="numeric|min:1|max:100">
+                          <v-text-field
+                          :error-messages="errors"
+                          dense
+                          v-model="address.number_address"
+                          label="Nro"
+                          class="purple-input"
+                          ></v-text-field>
+                        </ValidationProvider>
+                      </v-col>
+                      <v-col cols="12" md="12">
+                        <LMap :address.sync="address" :cities.sync="countryCities" :edit.sync="address.edit"/>
+                      </v-col>
+                    </v-row>
+                  </v-form>
+                </ValidationObserver>
             </v-container>
         </v-col>
       </v-row>
@@ -75,18 +78,16 @@
         <v-spacer></v-spacer>
         <v-btn @click.stop="adicionar()"
           color="error"
-          :disabled="errors.collect('zona').length>0||errors.collect('calle').length>0||errors.collect('nro').length>0"
         >Guardar</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
 </template>
+
 <script>
 import LMap from '@/components/affiliate/LMap'
-import { Validator } from 'vee-validate'
 
 export default {
-  inject: ['$validator'],
   name: "affiliate-addresses",
   props: {
     bus: {
@@ -110,7 +111,6 @@ export default {
       this.address = address
       this.dialog = true
     })
-    this.$validator.validateAll()
   },
   computed: {
     countryCities() {
@@ -118,10 +118,12 @@ export default {
     }
   },
   methods: {
-    adicionar() {
-      this.saveAddress()
-      this.bus.$emit('saveAddress', this.address)
-      this.close()
+    async adicionar() {
+      if (await this.$refs.observer.validate()) {
+        this.saveAddress()
+        this.bus.$emit('saveAddress', this.address)
+        this.close()
+      }
   },
     close() {
       this.dialog = false
@@ -140,7 +142,7 @@ export default {
           this.bus.$emit('saveAddress', res.data)
           }
       } catch (e) {
-        console.log(e)
+        this.$refs.observer.setErrors(e)
       } finally {
         this.loading = false
       }
