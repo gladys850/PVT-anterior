@@ -151,8 +151,6 @@ return [
         Tymon\JWTAuth\Providers\LaravelServiceProvider::class,
         // ACL Entrust
         Laratrust\LaratrustServiceProvider::class,
-        // CORS
-        Barryvdh\Cors\ServiceProvider::class,
         // Snappy
         Barryvdh\Snappy\ServiceProvider::class,
         // Broadcast

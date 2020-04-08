@@ -17,8 +17,7 @@ class CreateRecordsTable extends Migration
             $table->bigIncrements('id');
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('record_type_id');
-            $table->unsignedBigInteger('recordable_id');
-            $table->string('recordable_type');
+            $table->morphs('recordable');
             $table->text('action');
             $table->timestamps();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');

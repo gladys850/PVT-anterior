@@ -20,6 +20,7 @@ use App\ProcedureModality;
 use App\PaymentType;
 use App\RoleSequence;
 use App\Http\Requests\LoanForm;
+use App\Http\Requests\LoanPaymentForm;
 use Carbon;
 
 /** @group Préstamos
@@ -841,5 +842,135 @@ class LoanController extends Controller
     {
         $loan = Loan::findOrFail($id);
         return response()->json(RoleSequence::flow($loan->modality->procedure_type->id, $loan->role_id));
+    }
+
+    /** @group Cobranzas
+    * Cálculo de siguiente pago
+    * Devuelve el número de cuota, días calculados, días de interés que alcanza a pagar con la cuota, días restantes por pagar, montos de interés, capital y saldo a capital.
+    * @urlParam id required ID de préstamo. Example: 2
+    * @bodyParam estimated_date date Fecha para el cálculo del interés. Example: 2020-04-15
+    * @bodyParam estimated_quota float Monto para el cálculo. Example: 650
+    * @authenticated
+    * @response
+    * {
+    *     "estimated_date": "2020-04-15",
+    *     "quota_number": 1,
+    *     "estimated_days": {
+    *         "penal": 173,
+    *         "accumulated": 173,
+    *         "current": 15
+    *     },
+    *     "paid_days": {
+    *         "penal": 173,
+    *         "accumulated": 97,
+    *         "current": 0
+    *     },
+    *     "balance": 2000,
+    *     "capital_payment": 1.78,
+    *     "interest_payment": 0,
+    *     "accumulated_payment": 191.34,
+    *     "penal_payment": 56.88,
+    *     "estimated_quota": 250,
+    *     "next_balance": 1998.22,
+    *     "penal_remaining": 0,
+    *     "accumulated_remaining": 91
+    * }
+    */
+    public function get_next_payment(LoanPaymentForm $request, $id)
+    {
+        $loan = Loan::findOrFail($id);
+        return $loan->next_payment($request->input('estimated_date', null), $request->input('estimated_quota', null));
+    }
+
+    /** @group Cobranzas
+    * Nuevo pago
+    * Inserta una cuota de acuerdo a un monto y fecha estimados.
+    * @urlParam id required ID de préstamo. Example: 2
+	* @bodyParam estimated_date date Fecha para el cálculo del interés. Example: 2020-04-30
+	* @bodyParam estimated_quota float Monto para el cálculo de los días de interés pagados. Example: 600
+	* @bodyParam affiliate_id integer ID de afiliado que realizó el pago. Example: 56
+	* @bodyParam payment_type_id integer required ID de tipo de pago. Example: 2
+	* @bodyParam voucher_number integer Número de boleta de depósito. Example: 65100
+	* @bodyParam receipt_number integer Número de recibo. Example: 102
+	* @bodyParam description string Texto de descripción. Example: Penalizacion regularizada
+    * @authenticated
+    * @response
+    * {
+    *     "estimated_date": "2020-04-30",
+    *     "quota_number": 2,
+    *     "estimated_days": {
+    *         "penal": 91,
+    *         "accumulated": 91,
+    *         "current": 15
+    *     },
+    *     "paid_days": {
+    *         "penal": 91,
+    *         "accumulated": 91,
+    *         "current": 15
+    *     },
+    *     "balance": 1998.22,
+    *     "capital_payment": 361.2,
+    *     "interest_payment": 29.56,
+    *     "accumulated_payment": 179.35,
+    *     "penal_payment": 29.89,
+    *     "estimated_quota": 600,
+    *     "next_balance": 1637.02,
+    *     "penal_remaining": 0,
+    *     "accumulated_remaining": 0,
+    *     "payment_type_id": 2,
+    *     "pay_date": "2020-04-05T00:48:52.015535Z",
+    *     "affiliate_id": 47352,
+    *     "voucher_number": 65100,
+    *     "receipt_number": 102,
+    *     "description": "Penalización regularizado"
+    * }
+    */
+    public function set_payment(LoanPaymentForm $request, $id)
+    {
+        $loan = Loan::findOrFail($id);
+        $payment = $loan->next_payment($request->input('estimated_date', null), $request->input('estimated_quota', null));
+        $payment->payment_type_id = $request->payment_type_id;
+        $payment->pay_date = Carbon::now();
+        $payment->affiliate_id = $request->input('affiliate_id', $loan->disbursable_id);
+        $payment->voucher_number = $request->input('voucher_number', null);
+        $payment->receipt_number = $request->input('receipt_number', null);
+        $payment->description = $request->input('description', null);
+        $loan->payments()->create($payment->toArray());
+        return $payment;
+    }
+
+    /** @group Cobranzas
+    * Lista de pagos
+    * Devuelve el listado de los pagos ordenados por cuota de manera descendente
+    * @urlParam id required ID de préstamo. Example: 2
+    * @authenticated
+    * @response
+    * [
+    *     {
+    *         "loan_id": 2,
+    *         "affiliate_id": 47352,
+    *         "pay_date": "2020-04-04",
+    *         "estimated_date": "2020-04-30",
+    *         "quota_number": 2,
+    *         "estimated_quota": "600",
+    *         "penal_payment": "29.89",
+    *         "accumulated_payment": "179.35",
+    *         "interest_payment": "29.56",
+    *         "capital_payment": "361.2",
+    *         "penal_remaining": "0",
+    *         "accumulated_remaining": "0",
+    *         "voucher_number": null,
+    *         "payment_type_id": 2,
+    *         "receipt_number": null,
+    *         "description": null,
+    *         "created_at": "2020-04-04 20:48:52",
+    *         "updated_at": "2020-04-04 20:48:52"
+    *     }, {}
+    * ]
+    */
+    public function get_payments($id)
+    {
+        $loan = Loan::findOrFail($id);
+        return $loan->payments;
     }
 }

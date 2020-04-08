@@ -62,5 +62,8 @@
         'loan_term'=>'Plazo en meses',
         'disbursement_date'=>'Fecha de desembolso',
         'disbursement_type_id'=>'Tipo de desembolso',
-        'mofification_date'=>'Fecha de modificación'
+        'mofification_date'=>'Fecha de modificación',
+        'estimated_date' => 'Fecha estimada',
+        'estimated_quota' => 'Cuota estimada',
+        'payment_type_id' => 'Tipo de pago'
     ];
