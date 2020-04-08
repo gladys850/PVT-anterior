@@ -28,7 +28,7 @@
               <v-btn
                 icon
                 small
-                color="primary"
+                color="info"
                 v-on="on"
               >
                 <v-icon>mdi-printer</v-icon>
@@ -48,13 +48,14 @@
               <v-btn
                 icon
                 small
-                color="info"
+                color="warning"
+                :to="{ name: 'affiliateAdd', params: { id: props.item.id }}"
                 v-on="on"
               >
-                <v-icon>mdi-pencil</v-icon>
+                <v-icon>mdi-eye</v-icon>
               </v-btn>
             </template>
-            <span class="caption">Editar</span>
+            <span class="caption">Ver</span>
           </v-tooltip>
         </td>
       </tr>
@@ -64,7 +65,7 @@
 
 <script>
 export default {
-  name: 'loan-list',
+  name: 'qualification-list',
   props: {
     bus: {
       type: Object,
