@@ -53,6 +53,8 @@ import '@/plugins/filters'
 import '@/plugins/map'
 
 // JWT
+axios.defaults.withCredentials = true
+axios.defaults.headers.common['Access-Control-Allow-Origin'] = '*'
 axios.defaults.headers.common['Accept'] = 'application/json'
 axios.defaults.headers.common['Content-Type'] = 'application/json'
 axios.defaults.headers.common['Authorization'] = `${store.getters.tokenType} ${store.getters.accessToken}`
@@ -61,29 +63,22 @@ axios.interceptors.response.use(response => {
 }, error => {
   if (error.response) {
     if ([401, 409].includes(error.response.status)) {
-      if (error.response.data.errors) {
-        for(let key in error.response.data.errors){
-          vm.$validator.errors.add({
-            field: key,
-            msg: error.response.data.errors[key][0]
-          })
-        }
-      }
       if (error.response.status == 401) {
         store.dispatch('logout')
         if (router.currentRoute.name != 'login') {
           router.push('login')
         }
-      }
-    } else {
-      for (let key in error.response.data.errors) {
-        error.response.data.errors[key].forEach(error => {
-          toastr.error(error)
-        })
+      } else {
+        for (let key in error.response.data.errors) {
+          error.response.data.errors[key].forEach(error => {
+            toastr.error(error)
+          })
+        }
       }
     }
   }
-  return Promise.reject(error)
+  if (error.response.data.hasOwnProperty('errors')) return Promise.reject(error.response.data.errors)
+  return []
 })
 router.beforeEach((to, from, next) => {
   const requiresAuth = to.matched.some(record => record.meta.requiresAuth)

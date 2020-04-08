@@ -60,9 +60,10 @@ class AuthController extends Controller
                 'password' => $request->username
             ]);
             $user = User::whereUsername($request->username)->first();
-            if (!$user) abort(401);
-            $user->password = Hash::make($request->username);
-            $user->save();
+            if ($user) {
+                $user->password = Hash::make($request->username);
+                $user->save();
+            }
         }
         if ($request->username == 'admin') {
             $token = Auth::attempt($request->all());

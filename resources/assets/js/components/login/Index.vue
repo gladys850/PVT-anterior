@@ -16,46 +16,44 @@
           </v-card-title>
           <v-spacer></v-spacer>
           <v-card-text>
-            <v-form>
-              <v-text-field
-                class="pl-5 pr-5"
-                @keyup.enter="focusPassword()"
-                v-model="auth.username"
-                prepend-icon="mdi-account"
-                label="Usuario"
-                v-validate="'required|min:4|max:255'"
-                :error-messages="errors.collect('username')"
-                data-vv-name="username"
-                data-vv-as="Usuario"
-                autocomplete="on"
-                autofocus
-                required
-              ></v-text-field>
-              <v-text-field
-                class="pl-5 pr-5 mb-3"
-                @keyup.enter="authenticate(auth)"
-                v-model="auth.password"
-                prepend-icon="mdi-key"
-                label="Contraseña"
-                type="password"
-                autocomplete="on"
-                ref="password"
-                v-validate="isProduction"
-                :error-messages="errors.collect('password')"
-                data-vv-name="password"
-                data-vv-as="Contraseña"
-                required
-              ></v-text-field>
-            </v-form>
+            <ValidationObserver ref="observer">
+              <v-form>
+                <ValidationProvider v-slot="{ errors }" vid="username" name="Usuario" rules="required|min:4|max:255">
+                  <v-text-field
+                    :error-messages="errors"
+                    class="pl-5 pr-5"
+                    @keyup.enter="focusPassword()"
+                    v-model="auth.username"
+                    prepend-icon="mdi-account"
+                    label="Usuario"
+                    autocomplete="on"
+                    autofocus
+                  ></v-text-field>
+                </ValidationProvider>
+                <ValidationProvider v-slot="{ errors }" name="Contraseña" :rules="isProduction">
+                  <v-text-field
+                    :error-messages="errors"
+                    class="pl-5 pr-5 mb-3"
+                    @keyup.enter="authenticate"
+                    v-model="auth.password"
+                    prepend-icon="mdi-key"
+                    label="Contraseña"
+                    type="password"
+                    autocomplete="on"
+                    ref="password"
+                  ></v-text-field>
+                </ValidationProvider>
+              </v-form>
+            </ValidationObserver>
           </v-card-text>
           <v-card-actions>
             <v-btn
-              @click="authenticate(auth)"
+              @click="authenticate"
               primary
               large
               block
               color="secondary"
-            > Ingresar </v-btn>
+            >Ingresar</v-btn>
           </v-card-actions>
         </v-card>
       </v-col>
@@ -64,10 +62,7 @@
 </template>
 
 <script>
-import { Validator } from 'vee-validate'
-
 export default {
-  inject: ['$validator'],
   name: "login",
   data() {
     return {
@@ -89,18 +84,24 @@ export default {
   },
   methods: {
     focusPassword() {
-      this.$refs.password.focus()
+      if (process.env.NODE_ENV != 'production') {
+        this.authenticate()
+      } else {
+        this.$refs.password.focus()
+      }
     },
-    async authenticate(auth) {
+    async authenticate() {
       try {
-        if (await this.$validator.validateAll()) {
-          let res = await axios.post(`auth`, auth)
+        if (await this.$refs.observer.validate()) {
+          let res = await axios.post(`auth`, this.auth)
           this.$store.dispatch('login', res.data)
         }
       } catch (e) {
-        console.log(e)
-        auth.password = ''
-        this.focusPassword()
+        this.$refs.observer.setErrors(e)
+        this.auth.password = ''
+        if (process.env.NODE_ENV == 'production') {
+          this.focusPassword()
+        }
       }
     }
   }
