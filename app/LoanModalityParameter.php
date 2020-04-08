@@ -7,7 +7,10 @@ use App\ProcedureModality;
 
 class LoanModalityParameter extends Model
 {
-    public $timestamps = true;
+    protected $primaryKey = null;
+    public $incrementing = false;
+    public $timestamps = false;
+
     public $fillable = [
         'procedure_modality_id',
         'debt_index',
