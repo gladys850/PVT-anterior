@@ -1,5 +1,7 @@
 <template>
   <v-container fluid >
+    <ValidationObserver ref="observer">
+    <v-form>
       <v-row justify="center">
         <v-col cols="12" md="7" >
               <v-container class="py-0">
@@ -8,17 +10,17 @@
                     <v-toolbar-title>INFORMACION CONYUGE</v-toolbar-title>
                   </v-col>
                     <v-col cols="12" md="6" >
+                      <ValidationProvider v-slot="{ errors }" vid="first_name" name="primer nombre" rules="required|min:1|max:250">
                       <v-text-field
+                      :error-messages="errors"
                       dense
                       v-model="spouse.first_name"
                       class="purple-input"
                       label="Primer Nombre"
-                      v-validate="'required|min:1|max:250'"
-                      :error-messages="errors.collect('primer nombre')"
-                      data-vv-name="primer nombre"
                       :readonly="!editable || !permission.secondary"
                       :outlined="editable && permission.secondary"
                       ></v-text-field>
+                      </ValidationProvider>
                     </v-col>
                     <v-col cols="12" md="6" >
                       <v-text-field
@@ -26,67 +28,65 @@
                       v-model="spouse.second_name"
                       label="Segundo Nombre"
                       class="purple-input"
-                      data-vv-name="segundo nombre"
                       :readonly="!editable || !permission.secondary"
                       :outlined="editable && permission.secondary"
                       ></v-text-field>
                     </v-col>
                     <v-col cols="12" md="4" >
+                      <ValidationProvider v-slot="{ errors }" vid="last_name" name="primer apellido" rules="min:1|max:250">
                       <v-text-field
+                      :error-messages="errors"
                       dense
                       v-model="spouse.last_name"
                       label="Primer Apellido"
                       class="purple-input"
-                      v-validate="'min:1|max:250'"
-                      :error-messages="errors.collect('primer apellido')"
-                      data-vv-name="primer apellido"
                       :readonly="!editable || !permission.secondary"
                       :outlined="editable && permission.secondary"
                       ></v-text-field>
+                      </ValidationProvider>
                     </v-col>
                     <v-col cols="12" md="4" >
+                      <ValidationProvider v-slot="{ errors }" vid="mothers_last_name" name="segundo apellido" rules="min:1|max:250">
                       <v-text-field
+                      :error-messages="errors"
                       dense
                       v-model="spouse.mothers_last_name"
                       label="Segundo Apellido"
                       class="purple-input"
-                      v-validate="'min:1|max:250'"
-                      :error-messages="errors.collect('segundo apellido')"
-                      data-vv-name="segundo apellido"
                       :readonly="!editable || !permission.secondary"
                       :outlined="editable && permission.secondary"
                       ></v-text-field>
+                      </ValidationProvider>
                     </v-col>
                     <v-col cols="12" md="4" >
+                      <ValidationProvider v-slot="{ errors }" vid="surname_husband" name="apellido casado" rules="min:1|max:250">
                       <v-text-field
+                      :error-messages="errors"
                       dense
                       v-model="spouse.surname_husband"
                       label="Apellido Casada"
                       class="purple-input"
-                      v-validate="'min:1|max:250'"
-                      :error-messages="errors.collect('apellido casado')"
-                      data-vv-name="apellido casado"
                       :readonly="!editable || !permission.secondary"
                       :outlined="editable && permission.secondary"
                       ></v-text-field>
+                      </ValidationProvider>
                     </v-col>
                     <v-col cols="12" md="4" >
+                      <ValidationProvider v-slot="{ errors }" vid="identity_card" name="cédula identidad" rules="required|min:1|max:50">
                       <v-text-field
-                      dense
+                        :error-messages="errors"
+                        dense
                         v-model="spouse.identity_card"
                         class="purple-input"
                         label="Cedula de Identidad"
-                        v-validate="'required|min:1|max:50'"
-                        :error-messages="errors.collect('cedula identidad')"
-                        data-vv-name="cedula identidad"
                         :readonly="!editable || !permission.secondary"
                         :outlined="editable && permission.secondary"
                       ></v-text-field>
+                      </ValidationProvider>
                     </v-col>
                     <v-col cols="12" md="5" >
                       <v-select
                         dense
-                        data-vv-name="Ciudad de Expedición"
                         :items="cities"
                         item-text="name"
                         item-value="id"
@@ -135,7 +135,6 @@
                       <v-select
                         dense
                         :loading="loading"
-                        data-vv-name="Ciudad de Nacimiento"
                         :items="cities"
                         item-text="name"
                         item-value="id"
@@ -150,7 +149,6 @@
                       <v-select
                         dense
                         :loading="loading"
-                        data-vv-name="Estado Civil"
                         :items="civil"
                         item-text="name"
                         item-value="value"
@@ -198,17 +196,17 @@
                       ></v-text-field>
                     </v-col>
                     <v-col cols="12" md="4">
+                      <ValidationProvider v-slot="{ errors }" vid="death_certificate_number" name="cert. de defunción" rules="min:1|max:20">
                       <v-text-field
+                      :error-messages="errors"
                       dense
                       v-model="spouse.death_certificate_number"
                       label="Cert. de Defunción"
                       class="purple-input"
-                      v-validate="'min:1|max:20'"
-                      :error-messages="errors.collect('cert. de defunción')"
-                      data-vv-name="cert. de defunción"
                       :readonly="!editable || !permission.secondary"
                       :outlined="editable && permission.secondary"
                       ></v-text-field>
+                      </ValidationProvider>
                     </v-col>
                 </v-row>
               </v-container>
@@ -218,43 +216,43 @@
             <v-toolbar-title>INFORMACION DE SERECI</v-toolbar-title>
           </v-col>
           <v-col cols="12"  >
+            <ValidationProvider v-slot="{ errors }" vid="official" name="oficialía" rules="min:1|max:250">
             <v-text-field
+              :error-messages="errors"
               dense
               v-model="spouse.official"
               label="Oficialia"
               class="purple-input"
-              v-validate="'min:1|max:250'"
-              :error-messages="errors.collect('oficialia')"
-              data-vv-name="oficialia"
               :readonly="!editable || !permission.secondary"
               :outlined="editable && permission.secondary"
             ></v-text-field>
+            </ValidationProvider>
           </v-col>
           <v-col cols="12" >
+            <ValidationProvider v-slot="{ errors }" vid="book" name="libro" rules="min:1|max:250">
             <v-text-field
+              :error-messages="errors"
               dense
               v-model="spouse.book"
               label="Libro"
               class="purple-input"
-              v-validate="'min:1|max:250'"
-              :error-messages="errors.collect('libro')"
-              data-vv-name="libro"
               :readonly="!editable || !permission.secondary"
               :outlined="editable && permission.secondary"
             ></v-text-field>
+            </ValidationProvider>
           </v-col>
           <v-col cols="12" >
+            <ValidationProvider v-slot="{ errors }" vid="departure" name="partida" rules="min:1|max:250">
             <v-text-field
+              :error-messages="errors"
               dense
               v-model="spouse.departure"
               label="Partida"
               class="purple-input"
-              v-validate="'min:1|max:250'"
-              :error-messages="errors.collect('partida')"
-              data-vv-name="partida"
               :readonly="!editable || !permission.secondary"
               :outlined="editable && permission.secondary"
             ></v-text-field>
+            </ValidationProvider>
           </v-col>
           <v-col cols="12"  >
             <v-menu
@@ -284,13 +282,14 @@
           </v-col>
         </v-col>
       </v-row>
+    </v-form>
+    </ValidationObserver>
   </v-container>
 </template>
 <script>
 import { Validator } from 'vee-validate'
 
 export default {
-  inject: ['$validator'],
   name: "affiliate-spouse",
   props: {
     spouse: {

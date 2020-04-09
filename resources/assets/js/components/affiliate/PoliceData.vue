@@ -166,10 +166,8 @@
 </template>
 
 <script>
-
-
 export default {
- 
+
   name: "affiliate-police-data",
   props: {
     affiliate: {

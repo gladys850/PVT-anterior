@@ -2,17 +2,19 @@
   <v-container fluid>
     <v-card>
       <v-card-text>
+        <ValidationObserver ref="observer">
+        <v-form>
         <v-layout row wrap>
             <v-flex xs3 class="px-2">
             <fieldset class="pa-3">
               <legend class=" mx-2 px-1">Boletas de Pago</legend>
+                <ValidationProvider v-slot="{ errors }" name="1ra boleta" rules="required|numeric|min:1|max:10" mode="aggressive">
                 <v-text-field
+                  :error-messages="errors"
                   label="1a Boleta"
                   v-model="boletas[0]"
-                  v-validate="'required|numeric|min:1|max:10'"
-                  :error-messages="errors.collect('1ra boleta')"
-                  data-vv-name="1ra boleta"
                 ></v-text-field>
+                </ValidationProvider>
             </fieldset>
             </v-flex>
             <v-flex xs3 class="px-2">
@@ -47,24 +49,23 @@
               <legend class=" mx-2 px-1">Datos del Préstamo</legend>
               <template>
                 Plazo en meses 
+                <ValidationProvider v-slot="{ errors }" name="meses plazo" rules="required|numeric|between::1,2" mode="aggressive">
                 <v-text-field
+                :error-messages="errors"
                 label="Introduzca plazo"
                 v-model="plazo_meses_lp"
-                v-validate="`required|numeric|min_value:1|max_value:2`"
-                :error-messages="errors.collect('meses plazo')"
-                data-vv-name="meses plazo"
                 ></v-text-field>
+                </ValidationProvider>
               </template>
                 <template>
                 Monto solicitado
+                <ValidationProvider v-slot="{ errors }" name="monto solicitado" rules="required|numeric|between:1,2000" mode="aggressive">
                 <v-text-field
+                :error-messages="errors"
                 label="Introduzca monto"
                 v-model ="monto_solicitado"
-                v-validate="'required|numeric|min_value:1|max_value:2000'"
-                :error-messages="errors.collect('monto solicitado')"
-                data-vv-name="monto solicitado"
                 ></v-text-field>
-                <p class="red--text">{{ monto_solicitado>2000 ? "(Para acceder a un Anticipo el monto debe ser menor a 2000)" :"" }}</p>
+                </ValidationProvider>
               </template>
             </fieldset>
           </v-flex>
@@ -81,6 +82,8 @@
             </fieldset>
           </v-flex>
         </v-layout>
+        </v-form>
+        </ValidationObserver>
         </v-card-text>
         </v-card>
   </v-container>
@@ -88,10 +91,7 @@
 </template>
 
 <script>
-import { Validator } from 'vee-validate'
-
 export default {
-  inject: ['$validator'],
   name: 'largo-plazo',
   data: () => ({
     boletas: [null],
@@ -100,11 +100,6 @@ export default {
     monto_solicitado : null,
     loanTypeSelected:null,
   }),
-  watch: {
-    monto_solicitado() {
-      this.$validator.validateAll()
-    },
-  },
   computed: {
 
       suma_bono() {

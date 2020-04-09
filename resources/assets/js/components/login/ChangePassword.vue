@@ -17,47 +17,52 @@
           </template>
           <template v-if="!loading">
             <v-card-title></v-card-title>
-            <v-card-text>
-              <form>
-                <v-text-field
-                  v-validate="'required|min:5|max:255'"
-                  v-model="oldPassword"
-                  label="Contraseña Anterior"
-                  type="password"
-                  autocomplete="off"
-                  ref="oldPassword"
-                  name="contraseña anterior"
-                  :error-messages="errors.collect('contraseña anterior')"
-                  @keyup.enter="$refs['newPassword'].focus()"
-                ></v-text-field>
-                <v-text-field
-                  v-validate="'required|min:5|max:255'"
-                  v-model="newPassword"
-                  label="Contraseña Nueva"
-                  type="password"
-                  autocomplete="off"
-                  ref="newPassword"
-                  name="contraseña nueva"
-                  :error-messages="errors.collect('contraseña nueva')"
-                  @keyup.enter="$refs['confirmPassword'].focus()"
-                ></v-text-field>
-                <v-text-field
-                  v-validate="'required|min:5|max:255'"
-                  v-model="confirmPassword"
-                  label="Repita la Contraseña"
-                  type="password"
-                  autocomplete="off"
-                  ref="confirmPassword"
-                  name="confirmación de contraseña"
-                  :error-messages="errors.collect('confirmación de contraseña')"
-                  @keyup.enter="updatePassword()"
-                ></v-text-field>
-              </form>
-            </v-card-text>
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn color="error" @click="updatePassword()">Cambiar contraseña</v-btn>
-            </v-card-actions>
+            <ValidationObserver ref="observer" v-slot="{ invalid }">
+              <v-form>
+                <v-card-text>
+                  <ValidationProvider v-slot="{ errors }" vid="oldPassword" name="contraseña anterior" rules="required|min:5|max:255">
+                    <v-text-field
+                      :error-messages="errors"
+                      v-model="oldPassword"
+                      label="Contraseña Anterior"
+                      type="password"
+                      autocomplete="off"
+                      ref="oldPassword"
+                      name="contraseña anterior"
+                      @keyup.enter="$refs['newPassword'].focus()"
+                    ></v-text-field>
+                  </ValidationProvider>
+                  <ValidationProvider v-slot="{ errors }" vid="newPassword" name="contraseña nueva" rules="required|min:5|max:255">
+                    <v-text-field
+                      :error-messages="errors"
+                      v-model="newPassword"
+                      label="Contraseña Nueva"
+                      type="password"
+                      autocomplete="off"
+                      ref="newPassword"
+                      name="contraseña nueva"
+                      @keyup.enter="$refs['confirmPassword'].focus()"
+                    ></v-text-field>
+                  </ValidationProvider>
+                  <ValidationProvider v-slot="{ errors }" vid="confirmPassword" name="confirmación de contraseña" rules="required|min:5|max:255|confirmed:newPassword" mode="aggressive">
+                    <v-text-field
+                      :error-messages="errors"
+                      v-model="confirmPassword"
+                      label="Repita la Contraseña"
+                      type="password"
+                      autocomplete="off"
+                      ref="confirmPassword"
+                      name="confirmación de contraseña"
+                      @keyup.enter="updatePassword()"
+                    ></v-text-field>
+                  </ValidationProvider>
+                </v-card-text>
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+                  <v-btn :disabled="invalid" color="error" @click="updatePassword()">Cambiar contraseña</v-btn>
+                </v-card-actions>
+              </v-form>
+            </ValidationObserver>
           </template>
           <Loading v-else/>
         </v-card>
@@ -68,10 +73,8 @@
 
 <script>
 import Loading from '@/components/shared/Loading'
-import { Validator } from 'vee-validate'
 
 export default {
-  inject: ['$validator'],
   name: 'change-password',
   components: {
     Loading
@@ -93,14 +96,13 @@ export default {
   methods: {
     clearForm() {
       this.oldPassword = this.newPassword = this.confirmPassword = null
-      this.$validator.reset()
     },
     close() {
       this.dialog = false
     },
     async updatePassword() {
       try {
-        if (await this.$validator.validateAll()) {
+        if (await this.$refs.observer.validate()) {
           if (this.newPassword != this.confirmPassword) {
             this.newPassword = this.confirmPassword = null
             this.$refs.newPassword.focus()
