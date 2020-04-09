@@ -1,5 +1,7 @@
 <template>
   <v-container fluid >
+    <ValidationObserver ref="observer">
+    <v-form>
       <v-row justify="center">
         <v-col cols="12" md="11" class="v-card-profile" >
               <v-row justify="center">
@@ -11,7 +13,6 @@
                 dense
                 :loading="loading"
                 :items="affiliateState"
-                data-vv-name="Estado"
                 item-text="name"
                 item-value="id"
                 label="Estado"
@@ -52,7 +53,6 @@
             <v-select
                 dense
                 :loading="loading"
-                data-vv-name="Grado"
                 :items="degree"
                 item-text="name"
                 item-value="id"
@@ -68,7 +68,6 @@
               <v-select
                 dense
                 :loading="loading"
-                data-vv-name="categoria"
                 :items="category"
                 item-text="name"
                 item-value="id"
@@ -81,36 +80,35 @@
               ></v-select>
             </v-col>
             <v-col cols="12" md="4">
+              <ValidationProvider v-slot="{ errors }" vid="service_years" name="Años de servicio" rules="numeric|min_value:0|max_value:100">
               <v-text-field
+                :error-messages="errors"
                 dense
                 v-model="affiliate.service_years"
                 label="Años de Servicio"
-                v-validate="`numeric||min_value:0|max_value:100`"
-                :error-messages="errors.collect('year')"
-                data-vv-name="year"
                 :readonly="!editable || !permission.primary"
                 :outlined="editable && permission.primary"
                 :disabled="editable && !permission.primary"
               ></v-text-field>
+              </ValidationProvider>
             </v-col>
             <v-col cols="12" md="4" >
+              <ValidationProvider v-slot="{ errors }" vid="service_months" name="Meses de servicio" rules="numeric|min_value:0|max_value:12">
               <v-text-field
+                :error-messages="errors"
                 dense
                 v-model="affiliate.service_months"
                 label="Meses de Servicio"
-                v-validate="'numeric|min_value:0|max_value:12'"
-                :error-messages="errors.collect('months')"
-                data-vv-name="months"
                 :readonly="!editable || !permission.primary"
                 :outlined="editable && permission.primary"
                 :disabled="editable && !permission.primary"
               ></v-text-field>
+              </ValidationProvider>
             </v-col>
             <v-col cols="12"  md="6" >
               <v-select
                 dense
                 :loading="loading"
-                data-vv-name="Gestor"
                 :items="pension_entity"
                 item-text="name"
                 item-value="id"
@@ -150,14 +148,13 @@
           </v-row>
         </v-col>
       </v-row>
+    </v-form>
+    </ValidationObserver>
   </v-container>
 </template>
 
 <script>
-import { Validator } from 'vee-validate'
-
 export default {
-  inject: ['$validator'],
   name: "affiliate-police-data",
   props: {
     affiliate: {
