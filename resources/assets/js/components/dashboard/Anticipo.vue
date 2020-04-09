@@ -49,7 +49,7 @@
               <legend class=" mx-2 px-1">Datos del Préstamo</legend>
               <template>
                 Plazo en meses 
-                <ValidationProvider v-slot="{ errors }" name="meses plazo" rules="required|numeric|min_value:1|max_value:2" mode="aggressive">
+                <ValidationProvider v-slot="{ errors }" name="meses plazo" rules="required|numeric|between::1,2" mode="aggressive">
                 <v-text-field
                 :error-messages="errors"
                 label="Introduzca plazo"
@@ -59,7 +59,7 @@
               </template>
                 <template>
                 Monto solicitado
-                <ValidationProvider v-slot="{ errors }" name="monto solicitado" rules="required|numeric|min_value:1|max_value:2000" mode="aggressive">
+                <ValidationProvider v-slot="{ errors }" name="monto solicitado" rules="required|numeric|between:1,2000" mode="aggressive">
                 <v-text-field
                 :error-messages="errors"
                 label="Introduzca monto"
