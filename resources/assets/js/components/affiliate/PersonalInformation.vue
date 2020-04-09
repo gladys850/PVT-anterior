@@ -354,5 +354,5 @@ import AddStreet from '@/components/affiliate/AddStreet'
     }
   
   }
-  }
+}
 </script>
