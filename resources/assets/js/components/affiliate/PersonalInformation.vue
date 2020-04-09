@@ -22,7 +22,7 @@
                           <v-icon>mdi-plus</v-icon>
                         </v-btn>
                       </template>
-                      <v-text-field disabled >{{updateTelefono()}}</v-text-field>
+                    
                       <span>Añadir Dirección</span>
                     </v-tooltip>
                   </v-col>
@@ -103,12 +103,12 @@
               <v-text-field
                 :error-messages="errors"
                 dense
-                v-model="getTelefono[0]"
+                v-model="cel[0]"
                 label="Celular 1"
                 :readonly="!editable || !permission.secondary"
                 :outlined="editable && permission.secondary"
                 :disabled="editable && !permission.secondary"
-
+                @change="updateCelular()"
               ></v-text-field>
               </ValidationProvider>
             </v-col>
@@ -117,11 +117,12 @@
               <v-text-field class = "text-right"
                 :error-messages="errors"
                 dense
-                v-model="getTelefono[1]"
+                v-model="cel[1]"
                 label="Celular 2"
                 :readonly="!editable || !permission.secondary"
                 :outlined="editable && permission.secondary"
                 :disabled="editable && !permission.secondary" 
+                @change="updateCelular()"
               ></v-text-field>
               </ValidationProvider>
             </v-col>
@@ -216,7 +217,7 @@ import AddStreet from '@/components/affiliate/AddStreet'
   data: () => ({
     loading: true,
     dialog: false,
-    telefono:[null,null],
+    cel:[null,null],
     editable: false,
     cities: [],
     headers: [
@@ -250,22 +251,11 @@ import AddStreet from '@/components/affiliate/AddStreet'
       } else {
         return this.$store.getters.permissions.includes('create-affiliate')
       }
-    },
-    getTelefono(){
-      if(this.affiliate.cell_phone_number==null)
-      {
-        return 0
-      }
-      else
-      {
-        let array=this.affiliate.cell_phone_number.split(',');
-      return array
-      }
-  }
+    }
   },
   beforeMount() {
-    this.getCities();
-    this.updateTelefono();
+    this.getCities()
+    this.getCelular()
   },
   mounted() {
       this.bus.$on('saveAddress', (address) => {
@@ -290,22 +280,15 @@ import AddStreet from '@/components/affiliate/AddStreet'
     async getCities() {
     try {
       this.loading = true
-      let res = await axios.get(`city`);
-      this.cities = res.data;
+      let res = await axios.get(`city`)
+      this.cities = res.data
     } catch (e) {
-      this.dialog = false;
-      console.log(e);
+      this.dialog = false
+      console.log(e)
     }finally {
         this.loading = false
       }
   },
-    updateTelefono(){
-      this.telefono[0]= this.getTelefono[0];
-      this.telefono[1]= this.getTelefono[1];
-      let celular=this.telefono.join(',')
-      this.affiliate.cell_phone_number=celular
-      return  this.affiliate.cell_phone_number
-    },
     async saveAffiliate() {
       try {
         if (!this.editable) {
@@ -328,6 +311,41 @@ import AddStreet from '@/components/affiliate/AddStreet'
         this.loading = false
       }
     },
+     getCelular(){
+      let part
+      if(this.affiliate.cell_phone_number!==null)
+      {
+        part=this.affiliate.cell_phone_number.split(',')
+      }      
+      this.cel[0]= part[0]
+      this.cel[1]= part[1]      
+    },
+    updateCelular(){
+      let count = 0
+      let val = 0
+      if(this.cel[0]){
+        if(this.cel[0].trim() !== ''){
+          this.cel[0]=this.cel[0].trim()
+          count++
+          val = 0
+        }        
+      }
+      if(this.cel[1]){
+        if(this.cel[1].trim() !== ''){
+          this.cel[1]=this.cel[1].trim()
+          count++
+          val = 1
+        }        
+      }
+      if(count == 0){
+        this.affiliate.cell_phone_number=null
+      } else if(count == 1){
+        this.affiliate.cell_phone_number=this.cel[val]
+      } else {
+        this.affiliate.cell_phone_number=this.cel.join(',')
+      }
+    }
+  
   }
   }
 </script>

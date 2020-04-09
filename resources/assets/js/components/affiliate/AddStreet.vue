@@ -142,7 +142,7 @@ export default {
           this.bus.$emit('saveAddress', res.data)
           }
       } catch (e) {
-        this.$refs.observer.setErrors(e)
+        console.log(e)
       } finally {
         this.loading = false
       }
