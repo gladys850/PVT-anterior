@@ -4,6 +4,8 @@
     <v-row justify="center">
       <v-col cols="12"  >
         <v-container class="py-0">
+          <ValidationObserver ref="observer">
+          <v-form>
           <v-row>
             <v-col cols="12" md="4" class="py-0">
               Modalidad Prestamo
@@ -15,36 +17,40 @@
               Plazo Meses
             </v-col>
             <v-col cols="12" md="4" class="py-0">
+              <ValidationProvider v-slot="{ errors }" name="Modalidad" rules="required">
               <v-select
+                :error-messages="errors"
                 dense
-                v-validate="'required'"
-                v-model="loanTypeSelected"
-                data-vv-name="modalities"
                 :onchange="Onchange()"
                 :items="modalities"
+                v-model="loanTypeSelected"
                 item-text="name"
                 item-value="id"
               ></v-select>
             </v-col>
             <v-col cols="12" md="4" class="py-0">
+              <ValidationProvider v-slot="{ errors }" name="monto" rules="min:1|max:20">
               <v-text-field
+                :error-messages="errors"
                 dense
                 readonly
-                v-validate.initial="'min:1|max:20'"
-                data-vv-name="monto"
                 v-model="monto"
               ></v-text-field>
+              </ValidationProvider>
             </v-col>
             <v-col cols="12" md="4" class="py-0" >
+              <ValidationProvider v-slot="{ errors }" name="plazo" rules="min:1|max:20">
               <v-text-field
+                :error-messages="errors"
                 dense
                 readonly
-                v-validate.initial="'min:1|max:20'"
-                data-vv-name="plazo"
                 v-model="plazo"
               ></v-text-field>
+              </ValidationProvider>
             </v-col>
           </v-row>
+          </v-form>
+          </ValidationObserver>
         </v-container>
       </v-col>
     </v-row>
@@ -52,10 +58,8 @@
   </v-container>
 </template>
 <script>
-import { Validator } from 'vee-validate'
 import Ballots from '@/components/loan/Ballots'
   export default {
-  inject: ['$validator'],
   name: "loan-information",
   data: () => ({
     monto:null,
