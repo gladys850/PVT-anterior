@@ -1,5 +1,7 @@
 <template>
   <v-flex xs12 class="px-3">
+    <ValidationObserver ref="observer">
+    <v-form>
     <v-row justify="center">
       <v-col cols="12"  >
         <v-card>
@@ -18,16 +20,17 @@
                       INTERVALO DEL PLAZO EN MESES
                     </v-col>
                     <v-col cols="12" md="4" class="py-0">
+                      <ValidationProvider v-slot="{ errors }" vid="modalities" name="Modalidad" rules="required">
                       <v-select
+                        :error-messages="errors"
                         dense
-                        v-validate="'required'"
                         v-model="loanTypeSelected"
-                        data-vv-name="modalities"
                         :onchange="Onchange()"
                         :items="modalities"
                         item-text="name"
                         item-value="id"
                       ></v-select>
+                      </ValidationProvider>
                     </v-col>
                     <v-col cols="12" md="4" class="py-0 text-center">
                       {{monto}}
@@ -46,103 +49,103 @@
                 BOLETAS DE PAGO
               </v-col>
               <v-col cols="12" md="4" class="py-0"  >
+                <ValidationProvider v-slot="{ errors }" name="1ra Boleta" rules="min:1|max:20">
                 <v-text-field
+                  :error-messages="errors"
                   dense
                   v-model="payable_liquid[0]"
-                  v-validate.initial="'min:1|max:20'"
-                  :error-messages="errors.collect('1raBoleta')"
-                  data-vv-name="1raBoleta"
                   label="1ra Boleta"
                   :readonly="!editar"
                   :outlined="editar"
                 ></v-text-field>
+                </ValidationProvider>
               </v-col>
               <v-col cols="12" md="4" class="py-0" v-if="visible">
+                <ValidationProvider v-slot="{ errors }" name="2ra Boleta" rules="min:1|max:20">
                 <v-text-field
+                  :error-messages="errors"
                   dense
                   v-model="payable_liquid[1]"
-                  v-validate.initial="'min:1|max:20'"
-                  :error-messages="errors.collect('2daBoleta')"
-                  data-vv-name="2daBoleta"
                   label="2ra Boleta"
                   :readonly="!editar"
                   :outlined="editar"
                 ></v-text-field>
+                </ValidationProvider>
               </v-col>
               <v-col cols="12" md="4" class="py-0" v-if="visible" >
+                <ValidationProvider v-slot="{ errors }" name="3ra Boleta" rules="min:1|max:20">
                 <v-text-field
+                  :error-messages="errors"
                   dense
                   v-model="payable_liquid[2]"
-                  v-validate.initial="'min:1|max:20'"
-                  :error-messages="errors.collect('3raBoleta')"
-                  data-vv-name="3raBoleta"
                   label="3ra Boleta"
                   :readonly="!editar"
                   :outlined="editar"
                 ></v-text-field>
+                </ValidationProvider>
               </v-col>
               <v-col cols="12" class="py-0" >
                 BONOS
               </v-col>
               <v-col cols="12" md="3" >
+                <ValidationProvider v-slot="{ errors }" name="1er Bono" rules="min:1|max:20">
                 <v-text-field
+                  :error-messages="errors"
                   dense
                   v-model="bonos[0]"
-                  v-validate.initial="'min:1|max:20'"
-                  :error-messages="errors.collect('1erBono')"
-                  data-vv-name="1erBono"
                   label="Bono Frontera"
                   :readonly="!editar"
                   :outlined="editar"
                 ></v-text-field>
+                </ValidationProvider>
               </v-col>
               <v-col cols="12" md="3">
+                <ValidationProvider v-slot="{ errors }" name="2do Bono" rules="min:1|max:20">
                 <v-text-field
+                  :error-messages="errors"
                   dense
                   v-model="bonos[1]"
-                  v-validate.initial="'min:1|max:20'"
-                  :error-messages="errors.collect('2doBono')"
-                  data-vv-name="2doBono"
                   label="Bono Oriente"
                   :readonly="!editar"
                   :outlined="editar"
                 ></v-text-field>
+                </ValidationProvider>
               </v-col>
               <v-col cols="12" md="3" >
+                <ValidationProvider v-slot="{ errors }" name="3er Bono" rules="min:1|max:20">
                 <v-text-field
+                  :error-messages="errors"
                   dense
                   v-model="bonos[2]"
-                  v-validate.initial="'min:1|max:20'"
-                  :error-messages="errors.collect('3erBono')"
-                  data-vv-name="3erBono"
                   label="Bono Cargo"
                   :readonly="!editar"
                   :outlined="editar"
                 ></v-text-field>
+                </ValidationProvider>
               </v-col>
               <v-col cols="12" md="3">
+                <ValidationProvider v-slot="{ errors }" name="4to Bono" rules="min:1|max:20">
                 <v-text-field
+                  :error-messages="errors"
                   dense
                   v-model="bonos[3]"
-                  v-validate.initial="'min:1|max:20'"
-                  :error-messages="errors.collect('4toBono')"
-                  data-vv-name="4toBono"
                   label="Bono Seguridad Ciudadana"
                   :readonly="!editar"
                   :outlined="editar"
                 ></v-text-field>
+                </ValidationProvider>
               </v-col>
             </v-row>
           </v-container>
         </v-card>
       </v-col>
     </v-row>
+    </v-form>
+    </ValidationObserver>
   </v-flex>
 </template>
 <script>
-import { Validator } from 'vee-validate'
 export default {
-  inject: ['$validator'],
   name: "dashboard-index",
   data: () => ({
     editar:true,
