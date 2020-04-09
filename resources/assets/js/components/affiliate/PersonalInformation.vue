@@ -59,7 +59,9 @@
                   </v-col>
             </v-row>
           </v-card>
-         <v-card>
+          <ValidationObserver ref="observer">
+          <v-form>
+          <v-card>
             <v-row class="ma-0 pa-0">
              <v-col cols="12" class="py-2">
               <v-toolbar-title>CIUDAD EXPEDICIÓN CI.</v-toolbar-title>
@@ -73,8 +75,10 @@
                       ></v-text-field>
                     </v-col>
                     <v-col cols="12" md="6" >
+                      <ValidationProvider v-slot="{ errors }" vid="city_identity_card_id" name="Ciudad de Expedición" rules="required|integer|min:1">
                       <v-select
                         dense
+                        :error-messages="errors"
                         :items="cities"
                         item-text="name"
                         item-value="id"
@@ -85,9 +89,12 @@
                         :outlined="editable && permission.secondary"
                         :disabled="editable && !permission.secondary"
                       ></v-select>
+                      </ValidationProvider>
                     </v-col>
             </v-row>
           </v-card>
+          </v-form>>
+          </ValidationObserver>
         </v-container>
       </v-col>
       <v-col cols="12" md="3">
@@ -99,7 +106,7 @@
               <v-toolbar-title>TELÉFONOS</v-toolbar-title>
             </v-col>
             <v-col cols="12"  class="py-0" >
-              <ValidationProvider v-slot="{ errors }" vid="celular1" name="celular1" rules="min:1|max:20">
+              <ValidationProvider v-slot="{ errors }" vid="celular1" name="celular1" rules="min:1|max:12">
               <v-text-field
                 :error-messages="errors"
                 dense
@@ -113,7 +120,7 @@
               </ValidationProvider>
             </v-col>
             <v-col cols="12" class="py-0" >
-              <ValidationProvider v-slot="{ errors }" vid="celular" name="celular" rules="min:1|max:20">
+              <ValidationProvider v-slot="{ errors }" vid="celular" name="celular" rules="min:1|max:12">
               <v-text-field class = "text-right"
                 :error-messages="errors"
                 dense
@@ -127,7 +134,7 @@
               </ValidationProvider>
             </v-col>
             <v-col cols="12" class="py-0" >
-              <ValidationProvider v-slot="{ errors }" vid="telefono" name="telefono" rules="min:1|max:20">
+              <ValidationProvider v-slot="{ errors }" vid="telefono" name="telefono" rules="min:1|max:12">
               <v-text-field
                 :error-messages="errors"
                 dense

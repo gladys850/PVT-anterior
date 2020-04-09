@@ -1,5 +1,7 @@
 <template>
   <v-container fluid >
+    <ValidationObserver ref="observer">
+    <v-form>
       <v-row justify="center">
         <v-col cols="12" md="11" class="v-card-profile" >
               <v-row justify="center">
@@ -7,11 +9,12 @@
                 <v-toolbar-title>INFORMACION POLICIAL</v-toolbar-title>
               </v-col>
             <v-col cols="12" md="4" >
+              <ValidationProvider v-slot="{ errors }" vid="affiliate_state_id" name="Estado" rules="required">
               <v-select
+                :error-messages="errors"
                 dense
                 :loading="loading"
                 :items="affiliateState"
-                data-vv-name="Estado"
                 item-text="name"
                 item-value="id"
                 label="Estado"
@@ -20,6 +23,7 @@
                 :readonly="!editable || !permission.secondary"
                 :outlined="editable && permission.secondary"
               ></v-select>
+              </ValidationProvider>
             </v-col>
             <v-col cols="12" md="4" >
               <v-menu
@@ -49,10 +53,11 @@
               </v-menu>
             </v-col>
             <v-col cols="12" md="4" >
+            <ValidationProvider v-slot="{ errors }" vid="degree_id" name="Grado" rules="required">
             <v-select
                 dense
+                :error-messages="errors"
                 :loading="loading"
-                data-vv-name="Grado"
                 :items="degree"
                 item-text="name"
                 item-value="id"
@@ -63,12 +68,14 @@
                 :outlined="editable && permission.primary"
                 :disabled="editable && !permission.primary"
             ></v-select>
+            </ValidationProvider>
             </v-col>
             <v-col cols="12" md="4" >
+              <ValidationProvider v-slot="{ errors }" vid="category_id" name="Categoria" rules="required">
               <v-select
                 dense
+                :error-messages="errors"
                 :loading="loading"
-                data-vv-name="categoria"
                 :items="category"
                 item-text="name"
                 item-value="id"
@@ -79,38 +86,41 @@
                 :outlined="editable && permission.primary"
                 :disabled="editable && !permission.primary"
               ></v-select>
+              </ValidationProvider>
             </v-col>
             <v-col cols="12" md="4">
+              <ValidationProvider v-slot="{ errors }" vid="service_years" name="Años de Servicio" rules="numeric||min_value:0|max_value:100">
               <v-text-field
                 dense
+                :error-messages="errors"
                 v-model="affiliate.service_years"
                 label="Años de Servicio"
-                v-validate="`numeric||min_value:0|max_value:100`"
-                :error-messages="errors.collect('year')"
-                data-vv-name="year"
                 :readonly="!editable || !permission.primary"
                 :outlined="editable && permission.primary"
                 :disabled="editable && !permission.primary"
               ></v-text-field>
+              </ValidationProvider>
             </v-col>
             <v-col cols="12" md="4" >
+              <ValidationProvider v-slot="{ errors }" vid="service_months" name="Meses de Servicio" rules="renumeric|min_value:0|max_value:12">
               <v-text-field
                 dense
+                :error-messages="errors"
                 v-model="affiliate.service_months"
                 label="Meses de Servicio"
                 v-validate="'numeric|min_value:0|max_value:12'"
-                :error-messages="errors.collect('months')"
-                data-vv-name="months"
                 :readonly="!editable || !permission.primary"
                 :outlined="editable && permission.primary"
                 :disabled="editable && !permission.primary"
               ></v-text-field>
+               </ValidationProvider>
             </v-col>
             <v-col cols="12"  md="6" >
+              <ValidationProvider v-slot="{ errors }" vid="pension_entity_id" name="Ente Gestor" rules="required">
               <v-select
                 dense
+                :error-messages="errors"
                 :loading="loading"
-                data-vv-name="Gestor"
                 :items="pension_entity"
                 item-text="name"
                 item-value="id"
@@ -120,6 +130,7 @@
                 :readonly="!editable || !permission.secondary"
                 :outlined="editable && permission.secondary"
             ></v-select>
+            </ValidationProvider>
             </v-col>
             <v-col cols="12"  md="6">
               <v-menu
@@ -150,14 +161,16 @@
           </v-row>
         </v-col>
       </v-row>
+    </v-form>
+    </ValidationObserver>
   </v-container>
 </template>
 
 <script>
-import { Validator } from 'vee-validate'
+
 
 export default {
-  inject: ['$validator'],
+ 
   name: "affiliate-police-data",
   props: {
     affiliate: {

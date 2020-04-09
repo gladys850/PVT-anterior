@@ -255,7 +255,7 @@
                       <v-toolbar-title>TELÉFONOS</v-toolbar-title>
                     </v-col>
                     <v-col cols="12" md="4" >
-                     <ValidationProvider v-slot="{ errors }" name="celular1" rules="min:1|max:20">
+                     <ValidationProvider v-slot="{ errors }" name="celular1" rules="min:1|max:12">
                       <v-text-field
                         :error-messages="errors" 
                         dense
@@ -269,7 +269,7 @@
                       </ValidationProvider> 
                     </v-col>
                     <v-col cols="12" md="4" >
-                      <ValidationProvider v-slot="{ errors }" name="celular" rules="min:1|max:20">
+                      <ValidationProvider v-slot="{ errors }" name="celular" rules="min:1|max:12">
                       <v-text-field
                         :error-messages="errors"
                         dense
@@ -284,7 +284,7 @@
                     </v-col>
                     
                     <v-col cols="12" md="4" >
-                      <ValidationProvider v-slot="{ errors }" name="telefono" rules="min:1|max:20">
+                      <ValidationProvider v-slot="{ errors }" name="telefono" rules="min:1|max:12">
                       <v-text-field
                         :error-messages="errors"
                         dense
