@@ -1,6 +1,8 @@
 <template>
   <v-container fluid >
     <v-card>
+    <ValidationObserver ref="observer">
+    <v-form>
     <v-row justify="center">
       <v-col cols="12"  >
         <v-container class="py-0">
@@ -9,56 +11,57 @@
               <label> Tipo de Deposito:</label>
             </v-col>
             <v-col cols="12" md="3">
+              <ValidationProvider v-slot="{ errors }" name="Tipo Desembolso" rules="required">
               <v-select
+                :error-messages="errors"
                 dense
-                v-validate="'required'"
                 v-model="loanTypeSelected"
-                data-vv-name="payment_types"
                 :onchange="Onchange()"
                 :items="payment_types"
                 item-text="name"
                 item-value="id"
               ></v-select>
+              </ValidationProvider>
             </v-col>
              <v-col cols="12" md="2" class="py-0" v-show="visible">
               <label> Nro de Cuenta:</label>
             </v-col>
             <v-col cols="12" md="4"  v-show="visible">
+              <ValidationProvider v-slot="{ errors }" name="cuenta" rules="numeric|min:1|max:20"  mode="aggressive">
               <v-text-field
+                :error-messages="errors"
                 dense
                 outlined
-                v-validate.initial="'numeric|min:1|max:20'"
-                :error-messages="errors.collect('cuenta')"
-                data-vv-name="cuenta"
                 v-model="cuenta"
               ></v-text-field>
+              </ValidationProvider>
             </v-col>
             <v-col cols="12" md="6" v-show="espacio"></v-col>
             <v-col cols="12" md="2" class="py-0">
               <label> Destino del Prestamo:</label>
             </v-col>
             <v-col cols="12" md="6"  >
+                <ValidationProvider v-slot="{ errors }" name="destino" rules="required">
                <v-select
+                :error-messages="errors"
                 dense
-                v-validate="'required'"
-                data-vv-name="destino"
-                v-model="loanTypeSelected2"
                 :items="destino"
                 item-text="name"
                 item-value="id"
               ></v-select>
+                </ValidationProvider>
             </v-col>
           </v-row>
         </v-container>
       </v-col>
     </v-row>
+    </v-form>
+    </ValidationObserver>
     </v-card>
   </v-container>
 </template>
 <script>
-import { Validator } from 'vee-validate'
   export default {
-  inject: ['$validator'],
   name: "loan-information",
   data: () => ({
     cuenta:null,

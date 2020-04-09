@@ -13,7 +13,6 @@
               <v-select
                 dense
                 :items="affiliateState"
-                data-vv-name="Estado"
                 item-text="name"
                 item-value="id"
                 label="Estado"
@@ -28,10 +27,7 @@
 </template>
 
 <script>
-import { Validator } from 'vee-validate'
-
 export default {
-  inject: ['$validator'],
   name: "observer-qualification",
 
   data: () => ({

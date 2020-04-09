@@ -108,7 +108,6 @@
                 :error-messages="errors"
                 v-model="affiliate.service_months"
                 label="Meses de Servicio"
-                v-validate="'numeric|min_value:0|max_value:12'"
                 :readonly="!editable || !permission.primary"
                 :outlined="editable && permission.primary"
                 :disabled="editable && !permission.primary"
@@ -167,10 +166,8 @@
 </template>
 
 <script>
-
-
 export default {
- 
+
   name: "affiliate-police-data",
   props: {
     affiliate: {

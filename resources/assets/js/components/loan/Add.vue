@@ -52,9 +52,8 @@ import StepsGuarantor from '@/components/loan/StepsGuarantor'
 import Steps from '@/components/loan/Steps'
 import Ballots from '@/components/loan/Ballots'
 import Breadcrumbs from '@/components/shared/Breadcrumbs'
-import { Validator } from 'vee-validate'
+
 export default {
-  inject: ['$validator'],
   name: "loan-add",
   components: {
     Steps,
