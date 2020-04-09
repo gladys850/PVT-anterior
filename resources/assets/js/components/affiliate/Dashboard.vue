@@ -112,8 +112,12 @@
                 <br/>
                 Unidad: {{this.unit_name}}
                 <br />
-                Estado Civil: <span v-if ="affiliate.gender==='M'">{{affiliate.civil_status=='C'? 'CASADO':affiliate.civil_status=='S'? 'SOLTERO':affiliate.civil_status=='D'?'DIVORCIADO':'VIUDO'}}</span>
-                <span v-else>{{affiliate.civil_status=='C'? 'CASADA':affiliate.civil_status=='S'? 'SOLTERA':affiliate.civil_status=='D'?'DIVORCIADA':'VIUDA'}}</span>
+                Estado Civil: <span v-if ="affiliate.gender==='M'">
+                  {{affiliate.civil_status=='C'? 'CASADO':affiliate.civil_status=='S'? 'SOLTERO':affiliate.civil_status=='D'?'DIVORCIADO':'VIUDO'}}
+                  </span>
+                <span v-else>
+                  {{affiliate.civil_status=='C'? 'CASADA':affiliate.civil_status=='S'? 'SOLTERA':affiliate.civil_status=='D'?'DIVORCIADA':'VIUDA'}}
+                  </span>
               </center>
             </v-col>
           </v-card-text>
@@ -242,15 +246,6 @@ export default {
     },
     clickShowLoans() {
       this.$router.push("/loan");
-    },
-    getCivilStatus(){
-      let gender=affiliate.gender
-      if(gender=='M'){
-        return "hombre"
-      }else{
-        return "mujer"
-      }
-
     }
   }
 };
