@@ -10,28 +10,32 @@
               </v-col>
               <br>
               <v-col cols="12" md="3" >
+                <ValidationObserver ref="observer">
+                <v-form>
                 <v-layout row wrap>
                   <v-flex xs12 class="px-2">
                     <fieldset class="pa-3">
+                      <ValidationProvider v-slot="{ errors }" name="plazo" rules="numeric|min_value:1|max_value:25000" mode="aggressive">
                       <v-text-field
+                        :error-messages="errors"
                         label="Plazo en Meses"
                         v-model="calculos.plazo"
-                        v-validate.initial="`numeric|min_value:1|max_value:25000`"
-                        :error-messages="errors.collect('plazo')"
-                        data-vv-name="plazo"
                         v-on:keyup.enter="Calculator()"
                       ></v-text-field>
+                      </ValidationProvider>
+                      <ValidationProvider v-slot="{ errors }" name="monto solicitado" rules="numeric" mode="aggressive">
                       <v-text-field
+                        :error-messages="errors"
                         label="Monto Maximo Sugerido"
                         v-model ="calculos.montos"
-                        v-validate.initial="`numeric`"
-                        :error-messages="errors.collect('monto_solicitado')"
-                        data-vv-name="monto_solicitado"
                         v-on:keyup.enter="Calculator()"
                       ></v-text-field>
+                      </ValidationProvider>
                     </fieldset>
                   </v-flex>
                 </v-layout>
+                </v-form>
+                </ValidationObserver>
               </v-col>
             <v-col cols="12" md="4">
               <v-card-text class="py-0">
@@ -69,9 +73,7 @@
   </v-container>
 </template>
 <script>
-import { Validator } from 'vee-validate'
 export default {
-inject: ['$validator'],
 name: "loan-requirement",
   props: {
     bonos: {
