@@ -49,7 +49,7 @@
                 BOLETAS DE PAGO
               </v-col>
               <v-col cols="12" md="4" class="py-0"  >
-                <ValidationProvider v-slot="{ errors }" name="1ra Boleta" rules="min:1|max:20">
+                <ValidationProvider v-slot="{ errors }" name="1ra Boleta" rules="min:1|max:20" mode="aggressive">
                 <v-text-field
                   :error-messages="errors"
                   dense
@@ -61,7 +61,7 @@
                 </ValidationProvider>
               </v-col>
               <v-col cols="12" md="4" class="py-0" v-if="visible">
-                <ValidationProvider v-slot="{ errors }" name="2ra Boleta" rules="min:1|max:20">
+                <ValidationProvider v-slot="{ errors }" name="2ra Boleta" rules="min:1|max:20" mode="aggressive">
                 <v-text-field
                   :error-messages="errors"
                   dense
@@ -73,7 +73,7 @@
                 </ValidationProvider>
               </v-col>
               <v-col cols="12" md="4" class="py-0" v-if="visible" >
-                <ValidationProvider v-slot="{ errors }" name="3ra Boleta" rules="min:1|max:20">
+                <ValidationProvider v-slot="{ errors }" name="3ra Boleta" rules="min:1|max:20" mode="aggressive">
                 <v-text-field
                   :error-messages="errors"
                   dense
@@ -88,7 +88,7 @@
                 BONOS
               </v-col>
               <v-col cols="12" md="3" >
-                <ValidationProvider v-slot="{ errors }" name="1er Bono" rules="min:1|max:20">
+                <ValidationProvider v-slot="{ errors }" name="1er Bono" rules="min:1|max:20" mode="aggressive">
                 <v-text-field
                   :error-messages="errors"
                   dense
@@ -100,7 +100,7 @@
                 </ValidationProvider>
               </v-col>
               <v-col cols="12" md="3">
-                <ValidationProvider v-slot="{ errors }" name="2do Bono" rules="min:1|max:20">
+                <ValidationProvider v-slot="{ errors }" name="2do Bono" rules="min:1|max:20" mode="aggressive">
                 <v-text-field
                   :error-messages="errors"
                   dense
@@ -112,7 +112,7 @@
                 </ValidationProvider>
               </v-col>
               <v-col cols="12" md="3" >
-                <ValidationProvider v-slot="{ errors }" name="3er Bono" rules="min:1|max:20">
+                <ValidationProvider v-slot="{ errors }" name="3er Bono" rules="min:1|max:20" mode="aggressive">
                 <v-text-field
                   :error-messages="errors"
                   dense
@@ -124,7 +124,7 @@
                 </ValidationProvider>
               </v-col>
               <v-col cols="12" md="3">
-                <ValidationProvider v-slot="{ errors }" name="4to Bono" rules="min:1|max:20">
+                <ValidationProvider v-slot="{ errors }" name="4to Bono" rules="min:1|max:20" mode="aggressive">
                 <v-text-field
                   :error-messages="errors"
                   dense

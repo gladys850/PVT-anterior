@@ -27,9 +27,10 @@
                 item-text="name"
                 item-value="id"
               ></v-select>
+              </ValidationProvider>
             </v-col>
             <v-col cols="12" md="4" class="py-0">
-              <ValidationProvider v-slot="{ errors }" name="monto" rules="min:1|max:20">
+              <ValidationProvider v-slot="{ errors }" name="monto" rules="min:1|max:20" mode="aggressive">
               <v-text-field
                 :error-messages="errors"
                 dense
@@ -39,7 +40,7 @@
               </ValidationProvider>
             </v-col>
             <v-col cols="12" md="4" class="py-0" >
-              <ValidationProvider v-slot="{ errors }" name="plazo" rules="min:1|max:20">
+              <ValidationProvider v-slot="{ errors }" name="plazo" rules="min:1|max:20" mode="aggressive">
               <v-text-field
                 :error-messages="errors"
                 dense

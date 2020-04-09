@@ -27,7 +27,7 @@
               <label> Nro de Cuenta:</label>
             </v-col>
             <v-col cols="12" md="4"  v-show="visible">
-              <ValidationProvider v-slot="{ errors }" name="cuenta" rules="numeric|min:1|max:20">
+              <ValidationProvider v-slot="{ errors }" name="cuenta" rules="numeric|min:1|max:20"  mode="aggressive">
               <v-text-field
                 :error-messages="errors"
                 dense
