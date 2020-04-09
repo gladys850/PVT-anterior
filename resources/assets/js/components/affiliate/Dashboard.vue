@@ -100,10 +100,8 @@
                 <br />
                 Categoría: {{this.category_name}}
                 <br />
-                <!--<v-icon color="#EDF2F4">mdi-account</v-icon>-->
                 Estado:  {{this.state_name_status}}
                 <br />
-                <!--<v-icon color="#EDF2F4">mdi-police-badge</v-icon>-->
               </small>
             </v-col>
           </v-card-title>
@@ -114,9 +112,12 @@
                 <br/>
                 Unidad: {{this.unit_name}}
                 <br />
-                <!--TIPO: {{affiliate.type}}-->
-                 <!-- <v-icon color="#EDF2F4">mdi-account-heart</v-icon>-->
-                Estado Civil: <span class="text-uppercase text-center">{{affiliate.civil_status}}</span>
+                Estado Civil: <span v-if ="affiliate.gender==='M'">
+                  {{affiliate.civil_status=='C'? 'CASADO':affiliate.civil_status=='S'? 'SOLTERO':affiliate.civil_status=='D'?'DIVORCIADO':'VIUDO'}}
+                  </span>
+                <span v-else>
+                  {{affiliate.civil_status=='C'? 'CASADA':affiliate.civil_status=='S'? 'SOLTERA':affiliate.civil_status=='D'?'DIVORCIADA':'VIUDA'}}
+                  </span>
               </center>
             </v-col>
           </v-card-text>

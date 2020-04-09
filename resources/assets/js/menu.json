@@ -19,7 +19,7 @@
     "params": {}
   }, 
   {
-    "href": "loanIndex",
+    "href": "qualificationIndex",
     "title": "Calificacion",
     "icon": "mdi-content-duplicate",
     "permission": "show-loan",

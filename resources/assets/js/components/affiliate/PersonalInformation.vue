@@ -22,7 +22,7 @@
                           <v-icon>mdi-plus</v-icon>
                         </v-btn>
                       </template>
-                      <v-text-field disabled >{{updateTelefono()}}</v-text-field>
+                    
                       <span>Añadir Dirección</span>
                     </v-tooltip>
                   </v-col>
@@ -59,7 +59,9 @@
                   </v-col>
             </v-row>
           </v-card>
-         <v-card>
+          <ValidationObserver ref="observer">
+          <v-form>
+          <v-card>
             <v-row class="ma-0 pa-0">
              <v-col cols="12" class="py-2">
               <v-toolbar-title>CIUDAD EXPEDICIÓN CI.</v-toolbar-title>
@@ -73,8 +75,10 @@
                       ></v-text-field>
                     </v-col>
                     <v-col cols="12" md="6" >
+                      <ValidationProvider v-slot="{ errors }" vid="city_identity_card_id" name="Ciudad de Expedición" rules="required|integer|min:1">
                       <v-select
                         dense
+                        :error-messages="errors"
                         :items="cities"
                         item-text="name"
                         item-value="id"
@@ -85,9 +89,12 @@
                         :outlined="editable && permission.secondary"
                         :disabled="editable && !permission.secondary"
                       ></v-select>
+                      </ValidationProvider>
                     </v-col>
             </v-row>
           </v-card>
+          </v-form>>
+          </ValidationObserver>
         </v-container>
       </v-col>
       <v-col cols="12" md="3">
@@ -99,29 +106,30 @@
               <v-toolbar-title>TELÉFONOS</v-toolbar-title>
             </v-col>
             <v-col cols="12"  class="py-0" >
-              <ValidationProvider v-slot="{ errors }" vid="celular1" name="celular1" rules="min:1|max:20" mode="aggressive">
+              <ValidationProvider v-slot="{ errors }" vid="celular1" name="celular1" rules="min:1|max:12" mode="aggressive">
               <v-text-field
                 :error-messages="errors"
                 dense
-                v-model="getTelefono[0]"
+                v-model="cel[0]"
                 label="Celular 1"
                 :readonly="!editable || !permission.secondary"
                 :outlined="editable && permission.secondary"
                 :disabled="editable && !permission.secondary"
-
+                @change="updateCelular()"
               ></v-text-field>
               </ValidationProvider>
             </v-col>
             <v-col cols="12" class="py-0" >
-              <ValidationProvider v-slot="{ errors }" vid="celular" name="celular" rules="min:1|max:20" mode="aggressive">
+              <ValidationProvider v-slot="{ errors }" vid="celular" name="celular" rules="min:1|max:12" mode="aggressive">
               <v-text-field class = "text-right"
                 :error-messages="errors"
                 dense
-                v-model="getTelefono[1]"
+                v-model="cel[1]"
                 label="Celular 2"
                 :readonly="!editable || !permission.secondary"
                 :outlined="editable && permission.secondary"
                 :disabled="editable && !permission.secondary" 
+                @change="updateCelular()"
               ></v-text-field>
               </ValidationProvider>
             </v-col>
@@ -216,7 +224,7 @@ import AddStreet from '@/components/affiliate/AddStreet'
   data: () => ({
     loading: true,
     dialog: false,
-    telefono:[null,null],
+    cel:[null,null],
     editable: false,
     cities: [],
     headers: [
@@ -250,22 +258,11 @@ import AddStreet from '@/components/affiliate/AddStreet'
       } else {
         return this.$store.getters.permissions.includes('create-affiliate')
       }
-    },
-    getTelefono(){
-      if(this.affiliate.cell_phone_number==null)
-      {
-        return 0
-      }
-      else
-      {
-        let array=this.affiliate.cell_phone_number.split(',');
-      return array
-      }
-  }
+    }
   },
   beforeMount() {
-    this.getCities();
-    this.updateTelefono();
+    this.getCities()
+    this.getCelular()
   },
   mounted() {
       this.bus.$on('saveAddress', (address) => {
@@ -290,22 +287,15 @@ import AddStreet from '@/components/affiliate/AddStreet'
     async getCities() {
     try {
       this.loading = true
-      let res = await axios.get(`city`);
-      this.cities = res.data;
+      let res = await axios.get(`city`)
+      this.cities = res.data
     } catch (e) {
-      this.dialog = false;
-      console.log(e);
+      this.dialog = false
+      console.log(e)
     }finally {
         this.loading = false
       }
   },
-    updateTelefono(){
-      this.telefono[0]= this.getTelefono[0];
-      this.telefono[1]= this.getTelefono[1];
-      let celular=this.telefono.join(',')
-      this.affiliate.cell_phone_number=celular
-      return  this.affiliate.cell_phone_number
-    },
     async saveAffiliate() {
       try {
         if (!this.editable) {
@@ -328,6 +318,41 @@ import AddStreet from '@/components/affiliate/AddStreet'
         this.loading = false
       }
     },
+     getCelular(){
+      let part
+      if(this.affiliate.cell_phone_number!==null)
+      {
+        part=this.affiliate.cell_phone_number.split(',')
+      }      
+      this.cel[0]= part[0]
+      this.cel[1]= part[1]      
+    },
+    updateCelular(){
+      let count = 0
+      let val = 0
+      if(this.cel[0]){
+        if(this.cel[0].trim() !== ''){
+          this.cel[0]=this.cel[0].trim()
+          count++
+          val = 0
+        }        
+      }
+      if(this.cel[1]){
+        if(this.cel[1].trim() !== ''){
+          this.cel[1]=this.cel[1].trim()
+          count++
+          val = 1
+        }        
+      }
+      if(count == 0){
+        this.affiliate.cell_phone_number=null
+      } else if(count == 1){
+        this.affiliate.cell_phone_number=this.cel[val]
+      } else {
+        this.affiliate.cell_phone_number=this.cel.join(',')
+      }
+    }
+  
   }
-  }
+}
 </script>

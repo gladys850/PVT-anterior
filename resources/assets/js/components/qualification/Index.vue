@@ -22,7 +22,7 @@
             clearable
           ></v-text-field>
         </v-flex>
-        <Fab v-if="$store.getters.permissions.includes('create-loan')"/>
+        <Fab v-if="$store.getters.permissions.includes('create-qualification')"/>
       </v-toolbar>
     </v-card-title>
     <v-card-text>
@@ -35,7 +35,7 @@
 <script>
 import Breadcrumbs from '@/components/shared/Breadcrumbs'
 import RemoveItem from '@/components/shared/RemoveItem'
-import List from '@/components/loan/List'
+import List from '@/components/qualification/List'
 import Fab from '@/components/loan/Fab'
 import { Validator } from 'vee-validate'
 
@@ -55,7 +55,7 @@ export default {
   beforeMount() {
     this.$store.commit('setBreadcrumbs', [
       {
-        text: 'Calificaión',
+        text: 'Calificación',
         to: { name: 'loanIndex' }
       }
     ])

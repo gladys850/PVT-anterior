@@ -9,7 +9,9 @@
                 <v-toolbar-title>INFORMACION POLICIAL</v-toolbar-title>
               </v-col>
             <v-col cols="12" md="4" >
+              <ValidationProvider v-slot="{ errors }" vid="affiliate_state_id" name="Estado" rules="required">
               <v-select
+                :error-messages="errors"
                 dense
                 :loading="loading"
                 :items="affiliateState"
@@ -21,6 +23,7 @@
                 :readonly="!editable || !permission.secondary"
                 :outlined="editable && permission.secondary"
               ></v-select>
+              </ValidationProvider>
             </v-col>
             <v-col cols="12" md="4" >
               <v-menu
@@ -50,8 +53,10 @@
               </v-menu>
             </v-col>
             <v-col cols="12" md="4" >
+            <ValidationProvider v-slot="{ errors }" vid="degree_id" name="Grado" rules="required">
             <v-select
                 dense
+                :error-messages="errors"
                 :loading="loading"
                 :items="degree"
                 item-text="name"
@@ -63,10 +68,13 @@
                 :outlined="editable && permission.primary"
                 :disabled="editable && !permission.primary"
             ></v-select>
+            </ValidationProvider>
             </v-col>
             <v-col cols="12" md="4" >
+              <ValidationProvider v-slot="{ errors }" vid="category_id" name="Categoria" rules="required">
               <v-select
                 dense
+                :error-messages="errors"
                 :loading="loading"
                 :items="category"
                 item-text="name"
@@ -78,12 +86,13 @@
                 :outlined="editable && permission.primary"
                 :disabled="editable && !permission.primary"
               ></v-select>
+              </ValidationProvider>
             </v-col>
             <v-col cols="12" md="4">
-              <ValidationProvider v-slot="{ errors }" vid="service_years" name="Años de servicio" rules="numeric|min_value:0|max_value:100">
+              <ValidationProvider v-slot="{ errors }" vid="service_years" name="Años de Servicio" rules="numeric||min_value:0|max_value:100">
               <v-text-field
-                :error-messages="errors"
                 dense
+                :error-messages="errors"
                 v-model="affiliate.service_years"
                 label="Años de Servicio"
                 :readonly="!editable || !permission.primary"
@@ -93,21 +102,23 @@
               </ValidationProvider>
             </v-col>
             <v-col cols="12" md="4" >
-              <ValidationProvider v-slot="{ errors }" vid="service_months" name="Meses de servicio" rules="numeric|min_value:0|max_value:12">
+              <ValidationProvider v-slot="{ errors }" vid="service_months" name="Meses de Servicio" rules="renumeric|min_value:0|max_value:12">
               <v-text-field
-                :error-messages="errors"
                 dense
+                :error-messages="errors"
                 v-model="affiliate.service_months"
                 label="Meses de Servicio"
                 :readonly="!editable || !permission.primary"
                 :outlined="editable && permission.primary"
                 :disabled="editable && !permission.primary"
               ></v-text-field>
-              </ValidationProvider>
+               </ValidationProvider>
             </v-col>
             <v-col cols="12"  md="6" >
+              <ValidationProvider v-slot="{ errors }" vid="pension_entity_id" name="Ente Gestor" rules="required">
               <v-select
                 dense
+                :error-messages="errors"
                 :loading="loading"
                 :items="pension_entity"
                 item-text="name"
@@ -118,6 +129,7 @@
                 :readonly="!editable || !permission.secondary"
                 :outlined="editable && permission.secondary"
             ></v-select>
+            </ValidationProvider>
             </v-col>
             <v-col cols="12"  md="6">
               <v-menu
@@ -155,6 +167,7 @@
 
 <script>
 export default {
+
   name: "affiliate-police-data",
   props: {
     affiliate: {

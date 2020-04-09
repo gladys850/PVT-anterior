@@ -10,8 +10,9 @@
                     <v-toolbar-title>DATOS PERSONALES</v-toolbar-title>
                   </v-col>
                     <v-col cols="12" md="6" >
-                      <ValidationProvider v-slot="{ errors }" vid="first_name" name="Primer Nombre" rules="required|alpha_spaces|min:3|max:250">
+                      <ValidationProvider v-slot="{ errors }" vid="first_name" name="Primer Nombre" rules="required|alpha_spaces|min:3|max:20">
                       <v-text-field
+                      
                       :error-messages="errors"
                         dense
                       v-model="affiliate.first_name"
@@ -23,7 +24,7 @@
                       </ValidationProvider>
                     </v-col>
                     <v-col cols="12" md="6" >
-                      <ValidationProvider v-slot="{ errors }" vid="second_name" name="Segundo Nombre" rules="alpha_spaces|min:3|max:250">
+                      <ValidationProvider v-slot="{ errors }" vid="second_name" name="Segundo Nombre" rules="alpha_spaces|min:3|max:20">
                       <v-text-field
                       :error-messages="errors"
                         dense
@@ -36,7 +37,7 @@
                       </ValidationProvider>
                     </v-col>
                     <v-col cols="12" md="4" >
-                      <ValidationProvider v-slot="{ errors }" vid="last_name" name="Apellido Paterno" rules="required|alpha_spaces|min:3|max:250">
+                      <ValidationProvider v-slot="{ errors }" vid="last_name" name="Apellido Paterno" rules="required|alpha_spaces|min:3|max:20">
                       <v-text-field
                       :error-messages="errors"
                         dense
@@ -49,7 +50,7 @@
                       </ValidationProvider>
                     </v-col>
                     <v-col cols="12" md="4" >
-                      <ValidationProvider v-slot="{ errors }" vid="mothers_last_name" name="Apellido Materno" rules="alpha_spaces|min:3|max:250">
+                      <ValidationProvider v-slot="{ errors }" vid="mothers_last_name" name="Apellido Materno" rules="alpha_spaces|min:3|max:20">
                       <v-text-field
                       :error-messages="errors"
                         dense
@@ -134,6 +135,15 @@
                         <v-date-picker v-model="affiliate.due_date" no-title @input="dates.dueDate.show = false"></v-date-picker>
                       </v-menu>
                     </v-col>
+                    <v-col cols="12" md="3">
+                      <v-checkbox
+                        v-model="affiliate.is_duedate_undefined"
+                        :readonly="!editable || !permission.primary"
+                        :outlined="editable && permission.primary"
+                        :disabled="editable && !permission.primary"
+                        :label="`Indefinido`"
+                      ></v-checkbox>
+                    </v-col>
                     <v-col cols="12" md="4" >
                       <ValidationProvider v-slot="{ errors }" vid="civil_status" name="Estado Civil" rules="oneOf:C,D,S,V">
                       <v-select
@@ -150,15 +160,6 @@
                         :disabled="editable && !permission.primary"
                       ></v-select>
                       </ValidationProvider>
-                    </v-col>
-                    <v-col cols="12" md="3">
-                      <v-checkbox
-                        v-model="affiliate.is_duedate_undefined"
-                        :readonly="!editable || !permission.primary"
-                        :outlined="editable && permission.primary"
-                        :disabled="editable && !permission.primary"
-                        :label="`Indefinido`"
-                      ></v-checkbox>
                     </v-col>
                     <v-col cols="12" md="6" >
                       <v-menu
@@ -254,33 +255,36 @@
                       <v-toolbar-title>TELÉFONOS</v-toolbar-title>
                     </v-col>
                     <v-col cols="12" md="4" >
-                      <ValidationProvider v-slot="{ errors }" name="celular1" rules="min:1|max:20">
+                     <ValidationProvider v-slot="{ errors }" name="celular1" rules="min:1|max:12">
                       <v-text-field
-                        :error-messages="errors"
+                        :error-messages="errors" 
                         dense
-                        v-model="getTelefono[0]"
+                        v-model="cel[0]"
                         label="Celular 1"
                         :readonly="!editable || !permission.secondary"
                         :outlined="editable && permission.secondary"
                         :disabled="editable && !permission.secondary"
+                        @change="updateCelular()"
                       ></v-text-field>
-                      </ValidationProvider>
+                      </ValidationProvider> 
                     </v-col>
                     <v-col cols="12" md="4" >
-                      <ValidationProvider v-slot="{ errors }" name="celular" rules="min:1|max:20">
+                      <ValidationProvider v-slot="{ errors }" name="celular" rules="min:1|max:12">
                       <v-text-field
                         :error-messages="errors"
                         dense
-                        v-model="getTelefono[1]"
+                        v-model="cel[1]"
                         label="Celular 2"
                         :readonly="!editable || !permission.secondary"
                         :outlined="editable && permission.secondary"
                         :disabled="editable && !permission.secondary"
+                        @change="updateCelular()"
                       ></v-text-field>
-                      </ValidationProvider>
+                      </ValidationProvider> 
                     </v-col>
+                    
                     <v-col cols="12" md="4" >
-                      <ValidationProvider v-slot="{ errors }" name="telefono" rules="min:1|max:20">
+                      <ValidationProvider v-slot="{ errors }" name="telefono" rules="min:1|max:12">
                       <v-text-field
                         :error-messages="errors"
                         dense
@@ -309,7 +313,6 @@
                           <v-icon>mdi-plus</v-icon>
                         </v-btn>
                       </template>
-                      <v-text-field disabled >{{updateTelefono()}}</v-text-field>
                       <span>Añadir Dirección</span>
                     </v-tooltip>
                   </v-col>
@@ -386,7 +389,7 @@ export default {
     return {
       loading: true,
       dialog: false,
-      telefono:[null,null],
+      cel:[null,null],
       cities: [],
       headers: [
             { text: 'Ciudad', align: 'left', value: 'city_address_id' },
@@ -438,22 +441,23 @@ export default {
       bus: new Vue()
     }
   },
-  computed: {
-    getTelefono(){
+  /*computed: {
+    getCelular(){
       if(this.affiliate.cell_phone_number==null)
       {
         return 0
       }
       else
       {
-        let array=this.affiliate.cell_phone_number.split(',');
+        let array=this.affiliate.cell_phone_number.split(',')
       return array
       }
   }
-  },
+  },*/
   beforeMount() {
-    this.getCities();
-    this.updateTelefono();
+    this.getCities()
+    //this.updateCelular()
+    this.getCelular()
   },
   mounted() {
     if (this.affiliate.id) {
@@ -498,21 +502,48 @@ export default {
     async getCities() {
     try {
       this.loading = true
-      let res = await axios.get(`city`);
-      this.cities = res.data;
+      let res = await axios.get(`city`)
+      this.cities = res.data
     } catch (e) {
-      this.dialog = false;
-      console.log(e);
+      this.dialog = false
+      console.log(e)
     }finally {
         this.loading = false
       }
   },
-    updateTelefono(){
-      this.telefono[0]= this.getTelefono[0];
-      this.telefono[1]= this.getTelefono[1];
-      let celular=this.telefono.join(',')
-      this.affiliate.cell_phone_number=celular
-      return  this.affiliate.cell_phone_number
+    getCelular(){
+      let part
+      if(this.affiliate.cell_phone_number!==null)
+      {
+        part=this.affiliate.cell_phone_number.split(',')
+      }      
+      this.cel[0]= part[0]
+      this.cel[1]= part[1]      
+    },
+    updateCelular(){
+      let count = 0
+      let val = 0
+      if(this.cel[0]){
+        if(this.cel[0].trim() !== ''){
+          this.cel[0]=this.cel[0].trim()
+          count++
+          val = 0
+        }        
+      }
+      if(this.cel[1]){
+        if(this.cel[1].trim() !== ''){
+          this.cel[1]=this.cel[1].trim()
+          count++
+          val = 1
+        }        
+      }
+      if(count == 0){
+        this.affiliate.cell_phone_number=null
+      } else if(count == 1){
+        this.affiliate.cell_phone_number=this.cel[val]
+      } else {
+        this.affiliate.cell_phone_number=this.cel.join(',')
+      }
     }
   }
   }

@@ -49,7 +49,7 @@
                 icon
                 small
                 color="warning"
-                :to="{ name: 'affiliateAdd', params: { id: props.item.id }}"
+                :to="{ name: 'qualificationAdd', params: { id: props.item.id }}"
                 v-on="on"
               >
                 <v-icon>mdi-eye</v-icon>

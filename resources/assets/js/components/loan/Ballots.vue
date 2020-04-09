@@ -29,6 +29,8 @@
                         :items="modalities"
                         item-text="name"
                         item-value="id"
+                        :rules="[(v) => !!v || 'El campo de Modalidad de préstamo es requerido']"
+                        required
                       ></v-select>
                       </ValidationProvider>
                     </v-col>
@@ -57,6 +59,7 @@
                   label="1ra Boleta"
                   :readonly="!editar"
                   :outlined="editar"
+                  :rules="[rules.required, rules.max]"
                 ></v-text-field>
                 </ValidationProvider>
               </v-col>
@@ -69,6 +72,7 @@
                   label="2ra Boleta"
                   :readonly="!editar"
                   :outlined="editar"
+                   :rules="[rules.required, rules.max]"
                 ></v-text-field>
                 </ValidationProvider>
               </v-col>
@@ -81,6 +85,7 @@
                   label="3ra Boleta"
                   :readonly="!editar"
                   :outlined="editar"
+                   :rules="[rules.required, rules.max]"
                 ></v-text-field>
                 </ValidationProvider>
               </v-col>
@@ -96,6 +101,7 @@
                   label="Bono Frontera"
                   :readonly="!editar"
                   :outlined="editar"
+                  :rules="[rules.max]"
                 ></v-text-field>
                 </ValidationProvider>
               </v-col>
@@ -108,6 +114,7 @@
                   label="Bono Oriente"
                   :readonly="!editar"
                   :outlined="editar"
+                  :rules="[rules.max]"
                 ></v-text-field>
                 </ValidationProvider>
               </v-col>
@@ -120,6 +127,7 @@
                   label="Bono Cargo"
                   :readonly="!editar"
                   :outlined="editar"
+                   :rules="[rules.max]"
                 ></v-text-field>
                 </ValidationProvider>
               </v-col>
@@ -132,6 +140,7 @@
                   label="Bono Seguridad Ciudadana"
                   :readonly="!editar"
                   :outlined="editar"
+                  :rules="[rules.max]"
                 ></v-text-field>
                 </ValidationProvider>
               </v-col>
@@ -145,7 +154,8 @@
   </v-flex>
 </template>
 <script>
-export default {
+
+export default { 
   name: "dashboard-index",
   data: () => ({
     editar:true,
@@ -155,6 +165,11 @@ export default {
     loanTypeSelected:null,
     visible:false,
     num_type:9,
+    rules: {
+          required: value => !!value || 'El campos es requerido.',
+          max: v => v.length <= 5 || 'El monto máximo es de 5 dígitos',
+    
+    }
   }),
    props: {
     contributions1: {
