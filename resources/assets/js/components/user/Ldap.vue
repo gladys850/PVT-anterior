@@ -1,28 +1,29 @@
 <template>
-  <v-autocomplete
-    v-model="userSelected"
-    label="Usuario"
-    :items="users"
-    :loading="loading"
-    autofocus
-    clearable
-    persistent-hint
-    :hint="userSelected ? userSelected.title : ''"
-    item-text="fullName"
-    return-object
-    open-on-clear
-    validate-on-blur
-    v-validate="'required'"
-    name="usuario"
-    :error-messages="errors.collect('usuario')"
-  ></v-autocomplete>
+  <ValidationObserver ref="observer">
+    <v-form>
+      <ValidationProvider v-slot="{ errors }" name="usuario" rules="required">
+        <v-autocomplete
+          :error-messages="errors"
+          v-model="userSelected"
+          label="Usuario"
+          :items="users"
+          :loading="loading"
+          autofocus
+          clearable
+          persistent-hint
+          :hint="userSelected ? userSelected.title : ''"
+          item-text="fullName"
+          return-object
+          open-on-clear
+          name="usuario"
+        ></v-autocomplete>
+      </ValidationProvider>
+    </v-form>
+  </ValidationObserver>
 </template>
 
 <script>
-import { Validator } from 'vee-validate'
-
 export default {
-  inject: ['$validator'],
   name: 'ldap-user-form',
   props: {
     bus: {

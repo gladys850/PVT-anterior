@@ -35,6 +35,9 @@ Route::group([
     Route::group([
         'middleware' => 'auth'
     ], function () {
+        if (!env("LDAP_AUTHENTICATION")) {
+            Route::resource('user', 'Api\V1\UserController')->only('show', 'update');
+        }
         Route::resource('auth', 'Api\V1\AuthController')->only('index');
         Route::patch('auth', 'Api\V1\AuthController@refresh');
         Route::delete('auth', 'Api\V1\AuthController@logout');
@@ -167,14 +170,16 @@ Route::group([
             'middleware' => 'role:TE-admin'
         ], function () {
             // Usuario
-            Route::resource('user', 'Api\V1\UserController');
             Route::get('user/{id}/role', 'Api\V1\UserController@get_roles');
             Route::post('user/{id}/role', 'Api\V1\UserController@set_roles');
             Route::get('user/{id}/permission', 'Api\V1\UserController@get_permissions');
             // Ldap
             if (env("LDAP_AUTHENTICATION")) {
+                Route::resource('user', 'Api\V1\UserController');
                 Route::get('user/ldap/unregistered', 'Api\V1\UserController@unregistered_users');
                 Route::get('user/ldap/sync', 'Api\V1\UserController@synchronize_users');
+            } else {
+                Route::resource('user', 'Api\V1\UserController')->only('index', 'store', 'destroy');
             }
             // Módulo
             Route::get('module/{id}/role', 'Api\V1\ModuleController@get_roles');
