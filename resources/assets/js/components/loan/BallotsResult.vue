@@ -13,22 +13,22 @@
                     <v-layout row wrap>
                       <v-flex xs12 class="px-2">
                         <fieldset class="pa-3">
-                          <ValidationProvider v-slot="{ errors }" vid="plazo" name="Plazo" rules="numeric|min_value:1|max_value:96">
-                            <v-text-field
-                              :error-messages="errors"
-                              label="Plazo en Meses"
-                              v-model="calculos.plazo"
-                              v-on:keyup.enter="Calculator()"
-                            ></v-text-field>
-                          </ValidationProvider>
-                          <ValidationProvider v-slot="{ errors }" vid="montos" name="Monto Maximo Sugerido" rules="numeric">
-                            <v-text-field
-                              :error-messages="errors"
-                              label="Monto Maximo Sugerido"
-                              v-model="calculos.montos"
-                              v-on:keyup.enter="Calculator()"
-                            ></v-text-field>
-                          </ValidationProvider>
+                      <ValidationProvider v-slot="{ errors }" name="plazo" rules="numeric|min_value:1|max_value:96" mode="aggressive">
+                      <v-text-field
+                        :error-messages="errors"
+                        label="Plazo en Meses"
+                        v-model="calculos.plazo"
+                        v-on:keyup.enter="Calculator()"
+                      ></v-text-field>
+                      </ValidationProvider>
+                      <ValidationProvider v-slot="{ errors }" name="monto solicitado" rules="numeric" mode="aggressive">
+                      <v-text-field
+                        :error-messages="errors"
+                        label="Monto Maximo Sugerido"
+                        v-model ="calculos.montos"
+                        v-on:keyup.enter="Calculator()"
+                      ></v-text-field>
+                      </ValidationProvider>
                         </fieldset>
                       </v-flex>
                     </v-layout>
