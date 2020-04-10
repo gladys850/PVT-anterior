@@ -16,9 +16,9 @@ class AdvanceRoleSeeder extends Seeder
     {
         Role::flushEventListeners();
         $module = Module::whereName('prestamos')->first();
-        $receipt_permissions = ['update-affiliate-secondary', 'show-affiliate', 'show-loan', 'create-loan', 'create-address', 'update-address', 'delete-address'];
+        $receipt_permissions = ['update-affiliate-secondary', 'show-affiliate', 'show-loan', 'create-loan', 'create-address', 'update-address', 'delete-address', 'update-loan', 'delete-loan'];
         $receipt_roles = ['Área de Recepción', 'Regional Santa Cruz', 'Regional Cochabamba', 'Regional Oruro', 'Regional Potosí', 'Regional Sucre', 'Regional Tarija', 'Regional Trinidad', 'Regional Cobija'];
-        $sequence_permissions = ['update-affiliate-secondary', 'show-affiliate', 'show-loan', 'update-address', 'update-loan'];
+        $sequence_permissions = ['update-affiliate-secondary', 'show-affiliate', 'show-loan', 'update-address'];
         $sequence_roles = [
             [
                 'name' => 'Calificación',
@@ -73,7 +73,7 @@ class AdvanceRoleSeeder extends Seeder
                     'module_id' => $module->id,
                     'sequence_number' => $role['sequence']
                 ]);
-                $role->syncPermissions(in_array($role['name'], ['Jefatura', 'Dirección']) ? array_merge($sequence_permissions, ['show-all-loan']) : $sequence_permissions);
+                $role->syncPermissions(in_array($role['name'], ['Jefatura', 'Dirección']) ? array_merge($sequence_permissions, ['show-all-loan', 'update-loan', 'delete-loan']) : $sequence_permissions);
             }
         }
     }

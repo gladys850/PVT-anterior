@@ -19,7 +19,7 @@ $factory->define(Loan::class, function (Faker $faker) {
     $affiliate = Affiliate::whereNull('date_death')->whereNull('reason_death')->whereNull('death_certificate_number')->limit(100)->get()->random();
     $procedure_type = $module->procedure_types->random();
     $procedure_modality = $procedure_type->procedure_modalities->random();
-    if ($procedure_type->destinies->count() == 0) {
+    if ($procedure_type->loan_destinies->count() == 0) {
         do {
             $loan_destiny = factory(App\LoanDestiny::class)->create();
         } while ($loan_destiny->procedure_type_id != $procedure_type->id);
@@ -40,7 +40,7 @@ $factory->define(Loan::class, function (Faker $faker) {
         'amount_approved' => $amount,
         'loan_term' => $faker->numberBetween($procedure_type->interval->minimum_term,$procedure_type->interval->maximum_term),
         'disbursement_type_id' => PaymentType::whereName('Cheque')->first()->id,
-        'loan_destiny_id' => $procedure_type->destinies->random()->id,
+        'loan_destiny_id' => $procedure_type->loan_destinies->random()->id,
         'role_id' => Role::whereName('PRE-area-de-recepcion')->first()->id,
         'created_at' => $faker->dateTime($max = 'now'),
         'updated_at' => $faker->dateTime($max = 'now')

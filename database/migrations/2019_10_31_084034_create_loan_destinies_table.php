@@ -15,8 +15,6 @@ class CreateLoanDestiniesTable extends Migration
     {
         Schema::create('loan_destinies', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->unsignedBigInteger('procedure_type_id');
-            $table->foreign('procedure_type_id')->references('id')->on('procedure_types');
             $table->string('name');
             $table->string('description')->nullable();
             $table->timestamps();
