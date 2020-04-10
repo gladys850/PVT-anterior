@@ -80,9 +80,9 @@ class Affiliate extends Model
         return $data;
     }
 
-    public function getCivilStatusAttribute($value)
+    public function getCivilStatusGenderAttribute()
     {
-        return Util::get_civil_status($value, $this->gender);
+        return Util::get_civil_status($this->civil_status, $this->gender);
     }
 
     public function getFingerprintSavedAttribute()

@@ -16,70 +16,109 @@ class SpouseController extends Controller
     /**
     * Lista de cónyugues
     * Devuelve el listado con los datos paginados
-    * @queryParam search Parámetro de búsqueda. Example: TORRE
+    * @queryParam search Parámetro de búsqueda. Example: TEMO
     * @queryParam sortBy Vector de ordenamiento. Example: [last_name]
-    * @queryParam sortDesc Vector de orden descendente(true) o ascendente(false). Example: [false]
+    * @queryParam sortDesc Vector de orden descendente(true) o ascendente(false). Example: [0]
     * @queryParam per_page Número de datos por página. Example: 8
     * @queryParam page Número de página. Example: 1
     * @authenticated
     * @response
-    * {
-    *     "current_page": 1,
-    *     "data": [
-    *         {
-    *             "id": 21,
-    *             "user_id": 1,
-    *             "affiliate_id": 51992,
-    *             "city_identity_card_id": 1,
-    *             "identity_card": "1700723",
-    *             "registration": "0",
-    *             "last_name": "TEMO",
-    *             "mothers_last_name": "JOU",
-    *             "first_name": "MANUELA",
-    *             "second_name": null,
-    *             "surname_husband": "VDA. DE URGEL",
-    *             "civil_status": "V",
-    *             "birth_date": "1934-03-29",
-    *             "date_death": null,
-    *             "reason_death": null,
-    *             "created_at": "2017-06-08 11:56:17",
-    *             "updated_at": "2017-06-08 11:56:17",
-    *             "deleted_at": null,
-    *             "city_birth_id": null,
-    *             "death_certificate_number": null,
-    *             "due_date": null,
-    *             "is_duedate_undefined": false,
-    *             "official": null,
-    *             "book": null,
-    *             "departure": null,
-    *             "marriage_date": null
-    *         }, {}
-    *     ],
-    *     "first_page_url": "http://127.0.0.1/api/v1/spouse?page=1",
-    *     "from": 1,
-    *     "last_page": 244,
-    *     "last_page_url": "http://127.0.0.1/api/v1/spouse?page=244",
-    *     "next_page_url": "http://127.0.0.1/api/v1/spouse?page=2",
-    *     "path": "http://127.0.0.1/api/v1/spouse",
-    *     "per_page": 10,
-    *     "prev_page_url": null,
-    *     "to": 10,
-    *     "total": 2439
-    * }
+    *    {
+    *    "current_page": 1,
+    *    "data": [
+    *        {
+    *            "id": 21,
+    *            "user_id": 1,
+    *            "affiliate_id": 51992,
+    *            "city_identity_card_id": 1,
+    *            "identity_card": "1700723",
+    *            "registration": "0",
+    *            "last_name": "TEMO",
+    *            "mothers_last_name": "JOU",
+    *            "first_name": "MANUELA",
+    *            "second_name": null,
+    *            "surname_husband": "VDA. DE URGEL",
+    *            "civil_status": "V",
+    *            "birth_date": "1934-03-29",
+    *            "date_death": null,
+    *            "reason_death": null,
+    *            "created_at": "2017-06-08T15:56:17.000000Z",
+    *            "updated_at": "2017-06-08T15:56:17.000000Z",
+    *            "deleted_at": null,
+    *            "city_birth_id": null,
+    *            "death_certificate_number": null,
+    *            "due_date": null,
+    *            "is_duedate_undefined": false,
+    *            "official": null,
+    *            "book": null,
+    *            "departure": null,
+    *            "marriage_date": null,
+    *            "civil_status_gender": "viuda",
+    *            "affiliate": {
+    *                "id": 51992,
+    *                "user_id": 1,
+    *                "affiliate_state_id": 4,
+    *                "city_identity_card_id": 1,
+    *                "city_birth_id": null,
+    *                "degree_id": 21,
+    *                "unit_id": null,
+    *                "category_id": 7,
+    *                "pension_entity_id": 5,
+    *                "identity_card": "1670402",
+    *                "registration": "280927UZR",
+    *                "type": "Comando",
+    *                "last_name": "URGEL",
+    *                "mothers_last_name": "ZELADA",
+    *                "first_name": "ROSENDO",
+    *                "second_name": null,
+    *                "surname_husband": null,
+    *                "gender": "M",
+    *                "civil_status": "C",
+    *                "birth_date": "1928-09-27",
+    *                "date_entry": null,
+    *                "date_death": null,
+    *                "reason_death": null,
+    *                "date_derelict": null,
+    *                "reason_derelict": null,
+    *                "change_date": "2016-07-01",
+    *                "phone_number": null,
+    *                "cell_phone_number": "(728)-27012",
+    *                "afp": null,
+    *                "nua": 0,
+    *                "item": null,
+    *                "created_at": "2017-06-07T12:07:50.000000Z",
+    *                "updated_at": "2018-09-05T12:05:51.000000Z",
+    *                "deleted_at": null,
+    *                "service_years": null,
+    *                "service_months": null,
+    *                "death_certificate_number": null,
+    *                "due_date": null,
+    *                "is_duedate_undefined": false,
+    *                "affiliate_registration_number": null,
+    *                "file_code": null
+    *            }
+    *        }
+    *    ],
+    *    "first_page_url": "http://172.17.0.1/api/v1/spouse?page=1",
+    *    "from": 1,
+    *    "last_page": 1,
+    *    "last_page_url": "http://172.17.0.1/api/v1/spouse?page=1",
+    *    "next_page_url": null,
+    *    "path": "http://172.17.0.1/api/v1/spouse",
+    *    "per_page": "8",
+    *    "prev_page_url": null,
+    *    "to": 1,
+    *    "total": 1
+    *}
     */
+
     public function index(Request $request)
     {
-        return Util::search_sort(new Spouse(), $request);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+        $data = Util::search_sort(new Spouse(), $request);
+        foreach ($data as $item) {
+            $this->append_data($item);
+        }
+        return $data;
     }
 
     /**
@@ -144,32 +183,76 @@ class SpouseController extends Controller
     * @authenticated
     * @response
     * {
-    *     "id": 42,
-    *     "user_id": 47,
-    *     "affiliate_id": 12,
-    *     "city_identity_card_id": 2,
-    *     "identity_card": "1048652",
-    *     "registration": "",
-    *     "last_name": "FORTUN",
-    *     "mothers_last_name": null,
-    *     "first_name": "MARIA",
-    *     "second_name": "LUISA",
-    *     "surname_husband": "VDA. DE VILLALBA",
-    *     "civil_status": "V",
-    *     "birth_date": "1947-06-08",
-    *     "date_death": null,
-    *     "reason_death": "",
-    *     "created_at": "2017-06-08 11:56:17",
-    *     "updated_at": "2019-06-14 11:25:21",
-    *     "deleted_at": null,
-    *     "city_birth_id": 2,
-    *     "death_certificate_number": "",
-    *     "due_date": null,
-    *     "is_duedate_undefined": true,
-    *     "official": "600",
-    *     "book": "0024-64",
-    *     "departure": "143",
-    *     "marriage_date": "1964-12-12"
+    *   "id": 42,
+    *   "user_id": 47,
+    *   "affiliate_id": 12,
+    *   "city_identity_card_id": 2,
+    *   "identity_card": "1048652",
+    *   "registration": "",
+    *   "last_name": "FORTUN",
+    *   "mothers_last_name": null,
+    *   "first_name": "MARIA",
+    *   "second_name": "LUISA",
+    *   "surname_husband": "VDA. DE VILLALBA",
+    *   "civil_status": "V",
+    *   "birth_date": "1947-06-08",
+    *   "date_death": null,
+    *   "reason_death": "",
+    *   "created_at": "2017-06-08 11:56:17",
+    *   "updated_at": "2019-06-14 11:25:21",
+    *   "deleted_at": null,
+    *   "city_birth_id": 2,
+    *   "death_certificate_number": "",
+    *   "due_date": null,
+    *   "is_duedate_undefined": true,
+    *   "official": "600",
+    *   "book": "0024-64",
+    *   "departure": "143",
+    *   "marriage_date": "1964-12-12",
+    *   "civil_status_gender": "viuda",
+    *   "affiliate": {
+    *       "id": 12,
+    *       "user_id": 1,
+    *       "affiliate_state_id": 4,
+    *       "city_identity_card_id": 7,
+    *       "city_birth_id": 7,
+    *       "degree_id": 8,
+    *       "unit_id": 1,
+    *       "category_id": 8,
+    *       "pension_entity_id": 5,
+    *       "identity_card": "1156956",
+    *       "registration": "421008VPA",
+    *       "type": "Comando",
+    *       "last_name": "VILLALBA",
+    *       "mothers_last_name": "PEÑARANDA",
+    *       "first_name": "AUGUSTO",
+    *       "second_name": null,
+    *       "surname_husband": null,
+    *       "gender": "M",
+    *       "civil_status": "C",
+    *       "birth_date": "1942-10-08",
+    *       "date_entry": "1959-09-01",
+    *       "date_death": "2013-12-04",
+    *       "reason_death": "SHOCK CARDIOGENICO",
+    *       "date_derelict": "1999-12-01",
+    *       "reason_derelict": null,
+    *       "change_date": "2016-07-01",
+    *       "phone_number": "(6) 462-602",
+    *       "cell_phone_number": "(728)-92615",
+    *       "afp": true,
+    *       "nua": 0,
+    *       "item": 0,
+    *       "created_at": "2017-06-01 10:42:18",
+    *       "updated_at": "2019-06-14 11:25:21",
+    *       "deleted_at": null,
+    *       "service_years": 35,
+    *       "service_months": 1,
+    *       "death_certificate_number": null,
+    *       "due_date": null,
+    *       "is_duedate_undefined": false,
+    *       "affiliate_registration_number": null,
+    *       "file_code": ""
+    *   }
     * }
     */
     public function show($id)
@@ -279,5 +362,10 @@ class SpouseController extends Controller
         $spouse = Spouse::findOrFail($id);
         $spouse->delete();
         return $spouse;
+    }
+
+    // Append additional to spouse
+    private function append_data($spouse) {
+        $spouse->civil_status_gender = $spouse->civil_status_gender;
     }
 }
