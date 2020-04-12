@@ -13,13 +13,25 @@ class LoanDestinySeeder extends Seeder
      */
     public function run()
     {
-        $procedure = ProcedureType::whereName('Préstamo Anticipo')->first();
-        $anticipos = [
-            ['procedure_type_id' => $procedure->id, 'name' => 'Consumo', 'description' => 'Consumo Personal' ],
-            ['procedure_type_id' => $procedure->id, 'name' => 'Salud', 'description' => 'Salud Personal' ],
+        $destinies = [
+            [
+                'name' => 'Consumo',
+                'description' => 'Consumo Personal',
+                'procedures' => ['Préstamo Anticipo']
+            ], [
+                'name' => 'Salud',
+                'description' => 'Salud Personal',
+                'procedures' => ['Préstamo Anticipo']
+            ]
         ];
-        foreach($anticipos as $anticipo) {
-            LoanDestiny::firstOrCreate($anticipo);
+        foreach ($destinies as $destiny) {
+            $new_destiny = LoanDestiny::firstOrCreate([
+                'name' => $destiny['name']
+            ], [
+                'description' => $destiny['description']
+            ]);
+            $procedures = ProcedureType::whereIn('name', $destiny['procedures'])->pluck('id');
+            $new_destiny->procedure_types()->sync($procedures);
         }
     }
 }
