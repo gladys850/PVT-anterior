@@ -13,14 +13,22 @@ class TagSeeder extends Seeder
      */
     public function run()
     {
-        $shortened[1]='Mora';
-        $shortened[2]='Amortizando';
         $tags = [
-            ['name' => 'Retraso de Pago', 'shortened' => $shortened[1],'slug' => Str::slug($shortened[1],'-')],
-            ['name' => 'Pagando Cuotas', 'shortened' => $shortened[2],'slug' => Str::slug($shortened[2],'-')]
+            [
+                'name' => 'Retraso de Pago',
+                'shortened' => 'Mora',
+            ], [
+                'name' => 'Pagando Cuotas',
+                'shortened' => 'Amortizando',
+            ]
         ];
+
         foreach ($tags as $tag) {
-            Tag::firstOrCreate($tag);
-        } 
+            Tag::firstOrCreate([
+                'name' => $tag['name'],
+                'shortened' => $tag['shortened'],
+                'slug' => Str::slug($tag['shortened'], '-'),
+            ]);
+        }
     }
 }

@@ -16,7 +16,7 @@ class AdvanceRoleSeeder extends Seeder
     {
         Role::flushEventListeners();
         $module = Module::whereName('prestamos')->first();
-        $receipt_permissions = ['update-affiliate-secondary', 'show-affiliate', 'show-loan', 'create-loan', 'create-address', 'update-address', 'delete-address', 'update-loan', 'delete-loan'];
+        $receipt_permissions = ['update-affiliate-secondary', 'show-affiliate', 'show-loan', 'create-loan', 'create-address', 'update-address', 'delete-address', 'update-loan', 'delete-loan', 'print-contract-loan'];
         $receipt_roles = ['Área de Recepción', 'Regional Santa Cruz', 'Regional Cochabamba', 'Regional Oruro', 'Regional Potosí', 'Regional Sucre', 'Regional Tarija', 'Regional Trinidad', 'Regional Cobija'];
         $sequence_permissions = ['update-affiliate-secondary', 'show-affiliate', 'show-loan', 'update-address'];
         $sequence_roles = [
@@ -59,7 +59,7 @@ class AdvanceRoleSeeder extends Seeder
                     'display_name' => $role,
                     'action' => 'Recepcionado',
                     'module_id' => $module->id,
-                    'sequence_number' => $role == 'Área de Recepción' ? 1 : 0
+                    'sequence_number' => $role == 'Área de Recepción' ? (Role::where('module_id',Module::whereName('prestamos')->first()->id)->where('display_name','Área de Recepción')->first()->update(['sequence_number' => 1])): 0
                 ]);
                 $role->syncPermissions($receipt_permissions);
             }
