@@ -229,10 +229,16 @@ class LoanController extends Controller
         }
         // Generar PDFs
         $file_name = implode('_', ['solicitud', 'prestamo', $loan->id]) . '.pdf';
-        $loan->attachment = Util::pdf_to_base64([
-            $this->print_form(new Request([]), $loan->id, false),
-            $this->print_contract(new Request([]), $loan->id, false)
-        ], $file_name, 'legal', $request->copies ?? 1);
+        if(Auth::user()->can('print-contract-loan')){
+            $loan->attachment = Util::pdf_to_base64([
+                $this->print_form(new Request([]), $loan->id, false),
+                $this->print_contract(new Request([]), $loan->id, false)
+            ], $file_name, 'legal', $request->copies ?? 1);
+        }else{
+            $loan->attachment = Util::pdf_to_base64([
+                $this->print_form(new Request([]), $loan->id, false),
+            ], $file_name, 'legal', $request->copies ?? 1);
+        }
         return $loan;
     }
 
