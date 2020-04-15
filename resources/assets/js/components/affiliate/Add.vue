@@ -246,8 +246,7 @@ export default {
     tabs: 3,
     editable: false,
     reload: false,
-    tab: 'tab-1',
-    death_status: false
+    tab: 'tab-1'
   }),
   computed: {
     isNew() {
