@@ -36,6 +36,6 @@ class LoanIntervalTerm implements Rule
      */
     public function message()
     {
-        return 'El plazo no corresponde con la modalidad.';
+        return 'El plazo no corresponde con la modalidad';
     }
 }

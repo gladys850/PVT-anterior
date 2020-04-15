@@ -124,8 +124,11 @@ return [
     |
     */
     'custom' => [
-        'attribute-name' => [
-            'rule-name' => 'custom-message',
+        'original.*' => [
+            '*' => 'Valor inválido',
+        ],
+        'update.*' => [
+            '*' => 'Valor inválido',
         ],
     ],
 

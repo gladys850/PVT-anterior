@@ -3,8 +3,6 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Role;
-use App\ProcedureType;
 
 class Module extends Model
 {
@@ -22,5 +20,10 @@ class Module extends Model
     public function procedure_types()
     {
         return $this->hasMany(ProcedureType::class)->orderBy('name');
+    }
+
+    public function observation_types()
+    {
+        return $this->hasMany(ObservationType::class)->orderBy('module_id')->orderBy('shortened');
     }
 }

@@ -22,6 +22,7 @@ use App\Role;
 use App\RoleSequence;
 use App\Http\Requests\LoanForm;
 use App\Http\Requests\LoanPaymentForm;
+use App\Http\Requests\LoanObservationForm;
 use Carbon;
 
 /** @group Préstamos
@@ -839,7 +840,7 @@ class LoanController extends Controller
 
     /**
     * Flujo de trabajo
-    * Devuelve la lista de roles anteriores para observar o posteriores para derivar el trámite
+    * Devuelve la lista de roles anteriores para devolver o posteriores para derivar el trámite
     * @urlParam id required ID de préstamo. Example: 2
     * @authenticated
     * @response
@@ -989,5 +990,111 @@ class LoanController extends Controller
     {
         $loan = Loan::findOrFail($id);
         return $loan->payments;
+    }
+
+    /** @group Observaciones de Préstamos
+    * Lista de observaciones
+    * Devuelve el listado de los pagos ordenados por cuota de manera descendente
+    * @urlParam id required ID de préstamo. Example: 2
+    * @authenticated
+    * @response
+    * [
+    *     {
+    *         "user_id": 123,
+    *         "observation_type_id": 2,
+    *         "message": "Subsanable en una semana",
+    *         "date": "2020-04-14 21:16:52",
+    *         "enabled": false,
+    *         "created_at": "2020-04-15T01:16:52.000000Z",
+    *         "updated_at": "2020-04-15T01:16:52.000000Z",
+    *         "deleted_at": null
+    *     }, {}
+    * ]
+    */
+    public function get_observations($id)
+    {
+        $loan = Loan::findOrFail($id);
+        return $loan->observations;
+    }
+
+    /** @group Observaciones de Préstamos
+    * Nueva observación
+    * Inserta una nueva observación asociada al trámite
+    * @urlParam id required ID de préstamo. Example: 2
+    * @bodyParam observation_type_id integer required ID de tipo de observación. Example: 2
+    * @bodyParam message string Mensaje adjunto a la observación. Example: Subsanable en una semana
+    * @authenticated
+    * @response
+    * {
+    *     "message": "Subsanable en una semana",
+    *     "observation_type_id": 2,
+    *     "date": "2020-04-15T01:16:52.886784Z",
+    *     "user_id": 123,
+    *     "updated_at": "2020-04-15T01:16:52.000000Z",
+    *     "created_at": "2020-04-15T01:16:52.000000Z",
+    *     "user": {
+    *         "id": 123,
+    *         "city_id": 4,
+    *         "first_name": "Nelvis Irene",
+    *         "last_name": "Alarcon",
+    *         "username": "nalarcon",
+    *         "created_at": "2019-04-22T19:27:44.000000Z",
+    *         "updated_at": "2020-04-15T01:08:09.000000Z",
+    *         "position": "Encargada de Registro, Control y Recuperacion de Prestamos",
+    *         "is_commission": false,
+    *         "phone": null,
+    *         "active": true
+    *     }
+    * }
+    */
+    public function set_observation(LoanObservationForm $request, $id)
+    {
+        $loan = Loan::findOrFail($id);
+        $observation = $loan->observations()->make([
+            'message' => $request->message ?? null,
+            'observation_type_id' => $request->observation_type_id,
+            'date' => Carbon::now()
+        ]);
+        $observation->user()->associate(Auth::user());
+        $observation->save();
+        return $observation;
+    }
+
+    /** @group Observaciones de Préstamos
+    * Actualizar observación
+    * Actualiza los datos de una observación asociada al trámite
+    * @urlParam id required ID de préstamo. Example: 2
+    * @bodyParam original.user_id integer required ID de usuario que creó la observación. Example: 123
+    * @bodyParam original.observation_type_id integer required ID de tipo de observación original. Example: 2
+    * @bodyParam original.message string required Mensaje de la observación original. Example: Subsanable en una semana
+    * @bodyParam original.date date required Fecha de la observación original. Example: 2020-04-14 21:16:52
+    * @bodyParam original.enabled boolean required Estado de la observación original. Example: false
+    * @bodyParam update.observation_type_id integer ID de tipo de observación a actualizar. Example: 21
+    * @bodyParam update.message string Mensaje de la observación a actualizar. Example: Subsanable en un mes
+    * @bodyParam update.enabled boolean Estado de la observación a actualizar. Example: true
+    * @authenticated
+    * @response
+    * [
+    *     {
+    *         "user_id": 123,
+    *         "observation_type_id": 21,
+    *         "message": "Subsanable en un mes",
+    *         "date": "2020-04-14 21:16:52",
+    *         "enabled": true,
+    *         "created_at": "2020-04-15T01:16:52.000000Z",
+    *         "updated_at": "2020-04-15T02:34:26.000000Z",
+    *         "deleted_at": null
+    *     }, {}
+    * ]
+    */
+    public function update_observation(LoanObservationForm $request, $id)
+    {
+        $loan = Loan::findOrFail($id);
+        $observation = $loan->observations();
+        foreach (collect($request->original)->except('created_at', 'updated_at', 'deleted_at') as $key => $value) {
+            $observation = $observation->where($key, $value);
+        }
+        $observation->update(collect($request->update)->only('observation_type_id', 'message', 'enabled')->toArray());
+        return $loan->observations;
     }
 }
