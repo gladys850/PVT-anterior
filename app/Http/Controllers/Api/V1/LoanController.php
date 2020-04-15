@@ -179,7 +179,7 @@ class LoanController extends Controller
         })->pluck('id');
         $procedure_modality = ProcedureModality::findOrFail($request->procedure_modality_id);
         $request->merge([
-            'role_id' => $procedure_modality->procedure_type->workflow->pluck('id')->intersect($roles)->first()
+            'role_id' => $procedure_modality->procedure_type->workflow->pluck('role_id')->intersect($roles)->first()
         ]);
         if (!$request->role_id) abort(403);
         // Guardar préstamo
@@ -229,10 +229,16 @@ class LoanController extends Controller
         }
         // Generar PDFs
         $file_name = implode('_', ['solicitud', 'prestamo', $loan->id]) . '.pdf';
-        $loan->attachment = Util::pdf_to_base64([
-            $this->print_form(new Request([]), $loan->id, false),
-            $this->print_contract(new Request([]), $loan->id, false)
-        ], $file_name, 'legal', $request->copies ?? 1);
+        if(Auth::user()->can('print-contract-loan')){
+            $loan->attachment = Util::pdf_to_base64([
+                $this->print_form(new Request([]), $loan->id, false),
+                $this->print_contract(new Request([]), $loan->id, false)
+            ], $file_name, 'legal', $request->copies ?? 1);
+        }else{
+            $loan->attachment = Util::pdf_to_base64([
+                $this->print_form(new Request([]), $loan->id, false),
+            ], $file_name, 'legal', $request->copies ?? 1);
+        }
         return $loan;
     }
 

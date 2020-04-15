@@ -26,7 +26,7 @@ class LoanDestiny implements Rule
      */
     public function passes($attribute, $value)
     {
-        return $this->procedure_modality->procedure_type->destinies()->pluck('id')->contains($value);
+        return $this->procedure_modality->procedure_type->loan_destinies()->pluck('id')->contains($value);
     }
 
     /**

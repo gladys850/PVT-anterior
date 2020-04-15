@@ -103,7 +103,7 @@ Route::group([
             Route::get('loan/{id}/flow','Api\V1\LoanController@get_flow');
             Route::get('loan/{id}/plan','Api\V1\LoanController@print_plan');
             Route::resource('note','Api\V1\NoteController')->only('show');
-            Route::get('procedure_type/{id}/loan_destiny', 'Api\V1\ProcedureTypeController@get_destiny');
+            Route::get('procedure_type/{id}/loan_destiny', 'Api\V1\ProcedureTypeController@get_loan_destinies');
             Route::get('loan/{id}/payment','Api\V1\LoanController@get_payments');
             Route::patch('loan/{id}/payment','Api\V1\LoanController@get_next_payment');
             Route::post('loan/{id}/payment','Api\V1\LoanController@set_payment');

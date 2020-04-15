@@ -27,9 +27,9 @@ class Spouse extends Model
         'city_birth_id'
     ];
 
-    public function getCivilStatusAttribute($value)
+    public function getCivilStatusGenderAttribute()
     {
-        return Util::get_civil_status($value, $this->gender);
+        return Util::get_civil_status($this->civil_status, $this->gender);
     }
 
     public function getTitleAttribute()
