@@ -8,11 +8,10 @@ use App\Affiliate;
 use App\City;
 use App\LoanState;
 use App\PaymentType;
-use App\Loan;
 use App\Role;
 use Faker\Generator as Faker;
 
-$factory->define(Loan::class, function (Faker $faker) {
+$factory->define(App\Loan::class, function (Faker $faker) {
     $faker->addProvider(new \Faker\Provider\DateTime($faker));
 
     $module = Module::whereName('prestamos')->first();
