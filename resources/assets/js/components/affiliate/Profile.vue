@@ -441,29 +441,15 @@ export default {
       bus: new Vue()
     }
   },
-  /*computed: {
-    getCelular(){
-      if(this.affiliate.cell_phone_number==null)
-      {
-        return 0
-      }
-      else
-      {
-        let array=this.affiliate.cell_phone_number.split(',')
-      return array
-      }
-  }
-  },*/
   beforeMount() {
     this.getCities()
-    //this.updateCelular()
-    this.getCelular()
   },
   mounted() {
     if (this.affiliate.id) {
       this.formatDate('dueDate', this.affiliate.due_date)
       this.formatDate('birthDate', this.affiliate.birth_date)
       this.formatDate('dateDeath', this.affiliate.date_death)
+      this.getCelular()
     }
       this.bus.$on('saveAddress', (address) => {
         if (address.id) {
@@ -512,13 +498,13 @@ export default {
       }
   },
     getCelular(){
-      let part
-      if(this.affiliate.cell_phone_number!==null)
-      {
+      
+      let part = []
+      if(this.affiliate.cell_phone_number!==null){
         part=this.affiliate.cell_phone_number.split(',')
-      }      
-      this.cel[0]= part[0]
-      this.cel[1]= part[1]      
+        this.cel[0]= part[0]
+        this.cel[1]= part[1]
+      }
     },
     updateCelular(){
       let count = 0

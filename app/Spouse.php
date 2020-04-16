@@ -24,7 +24,12 @@ class Spouse extends Model
         'birth_date',
         'date_death',
         'reason_death',
-        'city_birth_id'
+        'city_birth_id',
+        'death_certificate_number',
+        'official',
+        'book',
+        'departure',
+        'marriage_date'
     ];
 
     public function getCivilStatusGenderAttribute()
