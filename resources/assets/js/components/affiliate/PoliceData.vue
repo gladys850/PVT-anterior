@@ -89,7 +89,7 @@
               </ValidationProvider>
             </v-col>
             <v-col cols="12" md="4">
-              <ValidationProvider v-slot="{ errors }" vid="service_years" name="Años de Servicio" rules="numeric||min_value:0|max_value:100">
+              <ValidationProvider v-slot="{ errors }" vid="service_years" name="Años de Servicio" rules="numeric|min_value:0|max_value:100">
               <v-text-field
                 dense
                 :error-messages="errors"
@@ -232,15 +232,27 @@ export default {
     this.getAffiliateState();
     this.getCalculateCategory;
   },
+    mounted() {
+    if (this.affiliate.id) {
+      this.formatDate('dateEntry', this.affiliate.date_entry)
+      this.formatDate('dateDerelict', this.affiliate.date_derelict)    }
+  },
   watch: {
     'affiliate.date_entry': function(date) {
-      if (date) this.dates.dateEntry.formatted = this.$moment(date).format('L')
+      this.formatDate('dateEntry',date)
     },
     'affiliate.date_derelict': function(date) {
-      if (date) this.dates.dateDerelict.formatted = this.$moment(date).format('L')
+      this.formatDate('dateDerelict',date)
     }
   },
   methods: {
+    formatDate(key, date){
+      if(date){
+        this.dates[key].formatted = this.$moment(date).format('L')
+      } else {
+        this.dates[key].formatted=null
+      }
+    },
     async getCategory() {
     try {
       this.loading = true

@@ -48,7 +48,9 @@ class Affiliate extends Model
         'nua',
         'item',
         'is_duedate_undefined',
-        'due_date'
+        'due_date',
+        'service_years',
+        'service_months'
       ];
 
     public function getTitleAttribute()

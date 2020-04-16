@@ -217,8 +217,6 @@ export default {
       cell_phone_number:null,
       city_identity_card_id:null,
       date_entry:null,
-      service_years:null,
-      service_months:null,
       date_derelict:null,
       unit_name:null
     },
@@ -301,9 +299,10 @@ export default {
         } else {
           if (this.isNew) {
           // New affiliate
-            await axios.post(`affiliate`, this.affiliate)
+            let res = await axios.post(`affiliate`, this.affiliate)
             this.toastr.success('Afiliado adicionado')
-            await axios.patch(`affiliate/${this.affiliate.id}/address`, {
+            //Actualizar dirección,  obteniendo respuesta POST afiliado nuevo (res.data.id)
+            await axios.patch(`affiliate/${res.data.id}/address`, {
             addresses: this.addresses.map(o => o.id)
             })
           } else {
@@ -312,13 +311,15 @@ export default {
             await axios.patch(`affiliate/${this.affiliate.id}/address`, {
               addresses: this.addresses.map(o => o.id)
             })
-            if (this.spouse.id)
-            {
-              await axios.patch(`spouse/${this.spouse.id}`, this.spouse)
-            }
-            else{
-              this.spouse.affiliate_id=this.affiliate.id
-              await axios.post(`spouse`, this.spouse)
+            //Preguntar si afiliado esta fallecido
+            if((this.affiliate.date_death != null && this.affiliate.date_death != '') || 
+                (this.affiliate.reason_death != null && this.affiliate.reason_death != '')){
+              if(this.spouse.id){
+                await axios.patch(`spouse/${this.spouse.id}`, this.spouse)
+              }else{
+                this.spouse.affiliate_id=this.affiliate.id
+                await axios.post(`spouse`, this.spouse)
+              }
             }
             this.editable = false
           }
@@ -358,7 +359,7 @@ export default {
         this.affiliate = res.data
         this.setBreadcrumbs()
         if (this.affiliate.dead) {
-          this.getSpouse(this.$route.params.id)
+          this.getSpouse(this.affiliate.id)
         }
       } catch (e) {
         console.log(e)
