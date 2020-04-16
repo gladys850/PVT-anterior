@@ -36,6 +36,6 @@ class LoanIntervalAmount implements Rule
      */
     public function message()
     {
-        return 'El monto no corresponde con la modalidad.';
+        return 'El monto no corresponde con la modalidad';
     }
 }

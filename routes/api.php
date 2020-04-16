@@ -33,7 +33,6 @@ Route::group([
         Route::resource('role', 'Api\V1\RoleController')->only('index', 'show');
         Route::resource('global_parameter', 'Api\V1\LoanGlobalParameterController')->only('index', 'show', 'store', 'update', 'destroy');
         Route::resource('loan_destiny', 'Api\V1\LoanDestinyController')->only('index', 'show', 'store', 'update', 'destroy');
-        Route::get('module/{id}/role', 'Api\V1\ModuleController@get_roles');
         Route::resource('affiliate', 'Api\V1\AffiliateController')->only('show');
         Route::resource('affiliate_state', 'Api\V1\AffiliateStateController')->only('index');
         Route::get('affiliate/{id}/fingerprint', 'Api\V1\AffiliateController@fingerprint_saved');
@@ -44,8 +43,10 @@ Route::group([
         Route::resource('procedure_type', 'Api\V1\ProcedureTypeController')->only('index');
         Route::resource('payment_type', 'Api\V1\PaymentTypeController')->only('index');
         Route::resource('procedure_modality', 'Api\V1\ProcedureModalityController')->only('index', 'show');
-        Route::get('module/{id}/procedure_type', 'Api\V1\ModuleController@get_procedure_types');
         Route::resource('module', 'Api\V1\ModuleController')->only('index', 'show');
+        Route::get('module/{id}/role', 'Api\V1\ModuleController@get_roles');
+        Route::get('module/{id}/procedure_type', 'Api\V1\ModuleController@get_procedure_types');
+        Route::get('module/{id}/observation_type', 'Api\V1\ModuleController@get_observation_types');
         Route::resource('loan', 'Api\V1\LoanController')->only('update');
 
         // Afiliado
@@ -108,6 +109,9 @@ Route::group([
             Route::get('loan/{id}/payment','Api\V1\LoanController@get_payments');
             Route::patch('loan/{id}/payment','Api\V1\LoanController@get_next_payment');
             Route::post('loan/{id}/payment','Api\V1\LoanController@set_payment');
+            Route::get('loan/{id}/observation','Api\V1\LoanController@get_observations');
+            Route::post('loan/{id}/observation','Api\V1\LoanController@set_observation');
+            Route::patch('loan/{id}/observation','Api\V1\LoanController@update_observation');
         });
         Route::group([
             'middleware' => 'permission:create-loan'

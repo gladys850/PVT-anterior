@@ -117,4 +117,27 @@ class ModuleController extends Controller
         $module = Module::findOrFail($id);
         return $module->procedure_types;
     }
+
+    /**
+    * Tipos de observaciones asociados al módulo
+    * Devuelve la lista de tipos de observaciones asociados a un módulo
+    * @urlParam module required ID del módulo. Example: 6
+    * @authenticated
+    * @response
+    * [
+    *     {
+    *         "id": 2,
+    *         "module_id": 6,
+    *         "name": "Suspendido - Préstamo en mora.",
+    *         "description": "Amortizable",
+    *         "type": "AT",
+    *         "shortened": "Préstamos"
+    *     }, {}
+    * ]
+    */
+    public function get_observation_types($id)
+    {
+        $module = Module::findOrFail($id);
+        return $module->observation_types;
+    }
 }

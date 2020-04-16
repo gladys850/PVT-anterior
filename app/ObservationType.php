@@ -15,8 +15,8 @@ class ObservationType extends Model
         return $this->belongsTo(Module::class);
     }
 
-    public function observables()
+    public function observations()
     {
-        return $this->hasMany(Observable::class);
+        return $this->hasMany(Observation::class);
     }
 }

@@ -47,7 +47,7 @@ class ProcedureRequirements implements Rule
      */
     public function message()
     {
-        return 'Los documentos no corresponden con la modalidad.';
+        return 'Los documentos no corresponden con la modalidad';
     }
 
     private function cartesian(array $input)

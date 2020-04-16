@@ -29,7 +29,7 @@ class User extends Authenticatable implements JWTSubject
     *
     * @var array
     */
-    protected $hidden = ['password', 'status'];
+    protected $hidden = ['password', 'status', 'remember_token'];
 
     /**
     * Get the identifier that will be stored in the subject claim of the JWT.
@@ -143,7 +143,7 @@ class User extends Authenticatable implements JWTSubject
 
     public function has_actions()
     {
-        if ($this->affiliate_records()->first() || $this->affiliate_records_pvt()->first() || $this->eco_com_records()->first() || $this->procedure_records()->first() || $this->quota_aid_records()->first() || $this->ret_fun_records()->first() || $this->sequences_records()->first() || $this->wf_records()->first() || $this->wf_records_bck()->first() || $this->actions()->first() || $this->observables()->first()) {
+        if ($this->affiliate_records()->first() || $this->affiliate_records_pvt()->first() || $this->eco_com_records()->first() || $this->procedure_records()->first() || $this->quota_aid_records()->first() || $this->ret_fun_records()->first() || $this->sequences_records()->first() || $this->wf_records()->first() || $this->wf_records_bck()->first() || $this->actions()->first() || $this->observations()->first()) {
             return true;
         } else {
             return false;
@@ -160,8 +160,8 @@ class User extends Authenticatable implements JWTSubject
         return $this->morphMany(Record::class, 'recordable');
     }
 
-    public function observables()
+    public function observations()
     {
-        return $this->hasMany(Observable::class);
+        return $this->hasMany(Observation::class);
     }
 }

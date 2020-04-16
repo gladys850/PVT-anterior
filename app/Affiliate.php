@@ -203,6 +203,11 @@ class Affiliate extends Model
       return $this->hasMany(Contribution::class);
     }
 
+    public function observations()
+    {
+        return $this->morphMany(Observation::class, 'observable');
+    }
+
     public function guarantees()
     {
         return $this->belongsToMany(Loan::class, 'loan_affiliates')->withPivot(['payment_percentage'])->whereGuarantor(true)->orderBy('loans.created_at', 'desc');

@@ -65,5 +65,7 @@
         'mofification_date'=>'Fecha de modificación',
         'estimated_date' => 'Fecha estimada',
         'estimated_quota' => 'Cuota estimada',
-        'payment_type_id' => 'Tipo de pago'
+        'payment_type_id' => 'Tipo de pago',
+        // Observation
+        'observation_type_id' => 'Tipo de Observación'
     ];
