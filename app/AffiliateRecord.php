@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class AffiliateRecord extends Model
 {
     use SoftDeletes;
-    protected $dates = ['deleted_at'];
+    protected $dates = ['date'];
     public $timestamps = true;
     public $guarded = ['id'];
     protected $fillable = ['user_id', 'affiliate_id', 'affiliate_state_id', 'degree_id', 'unit_id', 'date', 'type_id', 'message', 'category_id', 'pension_entity_id'];

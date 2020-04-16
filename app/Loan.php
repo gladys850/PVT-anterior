@@ -4,13 +4,19 @@ namespace App;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Carbon;
 use Util;
 
 class Loan extends Model
 {
     use Traits\EloquentGetTableNameTrait;
+    use SoftDeletes;
 
+    protected $dates = [
+        'disbursement_date',
+        'request_date'
+    ];
     // protected $appends = ['balance', 'estimated_quota', 'defaulted'];
     public $timestamps = true;
     // protected $hidden = ['pivot'];
@@ -35,7 +41,8 @@ class Loan extends Model
         'account_number',
         'loan_destiny_id',
         'personal_reference_id',
-        'role_id'
+        'role_id',
+        'validated'
     ];
 
     function __construct(array $attributes = [])
