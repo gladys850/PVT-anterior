@@ -24,9 +24,9 @@ class ProcedureType extends Model
         return $this->hasOne(LoanInterval::class);
     }
 
-    public function destinies()
+    public function loan_destinies()
     {
-        return $this->hasMany(LoanDestiny::class);
+        return $this->belongsToMany(LoanDestiny::class);
     }
 
     public function getWorkflowAttribute()

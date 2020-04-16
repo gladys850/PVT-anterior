@@ -18,9 +18,11 @@ use Illuminate\Support\Facades\Schema;
 use App\ProcedureDocument;
 use App\ProcedureModality;
 use App\PaymentType;
+use App\Role;
 use App\RoleSequence;
 use App\Http\Requests\LoanForm;
 use App\Http\Requests\LoanPaymentForm;
+use App\Http\Requests\LoanObservationForm;
 use Carbon;
 
 /** @group Préstamos
@@ -179,7 +181,7 @@ class LoanController extends Controller
         })->pluck('id');
         $procedure_modality = ProcedureModality::findOrFail($request->procedure_modality_id);
         $request->merge([
-            'role_id' => $procedure_modality->procedure_type->workflow->pluck('id')->intersect($roles)->first()
+            'role_id' => $procedure_modality->procedure_type->workflow->pluck('role_id')->intersect($roles)->first()
         ]);
         if (!$request->role_id) abort(403);
         // Guardar préstamo
@@ -187,26 +189,6 @@ class LoanController extends Controller
         // Relacionar afiliados y garantes
         $loan = $saved->loan;
         $request = $saved->request;
-        $request->lenders = collect($request->lenders);
-        $request->guarantors = collect($request->guarantors);
-        $request->guarantors = $request->guarantors->diff($request->lenders);
-        $percentage = Loan::get_percentage($request->lenders);
-        foreach ($request->lenders as $affiliate) {
-            $affiliates[$affiliate] = [
-                'payment_percentage' =>$percentage,
-                'guarantor' => false
-            ];
-        }
-        if($request->guarantors){
-            $percentage = Loan::get_percentage($request->guarantors);
-            foreach ($request->guarantors as $affiliate) {
-                $affiliates[$affiliate] = [
-                    'payment_percentage' =>$percentage,
-                    'guarantor' => true
-                ];
-            }
-        }
-        $loan->loan_affiliates()->sync($affiliates);
         // Relacionar documentos requeridos y opcionales
         $date = Carbon::now()->toISOString();
         $documents = [];
@@ -228,11 +210,17 @@ class LoanController extends Controller
             }
         }
         // Generar PDFs
-        $file_name = implode('_', ['solicitud', 'prestamo', $loan->id]) . '.pdf';
-        $loan->attachment = Util::pdf_to_base64([
-            $this->print_form(new Request([]), $loan->id, false),
-            $this->print_contract(new Request([]), $loan->id, false)
-        ], $file_name, 'legal', $request->copies ?? 1);
+        $file_name = implode('_', ['solicitud', 'prestamo', $loan->code]) . '.pdf';
+        if(Auth::user()->can('print-contract-loan')){
+            $loan->attachment = Util::pdf_to_base64([
+                $this->print_form(new Request([]), $loan->id, false),
+                $this->print_contract(new Request([]), $loan->id, false)
+            ], $file_name, 'legal', $request->copies ?? 1);
+        }else{
+            $loan->attachment = Util::pdf_to_base64([
+                $this->print_form(new Request([]), $loan->id, false),
+            ], $file_name, 'legal', $request->copies ?? 1);
+        }
         return $loan;
     }
 
@@ -384,29 +372,7 @@ class LoanController extends Controller
     public function update(LoanForm $request, $id)
     {
         $saved = $this->save_loan($request, $id);
-        $loan = $saved->loan;
-        $request = $saved->request;
-        $request->lenders = collect($request->lenders)->unique();
-        $request->guarantors = collect($request->guarantors)->unique();
-        $request->guarantors = $request->guarantors->diff($request->lenders);
-        $percentage = Loan::get_percentage($request->lenders);
-        foreach ($request->lenders as $affiliate) {
-            $affiliates[$affiliate] = [
-                'payment_percentage' => $percentage,
-                'guarantor' => false
-            ];
-        }
-        if($request->guarantors){
-            $percentage = Loan::get_percentage($request->guarantors);
-            foreach ($request->guarantors as $affiliate) {
-                $affiliates[$affiliate] = [
-                    'payment_percentage' => $percentage,
-                    'guarantor' => true
-                ];
-            }
-        }
-        $loan->loan_affiliates()->sync($affiliates);
-        return $loan;
+        return $saved->loan;
     }
 
     /**
@@ -445,23 +411,55 @@ class LoanController extends Controller
 
     private function save_loan(Request $request, $id = null)
     {
-        if (!$request->has('guarantors')) $request->guarantors = [];
-        $request->lenders = array_unique($request->lenders);
-        $request->guarantors = array_unique($request->guarantors);
-        if (!$request->has('disbursable_id')) {
-            $disbursable_id = $request->lenders[0];
-        } else {
-            if (!in_array($request->disbursable_id, $request->lenders)) abort(404);
-            $disbursable_id = $request->disbursable_id;
+        if (Auth::user()->can(['update-loan', 'create-loan']) && ($request->has('lenders') || $request->has('guarantors'))) {
+            $request->lenders = collect($request->has('lenders') ? $request->lenders : [])->unique();
+            $request->guarantors = collect($request->has('guarantors') ? $request->guarantors : [])->unique();
+            $request->guarantors = $request->guarantors->diff($request->lenders);
+            if (!$request->has('disbursable_id')) {
+                $disbursable_id = $request->lenders[0];
+            } else {
+                if (!in_array($request->disbursable_id, $request->lenders)) abort(404);
+                $disbursable_id = $request->disbursable_id;
+            }
+            $disbursable = Affiliate::findOrFail($disbursable_id);
         }
-        $disbursable = Affiliate::findOrFail($disbursable_id);
         if ($id) {
             $loan = Loan::findOrFail($id);
-            $loan->fill(array_merge($request->all(), (array)self::verify_spouse_disbursable($disbursable)));
+            if ($request->has('role_id')) {
+                $role = Role::findOrFail($request->role_id);
+                $roles = RoleSequence::flow($loan->modality->procedure_type->id, $loan->role_id);
+                $roles = $roles->previous->merge($roles->next);
+                if ($roles->search($request->role_id) === false) $request = new Request($request->except('role_id'));
+            }
+            if (Auth::user()->can('update-loan')) {
+                $loan->fill(array_merge($request->all(), isset($disbursable) ? (array)self::verify_spouse_disbursable($disbursable) : []));
+            } elseif (!Auth::user()->can('update-loan') && $request->has('role_id')) {
+                $loan->role()->associate($role);
+            }
         } else {
             $loan = new Loan(array_merge($request->all(), (array)self::verify_spouse_disbursable($disbursable), ['amount_approved' => $request->amount_requested]));
         }
         $loan->save();
+        if (Auth::user()->can(['update-loan', 'create-loan']) && ($request->has('lenders') || $request->has('guarantors'))) {
+            $percentage = Loan::get_percentage($request->lenders);
+            $affiliates = [];
+            foreach ($request->lenders as $affiliate) {
+                $affiliates[$affiliate] = [
+                    'payment_percentage' => $percentage,
+                    'guarantor' => false
+                ];
+            }
+            if($request->guarantors){
+                $percentage = Loan::get_percentage($request->guarantors);
+                foreach ($request->guarantors as $affiliate) {
+                    $affiliates[$affiliate] = [
+                        'payment_percentage' => $percentage,
+                        'guarantor' => true
+                    ];
+                }
+            }
+            if (count($affiliates) > 0) $loan->loan_affiliates()->sync($affiliates);
+        }
         return (object)[
             'request' => $request,
             'loan' => $loan
@@ -665,6 +663,11 @@ class LoanController extends Controller
     * @queryParam copies Número de copias del documento. Example: 2
     * @authenticated
     * @response
+    * {
+    *     "content": "zMTcgM....",
+    *     "type": "pdf",
+    *     "file_name": "contrato_anticipo_17.pdf"
+    * }
     */
     public function print_contract(Request $request, $id, $standalone = true)
     {
@@ -679,17 +682,21 @@ class LoanController extends Controller
             ['position' => 'Director de Asuntos Administrativos']
         ];
         foreach ($employees as $key => $employee) {
-            $req = collect(json_decode(file_get_contents(env("RRHH_URL") . '/position?name=' . $employee['position']), true));
-            if ($req->count() == 1) {
-                $position = $req->first();
-            } else {
-                abort(404);
+            try {
+                $req = collect(json_decode(file_get_contents(env("RRHH_URL") . '/position?name=' . $employee['position']), true));
+                if ($req->count() == 1) {
+                    $position = $req->first();
+                } else {
+                    abort(404);
+                }
+                $req = collect(json_decode(file_get_contents(implode('/', [env("RRHH_URL"), 'position', $position['id'], 'employee'])), true));
+                $employees[$key]['name'] = Util::trim_spaces(implode(' ', [$req['first_name'], $req['second_name'], $req['last_name'], $req['mothers_last_name']]));
+                $employees[$key]['identity_card'] = $req['identity_card'];
+                $req = collect(json_decode(file_get_contents(implode('/', [env("RRHH_URL"), 'city', $req['city_identity_card_id']])), true));
+                $employees[$key]['identity_card'] .= ' ' . $req['shortened'];
+            } catch (\Exception $e) {
+                $employees[$key]['name'] = $employees[$key]['identity_card'] = '_______________';
             }
-            $req = collect(json_decode(file_get_contents(implode('/', [env("RRHH_URL"), 'position', $position['id'], 'employee'])), true));
-            $employees[$key]['name'] = Util::trim_spaces(implode(' ', [$req['first_name'], $req['second_name'], $req['last_name'], $req['mothers_last_name']]));
-            $employees[$key]['identity_card'] = $req['identity_card'];
-            $req = collect(json_decode(file_get_contents(implode('/', [env("RRHH_URL"), 'city', $req['city_identity_card_id']])), true));
-            $employees[$key]['identity_card'] .= ' ' . $req['shortened'];
         }
         $data = [
             'header' => [
@@ -702,7 +709,7 @@ class LoanController extends Controller
             'loan' => $loan,
             'lenders' => collect($lenders)
         ];
-        $file_name = implode('_', ['contrato', $procedure_modality->shortened, $id]) . '.pdf';
+        $file_name = implode('_', ['contrato', $procedure_modality->shortened, $loan->code]) . '.pdf';
         $view = view()->make('loan.contracts.advance')->with($data)->render();
         if ($standalone) return Util::pdf_to_base64([$view], $file_name, 'legal', $request->copies ?? 1);
         return $view;
@@ -714,6 +721,12 @@ class LoanController extends Controller
     * @urlParam id required ID del préstamo. Example: 1
     * @queryParam copies Número de copias del documento. Example: 2
     * @authenticated
+    * @response
+    * {
+    *     "content": "zMTcgM....",
+    *     "type": "pdf",
+    *     "file_name": "solicitud_prestamo_17.pdf"
+    * }
     */
     public function print_form(Request $request, $id, $standalone = true)
     {
@@ -746,7 +759,7 @@ class LoanController extends Controller
                 'table' => [
                     ['Tipo', $loan->modality->procedure_type->second_name],
                     ['Modalidad', $loan->modality->shortened],
-                    ['Usuario', auth()->user()->username ?? 'prueba']
+                    ['Usuario', Auth::user()->username ?? 'prueba']
                 ]
             ],
             'title' => 'SOLICITUD DE ' . ($loan->parent_loan ? $loan->parent_reason : 'PRÉSTAMO'),
@@ -754,7 +767,7 @@ class LoanController extends Controller
             'lenders' => collect($lenders),
             'signers' => $persons
         ];
-        $file_name = implode('_', ['solicitud', 'prestamo']) . '.pdf';
+        $file_name = implode('_', ['solicitud', 'prestamo', $loan->code]) . '.pdf';
         $view = view()->make('loan.forms.request_form')->with($data)->render();
         if ($standalone) return Util::pdf_to_base64([$view], $file_name, 'legal', $request->copies ?? 1);
         return $view;
@@ -767,6 +780,11 @@ class LoanController extends Controller
     * @queryParam copies Número de copias del documento. Example: 2
     * @authenticated
     * @response
+    * {
+    *     "content": "zMTcgM....",
+    *     "type": "pdf",
+    *     "file_name": "plan_anticipo_17.pdf"
+    * }
     */
     public function print_plan(Request $request, $id, $standalone = true)
     {
@@ -783,14 +801,14 @@ class LoanController extends Controller
                 'table' => [
                     ['Tipo', $loan->modality->procedure_type->second_name],
                     ['Modalidad', $loan->modality->shortened],
-                    ['Usuario', auth()->user()->username ?? 'prueba']
+                    ['Usuario', Auth::user()->username ?? 'prueba']
                 ]
             ],
             'title' => 'PLAN DE PAGOS',
             'loan' => $loan,
             'lenders' => collect($lenders)
         ];
-        $file_name = implode('_', ['plan', $procedure_modality->shortened, $id]) . '.pdf';
+        $file_name = implode('_', ['plan', $procedure_modality->shortened, $loan->code]) . '.pdf';
         $view = view()->make('loan.payment_plan')->with($data)->render();
         if ($standalone) return Util::pdf_to_base64([$view], $file_name, 'legal', $request->copies ?? 1);
         return $view;
@@ -822,7 +840,7 @@ class LoanController extends Controller
 
     /**
     * Flujo de trabajo
-    * Devuelve la lista de roles anteriores para observar o posteriores para derivar el trámite
+    * Devuelve la lista de roles anteriores para devolver o posteriores para derivar el trámite
     * @urlParam id required ID de préstamo. Example: 2
     * @authenticated
     * @response
@@ -972,5 +990,111 @@ class LoanController extends Controller
     {
         $loan = Loan::findOrFail($id);
         return $loan->payments;
+    }
+
+    /** @group Observaciones de Préstamos
+    * Lista de observaciones
+    * Devuelve el listado de los pagos ordenados por cuota de manera descendente
+    * @urlParam id required ID de préstamo. Example: 2
+    * @authenticated
+    * @response
+    * [
+    *     {
+    *         "user_id": 123,
+    *         "observation_type_id": 2,
+    *         "message": "Subsanable en una semana",
+    *         "date": "2020-04-14 21:16:52",
+    *         "enabled": false,
+    *         "created_at": "2020-04-15T01:16:52.000000Z",
+    *         "updated_at": "2020-04-15T01:16:52.000000Z",
+    *         "deleted_at": null
+    *     }, {}
+    * ]
+    */
+    public function get_observations($id)
+    {
+        $loan = Loan::findOrFail($id);
+        return $loan->observations;
+    }
+
+    /** @group Observaciones de Préstamos
+    * Nueva observación
+    * Inserta una nueva observación asociada al trámite
+    * @urlParam id required ID de préstamo. Example: 2
+    * @bodyParam observation_type_id integer required ID de tipo de observación. Example: 2
+    * @bodyParam message string Mensaje adjunto a la observación. Example: Subsanable en una semana
+    * @authenticated
+    * @response
+    * {
+    *     "message": "Subsanable en una semana",
+    *     "observation_type_id": 2,
+    *     "date": "2020-04-15T01:16:52.886784Z",
+    *     "user_id": 123,
+    *     "updated_at": "2020-04-15T01:16:52.000000Z",
+    *     "created_at": "2020-04-15T01:16:52.000000Z",
+    *     "user": {
+    *         "id": 123,
+    *         "city_id": 4,
+    *         "first_name": "Nelvis Irene",
+    *         "last_name": "Alarcon",
+    *         "username": "nalarcon",
+    *         "created_at": "2019-04-22T19:27:44.000000Z",
+    *         "updated_at": "2020-04-15T01:08:09.000000Z",
+    *         "position": "Encargada de Registro, Control y Recuperacion de Prestamos",
+    *         "is_commission": false,
+    *         "phone": null,
+    *         "active": true
+    *     }
+    * }
+    */
+    public function set_observation(LoanObservationForm $request, $id)
+    {
+        $loan = Loan::findOrFail($id);
+        $observation = $loan->observations()->make([
+            'message' => $request->message ?? null,
+            'observation_type_id' => $request->observation_type_id,
+            'date' => Carbon::now()
+        ]);
+        $observation->user()->associate(Auth::user());
+        $observation->save();
+        return $observation;
+    }
+
+    /** @group Observaciones de Préstamos
+    * Actualizar observación
+    * Actualiza los datos de una observación asociada al trámite
+    * @urlParam id required ID de préstamo. Example: 2
+    * @bodyParam original.user_id integer required ID de usuario que creó la observación. Example: 123
+    * @bodyParam original.observation_type_id integer required ID de tipo de observación original. Example: 2
+    * @bodyParam original.message string required Mensaje de la observación original. Example: Subsanable en una semana
+    * @bodyParam original.date date required Fecha de la observación original. Example: 2020-04-14 21:16:52
+    * @bodyParam original.enabled boolean required Estado de la observación original. Example: false
+    * @bodyParam update.observation_type_id integer ID de tipo de observación a actualizar. Example: 21
+    * @bodyParam update.message string Mensaje de la observación a actualizar. Example: Subsanable en un mes
+    * @bodyParam update.enabled boolean Estado de la observación a actualizar. Example: true
+    * @authenticated
+    * @response
+    * [
+    *     {
+    *         "user_id": 123,
+    *         "observation_type_id": 21,
+    *         "message": "Subsanable en un mes",
+    *         "date": "2020-04-14 21:16:52",
+    *         "enabled": true,
+    *         "created_at": "2020-04-15T01:16:52.000000Z",
+    *         "updated_at": "2020-04-15T02:34:26.000000Z",
+    *         "deleted_at": null
+    *     }, {}
+    * ]
+    */
+    public function update_observation(LoanObservationForm $request, $id)
+    {
+        $loan = Loan::findOrFail($id);
+        $observation = $loan->observations();
+        foreach (collect($request->original)->except('created_at', 'updated_at', 'deleted_at') as $key => $value) {
+            $observation = $observation->where($key, $value);
+        }
+        $observation->update(collect($request->update)->only('observation_type_id', 'message', 'enabled')->toArray());
+        return $loan->observations;
     }
 }

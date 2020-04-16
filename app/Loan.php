@@ -136,7 +136,7 @@ class Loan extends Model
 
     public function observations()
     {
-        return $this->morphMany(Observable::class, 'observable');
+        return $this->morphMany(Observation::class, 'observable')->latest('updated_at');
     }
     //desembolso --> afiliado, esposa
     public function disbursable()

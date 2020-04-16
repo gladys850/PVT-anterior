@@ -23,3 +23,4 @@ php artisan db:seed --class=PaymentTypeSeeder
 php artisan db:seed --class=RoleSequenceSeeder
 php artisan db:seed --class=TagSeeder
 php artisan db:seed --class=LoanGlobalParameterSeeder
+php artisan db:seed --class=LoanDestinySeeder

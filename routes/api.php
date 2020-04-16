@@ -7,19 +7,6 @@ Route::group([
     // Rutas abiertas
     Route::resource('auth', 'Api\V1\AuthController')->only('store');
     Route::resource('config', 'Api\V1\ConfigController')->only('index');
-    Route::resource('affiliate', 'Api\V1\AffiliateController')->only('show');
-    Route::resource('city', 'Api\V1\CityController')->only('index');
-    Route::resource('affiliate_state', 'Api\V1\AffiliateStateController')->only('index');
-    Route::resource('degree', 'Api\V1\DegreeController')->only('index');
-    Route::resource('pension_entity', 'Api\V1\PensionEntityController')->only('index', 'show');
-    Route::resource('category', 'Api\V1\CategoryController')->only('index');
-    Route::resource('procedure_type', 'Api\V1\ProcedureTypeController')->only('index');
-    Route::resource('payment_type', 'Api\V1\PaymentTypeController')->only('index');
-    Route::resource('procedure_modality', 'Api\V1\ProcedureModalityController')->only('index', 'show');
-    Route::resource('module', 'Api\V1\ModuleController')->only('index', 'show');
-    Route::get('module/{id}/procedure_type', 'Api\V1\ModuleController@get_procedure_types');
-    // Biométrico
-    Route::get('affiliate/{id}/fingerprint', 'Api\V1\AffiliateController@fingerprint_saved');
 
 
     // INDEFINIDO (TODO)
@@ -46,6 +33,21 @@ Route::group([
         Route::resource('role', 'Api\V1\RoleController')->only('index', 'show');
         Route::resource('global_parameter', 'Api\V1\LoanGlobalParameterController')->only('index', 'show', 'store', 'update', 'destroy');
         Route::resource('loan_destiny', 'Api\V1\LoanDestinyController')->only('index', 'show', 'store', 'update', 'destroy');
+        Route::resource('affiliate', 'Api\V1\AffiliateController')->only('show');
+        Route::resource('affiliate_state', 'Api\V1\AffiliateStateController')->only('index');
+        Route::get('affiliate/{id}/fingerprint', 'Api\V1\AffiliateController@fingerprint_saved');
+        Route::resource('city', 'Api\V1\CityController')->only('index');
+        Route::resource('pension_entity', 'Api\V1\PensionEntityController')->only('index', 'show');
+        Route::resource('degree', 'Api\V1\DegreeController')->only('index');
+        Route::resource('category', 'Api\V1\CategoryController')->only('index');
+        Route::resource('procedure_type', 'Api\V1\ProcedureTypeController')->only('index');
+        Route::resource('payment_type', 'Api\V1\PaymentTypeController')->only('index');
+        Route::resource('procedure_modality', 'Api\V1\ProcedureModalityController')->only('index', 'show');
+        Route::resource('module', 'Api\V1\ModuleController')->only('index', 'show');
+        Route::get('module/{id}/role', 'Api\V1\ModuleController@get_roles');
+        Route::get('module/{id}/procedure_type', 'Api\V1\ModuleController@get_procedure_types');
+        Route::get('module/{id}/observation_type', 'Api\V1\ModuleController@get_observation_types');
+        Route::resource('loan', 'Api\V1\LoanController')->only('update');
 
         // Afiliado
         Route::group([
@@ -101,12 +103,15 @@ Route::group([
             Route::get('loan/{id}/document','Api\V1\LoanController@get_documents');
             Route::get('loan/{id}/note','Api\V1\LoanController@get_notes');
             Route::get('loan/{id}/flow','Api\V1\LoanController@get_flow');
-            Route::get('loan/{id}/plan','Api\V1\LoanController@print_plan');
+            Route::get('loan/{id}/print/plan','Api\V1\LoanController@print_plan');
             Route::resource('note','Api\V1\NoteController')->only('show');
-            Route::get('procedure_type/{id}/loan_destiny', 'Api\V1\ProcedureTypeController@get_destiny');
+            Route::get('procedure_type/{id}/loan_destiny', 'Api\V1\ProcedureTypeController@get_loan_destinies');
             Route::get('loan/{id}/payment','Api\V1\LoanController@get_payments');
             Route::patch('loan/{id}/payment','Api\V1\LoanController@get_next_payment');
             Route::post('loan/{id}/payment','Api\V1\LoanController@set_payment');
+            Route::get('loan/{id}/observation','Api\V1\LoanController@get_observations');
+            Route::post('loan/{id}/observation','Api\V1\LoanController@set_observation');
+            Route::patch('loan/{id}/observation','Api\V1\LoanController@update_observation');
         });
         Route::group([
             'middleware' => 'permission:create-loan'
@@ -120,7 +125,6 @@ Route::group([
         Route::group([
             'middleware' => 'permission:update-loan'
         ], function () {
-            Route::resource('loan', 'Api\V1\LoanController')->only('update');
             Route::patch('loan/{loan_id}/document/{document_id}', 'Api\V1\LoanController@update_document');
         });
         Route::group([
@@ -182,7 +186,6 @@ Route::group([
                 Route::resource('user', 'Api\V1\UserController')->only('index', 'store', 'destroy');
             }
             // Módulo
-            Route::get('module/{id}/role', 'Api\V1\ModuleController@get_roles');
             Route::get('role/{id}/permission', 'Api\V1\RoleController@get_permissions');
             Route::post('role/{id}/permission', 'Api\V1\RoleController@set_permissions');
             // Permiso

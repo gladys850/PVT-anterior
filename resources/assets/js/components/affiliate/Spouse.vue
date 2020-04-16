@@ -287,7 +287,6 @@
   </v-container>
 </template>
 <script>
-import { Validator } from 'vee-validate'
 
 export default {
   name: "affiliate-spouse",
@@ -340,18 +339,32 @@ export default {
   beforeMount() {
     this.getCities()
   },
+  mounted(){
+    if(this.spouse.id){
+      this.formatDate('birthDate', this.spouse.birth_date),
+      this.formatDate('dateDeath', this.spouse.date_death),
+      this.formatDate('marriageDate', this.spouse.marriage_date)
+    }
+  },
   watch: {
     'spouse.birth_date': function(date) {
-      if (date) this.dates.birthDate.formatted = this.$moment(date).format('L')
+     this.formatDate('birthDate', date)
     },
     'spouse.date_death': function(date) {
-      if (date) this.dates.dateDeath.formatted = this.$moment(date).format('L')
+      this.formatDate('dateDeath', date)
     },
     'spouse.marriage_date': function(date) {
-      if (date) this.dates.marriageDate.formatted = this.$moment(date).format('L')
+      this.formatDate('marriageDate', date)
     }
   },
   methods: {
+    formatDate(key, date){
+      if(date){
+        this.dates[key].formatted = this.$moment(date).format('L')
+      }else{
+        this.dates[key].formatted = null
+      }
+    },
     async getCities() {
     try {
       this.loading = true

@@ -24,12 +24,17 @@ class Spouse extends Model
         'birth_date',
         'date_death',
         'reason_death',
-        'city_birth_id'
+        'city_birth_id',
+        'death_certificate_number',
+        'official',
+        'book',
+        'departure',
+        'marriage_date'
     ];
 
-    public function getCivilStatusAttribute($value)
+    public function getCivilStatusGenderAttribute()
     {
-        return Util::get_civil_status($value, $this->gender);
+        return Util::get_civil_status($this->civil_status, $this->gender);
     }
 
     public function getTitleAttribute()

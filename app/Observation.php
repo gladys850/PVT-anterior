@@ -5,14 +5,17 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Observable extends Model
+class Observation extends Model
 {
     use SoftDeletes;
 
+    protected $table = 'observables';
     public $timestamps = true;
     protected $primaryKey = null;
     public $incrementing = false;
-    protected $fillable = ['user_id', 'observation_type_id', 'observation_id', 'message', 'date', 'enabled'];
+    protected $dates = ['deleted_at'];
+    protected $fillable = ['user_id', 'observation_type_id', 'observable_id', 'observable_type', 'message', 'date', 'enabled'];
+    protected $hidden = ['observable_id', 'observable_type'];
 
     public function observable()
     {
@@ -24,7 +27,7 @@ class Observable extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function observation_type()
+    public function type()
     {
         return $this->belongsTo(ObservationType::class);
     }

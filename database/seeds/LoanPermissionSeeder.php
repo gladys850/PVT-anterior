@@ -27,7 +27,10 @@ class LoanPermissionSeeder extends Seeder
                 'display_name' => 'Ver todos los trámites de préstamo'
             ], [
                 'name' => 'delete-loan',
-                'display_name' => 'Eliminar trámites de préstamo'
+                'display_name' => 'Anular trámites de préstamo'
+            ], [
+                'name' => 'print-contract-loan',
+                'display_name' => 'Imprimir contrato de préstamo'
             ]
         ];
         foreach ($permissions as $permission) {

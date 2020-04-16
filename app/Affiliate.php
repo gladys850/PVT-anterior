@@ -48,7 +48,9 @@ class Affiliate extends Model
         'nua',
         'item',
         'is_duedate_undefined',
-        'due_date'
+        'due_date',
+        'service_years',
+        'service_months'
       ];
 
     public function getTitleAttribute()
@@ -80,9 +82,9 @@ class Affiliate extends Model
         return $data;
     }
 
-    public function getCivilStatusAttribute($value)
+    public function getCivilStatusGenderAttribute()
     {
-        return Util::get_civil_status($value, $this->gender);
+        return Util::get_civil_status($this->civil_status, $this->gender);
     }
 
     public function getFingerprintSavedAttribute()
@@ -201,6 +203,11 @@ class Affiliate extends Model
     public function contributions()
     {
       return $this->hasMany(Contribution::class);
+    }
+
+    public function observations()
+    {
+        return $this->morphMany(Observation::class, 'observable');
     }
 
     public function guarantees()

@@ -3,18 +3,18 @@
 namespace App\Rules;
 
 use Illuminate\Contracts\Validation\Rule;
-use App\ProcedureModality;
+use App\Module;
 
-class LoanDestiny implements Rule
+class ModuleObservation implements Rule
 {
     /**
      * Create a new rule instance.
      *
      * @return void
      */
-    public function __construct(ProcedureModality $procedure_modality)
+    public function __construct(Module $module)
     {
-        $this->procedure_modality = $procedure_modality;
+        $this->module = $module;
     }
 
     /**
@@ -26,7 +26,7 @@ class LoanDestiny implements Rule
      */
     public function passes($attribute, $value)
     {
-        return $this->procedure_modality->procedure_type->loan_destinies()->pluck('id')->contains($value);
+        return $this->module->observation_types()->pluck('id')->contains($value);
     }
 
     /**
@@ -36,6 +36,6 @@ class LoanDestiny implements Rule
      */
     public function message()
     {
-        return 'El destino no corresponde con la modalidad';
+        return 'El tipo de observación no corresponde al módulo ' . $this->module->display_name;
     }
 }

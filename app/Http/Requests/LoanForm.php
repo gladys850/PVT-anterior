@@ -1,13 +1,13 @@
 <?php
 
 namespace App\Http\Requests;
+
 use Waavi\Sanitizer\Laravel\SanitizesInput;
 use App\Rules\LoanIntervalAmount;
 use App\Rules\LoanIntervalTerm;
 use App\Rules\LoanDestiny;
 use App\Rules\ProcedureRequirements;
 use App\ProcedureModality;
-
 use Illuminate\Foundation\Http\FormRequest;
 
 class LoanForm extends FormRequest
