@@ -209,9 +209,7 @@ import BallotsResult from '@/components/loan/BallotsResult'
 import PersonalInformation from '@/components/affiliate/PersonalInformation'
 import LoanInformation from '@/components/loan/LoanInformation'
 import FormInformation from '@/components/loan/FormInformation'
-import { Validator } from 'vee-validate'
 export default {
-  inject: ['$validator'],
   name: "loan-steps",
   props: {
     affiliate: {

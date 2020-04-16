@@ -37,10 +37,8 @@ import Breadcrumbs from '@/components/shared/Breadcrumbs'
 import RemoveItem from '@/components/shared/RemoveItem'
 import List from '@/components/loan/List'
 import Fab from '@/components/loan/Fab'
-import { Validator } from 'vee-validate'
 
 export default {
-  inject: ['$validator'],
   name: "user-index",
   components: {
     Breadcrumbs,
