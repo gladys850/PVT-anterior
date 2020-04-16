@@ -3,10 +3,10 @@
 namespace App\Http\Requests;
 
 use Waavi\Sanitizer\Laravel\SanitizesInput;
-use Illuminate\Support\Facades\Route;
 use App\Rules\LoanIntervalAmount;
 use App\Rules\LoanIntervalTerm;
 use App\Rules\LoanDestiny;
+use App\Rules\LoanRole;
 use App\Rules\ProcedureRequirements;
 use App\Loan;
 use App\ProcedureModality;
@@ -34,7 +34,7 @@ class LoanForm extends FormRequest
         if ($this->procedure_modality_id) {
             $procedure_modality = ProcedureModality::findOrFail($this->procedure_modality_id);
         } else {
-            $procedure_modality = Loan::findOrFail(Route::input('loan'))->modality;
+            $procedure_modality = Loan::findOrFail($this->loan)->modality;
         }
         $rules = [
             'procedure_modality_id' => ['integer', 'exists:procedure_modalities,id'],
@@ -57,7 +57,8 @@ class LoanForm extends FormRequest
             'loan_state_id' => ['exists:loan_states,id'],
             'amount_approved' => ['integer', 'min:200', 'max:700000', new LoanIntervalAmount($procedure_modality)],
             'notes' => ['array'],
-            'validated' => ['boolean']
+            'validated' => ['boolean'],
+            'role_id' => ['integer', 'exists:roles,id', new LoanRole($this->loan)]
         ];
         switch ($this->method()) {
             case 'POST': {
@@ -76,7 +77,8 @@ class LoanForm extends FormRequest
     public function filters()
     {
         return [
-            'parent_reason' => 'trim|uppercase'
+            'parent_reason' => 'trim|uppercase',
+            'validated' => 'cast:boolean'
         ];
     }
 }

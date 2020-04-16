@@ -7,6 +7,8 @@
         'addresses' => 'Dirección',
         'roles' => 'Rol',
         'permissions' => 'Permiso',
+        'loans' => 'Préstamo',
+        'loan_destinies' => 'Destino de Préstamo',
         // User
         'first_name' => 'Primer Nombre',
         'last_name' => 'Apellido Paterno',
@@ -16,6 +18,7 @@
         'active' => 'Activo',
         'phone' => 'Teléfono',
         'city_id' => 'Ciudad',
+        'role_id' => 'Rol',
         // Affiliate
         'second_name' => 'Segundo Nombre',
         'mothers_last_name' => 'Apellido Materno',

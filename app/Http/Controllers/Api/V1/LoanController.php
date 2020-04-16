@@ -20,6 +20,7 @@ use App\ProcedureModality;
 use App\PaymentType;
 use App\Role;
 use App\RoleSequence;
+use App\Http\Requests\LoansForm;
 use App\Http\Requests\LoanForm;
 use App\Http\Requests\LoanPaymentForm;
 use App\Http\Requests\LoanObservationForm;
@@ -304,16 +305,15 @@ class LoanController extends Controller
     *   "guarantors": []
     * }
     */
-    public function show($id)
+    public function show(Loan $loan)
     {
-        $item = Loan::findOrFail($id);
         if (Auth::user()->can('show-all-loan') || Auth::user()->roles()->whereHas('module', function($query) {
             return $query->whereName('prestamos');
-        })->pluck('id')->contains($item->role_id)) {
-            $item->lenders;
-            $item->guarantors;
-            $this->append_data($item);
-            return $item;
+        })->pluck('id')->contains($loan->role_id)) {
+            $loan->lenders;
+            $loan->guarantors;
+            $this->append_data($loan);
+            return $loan;
         } else {
             abort(403);
         }
@@ -425,13 +425,6 @@ class LoanController extends Controller
         }
         if ($id) {
             $loan = Loan::findOrFail($id);
-            if ($request->has('role_id')) {
-                if ($request->role_id != $loan->role_id) {
-                    $role = Role::findOrFail($request->role_id);
-                    $roles = RoleSequence::flow($loan->modality->procedure_type->id, $loan->role_id);
-                    if (($loan->validated && $roles->next->search($request->role_id) === false) || (!$loan->validated && $roles->previous->search($request->role_id) === false)) abort(403, 'Derivación inválida');
-                }
-            }
             if (Auth::user()->can('update-loan')) {
                 $loan->fill(array_merge($request->all(), isset($disbursable) ? (array)self::verify_spouse_disbursable($disbursable) : []));
             } else {
@@ -440,6 +433,7 @@ class LoanController extends Controller
                 }
                 if ($request->has('role_id')) {
                     if ($request->role_id != $loan->role_id) {
+                        $role = Role::findOrFail($request->role_id);
                         $loan->role()->associate($role);
                         $loan->validated = false;
                     }
@@ -1105,5 +1099,53 @@ class LoanController extends Controller
         }
         $observation->update(collect($request->update)->only('observation_type_id', 'message', 'enabled')->toArray());
         return $loan->observations;
+    }
+
+    /**
+    * Derivar en lote
+    * Deriva o devuelve trámites en un lote mediante sus IDs
+    * @bodyParam ids array required Lista de IDs de los trámites a derivar. Example: [1,2,3]
+    * @bodyParam role_id integer required ID del rol al cual derivar o devolver. Example: 82
+    * @authenticated
+    * @response
+    * [
+    *     {
+    *         "id": 1,
+    *         "code": "PTMO000001-2020",
+    *         "disbursable_id": 5146,
+    *         "disbursable_type": "affiliates",
+    *         "procedure_modality_id": 32,
+    *         "disbursement_date": null,
+    *         "parent_loan_id": null,
+    *         "parent_reason": null,
+    *         "request_date": "2020-04-15T04:00:00.000000Z",
+    *         "amount_requested": 2000,
+    *         "city_id": 3,
+    *         "loan_interest_id": 1,
+    *         "loan_state_id": 1,
+    *         "amount_approved": 2000,
+    *         "loan_term": 2,
+    *         "disbursement_type_id": 1,
+    *         "personal_reference_id": null,
+    *         "account_number": 586621345,
+    *         "loan_destiny_id": 1,
+    *         "role_id": 82,
+    *         "validated": false,
+    *         "created_at": "2020-04-16T01:12:41.000000Z",
+    *         "updated_at": "2020-04-16T14:26:19.000000Z",
+    *         "deleted_at": null
+    *     }, {}
+    * ]
+    */
+    public function bulk_update_role(LoansForm $request)
+    {
+        $loans = Loan::whereIn('id', $request->ids)->where('role_id', '!=', $request->role_id)->orderBy('code');
+        $derived = $loans->get();
+        $derived->map(function ($item, $key) use ($request) {
+            $item['role_id'] = $request->role_id;
+            $item['validated'] = false;
+        });
+        $loans->update(array_merge($request->only('role_id'), ['validated' => false]));
+        return $derived;
     }
 }

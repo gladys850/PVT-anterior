@@ -83,9 +83,9 @@ class LoanGlobalParameterController extends Controller
     *    "updated_at": "2020-02-27 16:29:10"
     * }
     */
-    public function show($id)
+    public function show(LoanGlobalParameter $global_parameter)
     {
-        return LoanGlobalParameter::findOrFail($id);
+        return $global_parameter;
     }
 
     /**

@@ -12,26 +12,6 @@ use Illuminate\Http\Request;
 class AddressController extends Controller
 {
     /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
     * Nueva dirección
     * Inserta nueva dirección
     * @bodyParam city_address_id integer ID de ciudad del CI. Example: 4
@@ -60,28 +40,6 @@ class AddressController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
     * Actualizar dirección
     * Actualizar los datos de una dirección existente
     * @urlParam address required ID de dirección. Example: 11805
@@ -105,10 +63,8 @@ class AddressController extends Controller
     *     "id": 11805
     * }
     */
-    public function update(AddressForm $request, $id)
+    public function update(AddressForm $request, Address $address)
     {
-        // echo('entro');
-        $address = Address::findOrFail($id);
         $address->fill($request->all());
         $address->save();
         return $address;
@@ -132,9 +88,8 @@ class AddressController extends Controller
     *     "created_at":" 2020-02-14 14:38:00"
     * }
     */
-    public function destroy($id)
+    public function destroy(Address $address)
     {
-        $address = Address::findOrFail($id);
         $address->delete();
         return $address;
     }

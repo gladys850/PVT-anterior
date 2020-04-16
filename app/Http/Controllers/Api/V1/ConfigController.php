@@ -20,7 +20,7 @@ class ConfigController extends Controller
     *     "date": "2020-02-07"
     * }
     */
-    public function index()
+    public function __invoke()
     {
         return response()->json([
             'date' => Carbon::now()->format('Y-m-d')

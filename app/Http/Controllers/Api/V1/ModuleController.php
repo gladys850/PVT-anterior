@@ -65,9 +65,9 @@ class ModuleController extends Controller
     *     "shortened": "FR"
     * }
     */
-    public function show($id)
+    public function show(Module $module)
     {
-        return Module::findOrFail($id);
+        return $module;
     }
 
     /**
