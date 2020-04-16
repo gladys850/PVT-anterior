@@ -120,9 +120,7 @@
 import Guarantor from '@/components/loan/Guarantor'
 import Ballots from '@/components/loan/Ballots'
 import Requirement from '@/components/loan/Requirement'
-import { Validator } from 'vee-validate'
 export default {
-  inject: ['$validator'],
   name: "loan-steps",
   components: {
     Requirement,

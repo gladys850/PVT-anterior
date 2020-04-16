@@ -426,15 +426,24 @@ class LoanController extends Controller
         if ($id) {
             $loan = Loan::findOrFail($id);
             if ($request->has('role_id')) {
-                $role = Role::findOrFail($request->role_id);
-                $roles = RoleSequence::flow($loan->modality->procedure_type->id, $loan->role_id);
-                $roles = $roles->previous->merge($roles->next);
-                if ($roles->search($request->role_id) === false) $request = new Request($request->except('role_id'));
+                if ($request->role_id != $loan->role_id) {
+                    $role = Role::findOrFail($request->role_id);
+                    $roles = RoleSequence::flow($loan->modality->procedure_type->id, $loan->role_id);
+                    if (($loan->validated && $roles->next->search($request->role_id) === false) || (!$loan->validated && $roles->previous->search($request->role_id) === false)) abort(403, 'Derivación inválida');
+                }
             }
             if (Auth::user()->can('update-loan')) {
                 $loan->fill(array_merge($request->all(), isset($disbursable) ? (array)self::verify_spouse_disbursable($disbursable) : []));
-            } elseif (!Auth::user()->can('update-loan') && $request->has('role_id')) {
-                $loan->role()->associate($role);
+            } else {
+                if ($request->has('validated')) {
+                    $loan->validated = $request->validated;
+                }
+                if ($request->has('role_id')) {
+                    if ($request->role_id != $loan->role_id) {
+                        $loan->role()->associate($role);
+                        $loan->validated = false;
+                    }
+                }
             }
         } else {
             $loan = new Loan(array_merge($request->all(), (array)self::verify_spouse_disbursable($disbursable), ['amount_approved' => $request->amount_requested]));

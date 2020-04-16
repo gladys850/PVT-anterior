@@ -147,6 +147,7 @@ class Affiliate extends Model
           }
         }
       }
+        unset ($this->contributions);
       return $category;
     }
 
@@ -182,7 +183,7 @@ class Affiliate extends Model
       //address
     public function addresses()
     {
-      return $this->morphToMany(Address::class, 'addressable')->withTimestamps();
+      return $this->morphToMany(Address::class, 'addressable')->withTimestamps()->latest('updated_at');
     }
 
     public function getAddressAttribute()
