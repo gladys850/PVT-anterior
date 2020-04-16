@@ -11,7 +11,7 @@
   >
     <template v-slot:item="props">
       <tr :class="props.isExpanded ? 'secondary white--text' : ''">
-        <td class="text-center">{{ props.item.id }}</td>
+        <td class="text-center">{{ props.item.id }}{{ props.item}}</td>
         <td class="text-center">{{ props.item.request_date | date }}</td>
         <td class="text-center">{{ props.item.loan_term }}</td>
         <td class="text-center">{{ props.item.disbursement_date | date }}</td>
@@ -181,6 +181,7 @@ export default {
         this.loading = true
         let res = await axios.get(`loan`, {
           params: {
+            role_id:82,
             page: this.options.page,
             per_page: this.options.itemsPerPage,
             sortBy: this.options.sortBy,

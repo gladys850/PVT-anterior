@@ -21,7 +21,6 @@
 
         <v-tab
           v-if="!editable"
-          v-show="!isNew"
           :href="`#tab-1`"
         >
           <v-icon v-if="icons">mdi-trending-up</v-icon>
@@ -38,18 +37,15 @@
         </v-tab>
         <v-tab
           :href="`#tab-4`"
-          v-show="!isNew"
         >
           <v-icon v-if="icons">mdi-account</v-icon>
         </v-tab>
         <v-tab
-          v-show="!isNew"
           :href="`#tab-5`"
         >
           <v-icon v-if="icons">mdi-police-badge</v-icon>
         </v-tab>
          <v-tab
-          v-show="!isNew"
           :href="`#tab-6`"
         >
           <v-icon v-if="icons">mdi-comment-eye-outline</v-icon>
@@ -141,7 +137,6 @@ import BallotsResult from '@/components/loan/BallotsResult'
 import Requirement from '@/components/loan/Requirement'
 import ObserverQualification from '@/components/qualification/ObserverQualification'
 import PoliceData from '@/components/affiliate/PoliceData'
-import Fingerprint from '@/components/affiliate/Fingerprint'
 import Dashboard from '@/components/qualification/Dashboard'
 
 export default {
@@ -152,7 +147,6 @@ export default {
     BallotsResult,
     Requirement,
     PoliceData,
-    Fingerprint,
     ObserverQualification,
     Dashboard
   },
@@ -217,9 +211,6 @@ export default {
     tab: 'tab-1'
   }),
   computed: {
-    isNew() {
-      return this.$route.params.id == 'new'
-          },
     permission() {
       return {
         primary: this.primaryPermission,
@@ -242,13 +233,7 @@ export default {
     }
   },
   mounted() {
-    if (!this.isNew) {
-      this.resetForm()
-    } else {
-      this.tab = 'tab-2'
-      this.editable = true
-      this.setBreadcrumbs()
-    }
+    this.getloan(4)
   },
   methods: {
     resetForm() {
@@ -260,43 +245,6 @@ export default {
       this.reload = false
       })
     },
-    async saveAffiliate() {
-      try {
-        if (!this.editable) {
-            this.editable = true
-        } else {
-          if (this.isNew) {
-          // New affiliate
-            await axios.post(`affiliate`, this.affiliate)
-            this.toastr.success('Afiliado adicionado')
-            await axios.patch(`affiliate/${this.affiliate.id}/address`, {
-            addresses: this.addresses.map(o => o.id)
-            })
-          } else {
-            // Edit affiliate
-            await axios.patch(`affiliate/${this.affiliate.id}`, this.affiliate)
-            await axios.patch(`affiliate/${this.affiliate.id}/address`, {
-              addresses: this.addresses.map(o => o.id)
-            })
-            if (this.spouse.id)
-            {
-              await axios.patch(`spouse/${this.spouse.id}`, this.spouse)
-            }
-            else{
-              this.spouse.affiliate_id=this.affiliate.id
-              await axios.post(`spouse`, this.spouse)
-            }
-            this.editable = false
-          }
-        this.toastr.success('Registro guardado correctamente')
-        this.editable = false
-        }
-      } catch (e) {
-        console.log(e)
-      } finally {
-        this.loading = false
-      }
-    },
     setBreadcrumbs() {
       let breadcrumbs = [
         {
@@ -305,6 +253,32 @@ export default {
         }
       ]
       this.$store.commit('setBreadcrumbs', breadcrumbs)
+    },
+    async getloan(id) {
+      try {
+        this.loading = true;
+        let res = await axios.get(`loan/${id}`);
+        this.loan = res.data;
+this.calculos.plazo=this.loan.loan_term
+this.calculos.montos=this.loan.amount_approved
+
+this.calculos.calculo_de_cuota=this.loan.estimated_quota
+
+this.calculos.monto_maximo_sugerido=this.loan.amount_approved
+
+        let res1 = await axios.get(`affiliate/${this.loan.disbursable_id}`)
+        this.affiliate = res1.data
+        this.setBreadcrumbs()
+        if (this.affiliate.dead) {
+          this.getSpouse(this.$route.params.id)
+        }
+        
+        console.log(this.loan+'este es el prestamo')
+      } catch (e) {
+        console.log(e);
+      } finally {
+        this.loading = false;
+      }
     },
     async getAffiliate(id) {
       try {
