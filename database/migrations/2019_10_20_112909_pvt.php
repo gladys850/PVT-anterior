@@ -41,6 +41,5 @@ class Pvt extends Migration
         //
         Schema::dropIfExists('loan_interests');
         Schema::dropIfExists('loan_states');
-        Schema::dropIfExists('disbursement_types');
     }
 }

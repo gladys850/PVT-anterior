@@ -20,8 +20,8 @@ $factory->define(App\Loan::class, function (Faker $faker) {
     $procedure_modality = $procedure_type->procedure_modalities->random();
     if ($procedure_type->loan_destinies->count() == 0) {
         do {
-            $loan_destiny = factory(App\LoanDestiny::class)->create();
-        } while ($loan_destiny->procedure_type_id != $procedure_type->id);
+            $destiny = factory(App\LoanDestiny::class)->create();
+        } while ($destiny->procedure_type_id != $procedure_type->id);
     }
     $amount = intval($faker->numberBetween($procedure_type->interval->minimum_amount,$procedure_type->interval->maximum_amount) / 100) * 100;
     return [
@@ -34,12 +34,12 @@ $factory->define(App\Loan::class, function (Faker $faker) {
         'disbursement_date' => $faker->dateTimeBetween($startDate = '-2 months', $endDate = 'now', $timezone = null),
         'amount_requested' => $amount,
         'city_id' => City::all()->random(),
-        'loan_interest_id' => $procedure_modality->current_interest,
-        'loan_state_id' => LoanState::whereName('Desembolsado')->first()->id,
+        'interest_id' => $procedure_modality->current_interest,
+        'state_id' => LoanState::whereName('Desembolsado')->first()->id,
         'amount_approved' => $amount,
         'loan_term' => $faker->numberBetween($procedure_type->interval->minimum_term,$procedure_type->interval->maximum_term),
-        'disbursement_type_id' => PaymentType::whereName('Cheque')->first()->id,
-        'loan_destiny_id' => $procedure_type->loan_destinies->random()->id,
+        'payment_type_id' => PaymentType::whereName('Cheque')->first()->id,
+        'destiny_id' => $procedure_type->loan_destinies->random()->id,
         'role_id' => Role::whereName('PRE-area-de-recepcion')->first()->id,
         'created_at' => $faker->dateTime($max = 'now'),
         'updated_at' => $faker->dateTime($max = 'now')
