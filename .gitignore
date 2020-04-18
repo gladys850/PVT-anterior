@@ -5,7 +5,6 @@
 /public/hot
 /public/img
 /public/docs/*
-!/public/docs/collection.json
 /public/fonts
 /public/js
 /public/css
@@ -21,3 +20,4 @@
 .phpunit.result.cache
 yarn-error.log
 npm-debug.log
+!/public/docs/collection.json
