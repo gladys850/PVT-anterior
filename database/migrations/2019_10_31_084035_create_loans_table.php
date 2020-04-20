@@ -27,19 +27,19 @@ class CreateLoansTable extends Migration
             $table->unsignedMediumInteger('amount_requested'); // monto solicitado
             $table->unsignedBigInteger('city_id');  // id lugar de la solicitud
             $table->foreign('city_id')->references('id')->on('cities');
-            $table->unsignedBigInteger('loan_interest_id')->nullable(false); // id del interes
-            $table->foreign('loan_interest_id')->references('id')->on('loan_interests');
-            $table->unsignedBigInteger('loan_state_id')->nullable(false); //id estado del tramite
-            $table->foreign('loan_state_id')->references('id')->on('loan_states'); // estado de prestamo
+            $table->unsignedBigInteger('interest_id')->nullable(false); // id del interes
+            $table->foreign('interest_id')->references('id')->on('loan_interests');
+            $table->unsignedBigInteger('state_id')->nullable(false); //id estado del tramite
+            $table->foreign('state_id')->references('id')->on('loan_states'); // estado de prestamo
             $table->unsignedMediumInteger('amount_approved')->nullable(); // monto aprobado
             $table->unsignedSmallInteger('loan_term'); // plazo del prestamo en meses
-            $table->unsignedBigInteger('disbursement_type_id'); // id tipo de desembolso
+            $table->unsignedBigInteger('payment_type_id'); // id tipo de desembolso
             $table->unsignedBigInteger('personal_reference_id')->nullable(); // persona de referencia
             $table->foreign('personal_reference_id')->references('id')->on('personal_references');
-            $table->foreign('disbursement_type_id')->references('id')->on('payment_types');
+            $table->foreign('payment_type_id')->references('id')->on('payment_types');
             $table->unsignedBigInteger('account_number')->nullable(); // numero de cuenta en caso de ser deposito en cuenta
-            $table->unsignedBigInteger('loan_destiny_id'); // id tipo de desembolso
-            $table->foreign('loan_destiny_id')->references('id')->on('loan_destinies');
+            $table->unsignedBigInteger('destiny_id'); // id tipo de desembolso
+            $table->foreign('destiny_id')->references('id')->on('loan_destinies');
             $table->unsignedBigInteger('role_id');  // id rol bandeja actual
             $table->foreign('role_id')->references('id')->on('roles');
             $table->boolean('validated')->default(false);
