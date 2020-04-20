@@ -36,10 +36,10 @@ Route::group([
         Route::apiResource('affiliate', 'Api\V1\AffiliateController')->only('show');
         Route::apiResource('affiliate_state', 'Api\V1\AffiliateStateController')->only('index');
         Route::get('affiliate/{affiliate}/fingerprint', 'Api\V1\AffiliateController@fingerprint_saved');
-        Route::apiResource('city', 'Api\V1\CityController')->only('index');
+        Route::apiResource('city', 'Api\V1\CityController')->only('index', 'show');
         Route::apiResource('pension_entity', 'Api\V1\PensionEntityController')->only('index', 'show');
         Route::apiResource('degree', 'Api\V1\DegreeController')->only('index');
-        Route::apiResource('category', 'Api\V1\CategoryController')->only('index');
+        Route::apiResource('category', 'Api\V1\CategoryController')->only('index', 'show');
         Route::apiResource('procedure_type', 'Api\V1\ProcedureTypeController')->only('index');
         Route::apiResource('payment_type', 'Api\V1\PaymentTypeController')->only('index');
         Route::apiResource('procedure_modality', 'Api\V1\ProcedureModalityController')->only('index', 'show');
@@ -58,7 +58,6 @@ Route::group([
             Route::apiResource('spouse', 'Api\V1\SpouseController')->only('index', 'show');
             // Route::get('affiliate/{affiliate}/degree', 'Api\V1\AffiliateController@get_degree');
             Route::get('affiliate/{affiliate}/degree', 'Api\V1\AffiliateController@get_degree');
-            Route::get('affiliate/{affiliate}/category', 'Api\V1\AffiliateController@get_category');
             Route::get('affiliate/{affiliate}/unit', 'Api\V1\AffiliateController@get_unit');
             Route::get('affiliate/{affiliate}/state', 'Api\V1\AffiliateController@get_state');
             Route::get('affiliate/{affiliate}/spouse', 'Api\V1\AffiliateController@get_spouse');

@@ -89,7 +89,6 @@ export default {
     this.getAffiliate(this.$route.query.affiliate_id)
     this.getAddress(this.$route.query.affiliate_id)
     this.getDegree_name(this.$route.query.affiliate_id)
-    this.getCategory_name(this.$route.query.affiliate_id)
   },
   methods:{
     async getAffiliate(id) {
@@ -97,6 +96,7 @@ export default {
         this.loading = true
         let res = await axios.get(`affiliate/${id}`)
         this.affiliate = res.data
+        this.getCategory_name(res.data.category_id)
         console.log(res.data);
         this.setBreadcrumbs()
       } catch (e) {
@@ -150,7 +150,7 @@ export default {
     async getCategory_name(id) {
       try {
         this.loading = true;
-        let res = await axios.get(`affiliate/${id}/category`);
+        let res = await axios.get(`category/${id}`);
         this.category_name = res.data.name;
       } catch (e) {
         console.log(e);

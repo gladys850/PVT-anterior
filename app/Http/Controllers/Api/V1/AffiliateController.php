@@ -124,7 +124,7 @@ class AffiliateController extends Controller
     /**
     * Actualizar afiliado
     * Actualizar datos personales de afiliado
-    * @urlParam id required ID de afiliado. Example: 54
+    * @urlParam affiliate required ID de afiliado. Example: 54
     * @bodyParam first_name string Primer nombre. Example: JUAN
     * @bodyParam last_name string Apellido paterno. Example: PINTO
     * @bodyParam gender string Género (M,F). Example: M
@@ -179,7 +179,7 @@ class AffiliateController extends Controller
     /**
     * Eliminar afiliado
     * Elimina un afiliado solo en caso de que no hubiese iniciado ningún trámite
-    * @urlParam id required ID de afiliado. Example: 54
+    * @urlParam affiliate required ID de afiliado. Example: 54
     * @authenticated
     * @responseFile responses/affiliate/destroy.200.json
     */
@@ -189,10 +189,10 @@ class AffiliateController extends Controller
         return $affiliate;
     }
 
-    /**
+    /** @group Biométrico
     * Finalizar captura de huellas
     * Finaliza la captura de huellas en el dispositivo biométrico y envía un mensaje con el estado mediante sockets en el canal: fingerprint; el ejemplo de socket es el del código 201
-    * @urlParam id required ID de afiliado. Example: 2
+    * @urlParam affiliate required ID de afiliado. Example: 2
     * @queryParam user_id required ID de usuario que realizó la captura. Example: 23
     * @queryParam success required Estado de la captura, 1 para exitoso y 0 para error. Example: 1
     * @responseFile 200 responses/affiliate/fingerprint_saved.200.json
@@ -211,10 +211,10 @@ class AffiliateController extends Controller
         }
     }
 
-    /**
+    /** @group Biométrico
     * Registrar huellas
     * Inicia la captura de huellas en el dispositivo biométrico, la respuesta es enviada también mediante sockets en el canal: record; dicha difusión contiene la misma información que la respuesta de ejemplo
-    * @urlParam id required ID de afiliado. Example: 2
+    * @urlParam affiliate required ID de afiliado. Example: 2
     * @responseFile responses/affiliate/update_fingerprint.200.json
     */
     public function update_fingerprint(Affiliate $affiliate)
@@ -238,10 +238,10 @@ class AffiliateController extends Controller
         $affiliate->full_name = $affiliate->full_name;
     }
 
-    /**
+    /** @group Biométrico
     * Imagen perfil afiliado
     * Devuelve el listado con los nombres de los archivos de imagen, el contenido en base64 y el formato
-    * @urlParam id required ID de afiliado. Example: 2
+    * @urlParam affiliate required ID de afiliado. Example: 2
     * @responseFile responses/affiliate/get_profile_images.200.json
     */
     public function get_profile_images(Request $request, $affiliate)
@@ -263,26 +263,28 @@ class AffiliateController extends Controller
         return $files;
     }
 
-    /**
+    /** @group Biométrico
     * Imagen huellas afiliado
     * Devuelve el listado con los nombres de los archivos de imagen, el contenido en base64 y el formato
-    * @urlParam id required ID de afiliado. Example: 2
+    * @urlParam affiliate required ID de afiliado. Example: 2
     * @responseFile responses/affiliate/get_fingerprint_images.200.json]
     */
     public function get_fingerprint_images($affiliate)
     {
         $files = [];
-        $base_path = 'picture/';
-        $fingerprint_files = ['_left_four.png', '_right_four.png', '_thumbs.png'];
-        foreach ($fingerprint_files as $file) {
-            if (Storage::disk('ftp')->exists($base_path . $affiliate . $file)) {
-                array_push($files, [
-                    'name' => $affiliate . $file,
-                    'content' => base64_encode(Storage::disk('ftp')->get($base_path . $affiliate . $file)),
-                    'format' => Storage::disk('ftp')->mimeType($base_path . $affiliate . $file)
-                ]);
+        try {
+            $base_path = 'picture/';
+            $fingerprint_files = ['_left_four.png', '_right_four.png', '_thumbs.png'];
+            foreach ($fingerprint_files as $file) {
+                if (Storage::disk('ftp')->exists($base_path . $affiliate . $file)) {
+                    array_push($files, [
+                        'name' => $affiliate . $file,
+                        'content' => base64_encode(Storage::disk('ftp')->get($base_path . $affiliate . $file)),
+                        'format' => Storage::disk('ftp')->mimeType($base_path . $affiliate . $file)
+                    ]);
+                }
             }
-        }
+        } catch (\Exception $e) {}
         return $files;
     }
 
@@ -304,18 +306,18 @@ class AffiliateController extends Controller
     /**
     * Cónyugue
     * Devuelve los datos del o la cónyugue en caso de que el afiliado hubiese fallecido
-    * @urlParam id required ID de afiliado. Example: 12
+    * @urlParam affiliate required ID de afiliado. Example: 12
     * @authenticated
     * @responseFile responses/affiliate/get_spouse.200.json
     */
     public function get_spouse(Affiliate $affiliate) {
-        return $affiliate->spouse;
+        return response()->json($affiliate->spouse);
     }
 
     /**
     * Obtener direcciones
     * Devuelve la lista de direcciones del afiliado
-    * @urlParam id required ID de afiliado. Example: 1
+    * @urlParam affiliate required ID de afiliado. Example: 1
     * @authenticated
     * @responseFile responses/affiliate/get_addresses.200.json
     */
@@ -326,7 +328,7 @@ class AffiliateController extends Controller
     /**
     * Actualizar direcciones
     * Actualiza el listado de direcciones de un afiliado
-    * @urlParam id required ID de afiliado. Example: 12
+    * @urlParam affiliate required ID de afiliado. Example: 12
     * @queryParam addresses required Lista de IDs de direcciones. Example: [12,17]
     * @authenticated
     * @responseFile responses/affiliate/update_addresses.200.json
@@ -342,7 +344,7 @@ class AffiliateController extends Controller
     /**
     * Boletas de pago
     * Devuelve el listado de las boletas de pago de un afiliado, si se envía el ID de ciudad además devuelve un booleano para identificar si la petición contiene las últimas boletas y la diferencia de meses que se utilizó para la operación
-    * @urlParam id required ID de afiliado. Example: 1
+    * @urlParam affiliate required ID de afiliado. Example: 1
     * @queryParam city_id ID de la ciudad de solicitud. Example: 4
     * @queryParam sortBy Vector de ordenamiento. Example: [month_year]
     * @queryParam sortDesc Vector de orden descendente(true) o ascendente(false). Example: [1]
@@ -392,21 +394,9 @@ class AffiliateController extends Controller
     }
 
     /**
-    * Categoría
-    * Devuelve la categoría policial del afiliado
-    * @urlParam id required ID de afiliado. Example: 12
-    * @authenticated
-    * @responseFile responses/affiliate/get_category.200.json
-    */
-    public function get_category(Affiliate $affiliate)
-    {
-        return $affiliate->category;
-    }
-
-    /**
     * Grado
     * Devuelve el grado policial del afiliado
-    * @urlParam id required ID de afiliado. Example: 12
+    * @urlParam affiliate required ID de afiliado. Example: 12
     * @authenticated
     * @responseFile responses/affiliate/get_degree.200.json
     */
@@ -418,7 +408,7 @@ class AffiliateController extends Controller
     /**
     * Unidad
     * Devuelve la unidad policial donde está destinado el afiliado
-    * @urlParam id required ID de afiliado. Example: 12
+    * @urlParam affiliate required ID de afiliado. Example: 12
     * @authenticated
     * @responseFile responses/affiliate/get_unit.200.json
     */
@@ -430,7 +420,7 @@ class AffiliateController extends Controller
     /** @group Préstamos
     * Préstamos por afiliado
     * Devuelve la lista de préstamos o garantías del afiliado
-    * @urlParam id required ID de afiliado. Example: 12
+    * @urlParam affiliate required ID de afiliado. Example: 12
     * @queryParam guarantor required Préstamos para el afiliado como garante(1) o como titular(0). Example: 1
     * @queryParam state ID de loan_state_id para filtrar por estado de préstamos. Example: 3
     * @authenticated
@@ -465,7 +455,7 @@ class AffiliateController extends Controller
     /**
     * Estado
     * Devuelve el estado policial del afiliado
-    * @urlParam id required ID de afiliado. Example: 5
+    * @urlParam affiliate required ID de afiliado. Example: 5
     * @authenticated
     * @responseFile responses/affiliate/get_state.200.json
     */
@@ -478,9 +468,9 @@ class AffiliateController extends Controller
     /** @group Préstamos
     * Modalidad por afiliado
     * Devuelve la modalidad de trámite evaluando al afiliado y el tipo de trámite
-    * @urlParam id required ID de afiliado. Example: 5
+    * @urlParam affiliate required ID de afiliado. Example: 5
     * @queryParam procedure_type_id required ID de tipo de trámite. Example: 9
-    * @queryParam external_discount Booleano de descuento en otras entidades. Example: 1
+    * @queryParam external_discount Booleano de descuento en otras entidades, 1 para si y 0 para no. Example: 1
     * @authenticated
     * @responseFile responses/affiliate/get_loan_modality.200.json
     */

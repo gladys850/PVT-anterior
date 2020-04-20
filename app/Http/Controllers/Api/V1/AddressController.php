@@ -21,18 +21,7 @@ class AddressController extends Controller
     * @bodyParam latitude float Latitud de acuerdo a OpenStreet Maps. Example: -16.495244595604056
     * @bodyParam longitude float Longitud de acuerdo a OpenStreet Maps. Example: -68.13450627055796
     * @authenticated
-    * @response
-    * {
-    *     "city_address_id": 4,
-    *     "zone": "Chuquiaguillo",
-    *     "street": "Av. Panamericana",
-    *     "number_address": 43,
-    *     "latitude": -16.495244595604056,
-    *     "longitude": -68.13450627055796,
-    *     "updated_at": "2020-02-14 14:38:00",
-    *     "created_at": "2020-02-14 14:38:00",
-    *     "id": 11805
-    * }
+    * @responseFile responses/address/store.200.json
     */
     public function store(AddressForm $request)
     {
@@ -50,18 +39,7 @@ class AddressController extends Controller
     * @bodyParam latitude float Latitud de acuerdo a OpenStreet Maps. Example: -16.495244595604056
     * @bodyParam longitude float Longitud de acuerdo a OpenStreet Maps. Example: -68.13450627055796
     * @authenticated
-    * @response
-    * {
-    *     "city_address_id": 4,
-    *     "zone": "Chuquiaguillo",
-    *     "street": "Av. Panamericana",
-    *     "number_address": 43,
-    *     "latitude": -16.495244595604056,
-    *     "longitude": -68.13450627055796,
-    *     "updated_at": "2020-02-14 14:38:00",
-    *     "created_at": "2020-02-14 14:38:00",
-    *     "id": 11805
-    * }
+    * @responseFile responses/address/update.200.json
     */
     public function update(AddressForm $request, Address $address)
     {
@@ -75,18 +53,7 @@ class AddressController extends Controller
     * Eliminar una dirección solo en caso de que no este relacionada ningún trámite
     * @urlParam address required ID de dirección. Example: 1077
     * @authenticated
-    * @response
-    * {
-    *     "id": 1077,
-    *     "city_address_id": 4,
-    *     "zone": "Villa Tejada Triangular-El Alto",
-    *     "street": "11",
-    *     "number_address": "112",
-    *     "created_at": "2018-09-06 15:57:42",
-    *     "updated_at": "2018-09-06 17:44:45",
-    *     "updated_at":" 2020-02-14 14:38:00",
-    *     "created_at":" 2020-02-14 14:38:00"
-    * }
+    * @responseFile responses/address/destroy.200.json
     */
     public function destroy(Address $address)
     {

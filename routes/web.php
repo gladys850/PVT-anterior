@@ -15,4 +15,4 @@ Route::get('logs', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index');
 
 Route::get('{any}', function () {
     return view('index');
-})->where('any', '^(?!api).*$')->name('index.php');
+})->where('any', '^(?!.*(api|docs|logs)).*$')->name('index.php');

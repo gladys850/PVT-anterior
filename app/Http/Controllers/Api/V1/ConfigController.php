@@ -13,12 +13,10 @@ use Carbon\Carbon;
 class ConfigController extends Controller
 {
     /**
-    * Datos generales
+    * Parámetros del servidor
     * Devuelve los parámetros necesarios para sincronización cliente-servidor
     * @response
-    * {
-    *     "date": "2020-02-07"
-    * }
+    * @responseFile responses/config/invoke.200.json
     */
     public function __invoke()
     {

@@ -7,6 +7,8 @@ use Util;
 
 class Address extends Model
 {
+    use Traits\EloquentGetTableNameTrait;
+
     protected $table = "addresses";
     public $guarded =  [];
     protected $fillable = ['city_address_id', 'zone', 'street', 'number_address', 'latitude', 'longitude'];
