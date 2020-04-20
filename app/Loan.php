@@ -31,15 +31,15 @@ class Loan extends Model
         'request_date',
         'amount_requested',
         'city_id',
-        'loan_interest_id',
-        'loan_state_id',
+        'interest_id',
+        'state_id',
         'amount_approved',
         'loan_term',
         'disbursement_date',
-        'disbursement_type_id',
+        'payment_type_id',
         'modification_date',
         'account_number',
-        'loan_destiny_id',
+        'destiny_id',
         'personal_reference_id',
         'role_id',
         'validated'
@@ -51,7 +51,7 @@ class Loan extends Model
         $this->request_date = Carbon::now();
         $state = LoanState::whereName('En Proceso')->first();
         if ($state) {
-            $this->loan_state_id = $state->id;
+            $this->state_id = $state->id;
         }
         $latest_loan = DB::table('loans')->orderBy('created_at', 'desc')->limit(1)->first();
         if (!$latest_loan) $latest_loan = (object)['id' => 0];
@@ -61,7 +61,7 @@ class Loan extends Model
     public function setProcedureModalityIdAttribute($id)
     {
         $this->attributes['procedure_modality_id'] = $id;
-        $this->attributes['loan_interest_id'] = $this->modality->current_interest->id;
+        $this->attributes['interest_id'] = $this->modality->current_interest->id;
     }
 
     public function personal_reference()
@@ -91,7 +91,7 @@ class Loan extends Model
 
     public function state()
     {
-      return $this->belongsTo(LoanState::class, 'loan_state_id','id');
+      return $this->belongsTo(LoanState::class, 'state_id','id');
     }
     public function city()
     {
@@ -99,7 +99,7 @@ class Loan extends Model
     }
     public function payment_type()
     {
-        return $this->belongsTo(PaymentType::class,'disbursement_type_id','id');
+        return $this->belongsTo(PaymentType::class,'payment_type_id','id');
     }
 
     public function submitted_documents()
@@ -138,7 +138,7 @@ class Loan extends Model
     }
     public function interest()
     {
-        return $this->belongsTo(LoanInterest::class, 'loan_interest_id', 'id');
+        return $this->belongsTo(LoanInterest::class, 'interest_id', 'id');
     }
 
     public function observations()
@@ -153,7 +153,7 @@ class Loan extends Model
 
     public function destiny()
     {
-        return $this->belongsTo(LoanDestiny::class, 'loan_destiny_id', 'id');
+        return $this->belongsTo(LoanDestiny::class, 'destiny_id', 'id');
     }
     // Saldo capital
     public function getBalanceAttribute()
