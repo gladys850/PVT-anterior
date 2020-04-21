@@ -7,7 +7,7 @@
             <v-col cols="12">
               <v-container class="py-0">
                 <v-row>
-                  <v-col cols="12" class="py-0">Resultado para el Prestamo</v-col>
+                  <v-col cols="12" class="py-0">Resultado para el Prestamo </v-col>
                   <br />
                   <v-col cols="12" md="3">
                     <v-layout row wrap>
