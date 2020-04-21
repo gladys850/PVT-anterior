@@ -214,6 +214,8 @@ export default {
           //intervalos es el monto, plazo y modalidad y id de una modalidad
           this.intervalos.maximun_amoun=this.interval[this.i].maximum_amount
           this.intervalos.maximum_term= this.interval[this.i].maximum_term
+          this.intervalos.minimun_amoun=this.interval[this.i].minimum_amount
+          this.intervalos.minimum_term= this.interval[this.i].minimum_term
           this.intervalos.procedure_type_id= this.loanTypeSelected
           this.num_type=this.loanTypeSelected
         }
