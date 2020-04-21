@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api\V1;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
-use Util;
+use Illuminate\Support\Facades\Schema;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Affiliate;
@@ -14,7 +14,6 @@ use App\Loan;
 use App\Tag;
 use App\LoanState;
 use App\RecordType;
-use Illuminate\Support\Facades\Schema;
 use App\ProcedureDocument;
 use App\ProcedureModality;
 use App\PaymentType;
@@ -25,6 +24,7 @@ use App\Http\Requests\LoanForm;
 use App\Http\Requests\LoanPaymentForm;
 use App\Http\Requests\LoanObservationForm;
 use Carbon;
+use Util;
 
 /** @group Préstamos
 * Datos de los trámites de préstamos y sus relaciones
@@ -46,45 +46,7 @@ class LoanController extends Controller
     * @queryParam per_page Número de datos por página. Example: 8
     * @queryParam page Número de página. Example: 1
     * @authenticated
-    * @response
-    * {
-    *     "current_page": 1,
-    *     "data": [
-    *         {
-    *             "id": 2,
-    *             "code": null,
-    *             "disbursable_id": 1453,
-    *             "disbursable_type": "spouses",
-    *             "procedure_modality_id": 32,
-    *             "disbursement_date": "2020-02-13",
-    *             "parent_loan_id": null,
-    *             "parent_reason": null,
-    *             "request_date": "2020-02-13",
-    *             "amount_requested": 2000,
-    *             "city_id": 4,
-    *             "interest_id": 1,
-    *             "state_id": 1,
-    *             "amount_approved": null,
-    *             "loan_term": 3,
-    *             "payment_type_id": 1,
-    *             "created_at": "2020-02-13 16:32:43",
-    *             "updated_at": "2020-02-13 16:32:43",
-    *             "balance": 2000,
-    *             "estimated_quota": 707.06,
-    *             "defaulted": false
-    *         }, {}
-    *     ],
-    *     "first_page_url": "http://127.0.0.1/api/v1/loan?page=1",
-    *     "from": 1,
-    *     "last_page": 1,
-    *     "last_page_url": "http://127.0.0.1/api/v1/loan?page=1",
-    *     "next_page_url": null,
-    *     "path": "http://127.0.0.1/api/v1/loan",
-    *     "per_page": 10,
-    *     "prev_page_url": null,
-    *     "to": 3,
-    *     "total": 3
-    * }
+    * @responseFile responses/loan/index.200.json
     */
     public function index(Request $request)
     {
@@ -135,45 +97,10 @@ class LoanController extends Controller
     * @bodyParam personal_reference_id integer ID de referencia personal. Example: 4
     * @bodyParam account_number integer Número de cuenta en Banco Union. Example: 586621345
     * @bodyParam destiny_id integer required ID destino de Préstamo. Example: 1
-    * @bodyParam documents array required Lista de IDs de Documentos solicitados. Example: [306,305]
+    * @bodyParam documents array required Lista de IDs de Documentos solicitados. Example: [40, 271, 273, 274]
     * @bodyParam notes array Lista de notas aclaratorias. Example: [Informe de baja policial, Carta de solicitud]
     * @authenticated
-    * @response
-    * {
-    *   "procedure_modality_id": 32,
-    *   "interest_id": 1,
-    *   "amount_requested": 2000,
-    *   "city_id": 3,
-    *   "loan_term": 2,
-    *   "payment_type_id": 1,
-    *   "destiny_id": 1,
-    *   "account_number": 586621345,
-    *   "request_date": "2020-03-05T20:27:23.900575Z",
-    *   "disbursable_type": "affiliates",
-    *   "disbursable_id": 5146,
-    *   "amount_approved": 2000,
-    *   "state_id": 1,
-    *   "code": "PTMO000017-2020",
-    *   "disbursement_date": "2020-02-01",
-    *   "updated_at": "2020-03-05 16:27:23",
-    *   "created_at": "2020-03-05 16:27:23",
-    *   "parent_loan_id": 1,
-    *   "parent_reason": "REFINANCIAMIENTO",
-    *   "personal_reference_id": 4,
-    *   "id": 17,
-    *   "modality": {
-    *       "id": 32,
-    *       "procedure_type_id": 9,
-    *       "name": "Anticipo sector activo",
-    *       "shortened": "ANT-SA",
-    *       "is_valid": true
-    *   },
-    *   "attachment": {
-    *       "content": "zMTcgM....",
-    *       "type": "pdf",
-    *       "file_name": "solicitud_prestamo_17.pdf"
-    *   }
-    * }
+    * @responseFile responses/loan/store.200.json
     */
     public function store(LoanForm $request)
     {
@@ -214,12 +141,12 @@ class LoanController extends Controller
         $file_name = implode('_', ['solicitud', 'prestamo', $loan->code]) . '.pdf';
         if(Auth::user()->can('print-contract-loan')){
             $loan->attachment = Util::pdf_to_base64([
-                $this->print_form(new Request([]), $loan->id, false),
-                $this->print_contract(new Request([]), $loan->id, false)
+                $this->print_form(new Request([]), $loan, false),
+                $this->print_contract(new Request([]), $loan, false)
             ], $file_name, 'legal', $request->copies ?? 1);
         }else{
             $loan->attachment = Util::pdf_to_base64([
-                $this->print_form(new Request([]), $loan->id, false),
+                $this->print_form(new Request([]), $loan, false),
             ], $file_name, 'legal', $request->copies ?? 1);
         }
         return $loan;
@@ -229,81 +156,8 @@ class LoanController extends Controller
     * Detalle de Préstamo
     * Devuelve el detalle de un préstamo mediante su ID
     * @urlParam loan required ID de préstamo. Example: 4
-    * @response
-    * {
-    *    "id": 4,
-    *    "code": null,
-    *    "disbursable_id": 1,
-    *    "disbursable_type": "affiliates",
-    *    "procedure_modality_id": 35,
-    *    "disbursement_date": "2020-02-01",
-    *    "parent_loan_id": null,
-    *    "parent_reason": null,
-    *    "request_date": "2020-02-17",
-    *    "amount_requested": 3000,
-    *    "city_id": 2,
-    *    "interest_id": 4,
-    *    "state_id": 1,
-    *    "amount_approved": 3000,
-    *    "loan_term": 3,
-    *    "payment_type_id": 1,
-    *    "created_at": "2020-02-17 14:52:40",
-    *    "updated_at": "2020-02-17 14:52:40",
-    *    "balance": 3000,
-    *    "estimated_quota": 1033.52,
-    *    "defaulted": false,
-    *    "lenders": [
-    *        {
-    *            "id": 6,
-    *            "user_id": 11,
-    *            "affiliate_state_id": 4,
-    *            "city_identity_card_id": 4,
-    *            "city_birth_id": 2,
-    *            "degree_id": 7,
-    *            "unit_id": 1,
-    *            "category_id": 8,
-    *            "pension_entity_id": 2,
-    *            "identity_card": "2022760",
-    *            "registration": "500718RRA",
-    *            "type": "Comando",
-    *            "last_name": "RODRIGUEZ",
-    *            "mothers_last_name": "ROLDAN",
-    *            "first_name": "ALBERTO",
-    *            "second_name": null,
-    *            "surname_husband": null,
-    *            "gender": "M",
-    *            "civil_status": "C",
-    *            "birth_date": "1950-07-18",
-    *            "date_entry": "1972-01-01",
-    *            "date_death": "2015-08-08",
-    *            "reason_death": "TRAUMATISMO CRANEO ENCEFÁLICO GRAVE",
-    *            "date_derelict": null,
-    *            "reason_derelict": null,
-    *            "change_date": "2016-07-01",
-    *            "phone_number": "(6) 423-792",
-    *            "cell_phone_number": "(603)-18901",
-    *            "afp": true,
-    *            "nua": 17346472,
-    *            "item": 27468,
-    *            "created_at": "2017-06-01 10:42:18",
-    *            "updated_at": "2018-09-05 07:59:09",
-    *            "deleted_at": null,
-    *            "service_years": null,
-    *            "service_months": null,
-    *            "death_certificate_number": "59244",
-    *            "due_date": null,
-    *            "is_duedate_undefined": true,
-    *            "affiliate_registration_number": null,
-    *            "file_code": null,
-    *            "pivot": {
-    *                "loan_id": 4,
-    *                "affiliate_id": 6,
-    *                "payment_percentage": "50"
-    *            }
-    *        },{}
-    *   ],
-    *   "guarantors": []
-    * }
+    * @authenticated
+    * @responseFile responses/loan/show.200.json
     */
     public function show(Loan $loan)
     {
@@ -322,7 +176,7 @@ class LoanController extends Controller
     /**
     * Actualizar préstamo
     * Actualizar datos principales de préstamo
-    * @urlParam id required ID de préstamo. Example: 17
+    * @urlParam loan required ID del préstamo. Example: 17
     * @bodyParam procedure_modality_id integer required ID de modalidad. Example: 32
     * @bodyParam amount_requested integer required monto solicitado. Example: 2000
     * @bodyParam city_id integer required ID de la ciudad. Example: 4
@@ -337,79 +191,30 @@ class LoanController extends Controller
     * @bodyParam account_number integer Número de cuenta en Banco Union. Example: 586621345
     * @bodyParam destiny_id integer required ID destino de Préstamo. Example: 1
     * @authenticated
-    * @response
-    * {
-    *     "id": 17,
-    *     "code": "PTMO000017-2020",
-    *     "disbursable_id": 5146,
-    *     "disbursable_type": "affiliates",
-    *     "procedure_modality_id": 32,
-    *     "disbursement_date": "2020-02-01",
-    *     "parent_loan_id": 1,
-    *     "parent_reason": "REFINANCIAMIENTO",
-    *     "personal_reference_id": 4,
-    *     "request_date": "2020-03-05",
-    *     "amount_requested": 2000,
-    *     "city_id": 4,
-    *     "interest_id": 1,
-    *     "state_id": 1,
-    *     "amount_approved": 2000,
-    *     "loan_term": 2,
-    *     "payment_type_id": 1,
-    *     "destiny_id": 1,
-    *     "account_number": 586621345,
-    *     "created_at": "2020-03-05 16:27:23",
-    *     "updated_at": "2020-03-05 16:34:04",
-    *     "modality": {
-    *         "id": 32,
-    *         "procedure_type_id": 9,
-    *         "name": "Anticipo sector activo",
-    *         "shortened": "ANT-SA",
-    *         "is_valid": true
-    *     }
-    * }
+    * @responseFile responses/loan/update.200.json
     */
-    public function update(LoanForm $request, $id)
+    public function update(LoanForm $request, Loan $loan)
     {
-        $saved = $this->save_loan($request, $id);
+        $saved = $this->save_loan($request, $loan);
         return $saved->loan;
     }
 
     /**
-    * Eliminar préstamo
-    * @urlParam id required ID de préstamo. Example: 1
+    * Anular préstamo
+    * @urlParam loan required ID del préstamo. Example: 1
     * @authenticated
-    * @response
-    * {
-    *    "id": 1,
-    *    "code": null,
-    *    "disbursable_id": 1,
-    *    "disbursable_type": "affiliates",
-    *    "procedure_modality_id": 35,
-    *    "disbursement_date": "2020-02-01",
-    *    "parent_loan_id": null,
-    *    "parent_reason": null,
-    *    "request_date": "2020-02-17",
-    *    "amount_requested": 5000,
-    *    "city_id": 2,
-    *    "interest_id": 4,
-    *    "state_id": 1,
-    *    "amount_approved": 3000,
-    *    "loan_term": 3,
-    *    "payment_type_id": 1,
-    *    "created_at": "2020-02-17 10:37:48",
-    *    "updated_at": "2020-02-17 10:39:41"
-    * }
+    * @responseFile responses/loan/destroy.200.json
     */
-    public function destroy($id)
+    public function destroy(Loan $loan)
     {
-        $loan = Loan::findOrFail($id);
-        $loan->loan_affiliates()->sync([]);
+        $state = LoanState::whereName('Anulado')->first();
+        $loan->state()->associate($state);
+        $loan->save();
         $loan->delete();
         return $loan;
     }
 
-    private function save_loan(Request $request, $id = null)
+    private function save_loan(Request $request, $loan = null)
     {
         if (Auth::user()->can(['update-loan', 'create-loan']) && ($request->has('lenders') || $request->has('guarantors'))) {
             $request->lenders = collect($request->has('lenders') ? $request->lenders : [])->unique();
@@ -423,10 +228,9 @@ class LoanController extends Controller
             }
             $disbursable = Affiliate::findOrFail($disbursable_id);
         }
-        if ($id) {
-            $loan = Loan::findOrFail($id);
+        if ($loan) {
             if (Auth::user()->can('update-loan')) {
-                $loan->fill(array_merge($request->all(), isset($disbursable) ? (array)self::verify_spouse_disbursable($disbursable) : []));
+                $loan->fill(array_merge($request->except('code'), isset($disbursable) ? (array)self::verify_spouse_disbursable($disbursable) : []));
             } else {
                 if ($request->has('validated')) {
                     $loan->validated = $request->validated;
@@ -470,120 +274,46 @@ class LoanController extends Controller
     }
 
     /**
-    * Actualización de documentos presentados
+    * Actualización de documentos
     * Actualiza los datos para cada documento presentado
-    * @urlParam loan_id required ID de préstamo. Example: 8
-    * @urlParam document_id required ID de préstamo. Example: 40
+    * @urlParam loan required ID del préstamo. Example: 8
+    * @urlParam document required ID de préstamo. Example: 40
     * @bodyParam is_valid boolean required Validez del documento. Example: true
     * @bodyParam comment string Comentario para añadir a la presentación. Example: Documento actualizado a la gestión actual
-    * @response
-    * [
-    *     {
-    *         "id": 40,
-    *         "name": "Cédula de Identidad del (la) titular en copia simple.",
-    *         "created_at": "2019-04-02 21:25:32",
-    *         "updated_at": null,
-    *         "expire_date": null,
-    *         "pivot": {
-    *             "loan_id": 8,
-    *             "procedure_document_id": 40,
-    *             "reception_date": "2020-03-06",
-    *             "comment": "Documento actualizado a la gestión actual",
-    *             "is_valid": true
-    *         }
-    *     }, {}
-    * ]
+    * @authenticated
+    * @responseFile responses/loan/update_document.200.json
     */
-    public function update_document(Request $request, $loan_id, $document_id)
+    public function update_document(Request $request, Loan $loan, ProcedureDocument $document)
     {
         $request->validate([
             'is_valid' => 'required|boolean',
             'comment' => 'string|nullable|min:1'
         ]);
-        $loan = Loan::findOrFail($loan_id);
-        $loan->submitted_documents()->updateExistingPivot($document_id, $request->all());
+        $loan->submitted_documents()->updateExistingPivot($document->id, $request->all());
         return $loan->submitted_documents;
     }
 
     /**
-    * Lista de documentos presentados
+    * Lista de documentos
     * Obtiene la lista de los documentos presentados para el trámite
-    * @urlParam id required ID de préstamo. Example: 8
-    * @response
-    * [
-    *     {
-    *         "id": 40,
-    *         "name": "Cédula de Identidad del (la) titular en copia simple.",
-    *         "created_at": "2019-04-02 21:25:32",
-    *         "updated_at": null,
-    *         "expire_date": null,
-    *         "pivot": {
-    *             "loan_id": 8,
-    *             "procedure_document_id": 40,
-    *             "reception_date": "2020-03-06",
-    *             "comment": "Documento actualizado a la gestión actual",
-    *             "is_valid": true
-    *         }
-    *     }, {}
-    * ]
+    * @urlParam loan required ID del préstamo. Example: 8
+    * @authenticated
+    * @responseFile responses/loan/get_documents.200.json
     */
-    public function get_documents($id)
+    public function get_documents(Loan $loan)
     {
-        $loan = Loan::findOrFail($id);
         return $loan->submitted_documents;
     }
 
     /**
     * Desembolso Afiliado
     * Devuelve los datos del o la cónyugue en caso de que hubiera fallecido a quien se hace el desembolso del préstamo
-    * @urlParam id required ID de préstamo. Example: 2
-    * @response
-    * {
-    *     "id": 1,
-    *    "user_id": 1,
-    *    "affiliate_state_id": 5,
-    *    "city_identity_card_id": 2,
-    *    "city_birth_id": 2,
-    *    "degree_id": 7,
-    *    "unit_id": 1,
-    *    "category_id": 8,
-    *    "pension_entity_id": 2,
-    *    "identity_card": "1020566",
-    *    "registration": "440808ACG",
-    *    "type": "Comando",
-    *    "last_name": "ALVAREZ",
-    *    "mothers_last_name": "CURCUY",
-    *    "first_name": "GARY",
-    *    "second_name": null,
-    *    "surname_husband": null,
-    *    "gender": "M",
-    *    "civil_status": "C",
-    *    "birth_date": "1944-08-08",
-    *    "date_entry": "2010-07-19",
-    *    "date_death": null,
-    *    "reason_death": "",
-    *    "date_derelict": "2017-04-01",
-    *    "reason_derelict": null,
-    *    "change_date": "2016-07-01",
-    *    "phone_number": "(6) 446-978",
-    *    "cell_phone_number": "",
-    *    "afp": true,
-    *    "nua": 1301101,
-    *    "item": 27446,
-    *    "created_at": "2017-06-01 10:42:18",
-    *    "updated_at": "2019-06-12 17:08:45",
-    *    "deleted_at": null,
-    *    "service_years": 41,
-    *    "service_months": 10,
-    *    "death_certificate_number": "",
-    *    "due_date": null,
-    *    "is_duedate_undefined": true,
-    *    "affiliate_registration_number": null,
-    *    "file_code": null
-    * }
+    * @urlParam loan required ID del préstamo. Example: 2
+    * @authenticated
+    * @responseFile responses/loan/get_disbursable.200.json
     */
-    public function get_disbursable($id){
-        $loan = Loan::findOrFail($id);
+    public function get_disbursable(Loan $loan)
+    {
         return $loan->disbursable;
     }
 
@@ -662,19 +392,13 @@ class LoanController extends Controller
     /**
     * Impresión de Contrato
     * Devuelve un pdf del contrato acorde a un ID de préstamo
-    * @urlParam id required ID del préstamo. Example: 6
+    * @urlParam loan required ID del préstamo. Example: 6
     * @queryParam copies Número de copias del documento. Example: 2
     * @authenticated
-    * @response
-    * {
-    *     "content": "zMTcgM....",
-    *     "type": "pdf",
-    *     "file_name": "contrato_anticipo_17.pdf"
-    * }
+    * @responseFile responses/loan/print_contract.200.json
     */
-    public function print_contract(Request $request, $id, $standalone = true)
+    public function print_contract(Request $request, Loan $loan, $standalone = true)
     {
-        $loan = Loan::findOrFail($id);
         $procedure_modality = $loan->modality;
         $lenders = [];
         foreach ($loan->lenders as $lender) {
@@ -721,19 +445,13 @@ class LoanController extends Controller
     /**
     * Impresión de Formulario de solicitud
     * Devuelve el pdf del Formulario de solicitud acorde a un ID de préstamo
-    * @urlParam id required ID del préstamo. Example: 1
+    * @urlParam loan required ID del préstamo. Example: 1
     * @queryParam copies Número de copias del documento. Example: 2
     * @authenticated
-    * @response
-    * {
-    *     "content": "zMTcgM....",
-    *     "type": "pdf",
-    *     "file_name": "solicitud_prestamo_17.pdf"
-    * }
+    * @responseFile responses/loan/print_form.200.json
     */
-    public function print_form(Request $request, $id, $standalone = true)
+    public function print_form(Request $request, Loan $loan, $standalone = true)
     {
-        $loan = Loan::findOrFail($id);
         $lenders = [];
         foreach ($loan->lenders as $lender) {
             array_push($lenders, self::verify_spouse_disbursable($lender)->disbursable);
@@ -779,19 +497,13 @@ class LoanController extends Controller
     /**
     * Impresión del plan de pagos
     * Devuelve un pdf del plan de pagos acorde a un ID de préstamo
-    * @urlParam id required ID del préstamo. Example: 6
+    * @urlParam loan required ID del préstamo. Example: 6
     * @queryParam copies Número de copias del documento. Example: 2
     * @authenticated
-    * @response
-    * {
-    *     "content": "zMTcgM....",
-    *     "type": "pdf",
-    *     "file_name": "plan_anticipo_17.pdf"
-    * }
+    * @responseFile responses/loan/print_plan.200.json
     */
-    public function print_plan(Request $request, $id, $standalone = true)
+    public function print_plan(Request $request, Loan $loan, $standalone = true)
     {
-        $loan = Loan::findOrFail($id);
         $procedure_modality = $loan->modality;
         $lenders = [];
         foreach ($loan->lenders as $lender) {
@@ -820,93 +532,45 @@ class LoanController extends Controller
     /**
     * Notas aclaratorias
     * Devuelve la lista de notas relacionadas con el préstamo
-    * @urlParam id required ID de préstamo. Example: 2
+    * @urlParam loan required ID del préstamo. Example: 2
     * @authenticated
-    * @response
-    * [
-    *     {
-    *         "id": 15,
-    *         "annotable_id": 6,
-    *         "annotable_type": "loans",
-    *         "message": "BOLETA DE MAYO 2018",
-    *         "date": "2018-07-21 11:50:14",
-    *         "created_at": "2018-07-21 11:50:14",
-    *         "updated_at": "2018-07-21 11:50:14"
-    *     }, {}
-    * ]
+    * @responseFile responses/loan/get_notes.200.json
     */
-    public function get_notes($id)
+    public function get_notes(Loan $loan)
     {
-        $loan = Loan::findOrFail($id);
         return $loan->notes;
     }
 
     /**
     * Flujo de trabajo
     * Devuelve la lista de roles anteriores para devolver o posteriores para derivar el trámite
-    * @urlParam id required ID de préstamo. Example: 2
+    * @urlParam loan required ID del préstamo. Example: 2
     * @authenticated
-    * @response
-    * {
-    *     "current": 73,
-    *     "previous": [
-    *         75,
-    *         76
-    *     ],
-    *     "next": [
-    *         79,
-    *         80
-    *     ]
-    * }
+    * @responseFile responses/loan/get_flow.200.json
     */
-    public function get_flow($id)
+    public function get_flow(Loan $loan)
     {
-        $loan = Loan::findOrFail($id);
         return response()->json(RoleSequence::flow($loan->modality->procedure_type->id, $loan->role_id));
     }
 
     /** @group Cobranzas
     * Cálculo de siguiente pago
     * Devuelve el número de cuota, días calculados, días de interés que alcanza a pagar con la cuota, días restantes por pagar, montos de interés, capital y saldo a capital.
-    * @urlParam id required ID de préstamo. Example: 2
+    * @urlParam loan required ID del préstamo. Example: 2
     * @bodyParam estimated_date date Fecha para el cálculo del interés. Example: 2020-04-15
     * @bodyParam estimated_quota float Monto para el cálculo. Example: 650
     * @authenticated
-    * @response
-    * {
-    *     "estimated_date": "2020-04-15",
-    *     "quota_number": 1,
-    *     "estimated_days": {
-    *         "penal": 173,
-    *         "accumulated": 173,
-    *         "current": 15
-    *     },
-    *     "paid_days": {
-    *         "penal": 173,
-    *         "accumulated": 97,
-    *         "current": 0
-    *     },
-    *     "balance": 2000,
-    *     "capital_payment": 1.78,
-    *     "interest_payment": 0,
-    *     "accumulated_payment": 191.34,
-    *     "penal_payment": 56.88,
-    *     "estimated_quota": 250,
-    *     "next_balance": 1998.22,
-    *     "penal_remaining": 0,
-    *     "accumulated_remaining": 91
-    * }
+    * @responseFile responses/loan/get_next_payment.200.json
     */
-    public function get_next_payment(LoanPaymentForm $request, $id)
+    public function get_next_payment(LoanPaymentForm $request, Loan $loan)
     {
-        $loan = Loan::findOrFail($id);
         return $loan->next_payment($request->input('estimated_date', null), $request->input('estimated_quota', null));
     }
 
     /** @group Cobranzas
     * Nuevo pago
     * Inserta una cuota de acuerdo a un monto y fecha estimados.
-    * @urlParam id required ID de préstamo. Example: 2
+    * @urlParam loan required ID del préstamo. Example: 2
 	* @bodyParam estimated_date date Fecha para el cálculo del interés. Example: 2020-04-30
 	* @bodyParam estimated_quota float Monto para el cálculo de los días de interés pagados. Example: 600
 	* @bodyParam affiliate_id integer ID de afiliado que realizó el pago. Example: 56
@@ -915,40 +579,10 @@ class LoanController extends Controller
 	* @bodyParam receipt_number integer Número de recibo. Example: 102
 	* @bodyParam description string Texto de descripción. Example: Penalizacion regularizada
     * @authenticated
-    * @response
-    * {
-    *     "estimated_date": "2020-04-30",
-    *     "quota_number": 2,
-    *     "estimated_days": {
-    *         "penal": 91,
-    *         "accumulated": 91,
-    *         "current": 15
-    *     },
-    *     "paid_days": {
-    *         "penal": 91,
-    *         "accumulated": 91,
-    *         "current": 15
-    *     },
-    *     "balance": 1998.22,
-    *     "capital_payment": 361.2,
-    *     "interest_payment": 29.56,
-    *     "accumulated_payment": 179.35,
-    *     "penal_payment": 29.89,
-    *     "estimated_quota": 600,
-    *     "next_balance": 1637.02,
-    *     "penal_remaining": 0,
-    *     "accumulated_remaining": 0,
-    *     "payment_type_id": 2,
-    *     "pay_date": "2020-04-05T00:48:52.015535Z",
-    *     "affiliate_id": 47352,
-    *     "voucher_number": 65100,
-    *     "receipt_number": 102,
-    *     "description": "Penalización regularizado"
-    * }
+    * @responseFile responses/loan/set_payment.200.json
     */
-    public function set_payment(LoanPaymentForm $request, $id)
+    public function set_payment(LoanPaymentForm $request, Loan $loan)
     {
-        $loan = Loan::findOrFail($id);
         $payment = $loan->next_payment($request->input('estimated_date', null), $request->input('estimated_quota', null));
         $payment->payment_type_id = $request->payment_type_id;
         $payment->pay_date = Carbon::now();
@@ -963,96 +597,38 @@ class LoanController extends Controller
     /** @group Cobranzas
     * Lista de pagos
     * Devuelve el listado de los pagos ordenados por cuota de manera descendente
-    * @urlParam id required ID de préstamo. Example: 2
+    * @urlParam loan required ID del préstamo. Example: 2
     * @authenticated
-    * @response
-    * [
-    *     {
-    *         "loan_id": 2,
-    *         "affiliate_id": 47352,
-    *         "pay_date": "2020-04-04",
-    *         "estimated_date": "2020-04-30",
-    *         "quota_number": 2,
-    *         "estimated_quota": "600",
-    *         "penal_payment": "29.89",
-    *         "accumulated_payment": "179.35",
-    *         "interest_payment": "29.56",
-    *         "capital_payment": "361.2",
-    *         "penal_remaining": "0",
-    *         "accumulated_remaining": "0",
-    *         "voucher_number": null,
-    *         "payment_type_id": 2,
-    *         "receipt_number": null,
-    *         "description": null,
-    *         "created_at": "2020-04-04 20:48:52",
-    *         "updated_at": "2020-04-04 20:48:52"
-    *     }, {}
-    * ]
+    * @responseFile responses/loan/get_payments.200.json
     */
-    public function get_payments($id)
+    public function get_payments(Loan $loan)
     {
-        $loan = Loan::findOrFail($id);
         return $loan->payments;
     }
 
     /** @group Observaciones de Préstamos
     * Lista de observaciones
     * Devuelve el listado de los pagos ordenados por cuota de manera descendente
-    * @urlParam id required ID de préstamo. Example: 2
+    * @urlParam loan required ID del préstamo. Example: 2
     * @authenticated
-    * @response
-    * [
-    *     {
-    *         "user_id": 123,
-    *         "observation_type_id": 2,
-    *         "message": "Subsanable en una semana",
-    *         "date": "2020-04-14 21:16:52",
-    *         "enabled": false,
-    *         "created_at": "2020-04-15T01:16:52.000000Z",
-    *         "updated_at": "2020-04-15T01:16:52.000000Z",
-    *         "deleted_at": null
-    *     }, {}
-    * ]
+    * @responseFile responses/loan/get_observations.200.json
     */
-    public function get_observations($id)
+    public function get_observations(Loan $loan)
     {
-        $loan = Loan::findOrFail($id);
         return $loan->observations;
     }
 
     /** @group Observaciones de Préstamos
     * Nueva observación
     * Inserta una nueva observación asociada al trámite
-    * @urlParam id required ID de préstamo. Example: 2
+    * @urlParam loan required ID del préstamo. Example: 2
     * @bodyParam observation_type_id integer required ID de tipo de observación. Example: 2
     * @bodyParam message string Mensaje adjunto a la observación. Example: Subsanable en una semana
     * @authenticated
-    * @response
-    * {
-    *     "message": "Subsanable en una semana",
-    *     "observation_type_id": 2,
-    *     "date": "2020-04-15T01:16:52.886784Z",
-    *     "user_id": 123,
-    *     "updated_at": "2020-04-15T01:16:52.000000Z",
-    *     "created_at": "2020-04-15T01:16:52.000000Z",
-    *     "user": {
-    *         "id": 123,
-    *         "city_id": 4,
-    *         "first_name": "Nelvis Irene",
-    *         "last_name": "Alarcon",
-    *         "username": "nalarcon",
-    *         "created_at": "2019-04-22T19:27:44.000000Z",
-    *         "updated_at": "2020-04-15T01:08:09.000000Z",
-    *         "position": "Encargada de Registro, Control y Recuperacion de Prestamos",
-    *         "is_commission": false,
-    *         "phone": null,
-    *         "active": true
-    *     }
-    * }
+    * @responseFile responses/loan/set_observation.200.json
     */
-    public function set_observation(LoanObservationForm $request, $id)
+    public function set_observation(LoanObservationForm $request, Loan $loan)
     {
-        $loan = Loan::findOrFail($id);
         $observation = $loan->observations()->make([
             'message' => $request->message ?? null,
             'observation_type_id' => $request->observation_type_id,
@@ -1066,7 +642,7 @@ class LoanController extends Controller
     /** @group Observaciones de Préstamos
     * Actualizar observación
     * Actualiza los datos de una observación asociada al trámite
-    * @urlParam id required ID de préstamo. Example: 2
+    * @urlParam loan required ID del préstamo. Example: 2
     * @bodyParam original.user_id integer required ID de usuario que creó la observación. Example: 123
     * @bodyParam original.observation_type_id integer required ID de tipo de observación original. Example: 2
     * @bodyParam original.message string required Mensaje de la observación original. Example: Subsanable en una semana
@@ -1076,25 +652,12 @@ class LoanController extends Controller
     * @bodyParam update.message string Mensaje de la observación a actualizar. Example: Subsanable en un mes
     * @bodyParam update.enabled boolean Estado de la observación a actualizar. Example: true
     * @authenticated
-    * @response
-    * [
-    *     {
-    *         "user_id": 123,
-    *         "observation_type_id": 21,
-    *         "message": "Subsanable en un mes",
-    *         "date": "2020-04-14 21:16:52",
-    *         "enabled": true,
-    *         "created_at": "2020-04-15T01:16:52.000000Z",
-    *         "updated_at": "2020-04-15T02:34:26.000000Z",
-    *         "deleted_at": null
-    *     }, {}
-    * ]
+    * @responseFile responses/loan/update_observation.200.json
     */
-    public function update_observation(LoanObservationForm $request, $id)
+    public function update_observation(LoanObservationForm $request, Loan $loan)
     {
-        $loan = Loan::findOrFail($id);
         $observation = $loan->observations();
-        foreach (collect($request->original)->except('created_at', 'updated_at', 'deleted_at') as $key => $value) {
+        foreach (collect($request->original)->only('user_id', 'message', 'date', 'enabled')->put('observable_id', $loan->id)->put('observable_type', 'loans') as $key => $value) {
             $observation = $observation->where($key, $value);
         }
         $observation->update(collect($request->update)->only('observation_type_id', 'message', 'enabled')->toArray());
@@ -1107,35 +670,7 @@ class LoanController extends Controller
     * @bodyParam ids array required Lista de IDs de los trámites a derivar. Example: [1,2,3]
     * @bodyParam role_id integer required ID del rol al cual derivar o devolver. Example: 82
     * @authenticated
-    * @response
-    * [
-    *     {
-    *         "id": 1,
-    *         "code": "PTMO000001-2020",
-    *         "disbursable_id": 5146,
-    *         "disbursable_type": "affiliates",
-    *         "procedure_modality_id": 32,
-    *         "disbursement_date": null,
-    *         "parent_loan_id": null,
-    *         "parent_reason": null,
-    *         "request_date": "2020-04-15T04:00:00.000000Z",
-    *         "amount_requested": 2000,
-    *         "city_id": 3,
-    *         "loan_interest_id": 1,
-    *         "loan_state_id": 1,
-    *         "amount_approved": 2000,
-    *         "loan_term": 2,
-    *         "disbursement_type_id": 1,
-    *         "personal_reference_id": null,
-    *         "account_number": 586621345,
-    *         "loan_destiny_id": 1,
-    *         "role_id": 82,
-    *         "validated": false,
-    *         "created_at": "2020-04-16T01:12:41.000000Z",
-    *         "updated_at": "2020-04-16T14:26:19.000000Z",
-    *         "deleted_at": null
-    *     }, {}
-    * ]
+    * @responseFile responses/loan/bulk_update_role.200.json
     */
     public function bulk_update_role(LoansForm $request)
     {

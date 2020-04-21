@@ -1,0 +1,21 @@
+{
+    "message": "Subsanable en una semana",
+    "observation_type_id": 2,
+    "date": "2020-04-15T01:16:52.886784Z",
+    "user_id": 123,
+    "updated_at": "2020-04-15T01:16:52.000000Z",
+    "created_at": "2020-04-15T01:16:52.000000Z",
+    "user": {
+        "id": 123,
+        "city_id": 4,
+        "first_name": "Nelvis Irene",
+        "last_name": "Alarcon",
+        "username": "nalarcon",
+        "created_at": "2019-04-22T19:27:44.000000Z",
+        "updated_at": "2020-04-15T01:08:09.000000Z",
+        "position": "Encargada de Registro, Control y Recuperacion de Prestamos",
+        "is_commission": false,
+        "phone": null,
+        "active": true
+    }
+}

@@ -19,8 +19,7 @@ class LoanPaymentForm extends FormRequest
      */
     public function authorize()
     {
-        $loan = Loan::findOrFail($this->id);
-        if ($loan->disbursement_date) return true;
+        if ($this->loan->disbursement_date) return true;
         abort(403, 'El préstamo aún no ha sido desembolsado');
     }
 
@@ -31,12 +30,11 @@ class LoanPaymentForm extends FormRequest
      */
     public function rules()
     {
-        $loan = Loan::find($this->id);
-        $latest_payment = $loan->last_payment;
+        $latest_payment = $this->loan->last_payment;
         if ($latest_payment) {
             $date = $latest_payment->estimated_date;
         } else {
-            $date = $loan->disbursement_date;
+            $date = $this->loan->disbursement_date;
         }
         $rules = [
             'estimated_date' => 'nullable|date_format:Y-m-d|after:'.$date,

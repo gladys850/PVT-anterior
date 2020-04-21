@@ -1,0 +1,22 @@
+[
+    {
+        "loan_id": 2,
+        "affiliate_id": 47352,
+        "pay_date": "2020-04-04",
+        "estimated_date": "2020-04-30",
+        "quota_number": 2,
+        "estimated_quota": "600",
+        "penal_payment": "29.89",
+        "accumulated_payment": "179.35",
+        "interest_payment": "29.56",
+        "capital_payment": "361.2",
+        "penal_remaining": "0",
+        "accumulated_remaining": "0",
+        "voucher_number": null,
+        "payment_type_id": 2,
+        "receipt_number": null,
+        "description": null,
+        "created_at": "2020-04-04 20:48:52",
+        "updated_at": "2020-04-04 20:48:52"
+    }, {}
+]

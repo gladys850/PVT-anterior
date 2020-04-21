@@ -1,0 +1,35 @@
+{
+    "procedure_modality_id": 32,
+    "interest_id": 1,
+    "amount_requested": 2000,
+    "city_id": 3,
+    "loan_term": 2,
+    "payment_type_id": 1,
+    "destiny_id": 1,
+    "account_number": 586621345,
+    "request_date": "2020-03-05T20:27:23.900575Z",
+    "disbursable_type": "affiliates",
+    "disbursable_id": 5146,
+    "amount_approved": 2000,
+    "state_id": 1,
+    "code": "PTMO000017-2020",
+    "disbursement_date": "2020-02-01",
+    "updated_at": "2020-03-05 16:27:23",
+    "created_at": "2020-03-05 16:27:23",
+    "parent_loan_id": 1,
+    "parent_reason": "REFINANCIAMIENTO",
+    "personal_reference_id": 4,
+    "id": 17,
+    "modality": {
+        "id": 32,
+        "procedure_type_id": 9,
+        "name": "Anticipo sector activo",
+        "shortened": "ANT-SA",
+        "is_valid": true
+    },
+    "attachment": {
+        "content": "zMTcgM....",
+        "type": "pdf",
+        "file_name": "solicitud_prestamo_17.pdf"
+    }
+}

@@ -393,30 +393,6 @@ class AffiliateController extends Controller
         return $contributions;
     }
 
-    /**
-    * Grado
-    * Devuelve el grado policial del afiliado
-    * @urlParam affiliate required ID de afiliado. Example: 12
-    * @authenticated
-    * @responseFile responses/affiliate/get_degree.200.json
-    */
-    public function get_degree(Affiliate $affiliate)
-    {
-        return $affiliate->degree;
-    }
-
-    /**
-    * Unidad
-    * Devuelve la unidad policial donde está destinado el afiliado
-    * @urlParam affiliate required ID de afiliado. Example: 12
-    * @authenticated
-    * @responseFile responses/affiliate/get_unit.200.json
-    */
-    public function get_unit(Affiliate $affiliate)
-    {
-        return $affiliate->unit;
-    }
-
     /** @group Préstamos
     * Préstamos por afiliado
     * Devuelve la lista de préstamos o garantías del afiliado
