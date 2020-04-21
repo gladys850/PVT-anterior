@@ -1,0 +1,12 @@
+[
+    {
+        "user_id": 123,
+        "observation_type_id": 21,
+        "message": "Subsanable en un mes",
+        "date": "2020-04-14 21:16:52",
+        "enabled": true,
+        "created_at": "2020-04-15T01:16:52.000000Z",
+        "updated_at": "2020-04-15T02:34:26.000000Z",
+        "deleted_at": null
+    }, {}
+]

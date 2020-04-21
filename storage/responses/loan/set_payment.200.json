@@ -1,0 +1,29 @@
+{
+    "estimated_date": "2020-04-30",
+    "quota_number": 2,
+    "estimated_days": {
+        "penal": 91,
+        "accumulated": 91,
+        "current": 15
+    },
+    "paid_days": {
+        "penal": 91,
+        "accumulated": 91,
+        "current": 15
+    },
+    "balance": 1998.22,
+    "capital_payment": 361.2,
+    "interest_payment": 29.56,
+    "accumulated_payment": 179.35,
+    "penal_payment": 29.89,
+    "estimated_quota": 600,
+    "next_balance": 1637.02,
+    "penal_remaining": 0,
+    "accumulated_remaining": 0,
+    "payment_type_id": 2,
+    "pay_date": "2020-04-05T00:48:52.015535Z",
+    "affiliate_id": 47352,
+    "voucher_number": 65100,
+    "receipt_number": 102,
+    "description": "Penalización regularizado"
+}

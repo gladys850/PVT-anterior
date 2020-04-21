@@ -1,0 +1,23 @@
+{
+    "estimated_date": "2020-04-15",
+    "quota_number": 1,
+    "estimated_days": {
+        "penal": 173,
+        "accumulated": 173,
+        "current": 15
+    },
+    "paid_days": {
+        "penal": 173,
+        "accumulated": 97,
+        "current": 0
+    },
+    "balance": 2000,
+    "capital_payment": 1.78,
+    "interest_payment": 0,
+    "accumulated_payment": 191.34,
+    "penal_payment": 56.88,
+    "estimated_quota": 250,
+    "next_balance": 1998.22,
+    "penal_remaining": 0,
+    "accumulated_remaining": 91
+}
