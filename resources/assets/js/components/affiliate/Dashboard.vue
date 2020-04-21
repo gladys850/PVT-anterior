@@ -160,11 +160,17 @@ export default {
       return this.$route.params.id == "new";
     }
   },
+  watch: {
+    affiliate(newVal, oldVal) {
+      if (oldVal != newVal) {
+        if (newVal.hasOwnProperty('category_id')) this.getCategory_name(newVal.category_id)
+      }
+    }
+  },
   mounted() {
     if (!this.isNew) {
       this.getProfilePictures(this.$route.params.id);
       this.getDegree_name(this.$route.params.id);
-      this.getCategory_name(this.$route.params.id);
       this.getUnit_name(this.$route.params.id);
       this.getLoan(this.$route.params.id);
       this.getState_name(this.$route.params.id);
@@ -196,7 +202,7 @@ export default {
     async getCategory_name(id) {
       try {
         this.loading = true;
-        let res = await axios.get(`affiliate/${id}/category`);
+        let res = await axios.get(`category/${id}`)
         this.category_name = res.data.name;
       } catch (e) {
         console.log(e);

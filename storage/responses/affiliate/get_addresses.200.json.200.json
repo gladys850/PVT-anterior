@@ -1,0 +1,20 @@
+[
+    {
+        "id": 6291,
+        "city_address_id": 2,
+        "zone": "CENTRAL",
+        "street": "URB. LOYOLA",
+        "number_address": "2",
+        "created_at": "2019-06-12 17:08:45",
+        "updated_at": "2019-06-12 17:08:45",
+        "latitude": 0,
+        "longitude": 0,
+        "pivot": {
+            "addressable_id": 1,
+            "address_id": 6291,
+            "addressable_type": "affiliates",
+            "created_at": "2019-06-12 17:08:45",
+            "updated_at": "2019-06-12 17:08:45"
+        }
+    }, {}
+]

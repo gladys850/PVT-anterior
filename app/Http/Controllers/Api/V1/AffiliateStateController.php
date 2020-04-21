@@ -14,17 +14,11 @@ class AffiliateStateController extends Controller
     /**
     * Lista de estados
     * Devuelve el listado de los posibles estados de afiliado
-    * @response
-    * [
-    *     {
-    *         "id": 1,
-    *         "affiliate_state_type_id": 1,
-    *         "name": "Servicio"
-    *     }, {}
-    * ]
+    * @authenticated
+    * @responseFile responses/affiliate_state/index.200.json
      */
     public function index()
     {
-        return AffiliateState::get();
+        return AffiliateState::orderBy('name')->get();
     }
 }

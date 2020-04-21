@@ -1,0 +1,1132 @@
+{
+	"info": {
+		"_postman_id": "5beb0102-bd2c-4d43-a344-03caa6b53d1c",
+		"name": "PVT",
+		"description": "Plataforma Virtual de Trámites",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Autenticación",
+			"item": [
+				{
+					"name": "Usuario autenticado",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/{{endpoint}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}"
+							]
+						},
+						"description": "index"
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener token",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"username\": \"nalarcon\",\n\t\"password\": \"nalarcon\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/{{endpoint}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}"
+							]
+						},
+						"description": "store"
+					},
+					"response": []
+				},
+				{
+					"name": "Refrescar token",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/{{endpoint}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}"
+							]
+						},
+						"description": "update"
+					},
+					"response": []
+				},
+				{
+					"name": "Cerrar sesión",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/{{endpoint}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}"
+							]
+						},
+						"description": "logout"
+					},
+					"response": []
+				}
+			],
+			"description": "auth",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "8b1b0c6b-e66e-431a-a402-ab121ca7ce63",
+						"type": "text/javascript",
+						"exec": [
+							"pm.environment.set('endpoint', 'auth');"
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "8c37b448-e247-4205-81c9-3796386fc2a5",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Direcciones",
+			"item": [
+				{
+					"name": "Nueva dirección",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"city_address_id\": 4,\n    \"zone\": \"Chuquiaguillo\",\n    \"street\": \"Av. Panamericana\",\n    \"number_address\": 43,\n    \"latitude\": -16.495244595604056,\n    \"longitude\": -68.13450627055796\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/{{endpoint}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}"
+							]
+						},
+						"description": "store"
+					},
+					"response": []
+				},
+				{
+					"name": "Actualizar dirección",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"city_address_id\": 4,\n    \"zone\": \"Chuquiaguillo\",\n    \"street\": \"Av. Panamericana\",\n    \"number_address\": 43,\n    \"latitude\": -16.495244595604056,\n    \"longitude\": -68.13450627055796\n}"
+						},
+						"url": {
+							"raw": "{{url}}/{{endpoint}}/16",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}",
+								"16"
+							]
+						},
+						"description": "update"
+					},
+					"response": []
+				},
+				{
+					"name": "Eliminar dirección",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/{{endpoint}}/16",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}",
+								"16"
+							]
+						},
+						"description": "destroy"
+					},
+					"response": []
+				}
+			],
+			"description": "address",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "fa2e0a15-5ad6-4343-8f3e-7e05fea3bf13",
+						"type": "text/javascript",
+						"exec": [
+							"pm.environment.set('endpoint', 'address');"
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "827e8ae5-2f6f-4e5a-a5ea-5aba01244b86",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Afiliados",
+			"item": [
+				{
+					"name": "Lista de afiliados",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/{{endpoint}}?search=ARANCIBIA&sortBy[]=last_name&sortDesc[]=false&per_page=8&page=1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}"
+							],
+							"query": [
+								{
+									"key": "search",
+									"value": "ARANCIBIA"
+								},
+								{
+									"key": "sortBy[]",
+									"value": "last_name"
+								},
+								{
+									"key": "sortDesc[]",
+									"value": "false"
+								},
+								{
+									"key": "per_page",
+									"value": "8"
+								},
+								{
+									"key": "page",
+									"value": "1"
+								}
+							]
+						},
+						"description": "index"
+					},
+					"response": []
+				},
+				{
+					"name": "Nuevo afiliado",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"first_name\": \"JUAN\",\n    \"last_name\": \"PINTO\",\n    \"gender\": \"M\",\n    \"birth_date\": \"1980-05-02\",\n    \"city_birth_id\": 10,\n    \"city_identity_card_id\": 4,\n    \"civil_status\": \"C\",\n    \"identity_card\": \"165134-1L\",\n    \"affiliate_state_id\": 2,\n    \"degree_id\": 4,\n    \"unit_id\": 7,\n    \"category_id\": 9,\n    \"pension_entity_id\": 1,\n    \"registration\": \"870925VBW\",\n    \"type\": \"Comando\",\n    \"second_name\": \"ROBERTO\",\n    \"mothers_last_name\": \"ROJAS\",\n    \"surname_husband\": \"PAREDES\",\n    \"date_entry\": \"1980-05-20\",\n    \"date_death\": \"2018-09-21\",\n    \"reason_death\": \"EMBOLIA\",\n    \"date_derelict\": \"2017-12-30\",\n    \"reason_derelict\": \"Proceso administrativo\",\n    \"due_date\": \"2018-01-05\",\n    \"is_duedate_undefined\": false,\n    \"change_date\": \"2015-02-03\",\n    \"phone_number\": 2254101,\n    \"cell_phone_number\": \"[76543210,65432101]\",\n    \"afp\": true,\n    \"nua\": 26271503,\n    \"item\": 32706,\n    \"service_years\": 6,\n\t\"service_months\": 4,\n\t\"affiliate_registration_number\": 1052,\n\t\"file_code\": \"AFW-12\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/{{endpoint}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}"
+							]
+						},
+						"description": "store"
+					},
+					"response": []
+				},
+				{
+					"name": "Detalle de afiliado",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/{{endpoint}}/58661",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}",
+								"58661"
+							]
+						},
+						"description": "show"
+					},
+					"response": []
+				},
+				{
+					"name": "Actualizar afiliado",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"first_name\": \"JUAN\",\n    \"last_name\": \"PINTO\",\n    \"gender\": \"M\",\n    \"birth_date\": \"1980-05-02\",\n    \"city_birth_id\": 10,\n    \"city_identity_card_id\": 4,\n    \"civil_status\": \"C\",\n    \"identity_card\": \"165134-1L\",\n    \"affiliate_state_id\": 2,\n    \"degree_id\": 4,\n    \"unit_id\": 7,\n    \"category_id\": 9,\n    \"pension_entity_id\": 1,\n    \"registration\": \"870925VBW\",\n    \"type\": \"Comando\",\n    \"second_name\": \"ROBERTO\",\n    \"mothers_last_name\": \"ROJAS\",\n    \"surname_husband\": \"PAREDES\",\n    \"date_entry\": \"1980-05-20\",\n    \"date_death\": \"2018-09-21\",\n    \"reason_death\": \"EMBOLIA\",\n    \"date_derelict\": \"2017-12-30\",\n    \"reason_derelict\": \"Proceso administrativo\",\n    \"due_date\": \"2018-01-05\",\n    \"is_duedate_undefined\": false,\n    \"change_date\": \"2015-02-03\",\n    \"phone_number\": 2254101,\n    \"cell_phone_number\": \"[76543210,65432101]\",\n    \"afp\": true,\n    \"nua\": 26271503,\n    \"item\": 32706,\n    \"service_years\": 6,\n\t\"service_months\": 4,\n\t\"affiliate_registration_number\": 1052,\n\t\"file_code\": \"AFW-12\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/{{endpoint}}/58661",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}",
+								"58661"
+							]
+						},
+						"description": "update"
+					},
+					"response": []
+				},
+				{
+					"name": "Eliminar afiliado",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/{{endpoint}}/58661",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}",
+								"58661"
+							]
+						},
+						"description": "destroy"
+					},
+					"response": []
+				},
+				{
+					"name": "Cónyugue",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/{{endpoint}}/3065/spouse",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}",
+								"3065",
+								"spouse"
+							]
+						},
+						"description": "get_spouse"
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener direcciones",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/{{endpoint}}/3065/address",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}",
+								"3065",
+								"address"
+							]
+						},
+						"description": "get_addresses"
+					},
+					"response": []
+				},
+				{
+					"name": "Boletas de pago",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/{{endpoint}}/12/contribution?city_id=4&sortBy[]=month_year&sortDesc[]=false&per_page=3&page=1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}",
+								"12",
+								"contribution"
+							],
+							"query": [
+								{
+									"key": "city_id",
+									"value": "4"
+								},
+								{
+									"key": "sortBy[]",
+									"value": "month_year"
+								},
+								{
+									"key": "sortDesc[]",
+									"value": "false"
+								},
+								{
+									"key": "per_page",
+									"value": "3"
+								},
+								{
+									"key": "page",
+									"value": "1"
+								}
+							]
+						},
+						"description": "get_contributions"
+					},
+					"response": []
+				},
+				{
+					"name": "Actualizar direcciones",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"addresses\": [12,17]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/{{endpoint}}/12/address",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}",
+								"12",
+								"address"
+							]
+						},
+						"description": "update_addresses"
+					},
+					"response": []
+				},
+				{
+					"name": "Categoría",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/{{endpoint}}/12/category",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}",
+								"12",
+								"category"
+							]
+						},
+						"description": "get_category"
+					},
+					"response": []
+				},
+				{
+					"name": "Grado",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/{{endpoint}}/12/degree",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}",
+								"12",
+								"degree"
+							]
+						},
+						"description": "get_degree"
+					},
+					"response": []
+				},
+				{
+					"name": "Unidad",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/{{endpoint}}/12/unit",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}",
+								"12",
+								"unit"
+							]
+						},
+						"description": "get_unit"
+					},
+					"response": []
+				},
+				{
+					"name": "Préstamos por afiliado",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/{{endpoint}}/5146/loan?guarantor=0&state=1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}",
+								"5146",
+								"loan"
+							],
+							"query": [
+								{
+									"key": "guarantor",
+									"value": "0"
+								},
+								{
+									"key": "state",
+									"value": "1"
+								}
+							]
+						},
+						"description": "get_loans"
+					},
+					"response": []
+				},
+				{
+					"name": "Estado",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/{{endpoint}}/12/state",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}",
+								"12",
+								"state"
+							]
+						},
+						"description": "get_state"
+					},
+					"response": []
+				},
+				{
+					"name": "Modalidad por afiliado",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/{{endpoint}}/12/loan_modality?procedure_type_id=9&external_discount=0",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}",
+								"12",
+								"loan_modality"
+							],
+							"query": [
+								{
+									"key": "procedure_type_id",
+									"value": "9"
+								},
+								{
+									"key": "external_discount",
+									"value": "0"
+								}
+							]
+						},
+						"description": "get_loan_modality"
+					},
+					"response": []
+				}
+			],
+			"description": "affiliate",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "314a1660-0b22-436d-be4d-84542b8276b3",
+						"type": "text/javascript",
+						"exec": [
+							"pm.environment.set('endpoint', 'affiliate');"
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "128077ec-8328-42b4-adf6-d7034417d0f3",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Biométrico",
+			"item": [
+				{
+					"name": "Finalizar captura de huellas",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/{{endpoint}}/42/fingerprint?user_id=123&success=1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}",
+								"42",
+								"fingerprint"
+							],
+							"query": [
+								{
+									"key": "user_id",
+									"value": "123"
+								},
+								{
+									"key": "success",
+									"value": "1"
+								}
+							]
+						},
+						"description": "fingerprint_saved"
+					},
+					"response": []
+				},
+				{
+					"name": "Registrar huellas",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/{{endpoint}}/42/fingerprint",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}",
+								"42",
+								"fingerprint"
+							]
+						},
+						"description": "update_fingerprint"
+					},
+					"response": []
+				},
+				{
+					"name": "Imagen perfil afiliado",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/{{endpoint}}/42/profile_picture",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}",
+								"42",
+								"profile_picture"
+							]
+						},
+						"description": "get_profile_images"
+					},
+					"response": []
+				},
+				{
+					"name": "Imagen huellas afiliado",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/{{endpoint}}/42/fingerprint_picture",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}",
+								"42",
+								"fingerprint_picture"
+							]
+						},
+						"description": "get_fingerprint_images"
+					},
+					"response": []
+				}
+			],
+			"description": "affiliate",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "9347a3d8-b831-44a5-9401-a3fa74560ce3",
+						"type": "text/javascript",
+						"exec": [
+							"pm.environment.set('endpoint', 'affiliate');"
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "73271db9-bd13-430d-b546-0c0e887ac12f",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Estado de Afiliado",
+			"item": [
+				{
+					"name": "Lista de estados",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/{{endpoint}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}"
+							]
+						},
+						"description": "index"
+					},
+					"response": []
+				}
+			],
+			"description": "affiliate_state",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "b9de8123-6edc-4d9a-8d30-edbc36a03c07",
+						"type": "text/javascript",
+						"exec": [
+							"pm.environment.set('endpoint', 'affiliate_state');"
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "13fa264a-0366-4767-a17d-8b3592793556",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Simulador de la calculadora",
+			"item": [
+				{
+					"name": "Calculadora",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"procedure_modality_id\": 32,\n    \"amount_requested\": 2000,\n    \"months_term\": 2,\n    \"affiliate_id\": 1,\n    \"contributions\": [\n        {\n            \"payable_liquid\": 2000,\n            \"seniority_bonus\": 0,\n            \"border_bonus\": 0,\n            \"public_security_bonus\": 0,\n            \"east_bonus\": 0\n        },\n        {\n            \"payable_liquid\": 2270,\n            \"seniority_bonus\": 0,\n            \"border_bonus\": 0,\n            \"public_security_bonus\": 0,\n            \"east_bonus\": 0\n        },\n        {\n            \"payable_liquid\": 1563,\n            \"seniority_bonus\": 0,\n            \"border_bonus\": 0,\n            \"public_security_bonus\": 0,\n            \"east_bonus\": 0\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/{{endpoint}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}"
+							]
+						},
+						"description": "store"
+					},
+					"response": []
+				}
+			],
+			"description": "calculator",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "5ac18b5f-22d0-41e8-954c-65e537142823",
+						"type": "text/javascript",
+						"exec": [
+							"pm.environment.set('endpoint', 'calculator');"
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "cc1e5b18-f03c-4b9a-a8aa-b5c69cae3302",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Categoría Policial",
+			"item": [
+				{
+					"name": "Lista de categorías",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/{{endpoint}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}"
+							]
+						},
+						"description": "index"
+					},
+					"response": []
+				},
+				{
+					"name": "Detalle de categoría",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/{{endpoint}}/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}",
+								"1"
+							]
+						},
+						"description": "show"
+					},
+					"response": []
+				}
+			],
+			"description": "category",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "8abc11ce-3ec6-4961-8948-3c77417418ae",
+						"type": "text/javascript",
+						"exec": [
+							"pm.environment.set('endpoint', 'category');"
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "903e9b22-69e6-4651-916c-a82d5f34c423",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Ciudades",
+			"item": [
+				{
+					"name": "Lista de ciudades",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/{{endpoint}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}"
+							]
+						},
+						"description": "index"
+					},
+					"response": []
+				},
+				{
+					"name": "Detalle de ciudad",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/{{endpoint}}/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}",
+								"1"
+							]
+						},
+						"description": "show"
+					},
+					"response": []
+				}
+			],
+			"description": "city",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "90080646-6430-46a8-b1d4-70983c84ea69",
+						"type": "text/javascript",
+						"exec": [
+							"pm.environment.set('endpoint', 'city');"
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "73e4e5a1-1d1f-4622-82ea-32204fbb61c7",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Configuración",
+			"item": [
+				{
+					"name": "Parámetros del servidor",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/{{endpoint}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}"
+							]
+						},
+						"description": "__invoke"
+					},
+					"response": []
+				}
+			],
+			"description": "config",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "47bf9dcd-9faf-486d-8a6b-4e0690b50564",
+						"type": "text/javascript",
+						"exec": [
+							"pm.environment.set('endpoint', 'config');"
+						]
+					}
+				}
+			],
+			"protocolProfileBehavior": {}
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{currentAccessToken}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "37e645a1-c42b-4b2c-8aa6-79c9136681bc",
+				"type": "text/javascript",
+				"exec": [
+					"const echoPostRequest = {",
+					"  url: 'http://localhost/api/v1/auth',",
+					"  method: 'POST',",
+					"  header: 'Content-Type:application/json',",
+					"  body: {",
+					"    mode: 'application/json',",
+					"    raw: JSON.stringify(",
+					"        {",
+					"        \tusername:'nalarcon',",
+					"        \tpassword:'nalarcon'",
+					"        })",
+					"  }",
+					"};",
+					"",
+					"var getToken = true;",
+					"",
+					"if (!pm.environment.get('accessTokenExpiry') || ",
+					"    !pm.environment.get('currentAccessToken')) {",
+					"    console.log('Token or expiry date are missing')",
+					"} else if (pm.environment.get('accessTokenExpiry') <= (new Date()).getTime()) {",
+					"    console.log('Token is expired')",
+					"} else {",
+					"    getToken = false;",
+					"    console.log('Token and expiry date are all good');",
+					"}",
+					"",
+					"if (getToken === true) {",
+					"    pm.sendRequest(echoPostRequest, function (err, res) {",
+					"    console.log(err ? err : res.json());",
+					"        if (err === null) {",
+					"            console.log('Saving the token and expiry date')",
+					"            var responseJson = res.json();",
+					"            pm.environment.set('currentAccessToken', responseJson.access_token)",
+					"    ",
+					"            var expiryDate = new Date();",
+					"            expiryDate.setSeconds(expiryDate.getSeconds() + responseJson.expires_in);",
+					"            pm.environment.set('accessTokenExpiry', expiryDate.getTime());",
+					"        }",
+					"    });",
+					"}"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "1e3eeb29-dadf-463d-b22e-7cb97cb33c73",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "9d59e5c6-6064-47b5-b72a-4d67f15546c7",
+			"key": "url",
+			"value": "http://localhost/api/v1",
+			"type": "string"
+		},
+		{
+			"id": "5147ee47-a5ac-479b-8de7-290806fae5ac",
+			"key": "username",
+			"value": "nalarcon",
+			"type": "string"
+		},
+		{
+			"id": "fb3af494-fd2d-49f1-b131-51124d8080a5",
+			"key": "password",
+			"value": "nalarcon",
+			"type": "string"
+		},
+		{
+			"id": "81b24e8d-e956-4c3d-9006-b791c230366b",
+			"key": "endpoint",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"id": "431794bb-95cd-4614-b255-23ef93f84c31",
+			"key": "currentAccessToken",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"id": "54242efa-c9e1-4b06-b65b-6d87f5c47950",
+			"key": "accessTokenExpiry",
+			"value": "",
+			"type": "string"
+		}
+	],
+	"protocolProfileBehavior": {}
+}

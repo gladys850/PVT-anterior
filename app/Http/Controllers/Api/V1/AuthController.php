@@ -19,25 +19,11 @@ class AuthController extends Controller
     * Usuario autenticado
     * Devuelve el usuario actualmente autenticado
     * @authenticated
-    * @response
-    * {
-    *     "id": 127,
-    *     "city_id": 10,
-    *     "first_name": "Administrador",
-    *     "last_name": "Administrador",
-    *     "username": "admin",
-    *     "created_at": "2019-06-17 15:04:11",
-    *     "updated_at": "2020-02-04 16:30:54",
-    *     "remember_token": "Hc3j8...",
-    *     "position": "Administrador",
-    *     "is_commission": false,
-    *     "phone": 65432101,
-    *     "active": true
-    * }
+    * @responseFile responses/auth/index.200.json
     */
     public function index()
     {
-        return response()->json(Auth::user());
+        return Auth::user();
     }
 
     /**
@@ -45,12 +31,7 @@ class AuthController extends Controller
     * El token servirá para consultar rutas protegidas
     * @bodyParam username string required Nombre de usuario. Example: admin
     * @bodyParam password string required Contraseña. Example: admin
-    * @response
-    * {
-    *     "access_token": "a35fd...",
-    *     "token_type": "bearer",
-    *     "expires_in": 18000
-    * }
+    * @responseFile responses/auth/store.200.json
     */
     public function store(AuthForm $request)
     {
@@ -111,16 +92,13 @@ class AuthController extends Controller
     * Cerrar sesión
     * El token se deshabilita
     * @authenticated
-    * @response
-    * {
-    *     "message": "Logged out successfully"
-    * }
+    * @responseFile responses/auth/logout.200.json
     */
     public function logout()
     {
         Auth::logout();
         return response()->json([
-            'message' => 'Logged out successfully',
+            'message' => 'Sesión terminada',
         ], 201);
     }
 
@@ -128,12 +106,7 @@ class AuthController extends Controller
     * Refrescar token
     * El token actual se deshabilita y se genera otro para alargando el tiempo de sesión
     * @authenticated
-    * @response
-    * {
-    *     "access_token": "a35fd...",
-    *     "token_type": "bearer",
-    *     "expires_in": 18000
-    * }
+    * @responseFile responses/auth/refresh.200.json
     */
     public function refresh()
     {

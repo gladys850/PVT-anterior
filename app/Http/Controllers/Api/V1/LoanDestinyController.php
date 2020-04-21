@@ -95,9 +95,9 @@ class LoanDestinyController extends Controller
     *   "updated_at": "2020-03-11 10:39:56"
     * }
     */
-    public function show($id)
+    public function show(LoanDestiny $loan_destiny)
     {
-        return LoanDestiny::findOrFail($id);
+        return $loan_destiny;
     }
 
     /**

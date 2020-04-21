@@ -21,17 +21,17 @@ class CalculatorController extends Controller
     * @bodyParam months_term integer required plazo. Example: 2
     * @bodyParam affiliate_id integer required ID del afiliado. Example: 1
     * @bodyParam contributions[0].payable_liquid integer required Líquido pagable. Example: 2000
-    * @bodyParam contributions[0].seniotity_bonus integer required Bono Cargo . Example: 0.00
+    * @bodyParam contributions[0].seniority_bonus integer required Bono Cargo . Example: 0.00
     * @bodyParam contributions[0].border_bonus integer required Bono Frontera . Example: 0.00
     * @bodyParam contributions[0].public_security_bonus integer required Bono Seguridad Ciudadana . Example: 0.00
     * @bodyParam contributions[0].east_bonus integer required Bono Oriente. Example: 0.00
     * @bodyParam contributions[1].payable_liquid integer Líquido pagable. Example: 2270
-    * @bodyParam contributions[1].seniotity_bonus integer Bono Cargo . Example: 0.00
+    * @bodyParam contributions[1].seniority_bonus integer Bono Cargo . Example: 0.00
     * @bodyParam contributions[1].border_bonus integer Bono Frontera . Example: 0.00
     * @bodyParam contributions[1].public_security_bonus integer Bono Seguridad Ciudadana . Example: 0.00
     * @bodyParam contributions[1].east_bonus integer Bono Oriente. Example: 0.00
     * @bodyParam contributions[2].payable_liquid integer Líquido pagable. Example: 1563
-    * @bodyParam contributions[2].seniotity_bonus integer Bono Cargo . Example: 0.00
+    * @bodyParam contributions[2].seniority_bonus integer Bono Cargo . Example: 0.00
     * @bodyParam contributions[2].border_bonus integer Bono Frontera . Example: 0.00
     * @bodyParam contributions[2].public_security_bonus integer Bono Seguridad Ciudadana . Example: 0.00
     * @bodyParam contributions[2].east_bonus integer Bono Oriente. Example: 0.00
