@@ -70,5 +70,8 @@
         'estimated_quota' => 'Cuota estimada',
         'payment_type_id' => 'Tipo de pago',
         // Observation
-        'observation_type_id' => 'Tipo de Observación'
+        'observation_type_id' => 'Tipo de Observación',
+         //document
+        'comment' => 'Comentario',
+        'is_valid' => 'Estado'
     ];

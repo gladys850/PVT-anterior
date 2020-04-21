@@ -20,6 +20,8 @@ use App\ProcedureModality;
 use App\PaymentType;
 use App\Role;
 use App\RoleSequence;
+use App\Record;
+use App\LoanSubmittedDocument;
 use App\Http\Requests\LoansForm;
 use App\Http\Requests\LoanForm;
 use App\Http\Requests\LoanPaymentForm;
@@ -473,7 +475,7 @@ class LoanController extends Controller
     * Actualización de documentos presentados
     * Actualiza los datos para cada documento presentado
     * @urlParam loan_id required ID de préstamo. Example: 8
-    * @urlParam document_id required ID de préstamo. Example: 40
+    * @urlParam document_id required ID de documento. Example: 40
     * @bodyParam is_valid boolean required Validez del documento. Example: true
     * @bodyParam comment string Comentario para añadir a la presentación. Example: Documento actualizado a la gestión actual
     * @response
@@ -501,6 +503,32 @@ class LoanController extends Controller
             'comment' => 'string|nullable|min:1'
         ]);
         $loan = Loan::findOrFail($loan_id);
+        $document = LoanSubmittedDocument::whereLoan_id($loan_id)->whereProcedure_document_id($document_id)->first();
+        $document->comment = $request->comment;
+        $document->is_valid = $request->is_valid;
+        if($document->isDirty()){
+            $old = new LoanSubmittedDocument();
+            $old->fill($document->getOriginal());
+            $changes = 'editó documento presentado ['.$document_id.'] :';
+            foreach ($document->getDirty() as $key => $value) {
+                $old_is_valid = $old->is_valid == 0 ?'No válido': 'Válido';
+                $document_is_valid = $document->is_valid == 0 ?'No válido': 'Válido';
+                if ($key == 'is_valid') {
+                    $changes .= (' [' . Util::translate($key) . '] ' . $old_is_valid .' => ' .$document_is_valid. ',');
+                }elseif ($key == 'comment') {
+                    $changes .= (' [' . Util::translate($key) . '] ' . $old->comment . ' => ' . $document->comment. ',');
+                } else {
+                    $changes .= (' [' . Util::translate($key) . '] ' . $old[$key] . ' => ' . $value . ',');
+                }
+            }
+            Record::create([
+                'user_id' => Auth::user()->id,
+                'record_type_id' => RecordType::whereName('datos-de-un-tramite')->first()->id,
+                'recordable_id' => $loan_id,
+                'recordable_type' => 'loans',
+                'action' => $changes
+              ]);
+        }
         $loan->submitted_documents()->updateExistingPivot($document_id, $request->all());
         return $loan->submitted_documents;
     }
@@ -508,29 +536,67 @@ class LoanController extends Controller
     /**
     * Lista de documentos presentados
     * Obtiene la lista de los documentos presentados para el trámite
-    * @urlParam id required ID de préstamo. Example: 8
+    * @urlParam id required ID de préstamo. Example: 3
     * @response
-    * [
-    *     {
-    *         "id": 40,
-    *         "name": "Cédula de Identidad del (la) titular en copia simple.",
-    *         "created_at": "2019-04-02 21:25:32",
+    * {
+    * "optional": {
+    *     "1": {
+    *         "id": 275,
+    *         "name": "Solicitud de aclaración de datos personales en la Boleta de Pago.",
+    *         "created_at": null,
     *         "updated_at": null,
     *         "expire_date": null,
     *         "pivot": {
-    *             "loan_id": 8,
-    *             "procedure_document_id": 40,
-    *             "reception_date": "2020-03-06",
-    *             "comment": "Documento actualizado a la gestión actual",
-    *             "is_valid": true
+    *             "loan_id": 3,
+    *             "procedure_document_id": 275,
+    *             "reception_date": "2020-04-18",
+    *             "comment": null,
+    *             "is_valid": false
+    *         },
+    *         "procedure_requirement": {
+    *             "id": 1502,
+    *             "procedure_modality_id": 46,
+    *             "procedure_document_id": 275,
+    *             "number": 0,
+    *             "created_at": "2020-04-17T11:48:59.000000Z",
+    *             "updated_at": "2020-04-17T11:48:59.000000Z",
+    *             "deleted_at": null
     *         }
-    *     }, {}
-    * ]
+    *     },
+    *     "2": {}
+    * },
+    * "required": {
+    *     "1": {
+    *         "id": 271,
+    *         "name": "Última Boleta de pago en copia simple.",
+    *         "created_at": null,
+    *         "updated_at": null,
+    *         "expire_date": null,
+    *         "pivot": {
+    *             "loan_id": 3,
+    *             "procedure_document_id": 271,
+    *             "reception_date": "2020-04-18",
+    *             "comment": null,
+    *             "is_valid": false
+    *         },
+    *         "procedure_requirement": {
+    *             "id": 1314,
+    *             "procedure_modality_id": 32,
+    *             "procedure_document_id": 271,
+    *             "number": 2,
+    *             "created_at": "2020-04-17T11:48:48.000000Z",
+    *             "updated_at": "2020-04-17T11:48:48.000000Z",
+    *             "deleted_at": null
+    *         }
+    *     },
+    *     "2": {}
+    * }
+    *}
     */
     public function get_documents($id)
     {
         $loan = Loan::findOrFail($id);
-        return $loan->submitted_documents;
+        return $loan->submitted_documents_list;
     }
 
     /**
@@ -1147,5 +1213,41 @@ class LoanController extends Controller
         });
         $loans->update(array_merge($request->only('role_id'), ['validated' => false]));
         return $derived;
+    }
+
+    /** @group Historial de Préstamos
+    * Lista de alteraciones que tuvo un trámite de préstamo
+    * Devuelve el listado del historial de préstamo de manera descendente
+    * @urlParam id required ID de préstamo. Example: 1
+    * @authenticated
+    * @response
+    * [
+    *    {
+    *        "id": 4530,
+    *        "user_id": 123,
+    *        "record_type_id": 7,
+    *        "recordable_id": 1,
+    *        "recordable_type": "loans",
+    *        "action": "[Datos de un Trámite] El usuario nalarcon editó [Ciudad] LA PAZ -> BENI,  [Destino] Salud -> Consumo. loans: PTMO000001-2020",
+    *        "created_at": "2020-04-17T20:34:56.000000Z",
+    *        "updated_at": "2020-04-17T20:34:56.000000Z"
+    *    },
+    *    {
+    *        "id": 4528,
+    *        "user_id": 123,
+    *        "record_type_id": 7,
+    *        "recordable_id": 1,
+    *        "recordable_type": "loans",
+    *        "action": "[Datos de un Trámite] El usuario nalarcon registró préstamo : PTMO000001-2020. loans: PTMO000001-2020",
+    *        "created_at": "2020-04-17T18:52:04.000000Z",
+    *        "updated_at": "2020-04-17T18:52:04.000000Z"
+    *    },{}
+    * ]
+    */
+
+    public function get_history($id)
+    {
+        $loan = Loan::findOrFail($id);
+        return $loan->records;
     }
 }

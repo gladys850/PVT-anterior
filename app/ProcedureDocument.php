@@ -28,4 +28,10 @@ class ProcedureDocument extends Model
     {
         return $this->belongsToMany(Loan::class, 'loan_submitted_documents', 'procedure_document_id')->withPivot('reception_date', 'comment', 'is_valid')->orderBy('pivot_reception_date','desc');
     }
+
+    public function procedure_requirement()
+    {
+        return $this->belongsTo(ProcedureRequirement::class, 'id', 'procedure_document_id');
+    }
+
 }
