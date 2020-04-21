@@ -7,13 +7,13 @@
             <v-col cols="12">
               <v-container class="py-0">
                 <v-row>
-                  <v-col cols="12" class="py-0">Resultado para el Prestamo</v-col>
+                  <v-col cols="12" class="py-0">Resultado para el Prestamo </v-col>
                   <br />
                   <v-col cols="12" md="3">
                     <v-layout row wrap>
                       <v-flex xs12 class="px-2">
                         <fieldset class="pa-3">
-                      <ValidationProvider v-slot="{ errors }" name="plazo" rules="numeric|min_value:1|max_value:96" mode="aggressive">
+                      <ValidationProvider v-slot="{ errors }" name="plazo" :rules="'numeric|min_value:'+datos.minimum_term+'|max_value:'+datos.maximum_term" mode="aggressive">
                       <v-text-field
                         :error-messages="errors"
                         label="Plazo en Meses"
@@ -21,7 +21,7 @@
                         v-on:keyup.enter="Calculator()"
                       ></v-text-field>
                       </ValidationProvider>
-                      <ValidationProvider v-slot="{ errors }" name="monto solicitado" rules="numeric" mode="aggressive">
+                      <ValidationProvider v-slot="{ errors }" name="monto solicitado" :rules="'numeric|min_value:'+datos.minimun_amoun+'|max_value:'+datos.maximun_amoun" mode="aggressive">
                       <v-text-field
                         :error-messages="errors"
                         label="Monto Maximo Sugerido"
@@ -73,6 +73,10 @@
 export default {
   name: "loan-requirement",
   props: {
+    datos: {
+      type: Object,
+      required: true
+    },
     bonos: {
       type: Array,
       required: true

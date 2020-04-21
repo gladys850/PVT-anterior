@@ -175,7 +175,7 @@
             <h5>Otros Documentos</h5>
           </v-toolbar-title>
           <v-row>
-            <v-col cols="11" class="ma-0 px-10">
+          <v-col cols="11" class="ma-0 px-10">
               <v-text-field
                 label="Registrar documento"
                 v-model="newOther"
@@ -261,7 +261,7 @@ export default {
   }),
   props: {
     datos: {
-      type: Array,
+      type: Object,
       required: true
     },
     formulario: {
@@ -319,8 +319,8 @@ export default {
             lenders: [this.$route.query.affiliate_id],
             procedure_modality_id: this.modalidad.id,
             city_id: this.$store.getters.cityId,
-            amount_requested: this.datos[1],
-            loan_term: this.datos[2]
+            amount_requested: this.datos.monto,
+            loan_term: this.datos.plazo
           },
           responseType: "arraybuffer"
         });

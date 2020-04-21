@@ -98,6 +98,7 @@
           <v-card color="grey lighten-1">
             <h3 class="text-uppercase text-center">{{modalidad.name}}</h3>
             <BallotsResult
+              :datos.sync="datos"
               :bonos.sync="bonos"
               :payable_liquid.sync="payable_liquid"
               :calculos.sync="calculos"
@@ -238,7 +239,7 @@ export default {
     e1: 1,
     steps: 5,
     modalities: [],
-    datos:[],
+    datos:{},
     intervalos:{},
     contributions1:[{},{},{} ],
     payable_liquid:[0,0,0],
@@ -345,6 +346,7 @@ export default {
         this.calculos= res.data
         this.calculos.plazo=this.intervalos.maximum_term
         this.calculos.montos=this.intervalos.maximun_amoun
+        this.datos =this.intervalos
         }else{
           let res = await axios.post(`calculator`, {
             procedure_modality_id:this.modalidad.id,
@@ -364,6 +366,7 @@ export default {
         this.calculos= res.data
         this.calculos.plazo=this.intervalos.maximum_term
         this.calculos.montos=this.intervalos.maximun_amoun
+        this.datos =this.intervalos
         }
       }catch (e) {
         console.log(e)
