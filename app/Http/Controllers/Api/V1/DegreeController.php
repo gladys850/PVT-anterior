@@ -26,8 +26,14 @@ class DegreeController extends Controller
     *     }, {}
     * ]
      */
-    public function index()
+    public function index(Request $request)
     {
-        return Degree::get();
+        $query = Degree::query();
+        if ($request->has('affiliate')) {
+            $query = $query->whereHas('affiliates', function($q) {
+                $q->whereId($request->affiliate);
+            });
+        }
+        return $query->get();
     }
 }

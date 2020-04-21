@@ -59,9 +59,9 @@ class NoteController extends Controller
     *     "updated_at": "2018-07-21 11:50:14"
     * }
     */
-    public function show($id)
+    public function show(Note $note)
     {
-        return Note::findOrFail($id);
+        return $note;
     }
 
     /**

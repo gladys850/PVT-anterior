@@ -20,6 +20,7 @@ use App\ProcedureModality;
 use App\PaymentType;
 use App\Role;
 use App\RoleSequence;
+use App\Http\Requests\LoansForm;
 use App\Http\Requests\LoanForm;
 use App\Http\Requests\LoanPaymentForm;
 use App\Http\Requests\LoanObservationForm;
@@ -61,11 +62,11 @@ class LoanController extends Controller
     *             "request_date": "2020-02-13",
     *             "amount_requested": 2000,
     *             "city_id": 4,
-    *             "loan_interest_id": 1,
-    *             "loan_state_id": 1,
+    *             "interest_id": 1,
+    *             "state_id": 1,
     *             "amount_approved": null,
     *             "loan_term": 3,
-    *             "disbursement_type_id": 1,
+    *             "payment_type_id": 1,
     *             "created_at": "2020-02-13 16:32:43",
     *             "updated_at": "2020-02-13 16:32:43",
     *             "balance": 2000,
@@ -126,32 +127,32 @@ class LoanController extends Controller
     * @bodyParam amount_requested integer required monto solicitado. Example: 2000
     * @bodyParam city_id integer required ID de la ciudad. Example: 3
     * @bodyParam loan_term integer required plazo. Example: 2
-    * @bodyParam disbursement_type_id integer required Tipo de desembolso. Example: 1
+    * @bodyParam payment_type_id integer required Tipo de desembolso. Example: 1
     * @bodyParam lenders array required Lista de IDs de afiliados Titular de préstamo. Example: [5146]
     * @bodyParam guarantors array Lista de IDs de afiliados Garante de préstamo. Example: []
     * @bodyParam parent_loan_id integer ID de Préstamo Padre. Example: 1
     * @bodyParam parent_reason enum (REFINANCIAMIENTO, REPROGRAMACIÓN) Tipo de trámite hijo. Example: REFINANCIAMIENTO
     * @bodyParam personal_reference_id integer ID de referencia personal. Example: 4
     * @bodyParam account_number integer Número de cuenta en Banco Union. Example: 586621345
-    * @bodyParam loan_destiny_id integer required ID destino de Préstamo. Example: 1
+    * @bodyParam destiny_id integer required ID destino de Préstamo. Example: 1
     * @bodyParam documents array required Lista de IDs de Documentos solicitados. Example: [306,305]
     * @bodyParam notes array Lista de notas aclaratorias. Example: [Informe de baja policial, Carta de solicitud]
     * @authenticated
     * @response
     * {
     *   "procedure_modality_id": 32,
-    *   "loan_interest_id": 1,
+    *   "interest_id": 1,
     *   "amount_requested": 2000,
     *   "city_id": 3,
     *   "loan_term": 2,
-    *   "disbursement_type_id": 1,
-    *   "loan_destiny_id": 1,
+    *   "payment_type_id": 1,
+    *   "destiny_id": 1,
     *   "account_number": 586621345,
     *   "request_date": "2020-03-05T20:27:23.900575Z",
     *   "disbursable_type": "affiliates",
     *   "disbursable_id": 5146,
     *   "amount_approved": 2000,
-    *   "loan_state_id": 1,
+    *   "state_id": 1,
     *   "code": "PTMO000017-2020",
     *   "disbursement_date": "2020-02-01",
     *   "updated_at": "2020-03-05 16:27:23",
@@ -241,11 +242,11 @@ class LoanController extends Controller
     *    "request_date": "2020-02-17",
     *    "amount_requested": 3000,
     *    "city_id": 2,
-    *    "loan_interest_id": 4,
-    *    "loan_state_id": 1,
+    *    "interest_id": 4,
+    *    "state_id": 1,
     *    "amount_approved": 3000,
     *    "loan_term": 3,
-    *    "disbursement_type_id": 1,
+    *    "payment_type_id": 1,
     *    "created_at": "2020-02-17 14:52:40",
     *    "updated_at": "2020-02-17 14:52:40",
     *    "balance": 3000,
@@ -304,16 +305,15 @@ class LoanController extends Controller
     *   "guarantors": []
     * }
     */
-    public function show($id)
+    public function show(Loan $loan)
     {
-        $item = Loan::findOrFail($id);
         if (Auth::user()->can('show-all-loan') || Auth::user()->roles()->whereHas('module', function($query) {
             return $query->whereName('prestamos');
-        })->pluck('id')->contains($item->role_id)) {
-            $item->lenders;
-            $item->guarantors;
-            $this->append_data($item);
-            return $item;
+        })->pluck('id')->contains($loan->role_id)) {
+            $loan->lenders;
+            $loan->guarantors;
+            $this->append_data($loan);
+            return $loan;
         } else {
             abort(403);
         }
@@ -327,7 +327,7 @@ class LoanController extends Controller
     * @bodyParam amount_requested integer required monto solicitado. Example: 2000
     * @bodyParam city_id integer required ID de la ciudad. Example: 4
     * @bodyParam loan_term integer required plazo. Example: 2
-    * @bodyParam disbursement_type_id integer required Tipo de desembolso. Example: 1
+    * @bodyParam payment_type_id integer required Tipo de desembolso. Example: 1
     * @bodyParam lenders array required Lista de IDs de afiliados Titular de préstamo. Example: [5146]
     * @bodyParam guarantors array Lista de IDs de afiliados Garante de préstamo. Example: []
     * @bodyParam disbursement_date date Fecha de desembolso. Example: 2020-02-01
@@ -335,7 +335,7 @@ class LoanController extends Controller
     * @bodyParam parent_reason enum (REFINANCIAMIENTO, REPROGRAMACIÓN) Tipo de trámite hijo. Example: REFINANCIAMIENTO
     * @bodyParam personal_reference_id integer ID de referencia personal. Example: 4
     * @bodyParam account_number integer Número de cuenta en Banco Union. Example: 586621345
-    * @bodyParam loan_destiny_id integer required ID destino de Préstamo. Example: 1
+    * @bodyParam destiny_id integer required ID destino de Préstamo. Example: 1
     * @authenticated
     * @response
     * {
@@ -351,12 +351,12 @@ class LoanController extends Controller
     *     "request_date": "2020-03-05",
     *     "amount_requested": 2000,
     *     "city_id": 4,
-    *     "loan_interest_id": 1,
-    *     "loan_state_id": 1,
+    *     "interest_id": 1,
+    *     "state_id": 1,
     *     "amount_approved": 2000,
     *     "loan_term": 2,
-    *     "disbursement_type_id": 1,
-    *     "loan_destiny_id": 1,
+    *     "payment_type_id": 1,
+    *     "destiny_id": 1,
     *     "account_number": 586621345,
     *     "created_at": "2020-03-05 16:27:23",
     *     "updated_at": "2020-03-05 16:34:04",
@@ -392,11 +392,11 @@ class LoanController extends Controller
     *    "request_date": "2020-02-17",
     *    "amount_requested": 5000,
     *    "city_id": 2,
-    *    "loan_interest_id": 4,
-    *    "loan_state_id": 1,
+    *    "interest_id": 4,
+    *    "state_id": 1,
     *    "amount_approved": 3000,
     *    "loan_term": 3,
-    *    "disbursement_type_id": 1,
+    *    "payment_type_id": 1,
     *    "created_at": "2020-02-17 10:37:48",
     *    "updated_at": "2020-02-17 10:39:41"
     * }
@@ -425,16 +425,19 @@ class LoanController extends Controller
         }
         if ($id) {
             $loan = Loan::findOrFail($id);
-            if ($request->has('role_id')) {
-                $role = Role::findOrFail($request->role_id);
-                $roles = RoleSequence::flow($loan->modality->procedure_type->id, $loan->role_id);
-                $roles = $roles->previous->merge($roles->next);
-                if ($roles->search($request->role_id) === false) $request = new Request($request->except('role_id'));
-            }
             if (Auth::user()->can('update-loan')) {
                 $loan->fill(array_merge($request->all(), isset($disbursable) ? (array)self::verify_spouse_disbursable($disbursable) : []));
-            } elseif (!Auth::user()->can('update-loan') && $request->has('role_id')) {
-                $loan->role()->associate($role);
+            } else {
+                if ($request->has('validated')) {
+                    $loan->validated = $request->validated;
+                }
+                if ($request->has('role_id')) {
+                    if ($request->role_id != $loan->role_id) {
+                        $role = Role::findOrFail($request->role_id);
+                        $loan->role()->associate($role);
+                        $loan->validated = false;
+                    }
+                }
             }
         } else {
             $loan = new Loan(array_merge($request->all(), (array)self::verify_spouse_disbursable($disbursable), ['amount_approved' => $request->amount_requested]));
@@ -1096,5 +1099,53 @@ class LoanController extends Controller
         }
         $observation->update(collect($request->update)->only('observation_type_id', 'message', 'enabled')->toArray());
         return $loan->observations;
+    }
+
+    /**
+    * Derivar en lote
+    * Deriva o devuelve trámites en un lote mediante sus IDs
+    * @bodyParam ids array required Lista de IDs de los trámites a derivar. Example: [1,2,3]
+    * @bodyParam role_id integer required ID del rol al cual derivar o devolver. Example: 82
+    * @authenticated
+    * @response
+    * [
+    *     {
+    *         "id": 1,
+    *         "code": "PTMO000001-2020",
+    *         "disbursable_id": 5146,
+    *         "disbursable_type": "affiliates",
+    *         "procedure_modality_id": 32,
+    *         "disbursement_date": null,
+    *         "parent_loan_id": null,
+    *         "parent_reason": null,
+    *         "request_date": "2020-04-15T04:00:00.000000Z",
+    *         "amount_requested": 2000,
+    *         "city_id": 3,
+    *         "loan_interest_id": 1,
+    *         "loan_state_id": 1,
+    *         "amount_approved": 2000,
+    *         "loan_term": 2,
+    *         "disbursement_type_id": 1,
+    *         "personal_reference_id": null,
+    *         "account_number": 586621345,
+    *         "loan_destiny_id": 1,
+    *         "role_id": 82,
+    *         "validated": false,
+    *         "created_at": "2020-04-16T01:12:41.000000Z",
+    *         "updated_at": "2020-04-16T14:26:19.000000Z",
+    *         "deleted_at": null
+    *     }, {}
+    * ]
+    */
+    public function bulk_update_role(LoansForm $request)
+    {
+        $loans = Loan::whereIn('id', $request->ids)->where('role_id', '!=', $request->role_id)->orderBy('code');
+        $derived = $loans->get();
+        $derived->map(function ($item, $key) use ($request) {
+            $item['role_id'] = $request->role_id;
+            $item['validated'] = false;
+        });
+        $loans->update(array_merge($request->only('role_id'), ['validated' => false]));
+        return $derived;
     }
 }

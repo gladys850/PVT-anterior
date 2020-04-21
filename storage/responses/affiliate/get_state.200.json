@@ -1,0 +1,9 @@
+{
+    "id": 4,
+    "affiliate_state_type_id": 2,
+    "name": "Fallecido",
+    "affiliate_state_type": {
+        "id": 2,
+        "name": "Pasivo"
+    }
+}

@@ -13,7 +13,7 @@ class Observation extends Model
     public $timestamps = true;
     protected $primaryKey = null;
     public $incrementing = false;
-    protected $dates = ['deleted_at'];
+    protected $dates = ['date'];
     protected $fillable = ['user_id', 'observation_type_id', 'observable_id', 'observable_type', 'message', 'date', 'enabled'];
     protected $hidden = ['observable_id', 'observable_type'];
 

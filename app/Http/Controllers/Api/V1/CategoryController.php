@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Category;
 
-/** @group Categorías
+/** @group Categoría Policial
 * Datos de las categorías policiales disponibles en el sistema
 */
 class CategoryController extends Controller
@@ -14,19 +14,23 @@ class CategoryController extends Controller
     /**
     * Lista de categorías
     * Devuelve el listado de las categorías
-    * @response
-    * [
-    *     {
-    *         "id": 1,
-    *         "from": 0,
-    *         "to": 4,
-    *         "name": "0%",
-    *         "percentage": "0.00"
-    *     }, {}
-    * ]
+    * @authenticated
+    * @responseFile responses/category/index.200.json
     */
     public function index()
     {
         return Category::get();
+    }
+
+    /**
+    * Detalle de categoría
+    * Devuelve el detalle de una categoría mediante su ID
+    * @urlParam category required ID de categoría. Example: 1
+    * @authenticated
+    * @responseFile responses/category/show.200.json
+    */
+    public function show(Category $category)
+    {
+        return $category;
     }
 }

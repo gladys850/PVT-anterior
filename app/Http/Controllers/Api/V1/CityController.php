@@ -14,19 +14,7 @@ class CityController extends Controller
     /**
     * Lista de ciudades
     * Devuelve el listado de las ciudades
-    * @response
-    * [
-    *     {
-    *         "id": 1,
-    *         "name": "BENI",
-    *         "first_shortened": "BE",
-    *         "second_shortened": "BEN",
-    *         "third_shortened": "BNI",
-    *         "to_bank": "BE",
-    *         "latitude": -14.834909060283,
-    *         "longitude": -64.904201030731
-    *     }, {}
-    * ]
+    * @responseFile responses/city/index.200.json
      */
     public function index()
     {
@@ -34,68 +22,14 @@ class CityController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
+    * Detalle de ciudad
+    * Devuelve el detalle de una ciudad mediante su ID
+    * @urlParam city required ID de ciudad. Example: 1
+    * @authenticated
+    * @responseFile responses/city/show.200.json
+    */
+    public function show(City $city)
     {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
+        return $city;
     }
 }
