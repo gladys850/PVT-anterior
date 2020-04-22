@@ -59,12 +59,12 @@ export default {
     affiliate(newVal, oldVal) {
       if (oldVal != newVal) {
         if (newVal.hasOwnProperty('category_id')) this.getCategory_name(newVal.category_id)
+        if (newVal.hasOwnProperty('degree_id')) this.getDegree_name(newVal.degree_id)
       }
     }
   },
   beforeMount() {
     this.getState_name(this.affiliate.id);
-    this.getDegree_name(this.affiliate.id);
   },
   methods: {
     async getCategory_name(id) {
@@ -94,7 +94,7 @@ export default {
     async getDegree_name(id) {
       try {
         this.loading = true;
-        let res = await axios.get(`affiliate/${id}/degree`);
+        let res = await axios.get(`degree/${id}`);
         this.degree_name = res.data.name;
       } catch (e) {
         console.log(e);

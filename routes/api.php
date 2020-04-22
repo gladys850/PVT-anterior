@@ -38,8 +38,9 @@ Route::group([
         Route::get('affiliate/{affiliate}/fingerprint', 'Api\V1\AffiliateController@fingerprint_saved');
         Route::apiResource('city', 'Api\V1\CityController')->only('index', 'show');
         Route::apiResource('pension_entity', 'Api\V1\PensionEntityController')->only('index', 'show');
-        Route::apiResource('degree', 'Api\V1\DegreeController')->only('index');
+        Route::apiResource('degree', 'Api\V1\DegreeController')->only('index', 'show');
         Route::apiResource('category', 'Api\V1\CategoryController')->only('index', 'show');
+        Route::apiResource('unit', 'Api\V1\UnitController')->only('index', 'show');
         Route::apiResource('procedure_type', 'Api\V1\ProcedureTypeController')->only('index');
         Route::apiResource('payment_type', 'Api\V1\PaymentTypeController')->only('index');
         Route::apiResource('procedure_modality', 'Api\V1\ProcedureModalityController')->only('index', 'show');
@@ -56,9 +57,6 @@ Route::group([
         ], function () {
             Route::apiResource('affiliate', 'Api\V1\AffiliateController')->only('index');
             Route::apiResource('spouse', 'Api\V1\SpouseController')->only('index', 'show');
-            // Route::get('affiliate/{affiliate}/degree', 'Api\V1\AffiliateController@get_degree');
-            Route::get('affiliate/{affiliate}/degree', 'Api\V1\AffiliateController@get_degree');
-            Route::get('affiliate/{affiliate}/unit', 'Api\V1\AffiliateController@get_unit');
             Route::get('affiliate/{affiliate}/state', 'Api\V1\AffiliateController@get_state');
             Route::get('affiliate/{affiliate}/spouse', 'Api\V1\AffiliateController@get_spouse');
             Route::get('affiliate/{affiliate}/address', 'Api\V1\AffiliateController@get_addresses');
@@ -98,35 +96,35 @@ Route::group([
         ], function () {
             Route::apiResource('loan', 'Api\V1\LoanController')->only('index');
             Route::apiResource('loan', 'Api\V1\LoanController')->only('show');
-            Route::get('loan/{id}/disbursable', 'Api\V1\LoanController@get_disbursable');
+            Route::get('loan/{loan}/disbursable', 'Api\V1\LoanController@get_disbursable');
             Route::apiResource('loan_interval', 'Api\V1\LoanIntervalController')->only('index');
             Route::get('affiliate/{affiliate}/loan','Api\V1\AffiliateController@get_loans');
-            Route::get('loan/{id}/document','Api\V1\LoanController@get_documents');
-            Route::get('loan/{id}/note','Api\V1\LoanController@get_notes');
-            Route::get('loan/{id}/flow','Api\V1\LoanController@get_flow');
-            Route::get('loan/{id}/print/plan','Api\V1\LoanController@print_plan');
+            Route::get('loan/{loan}/document','Api\V1\LoanController@get_documents');
+            Route::get('loan/{loan}/note','Api\V1\LoanController@get_notes');
+            Route::get('loan/{loan}/flow','Api\V1\LoanController@get_flow');
+            Route::get('loan/{loan}/print/plan','Api\V1\LoanController@print_plan');
             Route::apiResource('note','Api\V1\NoteController')->only('show');
             Route::get('procedure_type/{id}/loan_destiny', 'Api\V1\ProcedureTypeController@get_loan_destinies');
-            Route::get('loan/{id}/payment','Api\V1\LoanController@get_payments');
-            Route::patch('loan/{id}/payment','Api\V1\LoanController@get_next_payment');
-            Route::post('loan/{id}/payment','Api\V1\LoanController@set_payment');
-            Route::get('loan/{id}/observation','Api\V1\LoanController@get_observations');
-            Route::post('loan/{id}/observation','Api\V1\LoanController@set_observation');
-            Route::patch('loan/{id}/observation','Api\V1\LoanController@update_observation');
+            Route::get('loan/{loan}/payment','Api\V1\LoanController@get_payments');
+            Route::patch('loan/{loan}/payment','Api\V1\LoanController@get_next_payment');
+            Route::post('loan/{loan}/payment','Api\V1\LoanController@set_payment');
+            Route::get('loan/{loan}/observation','Api\V1\LoanController@get_observations');
+            Route::post('loan/{loan}/observation','Api\V1\LoanController@set_observation');
+            Route::patch('loan/{loan}/observation','Api\V1\LoanController@update_observation');
         });
         Route::group([
             'middleware' => 'permission:create-loan'
         ], function () {
             Route::apiResource('loan', 'Api\V1\LoanController')->only('store');
-            Route::get('loan/{id}/print/documents', 'Api\V1\LoanController@print_documents');
+            Route::get('loan/{loan}/print/documents', 'Api\V1\LoanController@print_documents');
             Route::get('affiliate/{affiliate}/loan_modality', 'Api\V1\AffiliateController@get_loan_modality');
-            Route::get('loan/{id}/print/form', 'Api\V1\LoanController@print_form');
-            Route::get('loan/{id}/print/contract', 'Api\V1\LoanController@print_contract');
+            Route::get('loan/{loan}/print/form', 'Api\V1\LoanController@print_form');
+            Route::get('loan/{loan}/print/contract', 'Api\V1\LoanController@print_contract');
         });
         Route::group([
             'middleware' => 'permission:update-loan'
         ], function () {
-            Route::patch('loan/{loan_id}/document/{document_id}', 'Api\V1\LoanController@update_document');
+            Route::patch('loan/{loan}/document/{document}', 'Api\V1\LoanController@update_document');
         });
         Route::group([
             'middleware' => 'permission:delete-loan'

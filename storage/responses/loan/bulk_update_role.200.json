@@ -1,0 +1,28 @@
+[
+    {
+        "id": 1,
+        "code": "PTMO000001-2020",
+        "disbursable_id": 5146,
+        "disbursable_type": "affiliates",
+        "procedure_modality_id": 32,
+        "disbursement_date": null,
+        "parent_loan_id": null,
+        "parent_reason": null,
+        "request_date": "2020-04-15T04:00:00.000000Z",
+        "amount_requested": 2000,
+        "city_id": 3,
+        "loan_interest_id": 1,
+        "loan_state_id": 1,
+        "amount_approved": 2000,
+        "loan_term": 2,
+        "disbursement_type_id": 1,
+        "personal_reference_id": null,
+        "account_number": 586621345,
+        "loan_destiny_id": 1,
+        "role_id": 82,
+        "validated": false,
+        "created_at": "2020-04-16T01:12:41.000000Z",
+        "updated_at": "2020-04-16T14:26:19.000000Z",
+        "deleted_at": null
+    }, {}
+]

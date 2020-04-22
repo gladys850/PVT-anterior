@@ -290,13 +290,13 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{url}}/{{endpoint}}/58661",
+							"raw": "{{url}}/{{endpoint}}/5012",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"{{endpoint}}",
-								"58661"
+								"5012"
 							]
 						},
 						"description": "show"
@@ -458,66 +458,6 @@
 							]
 						},
 						"description": "update_addresses"
-					},
-					"response": []
-				},
-				{
-					"name": "Categoría",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{url}}/{{endpoint}}/12/category",
-							"host": [
-								"{{url}}"
-							],
-							"path": [
-								"{{endpoint}}",
-								"12",
-								"category"
-							]
-						},
-						"description": "get_category"
-					},
-					"response": []
-				},
-				{
-					"name": "Grado",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{url}}/{{endpoint}}/12/degree",
-							"host": [
-								"{{url}}"
-							],
-							"path": [
-								"{{endpoint}}",
-								"12",
-								"degree"
-							]
-						},
-						"description": "get_degree"
-					},
-					"response": []
-				},
-				{
-					"name": "Unidad",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{url}}/{{endpoint}}/12/unit",
-							"host": [
-								"{{url}}"
-							],
-							"path": [
-								"{{endpoint}}",
-								"12",
-								"unit"
-							]
-						},
-						"description": "get_unit"
 					},
 					"response": []
 				},
@@ -1017,6 +957,622 @@
 				}
 			],
 			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Grado Policial",
+			"item": [
+				{
+					"name": "Lista de grados",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/{{endpoint}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}"
+							]
+						},
+						"description": "index"
+					},
+					"response": []
+				},
+				{
+					"name": "Detalle de grado",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/{{endpoint}}/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}",
+								"1"
+							]
+						},
+						"description": "show"
+					},
+					"response": []
+				}
+			],
+			"description": "degree",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "11fa99ac-1f3b-4cd9-aa9f-c18ec95fc70a",
+						"type": "text/javascript",
+						"exec": [
+							"pm.environment.set('endpoint', 'degree');"
+						]
+					}
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Unidad Policial",
+			"item": [
+				{
+					"name": "Lista de unidades",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/{{endpoint}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}"
+							]
+						},
+						"description": "index"
+					},
+					"response": []
+				},
+				{
+					"name": "Detalle de unidad",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/{{endpoint}}/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}",
+								"1"
+							]
+						},
+						"description": "show"
+					},
+					"response": []
+				}
+			],
+			"description": "unit",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "815b5123-270a-4d8f-9b05-2287b76acc55",
+						"type": "text/javascript",
+						"exec": [
+							"pm.environment.set('endpoint', 'unit');"
+						]
+					}
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Préstamos",
+			"item": [
+				{
+					"name": "Lista de Préstamos",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/{{endpoint}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}"
+							]
+						},
+						"description": "index"
+					},
+					"response": []
+				},
+				{
+					"name": "Nuevo préstamo",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"procedure_modality_id\": 32,\n    \"amount_requested\": 2000,\n    \"city_id\": 3,\n    \"loan_term\": 2,\n    \"payment_type_id\": 1,\n    \"lenders\": [5146],\n    \"guarantors\": [],\n    \"account_number\": 586621345,\n    \"destiny_id\": 1,\n    \"documents\": [40, 271, 273, 274],\n    \"notes\": [\"Informe de baja policial, Carta de solicitud\"]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/{{endpoint}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}"
+							]
+						},
+						"description": "store"
+					},
+					"response": []
+				},
+				{
+					"name": "Detalle de Préstamo",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/{{endpoint}}/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}",
+								"1"
+							]
+						},
+						"description": "show"
+					},
+					"response": []
+				},
+				{
+					"name": "Actualizar préstamo",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"city_id\": 2\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/{{endpoint}}/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}",
+								"1"
+							]
+						},
+						"description": "update"
+					},
+					"response": []
+				},
+				{
+					"name": "Anular préstamo",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/{{endpoint}}/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}",
+								"1"
+							]
+						},
+						"description": "destroy"
+					},
+					"response": []
+				},
+				{
+					"name": "Actualización de documentos presentados",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"is_valid\": true\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/{{endpoint}}/1/document/40",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}",
+								"1",
+								"document",
+								"40"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Lista de documentos",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/{{endpoint}}/1/document",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}",
+								"1",
+								"document"
+							]
+						},
+						"description": "get_documents"
+					},
+					"response": []
+				},
+				{
+					"name": "Desembolso Afiliado",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/{{endpoint}}/1/disbursable",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}",
+								"1",
+								"disbursable"
+							]
+						},
+						"description": "get_disbursable"
+					},
+					"response": []
+				},
+				{
+					"name": "Impresión de Contrato",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/{{endpoint}}/1/print/contract",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}",
+								"1",
+								"print",
+								"contract"
+							]
+						},
+						"description": "print_contract"
+					},
+					"response": []
+				},
+				{
+					"name": "Impresión de Formulario de solicitud",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/{{endpoint}}/1/print/form",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}",
+								"1",
+								"print",
+								"form"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Impresión del plan de pagos",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/{{endpoint}}/1/print/plan",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}",
+								"1",
+								"print",
+								"plan"
+							]
+						},
+						"description": "print_plan"
+					},
+					"response": []
+				},
+				{
+					"name": "Notas aclaratorias",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/{{endpoint}}/1/note",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}",
+								"1",
+								"note"
+							]
+						},
+						"description": "get_notes"
+					},
+					"response": []
+				},
+				{
+					"name": "Flujo de trabajo",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/{{endpoint}}/1/flow",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}",
+								"1",
+								"flow"
+							]
+						},
+						"description": "get_flow"
+					},
+					"response": []
+				},
+				{
+					"name": "Lista de observaciones",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/{{endpoint}}/1/observation",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}",
+								"1",
+								"observation"
+							]
+						},
+						"description": "get_observations"
+					},
+					"response": []
+				},
+				{
+					"name": "Nueva observación",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"observation_type_id\": 2,\n    \"message\": \"Subsanable en una semana\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/{{endpoint}}/1/observation",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}",
+								"1",
+								"observation"
+							]
+						},
+						"description": "set_observation"
+					},
+					"response": []
+				},
+				{
+					"name": "Actualizar observación",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"original\": {\n\t    \"user_id\": 123,\n        \"observation_type_id\": 2,\n        \"message\": \"Subsanable en una semana\",\n        \"date\": \"2020-04-20 22:29:33\",\n        \"enabled\": false,\n        \"created_at\": \"2020-04-21T02:29:33.000000Z\",\n        \"updated_at\": \"2020-04-21T02:29:33.000000Z\",\n        \"deleted_at\": null\n    },\n    \"update\": {\n        \"observation_type_id\": 21,\n        \"message\": \"Subsanable en un mes\",\n        \"enabled\": true\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/{{endpoint}}/1/observation",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}",
+								"1",
+								"observation"
+							]
+						},
+						"description": "update_observation"
+					},
+					"response": []
+				},
+				{
+					"name": "Derivar en lote",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"ids\": [1],\n\t\"role_id\": 81\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/{{endpoint}}s",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}s"
+							]
+						},
+						"description": "bulk_update_role"
+					},
+					"response": []
+				}
+			],
+			"description": "loan",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "a50b878c-535b-4c8e-970e-fd6a44b59473",
+						"type": "text/javascript",
+						"exec": [
+							"pm.environment.set('endpoint', 'loan');"
+						]
+					}
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Cobranzas",
+			"item": [
+				{
+					"name": "Cálculo de siguiente pago",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/{{endpoint}}/1/payment",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}",
+								"1",
+								"payment"
+							]
+						},
+						"description": "get_next_payment"
+					},
+					"response": []
+				},
+				{
+					"name": "Nuevo pago",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"payment_type_id\": 2\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/{{endpoint}}/1/payment",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}",
+								"1",
+								"payment"
+							]
+						},
+						"description": "set_payment"
+					},
+					"response": []
+				},
+				{
+					"name": "Lista de pagos",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/{{endpoint}}/1/payment",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}",
+								"1",
+								"payment"
+							]
+						},
+						"description": "get_payments"
+					},
+					"response": []
+				}
+			],
+			"description": "loan",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "a50b878c-535b-4c8e-970e-fd6a44b59473",
+						"type": "text/javascript",
+						"exec": [
+							"pm.environment.set('endpoint', 'loan');"
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "928587ae-e863-4302-9ef6-f2489c81a664",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			],
+			"protocolProfileBehavior": {}
 		}
 	],
 	"auth": {
@@ -1092,37 +1648,37 @@
 	],
 	"variable": [
 		{
-			"id": "9d59e5c6-6064-47b5-b72a-4d67f15546c7",
+			"id": "7883083c-8c70-4fc5-84c7-1c92668c4a41",
 			"key": "url",
 			"value": "http://localhost/api/v1",
 			"type": "string"
 		},
 		{
-			"id": "5147ee47-a5ac-479b-8de7-290806fae5ac",
+			"id": "7b5ca568-3bb5-4d0c-9bce-2c957d9c6209",
 			"key": "username",
 			"value": "nalarcon",
 			"type": "string"
 		},
 		{
-			"id": "fb3af494-fd2d-49f1-b131-51124d8080a5",
+			"id": "458a1fc4-ace0-43e2-9181-f5ddc4b55b0e",
 			"key": "password",
 			"value": "nalarcon",
 			"type": "string"
 		},
 		{
-			"id": "81b24e8d-e956-4c3d-9006-b791c230366b",
+			"id": "a61bb6cd-e8d8-4eb4-a88f-e113433d2313",
 			"key": "endpoint",
 			"value": "",
 			"type": "string"
 		},
 		{
-			"id": "431794bb-95cd-4614-b255-23ef93f84c31",
+			"id": "0ecb6458-9517-4aaf-be21-53dca3028509",
 			"key": "currentAccessToken",
 			"value": "",
 			"type": "string"
 		},
 		{
-			"id": "54242efa-c9e1-4b06-b65b-6d87f5c47950",
+			"id": "9f0d54f9-a36a-45f5-a756-40445e2c1335",
 			"key": "accessTokenExpiry",
 			"value": "",
 			"type": "string"

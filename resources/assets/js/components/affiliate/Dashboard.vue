@@ -164,14 +164,14 @@ export default {
     affiliate(newVal, oldVal) {
       if (oldVal != newVal) {
         if (newVal.hasOwnProperty('category_id')) this.getCategory_name(newVal.category_id)
+        if (newVal.hasOwnProperty('degree_id')) this.getDegree_name(newVal.degree_id)
+        if (newVal.hasOwnProperty('unit_id')) this.getUnit_name(newVal.unit_id)
       }
     }
   },
   mounted() {
     if (!this.isNew) {
       this.getProfilePictures(this.$route.params.id);
-      this.getDegree_name(this.$route.params.id);
-      this.getUnit_name(this.$route.params.id);
       this.getLoan(this.$route.params.id);
       this.getState_name(this.$route.params.id);
     }
@@ -191,7 +191,7 @@ export default {
     async getDegree_name(id) {
       try {
         this.loading = true;
-        let res = await axios.get(`affiliate/${id}/degree`);
+        let res = await axios.get(`degree/${id}`);
         this.degree_name = res.data.name;
       } catch (e) {
         console.log(e);
@@ -213,7 +213,7 @@ export default {
     async getUnit_name(id) {
       try {
         this.loading = true;
-        let res = await axios.get(`affiliate/${id}/unit`);
+        let res = await axios.get(`unit/${id}`);
         this.unit_name = res.data.name;
       } catch (e) {
         console.log(e);
