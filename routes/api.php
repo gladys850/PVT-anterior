@@ -113,7 +113,6 @@ Route::group([
             Route::get('loan/{id}/observation','Api\V1\LoanController@get_observations');
             Route::post('loan/{id}/observation','Api\V1\LoanController@set_observation');
             Route::patch('loan/{id}/observation','Api\V1\LoanController@update_observation');
-            Route::get('loan/{id}/history','Api\V1\LoanController@get_history');
         });
         Route::group([
             'middleware' => 'permission:create-loan'

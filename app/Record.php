@@ -36,9 +36,6 @@ class Record extends Model
                 case 'App\Role':
                     $action .= $this->recordable->display_name;
                     break;
-                case 'App\Loan':
-                    $action .= $this->recordable->code;
-                    break;
             }
         }
         unset($this['record_type'], $this['user'], $this['recordable']);

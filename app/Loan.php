@@ -11,7 +11,6 @@ use Util;
 class Loan extends Model
 {
     use Traits\EloquentGetTableNameTrait;
-    use Traits\RelationshipsTrait;
     use SoftDeletes;
 
     protected $dates = [
@@ -156,11 +155,6 @@ class Loan extends Model
     {
         return $this->belongsTo(LoanDestiny::class, 'destiny_id', 'id');
     }
-    // add records
-    public function records()
-    {
-      return $this->morphMany(Record::class, 'recordable')->latest('updated_at');
-    }
     // Saldo capital
     public function getBalanceAttribute()
     {
@@ -199,24 +193,6 @@ class Loan extends Model
         $monthly_interest = $this->interest->monthly_current_interest;
         unset($this->interest);
         return Util::round($monthly_interest * $this->amount_approved / (1 - 1 / pow((1 + $monthly_interest), $this->loan_term)));
-    }
-
-    public function getSubmittedDocumentsListAttribute()
-    {
-       $documents = $this->submitted_documents()->with('procedure_requirement')->get();
-        $optional_documents = []; $required_documents =[]; $i=1;$j=1;
-        foreach($documents as $document){
-            if($document->procedure_requirement->number !== 0)
-            {
-                $required_documents[$i] = $document;$i++;
-            }else{
-                $optional_documents[$j] = $document;$j++;
-            }
-        }
-        return response()->json([
-            'optional'=>$optional_documents,
-            'required'=>$required_documents,
-        ]);
     }
 
     public function next_payment($estimated_date = null, $amount = null)
