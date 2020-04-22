@@ -683,4 +683,16 @@ class LoanController extends Controller
         $loans->update(array_merge($request->only('role_id'), ['validated' => false]));
         return $derived;
     }
+
+    /**
+    * Historial de Préstamo
+    * Devuelve el listado del historial de préstamo de forma descendente
+    * @urlParam loan required ID del préstamo. Example: 20
+    * @authenticated
+    * @responseFile responses/loan/get_history.200.json
+    */
+    public function get_history(Loan $loan)
+    {
+        return $loan->records;
+    }
 }

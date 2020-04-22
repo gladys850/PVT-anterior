@@ -11,7 +11,8 @@ use Util;
 class Loan extends Model
 {
     use Traits\EloquentGetTableNameTrait;
-    use SoftDeletes;
+    use Traits\RelationshipsTrait;
+    //use SoftDeletes;
 
     protected $dates = [
         'disbursement_date',
@@ -154,6 +155,11 @@ class Loan extends Model
     public function destiny()
     {
         return $this->belongsTo(LoanDestiny::class, 'destiny_id', 'id');
+    }
+     // add records
+    public function records()
+    {
+        return $this->morphMany(Record::class, 'recordable')->latest('updated_at');
     }
     // Saldo capital
     public function getBalanceAttribute()
