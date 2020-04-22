@@ -12,7 +12,7 @@ class Loan extends Model
 {
     use Traits\EloquentGetTableNameTrait;
     use Traits\RelationshipsTrait;
-    //use SoftDeletes;
+    use SoftDeletes;
 
     protected $dates = [
         'disbursement_date',
