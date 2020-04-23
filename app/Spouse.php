@@ -34,7 +34,9 @@ class Spouse extends Model
 
     public function getCivilStatusGenderAttribute()
     {
-        return Util::get_civil_status($this->civil_status, $this->gender);
+        $civil_status = Util::get_civil_status($this->civil_status, $this->gender);
+        unset($this->affiliate);
+        return $civil_status;
     }
 
     public function getTitleAttribute()
