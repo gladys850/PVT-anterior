@@ -15,7 +15,6 @@ class ConfigController extends Controller
     /**
     * Parámetros del servidor
     * Devuelve los parámetros necesarios para sincronización cliente-servidor
-    * @response
     * @responseFile responses/config/invoke.200.json
     */
     public function __invoke()

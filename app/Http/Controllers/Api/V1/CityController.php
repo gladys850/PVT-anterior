@@ -14,8 +14,9 @@ class CityController extends Controller
     /**
     * Lista de ciudades
     * Devuelve el listado de las ciudades
+    * @authenticated
     * @responseFile responses/city/index.200.json
-     */
+    */
     public function index()
     {
         return City::orderBy('name')->get();

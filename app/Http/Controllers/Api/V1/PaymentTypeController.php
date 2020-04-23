@@ -13,15 +13,8 @@ class PaymentTypeController extends Controller
     /**
     * Lista de tipos de desembolso
     * Devuelve el listado de los tipos de desembolso
-    * @response
-    * [
-    *     {
-    *         "id": 3,
-    *         "name": "Cheque",
-    *         "created_at": null,
-    *         "updated_at": null
-    *     }, {}
-    * ]
+    * @authenticated
+    * @responseFile responses/payment_type/index.200.json
     */
     public function index()
     {

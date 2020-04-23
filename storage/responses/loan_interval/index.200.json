@@ -1,0 +1,10 @@
+[
+    {
+        "id": 4,
+        "maximum_amount": 700000,
+        "minimum_amount": 25001,
+        "maximum_term": 240,
+        "minimum_term": 25,
+        "procedure_type_id": 12
+    }, {}
+]

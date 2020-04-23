@@ -1,0 +1,12 @@
+[
+    {
+        "id": 30,
+        "module_id": 3,
+        "display_name": "Regional Santa Cruz",
+        "action": "Recepcionado",
+        "created_at": "1958-07-21 00:00:00",
+        "updated_at": "2020-01-21 15:53:23",
+        "correlative": "32/2020",
+        "name": "FR-regional-santa-cruz"
+    }, {}
+]

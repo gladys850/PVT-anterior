@@ -21,29 +21,7 @@ class ModuleController extends Controller
     * @queryParam per_page Número de datos por página. Example: 10
     * @queryParam page Número de página. Example: 1
     * @authenticated
-    * @response
-    * {
-    *     "current_page": 1,
-    *     "data": [
-    *         {
-    *             "id": 6,
-    *             "display_name": "Préstamos",
-    *             "description": "Unidad de Préstamos",
-    *             "name": "prestamos",
-    *             "shortened": "PRE"
-    *         }, {}
-    *     ],
-    *     "first_page_url": "http://127.0.0.1/api/v1/module?page=1",
-    *     "from": 1,
-    *     "last_page": 1,
-    *     "last_page_url": "http://127.0.0.1/api/v1/module?page=1",
-    *     "next_page_url": null,
-    *     "path": "http://127.0.0.1/api/v1/module",
-    *     "per_page": "10",
-    *     "prev_page_url": null,
-    *     "to": 1,
-    *     "total": 1
-    * }
+    * @responseFile responses/module/index.200.json
     */
     public function index(Request $request)
     {
@@ -56,14 +34,7 @@ class ModuleController extends Controller
     * Devuelve el detalle de un módulo mediante su ID
     * @urlParam module required ID de afiliado. Example: 3
     * @authenticated
-    * @response
-    * {
-    *     "id": 3,
-    *     "display_name": "Fondo de Retiro",
-    *     "description": "Unidad de Fondo de Retiro",
-    *     "name": "fondo-de-retiro",
-    *     "shortened": "FR"
-    * }
+    * @responseFile responses/module/show.200.json
     */
     public function show(Module $module)
     {
@@ -75,23 +46,10 @@ class ModuleController extends Controller
     * Devuelve la lista de roles asociados a un módulo
     * @urlParam module required ID del módulo. Example: 3
     * @authenticated
-    * @response
-    * [
-    *     {
-    *         "id": 30,
-    *         "module_id": 3,
-    *         "display_name": "Regional Santa Cruz",
-    *         "action": "Recepcionado",
-    *         "created_at": "1958-07-21 00:00:00",
-    *         "updated_at": "2020-01-21 15:53:23",
-    *         "correlative": "32/2020",
-    *         "name": "FR-regional-santa-cruz"
-    *     }, {}
-    * ]
+    * @responseFile responses/module/get_roles.200.json
     */
-    public function get_roles($id)
+    public function get_roles(Module $module)
     {
-        $module = Module::findOrFail($id);
         return $module->roles;
     }
 
@@ -100,21 +58,10 @@ class ModuleController extends Controller
     * Devuelve la lista de tipos de trámites asociados a un módulo
     * @urlParam module required ID del módulo. Example: 3
     * @authenticated
-    * @response
-    * [
-    *     {
-    *         "id": 2,
-    *         "module_id": 3,
-    *         "name": "Beneficio de Pago de Fondo de Retiro Policial Solidario",
-    *         "created_at": null,
-    *         "updated_at": null,
-    *         "second_name": "Fondo de Retiro"
-    *     }, {}
-    * ]
+    * @responseFile responses/module/get_procedure_types.200.json
     */
-    public function get_procedure_types($id)
+    public function get_procedure_types(Module $module)
     {
-        $module = Module::findOrFail($id);
         return $module->procedure_types;
     }
 
@@ -123,21 +70,10 @@ class ModuleController extends Controller
     * Devuelve la lista de tipos de observaciones asociados a un módulo
     * @urlParam module required ID del módulo. Example: 6
     * @authenticated
-    * @response
-    * [
-    *     {
-    *         "id": 2,
-    *         "module_id": 6,
-    *         "name": "Suspendido - Préstamo en mora.",
-    *         "description": "Amortizable",
-    *         "type": "AT",
-    *         "shortened": "Préstamos"
-    *     }, {}
-    * ]
+    * @responseFile responses/module/get_observation_types.200.json
     */
-    public function get_observation_types($id)
+    public function get_observation_types(Module $module)
     {
-        $module = Module::findOrFail($id);
         return $module->observation_types;
     }
 }
