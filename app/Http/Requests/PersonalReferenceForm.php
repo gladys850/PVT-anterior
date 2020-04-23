@@ -33,9 +33,6 @@ class PersonalReferenceForm extends FormRequest
             'last_name'=>'string|alpha_spaces|min:3', 
             'mothers_last_name'=>'string|nullable|alpha_spaces|min:3',
             'first_name'=>'string|alpha_spaces|min:3',
-            'birth_date'=>'date_format:"Y-m-d"',
-            'gender'=> 'string|in:M,F',
-            'civil_status'=>'string|in:C,D,S,V',
             'second_name'=>'string|nullable|alpha_spaces|min:3',
             'surname_husband'=>'string|nullable|alpha_spaces|min:3',
             'phone_number'=>'nullable',
@@ -44,7 +41,7 @@ class PersonalReferenceForm extends FormRequest
 
         switch ($this->method()) {
             case 'POST': {
-                foreach (array_slice($rules, 0, 8) as $key => $rule) {
+                foreach (array_slice($rules, 0, 5) as $key => $rule) {
                     $rules[$key] = implode('|', ['required', $rule]);
                 }
                 return $rules;

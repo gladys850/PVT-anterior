@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Note extends Model
 {
+    use Traits\EloquentGetTableNameTrait;
+
     public $timestamps = true;
     public $guarded = ['id'];
     protected $hidden = ['user_id'];

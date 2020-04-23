@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use App\LoanDestiny;
 use Util;
 
-/** @group Préstamos
+/** @group Destino Préstamo
 * Datos de los destinos de préstamos
 */
 class LoanDestinyController extends Controller
@@ -21,38 +21,7 @@ class LoanDestinyController extends Controller
     * @queryParam per_page Número de datos por página. Example: 8
     * @queryParam page Número de página. Example: 1
     * @authenticated
-    * @response
-    * {
-    *   "current_page": 1,
-    *   "data": [
-    *       {
-    *           "id": 1,
-    *           "procedure_type_id": 9,
-    *           "name": "Salud",
-    *           "description": "Salud",
-    *           "created_at": null,
-    *           "updated_at": null
-    *       },
-    *       {
-    *           "id": 2,
-    *           "procedure_type_id": 9,
-    *           "name": "Consumo",
-    *           "description": "Consumo",
-    *           "created_at": null,
-    *           "updated_at": null
-    *       }
-    *   ],
-    *   "first_page_url": "http://127.0.0.1/api/v1/destiny?page=1",
-    *   "from": 1,
-    *   "last_page": 1,
-    *   "last_page_url": "http://127.0.0.1/api/v1/destiny?page=1",
-    *   "next_page_url": null,
-    *   "path": "http://127.0.0.1/api/v1/destiny",
-    *   "per_page": 10,
-    *   "prev_page_url": null,
-    *   "to": 2,
-    *   "total": 2
-    * }
+    * @responseFile responses/loan_destiny/index.200.json
     */
     public function index(Request $request)
     {
@@ -62,19 +31,11 @@ class LoanDestinyController extends Controller
     /**
     * Nuevo destino de Préstamo
     * Inserta nuevo destino de préstamo
-    * @bodyParam procedure_type_id integer required ID de la modalidad de Préstamo. Example:9
-    * @bodyParam name string required destino de Préstamo. Example: "Salud"
-    * @bodyParam description string descripción de destino de Préstamo. Example: "Salud Familiar"
+    * @bodyParam procedure_type_id integer required ID de la modalidad de Préstamo. Example: 9
+    * @bodyParam name string required destino de Préstamo. Example: Salud
+    * @bodyParam description string descripción de destino de Préstamo. Example: Salud Familiar
     * @authenticated
-    * @response
-    * {
-    *    "procedure_type_id": 9,
-    *    "name": "Salud",
-    *    "description": "Salud familiar",
-    *    "updated_at": "2020-03-11 10:39:56",
-    *    "created_at": "2020-03-11 10:39:56",
-    *    "id": 6
-    * }
+    * @responseFile responses/loan_destiny/store.200.json
     */
     public function store(Request $request)
     {
@@ -84,16 +45,9 @@ class LoanDestinyController extends Controller
     /**
     * Detalle de destino de Préstamo
     * Devuelve el detalle de un destino de préstamo mediante su ID
-    * @urlParam destiny required ID de destino de préstamo. Example: 6
+    * @urlParam loan_destiny required ID de destino de préstamo. Example: 6
+    * @responseFile responses/loan_destiny/show.200.json
     * @response
-    * {
-    *   "id": 6,
-    *   "procedure_type_id": 9,
-    *   "name": "Salud",
-    *   "description": "Salud familiar",
-    *   "created_at": "2020-03-11 10:39:56",
-    *   "updated_at": "2020-03-11 10:39:56"
-    * }
     */
     public function show(LoanDestiny $loan_destiny)
     {
@@ -103,47 +57,29 @@ class LoanDestinyController extends Controller
     /**
     * Actualizar destino de Préstamo
     * Actualizar datos principales destino de préstamo
-    * @urlParam id required ID de destino de Préstamo. Example: 1
-    * @bodyParam procedure_type_id integer required ID de la modalidad de Préstamo. Example:9
-    * @bodyParam name string required destino de Préstamo. Example: "Salud"
-    * @bodyParam description string descripción de destino de Préstamo. Example: "Salud General"
+    * @urlParam loan_destiny required ID de destino de Préstamo. Example: 1
+    * @bodyParam procedure_type_id integer required ID de la modalidad de Préstamo. Example: 9
+    * @bodyParam name string required destino de Préstamo. Example: Salud
+    * @bodyParam description string descripción de destino de Préstamo. Example: Salud General
     * @authenticated
-    * @response
-    * {
-    *    "id": 6,
-    *    "procedure_type_id": 9,
-    *    "name": "Salud",
-    *    "description": "Salud General",
-    *    "created_at": "2020-03-11 10:39:56",
-    *    "updated_at": "2020-03-11 10:48:45"
-    * }
+    * @responseFile responses/loan_destiny/update.200.json
     */
-    public function update(Request $request, $id)
+    public function update(Request $request, LoanDestiny $loan_destiny)
     {
-        $destiny = LoanDestiny::findOrFail($id);
-        $destiny->fill($request->all());
-        $destiny->save();
-        return  $destiny;
+        $loan_destiny->fill($request->all());
+        $loan_destiny->save();
+        return  $loan_destiny;
     }
 
     /**
-    * Eliminar un destino de Préstamo
-    * @urlParam id required ID de destino de Préstamo. Example: 6
+    * Eliminar destino de Préstamo
+    * @urlParam loan_destiny required ID de destino de Préstamo. Example: 6
     * @authenticated
-    * @response
-    * {
-    *   "id": 6,
-    *   "procedure_type_id": 9,
-    *   "name": "Salud",
-    *   "description": "Salud General",
-    *   "created_at": "2020-03-11 10:39:56",
-    *   "updated_at": "2020-03-11 10:48:45"
-    * }
+    * @responseFile responses/loan_destiny/destroy.200.json
     */
-    public function destroy($id)
+    public function destroy(LoanDestiny $loan_destiny)
     {
-        $destiny = LoanDestiny::findOrFail($id);
-        $destiny->delete();
-        return $destiny;
+        $loan_destiny->delete();
+        return $loan_destiny;
     }
 }

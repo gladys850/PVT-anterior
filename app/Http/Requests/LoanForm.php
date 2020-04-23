@@ -57,8 +57,7 @@ class LoanForm extends FormRequest
             'state_id' => ['exists:loan_states,id'],
             'amount_approved' => ['integer', 'min:200', 'max:700000', new LoanIntervalAmount($procedure_modality)],
             'notes' => ['array'],
-            'validated' => ['boolean'],
-            'role_id' => ['integer', 'exists:roles,id', new LoanRole($this->loan->id)]
+            'validated' => ['boolean']
         ];
         switch ($this->method()) {
             case 'POST': {
@@ -69,6 +68,7 @@ class LoanForm extends FormRequest
             }
             case 'PUT':
             case 'PATCH':{
+                $rules['role_id'] = ['integer', 'exists:roles,id', new LoanRole($this->loan->id)];
                 return $rules;
             }
         }

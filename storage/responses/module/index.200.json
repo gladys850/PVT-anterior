@@ -1,0 +1,22 @@
+{
+    "current_page": 1,
+    "data": [
+        {
+            "id": 6,
+            "display_name": "Préstamos",
+            "description": "Unidad de Préstamos",
+            "name": "prestamos",
+            "shortened": "PRE"
+        }, {}
+    ],
+    "first_page_url": "http://127.0.0.1/api/v1/module?page=1",
+    "from": 1,
+    "last_page": 1,
+    "last_page_url": "http://127.0.0.1/api/v1/module?page=1",
+    "next_page_url": null,
+    "path": "http://127.0.0.1/api/v1/module",
+    "per_page": "10",
+    "prev_page_url": null,
+    "to": 1,
+    "total": 1
+}

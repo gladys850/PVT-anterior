@@ -1,0 +1,25 @@
+{
+    "current_page": 1,
+    "data": [
+        {
+            "id": 1,
+            "user_id": 122,
+            "record_type_id": 5,
+            "recordable_id": 56545,
+            "recordable_type": "affiliates",
+            "action": "[Datos Personales] El usuario jbarrios inició la captura de huellas. Afiliado: ERTERTET DONATO SILESR HINOJOSA",
+            "created_at": "2019-10-11 16:54:27",
+            "updated_at": "2019-10-11 16:54:27"
+        }, {}
+    ],
+    "first_page_url": "http://127.0.0.1/api/v1/record?page=1",
+    "from": 1,
+    "last_page": 66,
+    "last_page_url": "http://127.0.0.1/api/v1/record?page=66",
+    "next_page_url": "http://127.0.0.1/api/v1/record?page=2",
+    "path": "http://127.0.0.1/api/v1/record",
+    "per_page": "8",
+    "prev_page_url": null,
+    "to": 8,
+    "total": 526
+}

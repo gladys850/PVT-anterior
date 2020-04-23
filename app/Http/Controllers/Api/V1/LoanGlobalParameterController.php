@@ -7,13 +7,13 @@ use Illuminate\Http\Request;
 use App\LoanGlobalParameter;
 use Util;
 
-/** @group Préstamos
-* Datos de los Parametros Globales de préstamos
+/** @group Parámetros de Préstamos
+* Datos de los Parámetros para trámites de préstamos
 */
 class LoanGlobalParameterController extends Controller
 {
     /**
-    * Lista de Parametros Globales de Préstamos
+    * Lista de Parámetros de Préstamos
     * Devuelve el listado con los datos paginados
     * @queryParam search Parámetro de búsqueda. Example: 20
     * @queryParam sortBy Vector de ordenamiento. Example: []
@@ -21,30 +21,7 @@ class LoanGlobalParameterController extends Controller
     * @queryParam per_page Número de datos por página. Example: 8
     * @queryParam page Número de página. Example: 1
     * @authenticated
-    * @response
-    * {
-    *    "current_page": 1,
-    *    "data": [
-    *        {
-    *            "id": 1,
-    *            "offset_ballot_day": 7,
-    *            "offset_interest_day": 15,
-    *            "livelihood_amount": 510,
-    *            "created_at": "2020-02-27 16:29:10",
-    *            "updated_at": "2020-02-27 16:29:10"
-    *        }
-    *    ],
-    *    "first_page_url": "http://127.0.0.1/api/v1/global_parameter?page=1",
-    *    "from": 1,
-    *    "last_page": 1,
-    *    "last_page_url": "http://127.0.0.1/api/v1/global_parameter?page=1",
-    *    "next_page_url": null,
-    *    "path": "http://127.0.0.1/api/v1/global_parameter",
-    *    "per_page": 10,
-    *    "prev_page_url": null,
-    *    "to": 1,
-    *    "total": 1
-    * }
+    * @responseFile responses/loan_global_parameter/index.200.json
     */
     public function index(Request $request)
     {
@@ -52,83 +29,30 @@ class LoanGlobalParameterController extends Controller
     }
 
     /**
-    * Nuevo Parametro Global de Préstamo
-    * Inserta nuevo Parametro Global de préstamo
-    * @bodyParam offset_ballot_day integer required Fecha de corte para boletas. Example: 7
-    * @bodyParam offset_interest_day integer required Fecha de corte para interés. Example: 15
-    * @bodyParam livelihood_amount integer required monto de subsistencia. Example: 500
-    * @authenticated
-    * @response
-    * {
-    *     "offset_ballot_day": 7,
-    *     "offset_interest_day": 15,
-    *     "livelihood_amount":500 
-    * }
-    */
-    public function store(Request $request)
-    {
-        return LoanGlobalParameter::create($request->all());
-    }
-
-    /**
-    * Detalle de Parametros Globales de Préstamo
+    * Detalle de Parámetros de Préstamo
     * Devuelve el detalle de un parametro global de préstamo mediante su ID
-    * @urlParam global_parameter required ID de parametro global de préstamo. Example: 1
-    * @response
-    * {
-    *    "id": 1,
-    *    "offset_day": 7,
-    *    "livelihood_amount": 510,
-    *    "created_at": "2020-02-27 16:29:10",
-    *    "updated_at": "2020-02-27 16:29:10"
-    * }
+    * @urlParam loan_global_parameter required ID de parametro global de préstamo. Example: 1
+    * @authenticated
+    * @responseFile responses/loan_global_parameter/show.200.json
     */
-    public function show(LoanGlobalParameter $global_parameter)
+    public function show(LoanGlobalParameter $loan_global_parameter)
     {
-        return $global_parameter;
+        return $loan_global_parameter;
     }
 
     /**
-    * Actualizar Parametros Globales de Préstamo
-    * Actualizar datos principales de Parametros Globales de Préstamo
-    * @urlParam id required ID de Parametros Globales de Préstamo. Example: 1
+    * Actualizar Parámetros Globales de Préstamo
+    * Actualizar datos principales de Parámetros Globales de Préstamo
+    * @urlParam loan_global_parameter required ID de Parámetros Globales de Préstamo. Example: 1
     * @bodyParam offset_day integer required fecha de corte. Example: 8
     * @bodyParam livelihood_amount integer required monto de subsistencia. Example: 500
     * @authenticated
-    * @response
-    * {
-    *    "id": 1,
-    *    "offset_day": 8,
-    *    "livelihood_amount": 500,
-    *    "created_at": "2020-02-27 16:29:10",
-    *    "updated_at": "2020-02-27 18:22:37"
-    * }
+    * @responseFile responses/loan_global_parameter/update.200.json
     */
-    public function update(Request $request, $id)
+    public function update(Request $request, LoanGlobalParameter $loan_global_parameter)
     {
-        $parameter = LoanGlobalParameter::findOrFail($id);
-        $parameter->fill($request->all());
-        $parameter->save();
-        return  $parameter;
-    }
-
-    /**
-    * Eliminar un Parametro Global de Préstamo
-    * @urlParam id required ID de Parametro Global de Préstamo. Example: 5
-    * @authenticated
-    * @response
-    * {
-    *    "id": 5,
-    *    "offset_day": 7,
-    *    "livelihood_amount": 500,
-    *    "created_at": "2020-02-27 18:24:43",
-    *    "updated_at": "2020-02-27 18:24:43"
-    * }
-    */
-    public function destroy($id)
-    {
-        $parameter = LoanGlobalParameter::findOrFail($id);
-        $parameter->delete();
-        return $parameter;
+        $loan_global_parameter->fill($request->all());
+        $loan_global_parameter->save();
+        return  $loan_global_parameter;
     }
 }

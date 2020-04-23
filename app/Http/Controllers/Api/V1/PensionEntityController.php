@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\PensionEntity;
 
-/** @group Entidad de pensiones
+/** @group Entidad de Pensiones
 * Datos de las entidades de pensiones disponibles en el sistema
 */
 class PensionEntityController extends Controller
@@ -14,33 +14,23 @@ class PensionEntityController extends Controller
     /**
     * Lista de entidades
     * Devuelve el listado de las entidades de pensiones
-    * @response
-    * [
-    *     {
-    *         "id": 1,
-    *         "type": "APS",
-    *         "name": "AFP FUTURO"
-    *     }, {}
-    * ]
+    * @authenticated
+    * @responseFile responses/pension_entity/index.200.json
      */
     public function index()
     {
-        return PensionEntity::orderBy('name', 'asc')->get();
+        return PensionEntity::orderBy('name')->get();
     }
 
     /**
     * Detalle de una entidad
     * Devuelve el detalle de una entidad de pensiones mediante su ID
-    * @urlParam id required ID de entidad. Example: 3
-    * @response
-    * {
-    *     "id": 3,
-    *     "type": "APS",
-    *     "name": "LA VITALICIA"
-    * }
+    * @urlParam pension_entity required ID de entidad. Example: 3
+    * @authenticated
+    * @responseFile responses/pension_entity/show.200.json
     */
-    public function show($id)
+    public function show(PensionEntity $pension_entity)
     {
-        return PensionEntity::findOrFail($id);
+        return $pension_entity;
     }
 }

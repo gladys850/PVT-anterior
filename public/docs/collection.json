@@ -734,7 +734,7 @@
 			"protocolProfileBehavior": {}
 		},
 		{
-			"name": "Simulador de la calculadora",
+			"name": "Simulador de Calculadora",
 			"item": [
 				{
 					"name": "Calculadora",
@@ -1573,6 +1573,755 @@
 				}
 			],
 			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Destino Préstamo",
+			"item": [
+				{
+					"name": "Lista de destinos de Préstamos",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/{{endpoint}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}"
+							]
+						},
+						"description": "index"
+					},
+					"response": []
+				},
+				{
+					"name": "Nuevo destino de Préstamo",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"procedure_type_id\": 9,\n\t\"name\": \"Salud\",\n\t\"description\": \"Salud Familiar\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/{{endpoint}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}"
+							]
+						},
+						"description": "store"
+					},
+					"response": []
+				},
+				{
+					"name": "Detalle de destino de Préstamo",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/{{endpoint}}/6",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}",
+								"6"
+							]
+						},
+						"description": "show"
+					},
+					"response": []
+				},
+				{
+					"name": "Actualizar destino de Préstamo",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"procedure_type_id\": 9,\n\t\"name\": \"Salud\",\n\t\"description\": \"Salud General\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/{{endpoint}}/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}",
+								"1"
+							]
+						},
+						"description": "update"
+					},
+					"response": []
+				},
+				{
+					"name": "Eliminar destino de Préstamo",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/{{endpoint}}/6",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}",
+								"6"
+							]
+						},
+						"description": "destroy"
+					},
+					"response": []
+				}
+			],
+			"description": "loan_destiny",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "23e629cd-1b32-41d1-82f7-332d77d09675",
+						"type": "text/javascript",
+						"exec": [
+							"pm.environment.set('endpoint', 'loan_destiny');"
+						]
+					}
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Parámetros Globales Préstamos",
+			"item": [
+				{
+					"name": "Lista de Parámetros de Préstamos",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/{{endpoint}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}"
+							]
+						},
+						"description": "index"
+					},
+					"response": []
+				},
+				{
+					"name": "Detalle de Parámetros de Préstamo",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/{{endpoint}}/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}",
+								"1"
+							]
+						},
+						"description": "show"
+					},
+					"response": []
+				},
+				{
+					"name": "Actualizar Parámetros Globales de Préstamo",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"livelihood_amount\": 550,\n    \"min_service_years\": 1,\n    \"min_service_years_adm\": 2\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/{{endpoint}}/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}",
+								"1"
+							]
+						},
+						"description": "update"
+					},
+					"response": []
+				}
+			],
+			"description": "loan_global_parameter",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "0e6630ca-f2ae-4383-924a-105cafc77e86",
+						"type": "text/javascript",
+						"exec": [
+							"pm.environment.set('endpoint', 'loan_global_parameter');"
+						]
+					}
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Intervalos de Préstamos",
+			"item": [
+				{
+					"name": "Lista de Intérvalos de Préstamos",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/{{endpoint}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}"
+							]
+						},
+						"description": "index"
+					},
+					"response": []
+				}
+			],
+			"description": "loan_interval",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "341bf5dd-8c0d-4dad-b03c-d583ed611082",
+						"type": "text/javascript",
+						"exec": [
+							"pm.environment.set('endpoint', 'loan_interval');"
+						]
+					}
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Módulos",
+			"item": [
+				{
+					"name": "Lista de módulos",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/{{endpoint}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}"
+							]
+						},
+						"description": "index"
+					},
+					"response": []
+				},
+				{
+					"name": "Detalle de módulo",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/{{endpoint}}/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}",
+								"1"
+							]
+						},
+						"description": "show"
+					},
+					"response": []
+				},
+				{
+					"name": "Roles asociados al módulo",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/{{endpoint}}/6/role",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}",
+								"6",
+								"role"
+							]
+						},
+						"description": "get_roles"
+					},
+					"response": []
+				},
+				{
+					"name": "Tipos de trámite asociados al módulo",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/{{endpoint}}/6/procedure_type",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}",
+								"6",
+								"procedure_type"
+							]
+						},
+						"description": "get_procedure_types"
+					},
+					"response": []
+				},
+				{
+					"name": "Tipos de observaciones asociados al módulo",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/{{endpoint}}/6/observation_type",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}",
+								"6",
+								"observation_type"
+							]
+						},
+						"description": "get_observation_types"
+					},
+					"response": []
+				}
+			],
+			"description": "module",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "ab7f9175-b069-443d-bcc4-386b07aa70c8",
+						"type": "text/javascript",
+						"exec": [
+							"pm.environment.set('endpoint', 'module');"
+						]
+					}
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Notas aclaratorias",
+			"item": [
+				{
+					"name": "Detalle de nota",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/{{endpoint}}/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}",
+								"1"
+							]
+						},
+						"description": "show"
+					},
+					"response": []
+				},
+				{
+					"name": "Actualizar nota",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"message\": \"Test message\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/{{endpoint}}/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}",
+								"1"
+							]
+						},
+						"description": "update"
+					},
+					"response": []
+				},
+				{
+					"name": "Eliminar nota",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/{{endpoint}}/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}",
+								"1"
+							]
+						},
+						"description": "destroy"
+					},
+					"response": []
+				}
+			],
+			"description": "note",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "914c5d11-1301-49ea-b259-42b1198eeafb",
+						"type": "text/javascript",
+						"exec": [
+							"pm.environment.set('endpoint', 'note');"
+						]
+					}
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Tipos de Desembolso",
+			"item": [
+				{
+					"name": "Lista de tipos de desembolso",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/{{endpoint}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}"
+							]
+						},
+						"description": "index"
+					},
+					"response": []
+				}
+			],
+			"description": "payment_type",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "a1f52287-3a55-4f78-a61c-0f1a711d9143",
+						"type": "text/javascript",
+						"exec": [
+							"pm.environment.set('endpoint', 'payment_type');"
+						]
+					}
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Entidad de Pensiones",
+			"item": [
+				{
+					"name": "Lista de entidades",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/{{endpoint}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}"
+							]
+						},
+						"description": "index"
+					},
+					"response": []
+				},
+				{
+					"name": "Detalle de una entidad",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/{{endpoint}}/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}",
+								"1"
+							]
+						},
+						"description": "show"
+					},
+					"response": []
+				}
+			],
+			"description": "pension_entity",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "a5072bbe-38f8-4f32-be8e-f7deb65863f9",
+						"type": "text/javascript",
+						"exec": [
+							"pm.environment.set('endpoint', 'pension_entity');"
+						]
+					}
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Permisos",
+			"item": [
+				{
+					"name": "Lista de permisos",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/{{endpoint}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}"
+							]
+						},
+						"description": "index"
+					},
+					"response": []
+				}
+			],
+			"description": "permission",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "054161fc-732f-481b-a6ec-0fbd139b5c75",
+						"type": "text/javascript",
+						"exec": [
+							"pm.environment.set('endpoint', 'permission');"
+						]
+					}
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Referencias Personales",
+			"item": [
+				{
+					"name": "Lista de Personas de Referencia",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/{{endpoint}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}"
+							]
+						},
+						"description": "index"
+					},
+					"response": []
+				},
+				{
+					"name": "Nueva Persona de Referencia",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"city_identity_card_id\": 5,\n    \"identity_card\": \"165134-1L\",\n    \"last_name\": \"PINTO\",\n    \"mothers_last_name\": \"ROJAS\",\n    \"first_name\": \"JUAN\",\n    \"second_name\": \"ROBERTO\",\n    \"phone_number\": 2254101,\n    \"cell_phone_number\": 76543210\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/{{endpoint}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}"
+							]
+						},
+						"description": "store"
+					},
+					"response": []
+				},
+				{
+					"name": "Detalle de Referencia Personal",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/{{endpoint}}/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}",
+								"1"
+							]
+						},
+						"description": "show"
+					},
+					"response": []
+				},
+				{
+					"name": "Actualizar Persona de Referencia",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"last_name\": \"PINTOSO\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/{{endpoint}}/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}",
+								"1"
+							]
+						},
+						"description": "update"
+					},
+					"response": []
+				},
+				{
+					"name": "Eliminar una Persona de Referencia",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/{{endpoint}}/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}",
+								"1"
+							]
+						},
+						"description": "destroy"
+					},
+					"response": []
+				}
+			],
+			"description": "personal_reference",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "8df01aa1-4ad1-4cc5-8e89-2c49134a7301",
+						"type": "text/javascript",
+						"exec": [
+							"pm.environment.set('endpoint', 'personal_reference');"
+						]
+					}
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Historial",
+			"item": [
+				{
+					"name": "Registros de actividad",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/{{endpoint}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}"
+							]
+						},
+						"description": "index"
+					},
+					"response": []
+				}
+			],
+			"description": "record",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "99fe2b13-2353-4ba5-bb85-524a04009c8f",
+						"type": "text/javascript",
+						"exec": [
+							"pm.environment.set('endpoint', 'record');"
+						]
+					}
+				}
+			],
+			"protocolProfileBehavior": {}
 		}
 	],
 	"auth": {
@@ -1648,37 +2397,37 @@
 	],
 	"variable": [
 		{
-			"id": "7883083c-8c70-4fc5-84c7-1c92668c4a41",
+			"id": "bde84505-b68c-4109-af2a-f4b8ab2e78d8",
 			"key": "url",
 			"value": "http://localhost/api/v1",
 			"type": "string"
 		},
 		{
-			"id": "7b5ca568-3bb5-4d0c-9bce-2c957d9c6209",
+			"id": "44599c99-f32c-452d-9eee-3edc5856d981",
 			"key": "username",
 			"value": "nalarcon",
 			"type": "string"
 		},
 		{
-			"id": "458a1fc4-ace0-43e2-9181-f5ddc4b55b0e",
+			"id": "c6a77280-e558-4eef-ad60-35d1fb7574fd",
 			"key": "password",
 			"value": "nalarcon",
 			"type": "string"
 		},
 		{
-			"id": "a61bb6cd-e8d8-4eb4-a88f-e113433d2313",
+			"id": "de039492-847d-4129-84d6-6927ff3ffe98",
 			"key": "endpoint",
 			"value": "",
 			"type": "string"
 		},
 		{
-			"id": "0ecb6458-9517-4aaf-be21-53dca3028509",
+			"id": "e18f72db-7f3f-4703-86ca-002d2fea78cc",
 			"key": "currentAccessToken",
 			"value": "",
 			"type": "string"
 		},
 		{
-			"id": "9f0d54f9-a36a-45f5-a756-40445e2c1335",
+			"id": "35df1f86-038b-495c-b010-ef613dcca82a",
 			"key": "accessTokenExpiry",
 			"value": "",
 			"type": "string"
