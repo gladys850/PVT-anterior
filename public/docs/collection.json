@@ -1940,6 +1940,388 @@
 				}
 			],
 			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Notas aclaratorias",
+			"item": [
+				{
+					"name": "Detalle de nota",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/{{endpoint}}/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}",
+								"1"
+							]
+						},
+						"description": "show"
+					},
+					"response": []
+				},
+				{
+					"name": "Actualizar nota",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"message\": \"Test message\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/{{endpoint}}/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}",
+								"1"
+							]
+						},
+						"description": "update"
+					},
+					"response": []
+				},
+				{
+					"name": "Eliminar nota",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/{{endpoint}}/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}",
+								"1"
+							]
+						},
+						"description": "destroy"
+					},
+					"response": []
+				}
+			],
+			"description": "note",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "914c5d11-1301-49ea-b259-42b1198eeafb",
+						"type": "text/javascript",
+						"exec": [
+							"pm.environment.set('endpoint', 'note');"
+						]
+					}
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Tipos de Desembolso",
+			"item": [
+				{
+					"name": "Lista de tipos de desembolso",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/{{endpoint}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}"
+							]
+						},
+						"description": "index"
+					},
+					"response": []
+				}
+			],
+			"description": "payment_type",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "a1f52287-3a55-4f78-a61c-0f1a711d9143",
+						"type": "text/javascript",
+						"exec": [
+							"pm.environment.set('endpoint', 'payment_type');"
+						]
+					}
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Entidad de Pensiones",
+			"item": [
+				{
+					"name": "Lista de entidades",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/{{endpoint}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}"
+							]
+						},
+						"description": "index"
+					},
+					"response": []
+				},
+				{
+					"name": "Detalle de una entidad",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/{{endpoint}}/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}",
+								"1"
+							]
+						},
+						"description": "show"
+					},
+					"response": []
+				}
+			],
+			"description": "pension_entity",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "a5072bbe-38f8-4f32-be8e-f7deb65863f9",
+						"type": "text/javascript",
+						"exec": [
+							"pm.environment.set('endpoint', 'pension_entity');"
+						]
+					}
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Permisos",
+			"item": [
+				{
+					"name": "Lista de permisos",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/{{endpoint}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}"
+							]
+						},
+						"description": "index"
+					},
+					"response": []
+				}
+			],
+			"description": "permission",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "054161fc-732f-481b-a6ec-0fbd139b5c75",
+						"type": "text/javascript",
+						"exec": [
+							"pm.environment.set('endpoint', 'permission');"
+						]
+					}
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Referencias Personales",
+			"item": [
+				{
+					"name": "Lista de Personas de Referencia",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/{{endpoint}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}"
+							]
+						},
+						"description": "index"
+					},
+					"response": []
+				},
+				{
+					"name": "Nueva Persona de Referencia",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"city_identity_card_id\": 5,\n    \"identity_card\": \"165134-1L\",\n    \"last_name\": \"PINTO\",\n    \"mothers_last_name\": \"ROJAS\",\n    \"first_name\": \"JUAN\",\n    \"second_name\": \"ROBERTO\",\n    \"phone_number\": 2254101,\n    \"cell_phone_number\": 76543210\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/{{endpoint}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}"
+							]
+						},
+						"description": "store"
+					},
+					"response": []
+				},
+				{
+					"name": "Detalle de Referencia Personal",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/{{endpoint}}/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}",
+								"1"
+							]
+						},
+						"description": "show"
+					},
+					"response": []
+				},
+				{
+					"name": "Actualizar Persona de Referencia",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"last_name\": \"PINTOSO\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/{{endpoint}}/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}",
+								"1"
+							]
+						},
+						"description": "update"
+					},
+					"response": []
+				},
+				{
+					"name": "Eliminar una Persona de Referencia",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/{{endpoint}}/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}",
+								"1"
+							]
+						},
+						"description": "destroy"
+					},
+					"response": []
+				}
+			],
+			"description": "personal_reference",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "8df01aa1-4ad1-4cc5-8e89-2c49134a7301",
+						"type": "text/javascript",
+						"exec": [
+							"pm.environment.set('endpoint', 'personal_reference');"
+						]
+					}
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Historial",
+			"item": [
+				{
+					"name": "Registros de actividad",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/{{endpoint}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}"
+							]
+						},
+						"description": "index"
+					},
+					"response": []
+				}
+			],
+			"description": "record",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "99fe2b13-2353-4ba5-bb85-524a04009c8f",
+						"type": "text/javascript",
+						"exec": [
+							"pm.environment.set('endpoint', 'record');"
+						]
+					}
+				}
+			],
+			"protocolProfileBehavior": {}
 		}
 	],
 	"auth": {
@@ -2015,37 +2397,37 @@
 	],
 	"variable": [
 		{
-			"id": "2f267c90-8618-4c87-a186-95e0f91064fe",
+			"id": "bde84505-b68c-4109-af2a-f4b8ab2e78d8",
 			"key": "url",
 			"value": "http://localhost/api/v1",
 			"type": "string"
 		},
 		{
-			"id": "59cd012a-3e28-4113-844f-c0188a75f805",
+			"id": "44599c99-f32c-452d-9eee-3edc5856d981",
 			"key": "username",
 			"value": "nalarcon",
 			"type": "string"
 		},
 		{
-			"id": "f4ad0645-cd9c-4af3-b514-01e1225f32e1",
+			"id": "c6a77280-e558-4eef-ad60-35d1fb7574fd",
 			"key": "password",
 			"value": "nalarcon",
 			"type": "string"
 		},
 		{
-			"id": "2410c03f-fac6-425e-bdbd-20545a0c76ff",
+			"id": "de039492-847d-4129-84d6-6927ff3ffe98",
 			"key": "endpoint",
 			"value": "",
 			"type": "string"
 		},
 		{
-			"id": "a8f9fd05-8c6d-4418-a1de-d15223288e33",
+			"id": "e18f72db-7f3f-4703-86ca-002d2fea78cc",
 			"key": "currentAccessToken",
 			"value": "",
 			"type": "string"
 		},
 		{
-			"id": "64d3c2e4-9d8c-4f25-849d-5f9de4a9bef1",
+			"id": "35df1f86-038b-495c-b010-ef613dcca82a",
 			"key": "accessTokenExpiry",
 			"value": "",
 			"type": "string"
