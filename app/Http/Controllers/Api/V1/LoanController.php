@@ -302,7 +302,7 @@ class LoanController extends Controller
     */
     public function get_documents(Loan $loan)
     {
-        return $loan->submitted_documents;
+        return $loan->submitted_documents_list;
     }
 
     /**
