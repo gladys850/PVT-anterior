@@ -16,19 +16,7 @@ class RoleController extends Controller
     * Devuelve el listado de los roles disponibles en el sistema
     * @queryParam name Filtrar roles por nombre. Example: PRE-area-de-recepcion
     * @authenticated
-    * @response
-    * [
-    *     {
-    *         "id": 7,
-    *         "module_id": 9,
-    *         "display_name": "Área de Contabilidad",
-    *         "action": "Comprobante Realizado",
-    *         "created_at": "2017-06-01 10:41:03",
-    *         "updated_at": "2019-10-11 16:45:43",
-    *         "correlative": null,
-    *         "name": "AF-area-de-contabilidad"
-    *     }, {}
-    * ]
+    * @responseFile responses/role/index.200.json
     */
     public function index(Request $request)
     {
@@ -42,58 +30,36 @@ class RoleController extends Controller
     * Devuelve el detalle de un rol mediante su ID
     * @urlParam role required ID de rol. Example: 42
     * @authenticated
-    * @response
-    * {
-    *     "id": 42,
-    *     "module_id": 4,
-    *     "display_name": "Área de Archivo",
-    *     "action": "Revisado",
-    *     "created_at": "2018-08-20 08:07:15",
-    *     "updated_at": "2019-10-11 16:45:43",
-    *     "correlative": null,
-    *     "name": "CAM-area-de-archivo"
-    * }
+    * @responseFile responses/role/show.200.json
     */
-    public function show($id)
+    public function show(Role $role)
     {
-        return Role::findOrFail($id);
+        return $role;
     }
 
     /**
     * Obtener permisos de rol
     * Devuelve un listado con los IDs de los permisos asignados al rol
-    * @urlParam id required ID de rol. Example: 73
+    * @urlParam role required ID de rol. Example: 73
     * @authenticated
-    * @response
-    * [
-    *     574,
-    *     579,
-    *     585
-    * ]
+    * @responseFile responses/role/get_permissions.200.json
     */
-    public function get_permissions($id) {
-        $role = Role::findOrFail($id);
+    public function get_permissions(Role $role) {
         return $role->permissions()->where('name', '!=', null)->get()->pluck('id');
     }
 
     /**
     * Establecer permisos a un rol
     * Asignar permisos a un rol determinado
-    * @urlParam id required ID de rol. Example: 40
+    * @urlParam role required ID de rol. Example: 40
     * @authenticated
-    * @response
-    * [
-    *     574,
-    *     579,
-    *     585
-    * ]
+    * @responseFile responses/role/set_permissions.200.json
     */
-    public function set_permissions(Request $request, $id) {
+    public function set_permissions(Request $request, Role $role) {
         $request->validate([
             'permissions' => 'required|array|min:1',
             'permissions.*' => 'exists:permissions,id'
         ]);
-        $role = Role::findOrFail($id);
         $role->syncPermissions($request->permissions);
         return $role->permissions()->where('name', '!=', null)->get()->pluck('id');
     }

@@ -35,6 +35,7 @@
         'date_derelict' => 'Fecha de culminacion',
         'surname_husband' => 'Apellido del conyugue',
         'category_id' => 'Categoría',
+        'image' => 'Imagen',
         // Spouse
         'civil_status' =>'Estado Civil',
         'marriage_date' =>'Fecha de casamiento',

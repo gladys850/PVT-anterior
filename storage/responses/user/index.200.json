@@ -1,0 +1,29 @@
+{
+    "current_page": 1,
+    "data": [
+        {
+            "id": 138,
+            "city_id": 4,
+            "first_name": "ROLANDO",
+            "last_name": "FERNANDEZ SALAZAR",
+            "username": "rfernandez",
+            "created_at": "2019-10-17 17:46:39",
+            "updated_at": "2019-10-17 17:46:39",
+            "remember_token": "H2C9sw0YQ8ljNEoGZbvSzxHHnu2exY3zpGzgYOOiXT01Kx0KTcyDApjbjP1Y",
+            "position": "CONSULTOR INDIVIDUAL DE LINEA - CALIFICADOR DEL COMPLEMENTO ECONOMICO",
+            "is_commission": null,
+            "phone": "65648571",
+            "active": true
+        }, {}
+    ],
+    "first_page_url": "http://127.0.0.1/api/v1/user?page=1",
+    "from": 1,
+    "last_page": 7,
+    "last_page_url": "http://127.0.0.1/api/v1/user?page=7",
+    "next_page_url": "http://127.0.0.1/api/v1/user?page=2",
+    "path": "http://127.0.0.1/api/v1/user",
+    "per_page": "8",
+    "prev_page_url": null,
+    "to": 8,
+    "total": 49
+}

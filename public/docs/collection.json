@@ -659,6 +659,35 @@
 						"description": "get_fingerprint_images"
 					},
 					"response": []
+				},
+				{
+					"name": "Actualizar imagen perfil afiliado",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"image\": \"data:image/jpeg;base64,asdfasdf5465131\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/{{endpoint}}/42/profile_picture",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}",
+								"42",
+								"profile_picture"
+							]
+						},
+						"description": "picture_save"
+					},
+					"response": []
 				}
 			],
 			"description": "affiliate",
@@ -2322,6 +2351,630 @@
 				}
 			],
 			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Modalidad de trámites",
+			"item": [
+				{
+					"name": "Lista de modalidad de trámites",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/{{endpoint}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}"
+							]
+						},
+						"description": "index"
+					},
+					"response": []
+				},
+				{
+					"name": "Detalle de una modalidad de trámite",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/{{endpoint}}/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}",
+								"1"
+							]
+						},
+						"description": "show"
+					},
+					"response": []
+				},
+				{
+					"name": "Requisitos para una modalidad de préstamo",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/{{endpoint}}/1/requirement",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}",
+								"1",
+								"requirement"
+							]
+						},
+						"description": "get_requirements"
+					},
+					"response": []
+				}
+			],
+			"description": "procedure_modality",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "5827405e-a700-4589-bab6-d910c6562eb4",
+						"type": "text/javascript",
+						"exec": [
+							"pm.environment.set('endpoint', 'procedure_modality');"
+						]
+					}
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Tipos de trámites",
+			"item": [
+				{
+					"name": "Lista de trámites",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/{{endpoint}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}"
+							]
+						},
+						"description": "index"
+					},
+					"response": []
+				},
+				{
+					"name": "Listado de destinos de préstamo por modalidad",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/{{endpoint}}/9/loan_destiny",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}",
+								"9",
+								"loan_destiny"
+							]
+						},
+						"description": "get_loan_destinies"
+					},
+					"response": []
+				}
+			],
+			"description": "procedure_type",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "28bbb7fe-b138-49c1-8d1d-648b8b42a57f",
+						"type": "text/javascript",
+						"exec": [
+							"pm.environment.set('endpoint', 'procedure_type');"
+						]
+					}
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Roles",
+			"item": [
+				{
+					"name": "Lista de roles",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/{{endpoint}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}"
+							]
+						},
+						"description": "index"
+					},
+					"response": []
+				},
+				{
+					"name": "Detalle de rol",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/{{endpoint}}/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}",
+								"1"
+							]
+						},
+						"description": "show"
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener permisos de rol",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/{{endpoint}}/1/permission",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}",
+								"1",
+								"permission"
+							]
+						},
+						"description": "get_permissions"
+					},
+					"response": []
+				},
+				{
+					"name": "Establecer permisos a un rol",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"permissions\": [580,581,574,575]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/{{endpoint}}/2/permission",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}",
+								"2",
+								"permission"
+							]
+						},
+						"description": "set_permissions"
+					},
+					"response": []
+				}
+			],
+			"description": "role",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "db126f33-c56b-474c-8e3b-2b129896288f",
+						"type": "text/javascript",
+						"exec": [
+							"pm.environment.set('endpoint', 'role');"
+						]
+					}
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Cónyugues",
+			"item": [
+				{
+					"name": "Lista de cónyugues",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/{{endpoint}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}"
+							]
+						},
+						"description": "index"
+					},
+					"response": []
+				},
+				{
+					"name": "Nuevo cónyugue",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"first_name\": \"MAXIMA\",\n    \"last_name\": \"ARUQUIPA\",\n    \"city_identity_card_id\": 4,\n    \"birth_date\": \"1980-05-02\",\n    \"city_birth_id\": 10,\n    \"affiliate_id\": 536,\n    \"identity_card\": \"165134-1L\",\n    \"civil_status\": \"C\",\n    \"second_name\": \"ELOISA\",\n    \"mothers_last_name\": \"ROJAS\",\n    \"due_date\": \"2018-01-05\",\n    \"marriage_date\": \"2001-04-30\",\n    \"registration\": \"870914VBW\",\n    \"surname_husband\": \"PAREDES\",\n    \"date_death\": \"2018-09-21\",\n    \"reason_death\": \"Embolia\",\n    \"death_certificate_number\": \"180923-ATR\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/{{endpoint}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}"
+							]
+						},
+						"description": "store"
+					},
+					"response": []
+				},
+				{
+					"name": "Detalle de cónyugue",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/{{endpoint}}/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}",
+								"1"
+							]
+						},
+						"description": "show"
+					},
+					"response": []
+				},
+				{
+					"name": "Actualizar cónyugue",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"first_name\": \"MÁXIMO\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/{{endpoint}}/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}",
+								"1"
+							]
+						},
+						"description": "update"
+					},
+					"response": []
+				},
+				{
+					"name": "Eliminar cónyugue",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/{{endpoint}}/2428",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}",
+								"2428"
+							]
+						},
+						"description": "destroy"
+					},
+					"response": []
+				}
+			],
+			"description": "spouse",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "2f1b1a87-2833-4b27-96dc-acf8bdd30064",
+						"type": "text/javascript",
+						"exec": [
+							"pm.environment.set('endpoint', 'spouse');"
+						]
+					}
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Usuarios",
+			"item": [
+				{
+					"name": "Lista de usuarios",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/{{endpoint}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}"
+							]
+						},
+						"description": "index"
+					},
+					"response": []
+				},
+				{
+					"name": "Nuevo usuario",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"first_name\": \"JUAN\",\n    \"last_name\": \"TORRES\",\n    \"username\": \"jtorres\",\n    \"password\": \"temporibus\",\n    \"position\": \"PROFESIONAL DE COBRANZAS\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/{{endpoint}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}"
+							]
+						},
+						"description": "store"
+					},
+					"response": []
+				},
+				{
+					"name": "Detalle de usuario",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/{{endpoint}}/140",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}",
+								"140"
+							]
+						},
+						"description": "show"
+					},
+					"response": []
+				},
+				{
+					"name": "Actualizar usuario",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"last_name\": \"TORREZ\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/{{endpoint}}/140",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}",
+								"140"
+							]
+						},
+						"description": "update"
+					},
+					"response": []
+				},
+				{
+					"name": "Eliminar usuario",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/{{endpoint}}/141",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}",
+								"141"
+							]
+						},
+						"description": "destroy"
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener permisos de usuario",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/{{endpoint}}/10/permission",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}",
+								"10",
+								"permission"
+							]
+						},
+						"description": "get_permissions"
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener roles de usuario",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/{{endpoint}}/10/role",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}",
+								"10",
+								"role"
+							]
+						},
+						"description": "get_roles"
+					},
+					"response": []
+				},
+				{
+					"name": "Establecer roles de usuario",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"roles\": [\n        1,\n        5\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/{{endpoint}}/10/role",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}",
+								"10",
+								"role"
+							]
+						},
+						"description": "set_roles"
+					},
+					"response": []
+				}
+			],
+			"description": "user",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "17a2b378-44a6-4233-aa18-84d2d4efd772",
+						"type": "text/javascript",
+						"exec": [
+							"pm.environment.set('endpoint', 'user');"
+						]
+					}
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Ldap",
+			"item": [
+				{
+					"name": "Usuarios no registrados",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/{{endpoint}}/unregistered",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}",
+								"unregistered"
+							]
+						},
+						"description": "unregistered_users"
+					},
+					"response": []
+				},
+				{
+					"name": "Sincronizar usuarios",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/{{endpoint}}/sync",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}",
+								"sync"
+							]
+						},
+						"description": "synchronize_users"
+					},
+					"response": []
+				}
+			],
+			"description": "user/ldap",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "63229ebe-5bb5-436c-b860-1b77408c0d24",
+						"type": "text/javascript",
+						"exec": [
+							"pm.environment.set('endpoint', 'user/ldap');"
+						]
+					}
+				}
+			],
+			"protocolProfileBehavior": {}
 		}
 	],
 	"auth": {
@@ -2397,37 +3050,37 @@
 	],
 	"variable": [
 		{
-			"id": "bde84505-b68c-4109-af2a-f4b8ab2e78d8",
+			"id": "06a3657a-2405-4d47-8d43-beff1d80301e",
 			"key": "url",
 			"value": "http://localhost/api/v1",
 			"type": "string"
 		},
 		{
-			"id": "44599c99-f32c-452d-9eee-3edc5856d981",
+			"id": "b22e0528-7e47-471a-912f-b0765e0a2873",
 			"key": "username",
 			"value": "nalarcon",
 			"type": "string"
 		},
 		{
-			"id": "c6a77280-e558-4eef-ad60-35d1fb7574fd",
+			"id": "e1812795-0b2a-434b-8938-8a919e719935",
 			"key": "password",
 			"value": "nalarcon",
 			"type": "string"
 		},
 		{
-			"id": "de039492-847d-4129-84d6-6927ff3ffe98",
+			"id": "99625a96-3805-4965-89dc-734d45f98a49",
 			"key": "endpoint",
 			"value": "",
 			"type": "string"
 		},
 		{
-			"id": "e18f72db-7f3f-4703-86ca-002d2fea78cc",
+			"id": "f67d6328-fd15-4ca4-b633-7d8ca037c781",
 			"key": "currentAccessToken",
 			"value": "",
 			"type": "string"
 		},
 		{
-			"id": "35df1f86-038b-495c-b010-ef613dcca82a",
+			"id": "5706d087-ae32-4f2a-9169-6bb008a0b87b",
 			"key": "accessTokenExpiry",
 			"value": "",
 			"type": "string"

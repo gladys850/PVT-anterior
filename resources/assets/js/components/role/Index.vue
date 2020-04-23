@@ -147,7 +147,7 @@ export default {
       try {
         this.loading = true
         let res = await axios.get(`role/${id}/permission`)
-        this.selectedPermissions = res.data
+        this.selectedPermissions = res.data.permissions
       } catch (e) {
         console.log(e)
       } finally {

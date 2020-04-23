@@ -288,19 +288,32 @@ class AffiliateController extends Controller
         return $files;
     }
 
-    /** @group INDEFINIDO (TODO) */
+    /** @group Biométrico
+    * Actualizar imagen perfil afiliado
+    * Actualiza la imagen de perfil de afiliado capturada por una cámara en formato base64
+    * @urlParam affiliate required ID de afiliado. Example: 2
+    * @bodyParam image string required Imágen jpeg. Example: data:image/jpeg;base64,154AF...
+    * @responseFile responses/affiliate/picture_save.200.json]
+    */
     public function picture_save(Request $request, Affiliate $affiliate)
     {
-    //$picture=$request->all();
+        $request->validate([
+            'image' => 'required|string'
+        ]);
     $base_path = 'picture/';
     $code = $affiliate->id;
     $image = $request->image;   
     $image = str_replace('data:image/jpeg;base64,', '', $image);
-    $image = str_replace(' ', '+', $image);
-    $imageName = $code.'_perfil.'.'jpg';
-
-    Storage::disk('ftp')->put($base_path.$imageName, base64_decode($image));
-
+        $image = str_replace(' ', '+', $image);
+        $imageName = $code.'_perfil.'.'jpg';
+        try {
+            Storage::disk('ftp')->put($base_path.$imageName, base64_decode($image));
+            return response()->json([
+                'message' => 'Fotografía actualizada'
+            ], 200);
+        } catch (\Exception $e) {
+            abort(500, 'Error en la conexión con el servidor FTP');
+        }
     }
 
     /**

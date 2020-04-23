@@ -10,12 +10,7 @@ Route::group([
 
 
     // INDEFINIDO (TODO)
-    //webcam
-    Route::patch('picture/{affiliate}', 'Api\V1\AffiliateController@picture_save');
-    // Fingerprint
-    //document
     Route::get('document/{affiliate_id}', 'Api\V1\ScannedDocumentController@create_document');
-    Route::apiResource('procedureDocument', 'Api\V1\ProcedureDocumentController')->only('index');
 
 
     // Autenticado con token
@@ -28,7 +23,7 @@ Route::group([
         Route::apiResource('auth', 'Api\V1\AuthController')->only('index');
         Route::patch('auth', 'Api\V1\AuthController@refresh');
         Route::delete('auth', 'Api\V1\AuthController@logout');
-        Route::get('procedure_modality/{id}/requirements', 'Api\V1\ProcedureModalityController@get_requirements');
+        Route::get('procedure_modality/{procedure_modality}/requirement', 'Api\V1\ProcedureModalityController@get_requirements');
         Route::apiResource('calculator', 'Api\V1\CalculatorController')->only('store');
         Route::apiResource('role', 'Api\V1\RoleController')->only('index', 'show');
         Route::apiResource('loan_global_parameter', 'Api\V1\LoanGlobalParameterController')->only('index', 'show', 'store', 'update', 'destroy');
@@ -80,6 +75,7 @@ Route::group([
         ], function () {
             Route::apiResource('spouse', 'Api\V1\SpouseController')->only('store');
             Route::patch('affiliate/{affiliate}/fingerprint', 'Api\V1\AffiliateController@update_fingerprint');
+            Route::patch('affiliate/{affiliate}/profile_picture', 'Api\V1\AffiliateController@picture_save');
             Route::patch('affiliate/{affiliate}/address', 'Api\V1\AffiliateController@update_addresses');
             Route::apiResource('personal_reference', 'Api\V1\PersonalReferenceController')->only('index', 'store', 'show', 'destroy', 'update');
         });
@@ -104,7 +100,7 @@ Route::group([
             Route::get('loan/{loan}/flow','Api\V1\LoanController@get_flow');
             Route::get('loan/{loan}/print/plan','Api\V1\LoanController@print_plan');
             Route::apiResource('note','Api\V1\NoteController')->only('show');
-            Route::get('procedure_type/{id}/loan_destiny', 'Api\V1\ProcedureTypeController@get_loan_destinies');
+            Route::get('procedure_type/{procedure_type}/loan_destiny', 'Api\V1\ProcedureTypeController@get_loan_destinies');
             Route::get('loan/{loan}/payment','Api\V1\LoanController@get_payments');
             Route::patch('loan/{loan}/payment','Api\V1\LoanController@get_next_payment');
             Route::post('loan/{loan}/payment','Api\V1\LoanController@set_payment');
@@ -173,9 +169,9 @@ Route::group([
             'middleware' => 'role:TE-admin'
         ], function () {
             // Usuario
-            Route::get('user/{id}/role', 'Api\V1\UserController@get_roles');
-            Route::post('user/{id}/role', 'Api\V1\UserController@set_roles');
-            Route::get('user/{id}/permission', 'Api\V1\UserController@get_permissions');
+            Route::get('user/{user}/role', 'Api\V1\UserController@get_roles');
+            Route::post('user/{user}/role', 'Api\V1\UserController@set_roles');
+            Route::get('user/{user}/permission', 'Api\V1\UserController@get_permissions');
             // Ldap
             if (env("LDAP_AUTHENTICATION")) {
                 Route::apiResource('user', 'Api\V1\UserController');
@@ -185,8 +181,8 @@ Route::group([
                 Route::apiResource('user', 'Api\V1\UserController')->only('index', 'store', 'destroy');
             }
             // Módulo
-            Route::get('role/{id}/permission', 'Api\V1\RoleController@get_permissions');
-            Route::post('role/{id}/permission', 'Api\V1\RoleController@set_permissions');
+            Route::get('role/{role}/permission', 'Api\V1\RoleController@get_permissions');
+            Route::post('role/{role}/permission', 'Api\V1\RoleController@set_permissions');
             // Permiso
             Route::apiResource('permission', 'Api\V1\PermissionController')->only('index');
         });

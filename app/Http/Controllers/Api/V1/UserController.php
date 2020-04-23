@@ -29,36 +29,7 @@ class UserController extends Controller
     * @queryParam per_page Número de datos por página. Example: 8
     * @queryParam page Número de página. Example: 1
     * @authenticated
-    * @response
-    * {
-    *     "current_page": 1,
-    *     "data": [
-    *         {
-    *             "id": 138,
-    *             "city_id": 4,
-    *             "first_name": "ROLANDO",
-    *             "last_name": "FERNANDEZ SALAZAR",
-    *             "username": "rfernandez",
-    *             "created_at": "2019-10-17 17:46:39",
-    *             "updated_at": "2019-10-17 17:46:39",
-    *             "remember_token": "H2C9sw0YQ8ljNEoGZbvSzxHHnu2exY3zpGzgYOOiXT01Kx0KTcyDApjbjP1Y",
-    *             "position": "CONSULTOR INDIVIDUAL DE LINEA - CALIFICADOR DEL COMPLEMENTO ECONOMICO",
-    *             "is_commission": null,
-    *             "phone": "65648571",
-    *             "active": true
-    *         }, {}
-    *     ],
-    *     "first_page_url": "http://127.0.0.1/api/v1/user?page=1",
-    *     "from": 1,
-    *     "last_page": 7,
-    *     "last_page_url": "http://127.0.0.1/api/v1/user?page=7",
-    *     "next_page_url": "http://127.0.0.1/api/v1/user?page=2",
-    *     "path": "http://127.0.0.1/api/v1/user",
-    *     "per_page": "8",
-    *     "prev_page_url": null,
-    *     "to": 8,
-    *     "total": 49
-    * }
+    * @responseFile responses/user/index.200.json
     */
     public function index(Request $request)
     {
@@ -79,21 +50,7 @@ class UserController extends Controller
     * @bodyParam password string required Contraseña: as$32rW!%V
     * @bodyParam position string Cargo. Example: PROFESIONAL DE COBRANZAS
     * @authenticated
-    * @response
-    * {
-    *     "id": 138,
-    *     "city_id": 4,
-    *     "first_name": "ROLANDO",
-    *     "last_name": "FERNANDEZ SALAZAR",
-    *     "username": "rfernandez",
-    *     "created_at": "2019-10-17 17:46:39",
-    *     "updated_at": "2019-10-17 17:46:39",
-    *     "remember_token": "",
-    *     "position": "CONSULTOR INDIVIDUAL DE LINEA - CALIFICADOR DEL COMPLEMENTO ECONOMICO",
-    *     "is_commission": null,
-    *     "phone": "",
-    *     "active": true
-    * }
+    * @responseFile responses/user/store.200.json
     */
     public function store(UserForm $request)
     {
@@ -108,28 +65,13 @@ class UserController extends Controller
 
     /**
     * Detalle de usuario
-    * @urlParam id required ID de usuario. Example: 138
+    * @urlParam user required ID de usuario. Example: 138
     * @authenticated
-    * @response
-    * {
-    *     "id": 138,
-    *     "city_id": 4,
-    *     "first_name": "ROLANDO",
-    *     "last_name": "FERNANDEZ SALAZAR",
-    *     "username": "rfernandez",
-    *     "created_at": "2019-10-17 17:46:39",
-    *     "updated_at": "2019-10-17 17:46:39",
-    *     "remember_token": "",
-    *     "position": "CONSULTOR INDIVIDUAL DE LINEA - CALIFICADOR DEL COMPLEMENTO ECONOMICO",
-    *     "is_commission": null,
-    *     "phone": "",
-    *     "active": true
-    * }
+    * @responseFile responses/user/show.200.json
     */
-    public function show($id)
+    public function show(User $user)
     {
-        $user = User::findOrFail($id);
-        if (Auth::user()->id == $id || Auth::user()->can('show-user')) {
+        if (Auth::user()->id == $user->id || Auth::user()->can('show-user')) {
             return $user;
         } else {
             abort(401);
@@ -138,32 +80,17 @@ class UserController extends Controller
 
     /**
     * Actualizar usuario
-    * @urlParam id required ID de usuario. Example: 138
+    * @urlParam user required ID de usuario. Example: 138
     * @bodyParam first_name string Nombres. Example: JUAN
     * @bodyParam last_name string Apellidos. Example: TORRES
     * @bodyParam username string Nombre de usuario. Example: jtorres
     * @bodyParam password string Contraseña: as$32rW!%V
     * @bodyParam position string Cargo. Example: PROFESIONAL DE COBRANZAS
     * @authenticated
-    * @response
-    * {
-    *     "id": 138,
-    *     "city_id": 4,
-    *     "first_name": "ROLANDO",
-    *     "last_name": "FERNANDEZ SALAZAR",
-    *     "username": "rfernandez",
-    *     "created_at": "2019-10-17 17:46:39",
-    *     "updated_at": "2019-10-17 17:46:39",
-    *     "remember_token": "",
-    *     "position": "CONSULTOR INDIVIDUAL DE LINEA - CALIFICADOR DEL COMPLEMENTO ECONOMICO",
-    *     "is_commission": null,
-    *     "phone": "",
-    *     "active": true
-    * }
+    * @responseFile responses/user/update.200.json
     */
-    public function update(UserForm $request, $id)
+    public function update(UserForm $request, User $user)
     {
-        $user = User::findOrFail($id);
         if ($request->has('password') && !env("LDAP_AUTHENTICATION")) {
             if ($request->has('old_password')) {
                 if (!(Auth::user()->id == $id && Hash::check($request->input('old_password'), $user->password))) {
@@ -186,35 +113,14 @@ class UserController extends Controller
     /**
     * Eliminar usuario
     * Elimina un usuario solo en caso de que no tenga acciones registradas
-    * @urlParam id required ID de usuario. Example: 138
+    * @urlParam user required ID de usuario. Example: 138
     * @authenticated
-    * @response
-    * {
-    *     "id": 138,
-    *     "city_id": 4,
-    *     "first_name": "ROLANDO",
-    *     "last_name": "FERNANDEZ SALAZAR",
-    *     "username": "rfernandez",
-    *     "created_at": "2019-10-17 17:46:39",
-    *     "updated_at": "2019-10-17 17:46:39",
-    *     "remember_token": "",
-    *     "position": "CONSULTOR INDIVIDUAL DE LINEA - CALIFICADOR DEL COMPLEMENTO ECONOMICO",
-    *     "is_commission": null,
-    *     "phone": "",
-    *     "active": true
-    * }
+    * @responseFile responses/user/destroy.200.json
     */
-    public function destroy($id)
+    public function destroy(User $user)
     {
-        $user = User::findOrFail($id);
-        $has_actions = $user->has_actions();
-        if ($user->has_actions() || in_array($user->username, $this->db_users)) {
-            return response()->json([
-				'message' => 'Forbidden',
-				'errors' => [
-					'type' => ['El usuario aún tiene acciones registradas'],
-				]
-			], 403);
+        if ($user->has_actions || in_array($user->username, $this->db_users)) {
+            abort(403, 'El usuario aún tiene acciones registradas');
         } else {
             $user->records()->delete();
             $user->delete();
@@ -225,80 +131,61 @@ class UserController extends Controller
     /**
     * Obtener permisos de usuario
     * Devuelve un listado con los IDs de los permisos asignados al usuario
-    * @urlParam id required ID de usuario. Example: 69
+    * @urlParam user required ID de usuario. Example: 69
     * @authenticated
     * @response
-    * [
-    *     12
-    * ]
+    * @responseFile responses/user/get_permissions.200.json
     */
-    public function get_permissions($id)
+    public function get_permissions(User $user)
     {
-        $user = User::findOrFail($id);
-        return $user->allPermissions()->pluck('id');
+        return response()->json([
+            'permissions' => $user->allPermissions()->pluck('id')
+        ]);
     }
 
     /**
     * Obtener roles de usuario
     * Devuelve un listado con los IDs de los roles asignados al usuario
-    * @urlParam id required ID de usuario. Example: 69
+    * @urlParam user required ID de usuario. Example: 69
     * @authenticated
-    * @response
-    * [
-    *     19,
-    *     53,
-    *     65
-    * ]
+    * @responseFile responses/user/get_roles.200.json
     */
-    public function get_roles($id)
+    public function get_roles(User $user)
     {
-        $user = User::findOrFail($id);
-        return $user->roles()->pluck('id');
+        return response()->json([
+            'roles' => $user->roles()->pluck('id')
+        ]);
     }
 
     /**
     * Establecer roles de usuario
     * Asignar roles a un usuario
-    * @urlParam id required ID de usuario. Example: 69
+    * @urlParam user required ID de usuario. Example: 69
     * @bodyParam roles array required Vector con los objetos de roles. Example: [37,42,7]
     * @authenticated
-    * @response
-    * [
-    *     37,
-    *     42,
-    *     7
-    * ]
+    * @responseFile responses/user/set_roles.200.json
     */
-    public function set_roles(Request $request, $id)
+    public function set_roles(Request $request, User $user)
     {
         $request->validate([
             'roles' => 'required|array',
             'roles.*' => 'exists:roles,id'
         ]);
-        $user = User::findOrFail($id);
         $user->syncRoles($request->roles);
-        return $user->roles()->pluck('id');
+        return response()->json([
+            'roles' => $user->roles()->pluck('id')
+        ]);
     }
 
-    /**
+    /** @group Ldap
     * Usuarios no registrados
     * Devuelve un listado con datos de los usuarios del Active Directory que no se encuentran registrados en el sistema
     * @authenticated
-    * @response
-    * [
-    *     {
-    *         "cn": "JOHNNY ALAVE",
-    *         "sn": "ALAVE GUTIERREZ",
-    *         "employeenumber": "2",
-    *         "givenname": "JOHNNY JUNIOR",
-    *         "mail": "jalave@muserpol.gob.bo",
-    *         "title": "Técnico de Atención al Afiliado II",
-    *         "uid": "jalave"
-    *     }, {}
-    * ]
+    * @responseFile responses/ldap/unregistered_users.200.json
     */
     public function unregistered_users()
     {
+        return 'ok';
         $ldap = new Ldap();
         $unregistered_users = collect($ldap->get_entries())->pluck('uid')->diff(User::get()->pluck('username')->all());
         $items = [];
@@ -308,27 +195,11 @@ class UserController extends Controller
         return response()->json(collect($items)->sortBy('sn')->values());
     }
 
-    /**
+    /** @group Ldap
     * Sincronizar usuarios
     * Cambia el estado de activo a inactivo para los usuarios del sistema que no se encuentren en el Active Directory
     * @authenticated
-    * @response
-    * [
-    *     {
-    *         "id": 122,
-    *         "city_id": 4,
-    *         "first_name": "Juan Carlos",
-    *         "last_name": "Barrios Gutierrez",
-    *         "username": "jbarrios",
-    *         "created_at": "2019-03-25 16:26:24",
-    *         "updated_at": "2020-01-20 08:42:16",
-    *         "remember_token": "UpyA8Iju5ij5WUdY2QDyrOsmFERDSdhlk34ekMkCK2T7lqr44bCR7JS6euW5",
-    *         "position": "Encargado de Complemento Economico",
-    *         "is_commission": false,
-    *         "phone": null,
-    *         "active": true
-    *     }, {}
-    * ]
+    * @responseFile responses/ldap/synchronize_users.200.json
     */
     public function synchronize_users()
     {
