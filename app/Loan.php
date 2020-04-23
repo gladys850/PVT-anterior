@@ -108,6 +108,14 @@ class Loan extends Model
         return $this->belongsToMany(ProcedureDocument::class, 'loan_submitted_documents', 'loan_id')->withPivot('reception_date', 'comment', 'is_valid');
     }
 
+    public function getSubmittedDocumentsListAttribute()
+    {
+        return  [
+            'required' => ($this->submitted_documents)->intersect($this->modality->required_documents),
+            'optional' => ($this->submitted_documents)->intersect($this->modality->optional_documents)
+        ];
+    }
+
     public function guarantors()
     {
         return $this->loan_affiliates()->withPivot('payment_percentage')->whereGuarantor(true);
