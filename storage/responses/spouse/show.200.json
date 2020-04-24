@@ -1,6 +1,5 @@
 {
     "id": 42,
-    "user_id": 47,
     "affiliate_id": 12,
     "city_identity_card_id": 2,
     "identity_card": "1048652",
@@ -14,8 +13,6 @@
     "birth_date": "1947-06-08",
     "date_death": null,
     "reason_death": "",
-    "created_at": "2017-06-08 11:56:17",
-    "updated_at": "2019-06-14 11:25:21",
     "deleted_at": null,
     "city_birth_id": 2,
     "death_certificate_number": "",

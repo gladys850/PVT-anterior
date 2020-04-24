@@ -26,8 +26,9 @@ class Loan extends Model
         'code',
         'disbursable_id',
         'disbursable_type',
-		'procedure_modality_id',
-		'parent_loan_id',
+        'procedure_modality_id',
+        'disbursement_date',
+        'parent_loan_id',
         'parent_reason',
         'request_date',
         'amount_requested',
@@ -36,12 +37,10 @@ class Loan extends Model
         'state_id',
         'amount_approved',
         'loan_term',
-        'disbursement_date',
         'payment_type_id',
-        'modification_date',
+        'personal_reference_id',
         'account_number',
         'destiny_id',
-        'personal_reference_id',
         'role_id',
         'validated'
     ];
@@ -49,14 +48,20 @@ class Loan extends Model
     function __construct(array $attributes = [])
     {
         parent::__construct($attributes);
-        $this->request_date = Carbon::now();
-        $state = LoanState::whereName('En Proceso')->first();
-        if ($state) {
-            $this->state_id = $state->id;
+        if (!$this->request_date) {
+            $this->request_date = Carbon::now();
         }
-        $latest_loan = DB::table('loans')->orderBy('created_at', 'desc')->limit(1)->first();
-        if (!$latest_loan) $latest_loan = (object)['id' => 0];
-        $this->code = implode(['PTMO', str_pad($latest_loan->id + 1, 6, '0', STR_PAD_LEFT), '-', Carbon::now()->year]);
+        if (!$this->state_id) {
+            $state = LoanState::whereName('En Proceso')->first();
+            if ($state) {
+                $this->state_id = $state->id;
+            }
+        }
+        if (!$this->code) {
+            $latest_loan = DB::table('loans')->orderBy('created_at', 'desc')->limit(1)->first();
+            if (!$latest_loan) $latest_loan = (object)['id' => 0];
+            $this->code = implode(['PTMO', str_pad($latest_loan->id + 1, 6, '0', STR_PAD_LEFT), '-', Carbon::now()->year]);
+        }
     }
 
     public function setProcedureModalityIdAttribute($id)

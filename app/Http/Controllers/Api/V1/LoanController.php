@@ -19,6 +19,7 @@ use App\ProcedureModality;
 use App\PaymentType;
 use App\Role;
 use App\RoleSequence;
+use App\Http\Resources\LoanResource;
 use App\Http\Requests\LoansForm;
 use App\Http\Requests\LoanForm;
 use App\Http\Requests\LoanPaymentForm;
@@ -31,11 +32,6 @@ use Util;
 */
 class LoanController extends Controller
 {
-    private function append_data($loan) {
-        $loan->balance = $loan->balance;
-        $loan->estimated_quota = $loan->estimated_quota;
-        $loan->defaulted = $loan->defaulted;
-    }
     /**
     * Lista de Préstamos
     * Devuelve el listado con los datos paginados
@@ -76,10 +72,7 @@ class LoanController extends Controller
             ];
         }
         $data = Util::search_sort(new Loan(), $request, $filters);
-        foreach ($data as $item) {
-            $this->append_data($item);
-        }
-        return $data;
+        return LoanResource::collection($data);
     }
 
     /**
@@ -164,10 +157,8 @@ class LoanController extends Controller
         if (Auth::user()->can('show-all-loan') || Auth::user()->roles()->whereHas('module', function($query) {
             return $query->whereName('prestamos');
         })->pluck('id')->contains($loan->role_id)) {
-            $loan->lenders;
-            $loan->guarantors;
-            $this->append_data($loan);
-            return $loan;
+            $loan->with_lenders = true;
+            return new LoanResource($loan);
         } else {
             abort(403);
         }
@@ -190,6 +181,7 @@ class LoanController extends Controller
     * @bodyParam personal_reference_id integer ID de referencia personal. Example: 4
     * @bodyParam account_number integer Número de cuenta en Banco Union. Example: 586621345
     * @bodyParam destiny_id integer required ID destino de Préstamo. Example: 1
+    * @bodyParam role_id integer Rol al cual derivar o devolver. Example: 81
     * @authenticated
     * @responseFile responses/loan/update.200.json
     */
@@ -648,8 +640,6 @@ class LoanController extends Controller
     * @bodyParam original.message string required Mensaje de la observación original. Example: Subsanable en una semana
     * @bodyParam original.date date required Fecha de la observación original. Example: 2020-04-14 21:16:52
     * @bodyParam original.enabled boolean required Estado de la observación original. Example: false
-    * @bodyParam update.observation_type_id integer ID de tipo de observación a actualizar. Example: 21
-    * @bodyParam update.message string Mensaje de la observación a actualizar. Example: Subsanable en un mes
     * @bodyParam update.enabled boolean Estado de la observación a actualizar. Example: true
     * @authenticated
     * @responseFile responses/loan/update_observation.200.json
@@ -660,7 +650,7 @@ class LoanController extends Controller
         foreach (collect($request->original)->only('user_id', 'message', 'date', 'enabled')->put('observable_id', $loan->id)->put('observable_type', 'loans') as $key => $value) {
             $observation = $observation->where($key, $value);
         }
-        $observation->update(collect($request->update)->only('observation_type_id', 'message', 'enabled')->toArray());
+        $observation->update(collect($request->update)->only('enabled')->toArray());
         return $loan->observations;
     }
 
