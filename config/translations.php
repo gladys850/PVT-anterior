@@ -71,5 +71,11 @@
         'estimated_quota' => 'Cuota estimada',
         'payment_type_id' => 'Tipo de pago',
         // Observation
-        'observation_type_id' => 'Tipo de Observación'
+        'observation_type_id' => 'Tipo de Observación',
+        // Observation document
+        'comment' => 'Comentario',
+        'is_valid' => 'Estado',
+        // documentos presentados prestamos
+        'procedure_documen_id' => 'Documento',
+        'submitted_documents' => 'Documento presentado'
     ];
