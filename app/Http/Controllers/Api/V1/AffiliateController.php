@@ -19,6 +19,7 @@ use App\Unit;
 use App\Loan;
 use App\LoanGlobalParameter;
 use App\ProcedureType;
+use App\Http\Resources\AffiliateResource;
 use App\Http\Requests\AffiliateForm;
 use App\Http\Requests\AffiliateFingerprintForm;
 use Illuminate\Http\Request;
@@ -49,10 +50,7 @@ class AffiliateController extends Controller
     public function index(Request $request)
     {
         $data = Util::search_sort(new Affiliate(), $request);
-        foreach ($data as $item) {
-            $this->append_data($item);
-        }
-        return $data;
+        return AffiliateResource::collection($data);
     }
 
     /**
@@ -111,14 +109,8 @@ class AffiliateController extends Controller
     */
     public function show(Affiliate $affiliate)
     {
-        $this->append_data($affiliate);
-        $affiliate->civil_status_gender = $affiliate->civil_status_gender;
-        $affiliate->dead = $affiliate->dead;
-        $affiliate->defaulted = $affiliate->defaulted;
-        $affiliate->cpop = $affiliate->cpop;
-        $affiliate->identity_card_ext = $affiliate->identity_card_ext;
-        $affiliate->category = $affiliate->category;
-        return $affiliate;
+        $affiliate->with_category = true;
+        return new AffiliateResource($affiliate);
     }
 
     /**
@@ -166,8 +158,8 @@ class AffiliateController extends Controller
     */
     public function update(AffiliateForm $request, Affiliate $affiliate)
     {
-        if (!Auth::user()->can('update-affiliate-primary') && ($request->has('phone_number') || $request->has('cell_phone_number') || $request->has('city_identity_card_id'))) {
-            $update = $request->only(['phone_number', 'cell_phone_number', 'city_identity_card_id']);
+        if (!Auth::user()->can('update-affiliate-primary')) {
+            $update = $request->except('first_name', 'second_name', 'last_name', 'mothers_last_name', 'surname_husband', 'identity_card');
         } else {
             $update = $request->all();
         }
@@ -229,13 +221,6 @@ class AffiliateController extends Controller
             return $affiliate->records()->latest()->first();
         }
         abort(404);
-    }
-
-    // Append additional to affiliate
-    private function append_data($affiliate) {
-        $affiliate->picture_saved = $affiliate->picture_saved;
-        $affiliate->fingerprint_saved = $affiliate->fingerprint_saved;
-        $affiliate->full_name = $affiliate->full_name;
     }
 
     /** @group Biométrico

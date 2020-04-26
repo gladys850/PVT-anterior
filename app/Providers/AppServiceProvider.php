@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\ServiceProvider;
@@ -26,6 +27,9 @@ class AppServiceProvider extends ServiceProvider
     */
     public function boot()
     {
+        // JSON response wihtout data key
+        JsonResource::withoutWrapping();
+
         // Localization
         setlocale(LC_TIME, env('APP_LC_TIME', 'es_BO.utf8'));
         Carbon::setLocale(env('APP_LOCALE', 'es'));

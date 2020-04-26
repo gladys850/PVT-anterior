@@ -50,7 +50,10 @@ class Affiliate extends Model
         'is_duedate_undefined',
         'due_date',
         'service_years',
-        'service_months'
+        'service_months',
+        'death_certificate_number',
+        'affiliate_registration_number',
+        'file_code'
       ];
 
     public function getTitleAttribute()
