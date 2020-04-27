@@ -70,6 +70,9 @@
         'estimated_date' => 'Fecha estimada',
         'estimated_quota' => 'Cuota estimada',
         'payment_type_id' => 'Tipo de pago',
+        'payable_liquid_calculated' => 'Liquido pagable calculado',
+        'bonus_calculated' => 'Total bono calculado',
+        'indebtedness_calculated' => 'Indice de Endeudamiento',
         // Observation
         'observation_type_id' => 'Tipo de Observación',
         // Observation document
