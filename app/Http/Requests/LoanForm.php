@@ -10,6 +10,7 @@ use App\Rules\LoanRole;
 use App\Rules\ProcedureRequirements;
 use App\Loan;
 use App\ProcedureModality;
+use App\Rules\LoanParameterIndebtedness;
 use Illuminate\Foundation\Http\FormRequest;
 
 class LoanForm extends FormRequest
@@ -45,6 +46,9 @@ class LoanForm extends FormRequest
             'lenders' => ['array', 'min:1', 'exists:affiliates,id'],
             'destiny_id' => ['integer', 'exists:loan_destinies,id', new LoanDestiny($procedure_modality)],
             'documents' => ['array', 'min:1', new ProcedureRequirements($procedure_modality)],
+            'payable_liquid_calculated' => ['numeric'],
+            'bonus_calculated' => ['integer'],
+            'indebtedness_calculated' => ['numeric', 'max:90', new LoanParameterIndebtedness($procedure_modality)],
             'personal_reference_id' => ['nullable', 'exists:personal_references,id'],
             'documents.*' => ['exists:procedure_documents,id'],
             'guarantors' => ['array', 'exists:affiliates,id'],
@@ -61,7 +65,7 @@ class LoanForm extends FormRequest
         ];
         switch ($this->method()) {
             case 'POST': {
-                foreach (array_slice($rules, 0, $procedure_modality->loan_modality_parameter->personal_reference ? 9 : 8) as $key => $rule) {
+                foreach (array_slice($rules, 0, $procedure_modality->loan_modality_parameter->personal_reference ? 12 : 11) as $key => $rule) {
                     array_push($rules[$key], 'required');
                 }
                 return $rules;

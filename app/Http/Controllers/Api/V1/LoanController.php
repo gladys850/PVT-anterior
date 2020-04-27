@@ -18,6 +18,7 @@ use App\ProcedureDocument;
 use App\ProcedureModality;
 use App\PaymentType;
 use App\Role;
+use App\LoanSubmittedDocument;
 use App\RoleSequence;
 use App\Http\Requests\LoansForm;
 use App\Http\Requests\LoanForm;
@@ -91,6 +92,9 @@ class LoanController extends Controller
     * @bodyParam loan_term integer required plazo. Example: 2
     * @bodyParam payment_type_id integer required Tipo de desembolso. Example: 1
     * @bodyParam lenders array required Lista de IDs de afiliados Titular de préstamo. Example: [5146]
+    * @bodyParam payable_liquid_calculated numeric required Promedio liquido pagable. Example: 2000
+    * @bodyParam bonus_calculated integer required Total de bono calculado. Example: 24
+    * @bodyParam indebtedness_calculated numeric required Indice de endeudamiento. Example: 52.26
     * @bodyParam guarantors array Lista de IDs de afiliados Garante de préstamo. Example: []
     * @bodyParam parent_loan_id integer ID de Préstamo Padre. Example: 1
     * @bodyParam parent_reason enum (REFINANCIAMIENTO, REPROGRAMACIÓN) Tipo de trámite hijo. Example: REFINANCIAMIENTO
@@ -289,6 +293,26 @@ class LoanController extends Controller
             'is_valid' => 'required|boolean',
             'comment' => 'string|nullable|min:1'
         ]);
+        $changed = LoanSubmittedDocument::whereLoan_id($loan->id)->whereProcedure_document_id($document->id)->first();
+        $changed->comment = $request->comment;
+        $changed->is_valid = $request->is_valid;
+        if($changed->isDirty()){
+            $old = new LoanSubmittedDocument();
+            $old->fill($changed->getOriginal());
+            $changes = 'editó documento presentado ['.$document->id.'] :';
+            foreach ($changed->getDirty() as $key => $value) {
+                $old_is_valid = $old->is_valid == 0 ?'No válido': 'Válido';
+                $changed_is_valid = $changed->is_valid == 0 ?'No válido': 'Válido';
+                if ($key == 'is_valid') {
+                    $changes .= (' [' . Util::translate($key) . '] ' . $old_is_valid .' => ' .$changed_is_valid);
+                }elseif ($key == 'comment') {
+                    $changes .= (' [' . Util::translate($key) . '] ' . $old->comment . ' => ' . $changed->comment);
+                } else {
+                    $changes .= (' [' . Util::translate($key) . '] ' . $old[$key] . ' => ' . $value.' ,');
+                }
+            }
+            Util::save_record($loan, 'datos-de-un-tramite', $changes);
+        }
         $loan->submitted_documents()->updateExistingPivot($document->id, $request->all());
         return $loan->submitted_documents;
     }
