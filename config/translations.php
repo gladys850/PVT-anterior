@@ -50,6 +50,7 @@
         //loans
         'procedure_modality_id'=>'Modalidad de Préstamo',
         'procedure_documents' => 'Documento',
+        'submitted_documents' => 'Documento Presentado',
         'request_date'=>'Fecha de solicitud',
         'amount_requested'=>'Monto solicitado',
         'state_id'=>'Estado del prestamo',
@@ -71,5 +72,8 @@
         'estimated_quota' => 'Cuota estimada',
         'payment_type_id' => 'Tipo de pago',
         // Observation
-        'observation_type_id' => 'Tipo de Observación'
+        'observation_type_id' => 'Tipo de Observación',
+        // Submitted Documents
+        'is_valid' => 'Válido',
+        'comment' => 'Comentario'
     ];
