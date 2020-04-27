@@ -161,6 +161,35 @@ class Util
         return $action;
     }
 
+    public static function relation_action($model, $relationName, $pivotIds, $pivotIdsAttributes, $message)
+    {
+        $display_names = ['display_name', 'name', 'code', 'shortened', 'number', 'correlative', 'description'];
+        $dirty = false;
+        $action = $message . ' ';
+        $action .= self::translate($relationName);
+        $pivots = $model[$relationName]->whereIn('id', $pivotIds);
+        foreach ($pivots as $pivot) {
+            foreach ($display_names as $title) {
+                if (isset($pivot[$title])) {
+                    $action .= ' [' . $pivot[$title] . '] ';
+                    break;
+                }
+            }
+            foreach ($pivotIdsAttributes[$pivot->id] as $key => $attribute) {
+                if ($pivot['pivot'][$key] != $attribute && !$dirty) $dirty = true;
+                $action .= '(' . self::translate($key) . ') ';
+                $action .= self::bool_to_string($pivot['pivot'][$key]) . '->' . self::bool_to_string($attribute);
+                if (next($pivotIdsAttributes[$pivot->id])) {
+                    $action .= ', ';
+                }
+            }
+            if (next($pivots)) {
+                $action .= '; ';
+            }
+        }
+        return $dirty ? $action : '';
+    }
+
     public static function concat_action($object, $message = 'editó')
     {
         $old = app(get_class($object));
@@ -171,7 +200,7 @@ class Util
         foreach ($updated_values as $key => $value) {
             $display_names = ['display_name', 'name', 'code', 'shortened', 'number', 'correlative', 'description'];
             $concat = false;
-            $action .= ' [' . Util::translate($key) . '] ';
+            $action .= ' [' . self::translate($key) . '] ';
             if (substr($key, -3, 3) == '_id') {
                 $attribute = substr($key, 0, -3);
                 if (array_key_exists($attribute, $relationships)) {
@@ -200,7 +229,7 @@ class Util
                 }
             }
             if (!$concat) {
-                $action .= Util::bool_to_string($old[$key]) . ' -> ' . Util::bool_to_string($object[$key]);
+                $action .= self::bool_to_string($old[$key]) . ' -> ' . self::bool_to_string($object[$key]);
             }
             if (next($updated_values)) {
                 $action .= ', ';
@@ -211,13 +240,15 @@ class Util
 
     public static function save_record($object, $type, $action)
     {
-        $record_type = RecordType::whereName($type)->first();
-        if ($record_type) {
-            $record = $object->records()->make([
-                'action' => $action
-            ]);
-            $record->record_type()->associate($record_type);
-            $record->save();
+        if ($action) {
+            $record_type = RecordType::whereName($type)->first();
+            if ($record_type) {
+                $record = $object->records()->make([
+                    'action' => $action
+                ]);
+                $record->record_type()->associate($record_type);
+                $record->save();
+            }
         }
     }
 
