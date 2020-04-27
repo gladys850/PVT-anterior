@@ -133,7 +133,7 @@ export default {
           let res = await axios.post(`role/${this.selectedRole}/permission`, {
             permissions: this.selectedPermissions
           })
-          this.selectedPermissions = res.data
+          this.selectedPermissions = res.data.permissions
           this.toastr.success('Actualizado correctamente')
         }
       } catch (e) {
