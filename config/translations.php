@@ -76,6 +76,10 @@ return [
     'indebtedness_calculated' => 'Indice de Endeudamiento',
     // Observation
     'observation_type_id' => 'Tipo de Observación',
+    'message' => 'Mensaje',
+    'enabled' => 'Habilitado',
+    'date' => 'Fecha',
+    'user_id' => 'Usuario',
     // Submitted Documents
     'is_valid' => 'Válido',
     'comment' => 'Comentario'

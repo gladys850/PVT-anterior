@@ -23,7 +23,7 @@ use App\Http\Resources\LoanResource;
 use App\Http\Requests\LoansForm;
 use App\Http\Requests\LoanForm;
 use App\Http\Requests\LoanPaymentForm;
-use App\Http\Requests\LoanObservationForm;
+use App\Http\Requests\ObservationForm;
 use Carbon;
 use Util;
 
@@ -603,7 +603,7 @@ class LoanController extends Controller
 
     /** @group Observaciones de Préstamos
     * Lista de observaciones
-    * Devuelve el listado de los pagos ordenados por cuota de manera descendente
+    * Devuelve el listado de observaciones del trámite
     * @urlParam loan required ID del préstamo. Example: 2
     * @authenticated
     * @responseFile responses/loan/get_observations.200.json
@@ -622,7 +622,7 @@ class LoanController extends Controller
     * @authenticated
     * @responseFile responses/loan/set_observation.200.json
     */
-    public function set_observation(LoanObservationForm $request, Loan $loan)
+    public function set_observation(ObservationForm $request, Loan $loan)
     {
         $observation = $loan->observations()->make([
             'message' => $request->message ?? null,
@@ -647,7 +647,7 @@ class LoanController extends Controller
     * @authenticated
     * @responseFile responses/loan/update_observation.200.json
     */
-    public function update_observation(LoanObservationForm $request, Loan $loan)
+    public function update_observation(ObservationForm $request, Loan $loan)
     {
         $observation = $loan->observations();
         foreach (collect($request->original)->only('user_id', 'message', 'date', 'enabled')->put('observable_id', $loan->id)->put('observable_type', 'loans') as $key => $value) {
@@ -655,6 +655,34 @@ class LoanController extends Controller
         }
         $observation->update(collect($request->update)->only('enabled')->toArray());
         return $loan->observations;
+    }
+
+    /** @group Observaciones de Préstamos
+    * Eliminar observación
+    * Elimina una observación del trámite siempre y cuando no haya sido modificada
+    * @urlParam loan required ID del préstamo. Example: 2
+    * @bodyParam user_id integer required ID de usuario que creó la observación. Example: 123
+    * @bodyParam observation_type_id integer required ID de tipo de observación. Example: 2
+    * @bodyParam message string required Mensaje de la observación. Example: Subsanable en una semana
+    * @bodyParam date date required Fecha de la observación. Example: 2020-04-14 21:16:52
+    * @bodyParam enabled boolean required Estado de la observación. Example: false
+    * @authenticated
+    * @responseFile responses/loan/unset_observation.200.json
+    */
+    public function unset_observation(ObservationForm $request, Loan $loan)
+    {
+        $request->request->add(['observable_type' => 'loans', 'observable_id' => $loan->id]);
+        $observation = $loan->observations();
+        foreach ($request->except('created_at','updated_at','deleted_at') as $key => $value) {
+            $observation = $observation->where($key, $value);
+        }
+        $observation = $observation->whereColumn('created_at','updated_at');
+        if ($observation->count() == 1) {
+            $observation->delete();
+            return $loan->observations;
+        } else {
+            abort(404, 'Observación inexistente');
+        }
     }
 
     /**

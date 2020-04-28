@@ -540,6 +540,113 @@
 						"description": "get_loan_modality"
 					},
 					"response": []
+				},
+				{
+					"name": "Lista de observaciones",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/{{endpoint}}/5012/observation",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}",
+								"5012",
+								"observation"
+							]
+						},
+						"description": "get_observations"
+					},
+					"response": []
+				},
+				{
+					"name": "Nueva observación",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"observation_type_id\": 2,\n    \"message\": \"Subsanable en una semana\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/{{endpoint}}/5012/observation",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}",
+								"5012",
+								"observation"
+							]
+						},
+						"description": "set_observation"
+					},
+					"response": []
+				},
+				{
+					"name": "Actualizar observación",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"original\": {\n        \"user_id\": 123,\n        \"observation_type_id\": 2,\n        \"message\": \"Subsanable en una semana\",\n        \"date\": \"2020-04-28 15:55:29\",\n        \"enabled\": false,\n        \"created_at\": \"2020-04-28T19:55:29.000000Z\",\n        \"updated_at\": \"2020-04-28T19:55:29.000000Z\",\n        \"deleted_at\": null\n    },\n    \"update\": {\n    \t\"enabled\": true\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/{{endpoint}}/5012/observation",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}",
+								"5012",
+								"observation"
+							]
+						},
+						"description": "update_observation"
+					},
+					"response": []
+				},
+				{
+					"name": "Eliminar observación",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"user_id\": 123,\n    \"observation_type_id\": 2,\n    \"message\": \"Subsanable en una semana\",\n    \"date\": \"2020-04-28 15:55:29\",\n    \"enabled\": true,\n    \"created_at\": \"2020-04-28T19:55:29.000000Z\",\n    \"updated_at\": \"2020-04-28T20:09:04.000000Z\",\n    \"deleted_at\": null\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/{{endpoint}}/5012/observation",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}",
+								"5012",
+								"observation"
+							]
+						},
+						"description": "unset_observation"
+					},
+					"response": []
 				}
 			],
 			"description": "affiliate",
@@ -1486,6 +1593,35 @@
 							]
 						},
 						"description": "bulk_update_role"
+					},
+					"response": []
+				},
+				{
+					"name": "Eliminar observación",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"user_id\": 123,\n    \"observation_type_id\": 21,\n    \"message\": \"Subsanable en un mes\",\n    \"date\": \"2020-04-20 22:29:33\",\n    \"enabled\": true,\n    \"created_at\": \"2020-04-21T02:29:33.000000Z\",\n    \"updated_at\": \"2020-04-21T03:02:08.000000Z\",\n    \"deleted_at\": null\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/{{endpoint}}/1/observation",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}",
+								"1",
+								"observation"
+							]
+						},
+						"description": "unset_observation"
 					},
 					"response": []
 				}
@@ -3050,37 +3186,37 @@
 	],
 	"variable": [
 		{
-			"id": "06a3657a-2405-4d47-8d43-beff1d80301e",
+			"id": "d0c1dd87-925f-4bb2-82dd-f741af48ad60",
 			"key": "url",
 			"value": "http://localhost/api/v1",
 			"type": "string"
 		},
 		{
-			"id": "b22e0528-7e47-471a-912f-b0765e0a2873",
+			"id": "a3a75f16-574c-4a53-a104-fcf525916946",
 			"key": "username",
 			"value": "nalarcon",
 			"type": "string"
 		},
 		{
-			"id": "e1812795-0b2a-434b-8938-8a919e719935",
+			"id": "11817cd3-de68-403e-b099-a6b48a5abcd7",
 			"key": "password",
 			"value": "nalarcon",
 			"type": "string"
 		},
 		{
-			"id": "99625a96-3805-4965-89dc-734d45f98a49",
+			"id": "33820717-31d1-4d87-baee-40d800cebcd6",
 			"key": "endpoint",
 			"value": "",
 			"type": "string"
 		},
 		{
-			"id": "f67d6328-fd15-4ca4-b633-7d8ca037c781",
+			"id": "c3bf123b-0cf0-413e-97c3-f00f89b5874d",
 			"key": "currentAccessToken",
 			"value": "",
 			"type": "string"
 		},
 		{
-			"id": "5706d087-ae32-4f2a-9169-6bb008a0b87b",
+			"id": "94fcbc62-9b86-4549-b4ff-a22021b5d8b2",
 			"key": "accessTokenExpiry",
 			"value": "",
 			"type": "string"

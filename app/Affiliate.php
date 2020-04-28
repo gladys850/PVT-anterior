@@ -210,7 +210,7 @@ class Affiliate extends Model
 
     public function observations()
     {
-        return $this->morphMany(Observation::class, 'observable');
+        return $this->morphMany(Observation::class, 'observable')->latest('updated_at');
     }
 
     public function guarantees()
