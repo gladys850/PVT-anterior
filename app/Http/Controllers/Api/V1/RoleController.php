@@ -45,9 +45,7 @@ class RoleController extends Controller
     * @responseFile responses/role/get_permissions.200.json
     */
     public function get_permissions(Role $role) {
-        return response()->json([
-            'permissions' => $role->permissions()->where('name', '!=', null)->get()->pluck('id')
-        ]);
+        return $role->permissions()->where('name', '!=', null)->get()->pluck('id');
     }
 
     /**
@@ -63,8 +61,6 @@ class RoleController extends Controller
             'permissions.*' => 'exists:permissions,id'
         ]);
         $role->syncPermissions($request->permissions);
-        return response()->json([
-            'permissions' => $role->permissions()->where('name', '!=', null)->get()->pluck('id')
-        ]);
+        return $role->permissions()->where('name', '!=', null)->get()->pluck('id');
     }
 }

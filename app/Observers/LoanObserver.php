@@ -36,9 +36,4 @@ class LoanObserver
     {
         Util::save_record($object, 'datos-de-un-tramite', 'eliminó préstamo: ' . $object->code);
     }
-
-    public function pivotUpdating(Loan $object, $relationName, $pivotIds, $pivotIdsAttributes)
-    {
-        Util::save_record($object, 'datos-de-un-tramite', Util::relation_action($object, $relationName, $pivotIds, $pivotIdsAttributes, 'modificó'));
-    }
 }

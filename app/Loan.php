@@ -5,7 +5,6 @@ namespace App;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Fico7489\Laravel\Pivot\Traits\PivotEventTrait;
 use Carbon;
 use Util;
 
@@ -13,7 +12,6 @@ class Loan extends Model
 {
     use Traits\EloquentGetTableNameTrait;
     use Traits\RelationshipsTrait;
-    use PivotEventTrait;
     use SoftDeletes;
 
     protected $dates = [
@@ -37,9 +35,6 @@ class Loan extends Model
         'interest_id',
         'state_id',
         'amount_approved',
-        'payable_liquid_calculated',
-        'bonus_calculated',
-        'indebtedness_calculated',
         'loan_term',
         'disbursement_date',
         'payment_type_id',

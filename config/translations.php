@@ -50,7 +50,6 @@
         //loans
         'procedure_modality_id'=>'Modalidad de Préstamo',
         'procedure_documents' => 'Documento',
-        'submitted_documents' => 'Documento Presentado',
         'request_date'=>'Fecha de solicitud',
         'amount_requested'=>'Monto solicitado',
         'state_id'=>'Estado del prestamo',
@@ -71,12 +70,12 @@
         'estimated_date' => 'Fecha estimada',
         'estimated_quota' => 'Cuota estimada',
         'payment_type_id' => 'Tipo de pago',
-        'payable_liquid_calculated' => 'Liquido pagable calculado',
-        'bonus_calculated' => 'Total bono calculado',
-        'indebtedness_calculated' => 'Indice de Endeudamiento',
         // Observation
         'observation_type_id' => 'Tipo de Observación',
-        // Submitted Documents
-        'is_valid' => 'Válido',
-        'comment' => 'Comentario'
+        // Observation document
+        'comment' => 'Comentario',
+        'is_valid' => 'Estado',
+        // documentos presentados prestamos
+        'procedure_documen_id' => 'Documento',
+        'submitted_documents' => 'Documento presentado'
     ];
