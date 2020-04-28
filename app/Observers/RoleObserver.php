@@ -8,13 +8,13 @@ use App\Helpers\Util;
 
 class RoleObserver
 {
-    public function pivotAttached($model, $relationName, $pivotIds, $pivotIdsAttributes)
+    public function pivotAttached(Role $object, $relationName, $pivotIds, $pivotIdsAttributes)
     {
-        Util::save_record(Role::find($model['id']), 'sistema', Util::pivot_action($relationName, $pivotIds, 'agregó'));
+        Util::save_record($object, 'sistema', Util::pivot_action($relationName, $pivotIds, 'agregó'));
     }
 
-    public function pivotDetached($model, $relationName, $pivotIds)
+    public function pivotDetached(Role $object, $relationName, $pivotIds)
     {
-        Util::save_record(Role::find($model['id']), 'sistema', Util::pivot_action($relationName, $pivotIds, 'eliminó'));
+        Util::save_record($object, 'sistema', Util::pivot_action($relationName, $pivotIds, 'eliminó'));
     }
 }
