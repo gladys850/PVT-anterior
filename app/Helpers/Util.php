@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\Schema;
 
 class Util
 {
+    private static $display_names = ['display_name', 'name', 'code', 'shortened', 'number', 'correlative', 'description'];
+
     public static function trim_spaces($string)
     {
         return preg_replace('/[[:blank:]]+/', ' ', $string);
@@ -142,12 +144,14 @@ class Util
 
     public static function pivot_action($relationName, $pivotIds, $message)
     {
+        $dirty = false;
         $action = $message . ' ';
         $action .= self::translate($relationName) . ': ';
         if (substr($relationName, 0, 4) != 'App\\') {
             $relationName = 'App\\'.Str::studly(strtolower(Str::singular($relationName)));
         }
         if (is_subclass_of($relationName, 'Illuminate\Database\Eloquent\Model')) {
+            $dirty = true;
             $action .= '(';
             foreach ($pivotIds as $id) {
                 $action .= app($relationName)::find($id)->display_name;
@@ -158,7 +162,35 @@ class Util
                 }
             }
         }
-        return $action;
+        return $dirty ? $action : '';
+    }
+
+    public static function relation_action($model, $relationName, $pivotIds, $pivotIdsAttributes, $message)
+    {
+        $dirty = false;
+        $action = $message . ' ';
+        $action .= self::translate($relationName);
+        $pivots = $model[$relationName]->whereIn('id', $pivotIds);
+        foreach ($pivots as $pivot) {
+            foreach (self::$display_names as $title) {
+                if (isset($pivot[$title])) {
+                    $action .= ' [' . $pivot[$title] . '] ';
+                    break;
+                }
+            }
+            foreach ($pivotIdsAttributes[$pivot->id] as $key => $attribute) {
+                if ($pivot['pivot'][$key] != $attribute && !$dirty) $dirty = true;
+                $action .= '(' . self::translate($key) . ') ';
+                $action .= self::bool_to_string($pivot['pivot'][$key]) . '->' . self::bool_to_string($attribute);
+                if (next($pivotIdsAttributes[$pivot->id])) {
+                    $action .= ', ';
+                }
+            }
+            if (next($pivots)) {
+                $action .= '; ';
+            }
+        }
+        return $dirty ? $action : '';
     }
 
     public static function concat_action($object, $message = 'editó')
@@ -169,9 +201,8 @@ class Util
         $updated_values = $object->getDirty();
         $relationships = $object->relationships();
         foreach ($updated_values as $key => $value) {
-            $display_names = ['display_name', 'name', 'code', 'shortened', 'number', 'correlative', 'description'];
             $concat = false;
-            $action .= ' [' . Util::translate($key) . '] ';
+            $action .= ' [' . self::translate($key) . '] ';
             if (substr($key, -3, 3) == '_id') {
                 $attribute = substr($key, 0, -3);
                 if (array_key_exists($attribute, $relationships)) {
@@ -179,7 +210,7 @@ class Util
                         $old_relation = app($relationships[$attribute]['model'])::find($old[$key]);
                         $new_relation = app($relationships[$attribute]['model'])::find($value);
                         if ($old_relation) {
-                            foreach ($display_names as $title) {
+                            foreach (self::$display_names as $title) {
                                 if (isset($old_relation[$title])) {
                                     $action .= $old_relation[$title];
                                     break;
@@ -188,7 +219,7 @@ class Util
                         }
                         $action .= ' -> ';
                         if ($new_relation) {
-                            foreach ($display_names as $title) {
+                            foreach (self::$display_names as $title) {
                                 if (isset($new_relation[$title])) {
                                     $action .= $new_relation[$title];
                                     break;
@@ -200,7 +231,7 @@ class Util
                 }
             }
             if (!$concat) {
-                $action .= Util::bool_to_string($old[$key]) . ' -> ' . Util::bool_to_string($object[$key]);
+                $action .= self::bool_to_string($old[$key]) . ' -> ' . self::bool_to_string($object[$key]);
             }
             if (next($updated_values)) {
                 $action .= ', ';
