@@ -17,7 +17,6 @@ class Affiliate extends Model
     // protected $appends = ['picture_saved', 'fingerprint_saved', 'full_name'];
     // protected $hidden = ['pivot'];
     protected $fillable = [
-        'user_id',
         'affiliate_state_id',
         'city_identity_card_id',
         'city_birth_id',
@@ -33,8 +32,8 @@ class Affiliate extends Model
         'first_name',
         'second_name',
         'surname_husband',
-        'civil_status',
         'gender',
+        'civil_status',
         'birth_date',
         'date_entry',
         'date_death',
@@ -47,11 +46,11 @@ class Affiliate extends Model
         'afp',
         'nua',
         'item',
-        'is_duedate_undefined',
-        'due_date',
         'service_years',
         'service_months',
         'death_certificate_number',
+        'due_date',
+        'is_duedate_undefined',
         'affiliate_registration_number',
         'file_code'
       ];

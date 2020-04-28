@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\SpouseResource;
 use App\Spouse;
 use App\Http\Requests\SpouseForm;
 use Illuminate\Http\Request;
@@ -28,10 +29,7 @@ class SpouseController extends Controller
     public function index(Request $request)
     {
         $data = Util::search_sort(new Spouse(), $request);
-        foreach ($data as $item) {
-            $this->append_data($item);
-        }
-        return $data;
+        return SpouseResource::collection($data);
     }
 
     /**
@@ -71,8 +69,7 @@ class SpouseController extends Controller
     */
     public function show(Spouse $spouse)
     {
-        $this->append_data($spouse);
-        return $spouse;
+        return new SpouseResource($spouse);
     }
 
     /**
@@ -117,10 +114,5 @@ class SpouseController extends Controller
     {
         $spouse->delete();
         return $spouse;
-    }
-
-    // Append additional to spouse
-    private function append_data($spouse) {
-        $spouse->civil_status_gender = $spouse->civil_status_gender;
     }
 }
