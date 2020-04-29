@@ -86,6 +86,7 @@ class LoanController extends Controller
     * @bodyParam lenders array required Lista de IDs de afiliados Titular de préstamo. Example: [5146]
     * @bodyParam payable_liquid_calculated numeric required Promedio liquido pagable. Example: 2000
     * @bodyParam bonus_calculated integer required Total de bono calculado. Example: 24
+    * @bodyParam liquid_qualification_calculated numeric required Total de bono calculado. Example: 2000
     * @bodyParam indebtedness_calculated numeric required Indice de endeudamiento. Example: 52.26
     * @bodyParam guarantors array Lista de IDs de afiliados Garante de préstamo. Example: []
     * @bodyParam parent_loan_id integer ID de Préstamo Padre. Example: 1
@@ -177,6 +178,10 @@ class LoanController extends Controller
     * @bodyParam loan_term integer required plazo. Example: 2
     * @bodyParam payment_type_id integer required Tipo de desembolso. Example: 1
     * @bodyParam lenders array required Lista de IDs de afiliados Titular de préstamo. Example: [5146]
+    * @bodyParam payable_liquid_calculated numeric required Promedio liquido pagable. Example: 2000
+    * @bodyParam bonus_calculated integer required Total de bono calculado. Example: 24
+    * @bodyParam liquid_qualification_calculated numeric required Total de bono calculado. Example: 2000
+    * @bodyParam indebtedness_calculated numeric required Indice de endeudamiento. Example: 52.26
     * @bodyParam guarantors array Lista de IDs de afiliados Garante de préstamo. Example: []
     * @bodyParam disbursement_date date Fecha de desembolso. Example: 2020-02-01
     * @bodyParam parent_loan_id integer ID de Préstamo Padre. Example: 1
