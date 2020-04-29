@@ -48,6 +48,7 @@ class LoanForm extends FormRequest
             'documents' => ['array', 'min:1', new ProcedureRequirements($procedure_modality)],
             'payable_liquid_calculated' => ['numeric'],
             'bonus_calculated' => ['integer'],
+            'liquid_qualification_calculated' => ['numeric'],
             'indebtedness_calculated' => ['numeric', 'max:90', new LoanParameterIndebtedness($procedure_modality)],
             'personal_reference_id' => ['nullable', 'exists:personal_references,id'],
             'documents.*' => ['exists:procedure_documents,id'],
@@ -65,7 +66,7 @@ class LoanForm extends FormRequest
         ];
         switch ($this->method()) {
             case 'POST': {
-                foreach (array_slice($rules, 0, $procedure_modality->loan_modality_parameter->personal_reference ? 12 : 11) as $key => $rule) {
+                foreach (array_slice($rules, 0, $procedure_modality->loan_modality_parameter->personal_reference ? 13 : 12) as $key => $rule) {
                     array_push($rules[$key], 'required');
                 }
                 return $rules;

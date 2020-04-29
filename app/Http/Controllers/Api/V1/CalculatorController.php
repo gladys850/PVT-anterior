@@ -36,16 +36,7 @@ class CalculatorController extends Controller
     * @bodyParam contributions[2].public_security_bonus integer Bono Seguridad Ciudadana . Example: 0.00
     * @bodyParam contributions[2].east_bonus integer Bono Oriente. Example: 0.00
     * @authenticated
-    * @response
-    * {
-    *    "promedio_liquido_pagable": 1944,
-    *    "total_bonos": 0,
-    *    "liquido_para_calificacion": 1944,
-    *    "calculo_de_cuota": "1.045,22",
-    *    "indice_endeudamiento": 53,
-    *    "monto_maximo_sugerido": 2000,
-    *    "valido": true
-    * }
+    * @responseFile responses/calculator/store.200.json
     */
     public function store(Request $request)
     {
@@ -119,7 +110,7 @@ class CalculatorController extends Controller
         if($amount_requested>0 && $months_term ==null){
             return ((($interest_rate)/(1-(1/pow((1+$interest_rate),$loan_interval->maximum_term))))*$amount_requested);
         }if($amount_requested ==null && $months_term>0){
-            $maximum_qualified_amount = $this->maximum_amount($modality_id,$months_term,$liquid_qualification);
+            $maximum_qualified_amount = $this->maximum_amount($procedure_modality,$months_term,$liquid_qualification);
             return ((($interest_rate)/(1-(1/pow((1+$interest_rate),$months_term))))*$maximum_qualified_amount);
         }if ($months_term>0 && $amount_requested>0){
             return ((($interest_rate)/(1-(1/pow((1+$interest_rate),$months_term))))*$amount_requested);

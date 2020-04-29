@@ -74,6 +74,7 @@ return [
     'payable_liquid_calculated' => 'Liquido pagable calculado',
     'bonus_calculated' => 'Total bono calculado',
     'indebtedness_calculated' => 'Indice de Endeudamiento',
+    'liquid_qualification_calculated' => 'Líquido para Calificación calculado',
     // Observation
     'observation_type_id' => 'Tipo de Observación',
     'message' => 'Mensaje',
