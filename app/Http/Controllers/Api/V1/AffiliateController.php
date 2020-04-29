@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1;
 
 use \Waavi\Sanitizer\Sanitizer;
 use Util;
+use Carbon;
 use App\Affiliate;
 use App\RecordType;
 use App\User;
@@ -20,8 +21,10 @@ use App\Loan;
 use App\LoanGlobalParameter;
 use App\ProcedureType;
 use App\Http\Resources\AffiliateResource;
+use App\Http\Resources\LoanResource;
 use App\Http\Requests\AffiliateForm;
 use App\Http\Requests\AffiliateFingerprintForm;
+use App\Http\Requests\ObservationForm;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Schema;
@@ -416,14 +419,11 @@ class AffiliateController extends Controller
             ];
         }
         $data = Util::search_sort(new Loan(), $request, [], $relations, ['id']);
-        foreach ($data as $loan) {
-            $loan->balance = $loan->balance;
-            $loan->estimated_quota = $loan->estimated_quota;
-            $loan->defaulted = $loan->defaulted;
-            $loan->lenders = $loan->lenders;
-            $loan->guarantors = $loan->guarantors;
-        }
-        return $data;
+        $data->getCollection()->transform(function ($value) {
+            $value->with_lenders = true;
+            return $value;
+        });
+        return LoanResource::collection($data);
     }
 
     /**
@@ -456,5 +456,89 @@ class AffiliateController extends Controller
         if(!$affiliate->affiliate_state) abort(404, 'Debe actualizar el estado del afiliado');
         $modality = ProcedureType::findOrFail($request->procedure_type_id);
         return Loan::get_modality($modality->name, $affiliate);
+    }
+
+    /** @group Observaciones de Afiliado
+    * Lista de observaciones
+    * Devuelve el listado de observaciones del afiliado
+    * @urlParam affiliate required ID del afiliado. Example: 5012
+    * @authenticated
+    * @responseFile responses/affiliate/get_observations.200.json
+    */
+    public function get_observations(Affiliate $affiliate)
+    {
+        return $affiliate->observations;
+    }
+
+    /** @group Observaciones de Afiliado
+    * Nueva observación
+    * Inserta una nueva observación asociada al afiliado
+    * @urlParam affiliate required ID del afiliado. Example: 5012
+    * @bodyParam observation_type_id integer required ID de tipo de observación. Example: 2
+    * @bodyParam message string Mensaje adjunto a la observación. Example: Subsanable en una semana
+    * @authenticated
+    * @responseFile responses/affiliate/set_observation.200.json
+    */
+    public function set_observation(ObservationForm $request, Affiliate $affiliate)
+    {
+        $observation = $affiliate->observations()->make([
+            'message' => $request->message ?? null,
+            'observation_type_id' => $request->observation_type_id,
+            'date' => Carbon::now()
+        ]);
+        $observation->user()->associate(Auth::user());
+        $observation->save();
+        return $observation;
+    }
+
+    /** @group Observaciones de Afiliado
+    * Actualizar observación
+    * Actualiza los datos de una observación asociada al afiliado
+    * @urlParam affiliate required ID del afiliado. Example: 5012
+    * @bodyParam original.user_id integer required ID de usuario que creó la observación. Example: 123
+    * @bodyParam original.observation_type_id integer required ID de tipo de observación original. Example: 2
+    * @bodyParam original.message string required Mensaje de la observación original. Example: Subsanable en una semana
+    * @bodyParam original.date date required Fecha de la observación original. Example: 2020-04-14 21:16:52
+    * @bodyParam original.enabled boolean required Estado de la observación original. Example: false
+    * @bodyParam update.enabled boolean Estado de la observación a actualizar. Example: true
+    * @authenticated
+    * @responseFile responses/affiliate/update_observation.200.json
+    */
+    public function update_observation(ObservationForm $request, Affiliate $affiliate)
+    {
+        $observation = $affiliate->observations();
+        foreach (collect($request->original)->only('user_id', 'message', 'date', 'enabled')->put('observable_id', $affiliate->id)->put('observable_type', 'affiliates') as $key => $value) {
+            $observation = $observation->where($key, $value);
+        }
+        $observation->update(collect($request->update)->only('enabled')->toArray());
+        return $affiliate->observations;
+    }
+
+    /** @group Observaciones de Afiliado
+    * Eliminar observación
+    * Elimina una observación del afiliado siempre y cuando no haya sido modificada
+    * @urlParam affiliate required ID del préstamo. Example: 2
+    * @bodyParam user_id integer required ID de usuario que creó la observación. Example: 123
+    * @bodyParam observation_type_id integer required ID de tipo de observación. Example: 2
+    * @bodyParam message string required Mensaje de la observación. Example: Subsanable en una semana
+    * @bodyParam date date required Fecha de la observación. Example: 2020-04-14 21:16:52
+    * @bodyParam enabled boolean required Estado de la observación. Example: false
+    * @authenticated
+    * @responseFile responses/affiliate/unset_observation.200.json
+    */
+    public function unset_observation(ObservationForm $request, Affiliate $affiliate)
+    {
+        $request->request->add(['observable_type' => 'affiliates', 'observable_id' => $affiliate->id]);
+        $observation = $affiliate->observations();
+        foreach ($request->except('created_at','updated_at','deleted_at') as $key => $value) {
+            $observation = $observation->where($key, $value);
+        }
+        $observation = $observation->whereColumn('created_at','updated_at');
+        if ($observation->count() == 1) {
+            $observation->delete();
+            return $affiliate->observations;
+        } else {
+            abort(404, 'Observación inexistente');
+        }
     }
 }

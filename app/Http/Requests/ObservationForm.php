@@ -8,7 +8,7 @@ use App\Rules\ModuleObservation;
 use App\Module;
 use Util;
 
-class LoanObservationForm extends FormRequest
+class ObservationForm extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -27,12 +27,23 @@ class LoanObservationForm extends FormRequest
      */
     public function rules()
     {
-        $module = Module::whereName('prestamos')->first();
-        if (!$module) abort(404, 'No se encuentra el módulo de préstamos');
+        $route = explode('/', explode('api/', url()->current())[1])[1];
+        switch ($route) {
+            case 'loan':
+                $module = Module::whereName('prestamos')->first();
+                break;
+            case 'affiliate':
+                $module = false;
+                break;
+            default:
+                $module = null;
+        }
+        if ($module === null) abort(404, 'Módulo inexistente');
         $rules = [
-            'observation_type_id' => ['integer', 'exists:observation_types,id', new ModuleObservation($module)],
+            'observation_type_id' => ['integer', 'exists:observation_types,id'],
             'message' => ['string', 'min:1', 'max:255']
         ];
+        if ($module) array_push($rules['observation_type_id'], new ModuleObservation($module));
         switch ($this->method()) {
             case 'POST':
                 foreach (array_slice($rules, 0, 1) as $key => $rule) {
@@ -50,6 +61,15 @@ class LoanObservationForm extends FormRequest
                 $rules['original.enabled'] = array_merge($rules['update.enabled'], ['required']);
                 $rules['original.date'] = ['date', 'required'];
                 $rules['original.user_id'] = ['integer', 'exists:users,id', 'required'];
+                break;
+            case 'DELETE':
+                $rules['enabled'] = ['boolean'];
+                $rules['date'] = ['date'];
+                $rules['user_id'] = ['integer', 'exists:users,id'];
+                foreach ($rules as $key => $rule) {
+                    $rules[$key] = array_merge($rule, ['required']);
+                }
+                break;
         }
         return $rules;
     }

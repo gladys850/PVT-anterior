@@ -58,6 +58,10 @@ Route::group([
             Route::get('affiliate/{affiliate}/contribution', 'Api\V1\AffiliateController@get_contributions');
             Route::get('affiliate/{affiliate}/fingerprint_picture', 'Api\V1\AffiliateController@get_fingerprint_images');
             Route::get('affiliate/{affiliate}/profile_picture', 'Api\V1\AffiliateController@get_profile_images');
+            Route::get('affiliate/{affiliate}/observation','Api\V1\AffiliateController@get_observations');
+            Route::post('affiliate/{affiliate}/observation','Api\V1\AffiliateController@set_observation');
+            Route::patch('affiliate/{affiliate}/observation','Api\V1\AffiliateController@update_observation');
+            Route::delete('affiliate/{affiliate}/observation','Api\V1\AffiliateController@unset_observation');
         });
         Route::group([
             'middleware' => 'permission:create-affiliate'
@@ -107,6 +111,7 @@ Route::group([
             Route::get('loan/{loan}/observation','Api\V1\LoanController@get_observations');
             Route::post('loan/{loan}/observation','Api\V1\LoanController@set_observation');
             Route::patch('loan/{loan}/observation','Api\V1\LoanController@update_observation');
+            Route::delete('loan/{loan}/observation','Api\V1\LoanController@unset_observation');
         });
         Route::group([
             'middleware' => 'permission:create-loan'
