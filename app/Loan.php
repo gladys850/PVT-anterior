@@ -41,6 +41,7 @@ class Loan extends Model
         'payable_liquid_calculated',
         'bonus_calculated',
         'indebtedness_calculated',
+        'liquid_qualification_calculated',
         'loan_term',
         'payment_type_id',
         'personal_reference_id',
