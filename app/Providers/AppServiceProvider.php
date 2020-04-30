@@ -17,6 +17,8 @@ use App\Observers\RoleObserver;
 use App\Role;
 use App\Observers\LoanObserver;
 use App\Loan;
+use App\Observers\ObservationObserver;
+use App\Observation;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -45,7 +47,7 @@ class AppServiceProvider extends ServiceProvider
         Affiliate::observe(AffiliateObserver::class);
         Role::observe(RoleObserver::class);
         Loan::observe(LoanObserver::class);
-
+        Observation::observe(ObservationObserver::class);
 
         // Polymorphic relationships
         Relation::morphMap([

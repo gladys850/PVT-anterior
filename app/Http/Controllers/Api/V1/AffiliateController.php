@@ -462,12 +462,15 @@ class AffiliateController extends Controller
     * Lista de observaciones
     * Devuelve el listado de observaciones del afiliado
     * @urlParam affiliate required ID del afiliado. Example: 5012
+    * @queryParam with_trashed Booleano para incluir observaciones eliminadas. Example: 1
     * @authenticated
     * @responseFile responses/affiliate/get_observations.200.json
     */
     public function get_observations(Affiliate $affiliate)
     {
-        return $affiliate->observations;
+        $query = $affiliate->observations();
+        if ($request->boolean('with_trashed')) $query = $query->withTrashed();
+        return $query->get();
     }
 
     /** @group Observaciones de Afiliado
@@ -507,10 +510,16 @@ class AffiliateController extends Controller
     public function update_observation(ObservationForm $request, Affiliate $affiliate)
     {
         $observation = $affiliate->observations();
-        foreach (collect($request->original)->only('user_id', 'message', 'date', 'enabled')->put('observable_id', $affiliate->id)->put('observable_type', 'affiliates') as $key => $value) {
+        foreach (collect($request->original)->only('user_id', 'observation_type_id', 'message', 'date', 'enabled')->put('observable_id', $affiliate->id)->put('observable_type', 'affiliates') as $key => $value) {
             $observation = $observation->where($key, $value);
         }
-        $observation->update(collect($request->update)->only('enabled')->toArray());
+        if ($observation->count() === 1) {
+            $observation = $observation->first();
+            if ($observation->enabled != $request->update['enabled']) {
+                $observation->fill(collect($request->update)->only('enabled')->toArray());
+                $observation->save();
+            }
+        }
         return $affiliate->observations;
     }
 
@@ -538,7 +547,7 @@ class AffiliateController extends Controller
             $observation->delete();
             return $affiliate->observations;
         } else {
-            abort(404, 'Observación inexistente');
+            abort(404, 'La observación fue modificada, no se puede eliminar');
         }
     }
 }

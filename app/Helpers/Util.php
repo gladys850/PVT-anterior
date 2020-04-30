@@ -240,7 +240,7 @@ class Util
         return $action;
     }
 
-    public static function save_record($object, $type, $action)
+    public static function save_record($object, $type, $action, $recordable = null)
     {
         if ($action) {
             $record_type = RecordType::whereName($type)->first();
@@ -249,6 +249,7 @@ class Util
                     'action' => $action
                 ]);
                 $record->record_type()->associate($record_type);
+                if ($recordable) $record->recordable()->associate($recordable);
                 $record->save();
             }
         }
