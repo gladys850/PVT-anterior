@@ -19,7 +19,6 @@ use App\ProcedureModality;
 use App\PaymentType;
 use App\Role;
 use App\RoleSequence;
-use App\Http\Resources\LoanResource;
 use App\Http\Requests\LoansForm;
 use App\Http\Requests\LoanForm;
 use App\Http\Requests\LoanPaymentForm;
@@ -32,6 +31,22 @@ use Util;
 */
 class LoanController extends Controller
 {
+    public static function append_data(Loan $loan, $with_lenders = false)
+    {
+        $loan->payable_liquid_calculated = $loan->payable_liquid_calculated;
+        $loan->bonus_calculated = $loan->bonus_calculated;
+        $loan->indebtedness_calculated = $loan->indebtedness_calculated;
+        $loan->liquid_qualification_calculated = $loan->liquid_qualification_calculated;
+        $loan->balance = $loan->balance;
+        $loan->estimated_quota = $loan->estimated_quota;
+        $loan->defaulted = $loan->defaulted;
+        if ($with_lenders) {
+            $loan->lenders = $loan->lenders;
+            $loan->guarantors = $loan->guarantors;
+        }
+        return $loan;
+    }
+
     /**
     * Lista de Préstamos
     * Devuelve el listado con los datos paginados
@@ -72,7 +87,10 @@ class LoanController extends Controller
             ];
         }
         $data = Util::search_sort(new Loan(), $request, $filters);
-        return LoanResource::collection($data);
+        $data->getCollection()->transform(function ($loan) {
+            return self::append_data($loan, false);
+        });
+        return $data;
     }
 
     /**
@@ -161,8 +179,7 @@ class LoanController extends Controller
         if (Auth::user()->can('show-all-loan') || Auth::user()->roles()->whereHas('module', function($query) {
             return $query->whereName('prestamos');
         })->pluck('id')->contains($loan->role_id)) {
-            $loan->with_lenders = true;
-            return new LoanResource($loan);
+            return self::append_data($loan, true);
         } else {
             abort(403);
         }
@@ -610,12 +627,15 @@ class LoanController extends Controller
     * Lista de observaciones
     * Devuelve el listado de observaciones del trámite
     * @urlParam loan required ID del préstamo. Example: 2
+    * @queryParam with_trashed Booleano para incluir observaciones eliminadas. Example: 1
     * @authenticated
     * @responseFile responses/loan/get_observations.200.json
     */
-    public function get_observations(Loan $loan)
+    public function get_observations(Request $request, Loan $loan)
     {
-        return $loan->observations;
+        $query = $loan->observations();
+        if ($request->boolean('with_trashed')) $query = $query->withTrashed();
+        return $query->get();
     }
 
     /** @group Observaciones de Préstamos
@@ -655,10 +675,16 @@ class LoanController extends Controller
     public function update_observation(ObservationForm $request, Loan $loan)
     {
         $observation = $loan->observations();
-        foreach (collect($request->original)->only('user_id', 'message', 'date', 'enabled')->put('observable_id', $loan->id)->put('observable_type', 'loans') as $key => $value) {
+        foreach (collect($request->original)->only('user_id', 'observation_type_id', 'message', 'date', 'enabled')->put('observable_id', $loan->id)->put('observable_type', 'loans') as $key => $value) {
             $observation = $observation->where($key, $value);
         }
-        $observation->update(collect($request->update)->only('enabled')->toArray());
+        if ($observation->count() === 1) {
+            $observation = $observation->first();
+            if ($observation->enabled != $request->update['enabled']) {
+                $observation->fill(collect($request->update)->only('enabled')->toArray());
+                $observation->save();
+            }
+        }
         return $loan->observations;
     }
 
@@ -686,7 +712,7 @@ class LoanController extends Controller
             $observation->delete();
             return $loan->observations;
         } else {
-            abort(404, 'Observación inexistente');
+            abort(404, 'La observación fue modificada, no se puede eliminar');
         }
     }
 

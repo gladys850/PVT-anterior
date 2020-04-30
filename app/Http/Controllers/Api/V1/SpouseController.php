@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\SpouseResource;
 use App\Spouse;
 use App\Http\Requests\SpouseForm;
 use Illuminate\Http\Request;
@@ -14,6 +13,12 @@ use Util;
 */
 class SpouseController extends Controller
 {
+    public static function append_data(Spouse $spouse)
+    {
+        $spouse->civil_status_gender = $spouse->civil_status_gender;
+        return $spouse;
+    }
+
     /**
     * Lista de cónyugues
     * Devuelve el listado con los datos paginados
@@ -25,11 +30,13 @@ class SpouseController extends Controller
     * @authenticated
     * @responseFile responses/spouse/index.200.json
     */
-
     public function index(Request $request)
     {
         $data = Util::search_sort(new Spouse(), $request);
-        return SpouseResource::collection($data);
+        $data->getCollection()->transform(function ($spouse) {
+            return self::append_data($spouse);
+        });
+        return $data;
     }
 
     /**
@@ -69,7 +76,7 @@ class SpouseController extends Controller
     */
     public function show(Spouse $spouse)
     {
-        return new SpouseResource($spouse);
+        return self::append_data($spouse);
     }
 
     /**

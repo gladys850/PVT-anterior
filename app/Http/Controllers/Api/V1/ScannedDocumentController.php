@@ -48,7 +48,6 @@ class ScannedDocumentController extends Controller
                 'document'=>$document
             );
         }
-        logger($data);
         return view('affiliates.create_scanned_document',$data);
     }
 

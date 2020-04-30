@@ -14,7 +14,7 @@ class Observation extends Model
     protected $primaryKey = null;
     public $incrementing = false;
     protected $fillable = ['user_id', 'observation_type_id', 'observable_id', 'observable_type', 'message', 'date', 'enabled'];
-    protected $hidden = ['observable_id', 'observable_type'];
+    // protected $hidden = ['observable_id', 'observable_type'];
 
     public function observable()
     {
@@ -29,5 +29,10 @@ class Observation extends Model
     public function type()
     {
         return $this->belongsTo(ObservationType::class);
+    }
+
+    public function records()
+    {
+        return $this->morphMany(Record::class, 'recordable')->latest('updated_at');
     }
 }

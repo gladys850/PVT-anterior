@@ -20,8 +20,6 @@ use App\Unit;
 use App\Loan;
 use App\LoanGlobalParameter;
 use App\ProcedureType;
-use App\Http\Resources\AffiliateResource;
-use App\Http\Resources\LoanResource;
 use App\Http\Requests\AffiliateForm;
 use App\Http\Requests\AffiliateFingerprintForm;
 use App\Http\Requests\ObservationForm;
@@ -39,6 +37,20 @@ use Carbon\CarbonImmutable;
 */
 class AffiliateController extends Controller
 {
+    public static function append_data(Affiliate $affiliate, $with_category = false)
+    {
+        $affiliate->full_name = $affiliate->full_name;
+        $affiliate->civil_status_gender = $affiliate->civil_status_gender;
+        $affiliate->dead = $affiliate->dead;
+        $affiliate->identity_card_ext = $affiliate->identity_card_ext;
+        $affiliate->picture_saved = $affiliate->picture_saved;
+        $affiliate->fingerprint_saved = $affiliate->fingerprint_saved;
+        $affiliate->defaulted = $affiliate->defaulted;
+        $affiliate->cpop = $affiliate->cpop;
+        if ($with_category) $affiliate->category = $affiliate->category;
+        return $affiliate;
+    }
+
     /**
     * Lista de afiliados
     * Devuelve el listado con los datos paginados
@@ -53,7 +65,10 @@ class AffiliateController extends Controller
     public function index(Request $request)
     {
         $data = Util::search_sort(new Affiliate(), $request);
-        return AffiliateResource::collection($data);
+        $data->getCollection()->transform(function ($affiliate) {
+            return self::append_data($affiliate, false);
+        });
+        return $data;
     }
 
     /**
@@ -112,8 +127,7 @@ class AffiliateController extends Controller
     */
     public function show(Affiliate $affiliate)
     {
-        $affiliate->with_category = true;
-        return new AffiliateResource($affiliate);
+        return self::append_data($affiliate, true);
     }
 
     /**
@@ -419,11 +433,10 @@ class AffiliateController extends Controller
             ];
         }
         $data = Util::search_sort(new Loan(), $request, [], $relations, ['id']);
-        $data->getCollection()->transform(function ($value) {
-            $value->with_lenders = true;
-            return $value;
+        $data->getCollection()->transform(function ($loan) {
+            return LoanController::append_data($loan, true);
         });
-        return LoanResource::collection($data);
+        return $data;
     }
 
     /**
@@ -462,12 +475,15 @@ class AffiliateController extends Controller
     * Lista de observaciones
     * Devuelve el listado de observaciones del afiliado
     * @urlParam affiliate required ID del afiliado. Example: 5012
+    * @queryParam with_trashed Booleano para incluir observaciones eliminadas. Example: 1
     * @authenticated
     * @responseFile responses/affiliate/get_observations.200.json
     */
     public function get_observations(Affiliate $affiliate)
     {
-        return $affiliate->observations;
+        $query = $affiliate->observations();
+        if ($request->boolean('with_trashed')) $query = $query->withTrashed();
+        return $query->get();
     }
 
     /** @group Observaciones de Afiliado
@@ -507,10 +523,16 @@ class AffiliateController extends Controller
     public function update_observation(ObservationForm $request, Affiliate $affiliate)
     {
         $observation = $affiliate->observations();
-        foreach (collect($request->original)->only('user_id', 'message', 'date', 'enabled')->put('observable_id', $affiliate->id)->put('observable_type', 'affiliates') as $key => $value) {
+        foreach (collect($request->original)->only('user_id', 'observation_type_id', 'message', 'date', 'enabled')->put('observable_id', $affiliate->id)->put('observable_type', 'affiliates') as $key => $value) {
             $observation = $observation->where($key, $value);
         }
-        $observation->update(collect($request->update)->only('enabled')->toArray());
+        if ($observation->count() === 1) {
+            $observation = $observation->first();
+            if ($observation->enabled != $request->update['enabled']) {
+                $observation->fill(collect($request->update)->only('enabled')->toArray());
+                $observation->save();
+            }
+        }
         return $affiliate->observations;
     }
 
@@ -538,7 +560,7 @@ class AffiliateController extends Controller
             $observation->delete();
             return $affiliate->observations;
         } else {
-            abort(404, 'Observación inexistente');
+            abort(404, 'La observación fue modificada, no se puede eliminar');
         }
     }
 }
