@@ -20,8 +20,6 @@ use App\Unit;
 use App\Loan;
 use App\LoanGlobalParameter;
 use App\ProcedureType;
-use App\Http\Resources\AffiliateResource;
-use App\Http\Resources\LoanResource;
 use App\Http\Requests\AffiliateForm;
 use App\Http\Requests\AffiliateFingerprintForm;
 use App\Http\Requests\ObservationForm;
@@ -39,6 +37,20 @@ use Carbon\CarbonImmutable;
 */
 class AffiliateController extends Controller
 {
+    public static function append_data(Affiliate $affiliate, $with_category = false)
+    {
+        $affiliate->full_name = $affiliate->full_name;
+        $affiliate->civil_status_gender = $affiliate->civil_status_gender;
+        $affiliate->dead = $affiliate->dead;
+        $affiliate->identity_card_ext = $affiliate->identity_card_ext;
+        $affiliate->picture_saved = $affiliate->picture_saved;
+        $affiliate->fingerprint_saved = $affiliate->fingerprint_saved;
+        $affiliate->defaulted = $affiliate->defaulted;
+        $affiliate->cpop = $affiliate->cpop;
+        if ($with_category) $affiliate->category = $affiliate->category;
+        return $affiliate;
+    }
+
     /**
     * Lista de afiliados
     * Devuelve el listado con los datos paginados
@@ -53,7 +65,10 @@ class AffiliateController extends Controller
     public function index(Request $request)
     {
         $data = Util::search_sort(new Affiliate(), $request);
-        return AffiliateResource::collection($data);
+        $data->getCollection()->transform(function ($affiliate) {
+            return self::append_data($affiliate, false);
+        });
+        return $data;
     }
 
     /**
@@ -112,8 +127,7 @@ class AffiliateController extends Controller
     */
     public function show(Affiliate $affiliate)
     {
-        $affiliate->with_category = true;
-        return new AffiliateResource($affiliate);
+        return self::append_data($affiliate, true);
     }
 
     /**
@@ -419,11 +433,10 @@ class AffiliateController extends Controller
             ];
         }
         $data = Util::search_sort(new Loan(), $request, [], $relations, ['id']);
-        $data->getCollection()->transform(function ($value) {
-            $value->with_lenders = true;
-            return $value;
+        $data->getCollection()->transform(function ($loan) {
+            return LoanController::append_data($loan, true);
         });
-        return LoanResource::collection($data);
+        return $data;
     }
 
     /**
