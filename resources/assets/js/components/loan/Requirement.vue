@@ -272,9 +272,10 @@ export default {
       type: Object,
       required: true
     },
-      modalidad_id: {
+    modalidad_id: {
       type: Number,
-      required: true
+      required: true,
+      default: 0
     },
     intervalos: {
       type: Object,
@@ -288,10 +289,6 @@ export default {
       type: Object,
       required: true
     }
-  },
-  beforeMount() {
-    this.getRequirement(this.modalidad_id);
-    
   },
   watch: {
     modalidad_id () {

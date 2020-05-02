@@ -181,7 +181,7 @@
           :step="5"
           >
           <v-card color="grey lighten-1">
-            <h3 class="text-uppercase text-center">{{modalidad.id}}</h3>
+            <h3 class="text-uppercase text-center">{{modalidad.name}}</h3>
             <Requirement
               :bus="bus"
               :datos.sync="datos"
