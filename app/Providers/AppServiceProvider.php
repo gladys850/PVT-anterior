@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\ServiceProvider;
@@ -16,6 +17,8 @@ use App\Observers\RoleObserver;
 use App\Role;
 use App\Observers\LoanObserver;
 use App\Loan;
+use App\Observers\ObservationObserver;
+use App\Observation;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -26,6 +29,9 @@ class AppServiceProvider extends ServiceProvider
     */
     public function boot()
     {
+        // JSON response wihtout data key
+        JsonResource::withoutWrapping();
+
         // Localization
         setlocale(LC_TIME, env('APP_LC_TIME', 'es_BO.utf8'));
         Carbon::setLocale(env('APP_LOCALE', 'es'));
@@ -41,7 +47,7 @@ class AppServiceProvider extends ServiceProvider
         Affiliate::observe(AffiliateObserver::class);
         Role::observe(RoleObserver::class);
         Loan::observe(LoanObserver::class);
-
+        Observation::observe(ObservationObserver::class);
 
         // Polymorphic relationships
         Relation::morphMap([

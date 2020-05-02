@@ -1,0 +1,16 @@
+[
+    {
+        "id": 122,
+        "city_id": 4,
+        "first_name": "Juan Carlos",
+        "last_name": "Barrios Gutierrez",
+        "username": "jbarrios",
+        "created_at": "2019-03-25 16:26:24",
+        "updated_at": "2020-01-20 08:42:16",
+        "remember_token": "UpyA8Iju5ij5WUdY2QDyrOsmFERDSdhlk34ekMkCK2T7lqr44bCR7JS6euW5",
+        "position": "Encargado de Complemento Economico",
+        "is_commission": false,
+        "phone": null,
+        "active": true
+    }, {}
+]

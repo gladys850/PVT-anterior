@@ -4,7 +4,7 @@
       <v-data-iterator :items="items" hide-default-footer>
         <template v-slot:header>
           <v-toolbar class="mb-0" color="ternary" dark flat>
-            <v-toolbar-title>REQUISITOS {{modalidad.id}}</v-toolbar-title>
+            <v-toolbar-title>REQUISITOS PARA ANTICIPO</v-toolbar-title>
           </v-toolbar>
           <v-row>
             <v-col v-for="(group,i) in items" :key="i" cols="12" class="py-1">
@@ -23,10 +23,10 @@
                           </div>
                         </v-list-item-content>
                       </v-col>
-                      <v-col cols="10" class="py-0 ml-n8">
+                      <v-col cols="10" class="py-0">
                         <v-list-item-content class="align-end font-weight-light py-0">{{doc.name}}</v-list-item-content>
                       </v-col>
-                      <v-col cols="1" class="py-0 my-n1">
+                      <v-col cols="1" class="py-0">
                         <div v-if="group.length == 1" class="py-0">
                           <v-checkbox
                             class="py-0"
@@ -36,7 +36,7 @@
                             @change="selectDoc1(doc.id,j,i)"
                           ></v-checkbox>
                         </div>
-                        <div v-if="group.length > 1" class="py-0 my-n1">
+                        <div v-if="group.length > 1" class="py-0">
                           <v-radio-group :mandatory="false" v-model="radios[i]" class="py-0">
                             <v-radio
                               color="info"
@@ -173,6 +173,8 @@
         <template>
           <v-toolbar-title class="align-end font-weight-black text-left ma-0 pl-8 pt-5">
             <h5>Otros Documentos</h5>
+            <h6>{{calculos}}</h6>
+            <h6>{{formulario}}</h6>
           </v-toolbar-title>
           <v-row>
           <v-col cols="11" class="ma-0 px-10">
@@ -238,10 +240,10 @@
   </v-container>
 </template>
 <script>
-
+import { Validator } from "vee-validate";
 export default {
-  
-  name: "requirement",
+  inject: ["$validator"],
+  name: "loan-requirement",
   data: () => ({
     itemsPerPage: 10,
     items: [],
@@ -272,10 +274,6 @@ export default {
       type: Object,
       required: true
     },
-      modalidad_id: {
-      type: Number,
-      required: true
-    },
     intervalos: {
       type: Object,
       required: true
@@ -290,14 +288,7 @@ export default {
     }
   },
   beforeMount() {
-    this.getRequirement(this.modalidad_id);
-    
-  },
-  watch: {
-    modalidad_id () {
-      this.getRequirement(this.modalidad_id);
-      //console.log('actualizando modalidad');
-    }
+    this.getRequirement(33);
   },
   methods: {
     beforeStepBus(val) {
@@ -313,7 +304,7 @@ export default {
     async getRequirement(id) {
       try {
         this.loading = true;
-        let res = await axios.get(`procedure_modality/${id}/requirements`);
+        let res = await axios.get(`procedure_modality/${id}/requirement`);
         this.requirement = res.data;
         this.items = this.requirement.required;
         this.optional = this.requirement.optional;
@@ -369,18 +360,19 @@ export default {
         if (this.idRequirements.length === this.items.length) {
           let res = await axios.post(`loan`, {
             copies: 2,
-            responseType: "arraybuffer",
-            lenders: [this.$route.query.affiliate_id],
+            lenders:[this.$route.query.affiliate_id],
+            procedure_modality_id:this.modalidad.id,
             guarantors: [],
-            
-            
-            procedure_modality_id: this.modalidad.id,
             amount_requested: this.calculos.montos,
             city_id: this.$store.getters.cityId,
             loan_term: this.calculos.plazo,
-            payment_type_id: this.formulario[0],
-            
-            destiny_id: 1,
+            payment_type_id:2,
+            account_number:this.formulario[1],
+            destiny_id: this.formulario[2],
+            payable_liquid_calculated:this.calculos.promedio_liquido_pagable,
+            bonus_calculated:this.calculos.total_bonos,
+            indebtedness_calculated:this.calculos.indice_endeudamiento,
+            liquid_qualification_calculated:this.calculos.liquido_para_calificacion,
             documents: this.selectedOpc.concat(this.selected.concat(this.radios.filter(Boolean))),
             notes: this.otherDocuments
           });
@@ -424,7 +416,6 @@ export default {
     },
     addOptionalDocument(i) {
       //Verifica si no encuentra el valor repetido
-
       if (this.selectedOpc.indexOf(i) === -1) {
         this.selectedOpc.push(i);
         //console.log("I= " + i);

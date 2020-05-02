@@ -132,7 +132,7 @@ methods: {
         console.log(this.img)
         //let res = await axios.patch(`affiliate/${this.affiliate.id}`, this.img)
         //console.log(res)
-        let rest = await axios.patch(`picture/${this.affiliate.id}`, {
+        let rest = await axios.patch(`affiliate/${this.affiliate.id}/profile_picture`, {
         'image': this.img
         })
         console.log(rest)

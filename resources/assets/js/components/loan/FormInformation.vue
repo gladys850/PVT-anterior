@@ -44,6 +44,7 @@
                 <ValidationProvider v-slot="{ errors }" name="destino" rules="required">
                <v-select
                 :error-messages="errors"
+                v-model="loanTypeSelected2"
                 dense
                 :items="destino"
                 item-text="name"

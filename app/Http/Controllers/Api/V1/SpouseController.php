@@ -13,6 +13,12 @@ use Util;
 */
 class SpouseController extends Controller
 {
+    public static function append_data(Spouse $spouse)
+    {
+        $spouse->civil_status_gender = $spouse->civil_status_gender;
+        return $spouse;
+    }
+
     /**
     * Lista de cónyugues
     * Devuelve el listado con los datos paginados
@@ -22,102 +28,14 @@ class SpouseController extends Controller
     * @queryParam per_page Número de datos por página. Example: 8
     * @queryParam page Número de página. Example: 1
     * @authenticated
-    * @response
-    *    {
-    *    "current_page": 1,
-    *    "data": [
-    *        {
-    *            "id": 21,
-    *            "user_id": 1,
-    *            "affiliate_id": 51992,
-    *            "city_identity_card_id": 1,
-    *            "identity_card": "1700723",
-    *            "registration": "0",
-    *            "last_name": "TEMO",
-    *            "mothers_last_name": "JOU",
-    *            "first_name": "MANUELA",
-    *            "second_name": null,
-    *            "surname_husband": "VDA. DE URGEL",
-    *            "civil_status": "V",
-    *            "birth_date": "1934-03-29",
-    *            "date_death": null,
-    *            "reason_death": null,
-    *            "created_at": "2017-06-08T15:56:17.000000Z",
-    *            "updated_at": "2017-06-08T15:56:17.000000Z",
-    *            "deleted_at": null,
-    *            "city_birth_id": null,
-    *            "death_certificate_number": null,
-    *            "due_date": null,
-    *            "is_duedate_undefined": false,
-    *            "official": null,
-    *            "book": null,
-    *            "departure": null,
-    *            "marriage_date": null,
-    *            "civil_status_gender": "viuda",
-    *            "affiliate": {
-    *                "id": 51992,
-    *                "user_id": 1,
-    *                "affiliate_state_id": 4,
-    *                "city_identity_card_id": 1,
-    *                "city_birth_id": null,
-    *                "degree_id": 21,
-    *                "unit_id": null,
-    *                "category_id": 7,
-    *                "pension_entity_id": 5,
-    *                "identity_card": "1670402",
-    *                "registration": "280927UZR",
-    *                "type": "Comando",
-    *                "last_name": "URGEL",
-    *                "mothers_last_name": "ZELADA",
-    *                "first_name": "ROSENDO",
-    *                "second_name": null,
-    *                "surname_husband": null,
-    *                "gender": "M",
-    *                "civil_status": "C",
-    *                "birth_date": "1928-09-27",
-    *                "date_entry": null,
-    *                "date_death": null,
-    *                "reason_death": null,
-    *                "date_derelict": null,
-    *                "reason_derelict": null,
-    *                "change_date": "2016-07-01",
-    *                "phone_number": null,
-    *                "cell_phone_number": "(728)-27012",
-    *                "afp": null,
-    *                "nua": 0,
-    *                "item": null,
-    *                "created_at": "2017-06-07T12:07:50.000000Z",
-    *                "updated_at": "2018-09-05T12:05:51.000000Z",
-    *                "deleted_at": null,
-    *                "service_years": null,
-    *                "service_months": null,
-    *                "death_certificate_number": null,
-    *                "due_date": null,
-    *                "is_duedate_undefined": false,
-    *                "affiliate_registration_number": null,
-    *                "file_code": null
-    *            }
-    *        }
-    *    ],
-    *    "first_page_url": "http://172.17.0.1/api/v1/spouse?page=1",
-    *    "from": 1,
-    *    "last_page": 1,
-    *    "last_page_url": "http://172.17.0.1/api/v1/spouse?page=1",
-    *    "next_page_url": null,
-    *    "path": "http://172.17.0.1/api/v1/spouse",
-    *    "per_page": "8",
-    *    "prev_page_url": null,
-    *    "to": 1,
-    *    "total": 1
-    *}
+    * @responseFile responses/spouse/index.200.json
     */
-
     public function index(Request $request)
     {
         $data = Util::search_sort(new Spouse(), $request);
-        foreach ($data as $item) {
-            $this->append_data($item);
-        }
+        $data->getCollection()->transform(function ($spouse) {
+            return self::append_data($spouse);
+        });
         return $data;
     }
 
@@ -142,34 +60,7 @@ class SpouseController extends Controller
     * @bodyParam reason_death string Causa de fallecimiento. Example: Embolia
     * @bodyParam death_certificate_number string Número de certificado de defunción. Example: 180923-ATR
     * @authenticated
-    * @response
-    * {
-    *     "id": 1301,
-    *     "affiliate_id": 3065,
-    *     "city_identity_card_id": 4,
-    *     "identity_card": "460748",
-    *     "registration": "870914VBW",
-    *     "last_name": "ARUQUIPA",
-    *     "mothers_last_name": "TAPIA",
-    *     "first_name": "MAXIMA",
-    *     "second_name": "ELOISA",
-    *     "surname_husband": "PAREDES",
-    *     "civil_status": "C",
-    *     "birth_date": "1950-04-08",
-    *     "date_death": "2017-10-29",
-    *     "reason_death": "DIABETES TIPO 2 DESCOMPENSADA",
-    *     "created_at": "2018-08-23 11:38:28",
-    *     "updated_at": "2018-11-15 10:55:08",
-    *     "deleted_at": null,
-    *     "city_birth_id": 4,
-    *     "death_certificate_number": "180923-ATR",
-    *     "due_date": "2018-01-05",
-    *     "is_duedate_undefined": false,
-    *     "official": "600",
-    *     "book": "0024-64",
-    *     "departure": "143",
-    *     "marriage_date": "1964-12-12"
-    * }
+    * @responseFile responses/spouse/store.200.json
     */
     public function store(SpouseForm $request)
     {
@@ -181,85 +72,11 @@ class SpouseController extends Controller
     * Devuelve el detalle de un cónyugue mediante su ID
     * @urlParam id required ID de cónyugue. Example: 42
     * @authenticated
-    * @response
-    * {
-    *   "id": 42,
-    *   "user_id": 47,
-    *   "affiliate_id": 12,
-    *   "city_identity_card_id": 2,
-    *   "identity_card": "1048652",
-    *   "registration": "",
-    *   "last_name": "FORTUN",
-    *   "mothers_last_name": null,
-    *   "first_name": "MARIA",
-    *   "second_name": "LUISA",
-    *   "surname_husband": "VDA. DE VILLALBA",
-    *   "civil_status": "V",
-    *   "birth_date": "1947-06-08",
-    *   "date_death": null,
-    *   "reason_death": "",
-    *   "created_at": "2017-06-08 11:56:17",
-    *   "updated_at": "2019-06-14 11:25:21",
-    *   "deleted_at": null,
-    *   "city_birth_id": 2,
-    *   "death_certificate_number": "",
-    *   "due_date": null,
-    *   "is_duedate_undefined": true,
-    *   "official": "600",
-    *   "book": "0024-64",
-    *   "departure": "143",
-    *   "marriage_date": "1964-12-12",
-    *   "civil_status_gender": "viuda",
-    *   "affiliate": {
-    *       "id": 12,
-    *       "user_id": 1,
-    *       "affiliate_state_id": 4,
-    *       "city_identity_card_id": 7,
-    *       "city_birth_id": 7,
-    *       "degree_id": 8,
-    *       "unit_id": 1,
-    *       "category_id": 8,
-    *       "pension_entity_id": 5,
-    *       "identity_card": "1156956",
-    *       "registration": "421008VPA",
-    *       "type": "Comando",
-    *       "last_name": "VILLALBA",
-    *       "mothers_last_name": "PEÑARANDA",
-    *       "first_name": "AUGUSTO",
-    *       "second_name": null,
-    *       "surname_husband": null,
-    *       "gender": "M",
-    *       "civil_status": "C",
-    *       "birth_date": "1942-10-08",
-    *       "date_entry": "1959-09-01",
-    *       "date_death": "2013-12-04",
-    *       "reason_death": "SHOCK CARDIOGENICO",
-    *       "date_derelict": "1999-12-01",
-    *       "reason_derelict": null,
-    *       "change_date": "2016-07-01",
-    *       "phone_number": "(6) 462-602",
-    *       "cell_phone_number": "(728)-92615",
-    *       "afp": true,
-    *       "nua": 0,
-    *       "item": 0,
-    *       "created_at": "2017-06-01 10:42:18",
-    *       "updated_at": "2019-06-14 11:25:21",
-    *       "deleted_at": null,
-    *       "service_years": 35,
-    *       "service_months": 1,
-    *       "death_certificate_number": null,
-    *       "due_date": null,
-    *       "is_duedate_undefined": false,
-    *       "affiliate_registration_number": null,
-    *       "file_code": ""
-    *   }
-    * }
+    * @responseFile responses/spouse/show.200.json
     */
-    public function show($id)
+    public function show(Spouse $spouse)
     {
-        $spouse = Spouse::findOrFail($id);
-        $this->append_data($spouse);
-        return $spouse;
+        return self::append_data($spouse);
     }
 
     /**
@@ -284,39 +101,10 @@ class SpouseController extends Controller
     * @bodyParam reason_death string Causa de fallecimiento. Example: Embolia
     * @bodyParam death_certificate_number string Número de certificado de defunción. Example: 180923-ATR
     * @authenticated
-    * @response
-    * {
-    *     "id": 42,
-    *     "user_id": 47,
-    *     "affiliate_id": 12,
-    *     "city_identity_card_id": 2,
-    *     "identity_card": "1048652",
-    *     "registration": "",
-    *     "last_name": "FORTUN",
-    *     "mothers_last_name": null,
-    *     "first_name": "MARIA",
-    *     "second_name": "LUISA",
-    *     "surname_husband": "VDA. DE VILLALBA",
-    *     "civil_status": "V",
-    *     "birth_date": "1947-06-08",
-    *     "date_death": null,
-    *     "reason_death": "",
-    *     "created_at": "2017-06-08 11:56:17",
-    *     "updated_at": "2019-06-14 11:25:21",
-    *     "deleted_at": null,
-    *     "city_birth_id": 2,
-    *     "death_certificate_number": "",
-    *     "due_date": null,
-    *     "is_duedate_undefined": true,
-    *     "official": "600",
-    *     "book": "0024-64",
-    *     "departure": "143",
-    *     "marriage_date": "1964-12-12"
-    * }
+    * @responseFile responses/spouse/update.200.json
     */
-    public function update(SpouseForm $request, $id)
+    public function update(SpouseForm $request, Spouse $spouse)
     {
-        $spouse = Spouse::findOrFail($id);
         $spouse->fill($request->all());
         $spouse->save();
         return $spouse;
@@ -327,45 +115,11 @@ class SpouseController extends Controller
     * Eliminar un cónyugue solo en caso de no estar relacionado a ningún afiliado
     * @urlParam id required ID de cónyugue. Example: 42
     * @authenticated
-    * @response
-    * {
-    *     "id": 42,
-    *     "user_id": 47,
-    *     "affiliate_id": 12,
-    *     "city_identity_card_id": 2,
-    *     "identity_card": "1048652",
-    *     "registration": "",
-    *     "last_name": "FORTUN",
-    *     "mothers_last_name": null,
-    *     "first_name": "MARIA",
-    *     "second_name": "LUISA",
-    *     "surname_husband": "VDA. DE VILLALBA",
-    *     "civil_status": "V",
-    *     "birth_date": "1947-06-08",
-    *     "date_death": null,
-    *     "reason_death": "",
-    *     "created_at": "2017-06-08 11:56:17",
-    *     "updated_at": "2019-06-14 11:25:21",
-    *     "deleted_at": null,
-    *     "city_birth_id": 2,
-    *     "death_certificate_number": "",
-    *     "due_date": null,
-    *     "is_duedate_undefined": true,
-    *     "official": "600",
-    *     "book": "0024-64",
-    *     "departure": "143",
-    *     "marriage_date": "1964-12-12"
-    * }
+    * @responseFile responses/spouse/destroy.200.json
     */
-    public function destroy($id)
+    public function destroy(Spouse $spouse)
     {
-        $spouse = Spouse::findOrFail($id);
         $spouse->delete();
         return $spouse;
-    }
-
-    // Append additional to spouse
-    private function append_data($spouse) {
-        $spouse->civil_status_gender = $spouse->civil_status_gender;
     }
 }

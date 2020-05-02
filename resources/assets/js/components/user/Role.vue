@@ -126,7 +126,7 @@ export default {
         let res = await axios.post(`user/${this.user}/role`, {
           roles: this.selectedRoles
         })
-        this.selectedRoles = res.data
+        this.selectedRoles = res.data.roles
         this.toastr.success('Actualizado correctamente')
       } catch (e) {
         console.log(e)
@@ -169,7 +169,7 @@ export default {
       try {
         this.loading = true
         let res = await axios.get(`user/${id}/role`)
-        this.selectedRoles = res.data
+        this.selectedRoles = res.data.roles
       } catch (e) {
         console.log(e)
       } finally {

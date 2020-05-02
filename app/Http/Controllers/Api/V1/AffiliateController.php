@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1;
 
 use \Waavi\Sanitizer\Sanitizer;
 use Util;
+use Carbon;
 use App\Affiliate;
 use App\RecordType;
 use App\User;
@@ -21,6 +22,7 @@ use App\LoanGlobalParameter;
 use App\ProcedureType;
 use App\Http\Requests\AffiliateForm;
 use App\Http\Requests\AffiliateFingerprintForm;
+use App\Http\Requests\ObservationForm;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Schema;
@@ -35,6 +37,20 @@ use Carbon\CarbonImmutable;
 */
 class AffiliateController extends Controller
 {
+    public static function append_data(Affiliate $affiliate, $with_category = false)
+    {
+        $affiliate->full_name = $affiliate->full_name;
+        $affiliate->civil_status_gender = $affiliate->civil_status_gender;
+        $affiliate->dead = $affiliate->dead;
+        $affiliate->identity_card_ext = $affiliate->identity_card_ext;
+        $affiliate->picture_saved = $affiliate->picture_saved;
+        $affiliate->fingerprint_saved = $affiliate->fingerprint_saved;
+        $affiliate->defaulted = $affiliate->defaulted;
+        $affiliate->cpop = $affiliate->cpop;
+        if ($with_category) $affiliate->category = $affiliate->category;
+        return $affiliate;
+    }
+
     /**
     * Lista de afiliados
     * Devuelve el listado con los datos paginados
@@ -49,9 +65,9 @@ class AffiliateController extends Controller
     public function index(Request $request)
     {
         $data = Util::search_sort(new Affiliate(), $request);
-        foreach ($data as $item) {
-            $this->append_data($item);
-        }
+        $data->getCollection()->transform(function ($affiliate) {
+            return self::append_data($affiliate, false);
+        });
         return $data;
     }
 
@@ -111,14 +127,7 @@ class AffiliateController extends Controller
     */
     public function show(Affiliate $affiliate)
     {
-        $this->append_data($affiliate);
-        $affiliate->civil_status_gender = $affiliate->civil_status_gender;
-        $affiliate->dead = $affiliate->dead;
-        $affiliate->defaulted = $affiliate->defaulted;
-        $affiliate->cpop = $affiliate->cpop;
-        $affiliate->identity_card_ext = $affiliate->identity_card_ext;
-        $affiliate->category = $affiliate->category;
-        return $affiliate;
+        return self::append_data($affiliate, true);
     }
 
     /**
@@ -166,8 +175,8 @@ class AffiliateController extends Controller
     */
     public function update(AffiliateForm $request, Affiliate $affiliate)
     {
-        if (!Auth::user()->can('update-affiliate-primary') && ($request->has('phone_number') || $request->has('cell_phone_number') || $request->has('city_identity_card_id'))) {
-            $update = $request->only(['phone_number', 'cell_phone_number', 'city_identity_card_id']);
+        if (!Auth::user()->can('update-affiliate-primary')) {
+            $update = $request->except('first_name', 'second_name', 'last_name', 'mothers_last_name', 'surname_husband', 'identity_card');
         } else {
             $update = $request->all();
         }
@@ -231,13 +240,6 @@ class AffiliateController extends Controller
         abort(404);
     }
 
-    // Append additional to affiliate
-    private function append_data($affiliate) {
-        $affiliate->picture_saved = $affiliate->picture_saved;
-        $affiliate->fingerprint_saved = $affiliate->fingerprint_saved;
-        $affiliate->full_name = $affiliate->full_name;
-    }
-
     /** @group Biométrico
     * Imagen perfil afiliado
     * Devuelve el listado con los nombres de los archivos de imagen, el contenido en base64 y el formato
@@ -288,19 +290,32 @@ class AffiliateController extends Controller
         return $files;
     }
 
-    /** @group INDEFINIDO (TODO) */
+    /** @group Biométrico
+    * Actualizar imagen perfil afiliado
+    * Actualiza la imagen de perfil de afiliado capturada por una cámara en formato base64
+    * @urlParam affiliate required ID de afiliado. Example: 2
+    * @bodyParam image string required Imágen jpeg. Example: data:image/jpeg;base64,154AF...
+    * @responseFile responses/affiliate/picture_save.200.json]
+    */
     public function picture_save(Request $request, Affiliate $affiliate)
     {
-    //$picture=$request->all();
+        $request->validate([
+            'image' => 'required|string'
+        ]);
     $base_path = 'picture/';
     $code = $affiliate->id;
     $image = $request->image;   
     $image = str_replace('data:image/jpeg;base64,', '', $image);
-    $image = str_replace(' ', '+', $image);
-    $imageName = $code.'_perfil.'.'jpg';
-
-    Storage::disk('ftp')->put($base_path.$imageName, base64_decode($image));
-
+        $image = str_replace(' ', '+', $image);
+        $imageName = $code.'_perfil.'.'jpg';
+        try {
+            Storage::disk('ftp')->put($base_path.$imageName, base64_decode($image));
+            return response()->json([
+                'message' => 'Fotografía actualizada'
+            ], 200);
+        } catch (\Exception $e) {
+            abort(500, 'Error en la conexión con el servidor FTP');
+        }
     }
 
     /**
@@ -418,13 +433,9 @@ class AffiliateController extends Controller
             ];
         }
         $data = Util::search_sort(new Loan(), $request, [], $relations, ['id']);
-        foreach ($data as $loan) {
-            $loan->balance = $loan->balance;
-            $loan->estimated_quota = $loan->estimated_quota;
-            $loan->defaulted = $loan->defaulted;
-            $loan->lenders = $loan->lenders;
-            $loan->guarantors = $loan->guarantors;
-        }
+        $data->getCollection()->transform(function ($loan) {
+            return LoanController::append_data($loan, true);
+        });
         return $data;
     }
 
@@ -458,5 +469,98 @@ class AffiliateController extends Controller
         if(!$affiliate->affiliate_state) abort(404, 'Debe actualizar el estado del afiliado');
         $modality = ProcedureType::findOrFail($request->procedure_type_id);
         return Loan::get_modality($modality->name, $affiliate);
+    }
+
+    /** @group Observaciones de Afiliado
+    * Lista de observaciones
+    * Devuelve el listado de observaciones del afiliado
+    * @urlParam affiliate required ID del afiliado. Example: 5012
+    * @queryParam with_trashed Booleano para incluir observaciones eliminadas. Example: 1
+    * @authenticated
+    * @responseFile responses/affiliate/get_observations.200.json
+    */
+    public function get_observations(Affiliate $affiliate)
+    {
+        $query = $affiliate->observations();
+        if ($request->boolean('with_trashed')) $query = $query->withTrashed();
+        return $query->get();
+    }
+
+    /** @group Observaciones de Afiliado
+    * Nueva observación
+    * Inserta una nueva observación asociada al afiliado
+    * @urlParam affiliate required ID del afiliado. Example: 5012
+    * @bodyParam observation_type_id integer required ID de tipo de observación. Example: 2
+    * @bodyParam message string Mensaje adjunto a la observación. Example: Subsanable en una semana
+    * @authenticated
+    * @responseFile responses/affiliate/set_observation.200.json
+    */
+    public function set_observation(ObservationForm $request, Affiliate $affiliate)
+    {
+        $observation = $affiliate->observations()->make([
+            'message' => $request->message ?? null,
+            'observation_type_id' => $request->observation_type_id,
+            'date' => Carbon::now()
+        ]);
+        $observation->user()->associate(Auth::user());
+        $observation->save();
+        return $observation;
+    }
+
+    /** @group Observaciones de Afiliado
+    * Actualizar observación
+    * Actualiza los datos de una observación asociada al afiliado
+    * @urlParam affiliate required ID del afiliado. Example: 5012
+    * @bodyParam original.user_id integer required ID de usuario que creó la observación. Example: 123
+    * @bodyParam original.observation_type_id integer required ID de tipo de observación original. Example: 2
+    * @bodyParam original.message string required Mensaje de la observación original. Example: Subsanable en una semana
+    * @bodyParam original.date date required Fecha de la observación original. Example: 2020-04-14 21:16:52
+    * @bodyParam original.enabled boolean required Estado de la observación original. Example: false
+    * @bodyParam update.enabled boolean Estado de la observación a actualizar. Example: true
+    * @authenticated
+    * @responseFile responses/affiliate/update_observation.200.json
+    */
+    public function update_observation(ObservationForm $request, Affiliate $affiliate)
+    {
+        $observation = $affiliate->observations();
+        foreach (collect($request->original)->only('user_id', 'observation_type_id', 'message', 'date', 'enabled')->put('observable_id', $affiliate->id)->put('observable_type', 'affiliates') as $key => $value) {
+            $observation = $observation->where($key, $value);
+        }
+        if ($observation->count() === 1) {
+            $observation = $observation->first();
+            if ($observation->enabled != $request->update['enabled']) {
+                $observation->fill(collect($request->update)->only('enabled')->toArray());
+                $observation->save();
+            }
+        }
+        return $affiliate->observations;
+    }
+
+    /** @group Observaciones de Afiliado
+    * Eliminar observación
+    * Elimina una observación del afiliado siempre y cuando no haya sido modificada
+    * @urlParam affiliate required ID del préstamo. Example: 2
+    * @bodyParam user_id integer required ID de usuario que creó la observación. Example: 123
+    * @bodyParam observation_type_id integer required ID de tipo de observación. Example: 2
+    * @bodyParam message string required Mensaje de la observación. Example: Subsanable en una semana
+    * @bodyParam date date required Fecha de la observación. Example: 2020-04-14 21:16:52
+    * @bodyParam enabled boolean required Estado de la observación. Example: false
+    * @authenticated
+    * @responseFile responses/affiliate/unset_observation.200.json
+    */
+    public function unset_observation(ObservationForm $request, Affiliate $affiliate)
+    {
+        $request->request->add(['observable_type' => 'affiliates', 'observable_id' => $affiliate->id]);
+        $observation = $affiliate->observations();
+        foreach ($request->except('created_at','updated_at','deleted_at') as $key => $value) {
+            $observation = $observation->where($key, $value);
+        }
+        $observation = $observation->whereColumn('created_at','updated_at');
+        if ($observation->count() == 1) {
+            $observation->delete();
+            return $affiliate->observations;
+        } else {
+            abort(404, 'La observación fue modificada, no se puede eliminar');
+        }
     }
 }

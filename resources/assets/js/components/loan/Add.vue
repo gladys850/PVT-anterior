@@ -67,7 +67,7 @@ export default {
       phone_number:null,
       cell_phone_number:null
     },
-     modalidad:{},
+    modalidad:{},
     ocultar:false,
     degree_name: null,
     category_name: null

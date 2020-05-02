@@ -67,6 +67,7 @@
             <v-card-text>
               <BallotsResult
               :bonos.sync="bonos"
+              :datos.sync="datos"
               :payable_liquid.sync="payable_liquid"
               :calculos.sync="calculos"
               :modalidad.sync="modalidad"/>
@@ -121,7 +122,7 @@
           :value="'tab-6'"
         >
           <v-card flat tile >
-          <v-card-text>
+          <v-card-text class=" pa-0 mb-0">
             <ObserverQualification
             /></v-card-text>
           </v-card>
@@ -233,7 +234,7 @@ export default {
     }
   },
   mounted() {
-    this.getloan(4)
+    this.getloan(1)
   },
   methods: {
     resetForm() {
@@ -259,20 +260,21 @@ export default {
         this.loading = true;
         let res = await axios.get(`loan/${id}`);
         this.loan = res.data;
-this.calculos.plazo=this.loan.loan_term
-this.calculos.montos=this.loan.amount_approved
-
-this.calculos.calculo_de_cuota=this.loan.estimated_quota
-
-this.calculos.monto_maximo_sugerido=this.loan.amount_approved
-
+          this.calculos.plazo=this.loan.loan_term
+          this.calculos.montos=this.loan.amount_approved
+          this.calculos.calculo_de_cuota=this.loan.estimated_quota
+          this.calculos.monto_maximo_sugerido=this.loan.amount_approved
+          this.calculos.promedio_liquido_pagable=this.loan.payable_liquid_calculated
+          this.calculos.total_bonos= this.loan.bonus_calculated
+          this.calculos.liquido_para_calificacion= this.loan.liquid_qualification_calculated
+          this.calculos.indice_endeudamiento = this.loan.indebtedness_calculated
+                          
         let res1 = await axios.get(`affiliate/${this.loan.disbursable_id}`)
         this.affiliate = res1.data
         this.setBreadcrumbs()
         if (this.affiliate.dead) {
           this.getSpouse(this.$route.params.id)
         }
-        
         console.log(this.loan+'este es el prestamo')
       } catch (e) {
         console.log(e);

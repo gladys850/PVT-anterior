@@ -10,7 +10,6 @@ class Spouse extends Model
 {
     use Traits\EloquentGetTableNameTrait;
     protected $fillable = [
-        'user_id',
         'affiliate_id',
         'city_identity_card_id',
         'identity_card',
@@ -26,15 +25,19 @@ class Spouse extends Model
         'reason_death',
         'city_birth_id',
         'death_certificate_number',
+        'due_date',
+        'is_duedate_undefined',
         'official',
         'book',
         'departure',
-        'marriage_date'
+        'marriage_date',
     ];
 
     public function getCivilStatusGenderAttribute()
     {
-        return Util::get_civil_status($this->civil_status, $this->gender);
+        $civil_status = Util::get_civil_status($this->civil_status, $this->gender);
+        unset($this->affiliate);
+        return $civil_status;
     }
 
     public function getTitleAttribute()

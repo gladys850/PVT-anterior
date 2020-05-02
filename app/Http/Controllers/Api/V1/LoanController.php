@@ -22,7 +22,7 @@ use App\RoleSequence;
 use App\Http\Requests\LoansForm;
 use App\Http\Requests\LoanForm;
 use App\Http\Requests\LoanPaymentForm;
-use App\Http\Requests\LoanObservationForm;
+use App\Http\Requests\ObservationForm;
 use Carbon;
 use Util;
 
@@ -31,11 +31,22 @@ use Util;
 */
 class LoanController extends Controller
 {
-    private function append_data($loan) {
+    public static function append_data(Loan $loan, $with_lenders = false)
+    {
+        $loan->payable_liquid_calculated = $loan->payable_liquid_calculated;
+        $loan->bonus_calculated = $loan->bonus_calculated;
+        $loan->indebtedness_calculated = $loan->indebtedness_calculated;
+        $loan->liquid_qualification_calculated = $loan->liquid_qualification_calculated;
         $loan->balance = $loan->balance;
         $loan->estimated_quota = $loan->estimated_quota;
         $loan->defaulted = $loan->defaulted;
+        if ($with_lenders) {
+            $loan->lenders = $loan->lenders;
+            $loan->guarantors = $loan->guarantors;
+        }
+        return $loan;
     }
+
     /**
     * Lista de Préstamos
     * Devuelve el listado con los datos paginados
@@ -76,9 +87,9 @@ class LoanController extends Controller
             ];
         }
         $data = Util::search_sort(new Loan(), $request, $filters);
-        foreach ($data as $item) {
-            $this->append_data($item);
-        }
+        $data->getCollection()->transform(function ($loan) {
+            return self::append_data($loan, false);
+        });
         return $data;
     }
 
@@ -91,6 +102,10 @@ class LoanController extends Controller
     * @bodyParam loan_term integer required plazo. Example: 2
     * @bodyParam payment_type_id integer required Tipo de desembolso. Example: 1
     * @bodyParam lenders array required Lista de IDs de afiliados Titular de préstamo. Example: [5146]
+    * @bodyParam payable_liquid_calculated numeric required Promedio liquido pagable. Example: 2000
+    * @bodyParam bonus_calculated integer required Total de bono calculado. Example: 24
+    * @bodyParam liquid_qualification_calculated numeric required Total de bono calculado. Example: 2000
+    * @bodyParam indebtedness_calculated numeric required Indice de endeudamiento. Example: 52.26
     * @bodyParam guarantors array Lista de IDs de afiliados Garante de préstamo. Example: []
     * @bodyParam parent_loan_id integer ID de Préstamo Padre. Example: 1
     * @bodyParam parent_reason enum (REFINANCIAMIENTO, REPROGRAMACIÓN) Tipo de trámite hijo. Example: REFINANCIAMIENTO
@@ -164,10 +179,7 @@ class LoanController extends Controller
         if (Auth::user()->can('show-all-loan') || Auth::user()->roles()->whereHas('module', function($query) {
             return $query->whereName('prestamos');
         })->pluck('id')->contains($loan->role_id)) {
-            $loan->lenders;
-            $loan->guarantors;
-            $this->append_data($loan);
-            return $loan;
+            return self::append_data($loan, true);
         } else {
             abort(403);
         }
@@ -183,6 +195,10 @@ class LoanController extends Controller
     * @bodyParam loan_term integer required plazo. Example: 2
     * @bodyParam payment_type_id integer required Tipo de desembolso. Example: 1
     * @bodyParam lenders array required Lista de IDs de afiliados Titular de préstamo. Example: [5146]
+    * @bodyParam payable_liquid_calculated numeric required Promedio liquido pagable. Example: 2000
+    * @bodyParam bonus_calculated integer required Total de bono calculado. Example: 24
+    * @bodyParam liquid_qualification_calculated numeric required Total de bono calculado. Example: 2000
+    * @bodyParam indebtedness_calculated numeric required Indice de endeudamiento. Example: 52.26
     * @bodyParam guarantors array Lista de IDs de afiliados Garante de préstamo. Example: []
     * @bodyParam disbursement_date date Fecha de desembolso. Example: 2020-02-01
     * @bodyParam parent_loan_id integer ID de Préstamo Padre. Example: 1
@@ -190,6 +206,7 @@ class LoanController extends Controller
     * @bodyParam personal_reference_id integer ID de referencia personal. Example: 4
     * @bodyParam account_number integer Número de cuenta en Banco Union. Example: 586621345
     * @bodyParam destiny_id integer required ID destino de Préstamo. Example: 1
+    * @bodyParam role_id integer Rol al cual derivar o devolver. Example: 81
     * @authenticated
     * @responseFile responses/loan/update.200.json
     */
@@ -302,7 +319,7 @@ class LoanController extends Controller
     */
     public function get_documents(Loan $loan)
     {
-        return $loan->submitted_documents;
+        return $loan->submitted_documents_list;
     }
 
     /**
@@ -608,14 +625,17 @@ class LoanController extends Controller
 
     /** @group Observaciones de Préstamos
     * Lista de observaciones
-    * Devuelve el listado de los pagos ordenados por cuota de manera descendente
+    * Devuelve el listado de observaciones del trámite
     * @urlParam loan required ID del préstamo. Example: 2
+    * @queryParam with_trashed Booleano para incluir observaciones eliminadas. Example: 1
     * @authenticated
     * @responseFile responses/loan/get_observations.200.json
     */
-    public function get_observations(Loan $loan)
+    public function get_observations(Request $request, Loan $loan)
     {
-        return $loan->observations;
+        $query = $loan->observations();
+        if ($request->boolean('with_trashed')) $query = $query->withTrashed();
+        return $query->get();
     }
 
     /** @group Observaciones de Préstamos
@@ -627,7 +647,7 @@ class LoanController extends Controller
     * @authenticated
     * @responseFile responses/loan/set_observation.200.json
     */
-    public function set_observation(LoanObservationForm $request, Loan $loan)
+    public function set_observation(ObservationForm $request, Loan $loan)
     {
         $observation = $loan->observations()->make([
             'message' => $request->message ?? null,
@@ -648,20 +668,52 @@ class LoanController extends Controller
     * @bodyParam original.message string required Mensaje de la observación original. Example: Subsanable en una semana
     * @bodyParam original.date date required Fecha de la observación original. Example: 2020-04-14 21:16:52
     * @bodyParam original.enabled boolean required Estado de la observación original. Example: false
-    * @bodyParam update.observation_type_id integer ID de tipo de observación a actualizar. Example: 21
-    * @bodyParam update.message string Mensaje de la observación a actualizar. Example: Subsanable en un mes
     * @bodyParam update.enabled boolean Estado de la observación a actualizar. Example: true
     * @authenticated
     * @responseFile responses/loan/update_observation.200.json
     */
-    public function update_observation(LoanObservationForm $request, Loan $loan)
+    public function update_observation(ObservationForm $request, Loan $loan)
     {
         $observation = $loan->observations();
-        foreach (collect($request->original)->only('user_id', 'message', 'date', 'enabled')->put('observable_id', $loan->id)->put('observable_type', 'loans') as $key => $value) {
+        foreach (collect($request->original)->only('user_id', 'observation_type_id', 'message', 'date', 'enabled')->put('observable_id', $loan->id)->put('observable_type', 'loans') as $key => $value) {
             $observation = $observation->where($key, $value);
         }
-        $observation->update(collect($request->update)->only('observation_type_id', 'message', 'enabled')->toArray());
+        if ($observation->count() === 1) {
+            $observation = $observation->first();
+            if ($observation->enabled != $request->update['enabled']) {
+                $observation->fill(collect($request->update)->only('enabled')->toArray());
+                $observation->save();
+            }
+        }
         return $loan->observations;
+    }
+
+    /** @group Observaciones de Préstamos
+    * Eliminar observación
+    * Elimina una observación del trámite siempre y cuando no haya sido modificada
+    * @urlParam loan required ID del préstamo. Example: 2
+    * @bodyParam user_id integer required ID de usuario que creó la observación. Example: 123
+    * @bodyParam observation_type_id integer required ID de tipo de observación. Example: 2
+    * @bodyParam message string required Mensaje de la observación. Example: Subsanable en una semana
+    * @bodyParam date date required Fecha de la observación. Example: 2020-04-14 21:16:52
+    * @bodyParam enabled boolean required Estado de la observación. Example: false
+    * @authenticated
+    * @responseFile responses/loan/unset_observation.200.json
+    */
+    public function unset_observation(ObservationForm $request, Loan $loan)
+    {
+        $request->request->add(['observable_type' => 'loans', 'observable_id' => $loan->id]);
+        $observation = $loan->observations();
+        foreach ($request->except('created_at','updated_at','deleted_at') as $key => $value) {
+            $observation = $observation->where($key, $value);
+        }
+        $observation = $observation->whereColumn('created_at','updated_at');
+        if ($observation->count() == 1) {
+            $observation->delete();
+            return $loan->observations;
+        } else {
+            abort(404, 'La observación fue modificada, no se puede eliminar');
+        }
     }
 
     /**

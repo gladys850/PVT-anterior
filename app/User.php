@@ -141,7 +141,7 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasMany(WfRecordBck::class);
     }
 
-    public function has_actions()
+    public function getHasActionsAttribute()
     {
         if ($this->affiliate_records()->first() || $this->affiliate_records_pvt()->first() || $this->eco_com_records()->first() || $this->procedure_records()->first() || $this->quota_aid_records()->first() || $this->ret_fun_records()->first() || $this->sequences_records()->first() || $this->wf_records()->first() || $this->wf_records_bck()->first() || $this->actions()->first() || $this->observations()->first()) {
             return true;
