@@ -313,7 +313,7 @@ export default {
     async getRequirement(id) {
       try {
         this.loading = true;
-        let res = await axios.get(`procedure_modality/${id}/requirements`);
+        let res = await axios.get(`procedure_modality/${id}/requirement`);
         this.requirement = res.data;
         this.items = this.requirement.required;
         this.optional = this.requirement.optional;
