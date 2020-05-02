@@ -188,7 +188,8 @@
               :formulario.sync="formulario"
               :calculos.sync="calculos"
               :intervalos.sync="intervalos"
-              :modalidad.sync="modalidad"/>
+              :modalidad.sync="modalidad"
+              :modalidad_id.sync="modalidad.id"/>
           </v-card>
         </v-stepper-content>
       </v-stepper-items>
