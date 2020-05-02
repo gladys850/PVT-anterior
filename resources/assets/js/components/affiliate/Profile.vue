@@ -73,9 +73,9 @@
                         :loading="loading"
                         label="Género"
                         v-model="affiliate.gender"
-                        :readonly="!editable || !permission.primary"
-                        :outlined="editable && permission.primary"
-                        :disabled="editable && !permission.primary"
+                        :readonly="!editable || !permission.secondary"
+                        :outlined="editable && permission.secondary"
+                        :disabled="editable && !permission.secondary"
                       ></v-select>
                       </ValidationProvider>
                     </v-col>
@@ -103,9 +103,9 @@
                         :loading="loading"
                         label="Ciudad de Expedición"
                         v-model="affiliate.city_identity_card_id"
-                        :readonly="!editable || !permission.primary"
-                        :outlined="editable && permission.primary"
-                        :disabled="editable && !permission.primary"
+                        :readonly="!editable || !permission.secondary"
+                        :outlined="editable && permission.secondary"
+                        :disabled="editable && !permission.secondary"
                       ></v-select>
                       </ValidationProvider>
                     </v-col>
@@ -138,9 +138,9 @@
                     <v-col cols="12" md="3">
                       <v-checkbox
                         v-model="affiliate.is_duedate_undefined"
-                        :readonly="!editable || !permission.primary"
-                        :outlined="editable && permission.primary"
-                        :disabled="editable && !permission.primary"
+                        :readonly="!editable || !permission.secondary"
+                        :outlined="editable && permission.secondary"
+                        :disabled="editable && !permission.secondary"
                         :label="`Indefinido`"
                       ></v-checkbox>
                     </v-col>
@@ -155,9 +155,9 @@
                         item-value="value"
                         label="Estado Civil"
                         v-model="affiliate.civil_status"
-                        :readonly="!editable || !permission.primary"
-                        :outlined="editable && permission.primary"
-                        :disabled="editable && !permission.primary"
+                        :readonly="!editable || !permission.secondary"
+                        :outlined="editable && permission.secondary"
+                        :disabled="editable && !permission.secondary"
                       ></v-select>
                       </ValidationProvider>
                     </v-col>
@@ -169,7 +169,7 @@
                         offset-y
                         max-width="290px"
                         min-width="290px"
-                        :disabled="!editable || !permission.primary"
+                        :disabled="!editable || !permission.secondary"
                       >
                         <template v-slot:activator="{ on }">
                           <ValidationProvider v-slot="{ errors }" vid="birth_date" name="Fecha Nacimiento" rules="required">
@@ -183,8 +183,8 @@
                             append-icon="mdi-calendar"
                             readonly
                             v-on="on"
-                            :outlined="editable && permission.primary"
-                            :disabled="editable && !permission.primary"
+                            :outlined="editable && permission.secondary"
+                            :disabled="editable && !permission.secondary"
                           ></v-text-field>
                           </ValidationProvider>
                         </template>
@@ -202,9 +202,9 @@
                         item-value="id"
                         label="Ciudad de Nacimiento"
                         v-model="affiliate.city_birth_id"
-                        :readonly="!editable || !permission.primary"
-                        :outlined="editable && permission.primary"
-                        :disabled="editable && !permission.primary"
+                        :readonly="!editable || !permission.secondary"
+                        :outlined="editable && permission.secondary"
+                        :disabled="editable && !permission.secondary"
                       ></v-select>
                       </ValidationProvider>
                     </v-col>
