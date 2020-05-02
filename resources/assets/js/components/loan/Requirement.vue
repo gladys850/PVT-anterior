@@ -173,6 +173,8 @@
         <template>
           <v-toolbar-title class="align-end font-weight-black text-left ma-0 pl-8 pt-5">
             <h5>Otros Documentos</h5>
+            <h6>{{calculos}}</h6>
+            <h6>{{formulario}}</h6>
           </v-toolbar-title>
           <v-row>
           <v-col cols="11" class="ma-0 px-10">
@@ -358,18 +360,21 @@ export default {
         if (this.idRequirements.length === this.items.length) {
           let res = await axios.post(`loan`, {
             copies: 2,
-            responseType: "arraybuffer",
-            lenders: [this.$route.query.affiliate_id],
+            lenders:[this.$route.query.affiliate_id],
+            procedure_modality_id:this.modalidad.id,
             guarantors: [],
-            disbursable_id: this.$route.query.affiliate_id,
-            disbursable_type: "affiliates",
-            procedure_modality_id: this.modalidad.id,
             amount_requested: this.calculos.montos,
+
             city_id: this.$store.getters.cityId,
             loan_term: this.calculos.plazo,
-            disbursement_type_id: this.formulario[0],
-            account_number: this.formulario[1],
-            loan_destiny_id: this.formulario[2],
+            payment_type_id:2,
+            account_number:this.formulario[1],
+            destiny_id: this.formulario[2],
+            payable_liquid_calculated:this.calculos.promedio_liquido_pagable,
+            bonus_calculated:this.calculos.total_bonos,
+            indebtedness_calculated:this.calculos.indice_endeudamiento,
+            liquid_qualification_calculated:this.calculos.liquido_para_calificacion,
+
             documents: this.selectedOpc.concat(this.selected.concat(this.radios.filter(Boolean))),
             notes: this.otherDocuments
           });
