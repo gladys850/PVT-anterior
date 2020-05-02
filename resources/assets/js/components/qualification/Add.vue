@@ -78,7 +78,7 @@
         >
           <v-card flat tile >
             <v-card-text>
-              <Requirement
+              <DocumentsQualification
               :datos.sync="datos"
               :formulario.sync="formulario"
               :calculos.sync="calculos"
@@ -134,7 +134,7 @@
 import Breadcrumbs from '@/components/shared/Breadcrumbs'
 import Profile from '@/components/affiliate/Profile'
 import BallotsResult from '@/components/loan/BallotsResult'
-import Requirement from '@/components/loan/Requirement'
+import DocumentsQualification from '@/components/qualification/DocumentsQualification'
 import ObserverQualification from '@/components/qualification/ObserverQualification'
 import PoliceData from '@/components/affiliate/PoliceData'
 import Dashboard from '@/components/qualification/Dashboard'
@@ -145,7 +145,7 @@ export default {
     Breadcrumbs,
     Profile,
     BallotsResult,
-    Requirement,
+    DocumentsQualification,
     PoliceData,
     ObserverQualification,
     Dashboard
