@@ -136,9 +136,14 @@ return [
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
         /*
-        * Package Service Providers...
+        * Model Service Providers...
         */
-        
+        App\Providers\RecordModelServiceProvider::class,
+        App\Providers\UserModelServiceProvider::class,
+        App\Providers\AffiliateModelServiceProvider::class,
+        App\Providers\RoleModelServiceProvider::class,
+        App\Providers\LoanModelServiceProvider::class,
+        App\Providers\ObservationModelServiceProvider::class,
         /*
         * Application Service Providers...
         */

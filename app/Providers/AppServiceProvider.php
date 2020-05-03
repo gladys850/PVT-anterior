@@ -7,18 +7,6 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\ServiceProvider;
 use Carbon\Carbon;
-use App\Observers\RecordObserver;
-use App\Record;
-use App\Observers\UserObserver;
-use App\User;
-use App\Observers\AffiliateObserver;
-use App\Affiliate;
-use App\Observers\RoleObserver;
-use App\Role;
-use App\Observers\LoanObserver;
-use App\Loan;
-use App\Observers\ObservationObserver;
-use App\Observation;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -40,14 +28,6 @@ class AppServiceProvider extends ServiceProvider
         Validator::extend('alpha_spaces', function ($attribute, $value) {
             return preg_match('/^[\pL\s]+$/u', $value);
         });
-
-        // Observers
-        Record::observe(RecordObserver::class);
-        User::observe(UserObserver::class);
-        Affiliate::observe(AffiliateObserver::class);
-        Role::observe(RoleObserver::class);
-        Loan::observe(LoanObserver::class);
-        Observation::observe(ObservationObserver::class);
 
         // Polymorphic relationships
         Relation::morphMap([
