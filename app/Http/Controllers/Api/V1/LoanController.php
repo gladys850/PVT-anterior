@@ -263,6 +263,7 @@ class LoanController extends Controller
         } else {
             $loan = new Loan(array_merge($request->all(), (array)self::verify_spouse_disbursable($disbursable), ['amount_approved' => $request->amount_requested]));
         }
+
         $loan->save();
         if (Auth::user()->can(['update-loan', 'create-loan']) && ($request->has('lenders') || $request->has('guarantors'))) {
             $percentage = Loan::get_percentage($request->lenders);
@@ -336,19 +337,28 @@ class LoanController extends Controller
 
     public static function verify_spouse_disbursable(Affiliate $affiliate)
     {
-        if ($affiliate->dead) {
-            $spouse = $affiliate->spouse;
-            if ($spouse) return (object)[
-                'disbursable_type' => 'spouses',
-                'disbursable_id' => $spouse->id,
-                'disbursable' => $spouse
-            ];
-        }
-        return (object)[
+        $object = (object)[
             'disbursable_type' => 'affiliates',
             'disbursable_id' => $affiliate->id,
             'disbursable' => $affiliate
         ];
+        if ($object->disbursable->dead) {
+            $spouse = $object->disbursable->spouse;
+            if ($spouse) {
+                $object = (object)[
+                    'disbursable_type' => 'spouses',
+                    'disbursable_id' => $spouse->id,
+                    'disbursable' => $spouse
+                ];
+            } else {
+                abort(409, 'Debe actualizar la información de cónyugue para afiliados fallecidos');
+            }
+        }
+        $needed_keys = ['city_birth', 'city_identity_card', 'city_identity_card'];
+        foreach ($needed_keys as $key) {
+            if (!$object->disbursable[$key]) abort(409, 'Debe actualizar los datos personales del titular y garantes');
+        }
+        return $object;
     }
 
     public function switch_states()
