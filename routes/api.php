@@ -179,6 +179,7 @@ Route::group([
             'middleware' => 'permission:update-setting'
         ], function () {
             Route::patch('procedure_type/{procedure_type}/flow', 'Api\V1\ProcedureTypeController@set_flow');
+            Route::patch('procedure_type/{procedure_type}/loan_destiny', 'Api\V1\ProcedureTypeController@set_loan_destinies');
         });
 
         // Administrador
@@ -193,8 +194,8 @@ Route::group([
         Route::group([
             'middleware' => 'permission:update-role'
         ], function () {
-            Route::post('user/{user}/role', 'Api\V1\UserController@set_roles');
-            Route::post('role/{role}/permission', 'Api\V1\RoleController@set_permissions');
+            Route::patch('user/{user}/role', 'Api\V1\UserController@set_roles');
+            Route::patch('role/{role}/permission', 'Api\V1\RoleController@set_permissions');
         });
         Route::group([
             'middleware' => 'role:TE-admin'

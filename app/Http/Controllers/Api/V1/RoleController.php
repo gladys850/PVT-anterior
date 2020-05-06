@@ -54,6 +54,8 @@ class RoleController extends Controller
     * Establecer permisos a un rol
     * Asignar permisos a un rol determinado
     * @urlParam role required ID de rol. Example: 40
+    * @bodyParam permissions array required Listado de IDs de permisos.
+    * @bodyParam permissions[*] integer required ID de permiso. Example: 31
     * @authenticated
     * @responseFile responses/role/set_permissions.200.json
     */

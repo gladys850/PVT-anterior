@@ -24,6 +24,7 @@ class RoleSequenceForm extends FormRequest
     public function rules()
     {
         return [
+            'workflow' => 'required|array',
             'workflow.*.role_id' => 'required|exists:roles,id',
             'workflow.*.next_role_id' => 'required|exists:roles,id'
         ];
