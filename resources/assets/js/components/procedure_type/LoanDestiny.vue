@@ -7,7 +7,7 @@
     </v-card-title>
     <v-card-text>
       <v-card>
-        <v-card-title>
+        <v-card-text>
           <v-row align="center" no-gutters>
             <v-col cols="12" md="6">
               <v-select
@@ -27,13 +27,40 @@
               ></v-select>
             </v-col>
           </v-row>
+        </v-card-text>
+      </v-card>
+      <v-card v-if="selectedProcedure">
+        <v-card-title>
+          <v-toolbar dense color="grey lighten-3">
+            <v-toolbar-title>
+              <span>Destinos para préstamos de tipo </span>
+              <span class="font-weight-black">{{ procedures.find(o => o.id == selectedProcedure).second_name }}</span>
+            </v-toolbar-title>
+            <v-spacer></v-spacer>
+            <v-divider
+              class="mx-2"
+              inset
+              vertical
+            ></v-divider>
+            <v-flex xs3>
+              <v-text-field
+                v-model="search"
+                append-icon="mdi-magnify"
+                label="Buscar"
+                class="mr-5 pr-5"
+                single-line
+                hide-details
+                clearable
+              ></v-text-field>
+            </v-flex>
+          </v-toolbar>
         </v-card-title>
-        <v-card-text v-if="selectedProcedure">
-          <div class="title">
-            <span>Destinos para préstamos de tipo </span>
-            <span class="font-weight-black">{{ procedures.find(o => o.id == selectedProcedure).second_name }}</span>
-          </div>
-          <v-row no-gutters>
+        <v-card-text>
+          <v-row
+            no-gutters
+            class="data-box"
+            v-if="destinies.length"
+          >
             <template v-for="(destiniesColumn, index) in chunkedDestinies">
               <v-col :key="index">
                 <div
@@ -46,20 +73,38 @@
                       :class="hover ? 'elevation-4' : 'elevation-0'"
                       :color="selectedDestinies.includes(destiny.id) ? 'info' : 'secondary'"
                       dark
-                      style="width: 280px;"
+                      style="width: 310px; height: 45px;"
                       :outlined="!selectedDestinies.includes(destiny.id)"
                       @click.stop="switchDestiny(destiny.id)"
                     >
                       <v-avatar left v-if="selectedDestinies.includes(destiny.id)">
                         <v-icon>mdi-checkbox-marked-circle</v-icon>
                       </v-avatar>
-                      {{ destiny.name }}
+                      <div>
+                        <div class="subtitle-1 font-weight-black">
+                          {{ destiny.name }}
+                        </div>
+                        <div class="caption font-italic">
+                          {{ destiny.description }}
+                        </div>
+                      </div>
                     </v-chip>
                   </v-hover>
                 </div>
               </v-col>
             </template>
           </v-row>
+          <div v-else class="text-center data-box">
+            No hay datos disponibles
+          </div>
+          <div class="text-center">
+            <v-pagination
+              v-model="options.page"
+              :length="options.lastPage"
+              :total-visible="8"
+              color="secondary"
+            ></v-pagination>
+          </div>
         </v-card-text>
       </v-card>
     </v-card-text>
@@ -74,9 +119,29 @@ export default {
     procedures: [],
     destinies: [],
     selectedProcedure: null,
-    selectedDestinies: []
+    selectedDestinies: [],
+    search: '',
+    options: {
+      page: 1,
+      lastPage: 1,
+      itemsPerPage: 24,
+      sortBy: ['name'],
+      sortDesc: [false]
+    }
   }),
   watch: {
+    search: _.debounce(function (newVal, oldVal) {
+      if (newVal != oldVal) {
+        this.options.page = 1
+        this.getDestinies()
+      }
+    }, 1000),
+    options: {
+      deep: true,
+      handler(newVal, oldVal) {
+        this.getDestinies()
+      }
+    },
     selectedProcedure(newVal, oldVal) {
       if (newVal != oldVal && newVal != null) {
         this.selectedDestinies = []
@@ -86,7 +151,7 @@ export default {
   },
   computed: {
     chunkedDestinies() {
-      return _.chunk(this.destinies, 8)
+      return _.chunk(this.destinies, 6)
     }
   },
   mounted() {
@@ -126,8 +191,20 @@ export default {
     async getDestinies() {
       try {
         this.loading = true
-        let res = await axios.get(`loan_destiny`)
+        let res = await axios.get(`loan_destiny`, {
+          params: {
+            page: this.options.page,
+            per_page: this.options.itemsPerPage,
+            sortBy: this.options.sortBy,
+            sortDesc: this.options.sortDesc,
+            search: this.search
+          }
+        })
         this.destinies = res.data.data
+        delete res.data['data']
+        this.options.page = res.data.current_page
+        this.options.lastPage = res.data.last_page
+        this.options.itemsPerPage = parseInt(res.data.per_page)
       } catch (e) {
         console.log(e)
       } finally {
@@ -161,3 +238,8 @@ export default {
   }
 };
 </script>
+<style scoped>
+.data-box {
+  min-height: 400px;
+}
+</style>
