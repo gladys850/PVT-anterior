@@ -3,6 +3,7 @@ import Profile from '@/components/login/Profile'
 import DashboardIndex from '@/components/dashboard/Index'
 import UserIndex from '@/components/user/Index'
 import RoleIndex from '@/components/role/Index'
+import ProcedureTypeIndex from '@/components/procedure_type/Index'
 import AffiliateIndex from '@/components/affiliate/Index'
 import AffiliateAdd from '@/components/affiliate/Add'
 import LoanAdd from '@/components/loan/Add'
@@ -58,6 +59,13 @@ export const routes = [
     path: '/role',
     name: 'roleIndex',
     component: RoleIndex,
+    meta: {
+      requiresAuth: true
+    }
+  }, {
+    path: '/procedure_type',
+    name: 'procedureTypeIndex',
+    component: ProcedureTypeIndex,
     meta: {
       requiresAuth: true
     }
