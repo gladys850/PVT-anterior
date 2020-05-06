@@ -169,14 +169,36 @@ Route::group([
             Route::apiResource('note', 'Api\V1\NoteController')->only('destroy');
         });
 
+        // Ajustes
+        Route::group([
+            'middleware' => 'permission:show-setting'
+        ], function () {
+            Route::get('procedure_type/{procedure_type}/flow', 'Api\V1\ProcedureTypeController@get_flow');
+        });
+        Route::group([
+            'middleware' => 'permission:update-setting'
+        ], function () {
+            Route::patch('procedure_type/{procedure_type}/flow', 'Api\V1\ProcedureTypeController@set_flow');
+        });
+
         // Administrador
+        Route::group([
+            'middleware' => 'permission:show-role'
+        ], function () {
+            Route::apiResource('permission', 'Api\V1\PermissionController')->only('index');
+            Route::get('user/{user}/role', 'Api\V1\UserController@get_roles');
+            Route::get('user/{user}/permission', 'Api\V1\UserController@get_permissions');
+            Route::get('role/{role}/permission', 'Api\V1\RoleController@get_permissions');
+        });
+        Route::group([
+            'middleware' => 'permission:update-role'
+        ], function () {
+            Route::post('user/{user}/role', 'Api\V1\UserController@set_roles');
+            Route::post('role/{role}/permission', 'Api\V1\RoleController@set_permissions');
+        });
         Route::group([
             'middleware' => 'role:TE-admin'
         ], function () {
-            // Usuario
-            Route::get('user/{user}/role', 'Api\V1\UserController@get_roles');
-            Route::post('user/{user}/role', 'Api\V1\UserController@set_roles');
-            Route::get('user/{user}/permission', 'Api\V1\UserController@get_permissions');
             // Ldap
             if (env("LDAP_AUTHENTICATION")) {
                 Route::apiResource('user', 'Api\V1\UserController');
@@ -185,11 +207,6 @@ Route::group([
             } else {
                 Route::apiResource('user', 'Api\V1\UserController')->only('index', 'store', 'destroy');
             }
-            // Módulo
-            Route::get('role/{role}/permission', 'Api\V1\RoleController@get_permissions');
-            Route::post('role/{role}/permission', 'Api\V1\RoleController@set_permissions');
-            // Permiso
-            Route::apiResource('permission', 'Api\V1\PermissionController')->only('index');
         });
     });
 });

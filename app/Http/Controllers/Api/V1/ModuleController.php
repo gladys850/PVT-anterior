@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use App\Module;
 use Util;
 
@@ -26,6 +27,9 @@ class ModuleController extends Controller
     public function index(Request $request)
     {
         $filter = $request->has('name') ? ['name' => $request->name] : [];
+        if (!Auth::user()->hasRole('TE-admin')) {
+            $filter['id'] = Auth::user()->modules;
+        }
         return Util::search_sort(new Module(), $request, $filter);
     }
 
@@ -50,7 +54,7 @@ class ModuleController extends Controller
     */
     public function get_roles(Module $module)
     {
-        return $module->roles;
+        return $module->roles()->whereNotNull('sequence_number')->get();
     }
 
     /**
