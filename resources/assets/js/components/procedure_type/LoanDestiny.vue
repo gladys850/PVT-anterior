@@ -53,13 +53,14 @@
                 clearable
               ></v-text-field>
             </v-flex>
+            <AddDestiny v-if="$store.getters.permissions.includes('update-setting')" :bus="bus"/>
           </v-toolbar>
         </v-card-title>
         <v-card-text>
           <v-row
             no-gutters
             class="data-box"
-            v-if="destinies.length"
+            v-if="destinies.length && !loading"
           >
             <template v-for="(destiniesColumn, index) in chunkedDestinies">
               <v-col :key="index">
@@ -68,32 +69,69 @@
                   :key="destiny.id"
                   class="my-3"
                 >
-                  <v-hover v-slot:default="{ hover }">
-                    <v-chip
-                      :class="hover ? 'elevation-4' : 'elevation-0'"
-                      :color="selectedDestinies.includes(destiny.id) ? 'info' : 'secondary'"
-                      dark
-                      style="width: 310px; height: 45px;"
-                      :outlined="!selectedDestinies.includes(destiny.id)"
-                      @click.stop="switchDestiny(destiny.id)"
-                    >
-                      <v-avatar left v-if="selectedDestinies.includes(destiny.id)">
-                        <v-icon>mdi-checkbox-marked-circle</v-icon>
-                      </v-avatar>
-                      <div>
-                        <div class="subtitle-1 font-weight-black">
-                          {{ destiny.name }}
+                  <v-menu
+                    offset-y
+                    close-on-click
+                    close-on-content-click
+                    right
+                  >
+                    <template v-slot:activator="{ on }">
+                      <v-chip
+                        v-on="on"
+                        :color="selectedDestinies.includes(destiny.id) ? 'info' : 'secondary'"
+                        dark
+                        style="width: 300px; height: 45px;"
+                        :outlined="!selectedDestinies.includes(destiny.id)"
+                      >
+                        <v-avatar left v-if="selectedDestinies.includes(destiny.id)">
+                          <v-icon>mdi-checkbox-marked-circle</v-icon>
+                        </v-avatar>
+                        <div>
+                          <div class="subtitle-1 font-weight-black">
+                            {{ destiny.name }}
+                          </div>
+                          <div class="caption font-italic">
+                            {{ destiny.description }}
+                          </div>
                         </div>
-                        <div class="caption font-italic">
-                          {{ destiny.description }}
-                        </div>
-                      </div>
-                    </v-chip>
-                  </v-hover>
+                      </v-chip>
+                    </template>
+                    <v-list dense color="grey lighten-4">
+                      <v-list-item @click="switchDestiny(destiny.id)">
+                        <v-list-item-icon>
+                          <v-icon :color="selectedDestinies.includes(destiny.id) ? 'danger' : 'success'">
+                            {{ selectedDestinies.includes(destiny.id) ? 'mdi-minus' : 'mdi-plus' }}
+                          </v-icon>
+                        </v-list-item-icon>
+                        <v-list-item-content>
+                          <v-list-item-title>
+                            {{ selectedDestinies.includes(destiny.id) ? 'Quitar' : 'Agregar' }}
+                          </v-list-item-title>
+                        </v-list-item-content>
+                      </v-list-item>
+                      <v-list-item @click="bus.$emit('openDialog', destiny)">
+                        <v-list-item-icon>
+                          <v-icon color="info">mdi-pencil</v-icon>
+                        </v-list-item-icon>
+                        <v-list-item-content>
+                          <v-list-item-title>Editar</v-list-item-title>
+                        </v-list-item-content>
+                      </v-list-item>
+                      <v-list-item @click="bus.$emit('openRemoveDialog', `loan_destiny/${destiny.id}`)">
+                        <v-list-item-icon>
+                          <v-icon color="error">mdi-close</v-icon>
+                        </v-list-item-icon>
+                        <v-list-item-content>
+                          <v-list-item-title>Eliminar</v-list-item-title>
+                        </v-list-item-content>
+                      </v-list-item>
+                    </v-list>
+                  </v-menu>
                 </div>
               </v-col>
             </template>
           </v-row>
+          <Loading v-else-if="loading"/>
           <div v-else class="text-center data-box">
             No hay datos disponibles
           </div>
@@ -108,13 +146,23 @@
         </v-card-text>
       </v-card>
     </v-card-text>
+    <RemoveItem :bus="bus"/>
   </v-card>
 </template>
-
 <script>
+import AddDestiny from '@/components/procedure_type/AddDestiny'
+import RemoveItem from '@/components/shared/RemoveItem'
+import Loading from '@/components/shared/Loading'
+
 export default {
   name: "procedure-type-loan-destiny",
+  components: {
+    AddDestiny,
+    RemoveItem,
+    Loading
+  },
   data: () => ({
+    bus: new Vue(),
     loading: true,
     procedures: [],
     destinies: [],
@@ -157,8 +205,21 @@ export default {
   mounted() {
     this.getDestinies()
     this.getProcedures()
+    this.bus.$on('getDestinies', (flush) => {
+      this.resetList(flush)
+    })
+    this.bus.$on('removed', val => {
+      this.resetList()
+    })
   },
   methods: {
+    resetList(flush = false) {
+      if (flush) {
+        this.search = ''
+        this.page = 1
+      }
+      this.getDestinies()
+    },
     async getProcedureDestinies(id) {
       try {
         this.loading = true
