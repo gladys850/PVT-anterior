@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers\Api\V1;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\LoanDestiny;
 use Util;
+use App\LoanDestiny;
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\LoanDestinyForm;
 
 /** @group Destino Préstamo
 * Datos de los destinos de préstamos
@@ -37,7 +38,7 @@ class LoanDestinyController extends Controller
     * @authenticated
     * @responseFile responses/loan_destiny/store.200.json
     */
-    public function store(Request $request)
+    public function store(LoanDestinyForm $request)
     {
         return LoanDestiny::create($request->all());
     }
@@ -64,7 +65,7 @@ class LoanDestinyController extends Controller
     * @authenticated
     * @responseFile responses/loan_destiny/update.200.json
     */
-    public function update(Request $request, LoanDestiny $loan_destiny)
+    public function update(LoanDestinyForm $request, LoanDestiny $loan_destiny)
     {
         $loan_destiny->fill($request->all());
         $loan_destiny->save();
@@ -79,6 +80,7 @@ class LoanDestinyController extends Controller
     */
     public function destroy(LoanDestiny $loan_destiny)
     {
+        if ($loan_destiny->procedure_types()->count()) abort(409, 'Aún existen trámites asociados al destino');
         $loan_destiny->delete();
         return $loan_destiny;
     }

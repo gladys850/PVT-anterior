@@ -87,11 +87,18 @@ class ProcedureTypeController extends Controller
     */
     public function set_flow(RoleSequenceForm $request, ProcedureType $procedure_type)
     {
-        $request = collect($request->workflow)->unique('next_role_id', 'role_id')->map(function($item) use ($procedure_type) {
+        $request = collect($request->workflow)->map(function($item) use ($procedure_type) {
             if (Role::find($item['role_id'])->sequence_number >= Role::find($item['next_role_id'])->sequence_number) abort(409, 'El rol destino ser superior al de origen');
             $item['procedure_type_id'] = $procedure_type->id;
             return $item;
         })->values()->toArray();
+        foreach ($request as $key => $sequence) {
+            foreach ($request as $i => $compare) {
+                if ($key != $i) {
+                    if ($sequence['role_id'] == $compare['role_id'] && $sequence['next_role_id'] == $compare['next_role_id']) abort(409, 'No se pueden guardar secuencias duplicadas');
+                }
+            }
+        }
         RoleSequence::whereProcedureTypeId($procedure_type->id)->delete();
         RoleSequence::insert($request);
         return $procedure_type->workflow;

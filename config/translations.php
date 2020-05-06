@@ -83,5 +83,8 @@ return [
     'user_id' => 'Usuario',
     // Submitted Documents
     'is_valid' => 'Válido',
-    'comment' => 'Comentario'
+    'comment' => 'Comentario',
+    // Loan Destinies
+    'name' => 'Nombre',
+    'description' => 'Descripción'
 ];
