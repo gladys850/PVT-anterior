@@ -9,6 +9,7 @@ class RoleSequence extends Model
     protected $primaryKey = null;
     public $incrementing = false;
     public $timestamps = false;
+    protected $fillable = ['procedure_type_id', 'role_id', 'next_role_id'];
 
     public function procedure_type()
     {

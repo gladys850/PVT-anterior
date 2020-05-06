@@ -135,6 +135,8 @@ export default {
           })
           this.selectedPermissions = res.data.permissions
           this.toastr.success('Actualizado correctamente')
+        } else {
+          this.toastr.warning('No autorizado')
         }
       } catch (e) {
         console.log(e)

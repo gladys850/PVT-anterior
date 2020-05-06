@@ -2604,6 +2604,55 @@
 						"description": "get_loan_destinies"
 					},
 					"response": []
+				},
+				{
+					"name": "Obtener flujo de trabajo",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/{{endpoint}}/9/flow",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}",
+								"9",
+								"flow"
+							]
+						},
+						"description": "get_flow"
+					},
+					"response": []
+				},
+				{
+					"name": "Actualizar flujo de trabajo",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"workflow\": [\n\t    {\n\t        \"role_id\": 81,\n\t        \"next_role_id\": 73\n\t    },\n\t    {\n\t        \"role_id\": 73,\n\t        \"next_role_id\": 82\n\t    }\n\t]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/{{endpoint}}/9/flow",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}",
+								"9",
+								"flow"
+							]
+						},
+						"description": "set_flow"
+					},
+					"response": []
 				}
 			],
 			"description": "procedure_type",
@@ -3186,37 +3235,37 @@
 	],
 	"variable": [
 		{
-			"id": "d0c1dd87-925f-4bb2-82dd-f741af48ad60",
+			"id": "6c3101e5-2634-4838-871e-ed94cb875837",
 			"key": "url",
 			"value": "http://localhost/api/v1",
 			"type": "string"
 		},
 		{
-			"id": "a3a75f16-574c-4a53-a104-fcf525916946",
+			"id": "f781bfd9-7911-40b0-a22b-c2fc92063457",
 			"key": "username",
 			"value": "nalarcon",
 			"type": "string"
 		},
 		{
-			"id": "11817cd3-de68-403e-b099-a6b48a5abcd7",
+			"id": "9ca7ecfe-ce23-4121-993d-b38f18d2587c",
 			"key": "password",
 			"value": "nalarcon",
 			"type": "string"
 		},
 		{
-			"id": "33820717-31d1-4d87-baee-40d800cebcd6",
+			"id": "64a8c71c-ada7-4091-b911-dfdcd2888580",
 			"key": "endpoint",
 			"value": "",
 			"type": "string"
 		},
 		{
-			"id": "c3bf123b-0cf0-413e-97c3-f00f89b5874d",
+			"id": "cd4503a9-eecb-4ca9-b5f2-f388fd58cb83",
 			"key": "currentAccessToken",
 			"value": "",
 			"type": "string"
 		},
 		{
-			"id": "94fcbc62-9b86-4549-b4ff-a22021b5d8b2",
+			"id": "49b7d14d-79be-4e97-82f2-219c1c974064",
 			"key": "accessTokenExpiry",
 			"value": "",
 			"type": "string"

@@ -29,6 +29,6 @@ class AdminSeeder extends Seeder
         ]);
         $role = Role::whereName('TE-admin')->first();
         $user->roles()->sync($role);
-        $role->syncPermissions(['create-user', 'update-user', 'show-user', 'delete-user', 'show-record', 'delete-record', 'update-role', 'show-role']);
+        $role->syncPermissions(['create-user', 'update-user', 'show-user', 'delete-user', 'show-record', 'delete-record', 'update-role', 'show-role', 'show-setting']);
     }
 }

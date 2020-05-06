@@ -5,6 +5,9 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\ProcedureType;
+use App\RoleSequence;
+use App\Role;
+use App\Http\Requests\RoleSequenceForm;
 use Util;
 
 /** @group Tipos de trámites
@@ -39,5 +42,39 @@ class ProcedureTypeController extends Controller
     public function get_loan_destinies(ProcedureType $procedure_type)
     {
         return $procedure_type->loan_destinies;
+    }
+
+    /**
+    * Obtener flujo de trabajo
+    * Obtiene la lista de roles para derivación de trámites de una modalidad
+    * @urlParam procedure_type required ID de la modalidad. Example: 9
+    * @authenticated
+    * @responseFile responses/procedure_type/get_flow.200.json
+    */
+    public function get_flow(ProcedureType $procedure_type)
+    {
+        return $procedure_type->workflow;
+    }
+
+    /**
+    * Actualizar flujo de trabajo
+    * Actualiza la secuencia de roles para derivación de trámites de una modalidad
+    * @urlParam procedure_type required ID de la modalidad. Example: 9
+    * @bodyParam workflow array required Listado de secuencias de derivación.
+    * @bodyParam workflow[*].role_id integer required Área desde la cual se derivará. Example: 81
+    * @bodyParam workflow[*].next_role_id integer required Área a la cual se derivará. Example: 73
+    * @authenticated
+    * @responseFile responses/procedure_type/get_flow.200.json
+    */
+    public function set_flow(RoleSequenceForm $request, ProcedureType $procedure_type)
+    {
+        $request = collect($request->workflow)->unique('next_role_id', 'role_id')->map(function($item) use ($procedure_type) {
+            if (Role::find($item['role_id'])->sequence_number >= Role::find($item['next_role_id'])->sequence_number) abort(409, 'El rol destino ser superior al de origen');
+            $item['procedure_type_id'] = $procedure_type->id;
+            return $item;
+        })->values()->toArray();
+        RoleSequence::whereProcedureTypeId($procedure_type->id)->delete();
+        RoleSequence::insert($request);
+        return $procedure_type->workflow;
     }
 }

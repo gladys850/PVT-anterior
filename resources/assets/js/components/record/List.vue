@@ -21,6 +21,7 @@
 <script>
 export default {
   name: 'record-list',
+  props: ['bus'],
   data: () => ({
     loading: true,
     options: {
@@ -47,11 +48,18 @@ export default {
         align: 'center',
         sortable: true
       }
-    ]
+    ],
+    search: ''
   }),
   watch: {
     options: function(newVal, oldVal) {
       if (newVal.page != oldVal.page || newVal.itemsPerPage != oldVal.itemsPerPage || newVal.sortBy != oldVal.sortBy || newVal.sortDesc != oldVal.sortDesc) {
+        this.getRecords()
+      }
+    },
+    search: function(newVal, oldVal) {
+      if (newVal != oldVal) {
+        this.options.page = 1
         this.getRecords()
       }
     }
@@ -63,6 +71,9 @@ export default {
     })
   },
   mounted() {
+    this.bus.$on('search', val => {
+      this.search = val
+    })
     this.getRecords()
   },
   methods: {
@@ -75,7 +86,8 @@ export default {
             per_page: this.options.itemsPerPage,
             sortBy: this.options.sortBy,
             sortDesc: this.options.sortDesc,
-            active: this.active
+            active: this.active,
+            search: this.search
           }
         })
         this.records = res.data.data

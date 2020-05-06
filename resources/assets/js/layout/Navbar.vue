@@ -68,7 +68,10 @@ export default {
   }),
   methods: {
     checkPermission(item) {
-      return item.permission == null || this.$store.getters.permissions.includes(item.permission)
+      let hasPermission = true
+      if (item.hasOwnProperty('permission')) hasPermission &= (item.permission == null || this.$store.getters.permissions.includes(item.permission))
+      if (item.hasOwnProperty('role')) hasPermission &= this.$store.getters.roles.includes(item.role)
+      return hasPermission
     }
   }
 }
