@@ -2586,7 +2586,7 @@
 					"response": []
 				},
 				{
-					"name": "Listado de destinos de préstamo por modalidad",
+					"name": "Listado de destinos de préstamo",
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -2651,6 +2651,35 @@
 							]
 						},
 						"description": "set_flow"
+					},
+					"response": []
+				},
+				{
+					"name": "Actualizar destinos de préstamo",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"destinies\": [2]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/{{endpoint}}/9/loan_destiny",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}",
+								"9",
+								"loan_destiny"
+							]
+						},
+						"description": "set_loan_destinies"
 					},
 					"response": []
 				}
@@ -3235,37 +3264,37 @@
 	],
 	"variable": [
 		{
-			"id": "6c3101e5-2634-4838-871e-ed94cb875837",
+			"id": "8fabf3fe-8aa6-455b-a066-14a610a1a9d8",
 			"key": "url",
 			"value": "http://localhost/api/v1",
 			"type": "string"
 		},
 		{
-			"id": "f781bfd9-7911-40b0-a22b-c2fc92063457",
+			"id": "0273dd13-96cf-4da2-9d64-0f75f2ef6200",
 			"key": "username",
 			"value": "nalarcon",
 			"type": "string"
 		},
 		{
-			"id": "9ca7ecfe-ce23-4121-993d-b38f18d2587c",
+			"id": "a9950046-44fe-4c7a-b5da-6ca58b38ed6a",
 			"key": "password",
 			"value": "nalarcon",
 			"type": "string"
 		},
 		{
-			"id": "64a8c71c-ada7-4091-b911-dfdcd2888580",
+			"id": "e948d19d-170c-4019-a168-2ace822c3dfa",
 			"key": "endpoint",
 			"value": "",
 			"type": "string"
 		},
 		{
-			"id": "cd4503a9-eecb-4ca9-b5f2-f388fd58cb83",
+			"id": "6a2f4df7-24ce-426f-ac9e-7b24bf3dcc26",
 			"key": "currentAccessToken",
 			"value": "",
 			"type": "string"
 		},
 		{
-			"id": "49b7d14d-79be-4e97-82f2-219c1c974064",
+			"id": "0edee12f-9bb6-4055-abee-83f682293521",
 			"key": "accessTokenExpiry",
 			"value": "",
 			"type": "string"

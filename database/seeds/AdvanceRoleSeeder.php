@@ -73,7 +73,12 @@ class AdvanceRoleSeeder extends Seeder
                     'module_id' => $module->id,
                     'sequence_number' => $role['sequence']
                 ]);
-                $role->syncPermissions(in_array($role['name'], ['Jefatura', 'Dirección']) ? array_merge($sequence_permissions, ['show-all-loan', 'update-loan', 'delete-loan']) : $sequence_permissions);
+                if (in_array($role['name'], ['Jefatura', 'Aprobación Dirección'])) {
+                    array_merge($sequence_permissions, ['show-all-loan', 'update-loan', 'delete-loan', 'show-setting']);
+                } elseif ($role['name'] == 'Aprobación Dirección') {
+                    array_merge($sequence_permissions, ['update-setting']);
+                }
+                $role->syncPermissions($sequence_permissions);
             }
         }
     }

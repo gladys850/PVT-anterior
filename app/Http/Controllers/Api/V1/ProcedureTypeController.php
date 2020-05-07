@@ -33,7 +33,7 @@ class ProcedureTypeController extends Controller
     }
 
     /**
-    * Listado de destinos de préstamo por modalidad
+    * Listado de destinos de préstamo
     * Obtiene la lista de destinos de préstamos por modalidad
     * @urlParam procedure_type required ID de la modalidad. Example: 9
     * @authenticated
@@ -41,6 +41,25 @@ class ProcedureTypeController extends Controller
     */
     public function get_loan_destinies(ProcedureType $procedure_type)
     {
+        return $procedure_type->loan_destinies;
+    }
+
+    /**
+    * Actualizar destinos de préstamo
+    * Modifica la lista de destinos de préstamos por modalidad
+    * @urlParam procedure_type required ID de la modalidad. Example: 9
+    * @bodyParam destinies array required Listado de IDs de destinos de préstamo.
+    * @bodyParam destinies[*] integer required ID de destino. Example: 2
+    * @authenticated
+    * @responseFile responses/procedure_type/get_loan_destinies.200.json
+    */
+    public function set_loan_destinies(Request $request, ProcedureType $procedure_type)
+    {
+        $request->validate([
+            'destinies' => 'required|array|min:1',
+            'destinies.*' => 'exists:loan_destinies,id'
+        ]);
+        $procedure_type->loan_destinies()->sync($request->destinies);
         return $procedure_type->loan_destinies;
     }
 
