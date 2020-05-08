@@ -50,8 +50,8 @@ class LoanController extends Controller
     /**
     * Lista de Préstamos
     * Devuelve el listado con los datos paginados
-    * @queryParam role_id Ver préstamos del rol, si es 0 se muestra la lista completa. Example: 2
-    * @queryParam search Parámetro de búsqueda. Example: 3000
+    * @queryParam role_id Ver préstamos del rol, si es 0 se muestra la lista completa. Example: 73
+    * @queryParam search Parámetro de búsqueda. Example: 2000
     * @queryParam sortBy Vector de ordenamiento. Example: []
     * @queryParam sortDesc Vector de orden descendente(true) o ascendente(false). Example: [true]
     * @queryParam per_page Número de datos por página. Example: 8
@@ -188,7 +188,7 @@ class LoanController extends Controller
     /**
     * Actualizar préstamo
     * Actualizar datos principales de préstamo
-    * @urlParam loan required ID del préstamo. Example: 17
+    * @urlParam loan required ID del préstamo. Example: 1
     * @bodyParam procedure_modality_id integer required ID de modalidad. Example: 32
     * @bodyParam amount_requested integer required monto solicitado. Example: 2000
     * @bodyParam city_id integer required ID de la ciudad. Example: 4
@@ -312,7 +312,7 @@ class LoanController extends Controller
     }
 
     /**
-    * Lista de documentos
+    * Lista de documentos entregados
     * Obtiene la lista de los documentos presentados para el trámite
     * @urlParam loan required ID del préstamo. Example: 8
     * @authenticated
@@ -653,7 +653,7 @@ class LoanController extends Controller
     * Inserta una nueva observación asociada al trámite
     * @urlParam loan required ID del préstamo. Example: 2
     * @bodyParam observation_type_id integer required ID de tipo de observación. Example: 2
-    * @bodyParam message string Mensaje adjunto a la observación. Example: Subsanable en una semana
+    * @bodyParam message string required Mensaje adjunto a la observación. Example: Subsanable en una semana
     * @authenticated
     * @responseFile responses/loan/set_observation.200.json
     */
@@ -705,7 +705,7 @@ class LoanController extends Controller
     * @bodyParam user_id integer required ID de usuario que creó la observación. Example: 123
     * @bodyParam observation_type_id integer required ID de tipo de observación. Example: 2
     * @bodyParam message string required Mensaje de la observación. Example: Subsanable en una semana
-    * @bodyParam date date required Fecha de la observación. Example: 2020-04-14 21:16:52
+    * @bodyParam date required Fecha de la observación. Example: 2020-04-14 21:16:52
     * @bodyParam enabled boolean required Estado de la observación. Example: false
     * @authenticated
     * @responseFile responses/loan/unset_observation.200.json

@@ -5,6 +5,7 @@ namespace App\Http\Requests;
 use App\ProcedureModality;
 use App\Rules\LoanIntervalAmount;
 use App\Rules\LoanIntervalTerm;
+use App\Rules\LoanParameterTicket;
 
 
 use Illuminate\Foundation\Http\FormRequest;
@@ -42,7 +43,7 @@ class CalculatorForm extends FormRequest
             'parent_loan_id' => ['integer', 'nullable', 'exists:loans,id'],
             'debtor' => ['nullable', 'boolean'],
             'guarantor' => ['nullable', 'boolean'],
-            'contributions' => ['required', 'array', 'min:1'],
+            'contributions' => ['required', 'array', 'min:1', new LoanParameterTicket($procedure_modality)],
             'contributions.*.payable_liquid' => ['required'],
             'contributions.*.border_bonus' => ['required'],
             'contributions.*.seniority_bonus' => ['required'],
