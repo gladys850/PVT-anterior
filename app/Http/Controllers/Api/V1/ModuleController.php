@@ -48,7 +48,7 @@ class ModuleController extends Controller
     /**
     * Roles asociados al módulo
     * Devuelve la lista de roles asociados a un módulo
-    * @urlParam module required ID del módulo. Example: 3
+    * @urlParam module required ID del módulo. Example: 6
     * @authenticated
     * @responseFile responses/module/get_roles.200.json
     */
