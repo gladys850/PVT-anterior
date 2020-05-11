@@ -124,6 +124,8 @@
           <v-card flat tile >
           <v-card-text class=" pa-0 mb-0">
             <ObserverQualification
+            :observations.sync="observations"
+            :record.sync="record"
             /></v-card-text>
           </v-card>
         </v-tab-item>
@@ -171,27 +173,6 @@ export default {
       date_derelict:null,
       unit_name:null
     },
-    spouse: {
-    affiliate_id: null,
-    first_name: null,
-    second_name:null,
-    last_name: null,
-    mothers_last_name:null,
-    identity_card:null,
-    birth_date:null,
-    date_death:null,
-    reason_death:null,
-    phone_number:null,
-    cell_phone_number:null,
-    city_identity_card_id:null,
-    death_certificate_number:null,
-    city_birth_id:null,
-    civil_status:null,
-    official:null,
-    book:null,
-    departure:null,
-    marriage_date:null
-    },
     bonos:[0,0,0,0],
     payable_liquid:[0,0,0],
     calculos:{},
@@ -233,12 +214,20 @@ export default {
       }
     }
   },
+  beforeMount(){
+     this.getloan(4)
+    this.getObservation(1)
+    this.getRecords()
+
+  },
   mounted() {
     this.getloan(1)
+    this.getObservation(1)
+    this.getRecords()
   },
   methods: {
     resetForm() {
-      this.getAffiliate(this.$route.params.id)
+      
       this.getAddress(this.$route.params.id)
       this.editable = false
       this.reload = true
@@ -272,9 +261,6 @@ export default {
         let res1 = await axios.get(`affiliate/${this.loan.disbursable_id}`)
         this.affiliate = res1.data
         this.setBreadcrumbs()
-        if (this.affiliate.dead) {
-          this.getSpouse(this.$route.params.id)
-        }
         console.log(this.loan+'este es el prestamo')
       } catch (e) {
         console.log(e);
@@ -282,33 +268,19 @@ export default {
         this.loading = false;
       }
     },
-    async getAffiliate(id) {
-      try {
-        this.loading = true
-        let res = await axios.get(`affiliate/${id}`)
-        this.affiliate = res.data
-        this.setBreadcrumbs()
-        if (this.affiliate.dead) {
-          this.getSpouse(this.$route.params.id)
-        }
-      } catch (e) {
-        console.log(e)
-      } finally {
-        this.loading = false
-      }
-    },
-    async getSpouse(id) {
-      try {
-        this.loading = true
-        let res = await axios.get(`affiliate/${id}/spouse`)
-        this.spouse = res.data
-      } catch (e) {
-        console.log(e)
-      } finally {
-        this.loading = false
-      }
-    },
-    async getAddress(id) {
+    async getObservation(id) {
+    try {
+      this.loading = true
+      let res = await axios.get(`loan/${id}/observation`)
+      this.observations = res.data
+      console.log('este la observacion'+this.observations)
+    } catch (e) {
+      console.log(e)
+    } finally {
+      this.loading = false
+    }
+  },
+   async getAddress(id) {
       try {
         this.loading = true
         let res = await axios.get(`affiliate/${id}/address`)
@@ -319,6 +291,20 @@ export default {
         this.loading = false
       }
     },
+  async getRecords() {
+    try {
+      this.loading = true
+      let res = await axios.get(`record`,{param:{
+      loan_id:4
+    }})
+      this.record = res.data.data
+      console.log('este el record'+this.record)
+    } catch (e) {
+      console.log(e)
+    } finally {
+        this.loading = false
+    }
+  },
   },
 }
 </script>

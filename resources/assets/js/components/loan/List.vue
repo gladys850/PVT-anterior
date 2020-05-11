@@ -34,12 +34,21 @@
                 <v-icon>mdi-printer</v-icon>
               </v-btn>
             </template>
-            <v-list>
+            <v-list
+            class="py-0">
               <v-list-item
+                class="py-0"
                 v-for="(item, index) in [{title:'Contrato'},{title:'Formulario'}]"
                 :key="index"
               >
-                <v-list-item-title>{{ item.title }}</v-list-item-title>
+                <v-list-item-title class="py-0">
+                  <v-btn text 
+                    @click="imprimir(index,props.item.id)" >
+                    <v-icon v-show="index==0"> mdi-file-account-outline</v-icon> 
+                    <v-icon v-show="index==1"> mdi-file-document-outline</v-icon> 
+                    {{ item.title }}
+                  </v-btn>
+                </v-list-item-title>
               </v-list-item>
             </v-list>
           </v-menu>
@@ -175,6 +184,16 @@ export default {
     this.getloans()
   },
   methods: {
+    async imprimir(index,item)
+    {
+      if(index==0)
+      {
+         let res = await axios.get(`loan/${item}/print/contract`)
+      }
+      else{
+        let res = await axios.get(`loan/${item}/print/form`)
+      } 
+    },
     async getloans(params) {
       try {
         this.loading = true
