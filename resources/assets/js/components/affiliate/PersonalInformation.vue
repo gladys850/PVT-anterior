@@ -319,13 +319,12 @@ import AddStreet from '@/components/affiliate/AddStreet'
       }
     },
      getCelular(){
-      let part
-      if(this.affiliate.cell_phone_number!==null)
-      {
-        part=this.affiliate.cell_phone_number.split(',')
-      }      
-      this.cel[0]= part[0]
-      this.cel[1]= part[1]      
+      let part = []
+      if(this.affiliate.cell_phone_number!==null){
+        part=this.affiliate.cell_phone_number.split(',')    
+        this.cel[0]= part[0]
+        this.cel[1]= part[1]  
+      }    
     },
     updateCelular(){
       let count = 0
