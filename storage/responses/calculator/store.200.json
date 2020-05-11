@@ -1,10 +1,10 @@
 {
-    "promedio_liquido_pagable": 1944,
-    "total_bonos": 0,
-    "liquido_para_calificacion": 1944,
-    "calculo_de_cuota": "1.045,22",
-    "indice_endeudamiento": 53,
-    "monto solicitado": 2000,
-    "monto_maximo_sugerido": 2000,
-    "valido": true
+    "payable_liquid_calculated": 1944,
+    "bonus_calculated": 0,
+    "liquid_qualification_calculated": 1944,
+    "quota_calculated": "966,51",
+    "indebtedness_calculated": 49,
+    "amount_requested": 4600,
+    "amount_maximum_suggested": 4600,
+    "is_valid": true
 }

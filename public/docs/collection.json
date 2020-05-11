@@ -2586,7 +2586,7 @@
 					"response": []
 				},
 				{
-					"name": "Listado de destinos de préstamo por modalidad",
+					"name": "Listado de destinos de préstamo",
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -2602,6 +2602,84 @@
 							]
 						},
 						"description": "get_loan_destinies"
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener flujo de trabajo",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/{{endpoint}}/9/flow",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}",
+								"9",
+								"flow"
+							]
+						},
+						"description": "get_flow"
+					},
+					"response": []
+				},
+				{
+					"name": "Actualizar flujo de trabajo",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"workflow\": [\n\t    {\n\t        \"role_id\": 81,\n\t        \"next_role_id\": 73\n\t    },\n\t    {\n\t        \"role_id\": 73,\n\t        \"next_role_id\": 82\n\t    }\n\t]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/{{endpoint}}/9/flow",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}",
+								"9",
+								"flow"
+							]
+						},
+						"description": "set_flow"
+					},
+					"response": []
+				},
+				{
+					"name": "Actualizar destinos de préstamo",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"destinies\": [2]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/{{endpoint}}/9/loan_destiny",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}",
+								"9",
+								"loan_destiny"
+							]
+						},
+						"description": "set_loan_destinies"
 					},
 					"response": []
 				}
@@ -3186,37 +3264,37 @@
 	],
 	"variable": [
 		{
-			"id": "d0c1dd87-925f-4bb2-82dd-f741af48ad60",
+			"id": "8fabf3fe-8aa6-455b-a066-14a610a1a9d8",
 			"key": "url",
 			"value": "http://localhost/api/v1",
 			"type": "string"
 		},
 		{
-			"id": "a3a75f16-574c-4a53-a104-fcf525916946",
+			"id": "0273dd13-96cf-4da2-9d64-0f75f2ef6200",
 			"key": "username",
 			"value": "nalarcon",
 			"type": "string"
 		},
 		{
-			"id": "11817cd3-de68-403e-b099-a6b48a5abcd7",
+			"id": "a9950046-44fe-4c7a-b5da-6ca58b38ed6a",
 			"key": "password",
 			"value": "nalarcon",
 			"type": "string"
 		},
 		{
-			"id": "33820717-31d1-4d87-baee-40d800cebcd6",
+			"id": "e948d19d-170c-4019-a168-2ace822c3dfa",
 			"key": "endpoint",
 			"value": "",
 			"type": "string"
 		},
 		{
-			"id": "c3bf123b-0cf0-413e-97c3-f00f89b5874d",
+			"id": "6a2f4df7-24ce-426f-ac9e-7b24bf3dcc26",
 			"key": "currentAccessToken",
 			"value": "",
 			"type": "string"
 		},
 		{
-			"id": "94fcbc62-9b86-4549-b4ff-a22021b5d8b2",
+			"id": "0edee12f-9bb6-4055-abee-83f682293521",
 			"key": "accessTokenExpiry",
 			"value": "",
 			"type": "string"

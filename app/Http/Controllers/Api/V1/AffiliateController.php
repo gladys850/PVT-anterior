@@ -479,7 +479,7 @@ class AffiliateController extends Controller
     * @authenticated
     * @responseFile responses/affiliate/get_observations.200.json
     */
-    public function get_observations(Affiliate $affiliate)
+    public function get_observations(Request $request, Affiliate $affiliate)
     {
         $query = $affiliate->observations();
         if ($request->boolean('with_trashed')) $query = $query->withTrashed();
@@ -491,7 +491,7 @@ class AffiliateController extends Controller
     * Inserta una nueva observación asociada al afiliado
     * @urlParam affiliate required ID del afiliado. Example: 5012
     * @bodyParam observation_type_id integer required ID de tipo de observación. Example: 2
-    * @bodyParam message string Mensaje adjunto a la observación. Example: Subsanable en una semana
+    * @bodyParam message string required Mensaje adjunto a la observación. Example: Subsanable en una semana
     * @authenticated
     * @responseFile responses/affiliate/set_observation.200.json
     */
@@ -543,7 +543,7 @@ class AffiliateController extends Controller
     * @bodyParam user_id integer required ID de usuario que creó la observación. Example: 123
     * @bodyParam observation_type_id integer required ID de tipo de observación. Example: 2
     * @bodyParam message string required Mensaje de la observación. Example: Subsanable en una semana
-    * @bodyParam date date required Fecha de la observación. Example: 2020-04-14 21:16:52
+    * @bodyParam date required Fecha de la observación. Example: 2020-04-14 21:16:52
     * @bodyParam enabled boolean required Estado de la observación. Example: false
     * @authenticated
     * @responseFile responses/affiliate/unset_observation.200.json

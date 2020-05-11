@@ -46,7 +46,7 @@ class ObservationForm extends FormRequest
         if ($module) array_push($rules['observation_type_id'], new ModuleObservation($module));
         switch ($this->method()) {
             case 'POST':
-                foreach (array_slice($rules, 0, 1) as $key => $rule) {
+                foreach (array_slice($rules, 0, 2) as $key => $rule) {
                     array_push($rules[$key], 'required');
                 }
                 break;

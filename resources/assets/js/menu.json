@@ -3,7 +3,6 @@
     "href": "dashboardIndex",
     "title": "Inicio",
     "icon": "mdi-home",
-    "permission": null,
     "params": {}
   }, {
     "href": "affiliateIndex",
@@ -41,13 +40,26 @@
         "href": "userIndex",
         "title": "Usuarios",
         "icon": "mdi-account-outline",
-        "permission": null,
+        "permission": "show-user",
+        "role": "TE-admin",
         "params": {}
       }, {
         "href": "roleIndex",
         "title": "Roles",
         "icon": "mdi-shield-lock-outline",
         "permission": "show-role",
+        "params": {}
+      }
+    ]
+  }, {
+    "title": "Ajustes",
+    "icon": "mdi-cog",
+    "permission": "show-setting",
+    "group": [
+      {
+        "href": "procedureTypeIndex",
+        "title": "Flujo de trabajo",
+        "icon": "mdi-chart-timeline-variant",
         "params": {}
       }
     ]

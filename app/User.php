@@ -81,6 +81,11 @@ class User extends Authenticatable implements JWTSubject
         return $value;
     }
 
+    public function getModulesAttribute()
+    {
+        return $this->roles()->pluck('module_id')->unique()->toArray();
+    }
+
     public function city()
     {
         return $this->belongsTo(City::class);

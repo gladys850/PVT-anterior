@@ -5,35 +5,186 @@
     "city_id": 3,
     "loan_term": 2,
     "payment_type_id": 1,
-    "destiny_id": 1,
     "payable_liquid_calculated": 2000,
     "bonus_calculated": 24,
-    "indebtedness_calculated": 52.26,
     "liquid_qualification_calculated": 2000,
+    "indebtedness_calculated": 52.26,
     "account_number": 586621345,
-    "request_date": "2020-03-05T20:27:23.900575Z",
+    "destiny_id": 1,
+    "role_id": 73,
     "disbursable_type": "affiliates",
     "disbursable_id": 5146,
     "amount_approved": 2000,
+    "request_date": "2020-05-06T20:23:21.000000Z",
     "state_id": 1,
-    "code": "PTMO000017-2020",
-    "disbursement_date": "2020-02-01",
-    "updated_at": "2020-03-05 16:27:23",
-    "created_at": "2020-03-05 16:27:23",
-    "parent_loan_id": 1,
-    "parent_reason": "REFINANCIAMIENTO",
-    "personal_reference_id": 4,
-    "id": 17,
+    "code": "PTMO000003-2020",
+    "updated_at": "2020-05-06T20:23:21.000000Z",
+    "created_at": "2020-05-06T20:23:21.000000Z",
+    "id": 3,
+    "attachment": {
+        "content": "zMTcgM....",
+        "type": "pdf",
+        "file_name": "solicitud_prestamo_PTMO000003-2020.pdf"
+    },
     "modality": {
         "id": 32,
         "procedure_type_id": 9,
         "name": "Anticipo sector activo",
         "shortened": "ANT-SA",
-        "is_valid": true
+        "is_valid": true,
+        "procedure_type": {
+            "id": 9,
+            "module_id": 6,
+            "name": "Préstamo Anticipo",
+            "created_at": "2020-04-29T01:14:48.000000Z",
+            "updated_at": "2020-04-29T01:14:48.000000Z",
+            "second_name": "Anticipo"
+        }
     },
-    "attachment": {
-        "content": "zMTcgM....",
-        "type": "pdf",
-        "file_name": "solicitud_prestamo_17.pdf"
+    "lenders": [
+        {
+            "id": 5146,
+            "user_id": 1,
+            "affiliate_state_id": 5,
+            "city_identity_card_id": 4,
+            "city_birth_id": 4,
+            "degree_id": 22,
+            "unit_id": 19,
+            "category_id": 8,
+            "pension_entity_id": 2,
+            "identity_card": "2073305",
+            "registration": "500730PPZ",
+            "type": "Comando",
+            "last_name": "PUCHO",
+            "mothers_last_name": "PUCHO",
+            "first_name": "ZENON",
+            "second_name": null,
+            "surname_husband": null,
+            "gender": "M",
+            "civil_status": "C",
+            "birth_date": "1950-07-30",
+            "date_entry": "1973-01-01",
+            "date_death": null,
+            "reason_death": "",
+            "date_derelict": null,
+            "reason_derelict": null,
+            "change_date": "2016-07-01",
+            "phone_number": "",
+            "cell_phone_number": "(767)-06828",
+            "afp": true,
+            "nua": 15770187,
+            "item": 6518,
+            "created_at": "2017-06-01T14:43:37.000000Z",
+            "updated_at": "2018-09-05T11:59:41.000000Z",
+            "deleted_at": null,
+            "service_years": 41,
+            "service_months": 7,
+            "death_certificate_number": "",
+            "due_date": null,
+            "is_duedate_undefined": true,
+            "affiliate_registration_number": null,
+            "file_code": null,
+            "pivot": {
+                "loan_id": 3,
+                "affiliate_id": 5146,
+                "payment_percentage": "100"
+            },
+            "city_birth": {
+                "id": 4,
+                "name": "LA PAZ",
+                "first_shortened": "LP",
+                "second_shortened": "LPZ",
+                "third_shortened": "LPZ",
+                "to_bank": "LP",
+                "latitude": -16.495323179002,
+                "longitude": -68.134251236916
+            },
+            "city_identity_card": {
+                "id": 4,
+                "name": "LA PAZ",
+                "first_shortened": "LP",
+                "second_shortened": "LPZ",
+                "third_shortened": "LPZ",
+                "to_bank": "LP",
+                "latitude": -16.495323179002,
+                "longitude": -68.134251236916
+            },
+            "degree": {
+                "id": 22,
+                "hierarchy_id": 4,
+                "code": "11",
+                "name": "SUBOFICIAL SEGUNDO",
+                "shortened": "SOF. 2DO.",
+                "correlative": 16
+            },
+            "affiliate_state": {
+                "id": 5,
+                "affiliate_state_type_id": 2,
+                "name": "Jubilado",
+                "affiliate_state_type": {
+                    "id": 2,
+                    "name": "Pasivo"
+                }
+            },
+            "pension_entity": {
+                "id": 2,
+                "type": "APS",
+                "name": "AFP PREVISIÓN"
+            },
+            "unit": {
+                "id": 19,
+                "breakdown_id": 1,
+                "district": "LA PAZ",
+                "code": "20190",
+                "name": "DISPONIBILIDAD",
+                "shortened": "DISP.",
+                "created_at": "2017-06-01T14:41:04.000000Z",
+                "updated_at": "2017-06-01T14:41:04.000000Z",
+                "deleted_at": null
+            }
+        }
+    ],
+    "guarantors": [],
+    "parent_loan": null,
+    "payment_type": {
+        "id": 1,
+        "name": "Deposito Bancario",
+        "created_at": null,
+        "updated_at": null
+    },
+    "personal_reference": null,
+    "submitted_documents": [
+        {
+            "id": 40,
+            "name": "Cédula de Identidad del (la) titular en copia simple.",
+            "created_at": "2019-04-02 21:25:32",
+            "updated_at": null,
+            "expire_date": null,
+            "pivot": {
+                "loan_id": 3,
+                "procedure_document_id": 40,
+                "reception_date": "2020-05-06",
+                "comment": null,
+                "is_valid": false
+            }
+        }, {}
+    ],
+    "notes": [
+        {
+            "id": 301,
+            "annotable_id": 3,
+            "annotable_type": "loans",
+            "message": "Informe de baja policial, Carta de solicitud",
+            "date": "2020-05-06 16:23:25",
+            "created_at": "2020-05-06T20:23:25.000000Z",
+            "updated_at": "2020-05-06T20:23:25.000000Z"
+        }
+    ],
+    "destiny": {
+        "id": 1,
+        "name": "Consumo",
+        "description": "Consumo Personal",
+        "created_at": "2020-04-29T01:15:03.000000Z",
+        "updated_at": "2020-04-29T01:15:03.000000Z"
     }
 }
