@@ -123,7 +123,7 @@ export default {
         } else {
           this.selectedRoles.push(id)
         }
-        let res = await axios.post(`user/${this.user}/role`, {
+        let res = await axios.patch(`user/${this.user}/role`, {
           roles: this.selectedRoles
         })
         this.selectedRoles = res.data.roles

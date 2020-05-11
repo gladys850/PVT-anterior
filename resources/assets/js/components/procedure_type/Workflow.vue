@@ -167,7 +167,7 @@
 
 <script>
 export default {
-  name: "role-index",
+  name: "procedure-type-workflow",
   data: () => ({
     loading: true,
     roles: [],

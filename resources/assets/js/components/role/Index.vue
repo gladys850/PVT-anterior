@@ -130,7 +130,7 @@ export default {
           } else {
             this.selectedPermissions.push(id)
           }
-          let res = await axios.post(`role/${this.selectedRole}/permission`, {
+          let res = await axios.patch(`role/${this.selectedRole}/permission`, {
             permissions: this.selectedPermissions
           })
           this.selectedPermissions = res.data.permissions
