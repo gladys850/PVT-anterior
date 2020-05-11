@@ -1,10 +1,26 @@
 <template>
   <div>
-    <span>{{loansSelected}}</span>
+   <!-- <span>{{loansSelected}}</span>-->
+    <v-row>
+      <v-col cols="3" class="ma-0 pa-0 pl-2" v-if="this.statusLoans">
+        <v-select
+          label="Escoger Área"
+          v-model="valArea"
+          :items="listAreas"
+          item-text="display_name"
+          item-value="id"
+        ></v-select>
+      </v-col>  
+      <v-col cols="1" class="ma-0 pb-0" v-if="this.statusLoans" @click="derivationLoans()">   
+        <v-btn small tile color="success">
+            <v-icon left>mdi-file-send</v-icon> Derivar
+        </v-btn>          
+      </v-col>
+     </v-row> 
     <!--v-switch v-model="showSelect" label="Habilitar checks" class="pa-3"></v-switch-->
     <v-data-table
       :headers="headers"
-      :items="loans"
+      :items="showSelect ? validated : received "
       :loading="loading"
       :options.sync="options"
       :server-items-length="totalloans"
@@ -59,9 +75,6 @@
       <template v-slot:item.request_date="{ item }">
        {{item.request_date | date}}
       </template>
-      <template v-slot:item.balance="{ item }">
-       {{item.balance | money}}
-      </template>
       <template v-slot:item.actions="{ item }">
         <v-btn
           icon
@@ -85,7 +98,7 @@ export default {
       required: true
     },
     statusLoans: {
-      type: Number,
+      type: Boolean,
       required: true
     }
   },
@@ -188,7 +201,10 @@ export default {
     validated: [],
     received:[],
     countValidated: 0,
-    countReceived: 0
+    countReceived: 0,
+    listAreas: [],
+    valArea:[],
+    idLoans: []
   }),
   watch: {
     options: function(newVal, oldVal) {
@@ -208,22 +224,30 @@ export default {
       }
     },
     statusLoans (status) {
-      if(status == 1){
-        this.showSelect = false;
-        //
-        this.loans=this.received
-          console.log(this.received)
+      if(status == false){
+        this.showSelect = false
+        //this.loans=this.received
+        //console.log(this.received)
       } 
-      else if (status == 2) {
-        this.showSelect = true;
-        //this.loans = []
-        this.loans=this.validated
-        console.log(this.validated)    
-      }
       else{
-        this.showSelect = false;
-        this.getloans()
-      }   
+        this.showSelect = true
+        //this.loans=this.validated
+        //console.log(this.validated)    
+      } 
+    },
+    loansSelected() {
+      let miRes = [];
+      let long = this.loansSelected.length;
+      let miId = null;
+      for (let i = 0; i < this.loansSelected.length; i++) {
+        miId = this.loansSelected[i].id;
+        miRes.push(miId);
+      }
+      this.idLoans = miRes;
+      console.log("long " + long);
+      console.log("miId " + miId);
+      console.log("miRes " + miRes);
+      console.log("idLoans " + this.idLoans);
     }
   },
   mounted() {
@@ -236,8 +260,9 @@ export default {
     this.bus.$on("search", val => {
       this.search = val;
     });
-    this.getloans();
-    
+    this.getloans()
+    this.classifyLoans(); 
+    this.getAreas()   
   },
   methods: {
     async getloans(params) {
@@ -258,14 +283,41 @@ export default {
         this.options.page = res.data.current_page;
         this.options.itemsPerPage = parseInt(res.data.per_page);
         this.options.totalItems = res.data.total;
-        this.clasificarLoans()
+        this.classifyLoans()
       } catch (e) {
         console.log(e);
       } finally {
         this.loading = false;
       }
     },
-    clasificarLoans(){
+    async getAreas() {
+      try {
+        this.loading = true;
+        let res = await axios.get(`module/6/role`);
+        this.listAreas = res.data;
+      } catch (e) {
+        console.log(e);
+      } finally {
+        this.loading = false;
+      }
+    }, 
+    async derivationLoans() {
+      try {
+        this.loading = true;
+        let response = await axios.patch(`loans`, {
+          ids: this.idLoans,
+          role_id: this.valArea
+        });
+        this.toastr.success("El trámite fue derivado.")
+        console.log("se derivo..");
+      } catch (e) {
+        console.log(e);
+        this.toastr.error("Existe un error.")
+      } finally {
+        this.loading = false;
+      }
+    },
+    classifyLoans(){
       let val = []
       let rec = []
       let countVal = 0
@@ -284,11 +336,10 @@ export default {
       this.received = rec
       this.countValidated = countVal
       this.countReceived = countRec
-
       console.log(this.countValidated)
       console.log(this.countReceived)
-
     },
+    
   }
 };
 </script>
