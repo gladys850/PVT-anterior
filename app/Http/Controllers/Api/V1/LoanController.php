@@ -247,7 +247,13 @@ class LoanController extends Controller
         }
         if ($loan) {
             if (Auth::user()->can('update-loan')) {
-                $loan->fill(array_merge($request->except('code'), isset($disbursable) ? (array)self::verify_spouse_disbursable($disbursable) : []));
+                $exceptions = ['code'];
+                if ($request->has('validated')) {
+                    if (!Auth::user()->roles()->pluck('id')->contains($loan->role_id)) {
+                        array_push($exceptions, 'validated');
+                    }
+                }
+                $loan->fill(array_merge($request->except($exceptions), isset($disbursable) ? (array)self::verify_spouse_disbursable($disbursable) : []));
             } else {
                 if ($request->has('validated')) {
                     $loan->validated = $request->validated;

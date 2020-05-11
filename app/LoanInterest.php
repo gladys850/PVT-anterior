@@ -9,6 +9,7 @@ class LoanInterest extends Model
 {
     public $timestamps = true;
     protected $fillable = ['procedure_modality_id', 'annual_interest','penal_interest'];
+    public $guarded = ['id'];
 
     public function loans()
     {

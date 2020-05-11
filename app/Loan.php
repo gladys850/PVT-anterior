@@ -12,7 +12,7 @@ use Util;
 class Loan extends Model
 {
     use Traits\EloquentGetTableNameTrait;
-    use Traits\RelationshipsTrait;
+    // use Traits\RelationshipsTrait;
     use PivotEventTrait;
     use SoftDeletes;
 
