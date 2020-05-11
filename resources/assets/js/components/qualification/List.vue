@@ -292,9 +292,9 @@ export default {
     },
     async getAreas() {
       try {
-        this.loading = true;
+        this.loading = true
         let res = await axios.get(`module/6/role`);
-        this.listAreas = res.data;
+        this.listAreas = res.data
       } catch (e) {
         console.log(e);
       } finally {
