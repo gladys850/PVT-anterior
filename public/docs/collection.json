@@ -1767,7 +1767,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"procedure_type_id\": 9,\n\t\"name\": \"Salud\",\n\t\"description\": \"Salud Familiar\"\n}",
+							"raw": "{\n\t\"name\": \"Salud\",\n\t\"description\": \"Salud Familiar\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -3264,37 +3264,37 @@
 	],
 	"variable": [
 		{
-			"id": "8fabf3fe-8aa6-455b-a066-14a610a1a9d8",
+			"id": "64bedc77-ea4c-4c63-8512-2d47e5f161dc",
 			"key": "url",
 			"value": "http://localhost/api/v1",
 			"type": "string"
 		},
 		{
-			"id": "0273dd13-96cf-4da2-9d64-0f75f2ef6200",
+			"id": "13ae72e3-24cd-4015-8b64-50d646cd0cf5",
 			"key": "username",
 			"value": "nalarcon",
 			"type": "string"
 		},
 		{
-			"id": "a9950046-44fe-4c7a-b5da-6ca58b38ed6a",
+			"id": "6ebdd55d-b085-49d2-9519-d6e05b20feb7",
 			"key": "password",
 			"value": "nalarcon",
 			"type": "string"
 		},
 		{
-			"id": "e948d19d-170c-4019-a168-2ace822c3dfa",
+			"id": "af9283c7-d474-435a-a667-8f7b67dcccff",
 			"key": "endpoint",
 			"value": "",
 			"type": "string"
 		},
 		{
-			"id": "6a2f4df7-24ce-426f-ac9e-7b24bf3dcc26",
+			"id": "b62ec63d-3dda-4268-be8c-22d2ea4ce005",
 			"key": "currentAccessToken",
 			"value": "",
 			"type": "string"
 		},
 		{
-			"id": "0edee12f-9bb6-4055-abee-83f682293521",
+			"id": "4a75253d-c000-41ae-ad6e-c379a2a4b5e6",
 			"key": "accessTokenExpiry",
 			"value": "",
 			"type": "string"

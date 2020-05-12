@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Waavi\Sanitizer\Laravel\SanitizesInput;
 use Illuminate\Foundation\Http\FormRequest;
-use App\Affiliate;
+
 class AffiliateForm extends FormRequest
 {
     use SanitizesInput;

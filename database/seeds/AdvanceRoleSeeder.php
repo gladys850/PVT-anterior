@@ -18,7 +18,10 @@ class AdvanceRoleSeeder extends Seeder
         $module = Module::whereName('prestamos')->first();
         $receipt_permissions = ['update-affiliate-secondary', 'show-affiliate', 'show-loan', 'create-loan', 'create-address', 'update-address', 'delete-address', 'update-loan', 'delete-loan', 'print-contract-loan'];
         $receipt_roles = ['Área de Recepción', 'Regional Santa Cruz', 'Regional Cochabamba', 'Regional Oruro', 'Regional Potosí', 'Regional Sucre', 'Regional Tarija', 'Regional Trinidad', 'Regional Cobija'];
+
         $sequence_permissions = ['update-affiliate-secondary', 'show-affiliate', 'show-loan', 'update-address'];
+        $leadership_permissions = ['show-all-loan', 'update-loan', 'delete-loan', 'show-setting'];
+        $executive_permissions = ['update-setting'];
         $sequence_roles = [
             [
                 'name' => 'Calificación',
@@ -73,12 +76,13 @@ class AdvanceRoleSeeder extends Seeder
                     'module_id' => $module->id,
                     'sequence_number' => $role['sequence']
                 ]);
-                if (in_array($role['name'], ['Jefatura', 'Aprobación Dirección'])) {
-                    array_merge($sequence_permissions, ['show-all-loan', 'update-loan', 'delete-loan', 'show-setting']);
-                } elseif ($role['name'] == 'Aprobación Dirección') {
-                    array_merge($sequence_permissions, ['update-setting']);
+                if (in_array($role['display_name'], ['Jefatura'])) {
+                    $role->syncPermissions(array_merge($sequence_permissions, $leadership_permissions));
+                } elseif (in_array($role['display_name'], ['Aprobación Dirección', 'Revisión Dirección'])) {
+                    $role->syncPermissions(array_merge($sequence_permissions, $leadership_permissions, $executive_permissions));
+                } else {
+                    $role->syncPermissions($sequence_permissions);
                 }
-                $role->syncPermissions($sequence_permissions);
             }
         }
     }

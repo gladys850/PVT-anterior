@@ -57,7 +57,12 @@
     "permission": "show-setting",
     "group": [
       {
-        "href": "procedureTypeIndex",
+        "href": "procedureTypeLoanDestiny",
+        "title": "Destino de Préstamos",
+        "icon": "mdi-currency-usd-circle",
+        "params": {}
+      }, {
+        "href": "procedureTypeWorkflow",
         "title": "Flujo de trabajo",
         "icon": "mdi-chart-timeline-variant",
         "params": {}
