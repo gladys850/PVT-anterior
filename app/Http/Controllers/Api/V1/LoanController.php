@@ -51,7 +51,7 @@ class LoanController extends Controller
     * Lista de Préstamos
     * Devuelve el listado con los datos paginados
     * @queryParam role_id Ver préstamos del rol, si es 0 se muestra la lista completa. Example: 73
-    * @queryParam with_trashed Booleano para incluir eliminados. Example: 1
+    * @queryParam trashed Booleano para obtener solo eliminados. Example: 1
     * @queryParam validated Booleano para filtrar trámites válidados. Example: 1
     * @queryParam procedure_type_id ID para filtrar trámites por tipo de trámite. Example: 9
     * @queryParam search Parámetro de búsqueda. Example: 2000
@@ -653,14 +653,14 @@ class LoanController extends Controller
     * Lista de observaciones
     * Devuelve el listado de observaciones del trámite
     * @urlParam loan required ID del préstamo. Example: 2
-    * @queryParam with_trashed Booleano para incluir observaciones eliminadas. Example: 1
+    * @queryParam trashed Booleano para obtener solo observaciones eliminadas. Example: 1
     * @authenticated
     * @responseFile responses/loan/get_observations.200.json
     */
     public function get_observations(Request $request, Loan $loan)
     {
         $query = $loan->observations();
-        if ($request->boolean('with_trashed')) $query = $query->withTrashed();
+        if ($request->boolean('trashed')) $query = $query->onlyTrashed();
         return $query->get();
     }
 
