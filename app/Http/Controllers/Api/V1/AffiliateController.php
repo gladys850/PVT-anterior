@@ -475,14 +475,14 @@ class AffiliateController extends Controller
     * Lista de observaciones
     * Devuelve el listado de observaciones del afiliado
     * @urlParam affiliate required ID del afiliado. Example: 5012
-    * @queryParam with_trashed Booleano para incluir observaciones eliminadas. Example: 1
+    * @queryParam trashed Booleano para obtener solo observaciones eliminadas. Example: 1
     * @authenticated
     * @responseFile responses/affiliate/get_observations.200.json
     */
     public function get_observations(Request $request, Affiliate $affiliate)
     {
         $query = $affiliate->observations();
-        if ($request->boolean('with_trashed')) $query = $query->withTrashed();
+        if ($request->boolean('trashed')) $query = $query->onlyTrashed();
         return $query->get();
     }
 

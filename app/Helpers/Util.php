@@ -143,6 +143,9 @@ class Util
                 }
             }
         }
+        if ($request->has('trashed')) {
+            if ($request->boolean('trashed') && in_array('Illuminate\Database\Eloquent\SoftDeletes', class_uses($model))) $query = $query->onlyTrashed();
+        }
         return $query->paginate($request->per_page ?? 10);
     }
 

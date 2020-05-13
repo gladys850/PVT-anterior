@@ -51,6 +51,9 @@ class LoanController extends Controller
     * Lista de Préstamos
     * Devuelve el listado con los datos paginados
     * @queryParam role_id Ver préstamos del rol, si es 0 se muestra la lista completa. Example: 73
+    * @queryParam trashed Booleano para obtener solo eliminados. Example: 1
+    * @queryParam validated Booleano para filtrar trámites válidados. Example: 1
+    * @queryParam procedure_type_id ID para filtrar trámites por tipo de trámite. Example: 9
     * @queryParam search Parámetro de búsqueda. Example: 2000
     * @queryParam sortBy Vector de ordenamiento. Example: []
     * @queryParam sortDesc Vector de orden descendente(true) o ascendente(false). Example: [true]
@@ -62,6 +65,7 @@ class LoanController extends Controller
     public function index(Request $request)
     {
         $filters = [];
+        $relations = [];
         if (!$request->has('role_id')) {
             if (Auth::user()->can('show-all-loan')) {
                 $request->role_id = 0;
@@ -86,7 +90,13 @@ class LoanController extends Controller
                 'role_id' => $request->role_id
             ];
         }
-        $data = Util::search_sort(new Loan(), $request, $filters);
+        if ($request->has('validated')) $filters['validated'] = $request->boolean('validated');
+        if ($request->has('procedure_type_id')) {
+            $relations['modality'] = [
+                'procedure_type_id' => $request->procedure_type_id
+            ];
+        }
+        $data = Util::search_sort(new Loan(), $request, $filters, $relations);
         $data->getCollection()->transform(function ($loan) {
             return self::append_data($loan, false);
         });
@@ -643,14 +653,14 @@ class LoanController extends Controller
     * Lista de observaciones
     * Devuelve el listado de observaciones del trámite
     * @urlParam loan required ID del préstamo. Example: 2
-    * @queryParam with_trashed Booleano para incluir observaciones eliminadas. Example: 1
+    * @queryParam trashed Booleano para obtener solo observaciones eliminadas. Example: 1
     * @authenticated
     * @responseFile responses/loan/get_observations.200.json
     */
     public function get_observations(Request $request, Loan $loan)
     {
         $query = $loan->observations();
-        if ($request->boolean('with_trashed')) $query = $query->withTrashed();
+        if ($request->boolean('trashed')) $query = $query->onlyTrashed();
         return $query->get();
     }
 
