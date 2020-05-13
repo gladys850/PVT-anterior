@@ -35,7 +35,8 @@ class AppServiceProvider extends ServiceProvider
             'spouses' => 'App\Spouse',
             'users' => 'App\User',
             'roles' => 'App\Role',
-            'loans' => 'App\Loan'
+            'loans' => 'App\Loan',
+            'procedure_types' => 'App\ProcedureType'
         ]);
     }
 

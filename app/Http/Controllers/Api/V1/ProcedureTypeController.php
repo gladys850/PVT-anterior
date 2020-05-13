@@ -100,7 +100,9 @@ class ProcedureTypeController extends Controller
             }
         }
         RoleSequence::whereProcedureTypeId($procedure_type->id)->delete();
-        RoleSequence::insert($request);
+        foreach ($request as $sequence) {
+            RoleSequence::create($sequence);
+        }
         return $procedure_type->workflow;
     }
 }

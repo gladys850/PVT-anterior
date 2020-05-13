@@ -9,6 +9,7 @@ return [
     'permissions' => 'Permiso',
     'loans' => 'Préstamo',
     'loan_destinies' => 'Destino de Préstamo',
+    'procedure_types' => 'Tipo de trámite',
     // User
     'first_name' => 'Primer Nombre',
     'last_name' => 'Apellido Paterno',
