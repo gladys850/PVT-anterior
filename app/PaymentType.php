@@ -6,8 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class PaymentType extends Model
 {
-    public $timestamps = false;
+    public $timestamps = true;
     public $fillable = ['name'];
+    public $guarded = ['id'];
 
     public function loans()
     {

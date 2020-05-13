@@ -13,7 +13,7 @@ class ProcedureModality extends Model
 
     public $timestamps = false;
     // protected $hidden = ['pivot'];
-
+    public $guarded = ['id'];
     protected $fillable = [
         'procedure_type_id',
         'name',

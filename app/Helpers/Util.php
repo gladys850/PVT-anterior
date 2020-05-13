@@ -143,6 +143,9 @@ class Util
                 }
             }
         }
+        if ($request->has('trashed')) {
+            if ($request->boolean('trashed') && in_array('Illuminate\Database\Eloquent\SoftDeletes', class_uses($model))) $query = $query->onlyTrashed();
+        }
         return $query->paginate($request->per_page ?? 10);
     }
 
@@ -203,7 +206,11 @@ class Util
         $old->fill($object->getOriginal());
         $action = $message;
         $updated_values = $object->getDirty();
-        $relationships = $object->relationships();
+        try {
+            $relationships = $object->relationships();
+        } catch (\Exception $e) {
+            $relationships = [];
+        }
         foreach ($updated_values as $key => $value) {
             $concat = false;
             $action .= ' [' . self::translate($key) . '] ';

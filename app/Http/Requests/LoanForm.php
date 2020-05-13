@@ -16,6 +16,8 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class LoanForm extends FormRequest
 {
+    use SanitizesInput;
+
     /**
      * Determine if the user is authorized to make this request.
      *
@@ -80,6 +82,7 @@ class LoanForm extends FormRequest
         }
         return $rules;
     }
+
     public function filters()
     {
         return [
