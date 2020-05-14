@@ -199,7 +199,7 @@ class Loan extends Model
     {
         if(count($dato)>0){
             return Util::round(1/count($dato)*100);
-        }  
+        }
     }
 
     public function last_quota()
@@ -326,16 +326,16 @@ class Loan extends Model
         $modality=null;
         if ($affiliate->affiliate_state){
             $affiliate_state = $affiliate->affiliate_state->name;
-            $affiliate_state_type = $affiliate->affiliate_state->affiliate_state_type->name; 
+            $affiliate_state_type = $affiliate->affiliate_state->affiliate_state_type->name;
         switch($modality_name){
             case 'Préstamo Anticipo':
                 if($affiliate_state_type == "Activo")
-                { 
+                {
                     $modality=ProcedureModality::whereShortened("ANT-SA")->first();
                 }
                 else{
                     if($affiliate_state_type == "Pasivo"){
-                        $modality=ProcedureModality::whereShortened("ANT-SP")->first();  
+                        $modality=ProcedureModality::whereShortened("ANT-SP")->first();
                     }
                 }
             break;
@@ -345,12 +345,12 @@ class Loan extends Model
                         $modality = ProcedureModality::whereShortened("PCP-R-SA")->first();//Refinanciamiento corto plazo activo
                     }else{
                         if($affiliate_state == "Servicio" || $affiliate_state == "Comisión" )
-                        { 
-                            $modality=ProcedureModality::whereShortened("PCP-SA")->first(); //corto plazo activo 
+                        {
+                            $modality=ProcedureModality::whereShortened("PCP-SA")->first(); //corto plazo activo
                         }else{
-                            $modality=ProcedureModality::whereShortened("PCP-DLA")->first(); // corto plazo activo letra A 
+                            $modality=ProcedureModality::whereShortened("PCP-DLA")->first(); // corto plazo activo letra A
                         }
-                    }     
+                    }
                 }else{
                     if($affiliate_state_type == "Pasivo"){
                         if($affiliate->afp){
@@ -361,7 +361,6 @@ class Loan extends Model
                                 $modality=ProcedureModality::whereShortened("PCP-SP-AFP")->first();
                                 //$sub_modality="Prestamo a corto plazo sector pasivo afp";
                             }
-                              
                         }else{
                             if($affiliate->active_loans()){
                                 $modality=ProcedureModality::whereShortened("PCP-R-SP-SEN")->first();
@@ -369,7 +368,7 @@ class Loan extends Model
                             }else{
                                 $modality=ProcedureModality::whereShortened("PCP-SP-SEN")->first();
                             }
-                        }                       
+                        }
                     }
                 }
                 break;
@@ -395,7 +394,7 @@ class Loan extends Model
                                     // Refi largo plazo pasivo 1 solo garante
                                 }
                             }else{
-                                $modality=ProcedureModality::whereShortened("PLP-GP-SP")->first();  
+                                $modality=ProcedureModality::whereShortened("PLP-GP-SP")->first();
                             }
                         }
                 }
@@ -408,13 +407,14 @@ class Loan extends Model
                         //hipotecario CPOP
                     }else{
                         $modality=ProcedureModality::whereShortened("PLP-GH-SA")->first();
-                    } 
+                    }
                 }
                 break;
-            } 
-        }
-        if ($modality) $modality->loan_modality_parameter;
-        return response()->json($modality);
-             
+            }
+            if ($modality) $modality->loan_modality_parameter;
+            return response()->json($modality);
+        }abort (403, 'Debe registrar el estado del Afiliado');
     }
 }
+
+

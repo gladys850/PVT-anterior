@@ -45,7 +45,8 @@
             "civil_status_gender": "casado",
             "dead": true,
             "identity_card_ext": "165134-1L LP",
-            "defaulted": false,
+            "defaulted_lender": true,
+            "defaulted_guarantor": false,
             "cpop": false
         }, {}
     ],
