@@ -9,6 +9,7 @@ return [
     'permissions' => 'Permiso',
     'loans' => 'Préstamo',
     'loan_destinies' => 'Destino de Préstamo',
+    'procedure_types' => 'Tipo de trámite',
     // User
     'first_name' => 'Primer Nombre',
     'last_name' => 'Apellido Paterno',
@@ -47,7 +48,7 @@ return [
     // Personal Reference
     'phone_number' =>'Número de teléfono',
     'cell_phone_number'=>'Numero de Celular',
-    //loans
+    // Loan
     'procedure_modality_id'=>'Modalidad de Préstamo',
     'procedure_documents' => 'Documento',
     'submitted_documents' => 'Documento Presentado',
@@ -60,6 +61,7 @@ return [
     'lenders'=>'Titular',
     'guarantors'=>'Garante',
     'destiny_id'=>'Destino',
+    'validated' => 'Validado',
     //'parent_loan_id'=>'',
     'parent_reason'=>'',
     'interest_id'=>'Interés',
