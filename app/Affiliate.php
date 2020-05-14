@@ -114,18 +114,28 @@ class Affiliate extends Model
         return ($this->date_death != null || $this->reason_death != null || $this->death_certificate_number != null);
     }
 
-    public function getDefaultedAttribute()
+    public function getDefaultedLenderAttribute()
     {
         $loans = $this->loans()->whereHas('state', function($q) {
-            $q->where('name', 'Desembolsado ');
-        })->get()->merge($this->guarantees()->whereHas('state', function($q) {
-            $q->where('name', 'Desembolsado ');
-        })->get());
+            $q->where('name', 'Desembolsado');
+        })->get();
         foreach ($loans as $loan) {
             if ($loan->defaulted) return true;
         }
         return false;
     }
+
+    public function getDefaultedGuarantorAttribute()
+    {
+        $loans = $this->guarantees()->whereHas('state', function($q) {
+            $q->where('name', 'Desembolsado');
+        })->get();
+        foreach ($loans as $loan) {
+            if ($loan->defaulted) return true;
+        }
+        return false;
+    }
+
     public function getAdministrativeAttribute()
     {
       $data = $this->degree;
@@ -244,6 +254,22 @@ class Affiliate extends Model
         }
         return $active_loans;
     }
+    public function inactive_loans()
+    {
+        return $this->verify_balance_liquidated($this->loans);
+    }
+
+    private function verify_balance_liquidated($loans)
+    {
+        $inactive_loans = [];
+        foreach ($loans as $loan) {
+            $loan->balance = $loan->balance;
+            if ($loan->balance == 0) {
+                array_push($inactive_loans, $loan);
+            }
+        }
+        return $inactive_loans;
+    }
 
     //document
     public function submitted_documents()
@@ -257,6 +283,70 @@ class Affiliate extends Model
     }
 
     public function getCpopAttribute(){
-      return false;  
+      if($this->defaulted_lender) return false;
+      // verificando prestamos activos
+      $active_loans = $this->active_loans(); $cpop = null;
+      $loans = []; $last_month = date('m', strtotime('-1 month')); // mes anterior a la fecha actual
+      //obteniendo prestamos activos con plazo mayor a 12
+      foreach($active_loans as $loan){
+        if($loan->loan_term >= 12){
+          array_push($loans, $loan);
+        }
+      }
+      if(count($loans)>0){
+        foreach($loans as $loan){
+          if(count($loan->payments) > 0){
+            $loan_payment = $loan->last_payment; //ultimo registro de pago
+            $pay_date_month = substr($loan_payment->pay_date, 5, 2); // mes de la ultima fecha de pago
+              if($pay_date_month == $last_month){ //verificar si el ultimo pago es del mes anterior
+                foreach($loan->payments as $payment){ // el kardex debe estar inpecable
+                  if($payment->penal_payment == 0){
+                    $cpop = true;
+                  }else{
+                    $cpop = false;
+                    break;
+                  }
+                }
+              }else{
+                $cpop = false;
+              }
+          }else{
+            $cpop = false;
+          }
+          if($cpop == false){
+            break;
+          }
+        }
+      }
+      //verificando préstamos liquidados
+      if($cpop !== false){
+        $inactive_loans = $this->inactive_loans(); $liquidated_loans = [];
+        foreach($inactive_loans as $inactive){
+          if($inactive->loan_term >= 12){
+            array_push($liquidated_loans, $inactive);
+          }
+        }
+        if(count($liquidated_loans)){
+          foreach($liquidated_loans as $liquid_loan){
+            $loan_payment = $liquid_loan->last_payment; //ultimo registro de pago
+            $pay_date_month = substr($loan_payment->pay_date, 5, 2); // mes de la ultima fecha de pago
+            if($pay_date_month == $last_month){ //verificar si el ultimo pago es del mes anterior
+              foreach($liquid_loan->payments as $payment){
+                if($payment->penal_payment == 0){
+                  $cpop = true;
+                }else{
+                  $cpop = false;
+                  break;
+                }
+              }
+            }
+            if($cpop == false){
+            break;
+            }
+          }
+        }
+      }
+      if($cpop == null) $cpop = false;
+      return $cpop;
     }
 }

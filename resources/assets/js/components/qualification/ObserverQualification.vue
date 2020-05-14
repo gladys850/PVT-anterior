@@ -103,14 +103,12 @@
 <v-col cols="4">
         <v-select
           label="Devolver"
-  v-model="valDevolver"
-       
-        
-          
-        
-          item-text="text"
-          item-value="value"
+          v-model="valArea"
+          :items="listAreas"
+          item-text="display_name"
+          item-value="id"
         ></v-select>
+        {{valArea}}
       </v-col>
       <v-col cols="1">
         <v-btn small color="danger" @click.stop>Devolver</v-btn>
@@ -157,7 +155,7 @@ export default {
   },
 
   data: () => ({
-     valDevolver: null,
+     //valDevolver: null,
     loanFlow:[],
     valor:true,
    
@@ -168,10 +166,10 @@ export default {
     visible:false,
     visible1:false,
     visible2:false,
-    listAreas: [],
-    valDerivar: null,
-    flow: {},
-    mapAreas: null,
+    //listAreas: [],
+    //valDerivar: null,
+    //flow: {},
+    //mapAreas: null,
     bus: new Vue(),
     lista:[
     {
@@ -203,6 +201,10 @@ export default {
         { text: 'Acciones', class: ['normal', 'white--text'], align: 'center', width: '11%', sortable: false
       }
         ],
+    listRoles: [],
+    flow:[],
+    listAreas:[],
+    valArea:[]    
     
   }),
   props: {
@@ -222,7 +224,8 @@ export default {
    
   },
   mounted(){
-      this.getFlow()
+    this.getModuleRole(6)
+    this.getFlow(1) 
        this.bus.$on('saveObservation', (observation) => {
         console.log("entro al bus"+observation)
       
@@ -268,7 +271,7 @@ export default {
         }
       }      
     },
-  async getFlowsss(id) {
+  /*async getFlowsss(id) {
     try {
       this.loading = true
       let res = await axios.get(`loan/${id}/flow`)
@@ -292,7 +295,7 @@ export default {
       } finally {
         this.loading = false
       }
-    },
+    },*/
   async saveLoanRol() {
     try {
       let res = await axios.patch(`loan/${1}`, {
@@ -305,6 +308,36 @@ export default {
       this.loading = false
     }
   },
+    async getModuleRole(id) {
+      try {
+        this.loading = true
+        let res = await axios.get(`module/${id}/role`);
+        this.listRoles = res.data
+      } catch (e) {
+        console.log(e);
+      } finally {
+        this.loading = false;
+      }
+    },
+    async getFlow(id) {
+      try {
+        this.loading = true
+        let res = await axios.get(`loan/${id}/flow`)
+        this.flow = res.data.previous
+        this.filterRoleFlow()
+      } catch (e) {
+        console.log(e)
+      } finally {
+        this.loading = false
+      }
+    }, 
+    filterRoleFlow(){
+      let areas=[]
+      for(let i = 0; i < this.flow.length; i++){
+        areas = this.listRoles.find((item) => item.id == this.flow[i])
+         this.listAreas.push(areas)
+        }
+    },
 
   },
   
