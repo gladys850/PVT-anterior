@@ -256,24 +256,20 @@ class LoanController extends Controller
             $disbursable = Affiliate::findOrFail($disbursable_id);
         }
         if ($loan) {
+            $exceptions = ['code', 'role_id'];
+            if ($request->has('validated')) {
+                if (!Auth::user()->roles()->pluck('id')->contains($loan->role_id)) {
+                    array_push($exceptions, 'validated');
+                }
+            }
             if (Auth::user()->can('update-loan')) {
-                $exceptions = ['code'];
-                if ($request->has('validated')) {
-                    if (!Auth::user()->roles()->pluck('id')->contains($loan->role_id)) {
-                        array_push($exceptions, 'validated');
-                    }
-                }
                 $loan->fill(array_merge($request->except($exceptions), isset($disbursable) ? (array)self::verify_spouse_disbursable($disbursable) : []));
-            } else {
-                if ($request->has('validated')) {
-                    $loan->validated = $request->validated;
-                }
-                if ($request->has('role_id')) {
-                    if ($request->role_id != $loan->role_id) {
-                        $role = Role::findOrFail($request->role_id);
-                        $loan->role()->associate($role);
-                        $loan->validated = false;
-                    }
+            }
+            if (!in_array('validated', $exceptions)) $loan->validated = $request->validated;
+            if ($request->has('role_id')) {
+                if ($request->role_id != $loan->role_id) {
+                    $loan->role()->associate(Role::find($request->role_id));
+                    $loan->validated = false;
                 }
             }
         } else {

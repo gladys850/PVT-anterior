@@ -48,7 +48,7 @@ return [
     // Personal Reference
     'phone_number' =>'Número de teléfono',
     'cell_phone_number'=>'Numero de Celular',
-    //loans
+    // Loan
     'procedure_modality_id'=>'Modalidad de Préstamo',
     'procedure_documents' => 'Documento',
     'submitted_documents' => 'Documento Presentado',
@@ -61,6 +61,7 @@ return [
     'lenders'=>'Titular',
     'guarantors'=>'Garante',
     'destiny_id'=>'Destino',
+    'validated' => 'Validado',
     //'parent_loan_id'=>'',
     'parent_reason'=>'',
     'interest_id'=>'Interés',
