@@ -114,18 +114,28 @@ class Affiliate extends Model
         return ($this->date_death != null || $this->reason_death != null || $this->death_certificate_number != null);
     }
 
-    public function getDefaultedAttribute()
+    public function getDefaultedLenderAttribute()
     {
         $loans = $this->loans()->whereHas('state', function($q) {
-            $q->where('name', 'Desembolsado ');
-        })->get()->merge($this->guarantees()->whereHas('state', function($q) {
-            $q->where('name', 'Desembolsado ');
-        })->get());
+            $q->where('name', 'Desembolsado');
+        })->get();
         foreach ($loans as $loan) {
             if ($loan->defaulted) return true;
         }
         return false;
     }
+
+    public function getDefaultedGuarantorAttribute()
+    {
+        $loans = $this->guarantees()->whereHas('state', function($q) {
+            $q->where('name', 'Desembolsado');
+        })->get();
+        foreach ($loans as $loan) {
+            if ($loan->defaulted) return true;
+        }
+        return false;
+    }
+
     public function getAdministrativeAttribute()
     {
       $data = $this->degree;
@@ -273,6 +283,7 @@ class Affiliate extends Model
     }
 
     public function getCpopAttribute(){
+      if($this->defaulted_lender) return false;
       // verificando prestamos activos
       $active_loans = $this->active_loans(); $cpop = null;
       $loans = []; $last_month = date('m', strtotime('-1 month')); // mes anterior a la fecha actual
@@ -335,6 +346,7 @@ class Affiliate extends Model
           }
         }
       }
+      if($cpop == null) $cpop = false;
       return $cpop;
     }
 }

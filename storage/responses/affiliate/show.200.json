@@ -49,6 +49,7 @@
         "name": "S/N",
         "percentage": "0.34"
     },
-    "defaulted": false,
+    "defaulted_lender": true,
+    "defaulted_guarantor": false,
     "cpop": false
 }
