@@ -31,14 +31,14 @@ class UserForm extends FormRequest
         $rules = [
             'first_name' => 'alpha_spaces|min:3',
             'last_name' => 'alpha_spaces|min:3',
-            'username' => 'string|min:3|unique:users,username',
+            'username' => 'alpha_num|min:3|unique:users,username',
             'password' => 'string|min:5',
             'position' => 'string',
             'active' => 'boolean'
         ];
         switch ($this->method()) {
             case 'POST': {
-                foreach (array_slice($rules, 0, 4) as $key => $rule) {
+                foreach (array_slice($rules, 0, 5) as $key => $rule) {
                     $rules[$key] = implode('|', ['required', $rule]);
                 }
                 return $rules;

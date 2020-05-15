@@ -1,25 +1,23 @@
 <template>
-  <ValidationObserver ref="observer">
-    <v-form>
-      <ValidationProvider v-slot="{ errors }" name="usuario" rules="required">
-        <v-autocomplete
-          :error-messages="errors"
-          v-model="userSelected"
-          label="Usuario"
-          :items="users"
-          :loading="loading"
-          autofocus
-          clearable
-          persistent-hint
-          :hint="userSelected ? userSelected.title : ''"
-          item-text="fullName"
-          return-object
-          open-on-clear
-          name="usuario"
-        ></v-autocomplete>
-      </ValidationProvider>
-    </v-form>
-  </ValidationObserver>
+  <v-form>
+    <ValidationProvider v-slot="{ errors }" vid="username" name="Usuario" rules="required">
+      <v-autocomplete
+        :error-messages="errors"
+        v-model="user"
+        label="Usuario"
+        :items="users"
+        :loading="loading"
+        autofocus
+        clearable
+        persistent-hint
+        :hint="user ? user.title : ''"
+        item-text="fullName"
+        return-object
+        open-on-clear
+        name="usuario"
+      ></v-autocomplete>
+    </ValidationProvider>
+  </v-form>
 </template>
 
 <script>
@@ -33,18 +31,18 @@ export default {
   },
   data: () => ({
     loading: true,
-    userSelected: null,
+    user: null,
     users: []
   }),
   mounted() {
     this.getUsers()
     this.bus.$on('getUsers', () => {
-      this.userSelected = null
+      this.user = null
       this.getUsers()
     })
   },
   watch: {
-    userSelected(val) {
+    user(val) {
       if (val) {
         this.$emit('input', val)
       }
