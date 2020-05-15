@@ -458,14 +458,12 @@ class AffiliateController extends Controller
     * Devuelve la modalidad de trámite evaluando al afiliado y el tipo de trámite
     * @urlParam affiliate required ID de afiliado. Example: 5
     * @queryParam procedure_type_id required ID de tipo de trámite. Example: 9
-    * @queryParam external_discount Booleano de descuento en otras entidades, 1 para si y 0 para no. Example: 1
     * @authenticated
     * @responseFile responses/affiliate/get_loan_modality.200.json
     */
     public function get_loan_modality(Request $request, Affiliate $affiliate) {
         $request->validate([
-            'procedure_type_id' => 'required|integer|exists:procedure_types,id',
-            'external_discount' => 'boolean|nullable',
+            'procedure_type_id' => 'required|integer|exists:procedure_types,id'
         ]);
         if(!$affiliate->affiliate_state) abort(404, 'Debe actualizar el estado del afiliado');
         $modality = ProcedureType::findOrFail($request->procedure_type_id);
