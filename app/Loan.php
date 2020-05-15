@@ -411,9 +411,9 @@ class Loan extends Model
                 }
                 break;
             }
-            if ($modality) $modality->loan_modality_parameter;
-            return response()->json($modality);
-        }abort (403, 'Debe registrar el estado del Afiliado');
+        }
+        if ($modality) $modality->loan_modality_parameter;
+        return response()->json($modality);
     }
 }
 
