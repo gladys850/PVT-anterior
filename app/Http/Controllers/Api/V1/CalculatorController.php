@@ -23,7 +23,6 @@ class CalculatorController extends Controller
     * @bodyParam months_term integer required plazo. Example: 5
     * @bodyParam affiliate_id integer required ID del afiliado. Example: 1
     * @bodyParam parent_loan_id integer ID de Préstamo Padre.. Example: 1
-    * @bodyParam debtor boolean Afiliado con deudas pendientes con otras entidades . Example: false
     * @bodyParam guarantor boolean Afiliado evaluado como garante. Example: false
     * @bodyParam contributions[0].payable_liquid integer required Líquido pagable. Example: 2000
     * @bodyParam contributions[0].seniority_bonus integer required Bono Cargo . Example: 0.00
@@ -45,47 +44,44 @@ class CalculatorController extends Controller
     */
     public function store(CalculatorForm $request)
     {
-        if(!$request->debtor){
-            $procedure_modality = ProcedureModality::findOrFail($request->procedure_modality_id);
-            $amount_requested = $request->amount_requested;
-            $affiliate = Affiliate::findOrFail($request->affiliate_id);
-            if ($request->has('parent_loan_id')) {
-                $parent_loan = Loan::with(['lenders'=> function($q) use ($affiliate) {
-                    $q->where('affiliate_id', $affiliate->id);
-                }])->whereId($request->parent_loan_id)->first();
-                if (!$parent_loan) abort(404);
-                $parent_quota = $parent_loan->next_payment()->estimated_quota * $parent_loan->lenders[0]->pivot->payment_percentage/100;
-            } else {
-                $parent_quota = 0;
-            }
-            $contributions = collect($request->contributions);
-            $payable_liquid_average = $contributions->avg('payable_liquid');
-            $contribution_first = $contributions->first();
-            $total_bonuses = $contribution_first['seniority_bonus']+$contribution_first['border_bonus']+$contribution_first['public_security_bonus']+$contribution_first['east_bonus'];
-            $liquid_qualification_calculated=$this->liquid_qualification($payable_liquid_average, $total_bonuses, $affiliate, $parent_quota, $request->guarantor);
-            $quota_calculated = $this->quota_calculator($procedure_modality, $request->months_term, $amount_requested);
-            $amount_maximum_suggested = $this->maximum_amount($procedure_modality,$request->months_term,$liquid_qualification_calculated);
-            if($amount_requested>$amount_maximum_suggested){
-                $quota_calculated = $this->quota_calculator($procedure_modality, $request->months_term, $amount_maximum_suggested);
-                $amount_requested = $amount_maximum_suggested;
-            }
-            if($payable_liquid_average!=0){
-                $indebtedness_calculated =$quota_calculated/($liquid_qualification_calculated)*100 ;
-            }else{
-                $indebtedness_calculated = 0;
-            }
-            return response()->json([
-                'payable_liquid_calculated' => round($payable_liquid_average),
-                'bonus_calculated' => $total_bonuses,
-                'liquid_qualification_calculated' => round($liquid_qualification_calculated),
-                'quota_calculated' => Util::money_format($quota_calculated),
-                'indebtedness_calculated' => intval($indebtedness_calculated),
-                'amount_requested' => $amount_requested,
-                'amount_maximum_suggested' => $amount_maximum_suggested,
-                'is_valid' => ($indebtedness_calculated) <= ($procedure_modality->loan_modality_parameter->decimal_index)*100
-            ]);
+        $procedure_modality = ProcedureModality::findOrFail($request->procedure_modality_id);
+        $amount_requested = $request->amount_requested;
+        $affiliate = Affiliate::findOrFail($request->affiliate_id);
+        if ($request->has('parent_loan_id')) {
+            $parent_loan = Loan::with(['lenders'=> function($q) use ($affiliate) {
+                $q->where('affiliate_id', $affiliate->id);
+            }])->whereId($request->parent_loan_id)->first();
+            if (!$parent_loan) abort(404);
+            $parent_quota = $parent_loan->next_payment()->estimated_quota * $parent_loan->lenders[0]->pivot->payment_percentage/100;
+        } else {
+            $parent_quota = 0;
         }
-        abort (403, 'El afiliado no puede ser evaluado');
+        $contributions = collect($request->contributions);
+        $payable_liquid_average = $contributions->avg('payable_liquid');
+        $contribution_first = $contributions->first();
+        $total_bonuses = $contribution_first['seniority_bonus']+$contribution_first['border_bonus']+$contribution_first['public_security_bonus']+$contribution_first['east_bonus'];
+        $liquid_qualification_calculated=$this->liquid_qualification($payable_liquid_average, $total_bonuses, $affiliate, $parent_quota, $request->guarantor);
+        $quota_calculated = $this->quota_calculator($procedure_modality, $request->months_term, $amount_requested);
+        $amount_maximum_suggested = $this->maximum_amount($procedure_modality,$request->months_term,$liquid_qualification_calculated);
+        if($amount_requested>$amount_maximum_suggested){
+            $quota_calculated = $this->quota_calculator($procedure_modality, $request->months_term, $amount_maximum_suggested);
+            $amount_requested = $amount_maximum_suggested;
+        }
+        if($payable_liquid_average!=0){
+            $indebtedness_calculated =$quota_calculated/($liquid_qualification_calculated)*100 ;
+        }else{
+            $indebtedness_calculated = 0;
+        }
+        return response()->json([
+            'payable_liquid_calculated' => round($payable_liquid_average),
+            'bonus_calculated' => $total_bonuses,
+            'liquid_qualification_calculated' => round($liquid_qualification_calculated),
+            'quota_calculated' => Util::money_format($quota_calculated),
+            'indebtedness_calculated' => intval($indebtedness_calculated),
+            'amount_requested' => $amount_requested,
+            'amount_maximum_suggested' => $amount_maximum_suggested,
+            'is_valid' => ($indebtedness_calculated) <= ($procedure_modality->loan_modality_parameter->decimal_index)*100
+        ]);
     }
     // funcion para sacar la cuota estimada con la calculadora
     private function quota_calculator($procedure_modality, $months_term, $amount_requested){

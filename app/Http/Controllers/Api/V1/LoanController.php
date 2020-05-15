@@ -217,7 +217,7 @@ class LoanController extends Controller
     * @bodyParam account_number integer Número de cuenta en Banco Union. Example: 586621345
     * @bodyParam destiny_id integer required ID destino de Préstamo. Example: 1
     * @bodyParam role_id integer Rol al cual derivar o devolver. Example: 81
-    * @bodyParam validated boolean Estado validaión del préstamo. Example: true
+    * @bodyParam validated boolean Estado validación del préstamo. Example: true
     * @authenticated
     * @responseFile responses/loan/update.200.json
     */
@@ -570,7 +570,7 @@ class LoanController extends Controller
     }
 
     /**
-    * Notas aclaratorias
+    * Lista de Notas aclaratorias
     * Devuelve la lista de notas relacionadas con el préstamo
     * @urlParam loan required ID del préstamo. Example: 2
     * @authenticated
