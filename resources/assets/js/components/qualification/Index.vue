@@ -3,31 +3,15 @@
     <v-card-title>
       <v-toolbar dense color="tertiary">
         <v-toolbar-title>
-          <Breadcrumbs/>
+          <Breadcrumbs />
         </v-toolbar-title>
         <v-spacer></v-spacer>
-        <v-btn-toggle
-        
-        active-class="primary white--text"
-        mandatory
-        v-model="statusLoans"
-        >
-          <!--<v-btn text value="0" @click="typeStatusLoan(0)">
-            TODOS
-          </v-btn>-->
-          <v-btn text :value="false" @click="typeStatusLoan(false)">
-            RECIBIDOS
-          </v-btn>
-          <v-btn text :value="true" @click="typeStatusLoan(true)">
-            REVISADOS
-          </v-btn>
+        <v-btn-toggle active-class="primary white--text" mandatory v-model="statusLoans">
+          <v-btn text :value="false">RECIBIDOS</v-btn>
+          <v-btn text :value="true">REVISADOS</v-btn>
         </v-btn-toggle>
 
-        <v-divider
-          class="mx-2"
-          inset
-          vertical
-        ></v-divider>
+        <v-divider class="mx-2" inset vertical></v-divider>
         <v-flex xs3>
           <v-text-field
             v-model="search"
@@ -39,49 +23,52 @@
             clearable
           ></v-text-field>
         </v-flex>
-
-        <Fab v-if="$store.getters.permissions.includes('create-qualification')"/>
+        <!--<Fab v-if="$store.getters.permissions.includes('create-qualification')"/>-->
       </v-toolbar>
     </v-card-title>
-    <v-card-text> 
-      <!--<template v-if="statusLoans==0">
-        <v-card flat class="ma-0 px-2">
-          <List :bus="bus" :statusLoans="0"/>
-      </v-card>
-      </template>--> 
+    <v-card-text>
       <template>
-        <v-card class="ma-0 px-0" >
-         <v-row class="ma-0 pa-0 px-2">
-          <v-col cols="12" class="ma-0 px-0" >
-          <v-tabs v-model="tab" background-color="primary" dark>
-            <v-tab href="#tab-1">Mod. Anticipo</v-tab>
-            <v-tab href="#tab-2">Mod. Corto Plazo</v-tab>
-            <v-tab href="#tab-3">Mod. Largo Plazo</v-tab>
-            <v-tab href="#tab-4">Mod. Hipotecario</v-tab>       
-          </v-tabs>
-          </v-col>   
+        <v-card>
+          <v-row class="ma-0 pa-0 px-2">
+            <v-col cols="3" class="ma-0 pa-0 pr-2">
+              <v-select
+                eager
+                label="Trámites"
+                v-model="selectedProcedure"
+                :items="listProcedure"
+                item-text="display_name"
+                item-value="id"
+              ></v-select>
+            </v-col>
+            <!--Mostrar modalidades de trámites-->
+            <v-col cols="9" class="ma-0 pa-0">
+              <v-tabs v-model="tab" background-color="primary" dark>
+                <v-tab v-for="pt in procedureTypes" :key="pt.id" @click.stop="getModality(pt.id)">
+                  {{pt.second_name}}
+                </v-tab>
+              </v-tabs>
+            </v-col>
+          </v-row>
 
-         </v-row>   
           <v-tabs-items v-model="tab">
-            <v-tab-item v-for="i in 4" :key="i" :value="'tab-' + i">
-              <v-card flat class="ma-0 px-2">
-                <List :bus="bus" :statusLoans="statusLoans"/>
+            <v-tab-item eager v-for="pt in procedureTypes" :key="pt.id">
+              <v-card flat class="ma-0 pa-0 px-2">
+                <List :bus="bus" :procedureTypeId="procedureTypeId" :userRoles="userRoles" :listRoles="listRoles" />
               </v-card>
             </v-tab-item>
           </v-tabs-items>
         </v-card>
-      </template> 
-  
+      </template>
     </v-card-text>
-    <RemoveItem :bus="bus"/>
+    <RemoveItem :bus="bus" />
   </v-card>
 </template>
 
 <script>
-import Breadcrumbs from '@/components/shared/Breadcrumbs'
-import RemoveItem from '@/components/shared/RemoveItem'
-import List from '@/components/qualification/List'
-import Fab from '@/components/loan/Fab'
+import Breadcrumbs from "@/components/shared/Breadcrumbs"
+import RemoveItem from "@/components/shared/RemoveItem"
+import List from "@/components/qualification/List"
+import Fab from "@/components/loan/Fab"
 
 export default {
   name: "qualification-index",
@@ -93,28 +80,105 @@ export default {
   },
   data: () => ({
     tab: null,
-    search: '',
+    search: "",
     bus: new Vue(),
-    statusLoans: false
+    module: 6,
+    userRoles: [],
+    selectedRoles: [],
+    
+    listProcedure: [
+     {
+      id:'1',
+      display_name:'Todos'
+    },
+    ],
+    procedureTypes: null,
+    statusLoans: false,
+    procedureTypeId: 10,
+    selectedProcedure: null,
+    listRoles:[]
+    
   }),
   beforeMount() {
-    this.$store.commit('setBreadcrumbs', [
+    this.$store.commit("setBreadcrumbs", [
       {
-        text: 'Calificación',
-        to: { name: 'loanIndex' }
+        text: "Préstamos",
+        to: { name: "loanIndex" }
       }
     ])
+    this.getModuleRoles(this.module)
+    this.getModuleProcedureTypes(this.module)
+    this.getUserRoles(this.$store.getters.id)
   },
   watch: {
-    search: _.debounce(function () {
-      this.bus.$emit('search', this.search)
-    }, 1000)
+    search: _.debounce(function() {
+      this.bus.$emit("search", this.search)
+    }, 1000),
+    statusLoans: function() {
+      this.bus.$emit("statusLoans", this.statusLoans)
+    }
   },
+
   methods: {
     //Escoger los tramites validados o recibidos
-    typeStatusLoan (status) {
-      this.statusLoans = status;
-    }  
-  },
+    /*typeStatusLoan (status) {
+      this.statusLoans = status
+    },*/
+    getModality(id) {
+      this.procedureTypeId = id
+      console.log("prodecure padre" + id)
+    },
+    async getModuleProcedureTypes(id) {
+      try {
+        this.loading = true
+        let res = await axios.get(`module/${id}/procedure_type`)
+        this.procedureTypes = res.data
+        console.log("procedureType " + this.procedureTypes)
+      } catch (e) {
+        console.log(e)
+      } finally {
+        this.loading = false
+      }
+    },
+    async getModuleRoles(id) {
+      try {
+        this.loading = true
+        let res = await axios.get(`module/${id}/role`)
+        this.listRoles = res.data
+      } catch (e) {
+        console.log(e)
+      } finally {
+        this.loading = false
+      }
+    },
+    async getUserRoles(id) {
+      try {
+        this.loading = true
+        let res = await axios.get(`user/${id}/role`)
+        this.userRoles = res.data.roles
+        this.procedureRol()
+      } catch (e) {
+        console.log(e)
+      } finally {
+        this.loading = false
+      }
+    },
+    procedureRol(){
+      //obtiene nombre de roles(areas) en base a su id
+      let rol = []
+      let area = []
+      console.log("hola1")
+      console.log("hla "+ this.userRoles.length)
+      for(let i = 0; i < this.userRoles.length; i++){
+        area = this.listRoles.find((item) => item.id == this.userRoles[i])
+        console.log( area)
+        this.listProcedure.push(area)
+        console.log("procedure"+this.listProcedure)
+      }
+      //this.listRoleUser.forEach(element => console.log(element));
+      console.log("hola")
+    },
+
+  }
 }
 </script>

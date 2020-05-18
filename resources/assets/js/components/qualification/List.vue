@@ -1,17 +1,19 @@
 <template>
-  <div>
-   <!-- <span>{{loansSelected}}</span>-->
-    <v-row>
-      <v-col cols="3" class="ma-0 pa-0 pl-2" v-if="this.statusLoans">
-        <v-select
+  <div class="ma-0 pa-0">
+   <span>{{loansSelected}}</span>
+   <span>{{ $store.getters.username}}{{ $store.getters.roles}}{{ $store.getters.id}}{{ $store.getters.permissions}}</span>
+   <v-row class="ma-0 pa-0">       
+      <v-col cols="3" class="ma-0 pa-0 pr-2" v-if="statusLoans">
+        <v-select eager
           label="Escoger Área"
           v-model="valArea"
           :items="listAreas"
           item-text="display_name"
           item-value="id"
         ></v-select>
+        {{valArea}}
       </v-col>  
-      <v-col cols="1" class="ma-0 pb-0" v-if="this.statusLoans" @click="derivationLoans()">   
+      <v-col cols="1" class="ma-0 pa-0" v-if="statusLoans" @click.stop="derivationLoans()">   
         <v-btn small tile color="success">
             <v-icon left>mdi-file-send</v-icon> Derivar
         </v-btn>          
@@ -20,7 +22,7 @@
     <!--v-switch v-model="showSelect" label="Habilitar checks" class="pa-3"></v-switch-->
     <v-data-table
       :headers="headers"
-      :items="showSelect ? validated : received "
+      :items="loans"
       :loading="loading"
       :options.sync="options"
       :server-items-length="totalloans"
@@ -29,7 +31,7 @@
       single-expand
       v-model="loansSelected"
       :show-select="showSelect"
-      :single-select="false"
+      
     >
       <!--template v-slot:item="props">
         <tr :class="props.isExpanded ? 'secondary white--text' : ''">
@@ -97,12 +99,25 @@ export default {
       type: Object,
       required: true
     },
-    statusLoans: {
+    userRoles: {
+      type: Array,
+      required: true
+    },
+    /*statusLoans: {
       type: Boolean,
+      required: true
+    }*/
+    procedureTypeId:{
+      type: Number,
+      required: true
+    },
+    listRoles: {
+      type:Array,
       required: true
     }
   },
   data: () => ({
+    current_rol: 82,
     loading: true,
     search: "",
     options: {
@@ -173,7 +188,7 @@ export default {
         },
         {
           text: "Meses Plazo",
-          value: "loan_term",
+          value: "validated",
           class: ["normal", "white--text"],
           align: "center",
 
@@ -198,13 +213,19 @@ export default {
       ],
     loansSelected: [],
     showSelect:false,
-    validated: [],
-    received:[],
-    countValidated: 0,
-    countReceived: 0,
-    listAreas: [],
+    //validated: [],
+    //received:[],
+    //countValidated: 0,
+    //countReceived: 0,
+    statusLoans: false,
+    
+    validated: 0,
+    //procedure_type_id: 9,
+    idLoans: [],
+    //listRoles: [],
+    flow:[],
+    listAreas:[],
     valArea:[],
-    idLoans: []
   }),
   watch: {
     options: function(newVal, oldVal) {
@@ -223,92 +244,161 @@ export default {
         this.getloans();
       }
     },
-    statusLoans (status) {
-      if(status == false){
+    
+    /*statusLoans (status) {
+      if(status==false){
         this.showSelect = false
+        this.validated= 0
+        this.getloans()
         //this.loans=this.received
         //console.log(this.received)
       } 
       else{
         this.showSelect = true
+        this.validated = 1
+        this.getloans()
         //this.loans=this.validated
         //console.log(this.validated)    
       } 
+    },*/
+    statusLoans: function(newVal, oldVal){
+      if(newVal != oldVal)
+        if(newVal){
+          this.showSelect = true
+          this.validated = 1
+        }else{
+          this.showSelect = false
+          this.validated = 0       
+        }
+      this.getloans()
+    },
+    procedureTypeId: function(newVal, oldVal){
+      if(newVal != oldVal)
+      this.listAreas = []
+      this.getProcedureTypeFlow()  //procedureType 9 anticipo 
+      this.getloans()
     },
     loansSelected() {
-      let miRes = [];
-      let long = this.loansSelected.length;
-      let miId = null;
+      let loans = [];
+      //let long = this.loansSelected.length;
+      let idLoan = null;
       for (let i = 0; i < this.loansSelected.length; i++) {
-        miId = this.loansSelected[i].id;
-        miRes.push(miId);
+        idLoan = this.loansSelected[i].id;
+        loans.push(idLoan);
       }
-      this.idLoans = miRes;
-      console.log("long " + long);
-      console.log("miId " + miId);
-      console.log("miRes " + miRes);
-      console.log("idLoans " + this.idLoans);
+      this.idLoans = loans;
+      //console.log("long " + long);
+      //console.log("idLoan " + idLoan);
+      //console.log("loans " + loans);
+      //console.log("idLoans " + this.idLoans);
     }
   },
   mounted() {
-    this.bus.$on("added", val => {
-      this.getloans();
-    });
-    this.bus.$on("removed", val => {
-      this.getloans();
-    });
     this.bus.$on("search", val => {
       this.search = val;
     });
+    this.bus.$on("statusLoans", val =>{
+      this.statusLoans = val
+    })
     this.getloans()
-    this.classifyLoans(); 
-    this.getAreas()   
+    //this.classifyLoans(); 
+    //this.getModuleRole(6) //modulo 6 prestamo
+    this.$store.getters.username
+     this.$store.getters.roles
+     this.$store.getters.id
+      this.$store.getters.permissions
+
   },
   methods: {
     async getloans(params) {
       try {
-        this.loading = true;
-        let res = await axios.get(`loan`, {
-          params: {
-            page: this.options.page,
-            per_page: this.options.itemsPerPage,
-            sortBy: this.options.sortBy,
-            sortDesc: this.options.sortDesc,
-            search: this.search
-          }
+        this.loading = true; 
+        let res
+        let todos = true
+        if(todos){
+          res = await axios.get(`loan`, {
+            params: {
+              validated: this.validated,
+              procedure_type_id: this.procedureTypeId,
+              page: this.options.page,
+              per_page: this.options.itemsPerPage,
+              sortBy: this.options.sortBy,
+              sortDesc: this.options.sortDesc,
+              search: this.search
+            }
+          });
+        }else{
+          res = await axios.get(`loan`, {
+            params: {
+              page: this.options.page,
+              per_page: this.options.itemsPerPage,
+              sortBy: this.options.sortBy,
+              sortDesc: this.options.sortDesc,
+              search: this.search
+            }
         });
+        }
+
         this.loans = res.data.data;
         this.totalloans = res.data.total;
         delete res.data["data"];
+        //console.log("DELETE"+ delete res.data["data"])
         this.options.page = res.data.current_page;
         this.options.itemsPerPage = parseInt(res.data.per_page);
         this.options.totalItems = res.data.total;
-        this.classifyLoans()
+        //this.classifyLoans()
       } catch (e) {
         console.log(e);
       } finally {
         this.loading = false;
       }
     },
-    async getAreas() {
+    /*async getModuleRole(id) {
       try {
         this.loading = true
-        let res = await axios.get(`module/6/role`);
-        this.listAreas = res.data
+        let res = await axios.get(`module/${id}/role`);
+        this.listRoles = res.data
       } catch (e) {
         console.log(e);
       } finally {
         this.loading = false;
       }
+    },*/
+    async getProcedureTypeFlow() {
+      try {
+        this.loading = true
+        let res = await axios.get(`/procedure_type/${this.procedureTypeId}/flow`)
+        console.log("ID desde procedureTypeflow"+this.procedureTypeId)
+        this.flow = res.data
+        console.log(this.flow)
+        this.roleFlowDerivation()
+      } catch (e) {
+        console.log(e)
+      } finally {
+        this.loading = false
+      }
     }, 
+    roleFlowDerivation(){
+      //obtiene nombre de roles(areas) en base a su id
+      let roleFlow = []
+      let area = []
+      roleFlow = this.flow.filter((item) => item.role_id == this.current_rol)
+      //console.log(roleFlow)
+      for(let i = 0; i < roleFlow.length; i++){
+        area = this.listRoles.find((item) => item.id == roleFlow[i].next_role_id)
+        this.listAreas.push(area)
+      }
+      //console.log(this.listAreas)
+    },
     async derivationLoans() {
       try {
         this.loading = true;
-        let response = await axios.patch(`loans`, {
+        let res = await axios.patch(`loans`, {
           ids: this.idLoans,
           role_id: this.valArea
         });
         this.toastr.success("El trámite fue derivado.")
+        this.getloans()
         console.log("se derivo..");
       } catch (e) {
         console.log(e);
@@ -317,7 +407,7 @@ export default {
         this.loading = false;
       }
     },
-    classifyLoans(){
+    /*classifyLoans(){
       let val = []
       let rec = []
       let countVal = 0
@@ -338,7 +428,7 @@ export default {
       this.countReceived = countRec
       console.log(this.countValidated)
       console.log(this.countReceived)
-    },
+    },*/
     
   }
 };

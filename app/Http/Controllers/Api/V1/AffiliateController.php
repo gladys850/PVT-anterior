@@ -45,7 +45,8 @@ class AffiliateController extends Controller
         $affiliate->identity_card_ext = $affiliate->identity_card_ext;
         $affiliate->picture_saved = $affiliate->picture_saved;
         $affiliate->fingerprint_saved = $affiliate->fingerprint_saved;
-        $affiliate->defaulted = $affiliate->defaulted;
+        $affiliate->defaulted_lender = $affiliate->defaulted_lender;
+        $affiliate->defaulted_guarantor = $affiliate->defaulted_guarantor;
         $affiliate->cpop = $affiliate->cpop;
         if ($with_category) $affiliate->category = $affiliate->category;
         return $affiliate;

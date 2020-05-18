@@ -11,6 +11,11 @@ class RoleSequence extends Model
     public $timestamps = false;
     protected $fillable = ['procedure_type_id', 'role_id', 'next_role_id'];
 
+    public function records()
+    {
+        return $this->morphMany(Record::class, 'recordable')->latest('updated_at');
+    }
+
     public function procedure_type()
     {
         return $this->belongsTo(ProcedureType::class);

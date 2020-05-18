@@ -144,6 +144,7 @@ return [
         App\Providers\RoleModelServiceProvider::class,
         App\Providers\LoanModelServiceProvider::class,
         App\Providers\ObservationModelServiceProvider::class,
+        App\Providers\RoleSequenceModelServiceProvider::class,
         /*
         * Application Service Providers...
         */
