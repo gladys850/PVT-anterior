@@ -15,22 +15,7 @@
     "title": "Préstamos",
     "icon": "mdi-cash-multiple",
     "permission": "show-loan",
-    "group": [
-      {
-        "href": "loanIndex",
-        "title": "Recepción",
-        "icon": "mdi-cash-multiple",
-        "permission": "show-loan",
-        "params": {}
-      }, {
-        "href": "qualificationIndex",
-        "title": "Calificación",
-        "icon": "mdi-content-duplicate",
-        "permission": "show-loan",
-        "id_rol": 82,
-        "params": {}
-      }
-    ]
+    "params": {}
   }, {
     "title": "Acceso",
     "icon": "mdi-key",

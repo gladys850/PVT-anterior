@@ -11,7 +11,6 @@ import LoanAdd from '@/components/loan/Add'
 import RecordIndex from '@/components/record/Index'
 import Camara from '@/components/affiliate/Webcam'
 import LoanIndex from '@/components/loan/Index'
-import qualificationIndex from '@/components/qualification/Index'
 import qualificationAdd from '@/components/qualification/Add'
 
 export const routes = [
@@ -112,17 +111,7 @@ export const routes = [
     meta: {
       requiresAuth: true
     }
-  },
-  //calificación
-  {
-    path: '/qualification',
-    name: 'qualificationIndex',
-    component: qualificationIndex,
-    meta: {
-      requiresAuth: true
-    }
-  },
-  {
+  }, {
     path: '/qualification/:id',
     name: 'qualificationAdd',
     component: qualificationAdd,

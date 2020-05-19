@@ -46,6 +46,7 @@ Route::group([
         Route::get('module/{module}/observation_type', 'Api\V1\ModuleController@get_observation_types');
         Route::apiResource('loan', 'Api\V1\LoanController')->only('update');
         Route::patch('loans', 'Api\V1\LoanController@bulk_update_role');
+        Route::apiResource('record', 'Api\V1\RecordController')->only('index');
 
         // Afiliado
         Route::group([
@@ -149,13 +150,6 @@ Route::group([
             'middleware' => 'permission:delete-address'
         ], function () {
             Route::apiResource('address', 'Api\V1\AddressController')->only('destroy');
-        });
-
-        // Historial de actividad
-        Route::group([
-            'middleware' => 'permission:show-record'
-        ], function () {
-            Route::apiResource('record', 'Api\V1\RecordController')->only('index');
         });
 
         // Notas
