@@ -28,18 +28,20 @@
             <v-icon>mdi-close</v-icon>
           </v-btn>
         </v-toolbar>
-        <v-card-title></v-card-title>
-        <v-card-text>
-          <Ldap :bus="bus" @input="userSelected = $event"/>
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn
-            color="error"
-            @click="saveUser()"
-            :disabled="errors.any()"
-          >Añadir</v-btn>
-        </v-card-actions>
+        <ValidationObserver ref="observer"  v-slot="{ invalid }">
+          <v-card-text>
+              <Ldap v-if="$store.getters.ldapAuth" :bus="bus" @input="setUser($event)"/>
+              <Form v-else :bus="bus" @input="setUser($event)"/>
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn
+              color="error"
+              @click="saveUser()"
+              :disabled="invalid"
+            >Añadir</v-btn>
+          </v-card-actions>
+        </ValidationObserver>
       </v-card>
     </v-dialog>
   </div>
@@ -47,11 +49,13 @@
 
 <script>
 import Ldap from '@/components/user/Ldap'
+import Form from '@/components/user/Form'
 
 export default {
   name: 'ldap-add',
   components: {
-    Ldap
+    Ldap,
+    Form
   },
   props: {
     bus: {
@@ -71,11 +75,15 @@ export default {
       } else {
         this.bus.$emit('getUsers')
       }
-    }
+    },
   },
   methods: {
+    setUser(val) {
+      this.userSelected = val
+    },
     clearForm() {
       this.userSelected = null
+      this.$refs.observer.reset()
     },
     close() {
       this.dialog = false
@@ -83,24 +91,18 @@ export default {
     },
     async saveUser() {
       try {
-        if (this.userSelected) {
+        if (await this.$refs.observer.validate()) {
           this.loading = true
-          let res = await axios.post(`user`, {
-            first_name: this.userSelected.givenname,
-            last_name: this.userSelected.sn,
-            username: this.userSelected.uid,
-            password: this.userSelected.uid,
-            position: this.userSelected.title
-          })
+          let res = await axios.post(`user`, this.userSelected)
           this.toastr.success('Usuario adicionado')
           this.bus.$emit('added', res.data)
           this.clearForm()
           this.close()
         } else {
-          this.toastr.danger('Debe seleccionar un usuario')
+          this.toastr.warning('Debe seleccionar un usuario')
         }
       } catch (e) {
-        console.log(e)
+        this.$refs.observer.setErrors(e)
       } finally {
         this.loading = false
       }

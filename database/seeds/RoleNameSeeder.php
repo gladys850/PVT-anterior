@@ -19,6 +19,9 @@ class RoleNameSeeder extends Seeder
             $role->update(['name' => $role->module->shortened . '-' . Str::slug($role->display_name, '-')]);
         }
         $role = Role::where('display_name', 'Administrador')->first();
-        $role->update(['name' => $role->module->shortened . '-' . 'admin']);
+        $role->update([
+            'name' => $role->module->shortened . '-' . 'admin',
+            'sequence_number' => 0
+        ]);
     }
 }

@@ -36,61 +36,61 @@
           <v-icon v-if="icons">mdi-file</v-icon>
         </v-tab>
         <v-tab
-          :href="`#tab-4`"
+         :href="`#tab-4`"
         >
           <v-icon v-if="icons">mdi-account</v-icon>
         </v-tab>
         <v-tab
-          :href="`#tab-5`"
+         :href="`#tab-5`"
         >
           <v-icon v-if="icons">mdi-police-badge</v-icon>
         </v-tab>
-         <v-tab
-          :href="`#tab-6`"
+        <v-tab
+         :href="`#tab-6`"
         >
           <v-icon v-if="icons">mdi-comment-eye-outline</v-icon>
         </v-tab>
         <v-tab-item
-        :value="'tab-1'"
-      >
-        <v-card flat tile >
-          <v-card-text>
-            <Dashboard
-              :affiliate.sync="affiliate"/>
-          </v-card-text>
-        </v-card>
-      </v-tab-item>
-        <v-tab-item
+         :value="'tab-1'"
+        >
+          <v-card flat tile >
+            <v-card-text>
+              <Dashboard
+               :affiliate.sync="affiliate"/>
+            </v-card-text>
+          </v-card>
+        </v-tab-item>
+        <v-tab-item 
           :value="'tab-2'"
         >
           <v-card flat tile >
             <v-card-text>
               <BallotsResult
-              :bonos.sync="bonos"
-              :datos.sync="datos"
-              :payable_liquid.sync="payable_liquid"
-              :calculos.sync="calculos"
-              :modalidad.sync="modalidad"/>
+                :bonos.sync="bonos"
+                :datos.sync="datos"
+                :payable_liquid.sync="payable_liquid"
+                :calculos.sync="calculos"
+                :modalidad.sync="modalidad"/>
             </v-card-text>
           </v-card>
         </v-tab-item>
-          <v-tab-item
-          :value="'tab-3'"
+        <v-tab-item
+         :value="'tab-3'"
         >
           <v-card flat tile >
             <v-card-text>
               <DocumentsQualification
-              :datos.sync="datos"
-              :formulario.sync="formulario"
-              :calculos.sync="calculos"
-              :intervalos.sync="intervalos"
-              :modalidad.sync="modalidad"
+                :datos.sync="datos"
+                :formulario.sync="formulario"
+                :calculos.sync="calculos"
+                :intervalos.sync="intervalos"
+                :modalidad.sync="modalidad"
               />
             </v-card-text>
           </v-card>
         </v-tab-item>
-          <v-tab-item
-          :value="'tab-4'"
+        <v-tab-item
+        :value="'tab-4'"
         >
           <v-card flat tile >
             <v-card-text>
@@ -105,11 +105,11 @@
           </v-card>
         </v-tab-item>
         <v-tab-item
-          :value="'tab-5'"
+         :value="'tab-5'"
         >
           <v-card flat tile >
-          <v-card-text>
-            <PoliceData
+            <v-card-text>
+              <PoliceData
                 v-if="!reload"
                 :affiliate.sync="affiliate"
                 :editable.sync="editable"
@@ -119,14 +119,15 @@
           </v-card>
         </v-tab-item>
         <v-tab-item
-          :value="'tab-6'"
+        :value="'tab-6'"
         >
           <v-card flat tile >
-          <v-card-text class=" pa-0 mb-0">
-            <ObserverQualification
-            :observations.sync="observations"
-            :record.sync="record"
-            /></v-card-text>
+            <v-card-text class=" pa-0 mb-0">
+              <ObserverQualification 
+              :observations.sync="observations" 
+              :record.sync="record" 
+              :loan.sync="loan"/>
+            </v-card-text>
           </v-card>
         </v-tab-item>
       </v-tabs>
@@ -177,17 +178,18 @@ export default {
     payable_liquid:[0,0,0],
     calculos:{},
     modalidad:{},
-
-    datos:[],
-    formulario:[],
-    calculos:{},
-    intervalos:{},
-    modalidad:{},
-
+    loan:{},
+    datos: {},
+    formulario: [],
+    record: [],
+    observations: [],
+    intervalos: {},
+    modalidad: {},
 
     icons: true,
     vertical: true,
     tabs: 3,
+    i: 0,
     editable: false,
     reload: false,
     tab: 'tab-1'
@@ -204,9 +206,9 @@ export default {
         return this.$store.getters.permissions.includes('update-affiliate-secondary')
       } else {
         return this.$store.getters.permissions.includes('create-affiliate')
-    }
-  },
-  primaryPermission() {
+      }
+    },
+    primaryPermission() {
       if (this.affiliate.id) {
         return this.$store.getters.permissions.includes('update-affiliate-primary')
       } else {
@@ -214,12 +216,7 @@ export default {
       }
     }
   },
-  beforeMount(){
-     this.getloan(4)
-    this.getObservation(1)
-    this.getRecords()
-
-  },
+  beforeMount() {},
   mounted() {
     this.getloan(1)
     this.getObservation(1)
@@ -227,12 +224,11 @@ export default {
   },
   methods: {
     resetForm() {
-      
       this.getAddress(this.$route.params.id)
       this.editable = false
       this.reload = true
       this.$nextTick(() => {
-      this.reload = false
+        this.reload = false
       })
     },
     setBreadcrumbs() {
@@ -249,15 +245,14 @@ export default {
         this.loading = true;
         let res = await axios.get(`loan/${id}`);
         this.loan = res.data;
-          this.calculos.plazo=this.loan.loan_term
-          this.calculos.montos=this.loan.amount_approved
-          this.calculos.calculo_de_cuota=this.loan.estimated_quota
-          this.calculos.monto_maximo_sugerido=this.loan.amount_approved
-          this.calculos.promedio_liquido_pagable=this.loan.payable_liquid_calculated
-          this.calculos.total_bonos= this.loan.bonus_calculated
-          this.calculos.liquido_para_calificacion= this.loan.liquid_qualification_calculated
-          this.calculos.indice_endeudamiento = this.loan.indebtedness_calculated
-                          
+        this.calculos.plazo=this.loan.loan_term
+        this.calculos.montos=this.loan.amount_approved
+        this.calculos.calculo_de_cuota=this.loan.estimated_quota
+        this.calculos.monto_maximo_sugerido=this.loan.amount_approved
+        this.calculos.promedio_liquido_pagable=this.loan.payable_liquid_calculated
+        this.calculos.total_bonos= this.loan.bonus_calculated
+        this.calculos.liquido_para_calificacion= this.loan.liquid_qualification_calculated
+        this.calculos.indice_endeudamiento = this.loan.indebtedness_calculated
         let res1 = await axios.get(`affiliate/${this.loan.disbursable_id}`)
         this.affiliate = res1.data
         this.setBreadcrumbs()
@@ -269,18 +264,18 @@ export default {
       }
     },
     async getObservation(id) {
-    try {
-      this.loading = true
-      let res = await axios.get(`loan/${id}/observation`)
-      this.observations = res.data
-      console.log('este la observacion'+this.observations)
-    } catch (e) {
-      console.log(e)
-    } finally {
-      this.loading = false
-    }
-  },
-   async getAddress(id) {
+      try {
+        this.loading = true
+        let res = await axios.get(`loan/${id}/observation`)
+        this.observations = res.data
+        console.log(res.data)
+      } catch (e) {
+        console.log(e)
+      } finally {
+        this.loading = false
+      }
+    },
+    async getAddress(id) {
       try {
         this.loading = true
         let res = await axios.get(`affiliate/${id}/address`)
@@ -291,20 +286,20 @@ export default {
         this.loading = false
       }
     },
-  async getRecords() {
-    try {
-      this.loading = true
-      let res = await axios.get(`record`,{param:{
-      loan_id:4
-    }})
-      this.record = res.data.data
-      console.log('este el record'+this.record)
-    } catch (e) {
-      console.log(e)
-    } finally {
+    async getRecords() {
+      try {
+        this.loading = true
+        let res = await axios.get(`record`,{param:{
+            loan_id:4
+          }})
+        this.record = res.data.data
+        console.log('este el record'+this.record)
+      } catch (e) {
+        console.log(e)
+      } finally {
         this.loading = false
-    }
-  },
+      }
+    },
   },
 }
 </script>
