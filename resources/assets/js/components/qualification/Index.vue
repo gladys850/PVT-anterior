@@ -6,7 +6,7 @@
           <Breadcrumbs />
         </v-toolbar-title>
         <v-spacer></v-spacer>
-        <v-btn-toggle active-class="primary white--text" mandatory v-model="statusLoans">
+        <v-btn-toggle active-class="primary white--text" mandatory v-model="statusLoans" v-if="selectedProcedure > 0">
           <v-btn text :value="false">RECIBIDOS</v-btn>
           <v-btn text :value="true">REVISADOS</v-btn>
         </v-btn-toggle>
@@ -35,13 +35,18 @@
                 eager
                 label="Trámites"
                 v-model="selectedProcedure"
-                :items="listProcedure"
+                :items="itemsProcedure"
                 item-text="display_name"
                 item-value="id"
+                prepend-inner-icon="mdi-file-eye"
+                :loading="loading"
+                outlined
+                
               ></v-select>
+              {{selectedProcedure}}
             </v-col>
             <!--Mostrar modalidades de trámites-->
-            <v-col cols="9" class="ma-0 pa-0">
+            <v-col cols="9" class="ma-0 pa-0" v-if="selectedProcedure > 0">
               <v-tabs v-model="tab" background-color="primary" dark>
                 <v-tab v-for="pt in procedureTypes" :key="pt.id" @click.stop="getModality(pt.id)">
                   {{pt.second_name}}
@@ -53,7 +58,12 @@
           <v-tabs-items v-model="tab">
             <v-tab-item eager v-for="pt in procedureTypes" :key="pt.id">
               <v-card flat class="ma-0 pa-0 px-2">
-                <List :bus="bus" :procedureTypeId="procedureTypeId" :userRoles="userRoles" :listRoles="listRoles" />
+                <List 
+                  :bus="bus" 
+                  :procedureTypeId="procedureTypeId" 
+                  :userRoles="userRoles" 
+                  :moduleRoles="moduleRoles" 
+                  :selectedProcedure="selectedProcedure" />
               </v-card>
             </v-tab-item>
           </v-tabs-items>
@@ -83,21 +93,18 @@ export default {
     search: "",
     bus: new Vue(),
     module: 6,
+    procedureTypes: [],
+    moduleRoles:[],
     userRoles: [],
-    selectedRoles: [],
-    
-    listProcedure: [
-     {
-      id:'1',
-      display_name:'Todos'
-    },
+    selectedProcedure: 0,    
+    itemsProcedure: [
+      {
+      id:'0',
+      display_name:'Ver todos'
+      },
     ],
-    procedureTypes: null,
     statusLoans: false,
-    procedureTypeId: 10,
-    selectedProcedure: null,
-    listRoles:[]
-    
+    procedureTypeId: 0,    
   }),
   beforeMount() {
     this.$store.commit("setBreadcrumbs", [
@@ -107,7 +114,7 @@ export default {
       }
     ])
     this.getModuleRoles(this.module)
-    this.getModuleProcedureTypes(this.module)
+    this.getProcedureTypes()
     this.getUserRoles(this.$store.getters.id)
   },
   watch: {
@@ -118,22 +125,20 @@ export default {
       this.bus.$emit("statusLoans", this.statusLoans)
     }
   },
-
   methods: {
-    //Escoger los tramites validados o recibidos
-    /*typeStatusLoan (status) {
-      this.statusLoans = status
-    },*/
     getModality(id) {
       this.procedureTypeId = id
-      console.log("prodecure padre" + id)
     },
-    async getModuleProcedureTypes(id) {
+    async getProcedureTypes() {
       try {
         this.loading = true
-        let res = await axios.get(`module/${id}/procedure_type`)
-        this.procedureTypes = res.data
-        console.log("procedureType " + this.procedureTypes)
+        let res = await axios.get(`procedure_type`,{
+          params:{
+           module_id: this.module 
+          }
+        })
+        this.procedureTypes = res.data.data
+        console.log(this.procedureTypes)
       } catch (e) {
         console.log(e)
       } finally {
@@ -144,7 +149,7 @@ export default {
       try {
         this.loading = true
         let res = await axios.get(`module/${id}/role`)
-        this.listRoles = res.data
+        this.moduleRoles = res.data
       } catch (e) {
         console.log(e)
       } finally {
@@ -164,21 +169,13 @@ export default {
       }
     },
     procedureRol(){
-      //obtiene nombre de roles(areas) en base a su id
+      //obtiene nombre de roles en base a su id => Tramites
       let rol = []
-      let area = []
-      console.log("hola1")
-      console.log("hla "+ this.userRoles.length)
       for(let i = 0; i < this.userRoles.length; i++){
-        area = this.listRoles.find((item) => item.id == this.userRoles[i])
-        console.log( area)
-        this.listProcedure.push(area)
-        console.log("procedure"+this.listProcedure)
+        rol = this.moduleRoles.find((item) => item.id == this.userRoles[i])
+        this.itemsProcedure.push(rol)
       }
-      //this.listRoleUser.forEach(element => console.log(element));
-      console.log("hola")
     },
-
   }
 }
 </script>
