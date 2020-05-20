@@ -159,11 +159,11 @@
 
   <script>
 
-import AddObservation from '@/components/qualification/AddObservation'
+import AddObservation from '@/components/workflow/Add'
 import RemoveItem from '@/components/shared/RemoveItem'
 
 export default {
-  name: "observer-qualification",
+  name: "observer-flow",
 
   components: {
     AddObservation,
@@ -272,7 +272,7 @@ export default {
           role_id:this.valArea
         });
         this.toastr.success("Se devolvio satisfacctoriamente el tramite.")      
-        this.$router.push('/qualification')
+        this.$router.push('/workflow')
         console.log('se cambio el rol')
       } catch (e) {
         console.log(e)
@@ -287,7 +287,7 @@ export default {
         });
         console.log('se cambio el rol')
         this.toastr.success("Se reviso satisfacctoriamente el tramite.")      
-        this.$router.push('/qualification')
+        this.$router.push('/workflow')
         
       } catch (e) {
         console.log(e)

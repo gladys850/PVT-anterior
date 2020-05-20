@@ -70,7 +70,7 @@
 <script>
 
 export default {
-  name: "qualification-add-observation",
+  name: "flow-add-observation",
   props: {
     bus: {
       type: Object,

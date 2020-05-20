@@ -10,7 +10,7 @@
           :items="itemsArea"
           item-text="display_name"
           item-value="id"
-          prepend-inner-icon="mdi-format-list-checks"
+          prepend-inner-icon="mdi-file-send"
           :loading="loading"
           outlined
         ></v-select>
@@ -85,7 +85,7 @@
           icon
           small
           color="warning"
-          :to="{ name: 'qualificationAdd', params: { id: item.id }}"
+          :to="{ name: 'flowAdd', params: { id: item.id }}"
         >
           <v-icon>mdi-eye</v-icon>
         </v-btn>
@@ -96,7 +96,7 @@
 
 <script>
 export default {
-  name: "qualification-list",
+  name: "flow-list",
   props: {
     bus: {
       type: Object,
@@ -115,15 +115,11 @@ export default {
       type:Array,
       required: true
     },
-    selectedProcedure: {
-      type: String,
-      required: true
-    }
   },
   data: () => ({
-    //current_rol: 82,
     loading: true,
     search: "",
+    selectedProcedure:0,
     options: {
       page: 1,
       itemsPerPage: 8,
@@ -243,6 +239,7 @@ export default {
     },
     selectedProcedure: function(newVal, oldVal){
       if(newVal != oldVal && newVal != null)
+        this.showSelect = false
         this.getloans(newVal)
     },
     statusLoans: function(newVal, oldVal){
@@ -295,7 +292,7 @@ export default {
       try {
         this.loading = true; 
         let res
-        if(this.selectedProcedure > 0){
+        if(this.selectedProcedure > 1){
           res = await axios.get(`loan`, {
             params: {
               role_id: this.selectedProcedure,
@@ -344,7 +341,7 @@ export default {
       }
     }, 
     roleFlowDerivation(){
-      //obtiene nombre de roles en base a su id => Areas
+      // Areas
       let roleFlow = []
       let area = []
       roleFlow = this.procedureTypeFlow.filter((item) => item.role_id == this.selectedProcedure)

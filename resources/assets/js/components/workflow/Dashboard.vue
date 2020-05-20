@@ -32,7 +32,7 @@
 <script>
 import common from "@/plugins/common";
 export default {
-  name: "qualification-dashboard",
+  name: "flow-dashboard",
   props: {
     affiliate: {
       type: Object,

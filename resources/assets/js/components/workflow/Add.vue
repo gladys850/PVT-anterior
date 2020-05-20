@@ -79,7 +79,7 @@
         >
           <v-card flat tile >
             <v-card-text>
-              <DocumentsQualification
+              <DocumentsFlow
                 :datos.sync="datos"
                 :formulario.sync="formulario"
                 :calculos.sync="calculos"
@@ -123,7 +123,7 @@
         >
           <v-card flat tile >
             <v-card-text class=" pa-0 mb-0">
-              <ObserverQualification 
+              <ObserverFlow 
               :observations.sync="observations" 
               :record.sync="record" 
               :loan.sync="loan"/>
@@ -138,20 +138,20 @@
 import Breadcrumbs from '@/components/shared/Breadcrumbs'
 import Profile from '@/components/affiliate/Profile'
 import BallotsResult from '@/components/loan/BallotsResult'
-import DocumentsQualification from '@/components/qualification/DocumentsQualification'
-import ObserverQualification from '@/components/qualification/ObserverQualification'
+import DocumentsFlow from '@/components/workflow/DocumentsFlow'
+import ObserverFlow from '@/components/workflow/ObserverFlow'
 import PoliceData from '@/components/affiliate/PoliceData'
-import Dashboard from '@/components/qualification/Dashboard'
+import Dashboard from '@/components/workflow/Dashboard'
 
 export default {
-  name: "qualification-index",
+  name: "flow-index",
   components: {
     Breadcrumbs,
     Profile,
     BallotsResult,
-    DocumentsQualification,
+    DocumentsFlow,
     PoliceData,
-    ObserverQualification,
+    ObserverFlow,
     Dashboard
   },
   data: () => ({

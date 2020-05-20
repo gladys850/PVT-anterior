@@ -6,7 +6,7 @@
           <Breadcrumbs />
         </v-toolbar-title>
         <v-spacer></v-spacer>
-        <v-btn-toggle active-class="primary white--text" mandatory v-model="statusLoans" v-if="selectedProcedure > 0">
+        <v-btn-toggle active-class="primary white--text" mandatory v-model="statusLoans" v-if="selectedProcedure > 1">
           <v-btn text :value="false">RECIBIDOS</v-btn>
           <v-btn text :value="true">REVISADOS</v-btn>
         </v-btn-toggle>
@@ -23,7 +23,7 @@
             clearable
           ></v-text-field>
         </v-flex>
-        <!--<Fab v-if="$store.getters.permissions.includes('create-qualification')"/>-->
+        <!--<Fab v-if="$store.getters.permissions.includes('create-flow')"/>-->
       </v-toolbar>
     </v-card-title>
     <v-card-text>
@@ -46,7 +46,7 @@
               {{selectedProcedure}}
             </v-col>
             <!--Mostrar modalidades de trámites-->
-            <v-col cols="9" class="ma-0 pa-0" v-if="selectedProcedure > 0">
+            <v-col cols="9" class="ma-0 pa-0" v-if="selectedProcedure > 1">
               <v-tabs v-model="tab" background-color="primary" dark>
                 <v-tab v-for="pt in procedureTypes" :key="pt.id" @click.stop="getModality(pt.id)">
                   {{pt.second_name}}
@@ -77,11 +77,11 @@
 <script>
 import Breadcrumbs from "@/components/shared/Breadcrumbs"
 import RemoveItem from "@/components/shared/RemoveItem"
-import List from "@/components/qualification/List"
+import List from "@/components/workflow/List"
 import Fab from "@/components/loan/Fab"
 
 export default {
-  name: "qualification-index",
+  name: "flow-index",
   components: {
     Breadcrumbs,
     Fab,
@@ -99,7 +99,7 @@ export default {
     selectedProcedure: 0,    
     itemsProcedure: [
       {
-      id:'0',
+      id:'1',
       display_name:'Ver todos'
       },
     ],
@@ -121,6 +121,9 @@ export default {
     search: _.debounce(function() {
       this.bus.$emit("search", this.search)
     }, 1000),
+    selectedProcedure: function() {
+      this.bus.$emit("selectedProcedure", this.selectedProcedure)
+    },
     statusLoans: function() {
       this.bus.$emit("statusLoans", this.statusLoans)
     }
@@ -169,7 +172,7 @@ export default {
       }
     },
     procedureRol(){
-      //obtiene nombre de roles en base a su id => Tramites
+      //=> Tramites
       let rol = []
       for(let i = 0; i < this.userRoles.length; i++){
         rol = this.moduleRoles.find((item) => item.id == this.userRoles[i])
