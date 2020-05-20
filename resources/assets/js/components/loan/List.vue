@@ -8,13 +8,16 @@
     :server-items-length="totalloans"
     :footer-props="{ itemsPerPageOptions: [8, 15, 30] }"
     multi-sort
-    show-select
+    :show-select="params.role_id > 0"
   >
     <template v-slot:header.data-table-select="{ on, props }">
       <v-simple-checkbox color="info" class="grey lighten-3" v-bind="props" v-on="on"></v-simple-checkbox>
     </template>
     <template v-slot:item.data-table-select="{ isSelected, select }">
       <v-simple-checkbox color="success" :value="isSelected" @input="select($event)"></v-simple-checkbox>
+    </template>
+    <template v-slot:item.role_id="{ item }">
+      {{ $store.getters.roles.find(o => o.id == item.role_id).display_name }}
     </template>
     <template v-slot:item.request_date="{ item }">
       {{ item.request_date | date }}
@@ -89,7 +92,6 @@ export default {
       sortDesc: [true]
     },
     loans: [],
-    selectedLoan: 0,
     totalloans: 0,
     headers: [
       {
@@ -130,9 +132,9 @@ export default {
         sortable: false
       }, {
         text: 'Acciones',
+        value: 'actions',
         class: ['normal', 'white--text'],
         align: 'center',
-        value: 'actions',
         sortable: false
       }
     ]
@@ -159,7 +161,11 @@ export default {
       
     },
     params(val) {
-      if (this.validOptions) this.getloans()
+      if (this.validOptions) {
+        this.selectedLoans = []
+        this.getloans()
+        this.updateHeader()
+      }
     }
   },
   mounted() {
@@ -183,6 +189,21 @@ export default {
       else{
         let res = await axios.get(`loan/${item}/print/form`)
       } 
+    },
+    updateHeader() {
+      if (this.params.role_id > 0) {
+        this.headers = this.headers.filter(o => o.value != 'role_id')
+      } else {
+        if (!this.headers.some(o => o.value == 'role_id')) {
+          this.headers.unshift({
+            text: 'Área',
+            class: ['normal', 'white--text'],
+            align: 'center',
+            value: 'role_id',
+            sortable: true
+          })
+        }
+      }
     },
     async getloans() {
       try {
