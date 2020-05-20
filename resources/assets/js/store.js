@@ -15,6 +15,7 @@ export default {
     username: null,
     cityId: null,
     roles: [],
+    userRoles: [],
     permissions: [],
     ldapAuth: JSON.parse(process.env.MIX_LDAP_AUTHENTICATION),
     dateNow: moment().format('Y-MM-DD'),
@@ -41,6 +42,9 @@ export default {
     },
     roles(state) {
       return state.roles
+    },
+    userRoles(state) {
+      return state.userRoles
     },
     permissions(state) {
       return state.permissions
@@ -73,6 +77,7 @@ export default {
       state.username = null
       state.cityId = null
       state.roles = []
+      state.userRoles = []
       state.permissions = []
       state.tokenType = null
       state.accessToken = null
@@ -83,7 +88,7 @@ export default {
       state.user = data.user
       state.username = data.username
       state.cityId = data.city_id
-      state.roles = data.roles
+      state.userRoles = data.roles
       state.permissions = data.permissions
       state.accessToken = data.access_token
       state.tokenType = data.token_type
@@ -92,6 +97,9 @@ export default {
       router.go({
         name: 'dashboard'
       })
+    },
+    setRoles(state, newValue) {
+      state.roles = newValue
     },
     setDate(state, newValue) {
       state.dateNow = newValue
