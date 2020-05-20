@@ -54,7 +54,7 @@ export default {
     Loading
   },
   mounted() {
-    this.$store.getters.roles.forEach(role => {
+    this.$store.getters.userRoles.forEach(role => {
       this.getRole(role)
     })
   },

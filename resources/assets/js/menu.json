@@ -11,8 +11,14 @@
     "permission": "show-affiliate",
     "params": {}
   }, {
-    "href": "loanIndex",
+    "href": "flowIndex",
     "title": "Préstamos",
+    "icon": "mdi-file-eye",
+    "permission": "show-all-loan",
+    "params": {}
+  }, {
+    "href": "loanIndex",
+    "title": "Preśtamos anterior",
     "icon": "mdi-cash-multiple",
     "permission": "show-loan",
     "params": {}

@@ -11,7 +11,8 @@ import LoanAdd from '@/components/loan/Add'
 import RecordIndex from '@/components/record/Index'
 import Camara from '@/components/affiliate/Webcam'
 import LoanIndex from '@/components/loan/Index'
-import qualificationAdd from '@/components/qualification/Add'
+import flowIndex from '@/components/workflow/Index'
+import flowAdd from '@/components/workflow/Add'
 
 export const routes = [
   {
@@ -111,10 +112,20 @@ export const routes = [
     meta: {
       requiresAuth: true
     }
-  }, {
-    path: '/qualification/:id',
-    name: 'qualificationAdd',
-    component: qualificationAdd,
+  },
+  //calificación
+  {
+    path: '/workflow',
+    name: 'flowIndex',
+    component: flowIndex,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/workflow/:id',
+    name: 'flowAdd',
+    component: flowAdd,
     meta: {
       requiresAuth: true
     }

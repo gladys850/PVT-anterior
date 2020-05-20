@@ -15,7 +15,6 @@ import Footer from '@/layout/Footer'
 import Navbar from '@/layout/Navbar'
 import Appbar from '@/layout/Appbar'
 import Config from '@/services/ConfigService'
-import Role from '@/services/RoleService'
 
 export default {
   name: 'app-index',
@@ -34,14 +33,6 @@ export default {
       this.$store.commit("setDate", data.date)
     }).catch(() => {
       this.$store.commit("setDate", this.$moment().format("YYYY-MM-DD"))
-    })
-    const role = new Role()
-    role.get().then((data) => {
-      this.$store.commit("setRoles", data)
-    }).catch(() => {
-      this.toastr.error('Servidor no disponible')
-      this.$store.dispatch("logout")
-      this.$router.go("login")
     })
   }
 }

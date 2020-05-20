@@ -98,7 +98,6 @@ router.beforeEach((to, from, next) => {
 })
 if (store.getters.tokenExpired) {
   store.dispatch('logout')
-  router.go('login')
 }
 
 export const vm = new Vue({

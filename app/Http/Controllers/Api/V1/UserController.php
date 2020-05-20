@@ -73,9 +73,8 @@ class UserController extends Controller
     {
         if (Auth::user()->id == $user->id || Auth::user()->can('show-user')) {
             return $user;
-        } else {
-            abort(401);
         }
+        abort(401);
     }
 
     /**
@@ -152,9 +151,12 @@ class UserController extends Controller
     */
     public function get_roles(User $user)
     {
-        return response()->json([
-            'roles' => $user->roles()->pluck('id')
-        ]);
+        if (Auth::user()->id == $user->id || Auth::user()->can('show-role')) {
+            return response()->json([
+                'roles' => $user->roles()->pluck('id')
+            ]);
+        }
+        abort(401);
     }
 
     /**

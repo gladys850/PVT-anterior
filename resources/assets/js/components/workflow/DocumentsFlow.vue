@@ -90,7 +90,7 @@
 
 <script>
 export default {
-  name: "DocumentsQualification",
+  name: "documents-flow",
   data: () => ({
     docsRequired: [],
     docsOptional: [],
