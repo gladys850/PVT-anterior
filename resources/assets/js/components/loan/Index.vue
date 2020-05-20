@@ -23,43 +23,44 @@
             v-model="search"
             append-icon="mdi-magnify"
             label="Buscar"
-            class="mr-5 pr-5"
             single-line
             hide-details
             clearable
           ></v-text-field>
         </v-flex>
-        <Fab v-if="$store.getters.permissions.includes('create-loan')"/>
       </v-toolbar>
     </v-card-title>
     <v-card-text>
       <v-row>
-        <v-col :cols="singleRol ? 12 : 10">
-            <v-tabs
-              v-model="filters.procedureTypeSelected"
-              dark
-              grow
-              center-active
-              active-class="secondary"
-            >
-              <v-tab v-for="procedureType in $store.getters.procedureTypes" :key="procedureType.id">{{ procedureType.second_name }}</v-tab>
-            </v-tabs>
-        </v-col>
-        <v-col cols="2" v-show="!singleRol">
-          <v-select
-            v-model="filters.roleSelected"
-            :items="roles"
-            label="Filtro"
-            class="pt-3 my-0"
-            item-text="display_name"
-            item-value="id"
-            dense
-          ></v-select>
-        </v-col>
+        <v-toolbar flat>
+          <v-col :cols="singleRol ? 12 : 10">
+              <v-tabs
+                v-model="filters.procedureTypeSelected"
+                dark
+                grow
+                center-active
+                active-class="secondary"
+              >
+                <v-tab v-for="procedureType in $store.getters.procedureTypes" :key="procedureType.id">{{ procedureType.second_name }}</v-tab>
+              </v-tabs>
+          </v-col>
+          <v-col cols="2" v-show="!singleRol">
+            <v-select
+              v-model="filters.roleSelected"
+              :items="roles"
+              label="Filtro"
+              class="pt-3 my-0"
+              item-text="display_name"
+              item-value="id"
+              dense
+            ></v-select>
+          </v-col>
+          <Fab v-show="allowFlow" :bus="bus"/>
+        </v-toolbar>
       </v-row>
       <v-row>
         <v-col cols="12">
-          <List :bus="bus" :params="params"/>
+          <List :bus="bus" :params="params" @allowFlow="allowFlow = $event"/>
         </v-col>
       </v-row>
     </v-card-text>
@@ -81,11 +82,12 @@ export default {
     List,
     RemoveItem
   },
-  data: function() {
+  data() {
     return {
       search: '',
       bus: new Vue(),
-      trays: ['RECIBIDOS', 'REVISADOS'],
+      allowFlow: false,
+      trays: ['RECIBIDOS', 'VALIDADOS'],
       filters: {
         traySelected: null,
         procedureTypeSelected: null,
@@ -153,7 +155,7 @@ export default {
         case 'RECIBIDOS':
           filters.validated = false
           break
-        case 'REVISADOS':
+        case 'VALIDADOS':
           filters.validated = true
           break
         case 'ANULADOS':

@@ -8,7 +8,7 @@
     :server-items-length="totalloans"
     :footer-props="{ itemsPerPageOptions: [8, 15, 30] }"
     multi-sort
-    :show-select="params.role_id > 0"
+    :show-select="allowFlow"
   >
     <template v-slot:header.data-table-select="{ on, props }">
       <v-simple-checkbox color="info" class="grey lighten-3" v-bind="props" v-on="on"></v-simple-checkbox>
@@ -142,6 +142,13 @@ export default {
   computed: {
     validOptions() {
       return this.params.procedure_type_id != null && this.params.role_id != null && (this.params.hasOwnProperty('validated') || this.params.hasOwnProperty('trashed'))
+    },
+    allowFlow() {
+      if (this.params.hasOwnProperty('role_id') && this.params.hasOwnProperty('validated')) {
+        return (this.params.role_id > 0 && this.params.validated)
+      } else {
+        return false
+      }
     }
   },
   watch: {
@@ -157,8 +164,12 @@ export default {
       }
     },
     selectedLoans(val) {
-      console.log(val)
-      
+      this.bus.$emit('selectLoans', this.selectedLoans)
+      if (val.length) {
+        this.$emit('allowFlow', true)
+      } else {
+        this.$emit('allowFlow', false)
+      }
     },
     params(val) {
       if (this.validOptions) {
