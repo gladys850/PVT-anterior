@@ -7,6 +7,7 @@ Route::group([
     // Rutas abiertas
     Route::get('config', 'Api\V1\ConfigController');
     Route::apiResource('auth', 'Api\V1\AuthController')->only('store');
+    Route::apiResource('role', 'Api\V1\RoleController')->only('index', 'show');
 
 
     // INDEFINIDO (TODO)
@@ -25,7 +26,6 @@ Route::group([
         Route::delete('auth', 'Api\V1\AuthController@logout');
         Route::get('procedure_modality/{procedure_modality}/requirement', 'Api\V1\ProcedureModalityController@get_requirements');
         Route::apiResource('calculator', 'Api\V1\CalculatorController')->only('store');
-        Route::apiResource('role', 'Api\V1\RoleController')->only('index', 'show');
         Route::apiResource('loan_global_parameter', 'Api\V1\LoanGlobalParameterController')->only('index', 'show', 'store', 'update', 'destroy');
         Route::apiResource('loan_destiny', 'Api\V1\LoanDestinyController')->only('index', 'show', 'store', 'update', 'destroy');
         Route::apiResource('affiliate', 'Api\V1\AffiliateController')->only('show');
