@@ -13,12 +13,12 @@
   }, {
     "href": "flowIndex",
     "title": "Préstamos",
-    "icon": "mdi-cash-multiple",
+    "icon": "mdi-file-eye",
     "permission": "show-all-loan",
     "params": {}
   }, {
     "href": "loanIndex",
-    "title": "Recepción",
+    "title": "Preśtamos anterior",
     "icon": "mdi-cash-multiple",
     "permission": "show-loan",
     "params": {}
