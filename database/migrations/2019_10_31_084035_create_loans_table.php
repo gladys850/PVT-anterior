@@ -46,7 +46,7 @@ class CreateLoansTable extends Migration
             $table->foreign('destiny_id')->references('id')->on('loan_destinies');
             $table->unsignedBigInteger('role_id');  // id rol bandeja actual
             $table->foreign('role_id')->references('id')->on('roles');
-            $table->boolean('validated')->default(false);
+            $table->boolean('validated')->default(true);
             $table->timestamps();
             $table->softDeletes();
         });

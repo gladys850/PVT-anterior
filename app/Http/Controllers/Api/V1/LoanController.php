@@ -40,6 +40,7 @@ class LoanController extends Controller
         $loan->balance = $loan->balance;
         $loan->estimated_quota = $loan->estimated_quota;
         $loan->defaulted = $loan->defaulted;
+        $loan->observed = $loan->observed;
         if ($with_lenders) {
             $loan->lenders = $loan->lenders;
             $loan->guarantors = $loan->guarantors;
