@@ -86,6 +86,9 @@ class LoanController extends Controller
             }
         }
         if ($request->role_id != 0) {
+            if(!Auth::user()->can('show-all-loan')){
+                if($request->has('trashed') && !Auth::user()->can('show-deleted-loan')) abort(403);
+            }
             $filters = [
                 'role_id' => $request->role_id
             ];

@@ -31,6 +31,9 @@ class LoanPermissionSeeder extends Seeder
             ], [
                 'name' => 'print-contract-loan',
                 'display_name' => 'Imprimir contrato de préstamo'
+            ], [
+                'name' => 'show-deleted-loan',
+                'display_name' => 'Ver trámites anulados de préstamo'
             ]
         ];
         foreach ($permissions as $permission) {
