@@ -465,9 +465,31 @@ class AffiliateController extends Controller
         $request->validate([
             'procedure_type_id' => 'required|integer|exists:procedure_types,id'
         ]);
-        if(!$affiliate->affiliate_state) abort(404, 'Debe actualizar el estado del afiliado');
+        if(!$affiliate->affiliate_state) abort(403, 'Debe actualizar el estado del afiliado');
         $modality = ProcedureType::findOrFail($request->procedure_type_id);
         return Loan::get_modality($modality->name, $affiliate);
+    }
+
+    /** @group Préstamos
+    * Verificar garante
+    * Devuelve si un afiliado puede garantizar acorde a su categoria, estado y cantidad garantias de préstamos.
+    * @urlParam affiliate required ID de afiliado. Example: 25
+    * @queryParam procedure_modality_id ID de la modalidad de trámite. Example: 32
+    * @authenticated
+    * @responseFile responses/affiliate/test_guarantor.200.json
+    */
+    public function test_guarantor(Request $request){
+        $request->validate([
+            'identity_card' => 'required|string',
+            'procedure_modality_id' => 'integer|exists:procedure_modalities,id'
+        ]);
+        $affiliate = Affiliate::whereIdentity_card($request->identity_card)->first();
+        if(isset($affiliate)){
+            if(!$affiliate->affiliate_state) abort(403, 'Debe actualizar el estado del afiliado');
+            return $affiliate->test_guarantor($request->procedure_modality_id);
+        }else{
+            return abort(403,"No se encontraron resultados");
+        }
     }
 
     /** @group Observaciones de Afiliado
