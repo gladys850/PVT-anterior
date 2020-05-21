@@ -3218,7 +3218,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{url}}/{{endpoint}}?module=prestamos&filter=role_id",
+							"raw": "{{url}}/{{endpoint}}?module=prestamos&filter=role",
 							"host": [
 								"{{url}}"
 							],
@@ -3232,7 +3232,7 @@
 								},
 								{
 									"key": "filter",
-									"value": "role_id"
+									"value": "role"
 								}
 							]
 						},
@@ -3340,37 +3340,37 @@
 	],
 	"variable": [
 		{
-			"id": "f0bcf4c7-3e71-49b2-91a1-716615bc45d8",
+			"id": "5148d22f-2eef-4b04-9100-e25ccbf5d99e",
 			"key": "url",
 			"value": "http://localhost/api/v1",
 			"type": "string"
 		},
 		{
-			"id": "1d699217-e8af-4380-b213-d2950d8f7be6",
+			"id": "b0af9d2b-7df6-4ad6-ad0d-4993577a9ff2",
 			"key": "username",
 			"value": "nalarcon",
 			"type": "string"
 		},
 		{
-			"id": "676d06e4-f08f-4e65-869a-ba0ee275f5a9",
+			"id": "cab4a979-af41-4b26-a430-b8254a0e42db",
 			"key": "password",
 			"value": "nalarcon",
 			"type": "string"
 		},
 		{
-			"id": "6228a23c-2369-41b4-a064-71a866eb4386",
+			"id": "d006a3c0-fb30-4806-9629-af1d4abc9f4e",
 			"key": "endpoint",
 			"value": "",
 			"type": "string"
 		},
 		{
-			"id": "05dd15d9-5ac8-410b-b3da-a5680a0ae3a7",
+			"id": "1d29eebf-099c-4552-beda-6f9d4d1ca0bf",
 			"key": "currentAccessToken",
 			"value": "",
 			"type": "string"
 		},
 		{
-			"id": "dc4c814a-1c95-4763-8315-e49242762f88",
+			"id": "8b998988-e020-4ae6-b970-9bfa20fcebf2",
 			"key": "accessTokenExpiry",
 			"value": "",
 			"type": "string"
