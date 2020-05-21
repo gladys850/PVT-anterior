@@ -1,0 +1,10 @@
+[
+    {
+        "role_id": 81,
+        "data": {
+            "received": 0,
+            "validated": 4,
+            "trashed": 2
+        }
+    }, {}
+]

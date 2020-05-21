@@ -88,5 +88,8 @@ return [
     'comment' => 'Comentario',
     // Loan Destinies
     'name' => 'Nombre',
-    'description' => 'Descripción'
+    'description' => 'Descripción',
+    // Statistics
+    'module' => 'Módulo',
+    'filter' => 'Filtro'
 ];
