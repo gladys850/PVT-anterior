@@ -20,6 +20,7 @@ Route::group([
         if (!env("LDAP_AUTHENTICATION")) {
             Route::apiResource('user', 'Api\V1\UserController')->only('show', 'update');
         }
+        Route::get('user/{user}/role', 'Api\V1\UserController@get_roles');
         Route::apiResource('auth', 'Api\V1\AuthController')->only('index');
         Route::patch('auth', 'Api\V1\AuthController@refresh');
         Route::delete('auth', 'Api\V1\AuthController@logout');
@@ -46,6 +47,7 @@ Route::group([
         Route::get('module/{module}/observation_type', 'Api\V1\ModuleController@get_observation_types');
         Route::apiResource('loan', 'Api\V1\LoanController')->only('update');
         Route::patch('loans', 'Api\V1\LoanController@bulk_update_role');
+        Route::apiResource('record', 'Api\V1\RecordController')->only('index');
 
         // Afiliado
         Route::group([
@@ -151,13 +153,6 @@ Route::group([
             Route::apiResource('address', 'Api\V1\AddressController')->only('destroy');
         });
 
-        // Historial de actividad
-        Route::group([
-            'middleware' => 'permission:show-record'
-        ], function () {
-            Route::apiResource('record', 'Api\V1\RecordController')->only('index');
-        });
-
         // Notas
         Route::group([
             'middleware' => 'permission:update-note'
@@ -183,7 +178,6 @@ Route::group([
             'middleware' => 'permission:show-role'
         ], function () {
             Route::apiResource('permission', 'Api\V1\PermissionController')->only('index');
-            Route::get('user/{user}/role', 'Api\V1\UserController@get_roles');
             Route::get('user/{user}/permission', 'Api\V1\UserController@get_permissions');
             Route::get('role/{role}/permission', 'Api\V1\RoleController@get_permissions');
         });

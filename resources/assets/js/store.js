@@ -2,6 +2,9 @@ import moment from 'moment'
 import jwt from 'jsonwebtoken'
 import VuexPersistence from 'vuex-persist'
 import router from '@/plugins/router'
+import Role from '@/services/RoleService'
+import Module from '@/services/ModuleService'
+import ProcedureType from '@/services/ProcedureTypeService'
 
 const vuexLocal = new VuexPersistence({
   key: 'pvt',
@@ -15,6 +18,9 @@ export default {
     username: null,
     cityId: null,
     roles: [],
+    module: {},
+    procedureTypes: [],
+    userRoles: [],
     permissions: [],
     ldapAuth: JSON.parse(process.env.MIX_LDAP_AUTHENTICATION),
     dateNow: moment().format('Y-MM-DD'),
@@ -41,6 +47,15 @@ export default {
     },
     roles(state) {
       return state.roles
+    },
+    module(state) {
+      return state.module
+    },
+    procedureTypes(state) {
+      return state.procedureTypes
+    },
+    userRoles(state) {
+      return state.userRoles
     },
     permissions(state) {
       return state.permissions
@@ -72,26 +87,28 @@ export default {
       state.user = null
       state.username = null
       state.cityId = null
-      state.roles = []
+      state.userRoles = []
       state.permissions = []
       state.tokenType = null
       state.accessToken = null
       state.tokenExpiration = null
+      state.module = {}
+      state.procedureTypes = []
     },
     login(state, data) {
       state.id = data.id
       state.user = data.user
       state.username = data.username
       state.cityId = data.city_id
-      state.roles = data.roles
+      state.userRoles = data.roles
       state.permissions = data.permissions
       state.accessToken = data.access_token
       state.tokenType = data.token_type
       state.tokenExpiration = data.exp
       axios.defaults.headers.common['Authorization'] = `${data.token_type} ${data.access_token}`
-      router.go({
-        name: 'dashboard'
-      })
+    },
+    setRoles(state, newValue) {
+      state.roles = newValue
     },
     setDate(state, newValue) {
       state.dateNow = newValue
@@ -107,15 +124,49 @@ export default {
     },
     addBreadcrumb(state, index, data) {
       state.breadcrumbs[index] = data
+    },
+    setModule(state, data) {
+      state.module = data
+    },
+    setProcedureTypes(state, data) {
+      state.procedureTypes = data
     }
   },
   actions: {
-    logout(context) {
-      context.commit('logout')
+    selectModule({ commit }, name) {
+      const module = new Module()
+      const procedureType = new ProcedureType()
+      return module.get(null, {
+        name: name,
+        page: 1,
+        per_page: 1
+      }).then(res => {
+        commit('setModule', res.data[0])
+        return procedureType.get(null, {
+          module_id: res.data[0].id,
+          page: 1,
+          per_page: 100
+        })
+      }).then(res => {
+        commit('setProcedureTypes', res.data)
+      }).catch(e => {
+        console.log(e)
+      })
+    },
+    logout({ commit }) {
+      commit('logout')
+      router.go('login')
     },
     login({ commit }, data) {
       const payload = jwt.decode(data.access_token)
       commit('login', Object.assign({ ...data, ...payload }, { exp: moment.unix(payload.exp).format() }))
+      const role = new Role()
+      role.get().then((data) => {
+        commit('setRoles', data)
+        router.go('dashboard')
+      }).catch((e) => {
+        commit('logout')
+      })
     },
     async refresh({ commit, state }) {
       try {
