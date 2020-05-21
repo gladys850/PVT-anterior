@@ -1,6 +1,8 @@
 <?php
 
 namespace App;
+
+use App\Http\Controllers\Api\V1\AffiliateController;
 use Carbon;
 
 use Illuminate\Database\Eloquent\Model;
@@ -349,4 +351,32 @@ class Affiliate extends Model
       if($cpop == null) $cpop = false;
       return $cpop;
     }
+
+    public function test_guarantor($modality){
+      $guarantor = false;
+      if($modality){
+          $modality = ProcedureModality::findOrFail($modality); //evaluando categoria acorde a la modalidad
+          if($modality->loan_modality_parameter->min_guarantor_category <= $this->category->percentage && $this->category->percentage <= $modality->loan_modality_parameter->max_guarantor_category) $guarantor = true;
+      }else{
+          $loan_modality_parameter = LoanModalityParameter::get();
+          if( $loan_modality_parameter->min('min_guarantor_category')<= $this->category->percentage && $this->category->percentage <= $loan_modality_parameter->max('max_guarantor_category')) $guarantor = true; //evaluando categoria sin tomar en cuenta la modalidad
+      }
+      if($guarantor){
+          $loan_global_parameter = LoanGlobalParameter::latest()->first();
+          if($this->affiliate_state->affiliate_state_type->name == 'Activo'){
+              if($loan_global_parameter->max_guarantor_active <= count($this->active_guarantees())) $guarantor = false;
+          }
+          if($this->affiliate_state->affiliate_state_type->name == 'Pasivo'){
+              if($loan_global_parameter->max_guarantor_passive <= count($this->active_guarantees())) $guarantor = false;
+          }
+          if($this->affiliate_state->affiliate_state_type->name != 'Activo' && $this->affiliate_state->affiliate_state_type->name != 'Pasivo') $guarantor = false; // en otro caso no corresponde ya que seria Disponibilidad A o C
+          if($this->defaulted_lender || $this->defaulted_guarantor) $guarantor = false;
+      }
+      return response()->json([
+          'affiliate' => AffiliateController::append_data($this, true),
+          'guarantor' => $guarantor,
+          'active_guarantees_quantity' => count($this->active_guarantees())
+      ]);
+  }
+
 }
