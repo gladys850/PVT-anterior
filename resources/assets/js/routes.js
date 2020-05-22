@@ -10,7 +10,6 @@ import AffiliateAdd from '@/components/affiliate/Add'
 import LoanAdd from '@/components/loan/Add'
 import RecordIndex from '@/components/record/Index'
 import Camara from '@/components/affiliate/Webcam'
-import LoanIndex from '@/components/loan/Index'
 import flowIndex from '@/components/workflow/Index'
 import flowAdd from '@/components/workflow/Add'
 
@@ -95,13 +94,6 @@ export const routes = [
     path: '/record',
     name: 'recordIndex',
     component: RecordIndex,
-    meta: {
-      requiresAuth: true
-    }
-  }, {
-    path: '/loan',
-    name: 'loanIndex',
-    component: LoanIndex,
     meta: {
       requiresAuth: true
     }
