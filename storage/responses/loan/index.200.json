@@ -32,7 +32,8 @@
             "deleted_at": null,
             "balance": 0,
             "estimated_quota": 1045.22,
-            "defaulted": false
+            "defaulted": false,
+            "observed": true
         }, {}
     ],
     "first_page_url": "http://127.0.0.1/api/v1/loan?page=1",

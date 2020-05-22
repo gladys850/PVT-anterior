@@ -43,7 +43,7 @@ class CalculatorForm extends FormRequest
             'parent_loan_id' => ['integer', 'nullable', 'exists:loans,id'],
             'debtor' => ['nullable', 'boolean'],
             'guarantor' => ['nullable', 'boolean'],
-            'contributions' => ['required', 'array', 'min:1', new LoanParameterTicket($procedure_modality)],
+            'contributions' => ['required', 'array', 'min:1'],
             'contributions.*.payable_liquid' => ['required'],
             'contributions.*.border_bonus' => ['required'],
             'contributions.*.seniority_bonus' => ['required'],

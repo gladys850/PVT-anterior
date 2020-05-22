@@ -16,11 +16,11 @@ class AdvanceRoleSeeder extends Seeder
     {
         Role::flushEventListeners();
         $module = Module::whereName('prestamos')->first();
-        $receipt_permissions = ['update-affiliate-secondary', 'show-affiliate', 'show-loan', 'create-loan', 'create-address', 'update-address', 'delete-address', 'update-loan', 'delete-loan', 'print-contract-loan'];
+        $receipt_permissions = ['update-affiliate-secondary', 'show-affiliate', 'show-loan', 'create-loan', 'create-address', 'update-address', 'delete-address', 'update-loan', 'delete-loan', 'print-contract-loan', 'show-deleted-loan'];
         $receipt_roles = ['Área de Recepción', 'Regional Santa Cruz', 'Regional Cochabamba', 'Regional Oruro', 'Regional Potosí', 'Regional Sucre', 'Regional Tarija', 'Regional Trinidad', 'Regional Cobija'];
 
         $sequence_permissions = ['update-affiliate-secondary', 'show-affiliate', 'show-loan', 'update-address'];
-        $leadership_permissions = ['show-all-loan', 'update-loan', 'delete-loan', 'show-setting'];
+        $leadership_permissions = ['show-all-loan', 'update-loan', 'delete-loan', 'show-setting', 'show-deleted-loan'];
         $executive_permissions = ['update-setting'];
         $sequence_roles = [
             [

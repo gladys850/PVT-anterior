@@ -195,6 +195,11 @@ class Loan extends Model
         return $this->payments()->latest()->first();
     }
 
+    public function getObservedAttribute()
+    {
+        return ($this->observations()->count() > 0) ? true : false;
+    }
+
     public static function get_percentage($dato)
     {
         if(count($dato)>0){
