@@ -10,8 +10,8 @@ import AffiliateAdd from '@/components/affiliate/Add'
 import LoanAdd from '@/components/loan/Add'
 import RecordIndex from '@/components/record/Index'
 import Camara from '@/components/affiliate/Webcam'
-import flowIndex from '@/components/workflow/Index'
-import flowAdd from '@/components/workflow/Add'
+import FlowIndex from '@/components/workflow/Index'
+import FlowAdd from '@/components/workflow/Add'
 
 export const routes = [
   {
@@ -105,11 +105,10 @@ export const routes = [
       requiresAuth: true
     }
   },
-  //calificación
   {
     path: '/workflow',
     name: 'flowIndex',
-    component: flowIndex,
+    component: FlowIndex,
     meta: {
       requiresAuth: true
     }
@@ -117,7 +116,7 @@ export const routes = [
   {
     path: '/workflow/:id',
     name: 'flowAdd',
-    component: flowAdd,
+    component: FlowAdd,
     meta: {
       requiresAuth: true
     }

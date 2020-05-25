@@ -18,49 +18,37 @@
       </template>
       <span>Derivar</span>
     </v-tooltip>
-    <v-bottom-sheet
-      v-model="sheet"
-      inset
-      persistent
-      scrollable
-    >
-      <v-sheet
-        class="text-center"
-        height="350px"
-      >
-        <v-tooltip top>
-          <template v-slot:activator="{ on }">
-            <v-btn
-              v-on="on"
-              class="mt-3"
-              color="red"
-              @click="sheet = false"
-              center
-              top
-              small
-              fab
-              dark
-            >
-              <v-icon>mdi-close</v-icon>
-            </v-btn>
-          </template>
-          <span>Cancelar</span>
-        </v-tooltip>
-        <div class="py-3">Aquí se puede derivar</div>
-        <div>
-          Loans: {{ selectedLoans.map(o => o.code).join(', ') }}
-        </div>
-        <div>
-          ----Flujo----
-        </div>
-        <div>
-          Para observar: {{ $store.getters.roles.filter(o => flow.previous.includes(o.id)).map(o => o.display_name).join(', ') }}
-        </div>
-        <div>
-          Para derivar: {{ $store.getters.roles.filter(o => flow.next.includes(o.id)).map(o => o.display_name).join(', ') }}
-        </div>
-      </v-sheet>
-    </v-bottom-sheet>
+    <v-row justify="center">
+      <v-dialog
+        v-model="sheet" 
+        scrollable 
+        max-width="300px" 
+        inset 
+        persistent>
+        <v-card>
+          <v-card-title>Derivación</v-card-title>
+          <v-divider></v-divider>
+          <v-card-text style="height: 300px;">
+            <v-select
+              v-model="selectedRoleId"
+              :items="$store.getters.roles.filter(o => flow.next.includes(o.id))"
+              label="Seleccione el área para derivar"
+              class="pt-3 my-0"
+              item-text="display_name"
+              item-value="id"
+              dense
+            ></v-select>
+            <div class="blue--text">Los siguientes códigos serán derivados: </div>     
+            <small>{{ selectedLoans.map(o => o.code).join(', ') }}</small>
+          </v-card-text>
+          <v-divider></v-divider>
+          <v-card-actions>
+            <v-btn color="error" text @click="sheet = false">Cerrar</v-btn>
+            <v-btn color="success" text @click="derivationLoans()">Derivar</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+    </v-row>
   </div>
 </template>
 
@@ -80,7 +68,9 @@ export default {
       flow: {
         previous: [],
         next: []
-      }
+      },
+      selectedRoleId: null,
+      idLoans: []
     }
   },
   watch: {
@@ -102,6 +92,20 @@ export default {
         this.flow = res.data
       } catch (e) {
         console.log(e)
+      }
+    },
+    async derivationLoans() {
+      this.idLoans = this.selectedLoans.map(o => o.id)
+      try {
+        this.loading = true;
+        let res = await axios.patch(`loans`, {
+          ids: this.idLoans,
+          role_id: this.selectedRoleId
+        });
+        this.toastr.success("El trámite fue derivado." )      
+      } catch (e) {
+        console.log(e)
+        this.toastr.error("Ocurrió un error en la derivación...")
       }
     }
   }

@@ -3,7 +3,7 @@
     <v-row>
       <v-col cols="8" class="text-center">
         <v-card color="#EDF2F4" shaped class="mx-5">
-          <v-card-title>Calificacion-Prestamos</v-card-title>
+          <v-card-title>Préstamos</v-card-title>
           <v-card-text>
           </v-card-text>
         </v-card>
@@ -13,6 +13,8 @@
            <v-card-text class="ma-0 pa-0">
             <v-col cols="12" color="#EDF2F4" class="red--text text--lighten-5 ma-0 pa-0">
               <center>
+                Nombre:{{this.$options.filters.fullName(this.affiliate, true)}}
+                <br/>
                 Grado: {{this.degree_name}}
                 <br/>
                 Unidad: {{this.unit_name}}
