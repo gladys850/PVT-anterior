@@ -80,11 +80,7 @@
           <v-card flat tile >
             <v-card-text>
               <DocumentsFlow
-                :datos.sync="datos"
-                :formulario.sync="formulario"
-                :calculos.sync="calculos"
-                :intervalos.sync="intervalos"
-                :modalidad.sync="modalidad"
+             
               />
             </v-card-text>
           </v-card>
@@ -218,9 +214,10 @@ export default {
   },
   beforeMount() {},
   mounted() {
-    this.getloan(1)
-    this.getObservation(1)
+    this.getloan(this.$route.params.id)
+    this.getObservation(this.$route.params.id)
     this.getRecords()
+    console.log("params "+this.$route.params.id) 
   },
   methods: {
     resetForm() {
@@ -234,8 +231,8 @@ export default {
     setBreadcrumbs() {
       let breadcrumbs = [
         {
-          text: 'Calificacion',
-          to: { name: 'affiliateIndex' }
+          text: 'Préstamo',
+          to: { name: 'flowIndex' }
         }
       ]
       this.$store.commit('setBreadcrumbs', breadcrumbs)

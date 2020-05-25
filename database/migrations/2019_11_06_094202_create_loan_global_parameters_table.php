@@ -20,6 +20,8 @@ class CreateLoanGlobalParametersTable extends Migration
             $table->unsignedSmallInteger('livelihood_amount')->nullable();// cantidad de sustento-->inf. estadistica
             $table->unsignedTinyInteger('min_service_years'); // minimo años de servicio
             $table->unsignedTinyInteger('min_service_years_adm'); // minimo años de servicio adm policial
+            $table->unsignedTinyInteger('max_guarantor_active'); // maximo de garantias para el sector activo
+            $table->unsignedTinyInteger('max_guarantor_passive'); // maximo de garantias para el sector pasivo
             $table->timestamps();
         });
     }

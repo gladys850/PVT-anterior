@@ -1,0 +1,113 @@
+<template>
+  <div>
+    <v-tooltip top>
+      <template v-slot:activator="{ on }">
+        <v-btn
+          v-on="on"
+          color="success"
+          dark
+          small
+          absolute
+          bottom
+          right
+          fab
+          @click="sheet = true"
+        >
+          <v-icon>mdi-send</v-icon>
+        </v-btn>
+      </template>
+      <span>Derivar</span>
+    </v-tooltip>
+    <v-row justify="center">
+      <v-dialog
+        v-model="sheet" 
+        scrollable 
+        max-width="300px" 
+        inset 
+        persistent>
+        <v-card>
+          <v-card-title>Derivación</v-card-title>
+          <v-divider></v-divider>
+          <v-card-text style="height: 300px;">
+            <v-select
+              v-model="selectedRoleId"
+              :items="$store.getters.roles.filter(o => flow.next.includes(o.id))"
+              label="Seleccione el área para derivar"
+              class="pt-3 my-0"
+              item-text="display_name"
+              item-value="id"
+              dense
+            ></v-select>
+            <div class="blue--text">Los siguientes códigos serán derivados: </div>     
+            <small>{{ selectedLoans.map(o => o.code).join(', ') }}</small>
+          </v-card-text>
+          <v-divider></v-divider>
+          <v-card-actions>
+            <v-btn color="error" text @click="sheet = false">Cerrar</v-btn>
+            <v-btn color="success" text @click="derivationLoans()">Derivar</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+    </v-row>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'workflow-fab',
+  props: {
+    bus: {
+      type: Object,
+      required: true
+    }
+  },
+  data() {
+    return {
+      sheet: false,
+      selectedLoans: [],
+      flow: {
+        previous: [],
+        next: []
+      },
+      selectedRoleId: null,
+      idLoans: []
+    }
+  },
+  watch: {
+    selectedLoans(val) {
+      if (val.length) {
+        this.getFlow()
+      }
+    }
+  },
+  mounted() {
+    this.bus.$on('selectLoans', (data) => {
+      this.selectedLoans = data
+    })
+  },
+  methods: {
+    async getFlow() {
+      try {
+        let res = await axios.get(`loan/${this.selectedLoans[0].id}/flow`)
+        this.flow = res.data
+      } catch (e) {
+        console.log(e)
+      }
+    },
+    async derivationLoans() {
+      this.idLoans = this.selectedLoans.map(o => o.id)
+      try {
+        this.loading = true;
+        let res = await axios.patch(`loans`, {
+          ids: this.idLoans,
+          role_id: this.selectedRoleId
+        });
+        this.toastr.success("El trámite fue derivado." )      
+      } catch (e) {
+        console.log(e)
+        this.toastr.error("Ocurrió un error en la derivación...")
+      }
+    }
+  }
+}
+</script>

@@ -40,6 +40,7 @@ class LoanController extends Controller
         $loan->balance = $loan->balance;
         $loan->estimated_quota = $loan->estimated_quota;
         $loan->defaulted = $loan->defaulted;
+        $loan->observed = $loan->observed;
         if ($with_lenders) {
             $loan->lenders = $loan->lenders;
             $loan->guarantors = $loan->guarantors;
@@ -86,6 +87,9 @@ class LoanController extends Controller
             }
         }
         if ($request->role_id != 0) {
+            if(!Auth::user()->can('show-all-loan')){
+                if($request->has('trashed') && !Auth::user()->can('show-deleted-loan')) abort(403);
+            }
             $filters = [
                 'role_id' => $request->role_id
             ];
