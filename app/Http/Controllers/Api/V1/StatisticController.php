@@ -38,7 +38,7 @@ class StatisticController extends Controller
     * Datos estadísticos
     * Devuelve los datos estatdísticos de acuerdo al filtro seleccionado
     * @queryParam module Nombre de módulo para obtener las estadísticas. Example: prestamos
-    * @queryParam filter Filtro para consultar en la base de datos. Example: role_id
+    * @queryParam filter Filtro para consultar en la base de datos. Example: role
     * @authenticated
     * @responseFile responses/statistic/index.200.json
     */
