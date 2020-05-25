@@ -11,7 +11,21 @@
           active-class="primary white--text"
           mandatory
         >
-          <v-btn v-for="(tray, index) in trays" :key="index" :value="tray">{{ tray }}</v-btn>
+          <v-btn
+            v-for="tray in trays"
+            :key="tray.name"
+            :value="tray.name"
+          >
+            <v-badge
+              :content="tray.count.toString()"
+              :color="tray.color"
+              class="mr-5 ml-2"
+              right
+              top
+            >
+              {{ tray.display_name }}
+            </v-badge>
+          </v-btn>
         </v-btn-toggle>
         <v-divider
           class="mx-2"
@@ -41,7 +55,16 @@
                 center-active
                 active-class="secondary"
               >
-                <v-tab v-for="procedureType in $store.getters.procedureTypes" :key="procedureType.id">{{ procedureType.second_name }}</v-tab>
+                <v-tab v-for="(procedureType, index) in $store.getters.procedureTypes" :key="procedureType.id">
+                  <v-badge
+                    :content="procedureTypesCount.hasOwnProperty(index) ? procedureTypesCount[index].toString() : '-'"
+                    color="tertiary black--text"
+                    right
+                    top
+                  >
+                    {{ procedureType.second_name }}
+                  </v-badge>
+                </v-tab>
               </v-tabs>
           </v-col>
           <v-col cols="2" v-show="!singleRol">
@@ -87,7 +110,20 @@ export default {
       search: '',
       bus: new Vue(),
       allowFlow: false,
-      trays: ['RECIBIDOS', 'VALIDADOS'],
+      procedureTypesCount: [],
+      trays: [
+        {
+          name: 'received',
+          display_name: 'RECIBIDOS',
+          count: 0,
+          color: 'info'
+        }, {
+          name: 'validated',
+          display_name: 'VALIDADOS',
+          count: 0,
+          color: 'success'
+        }
+      ],
       filters: {
         traySelected: null,
         procedureTypeSelected: null,
@@ -119,8 +155,13 @@ export default {
     this.filters = self.filters
   },
   beforeMount() {
-    if (this.$store.getters.permissions.includes('show-deleted-loan')) this.trays.push('ANULADOS')
-    this.filters.traySelected = this.trays[0]
+    if (this.$store.getters.permissions.includes('show-deleted-loan')) this.trays.push({
+      name: 'trashed',
+      display_name: 'ANULADOS',
+      count: 0,
+      color: 'error'
+    })
+    this.filters.traySelected = this.trays[0].name
     this.$store.commit('setBreadcrumbs', [
       {
         text: 'Préstamos',
@@ -130,6 +171,7 @@ export default {
   },
   mounted() {
     this.filters.procedureTypeSelected = this.$store.getters.procedureTypes[0]
+    this.procedureTypesCount = new Array(this.$store.getters.procedureTypes.length).fill('-')
   },
   watch: {
     search: _.debounce(function () {
@@ -152,17 +194,67 @@ export default {
         role_id: this.filters.roleSelected
       }
       switch (this.filters.traySelected) {
-        case 'RECIBIDOS':
+        case 'received':
           filters.validated = false
           break
-        case 'VALIDADOS':
+        case 'validated':
           filters.validated = true
           break
-        case 'ANULADOS':
+        case 'trashed':
           filters.trashed = true
           break
       }
       this.params = filters
+      this.getRoleStatistics()
+      this.getProcedureTypeStatistics()
+    },
+    async getRoleStatistics() {
+      try {
+        let res = await axios.get(`statistic`, {
+          params: {
+            module: 'prestamos',
+            filter: 'role'
+          }
+        })
+        if (this.filters.roleSelected > 0) {
+          res = res.data.find(o => o.role_id == this.filters.roleSelected)
+          let index
+          Object.entries(res.data).forEach(([key, val]) => {
+            index = this.trays.findIndex(o => o.name == key)
+            this.trays[index].count = val
+          })
+        } else {
+          let count = []
+          this.trays.forEach(tray => {
+            tray.count = res.data.reduce((total, o) => {
+              return total + o.data[tray.name]
+            }, 0)
+          })
+        }
+      } catch (e) {
+        console.log(e)
+      }
+    },
+    async getProcedureTypeStatistics() {
+      try {
+        let res = await axios.get(`statistic`, {
+          params: {
+            module: 'prestamos',
+            filter: 'procedure_type'
+          }
+        })
+        res.data.forEach((procedure, index) => {
+          if (this.filters.roleSelected > 0) {
+            this.procedureTypesCount[index] = procedure.data.find(o => o.role_id == this.filters.roleSelected).data[this.filters.traySelected]
+            this.$forceUpdate()
+          } else {
+            this.procedureTypesCount[index] = procedure.total[this.filters.traySelected]
+            this.$forceUpdate()
+          }
+        })
+      } catch (e) {
+        console.log(e)
+      }
     }
   }
 }
