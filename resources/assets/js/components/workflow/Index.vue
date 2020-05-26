@@ -44,6 +44,31 @@
         </v-flex>
       </v-toolbar>
     </v-card-title>
+    <v-tooltip left>
+      <template v-slot:activator="{ on }">
+        <v-btn
+          fab
+          dark
+          fixed
+          bottom
+          right
+          color="warning"
+          class="mb-5"
+          v-on="on"
+          v-show="newLoans > 0"
+          @click="clearNotification"
+        >
+          <v-badge
+            :content="newLoans.toString()"
+            right
+            top
+          >
+            <v-icon>mdi-bell-ring</v-icon>
+          </v-badge>
+        </v-btn>
+      </template>
+      <span>Ver trámites nuevos</span>
+    </v-tooltip>
     <v-card-text>
       <v-row>
         <v-toolbar flat>
@@ -83,7 +108,7 @@
       </v-row>
       <v-row>
         <v-col cols="12">
-          <List :bus="bus" :params="params" @allowFlow="allowFlow = $event"/>
+          <List :bus="bus" :params="params" @allowFlow="allowFlow = $event" @newLoans="newLoans = $event"/>
         </v-col>
       </v-row>
     </v-card-text>
@@ -109,6 +134,7 @@ export default {
     return {
       search: '',
       bus: new Vue(),
+      newLoans: 0,
       allowFlow: false,
       procedureTypesCount: [],
       trays: [
@@ -188,6 +214,9 @@ export default {
     }
   },
   methods: {
+    clearNotification() {
+      this.newLoans = 0
+    },
     getLoans(procedureType) {
       let filters = {
         procedure_type_id: procedureType,
@@ -221,7 +250,7 @@ export default {
           let index
           Object.entries(res.data).forEach(([key, val]) => {
             index = this.trays.findIndex(o => o.name == key)
-            this.trays[index].count = val
+            if (index !== -1) this.trays[index].count = val
           })
         } else {
           let count = []

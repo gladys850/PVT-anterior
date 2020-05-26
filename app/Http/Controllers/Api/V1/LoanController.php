@@ -762,6 +762,9 @@ class LoanController extends Controller
             $item['validated'] = false;
         });
         $loans->update(array_merge($request->only('role_id'), ['validated' => false]));
+        $derived->transform(function ($loan) {
+            return self::append_data($loan, false);
+        });
         event(new LoanFlowEvent($derived));
         return $derived;
     }
