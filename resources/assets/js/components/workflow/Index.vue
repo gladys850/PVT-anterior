@@ -44,7 +44,10 @@
         </v-flex>
       </v-toolbar>
     </v-card-title>
-    <v-tooltip left>
+    <v-tooltip
+      left
+      content-class="secondary"
+    >
       <template v-slot:activator="{ on }">
         <v-btn
           fab
@@ -55,11 +58,11 @@
           color="warning"
           class="mb-5"
           v-on="on"
-          v-show="newLoans > 0"
+          v-show="newLoans.length > 0"
           @click="clearNotification"
         >
           <v-badge
-            :content="newLoans.toString()"
+            :content="newLoans.length.toString()"
             right
             top
           >
@@ -67,7 +70,28 @@
           </v-badge>
         </v-btn>
       </template>
-      <span>Ver trámites nuevos</span>
+      <v-list
+        class="secondary"
+        dense
+        dark
+      >
+        <v-subheader>Ver trámites nuevos:</v-subheader>
+        <v-list-item-group>
+          <v-list-item
+            v-for="(loan, index) in newLoans.slice(0, newLoansMax)"
+            :key="loan.id"
+          >
+            <v-list-item-content>
+              <v-list-item-title v-text="loan.code">{{index}}</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item v-if="newLoans.length > newLoansMax">
+            <v-list-item-content>
+              <v-list-item-title>{{ newLoans.length - newLoansMax }} más ...</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+        </v-list-item-group>
+      </v-list>
     </v-tooltip>
     <v-card-text>
       <v-row>
@@ -134,7 +158,8 @@ export default {
     return {
       search: '',
       bus: new Vue(),
-      newLoans: 0,
+      newLoans: [],
+      newLoansMax: 3,
       allowFlow: false,
       procedureTypesCount: [],
       trays: [
@@ -215,7 +240,12 @@ export default {
   },
   methods: {
     clearNotification() {
-      this.newLoans = 0
+      this.search = ''
+      this.filters.traySelected = 'received'
+      this.getRoleStatistics()
+      this.getProcedureTypeStatistics()
+      this.newLoans = []
+      this.bus.$emit('added', {})
     },
     getLoans(procedureType) {
       let filters = {
