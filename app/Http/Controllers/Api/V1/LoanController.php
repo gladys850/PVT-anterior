@@ -23,6 +23,7 @@ use App\Http\Requests\LoansForm;
 use App\Http\Requests\LoanForm;
 use App\Http\Requests\LoanPaymentForm;
 use App\Http\Requests\ObservationForm;
+use App\Events\LoanFlowEvent;
 use Carbon;
 use Util;
 
@@ -275,6 +276,7 @@ class LoanController extends Controller
                 if ($request->role_id != $loan->role_id) {
                     $loan->role()->associate(Role::find($request->role_id));
                     $loan->validated = false;
+                    event(new LoanFlowEvent([$loan]));
                 }
             }
         } else {
@@ -760,6 +762,7 @@ class LoanController extends Controller
             $item['validated'] = false;
         });
         $loans->update(array_merge($request->only('role_id'), ['validated' => false]));
+        event(new LoanFlowEvent($derived));
         return $derived;
     }
 }
