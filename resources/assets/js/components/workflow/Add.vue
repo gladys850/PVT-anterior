@@ -80,7 +80,11 @@
           <v-card flat tile >
             <v-card-text>
               <DocumentsFlow
-             
+                :datos.sync="datos"
+                :formulario.sync="formulario"
+                :calculos.sync="calculos"
+                :intervalos.sync="intervalos"
+                :modalidad.sync="modalidad"
               />
             </v-card-text>
           </v-card>
@@ -213,7 +217,7 @@ export default {
     }
   },
   beforeMount() {},
-  mounted() {
+   mounted() {
     this.getloan(this.$route.params.id)
     this.getObservation(this.$route.params.id)
     this.getRecords()
@@ -242,14 +246,14 @@ export default {
         this.loading = true;
         let res = await axios.get(`loan/${id}`);
         this.loan = res.data;
-        this.calculos.plazo=this.loan.loan_term
-        this.calculos.montos=this.loan.amount_approved
-        this.calculos.calculo_de_cuota=this.loan.estimated_quota
-        this.calculos.monto_maximo_sugerido=this.loan.amount_approved
-        this.calculos.promedio_liquido_pagable=this.loan.payable_liquid_calculated
-        this.calculos.total_bonos= this.loan.bonus_calculated
-        this.calculos.liquido_para_calificacion= this.loan.liquid_qualification_calculated
-        this.calculos.indice_endeudamiento = this.loan.indebtedness_calculated
+        this.calculos.loan_term=this.loan.loan_term
+        this.calculos.amount_approved=this.loan.amount_approved
+        this.calculos.quota_calculated=this.loan.estimated_quota
+        this.calculos.amount_maximum_suggested=this.loan.amount_approved
+        this.calculos.payable_liquid_calculated=this.loan.payable_liquid_calculated
+        this.calculos.bonus_calculated= this.loan.bonus_calculated
+        this.calculos.liquid_qualification_calculated= this.loan.liquid_qualification_calculated
+        this.calculos.indebtedness_calculated = this.loan.indebtedness_calculated
         let res1 = await axios.get(`affiliate/${this.loan.disbursable_id}`)
         this.affiliate = res1.data
         this.setBreadcrumbs()

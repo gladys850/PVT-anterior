@@ -29,7 +29,7 @@
               </v-expansion-panel-content>
             </v-expansion-panel>
 
-            <v-expansion-panel v-if="ocultar">
+            <v-expansion-panel v-if="!ocultar">
               <v-expansion-panel-header disable-icon-rotate>
                 GARANTES
                 <template v-slot:actions>
