@@ -108,7 +108,7 @@
                 <v-tab v-for="(procedureType, index) in $store.getters.procedureTypes" :key="procedureType.id">
                   <v-badge
                     :content="procedureTypesCount.hasOwnProperty(index) ? procedureTypesCount[index].toString() : '-'"
-                    color="tertiary black--text"
+                    :color="procedureTypeClass(index)"
                     right
                     top
                   >
@@ -240,6 +240,12 @@ export default {
     }
   },
   methods: {
+    procedureTypeClass(index) {
+      if (this.procedureTypesCount.hasOwnProperty(index)) {
+        if (this.procedureTypesCount[index] > 0) return 'tertiary black--text'
+      }
+      return 'normal black--text'
+    },
     clearNotification() {
       this.search = ''
       this.filters.traySelected = 'received'
