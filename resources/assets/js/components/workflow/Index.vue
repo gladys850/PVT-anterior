@@ -19,7 +19,8 @@
             <v-badge
               :content="tray.count.toString()"
               :color="tray.color"
-              class="mr-5 ml-2"
+              class="ml-2"
+              :class="Number.isInteger(tray.count) ? 'mr-5' : 'mr-6'"
               right
               top
             >
@@ -280,7 +281,7 @@ export default {
           let index
           Object.entries(res.data).forEach(([key, val]) => {
             index = this.trays.findIndex(o => o.name == key)
-            if (index !== -1) this.trays[index].count = val
+            if (index !== -1) this.trays[index].count = val <= 999 ? val : '+999'
           })
         } else {
           let count = []
@@ -288,6 +289,7 @@ export default {
             tray.count = res.data.reduce((total, o) => {
               return total + o.data[tray.name]
             }, 0)
+            if (tray.count > 999) tray.count = '+999'
           })
         }
       } catch (e) {
@@ -305,11 +307,11 @@ export default {
         res.data.forEach((procedure, index) => {
           if (this.filters.roleSelected > 0) {
             this.procedureTypesCount[index] = procedure.data.find(o => o.role_id == this.filters.roleSelected).data[this.filters.traySelected]
-            this.$forceUpdate()
           } else {
             this.procedureTypesCount[index] = procedure.total[this.filters.traySelected]
-            this.$forceUpdate()
           }
+          if (this.procedureTypesCount[index] > 9999) this.procedureTypesCount[index] = '+999..'
+          this.$forceUpdate()
         })
       } catch (e) {
         console.log(e)
