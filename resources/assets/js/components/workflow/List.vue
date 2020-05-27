@@ -193,6 +193,11 @@ export default {
       }
     }
   },
+  beforeMount() {
+    Echo.channel('loan').listen('.flow', (msg) => {
+      if (msg.data.role_id == this.params.role_id || this.params.role_id == 0) this.$emit('newLoans', msg.data.derived)
+    })
+  },
   mounted() {
     this.bus.$on('added', val => {
       this.getloans()
