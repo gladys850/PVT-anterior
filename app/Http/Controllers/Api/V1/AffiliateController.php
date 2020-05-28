@@ -467,7 +467,9 @@ class AffiliateController extends Controller
         ]);
         if(!$affiliate->affiliate_state) abort(403, 'Debe actualizar el estado del afiliado');
         $modality = ProcedureType::findOrFail($request->procedure_type_id);
-        return Loan::get_modality($modality->name, $affiliate);
+        $affiliate_modality= Loan::get_modality($modality->name, $affiliate);
+        if(!$affiliate_modality) abort(403, 'El afiliado no califica para la modalidad');
+        return $affiliate_modality;
     }
 
     /** @group Préstamos

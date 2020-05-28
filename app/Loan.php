@@ -225,65 +225,78 @@ class Loan extends Model
         return Util::round($monthly_interest * $this->amount_approved / (1 - 1 / pow((1 + $monthly_interest), $this->loan_term)));
     }
 
-    public function next_payment($estimated_date = null, $amount = null)
+    public function next_payment($estimated_date = null, $amount = null, $liquidate = false)
     {
-        if (!$amount) $amount = $this->estimated_quota;
-        $quota = new LoanPayment();
-        $next_payment = LoanPayment::quota_date($this);
-        if (!$estimated_date) {
-            $quota->estimated_date = $next_payment->date;
-        } else {
-            $quota->estimated_date = Carbon::parse($estimated_date)->toDateString();
-        }
-        $quota->quota_number = $next_payment->quota;
-        $interest = $this->interest;
-        $quota->estimated_days = LoanPayment::days_interest($this, $quota->estimated_date);
-        $quota->paid_days = clone($quota->estimated_days);
-        $quota->balance = $this->balance;
-        $quota->penal_payment = $quota->accumulated_payment = $quota->interest_payment = $quota->capital_payment = $total_interests = 0;
-        // Calcular intereses
-        // Interés penal
         do {
-            $total_interests -= $quota->penal_payment;
-            $quota->penal_payment = Util::round($quota->balance * $interest->daily_penal_interest * $quota->paid_days->penal);
-            $total_interests += $quota->penal_payment;
-            if ($total_interests > $amount) {
-                $quota->paid_days->penal = intval($amount * $quota->paid_days->penal / $quota->penal_payment);
-                $quota->paid_days->accumulated = $quota->paid_days->current = 0;
-            }
-        } while ($total_interests > $amount);
-        // Interés acumulado
-        do {
-            $total_interests -= $quota->accumulated_payment;
-            $quota->accumulated_payment = Util::round($quota->balance * $interest->daily_current_interest * $quota->paid_days->accumulated);
-            $total_interests += $quota->accumulated_payment;
-            if ($total_interests > $amount) {
-                $quota->paid_days->accumulated = intval(($amount - $quota->penal_payment) * $quota->paid_days->accumulated / $quota->accumulated_payment);
-                $quota->paid_days->current = 0;
-            }
-        } while ($total_interests > $amount);
-        // Interés corriente
-        do {
-            $total_interests -= $quota->interest_payment;
-            $quota->interest_payment = Util::round($quota->balance * $interest->daily_current_interest * $quota->paid_days->current);
-            $total_interests += $quota->interest_payment;
-            if ($total_interests > $amount) {
-                $quota->paid_days->current = intval(($amount - $quota->penal_payment - $quota->accumulated_payment) * $quota->paid_days->current / $quota->interest_payment);
-            }
-        } while ($total_interests > $amount);
-        // Calcular amortización de capital
-        if ($total_interests > 0) {
-            if (($quota->balance + $total_interests) > $amount) {
-                $quota->capital_payment = Util::round($amount - $total_interests);
+            if ($liquidate) {
+                $amount = $this->amount_requested * $this->amount_requested;
             } else {
-                $quota->capital_payment = $quota->balance;
+                if (!$amount) $amount = $this->estimated_quota;
             }
-        }
-        // Calcular monto total de la cuota
-        $quota->estimated_quota = $quota->capital_payment + $total_interests;
-        $quota->next_balance = Util::round($quota->balance - $quota->capital_payment);
-        $quota->penal_remaining = $quota->estimated_days->penal - $quota->paid_days->penal;
-        $quota->accumulated_remaining = $quota->estimated_days->accumulated - $quota->paid_days->accumulated + $quota->estimated_days->current - $quota->paid_days->current;
+            $quota = new LoanPayment();
+            $next_payment = LoanPayment::quota_date($this);
+            if (!$estimated_date) {
+                $quota->estimated_date = $next_payment->date;
+            } else {
+                $quota->estimated_date = Carbon::parse($estimated_date)->toDateString();
+            }
+            $quota->quota_number = $this->balance > 0 ? $next_payment->quota : null;
+            $interest = $this->interest;
+            $quota->estimated_days = LoanPayment::days_interest($this, $quota->estimated_date);
+            $quota->paid_days = clone($quota->estimated_days);
+            $quota->balance = $this->balance;
+            $quota->penal_payment = $quota->accumulated_payment = $quota->interest_payment = $quota->capital_payment = $total_interests = 0;
+            // Calcular intereses
+            // Interés penal
+            do {
+                $total_interests -= $quota->penal_payment;
+                $quota->penal_payment = Util::round($quota->balance * $interest->daily_penal_interest * $quota->paid_days->penal);
+                $total_interests += $quota->penal_payment;
+                if ($total_interests > $amount) {
+                    $quota->paid_days->penal = intval($amount * $quota->paid_days->penal / $quota->penal_payment);
+                    $quota->paid_days->accumulated = $quota->paid_days->current = 0;
+                }
+            } while ($total_interests > $amount);
+            // Interés acumulado
+            do {
+                $total_interests -= $quota->accumulated_payment;
+                $quota->accumulated_payment = Util::round($quota->balance * $interest->daily_current_interest * $quota->paid_days->accumulated);
+                $total_interests += $quota->accumulated_payment;
+                if ($total_interests > $amount) {
+                    $quota->paid_days->accumulated = intval(($amount - $quota->penal_payment) * $quota->paid_days->accumulated / $quota->accumulated_payment);
+                    $quota->paid_days->current = 0;
+                }
+            } while ($total_interests > $amount);
+            // Interés corriente
+            do {
+                $total_interests -= $quota->interest_payment;
+                $quota->interest_payment = Util::round($quota->balance * $interest->daily_current_interest * $quota->paid_days->current);
+                $total_interests += $quota->interest_payment;
+                if ($total_interests > $amount) {
+                    $quota->paid_days->current = intval(($amount - $quota->penal_payment - $quota->accumulated_payment) * $quota->paid_days->current / $quota->interest_payment);
+                }
+            } while ($total_interests > $amount);
+            // Calcular amortización de capital
+            if ($total_interests > 0) {
+                if (($quota->balance + $total_interests) > $amount) {
+                    $quota->capital_payment = Util::round($amount - $total_interests);
+                } else {
+                    $quota->capital_payment = $quota->balance;
+                }
+            }
+            // Calcular monto total de la cuota
+            $quota->estimated_quota = $quota->capital_payment + $total_interests;
+            $quota->next_balance = Util::round($quota->balance - $quota->capital_payment);
+            $quota->penal_remaining = $quota->estimated_days->penal - $quota->paid_days->penal;
+            $quota->accumulated_remaining = $quota->estimated_days->accumulated - $quota->paid_days->accumulated + $quota->estimated_days->current - $quota->paid_days->current;
+            if ($liquidate) {
+                if ($quota->next_balance > 0) {
+                    $amount *= $this->amount_requested;
+                } else {
+                    $liquidate = false;
+                }
+            }
+        } while ($liquidate);
         return $quota;
     }
 
@@ -328,7 +341,7 @@ class Loan extends Model
 
     //obtener modalidad teniendo el tipo y el afiliado
     public static function get_modality($modality_name, $affiliate){
-        $modality=null;
+        $modality = null;
         if ($affiliate->affiliate_state){
             $affiliate_state = $affiliate->affiliate_state->name;
             $affiliate_state_type = $affiliate->affiliate_state->affiliate_state_type->name;
@@ -347,8 +360,13 @@ class Loan extends Model
             case 'Préstamo a corto plazo':
                 if($affiliate_state_type == "Activo"){
                     if($affiliate->active_loans()){
-                        $modality = ProcedureModality::whereShortened("PCP-R-SA")->first();//Refinanciamiento corto plazo activo
-                    }else{
+                        foreach($affiliate->active_loans() as $loan){
+                            if($loan->modality->shortened == 'PCP-SA')
+                            $modality = ProcedureModality::whereShortened("PCP-R-SA")->first();//Refinanciamiento corto plazo activo
+                            break;
+                        }
+                    }
+                    if(!$modality){
                         if($affiliate_state == "Servicio" || $affiliate_state == "Comisión" )
                         {
                             $modality=ProcedureModality::whereShortened("PCP-SA")->first(); //corto plazo activo
@@ -360,19 +378,22 @@ class Loan extends Model
                     if($affiliate_state_type == "Pasivo"){
                         if($affiliate->afp){
                             if($affiliate->active_loans()){
-                                $modality=ProcedureModality::whereShortened("PCP-R-SP-AFP")->first();
-                                // refi afp pasivo
-                            }else{
-                                $modality=ProcedureModality::whereShortened("PCP-SP-AFP")->first();
-                                //$sub_modality="Prestamo a corto plazo sector pasivo afp";
+                                foreach($affiliate->active_loans() as $loan){
+                                    if($loan->modality->shortened == 'PCP-SP-AFP')
+                                    $modality=ProcedureModality::whereShortened("PCP-R-SP-AFP")->first();// refi afp pasivo
+                                    break;
+                                }
                             }
+                            if(!$modality) $modality=ProcedureModality::whereShortened("PCP-SP-AFP")->first(); // Prestamo a corto plazo sector pasivo afp;
                         }else{
                             if($affiliate->active_loans()){
-                                $modality=ProcedureModality::whereShortened("PCP-R-SP-SEN")->first();
-                                // refi senasir pasivo
-                            }else{
-                                $modality=ProcedureModality::whereShortened("PCP-SP-SEN")->first();
+                                foreach($affiliate->active_loans() as $loan){
+                                    if($loan->modality->shortened == 'PCP-SP-SEN')
+                                    $modality=ProcedureModality::whereShortened("PCP-R-SP-SEN")->first();// refi senasir pasivo
+                                    break;
+                                }
                             }
+                            if(!$modality) $modality=ProcedureModality::whereShortened("PCP-SP-SEN")->first(); // Prestamo a corto plazo senarir
                         }
                     }
                 }
@@ -380,36 +401,41 @@ class Loan extends Model
             case 'Préstamo a largo plazo':
                 if($affiliate_state_type == "Activo")
                 {
-                    if($affiliate->cpop){
-                        if($affiliate->active_loans()){
-                            $modality=ProcedureModality::whereShortened("PLP-R-SA-CPOP")->first();
-                            // Refi largo plazo activo 1 solo garante
-                        }else{
-                            $modality=ProcedureModality::whereShortened("PLP-CPOP")->first();
+                    if($affiliate_state !== "Disponibilidad" ) //cpop no pueden estar en disponibilidad letra A o C
+                    {
+                        if($affiliate->cpop){
+                            if($affiliate->active_loans()){
+                                foreach($affiliate->active_loans() as $loan){
+                                    if($loan->modality->shortened == 'PLP-CPOP')
+                                    $modality=ProcedureModality::whereShortened("PLP-R-SA-CPOP")->first();// Refi largo plazo activo 1 solo garante
+                                    break;
+                                }
+                            }
+                            if(!$modality) $modality=ProcedureModality::whereShortened("PLP-CPOP")->first(); // Largo plazo activo cpop
                         }
-                    }else{
-                        $modality=ProcedureModality::whereShortened("PLP-GP-SAYADM")->first();
                     }
+                    if(!$modality) $modality=ProcedureModality::whereShortened("PLP-GP-SAYADM")->first(); //Largo plazo activo  y adm con garantia personal 
                 }
                 else{
-                        if($affiliate_state_type == "Pasivo"){
-                            if($affiliate->active_loans()){
-                                if($affiliate->cpop){
-                                    $modality=ProcedureModality::whereShortened("PLP-R-SP-CPOP")->first();
-                                    // Refi largo plazo pasivo 1 solo garante
+                    if($affiliate_state_type == "Pasivo"){
+                        if($affiliate->active_loans()){
+                            if($affiliate->cpop){
+                                foreach($affiliate->active_loans() as $loan){
+                                    if($loan->modality->shortened == 'PLP-GP-SP')
+                                    $modality=ProcedureModality::whereShortened("PLP-R-SP-CPOP")->first(); // Refi largo plazo pasivo 1 solo garante
+                                    break;
                                 }
-                            }else{
-                                $modality=ProcedureModality::whereShortened("PLP-GP-SP")->first();
                             }
                         }
+                        if(!$modality) $modality=ProcedureModality::whereShortened("PLP-GP-SP")->first(); // largo plazo pasivo con 1 solo garante
+                    }
                 }
                 break;
             case 'Préstamo hipotecario':
                 if($affiliate_state_type == "Activo")
                 {
                     if($affiliate->cpop){
-                        $modality=ProcedureModality::whereShortened("PLP-GH-CPOP")->first();
-                        //hipotecario CPOP
+                        $modality=ProcedureModality::whereShortened("PLP-GH-CPOP")->first(); //hipotecario CPOP
                     }else{
                         $modality=ProcedureModality::whereShortened("PLP-GH-SA")->first();
                     }
@@ -417,8 +443,10 @@ class Loan extends Model
                 break;
             }
         }
-        if ($modality) $modality->loan_modality_parameter;
-        return response()->json($modality);
+        if ($modality) {
+            $modality->loan_modality_parameter;
+            return response()->json($modality);
+        }
     }
 }
 

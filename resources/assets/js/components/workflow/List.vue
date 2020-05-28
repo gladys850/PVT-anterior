@@ -32,7 +32,7 @@
       {{ item.estimated_quota | money }}
     </template>
     <template v-slot:item.actions="{ item }">
-      <v-tooltip bottom>
+      <v-tooltip bottom v-if="$store.getters.permissions.includes('update-loan')">
          <template v-slot:activator="{ on }">
           <v-btn
             icon
@@ -49,6 +49,7 @@
       <v-menu
         offset-y
         close-on-content-click
+        v-if="$store.getters.permissions.includes('print-contract-loan')"
       >
         <template v-slot:activator="{ on }">
           <v-btn
@@ -193,6 +194,11 @@ export default {
       }
     }
   },
+  beforeMount() {
+    Echo.channel('loan').listen('.flow', (msg) => {
+      if (msg.data.role_id == this.params.role_id || this.params.role_id == 0) this.$emit('newLoans', msg.data.derived)
+    })
+  },
   mounted() {
     this.bus.$on('added', val => {
       this.getloans()
@@ -202,6 +208,9 @@ export default {
     })
     this.bus.$on('search', val => {
       this.search = val
+    })
+    this.bus.$on('emitGetloans', val => {
+      this.getloans();
     })
   },
   methods: {

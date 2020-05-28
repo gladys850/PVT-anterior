@@ -13,15 +13,19 @@
            <v-card-text class="ma-0 pa-0">
             <v-col cols="12" color="#EDF2F4" class="red--text text--lighten-5 ma-0 pa-0">
               <center>
-                Nombre:{{this.$options.filters.fullName(this.affiliate, true)}}
+                PRESTATARIO:{{this.$options.filters.fullName(this.affiliate, true)}}
                 <br/>
-                Grado: {{this.degree_name}}
-                <br/>
-                Unidad: {{this.unit_name}}
+                GRADO: {{this.degree_name}}
+                <br />
+                MODALIDAD: {{this.loan.procedure_modality_id}}
+                <br />
+                MONTO SOLICITADO: {{this.loan.amount_requested}}
+                <br />
+                MESES PLAZO: {{this.loan.loan_term}}
                 <br />
                 <!--TIPO: {{affiliate.type}}-->
-                 <!-- <v-icon color="#EDF2F4">mdi-account-heart</v-icon>-->
-                Estado Civil: {{affiliate.civil_status=='C'? 'CASADO':affiliate.civil_status=='S'? 'SOLTERO':affiliate.civil_status=='D'?'DIVORCIADO':'VIUDO'}}
+                 <!-- <v-icon color="#EDF2F4">mdi-account-heart</v-icon>
+                Estado Civil: {{affiliate.civil_status=='C'? 'CASADO':affiliate.civil_status=='S'? 'SOLTERO':affiliate.civil_status=='D'?'DIVORCIADO':'VIUDO'}}-->
               </center>
             </v-col>
           </v-card-text>
@@ -39,23 +43,32 @@ export default {
     affiliate: {
       type: Object,
       required: true
+    },
+    loan:{
+      type: Object,
+      required: true
     }
   },
   data: () => ({
     loading: false,
     degree_name: null,
-    unit_name: null
+    unit_name: null,
+    procedure_modality: null
   }),
   computed: {
     isNew() {
       return this.$route.params.id == "new";
     }
   },
+  mounted(){
+    this.getProcedureModality()
+  },
   watch: {
     affiliate(newVal, oldVal) {
       if (oldVal != newVal) {
         if (newVal.hasOwnProperty('degree_id')) this.getDegree_name(newVal.degree_id)
         if (newVal.hasOwnProperty('unit_id')) this.getDegree_name(newVal.unit_id)
+        
       }
     }
   },
@@ -76,6 +89,19 @@ export default {
         this.loading = true;
         let res = await axios.get(`unit/${id}`);
         this.unit_name = res.data.name;
+      } catch (e) {
+        console.log(e);
+      } finally {
+        this.loading = false;
+      }
+    },
+    async getProcedureModality() {
+      try {
+        this.loading = true;
+        let res = await axios.get(`procedure_modality`);
+        this.procedure_modality = res.data
+        console.log(this.procedure_modality)
+      
       } catch (e) {
         console.log(e);
       } finally {

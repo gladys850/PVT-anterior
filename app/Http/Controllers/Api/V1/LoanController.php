@@ -23,6 +23,7 @@ use App\Http\Requests\LoansForm;
 use App\Http\Requests\LoanForm;
 use App\Http\Requests\LoanPaymentForm;
 use App\Http\Requests\ObservationForm;
+use App\Events\LoanFlowEvent;
 use Carbon;
 use Util;
 
@@ -275,6 +276,7 @@ class LoanController extends Controller
                 if ($request->role_id != $loan->role_id) {
                     $loan->role()->associate(Role::find($request->role_id));
                     $loan->validated = false;
+                    event(new LoanFlowEvent([$loan]));
                 }
             }
         } else {
@@ -603,12 +605,13 @@ class LoanController extends Controller
     * @urlParam loan required ID del préstamo. Example: 2
     * @bodyParam estimated_date date Fecha para el cálculo del interés. Example: 2020-04-15
     * @bodyParam estimated_quota float Monto para el cálculo. Example: 650
+    * @bodyParam liquidate boolean Booleano para hacer el cálculo con el monto máximo que liquidará el préstamo. Example: false
     * @authenticated
     * @responseFile responses/loan/get_next_payment.200.json
     */
     public function get_next_payment(LoanPaymentForm $request, Loan $loan)
     {
-        return $loan->next_payment($request->input('estimated_date', null), $request->input('estimated_quota', null));
+        return $loan->next_payment($request->input('estimated_date', null), $request->input('estimated_quota', null), $request->input('liquidate', false));
     }
 
     /** @group Cobranzas
@@ -760,6 +763,10 @@ class LoanController extends Controller
             $item['validated'] = false;
         });
         $loans->update(array_merge($request->only('role_id'), ['validated' => false]));
+        $derived->transform(function ($loan) {
+            return self::append_data($loan, false);
+        });
+        event(new LoanFlowEvent($derived));
         return $derived;
     }
 }

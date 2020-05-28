@@ -56,7 +56,8 @@
           <v-card flat tile >
             <v-card-text>
               <Dashboard
-               :affiliate.sync="affiliate"/>
+               :affiliate.sync="affiliate"
+               :loan.sync="loan"/>
             </v-card-text>
           </v-card>
         </v-tab-item>
@@ -124,6 +125,7 @@
           <v-card flat tile >
             <v-card-text class=" pa-0 mb-0">
               <ObserverFlow 
+              :bus1 = "bus1"
               :observations.sync="observations" 
               :record.sync="record" 
               :loan.sync="loan"/>
@@ -155,6 +157,7 @@ export default {
     Dashboard
   },
   data: () => ({
+    bus1: new Vue(),//Creamos la ionstancia de bus1
     addresses:[],
     affiliate:{
       first_name: null,
@@ -220,8 +223,12 @@ export default {
    mounted() {
     this.getloan(this.$route.params.id)
     this.getObservation(this.$route.params.id)
-    this.getRecords()
-    console.log("params "+this.$route.params.id) 
+    this.getRecords(this.$route.params.id)
+    console.log("params "+this.$route.params.id)
+    this.bus1.$on("emitGetObservation", id => {//escucahamos la emision de ObserverFlow
+      console.log('entraaaa 2')
+      this.getObservation(id); //y monstamos la lista de observaciones segun el id del prestamo
+    });
   },
   methods: {
     resetForm() {
@@ -239,6 +246,10 @@ export default {
           to: { name: 'flowIndex' }
         }
       ]
+      breadcrumbs.push({
+        text: this.loan.code,
+        to: { name: 'flowAdd', params: { id: this.loan.id } }
+      })
       this.$store.commit('setBreadcrumbs', breadcrumbs)
     },
     async getloan(id) {
@@ -257,7 +268,7 @@ export default {
         let res1 = await axios.get(`affiliate/${this.loan.disbursable_id}`)
         this.affiliate = res1.data
         this.setBreadcrumbs()
-        console.log(this.loan+'este es el prestamo')
+        console.log(this.loan)
       } catch (e) {
         console.log(e);
       } finally {
@@ -287,14 +298,16 @@ export default {
         this.loading = false
       }
     },
-    async getRecords() {
+    async getRecords(id) {
       try {
         this.loading = true
-        let res = await axios.get(`record`,{param:{
-            loan_id:4
-          }})
+        let res = await axios.get(`record`,{
+          params:{
+            loan_id: id
+          }
+        })
         this.record = res.data.data
-        console.log('este el record'+this.record)
+        console.log(this.record)
       } catch (e) {
         console.log(e)
       } finally {
