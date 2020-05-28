@@ -26,7 +26,7 @@
         inset 
         persistent>
         <v-card>
-          <v-card-title>Derivación</v-card-title>
+          <v-card-title>Derivar {{ " ("+selectedLoans.length +") "}} trámites</v-card-title>
           <v-divider></v-divider>
           <v-card-text style="height: 300px;">
             <v-select
@@ -38,7 +38,8 @@
               item-value="id"
               dense
             ></v-select>
-            <div class="blue--text">Los siguientes códigos serán derivados: </div>     
+            <div>{{$store.getters.roles.filter(o => flow.next.includes(o.id)).di }}</div>
+            <div class="blue--text">Los siguientes trámites serán derivados: </div>     
             <small>{{ selectedLoans.map(o => o.code).join(', ') }}</small>
           </v-card-text>
           <v-divider></v-divider>
@@ -102,6 +103,8 @@ export default {
           ids: this.idLoans,
           role_id: this.selectedRoleId
         });
+        this.sheet = false;
+        this.bus.$emit('emitGetloans');
         this.toastr.success("El trámite fue derivado." )      
       } catch (e) {
         console.log(e)

@@ -103,7 +103,7 @@
                         <template v-slot:item="items">
                           <tr>
                             <td>{{items.item.user_id}}</td>
-                            <td>{{items.item.record_type_id}}</td>
+                            <!--<td>{{items.item.record_type_id}}</td>-->
                             <td>{{items.item.recordable_id}}</td>
                             <td>{{items.item.action}}</td>
                           </tr>
@@ -190,12 +190,12 @@ export default {
         align: "left",
         value: "record_type_id"
       },
-      {
-        text: "Nombre",
+      /*{
+        text: "Trámite",
         class: ["normal", "white--text"],
         align: "left",
         value: "recordable_id"
-      },
+      },*/
       {
         text: "Accion",
         class: ["normal", "white--text"],
