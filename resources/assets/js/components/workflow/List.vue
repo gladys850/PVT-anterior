@@ -4,11 +4,12 @@
     :headers="headers"
     :items="loans"
     :loading="loading"
-    :options.sync="options"
-    :server-items-length="totalloans"
+    :options="options"
+    :server-items-length="totalLoans"
     :footer-props="{ itemsPerPageOptions: [8, 15, 30] }"
     multi-sort
-    :show-select="allowFlow"
+    :show-select="tray == 'validated'"
+    @update:options="updateOptions"
   >
     <template v-slot:header.data-table-select="{ on, props }">
       <v-simple-checkbox color="info" class="grey lighten-3" v-bind="props" v-on="on"></v-simple-checkbox>
@@ -90,23 +91,34 @@ export default {
       type: Object,
       required: true
     },
-    params: {
+    tray: {
+      type: String,
+      default: 'received'
+    },
+    options: {
       type: Object,
+      default: {
+        itemsPerPage: 8,
+        page: 1,
+        sortBy: ['request_date'],
+        sortDesc: [true]
+      }
+    },
+    loans: {
+      type: Array,
+      required: true
+    },
+    totalLoans: {
+      type: Number,
+      required: true
+    },
+    loading: {
+      type: Boolean,
       required: true
     }
   },
   data: () => ({
-    loading: true,
     selectedLoans: [],
-    search: '',
-    options: {
-      page: 1,
-      itemsPerPage: 8,
-      sortBy: ['request_date'],
-      sortDesc: [true]
-    },
-    loans: [],
-    totalloans: 0,
     headers: [
       {
         text: 'Correlativo',
@@ -153,30 +165,7 @@ export default {
       }
     ]
   }),
-  computed: {
-    validOptions() {
-      return this.params.procedure_type_id != null && this.params.role_id != null && (this.params.hasOwnProperty('validated') || this.params.hasOwnProperty('trashed'))
-    },
-    allowFlow() {
-      if (this.params.hasOwnProperty('role_id') && this.params.hasOwnProperty('validated')) {
-        return (this.params.role_id > 0 && this.params.validated)
-      } else {
-        return false
-      }
-    }
-  },
   watch: {
-    options: function(newVal, oldVal) {
-      if (newVal.page != oldVal.page || newVal.itemsPerPage != oldVal.itemsPerPage || newVal.sortBy != oldVal.sortBy || newVal.sortDesc != oldVal.sortDesc && this.validOptions) {
-        this.getloans()
-      }
-    },
-    search: function(newVal, oldVal) {
-      if (newVal != oldVal && this.validOptions) {
-        this.options.page = 1
-        this.getloans()
-      }
-    },
     selectedLoans(val) {
       this.bus.$emit('selectLoans', this.selectedLoans)
       if (val.length) {
@@ -184,32 +173,12 @@ export default {
       } else {
         this.$emit('allowFlow', false)
       }
-    },
-    params(val) {
-      if (this.validOptions) {
-        this.selectedLoans = []
-        this.getloans()
-        this.updateHeader()
-      }
     }
   },
-  beforeMount() {
-    Echo.channel('loan').listen('.flow', (msg) => {
-      if (msg.data.role_id == this.params.role_id || this.params.role_id == 0) this.$emit('newLoans', msg.data.derived)
-    })
-  },
-  mounted() {
-    this.bus.$on('added', val => {
-      this.getloans()
-    })
-    this.bus.$on('removed', val => {
-      this.getloans()
-    })
-    this.bus.$on('search', val => {
-      this.search = val
-    })
-  },
   methods: {
+    updateOptions($event) {
+      if (this.options.page != $event.page || this.options.itemsPerPage != $event.itemsPerPage || this.options.sortBy != $event.sortBy || this.options.sortDesc != $event.sortDesc) this.$emit('update:options', $event)
+    },
     async imprimir(index,item)
     {
       if(index==0)
@@ -221,7 +190,7 @@ export default {
       } 
     },
     updateHeader() {
-      if (this.params.role_id > 0) {
+      if (this.tray != 'all') {
         this.headers = this.headers.filter(o => o.value != 'role_id')
       } else {
         if (!this.headers.some(o => o.value == 'role_id')) {
@@ -233,30 +202,6 @@ export default {
             sortable: true
           })
         }
-      }
-    },
-    async getloans() {
-      try {
-        this.loading = true
-        let res = await axios.get(`loan`, {
-          params: {...{
-            page: this.options.page,
-            per_page: this.options.itemsPerPage,
-            sortBy: this.options.sortBy,
-            sortDesc: this.options.sortDesc,
-            search: this.search
-          }, ...this.params}
-        })
-        this.loans = res.data.data
-        this.totalloans = res.data.total
-        delete res.data['data']
-        this.options.page = res.data.current_page
-        this.options.itemsPerPage = parseInt(res.data.per_page)
-        this.options.totalItems = res.data.total
-      } catch (e) {
-        console.log(e)
-      } finally {
-        this.loading = false
       }
     }
   }

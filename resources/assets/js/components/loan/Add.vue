@@ -81,7 +81,7 @@ export default {
     this.$store.commit('setBreadcrumbs', [
       {
         text: 'Préstamos',
-        to: { name: 'loanIndex' }
+        to: { name: 'flowIndex' }
       }
     ])
   },
@@ -108,18 +108,18 @@ export default {
     let breadcrumbs = [
       {
         text: 'Préstamos',
-        to: { name: 'loanIndex' }
+        to: { name: 'flowIndex' }
       }
     ]
     if (this.isNew) {
       breadcrumbs.push({
         text: 'Nuevo Préstamo',
-        to: { name: 'loanIndex', params: { id: 'new' } }
+        to: { name: 'flowIndex', params: { id: 'new' } }
       })
       } else {
       breadcrumbs.push({
         text: this.$options.filters.fullName(this.affiliate, true),
-        to: { name: 'loanIndex', params: { id: this.affiliate.id } }
+        to: { name: 'flowIndex', params: { id: this.affiliate.id } }
       })
     }
     this.$store.commit('setBreadcrumbs', breadcrumbs)

@@ -133,17 +133,15 @@
       </v-row>
       <v-row>
         <v-col cols="12">
-          <List :bus="bus" :params="params" @allowFlow="allowFlow = $event" @newLoans="newLoans = $event"/>
+          <List :bus="bus" :tray="filters.traySelected" :options.sync="options" :loans="loans" :totalLoans="totalLoans" :loading="loading" @allowFlow="allowFlow = $event"/>
         </v-col>
       </v-row>
     </v-card-text>
-    <RemoveItem :bus="bus"/>
   </v-card>
 </template>
 
 <script>
 import Breadcrumbs from '@/components/shared/Breadcrumbs'
-import RemoveItem from '@/components/shared/RemoveItem'
 import List from '@/components/workflow/List'
 import Fab from '@/components/workflow/Fab'
 
@@ -152,8 +150,7 @@ export default {
   components: {
     Breadcrumbs,
     Fab,
-    List,
-    RemoveItem
+    List
   },
   data() {
     return {
@@ -182,15 +179,21 @@ export default {
         roleSelected: null
       },
       params: {},
-      roles: this.$store.getters.permissions.includes('show-all-loan') ? [{
-        id: 0,
-        display_name: 'Ver todos'
-      }] : []
+      roles: [],
+      options: {
+        itemsPerPage: 8,
+        page: 1,
+        sortBy: ['request_date'],
+        sortDesc: [true]
+      },
+      loans: [],
+      totalLoans: 0,
+      loading: true
     }
   },
   computed: {
     singleRol() {
-      return !this.$store.getters.permissions.includes('show-all-loan') && this.roles.length <= 1
+      return this.roles.length <= 1
     }
   },
   beforeCreate() {
@@ -207,17 +210,13 @@ export default {
     this.filters = self.filters
   },
   beforeMount() {
-    if (this.$store.getters.permissions.includes('show-deleted-loan')) this.trays.push({
-      name: 'trashed',
-      display_name: 'ANULADOS',
-      count: 0,
-      color: 'error'
+    Echo.channel('loan').listen('.flow', (msg) => {
+      if (msg.data.role_id == this.params.role_id || this.params.role_id == 0) this.newLoans = msg.data.derived
     })
-    this.filters.traySelected = this.trays[0].name
     this.$store.commit('setBreadcrumbs', [
       {
         text: 'Préstamos',
-        to: { name: 'loanIndex' }
+        to: { name: 'flowIndex' }
       }
     ])
   },
@@ -227,19 +226,30 @@ export default {
   },
   watch: {
     search: _.debounce(function () {
-      this.bus.$emit('search', this.search)
+      this.getLoans()
     }, 1000),
     filters: {
       deep: true,
       handler(val) {
         if (val.traySelected != null && val.procedureTypeSelected != null && val.roleSelected != null) {
           let procedureType = this.$store.getters.procedureTypes[this.filters.procedureTypeSelected]
-          if (procedureType) this.getLoans(procedureType.id)
+          if (procedureType) this.setFilters(procedureType.id)
         }
+      }
+    },
+    options: {
+      deep: true,
+      handler(val) {
+        this.getLoans()
       }
     }
   },
   methods: {
+    updateLoanList() {
+      this.getRoleStatistics()
+      this.getProcedureTypeStatistics()
+      this.getLoans()
+    },
     procedureTypeClass(index) {
       if (this.procedureTypesCount.hasOwnProperty(index)) {
         if (this.procedureTypesCount[index] > 0) return 'tertiary black--text'
@@ -249,12 +259,10 @@ export default {
     clearNotification() {
       this.search = ''
       this.filters.traySelected = 'received'
-      this.getRoleStatistics()
-      this.getProcedureTypeStatistics()
+      this.updateLoanList()
       this.newLoans = []
-      this.bus.$emit('added', {})
     },
-    getLoans(procedureType) {
+    setFilters(procedureType) {
       let filters = {
         procedure_type_id: procedureType,
         role_id: this.filters.roleSelected
@@ -266,13 +274,33 @@ export default {
         case 'validated':
           filters.validated = true
           break
-        case 'trashed':
-          filters.trashed = true
-          break
       }
       this.params = filters
-      this.getRoleStatistics()
-      this.getProcedureTypeStatistics()
+      this.updateLoanList()
+    },
+    async getLoans() {
+      try {
+        this.loading = true
+        let res = await axios.get(`loan`, {
+          params: {...{
+            page: this.options.page,
+            per_page: this.options.itemsPerPage,
+            sortBy: this.options.sortBy,
+            sortDesc: this.options.sortDesc,
+            search: this.search
+          }, ...this.params}
+        })
+        this.loans = res.data.data
+        this.totalLoans = res.data.total
+        delete res.data['data']
+        this.options.page = res.data.current_page
+        this.options.itemsPerPage = parseInt(res.data.per_page)
+        this.options.totalItems = res.data.total
+      } catch (e) {
+        console.log(e)
+      } finally {
+        this.loading = false
+      }
     },
     async getRoleStatistics() {
       try {
