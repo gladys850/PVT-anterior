@@ -75,6 +75,10 @@ export default {
     bus: {
       type: Object,
       required: true
+    },
+    loan: {
+      type: Object,
+      required: true
     }
   },
   data: () => ({
@@ -107,25 +111,33 @@ export default {
       try {
           if(this.observation.edit)
           {
-            let res = await axios.patch(`loan/${1}/observation`, {
+            let res = await axios.patch(`loan/${this.loan.id}/observation`, {
               original: {
                 user_id: this.observation.user_id,
                 observation_type_id: this.observation.observation_type_id,
                 message: this.observation.message,
                 date: this.observation.date,
-                enabled: true
+                enabled: false
               },
               update: {
                 enabled: this.observation.enabled
                 }
             });
-
+            console.log("DATOS OBSERVACION " + this.loan.id)
+            console.log(this.observation.user_id)
+            console.log(this.observation.observation_type_id)
+            console.log(this.observation.message)
+            console.log(this.observation.date)
+            console.log(this.observation.enabled)
+            this.bus.$emit('emitSaveObservation', 'vacio');//emitir SAveObservation edit, para ObserverFlow
             console.log('entro al editar'+this.observation.enabled)
+            console.log(this.observation)
 
           }else{
-            let res = await axios.post(`loan/${1}/observation`, {
+            let res = await axios.post(`loan/${this.loan.id}/observation`, {
             observation_type_id:this.observation.observation_type_id,
             message:this.observation.message});
+            this.bus.$emit('emitSaveObservation', 'vacio');//emitir SAveObservation new, para ObserverFlow
             console.log('entro al entro al grabar')
           }
       
