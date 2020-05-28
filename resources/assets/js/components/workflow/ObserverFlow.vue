@@ -23,7 +23,7 @@
                           bottom
                           right
                           v-on="on"
-                          style="margin-right: 0px; margin-left: 950px; margin-top:-11px; "
+                          style="margin-right: 0px; margin-left: 550px; margin-top:-11px; "
                           @click.stop="bus.$emit('openDialog', { edit:false })"
                         >
                           <v-icon>mdi-plus</v-icon>
@@ -49,12 +49,12 @@
                             <td>{{items.item.user_id}}</td>
                             <td>{{ observation_type.find(o => o.id == items.item.observation_type_id).name }}</td>
                             <td>{{items.item.message}}</td>
-                            <td>{{items.item.date}}</td>
+                            <td>{{items.item.date|datetime}}</td>
                             <td>
                               <v-tooltip top>
                                 <template v-slot:activator="{ on }">
                                   <v-btn
-                                  v-if="!items.item.user_id==123" v-show="!items.item.enabled"
+                                  v-if="!(items.item.user_id==$store.getters.id) && !items.item.enabled"
                                     icon
                                     small
                                     color="info"
@@ -69,11 +69,11 @@
                               <v-tooltip top>
                                 <template v-slot:activator="{ on }">
                                   <v-btn
-                                  v-if="items.item.user_id==123" v-show="!items.item.enabled"
+                                  v-if="(items.item.user_id==$store.getters.id) && !items.item.enabled"
                                     icon
                                     small
                                     color="error"
-                                    @click.stop="bus.$emit('openRemoveDialog', {...`loan/${1}/observation`,...{...items.item,}})"
+                                    @click.stop="bus.$emit('openRemoveDialog', {...`loan/${loan.id}/observation`,...{...items.item,}})"
                                     v-on="on"
                                   >
                                     <v-icon   >mdi-delete</v-icon>
@@ -89,7 +89,7 @@
                   </v-card-text>
                 </v-card>
               </v-tab-item>
-              <v-tab>HISTORIAL DEL TRAMITE</v-tab>
+              <v-tab>HISTORIAL DEL TRÁMITE</v-tab>
               <v-tab-item>
                 <v-card flat tile>
                   <v-card-text>
@@ -121,8 +121,8 @@
               small
               color="success"
               class="text-rigth"
-              @click.stop="saveLoanValidated()"
-            >Aprobar el Tramite</v-btn>
+              @click.stop="saveLoanValidated(loan.id)"
+            >Aprobar el Trámite</v-btn>
           </v-col>
            <v-col cols="3" class="ma-0 pb-0">
             <v-checkbox
@@ -144,22 +144,22 @@
             <v-btn
               small
               color="danger"
-              @click.stop="saveLoanRol()"
-            >Devolver Tramite</v-btn>
+              @click.stop="saveLoanRol(loan.id)"
+            >Devolver Trámite</v-btn>
           </v-col>
           <v-spacer></v-spacer>
           <v-col cols="10"></v-col>
         </v-row>
       </v-col>
     </v-row>
-    <AddObservation :bus="bus" />
+    <AddObservation :bus="bus" :loan.sync="loan" />
     <RemoveItem :bus="bus"/>
   </v-container>
 </template>
 
   <script>
 
-import AddObservation from '@/components/workflow/Add'
+import AddObservation from '@/components/workflow/AddObservation'
 import RemoveItem from '@/components/shared/RemoveItem'
 
 export default {
@@ -175,6 +175,7 @@ export default {
     //valDevolver: null,
     valor:false,
     observation_type:[],
+    user: [] ,
     bus: new Vue(),
     headers: [
       {
@@ -241,6 +242,10 @@ export default {
     valArea:[]
   }),
   props: {
+    bus1: {
+      type: Object,
+      required: true
+    },
     observations: {
       type: Array,
       required: true
@@ -258,31 +263,39 @@ export default {
     this.getUser();
     this.getObservationType();
     this.getModuleRole(6);
-    this.getFlow(1);
+    this.getFlow(this.loan.id);
     this.bus.$on("saveObservation", observation => {
       console.log("entro al bus" + observation);
-
       this.observations.unshift(observation);
+    });
+    this.bus.$on("emitSaveObservation", val => {//al realizar el guardado de la observacion en saveObservation
+      console.log('entraaaa 1')
+      this.bus1.$emit('emitGetObservation',this.loan.id); //emite a Add.vue para obtener los registros de las observaciones del id de prestamo 
     });
   },
   methods: {
-      async saveLoanRol() {
+      async saveLoanRol(id) {
       try {
-        let res = await axios.patch(`loan/${1}`, {
-          role_id:this.valArea
-        });
-        this.toastr.success("Se devolvio satisfacctoriamente el tramite.")      
-        this.$router.push('/workflow')
-        console.log('se cambio el rol')
+        if( JSON.stringify(this.observations) != '{}'){
+          let res = await axios.patch(`loan/${id}`, {
+            role_id:this.valArea
+          });
+          this.toastr.success("Se devolvio satisfacctoriamente el tramite.")      
+          this.$router.push('/workflow')
+          console.log('se cambio el rol')
+        }else{
+          this.toastr.error("Debe crear una observacion para devolver el trámite")   
+        }
+
       } catch (e) {
         console.log(e)
       } finally {
         this.loading = false
       }
     },
-    async saveLoanValidated() {
+    async saveLoanValidated(id) {
       try {
-        let res = await axios.patch(`loan/${1}`, {
+        let res = await axios.patch(`loan/${id}`, {
              validated:true, 
         });
         console.log('se cambio el rol')
@@ -312,7 +325,7 @@ export default {
         this.loading = true;
         let res = await axios.get(`user`);
         this.user = res.data;
-        console.log("estas son las observaciones" + this.observation_type);
+        console.log(this.user);
       } catch (e) {
         console.log(e);
       } finally {
