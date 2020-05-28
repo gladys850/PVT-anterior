@@ -157,7 +157,10 @@
           <v-card color="grey lighten-1">
             <h3 class="text-uppercase text-center">{{modalidad.name}}</h3>
             <FormInformation
-              :formulario.sync="formulario"/>
+              :formulario.sync="formulario"
+              :modalidad.sync="modalidad"
+              :personal_reference="personal_reference"
+              />
             <v-container class="py-0">
               <v-row>
                 <v-spacer></v-spacer>
@@ -246,6 +249,7 @@ export default {
     payable_liquid:[0,0,0],
     bonos:[0,0,0,0],
     formulario:[],
+    personal_reference:{},
     calculos:{
       promedio_liquido_pagable:0,
       total_bonos:0,
@@ -283,11 +287,85 @@ export default {
         {
           this.Calculator()
         }
+        if(n==4)
+        {
+          this.personal()
+        }
         this.e1 = n + 1
      }
     },
     beforeStep (n) {
       this.e1 = n -1
+    },
+    async personal()
+    {
+      try {
+        if (this.modalidad.personal_reference) {
+            let res = await axios.post(`personal_reference`, {
+              city_identity_card_id:5,
+              identity_card:this.personal_reference.identity_card,
+              last_name:this.personal_reference.last_name,
+              mothers_last_name:this.personal_reference.mothers_last_name,
+              first_name:this.personal_reference.first_name,
+              second_name:this.personal_reference.second_name,
+              phone_number:this.personal_reference.phone_number,
+              cell_phone_number:this.personal_reference.cell_phone_number
+            })
+          }
+      } catch (e) {
+        console.log(e)
+      } finally {
+        this.loading = false
+     
+console.log('entro por verdader'+this.modalidad.personal_reference)
+      }
+      
+  /*    try {
+        if (!this.editable) {
+            this.editable = true
+        } else {
+          if (this.isNew) {
+          // New affiliate
+            let res = await axios.post(`affiliate`, this.affiliate)
+            this.toastr.success('Afiliado adicionado')
+            //Actualizar dirección,  obteniendo respuesta POST afiliado nuevo (res.data.id)
+            await axios.patch(`affiliate/${res.data.id}/address`, {
+            addresses: this.addresses.map(o => o.id)
+            })
+          } else {
+            // Edit affiliate
+            await axios.patch(`affiliate/${this.affiliate.id}`, this.affiliate)
+            await axios.patch(`affiliate/${this.affiliate.id}/address`, {
+              addresses: this.addresses.map(o => o.id)
+            })
+            //Preguntar si afiliado esta fallecido
+            if((this.affiliate.date_death != null && this.affiliate.date_death != '') || 
+                (this.affiliate.reason_death != null && this.affiliate.reason_death != '')){
+              if(this.spouse.id){
+                await axios.patch(`spouse/${this.spouse.id}`, this.spouse)
+              }else{
+                this.spouse.affiliate_id=this.affiliate.id
+                await axios.post(`spouse`, this.spouse)
+              }
+            }
+            this.editable = false
+          }
+        this.toastr.success('Registro guardado correctamente')
+        this.editable = false
+        }
+      } catch (e) {
+        console.log(e)
+      } finally {
+        this.loading = false
+      }
+        "city_identity_card_id": 5,
+    "identity_card": "165134-1L",
+    "last_name": "PINTO",
+    "mothers_last_name": "ROJAS",
+    "first_name": "JUAN",
+    "second_name": "ROBERTO",
+    "phone_number": 2254101,
+    "cell_phone_number": 76543210*/
     },
     //Metodo para identificar el modulo
     async getProcedureType() {

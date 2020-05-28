@@ -19,7 +19,8 @@
             <v-badge
               :content="tray.count.toString()"
               :color="tray.color"
-              class="mr-5 ml-2"
+              class="ml-2"
+              :class="Number.isInteger(tray.count) ? 'mr-5' : 'mr-6'"
               right
               top
             >
@@ -44,6 +45,55 @@
         </v-flex>
       </v-toolbar>
     </v-card-title>
+    <v-tooltip
+      left
+      content-class="secondary"
+    >
+      <template v-slot:activator="{ on }">
+        <v-btn
+          fab
+          dark
+          fixed
+          bottom
+          right
+          color="warning"
+          class="mb-5"
+          v-on="on"
+          v-show="newLoans.length > 0"
+          @click="clearNotification"
+        >
+          <v-badge
+            :content="newLoans.length.toString()"
+            right
+            top
+          >
+            <v-icon>mdi-bell-ring</v-icon>
+          </v-badge>
+        </v-btn>
+      </template>
+      <v-list
+        class="secondary"
+        dense
+        dark
+      >
+        <v-subheader>Ver trámites nuevos:</v-subheader>
+        <v-list-item-group>
+          <v-list-item
+            v-for="(loan, index) in newLoans.slice(0, newLoansMax)"
+            :key="loan.id"
+          >
+            <v-list-item-content>
+              <v-list-item-title v-text="loan.code">{{index}}</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item v-if="newLoans.length > newLoansMax">
+            <v-list-item-content>
+              <v-list-item-title>{{ newLoans.length - newLoansMax }} más ...</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+        </v-list-item-group>
+      </v-list>
+    </v-tooltip>
     <v-card-text>
       <v-row>
         <v-toolbar flat>
@@ -58,7 +108,7 @@
                 <v-tab v-for="(procedureType, index) in $store.getters.procedureTypes" :key="procedureType.id">
                   <v-badge
                     :content="procedureTypesCount.hasOwnProperty(index) ? procedureTypesCount[index].toString() : '-'"
-                    color="tertiary black--text"
+                    :color="procedureTypeClass(index)"
                     right
                     top
                   >
@@ -83,7 +133,7 @@
       </v-row>
       <v-row>
         <v-col cols="12">
-          <List :bus="bus" :params="params" @allowFlow="allowFlow = $event"/>
+          <List :bus="bus" :params="params" @allowFlow="allowFlow = $event" @newLoans="newLoans = $event"/>
         </v-col>
       </v-row>
     </v-card-text>
@@ -109,6 +159,8 @@ export default {
     return {
       search: '',
       bus: new Vue(),
+      newLoans: [],
+      newLoansMax: 3,
       allowFlow: false,
       procedureTypesCount: [],
       trays: [
@@ -188,6 +240,20 @@ export default {
     }
   },
   methods: {
+    procedureTypeClass(index) {
+      if (this.procedureTypesCount.hasOwnProperty(index)) {
+        if (this.procedureTypesCount[index] > 0) return 'tertiary black--text'
+      }
+      return 'normal black--text'
+    },
+    clearNotification() {
+      this.search = ''
+      this.filters.traySelected = 'received'
+      this.getRoleStatistics()
+      this.getProcedureTypeStatistics()
+      this.newLoans = []
+      this.bus.$emit('added', {})
+    },
     getLoans(procedureType) {
       let filters = {
         procedure_type_id: procedureType,
@@ -221,7 +287,7 @@ export default {
           let index
           Object.entries(res.data).forEach(([key, val]) => {
             index = this.trays.findIndex(o => o.name == key)
-            this.trays[index].count = val
+            if (index !== -1) this.trays[index].count = val <= 999 ? val : '+999'
           })
         } else {
           let count = []
@@ -229,6 +295,7 @@ export default {
             tray.count = res.data.reduce((total, o) => {
               return total + o.data[tray.name]
             }, 0)
+            if (tray.count > 999) tray.count = '+999'
           })
         }
       } catch (e) {
@@ -246,11 +313,11 @@ export default {
         res.data.forEach((procedure, index) => {
           if (this.filters.roleSelected > 0) {
             this.procedureTypesCount[index] = procedure.data.find(o => o.role_id == this.filters.roleSelected).data[this.filters.traySelected]
-            this.$forceUpdate()
           } else {
             this.procedureTypesCount[index] = procedure.total[this.filters.traySelected]
-            this.$forceUpdate()
           }
+          if (this.procedureTypesCount[index] > 9999) this.procedureTypesCount[index] = '+999..'
+          this.$forceUpdate()
         })
       } catch (e) {
         console.log(e)

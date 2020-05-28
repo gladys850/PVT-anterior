@@ -236,6 +236,12 @@ export default {
           this.modalidad.id=this.loan_modality.id
           this.modalidad.name=this.loan_modality.name
           this.modalidad.quantity_ballots=this.loan_modality.loan_modality_parameter.quantity_ballots
+          this.modalidad.guarantors=this.loan_modality.loan_modality_parameter.guarantors
+          this.modalidad.min_guarantor_category=this.loan_modality.loan_modality_parameter.min_guarantor_category
+          this.modalidad.max_guarantor_category=this.loan_modality.loan_modality_parameter.max_guarantor_category
+    //      this.modalidad.personal_reference=this.loan_modality.loan_modality_parameter.personal_reference
+    this.modalidad.personal_reference=true
+        
           if(this.loan_modality.loan_modality_parameter.quantity_ballots>1)
           {
           this.visible=true

@@ -10,9 +10,10 @@
             <v-col cols="12" md="2" class="py-0">
               <label> Tipo de Deposito:</label>
             </v-col>
-            <v-col cols="12" md="3">
+            <v-col cols="12" md="3" class="py-0">
               <ValidationProvider v-slot="{ errors }" name="Tipo Desembolso" rules="required">
               <v-select
+                class="py-0"
                 :error-messages="errors"
                 dense
                 v-model="loanTypeSelected"
@@ -26,9 +27,10 @@
              <v-col cols="12" md="2" class="py-0" v-show="visible">
               <label> Nro de Cuenta:</label>
             </v-col>
-            <v-col cols="12" md="4"  v-show="visible">
+            <v-col cols="12" md="4" class="py-0"  v-show="visible">
               <ValidationProvider v-slot="{ errors }" name="cuenta" rules="numeric|min:1|max:20"  mode="aggressive">
               <v-text-field
+                class="py-0"
                 :error-messages="errors"
                 dense
                 outlined
@@ -37,12 +39,13 @@
               </ValidationProvider>
             </v-col>
             <v-col cols="12" md="6" v-show="espacio"></v-col>
-            <v-col cols="12" md="2" class="py-0">
+            <v-col cols="12" md="2" class="py-1">
               <label> Destino del Prestamo:</label>
             </v-col>
             <v-col cols="12" md="6"  >
                 <ValidationProvider v-slot="{ errors }" name="destino" rules="required">
                <v-select
+                class="py-0"
                 :error-messages="errors"
                 v-model="loanTypeSelected2"
                 dense
@@ -51,6 +54,68 @@
                 item-value="id"
               ></v-select>
                 </ValidationProvider>
+            </v-col>
+            <v-col cols="12" md="12" v-show="modalidad.personal_reference " >
+             <v-toolbar-title> REFERENCIA PERSONAL</v-toolbar-title>
+            </v-col>
+             <v-col cols="12" md="3" v-show="modalidad.personal_reference">
+             <v-text-field
+                  v-model="personal_reference.first_name"
+                  dense
+                  label="Primer Nombre"
+             ></v-text-field>
+            </v-col>
+            <v-col cols="12" md="3" v-show="modalidad.personal_reference">
+             <v-text-field
+                  v-model="personal_reference.second_name"
+                  dense
+                  label="Segundo Nombre"
+             ></v-text-field>
+            </v-col>
+            <v-col cols="12" md="3" v-show="modalidad.personal_reference">
+             <v-text-field
+                  v-model="personal_reference.last_name"
+                  dense
+                  label="Primer Apellido"
+             ></v-text-field>
+            </v-col>
+            <v-col cols="12" md="3" v-show="modalidad.personal_reference">
+             <v-text-field
+                  v-model="personal_reference.mothers_last_name"
+                  dense
+                  label="Segundo Apellido"
+             ></v-text-field>
+            </v-col>
+             <v-col cols="12" md="3" v-show="modalidad.personal_reference">
+              <v-text-field
+                v-model="personal_reference.identity_card"
+                dense
+                label="Cédula de Identidad"
+              ></v-text-field>
+            </v-col>
+            <v-col cols="12" md="3" v-show="modalidad.personal_reference" >
+              <v-select
+                v-model="personal_reference.city_identity_card_id"
+                dense
+                :items="cities"
+                item-text="name"
+                item-value="id"
+                label="Ciudad de Expedición"
+              ></v-select>
+            </v-col>
+            <v-col cols="12" md="3" v-show="modalidad.personal_reference">
+              <v-text-field
+                v-model="personal_reference.phone_number"
+                dense
+                label="Telefono"
+              ></v-text-field>
+            </v-col>
+            <v-col cols="12" md="3" v-show="modalidad.personal_reference">
+              <v-text-field
+                v-model="personal_reference.cell_phone_number"
+                dense
+                label="Celular"
+              ></v-text-field>
             </v-col>
           </v-row>
         </v-container>
@@ -71,11 +136,20 @@
     espacio:true,
     loanTypeSelected:null,
     loanTypeSelected2:null,
-    payment_types:[]
+    payment_types:[],
+    cities:[]
   }),
   props: {
     formulario: {
       type: Array,
+      required: true
+    },
+    modalidad: {
+      type: Object,
+      required: true
+    },
+    personal_reference: {
+      type: Object,
       required: true
     },
   },

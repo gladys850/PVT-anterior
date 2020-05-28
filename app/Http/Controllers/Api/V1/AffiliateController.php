@@ -467,14 +467,16 @@ class AffiliateController extends Controller
         ]);
         if(!$affiliate->affiliate_state) abort(403, 'Debe actualizar el estado del afiliado');
         $modality = ProcedureType::findOrFail($request->procedure_type_id);
-        return Loan::get_modality($modality->name, $affiliate);
+        $affiliate_modality= Loan::get_modality($modality->name, $affiliate);
+        if(!$affiliate_modality) abort(403, 'El afiliado no califica para la modalidad');
+        return $affiliate_modality;
     }
 
     /** @group Préstamos
     * Verificar garante
     * Devuelve si un afiliado puede garantizar acorde a su categoria, estado y cantidad garantias de préstamos.
-    * @queryParam identity_card required Número de carnet de identidad del afiliado. Example: 1379734
-    * @queryParam procedure_modality_id ID de la modalidad de trámite. Example: 32
+    * @bodyParam identity_card required Número de carnet de identidad del afiliado. Example: 1379734
+    * @bodyParam procedure_modality_id ID de la modalidad de trámite. Example: 32
     * @authenticated
     * @responseFile responses/affiliate/test_guarantor.200.json
     */

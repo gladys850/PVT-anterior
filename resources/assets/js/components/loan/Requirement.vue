@@ -141,7 +141,7 @@
       <v-data-iterator :items="optional" hide-default-footer>
         <template>
           <v-toolbar-title class="align-end font-weight-black text-center ma-0 pa-0 pt-5">
-            <h3>Documentos Adicionales</h3>
+            <h6>Documentos Adicionales{{calculos}}</h6>
           </v-toolbar-title>
           <v-row>
             <v-col cols="12" class="ma-0 px-10">
@@ -366,19 +366,20 @@ export default {
         if (this.idRequirements.length === this.items.length) {
           let res = await axios.post(`loan`, {
             copies: 2,
-            lenders:[this.$route.query.affiliate_id],
             procedure_modality_id:this.modalidad.id,
-            guarantors: [],
             amount_requested: this.calculos.montos,
             city_id: this.$store.getters.cityId,
             loan_term: this.calculos.plazo,
             payment_type_id:2,
+            lenders:[this.$route.query.affiliate_id],
+            payable_liquid_calculated:this.calculos.payable_liquid_calculated,
+            bonus_calculated:this.calculos.bonus_calculated,
+            liquid_qualification_calculated:this.calculos.liquid_qualification_calculated,
+            indebtedness_calculated:this.calculos.indebtedness_calculated,
+            guarantors: [],
+            personal_reference_id: null,
             account_number:this.formulario[1],
             destiny_id: this.formulario[2],
-            payable_liquid_calculated:this.calculos.promedio_liquido_pagable,
-            bonus_calculated:this.calculos.total_bonos,
-            indebtedness_calculated:this.calculos.indice_endeudamiento,
-            liquid_qualification_calculated:this.calculos.liquido_para_calificacion,
             documents: this.selectedOpc.concat(this.selected.concat(this.radios.filter(Boolean))),
             notes: this.otherDocuments
           });
