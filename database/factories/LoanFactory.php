@@ -40,7 +40,7 @@ $factory->define(App\Loan::class, function (Faker $faker) {
         'loan_term' => $faker->numberBetween($procedure_type->interval->minimum_term,$procedure_type->interval->maximum_term),
         'payment_type_id' => PaymentType::whereName('Cheque')->first()->id,
         'destiny_id' => $procedure_type->loan_destinies->random()->id,
-        'role_id' => Role::whereName('PRE-area-de-recepcion')->first()->id,
+        'role_id' => Role::whereName('PRE-recepcion')->first()->id,
         'created_at' => $faker->dateTime($max = 'now'),
         'updated_at' => $faker->dateTime($max = 'now')
     ];
