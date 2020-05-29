@@ -14,10 +14,11 @@ class RoleSequenceSeeder extends Seeder
      */
     public function run()
     {
+        RoleSequence::flushEventListeners();
         $sequences = [
             'Préstamo Anticipo' => [
                 ['PRE-regional-santa-cruz', 'PRE-regional-cochabamba', 'PRE-regional-oruro', 'PRE-regional-potosi', 'PRE-regional-sucre', 'PRE-regional-tarija', 'PRE-regional-trinidad', 'PRE-regional-cobija'],
-                ['PRE-area-de-recepcion'],
+                ['PRE-recepcion'],
                 ['PRE-calificacion'],
                 ['PRE-revision-legal'],
                 ['PRE-jefatura'],
