@@ -15,9 +15,16 @@ class AdvanceRoleSeeder extends Seeder
     public function run()
     {
         Role::flushEventListeners();
+        $old_receipt = Role::whereName('PRE-area-de-recepcion')->first();
+        if ($old_receipt) {
+            $old_receipt->users()->sync([]);
+            $old_receipt->permissions()->sync([]);
+            $old_receipt->records()->delete();
+            $old_receipt->delete();
+        }
         $module = Module::whereName('prestamos')->first();
-        $receipt_permissions = ['update-affiliate-secondary', 'show-affiliate', 'show-loan', 'create-loan', 'create-address', 'update-address', 'delete-address', 'update-loan', 'delete-loan', 'print-contract-loan', 'show-deleted-loan'];
-        $receipt_roles = ['Área de Recepción', 'Regional Santa Cruz', 'Regional Cochabamba', 'Regional Oruro', 'Regional Potosí', 'Regional Sucre', 'Regional Tarija', 'Regional Trinidad', 'Regional Cobija'];
+        $receipt_permissions = ['update-affiliate-secondary', 'show-affiliate', 'show-all-loan', 'show-loan', 'create-loan', 'create-address', 'update-address', 'delete-address', 'update-loan', 'delete-loan', 'print-contract-loan', 'show-deleted-loan'];
+        $receipt_roles = ['Regional Santa Cruz', 'Regional Cochabamba', 'Regional Oruro', 'Regional Potosí', 'Regional Sucre', 'Regional Tarija', 'Regional Trinidad', 'Regional Cobija', 'Recepción'];
 
         $sequence_permissions = ['update-affiliate-secondary', 'show-affiliate', 'show-loan', 'update-address'];
         $leadership_permissions = ['show-all-loan', 'update-loan', 'delete-loan', 'show-setting', 'show-deleted-loan'];
@@ -39,6 +46,10 @@ class AdvanceRoleSeeder extends Seeder
                 'name' => 'Aprobación Dirección',
                 'action' => 'Aprobado',
                 'sequence' => 5
+            ], [
+                'name' => 'Revisión Dirección',
+                'action' => 'Aprobado',
+                'sequence' => 3
             ], [
                 'name' => 'Aprobación Legal',
                 'action' => 'Aprobado',
@@ -62,7 +73,7 @@ class AdvanceRoleSeeder extends Seeder
                     'display_name' => $role,
                     'action' => 'Recepcionado',
                     'module_id' => $module->id,
-                    'sequence_number' => $role == 'Área de Recepción' ? (Role::where('module_id',Module::whereName('prestamos')->first()->id)->where('display_name','Área de Recepción')->first()->update(['sequence_number' => 1])): 0
+                    'sequence_number' => $role == 'Recepción' ? 1 : 0
                 ]);
                 $role->syncPermissions($receipt_permissions);
             }

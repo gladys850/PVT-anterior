@@ -16,31 +16,33 @@
             v-model="search"
             append-icon="mdi-magnify"
             label="Buscar"
-            class="mr-5 pr-5"
+            :class="{ 'mr-5 pr-5': canCreate }"
             single-line
             hide-details
             clearable
           ></v-text-field>
         </v-flex>
-        <v-tooltip left v-if="$store.getters.permissions.includes('create-affiliate')">
-          <template v-slot:activator="{ on }">
-            <v-btn
-              fab
-              dark
-              small
-              color="success"
-              bottom
-              right
-              absolute
-              v-on="on"
-              style="margin-right: -9px;"
-              :to="{ name: 'affiliateAdd', params: { id:'new' } }"
-            >
-              <v-icon>mdi-plus</v-icon>
-            </v-btn>
-          </template>
-          <span>Nuevo afiliado</span>
-        </v-tooltip>
+        <template v-if="canCreate">
+          <v-tooltip left>
+            <template v-slot:activator="{ on }">
+              <v-btn
+                fab
+                dark
+                small
+                color="success"
+                bottom
+                right
+                absolute
+                v-on="on"
+                style="margin-right: -9px;"
+                :to="{ name: 'affiliateAdd', params: { id:'new' } }"
+              >
+                <v-icon>mdi-plus</v-icon>
+              </v-btn>
+            </template>
+            <span>Nuevo afiliado</span>
+          </v-tooltip>
+        </template>
       </v-toolbar>
     </v-card-title>
     <v-card-text>
@@ -62,6 +64,11 @@ export default {
     search: '',
     bus: new Vue()
   }),
+  computed: {
+    canCreate() {
+      return this.$store.getters.permissions.includes('create-affiliate')
+    }
+  },
   beforeMount() {
     this.$store.commit('setBreadcrumbs', [
       {

@@ -47,13 +47,15 @@
                 v-model="search"
                 append-icon="mdi-magnify"
                 label="Buscar"
-                class="mr-5 pr-5"
+                :class="{ 'mr-5': canUpdate }"
                 single-line
                 hide-details
                 clearable
               ></v-text-field>
             </v-flex>
-            <AddDestiny v-if="$store.getters.permissions.includes('update-setting')" :bus="bus"/>
+            <template v-if="canUpdate">
+              <AddDestiny :bus="bus"/>
+            </template>
           </v-toolbar>
         </v-card-title>
         <v-card-text>
@@ -200,6 +202,9 @@ export default {
   computed: {
     chunkedDestinies() {
       return _.chunk(this.destinies, 6)
+    },
+    canUpdate() {
+      return this.$store.getters.permissions.includes('update-setting')
     }
   },
   mounted() {
