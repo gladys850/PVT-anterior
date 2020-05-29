@@ -169,13 +169,13 @@ export default {
   watch: {
     options: function(newVal, oldVal) {
       if (newVal.page != oldVal.page || newVal.itemsPerPage != oldVal.itemsPerPage || newVal.sortBy != oldVal.sortBy || newVal.sortDesc != oldVal.sortDesc && this.validOptions) {
-        this.getloans()
+        this.getLoans()
       }
     },
     search: function(newVal, oldVal) {
       if (newVal != oldVal && this.validOptions) {
         this.options.page = 1
-        this.getloans()
+        this.getLoans()
       }
     },
     selectedLoans(val) {
@@ -189,7 +189,7 @@ export default {
     params(val) {
       if (this.validOptions) {
         this.selectedLoans = []
-        this.getloans()
+        this.getLoans()
         this.updateHeader()
       }
     }
@@ -201,16 +201,16 @@ export default {
   },
   mounted() {
     this.bus.$on('added', val => {
-      this.getloans()
+      this.getLoans()
     })
     this.bus.$on('removed', val => {
-      this.getloans()
+      this.getLoans()
     })
     this.bus.$on('search', val => {
       this.search = val
     })
     this.bus.$on('emitGetloans', val => {
-      this.getloans();
+      this.getLoans();
     })
   },
   methods: {
@@ -239,7 +239,7 @@ export default {
         }
       }
     },
-    async getloans() {
+    async getLoans() {
       try {
         this.loading = true
         let res = await axios.get(`loan`, {
