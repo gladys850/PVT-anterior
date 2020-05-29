@@ -170,7 +170,7 @@ class UserController extends Controller
     public function set_roles(Request $request, User $user)
     {
         $request->validate([
-            'roles' => 'required|array',
+            'roles' => 'array',
             'roles.*' => 'exists:roles,id'
         ]);
         $user->syncRoles($request->roles);

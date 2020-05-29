@@ -20,6 +20,14 @@
     <template v-slot:item.role_id="{ item }">
       {{ $store.getters.roles.find(o => o.id == item.role_id).display_name }}
     </template>
+    <template v-slot:item.procedure_modality_id="{ item }">
+      <v-tooltip top>
+        <template v-slot:activator="{ on }">
+          <span v-on="on">{{ procedureModalities.find(o => o.id == item.procedure_modality_id).shortened }}</span>
+        </template>
+        <span>{{ procedureModalities.find(o => o.id == item.procedure_modality_id).name }}</span>
+      </v-tooltip>
+    </template>
     <template v-slot:item.request_date="{ item }">
       {{ item.request_date | date }}
     </template>
@@ -115,6 +123,10 @@ export default {
     loading: {
       type: Boolean,
       required: true
+    },
+    procedureModalities: {
+      type: Array,
+      required: true
     }
   },
   data: () => ({
@@ -173,6 +185,9 @@ export default {
       } else {
         this.$emit('allowFlow', false)
       }
+    },
+    tray(val) {
+      if (typeof val === 'string') this.updateHeader()
     }
   },
   methods: {
@@ -192,8 +207,16 @@ export default {
     updateHeader() {
       if (this.tray != 'all') {
         this.headers = this.headers.filter(o => o.value != 'role_id')
+        this.headers = this.headers.filter(o => o.value != 'procedure_modality_id')
       } else {
         if (!this.headers.some(o => o.value == 'role_id')) {
+          this.headers.unshift({
+            text: 'Modalidad',
+            class: ['normal', 'white--text'],
+            align: 'center',
+            value: 'procedure_modality_id',
+            sortable: true
+          })
           this.headers.unshift({
             text: 'Área',
             class: ['normal', 'white--text'],

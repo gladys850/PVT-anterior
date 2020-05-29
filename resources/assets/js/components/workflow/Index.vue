@@ -10,6 +10,7 @@
           v-model="filters.traySelected"
           active-class="primary white--text"
           mandatory
+          v-if="!track"
         >
           <v-btn
             v-for="tray in trays"
@@ -43,6 +44,29 @@
             clearable
           ></v-text-field>
         </v-flex>
+        <template v-if="$store.getters.permissions.includes('show-all-loan') && procedureModalities.length">
+          <v-tooltip
+            top
+          >
+            <template v-slot:activator="{ on }">
+              <v-btn
+                v-on="on"
+                icon
+                outlined
+                small
+                :color="track ? 'info' : 'brown'"
+                class="darken-2 ml-4"
+                @click="track = !track"
+              >
+                <v-icon>
+                  {{ track ? 'mdi-tray-full' : 'mdi-swap-horizontal' }}
+                </v-icon>
+              </v-btn>
+            </template>
+            <span v-if="track">Bandeja de trabajo</span>
+            <span v-else>Seguimiento de trámites</span>
+          </v-tooltip>
+        </template>
       </v-toolbar>
     </v-card-title>
     <v-tooltip
@@ -95,7 +119,7 @@
       </v-list>
     </v-tooltip>
     <v-card-text>
-      <v-row>
+      <v-row v-if="!track">
         <v-toolbar flat>
           <v-col :cols="singleRol ? 12 : 10">
               <v-tabs
@@ -133,7 +157,7 @@
       </v-row>
       <v-row>
         <v-col cols="12">
-          <List :bus="bus" :tray="filters.traySelected" :options.sync="options" :loans="loans" :totalLoans="totalLoans" :loading="loading" @allowFlow="allowFlow = $event"/>
+          <List :bus="bus" :tray="filters.traySelected" :procedureModalities="procedureModalities" :options.sync="options" :loans="loans" :totalLoans="totalLoans" :loading="loading" @allowFlow="allowFlow = $event"/>
         </v-col>
       </v-row>
     </v-card-text>
@@ -154,6 +178,7 @@ export default {
   },
   data() {
     return {
+      track: false,
       search: '',
       bus: new Vue(),
       newLoans: [],
@@ -188,7 +213,8 @@ export default {
       },
       loans: [],
       totalLoans: 0,
-      loading: true
+      loading: true,
+      procedureModalities: []
     }
   },
   computed: {
@@ -199,6 +225,7 @@ export default {
   beforeCreate() {
     let self = this
     this.$store.dispatch('selectModule', 'prestamos').then(() => {
+      this.getProcedureModalities()
       this.$store.getters.roles.filter(o => {
         return o.module_id == this.$store.getters.module.id && this.$store.getters.userRoles.includes(o.name)
       }).forEach(function(o, i) {
@@ -211,7 +238,7 @@ export default {
   },
   beforeMount() {
     Echo.channel('loan').listen('.flow', (msg) => {
-      if (msg.data.role_id == this.params.role_id || this.params.role_id == 0) this.newLoans = msg.data.derived
+      if (msg.data.role_id == this.filters.role_id || this.filters.role_id == 0) this.newLoans = msg.data.derived
     })
     this.$store.commit('setBreadcrumbs', [
       {
@@ -242,9 +269,42 @@ export default {
       handler(val) {
         this.getLoans()
       }
+    },
+    track(val) {
+      if (val) {
+        this.filters.procedureTypeSelected = null
+        this.filters.roleSelected = 0
+        this.filters.traySelected = 'all'
+        this.search = ''
+        this.params = {
+          role_id: this.filters.roleSelected,
+        }
+        this.newLoans = []
+        this.getLoans()
+      } else {
+        this.filters.procedureTypeSelected = this.$store.getters.procedureTypes[0]
+        this.filters.roleSelected = this.roles[0].id
+        this.clearNotification()
+      }
     }
   },
   methods: {
+    getProcedureModalities() {
+      this.$store.getters.procedureTypes.forEach(async (procedureType) => {
+        try {
+          let res = await axios.get(`procedure_modality`, {
+            params: {
+              procedure_type_id: procedureType.id,
+              page: 1,
+              per_page: 100
+            }
+          })
+          this.procedureModalities = this.procedureModalities.concat(res.data.data)
+        } catch (e) {
+          console.log(e)
+        }
+      })
+    },
     updateLoanList() {
       this.getRoleStatistics()
       this.getProcedureTypeStatistics()
@@ -258,8 +318,12 @@ export default {
     },
     clearNotification() {
       this.search = ''
-      this.filters.traySelected = 'received'
-      this.updateLoanList()
+      if (this.track) {
+        this.getLoans()
+      } else {
+        this.filters.traySelected = 'received'
+        this.updateLoanList()
+      }
       this.newLoans = []
     },
     setFilters(procedureType) {
@@ -310,20 +374,12 @@ export default {
             filter: 'role'
           }
         })
-        if (this.filters.roleSelected > 0) {
-          res = res.data.find(o => o.role_id == this.filters.roleSelected)
+        res = res.data.find(o => o.role_id == this.filters.roleSelected)
+        if (res) {
           let index
           Object.entries(res.data).forEach(([key, val]) => {
             index = this.trays.findIndex(o => o.name == key)
             if (index !== -1) this.trays[index].count = val <= 999 ? val : '+999'
-          })
-        } else {
-          let count = []
-          this.trays.forEach(tray => {
-            tray.count = res.data.reduce((total, o) => {
-              return total + o.data[tray.name]
-            }, 0)
-            if (tray.count > 999) tray.count = '+999'
           })
         }
       } catch (e) {
@@ -339,13 +395,12 @@ export default {
           }
         })
         res.data.forEach((procedure, index) => {
-          if (this.filters.roleSelected > 0) {
-            this.procedureTypesCount[index] = procedure.data.find(o => o.role_id == this.filters.roleSelected).data[this.filters.traySelected]
-          } else {
-            this.procedureTypesCount[index] = procedure.total[this.filters.traySelected]
+          let role = procedure.data.find(o => o.role_id == this.filters.roleSelected)
+          if (role) {
+            this.procedureTypesCount[index] = role.data[this.filters.traySelected]
+            if (this.procedureTypesCount[index] > 9999) this.procedureTypesCount[index] = '+999..'
+            this.$forceUpdate()
           }
-          if (this.procedureTypesCount[index] > 9999) this.procedureTypesCount[index] = '+999..'
-          this.$forceUpdate()
         })
       } catch (e) {
         console.log(e)

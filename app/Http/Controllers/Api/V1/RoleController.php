@@ -14,7 +14,7 @@ class RoleController extends Controller
     /**
     * Lista de roles
     * Devuelve el listado de los roles disponibles en el sistema
-    * @queryParam name Filtrar roles por nombre. Example: PRE-area-de-recepcion
+    * @queryParam name Filtrar roles por nombre. Example: PRE-recepcion
     * @authenticated
     * @responseFile responses/role/index.200.json
     */
