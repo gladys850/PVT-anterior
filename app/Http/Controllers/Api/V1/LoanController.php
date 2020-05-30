@@ -141,7 +141,7 @@ class LoanController extends Controller
         $request->merge([
             'role_id' => $procedure_modality->procedure_type->workflow->pluck('role_id')->intersect($roles)->first()
         ]);
-        if (!$request->role_id) abort(403);
+        if (!$request->role_id) abort(403, 'Debe crear un flujo de trabajo');
         // Guardar préstamo
         $saved = $this->save_loan($request);
         // Relacionar afiliados y garantes
