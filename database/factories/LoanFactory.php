@@ -41,6 +41,10 @@ $factory->define(App\Loan::class, function (Faker $faker) {
         'payment_type_id' => PaymentType::whereName('Cheque')->first()->id,
         'destiny_id' => $procedure_type->loan_destinies->random()->id,
         'role_id' => Role::whereName('PRE-area-de-recepcion')->first()->id,
+        'payable_liquid_calculated'=> $amount,
+        'bonus_calculated' => $faker->numberBetween($min = 24, $max = 72),
+        'liquid_qualification_calculated' => $amount,
+        'indebtedness_calculated' => $faker->randomFloat($nbMaxDecimals = 2, $min = 50, $max = 90),
         'created_at' => $faker->dateTime($max = 'now'),
         'updated_at' => $faker->dateTime($max = 'now')
     ];
