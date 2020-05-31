@@ -709,11 +709,7 @@ class LoanController extends Controller
             $observation = $observation->where($key, $value);
         }
         if ($observation->count() === 1) {
-            $observation = $observation->first();
-            if ($observation->enabled != $request->update['enabled']) {
-                $observation->fill(collect($request->update)->only('enabled')->toArray());
-                $observation->save();
-            }
+            $observation->update($request->update);
         }
         return $loan->observations;
     }
