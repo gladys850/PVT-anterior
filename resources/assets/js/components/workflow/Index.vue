@@ -250,6 +250,9 @@ export default {
   mounted() {
     this.filters.procedureTypeSelected = this.$store.getters.procedureTypes[0]
     this.procedureTypesCount = new Array(this.$store.getters.procedureTypes.length).fill('-')
+    this.bus.$on('emitRefreshLoans', val => {
+      this.updateLoanList();
+    })
   },
   watch: {
     search: _.debounce(function () {
