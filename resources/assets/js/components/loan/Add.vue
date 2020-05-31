@@ -23,21 +23,8 @@
               </v-expansion-panel-header>
               <v-expansion-panel-content class="pa-0 ml-0"  >
                 <Steps
-                :modalidad.sync="modalidad"
                 :affiliate.sync="affiliate"
                 :addresses.sync="addresses"/>
-              </v-expansion-panel-content>
-            </v-expansion-panel>
-
-            <v-expansion-panel v-if="!ocultar">
-              <v-expansion-panel-header disable-icon-rotate>
-                GARANTES
-                <template v-slot:actions>
-                  <v-icon color="error">mdi-alert-circle</v-icon>
-                </template>
-              </v-expansion-panel-header>
-              <v-expansion-panel-content>
-                <StepsGuarantor/>
               </v-expansion-panel-content>
             </v-expansion-panel>
           </v-expansion-panels>
@@ -48,7 +35,6 @@
 </template>
 
 <script>
-import StepsGuarantor from '@/components/loan/StepsGuarantor'
 import Steps from '@/components/loan/Steps'
 import Ballots from '@/components/loan/Ballots'
 import Breadcrumbs from '@/components/shared/Breadcrumbs'
@@ -58,7 +44,6 @@ export default {
   components: {
     Steps,
     Ballots,
-    StepsGuarantor,
     Breadcrumbs
   },
   data: () => ({
@@ -67,8 +52,6 @@ export default {
       phone_number:null,
       cell_phone_number:null
     },
-    modalidad:{},
-    ocultar:false,
     degree_name: null,
     category_name: null
   }),

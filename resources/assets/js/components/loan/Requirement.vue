@@ -4,7 +4,7 @@
       <v-data-iterator :items="items" hide-default-footer>
         <template v-slot:header>
           <v-toolbar class="mb-0" color="ternary" dark flat>
-            <v-toolbar-title>REQUISITOS</v-toolbar-title>
+            <v-toolbar-title>REQUISITOS{{reference.id}}</v-toolbar-title>
           </v-toolbar>
           <v-row>
             <v-col v-for="(group,i) in items" :key="i" cols="12" class="py-1">
@@ -141,7 +141,7 @@
       <v-data-iterator :items="optional" hide-default-footer>
         <template>
           <v-toolbar-title class="align-end font-weight-black text-center ma-0 pa-0 pt-5">
-            <h6>Documentos Adicionales{{calculos}}</h6>
+            <h6>Documentos Adicionales</h6>
           </v-toolbar-title>
           <v-row>
             <v-col cols="12" class="ma-0 px-10">
@@ -264,6 +264,10 @@ export default {
       type: Object,
       required: true
     },
+    garantes: {
+      type: Array,
+      required: true
+    },
     formulario: {
       type: Array,
       required: true
@@ -282,6 +286,10 @@ export default {
       required: true
     },
     calculos: {
+      type: Object,
+      required: true
+    },
+    reference: {
       type: Object,
       required: true
     },
@@ -370,6 +378,45 @@ export default {
             amount_requested: this.calculos.montos,
             city_id: this.$store.getters.cityId,
             loan_term: this.calculos.plazo,
+            payment_type_id:this.formulario[0],
+            lenders:[this.$route.query.affiliate_id],
+            payable_liquid_calculated:this.calculos.payable_liquid_calculated,
+            bonus_calculated:this.calculos.bonus_calculated,
+            liquid_qualification_calculated:this.calculos.liquid_qualification_calculated,
+            indebtedness_calculated:this.calculos.indebtedness_calculated,
+            guarantors: this.garantes,
+            personal_reference_id: this.reference.id,
+            account_number:this.formulario[1],
+            destiny_id: this.formulario[2],
+            documents: this.selectedOpc.concat(this.selected.concat(this.radios.filter(Boolean))),
+            notes: this.otherDocuments
+          });
+          printJS({
+            printable: res.data.attachment.content,
+            type: res.data.attachment.type,
+            base64: true
+          })
+          this.$router.push('/workflow')
+        } else {
+          this.toastr.error("Falta seleccionar requisitos, todos los requisitos deben ser presentados."
+          )
+        }
+      } catch (e) {
+        console.log(e);
+      } finally {
+        this.loading = false;
+      }
+    },
+    async saveLoan1() {
+      try {
+        this.idRequirements = this.selected.concat(this.radios.filter(Boolean))
+        if (this.idRequirements.length === this.items.length) {
+          let res = await axios.post(`loan`, {
+            copies: 2,
+            procedure_modality_id:this.modalidad.id,
+            amount_requested: this.calculos.montos,
+            city_id: this.$store.getters.cityId,
+            loan_term: this.calculos.plazo,
             payment_type_id:2,
             lenders:[this.$route.query.affiliate_id],
             payable_liquid_calculated:this.calculos.payable_liquid_calculated,
@@ -377,7 +424,7 @@ export default {
             liquid_qualification_calculated:this.calculos.liquid_qualification_calculated,
             indebtedness_calculated:this.calculos.indebtedness_calculated,
             guarantors: [],
-            personal_reference_id: null,
+            personal_reference_id: this.reference.id,
             account_number:this.formulario[1],
             destiny_id: this.formulario[2],
             documents: this.selectedOpc.concat(this.selected.concat(this.radios.filter(Boolean))),

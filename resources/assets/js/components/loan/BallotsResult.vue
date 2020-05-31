@@ -7,7 +7,7 @@
             <v-col cols="12">
               <v-container class="py-0">
                 <v-row>
-                  <v-col cols="12" class="py-0">Resultado para el Prestamo {{modalidad}}</v-col>
+                  <v-col cols="12" class="py-0">Resultado para el Prestamo</v-col>
                   <br />
                   <v-col cols="12" md="3">
                     <v-layout row wrap>
@@ -24,7 +24,7 @@
                       <ValidationProvider v-slot="{ errors }" name="monto solicitado" :rules="'numeric|min_value:'+datos.minimun_amoun+'|max_value:'+datos.maximun_amoun" mode="aggressive">
                       <v-text-field
                         :error-messages="errors"
-                        label="Monto Maximo Sugerido"
+                        label="Monto Solicitado"
                         v-model ="calculos.montos"
                         v-on:keyup.enter="Calculator()"
                       ></v-text-field>
@@ -53,7 +53,7 @@
                           <fieldset class="pa-3">
                             <p>CALCULO DE CUOTA: {{ calculos.quota_calculated }}</p>
                             <p>INDICE DE ENDEUDAMIENTO: {{calculos.indebtedness_calculated }}</p>
-                            <p>MONTO MAXIMO SUGERIDO : {{calculos.amount_maximum_suggested}}</p>
+                            <p class="success--text font-weight-black">MONTO MAXIMO SUGERIDO : {{calculos.amount_maximum_suggested}}</p>
                           </fieldset>
                         </v-flex>
                       </v-layout>
@@ -143,6 +143,8 @@ export default {
           this.calculos.amount_maximum_suggested = this.calculo.amount_maximum_suggested
           this.calculos.plazo = this.calculos.plazo
 
+
+
             if (this.calculos.montos>this.calculo.amount_maximum_suggested) {
             this.calculos.montos = this.calculo.amount_maximum_suggested
           } else {
@@ -165,11 +167,6 @@ export default {
             ]
           })
           this.calculo = res.data
-           if(this.calculos.montos>this.calculo.amount_maximum_suggested){
-          this.calculos.montos=this.calculo.amount_maximum_suggested
-       }else{
-this.calculos.montos=this.calculos.montos
-       }
 
           this.calculos.payable_liquid_calculated = this.calculo.payable_liquid_calculated
           this.calculos.bonus_calculated = this.calculo.bonus_calculated
@@ -180,8 +177,12 @@ this.calculos.montos=this.calculos.montos
           this.calculos.plazo = this.calculos.plazo
 
 
-      
-          
+
+            if (this.calculos.montos>this.calculo.amount_maximum_suggested) {
+            this.calculos.montos = this.calculo.amount_maximum_suggested
+          } else {
+            this.calculos.montos = this.calculos.montos
+          }  
           
       console.log('entro a calculos'+this.calculos.amount_maximum_suggested)
         }
