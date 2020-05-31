@@ -50,7 +50,7 @@
               </template>
               <span>Nuevo trámite</span>
             </v-tooltip>
-            <v-tooltip left v-if="loan.length > 0">
+            <!--<v-tooltip left v-if="loan.length > 0">
               <template v-slot:activator="{ on }">
                 <v-btn
                   fab
@@ -68,7 +68,7 @@
                 </v-btn>
               </template>
               <span>Ver préstamos</span>
-            </v-tooltip>
+            </v-tooltip>-->
           </v-card-text>
         </v-card>
       </v-col>
