@@ -46,7 +46,7 @@
                       >
                         <template v-slot:item="items">
                           <tr>
-                            <td>{{items.item.user_id}}</td>
+                            <td>{{items.item.user_name}}</td>
                             <td>{{ observation_type.find(o => o.id == items.item.observation_type_id).name }}</td>
                             <td>{{items.item.message}}</td>
                             <td>{{items.item.date|datetime}}</td>
@@ -79,7 +79,7 @@
                                       items.item.observation_type_id, 
                                       items.item.message, 
                                       items.item.date, 
-                                      items.item.enabled)"                                   
+                                      items.item.enabled)"  
                                   >
                                     <v-icon>mdi-delete</v-icon>
                                   </v-btn>
@@ -202,11 +202,11 @@ export default {
         align: "left",
         value: "recordable_id"
       },*/
-           {
+      {
         text: "Fecha",
         class: ["normal", "white--text"],
         align: "left",
-        value: "date"
+         value: "date"
       }, 
       {
         text: "Acciones realizadas",
@@ -332,7 +332,7 @@ export default {
         this.loading = false;
       }
     },
-    async getUser(id) {
+      async getUser(id) {
       try {
         this.loading = true;
         let res = await axios.get(`user/${id}`);
@@ -340,7 +340,7 @@ export default {
         console.log(this.user);
       } catch (e) {
         console.log(e);
-      } 
+      }
     },
     async getModuleRole(id) {
       try {
