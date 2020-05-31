@@ -1,13 +1,12 @@
 <template>
   <v-container fluid>
-    <v-card>
-        <v-toolbar-title class="text-grey darken-2 ma-0 pa-4 pl-8">DOCUMENTOS PRESENTADOS</v-toolbar-title>
+    <v-toolbar-title class="text-grey darken-2 ma-0 pa-4 pb-0 pl-8">DOCUMENTOS PRESENTADOS</v-toolbar-title>
       <v-row>
         <v-col cols="12" md="6">
       <v-data-iterator :items="docsRequired" hide-default-footer>
         <template v-slot:header>
           <v-toolbar-title class=" font-weight-light align-end ma-0 pa-4 pl-8">
-            <h3>Documentos Requeridos</h3>
+            <h4>Documentos Requeridos</h4>
           </v-toolbar-title>
           <v-row>
             <v-col v-for="(req,i) in docsRequired" :key="i" cols="12" class="py-1">
@@ -24,7 +23,7 @@
                       </v-col>
                       <v-col cols="10" class="py-0 ml-n8">
                         <v-list-item-content
-                          class="align-end font-weight-light py-0"
+                          class="align-end font-weight-light py-2 pl-8"
                         >{{ req.name }}</v-list-item-content>
                       </v-col>
                     </v-list-item>
@@ -40,7 +39,7 @@
       <v-data-iterator :items="docsOptional" hide-default-footer>
         <template v-slot:header>
           <v-toolbar-title class="align-end font-weight-light ma-0 pa-4 pl-8">
-            <h3>Documentos Adicionales</h3>
+            <h4>Documentos Adicionales</h4>
           </v-toolbar-title>
           <v-row>
             <v-col v-for="(opt,i) in docsOptional" :key="i" cols="12" class="py-1">
@@ -57,7 +56,7 @@
                       </v-col>
                       <v-col cols="10" class="py-0 ml-n8">
                         <v-list-item-content
-                          class="align-end font-weight-light py-0"
+                          class="align-end font-weight-light py-2 pl-8"
                         >{{ opt.name }}</v-list-item-content>
                       </v-col>
                     </v-list-item>
@@ -87,7 +86,6 @@
       </v-data-iterator>
       </v-col>
       </v-row>
-    </v-card>
   </v-container>
 </template>
 
