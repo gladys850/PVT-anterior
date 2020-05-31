@@ -10,19 +10,23 @@
       </v-col>
       <v-col cols="4" class="ma-0 pa-0">
         <v-card color="secondary">
-           <v-card-text class="ma-0 pa-0">
+           <v-card-text class="ma-0 pa-2">
             <v-col cols="12" color="#EDF2F4" class="red--text text--lighten-5 ma-0 pa-0">
               <center>
-                PRESTATARIO:{{this.$options.filters.fullName(this.affiliate, true)}}
+               
+                <strong>PRESTATARIO:</strong> {{$options.filters.fullName(affiliate, true)}}
                 <br/>
-                GRADO: {{this.degree_name}}
+                <strong>GRADO:</strong> {{degree_name}}
                 <br />
-                MODALIDAD: {{this.loan.procedure_modality_id}}
+                <strong>UNIDAD:</strong> {{unit_name}}
+                <br>
+                <strong>MODALIDAD:</strong> {{procedure_modality_name | uppercase }}
                 <br />
-                MONTO SOLICITADO: {{this.loan.amount_requested}}
+                <strong>MONTO SOLICITADO:</strong> {{loan.amount_requested + ' Bs'}}
                 <br />
-                MESES PLAZO: {{this.loan.loan_term}}
+                <strong>MESES PLAZO:</strong> {{loan.loan_term}}
                 <br />
+               
                 <!--TIPO: {{affiliate.type}}-->
                  <!-- <v-icon color="#EDF2F4">mdi-account-heart</v-icon>
                 Estado Civil: {{affiliate.civil_status=='C'? 'CASADO':affiliate.civil_status=='S'? 'SOLTERO':affiliate.civil_status=='D'?'DIVORCIADO':'VIUDO'}}-->
@@ -53,22 +57,24 @@ export default {
     loading: false,
     degree_name: null,
     unit_name: null,
-    procedure_modality: null
+    procedure_modality_name: ''
   }),
   computed: {
     isNew() {
       return this.$route.params.id == "new";
     }
   },
-  mounted(){
-    this.getProcedureModality()
-  },
+
   watch: {
     affiliate(newVal, oldVal) {
       if (oldVal != newVal) {
         if (newVal.hasOwnProperty('degree_id')) this.getDegree_name(newVal.degree_id)
-        if (newVal.hasOwnProperty('unit_id')) this.getDegree_name(newVal.unit_id)
-        
+        if (newVal.hasOwnProperty('unit_id')) this.getUnit_name(newVal.unit_id)
+      }
+    },
+    loan(newVal, oldVal){
+      if (oldVal != newVal) {
+        if (newVal.hasOwnProperty('procedure_modality_id')) this.getProcedureModalityName(newVal.procedure_modality_id)
       }
     }
   },
@@ -95,13 +101,12 @@ export default {
         this.loading = false;
       }
     },
-    async getProcedureModality() {
+    async getProcedureModalityName(id) {
       try {
         this.loading = true;
-        let res = await axios.get(`procedure_modality`);
-        this.procedure_modality = res.data
-        console.log(this.procedure_modality)
-      
+        let res = await axios.get(`procedure_modality/${id}`);
+        this.procedure_modality_name = res.data.name
+        console.log(this.procedure_modality_name)      
       } catch (e) {
         console.log(e);
       } finally {

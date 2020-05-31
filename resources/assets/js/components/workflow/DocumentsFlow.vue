@@ -1,12 +1,12 @@
 <template>
   <v-container fluid>
     <v-card>
+        <v-toolbar-title class="text-grey darken-2 ma-0 pa-4 pl-8">DOCUMENTOS PRESENTADOS</v-toolbar-title>
+      <v-row>
+        <v-col cols="12" md="6">
       <v-data-iterator :items="docsRequired" hide-default-footer>
         <template v-slot:header>
-          <v-toolbar class="mb-0" color="ternary" dark flat>
-            <v-toolbar-title>DOCUMENTOS PRESENTADOS</v-toolbar-title>
-          </v-toolbar>
-          <v-toolbar-title class="align-end font-weight-black text-center ma-0 pa-0 pt-5">
+          <v-toolbar-title class=" font-weight-light align-end ma-0 pa-4 pl-8">
             <h3>Documentos Requeridos</h3>
           </v-toolbar-title>
           <v-row>
@@ -35,10 +35,11 @@
           </v-row>
         </template>
       </v-data-iterator>
-
+    </v-col>
+    <v-col cols="12" md="6" >
       <v-data-iterator :items="docsOptional" hide-default-footer>
         <template v-slot:header>
-          <v-toolbar-title class="align-end font-weight-black text-center ma-0 pa-0 pt-5">
+          <v-toolbar-title class="align-end font-weight-light ma-0 pa-4 pl-8">
             <h3>Documentos Adicionales</h3>
           </v-toolbar-title>
           <v-row>
@@ -67,13 +68,13 @@
           </v-row>
         </template>
         <template>
-          <v-toolbar-title class="align-end font-weight-black text-left ma-0 pl-8 pt-5">
+          <v-toolbar-title class="align-end font-weight-black text-left ma-0 pa-4 pl-8">
             <h5>Otros Documentos</h5>
           </v-toolbar-title>
           <v-row>
             <v-col cols="12" class="ma-0 px-10">
               <div
-                class="align-end font-weight-light ma-0 pa-0"
+                class="align-end font-weight-light ma-0 pa-0 pl-2"
                 v-for="(note, index) of notes"
                 :key="index"
               >
@@ -84,6 +85,8 @@
           </v-row>
         </template>
       </v-data-iterator>
+      </v-col>
+      </v-row>
     </v-card>
   </v-container>
 </template>

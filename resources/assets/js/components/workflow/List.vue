@@ -41,7 +41,7 @@
       {{ item.estimated_quota | money }}
     </template>
     <template v-slot:item.actions="{ item }">
-      <v-tooltip bottom v-if="$store.getters.permissions.includes('update-loan')">
+      <v-tooltip bottom>
          <template v-slot:activator="{ on }">
           <v-btn
             icon
@@ -54,7 +54,7 @@
           </v-btn>
          </template>
         <span>Ver trámite</span>
-      </v-tooltip>
+      </v-tooltip>      
       <v-menu
         offset-y
         close-on-content-click
@@ -78,12 +78,36 @@
             :key="index"
           >
             <v-list-item-title class="py-0">
-              <v-btn text 
-                @click="imprimir(index,item.id)" >
-                <v-icon v-show="index==0"> mdi-file-account-outline</v-icon> 
-                <v-icon v-show="index==1"> mdi-file-document-outline</v-icon> 
-                {{ item.title }}
-              </v-btn>
+               <v-tooltip left>
+                  <template v-slot:activator="{ on }">
+                    <v-btn 
+                      icon
+                      small
+                      v-on="on"
+                      color="light-blue accent-4"
+                      v-show="index==0"
+                      @click="imprimir(index,item.id)"
+                      >
+                      <v-icon > mdi-file-document</v-icon> 
+                    </v-btn>
+                  </template>
+                  <span>Contrato</span>
+              </v-tooltip>
+              <v-tooltip left> 
+              <template v-slot:activator="{ on }">
+                    <v-btn 
+                      icon
+                      small
+                      color="light-blue accent-3"
+                      v-on="on"
+                      v-show="index==1"
+                      @click="imprimir(index,item.id)"
+                      >
+                      <v-icon > mdi-file</v-icon> 
+                    </v-btn>
+                  </template>
+                  <span>Formulario</span>
+              </v-tooltip>                  
             </v-list-item-title>
           </v-list-item>
         </v-list>
@@ -91,8 +115,8 @@
     </template>
   </v-data-table>
 </template>
-
 <script>
+
 export default {
   name: 'workflow-list',
   props: {
@@ -189,7 +213,12 @@ export default {
     },
     tray(val) {
       if (typeof val === 'string') this.updateHeader()
-    }
+    },
+  },
+  mounted() {
+    this.bus.$on('emitRefreshLoans', val => {
+      this.selectedLoans = []
+    })
   },
   methods: {
     updateOptions($event) {
@@ -197,13 +226,26 @@ export default {
     },
     async imprimir(index,item)
     {
-      if(index==0)
-      {
-         let res = await axios.get(`loan/${item}/print/contract`)
+      try {
+        let res
+        if(index==0)
+        {
+          res = await axios.get(`loan/${item}/print/contract`)
+        }
+        else{
+          res = await axios.get(`loan/${item}/print/form`)
+        } 
+        printJS({
+            printable: res.data.content,
+            type: res.data.type,
+            file_name: res.data.file_name,
+            base64: true
+        })  
+      } catch (e) {
+        toast.error("Ocurrió un error en la impresión.")
+        console.log(e)
       }
-      else{
-        let res = await axios.get(`loan/${item}/print/form`)
-      } 
+      
     },
     updateHeader() {
       if (this.tray != 'all') {

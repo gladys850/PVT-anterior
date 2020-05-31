@@ -73,10 +73,15 @@
                                     icon
                                     small
                                     color="error"
-                                    @click.stop="bus.$emit('openRemoveDialog', {...`loan/${loan.id}/observation`,...{...items.item,}})"
                                     v-on="on"
+                                    @click.stop="deleteObservation( 
+                                      items.item.user_id, 
+                                      items.item.observation_type_id, 
+                                      items.item.message, 
+                                      items.item.date, 
+                                      items.item.enabled)"                                   
                                   >
-                                    <v-icon   >mdi-delete</v-icon>
+                                    <v-icon>mdi-delete</v-icon>
                                   </v-btn>
                                 </template>
                                 <span class="caption">Eliminar</span>
@@ -102,9 +107,10 @@
                       >
                         <template v-slot:item="items">
                           <tr>
-                            <td>{{items.item.user_id}}</td>
-                            <!--<td>{{items.item.record_type_id}}</td>-->
-                            <td>{{items.item.recordable_id}}</td>
+                            <!--<td>{{items.item.user_id}}</td>
+                            <td>{{items.item.record_type_id}}</td>
+                            <td>{{items.item.recordable_id}}</td>-->
+                            <td>{{items.item.date|datetime}}</td>
                             <td>{{items.item.action}}</td>
                           </tr>
                         </template>
@@ -175,10 +181,10 @@ export default {
     //valDevolver: null,
     valor:false,
     observation_type:[],
-    user: [] ,
+    user: null ,
     bus: new Vue(),
     headers: [
-      {
+      /*{
         text: "Usuario",
         class: ["normal", "white--text"],
         align: "left",
@@ -190,14 +196,20 @@ export default {
         align: "left",
         value: "record_type_id"
       },
-      /*{
+      {
         text: "Trámite",
         class: ["normal", "white--text"],
         align: "left",
         value: "recordable_id"
       },*/
+           {
+        text: "Fecha",
+        class: ["normal", "white--text"],
+        align: "left",
+        value: "date"
+      }, 
       {
-        text: "Accion",
+        text: "Acciones realizadas",
         class: ["normal", "white--text"],
         align: "left",
         value: "accion"
@@ -320,17 +332,15 @@ export default {
         this.loading = false;
       }
     },
-    async getUser() {
+    async getUser(id) {
       try {
         this.loading = true;
-        let res = await axios.get(`user`);
-        this.user = res.data;
+        let res = await axios.get(`user/${id}`);
+        this.user = res.data.username;
         console.log(this.user);
       } catch (e) {
         console.log(e);
-      } finally {
-        this.loading = false;
-      }
+      } 
     },
     async getModuleRole(id) {
       try {
@@ -360,6 +370,26 @@ export default {
       for(let i = 0; i < this.flow.length; i++){
         areas = this.listRoles.find((item) => item.id == this.flow[i])
         this.listAreas.push(areas)
+      }
+    },
+    async deleteObservation(user_id1, observation_type_id1, message1, date1, enabled1) {
+      try {       
+        let res = await axios.delete(`loan/${this.loan.id}/observation`, {data:{
+            user_id: user_id1, 
+            observation_type_id: observation_type_id1,
+            message:message1,
+            date: date1,
+            enabled: enabled1 
+          }
+        });
+        console.log("DATOS"+ user_id1, observation_type_id1, message1, date1, enabled1 +" loan " + this.loan.id)     
+        this.toastr.success("La observación fue eliminada.")
+        this.bus1.$emit('emitGetObservation',this.loan.id);
+
+      } catch (e) {
+        console.log(e)
+      } finally {
+        this.loading = false
       }
     },
   },
