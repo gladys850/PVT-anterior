@@ -4,6 +4,7 @@ use Illuminate\Support\Str;
 use Illuminate\Database\Seeder;
 use App\Module;
 use App\Role;
+use App\RoleSequence;
 
 class AdvanceRoleSeeder extends Seeder
 {
@@ -14,6 +15,7 @@ class AdvanceRoleSeeder extends Seeder
      */
     public function run()
     {
+        RoleSequence::flushEventListeners();
         Role::flushEventListeners();
         $old_receipt = Role::whereName('PRE-area-de-recepcion')->first();
         if ($old_receipt) {
