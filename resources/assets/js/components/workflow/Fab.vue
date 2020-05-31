@@ -29,7 +29,8 @@
           <v-card-title>Derivar {{ " ("+selectedLoans.length +") "}} trámites</v-card-title>
           <v-divider></v-divider>
           <v-card-text style="height: 300px;">
-            <v-select
+            <div >
+            <v-select v-if="$store.getters.roles.filter(o => flow.next.includes(o.id)).length > 1"
               v-model="selectedRoleId"
               :items="$store.getters.roles.filter(o => flow.next.includes(o.id))"
               label="Seleccione el área para derivar"
@@ -38,7 +39,9 @@
               item-value="id"
               dense
             ></v-select>
-            <div>{{$store.getters.roles.filter(o => flow.next.includes(o.id)).di }}</div>
+            <div v-else><h3>Área para derivar: {{String($store.getters.roles.filter(o => flow.next.includes(o.id)).map(o => o.display_name))}}</h3></div>           
+            </div>
+
             <div class="blue--text">Los siguientes trámites serán derivados: </div>     
             <small>{{ selectedLoans.map(o => o.code).join(', ') }}</small>
           </v-card-text>
@@ -98,14 +101,26 @@ export default {
     async derivationLoans() {
       this.idLoans = this.selectedLoans.map(o => o.id)
       try {
-        this.loading = true;
-        let res = await axios.patch(`loans`, {
-          ids: this.idLoans,
-          role_id: this.selectedRoleId
-        });
-        this.sheet = false;
-        this.bus.$emit('emitGetloans');
-        this.toastr.success("El trámite fue derivado." )      
+        if(this.$store.getters.roles.filter(o => this.flow.next.includes(o.id)).length > 1){
+          this.loading = true;
+            let res = await axios.patch(`loans`, {
+              ids: this.idLoans,
+              role_id: this.selectedRoleId
+            });
+            this.sheet = false;
+            this.bus.$emit('emitRefreshLoans');
+            this.toastr.success("El trámite fue derivado." ) 
+        }else{
+            this.loading = true;
+            let res = await axios.patch(`loans`, {
+              ids: this.idLoans,
+              role_id: parseInt(this.$store.getters.roles.filter(o => this.flow.next.includes(o.id)).map(o => o.id)),
+            });
+            this.sheet = false;
+            this.bus.$emit('emitRefreshLoans');
+            this.toastr.success("El trámite fue derivado." ) 
+        }
+     
       } catch (e) {
         console.log(e)
         this.toastr.error("Ocurrió un error en la derivación...")
