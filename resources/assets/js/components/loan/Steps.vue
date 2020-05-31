@@ -3,68 +3,49 @@
     <v-stepper v-model="e1" >
       <v-stepper-header class=" !pa-0 ml-0" >
         <template>
-          <v-stepper-step
+          <v-stepper-step editable
             :key="`${1}-step`"
             :complete="e1 > 1"
-            :step="1"
-            editable
-          >Modalidad
+            :step="1">Modalidad
           </v-stepper-step>
-          <v-divider
-            v-if="1 !== steps"
-            :key="1"
-          ></v-divider>
-          <v-stepper-step
+          <v-divider v-if="1 !== steps" :key="1" ></v-divider>
+          <v-stepper-step editable
             :key="`${2}-step`"
             :complete="e1 > 2"
-            :step="2"
-            editable
-          >Calculo
+            :step="2">Calculo
           </v-stepper-step>
-          <v-divider
-            v-if="2 !== steps"
-            :key="2"
-          ></v-divider>
-          <v-stepper-step
+          <v-divider v-if="2 !== steps" :key="2" ></v-divider>
+          <v-stepper-step editable
             :key="`${3}-step`"
             :complete="e1 > 3"
-            :step="3"
-            editable
-          >Afiliado
+            :step="3">Garantes 
           </v-stepper-step>
-          <v-divider
-            v-if="3 !== steps"
-            :key="3"
-          ></v-divider>
-          <v-stepper-step
+          <v-divider v-if="3 !== steps" :key="3" ></v-divider>
+          <v-stepper-step editable
             :key="`${4}-step`"
             :complete="e1 > 4"
             :step="4"
-            editable
-          >Formulario
+            >Afiliado
           </v-stepper-step>
-          <v-divider
-            v-if="4 !== steps"
-            :key="4"
-          ></v-divider>
-          <v-stepper-step
+          <v-divider v-if="4 !== steps" :key="4" ></v-divider>
+          <v-stepper-step  editable
             :key="`${5}-step`"
             :complete="e1 > 5"
             :step="5"
-            editable
-          >Requisitos
+           >Formulario
           </v-stepper-step>
-          <v-divider
-            v-if="5 !== steps"
-            :key="5"
-          ></v-divider>
+          <v-divider v-if="5 !== steps" :key="5" ></v-divider>
+          <v-stepper-step editable
+            :key="`${6}-step`"
+            :complete="e1 > 6"
+            :step="6"
+            >Requisitos
+          </v-stepper-step>
+          <v-divider v-if="6 !== steps" :key="6" ></v-divider>
         </template>
       </v-stepper-header>
       <v-stepper-items>
-        <v-stepper-content
-          :key="`${1}-content`"
-          :step="1"
-        >
+        <v-stepper-content :key="`${1}-content`" :step="1">
           <v-card color="grey lighten-1">
             <Ballots
               :modalities.sync="modalities"
@@ -73,14 +54,12 @@
               :intervalos.sync="intervalos"
               :contributions1.sync="contributions1"
               :modalidad.sync="modalidad"
+              :prueba.sync="prueba"
             />
             <v-container class="py-0">
               <v-row>
-                <v-spacer></v-spacer>
-                <v-spacer></v-spacer>
-                <v-spacer></v-spacer>
+                <v-spacer></v-spacer> <v-spacer></v-spacer> <v-spacer></v-spacer>
                 <v-col class="py-0">
-                  <v-btn text>Cancelar</v-btn>
                   <v-btn
                     color="primary"
                     @click="nextStep(1)">
@@ -91,10 +70,7 @@
             </v-container>
           </v-card>
         </v-stepper-content>
-        <v-stepper-content
-          :key="`${2}-content`"
-          :step="2"
-        >
+        <v-stepper-content :key="`${2}-content`" :step="2" >
           <v-card color="grey lighten-1">
             <h3 class="text-uppercase text-center">{{modalidad.name}}</h3>
             <BallotsResult
@@ -106,9 +82,7 @@
             />
             <v-container class="py-0">
               <v-row>
-                <v-spacer></v-spacer>
-                <v-spacer></v-spacer>
-                <v-spacer></v-spacer>
+                <v-spacer></v-spacer><v-spacer> </v-spacer> <v-spacer></v-spacer>
                 <v-col class="py-0">
                   <v-btn text
                   @click="beforeStep(2)">Atras</v-btn>
@@ -122,21 +96,18 @@
             </v-container>
           </v-card>
         </v-stepper-content>
-        <v-stepper-content
-          :key="`${3}-content`"
-          :step="3"
-        >
+        <v-stepper-content :key="`${3}-content`" :step="3" >
           <v-card color="grey lighten-1">
             <h3 class="text-uppercase text-center">{{modalidad.name}}</h3>
-            <PersonalInformation
-              :affiliate.sync="affiliate"
-              :addresses.sync="addresses"
-            />
+            <Guarantor
+              :modalidad_guarantors.sync="modalidad.guarantors"
+              :prueba.sync="prueba"
+              :calculos.sync="calculos"
+              :garantes.sync="garantes"
+              :modalidad_id.sync="modalidad.id"/>
             <v-container class="py-0">
               <v-row>
-                <v-spacer></v-spacer>
-                <v-spacer></v-spacer>
-                <v-spacer></v-spacer>
+                <v-spacer></v-spacer><v-spacer></v-spacer> <v-spacer></v-spacer>
                 <v-col class="py-0">
                   <v-btn text
                   @click="beforeStep(3)">Atras</v-btn>
@@ -150,26 +121,20 @@
             </v-container>
           </v-card>
         </v-stepper-content>
-        <v-stepper-content
-          :key="`${4}-content`"
-          :step="4"
-          >
+        <v-stepper-content :key="`${4}-content`" :step="4" >
           <v-card color="grey lighten-1">
             <h3 class="text-uppercase text-center">{{modalidad.name}}</h3>
-            <FormInformation
-              :formulario.sync="formulario"
-              :modalidad.sync="modalidad"
-              :personal_reference="personal_reference"
-              />
+            <PersonalInformation
+              :affiliate.sync="affiliate"
+              :addresses.sync="addresses"
+            />
             <v-container class="py-0">
               <v-row>
-                <v-spacer></v-spacer>
-                <v-spacer></v-spacer>
-                <v-spacer></v-spacer>
+                <v-spacer></v-spacer><v-spacer></v-spacer><v-spacer></v-spacer>
                 <v-col class="py-0">
                   <v-btn text
-                    @click="beforeStep(4)">Atras</v-btn>
-                  <v-btn
+                  @click="beforeStep(4)">Atras</v-btn>
+                  <v-btn right
                     color="primary"
                     @click="nextStep(4)">
                     Siguiente
@@ -179,10 +144,34 @@
             </v-container>
           </v-card>
         </v-stepper-content>
-        <v-stepper-content
-          :key="`${5}-content`"
-          :step="5"
-          >
+        <v-stepper-content :key="`${5}-content`" :step="5">
+          <v-card color="grey lighten-1">
+            <h3 class="text-uppercase text-center">{{modalidad.name}}</h3>
+            <FormInformation
+              :formulario.sync="formulario"
+              :modalidad_personal_reference.sync="modalidad.personal_reference"
+              :personal_reference.sync="personal_reference"
+              :prueba.sync="prueba"
+              :calculos.sync="calculos"
+              :intervalos.sync="intervalos"
+            />
+            <v-container class="py-0">
+              <v-row>
+                <v-spacer></v-spacer><v-spacer></v-spacer><v-spacer></v-spacer>
+                <v-col class="py-0">
+                  <v-btn text
+                    @click="beforeStep(5)">Atras</v-btn>
+                  <v-btn
+                    color="primary"
+                    @click="nextStep(5)">
+                    Siguiente
+                  </v-btn>
+                </v-col>
+              </v-row>
+            </v-container>
+          </v-card>
+        </v-stepper-content>
+        <v-stepper-content :key="`${6}-content`" :step="6" >
           <v-card color="grey lighten-1">
             <h3 class="text-uppercase text-center">{{modalidad.name}}</h3>
             <Requirement
@@ -192,6 +181,8 @@
               :calculos.sync="calculos"
               :intervalos.sync="intervalos"
               :modalidad.sync="modalidad"
+              :reference.sync="reference"
+              :garantes.sync="garantes"
               :modalidad_id.sync="modalidad.id"/>
           </v-card>
         </v-stepper-content>
@@ -212,8 +203,8 @@ import Ballots from '@/components/loan/Ballots'
 import Requirement from '@/components/loan/Requirement'
 import BallotsResult from '@/components/loan/BallotsResult'
 import PersonalInformation from '@/components/affiliate/PersonalInformation'
-import LoanInformation from '@/components/loan/LoanInformation'
 import FormInformation from '@/components/loan/FormInformation'
+import Guarantor from '@/components/loan/Guarantor'
 export default {
   name: "loan-steps",
   props: {
@@ -221,29 +212,29 @@ export default {
       type: Object,
       required: true
     },
-    modalidad: {
-      type: Object,
-      required: true
-    },
     addresses: {
       type: Array,
       required: true
-    },
+    }
   },
   components: {
     Requirement,
     Ballots,
     PersonalInformation,
-    LoanInformation,
     FormInformation,
-    BallotsResult
+    BallotsResult,
+    Guarantor
   },
    data: () => ({
     bus: new Vue(),
     e1: 1,
-    steps: 5,
+    steps: 6,
     modalities: [],
+    prueba: [],
+    garantes: [],
+    modalidad:{},
     datos:{},
+    reference:{},
     intervalos:{},
     contributions1:[{},{},{} ],
     payable_liquid:[0,0,0],
@@ -286,10 +277,28 @@ export default {
         if(n==1)
         {
           this.Calculator()
+               console.log('esta es la modalidad ultima prueba'+this.modalidad.id)
+     
+        }
+        if(n==2)
+        {
+          console.log('segundo'+this.modalidad.guarantors )
         }
         if(n==4)
         {
+          console.log('segundo'+this.modalidad.personal_reference)
+             console.log('este es el formulario 0'+this.formulario[0])
+             console.log('este es el formulario 1'+this.formulario[1])
+             console.log('este es el formulario 2'+this.formulario[2])
+
+        }
+        if(n==5)
+        {
           this.personal()
+          console.log('segundo'+this.modalidad.personal_reference)
+             console.log('este es el formulario 0'+this.formulario[0])
+             console.log('este es el formulario 1'+this.formulario[1])
+             console.log('este es el formulario 2'+this.formulario[2])
         }
         this.e1 = n + 1
      }
@@ -302,7 +311,7 @@ export default {
       try {
         if (this.modalidad.personal_reference) {
             let res = await axios.post(`personal_reference`, {
-              city_identity_card_id:5,
+              city_identity_card_id:this.personal_reference.city_identity_card_id,
               identity_card:this.personal_reference.identity_card,
               last_name:this.personal_reference.last_name,
               mothers_last_name:this.personal_reference.mothers_last_name,
@@ -311,61 +320,14 @@ export default {
               phone_number:this.personal_reference.phone_number,
               cell_phone_number:this.personal_reference.cell_phone_number
             })
+            this.reference=res.data
           }
       } catch (e) {
         console.log(e)
       } finally {
         this.loading = false
-     
-console.log('entro por verdader'+this.modalidad.personal_reference)
+        console.log('entro por verdader'+this.modalidad.personal_reference)
       }
-      
-  /*    try {
-        if (!this.editable) {
-            this.editable = true
-        } else {
-          if (this.isNew) {
-          // New affiliate
-            let res = await axios.post(`affiliate`, this.affiliate)
-            this.toastr.success('Afiliado adicionado')
-            //Actualizar dirección,  obteniendo respuesta POST afiliado nuevo (res.data.id)
-            await axios.patch(`affiliate/${res.data.id}/address`, {
-            addresses: this.addresses.map(o => o.id)
-            })
-          } else {
-            // Edit affiliate
-            await axios.patch(`affiliate/${this.affiliate.id}`, this.affiliate)
-            await axios.patch(`affiliate/${this.affiliate.id}/address`, {
-              addresses: this.addresses.map(o => o.id)
-            })
-            //Preguntar si afiliado esta fallecido
-            if((this.affiliate.date_death != null && this.affiliate.date_death != '') || 
-                (this.affiliate.reason_death != null && this.affiliate.reason_death != '')){
-              if(this.spouse.id){
-                await axios.patch(`spouse/${this.spouse.id}`, this.spouse)
-              }else{
-                this.spouse.affiliate_id=this.affiliate.id
-                await axios.post(`spouse`, this.spouse)
-              }
-            }
-            this.editable = false
-          }
-        this.toastr.success('Registro guardado correctamente')
-        this.editable = false
-        }
-      } catch (e) {
-        console.log(e)
-      } finally {
-        this.loading = false
-      }
-        "city_identity_card_id": 5,
-    "identity_card": "165134-1L",
-    "last_name": "PINTO",
-    "mothers_last_name": "ROJAS",
-    "first_name": "JUAN",
-    "second_name": "ROBERTO",
-    "phone_number": 2254101,
-    "cell_phone_number": 76543210*/
     },
     //Metodo para identificar el modulo
     async getProcedureType() {
@@ -424,7 +386,11 @@ console.log('entro por verdader'+this.modalidad.personal_reference)
         })
         this.calculos= res.data
         this.calculos.plazo=this.intervalos.maximum_term
-        this.calculos.montos=this.intervalos.maximun_amoun
+        if( this.calculos.amount_maximum_suggested<this.intervalos.maximun_amoun){
+          this.calculos.montos=this.calculos.amount_maximum_suggested
+        }else{
+          this.calculos.montos=this.intervalos.maximun_amoun
+        }
         this.datos =this.intervalos
         }else{
           let res = await axios.post(`calculator`, {
@@ -444,7 +410,11 @@ console.log('entro por verdader'+this.modalidad.personal_reference)
         })
         this.calculos= res.data
         this.calculos.plazo=this.intervalos.maximum_term
-        this.calculos.montos=this.intervalos.maximun_amoun
+         if( this.calculos.amount_maximum_suggested<this.intervalos.maximun_amoun){
+          this.calculos.montos=this.calculos.amount_maximum_suggested
+        }else{
+          this.calculos.montos=this.intervalos.maximun_amoun
+        }
         this.datos =this.intervalos
         }
       }catch (e) {

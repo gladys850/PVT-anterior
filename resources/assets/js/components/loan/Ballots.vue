@@ -1,162 +1,162 @@
 <template>
   <v-flex xs12 class="px-3">
     <ValidationObserver ref="observer">
-    <v-form>
-    <v-row justify="center">
-      <v-col cols="12"  >
-        <v-card>
-          <v-container fluid >
-            <v-row justify="center" class="py-0">
-              <v-col cols="12" class="py-0" >
-                <v-container class="py-0">
-                  <v-row>
-                    <v-col cols="12" md="4" class="py-0 text-center">
-                      MODALIDAD DEL PRESTAMO
-                    </v-col>
-                    <v-col cols="12" md="4" class="py-0 text-center">
-                      INTERVALO DE LOS MONTOS
-                    </v-col>
-                    <v-col cols="12" md="4" class="py-0 text-center">
-                      INTERVALO DEL PLAZO EN MESES
-                    </v-col>
-                    <v-col cols="12" md="4" class="py-0">
-                      <ValidationProvider v-slot="{ errors }" vid="modalities" name="Modalidad" rules="required">
-                      <v-select
-                        :error-messages="errors"
-                        dense
-                        v-model="loanTypeSelected"
-                        :onchange="Onchange()"
-                        :items="modalities"
-                        item-text="name"
-                        item-value="id"
-                        :rules="[(v) => !!v || 'El campo de Modalidad de préstamo es requerido']"
-                        required
-                      ></v-select>
-                      </ValidationProvider>
-                    </v-col>
-                    <v-col cols="12" md="4" class="py-0 text-center">
-                      {{monto}}
-                    </v-col>
-                    <v-col cols="12" md="4" class="py-0 text-center" >
-                      {{plazo}}
-                    </v-col>
-                  </v-row>
-                </v-container>
-              </v-col>
-            </v-row>
-          </v-container>
-          <v-container class="py-0">
-            <v-row>
-              <v-col cols="12" md="12" class="text-center" >
-                BOLETAS DE PAGO
-              </v-col>
-              <v-col cols="12" md="4" class="py-0"  >
-                <ValidationProvider v-slot="{ errors }" name="1ra Boleta" rules="min:1|max:20" mode="aggressive">
-                <v-text-field
-                  :error-messages="errors"
-                  dense
-                  v-model="payable_liquid[0]"
-                  label="1ra Boleta"
-                  :readonly="!editar"
-                  :outlined="editar"
-                  :rules="[rules.required, rules.max]"
-                ></v-text-field>
-                </ValidationProvider>
-              </v-col>
-              <v-col cols="12" md="4" class="py-0" v-if="visible">
-                <ValidationProvider v-slot="{ errors }" name="2ra Boleta" rules="min:1|max:20" mode="aggressive">
-                <v-text-field
-                  :error-messages="errors"
-                  dense
-                  v-model="payable_liquid[1]"
-                  label="2ra Boleta"
-                  :readonly="!editar"
-                  :outlined="editar"
-                   :rules="[rules.required, rules.max]"
-                ></v-text-field>
-                </ValidationProvider>
-              </v-col>
-              <v-col cols="12" md="4" class="py-0" v-if="visible" >
-                <ValidationProvider v-slot="{ errors }" name="3ra Boleta" rules="min:1|max:20" mode="aggressive">
-                <v-text-field
-                  :error-messages="errors"
-                  dense
-                  v-model="payable_liquid[2]"
-                  label="3ra Boleta"
-                  :readonly="!editar"
-                  :outlined="editar"
-                   :rules="[rules.required, rules.max]"
-                ></v-text-field>
-                </ValidationProvider>
-              </v-col>
-              <v-col cols="12" class="py-0" >
-                BONOS
-              </v-col>
-              <v-col cols="12" md="3" >
-                <ValidationProvider v-slot="{ errors }" name="1er Bono" rules="min:1|max:20" mode="aggressive">
-                <v-text-field
-                  :error-messages="errors"
-                  dense
-                  v-model="bonos[0]"
-                  label="Bono Frontera"
-                  :readonly="!editar"
-                  :outlined="editar"
-                  :rules="[rules.max]"
-                ></v-text-field>
-                </ValidationProvider>
-              </v-col>
-              <v-col cols="12" md="3">
-                <ValidationProvider v-slot="{ errors }" name="2do Bono" rules="min:1|max:20" mode="aggressive">
-                <v-text-field
-                  :error-messages="errors"
-                  dense
-                  v-model="bonos[1]"
-                  label="Bono Oriente"
-                  :readonly="!editar"
-                  :outlined="editar"
-                  :rules="[rules.max]"
-                ></v-text-field>
-                </ValidationProvider>
-              </v-col>
-              <v-col cols="12" md="3" >
-                <ValidationProvider v-slot="{ errors }" name="3er Bono" rules="min:1|max:20" mode="aggressive">
-                <v-text-field
-                  :error-messages="errors"
-                  dense
-                  v-model="bonos[2]"
-                  label="Bono Cargo"
-                  :readonly="!editar"
-                  :outlined="editar"
-                   :rules="[rules.max]"
-                ></v-text-field>
-                </ValidationProvider>
-              </v-col>
-              <v-col cols="12" md="3">
-                <ValidationProvider v-slot="{ errors }" name="4to Bono" rules="min:1|max:20" mode="aggressive">
-                <v-text-field
-                  :error-messages="errors"
-                  dense
-                  v-model="bonos[3]"
-                  label="Bono Seguridad Ciudadana"
-                  :readonly="!editar"
-                  :outlined="editar"
-                  :rules="[rules.max]"
-                ></v-text-field>
-                </ValidationProvider>
-              </v-col>
-            </v-row>
-          </v-container>
-        </v-card>
-      </v-col>
-    </v-row>
-    </v-form>
+      <v-form>
+        <v-row justify="center">
+          <v-col cols="12"  >
+            <v-card>
+              <v-container fluid >
+                <v-row justify="center" class="py-0">
+                  <v-col cols="12" class="py-0" >
+                    <v-container class="py-0">
+                      <v-row>
+                        <v-col cols="12" md="4" class="py-0 text-center">
+                          MODALIDAD DEL PRESTAMO
+                        </v-col>
+                        <v-col cols="12" md="4" class="py-0 text-center">
+                          INTERVALO DE LOS MONTOS
+                        </v-col>
+                        <v-col cols="12" md="4" class="py-0 text-center">
+                          INTERVALO DEL PLAZO EN MESES
+                        </v-col>
+                        <v-col cols="12" md="4" class="py-0">
+                          <ValidationProvider v-slot="{ errors }" vid="modalities" name="Modalidad" rules="required">
+                          <v-select
+                            :error-messages="errors"
+                            dense
+                            v-model="loanTypeSelected"
+                            :onchange="Onchange()"
+                            :items="modalities"
+                            item-text="name"
+                            item-value="id"
+                            :rules="[(v) => !!v || 'El campo de Modalidad de préstamo es requerido']"
+                            required
+                          ></v-select>
+                          </ValidationProvider>
+                        </v-col>
+                        <v-col cols="12" md="4" class="py-0 text-center">
+                          {{monto}}
+                        </v-col>
+                        <v-col cols="12" md="4" class="py-0 text-center" >
+                          {{plazo}}
+                        </v-col>
+                      </v-row>
+                    </v-container>
+                  </v-col>
+                </v-row>
+              </v-container>
+              <v-container class="py-0">
+                <v-row>
+                  <v-col cols="12" md="12" class="text-center" >
+                    BOLETAS DE PAGO
+                  </v-col>
+                  <v-col cols="12" md="4" class="py-0"  >
+                    <ValidationProvider v-slot="{ errors }" name="1ra Boleta" rules="min:1|max:20" mode="aggressive">
+                    <v-text-field
+                      :error-messages="errors"
+                      dense
+                      v-model="payable_liquid[0]"
+                      label="1ra Boleta"
+                      :readonly="!editar"
+                      :outlined="editar"
+                      :rules="[rules.required, rules.max]"
+                    ></v-text-field>
+                    </ValidationProvider>
+                  </v-col>
+                  <v-col cols="12" md="4" class="py-0" v-if="visible">
+                    <ValidationProvider v-slot="{ errors }" name="2ra Boleta" rules="min:1|max:20" mode="aggressive">
+                    <v-text-field
+                      :error-messages="errors"
+                      dense
+                      v-model="payable_liquid[1]"
+                      label="2ra Boleta"
+                      :readonly="!editar"
+                      :outlined="editar"
+                      :rules="[rules.required, rules.max]"
+                    ></v-text-field>
+                    </ValidationProvider>
+                  </v-col>
+                  <v-col cols="12" md="4" class="py-0" v-if="visible" >
+                    <ValidationProvider v-slot="{ errors }" name="3ra Boleta" rules="min:1|max:20" mode="aggressive">
+                    <v-text-field
+                      :error-messages="errors"
+                      dense
+                      v-model="payable_liquid[2]"
+                      label="3ra Boleta"
+                      :readonly="!editar"
+                      :outlined="editar"
+                      :rules="[rules.required, rules.max]"
+                    ></v-text-field>
+                    </ValidationProvider>
+                  </v-col>
+                  <v-col cols="12" class="py-0" >
+                    BONOS
+                  </v-col>
+                  <v-col cols="12" md="3" >
+                    <ValidationProvider v-slot="{ errors }" name="1er Bono" rules="min:1|max:20" mode="aggressive">
+                    <v-text-field
+                      :error-messages="errors"
+                      dense
+                      v-model="bonos[0]"
+                      label="Bono Frontera"
+                      :readonly="!editar"
+                      :outlined="editar"
+                      :rules="[rules.max]"
+                    ></v-text-field>
+                    </ValidationProvider>
+                  </v-col>
+                  <v-col cols="12" md="3">
+                    <ValidationProvider v-slot="{ errors }" name="2do Bono" rules="min:1|max:20" mode="aggressive">
+                    <v-text-field
+                      :error-messages="errors"
+                      dense
+                      v-model="bonos[1]"
+                      label="Bono Oriente"
+                      :readonly="!editar"
+                      :outlined="editar"
+                      :rules="[rules.max]"
+                    ></v-text-field>
+                    </ValidationProvider>
+                  </v-col>
+                  <v-col cols="12" md="3" >
+                    <ValidationProvider v-slot="{ errors }" name="3er Bono" rules="min:1|max:20" mode="aggressive">
+                    <v-text-field
+                      :error-messages="errors"
+                      dense
+                      v-model="bonos[2]"
+                      label="Bono Cargo"
+                      :readonly="!editar"
+                      :outlined="editar"
+                      :rules="[rules.max]"
+                    ></v-text-field>
+                    </ValidationProvider>
+                  </v-col>
+                  <v-col cols="12" md="3">
+                    <ValidationProvider v-slot="{ errors }" name="4to Bono" rules="min:1|max:20" mode="aggressive">
+                    <v-text-field
+                      :error-messages="errors"
+                      dense
+                      v-model="bonos[3]"
+                      label="Bono Seguridad Ciudadana"
+                      :readonly="!editar"
+                      :outlined="editar"
+                      :rules="[rules.max]"
+                    ></v-text-field>
+                    </ValidationProvider>
+                  </v-col>
+                </v-row>
+              </v-container>
+            </v-card>
+          </v-col>
+        </v-row>
+      </v-form>
     </ValidationObserver>
   </v-flex>
 </template>
 <script>
 
 export default { 
-  name: "dashboard-index",
+  name: "ballots",
   data: () => ({
     editar:true,
     monto:null,
@@ -192,6 +192,10 @@ export default {
       type: Array,
       required: true
     },
+     prueba: {
+      type: Array,
+      required: true
+    },
     intervalos: {
       type: Object,
       required: true
@@ -218,10 +222,21 @@ export default {
           this.intervalos.minimum_term= this.interval[this.i].minimum_term
           this.intervalos.procedure_type_id= this.loanTypeSelected
           this.num_type=this.loanTypeSelected
+          console.log('este es la modalidad del intervalo'+this.num_type)
         }
       }
       this.getLoanModality(this.$route.query.affiliate_id)
       this.getBallots(this.$route.query.affiliate_id)
+    },
+    clearForm()
+    {
+      this.payable_liquid[0]=0
+      this.payable_liquid[1]=0
+      this.payable_liquid[2]=0
+      this.bonos[0]=0
+      this.bonos[1]=0
+      this.bonos[2]=0
+      this.bonos[3]=0
     },
     //Medodo donde identifica la modalidad de acuerdo a las caracteristicas de un affiliado
     async getLoanModality(id) {
@@ -232,6 +247,7 @@ export default {
             external_discount:0,
           }
         })
+        console.log('entro a get modality'+this.num_type)
           this.loan_modality= resp.data
           this.modalidad.id=this.loan_modality.id
           this.modalidad.name=this.loan_modality.name
@@ -239,9 +255,14 @@ export default {
           this.modalidad.guarantors=this.loan_modality.loan_modality_parameter.guarantors
           this.modalidad.min_guarantor_category=this.loan_modality.loan_modality_parameter.min_guarantor_category
           this.modalidad.max_guarantor_category=this.loan_modality.loan_modality_parameter.max_guarantor_category
-    //      this.modalidad.personal_reference=this.loan_modality.loan_modality_parameter.personal_reference
-    this.modalidad.personal_reference=true
-        
+         this.modalidad.personal_reference=this.loan_modality.loan_modality_parameter.personal_reference
+    
+    
+    //this.modalidad.personal_reference=true
+        this.prueba[0]=this.loan_modality.loan_modality_parameter.guarantors
+        this.prueba[1]=this.loan_modality.loan_modality_parameter.min_guarantor_category
+        this.prueba[2]=this.loan_modality.loan_modality_parameter.max_guarantor_category
+        this.prueba[3]=this.loan_modality.loan_modality_parameter.personal_reference
           if(this.loan_modality.loan_modality_parameter.quantity_ballots>1)
           {
           this.visible=true

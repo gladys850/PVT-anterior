@@ -8,7 +8,7 @@
         <v-container class="py-0">
           <v-row>
             <v-col cols="12" md="2" class="py-0">
-              <label> Tipo de Deposito:</label>
+              <label> Tipo de Depositos:</label>
             </v-col>
             <v-col cols="12" md="3" class="py-0">
               <ValidationProvider v-slot="{ errors }" name="Tipo Desembolso" rules="required">
@@ -55,45 +55,51 @@
               ></v-select>
                 </ValidationProvider>
             </v-col>
-            <v-col cols="12" md="12" v-show="modalidad.personal_reference " >
+          </v-row>
+        </v-container>
+
+
+         <v-container class="py-0" v-show="modalidad_personal_reference">
+          <v-row>
+            <v-col cols="12" md="12">
              <v-toolbar-title> REFERENCIA PERSONAL</v-toolbar-title>
             </v-col>
-             <v-col cols="12" md="3" v-show="modalidad.personal_reference">
+             <v-col cols="12" md="3">
              <v-text-field
                   v-model="personal_reference.first_name"
                   dense
                   label="Primer Nombre"
              ></v-text-field>
             </v-col>
-            <v-col cols="12" md="3" v-show="modalidad.personal_reference">
+            <v-col cols="12" md="3">
              <v-text-field
                   v-model="personal_reference.second_name"
                   dense
                   label="Segundo Nombre"
              ></v-text-field>
             </v-col>
-            <v-col cols="12" md="3" v-show="modalidad.personal_reference">
+            <v-col cols="12" md="3">
              <v-text-field
                   v-model="personal_reference.last_name"
                   dense
                   label="Primer Apellido"
              ></v-text-field>
             </v-col>
-            <v-col cols="12" md="3" v-show="modalidad.personal_reference">
+            <v-col cols="12" md="3">
              <v-text-field
                   v-model="personal_reference.mothers_last_name"
                   dense
                   label="Segundo Apellido"
              ></v-text-field>
             </v-col>
-             <v-col cols="12" md="3" v-show="modalidad.personal_reference">
+             <v-col cols="12" md="3">
               <v-text-field
                 v-model="personal_reference.identity_card"
                 dense
                 label="Cédula de Identidad"
               ></v-text-field>
             </v-col>
-            <v-col cols="12" md="3" v-show="modalidad.personal_reference" >
+            <v-col cols="12" md="3">
               <v-select
                 v-model="personal_reference.city_identity_card_id"
                 dense
@@ -103,14 +109,14 @@
                 label="Ciudad de Expedición"
               ></v-select>
             </v-col>
-            <v-col cols="12" md="3" v-show="modalidad.personal_reference">
+            <v-col cols="12" md="3">
               <v-text-field
                 v-model="personal_reference.phone_number"
                 dense
                 label="Telefono"
               ></v-text-field>
             </v-col>
-            <v-col cols="12" md="3" v-show="modalidad.personal_reference">
+            <v-col cols="12" md="3">
               <v-text-field
                 v-model="personal_reference.cell_phone_number"
                 dense
@@ -129,6 +135,33 @@
 <script>
   export default {
   name: "loan-information",
+    props: {
+    formulario: {
+      type: Array,
+      required: true
+    },
+    modalidad_personal_reference: {
+      type: Boolean,
+      required: true,
+      default: false
+    },
+    personal_reference: {
+      type: Object,
+      required: true
+    }, 
+    prueba: {
+      type: Array,
+      required: true
+    },
+      calculos: {
+      type: Object,
+      required: true
+    },
+      intervalos: {
+      type: Object,
+      required: true
+    }
+  },
   data: () => ({
     cuenta:null,
     destino:[],
@@ -139,26 +172,16 @@
     payment_types:[],
     cities:[]
   }),
-  props: {
-    formulario: {
-      type: Array,
-      required: true
-    },
-    modalidad: {
-      type: Object,
-      required: true
-    },
-    personal_reference: {
-      type: Object,
-      required: true
-    },
+   watch: {
+  ver()
+  {
+    modalidad
+  }
   },
   beforeMount(){
+    this.getCities()
     this.getPaymentTypes()
-     this.getLoanDestiny()
-  },
-  mounted(){
-    this.getLoanDestiny()
+   
   },
   methods: {
    Onchange(){
@@ -178,6 +201,7 @@
         this.formulario[0]=this.loanTypeSelected,
         this.formulario[1]=this.cuenta,
         this.formulario[2]=this.loanTypeSelected2
+        this.getLoanDestiny()
     },
      async getPaymentTypes() {
       try {
@@ -191,10 +215,22 @@
         this.loading = false
       }
     },
+    async getCities() {
+    try {
+      this.loading = true
+      let res = await axios.get(`city`)
+      this.cities = res.data
+    } catch (e) {
+      this.dialog = false
+      console.log(e)
+    }finally {
+        this.loading = false
+      }
+    },
      async getLoanDestiny() {
       try {
         this.loading = true
-        let res = await axios.get(`procedure_type/${9}/loan_destiny`)
+        let res = await axios.get(`procedure_type/${this.intervalos.procedure_type_id}/loan_destiny`)
         this.destino = res.data
         console.log(this.destino+'estos son los destinos');
       } catch (e) {
