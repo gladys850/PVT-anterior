@@ -71,10 +71,7 @@ class UserController extends Controller
     */
     public function show(User $user)
     {
-        if (Auth::user()->id == $user->id || Auth::user()->can('show-user')) {
-            return $user;
-        }
-        abort(401);
+        return $user;
     }
 
     /**

@@ -17,9 +17,8 @@ Route::group([
     Route::group([
         'middleware' => 'auth'
     ], function () {
-        if (!env("LDAP_AUTHENTICATION")) {
-            Route::apiResource('user', 'Api\V1\UserController')->only('show', 'update');
-        }
+        Route::apiResource('user', 'Api\V1\UserController')->only('index', 'show');
+        if (!env("LDAP_AUTHENTICATION")) Route::apiResource('user', 'Api\V1\UserController')->only('update');
         Route::get('user/{user}/role', 'Api\V1\UserController@get_roles');
         Route::apiResource('auth', 'Api\V1\AuthController')->only('index');
         Route::patch('auth', 'Api\V1\AuthController@refresh');
@@ -194,12 +193,10 @@ Route::group([
             'middleware' => 'role:TE-admin'
         ], function () {
             // Ldap
+            Route::apiResource('user', 'Api\V1\UserController')->only('store', 'destroy');;
             if (env("LDAP_AUTHENTICATION")) {
-                Route::apiResource('user', 'Api\V1\UserController');
                 Route::get('user/ldap/unregistered', 'Api\V1\UserController@unregistered_users');
                 Route::get('user/ldap/sync', 'Api\V1\UserController@synchronize_users');
-            } else {
-                Route::apiResource('user', 'Api\V1\UserController')->only('index', 'store', 'destroy');
             }
         });
     });
