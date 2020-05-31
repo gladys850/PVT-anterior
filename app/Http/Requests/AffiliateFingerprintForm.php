@@ -7,6 +7,8 @@ use Waavi\Sanitizer\Laravel\SanitizesInput;
 
 class AffiliateFingerprintForm extends FormRequest
 {
+    use SanitizesInput;
+
     /**
      * Determine if the user is authorized to make this request.
      *

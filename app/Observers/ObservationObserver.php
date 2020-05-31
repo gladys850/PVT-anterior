@@ -24,15 +24,4 @@ class ObservationObserver
     {
         Util::save_record($observation, $this->record_type, 'registró observación: ' . $observation->message, $observation->observable);
     }
-
-    /**
-     * Handle the observation "updated" event.
-     *
-     * @param  \App\Observation  $observation
-     * @return void
-     */
-    public function updating(Observation $observation)
-    {
-        Util::save_record($observation, $this->record_type, ($observation->enabled ? 'subsanó observación: ' : 'observó: ') . $observation->message, $observation->observable);
-    }
 }

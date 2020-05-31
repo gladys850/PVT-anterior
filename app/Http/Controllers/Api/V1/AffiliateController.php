@@ -550,11 +550,18 @@ class AffiliateController extends Controller
             $observation = $observation->where($key, $value);
         }
         if ($observation->count() === 1) {
-            $observation = $observation->first();
-            if ($observation->enabled != $request->update['enabled']) {
-                $observation->fill(collect($request->update)->only('enabled')->toArray());
-                $observation->save();
+            $obs = $observation->first();
+            if (isset($request->update['enabled'])) {
+                if ($request->update['enabled']) {
+                    $message = 'subsanó observación: ';
+                } else {
+                    $message = 'observó: ';
+                }
+            } else {
+                $message = 'modificó observación: ';
             }
+            Util::save_record($obs, 'observaciones', $message . $obs->message, $obs->observable);
+            $observation->update(collect($request->update)->only('observation_type_id', 'message', 'enabled')->toArray());
         }
         return $affiliate->observations;
     }

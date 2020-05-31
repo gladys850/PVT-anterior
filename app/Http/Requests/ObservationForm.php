@@ -2,14 +2,15 @@
 
 namespace App\Http\Requests;
 
+use App\Module;
+use App\Rules\ModuleObservation;
 use Illuminate\Foundation\Http\FormRequest;
 use Waavi\Sanitizer\Laravel\SanitizesInput;
-use App\Rules\ModuleObservation;
-use App\Module;
-use Util;
 
 class ObservationForm extends FormRequest
 {
+    use SanitizesInput;
+
     /**
      * Determine if the user is authorized to make this request.
      *
@@ -77,8 +78,12 @@ class ObservationForm extends FormRequest
     public function filters()
     {
         return [
-            'observation_type_id' => 'trim',
-            'message' => 'trim|uppercase'
+            'original.observation_type_id' => 'trim',
+            'original.message' => 'trim',
+            'original.date' => 'trim',
+            'update.observation_type_id' => 'trim',
+            'update.message' => 'trim|uppercase',
+            'update.date' => 'trim',
         ];
     }
 }
