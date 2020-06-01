@@ -229,7 +229,7 @@
       <v-col class="py-0">
         <v-btn 
         text 
-        @click="beforeStepBus(5)">Atras</v-btn>
+        @click="beforeStepBus(6)">Atras</v-btn>
         <v-btn 
         color="primary" 
         @click.stop="saveLoan()">Finalizar</v-btn>
