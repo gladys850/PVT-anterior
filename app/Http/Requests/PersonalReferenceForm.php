@@ -28,20 +28,20 @@ class PersonalReferenceForm extends FormRequest
     public function rules()
     {
         $rules = [
-            'city_identity_card_id'=>'integer|exists:cities,id', 
+            'city_identity_card_id'=>'integer|exists:cities,id',
             'identity_card'=>'string|min:3',
-            'last_name'=>'string|alpha_spaces|min:3', 
-            'mothers_last_name'=>'string|nullable|alpha_spaces|min:3',
+            'last_name'=>'string|alpha_spaces|min:3',
             'first_name'=>'string|alpha_spaces|min:3',
+            'mothers_last_name'=>'string|nullable|alpha_spaces|min:3',
             'second_name'=>'string|nullable|alpha_spaces|min:3',
             'surname_husband'=>'string|nullable|alpha_spaces|min:3',
             'phone_number'=>'nullable',
             'cell_phone_number'=>'nullable'
-       ];  
+        ];
 
         switch ($this->method()) {
             case 'POST': {
-                foreach (array_slice($rules, 0, 5) as $key => $rule) {
+                foreach (array_slice($rules, 0, 4) as $key => $rule) {
                     $rules[$key] = implode('|', ['required', $rule]);
                 }
                 return $rules;
