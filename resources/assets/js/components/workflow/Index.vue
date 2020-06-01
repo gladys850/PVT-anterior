@@ -238,7 +238,7 @@ export default {
   },
   beforeMount() {
     Echo.channel('loan').listen('.flow', (msg) => {
-      if (msg.data.role_id == this.filters.role_id || this.filters.role_id == 0) this.newLoans = msg.data.derived
+      if (msg.data.role_id == this.filters.roleSelected || this.filters.roleSelected == 0) this.newLoans = msg.data.derived
     })
     this.$store.commit('setBreadcrumbs', [
       {
