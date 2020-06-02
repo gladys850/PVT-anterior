@@ -11,7 +11,7 @@
             >
               <v-tab>Observaciones</v-tab>
               <v-tab-item>
-                <v-card flat tile>
+                <v-card flat tile v-if="!loan.validated">
                   <v-card-text class="py-0">
                     <v-tooltip top>
                       <template v-slot:activator="{ on }">
@@ -35,6 +35,7 @@
                     </v-tooltip>
                   </v-card-text>
                 </v-card>
+                <br v-else>
                 <v-card flat tile>
                   <v-card-text class="py-0">
                     <v-col cols="12" class="py-0 mb-0">
@@ -123,7 +124,7 @@
           </v-col>
           <v-col cols="1" class="ma-0 pb-0"></v-col>
           <v-col cols="2" v-show="!valor">
-            <v-btn
+            <v-btn v-if="!loan.validated"
               small
               color="success"
               class="text-rigth"
@@ -131,7 +132,7 @@
             >Aprobar el Trámite</v-btn>
           </v-col>
            <v-col cols="3" class="ma-0 pb-0">
-            <v-checkbox
+            <v-checkbox v-if="!loan.validated"
               class="ma-0 pb-0"
               label="Devolver el Tramite"
               v-model="valor"
