@@ -26,6 +26,7 @@ Route::group([
         Route::get('procedure_modality/{procedure_modality}/requirement', 'Api\V1\ProcedureModalityController@get_requirements');
         Route::apiResource('calculator', 'Api\V1\CalculatorController')->only('store');
         Route::apiResource('role', 'Api\V1\RoleController')->only('index', 'show');
+        Route::apiResource('permission', 'Api\V1\PermissionController')->only('index');
         Route::apiResource('loan_global_parameter', 'Api\V1\LoanGlobalParameterController')->only('index', 'show', 'store', 'update', 'destroy');
         Route::apiResource('loan_destiny', 'Api\V1\LoanDestinyController')->only('index', 'show', 'store', 'update', 'destroy');
         Route::apiResource('affiliate', 'Api\V1\AffiliateController')->only('show');
@@ -179,7 +180,6 @@ Route::group([
         Route::group([
             'middleware' => 'permission:show-role'
         ], function () {
-            Route::apiResource('permission', 'Api\V1\PermissionController')->only('index');
             Route::get('user/{user}/permission', 'Api\V1\UserController@get_permissions');
             Route::get('role/{role}/permission', 'Api\V1\RoleController@get_permissions');
         });

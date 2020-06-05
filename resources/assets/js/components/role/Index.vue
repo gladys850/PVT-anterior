@@ -7,7 +7,7 @@
     </v-card-title>
     <v-card-text>
       <v-card>
-        <v-card-title>
+        <v-card-text>
           <v-row align="center" no-gutters>
             <v-col cols="12" md="6">
               <v-select
@@ -45,57 +45,101 @@
               ></v-select>
             </v-col>
           </v-row>
-        </v-card-title>
-        <v-card-text v-if="selectedRole">
-          <div class="title">
-            <span>Permisos para el rol </span>
-            <span class="font-weight-black">{{ roles.find(o => o.id == selectedRole).display_name }}</span>
-          </div>
-          <v-row no-gutters>
-            <template v-for="(permissionsColumn, index) in chunkedPermissions">
-              <v-col :key="index">
-                <div
-                  v-for="permission in permissionsColumn"
-                  :key="permission.id"
-                  class="my-3"
-                >
-                  <v-hover v-slot:default="{ hover }">
-                    <v-chip
-                      :class="hover ? 'elevation-4' : 'elevation-0'"
-                      :color="selectedPermissions.includes(permission.id) ? 'info' : 'secondary'"
-                      dark
-                      style="width: 280px;"
-                      :outlined="!selectedPermissions.includes(permission.id)"
-                      @click.stop="switchPermission(permission.id)"
-                    >
-                      <v-avatar left v-if="selectedPermissions.includes(permission.id)">
-                        <v-icon>mdi-checkbox-marked-circle</v-icon>
-                      </v-avatar>
-                      {{ permission.display_name }}
-                    </v-chip>
-                  </v-hover>
-                </div>
-              </v-col>
-            </template>
-          </v-row>
         </v-card-text>
+        <v-card v-if="selectedRole">
+          <v-card-title>
+            <v-toolbar dense color="grey lighten-3">
+              <v-toolbar-title>
+                <span>Permisos para el rol </span>
+                <span class="font-weight-black">{{ roles.find(o => o.id == selectedRole).display_name }}</span>
+              </v-toolbar-title>
+              <v-spacer></v-spacer>
+              <v-divider
+                class="mx-2"
+                inset
+                vertical
+              ></v-divider>
+              <v-flex xs3>
+                <Search @search="search = $event"/>
+              </v-flex>
+            </v-toolbar>
+          </v-card-title>
+          <v-card-text>
+            <v-row v-if="permissions.length && !loading">
+              <template v-for="(permissionsColumn, index) in chunkedPermissions">
+                <v-col :key="index">
+                  <div
+                    v-for="permission in permissionsColumn"
+                    :key="permission.id"
+                    class="my-3"
+                  >
+                    <v-hover v-slot:default="{ hover }">
+                      <v-chip
+                        :class="hover ? 'elevation-4' : 'elevation-0'"
+                        :color="selectedPermissions.includes(permission.id) ? 'info' : 'secondary'"
+                        dark
+                        style="width: 280px;"
+                        :outlined="!selectedPermissions.includes(permission.id)"
+                        @click.stop="switchPermission(permission.id)"
+                      >
+                        <v-avatar left v-if="selectedPermissions.includes(permission.id)">
+                          <v-icon>mdi-checkbox-marked-circle</v-icon>
+                        </v-avatar>
+                        {{ permission.display_name }}
+                      </v-chip>
+                    </v-hover>
+                  </div>
+                </v-col>
+              </template>
+            </v-row>
+            <Loading v-else-if="loading"/>
+            <div v-else class="text-center data-box">
+              No hay datos disponibles
+            </div>
+            <v-row>
+              <v-pagination
+                v-model="options.page"
+                :length="options.lastPage"
+                :total-visible="8"
+                color="secondary"
+              ></v-pagination>
+            </v-row>
+          </v-card-text>
+        </v-card>
       </v-card>
     </v-card-text>
   </v-card>
 </template>
-
 <script>
+import Loading from '@/components/shared/Loading'
+import Search from '@/components/shared/Search'
+import Module from '@/services/ModuleService'
+
 export default {
   name: "role-index",
-  data: () => ({
-    loading: true,
-    permissions: [],
-    modules: [],
-    roles: [],
-    selectedModule: null,
-    selectedRole: null,
-    selectedPermissions: []
-  }),
+  components: {
+    Loading,
+    Search
+  },
+  data: function() {
+    return {
+      loading: true,
+      search: '',
+      options: {
+        page: 1,
+        lastPage: 1,
+        itemsPerPage: 32,
+        sortBy: ['name'],
+        sortDesc: [false]
+      },
+      permissions: [],
+      modules: [],
+      roles: [],
+      selectedModule: null,
+      selectedRole: null,
+      selectedPermissions: []
+    }
+  },
   watch: {
     selectedModule(newVal, oldVal) {
       if (newVal != oldVal && newVal != null) {
@@ -109,6 +153,16 @@ export default {
         this.selectedPermissions = []
         this.getRolePermissions(newVal)
       }
+    },
+    search() {
+      this.options.page = 1
+      this.getPermissions()
+    },
+    options: {
+      deep: true,
+      handler() {
+        this.getPermissions()
+      }
     }
   },
   computed: {
@@ -117,7 +171,6 @@ export default {
     }
   },
   mounted() {
-    this.getPermissions()
     this.getModules()
   },
   methods: {
@@ -150,6 +203,7 @@ export default {
         this.loading = true
         let res = await axios.get(`role/${id}/permission`)
         this.selectedPermissions = res.data.permissions
+        this.getPermissions()
       } catch (e) {
         console.log(e)
       } finally {
@@ -161,6 +215,8 @@ export default {
         this.loading = true
         let res = await axios.get(`module/${id}/role`)
         this.roles = res.data
+        this.search = ''
+        this.options.page = 1
       } catch (e) {
         console.log(e)
       } finally {
@@ -170,24 +226,41 @@ export default {
     async getPermissions() {
       try {
         this.loading = true
-        let res = await axios.get(`permission`)
-        this.permissions = res.data
+        let res = await axios.get(`permission`, {
+          params: {
+            page: this.options.page,
+            per_page: this.options.itemsPerPage,
+            sortBy: this.options.sortBy,
+            sortDesc: this.options.sortDesc,
+            search: this.search
+          }
+        })
+        this.permissions = res.data.data
+        delete res.data['data']
+        this.options.page = res.data.current_page
+        this.options.lastPage = res.data.last_page
+        this.options.itemsPerPage = parseInt(res.data.per_page)
       } catch (e) {
         console.log(e)
       } finally {
         this.loading = false
       }
     },
-    async getModules() {
-      try {
-        this.loading = true
-        let res = await axios.get(`module`)
-        this.modules = res.data.data
-      } catch (e) {
+    getModules() {
+      this.loading = true
+      const module = new Module()
+      module.get(null, {
+        page: 1,
+        per_page: 100,
+        sortBy: ['description'],
+        sortDesc: [false]
+      }).then(res => {
+        this.modules = res.data
+      }).catch(e => {
         console.log(e)
-      } finally {
+      }).finally(() => {
         this.loading = false
-      }
+      })
     }
   }
 };
