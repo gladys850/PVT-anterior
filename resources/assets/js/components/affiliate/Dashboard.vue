@@ -256,7 +256,7 @@ export default {
     },
     validateAffiliate(id) {
       //this.$router.push("/loan");
-      //:to="{ name: 'loanAdd', params: { hash: 'new'}, query: { affiliate_id: affiliate.id}}"
+      //template :to="{ name: 'loanAdd', params: { hash: 'new'}, query: { affiliate_id: affiliate.id}}"
       //ruta http://localhost/loan/new?affiliate_id=51419
       if(this.state_name_type != 'Baja' && this.state_name_status != 'Fallecido' && this.state_name != ''){
         if(this.affiliate.identity_card != null && this.affiliate.city_identity_card_id != null){
