@@ -104,6 +104,7 @@
               :prueba.sync="prueba"
               :calculos.sync="calculos"
               :garantes.sync="garantes"
+              :affiliate.sync="affiliate"
               :modalidad_id.sync="modalidad.id"/>
             <v-container class="py-0">
               <v-row>
