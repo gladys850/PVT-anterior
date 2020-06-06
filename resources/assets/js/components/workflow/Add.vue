@@ -65,6 +65,28 @@
           :value="'tab-2'"
         >
           <v-card flat tile >
+            <v-card-title v-if="$store.getters.permissions.includes('print-plan-payment') ">
+              <v-tooltip top>
+                <template v-slot:activator="{ on }">
+                  <v-btn
+                    fab
+                    dark
+                    x-small
+                    :color="'light-blue accent-4'"
+                    top
+                    right
+                    absolute
+                    v-on="on"
+                    @click="imprimir($route.params.id)"           
+                  >
+                    <v-icon>mdi-cash</v-icon>
+                  </v-btn>
+                </template>
+                <div>
+                  <span>Plan de pagos</span>
+                </div>
+              </v-tooltip>
+            </v-card-title>
             <v-card-text>
               <BallotsResult
                 :bonos.sync="bonos"
@@ -320,6 +342,23 @@ export default {
         this.loading = false
       }
     },
-  },
+    async imprimir(item)
+    {
+      try {
+          let res = await axios.get(`loan/${item}/print/plan`)
+           console.log("plan "+item)
+          printJS({
+            printable: res.data.content,
+            type: res.data.type,
+            file_name: res.data.file_name,
+            base64: true
+        })  
+      } catch (e) {
+        this.toastr.error("Ocurrió un error en la impresión.")
+        console.log(e)
+      }
+      
+    }
+  }
 }
 </script>
