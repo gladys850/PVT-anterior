@@ -260,7 +260,7 @@ export default {
     },
     printItemsLoans(){
       let items =[]    
-      if(this.$store.getters.permissions.includes('print-contract-loan') && this.$store.getters.permissions.includes('print-plan-payment')){
+      if(this.$store.getters.permissions.includes('print-contract-loan') && this.$store.getters.permissions.includes('print-payment-plan')){
         items=[
           { id: 1, title: 'Contrato', icon: 'mdi-file-document'},
           { id: 2, title: 'Solicitud', icon: 'mdi-file'},
