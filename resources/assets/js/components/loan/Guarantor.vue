@@ -1,7 +1,19 @@
 <template>
   <v-container fluid >
     <v-row justify="center">
-      <v-col cols="4" class="py-0" >
+         <v-col cols="12" class="py-0" >
+          <v-card v-show="show_garante">
+            <v-container v-if="modalidad_guarantors==0">
+              <v-row>
+                <v-col class="text-center">
+                  <h2 class="success--text" > ESTA MODALIDAD NO NECESITA GARANTE</h2>
+                  <h2>{{affiliate}}</h2>
+                </v-col>
+              </v-row>
+            </v-container>
+          </v-card>
+         </v-col>
+      <v-col cols="4" class="py-0" v-if="modalidad_guarantors>0" >
         <v-card>
           <v-container class="py-0">
             <v-row>
@@ -89,11 +101,10 @@
         </v-col>
         <v-col cols="8" class="py-0" >
           <v-card v-show="show_garante">
-            <v-container>
+            <v-container v-if="modalidad_guarantors>0">
               <v-row>
                 <v-col class="text-center">
-                  <h3 class="success--text" v-if="modalidad_guarantors==0"> ESTA MODALIDAD NO NECESITA GARANTE</h3>
-                  <h4 class="error--text"  v-else> CANTIDAD DE GARANTES QUE NECESITA ESTA MODALIDAD:{{modalidad_guarantors}}<br>
+                    <h4 class="error--text" > CANTIDAD DE GARANTES QUE NECESITA ESTA MODALIDAD:{{modalidad_guarantors}}<br>
                   EL GARANTE DEBE ESTAR ENTRE UNA CATEGORIA DE {{prueba[1]}} A {{prueba[2]}} </h4>
                 </v-col>
               </v-row>
@@ -216,11 +227,15 @@
       type: Array,
       required: true
     },
+     affiliate: {
+      type: Object,
+      required: true
+    },
     prueba: {
       type: Array,
       required: true
     },
-     calculos: {
+    calculos: {
       type: Object,
       required: true
     },
@@ -368,25 +383,27 @@ console.log('este es el garante'+this.garantes[0])
     
    async activar()
     {
-
       try {
+        if(this.guarantor_ci==this.affiliate.identity_card)
+        {
+          this.toastr.error("El garante no puede tener el mismo carnet que el titular.")
+        }
+        else{
           let resp = await axios.post(`affiliate_guarantor`,{
-          
-             identity_card: this.guarantor_ci,
-              procedure_modality_id:this.modalidad_id,
-          
-        })
-        this.affiliate_garantor=resp.data
-        this.validated=this.affiliate_garantor.guarantor
-        this.validated1=this.affiliate_garantor.guarantor
-        this.show_calculated=this.affiliate_garantor.guarantor
-        this.loan=this.affiliate_garantor.affiliate.loans
-        this.guarantor=this.affiliate_garantor.affiliate.guarantor
-        this.show_garante=false
-      console.log('Entro al metodo de garanyes'+this.affiliate_garantor+'==>'+this.guarantor_ci) 
-        console.log('prestamos'+this.loan)  
-        console.log('guarantor'+this.guarantor)       
-          
+            identity_card: this.guarantor_ci,
+            procedure_modality_id:this.modalidad_id,
+          })
+          this.affiliate_garantor=resp.data
+          this.validated=this.affiliate_garantor.guarantor
+          this.validated1=this.affiliate_garantor.guarantor
+          this.show_calculated=this.affiliate_garantor.guarantor
+          this.loan=this.affiliate_garantor.affiliate.loans
+          this.guarantor=this.affiliate_garantor.affiliate.guarantor
+          this.show_garante=false
+          console.log('Entro al metodo de garanyes'+this.affiliate_garantor+'==>'+this.guarantor_ci) 
+          console.log('prestamos'+this.loan)  
+          console.log('guarantor'+this.guarantor)
+        }
       } catch (e) {
         console.log(e)
       } finally {
