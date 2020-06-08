@@ -70,7 +70,6 @@
                 <template v-slot:activator="{ on }">
                   <v-btn
                     fab
-                    dark
                     small
                     color='dark'
                     top

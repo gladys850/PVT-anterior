@@ -150,6 +150,8 @@
               <v-autocomplete
                 dense
                 filled
+                outlined
+                shaped
                 label="Búsque y elija el documento"
                 v-model="selectedOpc"
                 :items="newOptional"
@@ -177,39 +179,21 @@
             <h5>Otros Documentos</h5>
           </v-toolbar-title>
           <v-row>
-          <v-col cols="11" class="ma-0 px-10">
-            <ValidationProvider v-slot="{ errors }" name="Registrar el documento" rules="required|min:3">
+          <v-col cols="12" class="ma-0 px-10">
+            <ValidationProvider v-slot="{ errors }" name="Registrar el documento" rules="min:3">
               <v-text-field
                 :error-messages="errors"
-                label="Registrar el documento"
+                dense
+                outlined
+                color="info"
+                append-outer-icon="mdi-text-box-plus"
+                @click:append-outer="addOtherDocument()"
+                label="Registre el documento"
                 v-model="newOther"
                 @keyup.enter="addOtherDocument()"
               ></v-text-field>
               <!--<v-btn color="primary" @click.stop="addOtherDocument">NuevoOtro</v-btn>-->
             </ValidationProvider>
-            </v-col>
-            <v-col cols="1" class="ma-0 pr-10">
-              <v-tooltip top>
-                <template v-slot:activator="{ on }">
-                  <v-btn
-                    fab
-                    dark
-                    small
-                    :color="'success'"
-                    bottom
-                    right
-
-                    v-on="on"
-                    style="margin-right: 0px; margin-left: 0px; margin-top:10px; "
-                    @click.stop="addOtherDocument()"
-                  >
-                    <v-icon>mdi-plus</v-icon>
-                  </v-btn>
-                </template>
-                <div>
-                  <span>Agregar documento</span>
-                </div>
-              </v-tooltip>
             </v-col>
           </v-row>
           <v-row>
