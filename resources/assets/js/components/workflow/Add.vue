@@ -65,7 +65,7 @@
           :value="'tab-2'"
         >
           <v-card flat tile >
-            <v-card-title v-if="$store.getters.permissions.includes('print-plan-payment') ">
+            <v-card-title v-if="$store.getters.permissions.includes('print-payment-plan') ">
               <v-tooltip top>
                 <template v-slot:activator="{ on }">
                   <v-btn

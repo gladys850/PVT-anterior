@@ -58,7 +58,7 @@
    <v-menu
       offset-y
       close-on-content-click
-      v-if="$store.getters.permissions.includes('print-contract-loan') || $store.getters.permissions.includes('print-plan-payment') "
+      v-if="$store.getters.permissions.includes('print-contract-loan') || $store.getters.permissions.includes('print-payment-plan') "
     >
       <template v-slot:activator="{ on }">
         <v-btn
@@ -273,7 +273,7 @@ export default {
           { id: 2, title: 'Solicitud', icon: 'mdi-file'}
         ]
       }
-      else if(this.$store.getters.permissions.includes('print-plan-payment')){
+      else if(this.$store.getters.permissions.includes('print-payment-plan')){
         items=[
           { id: 3, title: 'Plan de pagos', icon: 'mdi-cash'}
         ]
