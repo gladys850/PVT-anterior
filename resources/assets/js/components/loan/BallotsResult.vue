@@ -2,12 +2,12 @@
   <v-container fluid>
     <ValidationObserver ref="observer">
       <v-form>
-        <v-card>
+        <!--v-card-->
           <v-row justify="center">
             <v-col cols="12">
               <v-container class="py-0">
                 <v-row>
-                  <v-col cols="12" class="py-0">Resultado para el Prestamo</v-col>
+                  <slot name="title"></slot>
                   <br />
                   <v-col cols="12" md="3">
                     <v-layout row wrap>
@@ -64,7 +64,7 @@
               </v-container>
             </v-col>
           </v-row>
-        </v-card>
+        <!--/v-card-->
       </v-form>
     </ValidationObserver>
   </v-container>

@@ -71,19 +71,19 @@
                   <v-btn
                     fab
                     dark
-                    x-small
-                    :color="'light-blue accent-4'"
+                    small
+                    color='dark'
                     top
                     right
                     absolute
                     v-on="on"
                     @click="imprimir($route.params.id)"           
                   >
-                    <v-icon>mdi-cash</v-icon>
+                    <v-icon>mdi-printer</v-icon>
                   </v-btn>
                 </template>
                 <div>
-                  <span>Plan de pagos</span>
+                  <span>Imprimir plan de pagos</span>
                 </div>
               </v-tooltip>
             </v-card-title>
@@ -93,7 +93,15 @@
                 :datos.sync="datos"
                 :payable_liquid.sync="payable_liquid"
                 :calculos.sync="calculos"
-                :modalidad.sync="modalidad"/>
+                :modalidad.sync="modalidad">
+                <template v-slot:title>
+                  <v-col cols="12" class="py-0">
+                    <span class="text-grey darken-1 title font-weight-light">
+                      RESULTADOS DEL PRÉSTAMO
+                    </span>  
+                  </v-col>                  
+                </template>
+              </BallotsResult>
             </v-card-text>
           </v-card>
         </v-tab-item>

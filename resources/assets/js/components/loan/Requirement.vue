@@ -1,5 +1,7 @@
 <template>
   <v-container fluid>
+    <ValidationObserver ref="observer">
+    <v-form>
     <v-card>
       <v-data-iterator :items="items" hide-default-footer>
         <template v-slot:header>
@@ -141,7 +143,7 @@
       <v-data-iterator :items="optional" hide-default-footer>
         <template>
           <v-toolbar-title class="align-end font-weight-black text-center ma-0 pa-0 pt-5">
-            <h6>Documentos Adicionales</h6>
+            <h5>Documentos Adicionales</h5>
           </v-toolbar-title>
           <v-row>
             <v-col cols="12" class="ma-0 px-10">
@@ -149,17 +151,17 @@
                 dense
                 filled
                 label="Búsque y elija el documento"
-                v-model="selectedValue"
-                :items="optional"
+                v-model="selectedOpc"
+                :items="newOptional"
                 item-text="name"
                 item-value="id"
-                @change="addOptionalDocument(selectedValue)"
+                @change="addOptionalDocument(selectedOpc)"
               ></v-autocomplete>
               <div class="align-end font-weight-light">
-                <div v-for="(idDoc, index) of selectedOpc" :key="index">
+                <div v-for="(idDoc, index) of itemsOpc" :key="index">
                   <div>
                     {{index+1 + ". "}} {{(optional.find((item) => item.id === idDoc)).name}}
-                    <v-btn text icon color="error" @click="deleteOptionalDocument(index)">
+                    <v-btn text icon color="error" @click="deleteOptionalDocument(index,idDoc)">
                       <h2>X</h2>
                       <!--<v-icon>mdi-marker-cancel</v-icon>-->
                     </v-btn>
@@ -176,12 +178,15 @@
           </v-toolbar-title>
           <v-row>
           <v-col cols="11" class="ma-0 px-10">
+            <ValidationProvider v-slot="{ errors }" name="Registrar el documento" rules="required|min:3">
               <v-text-field
-                label="Registrar documento"
+                :error-messages="errors"
+                label="Registrar el documento"
                 v-model="newOther"
-                @keyup.enter="addOtherDocument"
+                @keyup.enter="addOtherDocument()"
               ></v-text-field>
               <!--<v-btn color="primary" @click.stop="addOtherDocument">NuevoOtro</v-btn>-->
+            </ValidationProvider>
             </v-col>
             <v-col cols="1" class="ma-0 pr-10">
               <v-tooltip top>
@@ -193,9 +198,10 @@
                     :color="'success'"
                     bottom
                     right
+
                     v-on="on"
                     style="margin-right: 0px; margin-left: 0px; margin-top:10px; "
-                    @click.stop="addOtherDocument"
+                    @click.stop="addOtherDocument()"
                   >
                     <v-icon>mdi-plus</v-icon>
                   </v-btn>
@@ -235,6 +241,8 @@
         @click.stop="saveLoan()">Finalizar</v-btn>
       </v-col>
     </v-row>
+  </v-form>
+  </ValidationObserver>
   </v-container>
 </template>
 <script>
@@ -246,15 +254,16 @@ export default {
     itemsPerPage: 10,
     items: [],
     optional: [],
+    newOptional: [],
     requirement: [],
     index: [],
     prueba: null,
     cont: 0,
     checks: [],
-    selectedOpc: [],
+    itemsOpc: [],
     selected: [],
     radios: [],
-    selectedValue: null,
+    selectedOpc: null,
     idRequirements: [],
     otherDocuments: [],
     newOther: null
@@ -322,6 +331,7 @@ export default {
         this.requirement = res.data;
         this.items = this.requirement.required;
         this.optional = this.requirement.optional;
+        this.newOptional = this.requirement.optional;
       } catch (e) {
         console.log(e);
       } finally {
@@ -388,7 +398,7 @@ export default {
             personal_reference_id: this.reference.id,
             account_number:this.formulario[1],
             destiny_id: this.formulario[2],
-            documents: this.selectedOpc.concat(this.selected.concat(this.radios.filter(Boolean))),
+            documents: this.itemsOpc.concat(this.selected.concat(this.radios.filter(Boolean))),
             notes: this.otherDocuments
           });
           printJS({
@@ -427,7 +437,7 @@ export default {
             personal_reference_id: this.reference.id,
             account_number:this.formulario[1],
             destiny_id: this.formulario[2],
-            documents: this.selectedOpc.concat(this.selected.concat(this.radios.filter(Boolean))),
+            documents: this.itemsOpc.concat(this.selected.concat(this.radios.filter(Boolean))),
             notes: this.otherDocuments
           });
           printJS({
@@ -470,23 +480,43 @@ export default {
     },
     addOptionalDocument(i) {
       //Verifica si no encuentra el valor repetido
-      if (this.selectedOpc.indexOf(i) === -1) {
-        this.selectedOpc.push(i);
-        //console.log("I= " + i);
-        //console.log("selectedOpc " + this.selectedOpc);
+      if (this.itemsOpc.indexOf(i) === -1) {
+        this.itemsOpc.push(i)
+        //filtrar en newOptional el item agregado y generar uno array nuevo sin el item
+        this.newOptional = this.newOptional.filter(item => item.id !== i)
+        console.log(this.newOptional)
+        console.log("I= " + i);
+        console.log("itemsOpc " + this.itemsOpc);
       }
-      this.selectedValue = " ";
+      
     },
-    deleteOptionalDocument(i) {
-      this.selectedOpc.splice(i, 1);
+    deleteOptionalDocument(i, idDoc) {
+      let itemDelete = []
+      this.itemsOpc.splice(i, 1)
+      this.selectedOpc = " ";
+      console.log("delete "+i)
+      console.log("delete "+idDoc)
+      //obtener el item borrado desde optional
+      itemDelete = this.optional.find(item => item.id === idDoc)
+      console.log(itemDelete)
+      //insertarlo en newOptional
+      this.newOptional.push(itemDelete)
+     
     },
     addOtherDocument() {
+      //verificar si existe algun dato
       if (this.newOther) {
-        this.otherDocuments.push(this.newOther);
-        console.log("other " + this.otherDocuments);
-        this.newOther = "";
+        //desde otherDocuments filtrar si existe un dato registrado igual a uno guardado en newOher
+        if(!(this.otherDocuments.filter(item => item === this.newOther)).length > 0){
+          //si no existe repetido insertar item
+          this.otherDocuments.push(this.newOther);
+          console.log("other " + this.otherDocuments);
+          this.newOther = ""          
+        }else{  
+          this.toastr.error("El documento ya existe")  
+        }
       } else {
-        console.log("elemento vacio");
+        this.toastr.error("No registró ningún documento")
       }
     },
     deleteOtherDocument(i) {
