@@ -23,9 +23,9 @@
     <template v-slot:item.procedure_modality_id="{ item }">
       <v-tooltip top>
         <template v-slot:activator="{ on }">
-          <span v-on="on">{{ procedureModalities.find(o => o.id == item.procedure_modality_id).shortened }}</span>
+          <span v-on="on">{{ searchProcedureModality(item, 'shortened') }}</span>
         </template>
-        <span>{{ procedureModalities.find(o => o.id == item.procedure_modality_id).name }}</span>
+        <span>{{ searchProcedureModality(item, 'name') }}</span>
       </v-tooltip>
     </template>
     <template v-slot:item.request_date="{ item }">
@@ -203,6 +203,18 @@ export default {
     this.printItemsLoans()
   },
   methods: {
+    searchProcedureModality(item, attribute = null) {
+      let procedureModality = this.procedureModalities.find(o => o.id == item.procedure_modality_id)
+      if (procedureModality) {
+        if (attribute) {
+          return procedureModality[attribute]
+        } else {
+          return procedureModality
+        }
+      } else {
+        return null
+      }
+    },
     updateOptions($event) {
       if (this.options.page != $event.page || this.options.itemsPerPage != $event.itemsPerPage || this.options.sortBy != $event.sortBy || this.options.sortDesc != $event.sortDesc) this.$emit('update:options', $event)
     },
