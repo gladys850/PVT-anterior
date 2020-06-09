@@ -70,16 +70,31 @@
                 @endif
             </tr>
             @endforeach
+            <tr>
+                <td class="data-row py-5 text-center" colspan="{{ $hasSender ? 7 : 8 }}">
+                    <span class="font-semibold uppercase">Total trámites: </span>
+                    <span class="font-bold uppercase">{{ count($procedures) }}</span>
+                </td>
+            </tr>
         </table>
     </div>
 
+    <div class="text-justify">
+
+    </div>
     <div class="block no-page-break">
-        @php($user = Auth::user() ?? (object)['full_name' => 'prueba', 'position' => 'prueba'])
-        @include('partials.signature_box', [
-            'full_name' => $user->full_name,
-            'position' => $user->position,
-            'employee' => true
-        ])
+        <div class="m-b-10 text-justify">
+            Los trámites mencionados en la lista anterior fueron revisados, validados y derivados en sistema. Por tanto, recomiendo dar continuidad al proceso de cada uno de ellos, para lo cual adjunto las carpetas que contienen la información de respaldo.
+        </div>
+
+        <div>
+            @php($user = Auth::user() ?? (object)['full_name' => 'prueba', 'position' => 'prueba'])
+            @include('partials.signature_box', [
+                'full_name' => $user->full_name,
+                'position' => $user->position,
+                'employee' => true
+            ])
+        </div>
     </div>
 </body>
 </html>
