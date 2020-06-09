@@ -65,13 +65,42 @@
           :value="'tab-2'"
         >
           <v-card flat tile >
+            <v-card-title v-if="$store.getters.permissions.includes('print-payment-plan') ">
+              <v-tooltip top>
+                <template v-slot:activator="{ on }">
+                  <v-btn
+                    fab
+                    small
+                    color='dark'
+                    top
+                    right
+                    absolute
+                    v-on="on"
+                    @click="imprimir($route.params.id)"           
+                  >
+                    <v-icon>mdi-printer</v-icon>
+                  </v-btn>
+                </template>
+                <div>
+                  <span>Imprimir plan de pagos</span>
+                </div>
+              </v-tooltip>
+            </v-card-title>
             <v-card-text>
               <BallotsResult
                 :bonos.sync="bonos"
                 :datos.sync="datos"
                 :payable_liquid.sync="payable_liquid"
                 :calculos.sync="calculos"
-                :modalidad.sync="modalidad"/>
+                :modalidad.sync="modalidad">
+                <template v-slot:title>
+                  <v-col cols="12" class="py-0">
+                    <span class="text-grey darken-1 title font-weight-light">
+                      RESULTADOS DEL PRÉSTAMO
+                    </span>  
+                  </v-col>                  
+                </template>
+              </BallotsResult>
             </v-card-text>
           </v-card>
         </v-tab-item>
@@ -320,6 +349,23 @@ export default {
         this.loading = false
       }
     },
-  },
+    async imprimir(item)
+    {
+      try {
+          let res = await axios.get(`loan/${item}/print/plan`)
+           console.log("plan "+item)
+          printJS({
+            printable: res.data.content,
+            type: res.data.type,
+            file_name: res.data.file_name,
+            base64: true
+        })  
+      } catch (e) {
+        this.toastr.error("Ocurrió un error en la impresión.")
+        console.log(e)
+      }
+      
+    }
+  }
 }
 </script>
