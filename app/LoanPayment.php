@@ -75,6 +75,10 @@ class LoanPayment extends Model
             $interest['penal'] = $interest['accumulated'];
         }
         $interest['penal'] += $latest_quota->penal_remaining;
+        // Máximo 360 días para el cálculo de interés
+        foreach ($interest as $key => $value) {
+            if ($value > 360) $interest[$key] = 360;
+        }
         return (object)$interest;
     }
 
