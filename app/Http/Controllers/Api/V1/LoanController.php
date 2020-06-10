@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Schema;
@@ -455,21 +456,7 @@ class LoanController extends Controller
             ['position' => 'Director de Asuntos Administrativos']
         ];
         foreach ($employees as $key => $employee) {
-            try {
-                $req = collect(json_decode(file_get_contents(env("RRHH_URL") . '/position?name=' . $employee['position']), true));
-                if ($req->count() == 1) {
-                    $position = $req->first();
-                } else {
-                    abort(404);
-                }
-                $req = collect(json_decode(file_get_contents(implode('/', [env("RRHH_URL"), 'position', $position['id'], 'employee'])), true));
-                $employees[$key]['name'] = Util::trim_spaces(implode(' ', [$req['first_name'], $req['second_name'], $req['last_name'], $req['mothers_last_name']]));
-                $employees[$key]['identity_card'] = $req['identity_card'];
-                $req = collect(json_decode(file_get_contents(implode('/', [env("RRHH_URL"), 'city', $req['city_identity_card_id']])), true));
-                $employees[$key]['identity_card'] .= ' ' . $req['shortened'];
-            } catch (\Exception $e) {
-                $employees[$key]['name'] = $employees[$key]['identity_card'] = '_______________';
-            }
+            $employees[$key] = Util::request_rrhh_employee($employee['position']);
         }
         $data = [
             'header' => [
@@ -526,7 +513,7 @@ class LoanController extends Controller
                 'table' => [
                     ['Tipo', $loan->modality->procedure_type->second_name],
                     ['Modalidad', $loan->modality->shortened],
-                    ['Usuario', Auth::user()->username ?? 'prueba']
+                    ['Usuario', Auth::user()->username]
                 ]
             ],
             'title' => 'SOLICITUD DE ' . ($loan->parent_loan ? $loan->parent_reason : 'PRÉSTAMO'),
@@ -562,7 +549,7 @@ class LoanController extends Controller
                 'table' => [
                     ['Tipo', $loan->modality->procedure_type->second_name],
                     ['Modalidad', $loan->modality->shortened],
-                    ['Usuario', Auth::user()->username ?? 'prueba']
+                    ['Usuario', Auth::user()->username]
                 ]
             ],
             'title' => 'PLAN DE PAGOS',
@@ -763,10 +750,16 @@ class LoanController extends Controller
     */
     public function bulk_update_role(LoansForm $request)
     {
+        $from_role = null;
+        $to_role = $request->role_id;
         $loans = Loan::whereIn('id', $request->ids)->where('role_id', '!=', $request->role_id)->orderBy('code');
         $derived = $loans->get();
-        $derived->map(function ($item, $key) use ($request) {
-            $item['role_id'] = $request->role_id;
+        if (count(array_unique($loans->pluck('role_id')->toArray()))) $from_role = $derived->first()->role_id;
+        $derived->map(function ($item, $key) use ($from_role, $to_role) {
+            if ($from_role == null) {
+                $item['from_role_id'] = $item['role_id'];
+            }
+            $item['role_id'] = $to_role;
             $item['validated'] = false;
         });
         $loans->update(array_merge($request->only('role_id'), ['validated' => false]));
@@ -774,6 +767,31 @@ class LoanController extends Controller
             return self::append_data($loan, false);
         });
         event(new LoanFlowEvent($derived));
-        return $derived;
+        // PDF template
+        $from_role = Role::find($from_role ?? $derived->first()->from_role_id);
+        $to_role = Role::find($to_role);
+        $data = [
+            'header' => [
+                'direction' => 'DIRECCIÓN DE ESTRATEGIAS SOCIALES E INVERSIONES',
+                'unity' => 'Área de ' . $from_role->display_name,
+                'table' => [
+                    ['Fecha', Carbon::now()->isoFormat('L')],
+                    ['Hora', Carbon::now()->format('H:i')],
+                    ['Usuario', Auth::user()->username]
+                ]
+            ],
+            'title' => 'DERIVACIÓN DE TRÁMITES',
+            'procedures' => $derived,
+            'roles' => [
+                'from' => $from_role,
+                'to' => $to_role
+            ]
+        ];
+        $file_name = implode('_', ['derivacion', 'prestamos', Str::slug(Carbon::now()->isoFormat('LLL'), '_')]) . '.pdf';
+        $view = view()->make('flow.bulk_flow_procedures')->with($data)->render();
+        return response()->json([
+            'attachment' => Util::pdf_to_base64([$view], $file_name, 'letter', $request->copies ?? 1),
+            'derived' => $derived
+        ]);
     }
 }
