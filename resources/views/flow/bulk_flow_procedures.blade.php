@@ -63,7 +63,7 @@
                 @php ($created_at = Carbon::parse($loan->created_at))
                 <td class="data-row py-5">{{ $created_at->isoFormat('L') }} {{ $created_at->toTimeString() }}</td>
                 <td class="data-row py-5">{{ Util::money_format($loan->amount_approved) }}</td>
-                <td class="data-row py-5">{{ $loan->loan_term }} Meses</td>
+                <td class="data-row py-5">{{ $loan->loan_term }} Mes{{ $loan->loan_term > 1 ? 'es' : '' }}</td>
                 <td class="data-row py-5">{{ $loan->modality->procedure_type->second_name }}</td>
                 @if (!$hasSender)
                 <td class="data-row py-5">{{ Role::find($loan->from_role_id)->display_name }}</td>
