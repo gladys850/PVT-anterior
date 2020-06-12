@@ -319,14 +319,14 @@ class Util
         return $status;
     }
 
-    public static function pdf_to_base64($views, $file_name, $size = 'letter', $copies = 1)
+    public static function pdf_to_base64($views, $file_name, $size = 'letter', $copies = 1, $portrait = true)
     {
         $footerHtml = view()->make('partials.footer')->with(array('paginator' => true, 'print_date' => true, 'date' => Carbon::now()->ISOFormat('L H:m')))->render();
         $options = [
             'copies' => $copies ?? 1,
             'footer-html' => $footerHtml,
             'user-style-sheet' => public_path('css/report-print.min.css'),
-            'orientation' => 'portrait',
+            'orientation' => $portrait ? 'portrait' : 'landscape',
             'margin-top' => '8',
             'margin-bottom' => '16',
             'margin-left' => '5',

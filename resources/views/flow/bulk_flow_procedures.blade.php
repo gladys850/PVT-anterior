@@ -13,7 +13,7 @@
     @include('partials.header', $header)
 
     <div class="block">
-        <div class="font-semibold leading-tight text-center m-b-10 text-xs">{{ $title }}</div>
+        <div class="font-semibold leading-tight text-center m-b-10 text-xs uppercase">{{ $title }}</div>
     </div>
 
     <div class="block">
@@ -44,34 +44,23 @@
     <div class="block">
         <table class="table-info w-100 text-center uppercase my-20">
             <tr class="bg-grey-darker text-xxs text-white">
-                <td class="w-20">Código</td>
-                <td class="w-25">Solicitante</td>
-                <td class="w-10">CI del solicitante</td>
-                <td class="w-10">Fecha de solicitud</td>
-                <td class="w-10">Monto aprobado</td>
-                <td class="{{ $hasSender ? 'w-10' : 'w-5' }}">Plazo</td>
-                <td class="{{ $hasSender ? 'w-15' : 'w-10' }}">Tipo de trámite</td>
-                @if (!$hasSender)
-                <td class="w-10">Remitente</td>
-                @endif
+                @include('flow.thead.' . $type, ['hasSender' => $hasSender])
             </tr>
-            @foreach ($procedures as $loan)
+            @foreach ($procedures as $i => $procedure)
             <tr>
-                <td class="data-row py-5">{{ $loan->code }}</td>
-                <td class="data-row py-5">{{ $loan->disbursable->title }} {{ $loan->disbursable->full_name }}</td>
-                <td class="data-row py-5">{{ $loan->disbursable->identity_card_ext }}</td>
-                @php ($created_at = Carbon::parse($loan->created_at))
-                <td class="data-row py-5">{{ $created_at->isoFormat('L') }} {{ $created_at->toTimeString() }}</td>
-                <td class="data-row py-5">{{ Util::money_format($loan->amount_approved) }}</td>
-                <td class="data-row py-5">{{ $loan->loan_term }} Mes{{ $loan->loan_term > 1 ? 'es' : '' }}</td>
-                <td class="data-row py-5">{{ $loan->modality->procedure_type->second_name }}</td>
-                @if (!$hasSender)
-                <td class="data-row py-5">{{ Role::find($loan->from_role_id)->display_name }}</td>
-                @endif
+                <td class="data-row py-5">{{ $i + 1 }}</td>
+                @include('flow.tbody.' . $type, ['hasSender' => $hasSender, 'procedure' => $procedure])
             </tr>
             @endforeach
+            @switch($type)
+                @case('loan')
+                    @php ($total_cols = $hasSender ? 8 : 9)
+                    @break
+                @default
+                    @php ($total_cols = 1)
+            @endswitch
             <tr>
-                <td class="data-row py-5 text-center" colspan="{{ $hasSender ? 7 : 8 }}">
+                <td class="data-row py-5 text-center" colspan="{{ $total_cols }}">
                     <span class="font-semibold uppercase">Total trámites: </span>
                     <span class="font-bold uppercase">{{ count($procedures) }}</span>
                 </td>
