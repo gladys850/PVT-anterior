@@ -481,18 +481,19 @@ class LoanController extends Controller
         $modality_type = $procedure_modality->procedure_type->name;
         switch($modality_type){
             case 'Préstamo Anticipo':
-                $view = view()->make('loan.contracts.advance')->with($data)->render();
-            break;
+				$view_type = 'advance';
+            	break;
             case 'Préstamo a corto plazo':
-                $view = view()->make('loan.contracts.short')->with($data)->render();
-            break;
+				$view_type = 'short';
+            	break;
             case 'Préstamo a largo plazo':
-                $view = view()->make('loan.contracts.long')->with($data)->render();
-            break;
+				$view_type = 'long';
+            	break;
             case 'Préstamo hipotecario':
-                $view = view()->make('loan.contracts.hypothecary')->with($data)->render();
-            break;
+				$view_type = 'hypothecary';
+            	break;
         }
+		$view = view()->make('loan.contracts.' . $view_type)->with($data)->render();
         if ($standalone) return Util::pdf_to_base64([$view], $file_name, 'legal', $request->copies ?? 1);
         return $view;
     }
