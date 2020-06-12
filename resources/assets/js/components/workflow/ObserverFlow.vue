@@ -48,7 +48,7 @@
                         <template v-slot:item="items">
                           <tr>
                             <td>{{items.item.user_name}}</td>
-                            <td>{{ observation_type.find(o => o.id == items.item.observation_type_id).name }}</td>
+                            <td>{{observation_type.find(o => o.id == items.item.observation_type_id).name }}</td>
                             <td>{{items.item.message}}</td>
                             <td>{{items.item.date|datetime}}</td>
                             <td>
@@ -108,9 +108,6 @@
                       >
                         <template v-slot:item="items">
                           <tr>
-                            <!--<td>{{items.item.user_id}}</td>
-                            <td>{{items.item.record_type_id}}</td>
-                            <td>{{items.item.recordable_id}}</td>-->
                             <td>{{items.item.date|datetime}}</td>
                             <td>{{items.item.action}}</td>
                           </tr>
@@ -142,7 +139,7 @@
             <v-select
               label="Escoger Area"
               v-model="valArea"
-              :items="listAreas"
+              :items="$store.getters.roles.filter(o => flow.previous.includes(o.id))"
               item-text="display_name"
               item-value="id"
             ></v-select>
@@ -159,7 +156,7 @@
         </v-row>
       </v-col>
     </v-row>
-    <AddObservation :bus="bus" :loan.sync="loan" />
+    <AddObservation :bus="bus"/>
     <RemoveItem :bus="bus"/>
   </v-container>
 </template>
@@ -175,34 +172,12 @@ export default {
   components: {
     AddObservation,
     RemoveItem
-
   },
-
   data: () => ({
-    //valDevolver: null,
     valor:false,
     observation_type:[],
-    user: null ,
     bus: new Vue(),
     headers: [
-      /*{
-        text: "Usuario",
-        class: ["normal", "white--text"],
-        align: "left",
-        value: "user_id"
-      },
-      {
-        text: "Record",
-        class: ["normal", "white--text"],
-        align: "left",
-        value: "record_type_id"
-      },
-      {
-        text: "Trámite",
-        class: ["normal", "white--text"],
-        align: "left",
-        value: "recordable_id"
-      },*/
       {
         text: "Fecha",
         class: ["normal", "white--text"],
@@ -250,7 +225,10 @@ export default {
       }
     ],
     listRoles: [],
-    flow:[],
+    flow: {
+        previous: [],
+        next: []
+      },
     listAreas:[],
     valArea:[]
   }),
@@ -273,7 +251,6 @@ export default {
     }
   },
   mounted() {
-    this.getUser();
     this.getObservationType();
     this.getModuleRole(6);
     this.getFlow(this.loan.id);
@@ -333,16 +310,6 @@ export default {
         this.loading = false;
       }
     },
-      async getUser(id) {
-      try {
-        this.loading = true;
-        let res = await axios.get(`user/${id}`);
-        this.user = res.data.username;
-        console.log(this.user);
-      } catch (e) {
-        console.log(e);
-      }
-    },
     async getModuleRole(id) {
       try {
         this.loading = true
@@ -356,21 +323,10 @@ export default {
     },
     async getFlow(id) {
       try {
-        this.loading = true
         let res = await axios.get(`loan/${id}/flow`)
-        this.flow = res.data.previous
-        this.filterRoleFlow()
+        this.flow = res.data
       } catch (e) {
         console.log(e)
-      } finally {
-        this.loading = false
-      }
-    },
-    filterRoleFlow(){
-      let areas=[]
-      for(let i = 0; i < this.flow.length; i++){
-        areas = this.listRoles.find((item) => item.id == this.flow[i])
-        this.listAreas.push(areas)
       }
     },
     async deleteObservation(user_id1, observation_type_id1, message1, date1, enabled1) {

@@ -99,11 +99,12 @@ export default {
       }
     },
     async derivationLoans() {
+      let res
       this.idLoans = this.selectedLoans.map(o => o.id)
       try {
         if(this.$store.getters.roles.filter(o => this.flow.next.includes(o.id)).length > 1){
           this.loading = true;
-            let res = await axios.patch(`loans`, {
+            res = await axios.patch(`loans`, {
               ids: this.idLoans,
               role_id: this.selectedRoleId
             });
@@ -112,7 +113,7 @@ export default {
             this.toastr.success("El trámite fue derivado." ) 
         }else{
             this.loading = true;
-            let res = await axios.patch(`loans`, {
+            res = await axios.patch(`loans`, {
               ids: this.idLoans,
               role_id: parseInt(this.$store.getters.roles.filter(o => this.flow.next.includes(o.id)).map(o => o.id)),
             });
@@ -120,6 +121,12 @@ export default {
             this.bus.$emit('emitRefreshLoans');
             this.toastr.success("El trámite fue derivado." ) 
         }
+            printJS({
+            printable: res.data.attachment.content,
+            type: res.data.attachment.type,
+            documentTitle: res.data.attachment.file_name,
+            base64: true
+        })  
      
       } catch (e) {
         console.log(e)
