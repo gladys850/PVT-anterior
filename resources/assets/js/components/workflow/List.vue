@@ -42,55 +42,70 @@
     </template>
     <template v-slot:item.actions="{ item }">
       <v-tooltip bottom>
-         <template v-slot:activator="{ on }">
+        <template v-slot:activator="{ on }">
           <v-btn
             icon
             small
             v-on="on"
             color="warning"
             :to="{ name: 'flowAdd', params: { id: item.id }}"
-          >
-            <v-icon>mdi-eye</v-icon>
+          ><v-icon>mdi-eye</v-icon>
           </v-btn>
-         </template>
+        </template>
         <span>Ver trámite</span>
-      </v-tooltip>      
-   <v-menu
-      offset-y
-      close-on-content-click
-      v-if="$store.getters.permissions.includes('print-contract-loan') || $store.getters.permissions.includes('print-payment-plan') "
-    >
-      <template v-slot:activator="{ on }">
-        <v-btn
-          icon
-          color="primary"
-          dark
-          v-on="on"
-        >
-          <v-icon>mdi-printer</v-icon>
-        </v-btn>
-      </template>
-      <v-list dense class="py-0">
-        <v-list-item
-          v-for="option in printItems"
-          :key="option.id"
-          @click="imprimir(option.id, item.id)"
-        >
-          <v-list-item-icon class="ma-0 py-0 pt-2">
-            <v-icon 
-              class="ma-0 py-0"
-              small
-              v-text="option.icon"
-              color="light-blue accent-4"
-            ></v-icon>
-          </v-list-item-icon>
-          <v-list-item-title 
-            class="ma-0 py-0 mt-n2">
-            {{ option.title }}
-          </v-list-item-title>
-        </v-list-item>
-      </v-list>
-    </v-menu>
+      </v-tooltip>
+
+      <v-tooltip bottom v-if="$store.getters.permissions.includes('delete-loan')">
+        <template v-slot:activator="{ on }">
+          <v-btn
+            icon
+            small
+            v-on="on"
+            color="error"
+            @click.stop="cancelLoan(item.id)"
+          ><v-icon>mdi-file-cancel</v-icon>
+          </v-btn>
+        </template>
+        <span>Anular trámite</span>
+      </v-tooltip>
+
+      <v-menu
+        offset-y
+        close-on-content-click
+        v-if="$store.getters.permissions.includes('print-contract-loan') || $store.getters.permissions.includes('print-payment-plan') "
+      >
+        <template v-slot:activator="{ on }">
+          <v-btn
+            icon
+            color="primary"
+            dark
+            v-on="on"
+          ><v-icon>mdi-printer</v-icon>
+          </v-btn>
+        </template>
+        <v-list dense class="py-0">
+          <v-list-item
+            v-for="doc in printDocs"
+            :key="doc.id"
+            @click="imprimir(doc.id, item.id)"
+          >
+            <v-list-item-icon class="ma-0 py-0 pt-2">
+              <v-icon 
+                class="ma-0 py-0"
+                small
+                v-text="doc.icon"
+                color="light-blue accent-4"
+              ></v-icon>
+            </v-list-item-icon>
+            <v-list-item-title 
+              class="ma-0 py-0 mt-n2">
+              {{ doc.title }}
+            </v-list-item-title>
+          </v-list-item>
+        </v-list>
+      </v-menu>
+     <template>
+     </template> 
     </template>
   </v-data-table>
 </template>
@@ -180,8 +195,7 @@ export default {
         sortable: false
       }
     ],
-        printItems: [
-        ]
+        printDocs: []
   }),
   watch: {
     selectedLoans(val) {
@@ -200,7 +214,7 @@ export default {
     this.bus.$on('emitRefreshLoans', val => {
       this.selectedLoans = []
     }),
-    this.printItemsLoans()
+    this.docsLoans()
   },
   methods: {
     searchProcedureModality(item, attribute = null) {
@@ -218,34 +232,27 @@ export default {
     updateOptions($event) {
       if (this.options.page != $event.page || this.options.itemsPerPage != $event.itemsPerPage || this.options.sortBy != $event.sortBy || this.options.sortDesc != $event.sortDesc) this.$emit('update:options', $event)
     },
-    async imprimir(id,item)
+    async imprimir(id, item)
     {
       try {
         let res
-        if(id==1)
-        {
+        if(id==1){
           res = await axios.get(`loan/${item}/print/contract`)
-          console.log("contrato"+id)
-        }
-        else if(id==2){
+        }else if(id==2){
           res = await axios.get(`loan/${item}/print/form`)
-           console.log("formu"+id)
-        } 
-        else {
+        }else {
           res = await axios.get(`loan/${item}/print/plan`)
-           console.log("plan "+id)
         } 
         printJS({
             printable: res.data.content,
             type: res.data.type,
-            file_name: res.data.file_name,
+            documentTitle: res.data.file_name,
             base64: true
         })  
       } catch (e) {
         this.toastr.error("Ocurrió un error en la impresión.")
         console.log(e)
-      }
-      
+      }      
     },
     updateHeader() {
       if (this.tray != 'all') {
@@ -270,27 +277,39 @@ export default {
         }
       }
     },
-    printItemsLoans(){
-      let items =[]    
+    docsLoans(){
+      let docs =[]    
       if(this.$store.getters.permissions.includes('print-contract-loan') && this.$store.getters.permissions.includes('print-payment-plan')){
-        items=[
+        docs=[
           { id: 1, title: 'Contrato', icon: 'mdi-file-document'},
           { id: 2, title: 'Solicitud', icon: 'mdi-file'},
           { id: 3, title: 'Plan de pagos', icon: 'mdi-cash'}
         ]
       }
       else if(this.$store.getters.permissions.includes('print-contract-loan')){
-        items=[
+        docs=[
           { id: 1, title: 'Contrato', icon: 'mdi-file-document'},
           { id: 2, title: 'Solicitud', icon: 'mdi-file'}
         ]
       }
       else if(this.$store.getters.permissions.includes('print-payment-plan')){
-        items=[
+        docs=[
           { id: 3, title: 'Plan de pagos', icon: 'mdi-cash'}
         ]
       }
-      this.printItems=items
+      this.printDocs=docs
+    },
+    async cancelLoan(id){
+      try {
+         this.dialog = true;
+        let res = await axios.delete(`loan/${id}`)
+        let code = res.data.code
+        this.bus.$emit('emitRefreshLoans');
+        this.toastr.success("el trámite " + code + " fue anulado correctamente.")
+      } catch (e) {
+        this.toastr.error("el trámite " + code + " no se puede anular")
+        console.log(e)
+      }      
     }
   }
 }

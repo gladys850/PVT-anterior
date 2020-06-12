@@ -186,7 +186,7 @@ export default {
     Dashboard
   },
   data: () => ({
-    bus1: new Vue(),//Creamos la ionstancia de bus1
+    bus1: new Vue(),//Creamos la instancia de bus1
     addresses:[],
     affiliate:{
       first_name: null,
@@ -254,9 +254,9 @@ export default {
     this.getObservation(this.$route.params.id)
     this.getRecords(this.$route.params.id)
     console.log("params "+this.$route.params.id)
-    this.bus1.$on("emitGetObservation", id => {//escucahamos la emision de ObserverFlow
+    this.bus1.$on("emitGetObservation", id => {//escuchamos la emision de ObserverFlow
       console.log('entraaaa 2')
-      this.getObservation(id); //y monstamos la lista de observaciones segun el id del prestamo
+      this.getObservation(id); //y monstramos la lista de observaciones segun el id del prestamo
     });
   },
   methods: {
