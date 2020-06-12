@@ -773,17 +773,26 @@ class LoanController extends Controller
     */
     public function bulk_update_role(LoansForm $request)
     {
+        $sequence = null;
         $from_role = null;
         $to_role = $request->role_id;
         $loans = Loan::whereIn('id', $request->ids)->where('role_id', '!=', $request->role_id)->orderBy('code');
         $derived = $loans->get();
+        $to_role = Role::find($to_role);
         if (count(array_unique($loans->pluck('role_id')->toArray()))) $from_role = $derived->first()->role_id;
-        $derived->map(function ($item, $key) use ($from_role, $to_role) {
-            if ($from_role == null) {
+        if ($from_role) {
+            $from_role = Role::find($from_role);
+            $flow_message = $this->flow_message($derived->first()->modality->procedure_type->id, $from_role, $to_role);
+        }
+        $derived->map(function ($item, $key) use ($from_role, $to_role, $flow_message) {
+            if (!$from_role) {
                 $item['from_role_id'] = $item['role_id'];
+                $from_role = Role::find($item['role_id']);
+                $flow_message = $this->flow_message($item->modality->procedure_type->id, $from_role, $to_role);
             }
-            $item['role_id'] = $to_role;
+            $item['role_id'] = $to_role->id;
             $item['validated'] = false;
+            Util::save_record($item, $flow_message['type'], $flow_message['message']);
         });
         $loans->update(array_merge($request->only('role_id'), ['validated' => false]));
         $derived->transform(function ($loan) {
@@ -791,9 +800,8 @@ class LoanController extends Controller
         });
         event(new LoanFlowEvent($derived));
         // PDF template
-        $from_role = Role::find($from_role ?? $derived->first()->from_role_id);
-        $to_role = Role::find($to_role);
         $data = [
+            'type' => 'loan',
             'header' => [
                 'direction' => 'DIRECCIÓN DE ESTRATEGIAS SOCIALES E INVERSIONES',
                 'unity' => 'Área de ' . $from_role->display_name,
@@ -803,7 +811,7 @@ class LoanController extends Controller
                     ['Usuario', Auth::user()->username]
                 ]
             ],
-            'title' => 'DERIVACIÓN DE TRÁMITES',
+            'title' => ($flow_message['type'] == 'derivacion' ? 'DERIVACIÓN' : 'DEVOLUCIÓN') . ' DE TRÁMITES - MODALIDAD ' . $derived->first()->modality->procedure_type->second_name,
             'procedures' => $derived,
             'roles' => [
                 'from' => $from_role,
@@ -813,8 +821,25 @@ class LoanController extends Controller
         $file_name = implode('_', ['derivacion', 'prestamos', Str::slug(Carbon::now()->isoFormat('LLL'), '_')]) . '.pdf';
         $view = view()->make('flow.bulk_flow_procedures')->with($data)->render();
         return response()->json([
-            'attachment' => Util::pdf_to_base64([$view], $file_name, 'letter', $request->copies ?? 1),
+            'attachment' => Util::pdf_to_base64([$view], $file_name, 'letter', $request->copies ?? 1, false),
             'derived' => $derived
         ]);
+    }
+
+    private function flow_message($procedure_type_id, $from_role, $to_role)
+    {
+        $sequence = RoleSequence::flow($procedure_type_id, $from_role->id);
+        if (in_array($to_role->id, $sequence->next->all())) {
+            $message = 'derivó';
+            $type = 'derivacion';
+        } else {
+            $message = 'devolvió';
+            $type = 'devolucion';
+        }
+        $message .= ' de ' . $from_role->display_name . ' a ' . $to_role->display_name;
+        return [
+            'message' => $message,
+            'type' => $type
+        ];
     }
 }
