@@ -129,6 +129,12 @@ Route::group([
             Route::get('loan/{loan}/print/contract', 'Api\V1\LoanController@print_contract');
         });
         Route::group([
+            'middleware' => 'permission:print-contract-loan'
+        ], function () {
+            Route::get('loan/{loan}/print/form', 'Api\V1\LoanController@print_form');
+            Route::get('loan/{loan}/print/contract', 'Api\V1\LoanController@print_contract');
+        });
+        Route::group([
             'middleware' => 'permission:update-loan'
         ], function () {
             Route::patch('loan/{loan}/document/{document}', 'Api\V1\LoanController@update_document');
