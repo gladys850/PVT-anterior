@@ -447,9 +447,15 @@ class LoanController extends Controller
     public function print_contract(Request $request, Loan $loan, $standalone = true)
     {
         $procedure_modality = $loan->modality;
+        $parent_loan = "";
+        if($loan->parent_loan_id) $parent_loan = Loan::findOrFail($loan->parent_loan_id);
         $lenders = [];
         foreach ($loan->lenders as $lender) {
             $lenders[] = self::verify_spouse_disbursable($lender);
+        }
+        $guarantors = [];
+        foreach ($loan->guarantors as $guarantor) {
+            $guarantors[] = $guarantor;
         }
         $employees = [
             ['position' => 'Director General Ejecutivo'],
@@ -467,10 +473,27 @@ class LoanController extends Controller
             'employees' => $employees,
             'title' => $procedure_modality->name,
             'loan' => $loan,
-            'lenders' => collect($lenders)
+            'lenders' => collect($lenders),
+            'guarantors' => collect($guarantors),
+            'parent_loan' => $parent_loan
         ];
         $file_name = implode('_', ['contrato', $procedure_modality->shortened, $loan->code]) . '.pdf';
-        $view = view()->make('loan.contracts.advance')->with($data)->render();
+        $modality_type = $procedure_modality->procedure_type->name;
+        switch($modality_type){
+            case 'Préstamo Anticipo':
+				$view_type = 'advance';
+            	break;
+            case 'Préstamo a corto plazo':
+				$view_type = 'short';
+            	break;
+            case 'Préstamo a largo plazo':
+				$view_type = 'long';
+            	break;
+            case 'Préstamo hipotecario':
+				$view_type = 'hypothecary';
+            	break;
+        }
+		$view = view()->make('loan.contracts.' . $view_type)->with($data)->render();
         if ($standalone) return Util::pdf_to_base64([$view], $file_name, 'legal', $request->copies ?? 1);
         return $view;
     }
