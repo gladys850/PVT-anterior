@@ -447,9 +447,15 @@ class LoanController extends Controller
     public function print_contract(Request $request, Loan $loan, $standalone = true)
     {
         $procedure_modality = $loan->modality;
+        $parent_loan = "";
+        if($loan->parent_loan_id) $parent_loan = Loan::findOrFail($loan->parent_loan_id);
         $lenders = [];
         foreach ($loan->lenders as $lender) {
             $lenders[] = self::verify_spouse_disbursable($lender);
+        }
+        $guarantors = [];
+        foreach ($loan->guarantors as $guarantor) {
+            $guarantors[] = $guarantor;
         }
         $employees = [
             ['position' => 'Director General Ejecutivo'],
@@ -467,10 +473,26 @@ class LoanController extends Controller
             'employees' => $employees,
             'title' => $procedure_modality->name,
             'loan' => $loan,
-            'lenders' => collect($lenders)
+            'lenders' => collect($lenders),
+            'guarantors' => collect($guarantors),
+            'parent_loan' => $parent_loan
         ];
         $file_name = implode('_', ['contrato', $procedure_modality->shortened, $loan->code]) . '.pdf';
-        $view = view()->make('loan.contracts.advance')->with($data)->render();
+        $modality_type = $procedure_modality->procedure_type->name;
+        switch($modality_type){
+            case 'Préstamo Anticipo':
+                $view = view()->make('loan.contracts.advance')->with($data)->render();
+            break;
+            case 'Préstamo a corto plazo':
+                $view = view()->make('loan.contracts.short')->with($data)->render();
+            break;
+            case 'Préstamo a largo plazo':
+                $view = view()->make('loan.contracts.long')->with($data)->render();
+            break;
+            case 'Préstamo hipotecario':
+                $view = view()->make('loan.contracts.hypothecary')->with($data)->render();
+            break;
+        }
         if ($standalone) return Util::pdf_to_base64([$view], $file_name, 'legal', $request->copies ?? 1);
         return $view;
     }
