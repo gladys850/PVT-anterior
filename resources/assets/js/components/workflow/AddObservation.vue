@@ -59,7 +59,7 @@
       </v-card-text>
       <v-card-actions class="ma-0 pb-0">
         <v-spacer></v-spacer>
-        <v-btn @click.stop="saveObservation()"
+        <v-btn @click.stop="saveObservation($route.params.id)"
           color="error"
           >Guardar</v-btn>
       </v-card-actions>
@@ -73,10 +73,6 @@ export default {
   name: "flow-add-observation",
   props: {
     bus: {
-      type: Object,
-      required: true
-    },
-    loan: {
       type: Object,
       required: true
     }
@@ -93,12 +89,14 @@ export default {
     this.bus.$on('openDialog', (observation) => {
       this.observation = observation
       this.dialog = true
+      console.log("resultado")
+      console.log(observation)
     })
   },
   methods: {
     async adicionar() {
       if (await this.$refs.observer.validate()) {
-        this.saveObservation()
+        this.saveObservation(this.$route.params.id)
         this.bus.$emit('saveObservation', this.observation)
         this.close()
       }
@@ -107,11 +105,11 @@ export default {
       this.dialog = false
       this.observation = {}
     },
-    async saveObservation() {
+    async saveObservation(id) {
       try {
           if(this.observation.edit)
           {
-            let res = await axios.patch(`loan/${this.loan.id}/observation`, {
+            let res = await axios.patch(`loan/${id}/observation`, {
               original: {
                 user_id: this.observation.user_id,
                 observation_type_id: this.observation.observation_type_id,
@@ -123,25 +121,14 @@ export default {
                 enabled: this.observation.enabled
                 }
             });
-            console.log("DATOS OBSERVACION " + this.loan.id)
-            console.log(this.observation.user_id)
-            console.log(this.observation.observation_type_id)
-            console.log(this.observation.message)
-            console.log(this.observation.date)
-            console.log(this.observation.enabled)
             this.bus.$emit('emitSaveObservation', 'vacio');//emitir SAveObservation edit, para ObserverFlow
-            console.log('entro al editar'+this.observation.enabled)
-            console.log(this.observation)
-
           }else{
-            let res = await axios.post(`loan/${this.loan.id}/observation`, {
+            let res = await axios.post(`loan/${id}/observation`, {
             observation_type_id:this.observation.observation_type_id,
             message:this.observation.message});
             this.bus.$emit('emitSaveObservation', 'vacio');//emitir SAveObservation new, para ObserverFlow
-            console.log('entro al entro al grabar')
           }
-      
- this.dialog = false
+          this.dialog = false
 
       } catch (e) {
         console.log(e)
