@@ -24,9 +24,6 @@
                     >
                       <strong>Porcentaje pagado: {{ (((item.amount_approved-item.balance)*100)/item.amount_approved).toFixed(2) }}%</strong>
                     </v-progress-linear>
-                    <div>
-                      {{$route.params.id}}
-                    </div>
                   </div>
                 </li>
               </ul>
