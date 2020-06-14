@@ -55,20 +55,6 @@
         <span>Ver trámite</span>
       </v-tooltip>
 
-      <v-tooltip bottom v-if="$store.getters.permissions.includes('delete-loan')">
-        <template v-slot:activator="{ on }">
-          <v-btn
-            icon
-            small
-            v-on="on"
-            color="error"
-            @click.stop="cancelLoan(item.id)"
-          ><v-icon>mdi-file-cancel</v-icon>
-          </v-btn>
-        </template>
-        <span>Anular trámite</span>
-      </v-tooltip>
-
       <v-menu
         offset-y
         close-on-content-click
@@ -299,18 +285,6 @@ export default {
       }
       this.printDocs=docs
     },
-    async cancelLoan(id){
-      try {
-         this.dialog = true;
-        let res = await axios.delete(`loan/${id}`)
-        let code = res.data.code
-        this.bus.$emit('emitRefreshLoans');
-        this.toastr.success("el trámite " + code + " fue anulado correctamente.")
-      } catch (e) {
-        this.toastr.error("el trámite " + code + " no se puede anular")
-        console.log(e)
-      }      
-    }
   }
 }
 </script>
