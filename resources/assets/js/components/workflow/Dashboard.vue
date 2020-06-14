@@ -1,41 +1,103 @@
 <template>
-  <v-container class="ma-0 pa-0">
+  <v-container  fluid class="ma-0 pa-0">
     <v-row>
-      <v-col cols="8" class="text-center">
-        <v-card color="#EDF2F4" shaped class="mx-5">
-          <v-card-title>Préstamos</v-card-title>
-          <v-card-text>
+      <v-col cols="6" class="text-center">
+        <v-card
+          class="py-0"
+          color="#173B0B"
+          dark
+          max-width="600"
+           max-height="1000"
+        >
+          <v-card-text class="headline font-weight-bold">
+            <v-icon
+              large
+              left
+              style="font-size: 150px;"
+            >
+              mdi-shield-account
+            </v-icon>
+             <h6><strong>PRESTATARIO:</strong> {{$options.filters.fullName(affiliate, true)}}</h6>
+              <h6><strong>GRADO:</strong> {{degree_name}}</h6>
+             <h6><strong>UNIDAD:</strong> {{unit_name}}</h6>
           </v-card-text>
         </v-card>
       </v-col>
-      <v-col cols="4" class="ma-0 pa-0">
-        <v-card color="secondary">
-           <v-card-text class="ma-0 pa-2">
-            <v-col cols="12" color="#EDF2F4" class="red--text text--lighten-5 ma-0 pa-0">
-              <center>
-               
-                <strong>PRESTATARIO:</strong> {{$options.filters.fullName(affiliate, true)}}
-                <br/>
-                <strong>GRADO:</strong> {{degree_name}}
-                <br />
-                <strong>UNIDAD:</strong> {{unit_name}}
-                <br>
-                <strong>MODALIDAD:</strong> {{procedure_modality_name | uppercase }}
-                <br />
-                <strong>MONTO SOLICITADO:</strong> {{loan.amount_requested + ' Bs'}}
-                <br />
-                <strong>MESES PLAZO:</strong> {{loan.loan_term}}
-                <br />
-               
-                <!--TIPO: {{affiliate.type}}-->
-                 <!-- <v-icon color="#EDF2F4">mdi-account-heart</v-icon>
-                Estado Civil: {{affiliate.civil_status=='C'? 'CASADO':affiliate.civil_status=='S'? 'SOLTERO':affiliate.civil_status=='D'?'DIVORCIADO':'VIUDO'}}-->
-              </center>
-            </v-col>
+      <v-col cols="6" class="text-center">
+        <v-row>
+          <v-col cols="6" class="text-center py-0">
+          <v-card
+            class="py-0"
+            color="#585858"
+            dark
+            max-height="135"
+          >
+            <v-card-text class="headline font-weight-bold">
+              <v-icon
+                large
+                left
+                 style="font-size: 50px;"
+              >
+                mdi-currency-usd
+              </v-icon>
+              <h5>    <strong>MONTO SOLICITADO:</strong>  </h5>
+              <h5>{{loan.amount_requested + ' Bs'}}
+            </h5>
+            </v-card-text>
+          </v-card>
+        </v-col>
+        <v-col cols="6" class="text-center py-0">
+          <v-card
+            class="mx-auto"
+            color="#424242"
+            dark
+            max-height="135"
+          
+          >
+            <v-card-text class="headline font-weight-bold">
+              <v-icon
+                large
+                left
+                              style="font-size: 50px;"
+    
+              >
+                mdi-timer-sand
+              </v-icon>
+               <h5>    <strong>MESES PLAZO:</strong> </h5><h5>{{loan.loan_term}}</h5>
           </v-card-text>
-        </v-card>
-      </v-col>
-    </v-row>
+          </v-card>
+        </v-col>
+        <v-col cols="12" class="text-center ">
+  <v-card
+    class="mx-auto"
+    color="#151515"
+    dark
+   max-height="285"
+  >
+  
+      <v-icon
+        large
+        left
+
+                              style="font-size: 50px;"
+      >
+        mdi-bank
+      </v-icon>
+  
+
+    <v-card-text class="headline font-weight-bold">
+  
+         <strong>MODALIDAD:</strong> {{procedure_modality_name | uppercase }}
+          
+     </v-card-text>
+  </v-card>
+   </v-col>
+  
+      </v-row>
+    </v-col>
+    
+  
+  </v-row>
   </v-container>
 </template>
 

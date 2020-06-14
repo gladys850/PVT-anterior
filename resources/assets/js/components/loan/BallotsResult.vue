@@ -95,12 +95,6 @@ export default {
     }
   },
   methods: {
-    metodo()
-    {
-      console.log(this.calculos.montos)
-
-      console.log(this.calculos.plazo)
-    },
     async Calculator() {
       try {
         if (this.modalidad.quantity_ballots > 1) {
@@ -143,8 +137,6 @@ export default {
           this.calculos.amount_maximum_suggested = this.calculo.amount_maximum_suggested
           this.calculos.plazo = this.calculos.plazo
 
-
-
             if (this.calculos.montos>this.calculo.amount_maximum_suggested) {
             this.calculos.montos = this.calculo.amount_maximum_suggested
           } else {
@@ -176,16 +168,12 @@ export default {
           this.calculos.amount_maximum_suggested = this.calculo.amount_maximum_suggested
           this.calculos.plazo = this.calculos.plazo
 
-
-
             if (this.calculos.montos>this.calculo.amount_maximum_suggested) {
             this.calculos.montos = this.calculo.amount_maximum_suggested
           } else {
             this.calculos.montos = this.calculos.montos
           }  
-          
-      console.log('entro a calculos'+this.calculos.amount_maximum_suggested)
-        }
+       }
       } catch (e) {
         console.log(e)
       } finally {
