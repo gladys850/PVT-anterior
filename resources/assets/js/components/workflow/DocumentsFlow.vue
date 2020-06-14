@@ -194,53 +194,53 @@ export default {
   }),
 
   beforeMount() {
-    this.getDocumentsSubmitted(this.$route.params.id);
-    this.getNotes(this.$route.params.id);
+    this.getDocumentsSubmitted(this.$route.params.id)
+    this.getNotes(this.$route.params.id)
   },
 
   methods: {
     async getDocumentsSubmitted(id) {
       try {
-        this.loading = true;
-        let res = await axios.get(`loan/${id}/document`);
-        this.docsRequired = res.data.required;
-        this.docsOptional = res.data.optional;
-        console.log(this.docsRequired + " " + this.docsOptional);
+        this.loading = true
+        let res = await axios.get(`loan/${id}/document`)
+        this.docsRequired = res.data.required
+        this.docsOptional = res.data.optional
+        console.log(this.docsRequired + " " + this.docsOptional)
       } catch (e) {
-        console.log(e);
+        console.log(e)
       } finally {
-        this.loading = false;
+        this.loading = false
       }
     },
     async getNotes(id) {
       try {
-        this.loading = true;
-        let res = await axios.get(`loan/${id}/note`);
-        this.notes = res.data;
-        console.log("NOTES  " + this.notes);
+        this.loading = true
+        let res = await axios.get(`loan/${id}/note`)
+        this.notes = res.data
+        console.log("NOTES  " + this.notes)
       } catch (e) {
-        console.log(e);
+        console.log(e)
       } finally {
-        this.loading = false;
+        this.loading = false
       }
     },
     async validarDoc(id, is_valid, comment) {
       try {
-        this.loading = true;
+        this.loading = true
         let res = await axios.patch(
           `loan/${this.$route.params.id}/document/${id}`,
           {
             is_valid: is_valid,
             comment: comment
           }
-        );
-        this.toastr.success("El documento se valido correctamente");
+        )
+        this.toastr.success("El documento se valido correctamente")
       } catch (e) {
-        console.log(e);
+        console.log(e)
       } finally {
-        this.loading = false;
+        this.loading = false
       }
     }
   }
-};
+}
 </script>
