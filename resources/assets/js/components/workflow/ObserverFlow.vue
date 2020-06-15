@@ -1,48 +1,19 @@
 <template>
-  <v-container class="mb-0">
+  <v-container fluid class="mb-0">
     <v-row justify="center" class="mb-0">
-      <v-col cols="12" class="mb-0" >
+      <v-col cols="12" class="mb-0">
         <v-row justify="center" class="mb-0">
           <v-col cols="12" class="mb-0">
-            <v-tabs
-              background-color="primary"
-              center-active
-              dark
-            >
-              <v-tab>Observaciones</v-tab>
+            <v-tabs dark active-class="secondary">
+              <v-tab>OBSERVACIONES</v-tab>
               <v-tab-item>
-                <v-card flat tile v-if="!loan.validated">
-                  <v-card-text class="py-0">
-                    <v-tooltip top>
-                      <template v-slot:activator="{ on }">
-                        <v-btn
-                          fab
-                          dark
-                          x-small
-                          :color="'success'"
-                          bottom
-                          right
-                          v-on="on"
-                          style="margin-right: 0px; margin-left: 550px; margin-top:-11px; "
-                          @click.stop="bus.$emit('openDialog', { edit:false })"
-                        >
-                          <v-icon>mdi-plus</v-icon>
-                        </v-btn>
-                      </template>
-                      <div>
-                        <span>Agregar Observacion</span>
-                      </div>
-                    </v-tooltip>
-                  </v-card-text>
-                </v-card>
-                <br v-else>
                 <v-card flat tile>
-                  <v-card-text class="py-0">
+                  <v-card-text >
                     <v-col cols="12" class="py-0 mb-0">
                       <v-data-table
-                        :headers="headers1"
+                        :headers="headersObs"
                         :items="observations"
-                        :items-per-page="4"
+                        :items-per-page="6"
                         class="elevation-1"
                       >
                         <template v-slot:item="items">
@@ -55,22 +26,23 @@
                               <v-tooltip top>
                                 <template v-slot:activator="{ on }">
                                   <v-btn
-                                  v-if="!(items.item.user_id==$store.getters.id) && !items.item.enabled"
+                                    v-if="!(items.item.user_id==$store.getters.id) && !items.item.enabled"
                                     icon
                                     small
                                     color="info"
                                     @click.stop="bus.$emit('openDialog', {...items.item, ...{edit: true}})"
                                     v-on="on"
                                   >
-                                    <v-icon >mdi-pencil</v-icon>
+                                    <v-icon>mdi-pencil</v-icon>
                                   </v-btn>
                                 </template>
                                 <span class="caption">Editar</span>
                               </v-tooltip>
+
                               <v-tooltip top>
                                 <template v-slot:activator="{ on }">
                                   <v-btn
-                                  v-if="(items.item.user_id==$store.getters.id) && !items.item.enabled"
+                                    v-if="(items.item.user_id==$store.getters.id) && !items.item.enabled"
                                     icon
                                     small
                                     color="error"
@@ -80,7 +52,7 @@
                                       items.item.observation_type_id, 
                                       items.item.message, 
                                       items.item.date, 
-                                      items.item.enabled)"  
+                                      items.item.enabled)"
                                   >
                                     <v-icon>mdi-delete</v-icon>
                                   </v-btn>
@@ -96,19 +68,20 @@
                 </v-card>
               </v-tab-item>
               <v-tab>HISTORIAL DEL TRÁMITE</v-tab>
-              <v-tab-item>
+              <v-tab-item >
                 <v-card flat tile>
                   <v-card-text>
                     <v-col cols="12" class="mb-0">
                       <v-data-table
-                        :headers="headers"
+                        :headers="headersHist"
                         :items="record"
-                        :items-per-page="4"
+                        :items-per-page="6"
                         class="elevation-1"
                       >
                         <template v-slot:item="items">
                           <tr>
-                            <td>{{items.item.date|datetime}}</td>
+                            <td>{{items.item.created_at|datetime}}</td>
+                            <td>{{items.item.update_at|datetime}}</td>
                             <td>{{items.item.action}}</td>
                           </tr>
                         </template>
@@ -119,52 +92,17 @@
               </v-tab-item>
             </v-tabs>
           </v-col>
-          <v-col cols="1" class="ma-0 pb-0"></v-col>
-          <v-col cols="2" v-show="!valor">
-            <v-btn v-if="!loan.validated"
-              small
-              color="success"
-              class="text-rigth"
-              @click.stop="saveLoanValidated(loan.id)"
-            >Aprobar el Trámite</v-btn>
-          </v-col>
-           <v-col cols="3" class="ma-0 pb-0">
-            <v-checkbox v-if="!loan.validated"
-              class="ma-0 pb-0"
-              label="Devolver el Tramite"
-              v-model="valor"
-           ></v-checkbox>
-          </v-col>
-          <v-col cols="3" v-show="valor">
-            <v-select
-              label="Escoger Area"
-              v-model="valArea"
-              :items="$store.getters.roles.filter(o => flow.previous.includes(o.id))"
-              item-text="display_name"
-              item-value="id"
-            ></v-select>
-          </v-col>
-          <v-col cols="2" v-show="valor">
-            <v-btn
-              small
-              color="danger"
-              @click.stop="saveLoanRol(loan.id)"
-            >Devolver Trámite</v-btn>
-          </v-col>
-          <v-spacer></v-spacer>
-          <v-col cols="10"></v-col>
         </v-row>
       </v-col>
     </v-row>
-    <AddObservation :bus="bus"/>
-    <RemoveItem :bus="bus"/>
+    <AddObservation :bus="bus" :loan="loan"  />
+    <RemoveItem :bus="bus" />
   </v-container>
 </template>
 
-  <script>
-
-import AddObservation from '@/components/workflow/AddObservation'
-import RemoveItem from '@/components/shared/RemoveItem'
+<script>
+import AddObservation from "@/components/workflow/AddObservation"
+import RemoveItem from "@/components/shared/RemoveItem"
 
 export default {
   name: "observer-flow",
@@ -174,16 +112,22 @@ export default {
     RemoveItem
   },
   data: () => ({
-    valor:false,
-    observation_type:[],
+    //valor: false,
+    observation_type: [],
     bus: new Vue(),
-    headers: [
+    headersHist: [
       {
-        text: "Fecha",
+        text: "Fecha creación",
         class: ["normal", "white--text"],
         align: "left",
-         value: "date"
-      }, 
+        value: "created_at"
+      },
+      {
+        text: "Fecha actualización",
+        class: ["normal", "white--text"],
+        align: "left",
+        value: "update_at"
+      },
       {
         text: "Acciones realizadas",
         class: ["normal", "white--text"],
@@ -191,7 +135,7 @@ export default {
         value: "accion"
       }
     ],
-    headers1: [
+    headersObs: [
       {
         text: "Usuario",
         class: ["normal", "white--text"],
@@ -199,7 +143,7 @@ export default {
         value: "user_id"
       },
       {
-        text: "Observacion",
+        text: "Observación",
         class: ["normal", "white--text"],
         align: "left",
         value: "observation_type_id"
@@ -224,16 +168,10 @@ export default {
         sortable: false
       }
     ],
-    listRoles: [],
-    flow: {
-        previous: [],
-        next: []
-      },
-    listAreas:[],
-    valArea:[]
+    record: []
   }),
   props: {
-    bus1: {
+    loan: {
       type: Object,
       required: true
     },
@@ -241,114 +179,89 @@ export default {
       type: Array,
       required: true
     },
-    record: {
-      type: Array,
-      required: true
-    },
-    loan: {
+    bus1: {
       type: Object,
       required: true
-    }
+    },
   },
+
   mounted() {
-    this.getObservationType();
-    this.getModuleRole(6);
-    this.getFlow(this.loan.id);
+    this.getObservationType()
+    this.getRecords(this.loan.id)
     this.bus.$on("saveObservation", observation => {
-      console.log("entro al bus" + observation);
-      this.observations.unshift(observation);
-    });
+      this.observations.unshift(observation)
+    })
     this.bus.$on("emitSaveObservation", val => {//al realizar el guardado de la observacion en saveObservation
-      console.log('entraaaa 1')
-      this.bus1.$emit('emitGetObservation',this.loan.id); //emite a Add.vue para obtener los registros de las observaciones del id de prestamo 
-    });
+      this.bus1.$emit("emitGetObservation", this.loan.id) //emite a Add.vue para obtener los registros de las observaciones del id de prestamo
+    })
   },
   methods: {
-      async saveLoanRol(id) {
-      try {
-        if( JSON.stringify(this.observations) != '{}'){
-          let res = await axios.patch(`loan/${id}`, {
-            role_id:this.valArea
-          });
-          this.toastr.success("Se devolvio satisfacctoriamente el tramite.")      
-          this.$router.push('/workflow')
-          console.log('se cambio el rol')
-        }else{
-          this.toastr.error("Debe crear una observacion para devolver el trámite")   
-        }
-
-      } catch (e) {
-        console.log(e)
-      } finally {
-        this.loading = false
-      }
-    },
-    async saveLoanValidated(id) {
+    async saveLoanRol(id) {
       try {
         let res = await axios.patch(`loan/${id}`, {
-             validated:true, 
-        });
-        console.log('se cambio el rol')
-        this.toastr.success("Se reviso satisfacctoriamente el tramite.")      
-        this.$router.push('/workflow')
-        
+          role_id: this.valArea
+        })
+        this.toastr.success("Se devolvio satisfacctoriamente el tramite.")
+        this.$router.push("/workflow")
+        console.log("se cambio el rol")
       } catch (e) {
         console.log(e)
-      } finally {
-        this.loading = false
       }
     },
     async getObservationType() {
       try {
-        this.loading = true;
-        let res = await axios.get(`module/${6}/observation_type`);
-        this.observation_type = res.data;
-        console.log("estas son las observaciones" + this.observation_type);
-      } catch (e) {
-        console.log(e);
-      } finally {
-        this.loading = false;
-      }
-    },
-    async getModuleRole(id) {
-      try {
         this.loading = true
-        let res = await axios.get(`module/${id}/role`);
-        this.listRoles = res.data
-      } catch (e) {
-        console.log(e);
-      } finally {
-        this.loading = false;
-      }
-    },
-    async getFlow(id) {
-      try {
-        let res = await axios.get(`loan/${id}/flow`)
-        this.flow = res.data
-      } catch (e) {
-        console.log(e)
-      }
-    },
-    async deleteObservation(user_id1, observation_type_id1, message1, date1, enabled1) {
-      try {       
-        let res = await axios.delete(`loan/${this.loan.id}/observation`, {data:{
-            user_id: user_id1, 
-            observation_type_id: observation_type_id1,
-            message:message1,
-            date: date1,
-            enabled: enabled1 
-          }
-        });
-        console.log("DATOS"+ user_id1, observation_type_id1, message1, date1, enabled1 +" loan " + this.loan.id)     
-        this.toastr.success("La observación fue eliminada.")
-        this.bus1.$emit('emitGetObservation',this.loan.id);
-
+        let res = await axios.get(
+          `module/${this.$store.getters.module.id}/observation_type`
+        )
+        this.observation_type = res.data
       } catch (e) {
         console.log(e)
       } finally {
         this.loading = false
       }
     },
-  },
+    async getRecords(id) {
+      try {
+        this.loading = true
+        let res = await axios.get(`record`, {
+          params: {
+            loan_id: id
+          }
+        })
+        this.record = res.data.data
+        console.log(this.record)
+      } catch (e) {
+        console.log(e)
+      } finally {
+        this.loading = false
+      }
+    },
+    async deleteObservation(
+      user_id1,
+      observation_type_id1,
+      message1,
+      date1,
+      enabled1
+    ) {
+      try {
+        let res = await axios.delete(`loan/${this.loan.id}/observation`, {
+          data: {
+            user_id: user_id1,
+            observation_type_id: observation_type_id1,
+            message: message1,
+            date: date1,
+            enabled: enabled1
+          }
+        })
+        this.toastr.success("La observación fue eliminada.")
+        this.bus1.$emit("emitGetObservation", this.loan.id)
+      } catch (e) {
+        console.log(e)
+      } finally {
+        this.loading = false
+      }
+    }
   }
+}
 </script>

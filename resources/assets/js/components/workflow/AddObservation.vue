@@ -5,8 +5,10 @@
   >
     <v-card>
       <v-toolbar dense flat color="tertiary">
-        <v-toolbar-title v-show="!observation.edit">Añadir Observacion</v-toolbar-title>
-        <v-toolbar-title v-show="observation.edit">Editar Observacion</v-toolbar-title>
+        <v-toolbar-title v-show="!observation.edit && observation.accion=='devolver'">Devolver trámite</v-toolbar-title>
+        <v-toolbar-title v-show="!observation.edit && observation.accion=='anular'">Anular trámite</v-toolbar-title>
+        <v-toolbar-title v-show="!observation.edit && observation.accion=='validar'">Validar trámite</v-toolbar-title>
+        <v-toolbar-title v-show="observation.edit">Editar Observacion</v-toolbar-title>         
         <v-spacer></v-spacer>
         <v-btn icon @click.stop="close()">
           <v-icon>mdi-close</v-icon>
@@ -19,9 +21,24 @@
               <v-container class="py-0">
                 <ValidationObserver ref="observer">
                   <v-form>
+                    <template v-if="observation.accion !='validar'">
+                    <v-row v-show="observation.accion=='devolver'">
+                      <v-col cols="4" class="ma-0 pb-0">
+                        <label>Devolver al área de:</label>
+                      </v-col>
+                      <v-col cols="8" class="ma-0 pb-0">
+                        <v-select
+                          dense
+                          v-model="valArea"
+                          :items="areas"
+                          item-text="display_name"
+                          item-value="id"
+                        ></v-select>
+                      </v-col>
+                    </v-row>
                     <v-row>
                       <v-col cols="4" class="ma-0 pb-0">
-                        <label>Tipo de Observacion:</label>
+                        <label>Tipo de observación:</label>
                       </v-col>
                       <v-col cols="8" class="ma-0 pb-0">
                         <v-select
@@ -50,6 +67,10 @@
                         ></v-checkbox>
                     </v-col>
                     </v-row>
+                    </template>
+                    <template v-else>
+                      ¿Desea validar el trámite <strong>{{this.loan.code}}</strong> ?.
+                    </template>
                   </v-form>
                 </ValidationObserver>
               </v-container>
@@ -60,13 +81,12 @@
       <v-card-actions class="ma-0 pb-0">
         <v-spacer></v-spacer>
         <v-btn @click.stop="saveObservation($route.params.id)"
-          color="error"
-          >Guardar</v-btn>
+          color="success"
+          >Aceptar</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
 </template>
-
 <script>
 
 export default {
@@ -75,15 +95,23 @@ export default {
     bus: {
       type: Object,
       required: true
-    }
+    },
+    loan: {
+      type: Object,
+      required: true
+    },
   },
   data: () => ({
     dialog: false,
     observation: {},
-    observation_type: []
+    observation_type: [],
+    flow: {},
+    valArea: [],
+    areas: []
   }),
   beforeMount(){
     this.getObservationType()
+    this.getFlow(this.$route.params.id)
   },
   mounted() {
     this.bus.$on('openDialog', (observation) => {
@@ -120,16 +148,32 @@ export default {
               update: {
                 enabled: this.observation.enabled
                 }
-            });
-            this.bus.$emit('emitSaveObservation', 'vacio');//emitir SAveObservation edit, para ObserverFlow
+            })
+            this.bus.$emit('emitSaveObservation', 'vacio')//emitir SAveObservation edit, para ObserverFlow
           }else{
-            let res = await axios.post(`loan/${id}/observation`, {
-            observation_type_id:this.observation.observation_type_id,
-            message:this.observation.message});
-            this.bus.$emit('emitSaveObservation', 'vacio');//emitir SAveObservation new, para ObserverFlow
+            if(this.observation.accion=='validar'){
+                let res = await axios.patch(`loan/${id}`, {
+                validated: true
+              })
+              this.toastr.success("Se validó el trámite correctamente.")
+            }else{
+              let res = await axios.post(`loan/${id}/observation`, {
+              observation_type_id:this.observation.observation_type_id,
+              message:this.observation.message})
+              if(this.observation.accion=='devolver'){
+                let res1 = await axios.patch(`loan/${id}`, {
+                role_id: this.valArea
+                })
+                 this.toastr.success("Se devolvio el tramite correctamente.")
+              }else{
+                let res2 = await axios.delete(`loan/${id}`)
+                let code = res2.data.code
+                this.toastr.success("El trámite " + code + " fue anulado correctamente.")
+              }
+            }
+             this.$router.push("/workflow")
           }
           this.dialog = false
-
       } catch (e) {
         console.log(e)
       } finally {
@@ -139,13 +183,24 @@ export default {
     async getObservationType() {
       try {
         this.loading = true
-        let res = await axios.get(`module/${6}/observation_type`)
+        let res = await axios.get(`module/${this.$store.getters.module.id}/observation_type`)
         this.observation_type = res.data
         console.log('estas son las observaciones'+this.observation_type)
       } catch (e) {
         console.log(e)
       } finally {
         this.loading = false
+      }
+    },
+    async getFlow(id) {
+      try {
+        let res = await axios.get(`loan/${id}/flow`)
+        this.flow = res.data
+        this.areas = this.$store.getters.roles.filter(o =>
+          this.flow.previous.includes(o.id)
+        )
+      } catch (e) {
+        console.log(e)
       }
     },
   }
