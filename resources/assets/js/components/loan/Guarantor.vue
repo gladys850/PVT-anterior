@@ -7,7 +7,6 @@
               <v-row>
                 <v-col class="text-center">
                   <h2 class="success--text" > ESTA MODALIDAD NO NECESITA GARANTE</h2>
-                  <h2>{{affiliate}}</h2>
                 </v-col>
               </v-row>
             </v-container>
@@ -119,7 +118,7 @@
                   <h2 class="success--text" v-show="validated1"> PUEDE SER GARANTE</h2>
                 </v-col>
                 <v-col cols="12" md="12" class="py-0" v-show="affiliate_garantor.affiliate.cpop">
-                  <h5 class="success--text text-center">AFILIADO CPOP {{affiliate_garantor.affiliate.cpop}}</h5>
+                  <h5 class="success--text text-center">AFILIADO CPOP</h5>
                 </v-col>
                 <v-col cols="12" md="6" class="ma-0 pb-0 font-weight-light">
                   AFILIADO :{{affiliate_garantor.affiliate.full_name}}
