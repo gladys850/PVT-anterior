@@ -29,8 +29,8 @@ class AdvanceRoleSeeder extends Seeder
         $sequence_permissions = ['update-affiliate-secondary', 'show-affiliate', 'show-loan', 'update-address'];
         $leadership_permissions = ['show-all-loan', 'update-loan', 'delete-loan', 'show-setting', 'show-deleted-loan'];
         $executive_permissions = ['update-setting'];
+        $pay_permissions = ['print-payment-plan'];
         $recovery_permissions = ['show-all-loan', 'show-loan', 'show-affiliate'];
-
         $receipt_roles = ['Regional Santa Cruz', 'Regional Cochabamba', 'Regional Oruro', 'Regional Potosí', 'Regional Sucre', 'Regional Tarija', 'Regional Trinidad', 'Regional Cobija', 'Recepción'];
         $sequence_roles = [
             [
@@ -97,7 +97,9 @@ class AdvanceRoleSeeder extends Seeder
                     $role->syncPermissions(array_merge($sequence_permissions, $leadership_permissions));
                 } elseif (in_array($role['display_name'], ['Aprobación Dirección', 'Revisión Dirección'])) {
                     $role->syncPermissions(array_merge($sequence_permissions, $leadership_permissions, $executive_permissions));
-                } else {
+                } elseif (in_array($role['display_name'], ['Tesorería'])) {
+                    $role->syncPermissions(array_merge($sequence_permissions, $pay_permissions));
+                }else {
                     $role->syncPermissions($sequence_permissions);
                 }
             }
@@ -111,7 +113,7 @@ class AdvanceRoleSeeder extends Seeder
                     'module_id' => $module->id,
                     'sequence_number' => $role['sequence']
                 ]);
-                $role->syncPermissions($recovery_permissions);
+                $role->syncPermissions(array_merge($recovery_permissions, $pay_permissions));
             }
         }
     }

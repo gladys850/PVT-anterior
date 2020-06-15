@@ -118,6 +118,9 @@ Route::group([
             Route::post('loan/{loan}/observation','Api\V1\LoanController@set_observation');
             Route::patch('loan/{loan}/observation','Api\V1\LoanController@update_observation');
             Route::delete('loan/{loan}/observation','Api\V1\LoanController@unset_observation');
+            Route::get('loan/{loan}/print/form', 'Api\V1\LoanController@print_form');
+            Route::get('loan/{loan}/print/contract', 'Api\V1\LoanController@print_contract');
+
         });
         Route::group([
             'middleware' => 'permission:create-loan'
@@ -125,14 +128,6 @@ Route::group([
             Route::apiResource('loan', 'Api\V1\LoanController')->only('store');
             Route::get('loan/{loan}/print/documents', 'Api\V1\LoanController@print_documents');
             Route::get('affiliate/{affiliate}/loan_modality', 'Api\V1\AffiliateController@get_loan_modality');
-            Route::get('loan/{loan}/print/form', 'Api\V1\LoanController@print_form');
-            Route::get('loan/{loan}/print/contract', 'Api\V1\LoanController@print_contract');
-        });
-        Route::group([
-            'middleware' => 'permission:print-contract-loan'
-        ], function () {
-            Route::get('loan/{loan}/print/form', 'Api\V1\LoanController@print_form');
-            Route::get('loan/{loan}/print/contract', 'Api\V1\LoanController@print_contract');
         });
         Route::group([
             'middleware' => 'permission:update-loan'
