@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Schema;
@@ -446,30 +447,22 @@ class LoanController extends Controller
     public function print_contract(Request $request, Loan $loan, $standalone = true)
     {
         $procedure_modality = $loan->modality;
+        $parent_loan = "";
+        if($loan->parent_loan_id) $parent_loan = Loan::findOrFail($loan->parent_loan_id);
         $lenders = [];
         foreach ($loan->lenders as $lender) {
             $lenders[] = self::verify_spouse_disbursable($lender);
+        }
+        $guarantors = [];
+        foreach ($loan->guarantors as $guarantor) {
+            $guarantors[] = $guarantor;
         }
         $employees = [
             ['position' => 'Director General Ejecutivo'],
             ['position' => 'Director de Asuntos Administrativos']
         ];
         foreach ($employees as $key => $employee) {
-            try {
-                $req = collect(json_decode(file_get_contents(env("RRHH_URL") . '/position?name=' . $employee['position']), true));
-                if ($req->count() == 1) {
-                    $position = $req->first();
-                } else {
-                    abort(404);
-                }
-                $req = collect(json_decode(file_get_contents(implode('/', [env("RRHH_URL"), 'position', $position['id'], 'employee'])), true));
-                $employees[$key]['name'] = Util::trim_spaces(implode(' ', [$req['first_name'], $req['second_name'], $req['last_name'], $req['mothers_last_name']]));
-                $employees[$key]['identity_card'] = $req['identity_card'];
-                $req = collect(json_decode(file_get_contents(implode('/', [env("RRHH_URL"), 'city', $req['city_identity_card_id']])), true));
-                $employees[$key]['identity_card'] .= ' ' . $req['shortened'];
-            } catch (\Exception $e) {
-                $employees[$key]['name'] = $employees[$key]['identity_card'] = '_______________';
-            }
+            $employees[$key] = Util::request_rrhh_employee($employee['position']);
         }
         $data = [
             'header' => [
@@ -480,10 +473,27 @@ class LoanController extends Controller
             'employees' => $employees,
             'title' => $procedure_modality->name,
             'loan' => $loan,
-            'lenders' => collect($lenders)
+            'lenders' => collect($lenders),
+            'guarantors' => collect($guarantors),
+            'parent_loan' => $parent_loan
         ];
         $file_name = implode('_', ['contrato', $procedure_modality->shortened, $loan->code]) . '.pdf';
-        $view = view()->make('loan.contracts.advance')->with($data)->render();
+        $modality_type = $procedure_modality->procedure_type->name;
+        switch($modality_type){
+            case 'Préstamo Anticipo':
+				$view_type = 'advance';
+            	break;
+            case 'Préstamo a corto plazo':
+				$view_type = 'short';
+            	break;
+            case 'Préstamo a largo plazo':
+				$view_type = 'long';
+            	break;
+            case 'Préstamo hipotecario':
+				$view_type = 'hypothecary';
+            	break;
+        }
+		$view = view()->make('loan.contracts.' . $view_type)->with($data)->render();
         if ($standalone) return Util::pdf_to_base64([$view], $file_name, 'legal', $request->copies ?? 1);
         return $view;
     }
@@ -526,7 +536,7 @@ class LoanController extends Controller
                 'table' => [
                     ['Tipo', $loan->modality->procedure_type->second_name],
                     ['Modalidad', $loan->modality->shortened],
-                    ['Usuario', Auth::user()->username ?? 'prueba']
+                    ['Usuario', Auth::user()->username]
                 ]
             ],
             'title' => 'SOLICITUD DE ' . ($loan->parent_loan ? $loan->parent_reason : 'PRÉSTAMO'),
@@ -562,7 +572,7 @@ class LoanController extends Controller
                 'table' => [
                     ['Tipo', $loan->modality->procedure_type->second_name],
                     ['Modalidad', $loan->modality->shortened],
-                    ['Usuario', Auth::user()->username ?? 'prueba']
+                    ['Usuario', Auth::user()->username]
                 ]
             ],
             'title' => 'PLAN DE PAGOS',
@@ -763,17 +773,73 @@ class LoanController extends Controller
     */
     public function bulk_update_role(LoansForm $request)
     {
+        $sequence = null;
+        $from_role = null;
+        $to_role = $request->role_id;
         $loans = Loan::whereIn('id', $request->ids)->where('role_id', '!=', $request->role_id)->orderBy('code');
         $derived = $loans->get();
-        $derived->map(function ($item, $key) use ($request) {
-            $item['role_id'] = $request->role_id;
+        $to_role = Role::find($to_role);
+        if (count(array_unique($loans->pluck('role_id')->toArray()))) $from_role = $derived->first()->role_id;
+        if ($from_role) {
+            $from_role = Role::find($from_role);
+            $flow_message = $this->flow_message($derived->first()->modality->procedure_type->id, $from_role, $to_role);
+        }
+        $derived->map(function ($item, $key) use ($from_role, $to_role, $flow_message) {
+            if (!$from_role) {
+                $item['from_role_id'] = $item['role_id'];
+                $from_role = Role::find($item['role_id']);
+                $flow_message = $this->flow_message($item->modality->procedure_type->id, $from_role, $to_role);
+            }
+            $item['role_id'] = $to_role->id;
             $item['validated'] = false;
+            Util::save_record($item, $flow_message['type'], $flow_message['message']);
         });
         $loans->update(array_merge($request->only('role_id'), ['validated' => false]));
         $derived->transform(function ($loan) {
             return self::append_data($loan, false);
         });
         event(new LoanFlowEvent($derived));
-        return $derived;
+        // PDF template
+        $data = [
+            'type' => 'loan',
+            'header' => [
+                'direction' => 'DIRECCIÓN DE ESTRATEGIAS SOCIALES E INVERSIONES',
+                'unity' => 'Área de ' . $from_role->display_name,
+                'table' => [
+                    ['Fecha', Carbon::now()->isoFormat('L')],
+                    ['Hora', Carbon::now()->format('H:i')],
+                    ['Usuario', Auth::user()->username]
+                ]
+            ],
+            'title' => ($flow_message['type'] == 'derivacion' ? 'DERIVACIÓN' : 'DEVOLUCIÓN') . ' DE TRÁMITES - MODALIDAD ' . $derived->first()->modality->procedure_type->second_name,
+            'procedures' => $derived,
+            'roles' => [
+                'from' => $from_role,
+                'to' => $to_role
+            ]
+        ];
+        $file_name = implode('_', ['derivacion', 'prestamos', Str::slug(Carbon::now()->isoFormat('LLL'), '_')]) . '.pdf';
+        $view = view()->make('flow.bulk_flow_procedures')->with($data)->render();
+        return response()->json([
+            'attachment' => Util::pdf_to_base64([$view], $file_name, 'letter', $request->copies ?? 1, false),
+            'derived' => $derived
+        ]);
+    }
+
+    private function flow_message($procedure_type_id, $from_role, $to_role)
+    {
+        $sequence = RoleSequence::flow($procedure_type_id, $from_role->id);
+        if (in_array($to_role->id, $sequence->next->all())) {
+            $message = 'derivó';
+            $type = 'derivacion';
+        } else {
+            $message = 'devolvió';
+            $type = 'devolucion';
+        }
+        $message .= ' de ' . $from_role->display_name . ' a ' . $to_role->display_name;
+        return [
+            'message' => $message,
+            'type' => $type
+        ];
     }
 }

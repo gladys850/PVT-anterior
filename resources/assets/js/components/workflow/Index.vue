@@ -44,7 +44,7 @@
             clearable
           ></v-text-field>
         </v-flex>
-        <template v-if="$store.getters.permissions.includes('show-all-loan') && procedureModalities.length">
+        <template v-if="hasTray">
           <v-tooltip
             top
           >
@@ -220,6 +220,13 @@ export default {
   computed: {
     singleRol() {
       return this.roles.length <= 1
+    },
+    hasTray() {
+      if (this.procedureModalities.length) {
+        return this.$store.getters.permissions.includes('update-loan') && this.$store.getters.permissions.includes('show-all-loan')
+      } else {
+        return false
+      }
     }
   },
   beforeCreate() {
@@ -347,6 +354,9 @@ export default {
     },
     async getLoans() {
       try {
+        if (!this.$store.getters.permissions.includes('update-loan') && this.$store.getters.permissions.includes('show-all-loan')) {
+          this.track = true
+        }
         this.loading = true
         let res = await axios.get(`loan`, {
           params: {...{

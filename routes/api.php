@@ -26,6 +26,7 @@ Route::group([
         Route::get('procedure_modality/{procedure_modality}/requirement', 'Api\V1\ProcedureModalityController@get_requirements');
         Route::apiResource('calculator', 'Api\V1\CalculatorController')->only('store');
         Route::apiResource('role', 'Api\V1\RoleController')->only('index', 'show');
+        Route::apiResource('permission', 'Api\V1\PermissionController')->only('index');
         Route::apiResource('loan_global_parameter', 'Api\V1\LoanGlobalParameterController')->only('index', 'show', 'store', 'update', 'destroy');
         Route::apiResource('loan_destiny', 'Api\V1\LoanDestinyController')->only('index', 'show', 'store', 'update', 'destroy');
         Route::apiResource('affiliate', 'Api\V1\AffiliateController')->only('show');
@@ -117,6 +118,9 @@ Route::group([
             Route::post('loan/{loan}/observation','Api\V1\LoanController@set_observation');
             Route::patch('loan/{loan}/observation','Api\V1\LoanController@update_observation');
             Route::delete('loan/{loan}/observation','Api\V1\LoanController@unset_observation');
+            Route::get('loan/{loan}/print/form', 'Api\V1\LoanController@print_form');
+            Route::get('loan/{loan}/print/contract', 'Api\V1\LoanController@print_contract');
+
         });
         Route::group([
             'middleware' => 'permission:create-loan'
@@ -124,8 +128,6 @@ Route::group([
             Route::apiResource('loan', 'Api\V1\LoanController')->only('store');
             Route::get('loan/{loan}/print/documents', 'Api\V1\LoanController@print_documents');
             Route::get('affiliate/{affiliate}/loan_modality', 'Api\V1\AffiliateController@get_loan_modality');
-            Route::get('loan/{loan}/print/form', 'Api\V1\LoanController@print_form');
-            Route::get('loan/{loan}/print/contract', 'Api\V1\LoanController@print_contract');
         });
         Route::group([
             'middleware' => 'permission:update-loan'
@@ -179,7 +181,6 @@ Route::group([
         Route::group([
             'middleware' => 'permission:show-role'
         ], function () {
-            Route::apiResource('permission', 'Api\V1\PermissionController')->only('index');
             Route::get('user/{user}/permission', 'Api\V1\UserController@get_permissions');
             Route::get('role/{role}/permission', 'Api\V1\RoleController@get_permissions');
         });

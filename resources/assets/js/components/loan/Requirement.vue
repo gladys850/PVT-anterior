@@ -1,5 +1,7 @@
 <template>
   <v-container fluid>
+    <ValidationObserver ref="observer">
+    <v-form>
     <v-card>
       <v-data-iterator :items="items" hide-default-footer>
         <template v-slot:header>
@@ -12,7 +14,6 @@
                 <v-col cols="12" class="py-0" v-for="(doc,j) in group" :key="doc.id">
                   <v-list dense class="py-0">
                     <v-list-item class="py-0">
-                      <!--{{'Lon='+group.length}} {{'ID='+ doc.id}}-->
                       <v-col cols="1" class="py-0">
                         <v-list-item-content class="align-end font-weight-light">
                           <div v-if="group.length == 1">
@@ -33,7 +34,6 @@
                             color="info"
                             v-model="selected"
                             :value="doc.id"
-                            @change="selectDoc1(doc.id,j,i)"
                           ></v-checkbox>
                         </div>
                         <div v-if="group.length > 1" class="py-0 my-n1">
@@ -41,7 +41,6 @@
                             <v-radio
                               color="info"
                               :value="doc.id"
-                              @change="selectDoc1(doc.id,j,i)"
                               class="py-0"
                             ></v-radio>
                           </v-radio-group>
@@ -53,86 +52,6 @@
               </v-card>
             </v-col>
             <v-col cols="12" md="1" class="ma-0 pa-0">
-              <!--v-tooltip top>
-                <template v-slot:activator="{ on }">
-                  <v-btn
-                    fab
-                    dark
-                    small
-                    :color="'secundary'"
-                    bottom
-                    right
-                    v-on="on"
-                    style="margin-right: 10px; margin-left: 6px; margin-top:-640px;"
-                    @click.stop="getRequirementPrint()"
-                  >
-                    <v-icon>mdi-printer-settings</v-icon>
-                  </v-btn>
-                </template>
-                <div>
-                  <span>Imprimir Requisitos</span>
-                </div>
-              </v-tooltip-->
-              <!--v-tooltip top>
-                <template v-slot:activator="{ on }">
-                  <v-btn
-                    fab
-                    dark
-                    small
-                    :color="'info'"
-                    bottom
-                    right
-                    v-on="on"
-                    style="margin-right: 5px; margin-left: 6px; margin-top:-600px; "
-                    @click.stop="getFormPrint()"
-                  >
-                    <v-icon>mdi-book-open-page-variant</v-icon>
-                  </v-btn>
-                </template>
-                <div>
-                  <span>Gerenar Formulario</span>
-                </div>
-              </v-tooltip>
-              <v-tooltip top>
-                <template v-slot:activator="{ on }">
-                  <v-btn
-                    fab
-                    dark
-                    small
-                    :color="'success'"
-                    bottom
-                    right
-                    v-on="on"
-                    style="margin-right: 5px; margin-left: 6px; margin-top:-520px;"
-                    @click.stop="saveLoan()"
-                  >
-                    <v-icon>mdi-content-save-all</v-icon>
-                  </v-btn>
-                </template>
-                <div>
-                  <span>Guardar Tramite</span>
-                </div>
-              </v-tooltip>
-              <v-tooltip top>
-                <template v-slot:activator="{ on }">
-                  <v-btn
-                    fab
-                    dark
-                    small
-                    :color="'danger'"
-                    bottom
-                    right
-                    v-on="on"
-                    style="margin-right: 5px; margin-left: 6px; margin-top:-510px;"
-                    @click.stop="getContractPrint()"
-                  >
-                    <v-icon>mdi-file-download</v-icon>
-                  </v-btn>
-                </template>
-                <div>
-                  <span>Generar Contrato</span>
-                </div>
-              </v-tooltip-->
             </v-col>
           </v-row>
         </template>
@@ -141,27 +60,28 @@
       <v-data-iterator :items="optional" hide-default-footer>
         <template>
           <v-toolbar-title class="align-end font-weight-black text-center ma-0 pa-0 pt-5">
-            <h6>Documentos Adicionales</h6>
+            <h5>Documentos Adicionales</h5>
           </v-toolbar-title>
           <v-row>
             <v-col cols="12" class="ma-0 px-10">
               <v-autocomplete
                 dense
                 filled
+                outlined
+                shaped
                 label="Búsque y elija el documento"
-                v-model="selectedValue"
-                :items="optional"
+                 v-model="selectedOpc"
+                :items="newOptional"
                 item-text="name"
                 item-value="id"
-                @change="addOptionalDocument(selectedValue)"
+                @change="addOptionalDocument(selectedOpc)"
               ></v-autocomplete>
               <div class="align-end font-weight-light">
-                <div v-for="(idDoc, index) of selectedOpc" :key="index">
+                <div v-for="(idDoc, index) of itemsOpc" :key="index">
                   <div>
                     {{index+1 + ". "}} {{(optional.find((item) => item.id === idDoc)).name}}
-                    <v-btn text icon color="error" @click="deleteOptionalDocument(index)">
+                    <v-btn text icon color="error" @click="deleteOptionalDocument(index,idDoc)">
                       <h2>X</h2>
-                      <!--<v-icon>mdi-marker-cancel</v-icon>-->
                     </v-btn>
                     <v-divider></v-divider>
                   </div>
@@ -175,35 +95,20 @@
             <h5>Otros Documentos</h5>
           </v-toolbar-title>
           <v-row>
-          <v-col cols="11" class="ma-0 px-10">
+          <v-col cols="12" class="ma-0 px-10">
+            <ValidationProvider v-slot="{ errors }" name="Registrar el documento" rules="min:3">
               <v-text-field
-                label="Registrar documento"
+              :error-messages="errors"
+                dense
+                outlined
+                color="info"
+                append-outer-icon="mdi-text-box-plus"
+                @click:append-outer="addOtherDocument()"
+                label="Registre el documento"
                 v-model="newOther"
-                @keyup.enter="addOtherDocument"
+                @keyup.enter="addOtherDocument()"
               ></v-text-field>
-              <!--<v-btn color="primary" @click.stop="addOtherDocument">NuevoOtro</v-btn>-->
-            </v-col>
-            <v-col cols="1" class="ma-0 pr-10">
-              <v-tooltip top>
-                <template v-slot:activator="{ on }">
-                  <v-btn
-                    fab
-                    dark
-                    small
-                    :color="'success'"
-                    bottom
-                    right
-                    v-on="on"
-                    style="margin-right: 0px; margin-left: 0px; margin-top:10px; "
-                    @click.stop="addOtherDocument"
-                  >
-                    <v-icon>mdi-plus</v-icon>
-                  </v-btn>
-                </template>
-                <div>
-                  <span>Agregar documento</span>
-                </div>
-              </v-tooltip>
+              </ValidationProvider>
             </v-col>
           </v-row>
           <v-row>
@@ -235,6 +140,8 @@
         @click.stop="saveLoan()">Finalizar</v-btn>
       </v-col>
     </v-row>
+    </v-form>
+  </ValidationObserver>
   </v-container>
 </template>
 <script>
@@ -246,15 +153,16 @@ export default {
     itemsPerPage: 10,
     items: [],
     optional: [],
+    newOptional: [],
     requirement: [],
     index: [],
     prueba: null,
     cont: 0,
     checks: [],
-    selectedOpc: [],
+    itemsOpc: [],
     selected: [],
     radios: [],
-    selectedValue: null,
+    selectedOpc: null,
     idRequirements: [],
     otherDocuments: [],
     newOther: null
@@ -300,20 +208,12 @@ export default {
   },
   watch: {
     modalidad_id () {
-      this.getRequirement(this.modalidad_id);
-      //console.log('actualizando modalidad');
+      this.getRequirement(this.modalidad_id)
     }
   },
   methods: {
     beforeStepBus(val) {
       this.bus.$emit("beforeStepBus", val)
-    },
-    selectDoc1(id) {
-      setTimeout(() => {
-        //console.log("ID=" + id + " J=" + j + " I=" + i);
-        //console.log(this.selected + "=>vector ckeck");
-        //console.log(this.radios.filter(Boolean) + "=>vector radio");
-      }, 500);
     },
     async getRequirement(id) {
       try {
@@ -322,52 +222,14 @@ export default {
         this.requirement = res.data;
         this.items = this.requirement.required;
         this.optional = this.requirement.optional;
+        this.newOptional = this.requirement.optional;
       } catch (e) {
         console.log(e);
       } finally {
         this.loading = false;
       }
     },
-    async getRequirementPrint() {
-      try {
-        let res = await axios.get(`loan/print/requirements`, {
-          params: {
-            lenders: [this.$route.query.affiliate_id],
-            procedure_modality_id: this.modalidad.id,
-            city_id: this.$store.getters.cityId,
-            amount_requested: this.datos.monto,
-            loan_term: this.datos.plazo
-          },
-          responseType: "arraybuffer"
-        });
-        let blob = new Blob([res.data], {
-          type: "application/pdf"
-        });
-        printJS(window.URL.createObjectURL(blob));
-      } catch (e) {
-        console.log(e);
-      } finally {
-        this.loading = false;
-      }
-    },
-    async getFormPrint() {
-      try {
-        let res = await axios.get(`loan/${8}/print/form`, {
-          params:{
-            copies: 2
-          },
-          responseType: 'arraybuffer'
-        })
-        let blob = new Blob([res.data], {
-          type: "application/pdf"
-        })
-        printJS(window.URL.createObjectURL(blob))
-      } catch (e) {
-        console.log(e);
-      } finally {
-        this.loading = false;
-      }
-    },
+  
     async saveLoan() {
       try {
         this.idRequirements = this.selected.concat(this.radios.filter(Boolean))
@@ -388,7 +250,7 @@ export default {
             personal_reference_id: this.reference.id,
             account_number:this.formulario[1],
             destiny_id: this.formulario[2],
-            documents: this.selectedOpc.concat(this.selected.concat(this.radios.filter(Boolean))),
+            documents: this.itemsOpc.concat(this.selected.concat(this.radios.filter(Boolean))),
             notes: this.otherDocuments
           });
           printJS({
@@ -407,86 +269,44 @@ export default {
         this.loading = false;
       }
     },
-    async saveLoan1() {
-      try {
-        this.idRequirements = this.selected.concat(this.radios.filter(Boolean))
-        if (this.idRequirements.length === this.items.length) {
-          let res = await axios.post(`loan`, {
-            copies: 2,
-            procedure_modality_id:this.modalidad.id,
-            amount_requested: this.calculos.montos,
-            city_id: this.$store.getters.cityId,
-            loan_term: this.calculos.plazo,
-            payment_type_id:2,
-            lenders:[this.$route.query.affiliate_id],
-            payable_liquid_calculated:this.calculos.payable_liquid_calculated,
-            bonus_calculated:this.calculos.bonus_calculated,
-            liquid_qualification_calculated:this.calculos.liquid_qualification_calculated,
-            indebtedness_calculated:this.calculos.indebtedness_calculated,
-            guarantors: [],
-            personal_reference_id: this.reference.id,
-            account_number:this.formulario[1],
-            destiny_id: this.formulario[2],
-            documents: this.selectedOpc.concat(this.selected.concat(this.radios.filter(Boolean))),
-            notes: this.otherDocuments
-          });
-          printJS({
-            printable: res.data.attachment.content,
-            type: res.data.attachment.type,
-            base64: true
-          })
-          this.$router.push('/loan')
-        } else {
-          this.toastr.error("Falta seleccionar requisitos, todos los requisitos deben ser presentados."
-          )
-        }
-      } catch (e) {
-        console.log(e);
-      } finally {
-        this.loading = false;
-      }
-    },
-    async getContractPrint() {
-      try {
-        let res1 = await axios.get(`loan/${8}/print/contract`, {
-          responseType: 'arraybuffer'
-        })
-        let res2 = await axios.get(`loan/${8}/print/documents`, {
-          responseType: 'arraybuffer'
-        })
-        let blob1 = new Blob([res1.data], {
-          type: "application/pdf"
-        })
-        let blob2 = new Blob([res2.data], {
-          type: "application/pdf"
-        })
-        printJS(window.URL.createObjectURL(blob1))
-        printJS(window.URL.createObjectURL(blob2))
-      } catch (e) {
-        console.log(e);
-      } finally {
-        this.loading = false;
-      }
-    },
     addOptionalDocument(i) {
       //Verifica si no encuentra el valor repetido
-      if (this.selectedOpc.indexOf(i) === -1) {
-        this.selectedOpc.push(i);
+      if (this.itemsOpc.indexOf(i) === -1) {
+        this.itemsOpc.push(i)
+         //filtrar en newOptional el item agregado y generar uno array nuevo sin el item
+        this.newOptional = this.newOptional.filter(item => item.id !== i)
         //console.log("I= " + i);
         //console.log("selectedOpc " + this.selectedOpc);
       }
-      this.selectedValue = " ";
+
     },
-    deleteOptionalDocument(i) {
-      this.selectedOpc.splice(i, 1);
+    deleteOptionalDocument(i, idDoc) {
+      let itemDelete = []
+      this.itemsOpc.splice(i, 1)
+      this.selectedOpc = " ";
+      console.log("delete "+i)
+      console.log("delete "+idDoc)
+      //obtener el item borrado desde optional
+      itemDelete = this.optional.find(item => item.id === idDoc)
+      console.log(itemDelete)
+      //insertarlo en newOptional
+      this.newOptional.push(itemDelete)
+     
     },
     addOtherDocument() {
+      //verificar si existe algun dato
       if (this.newOther) {
-        this.otherDocuments.push(this.newOther);
-        console.log("other " + this.otherDocuments);
-        this.newOther = "";
+         //desde otherDocuments filtrar si existe un dato registrado igual a uno guardado en newOher
+        if(!(this.otherDocuments.filter(item => item === this.newOther)).length > 0){
+          //si no existe repetido insertar item
+          this.otherDocuments.push(this.newOther);
+          console.log("other " + this.otherDocuments);
+          this.newOther = ""          
+        }else{  
+          this.toastr.error("El documento ya existe")  
+        }
       } else {
-        console.log("elemento vacio");
+        this.toastr.error("No registró ningún documento")
       }
     },
     deleteOtherDocument(i) {

@@ -22,15 +22,7 @@
           vertical
         ></v-divider>
         <v-flex xs3>
-          <v-text-field
-            v-model="search"
-            append-icon="mdi-magnify"
-            label="Buscar"
-            class="mr-5 pr-5"
-            single-line
-            hide-details
-            clearable
-          ></v-text-field>
+          <Search @search="search = $event" class="mr-5 pr-5"/>
         </v-flex>
         <Fab v-if="['create-user', 'update-user'].some(i => $store.getters.permissions.includes(i))" :bus="bus"/>
       </v-toolbar>
@@ -45,13 +37,15 @@
 import List from '@/components/user/List'
 import Fab from '@/components/user/Fab'
 import RemoveItem from '@/components/shared/RemoveItem'
+import Search from '@/components/shared/Search'
 
 export default {
   name: "user-index",
   components: {
     Fab,
     List,
-    RemoveItem
+    RemoveItem,
+    Search
   },
   data: () => ({
     search: '',
@@ -59,9 +53,9 @@ export default {
     active: true
   }),
   watch: {
-    search: _.debounce(function () {
+    search() {
       this.bus.$emit('search', this.search)
-    }, 1000),
+    },
     active: function() {
       this.bus.$emit('active', this.active)
     }

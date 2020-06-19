@@ -10,24 +10,18 @@
     </v-card-title>
     <template>
       <v-container>
-        <div  >
-          <v-expansion-panels  :focusable="true">
-            <v-expansion-panel
-              :expand="true">
-              <v-expansion-panel-header>
-                {{"TITULAR: "+this.degree_name}} {{this.$options.filters.fullName(this.affiliate, true)}}
-                <span style="text-align:center; ">CAT. {{this.category_name}}</span>
-                <template v-slot:actions >
-                  <v-icon color="teal">mdi-check</v-icon>
-                </template>
-              </v-expansion-panel-header>
-              <v-expansion-panel-content class="pa-0 ml-0"  >
-                <Steps
-                :affiliate.sync="affiliate"
-                :addresses.sync="addresses"/>
-              </v-expansion-panel-content>
-            </v-expansion-panel>
-          </v-expansion-panels>
+        <div>
+          <v-row>
+            <v-col  cols="6">
+              {{"TITULAR: "+this.degree_name}} {{this.$options.filters.fullName(this.affiliate, true)}}{{'CAT.'+this.category_name}}
+            </v-col>
+            <v-col  cols="6">
+              {{'CATEGORIA:'+this.category_name}}
+            </v-col>
+          </v-row>
+          <Steps
+            :affiliate.sync="affiliate"
+            :addresses.sync="addresses"/>
         </div>
       </v-container>
     </template>

@@ -8,29 +8,77 @@
     <v-card-text>
       <v-card>
         <v-card-text>
-          <v-simple-table dense>
-            <tbody>
-              <tr>
-                <td class="font-weight-black text-end pr-5">Usuario:</td>
-                <td class="text-left">{{ $store.getters.user }}</td>
-                <td class="font-weight-black text-end pr-5">Roles:</td>
-                <td class="text-left">
-                  <ul v-if="!loading">
-                    <li
-                      v-for="role in roles"
-                      :key="role.id"
+          <v-container fluid>
+            <v-row
+              align="start"
+              justify="space-around"
+            >
+              <v-col>
+                <v-row
+                  align="start"
+                  justify="center"
+                >
+                  <v-col xl="2" class="font-weight-black text-right">
+                    Usuario:
+                  </v-col>
+                  <v-col xl="10">
+                    {{ $store.getters.user }}
+                  </v-col>
+                </v-row>
+                <v-row
+                  align="start"
+                  justify="center"
+                  v-if="position"
+                >
+                  <v-col xl="2" class="font-weight-black text-right">
+                    Cargo:
+                  </v-col>
+                  <v-col xl="10">
+                    {{ position }}
+                  </v-col>
+                </v-row>
+              </v-col>
+              <v-col>
+                <v-row
+                  align="start"
+                  justify="center"
+                >
+                  <v-col xl="12" class="font-weight-black text-center">
+                    Roles:
+                  </v-col>
+                </v-row>
+                <v-row
+                  align="start"
+                  justify="center"
+                >
+                  <v-col xl="12">
+                    <v-treeview
+                      :items="modules"
+                      item-children="roles"
+                      item-key="id"
+                      item-text="display_name"
+                      expand-icon=""
+                      open-on-click
+                      open-all
+                      dense
                     >
-                      {{ role.display_name }}
-                    </li>
-                  </ul>
-                  <Loading v-else/>
-                </td>
-                <td v-if="!$store.getters.ldapAuth || $store.getters.username == 'admin'">
-                  <ChangePassword/>
-                </td>
-              </tr>
-            </tbody>
-          </v-simple-table>
+                      <template v-slot:prepend="{ item, open }">
+                        <v-icon v-if="item.hasOwnProperty('sequence_number')">
+                          mdi-square-small
+                        </v-icon>
+                        <v-icon v-else>
+                          {{ open ? 'mdi-folder-open' : 'mdi-folder' }}
+                        </v-icon>
+                      </template>
+                    </v-treeview>
+                  </v-col>
+                </v-row>
+              </v-col>
+              <v-col v-if="!$store.getters.ldapAuth || $store.getters.username == 'admin'">
+                <ChangePassword/>
+              </v-col>
+            </v-row>
+          </v-container>
         </v-card-text>
       </v-card>
     </v-card-text>
@@ -40,39 +88,54 @@
 <script>
 import ChangePassword from '@/components/login/ChangePassword'
 import Loading from '@/components/shared/Loading'
+import Module from '@/services/ModuleService'
 
 export default {
   name: "Profile",
   data() {
     return {
       loading: true,
-      roles: []
+      modules: [],
+      position: null
     }
   },
   components: {
     ChangePassword,
     Loading
   },
-  mounted() {
-    this.$store.getters.userRoles.forEach(role => {
-      this.getRole(role)
-    })
+  beforeMount() {
+    this.getUser()
+    this.getModules()
   },
   methods: {
-    async getRole(name) {
+    async getUser() {
       try {
-        this.loading = true
-        let res = await axios.get(`role`, {
-          params: {
-            name: name
-          }
-        })
-        if (res.data.length) this.roles.push(res.data[0])
+        let res = await axios.get(`user/${this.$store.getters.id}`)
+        this.position = res.data.position
       } catch (e) {
         console.log(e)
-      } finally {
-        this.loading = false
       }
+    },
+    getModules() {
+      this.loading = true
+      let roles = this.$store.getters.roles.filter(o => this.$store.getters.userRoles.includes(o.name))
+      const module = new Module()
+      module.get(null, {
+        page: 1,
+        per_page: 100
+      }).then(res => {
+        res.data.forEach(module => {
+          let moduleRoles = roles.filter(o => o.module_id == module.id)
+          if (moduleRoles.length) {
+            module.roles = moduleRoles
+            this.modules.push(module)
+          }
+        })
+      }).catch(e => {
+        console.log(e)
+      }).finally(() => {
+        this.loading = false
+      })
     }
   }
 }

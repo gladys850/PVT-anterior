@@ -319,14 +319,14 @@ class Util
         return $status;
     }
 
-    public static function pdf_to_base64($views, $file_name, $size = 'letter', $copies = 1)
+    public static function pdf_to_base64($views, $file_name, $size = 'letter', $copies = 1, $portrait = true)
     {
         $footerHtml = view()->make('partials.footer')->with(array('paginator' => true, 'print_date' => true, 'date' => Carbon::now()->ISOFormat('L H:m')))->render();
         $options = [
             'copies' => $copies ?? 1,
             'footer-html' => $footerHtml,
             'user-style-sheet' => public_path('css/report-print.min.css'),
-            'orientation' => 'portrait',
+            'orientation' => $portrait ? 'portrait' : 'landscape',
             'margin-top' => '8',
             'margin-bottom' => '16',
             'margin-left' => '5',
@@ -341,5 +341,31 @@ class Util
             'type' => 'pdf',
             'file_name' => $file_name
         ];
+    }
+
+    public static function request_rrhh_employee($position)
+    {
+        $employee = [
+            'name' => '_______________',
+            'identity_card' => '_______________',
+            'position' => $position
+        ];
+        try {
+            $req = collect(json_decode(file_get_contents(env("RRHH_URL") . '/position?name=' . $position), true));
+            if ($req->count() == 1) {
+                $pos = $req->first();
+            } else {
+                throw new Exception();
+            }
+            $req = collect(json_decode(file_get_contents(implode('/', [env("RRHH_URL"), 'position', $pos['id'], 'employee'])), true));
+            $employee['name'] = self::trim_spaces(implode(' ', [$req['first_name'], $req['second_name'], $req['last_name'], $req['mothers_last_name']]));
+            $employee['identity_card'] = $req['identity_card'];
+            $req = collect(json_decode(file_get_contents(implode('/', [env("RRHH_URL"), 'city', $req['city_identity_card_id']])), true));
+            $employee['identity_card'] .= ' ' . $req['shortened'];
+        } catch (\Exception $e) {
+            \Log::error('RRHH server not found');
+        } finally {
+            return $employee;
+        }
     }
 }

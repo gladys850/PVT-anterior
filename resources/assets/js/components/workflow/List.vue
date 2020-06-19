@@ -23,9 +23,9 @@
     <template v-slot:item.procedure_modality_id="{ item }">
       <v-tooltip top>
         <template v-slot:activator="{ on }">
-          <span v-on="on">{{ procedureModalities.find(o => o.id == item.procedure_modality_id).shortened }}</span>
+          <span v-on="on">{{ searchProcedureModality(item, 'shortened') }}</span>
         </template>
-        <span>{{ procedureModalities.find(o => o.id == item.procedure_modality_id).name }}</span>
+        <span>{{ searchProcedureModality(item, 'name') }}</span>
       </v-tooltip>
     </template>
     <template v-slot:item.request_date="{ item }">
@@ -42,76 +42,56 @@
     </template>
     <template v-slot:item.actions="{ item }">
       <v-tooltip bottom>
-         <template v-slot:activator="{ on }">
+        <template v-slot:activator="{ on }">
           <v-btn
             icon
             small
             v-on="on"
             color="warning"
             :to="{ name: 'flowAdd', params: { id: item.id }}"
-          >
-            <v-icon>mdi-eye</v-icon>
+          ><v-icon>mdi-eye</v-icon>
           </v-btn>
-         </template>
+        </template>
         <span>Ver trámite</span>
-      </v-tooltip>      
+      </v-tooltip>
+
       <v-menu
         offset-y
         close-on-content-click
-        v-if="$store.getters.permissions.includes('print-contract-loan')"
+        v-if="$store.getters.permissions.includes('print-contract-loan') || $store.getters.permissions.includes('print-payment-plan') "
       >
         <template v-slot:activator="{ on }">
           <v-btn
             icon
-            small
             color="primary"
+            dark
             v-on="on"
-          >
-            <v-icon>mdi-printer</v-icon>
+          ><v-icon>mdi-printer</v-icon>
           </v-btn>
         </template>
-        <v-list
-        class="py-0">
+        <v-list dense class="py-0">
           <v-list-item
-            class="py-0"
-            v-for="(option, index) in [{title:'Contrato'},{title:'Formulario'}]"
-            :key="index"
+            v-for="doc in printDocs"
+            :key="doc.id"
+            @click="imprimir(doc.id, item.id)"
           >
-            <v-list-item-title class="py-0">
-               <v-tooltip left>
-                  <template v-slot:activator="{ on }">
-                    <v-btn 
-                      icon
-                      small
-                      v-on="on"
-                      color="light-blue accent-4"
-                      v-show="index==0"
-                      @click="imprimir(index,item.id)"
-                      >
-                      <v-icon > mdi-file-document</v-icon> 
-                    </v-btn>
-                  </template>
-                  <span>Contrato</span>
-              </v-tooltip>
-              <v-tooltip left> 
-              <template v-slot:activator="{ on }">
-                    <v-btn 
-                      icon
-                      small
-                      color="light-blue accent-3"
-                      v-on="on"
-                      v-show="index==1"
-                      @click="imprimir(index,item.id)"
-                      >
-                      <v-icon > mdi-file</v-icon> 
-                    </v-btn>
-                  </template>
-                  <span>Formulario</span>
-              </v-tooltip>                  
+            <v-list-item-icon class="ma-0 py-0 pt-2">
+              <v-icon 
+                class="ma-0 py-0"
+                small
+                v-text="doc.icon"
+                color="light-blue accent-4"
+              ></v-icon>
+            </v-list-item-icon>
+            <v-list-item-title 
+              class="ma-0 py-0 mt-n2">
+              {{ doc.title }}
             </v-list-item-title>
           </v-list-item>
         </v-list>
       </v-menu>
+     <template>
+     </template> 
     </template>
   </v-data-table>
 </template>
@@ -200,7 +180,8 @@ export default {
         align: 'center',
         sortable: false
       }
-    ]
+    ],
+        printDocs: []
   }),
   watch: {
     selectedLoans(val) {
@@ -213,39 +194,51 @@ export default {
     },
     tray(val) {
       if (typeof val === 'string') this.updateHeader()
-    },
+    }
   },
   mounted() {
     this.bus.$on('emitRefreshLoans', val => {
       this.selectedLoans = []
-    })
+    }),
+    this.docsLoans()
   },
   methods: {
+    searchProcedureModality(item, attribute = null) {
+      let procedureModality = this.procedureModalities.find(o => o.id == item.procedure_modality_id)
+      if (procedureModality) {
+        if (attribute) {
+          return procedureModality[attribute]
+        } else {
+          return procedureModality
+        }
+      } else {
+        return null
+      }
+    },
     updateOptions($event) {
       if (this.options.page != $event.page || this.options.itemsPerPage != $event.itemsPerPage || this.options.sortBy != $event.sortBy || this.options.sortDesc != $event.sortDesc) this.$emit('update:options', $event)
     },
-    async imprimir(index,item)
+    async imprimir(id, item)
     {
       try {
         let res
-        if(index==0)
-        {
+        if(id==1){
           res = await axios.get(`loan/${item}/print/contract`)
-        }
-        else{
+        }else if(id==2){
           res = await axios.get(`loan/${item}/print/form`)
+        }else {
+          res = await axios.get(`loan/${item}/print/plan`)
         } 
         printJS({
             printable: res.data.content,
             type: res.data.type,
-            file_name: res.data.file_name,
+            documentTitle: res.data.file_name,
             base64: true
         })  
       } catch (e) {
-        toast.error("Ocurrió un error en la impresión.")
+        this.toastr.error("Ocurrió un error en la impresión.")
         console.log(e)
-      }
-      
+      }      
     },
     updateHeader() {
       if (this.tray != 'all') {
@@ -269,7 +262,29 @@ export default {
           })
         }
       }
-    }
+    },
+    docsLoans(){
+      let docs =[]    
+      if(this.$store.getters.permissions.includes('print-contract-loan') && this.$store.getters.permissions.includes('print-payment-plan')){
+        docs=[
+          { id: 1, title: 'Contrato', icon: 'mdi-file-document'},
+          { id: 2, title: 'Solicitud', icon: 'mdi-file'},
+          { id: 3, title: 'Plan de pagos', icon: 'mdi-cash'}
+        ]
+      }
+      else if(this.$store.getters.permissions.includes('print-contract-loan')){
+        docs=[
+          { id: 1, title: 'Contrato', icon: 'mdi-file-document'},
+          { id: 2, title: 'Solicitud', icon: 'mdi-file'}
+        ]
+      }
+      else if(this.$store.getters.permissions.includes('print-payment-plan')){
+        docs=[
+          { id: 3, title: 'Plan de pagos', icon: 'mdi-cash'}
+        ]
+      }
+      this.printDocs=docs
+    },
   }
 }
 </script>

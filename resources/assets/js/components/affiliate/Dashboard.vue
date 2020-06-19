@@ -30,7 +30,7 @@
             </div>
             <v-tooltip
               left
-              v-if="this.state_name_type != 'Baja' && this.state_name_status != 'Fallecido' &&  JSON.stringify(this.state_name) != '{}'"
+              
             >
               <template v-slot:activator="{ on }">
                 <v-btn
@@ -43,32 +43,13 @@
                   absolute
                   v-on="on"
                   style="margin-right: -9px;"
-                  :to="{ name: 'loanAdd', params: { hash: 'new'}, query: { affiliate_id: affiliate.id}}"
+                  @click="validateAffiliate($route.params.id)"                
                 >
                   <v-icon>mdi-plus</v-icon>
                 </v-btn>
               </template>
               <span>Nuevo trámite</span>
             </v-tooltip>
-            <!--<v-tooltip left v-if="loan.length > 0">
-              <template v-slot:activator="{ on }">
-                <v-btn
-                  fab
-                  dark
-                  small
-                  color="warning"
-                  v-on="on"
-                  class="mr-10"
-                  absolute
-                  bottom
-                  right
-                  @click="clickShowLoans()"
-                >
-                  <v-icon>mdi-eye</v-icon>
-                </v-btn>
-              </template>
-              <span>Ver préstamos</span>
-            </v-tooltip>-->
           </v-card-text>
         </v-card>
       </v-col>
@@ -98,7 +79,7 @@
               <small>
                 C.I.: {{affiliate.identity_card_ext}}
                 <br />
-                Categoría: {{this.category_name}}
+                Categoría: <span v-if="affiliate.category != null">{{affiliate.category.name}}</span>
                 <br />
                 Estado:  {{this.state_name_status}}
                 <br />
@@ -130,7 +111,7 @@
 <script>
 import common from "@/plugins/common";
 export default {
-  name: "affiliate-fingerprint",
+  name: "affiliate-dashboard",
   props: {
     affiliate: {
       type: Object,
@@ -250,8 +231,25 @@ export default {
         this.loading = false;
       }
     },
-    clickShowLoans() {
-      this.$router.push("/loan");
+    validateAffiliate(id) {
+      if(this.state_name_type != 'Baja' && this.state_name_status != 'Fallecido' && this.state_name != ''){
+        if(this.affiliate.identity_card != null && this.affiliate.city_identity_card_id != null){
+          if(this.affiliate.civil_status != null){
+            if(this.affiliate.birth_date != null && this.affiliate.city_birth_id != null){
+              this.$router.push({ name: 'loanAdd',  params: { hash: 'new'},  query: { affiliate_id: id}})
+            }else{
+              this.toastr.error("El afiliado no tiene registrado su fecha de nacimiento ó ciudad de nacimiento.")
+            }          
+          }else{
+            this.toastr.error("El afiliado no tiene registrado su estado civil.")
+          }          
+        }else{
+          this.toastr.error("El afiliado no tiene registrado su CI ó ciudad de expedición del CI.")
+        }
+      }else{
+        this.toastr.error("El afiliado no puede acceder a un préstamo por estar fallecido ó dado de baja ó no tener registrado su estado.")
+      }
+      
     }
   }
 };
