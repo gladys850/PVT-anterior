@@ -26,19 +26,21 @@
                 @if ($loan->parent_loan)
                 <td class="w-25">Trámite origen</td>
                 @endif
-                <td class="{{ $loan->parent_loan ? 'w-50' : 'w-75' }}" colspan="{{ $loan->parent_loan ? 1 : 2 }}">Modalidad de trámite</td>
+                <td class="{{ $loan->parent_loan ? 'w-50' : 'w-75' }}" colspan="{{ $loan->parent_loan ? 1 : 3 }}">Modalidad de trámite</td>
             </tr>
             <tr>
                 <td class="data-row py-5">{{ $loan->code }}</td>
                 @if ($loan->parent_loan)
                 <td class="data-row py-5">{{ $loan->parent_loan->code }}</td>
                 @endif
-                <td class="data-row py-5" colspan="{{ $loan->parent_loan ? 1 : 2 }}">{{ $loan->modality->name }}</td>
+                <td class="data-row py-5" colspan="{{ $loan->parent_loan ? 1 : 3 }}">{{ $loan->modality->name }}</td>
             </tr>
             <tr class="bg-grey-darker text-xxs text-white">
                 <td>Monto solicitado</td>
                 <td>Plazo</td>
                 <td>Tipo de Desembolso</td>
+                <td>Fecha de Desembolso</td>
+
             </tr>
             <tr>
                 <td class="data-row py-5">{{ Util::money_format($loan->amount_requested) }} <span class="capitalize">Bs.</span></td>
@@ -51,6 +53,7 @@
                         {{ $loan->payment_type->name}}
                     @endif
                 </td>
+                <td class="data-row py-5">{{ Carbon::parse($loan->disbursement_date)->format('d/m/y') }}</td>
             </tr>
         </table>
     </div>
@@ -102,7 +105,6 @@
     <div class="block">
         <div class="font-semibold leading-tight text-left m-b-10 text-xs">{{ $n++ }}. PLAN DE PAGOS (EXPRESADO EN BOLIVIANOS)</div>
     </div>
-
     <div class="block">
         <table class="table-info w-100 text-center uppercase my-20">
             <thead>
@@ -117,6 +119,9 @@
                 </tr>
             </thead>
             <tbody>
+                @php ($sum_capital = 0)
+                @php ($sum_interest = 0)
+                @php ($sum_estimated_quota = 0)
                 @foreach ($loan->plan as $quota)
                 <tr>
                     <td class="data-row py-2">{{ $quota->quota }}</td>
@@ -127,7 +132,18 @@
                     <td class="data-row py-2">{{ Util::money_format($quota->interest) }}</td>
                     <td class="data-row py-2">{{ Util::money_format($quota->next_balance) }}</td>
                 </tr>
+                @php ($sum_estimated_quota += $quota->estimated_quota)
+                @php ($sum_capital += $quota->capital)
+                @php ($sum_interest += $quota->interest)
                 @endforeach
+                <tr>
+                    <td colspan="2" class="data-row py-2 font-semibold leading-tight text-xs">TOTALES</td>
+                    <td class="data-row py-2">{{ Util::money_format($sum_estimated_quota) }}</td>
+                    <td class="data-row py-2"></td>
+                    <td class="data-row py-2">{{ Util::money_format($sum_capital) }}</td>
+                    <td class="data-row py-2">{{ Util::money_format($sum_interest) }}</td>
+                    <td class="data-row py-2"></td>
+                </tr>
             </tbody>
         </table>
     </div>
