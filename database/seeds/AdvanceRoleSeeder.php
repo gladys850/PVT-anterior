@@ -29,7 +29,7 @@ class AdvanceRoleSeeder extends Seeder
         $sequence_permissions = ['update-affiliate-secondary', 'show-affiliate', 'show-loan', 'update-address'];
         $leadership_permissions = ['show-all-loan', 'update-loan', 'delete-loan', 'show-setting', 'show-deleted-loan'];
         $executive_permissions = ['update-setting'];
-        $pay_permissions = ['print-payment-plan'];
+        $pay_permissions = ['print-payment-plan', 'print-payment-kardex-loan'];
         $recovery_permissions = ['show-all-loan', 'show-loan', 'show-affiliate'];
         $receipt_roles = ['Regional Santa Cruz', 'Regional Cochabamba', 'Regional Oruro', 'Regional Potosí', 'Regional Sucre', 'Regional Tarija', 'Regional Trinidad', 'Regional Cobija', 'Recepción'];
         $sequence_roles = [
