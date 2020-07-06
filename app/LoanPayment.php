@@ -40,6 +40,11 @@ class LoanPayment extends Model
         return $this->belongsTo(PaymentType::class);
     }
 
+    public function vouchers()
+    {
+        return $this->morphMany(Voucher::class, 'payable')->latest('updated_at');
+    }
+
     public static function days_interest(Loan $loan, $estimated_date = null)
     {
         $interest = [

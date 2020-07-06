@@ -49,6 +49,8 @@ Route::group([
         Route::patch('loans', 'Api\V1\LoanController@bulk_update_role');
         Route::apiResource('record', 'Api\V1\RecordController')->only('index');
         Route::apiResource('statistic', 'Api\V1\StatisticController')->only('index', 'show');
+        Route::apiResource('voucher', 'Api\V1\VoucherController')->only('index', 'show');
+
 
         // Afiliado
         Route::group([
