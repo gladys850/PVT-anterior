@@ -14,11 +14,12 @@ class CreateLoanPaymentsTable extends Migration
     public function up()
     { // table amortization
         Schema::create('loan_payments', function (Blueprint $table) {
+            $table->id();
             $table->unsignedBigInteger('loan_id'); 
             $table->foreign('loan_id')->references('id')->on('loans')->onDelete('cascade');
-            $table->unsignedBigInteger('affiliate_id'); // registro del depositante  
-            $table->foreign('affiliate_id')->references('id')->on('affiliates');
-            $table->date('pay_date'); // fecha de pago
+            //$table->unsignedBigInteger('affiliate_id'); // registro del depositante  
+            //$table->foreign('affiliate_id')->references('id')->on('affiliates');
+            //$table->date('pay_date'); // fecha de pago
             $table->date('estimated_date'); // fecha estimada de pago
             $table->unsignedSmallInteger('quota_number'); // numero de cuota, cuando sea necesario se repite
             // de las siguientes 5 columnas se obtendra el total pagado

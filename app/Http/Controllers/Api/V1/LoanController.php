@@ -20,6 +20,8 @@ use App\ProcedureModality;
 use App\PaymentType;
 use App\Role;
 use App\RoleSequence;
+use App\LoanPayment;
+use App\Voucher;
 use App\Http\Requests\LoansForm;
 use App\Http\Requests\LoanForm;
 use App\Http\Requests\LoanPaymentForm;
@@ -640,14 +642,23 @@ class LoanController extends Controller
     */
     public function set_payment(LoanPaymentForm $request, Loan $loan)
     {
+        //$payment = new LoanPayment();
         $payment = $loan->next_payment($request->input('estimated_date', null), $request->input('estimated_quota', null));
         $payment->payment_type_id = $request->payment_type_id;
-        $payment->pay_date = Carbon::now();
-        $payment->affiliate_id = $request->input('affiliate_id', $loan->disbursable_id);
+        //$payment->pay_date = Carbon::now();
+        //$payment->affiliate_id = $request->input('affiliate_id', $loan->disbursable_id);
         $payment->voucher_number = $request->input('voucher_number', null);
         $payment->receipt_number = $request->input('receipt_number', null);
         $payment->description = $request->input('description', null);
         $loan->payments()->create($payment->toArray());
+        
+        $voucher["pay_date"] = Carbon::now();
+        $voucher["voucher_type_id"] = 1;
+        $voucher["code"] = "0001";
+        $voucher["total"] = 500;
+        $voucher["user_id"] = 1;
+        $voucher["affiliate_id"] = $request->input('affiliate_id', $loan->disbursable_id);
+        $payment->vouchers()->create($voucher);
         return $payment;
     }
 
