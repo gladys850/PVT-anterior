@@ -7,7 +7,9 @@ use App\Voucher;
 use Illuminate\Http\Request;
 use Util;
 
-
+/** @group Vouchers
+* Datos de los vouchers registrados
+*/
 class VoucherController extends Controller
 {
     /**
