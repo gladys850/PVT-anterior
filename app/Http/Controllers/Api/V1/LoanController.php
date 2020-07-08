@@ -634,7 +634,8 @@ class LoanController extends Controller
 	* @bodyParam estimated_date date Fecha para el cálculo del interés. Example: 2020-04-30
 	* @bodyParam estimated_quota float Monto para el cálculo de los días de interés pagados. Example: 600
 	* @bodyParam affiliate_id integer ID de afiliado que realizó el pago. Example: 56
-	* @bodyParam payment_type_id integer ID de tipo de pago. Example: 2
+    * @bodyParam liquidate boolean Booleano para hacer el cálculo con el monto máximo que liquidará el préstamo. Example: false
+    * @bodyParam payment_type_id integer ID de tipo de pago. Example: 2
 	* @bodyParam voucher_number integer Número de boleta de depósito. Example: 65100
 	* @bodyParam receipt_number integer Número de recibo. Example: 102
 	* @bodyParam description string Texto de descripción. Example: Penalizacion regularizada
@@ -647,19 +648,16 @@ class LoanController extends Controller
     */
     public function set_payment(LoanPaymentForm $request, Loan $loan)
     {
-        
         DB::beginTransaction();
-        try {         
-            $payment = $loan->next_payment($request->input('estimated_date', null), $request->input('estimated_quota', null));
+        try {
+            $payment = $loan->next_payment($request->input('estimated_date', null), $request->input('estimated_quota', null), $request->input('liquidate', false));
             $payment->voucher_number = $request->input('voucher_number', null);
             $payment->receipt_number = $request->input('receipt_number', null);
             $payment->description = $request->input('description', null);
             $loan_payment = $loan->payments()->create($payment->toArray());
-
             $payment->user_id = auth()->id();
             $payment->affiliate_id = $request->input('affiliate_id', $loan->disbursable_id);
             $payment->voucher_type_id = $request->voucher_type_id;
-            $payment->code = $request->code;
             $payment->total = $payment->estimated_quota;
             $payment->payment_date = Carbon::now();
             $payment->paid_amount = $payment->estimated_quota;
