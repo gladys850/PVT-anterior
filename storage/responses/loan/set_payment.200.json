@@ -1,29 +1,36 @@
 {
-    "estimated_date": "2020-04-30",
+    "estimated_date": "2020-08-31",
     "quota_number": 2,
     "estimated_days": {
-        "penal": 91,
-        "accumulated": 91,
-        "current": 15
+        "penal": 0,
+        "accumulated": 0,
+        "current": 31
     },
     "paid_days": {
-        "penal": 91,
-        "accumulated": 91,
-        "current": 15
+        "penal": 0,
+        "accumulated": 0,
+        "current": 31
     },
-    "balance": 1998.22,
-    "capital_payment": 361.2,
-    "interest_payment": 29.56,
-    "accumulated_payment": 179.35,
-    "penal_payment": 29.89,
-    "estimated_quota": 600,
-    "next_balance": 1637.02,
+    "balance": 24263.03,
+    "capital_payment": 653.6,
+    "interest_payment": 412.14,
+    "accumulated_payment": 0,
+    "penal_payment": 0,
+    "estimated_quota": 1065.74,
+    "next_balance": 23609.43,
     "penal_remaining": 0,
     "accumulated_remaining": 0,
-    "payment_type_id": 2,
-    "pay_date": "2020-04-05T00:48:52.015535Z",
-    "affiliate_id": 47352,
-    "voucher_number": 65100,
-    "receipt_number": 102,
-    "description": "Penalización regularizado"
+    "voucher_number": null,
+    "receipt_number": null,
+    "description": null,
+    "user_id": 123,
+    "affiliate_id": 51419,
+    "voucher_type_id": 1,
+    "code": "0002",
+    "total": 1065.74,
+    "payment_date": "2020-07-08T13:08:26.745792Z",
+    "paid_amount": 1065.74,
+    "bank": null,
+    "bank_puy_number": null,
+    "payment_type_id": 3
 }

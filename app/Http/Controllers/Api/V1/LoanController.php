@@ -638,7 +638,6 @@ class LoanController extends Controller
 	* @bodyParam voucher_number integer Número de boleta de depósito. Example: 65100
 	* @bodyParam receipt_number integer Número de recibo. Example: 102
 	* @bodyParam description string Texto de descripción. Example: Penalizacion regularizada
-    
     * @bodyParam voucher_type_id required integer ID de tipo de Voucher. Example: 1
     * @bodyParam code required string Código de Voucher. Example: 001
     * @bodyParam bank string Nombre de Banco. Example: "Banco Union"
