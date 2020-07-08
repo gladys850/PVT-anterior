@@ -16,6 +16,13 @@
     "icon": "mdi-cash-multiple",
     "permission": "show-loan",
     "params": {}
+  },
+  {
+    "href": "collectionIndex",
+    "title": "Cobranzas",
+    "icon": "mdi-cash-usd-outline",
+    "permission": "show-loan",
+     "params": {}
   }, {
     "title": "Acceso",
     "icon": "mdi-key",
