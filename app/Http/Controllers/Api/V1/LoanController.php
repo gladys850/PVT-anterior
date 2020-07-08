@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Schema;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use DB;
 use App\Affiliate;
 use App\City;
 use App\User;
@@ -20,6 +21,8 @@ use App\ProcedureModality;
 use App\PaymentType;
 use App\Role;
 use App\RoleSequence;
+use App\LoanPayment;
+use App\Voucher;
 use App\Http\Requests\LoansForm;
 use App\Http\Requests\LoanForm;
 use App\Http\Requests\LoanPaymentForm;
@@ -631,23 +634,44 @@ class LoanController extends Controller
 	* @bodyParam estimated_date date Fecha para el cálculo del interés. Example: 2020-04-30
 	* @bodyParam estimated_quota float Monto para el cálculo de los días de interés pagados. Example: 600
 	* @bodyParam affiliate_id integer ID de afiliado que realizó el pago. Example: 56
-	* @bodyParam payment_type_id integer required ID de tipo de pago. Example: 2
+	* @bodyParam payment_type_id integer ID de tipo de pago. Example: 2
 	* @bodyParam voucher_number integer Número de boleta de depósito. Example: 65100
 	* @bodyParam receipt_number integer Número de recibo. Example: 102
 	* @bodyParam description string Texto de descripción. Example: Penalizacion regularizada
+    * @bodyParam voucher_type_id required integer ID de tipo de Voucher. Example: 1
+    * @bodyParam code required string Código de Voucher. Example: 001
+    * @bodyParam bank string Nombre de Banco. Example: "Banco Union"
+    * @bodyParam bank_puy_number string Número de pago del banco. Example: 21234
     * @authenticated
     * @responseFile responses/loan/set_payment.200.json
     */
     public function set_payment(LoanPaymentForm $request, Loan $loan)
     {
-        $payment = $loan->next_payment($request->input('estimated_date', null), $request->input('estimated_quota', null));
-        $payment->payment_type_id = $request->payment_type_id;
-        $payment->pay_date = Carbon::now();
-        $payment->affiliate_id = $request->input('affiliate_id', $loan->disbursable_id);
-        $payment->voucher_number = $request->input('voucher_number', null);
-        $payment->receipt_number = $request->input('receipt_number', null);
-        $payment->description = $request->input('description', null);
-        $loan->payments()->create($payment->toArray());
+        
+        DB::beginTransaction();
+        try {         
+            $payment = $loan->next_payment($request->input('estimated_date', null), $request->input('estimated_quota', null));
+            $payment->voucher_number = $request->input('voucher_number', null);
+            $payment->receipt_number = $request->input('receipt_number', null);
+            $payment->description = $request->input('description', null);
+            $loan_payment = $loan->payments()->create($payment->toArray());
+
+            $payment->user_id = auth()->id();
+            $payment->affiliate_id = $request->input('affiliate_id', $loan->disbursable_id);
+            $payment->voucher_type_id = $request->voucher_type_id;
+            $payment->code = $request->code;
+            $payment->total = $payment->estimated_quota;
+            $payment->payment_date = Carbon::now();
+            $payment->paid_amount = $payment->estimated_quota;
+            $payment->bank = $request->input('bank', null);
+            $payment->bank_puy_number = $request->input('bank_puy_number', null);
+            $payment->payment_type_id = $request->payment_type_id;
+            $loan_payment->vouchers()->create($payment->toArray());
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollback();
+            return $e;
+        }
         return $payment;
     }
 

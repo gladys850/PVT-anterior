@@ -42,7 +42,7 @@ class VoucherController extends Controller
     * Devuelve el detalle de un voucher mediante su ID
     * @urlParam voucher required ID de voucher. Example: 1
     * @authenticated
-    * @responseFile responses/city/show.200.json
+    * @responseFile responses/voucher/show.200.json
     */
     public function show(Voucher $voucher)
     {

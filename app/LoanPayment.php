@@ -8,13 +8,12 @@ use Carbon;
 
 class LoanPayment extends Model
 {
-    protected $primaryKey = null;
-    public $incrementing = false;
+    //protected $primaryKey = null;
+    //public $incrementing = false;
     public $timestamps = true;
+    //public $guarded = ['id'];
     public $fillable = [
         'loan_id',
-        'affiliate_id',
-        'pay_date',
         'estimated_date',
         'quota_number',
         'estimated_quota',
