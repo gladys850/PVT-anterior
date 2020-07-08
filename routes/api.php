@@ -116,6 +116,7 @@ Route::group([
             Route::get('loan/{loan}/payment','Api\V1\LoanController@get_payments');
             Route::patch('loan/{loan}/payment','Api\V1\LoanController@get_next_payment');
             Route::post('loan/{loan}/payment','Api\V1\LoanController@set_payment');
+            Route::put('loan/{loan}/{loan_payment}/payment','Api\V1\LoanController@update_payment');
             Route::get('loan/{loan}/observation','Api\V1\LoanController@get_observations');
             Route::post('loan/{loan}/observation','Api\V1\LoanController@set_observation');
             Route::patch('loan/{loan}/observation','Api\V1\LoanController@update_observation');

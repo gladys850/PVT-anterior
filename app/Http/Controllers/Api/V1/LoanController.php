@@ -647,9 +647,8 @@ class LoanController extends Controller
     */
     public function set_payment(LoanPaymentForm $request, Loan $loan)
     {
-        
         DB::beginTransaction();
-        try {         
+        try {
             $payment = $loan->next_payment($request->input('estimated_date', null), $request->input('estimated_quota', null));
             $payment->voucher_number = $request->input('voucher_number', null);
             $payment->receipt_number = $request->input('receipt_number', null);
@@ -666,7 +665,51 @@ class LoanController extends Controller
             $payment->bank = $request->input('bank', null);
             $payment->bank_puy_number = $request->input('bank_puy_number', null);
             $payment->payment_type_id = $request->payment_type_id;
-            $loan_payment->vouchers()->create($payment->toArray());
+            $loan_payment->voucher()->create($payment->toArray());
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollback();
+            return $e;
+        }
+        return $payment;
+    }
+
+    /** @group Cobranzas
+    * Editar pago
+    * Edita el Pago realizado.
+    * @urlParam loan required ID del prestamo y loan_payment required ID del pago realizado. Example: 2 / 15
+	* @bodyParam estimated_date date Fecha para el cálculo del interés. Example: 2020-04-30
+	* @bodyParam estimated_quota float Monto para el cálculo de los días de interés pagados. Example: 600
+	* @bodyParam affiliate_id integer ID de afiliado que realizó el pago. Example: 56
+	* @bodyParam payment_type_id integer ID de tipo de pago. Example: 2
+	* @bodyParam voucher_number integer Número de boleta de depósito. Example: 65100
+	* @bodyParam receipt_number integer Número de recibo. Example: 102
+	* @bodyParam description string Texto de descripción. Example: Penalizacion regularizada
+    * @bodyParam voucher_type_id required integer ID de tipo de Voucher. Example: 1
+    * @bodyParam code required string Código de Voucher. Example: 001
+    * @bodyParam bank string Nombre de Banco. Example: "Banco Union"
+    * @bodyParam bank_puy_number string Número de pago del banco. Example: 21234
+    * @authenticated
+    * @responseFile responses/loan/set_payment.200.json
+    */
+    public function update_payment(LoanPaymentForm $request, Loan $loan, LoanPayment $loanPayment)
+    {
+        DB::beginTransaction();
+        try {
+            $payment = $loanPayment;
+            $payment->voucher_number = $request->input('voucher_number', null);
+            $payment->receipt_number = $request->input('receipt_number', null);
+            $payment->description = $request->input('description', null);
+
+            $voucher = $loanPayment->voucher;
+            $voucher->voucher_type_id = $request->voucher_type_id;
+            $voucher->bank = $request->input('bank', null);
+            $voucher->bank_puy_number = $request->input('bank_puy_number', null);
+            $voucher->payment_type_id = $request->payment_type_id;
+
+            $loanPayment = $loanPayment->update($payment->toArray());
+            //$loanPayment->voucher()->($voucher->toArray());
+            Voucher::find($voucher->id)->update($voucher->toArray());
             DB::commit();
         } catch (\Exception $e) {
             DB::rollback();
