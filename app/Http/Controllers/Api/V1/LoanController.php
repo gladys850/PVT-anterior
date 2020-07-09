@@ -649,7 +649,8 @@ class LoanController extends Controller
     {
         DB::beginTransaction();
         try {
-            $payment = $loan->next_payment($request->input('estimated_date', null), $request->input('estimated_quota', null));
+            
+            //$payment = $loan->next_payment($request->input('estimated_date', null), $request->input('estimated_quota', null));
             $payment->voucher_number = $request->input('voucher_number', null);
             $payment->receipt_number = $request->input('receipt_number', null);
             $payment->description = $request->input('description', null);

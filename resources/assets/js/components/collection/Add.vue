@@ -1,0 +1,350 @@
+<template>
+  <v-card flat>
+    <v-card-title>
+      <v-toolbar dense color="tertiary" style="z-index: 1">
+        <v-toolbar-title>
+          <Breadcrumbs />
+        </v-toolbar-title>
+        <v-spacer></v-spacer>
+          <v-tooltip top
+          >
+            <template v-slot:activator="{ on }">
+              <v-btn
+                v-show="!loan.validated"
+                v-on="on"
+                icon
+                outlined
+                small
+                color="success"
+                class="darken-2 ml-4"
+                @click="bus.$emit('openDialog', { edit:false, accion: 'validar' })"
+              >
+                <v-icon dark>mdi-file-check</v-icon>
+              </v-btn>
+            </template>
+            <span>Validar trámite</span>
+          </v-tooltip>
+          <v-tooltip top
+          >
+            <template v-slot:activator="{ on }">
+              <v-btn
+                v-show="!loan.validated"
+                v-on="on"
+                icon
+                outlined
+                small
+                color="orange"
+                class="ml-4"
+                @click="bus.$emit('openDialog', { edit:false, accion: 'devolver' })"
+              >
+                <v-icon>mdi-file-undo</v-icon>
+              </v-btn>
+            </template>
+            <span>Devolver trámite</span>
+          </v-tooltip>
+          <v-tooltip top
+          >
+            <template v-slot:activator="{ on }">
+              <v-btn
+                top v-if="$store.getters.permissions.includes('delete-loan')"
+                v-on="on"
+                icon
+                outlined
+                small
+                color="error"
+                class="darken-2 ml-4"
+                @click="bus.$emit('openDialog', { edit:false, accion: 'anular' })"
+              >
+                <v-icon>mdi-file-cancel</v-icon>
+              </v-btn>
+            </template>
+            <span>Anular trámite</span>
+          </v-tooltip>        
+      </v-toolbar>
+    </v-card-title>
+    <v-card-text>
+      <v-tabs
+        v-model="tab"
+        background-color="deep-blue accent-2"
+        class="elevation-2"
+        dark
+        :vertical="vertical"
+        :icons-and-text="icons"
+      >
+        <v-tabs-slider></v-tabs-slider>
+        <v-tab v-if="!editable" :href="`#tab-1`">
+          <v-icon v-if="icons">mdi-trending-up</v-icon>
+        </v-tab>
+        <v-tab :href="`#tab-2`">
+          <v-icon v-if="icons">mdi-currency-usd</v-icon>
+        </v-tab>
+        <v-tab :href="`#tab-3`">
+          <v-icon v-if="icons">mdi-gesture-tap-button</v-icon>
+        </v-tab>
+        <v-tab :href="`#tab-4`">
+          <v-icon v-if="icons">mdi-account-switch-outline</v-icon>
+        </v-tab>
+        <v-tab :href="`#tab-5`">
+          <v-icon v-if="icons">mdi-badge-account-horizontal</v-icon>
+        </v-tab>
+        <v-tab-item :value="'tab-1'">
+          <v-card flat tile>
+            <v-card-text>
+              <Dashboard :affiliate.sync="affiliate" :loan.sync="loan" />
+            </v-card-text>
+          </v-card>
+        </v-tab-item>
+        <v-tab-item :value="'tab-2'">
+          <v-card flat tile>
+            <v-card-title v-if="$store.getters.permissions.includes('print-payment-plan') ">
+              <v-tooltip top>
+                <template v-slot:activator="{ on }">
+                  <v-btn
+                    fab
+                    small
+                    color="dark"
+                    top
+                    right
+                    absolute
+                    v-on="on"
+                    @click="imprimir($route.params.id)"
+                  >
+                    <v-icon>mdi-printer</v-icon>
+                  </v-btn>
+                </template>
+                <div>
+                  <span>Imprimir plan de pagos</span>
+                </div>
+              </v-tooltip>
+            </v-card-title>
+            <v-card-text>
+              <GenerateVoucher>
+                <template v-slot:title>
+                  <v-col cols="12" class="py-0">
+                    <span class="text-grey darken-1 title font-weight-light">VOUCHER</span>
+                  </v-col>
+                </template>
+              </GenerateVoucher>
+            </v-card-text>
+          </v-card>
+        </v-tab-item>
+        <v-tab-item :value="'tab-3'">
+          <v-card flat tile>
+            <v-card-text>
+              <ManualAmortization>
+                <template v-slot:title>
+                  <v-col cols="12" class="py-0">
+                    <span class="text-grey darken-1 title font-weight-light">AMORTIZACION MANUAL</span>
+                  </v-col>
+                </template>
+              </ManualAmortization>
+            </v-card-text>
+          </v-card>
+        </v-tab-item>
+        <v-tab-item :value="'tab-4'">
+          <v-card flat tile>
+            <v-card-text>
+               <GuaranteData>
+                <template v-slot:title>
+                  <v-col cols="12" class="py-0">
+                    <span class="text-grey darken-1 title font-weight-light">DATOS DEL GARANTE</span>
+                  </v-col>
+                </template>
+              </GuaranteData>
+            </v-card-text>
+          </v-card>
+        </v-tab-item>
+        <v-tab-item :value="'tab-5'">
+          <v-card flat tile>
+            <v-card-text>
+               <GuaranteData>
+                <template v-slot:title>
+                  <v-col cols="12" class="py-0">
+                    <span class="text-grey darken-1 title font-weight-light">REVISION DEUDAS CON LA ENTIDAD</span>
+                  </v-col>
+                </template>
+              </GuaranteData>
+            </v-card-text>
+          </v-card>
+        </v-tab-item>
+      </v-tabs>
+    </v-card-text>
+  </v-card>
+</template>
+<script>
+import Breadcrumbs from "@/components/shared/Breadcrumbs"
+import ManualAmortization from "@/components/collection/ManualAmortization"
+import GuaranteData from "@/components/loan/GuaranteData"
+import GenerateVoucher from "@/components/collection/GenerateVoucher"
+import DebtsEntity from "@/components/collection/DebtsEntity"
+import Dashboard from "@/components/collection/Dashboard"
+
+export default {
+  name: "flow-index",
+  components: {
+    Breadcrumbs,
+    GenerateVoucher,
+    ManualAmortization,
+    GuaranteData,
+    DebtsEntity,
+    Dashboard
+  },
+  data: () => ({
+    bus: new Vue(),
+    bus1: new Vue(), //Creamos la instancia de bus1
+    addresses: [],
+    affiliate: {
+      first_name: null,
+      second_name: null,
+      last_name: null,
+      mothers_last_name: null,
+      identity_card: null,
+      birth_date: null,
+      date_death: null,
+      reason_death: null,
+      phone_number: null,
+      cell_phone_number: null,
+      city_identity_card_id: null,
+      date_entry: null,
+      service_years: null,
+      service_months: null,
+      date_derelict: null,
+      unit_name: null
+    },
+    bonos: [0, 0, 0, 0],
+    payable_liquid: [0, 0, 0],
+    calculos: {},
+    modalidad: {},
+    loan: {},
+    datos: {},
+    formulario: [],
+    observations: [],
+    intervalos: {},
+    modalidad: {},
+    icons: true,
+    vertical: true,
+    editable: false,
+    reload: false,
+    tab: "tab-1"
+  }),
+  computed: {
+    permission() {
+      return {
+        primary: this.primaryPermission,
+        secondary: this.secondaryPermission
+      }
+    },
+    secondaryPermission() {
+      if (this.affiliate.id) {
+        return this.$store.getters.permissions.includes(
+          "update-affiliate-secondary"
+        )
+      } else {
+        return this.$store.getters.permissions.includes("create-affiliate")
+      }
+    },
+    primaryPermission() {
+      if (this.affiliate.id) {
+        return this.$store.getters.permissions.includes(
+          "update-affiliate-primary"
+        )
+      } else {
+        return this.$store.getters.permissions.includes("create-affiliate")
+      }
+    }
+  },
+  mounted() {
+    this.getloan(this.$route.params.id)
+  },
+  methods: {
+    resetForm() {
+      this.getAddress(this.$route.params.id)
+      this.editable = false
+      this.reload = true
+      this.$nextTick(() => {
+        this.reload = false
+      })
+    },
+    setBreadcrumbs() {
+      let breadcrumbs = [
+        {
+          text: "Préstamo",
+          to: { name: "flowIndex" }
+        }
+      ]
+      breadcrumbs.push({
+        text: this.loan.code,
+        to: { name: "flowAdd", params: { id: this.loan.id } }
+      })
+      this.$store.commit("setBreadcrumbs", breadcrumbs)
+    },
+    async getloan(id) {
+      try {
+        this.loading = true
+        let res = await axios.get(`loan/${id}`)
+        this.loan = res.data
+        this.calculos.plazo = this.loan.loan_term
+        this.calculos.amount_approved = this.loan.amount_approved
+        this.calculos.quota_calculated = this.loan.estimated_quota
+        this.calculos.amount_maximum_suggested = this.loan.amount_approved
+        this.calculos.payable_liquid_calculated = this.loan.payable_liquid_calculated
+        this.calculos.bonus_calculated = this.loan.bonus_calculated
+        this.calculos.liquid_qualification_calculated = this.loan.liquid_qualification_calculated
+        this.calculos.indebtedness_calculated = this.loan.indebtedness_calculated
+        this.calculos.montos = this.loan.amount_approved
+
+        let res1 = await axios.get(`affiliate/${this.loan.disbursable_id}`)
+        this.affiliate = res1.data
+        this.setBreadcrumbs()
+        console.log(this.loan)
+      } catch (e) {
+        console.log(e)
+      } finally {
+        this.loading = false
+      }
+    },
+    async getObservation(id) {
+      try {
+        this.loading = true
+        let res = await axios.get(`loan/${id}/observation`)
+        this.observations = res.data
+        for (this.i = 0; this.i < this.observations.length; this.i++) {
+          let res1 = await axios.get(`user/${this.observations[this.i].user_id}`
+          )
+          this.observations[this.i].user_name = res1.data.username
+        }
+      } catch (e) {
+        console.log(e)
+      } finally {
+        this.loading = false
+      }
+    },
+    async getAddress(id) {
+      try {
+        this.loading = true
+        let res = await axios.get(`affiliate/${id}/address`)
+        this.addresses = res.data
+      } catch (e) {
+        console.log(e)
+      } finally {
+        this.loading = false
+      }
+    },
+    async imprimir(item) {
+      try {
+        let res = await axios.get(`loan/${item}/print/plan`)
+        console.log("plan " + item)
+        printJS({
+          printable: res.data.content,
+          type: res.data.type,
+          file_name: res.data.file_name,
+          base64: true
+        })
+      } catch (e) {
+        this.toastr.error("Ocurrió un error en la impresión.")
+        console.log(e)
+      }
+    }
+  }
+}
+</script>
