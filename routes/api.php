@@ -124,6 +124,8 @@ Route::group([
             Route::delete('loan/{loan}/observation','Api\V1\LoanController@unset_observation');
             Route::get('loan/{loan}/print/form', 'Api\V1\LoanController@print_form');
             Route::get('loan/{loan}/print/contract', 'Api\V1\LoanController@print_contract');
+            Route::get('loan/{loan}/print/kardex','Api\V1\LoanController@print_kardex');
+
 
         });
         Route::group([
