@@ -12,6 +12,8 @@ import RecordIndex from '@/components/record/Index'
 import Camara from '@/components/affiliate/Webcam'
 import FlowIndex from '@/components/workflow/Index'
 import FlowAdd from '@/components/workflow/Add'
+import CollectionIndex from '@/components/collection/Index'
+import CollectionAdd from '@/components/collection/Add'
 
 export const routes = [
   {
@@ -117,6 +119,22 @@ export const routes = [
     path: '/workflow/:id',
     name: 'flowAdd',
     component: FlowAdd,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/collection',
+    name: 'collectionIndex',
+    component: CollectionIndex,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/collection/:id',
+    name: 'collectionAdd',
+    component: CollectionAdd,
     meta: {
       requiresAuth: true
     }

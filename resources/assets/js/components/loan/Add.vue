@@ -13,7 +13,7 @@
         <div>
           <v-row>
             <v-col  cols="6">
-              {{"TITULAR: "+this.degree_name}} {{this.$options.filters.fullName(this.affiliate, true)}}{{'CAT.'+this.category_name}}
+              {{"TITULAR: "+this.degree_name}} {{this.$options.filters.fullName(this.affiliate, true)}}
             </v-col>
             <v-col  cols="6">
               {{'CATEGORIA:'+this.category_name}}
