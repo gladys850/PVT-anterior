@@ -664,13 +664,74 @@ class LoanController extends Controller
             $payment->bank = $request->input('bank', null);
             $payment->bank_puy_number = $request->input('bank_puy_number', null);
             $payment->payment_type_id = $request->payment_type_id;
-            $loan_payment->vouchers()->create($payment->toArray());
+            $loan_payment->voucher()->create($payment->toArray());
             DB::commit();
         } catch (\Exception $e) {
             DB::rollback();
             return $e;
         }
         return $payment;
+    }
+
+    /** @group Cobranzas
+    * Editar pago
+    * Edita el Pago realizado.
+    * @urlParam loan required ID del prestamo. Example: 2
+    * @urlParam loan_payment required ID del pago realizado. Example: 15
+	* @bodyParam payment_type_id integer ID de tipo de pago. Example: 2
+	* @bodyParam voucher_number integer Número de boleta de depósito. Example: 65100
+	* @bodyParam receipt_number integer Número de recibo. Example: 102
+	* @bodyParam description string Texto de descripción. Example: Penalizacion regularizada
+    * @bodyParam voucher_type_id required integer ID de tipo de Voucher. Example: 1
+    * @bodyParam bank string Nombre de Banco. Example: "Banco Union"
+    * @bodyParam bank_puy_number string Número de pago del banco. Example: 21234
+    * @authenticated
+    * @responseFile responses/loan/update_payment.200.json
+    */
+    public function update_payment(LoanPaymentForm $request, Loan $loan, LoanPayment $loanPayment)
+    {
+        DB::beginTransaction();
+        try {
+            $payment = $loanPayment;
+            $payment->voucher_number = $request->input('voucher_number', null);
+            $payment->receipt_number = $request->input('receipt_number', null);
+            $payment->description = $request->input('description', null);
+
+            $voucher = $loanPayment->voucher;
+            $voucher->voucher_type_id = $request->voucher_type_id;
+            $voucher->bank = $request->input('bank', null);
+            $voucher->bank_puy_number = $request->input('bank_puy_number', null);
+            $voucher->payment_type_id = $request->payment_type_id;
+
+            $loanPayment->update($payment->toArray());
+            Voucher::find($voucher->id)->update($voucher->toArray());
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollback();
+            return $e;
+        }
+        return $payment;
+    }
+
+     /**
+    * Anular Pago
+    * @urlParam loan required ID del pago. Example: 1
+    * @authenticated
+    * @responseFile responses/loan/destroy_payment.200.json
+    */
+    public function destroy_payment(LoanPayment $loanPayment)
+    {
+        $loanPayment->voucher;
+        DB::beginTransaction();
+        try {
+            $loanPayment->voucher()->delete();
+            $loanPayment->delete();
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollback();
+            return $e;
+        }
+        return $loanPayment;
     }
 
     /** @group Cobranzas

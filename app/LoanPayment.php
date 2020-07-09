@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Carbon\CarbonImmutable;
 use Carbon;
 
@@ -12,6 +13,7 @@ class LoanPayment extends Model
     //public $incrementing = false;
     public $timestamps = true;
     //public $guarded = ['id'];
+    use SoftDeletes;
     public $fillable = [
         'loan_id',
         'estimated_date',
@@ -39,9 +41,9 @@ class LoanPayment extends Model
         return $this->belongsTo(PaymentType::class);
     }
 
-    public function vouchers()
+    public function voucher()
     {
-        return $this->morphMany(Voucher::class, 'payable')->latest('updated_at');
+        return $this->morphOne(Voucher::class, 'payable')->latest('updated_at');
     }
 
     public static function days_interest(Loan $loan, $estimated_date = null)
