@@ -44,10 +44,12 @@ class LoanPaymentForm extends FormRequest
             case 'POST': {
                 return array_merge($rules, [
                     'payment_type_id' => 'required|exists:payment_types,id',
+                    'liquidate' => 'nullable|boolean',
                     'affiliate_id' => 'nullable|exists:affiliates,id',
                     'voucher_number' => 'nullable|integer|min:1',
                     'receipt_number' => 'nullable|integer|min:1',
-                    'description' => 'nullable|string|min:2'
+                    'description' => 'nullable|string|min:2',
+                    'voucher_type_id' => 'required|exists:voucher_types,id'
                 ]);
             }
             default: {
@@ -60,7 +62,10 @@ class LoanPaymentForm extends FormRequest
     public function messages()
     {
         return [
-            'estimated_date.after_or_equal' => 'La fecha estimada debe ser igual a hoy o posterior'
+            'estimated_date.after_or_equal' => 'La fecha estimada debe ser igual a hoy o posterior',
+            'voucher_type_id.required' => 'El tipo de voucher es requerido',
+            'payment_type_id.required' => 'El tipo de pago es requerido',
+            'liquidate.boolean' => 'EL atributo liquidado debe ser (true or false)'
         ];
     }
 }
