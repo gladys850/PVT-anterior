@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Carbon\CarbonImmutable;
 use Carbon;
 
@@ -12,6 +13,7 @@ class LoanPayment extends Model
     //public $incrementing = false;
     public $timestamps = true;
     //public $guarded = ['id'];
+    use SoftDeletes;
     public $fillable = [
         'loan_id',
         'estimated_date',

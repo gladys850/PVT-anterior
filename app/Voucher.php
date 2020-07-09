@@ -4,10 +4,12 @@ namespace App;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Carbon;
 
 class Voucher extends Model
 {
+    use SoftDeletes;
     use Traits\EloquentGetTableNameTrait;
     public $timestamps = true;
     public $guarded = ['id'];

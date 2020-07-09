@@ -31,7 +31,7 @@ class CreateLoanPaymentsTable extends Migration
             $table->unsignedBigInteger('receipt_number')->nullable(); // numero de recibo
             $table->text('description')->nullable(); // descripcion del pago 
             $table->timestamps();
-
+            $table->softDeletes();
         });
     }
 

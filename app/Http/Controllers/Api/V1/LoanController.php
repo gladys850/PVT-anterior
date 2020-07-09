@@ -676,20 +676,17 @@ class LoanController extends Controller
     /** @group Cobranzas
     * Editar pago
     * Edita el Pago realizado.
-    * @urlParam loan required ID del prestamo y loan_payment required ID del pago realizado. Example: 2 / 15
-	* @bodyParam estimated_date date Fecha para el cálculo del interés. Example: 2020-04-30
-	* @bodyParam estimated_quota float Monto para el cálculo de los días de interés pagados. Example: 600
-	* @bodyParam affiliate_id integer ID de afiliado que realizó el pago. Example: 56
+    * @urlParam loan required ID del prestamo. Example: 2
+    * @urlParam loan_payment required ID del pago realizado. Example: 15
 	* @bodyParam payment_type_id integer ID de tipo de pago. Example: 2
 	* @bodyParam voucher_number integer Número de boleta de depósito. Example: 65100
 	* @bodyParam receipt_number integer Número de recibo. Example: 102
 	* @bodyParam description string Texto de descripción. Example: Penalizacion regularizada
     * @bodyParam voucher_type_id required integer ID de tipo de Voucher. Example: 1
-    * @bodyParam code required string Código de Voucher. Example: 001
     * @bodyParam bank string Nombre de Banco. Example: "Banco Union"
     * @bodyParam bank_puy_number string Número de pago del banco. Example: 21234
     * @authenticated
-    * @responseFile responses/loan/set_payment.200.json
+    * @responseFile responses/loan/update_payment.200.json
     */
     public function update_payment(LoanPaymentForm $request, Loan $loan, LoanPayment $loanPayment)
     {
@@ -706,8 +703,7 @@ class LoanController extends Controller
             $voucher->bank_puy_number = $request->input('bank_puy_number', null);
             $voucher->payment_type_id = $request->payment_type_id;
 
-            $loanPayment = $loanPayment->update($payment->toArray());
-            //$loanPayment->voucher()->($voucher->toArray());
+            $loanPayment->update($payment->toArray());
             Voucher::find($voucher->id)->update($voucher->toArray());
             DB::commit();
         } catch (\Exception $e) {
@@ -715,6 +711,27 @@ class LoanController extends Controller
             return $e;
         }
         return $payment;
+    }
+
+     /**
+    * Anular Pago
+    * @urlParam loan required ID del pago. Example: 1
+    * @authenticated
+    * @responseFile responses/loan/destroy_payment.200.json
+    */
+    public function destroy_payment(LoanPayment $loanPayment)
+    {
+        $loanPayment->voucher;
+        DB::beginTransaction();
+        try {
+            $loanPayment->voucher()->delete();
+            $loanPayment->delete();
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollback();
+            return $e;
+        }
+        return $loanPayment;
     }
 
     /** @group Cobranzas
