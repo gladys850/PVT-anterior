@@ -926,6 +926,15 @@ class LoanController extends Controller
         ];
     }
 
+    /**
+    * Impresión del Kardex de Pagos
+    * Devuelve un pdf del Kardex de pagos acorde a un ID de préstamo
+    * @urlParam loan required ID del préstamo. Example: 1
+    * @queryParam copies Número de copias del documento. Example: 2
+    * @authenticated
+    * @responseFile responses/voucher/print_kardex.200.json
+    */
+
     public function print_kardex(Request $request, Loan $loan, $standalone = true)
     {
         $procedure_modality = $loan->modality;

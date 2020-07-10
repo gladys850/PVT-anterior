@@ -107,33 +107,57 @@
         <table class="table-info w-100 text-center uppercase my-20">
             <thead>
                 <tr class="bg-grey-darker text-xxs text-white">
-                    <th class="w-10">Nº</th>
-                    <th class="w-15"><div>Fecha</div><div>de pago</div></td>
-                    <th class="w-15"><div>Fecha estimada</div><div>de pago</div></td>
-                    <th class="w-15">Cuota</td>
-                    <th class="w-15"><div>Pago</div><div>Penal</div></td>
-                    <th class="w-15"><div>Pago interés</div><div>acumulado</div></td>
-                    <th class="w-15"><div>Pago interés</div><div>corriente</div></td>
-                    <th class="w-15"><div>Amortización</div><div>capital</div></td>
-                    <th class="w-15"><div>Interes Penal</div><div>previo</div></td>
-                    <th class="w-15"><div>Interes Acumulado</div><div>previo</div></td>
+                    <th class="w-5">Nº</th>
+                    <th class="w-10"><div>Fecha</div><div>de pago</div></td>
+                    <th class="w-10"><div>Fecha estimada</div><div>de pago</div></td>
+                    <th class="w-10"><div>Interes Acumulado</div><div>previo</div></td>
+                    <th class="w-10"><div>Interés</div><div>acumulado</div></td>
+                    <th class="w-10"><div>Interes Penal</div><div>previo</div></td>
+                    <th class="w-10"><div>Interes</div><div>Penal</div></td>
+                    <th class="w-10"><div>Interés</div><div>corriente</div></td>
+                    <th class="w-10"><div>Amortización</div><div>capital</div></td>
+                    <th class="w-10">Cuota</td>
                 </tr>
             </thead>
             <tbody>
-                @foreach ($loan->payments as $payment)
+                @php ($sum_accumulated_remaining = 0)
+                @php ($sum_accumulated_payment = 0)
+                @php ($sum_penal_remaining = 0)
+                @php ($sum_penal_payment = 0)
+                @php ($sum_interest_payment = 0)
+                @php ($sum_capital_payment = 0)
+                @php ($sum_estimated_quota = 0)
+                @foreach ($loan->payments->sortBy('quota_number') as $payment)
                 <tr>
-                    <td class="data-row py-2">{{ $payment->quota_number }}</td>
-                    <td class="data-row py-2">{{ Carbon::parse($payment->pay_date)->format('d/m/y') }}</td>
-                    <td class="data-row py-2">{{ Carbon::parse($payment->estimated_date)->format('d/m/y') }}</td>
-                    <td class="data-row py-2">{{ Util::money_format($payment->estimated_quota) }}</td>
-                    <td class="data-row py-2">{{ Util::money_format($payment->penal_payment) }}</td>
-                    <td class="data-row py-2">{{ Util::money_format($payment->accumulated_payment) }}</td>
-                    <td class="data-row py-2">{{ Util::money_format($payment->interest_payment) }}</td>
-                    <td class="data-row py-2">{{ Util::money_format($payment->capital_payment) }}</td>
-                    <td class="data-row py-2">{{ Util::money_format($payment->penal_remaining) }}</td>
-                    <td class="data-row py-2">{{ Util::money_format($payment->accumulated_remaining) }}</td>
+                    <td class="w-5">{{ $payment->quota_number }}</td>
+                    <td class="w-10">{{ Carbon::parse($payment->pay_date)->format('d/m/y') }}</td>
+                    <td class="w-10">{{ Carbon::parse($payment->estimated_date)->format('d/m/y') }}</td>
+                    <td class="w-10">{{ Util::money_format($payment->accumulated_remaining) }}</td>
+                    <td class="w-10">{{ Util::money_format($payment->accumulated_payment) }}</td>
+                    <td class="w-10">{{ Util::money_format($payment->penal_remaining) }}</td>
+                    <td class="w-10">{{ Util::money_format($payment->penal_payment) }}</td>
+                    <td class="w-10">{{ Util::money_format($payment->interest_payment) }}</td>
+                    <td class="w-10">{{ Util::money_format($payment->capital_payment) }}</td>
+                    <td class="w-10">{{ Util::money_format($payment->estimated_quota) }}</td>
                 </tr>
+                @php ($sum_accumulated_remaining += $payment->accumulated_remaining )
+                @php ($sum_accumulated_payment += $payment->accumulated_payment)
+                @php ($sum_penal_remaining += $payment->penal_remaining)
+                @php ($sum_penal_payment += $payment->penal_payment)
+                @php ($sum_interest_payment += $payment->interest_payment)
+                @php ($sum_capital_payment += $payment->capital_payment)
+                @php ($sum_estimated_quota += $payment->estimated_quota)
                 @endforeach
+                <tr>
+                    <td colspan="3"></td>
+                    <td class="w-10">{{ $sum_accumulated_remaining }}</td>
+                    <td class="w-10">{{ $sum_accumulated_payment }}</td>
+                    <td class="w-10">{{ $sum_penal_remaining }}</td>
+                    <td class="w-10">{{ $sum_penal_payment }}</td>
+                    <td class="w-10">{{ $sum_interest_payment }}</td>
+                    <td class="w-10">{{ $sum_capital_payment }}</td>
+                    <td class="w-10">{{ $sum_estimated_quota }}</td>
+                </tr>
             </tbody>
         </table>
     </div>
