@@ -583,7 +583,7 @@ class LoanController extends Controller
             'lenders' => collect($lenders)
         ];
         $file_name = implode('_', ['plan', $procedure_modality->shortened, $loan->code]) . '.pdf';
-        $view = view()->make('loan.payment_plan')->with($data)->render();
+        $view = view()->make('loan.payments.payment_plan')->with($data)->render();
         if ($standalone) return Util::pdf_to_base64([$view], $file_name, 'legal', $request->copies ?? 1);
         return $view;
     }
@@ -924,5 +924,41 @@ class LoanController extends Controller
             'message' => $message,
             'type' => $type
         ];
+    }
+
+    /**
+    * Impresión del Kardex de Pagos
+    * Devuelve un pdf del Kardex de pagos acorde a un ID de préstamo
+    * @urlParam loan required ID del préstamo. Example: 1
+    * @queryParam copies Número de copias del documento. Example: 2
+    * @authenticated
+    * @responseFile responses/voucher/print_kardex.200.json
+    */
+
+    public function print_kardex(Request $request, Loan $loan, $standalone = true)
+    {
+        $procedure_modality = $loan->modality;
+        $lenders = [];
+        foreach ($loan->lenders as $lender) {
+            $lenders[] = self::verify_spouse_disbursable($lender)->disbursable;
+        }
+        $data = [
+            'header' => [
+                'direction' => 'DIRECCIÓN DE ESTRATEGIAS SOCIALES E INVERSIONES',
+                'unity' => 'UNIDAD DE INVERSIÓN EN PRÉSTAMOS',
+                'table' => [
+                    ['Tipo', $loan->modality->procedure_type->second_name],
+                    ['Modalidad', $loan->modality->shortened],
+                    ['Usuario', Auth::user()->username]
+                ]
+            ],
+            'title' => 'KARDEX DE PAGOS',
+            'loan' => $loan,
+            'lenders' => collect($lenders)
+        ];
+        $file_name = implode('_', ['kardex', $procedure_modality->shortened, $loan->code]) . '.pdf';
+        $view = view()->make('loan.payments.payment_kardex')->with($data)->render();
+        if ($standalone) return Util::pdf_to_base64([$view], $file_name, 'legal', $request->copies ?? 1);
+        return $view;
     }
 }
