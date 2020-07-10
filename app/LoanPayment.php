@@ -133,4 +133,9 @@ class LoanPayment extends Model
             'quota' => $quota
         ];
     }
+
+    public function records()
+    {
+        return $this->morphMany(Record::class, 'recordable')->latest('updated_at');
+    }
 }
