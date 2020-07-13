@@ -29,7 +29,7 @@ use App\Http\Requests\LoanPaymentForm;
 use App\Http\Requests\ObservationForm;
 use App\Events\LoanFlowEvent;
 use Carbon;
-use Util;
+use App\Helpers\Util;
 
 /** @group Préstamos
 * Datos de los trámites de préstamos y sus relaciones
@@ -655,6 +655,7 @@ class LoanController extends Controller
             $payment->receipt_number = $request->input('receipt_number', null);
             $payment->description = $request->input('description', null);
             $loan_payment = $loan->payments()->create($payment->toArray());
+            Util::save_record($loan_payment, 'datos-de-un-pago', 'registró pago : '. $loan_payment->id);
             $payment->user_id = auth()->id();
             $payment->affiliate_id = $request->input('affiliate_id', $loan->disbursable_id);
             $payment->voucher_type_id = $request->voucher_type_id;
@@ -664,7 +665,8 @@ class LoanController extends Controller
             $payment->bank = $request->input('bank', null);
             $payment->bank_puy_number = $request->input('bank_puy_number', null);
             $payment->payment_type_id = $request->payment_type_id;
-            $loan_payment->voucher()->create($payment->toArray());
+            $voucher = $loan_payment->voucher()->create($payment->toArray());
+            Util::save_record($voucher, 'datos-de-un-pago', 'registró pago : '. $voucher->code);
             DB::commit();
         } catch (\Exception $e) {
             DB::rollback();
@@ -693,18 +695,21 @@ class LoanController extends Controller
         DB::beginTransaction();
         try {
             $payment = $loanPayment;
-            $payment->voucher_number = $request->input('voucher_number', null);
-            $payment->receipt_number = $request->input('receipt_number', null);
-            $payment->description = $request->input('description', null);
+            $payment->voucher_number = $request->input('voucher_number');
+            $payment->receipt_number = $request->input('receipt_number');
+            $payment->description = $request->input('description');
 
             $voucher = $loanPayment->voucher;
             $voucher->voucher_type_id = $request->voucher_type_id;
-            $voucher->bank = $request->input('bank', null);
-            $voucher->bank_puy_number = $request->input('bank_puy_number', null);
+            $voucher->bank = $request->input('bank');
+            $voucher->bank_puy_number = $request->input('bank_puy_number');
             $voucher->payment_type_id = $request->payment_type_id;
 
+            Util::save_record($loanPayment, 'datos-de-un-pago', Util::concat_action($loanPayment));
+            Util::save_record($voucher, 'datos-de-un-pago', Util::concat_action($voucher));
             $loanPayment->update($payment->toArray());
             Voucher::find($voucher->id)->update($voucher->toArray());
+            
             DB::commit();
         } catch (\Exception $e) {
             DB::rollback();
@@ -721,11 +726,13 @@ class LoanController extends Controller
     */
     public function destroy_payment(LoanPayment $loanPayment)
     {
-        $loanPayment->voucher;
         DB::beginTransaction();
-        try {
+        try {       
+            $code = $loanPayment->voucher->code;
             $loanPayment->voucher()->delete();
             $loanPayment->delete();
+            Util::save_record($loanPayment->voucher, 'datos-de-un-pago', 'eliminó pago: ' . $code);
+            Util::save_record($loanPayment, 'datos-de-un-pago', 'eliminó pago: ' . $loanPayment->id);
             DB::commit();
         } catch (\Exception $e) {
             DB::rollback();
@@ -959,6 +966,42 @@ class LoanController extends Controller
         $file_name = implode('_', ['kardex', $procedure_modality->shortened, $loan->code]) . '.pdf';
         $view = view()->make('loan.payments.payment_kardex')->with($data)->render();
         if ($standalone) return Util::pdf_to_base64([$view], $file_name, 'legal', $request->copies ?? 1);
+        return $view;
+    }
+
+    /**
+    * Impresión del Voucher de Pagos
+    * Devuelve un pdf del Voucher acorde a un ID de pago
+    * @urlParam loanPayment required ID del pago. Example: 1
+    * @queryParam copies Número de copias del documento. Example: 2
+    * @authenticated
+    * @responseFile responses/voucher/printvoucher.200.json
+    */
+
+    public function print_voucher(Request $request, LoanPayment $loanPayment, $standalone = true)
+    {
+        $loanPayment->voucher;
+        $lenders = [];
+        foreach ($loanPayment->loan->lenders as $lender) {
+            $lenders[] = self::verify_spouse_disbursable($lender)->disbursable;
+        }
+        $data = [
+            'header' => [
+                'direction' => 'DIRECCIÓN DE ESTRATEGIAS SOCIALES E INVERSIONES',
+                'unity' => 'UNIDAD DE INVERSIÓN EN PRÉSTAMOS',
+                'table' => [
+                    ['Número de Cuota', $loanPayment->quota_number],
+                    ['Código', $loanPayment->voucher->code],
+                    ['Usuario', Auth::user()->username]
+                ]
+            ],
+            'title' => 'RECIBO OFICIAL',
+            'loanPayment' => $loanPayment,
+            'lenders' => collect($lenders)
+        ];
+        $file_name = implode('_', ['voucher', $loanPayment->voucher->code]) . '.pdf';
+        $view = view()->make('loan.payments.payment_voucher')->with($data)->render();
+        if ($standalone) return Util::pdf_to_base64([$view], $file_name, 'letter', $request->copies ?? 1);
         return $view;
     }
 }
