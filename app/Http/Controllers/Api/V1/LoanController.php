@@ -939,7 +939,7 @@ class LoanController extends Controller
     * @urlParam loan required ID del préstamo. Example: 1
     * @queryParam copies Número de copias del documento. Example: 2
     * @authenticated
-    * @responseFile responses/voucher/print_kardex.200.json
+    * @responseFile responses/loan/print_kardex.200.json
     */
 
     public function print_kardex(Request $request, Loan $loan, $standalone = true)
