@@ -39,4 +39,9 @@ class Voucher extends Model
     {
         return $this->belongsTo(VoucherType::class);
     }
+
+    public function records()
+    {
+        return $this->morphMany(Record::class, 'recordable')->latest('updated_at');
+    }
 }

@@ -27,10 +27,7 @@ class LoanPaymentObserver
      */
     public function updated(LoanPayment $object)
     {
-        $affiliate = Affiliate::find(1);
-        $affiliate->second_name = "Porfin";
-        $affiliate->update($affiliate->toArray());
-        //Util::save_record($object, 'datos-de-un-pago', Util::concat_action($object));
+        Util::save_record($object, 'datos-de-un-pago', Util::concat_action($object));
     }
 
     /**
