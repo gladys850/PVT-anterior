@@ -13,7 +13,7 @@ class RoleSequenceSeeder extends Seeder
      * @return void
      */
     public function run()
-    {
+    {   //Flujo de Prestamo anticipo
         RoleSequence::flushEventListeners();
         $sequences = [
             'Préstamo Anticipo' => [
@@ -28,6 +28,19 @@ class RoleSequenceSeeder extends Seeder
                 ['PRE-cobranzas']
             ]
         ];
+        $this->create($sequences);
+        //Flujo de Registro de Pago
+        RoleSequence::flushEventListeners();
+        $sequences = [
+            'Préstamo amortización' => [
+                ['PRE-cobranzas'],
+                ['PRE-tesoreria','PRE-encargado-tesoreria']
+            ]
+        ];
+        $this->create($sequences);
+    }
+
+    public function create($sequences){
         foreach ($sequences as $procedure_type => $sequence) {
             $procedure = ProcedureType::whereName($procedure_type)->first();
             foreach ($sequence as $i => $current) {
