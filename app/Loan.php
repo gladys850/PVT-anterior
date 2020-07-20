@@ -44,8 +44,8 @@ class Loan extends Model
         'liquid_qualification_calculated',
         'loan_term',
         'payment_type_id',
+        'number_payment_type',
         'personal_reference_id',
-        'account_number',
         'destiny_id',
         'role_id',
         'validated'

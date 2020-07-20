@@ -248,7 +248,7 @@ export default {
             indebtedness_calculated:this.calculos.indebtedness_calculated,
             guarantors: this.garantes,
             personal_reference_id: this.reference.id,
-            account_number:this.formulario[1],
+            number_payment_type:this.formulario[1],
             destiny_id: this.formulario[2],
             documents: this.itemsOpc.concat(this.selected.concat(this.radios.filter(Boolean))),
             notes: this.otherDocuments
