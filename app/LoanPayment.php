@@ -28,6 +28,9 @@ class LoanPayment extends Model
         'voucher_number',
         'payment_type_id',
         'receipt_number',
+        'code',
+        'state_id',
+        'role_id',
         'description'
     ];
 
