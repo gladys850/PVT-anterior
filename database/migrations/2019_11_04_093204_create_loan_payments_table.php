@@ -28,8 +28,6 @@ class CreateLoanPaymentsTable extends Migration
             $table->float('capital_payment',10,2)->default(0); // pago de capital
             $table->float('penal_remaining',10,2)->default(0); // interés penal previo
             $table->float('accumulated_remaining',10,2)->default(0); // interés acumulado previo
-            $table->unsignedBigInteger('voucher_number')->nullable(); // numero de comprobante
-            $table->unsignedBigInteger('receipt_number')->nullable(); // numero de recibo
             $table->unsignedBigInteger('state_id')->nullable(false); //id estado del tramite
             $table->foreign('state_id')->references('id')->on('loan_states'); // estado de registro de pago
             $table->unsignedBigInteger('role_id');  // id rol bandeja actual
