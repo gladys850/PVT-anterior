@@ -23,7 +23,7 @@
             "loan_term": 2,
             "disbursement_type_id": 1,
             "personal_reference_id": null,
-            "account_number": 586621345,
+            "number_payment_type": 586621345,
             "loan_destiny_id": 1,
             "role_id": 82,
             "validated": false,

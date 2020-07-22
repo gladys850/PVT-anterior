@@ -1,0 +1,33 @@
+{
+    "current_page": 1,
+    "data": [
+        {
+            "id": 11,
+            "user_id": 123,
+            "affiliate_id": 1,
+            "voucher_type_id": 1,
+            "code": "PAY00001",
+            "total": "1000.00",
+            "payment_date": null,
+            "created_at": "2020-07-07T18:57:41.000000Z",
+            "updated_at": "2020-07-07T18:57:41.000000Z",
+            "deleted_at": null,
+            "paid_amount": null,
+            "bank": null,
+            "bank_pay_number": null,
+            "payable_id": 16,
+            "payable_type": "loan_payments",
+            "payment_type_id": null
+        }
+    ],
+    "first_page_url": "http://127.0.0.1/api/v1/voucher?page=1",
+    "from": 1,
+    "last_page": 1,
+    "last_page_url": "http://127.0.0.1/api/v1/voucher?page=1",
+    "next_page_url": null,
+    "path": "http://172.17.0.1/api/v1/voucher",
+    "per_page": "1",
+    "prev_page_url": null,
+    "to": 1,
+    "total": 1
+}

@@ -37,6 +37,9 @@ class LoanPermissionSeeder extends Seeder
             ], [
                 'name' => 'print-payment-plan',
                 'display_name' => 'Imprimir plan de pagos'
+            ],  [
+                'name' => 'print-payment-kardex-loan',
+                'display_name' => 'Imprimir kardex de pagos de préstamo'
             ]
         ];
         foreach ($permissions as $permission) {

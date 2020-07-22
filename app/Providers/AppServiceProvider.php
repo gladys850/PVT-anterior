@@ -36,7 +36,10 @@ class AppServiceProvider extends ServiceProvider
             'users' => 'App\User',
             'roles' => 'App\Role',
             'loans' => 'App\Loan',
-            'procedure_types' => 'App\ProcedureType'
+            'procedure_types' => 'App\ProcedureType',
+            'loan_payments' => 'App\LoanPayment',
+            'voucher' => 'App\Voucher'
+
         ]);
     }
 

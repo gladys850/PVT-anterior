@@ -29,8 +29,9 @@ class AdvanceRoleSeeder extends Seeder
         $sequence_permissions = ['update-affiliate-secondary', 'show-affiliate', 'show-loan', 'update-address'];
         $leadership_permissions = ['show-all-loan', 'update-loan', 'delete-loan', 'show-setting', 'show-deleted-loan'];
         $executive_permissions = ['update-setting'];
-        $pay_permissions = ['print-payment-plan'];
+        $pay_permissions = ['print-payment-plan', 'print-payment-kardex-loan'];
         $recovery_permissions = ['show-all-loan', 'show-loan', 'show-affiliate'];
+        $loan_payment_permissions = ['update-loan-payment','reactivate-loan-payment', 'show-all-loan-payment'];
         $receipt_roles = ['Regional Santa Cruz', 'Regional Cochabamba', 'Regional Oruro', 'Regional Potosí', 'Regional Sucre', 'Regional Tarija', 'Regional Trinidad', 'Regional Cobija', 'Recepción'];
         $sequence_roles = [
             [
@@ -61,13 +62,17 @@ class AdvanceRoleSeeder extends Seeder
                 'name' => 'Tesorería',
                 'action' => 'Desembolsado',
                 'sequence' => 7
+            ], [
+                'name' => 'Encargado Tesorería',
+                'action' => 'Desembolsado',
+                'sequence' => 8
             ]
         ];
         $recovery_roles = [
             [
                 'name' => 'Cobranzas',
                 'action' => 'Liquidado',
-                'sequence' => 8
+                'sequence' => 9
             ]
         ];
 
@@ -97,6 +102,8 @@ class AdvanceRoleSeeder extends Seeder
                     $role->syncPermissions(array_merge($sequence_permissions, $leadership_permissions));
                 } elseif (in_array($role['display_name'], ['Aprobación Dirección', 'Revisión Dirección'])) {
                     $role->syncPermissions(array_merge($sequence_permissions, $leadership_permissions, $executive_permissions));
+                } elseif (in_array($role['display_name'], ['Encargado Tesorería'])) {
+                    $role->syncPermissions(array_merge($sequence_permissions, $pay_permissions, $loan_payment_permissions));
                 } elseif (in_array($role['display_name'], ['Tesorería'])) {
                     $role->syncPermissions(array_merge($sequence_permissions, $pay_permissions));
                 }else {

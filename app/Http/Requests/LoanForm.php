@@ -58,14 +58,16 @@ class LoanForm extends FormRequest
             'documents.*' => ['exists:procedure_documents,id'],
             'disbursable_id' => ['integer'],
             'disbursable_type' => ['string', 'in:affiliates,spouses'],
-            'account_number' => ['nullable', 'integer', 'min:6'],
+            'number_payment_type' => ['nullable', 'integer', 'min:6'],
             'disbursement_date' => ['nullable', 'date_format:"Y-m-d"'],
             'parent_loan_id' => ['integer', 'nullable', 'exists:loans,id'],
             'parent_reason'=> ['string', 'nullable', 'in:REFINANCIAMIENTO,REPROGRAMACIÓN'],
             'state_id' => ['exists:loan_states,id'],
             'amount_approved' => ['integer', 'min:200', 'max:700000', new LoanIntervalAmount($procedure_modality)],
             'notes' => ['array'],
-            'validated' => ['boolean']
+            'validated' => ['boolean'],
+            //'number_payment_type' => ['integer']
+
         ];
         switch ($this->method()) {
             case 'POST': {

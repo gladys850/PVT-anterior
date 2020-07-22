@@ -39,6 +39,9 @@ class Record extends Model
                 case 'App\Loan':
                     $action .= $this->recordable->code;
                     break;
+                case 'App\LoanPayment':
+                    $action .= $this->recordable->id;
+                    break;
                 case 'App\ProcedureType':
                     $action .= $this->recordable->name;
                     break;
