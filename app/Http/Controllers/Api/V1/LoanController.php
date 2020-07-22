@@ -227,7 +227,7 @@ class LoanController extends Controller
     * @bodyParam number_payment_type integer Número de cuenta o Número de cheque para el de desembolso. Example: 10000541214
     * @bodyParam destiny_id integer required ID destino de Préstamo. Example: 1
     * @bodyParam role_id integer Rol al cual derivar o devolver. Example: 81
-    * @bodyParam validated boolean Estado validación del préstamo. Example: true
+    * @bodyParam validated boolean required Estado validación del préstamo. Example: true
     * @authenticated
     * @responseFile responses/loan/update.200.json
     */
