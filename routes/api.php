@@ -45,13 +45,11 @@ Route::group([
         Route::get('module/{module}/role', 'Api\V1\ModuleController@get_roles');
         Route::get('module/{module}/procedure_type', 'Api\V1\ModuleController@get_procedure_types');
         Route::get('module/{module}/observation_type', 'Api\V1\ModuleController@get_observation_types');
-        Route::apiResource('loan', 'Api\V1\LoanController')->only('update');
         Route::patch('loans', 'Api\V1\LoanController@bulk_update_role');
         Route::apiResource('record', 'Api\V1\RecordController')->only('index');
         Route::apiResource('statistic', 'Api\V1\StatisticController')->only('index', 'show');
         Route::apiResource('voucher', 'Api\V1\VoucherController')->only('index', 'show');
         Route::apiResource('voucher_type', 'Api\V1\VoucherTypeController')->only('index');
-
 
         // Afiliado
         Route::group([
@@ -138,6 +136,7 @@ Route::group([
         Route::group([
             'middleware' => 'permission:update-loan'
         ], function () {
+            Route::apiResource('loan', 'Api\V1\LoanController')->only('update');
             Route::patch('loan/{loan}/document/{document}', 'Api\V1\LoanController@update_document');
         });
         Route::group([
