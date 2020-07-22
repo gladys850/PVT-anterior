@@ -13,7 +13,7 @@ class Voucher extends Model
     use Traits\EloquentGetTableNameTrait;
     public $timestamps = true;
     public $guarded = ['id'];
-    protected $fillable = ['user_id','affiliate_id', 'voucher_type_id','code','total','payment_date','paid_amount','bank','bank_pay_number', 'payable_id', 'payable_type', 'payment_type_id'];
+    protected $fillable = ['user_id','affiliate_id', 'voucher_type_id','code','total','payment_date','paid_amount', 'payable_id', 'payable_type', 'payment_type_id'];
 
     function __construct(array $attributes = [])
     {
