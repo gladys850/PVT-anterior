@@ -26,7 +26,6 @@ class LoanPaymentModelServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        if (Schema::connection('platform')->hasTable('loans_payments'))
         LoanPayment::observe(LoanPaymentObserver::class);
     }
 }

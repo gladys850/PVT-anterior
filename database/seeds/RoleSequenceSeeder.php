@@ -32,9 +32,9 @@ class RoleSequenceSeeder extends Seeder
         //Flujo de Registro de Pago
         RoleSequence::flushEventListeners();
         $sequences = [
-            'Préstamo amortización' => [
+            'Pago amortización' => [
                 ['PRE-cobranzas'],
-                ['PRE-tesoreria','PRE-encargado-tesoreria']
+                ['PRE-tesoreria']
             ]
         ];
         $this->create($sequences);
