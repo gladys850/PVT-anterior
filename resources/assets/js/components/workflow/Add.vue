@@ -121,7 +121,7 @@
               </v-tooltip>
             </v-card-title>
             <v-card-text>
-              <BallotsResult
+              <SpecificDataLoan
                 :bonos.sync="bonos"
                 :datos.sync="datos"
                 :payable_liquid.sync="payable_liquid"
@@ -130,10 +130,10 @@
               >
                 <template v-slot:title>
                   <v-col cols="12" class="py-0">
-                    <span class="text-grey darken-1 title font-weight-light">RESULTADOS DEL PRÉSTAMO</span>
+                    <v-toolbar-title>DATOS ESPECIFICOS DEL PRÉSTAMO</v-toolbar-title>
                   </v-col>
                 </template>
-              </BallotsResult>
+              </SpecificDataLoan>
             </v-card-text>
           </v-card>
         </v-tab-item>
@@ -190,7 +190,7 @@
 <script>
 import Breadcrumbs from "@/components/shared/Breadcrumbs"
 import Profile from "@/components/affiliate/Profile"
-import BallotsResult from "@/components/loan/BallotsResult"
+import SpecificDataLoan from "@/components/loan/SpecificDataLoan"
 import DocumentsFlow from "@/components/workflow/DocumentsFlow"
 import ObserverFlow from "@/components/workflow/ObserverFlow"
 import AddObservation from "@/components/workflow/AddObservation"
@@ -202,7 +202,7 @@ export default {
   components: {
     Breadcrumbs,
     Profile,
-    BallotsResult,
+    SpecificDataLoan,
     DocumentsFlow,
     PoliceData,
     ObserverFlow,
