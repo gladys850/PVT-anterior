@@ -706,7 +706,7 @@ class LoanController extends Controller
     * Nuevo pago
     * Insertar registro de pago (loan_payment).
     * @urlParam loan_payment required ID del registro de pago. Example: 2
-    * @bodyParam payment_type_id required integer ID de tipo de pago. Example: 1
+    * @bodyParam payment_type_id integer required ID de tipo de pago. Example: 1
     * @bodyParam voucher_number integer número de voucher. Example: 12354121
     * @bodyParam description string Texto de descripción. Example: Penalizacion regularizada
     * @authenticated
