@@ -5,7 +5,10 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use App\Voucher;
 use Illuminate\Http\Request;
+use App\Http\Requests\VoucherForm;
 use Util;
+use Carbon;
+use DB;
 
 /** @group Vouchers
 * Datos de los vouchers registrados
@@ -48,4 +51,54 @@ class VoucherController extends Controller
     {
         return $voucher;
     }
+
+
+    /** @group Cobranzas
+    * Editar pago
+    * Edita el Pago realizado.
+    * @urlParam voucher required ID del registro de pago. Example: 2
+    * @bodyParam payment_type_id integer ID de tipo de pago. Example: 2
+    * @bodyParam voucher_number integer número de voucher. Example: 12354121
+	* @bodyParam description string Texto de descripción. Example: Penalizacion regularizada
+    * @authenticated
+    * @responseFile responses/voucher/update_voucher.200.json
+    */
+    public function update_voucher(VoucherForm $request, Voucher $voucher)
+    {
+        DB::beginTransaction();
+        try {
+            $payment = $voucher;
+            $payment->description = $request->input('description');
+            $payment->voucher_number = $request->input('voucher_number');
+            $payment->payment_type_id = $request->payment_type_id;
+            Util::save_record($voucher, 'datos-de-un-pago', Util::concat_action($voucher));
+            $voucher->update($payment->toArray());
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollback();
+            return $e;
+        }
+        return $payment;
+    }
+
+     /**
+    * Anular Pago
+    * @urlParam voucher required ID del pago. Example: 1
+    * @authenticated
+    * @responseFile responses/voucher/destroy_voucher.200.json
+    */
+    public function destroy_voucher(Voucher $voucher)
+    {
+        DB::beginTransaction();
+        try {
+            $voucher->delete();
+            Util::save_record($voucher, 'datos-de-un-pago', 'eliminó pago: ' . $voucher->code);
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollback();
+            return $e;
+        }
+        return $voucher;
+    }
+
 }

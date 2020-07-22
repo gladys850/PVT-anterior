@@ -115,12 +115,14 @@ Route::group([
             Route::patch('loan/{loan}/payment','Api\V1\LoanController@get_next_payment');
             //loan Payment
             Route::post('loan/{loan}/payment','Api\V1\LoanController@set_payment');
-            Route::put('loan/{loan}/{loan_payment}/payment','Api\V1\LoanController@update_payment');
-            Route::delete('loan/{loan_payment}/payment','Api\V1\LoanController@destroy_payment');
+            Route::put('loan_payment/{loan_payment}/payment','Api\V1\LoanPaymentController@update_payment');
+            Route::delete('loan_payment/{loan_payment}/payment','Api\V1\LoanPaymentController@destroy_payment');
             //voucher
-            Route::post('loan/{loan_payment}/voucher','Api\V1\LoanController@set_voucher');
-            Route::put('loan/{voucher}/voucher','Api\V1\LoanController@update_voucher');
-            Route::delete('loan/{voucher}/voucher','Api\V1\LoanController@destroy_voucher');
+            Route::post('loan_payment/{loan_payment}/voucher','Api\V1\LoanPaymentController@set_voucher');
+            Route::put('voucher/{voucher}','Api\V1\VoucherController@update_voucher');
+            Route::delete('voucher/{voucher}','Api\V1\VoucherController@destroy_voucher');
+            //Derivacion
+            Route::post('loanPayment/derivation/amortization','Api\V1\LoanPaymentController@derivation_amortization');
 
             Route::get('loan/{loan}/observation','Api\V1\LoanController@get_observations');
             Route::post('loan/{loan}/observation','Api\V1\LoanController@set_observation');
