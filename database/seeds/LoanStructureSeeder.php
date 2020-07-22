@@ -473,7 +473,7 @@ class LoanStructureSeeder extends Seeder
           ],
            ////Procedure Type Prestamo amortización
            'amortizacion' => [
-            'type' => ['module_id' => $module->id,'name'=>'Préstamo amortización','second_name'=>'Amortización'],
+            'type' => ['module_id' => $module->id,'name'=>'Pago amortización','second_name'=>'Amortización'],
             'limits' => [],
             'modalities' => []
            ],
