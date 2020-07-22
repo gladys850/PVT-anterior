@@ -40,15 +40,6 @@ class LoanPermissionSeeder extends Seeder
             ],  [
                 'name' => 'print-payment-kardex-loan',
                 'display_name' => 'Imprimir kardex de pagos de préstamo'
-            ],  [
-                'name' => 'update-loan-payment',
-                'display_name' => 'Actualizar datos del pago'
-            ],  [
-                'name' => 'reactivate-loan-payment',
-                'display_name' => 'Reactivar de anulado a Pendiente de Pago'
-            ],  [
-                'name' => 'show-all-loan-payment',
-                'display_name' => 'Ver todos los Pagos'
             ]
         ];
         foreach ($permissions as $permission) {
