@@ -8,7 +8,6 @@ Route::group([
     Route::get('config', 'Api\V1\ConfigController');
     Route::apiResource('auth', 'Api\V1\AuthController')->only('store');
 
-
     // INDEFINIDO (TODO)
     Route::get('document/{affiliate_id}', 'Api\V1\ScannedDocumentController@create_document');
 
@@ -45,12 +44,12 @@ Route::group([
         Route::get('module/{module}/role', 'Api\V1\ModuleController@get_roles');
         Route::get('module/{module}/procedure_type', 'Api\V1\ModuleController@get_procedure_types');
         Route::get('module/{module}/observation_type', 'Api\V1\ModuleController@get_observation_types');
-        Route::apiResource('loan', 'Api\V1\LoanController')->only('update');
+        Route::get('module/{module}/modality_loan', 'Api\V1\ModuleController@get_modality_types');
         Route::patch('loans', 'Api\V1\LoanController@bulk_update_role');
         Route::apiResource('record', 'Api\V1\RecordController')->only('index');
         Route::apiResource('statistic', 'Api\V1\StatisticController')->only('index', 'show');
         Route::apiResource('voucher', 'Api\V1\VoucherController')->only('index', 'show');
-
+        Route::apiResource('voucher_type', 'Api\V1\VoucherTypeController')->only('index');
 
         // Afiliado
         Route::group([
@@ -115,9 +114,15 @@ Route::group([
             Route::get('procedure_type/{procedure_type}/loan_destiny', 'Api\V1\ProcedureTypeController@get_loan_destinies');
             Route::get('loan/{loan}/payment','Api\V1\LoanController@get_payments');
             Route::patch('loan/{loan}/payment','Api\V1\LoanController@get_next_payment');
+            //loan Payment
             Route::post('loan/{loan}/payment','Api\V1\LoanController@set_payment');
             Route::put('loan/{loan}/{loan_payment}/payment','Api\V1\LoanController@update_payment');
             Route::delete('loan/{loan_payment}/payment','Api\V1\LoanController@destroy_payment');
+            //voucher
+            Route::post('loan/{loan_payment}/voucher','Api\V1\LoanController@set_voucher');
+            Route::put('loan/{voucher}/voucher','Api\V1\LoanController@update_voucher');
+            Route::delete('loan/{voucher}/voucher','Api\V1\LoanController@destroy_voucher');
+
             Route::get('loan/{loan}/observation','Api\V1\LoanController@get_observations');
             Route::post('loan/{loan}/observation','Api\V1\LoanController@set_observation');
             Route::patch('loan/{loan}/observation','Api\V1\LoanController@update_observation');
@@ -125,8 +130,7 @@ Route::group([
             Route::get('loan/{loan}/print/form', 'Api\V1\LoanController@print_form');
             Route::get('loan/{loan}/print/contract', 'Api\V1\LoanController@print_contract');
             Route::get('loan/{loan}/print/kardex','Api\V1\LoanController@print_kardex');
-
-
+            Route::get('loan/{loan_payment}/print/voucher','Api\V1\LoanController@print_voucher');
         });
         Route::group([
             'middleware' => 'permission:create-loan'
@@ -138,6 +142,7 @@ Route::group([
         Route::group([
             'middleware' => 'permission:update-loan'
         ], function () {
+            Route::apiResource('loan', 'Api\V1\LoanController')->only('update');
             Route::patch('loan/{loan}/document/{document}', 'Api\V1\LoanController@update_document');
         });
         Route::group([

@@ -27,9 +27,10 @@ use App\Http\Requests\LoansForm;
 use App\Http\Requests\LoanForm;
 use App\Http\Requests\LoanPaymentForm;
 use App\Http\Requests\ObservationForm;
+use App\Http\Requests\VoucherForm;
 use App\Events\LoanFlowEvent;
 use Carbon;
-use Util;
+use App\Helpers\Util;
 
 /** @group Préstamos
 * Datos de los trámites de préstamos y sus relaciones
@@ -120,6 +121,7 @@ class LoanController extends Controller
     * @bodyParam city_id integer required ID de la ciudad. Example: 3
     * @bodyParam loan_term integer required plazo. Example: 2
     * @bodyParam payment_type_id integer required Tipo de desembolso. Example: 1
+    * @bodyParam number_payment_type integer Número de cuenta o Número de cheque para el de desembolso. Example: 10000541214
     * @bodyParam lenders array required Lista de IDs de afiliados Titular de préstamo. Example: [5146]
     * @bodyParam payable_liquid_calculated numeric required Promedio liquido pagable. Example: 2000
     * @bodyParam bonus_calculated integer required Total de bono calculado. Example: 24
@@ -129,7 +131,6 @@ class LoanController extends Controller
     * @bodyParam parent_loan_id integer ID de Préstamo Padre. Example: 1
     * @bodyParam parent_reason enum (REFINANCIAMIENTO, REPROGRAMACIÓN) Tipo de trámite hijo. Example: REFINANCIAMIENTO
     * @bodyParam personal_reference_id integer ID de referencia personal. Example: 4
-    * @bodyParam account_number integer Número de cuenta en Banco Union. Example: 586621345
     * @bodyParam destiny_id integer required ID destino de Préstamo. Example: 1
     * @bodyParam documents array required Lista de IDs de Documentos solicitados. Example: [40, 271, 273, 274]
     * @bodyParam notes array Lista de notas aclaratorias. Example: [Informe de baja policial, Carta de solicitud]
@@ -223,10 +224,10 @@ class LoanController extends Controller
     * @bodyParam parent_loan_id integer ID de Préstamo Padre. Example: 1
     * @bodyParam parent_reason enum (REFINANCIAMIENTO, REPROGRAMACIÓN) Tipo de trámite hijo. Example: REFINANCIAMIENTO
     * @bodyParam personal_reference_id integer ID de referencia personal. Example: 4
-    * @bodyParam account_number integer Número de cuenta en Banco Union. Example: 586621345
+    * @bodyParam number_payment_type integer Número de cuenta o Número de cheque para el de desembolso. Example: 10000541214
     * @bodyParam destiny_id integer required ID destino de Préstamo. Example: 1
     * @bodyParam role_id integer Rol al cual derivar o devolver. Example: 81
-    * @bodyParam validated boolean Estado validación del préstamo. Example: true
+    * @bodyParam validated boolean required Estado validación del préstamo. Example: true
     * @authenticated
     * @responseFile responses/loan/update.200.json
     */
@@ -628,21 +629,13 @@ class LoanController extends Controller
     }
 
     /** @group Cobranzas
-    * Nuevo pago
+    * Nuevo Registro de pago
     * Inserta una cuota de acuerdo a un monto y fecha estimados.
     * @urlParam loan required ID del préstamo. Example: 2
 	* @bodyParam estimated_date date Fecha para el cálculo del interés. Example: 2020-04-30
 	* @bodyParam estimated_quota float Monto para el cálculo de los días de interés pagados. Example: 600
-	* @bodyParam affiliate_id integer ID de afiliado que realizó el pago. Example: 56
     * @bodyParam liquidate boolean Booleano para hacer el cálculo con el monto máximo que liquidará el préstamo. Example: false
-    * @bodyParam payment_type_id integer ID de tipo de pago. Example: 2
-	* @bodyParam voucher_number integer Número de boleta de depósito. Example: 65100
-	* @bodyParam receipt_number integer Número de recibo. Example: 102
 	* @bodyParam description string Texto de descripción. Example: Penalizacion regularizada
-    * @bodyParam voucher_type_id required integer ID de tipo de Voucher. Example: 1
-    * @bodyParam code required string Código de Voucher. Example: 001
-    * @bodyParam bank string Nombre de Banco. Example: "Banco Union"
-    * @bodyParam bank_puy_number string Número de pago del banco. Example: 21234
     * @authenticated
     * @responseFile responses/loan/set_payment.200.json
     */
@@ -651,20 +644,90 @@ class LoanController extends Controller
         DB::beginTransaction();
         try {
             $payment = $loan->next_payment($request->input('estimated_date', null), $request->input('estimated_quota', null), $request->input('liquidate', false));
-            $payment->voucher_number = $request->input('voucher_number', null);
-            $payment->receipt_number = $request->input('receipt_number', null);
             $payment->description = $request->input('description', null);
+            $payment->state_id = 5;//Pendiente de pago
+            $payment->role_id = $rol_cobranza = Role::whereName('PRE-cobranzas')->first()->id;
             $loan_payment = $loan->payments()->create($payment->toArray());
+            Util::save_record($loan_payment, 'datos-de-un-registro-pago', 'registró pago : '. $loan_payment->id);
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollback();
+            return $e;
+        }
+        return $payment;
+    }
+
+    /** @group Cobranzas
+    * Editar Registro de pago
+    * Edita el Registro de Pago realizado.
+    * @urlParam loan required ID del prestamo. Example: 2
+    * @urlParam loan_payment required ID del pago realizado. Example: 15
+	* @bodyParam description string Texto de descripción. Example: Penalizacion regularizada
+    * @authenticated
+    * @responseFile responses/loan/update_payment.200.json
+    */
+    public function update_payment(LoanPaymentForm $request, Loan $loan, LoanPayment $loanPayment)
+    {
+        DB::beginTransaction();
+        try {
+            $payment = $loanPayment;
+            $payment->description = $request->input('description');
+            Util::save_record($loanPayment, 'datos-de-un-registro-pago', Util::concat_action($loanPayment));
+            $loanPayment->update($payment->toArray());
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollback();
+            return $e;
+        }
+        return $payment;
+    }
+
+     /**
+    * Anular Registro de Pago
+    * @urlParam loan_payment required ID del pago. Example: 1
+    * @authenticated
+    * @responseFile responses/loan/destroy_payment.200.json
+    */
+    public function destroy_payment(LoanPayment $loanPayment)
+    {
+        DB::beginTransaction();
+        try {
+            $loanPayment->delete();
+            Util::save_record($loanPayment, 'datos-de-un-registro-pago', 'eliminó registro pago: ' . $loanPayment->id);
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollback();
+            return $e;
+        }
+        return $loanPayment;
+    }
+
+     /** @group Cobranzas
+    * Nuevo pago
+    * Insertar registro de pago (loan_payment).
+    * @urlParam loan_payment required ID del registro de pago. Example: 2
+    * @bodyParam payment_type_id integer required ID de tipo de pago. Example: 1
+    * @bodyParam voucher_number integer número de voucher. Example: 12354121
+    * @bodyParam description string Texto de descripción. Example: Penalizacion regularizada
+    * @authenticated
+    * @responseFile responses/loan/set_voucher.200.json
+    */
+    public function set_voucher(VoucherForm $request, LoanPayment $loanPayment)
+    {
+        DB::beginTransaction();
+        try {
+            $payment = new Voucher;
             $payment->user_id = auth()->id();
-            $payment->affiliate_id = $request->input('affiliate_id', $loan->disbursable_id);
-            $payment->voucher_type_id = $request->voucher_type_id;
-            $payment->total = $payment->estimated_quota;
-            $payment->payment_date = Carbon::now();
-            $payment->paid_amount = $payment->estimated_quota;
-            $payment->bank = $request->input('bank', null);
-            $payment->bank_puy_number = $request->input('bank_puy_number', null);
+            $payment->affiliate_id = $loanPayment->loan->disbursable_id;
+            $payment->voucher_type_id = 2;//Pago Amortización Prestamo
+            $payment->total = $loanPayment->estimated_quota;
+            $payment->payment_date = $loanPayment->estimated_date;
+            $payment->paid_amount = $loanPayment->estimated_quota;
             $payment->payment_type_id = $request->payment_type_id;
-            $loan_payment->voucher()->create($payment->toArray());
+            $payment->description = $request->input('description', null);
+            $payment->voucher_number = $request->input('voucher_number', null);
+            $voucher = $loanPayment->voucher()->create($payment->toArray());
+            Util::save_record($voucher, 'datos-de-un-pago', 'registró pago : '. $voucher->code);
             DB::commit();
         } catch (\Exception $e) {
             DB::rollback();
@@ -676,35 +739,23 @@ class LoanController extends Controller
     /** @group Cobranzas
     * Editar pago
     * Edita el Pago realizado.
-    * @urlParam loan required ID del prestamo. Example: 2
-    * @urlParam loan_payment required ID del pago realizado. Example: 15
-	* @bodyParam payment_type_id integer ID de tipo de pago. Example: 2
-	* @bodyParam voucher_number integer Número de boleta de depósito. Example: 65100
-	* @bodyParam receipt_number integer Número de recibo. Example: 102
+    * @urlParam voucher required ID del registro de pago. Example: 2
+    * @bodyParam payment_type_id integer ID de tipo de pago. Example: 2
+    * @bodyParam voucher_number integer número de voucher. Example: 12354121
 	* @bodyParam description string Texto de descripción. Example: Penalizacion regularizada
-    * @bodyParam voucher_type_id required integer ID de tipo de Voucher. Example: 1
-    * @bodyParam bank string Nombre de Banco. Example: "Banco Union"
-    * @bodyParam bank_puy_number string Número de pago del banco. Example: 21234
     * @authenticated
-    * @responseFile responses/loan/update_payment.200.json
+    * @responseFile responses/loan/update_voucher.200.json
     */
-    public function update_payment(LoanPaymentForm $request, Loan $loan, LoanPayment $loanPayment)
+    public function update_voucher(VoucherForm $request, Voucher $voucher)
     {
         DB::beginTransaction();
         try {
-            $payment = $loanPayment;
-            $payment->voucher_number = $request->input('voucher_number', null);
-            $payment->receipt_number = $request->input('receipt_number', null);
-            $payment->description = $request->input('description', null);
-
-            $voucher = $loanPayment->voucher;
-            $voucher->voucher_type_id = $request->voucher_type_id;
-            $voucher->bank = $request->input('bank', null);
-            $voucher->bank_puy_number = $request->input('bank_puy_number', null);
-            $voucher->payment_type_id = $request->payment_type_id;
-
-            $loanPayment->update($payment->toArray());
-            Voucher::find($voucher->id)->update($voucher->toArray());
+            $payment = $voucher;
+            $payment->description = $request->input('description');
+            $payment->voucher_number = $request->input('voucher_number');
+            $payment->payment_type_id = $request->payment_type_id;
+            Util::save_record($voucher, 'datos-de-un-pago', Util::concat_action($voucher));
+            $voucher->update($payment->toArray());
             DB::commit();
         } catch (\Exception $e) {
             DB::rollback();
@@ -715,23 +766,22 @@ class LoanController extends Controller
 
      /**
     * Anular Pago
-    * @urlParam loan required ID del pago. Example: 1
+    * @urlParam voucher required ID del pago. Example: 1
     * @authenticated
-    * @responseFile responses/loan/destroy_payment.200.json
+    * @responseFile responses/loan/destroy_voucher.200.json
     */
-    public function destroy_payment(LoanPayment $loanPayment)
+    public function destroy_voucher(Voucher $voucher)
     {
-        $loanPayment->voucher;
         DB::beginTransaction();
         try {
-            $loanPayment->voucher()->delete();
-            $loanPayment->delete();
+            $voucher->delete();
+            Util::save_record($voucher, 'datos-de-un-pago', 'eliminó pago: ' . $voucher->code);
             DB::commit();
         } catch (\Exception $e) {
             DB::rollback();
             return $e;
         }
-        return $loanPayment;
+        return $voucher;
     }
 
     /** @group Cobranzas
@@ -932,7 +982,7 @@ class LoanController extends Controller
     * @urlParam loan required ID del préstamo. Example: 1
     * @queryParam copies Número de copias del documento. Example: 2
     * @authenticated
-    * @responseFile responses/voucher/print_kardex.200.json
+    * @responseFile responses/loan/print_kardex.200.json
     */
 
     public function print_kardex(Request $request, Loan $loan, $standalone = true)
@@ -959,6 +1009,42 @@ class LoanController extends Controller
         $file_name = implode('_', ['kardex', $procedure_modality->shortened, $loan->code]) . '.pdf';
         $view = view()->make('loan.payments.payment_kardex')->with($data)->render();
         if ($standalone) return Util::pdf_to_base64([$view], $file_name, 'legal', $request->copies ?? 1);
+        return $view;
+    }
+
+    /**
+    * Impresión del Voucher de Pagos
+    * Devuelve un pdf del Voucher acorde a un ID de pago
+    * @urlParam loanPayment required ID del pago. Example: 1
+    * @queryParam copies Número de copias del documento. Example: 2
+    * @authenticated
+    * @responseFile responses/voucher/printvoucher.200.json
+    */
+
+    public function print_voucher(Request $request, LoanPayment $loanPayment, $standalone = true)
+    {
+        $loanPayment->voucher;
+        $lenders = [];
+        foreach ($loanPayment->loan->lenders as $lender) {
+            $lenders[] = self::verify_spouse_disbursable($lender)->disbursable;
+        }
+        $data = [
+            'header' => [
+                'direction' => 'DIRECCIÓN DE ESTRATEGIAS SOCIALES E INVERSIONES',
+                'unity' => 'UNIDAD DE INVERSIÓN EN PRÉSTAMOS',
+                'table' => [
+                    ['Número de Cuota', $loanPayment->quota_number],
+                    ['Código', $loanPayment->voucher->code],
+                    ['Usuario', Auth::user()->username]
+                ]
+            ],
+            'title' => 'RECIBO OFICIAL',
+            'loanPayment' => $loanPayment,
+            'lenders' => collect($lenders)
+        ];
+        $file_name = implode('_', ['voucher', $loanPayment->voucher->code]) . '.pdf';
+        $view = view()->make('loan.payments.payment_voucher')->with($data)->render();
+        if ($standalone) return Util::pdf_to_base64([$view], $file_name, 'letter', $request->copies ?? 1);
         return $view;
     }
 }

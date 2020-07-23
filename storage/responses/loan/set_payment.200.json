@@ -1,36 +1,26 @@
 {
-    "estimated_date": "2020-08-31",
+    "estimated_date": "2020-09-30",
     "quota_number": 2,
     "estimated_days": {
         "penal": 0,
         "accumulated": 0,
-        "current": 31
+        "current": 30
     },
     "paid_days": {
         "penal": 0,
         "accumulated": 0,
-        "current": 31
+        "current": 30
     },
-    "balance": 24263.03,
-    "capital_payment": 653.6,
-    "interest_payment": 412.14,
+    "balance": 24509.6,
+    "capital_payment": 662.84,
+    "interest_payment": 402.9,
     "accumulated_payment": 0,
     "penal_payment": 0,
     "estimated_quota": 1065.74,
-    "next_balance": 23609.43,
+    "next_balance": 23846.76,
     "penal_remaining": 0,
     "accumulated_remaining": 0,
-    "voucher_number": null,
-    "receipt_number": null,
     "description": null,
-    "user_id": 123,
-    "affiliate_id": 51419,
-    "voucher_type_id": 1,
-    "code": "0002",
-    "total": 1065.74,
-    "payment_date": "2020-07-08T13:08:26.745792Z",
-    "paid_amount": 1065.74,
-    "bank": null,
-    "bank_puy_number": null,
-    "payment_type_id": 3
+    "state_id": 5,
+    "role_id": 91
 }

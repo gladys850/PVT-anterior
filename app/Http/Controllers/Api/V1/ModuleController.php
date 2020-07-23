@@ -80,4 +80,16 @@ class ModuleController extends Controller
     {
         return $module->observation_types;
     }
+
+    /**
+    * Tipos de modalidades de préstamo asociados al módulo
+    * Devuelve la lista de tipos de modalidades de préstamo asociados a un módulo
+    * @urlParam module required ID del módulo. Example: 6
+    * @authenticated
+    * @responseFile responses/module/get_modality_types.200.json
+    */
+    public function get_modality_types(Module $module)
+    {
+        return $module->procedure_types()->where('name','LIKE', '%Préstamo%')->get();
+    }
 }

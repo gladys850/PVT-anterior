@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class VoucherType extends Model
 {
-    public $timestamps = true;
+    public $timestamps = false;
     public $fillable = ['name'];
     public $guarded = ['id'];
 

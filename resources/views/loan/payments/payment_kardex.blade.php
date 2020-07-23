@@ -46,7 +46,7 @@
                 <td class="data-row py-5">
                     @if($loan->payment_type->name=='Deposito Bancario')
                         <div class="font-bold">Cuenta Banco Union</div>
-                        <div>{{ $loan->account_number }}</div>
+                        <div>{{ $loan->number_payment_type }}</div>
                     @else
                         {{ $loan->payment_type->name}}
                     @endif
@@ -65,7 +65,7 @@
             <tr class="bg-grey-darker text-xxs text-white">
                 <td class="w-70">Solicitante</td>
                 <td class="w-15">CI</td>
-                <td class="w-15">Estado</td>
+                <td class="w-15">Sector</td>
             </tr>
             <tr>
                 <td class="data-row py-5">{{ $lender->title }} {{ $lender->full_name }}</td>
@@ -108,8 +108,8 @@
             <thead>
                 <tr class="bg-grey-darker text-xxs text-white">
                     <th class="w-5">Nº</th>
-                    <th class="w-10"><div>Fecha</div><div>de pago</div></td>
-                    <th class="w-10"><div>Fecha estimada</div><div>de pago</div></td>
+                    <th class="w-10"><div>Fecha de</div><div>pago</div></td>
+                    <th class="w-10"><div>Fecha de</div><div>cálculo</div></td>
                     <th class="w-10"><div>Interes Acumulado</div><div>previo</div></td>
                     <th class="w-10"><div>Interés</div><div>acumulado</div></td>
                     <th class="w-10"><div>Interes Penal</div><div>previo</div></td>

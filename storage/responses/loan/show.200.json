@@ -16,7 +16,7 @@
     "disbursement_date": "2020-02-21T04:00:00.000000Z",
     "payment_type_id": 1,
     "modification_date": null,
-    "account_number": 586621345,
+    "number_payment_type": 586621345,
     "destiny_id": 1,
     "personal_reference_id": null,
     "role_id": 81,

@@ -1234,7 +1234,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"procedure_modality_id\": 32,\n    \"amount_requested\": 2000,\n    \"city_id\": 3,\n    \"loan_term\": 2,\n    \"payment_type_id\": 1,\n    \"lenders\": [5146],\n    \"guarantors\": [],\n    \"account_number\": 586621345,\n    \"destiny_id\": 1,\n    \"documents\": [40, 271, 273, 274],\n    \"notes\": [\"Informe de baja policial, Carta de solicitud\"],\n    \"payable_liquid_calculated\": 3000,\n    \"bonus_calculated\": 100,\n    \"liquid_qualification_calculated\": 2900,\n    \"indebtedness_calculated\": 36\n}",
+							"raw": "{\n    \"procedure_modality_id\": 32,\n    \"amount_requested\": 2000,\n    \"city_id\": 3,\n    \"loan_term\": 2,\n    \"payment_type_id\": 1,\n    \"lenders\": [5146],\n    \"guarantors\": [],\n    \"number_payment_type\": 586621345,\n    \"destiny_id\": 1,\n    \"documents\": [40, 271, 273, 274],\n    \"notes\": [\"Informe de baja policial, Carta de solicitud\"],\n    \"payable_liquid_calculated\": 3000,\n    \"bonus_calculated\": 100,\n    \"liquid_qualification_calculated\": 2900,\n    \"indebtedness_calculated\": 36\n}",
 							"options": {
 								"raw": {
 									"language": "json"
