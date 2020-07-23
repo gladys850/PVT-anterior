@@ -16,7 +16,7 @@ class VoucherTypeSeeder extends Seeder
     {
         $module = Module::whereName('prestamos')->first();
         $voucher_types = [
-            ['name' => 'Pago Amortización Préstamos', 'module_id' => $module->id]
+            ['name' => 'Amortización Préstamos', 'module_id' => $module->id]
         ];
         foreach ($voucher_types as $voucher_type) {
             VoucherType::firstOrCreate($voucher_type);

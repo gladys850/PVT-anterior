@@ -473,9 +473,10 @@ class LoanStructureSeeder extends Seeder
           ],
            ////Procedure Type Prestamo amortización
            'amortizacion' => [
-            'type' => ['module_id' => $module->id,'name'=>'Pago amortización','second_name'=>'Amortización'],
+            'type' => ['module_id' => $module->id,'name'=>'Amortización','second_name'=>'Amortización'],
             'limits' => [],
-            'modalities' => []
+            'modalities' => [ ['name'=>'Amortización','shortened'=>'A','requirements'=>[],
+            ]]
            ],
         ]
       ];
@@ -498,8 +499,10 @@ class LoanStructureSeeder extends Seeder
               'number'=>$requirement['number']
             ]);
           }
-          $new_modality->loan_modality_parameter()->firstOrCreate($modality['parameters']);
-          $new_modality->loan_interests()->firstOrCreate($modality['interest']);
+          if (isset($modality['parameters']))
+            $new_modality->loan_modality_parameter()->firstOrCreate($modality['parameters']);
+          if (isset($modality['interest']))
+            $new_modality->loan_interests()->firstOrCreate($modality['interest']);
         }
       }
 

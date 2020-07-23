@@ -27,6 +27,7 @@ class LoanPayment extends Model
         'penal_remaining',
         'accumulated_remaining',
         'code',
+        'procedure_modality_id',
         'state_id',
         'role_id',
         'description'
