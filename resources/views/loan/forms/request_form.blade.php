@@ -266,22 +266,24 @@
         </div>
         <table>
             <tbody>
+                @php ($cont = 0)
                 @foreach ($signers->chunk(2) as $chunk)
                 <tr class="align-top">
                     @foreach ($chunk as $person)
-                    <td width="50%">
-                        @include('partials.signature_box', $person)
-                    </td>
-                    @if ($signers->count() % 2 == 1 && $signers->last()['id'] == $person['id'])
-                    <td width="50%">
-                        @php($user = Auth::user())
-                        @include('partials.signature_box', [
-                            'full_name' => $user->full_name,
-                            'position' => $user->position,
-                            'employee' => true
-                        ])
-                    </td>
-                    @endif
+                        <td width="50%">
+                            @include('partials.signature_box', $person)
+                        </td>
+                        @php ($cont ++)
+                        @if ($signers->count() == $cont)
+                            <td width="50%">
+                                @php($user = Auth::user())
+                                @include('partials.signature_box', [
+                                    'full_name' => $user->full_name,
+                                    'position' => $user->position,
+                                    'employee' => true
+                                ])
+                            </td>
+                        @endif
                     @endforeach
                 </tr>
                 @endforeach
