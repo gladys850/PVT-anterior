@@ -14,11 +14,10 @@ class CreateLoanPaymentsTable extends Migration
     public function up()
     { // table amortization
         Schema::create('loan_payments', function (Blueprint $table) {
-            $table->unsignedBigInteger('loan_id'); 
+            $table->id();
+            $table->unsignedBigInteger('loan_id');
             $table->foreign('loan_id')->references('id')->on('loans')->onDelete('cascade');
-            $table->unsignedBigInteger('affiliate_id'); // registro del depositante  
-            $table->foreign('affiliate_id')->references('id')->on('affiliates');
-            $table->date('pay_date'); // fecha de pago
+            $table->string('code')->nullable(); // para el correlativo
             $table->date('estimated_date'); // fecha estimada de pago
             $table->unsignedSmallInteger('quota_number'); // numero de cuota, cuando sea necesario se repite
             // de las siguientes 5 columnas se obtendra el total pagado
@@ -29,13 +28,13 @@ class CreateLoanPaymentsTable extends Migration
             $table->float('capital_payment',10,2)->default(0); // pago de capital
             $table->float('penal_remaining',10,2)->default(0); // interés penal previo
             $table->float('accumulated_remaining',10,2)->default(0); // interés acumulado previo
-            $table->unsignedBigInteger('voucher_number')->nullable(); // numero de comprobante
-            $table->unsignedSmallInteger('payment_type_id'); // tipo de pago
-            $table->foreign('payment_type_id')->references('id')->on('payment_types')->onDelete('cascade');
-            $table->unsignedBigInteger('receipt_number')->nullable(); // numero de recibo
-            $table->text('description')->nullable(); // descripcion del pago 
+            $table->unsignedBigInteger('state_id')->nullable(false); //id estado del tramite
+            $table->foreign('state_id')->references('id')->on('loan_states'); // estado de registro de pago
+            $table->unsignedBigInteger('role_id');  // id rol bandeja actual
+            $table->foreign('role_id')->references('id')->on('roles');
+            $table->text('description')->nullable(); // descripcion del pago
             $table->timestamps();
-
+            $table->softDeletes();
         });
     }
 

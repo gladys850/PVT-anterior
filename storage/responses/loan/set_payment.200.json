@@ -1,29 +1,26 @@
 {
-    "estimated_date": "2020-04-30",
+    "estimated_date": "2020-09-30",
     "quota_number": 2,
     "estimated_days": {
-        "penal": 91,
-        "accumulated": 91,
-        "current": 15
+        "penal": 0,
+        "accumulated": 0,
+        "current": 30
     },
     "paid_days": {
-        "penal": 91,
-        "accumulated": 91,
-        "current": 15
+        "penal": 0,
+        "accumulated": 0,
+        "current": 30
     },
-    "balance": 1998.22,
-    "capital_payment": 361.2,
-    "interest_payment": 29.56,
-    "accumulated_payment": 179.35,
-    "penal_payment": 29.89,
-    "estimated_quota": 600,
-    "next_balance": 1637.02,
+    "balance": 24509.6,
+    "capital_payment": 662.84,
+    "interest_payment": 402.9,
+    "accumulated_payment": 0,
+    "penal_payment": 0,
+    "estimated_quota": 1065.74,
+    "next_balance": 23846.76,
     "penal_remaining": 0,
     "accumulated_remaining": 0,
-    "payment_type_id": 2,
-    "pay_date": "2020-04-05T00:48:52.015535Z",
-    "affiliate_id": 47352,
-    "voucher_number": 65100,
-    "receipt_number": 102,
-    "description": "Penalización regularizado"
+    "description": null,
+    "state_id": 5,
+    "role_id": 91
 }

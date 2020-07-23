@@ -23,7 +23,7 @@
             "loan_term": 2,
             "payment_type_id": 1,
             "personal_reference_id": null,
-            "account_number": null,
+            "number_payment_type": null,
             "destiny_id": 1,
             "role_id": 73,
             "validated": false,

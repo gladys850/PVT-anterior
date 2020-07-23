@@ -43,11 +43,8 @@ class LoanPaymentForm extends FormRequest
         switch ($this->method()) {
             case 'POST': {
                 return array_merge($rules, [
-                    'payment_type_id' => 'required|exists:payment_types,id',
-                    'affiliate_id' => 'nullable|exists:affiliates,id',
-                    'voucher_number' => 'nullable|integer|min:1',
-                    'receipt_number' => 'nullable|integer|min:1',
-                    'description' => 'nullable|string|min:2'
+                    'liquidate' => 'nullable|boolean',
+                    'description' => 'nullable|string|min:2',
                 ]);
             }
             default: {
@@ -60,7 +57,8 @@ class LoanPaymentForm extends FormRequest
     public function messages()
     {
         return [
-            'estimated_date.after_or_equal' => 'La fecha estimada debe ser igual a hoy o posterior'
+            'estimated_date.after_or_equal' => 'La fecha estimada debe ser igual a hoy o posterior',
+            'liquidate.boolean' => 'EL atributo liquidado debe ser (true or false)'
         ];
     }
 }

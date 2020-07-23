@@ -46,7 +46,7 @@
                 <td class="data-row py-5">
                     @if($loan->payment_type->name=='Deposito Bancario')
                         <div class="font-bold">Cuenta Banco Union</div>
-                        <div>{{ $loan->account_number }}</div>
+                        <div>{{ $loan->number_payment_type }}</div>
                     @else
                         {{ $loan->payment_type->name}}
                     @endif

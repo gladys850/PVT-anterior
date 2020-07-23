@@ -44,8 +44,8 @@ class Loan extends Model
         'liquid_qualification_calculated',
         'loan_term',
         'payment_type_id',
+        'number_payment_type',
         'personal_reference_id',
-        'account_number',
         'destiny_id',
         'role_id',
         'validated'
@@ -156,6 +156,12 @@ class Loan extends Model
     {
         return $this->hasMany(LoanPayment::class)->orderBy('quota_number', 'desc')->orderBy('created_at');
     }
+
+    /*public function payments()
+    {
+        return $this->hasMany(LoanPayment::class)->orderBy('quota_number', 'asc')->orderBy('created_at');
+    }*/
+
     public function interest()
     {
         return $this->belongsTo(LoanInterest::class, 'interest_id', 'id');

@@ -26,21 +26,19 @@
                 @if ($loan->parent_loan)
                 <td class="w-25">Trámite origen</td>
                 @endif
-                <td class="{{ $loan->parent_loan ? 'w-50' : 'w-75' }}" colspan="{{ $loan->parent_loan ? 1 : 3 }}">Modalidad de trámite</td>
+                <td class="{{ $loan->parent_loan ? 'w-50' : 'w-75' }}" colspan="{{ $loan->parent_loan ? 1 : 2 }}">Modalidad de trámite</td>
             </tr>
             <tr>
                 <td class="data-row py-5">{{ $loan->code }}</td>
                 @if ($loan->parent_loan)
                 <td class="data-row py-5">{{ $loan->parent_loan->code }}</td>
                 @endif
-                <td class="data-row py-5" colspan="{{ $loan->parent_loan ? 1 : 3 }}">{{ $loan->modality->name }}</td>
+                <td class="data-row py-5" colspan="{{ $loan->parent_loan ? 1 : 2 }}">{{ $loan->modality->name }}</td>
             </tr>
             <tr class="bg-grey-darker text-xxs text-white">
                 <td>Monto solicitado</td>
                 <td>Plazo</td>
                 <td>Tipo de Desembolso</td>
-                <td>Fecha de Desembolso</td>
-
             </tr>
             <tr>
                 <td class="data-row py-5">{{ Util::money_format($loan->amount_requested) }} <span class="capitalize">Bs.</span></td>
@@ -48,12 +46,11 @@
                 <td class="data-row py-5">
                     @if($loan->payment_type->name=='Deposito Bancario')
                         <div class="font-bold">Cuenta Banco Union</div>
-                        <div>{{ $loan->account_number }}</div>
+                        <div>{{ $loan->number_payment_type }}</div>
                     @else
                         {{ $loan->payment_type->name}}
                     @endif
                 </td>
-                <td class="data-row py-5">{{ Carbon::parse($loan->disbursement_date)->format('d/m/y') }}</td>
             </tr>
         </table>
     </div>
@@ -68,7 +65,7 @@
             <tr class="bg-grey-darker text-xxs text-white">
                 <td class="w-70">Solicitante</td>
                 <td class="w-15">CI</td>
-                <td class="w-15">Estado</td>
+                <td class="w-15">Sector</td>
             </tr>
             <tr>
                 <td class="data-row py-5">{{ $lender->title }} {{ $lender->full_name }}</td>
@@ -103,46 +100,63 @@
     @endif
 
     <div class="block">
-        <div class="font-semibold leading-tight text-left m-b-10 text-xs">{{ $n++ }}. PLAN DE PAGOS (EXPRESADO EN BOLIVIANOS)</div>
+        <div class="font-semibold leading-tight text-left m-b-10 text-xs">{{ $n++ }}. KARDEX DE PAGOS (EXPRESADO EN BOLIVIANOS)</div>
     </div>
+
     <div class="block">
         <table class="table-info w-100 text-center uppercase my-20">
             <thead>
                 <tr class="bg-grey-darker text-xxs text-white">
-                    <th class="w-10">Nº</th>
-                    <th class="w-15">Fecha</td>
-                    <th class="w-15">Cuota</td>
-                    <th class="w-15"><div>Días</div><div>interés</div></td>
-                    <th class="w-15"><div>Amortización</div><div>capital</div></td>
-                    <th class="w-15"><div>Pago</div><div>interés</div></td>
-                    <th class="w-15"><div>Saldo</div><div>capital</div></th>
+                    <th class="w-5">Nº</th>
+                    <th class="w-10"><div>Fecha de</div><div>pago</div></td>
+                    <th class="w-10"><div>Fecha de</div><div>cálculo</div></td>
+                    <th class="w-10"><div>Interes Acumulado</div><div>previo</div></td>
+                    <th class="w-10"><div>Interés</div><div>acumulado</div></td>
+                    <th class="w-10"><div>Interes Penal</div><div>previo</div></td>
+                    <th class="w-10"><div>Interes</div><div>Penal</div></td>
+                    <th class="w-10"><div>Interés</div><div>corriente</div></td>
+                    <th class="w-10"><div>Amortización</div><div>capital</div></td>
+                    <th class="w-10">Cuota</td>
                 </tr>
             </thead>
             <tbody>
-                @php ($sum_capital = 0)
-                @php ($sum_interest = 0)
+                @php ($sum_accumulated_remaining = 0)
+                @php ($sum_accumulated_payment = 0)
+                @php ($sum_penal_remaining = 0)
+                @php ($sum_penal_payment = 0)
+                @php ($sum_interest_payment = 0)
+                @php ($sum_capital_payment = 0)
                 @php ($sum_estimated_quota = 0)
-                @foreach ($loan->plan as $quota)
+                @foreach ($loan->payments->sortBy('quota_number') as $payment)
                 <tr>
-                    <td class="data-row py-2">{{ $quota->quota }}</td>
-                    <td class="data-row py-2">{{ Carbon::parse($quota->date)->format('d/m/y') }}</td>
-                    <td class="data-row py-2">{{ Util::money_format($quota->estimated_quota) }}</td>
-                    <td class="data-row py-2">{{ $quota->days }}</td>
-                    <td class="data-row py-2">{{ Util::money_format($quota->capital) }}</td>
-                    <td class="data-row py-2">{{ Util::money_format($quota->interest) }}</td>
-                    <td class="data-row py-2">{{ Util::money_format($quota->next_balance) }}</td>
+                    <td class="w-5">{{ $payment->quota_number }}</td>
+                    <td class="w-10">{{ Carbon::parse($payment->pay_date)->format('d/m/y') }}</td>
+                    <td class="w-10">{{ Carbon::parse($payment->estimated_date)->format('d/m/y') }}</td>
+                    <td class="w-10">{{ Util::money_format($payment->accumulated_remaining) }}</td>
+                    <td class="w-10">{{ Util::money_format($payment->accumulated_payment) }}</td>
+                    <td class="w-10">{{ Util::money_format($payment->penal_remaining) }}</td>
+                    <td class="w-10">{{ Util::money_format($payment->penal_payment) }}</td>
+                    <td class="w-10">{{ Util::money_format($payment->interest_payment) }}</td>
+                    <td class="w-10">{{ Util::money_format($payment->capital_payment) }}</td>
+                    <td class="w-10">{{ Util::money_format($payment->estimated_quota) }}</td>
                 </tr>
-                @php ($sum_estimated_quota += $quota->estimated_quota)
-                @php ($sum_capital += $quota->capital)
-                @php ($sum_interest += $quota->interest)
+                @php ($sum_accumulated_remaining += $payment->accumulated_remaining )
+                @php ($sum_accumulated_payment += $payment->accumulated_payment)
+                @php ($sum_penal_remaining += $payment->penal_remaining)
+                @php ($sum_penal_payment += $payment->penal_payment)
+                @php ($sum_interest_payment += $payment->interest_payment)
+                @php ($sum_capital_payment += $payment->capital_payment)
+                @php ($sum_estimated_quota += $payment->estimated_quota)
                 @endforeach
                 <tr>
-                    <td colspan="2" class="data-row py-2 font-semibold leading-tight text-xs">TOTALES</td>
-                    <td class="data-row py-2">{{ Util::money_format($sum_estimated_quota) }}</td>
-                    <td class="data-row py-2"></td>
-                    <td class="data-row py-2">{{ Util::money_format($sum_capital) }}</td>
-                    <td class="data-row py-2">{{ Util::money_format($sum_interest) }}</td>
-                    <td class="data-row py-2"></td>
+                    <td colspan="3"></td>
+                    <td class="w-10">{{ $sum_accumulated_remaining }}</td>
+                    <td class="w-10">{{ $sum_accumulated_payment }}</td>
+                    <td class="w-10">{{ $sum_penal_remaining }}</td>
+                    <td class="w-10">{{ $sum_penal_payment }}</td>
+                    <td class="w-10">{{ $sum_interest_payment }}</td>
+                    <td class="w-10">{{ $sum_capital_payment }}</td>
+                    <td class="w-10">{{ $sum_estimated_quota }}</td>
                 </tr>
             </tbody>
         </table>

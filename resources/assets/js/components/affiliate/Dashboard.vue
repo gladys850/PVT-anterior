@@ -29,8 +29,7 @@
               </ul>
             </div>
             <v-tooltip
-              left
-              
+              left v-if="$store.getters.permissions.includes('create-loan')"              
             >
               <template v-slot:activator="{ on }">
                 <v-btn
