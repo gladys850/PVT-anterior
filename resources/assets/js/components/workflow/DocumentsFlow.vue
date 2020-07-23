@@ -1,10 +1,11 @@
 <template>
-  <v-container fluid>
-    <v-toolbar-title class="ma-0 pb-4 pl-8">DOCUMENTOS PRESENTADOS</v-toolbar-title>
+  <v-container fluid >
+    <v-toolbar-title>DOCUMENTOS PRESENTADOS</v-toolbar-title>
+    <br>
     <v-form>
-      <v-card> 
+      <v-card>
         <v-row>
-          <v-col cols="12">
+          <v-col cols="12" >
             <v-data-iterator :items="docsRequired" hide-default-footer>
               <template v-slot:header>
                 <v-toolbar-title class="font-weight-light align-end ma-0 pa-4 pl-8 pt-0">
