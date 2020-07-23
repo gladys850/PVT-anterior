@@ -634,7 +634,6 @@ class LoanController extends Controller
 	* @bodyParam estimated_date date Fecha para el cálculo del interés. Example: 2020-04-30
 	* @bodyParam estimated_quota float Monto para el cálculo de los días de interés pagados. Example: 600
     * @bodyParam liquidate boolean Booleano para hacer el cálculo con el monto máximo que liquidará el préstamo. Example: false
-    * @bodyParam state_id  integer required ID del estado. Example: 5
 	* @bodyParam description string Texto de descripción. Example: Penalizacion regularizada
     * @authenticated
     * @responseFile responses/loan/set_payment.200.json
@@ -645,7 +644,7 @@ class LoanController extends Controller
         try {
             $payment = $loan->next_payment($request->input('estimated_date', null), $request->input('estimated_quota', null), $request->input('liquidate', false));
             $payment->description = $request->input('description', null);
-            $payment->state_id = $request->state_id;
+            $payment->state_id = LoanState::whereName('Pendiente de Pago')->first()->id;
             $payment->role_id = Role::whereName('PRE-cobranzas')->first()->id;
             $payment->procedure_modality_id = ProcedureModality::whereName('Amortización')->first()->id;
             $loan_payment = $loan->payments()->create($payment->toArray());

@@ -373,12 +373,12 @@ class Util
     //$to role: a done
     //$ids: ids a cambiar
     public static function derivation($to_role, $derived){
+        return  $to_role;die;
         $to_role = Role::find($to_role);
         if (count(array_unique($derived->pluck('role_id')->toArray())))
             $from_role = $derived->first()->role_id;
         if ($from_role) {
             $from_role = Role::find($from_role);
-            echo $derived->first();die;
             $flow_message = $this->flow_message($derived->first()->modality->procedure_type->id, $from_role, $to_role);
         }
     }
