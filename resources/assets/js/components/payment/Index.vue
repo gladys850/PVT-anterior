@@ -35,12 +35,12 @@
 <script>
 import Breadcrumbs from '@/components/shared/Breadcrumbs'
 import RemoveItem from '@/components/shared/RemoveItem'
-import List from '@/components/collection/List'
-import Fab from '@/components/collection/Fab'
+import List from '@/components/payment/List'
+import Fab from '@/components/payment/Fab'
 import { Validator } from 'vee-validate'
 export default {
   inject: ['$validator'],
-  name: "collection-index",
+  name: "payment-index",
   components: {
     Breadcrumbs,
     Fab,

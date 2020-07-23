@@ -63,7 +63,7 @@
                 small
                 v-on="on"
                 color="warning"
-                :to="{ name: 'collectionAdd', params: { id: item.id }}"
+                :to="{ name: 'paymentAdd', params: { id: item.id }}"
                 ><v-icon>mdi-eye</v-icon>
               </v-btn>
             </template>

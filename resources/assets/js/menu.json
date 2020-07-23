@@ -18,8 +18,8 @@
     "params": {}
   },
   {
-    "href": "collectionIndex",
-    "title": "Cobranzas",
+    "href": "paymentIndex",
+    "title": "Cobros",
     "icon": "mdi-cash-usd-outline",
     "permission": "show-loan",
      "params": {}
