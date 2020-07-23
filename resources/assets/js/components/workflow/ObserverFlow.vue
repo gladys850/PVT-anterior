@@ -1,15 +1,15 @@
 <template>
-  <v-container fluid class="mb-0">
-    <v-row justify="center" class="mb-0">
-      <v-col cols="12" class="mb-0">
-        <v-row justify="center" class="mb-0">
-          <v-col cols="12" class="mb-0">
+  <v-container fluid class="pl-0 pt-0">
+    <v-row justify="center" class="py-0">
+      <v-col cols="12" class="py-0">
+        <v-row justify="center" class="py-0">
+          <v-col cols="12" class="py-0">
             <v-tabs dark active-class="secondary">
               <v-tab>OBSERVACIONES</v-tab>
               <v-tab-item>
                 <v-card flat tile>
-                  <v-card-text >
-                    <v-col cols="12" class="py-0 mb-0">
+                  <v-card-text class="pl-10">
+                    <v-col cols="12" class="pl-3">
                       <v-data-table
                         :headers="headersObs"
                         :items="observations"
@@ -47,11 +47,11 @@
                                     small
                                     color="error"
                                     v-on="on"
-                                    @click.stop="deleteObservation( 
-                                      items.item.user_id, 
-                                      items.item.observation_type_id, 
-                                      items.item.message, 
-                                      items.item.date, 
+                                    @click.stop="deleteObservation(
+                                      items.item.user_id,
+                                      items.item.observation_type_id,
+                                      items.item.message,
+                                      items.item.date,
                                       items.item.enabled)"
                                   >
                                     <v-icon>mdi-delete</v-icon>
