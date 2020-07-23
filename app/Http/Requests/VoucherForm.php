@@ -24,10 +24,10 @@ class VoucherForm extends FormRequest
      */
     public function rules()
     {
-            // 'voucher_type_id' => 'required|exists:voucher_types,id',
             $rules = [
                 'payment_type_id' => 'required|exists:payment_types,id',
-                'voucher_number' => 'required_if:payment_type_id,1|integer|min:1'
+                'voucher_number' => 'required_if:payment_type_id,1|integer|min:1',
+                'voucher_type_id' => 'required|exists:voucher_types,id'
             ];
         return $rules;
     }
@@ -35,7 +35,7 @@ class VoucherForm extends FormRequest
     public function messages()
     {
         return [
-            //'voucher_type_id.required' => 'El tipo de voucher es requerido',
+            'voucher_type_id.required' => 'El tipo de voucher es requerido',
             'payment_type_id.required' => 'El tipo de pago es requerido',
             'voucher_number.required' => 'El número de voucher es requerido',
             'voucher_number.required_if' => 'El número de voucher es requerido porque se realizó deposito bancario',
