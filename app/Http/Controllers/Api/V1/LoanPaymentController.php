@@ -108,19 +108,8 @@ class LoanPaymentController extends Controller
     */
     public function derivation_amortization(Request $request)
     {
-       /*$sequence = null;
-        $from_role = null;
-        $to_role = $request->role_id;
-        $documents_id = $request->documents_id;
-        $this->derivation();
-        $loans = Loan::whereIn('id', $request->ids)->where('role_id', '!=', $request->role_id)->orderBy('code');
-        $derived = $loans->get();
-        $to_role = Role::find($to_role);
-        if (count(array_unique($loans->pluck('role_id')->toArray()))) $from_role = $derived->first()->role_id;
-        if ($from_role) {
-            $from_role = Role::find($from_role);
-            $flow_message = $this->flow_message($derived->first()->modality->procedure_type->id, $from_role, $to_role);
-        }
+        $derived = LoanPayment::whereIn('id', $request->ids)->where('role_id', '!=', $request->role_id)->orderBy('code')->get();
+        Util::derivation($request->to_role, $derived);
         $derived->map(function ($item, $key) use ($from_role, $to_role, $flow_message) {
             if (!$from_role) {
                 $item['from_role_id'] = $item['role_id'];
@@ -162,6 +151,4 @@ class LoanPaymentController extends Controller
             'derived' => $derived
         ]);
     }
-    */
-
 }

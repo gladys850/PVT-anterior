@@ -5,6 +5,8 @@ namespace App\Helpers;
 use Carbon;
 use Config;
 use App\RecordType;
+use App\Role;
+use App\RoleSequence;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Schema;
@@ -367,5 +369,34 @@ class Util
         } finally {
             return $employee;
         }
+    }
+    //$to role: a done
+    //$ids: ids a cambiar
+    public static function derivation($to_role, $derived){
+        $to_role = Role::find($to_role);
+        if (count(array_unique($derived->pluck('role_id')->toArray())))
+            $from_role = $derived->first()->role_id;
+        if ($from_role) {
+            $from_role = Role::find($from_role);
+            echo $derived->first();die;
+            $flow_message = $this->flow_message($derived->first()->modality->procedure_type->id, $from_role, $to_role);
+        }
+    }
+
+    private function flow_message($procedure_type_id, $from_role, $to_role)
+    {
+        $sequence = RoleSequence::flow($procedure_type_id, $from_role->id);
+        if (in_array($to_role->id, $sequence->next->all())) {
+            $message = 'derivó';
+            $type = 'derivacion';
+        } else {
+            $message = 'devolvió';
+            $type = 'devolucion';
+        }
+        $message .= ' de ' . $from_role->display_name . ' a ' . $to_role->display_name;
+        return [
+            'message' => $message,
+            'type' => $type
+        ];
     }
 }

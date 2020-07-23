@@ -122,7 +122,7 @@ Route::group([
             Route::put('voucher/{voucher}','Api\V1\VoucherController@update_voucher');
             Route::delete('voucher/{voucher}','Api\V1\VoucherController@destroy_voucher');
             //Derivacion
-            Route::post('loanPayment/derivation/amortization','Api\V1\LoanPaymentController@derivation_amortization');
+            Route::post('loan_payment/derivation/amortization','Api\V1\LoanPaymentController@derivation_amortization');
 
             Route::get('loan/{loan}/observation','Api\V1\LoanController@get_observations');
             Route::post('loan/{loan}/observation','Api\V1\LoanController@set_observation');
