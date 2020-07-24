@@ -5,9 +5,8 @@
         <v-toolbar-title>
           <Breadcrumbs />
         </v-toolbar-title>
-        <v-spacer></v-spacer>      
-          <v-tooltip top 
-          >
+        <v-spacer></v-spacer>
+          <v-tooltip top>
             <template v-slot:activator="{ on }">
               <v-btn
                 v-show="!loan.validated"
@@ -59,7 +58,7 @@
               </v-btn>
             </template>
             <span>Anular trámite</span>
-          </v-tooltip>        
+          </v-tooltip>
       </v-toolbar>
     </v-card-title>
     <v-card-text>
@@ -120,8 +119,8 @@
                 </div>
               </v-tooltip>
             </v-card-title>
-            <v-card-text>
-              <BallotsResult
+            <v-card-text class="pl-10">
+              <SpecificDataLoan
                 :bonos.sync="bonos"
                 :datos.sync="datos"
                 :payable_liquid.sync="payable_liquid"
@@ -130,29 +129,35 @@
               >
                 <template v-slot:title>
                   <v-col cols="12" class="py-0">
-                    <span class="text-grey darken-1 title font-weight-light">RESULTADOS DEL PRÉSTAMO</span>
+                    <v-toolbar-title>DATOS ESPECIFICOS DEL PRÉSTAMO</v-toolbar-title>
                   </v-col>
                 </template>
-              </BallotsResult>
+              </SpecificDataLoan>
             </v-card-text>
           </v-card>
         </v-tab-item>
         <v-tab-item :value="'tab-3'">
           <v-card flat tile>
-            <v-card-text>
+            <v-card-text class="pl-12">
               <DocumentsFlow
                 :datos.sync="datos"
                 :formulario.sync="formulario"
                 :calculos.sync="calculos"
                 :intervalos.sync="intervalos"
                 :modalidad.sync="modalidad"
-              />
+              >
+                <template v-slot:title>
+                  <v-col cols="12" class="">
+                    <v-toolbar-title>DOCUMENTOS PRESENTADOS</v-toolbar-title>
+                  </v-col>
+                </template>
+              </DocumentsFlow>
             </v-card-text>
           </v-card>
         </v-tab-item>
         <v-tab-item :value="'tab-4'">
           <v-card flat tile>
-            <v-card-text>
+            <v-card-text class="pl-0 py-0">
               <Profile
                 v-if="!reload"
                 :affiliate.sync="affiliate"
@@ -164,8 +169,8 @@
           </v-card>
         </v-tab-item>
         <v-tab-item :value="'tab-5'">
-          <v-card flat tile>
-            <v-card-text>
+          <v-card flat tile >
+            <v-card-text class="py-0 pl-0">
               <PoliceData
                 v-if="!reload"
                 :affiliate.sync="affiliate"
@@ -175,9 +180,9 @@
             </v-card-text>
           </v-card>
         </v-tab-item>
-        <v-tab-item :value="'tab-6'">
-          <v-card flat tile>
-            <v-card-text class="pa-0 mb-0">
+        <v-tab-item :value="'tab-6'" >
+          <v-card  flat tile>
+            <v-card-text class="pa-0 pl-3 pr-0 py-0">
               <ObserverFlow :loan.sync="loan" :observations.sync="observations" :bus1="bus1"/>
             </v-card-text>
           </v-card>
@@ -190,7 +195,7 @@
 <script>
 import Breadcrumbs from "@/components/shared/Breadcrumbs"
 import Profile from "@/components/affiliate/Profile"
-import BallotsResult from "@/components/loan/BallotsResult"
+import SpecificDataLoan from "@/components/loan/SpecificDataLoan"
 import DocumentsFlow from "@/components/workflow/DocumentsFlow"
 import ObserverFlow from "@/components/workflow/ObserverFlow"
 import AddObservation from "@/components/workflow/AddObservation"
@@ -202,7 +207,7 @@ export default {
   components: {
     Breadcrumbs,
     Profile,
-    BallotsResult,
+    SpecificDataLoan,
     DocumentsFlow,
     PoliceData,
     ObserverFlow,

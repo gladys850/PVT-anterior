@@ -173,11 +173,11 @@
 </template>
 <script>
 import Breadcrumbs from "@/components/shared/Breadcrumbs"
-import ManualAmortization from "@/components/collection/ManualAmortization"
+import ManualAmortization from "@/components/payment/ManualAmortization"
 import GuaranteData from "@/components/loan/GuaranteData"
-import GenerateVoucher from "@/components/collection/GenerateVoucher"
-import DebtsEntity from "@/components/collection/DebtsEntity"
-import Dashboard from "@/components/collection/Dashboard"
+import GenerateVoucher from "@/components/payment/GenerateVoucher"
+import DebtsEntity from "@/components/payment/DebtsEntity"
+import Dashboard from "@/components/payment/Dashboard"
 
 export default {
   name: "flow-index",

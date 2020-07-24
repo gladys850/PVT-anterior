@@ -6,7 +6,7 @@
 
 <script>
 export default {
-  name: "collection-add",
+  name: "payment-add",
   computed: {
     isNew() {
       return this.$route.params.hash == 'new'
