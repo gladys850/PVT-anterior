@@ -102,6 +102,7 @@ class LoanPaymentController extends Controller
                 DB::rollback();
                 return $e;
             }
+            return $payment;
         }
         abort(403, 'Registro de Pago finalizado');
     }
