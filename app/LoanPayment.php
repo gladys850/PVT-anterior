@@ -58,6 +58,11 @@ class LoanPayment extends Model
         return $this->morphOne(Voucher::class, 'payable')->latest('updated_at');
     }
 
+    public function modality()
+    {
+        return $this->belongsTo(ProcedureModality::class,'procedure_modality_id', 'id');
+    }
+
     public static function days_interest(Loan $loan, $estimated_date = null)
     {
         $interest = [

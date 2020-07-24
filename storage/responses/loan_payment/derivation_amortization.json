@@ -1,0 +1,59 @@
+[
+    {
+        "id": 6,
+        "loan_id": 1,
+        "code": "PAY000001-2020",
+        "procedure_modality_id": 48,
+        "estimated_date": "2020-08-31",
+        "quota_number": 1,
+        "estimated_quota": "1065.74",
+        "penal_payment": "0",
+        "accumulated_payment": "123.29",
+        "interest_payment": "424.66",
+        "capital_payment": "517.79",
+        "penal_remaining": "0",
+        "accumulated_remaining": "0",
+        "state_id": 5,
+        "role_id": 89,
+        "description": "prueba2",
+        "created_at": "2020-07-23T15:04:57.000000Z",
+        "updated_at": "2020-07-23T19:18:13.000000Z",
+        "deleted_at": null,
+        "modality": {
+            "id": 48,
+            "procedure_type_id": 13,
+            "name": "Amortización",
+            "shortened": "A",
+            "is_valid": true,
+            "procedure_type": {
+                "id": 13,
+                "module_id": 6,
+                "name": "Amortización",
+                "created_at": "2020-07-23T14:27:31.000000Z",
+                "updated_at": "2020-07-23T14:27:31.000000Z",
+                "second_name": "Amortización"
+            }
+        }
+    },
+    {
+        "id": 7,
+        "loan_id": 1,
+        "code": "PAY000007-2020",
+        "procedure_modality_id": 48,
+        "estimated_date": "2020-09-30",
+        "quota_number": 2,
+        "estimated_quota": "1065.74",
+        "penal_payment": "0",
+        "accumulated_payment": "0",
+        "interest_payment": "402.45",
+        "capital_payment": "663.29",
+        "penal_remaining": "0",
+        "accumulated_remaining": "0",
+        "state_id": 5,
+        "role_id": 89,
+        "description": null,
+        "created_at": "2020-07-23T15:42:44.000000Z",
+        "updated_at": "2020-07-23T19:18:13.000000Z",
+        "deleted_at": null
+    }
+]
