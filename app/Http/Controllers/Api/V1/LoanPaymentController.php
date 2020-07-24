@@ -17,10 +17,14 @@ use App\Events\LoanFlowEvent;
 use Carbon;
 use DB;
 use App\Helpers\Util;
+use App\Http\Controllers\Api\V1\LoanController;
 
+/** @group Cobranzas
+* Datos de los trámites de Cobranzas
+*/
 class LoanPaymentController extends Controller
 {
-      /** @group Cobranzas
+    /**
     * Editar Registro de pago
     * Edita el Registro de Pago realizado.
     * @urlParam loan required ID del prestamo. Example: 2
@@ -45,7 +49,7 @@ class LoanPaymentController extends Controller
         return $payment;
     }
 
-       /**
+    /**
     * Anular Registro de Pago
     * @urlParam loan_payment required ID del pago. Example: 1
     * @authenticated
@@ -65,8 +69,8 @@ class LoanPaymentController extends Controller
         return $loanPayment;
     }
 
-     /** @group Cobranzas
-    * Nuevo pago
+    /**
+    * Nuevo pago por Tesoreria
     * Insertar registro de pago (loan_payment).
     * @urlParam loan_payment required ID del registro de pago. Example: 2
     * @bodyParam payment_type_id integer required ID de tipo de pago. Example: 1
@@ -107,7 +111,7 @@ class LoanPaymentController extends Controller
         abort(403, 'Registro de Pago finalizado');
     }
 
-      /**
+    /**
     * Derivar en lote
     * Deriva o devuelve trámites en un lote mediante sus IDs
     * @bodyParam ids array required Lista de IDs de los trámites a derivar. Example: [1,2,3]
@@ -122,5 +126,52 @@ class LoanPaymentController extends Controller
         $derived = $loanPayment->get();
         $derived = Util::derivation($request->to_role, $derived, $loanPayment);
         return $derived;
+    }
+
+    /**
+    * Impresión del Registro de Pago de Préstamo
+    * Devuelve un pdf del Pago acorde a un ID de registro de pago
+    * @urlParam loan_payment required ID del pago. Example: 1
+    * @queryParam copies Número de copias del documento. Example: 2
+    * @authenticated
+    * @responseFile responses/loan_payment/print_loan_payment.200.json
+    */
+    public function print_loan_payment(Request $request, LoanPayment $loan_payment, $standalone = true)
+    {
+        $loan = LoanPayment::findOrFail($loan_payment->id)->loan;
+        $procedure_modality = $loan->modality;
+        $lenders = [];
+        foreach ($loan->lenders as $lender) {
+            $lenders[] = LoanController::verify_spouse_disbursable($lender)->disbursable;
+        }
+        $persons = collect([]);
+        foreach ($lenders as $lender) {
+            $persons->push([
+                'id' => $lender->id,
+                'full_name' => implode(' ', [$lender->title, $lender->full_name]),
+                'identity_card' => $lender->identity_card_ext,
+                'position' => 'SOLICITANTE'
+            ]);
+        }
+        $data = [
+            'header' => [
+                'direction' => 'DIRECCIÓN DE ESTRATEGIAS SOCIALES E INVERSIONES',
+                'unity' => 'UNIDAD DE INVERSIÓN EN PRÉSTAMOS',
+                'table' => [
+                    ['Tipo', $loan->modality->procedure_type->second_name],
+                    ['Modalidad', $loan->modality->shortened],
+                    ['Usuario', Auth::user()->username]
+                ]
+            ],
+            'title' => 'AMORTIZACIÓN DE CUOTA',
+            'loan' => $loan,
+            'lenders' => collect($lenders),
+            'loan_payment' => $loan_payment,
+            'signers' => $persons
+        ];
+        $file_name = implode('_', ['pagos', $procedure_modality->shortened, $loan->code]) . '.pdf';
+        $view = view()->make('loan.payments.payment_loan')->with($data)->render();
+        if ($standalone) return Util::pdf_to_base64([$view], $file_name, 'legal', $request->copies ?? 1);
+        return $view;
     }
 }

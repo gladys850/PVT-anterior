@@ -118,6 +118,7 @@ Route::group([
             Route::post('loan/{loan}/payment','Api\V1\LoanController@set_payment');
             Route::put('loan_payment/{loan_payment}/payment','Api\V1\LoanPaymentController@update_payment');
             Route::delete('loan_payment/{loan_payment}/payment','Api\V1\LoanPaymentController@destroy_payment');
+            Route::get('loan_payment/{loan_payment}/print/loan_payment','Api\V1\LoanPaymentController@print_loan_payment');
             //voucher
             Route::post('loan_payment/{loan_payment}/voucher','Api\V1\LoanPaymentController@set_voucher');
             Route::put('voucher/{voucher}','Api\V1\VoucherController@update_voucher');
