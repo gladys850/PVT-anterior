@@ -54,7 +54,7 @@ class VoucherController extends Controller
 
 
     /** @group Cobranzas
-    * Editar pago
+    * Editar pago por Tesoreria
     * Edita el Pago realizado.
     * @urlParam voucher required ID del registro de pago. Example: 2
     * @bodyParam payment_type_id integer required ID de tipo de pago. Example: 2
@@ -83,7 +83,7 @@ class VoucherController extends Controller
         return $payment;
     }
 
-     /**
+    /** @group Tesoreria
     * Anular Pago
     * @urlParam voucher required ID del pago. Example: 1
     * @authenticated

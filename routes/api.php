@@ -38,7 +38,7 @@ Route::group([
         Route::apiResource('unit', 'Api\V1\UnitController')->only('index', 'show');
         Route::apiResource('procedure_type', 'Api\V1\ProcedureTypeController')->only('index');
         Route::get('procedure_type/{procedure_type}/flow', 'Api\V1\ProcedureTypeController@get_flow');
-        Route::apiResource('payment_type', 'Api\V1\PaymentTypeController')->only('index');
+        Route::apiResource('payment_type', 'Api\V1\PaymentTypeController')->only('index', 'show');
         Route::apiResource('procedure_modality', 'Api\V1\ProcedureModalityController')->only('index', 'show');
         Route::apiResource('module', 'Api\V1\ModuleController')->only('index', 'show');
         Route::get('module/{module}/role', 'Api\V1\ModuleController@get_roles');
@@ -118,6 +118,7 @@ Route::group([
             Route::post('loan/{loan}/payment','Api\V1\LoanController@set_payment');
             Route::put('loan_payment/{loan_payment}/payment','Api\V1\LoanPaymentController@update_payment');
             Route::delete('loan_payment/{loan_payment}/payment','Api\V1\LoanPaymentController@destroy_payment');
+            Route::get('loan_payment/{loan_payment}/print/loan_payment','Api\V1\LoanPaymentController@print_loan_payment');
             //voucher
             Route::post('loan_payment/{loan_payment}/voucher','Api\V1\LoanPaymentController@set_voucher');
             Route::put('voucher/{voucher}','Api\V1\VoucherController@update_voucher');
