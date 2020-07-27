@@ -34,6 +34,7 @@
                           <fieldset class="pa-3">
                             <v-toolbar-title>GARANTE</v-toolbar-title>
                             <br>
+                            <p>{{loan.guarantors}}</p>
                             <p>NOMBRE COMPLETO:{{ calculos.payable_liquid_calculated}}</p>
                             <p>NUMERO DE PRESTAMOS:{{ calculos.payable_liquid_calculated}}</p>
                             <p>PORCENTAJE DE PAGO:{{ calculos.payable_liquid_calculated}}</p>
@@ -118,7 +119,24 @@ export default {
       name:'Efectivo',
       value:3
       }
-    ]
+    ],
+    loan:{}
   }),
+  mounted() {
+    this.getLoan()
+  },
+  methods:{
+     async getLoan() {
+      try {
+        this.loading = true
+        let res = await axios.get(`loan/${2}`)
+        this.loan = res.data
+      } catch (e) {
+        console.log(e)
+      } finally {
+        this.loading = false
+      }
+    },
+  }
 }
 </script>

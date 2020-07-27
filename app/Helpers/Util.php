@@ -7,6 +7,9 @@ use Config;
 use App\RecordType;
 use App\Role;
 use App\RoleSequence;
+use App\loanPayment;
+use Illuminate\Support\Facades\Auth;
+use App\Events\LoanFlowEvent;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Schema;
@@ -370,20 +373,30 @@ class Util
             return $employee;
         }
     }
-    //$to role: a done
-    //$ids: ids a cambiar
-    public static function derivation($to_role, $derived){
+
+    public static function derivation($to_role, $derived, $loanPayment){
         $to_role = Role::find($to_role);
         if (count(array_unique($derived->pluck('role_id')->toArray())))
             $from_role = $derived->first()->role_id;
         if ($from_role) {
             $from_role = Role::find($from_role);
-            echo $derived->first();die;
-            $flow_message = $this->flow_message($derived->first()->modality->procedure_type->id, $from_role, $to_role);
+            $flow_message = Util::flow_message($derived->first()->modality->procedure_type->id, $from_role, $to_role);
         }
+        $derived->map(function ($item, $key) use ($from_role, $to_role, $flow_message) {
+            if (!$from_role) {
+                $item['from_role_id'] = $item['role_id'];
+                $from_role = Role::find($item['role_id']);
+                $flow_message = $this->flow_message($item->modality->procedure_type->id, $from_role, $to_role);
+            }
+            $item['role_id'] = $to_role->id;
+            Util::save_record($item, $flow_message['type'], $flow_message['message']);
+        });
+        $loanPayment->update(['role_id' => $to_role->id]);
+        event(new LoanFlowEvent($derived));
+        return $derived;
     }
 
-    private function flow_message($procedure_type_id, $from_role, $to_role)
+    public static function flow_message($procedure_type_id, $from_role, $to_role)
     {
         $sequence = RoleSequence::flow($procedure_type_id, $from_role->id);
         if (in_array($to_role->id, $sequence->next->all())) {

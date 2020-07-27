@@ -54,10 +54,11 @@ class VoucherController extends Controller
 
 
     /** @group Cobranzas
-    * Editar pago
+    * Editar pago por Tesoreria
     * Edita el Pago realizado.
     * @urlParam voucher required ID del registro de pago. Example: 2
-    * @bodyParam payment_type_id integer ID de tipo de pago. Example: 2
+    * @bodyParam payment_type_id integer required ID de tipo de pago. Example: 2
+    * @bodyParam voucher_type_id integer required ID de tipo de voucher. Example: 1
     * @bodyParam voucher_number integer número de voucher. Example: 12354121
 	* @bodyParam description string Texto de descripción. Example: Penalizacion regularizada
     * @authenticated
@@ -70,6 +71,7 @@ class VoucherController extends Controller
             $payment = $voucher;
             $payment->description = $request->input('description');
             $payment->voucher_number = $request->input('voucher_number');
+            $payment->voucher_type_id = $request->voucher_type_id;
             $payment->payment_type_id = $request->payment_type_id;
             Util::save_record($voucher, 'datos-de-un-pago', Util::concat_action($voucher));
             $voucher->update($payment->toArray());
@@ -81,7 +83,7 @@ class VoucherController extends Controller
         return $payment;
     }
 
-     /**
+    /** @group Tesoreria
     * Anular Pago
     * @urlParam voucher required ID del pago. Example: 1
     * @authenticated

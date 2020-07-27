@@ -18,6 +18,8 @@ class CreateLoanPaymentsTable extends Migration
             $table->unsignedBigInteger('loan_id');
             $table->foreign('loan_id')->references('id')->on('loans')->onDelete('cascade');
             $table->string('code')->nullable(); // para el correlativo
+            $table->unsignedBigInteger('procedure_modality_id'); // id modalidad
+            $table->foreign('procedure_modality_id')->references('id')->on('procedure_modalities');
             $table->date('estimated_date'); // fecha estimada de pago
             $table->unsignedSmallInteger('quota_number'); // numero de cuota, cuando sea necesario se repite
             // de las siguientes 5 columnas se obtendra el total pagado

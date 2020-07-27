@@ -27,6 +27,7 @@ class LoanPayment extends Model
         'penal_remaining',
         'accumulated_remaining',
         'code',
+        'procedure_modality_id',
         'state_id',
         'role_id',
         'description'
@@ -55,6 +56,11 @@ class LoanPayment extends Model
     public function voucher()
     {
         return $this->morphOne(Voucher::class, 'payable')->latest('updated_at');
+    }
+
+    public function modality()
+    {
+        return $this->belongsTo(ProcedureModality::class,'procedure_modality_id', 'id');
     }
 
     public static function days_interest(Loan $loan, $estimated_date = null)

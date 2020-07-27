@@ -644,8 +644,9 @@ class LoanController extends Controller
         try {
             $payment = $loan->next_payment($request->input('estimated_date', null), $request->input('estimated_quota', null), $request->input('liquidate', false));
             $payment->description = $request->input('description', null);
-            $payment->state_id = 5;//Pendiente de pago
-            $payment->role_id = $rol_cobranza = Role::whereName('PRE-cobranzas')->first()->id;
+            $payment->state_id = LoanState::whereName('Pendiente de Pago')->first()->id;
+            $payment->role_id = Role::whereName('PRE-cobranzas')->first()->id;
+            $payment->procedure_modality_id = ProcedureModality::whereName('Amortización')->first()->id;
             $loan_payment = $loan->payments()->create($payment->toArray());
             Util::save_record($loan_payment, 'datos-de-un-registro-pago', 'registró pago : '. $loan_payment->id);
             DB::commit();
@@ -848,7 +849,7 @@ class LoanController extends Controller
         ];
     }
 
-    /**
+    /** @group Cobranzas
     * Impresión del Kardex de Pagos
     * Devuelve un pdf del Kardex de pagos acorde a un ID de préstamo
     * @urlParam loan required ID del préstamo. Example: 1
