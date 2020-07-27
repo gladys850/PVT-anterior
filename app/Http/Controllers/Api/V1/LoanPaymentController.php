@@ -18,10 +18,14 @@ use App\Events\LoanFlowEvent;
 use Carbon;
 use DB;
 use App\Helpers\Util;
+use App\Http\Controllers\Api\V1\LoanController;
 
+/** @group Cobranzas
+* Datos de los trámites de Cobranzas
+*/
 class LoanPaymentController extends Controller
 {
-      /** @group Cobranzas
+    /**
     * Editar Registro de pago
     * Edita el Registro de Pago realizado.
     * @urlParam loan required ID del prestamo. Example: 2
@@ -46,7 +50,7 @@ class LoanPaymentController extends Controller
         return $payment;
     }
 
-       /**
+    /**
     * Anular Registro de Pago
     * @urlParam loan_payment required ID del pago. Example: 1
     * @authenticated
@@ -66,8 +70,8 @@ class LoanPaymentController extends Controller
         return $loanPayment;
     }
 
-     /** @group Cobranzas
-    * Nuevo pago
+    /**
+    * Nuevo pago por Tesoreria
     * Insertar registro de pago (loan_payment).
     * @urlParam loan_payment required ID del registro de pago. Example: 2
     * @bodyParam payment_type_id integer required ID de tipo de pago. Example: 1
@@ -108,7 +112,7 @@ class LoanPaymentController extends Controller
         abort(403, 'Registro de Pago finalizado');
     }
 
-      /**
+    /**
     * Derivar en lote
     * Deriva o devuelve trámites en un lote mediante sus IDs
     * @bodyParam ids array required Lista de IDs de los trámites a derivar. Example: [1,2,3]
@@ -125,64 +129,50 @@ class LoanPaymentController extends Controller
         return $derived;
     }
 
-      /**
-    * Impresión del Voucher de Pagos
-    * Devuelve un pdf del Voucher acorde a un ID de pago
-    * @urlParam loanPayment required ID del pago. Example: 1
+    /**
+    * Impresión del Registro de Pago de Préstamo
+    * Devuelve un pdf del Pago acorde a un ID de registro de pago
+    * @urlParam loan_payment required ID del pago. Example: 1
     * @queryParam copies Número de copias del documento. Example: 2
     * @authenticated
-    * @responseFile responses/voucher/printvoucher.200.json
+    * @responseFile responses/loan_payment/print_loan_payment.200.json
     */
-
-    public function print_voucher(Request $request, LoanPayment $loanPayment, $standalone = true)
+    public function print_loan_payment(Request $request, LoanPayment $loan_payment, $standalone = true)
     {
+        $loan = LoanPayment::findOrFail($loan_payment->id)->loan;
+        $procedure_modality = $loan->modality;
         $lenders = [];
-        foreach ($loanPayment->loan->lenders as $lender) {
-            $lenders[] = self::verify_spouse_disbursable($lender)->disbursable;
+        foreach ($loan->lenders as $lender) {
+            $lenders[] = LoanController::verify_spouse_disbursable($lender)->disbursable;
+        }
+        $persons = collect([]);
+        foreach ($lenders as $lender) {
+            $persons->push([
+                'id' => $lender->id,
+                'full_name' => implode(' ', [$lender->title, $lender->full_name]),
+                'identity_card' => $lender->identity_card_ext,
+                'position' => 'SOLICITANTE'
+            ]);
         }
         $data = [
             'header' => [
                 'direction' => 'DIRECCIÓN DE ESTRATEGIAS SOCIALES E INVERSIONES',
                 'unity' => 'UNIDAD DE INVERSIÓN EN PRÉSTAMOS',
                 'table' => [
-                    ['Número de Cuota', $loanPayment->quota_number],
-                    ['Código', $loanPayment->voucher->code],
+                    ['Tipo', $loan->modality->procedure_type->second_name],
+                    ['Modalidad', $loan->modality->shortened],
                     ['Usuario', Auth::user()->username]
                 ]
             ],
-            'title' => 'RECIBO OFICIAL',
-            'loanPayment' => $loanPayment,
-            'lenders' => collect($lenders)
+            'title' => 'AMORTIZACIÓN DE CUOTA',
+            'loan' => $loan,
+            'lenders' => collect($lenders),
+            'loan_payment' => $loan_payment,
+            'signers' => $persons
         ];
-        $file_name = implode('_', ['voucher', $loanPayment->voucher->code]) . '.pdf';
-        $view = view()->make('loan.payments.payment_voucher')->with($data)->render();
-        if ($standalone) return Util::pdf_to_base64([$view], $file_name, 'letter', $request->copies ?? 1);
+        $file_name = implode('_', ['pagos', $procedure_modality->shortened, $loan->code]) . '.pdf';
+        $view = view()->make('loan.payments.payment_loan')->with($data)->render();
+        if ($standalone) return Util::pdf_to_base64([$view], $file_name, 'legal', $request->copies ?? 1);
         return $view;
-    }
-
-    public static function verify_spouse_disbursable(Affiliate $affiliate)
-    {
-        $object = (object)[
-            'disbursable_type' => 'affiliates',
-            'disbursable_id' => $affiliate->id,
-            'disbursable' => $affiliate
-        ];
-        if ($object->disbursable->dead) {
-            $spouse = $object->disbursable->spouse;
-            if ($spouse) {
-                $object = (object)[
-                    'disbursable_type' => 'spouses',
-                    'disbursable_id' => $spouse->id,
-                    'disbursable' => $spouse
-                ];
-            } else {
-                abort(409, 'Debe actualizar la información de cónyugue para afiliados fallecidos');
-            }
-        }
-        $needed_keys = ['city_birth', 'city_identity_card', 'city_identity_card'];
-        foreach ($needed_keys as $key) {
-            if (!$object->disbursable[$key]) abort(409, 'Debe actualizar los datos personales del titular y garantes');
-        }
-        return $object;
     }
 }
