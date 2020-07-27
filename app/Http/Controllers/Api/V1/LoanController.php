@@ -849,7 +849,7 @@ class LoanController extends Controller
         ];
     }
 
-    /**
+    /** @group Cobranzas
     * Impresión del Kardex de Pagos
     * Devuelve un pdf del Kardex de pagos acorde a un ID de préstamo
     * @urlParam loan required ID del préstamo. Example: 1
