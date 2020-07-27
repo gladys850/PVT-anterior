@@ -121,11 +121,7 @@
             </v-card-title>
             <v-card-text class="pl-10">
               <SpecificDataLoan
-                :bonos.sync="bonos"
-                :datos.sync="datos"
-                :payable_liquid.sync="payable_liquid"
-                :calculos.sync="calculos"
-                :modalidad.sync="modalidad"
+               :loan.sync="loan"
               >
                 <template v-slot:title>
                   <v-col cols="12" class="py-0">
