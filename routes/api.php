@@ -132,7 +132,7 @@ Route::group([
             Route::get('loan/{loan}/print/form', 'Api\V1\LoanController@print_form');
             Route::get('loan/{loan}/print/contract', 'Api\V1\LoanController@print_contract');
             Route::get('loan/{loan}/print/kardex','Api\V1\LoanController@print_kardex');
-            Route::get('loan/{loan_payment}/print/voucher','Api\V1\LoanController@print_voucher');
+            Route::get('loan_payment/{loan_payment}/print/voucher','Api\V1\LoanPaymentController@print_voucher');
         });
         Route::group([
             'middleware' => 'permission:create-loan'

@@ -11,6 +11,7 @@ use App\Http\Controllers\Controller;
 use App\LoanPayment;
 use App\Voucher;
 use App\LoanState;
+use App\Affiliate;
 use App\Http\Requests\LoanPaymentForm;
 use App\Http\Requests\VoucherForm;
 use App\Events\LoanFlowEvent;
@@ -122,5 +123,66 @@ class LoanPaymentController extends Controller
         $derived = $loanPayment->get();
         $derived = Util::derivation($request->to_role, $derived, $loanPayment);
         return $derived;
+    }
+
+      /**
+    * Impresión del Voucher de Pagos
+    * Devuelve un pdf del Voucher acorde a un ID de pago
+    * @urlParam loanPayment required ID del pago. Example: 1
+    * @queryParam copies Número de copias del documento. Example: 2
+    * @authenticated
+    * @responseFile responses/voucher/printvoucher.200.json
+    */
+
+    public function print_voucher(Request $request, LoanPayment $loanPayment, $standalone = true)
+    {
+        $lenders = [];
+        foreach ($loanPayment->loan->lenders as $lender) {
+            $lenders[] = self::verify_spouse_disbursable($lender)->disbursable;
+        }
+        $data = [
+            'header' => [
+                'direction' => 'DIRECCIÓN DE ESTRATEGIAS SOCIALES E INVERSIONES',
+                'unity' => 'UNIDAD DE INVERSIÓN EN PRÉSTAMOS',
+                'table' => [
+                    ['Número de Cuota', $loanPayment->quota_number],
+                    ['Código', $loanPayment->voucher->code],
+                    ['Usuario', Auth::user()->username]
+                ]
+            ],
+            'title' => 'RECIBO OFICIAL',
+            'loanPayment' => $loanPayment,
+            'lenders' => collect($lenders)
+        ];
+        $file_name = implode('_', ['voucher', $loanPayment->voucher->code]) . '.pdf';
+        $view = view()->make('loan.payments.payment_voucher')->with($data)->render();
+        if ($standalone) return Util::pdf_to_base64([$view], $file_name, 'letter', $request->copies ?? 1);
+        return $view;
+    }
+
+    public static function verify_spouse_disbursable(Affiliate $affiliate)
+    {
+        $object = (object)[
+            'disbursable_type' => 'affiliates',
+            'disbursable_id' => $affiliate->id,
+            'disbursable' => $affiliate
+        ];
+        if ($object->disbursable->dead) {
+            $spouse = $object->disbursable->spouse;
+            if ($spouse) {
+                $object = (object)[
+                    'disbursable_type' => 'spouses',
+                    'disbursable_id' => $spouse->id,
+                    'disbursable' => $spouse
+                ];
+            } else {
+                abort(409, 'Debe actualizar la información de cónyugue para afiliados fallecidos');
+            }
+        }
+        $needed_keys = ['city_birth', 'city_identity_card', 'city_identity_card'];
+        foreach ($needed_keys as $key) {
+            if (!$object->disbursable[$key]) abort(409, 'Debe actualizar los datos personales del titular y garantes');
+        }
+        return $object;
     }
 }
