@@ -103,12 +103,13 @@
                 <template v-slot:activator="{ on }">
                   <v-btn
                     fab
-                    small
+                    x-small
                     color="dark"
                     top
                     right
                     absolute
                     v-on="on"
+                    style="margin-right: -9px;margin-top: 38px;"
                     @click="imprimir($route.params.id)"
                   >
                     <v-icon>mdi-printer</v-icon>
@@ -135,13 +136,7 @@
         <v-tab-item :value="'tab-3'">
           <v-card flat tile>
             <v-card-text class="pl-12">
-              <DocumentsFlow
-                :datos.sync="datos"
-                :formulario.sync="formulario"
-                :calculos.sync="calculos"
-                :intervalos.sync="intervalos"
-                :modalidad.sync="modalidad"
-              >
+              <DocumentsFlow>
                 <template v-slot:title>
                   <v-col cols="12" class="">
                     <v-toolbar-title>DOCUMENTOS PRESENTADOS</v-toolbar-title>
