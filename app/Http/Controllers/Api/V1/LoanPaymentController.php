@@ -33,7 +33,7 @@ class LoanPaymentController extends Controller
     * @authenticated
     * @responseFile responses/loan_payment/update_payment.200.json
     */
-    public function update_payment(Request $request, LoanPayment $loanPayment)
+    public function update(Request $request, LoanPayment $loanPayment)
     {
         DB::beginTransaction();
         try {
@@ -55,12 +55,12 @@ class LoanPaymentController extends Controller
     * @authenticated
     * @responseFile responses/loan_payment/destroy_payment.200.json
     */
-    public function destroy_payment(LoanPayment $loanPayment)
+    public function destroy(LoanPayment $loanPayment)
     {
         DB::beginTransaction();
         try {
             $loanPayment->delete();
-            Util::save_record($loanPayment, 'datos-de-un-registro-pago', 'eliminó registro pago: ' . $loanPayment->id);
+            Util::save_record($loanPayment, 'datos-de-un-registro-pago', 'eliminó registro pago: ' . $loanPayment->code);
             DB::commit();
         } catch (\Exception $e) {
             DB::rollback();
@@ -172,6 +172,42 @@ class LoanPaymentController extends Controller
         $file_name = implode('_', ['pagos', $procedure_modality->shortened, $loan->code]) . '.pdf';
         $view = view()->make('loan.payments.payment_loan')->with($data)->render();
         if ($standalone) return Util::pdf_to_base64([$view], $file_name, 'legal', $request->copies ?? 1);
+        return $view;
+    }
+
+    /**
+    * Impresión del Voucher de Pagos
+    * Devuelve un pdf del Voucher acorde a un ID de pago
+    * @urlParam loanPayment required ID del pago. Example: 1
+    * @queryParam copies Número de copias del documento. Example: 2
+    * @authenticated
+    * @responseFile responses/voucher/printvoucher.200.json
+    */
+
+    public function print_voucher(Request $request, LoanPayment $loanPayment, $standalone = true)
+    {
+        $loanPayment->voucher;
+        $lenders = [];
+        foreach ($loanPayment->loan->lenders as $lender) {
+            $lenders[] = LoanController::verify_spouse_disbursable($lender)->disbursable;
+        }
+        $data = [
+            'header' => [
+                'direction' => 'DIRECCIÓN DE ESTRATEGIAS SOCIALES E INVERSIONES',
+                'unity' => 'UNIDAD DE INVERSIÓN EN PRÉSTAMOS',
+                'table' => [
+                    ['Número de Cuota', $loanPayment->quota_number],
+                    ['Código', $loanPayment->voucher->code],
+                    ['Usuario', Auth::user()->username]
+                ]
+            ],
+            'title' => 'RECIBO OFICIAL',
+            'loanPayment' => $loanPayment,
+            'lenders' => collect($lenders)
+        ];
+        $file_name = implode('_', ['voucher', $loanPayment->voucher->code]) . '.pdf';
+        $view = view()->make('loan.payments.payment_voucher')->with($data)->render();
+        if ($standalone) return Util::pdf_to_base64([$view], $file_name, 'letter', $request->copies ?? 1);
         return $view;
     }
 }

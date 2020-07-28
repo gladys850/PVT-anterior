@@ -40,6 +40,18 @@ class LoanPermissionSeeder extends Seeder
             ],  [
                 'name' => 'print-payment-kardex-loan',
                 'display_name' => 'Imprimir kardex de pagos de préstamo'
+            ],  [
+                'name' => 'create-payment-loan',
+                'display_name' => 'Crear tramites de cobros'
+            ],  [
+                'name' => 'update-payment-loan',
+                'display_name' => 'Editar tramites de cobros'
+            ],  [
+                'name' => 'show-payment-loan',
+                'display_name' => 'Ver trámites de cobros'
+            ],  [
+                'name' => 'delete-payment-loan',
+                'display_name' => 'Anular trámites de cobros'
             ]
         ];
         foreach ($permissions as $permission) {

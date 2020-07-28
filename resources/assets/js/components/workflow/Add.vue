@@ -103,12 +103,13 @@
                 <template v-slot:activator="{ on }">
                   <v-btn
                     fab
-                    small
+                    x-small
                     color="dark"
                     top
                     right
                     absolute
                     v-on="on"
+                    style="margin-right: -9px;margin-top: 38px;"
                     @click="imprimir($route.params.id)"
                   >
                     <v-icon>mdi-printer</v-icon>
@@ -121,11 +122,7 @@
             </v-card-title>
             <v-card-text class="pl-10">
               <SpecificDataLoan
-                :bonos.sync="bonos"
-                :datos.sync="datos"
-                :payable_liquid.sync="payable_liquid"
-                :calculos.sync="calculos"
-                :modalidad.sync="modalidad"
+               :loan.sync="loan"
               >
                 <template v-slot:title>
                   <v-col cols="12" class="py-0">
@@ -139,13 +136,7 @@
         <v-tab-item :value="'tab-3'">
           <v-card flat tile>
             <v-card-text class="pl-12">
-              <DocumentsFlow
-                :datos.sync="datos"
-                :formulario.sync="formulario"
-                :calculos.sync="calculos"
-                :intervalos.sync="intervalos"
-                :modalidad.sync="modalidad"
-              >
+              <DocumentsFlow>
                 <template v-slot:title>
                   <v-col cols="12" class="">
                     <v-toolbar-title>DOCUMENTOS PRESENTADOS</v-toolbar-title>
