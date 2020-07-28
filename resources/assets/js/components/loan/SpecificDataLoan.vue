@@ -3,7 +3,30 @@
     <ValidationObserver ref="observer">
       <v-form>
         <!--v-card-->
-        <v-tooltip top >
+        <v-tooltip top>
+          <template v-slot:activator="{ on }">
+            <v-btn
+              fab
+              dark
+              x-small
+              :color="'error'"
+              top
+              right
+              absolute
+              v-on="on"
+              style="margin-right: 45px;"
+              @click.stop="resetForm()"
+              v-show="editable"
+            >
+              <v-icon>mdi-close</v-icon>
+            </v-btn>
+          </template>
+          <div>
+            <span>Cancelar</span>
+          </div>
+        </v-tooltip>
+
+        <v-tooltip top v-if="$store.getters.userRoles.includes('PRE-tesoreria')">
           <template v-slot:activator="{ on }">
             <v-btn
               fab
@@ -14,6 +37,7 @@
               right
               absolute
               v-on="on"
+              style="margin-right: -9px;"
               @click.stop="editLoan()"
             >
               <v-icon v-if="editable">mdi-check</v-icon>
@@ -58,9 +82,9 @@
                             <ul style="list-style: none" class="pa-0">
                               <li v-for="(guarantor,i) in loan.guarantors" :key="i" >
                                 <br>
-                                <p></p>
-                                <p>CÉDULA DE IDENTIDAD: {{guarantor.identity_card}}</p>
-                                <p>NOMBRE COMPLETO: {{guarantor.first_name +" "+ guarantor.last_name}}</p>
+                                <p>CÉDULA DE IDENTIDAD: {{guarantor.identity_card +" "+ identityCardExt(guarantor.city_identity_card_id) }}</p> 
+                                                         
+                                <p>NOMBRE COMPLETO: {{$options.filters.fullName(guarantor, true)}}</p>
                                 <p>PORCENTAJE DE PAGO: {{guarantor.pivot.payment_percentage}} %</p>
 
                                 </li>
@@ -86,7 +110,7 @@
                               offset-y
                               max-width="290px"
                               min-width="290px"
-                              :readonly= editable
+                              :disabled="!editable"
 
                             >
                             <template v-slot:activator="{ on }">
@@ -111,14 +135,14 @@
                               :readonly="!editable"
                               :items="payment_types"
                               item-text="name"
-                              item-value="value"
+                              item-value="id"
                               label="TIPO"
                               v-model="loan.payment_type_id"
                              ></v-select>
                             <v-text-field
                               :outlined="editable"
                               :readonly="!editable"
-                              :label=" loan.payment_type_id=='1'? 'NRO DE CUENTA':loan.payment_type_id=='2'? 'NRO DE CHEQUE':loan.payment_type_id=='3'?'NRO DE RECIBO':'OTRO'"
+                              :label="loan.payment_type_id=='1'? 'NRO DE CUENTA':loan.payment_type_id=='2'? 'NRO DE CHEQUE':loan.payment_type_id=='3'?'NRO DE RECIBO':'OTRO'"
                               v-model="loan.number_payment_type"
                             ></v-text-field>
                           </fieldset>
@@ -148,7 +172,7 @@ export default {
     editable: false,
     reload: false,
     payment_types:[],
-
+    city: [],
     dates: {
     disbursementDate:{
           formatted: null,
@@ -158,6 +182,7 @@ export default {
   }),
   beforeMount(){
     this.getPaymentTypes()
+    this.getCity()
   },
   mounted() {
     this.formatDate('disbursementDate', this.loan.disbursement_date)
@@ -175,39 +200,58 @@ export default {
         this.dates[key].formatted = null
       }
     },
-      async saveLoan(){
+    async getCity() {
       try {
-          let res = await axios.patch(`loan/${this.$route.params.id}`, {
-           
-          payment_type_id: this.loan.payment_type_id,
-          number_payment_type: this.loan.number_payment_type,
-          validated: this.loan.number_payment_type
+        this.loading = true
+        let res = await axios.get(`city`)
+        this.city = res.data
+        console.log("ciudad "+ this.city)
 
-        })
-        this.toastr.success('Registro guardado correctamente')
       } catch (e) {
         console.log(e)
+      } finally {
+        this.loading = false
       }
-
     },
-   async editLoan(){
+    identityCardExt(id){
+      let ext
+      if(id != null){
+      ext = this.city.find(o => o.id == id).first_shortened
+      console.log( ext)
+      return ext
+      }else{
+        return ''
+      }
+    },
+    resetForm() {
+      this.editable = false
+      this.reload = true
+      this.$nextTick(() => {
+      this.reload = false
+      })
+    },
+    async editLoan(){
       try {
         if (!this.editable) {
           this.editable = true
           console.log('entro al grabar por verdadero :)')
         } else {
           console.log('entro al grabar por falso :)')
-
           //Edit desembolso
+          if((this.loan.disbursement_date != '' && this.loan.number_payment_type != '') && (this.loan.disbursement_date != null && this.loan.number_payment_type != null)){
             let res = await axios.patch(`loan/${this.loan.id}`, {
-          disbursement_date:this.loan.disbursement_date,
-          payment_type_id: 2,
-          number_payment_type: this.loan.number_payment_type,
-          validated: this.loan.number_payment_type
+            disbursement_date:this.loan.disbursement_date,
+            payment_type_id: this.loan.payment_type_id,
+            number_payment_type: this.loan.number_payment_type,
+            validated: this.loan.number_payment_type
+          })
+            this.toastr.success('Se registró correctamente.')
+            this.editable = false
+          }else{
+            this.toastr.error('Faltan registar campos en Desembolso. Registre la fecha, tipo y nro de documento.');
+            
+          }
 
-        })
-          this.toastr.success('Registro guardado correctamente')
-          this.editable = false
         }
       } catch (e) {
         console.log(e)
