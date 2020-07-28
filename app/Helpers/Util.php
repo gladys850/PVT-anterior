@@ -386,7 +386,7 @@ class Util
             if (!$from_role) {
                 $item['from_role_id'] = $item['role_id'];
                 $from_role = Role::find($item['role_id']);
-                $flow_message = $this->flow_message($item->modality->procedure_type->id, $from_role, $to_role);
+                $flow_message = Util::flow_message($item->modality->procedure_type->id, $from_role, $to_role);
             }
             $item['role_id'] = $to_role->id;
             Util::save_record($item, $flow_message['type'], $flow_message['message']);
