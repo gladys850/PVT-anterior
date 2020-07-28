@@ -151,6 +151,8 @@ Route::group([
         ], function () {
             Route::get('loan/{loan}/payment','Api\V1\LoanController@get_payments');
             Route::get('loan_payment/{loan_payment}/print/loan_payment','Api\V1\LoanPaymentController@print_loan_payment');
+            Route::apiResource('loan_payment', 'Api\V1\LoanPaymentController')->only('index');
+            Route::apiResource('loan_payment', 'Api\V1\LoanPaymentController')->only('show');
         });
         Route::group([
             'middleware' => 'permission:create-payment-loan'
