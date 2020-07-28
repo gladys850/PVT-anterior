@@ -72,6 +72,25 @@ class LoanPaymentController extends Controller
         $data = Util::search_sort(new LoanPayment(), $request, $filters, $relations);
         return $data;
     }
+
+    /**
+    * Detalle de Registro de pago
+    * Devuelve el detalle de un registro de pago mediante su ID
+    * @urlParam loan_payment required ID de registro de pago. Example: 4
+    * @authenticated
+    * @responseFile responses/loan/show.200.json
+    */
+    public function show(LoanPayment $loanPayment)
+    {
+        if (Auth::user()->can('show-all-loan') || Auth::user()->roles()->whereHas('module', function($query) {
+            return $query->whereName('prestamos');
+        })->pluck('id')->contains($loanPayment->role_id)) {
+            return $loanPayment;
+        } else {
+            abort(403);
+        }
+    }
+
     /**
     * Editar Registro de pago
     * Edita el Registro de Pago realizado.
