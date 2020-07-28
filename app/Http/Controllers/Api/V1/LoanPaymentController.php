@@ -137,7 +137,7 @@ class LoanPaymentController extends Controller
     }
 
     /**
-    * Nuevo pago por Tesoreria
+    * Registro de cobro de Préstamo
     * Insertar registro de pago (loan_payment).
     * @urlParam loan_payment required ID del registro de pago. Example: 2
     * @bodyParam payment_type_id integer required ID de tipo de pago. Example: 1
