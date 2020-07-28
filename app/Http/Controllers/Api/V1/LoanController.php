@@ -870,7 +870,7 @@ class LoanController extends Controller
         //return $roles;die;
         if(count($roles)>0){
             $loan->update($request->only('disbursement_date', 'payment_type_id', 'number_payment_type'));
-            return $loan;    
+            return $loan;
         }else
         {
             abort(403, 'Debe tener el rol de Tesoreria');

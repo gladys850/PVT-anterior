@@ -10,13 +10,13 @@ use Util;
 use Carbon;
 use DB;
 
-/** @group Vouchers
-* Datos de los vouchers registrados
+/** @group Tesoreria
+* Datos de los registros de cobros
 */
 class VoucherController extends Controller
 {
     /**
-    * Registros de Voucher
+    * Registros de cobros
     * Devuelve el listado con los datos paginados
     * @queryParam user_id Filtro por id de usuario. Example: 122
     * @queryParam loan_payment_id Filtro por id de préstamo. Example: 2
@@ -41,7 +41,7 @@ class VoucherController extends Controller
         return Util::search_sort(new Voucher(), $request, $filter);
     }
     /**
-    * Detalle de voucher
+    * Detalle de registro de cobro
     * Devuelve el detalle de un voucher mediante su ID
     * @urlParam voucher required ID de voucher. Example: 1
     * @authenticated
@@ -53,8 +53,8 @@ class VoucherController extends Controller
     }
 
 
-    /** @group Cobranzas
-    * Editar pago por Tesoreria
+    /**
+    * Editar registro de cobro
     * Edita el Pago realizado.
     * @urlParam voucher required ID del registro de pago. Example: 2
     * @bodyParam payment_type_id integer required ID de tipo de pago. Example: 2
@@ -64,7 +64,7 @@ class VoucherController extends Controller
     * @authenticated
     * @responseFile responses/voucher/update_voucher.200.json
     */
-    public function update_voucher(VoucherForm $request, Voucher $voucher)
+    public function update(VoucherForm $request, Voucher $voucher)
     {
         DB::beginTransaction();
         try {
@@ -83,13 +83,13 @@ class VoucherController extends Controller
         return $payment;
     }
 
-    /** @group Tesoreria
-    * Anular Pago
+    /**
+    * Anular registro de cobro
     * @urlParam voucher required ID del pago. Example: 1
     * @authenticated
     * @responseFile responses/voucher/destroy_voucher.200.json
     */
-    public function destroy_voucher(Voucher $voucher)
+    public function destroy(Voucher $voucher)
     {
         DB::beginTransaction();
         try {
@@ -102,7 +102,4 @@ class VoucherController extends Controller
         }
         return $voucher;
     }
-
-
-    
 }

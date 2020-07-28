@@ -49,7 +49,6 @@ Route::group([
         Route::post('loan_payment/derivation/amortization','Api\V1\LoanPaymentController@derivation_amortization');
         Route::apiResource('record', 'Api\V1\RecordController')->only('index');
         Route::apiResource('statistic', 'Api\V1\StatisticController')->only('index', 'show');
-        Route::apiResource('voucher', 'Api\V1\VoucherController')->only('index', 'show');
         Route::apiResource('voucher_type', 'Api\V1\VoucherTypeController')->only('index');
 
         // Afiliado
@@ -113,10 +112,6 @@ Route::group([
             Route::get('loan/{loan}/print/plan','Api\V1\LoanController@print_plan');
             Route::apiResource('note','Api\V1\NoteController')->only('show');
             Route::get('procedure_type/{procedure_type}/loan_destiny', 'Api\V1\ProcedureTypeController@get_loan_destinies');
-            //voucher
-            Route::post('loan_payment/{loan_payment}/voucher','Api\V1\LoanPaymentController@set_voucher');
-            Route::put('voucher/{voucher}','Api\V1\VoucherController@update_voucher');
-            Route::delete('voucher/{voucher}','Api\V1\VoucherController@destroy_voucher');
             Route::get('loan/{loan}/observation','Api\V1\LoanController@get_observations');
             Route::post('loan/{loan}/observation','Api\V1\LoanController@set_observation');
             Route::patch('loan/{loan}/observation','Api\V1\LoanController@update_observation');
@@ -151,8 +146,7 @@ Route::group([
         ], function () {
             Route::get('loan/{loan}/payment','Api\V1\LoanController@get_payments');
             Route::get('loan_payment/{loan_payment}/print/loan_payment','Api\V1\LoanPaymentController@print_loan_payment');
-            Route::apiResource('loan_payment', 'Api\V1\LoanPaymentController')->only('index');
-            Route::apiResource('loan_payment', 'Api\V1\LoanPaymentController')->only('show');
+            Route::apiResource('loan_payment', 'Api\V1\LoanPaymentController')->only('index', 'show');
         });
         Route::group([
             'middleware' => 'permission:create-payment-loan'
@@ -169,6 +163,27 @@ Route::group([
             'middleware' => 'permission:delete-payment-loan'
         ], function () {
             Route::apiResource('loan_payment', 'Api\V1\LoanPaymentController')->only('destroy');
+        });
+        //Registro de pago por tesoreria
+        Route::group([
+            'middleware' => 'permission:show-payment'
+        ], function () {
+            Route::apiResource('voucher', 'Api\V1\VoucherController')->only('index', 'show');
+        });
+        Route::group([
+            'middleware' => 'permission:create-payment'
+        ], function () {
+            Route::post('loan_payment/{loan_payment}/voucher','Api\V1\LoanPaymentController@set_voucher');
+        });
+        Route::group([
+            'middleware' => 'permission:update-payment'
+        ], function () {
+            Route::apiResource('voucher','Api\V1\VoucherController')->only('update');
+        });
+        Route::group([
+            'middleware' => 'permission:delete-payment'
+        ], function () {
+            Route::apiResource('voucher', 'Api\V1\VoucherController')->only('destroy');
         });
         // Dirección
         Route::group([
