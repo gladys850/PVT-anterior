@@ -648,7 +648,7 @@ class LoanController extends Controller
             $payment->role_id = Role::whereName('PRE-cobranzas')->first()->id;
             $payment->procedure_modality_id = ProcedureModality::whereName('Amortización')->first()->id;
             $loan_payment = $loan->payments()->create($payment->toArray());
-            Util::save_record($loan_payment, 'datos-de-un-registro-pago', 'registró pago : '. $loan_payment->id);
+            Util::save_record($loan_payment, 'datos-de-un-registro-pago', 'registró pago : '. $loan_payment->code);
             DB::commit();
         } catch (\Exception $e) {
             DB::rollback();

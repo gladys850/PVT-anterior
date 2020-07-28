@@ -33,7 +33,7 @@ class LoanPaymentController extends Controller
     * @authenticated
     * @responseFile responses/loan_payment/update_payment.200.json
     */
-    public function update_payment(Request $request, LoanPayment $loanPayment)
+    public function update(Request $request, LoanPayment $loanPayment)
     {
         DB::beginTransaction();
         try {
@@ -55,12 +55,12 @@ class LoanPaymentController extends Controller
     * @authenticated
     * @responseFile responses/loan_payment/destroy_payment.200.json
     */
-    public function destroy_payment(LoanPayment $loanPayment)
+    public function destroy(LoanPayment $loanPayment)
     {
         DB::beginTransaction();
         try {
             $loanPayment->delete();
-            Util::save_record($loanPayment, 'datos-de-un-registro-pago', 'eliminó registro pago: ' . $loanPayment->id);
+            Util::save_record($loanPayment, 'datos-de-un-registro-pago', 'eliminó registro pago: ' . $loanPayment->code);
             DB::commit();
         } catch (\Exception $e) {
             DB::rollback();
