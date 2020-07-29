@@ -58,6 +58,7 @@ class LoanController extends Controller
     * Lista de Préstamos
     * Devuelve el listado con los datos paginados
     * @queryParam role_id Ver préstamos del rol, si es 0 se muestra la lista completa. Example: 73
+    * @queryParam affiliate_id Ver préstamos del afiliado. Example: 529
     * @queryParam trashed Booleano para obtener solo eliminados. Example: 1
     * @queryParam validated Booleano para filtrar trámites válidados. Example: 1
     * @queryParam procedure_type_id ID para filtrar trámites por tipo de trámite. Example: 9
@@ -106,9 +107,14 @@ class LoanController extends Controller
                 'procedure_type_id' => $request->procedure_type_id
             ];
         }
+        if ($request->has('affiliate_id')) {
+            $relations['lenders'] = [
+                'affiliate_id' => $request->affiliate_id
+            ];
+        }
         $data = Util::search_sort(new Loan(), $request, $filters, $relations);
         $data->getCollection()->transform(function ($loan) {
-            return self::append_data($loan, false);
+            return self::append_data($loan, true);
         });
         return $data;
     }
