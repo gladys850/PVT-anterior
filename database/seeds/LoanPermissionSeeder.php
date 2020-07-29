@@ -53,8 +53,8 @@ class LoanPermissionSeeder extends Seeder
                 'name' => 'delete-payment-loan',
                 'display_name' => 'Anular trámites de cobros'
             ],  [
-                'name' => 'show-all-payment',
-                'display_name' => 'Ver cobros'
+                'name' => 'show-all-payment-loan',
+                'display_name' => 'Ver todos los trámites de cobros'
             ],  [
                 'name' => 'show-payment',
                 'display_name' => 'Ver cobros'
