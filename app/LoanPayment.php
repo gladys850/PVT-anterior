@@ -151,6 +151,11 @@ class LoanPayment extends Model
         ];
     }
 
+    public function state()
+    {
+      return $this->belongsTo(LoanState::class, 'state_id','id');
+    }
+    
     public function records()
     {
         return $this->morphMany(Record::class, 'recordable')->latest('updated_at');

@@ -27,6 +27,7 @@ use App\Http\Requests\LoansForm;
 use App\Http\Requests\LoanForm;
 use App\Http\Requests\LoanPaymentForm;
 use App\Http\Requests\ObservationForm;
+use App\Http\Requests\DisbursementForm;
 use App\Events\LoanFlowEvent;
 use Carbon;
 use App\Helpers\Util;
@@ -648,7 +649,7 @@ class LoanController extends Controller
             $payment->role_id = Role::whereName('PRE-cobranzas')->first()->id;
             $payment->procedure_modality_id = ProcedureModality::whereName('Amortización')->first()->id;
             $loan_payment = $loan->payments()->create($payment->toArray());
-            Util::save_record($loan_payment, 'datos-de-un-registro-pago', 'registró pago : '. $loan_payment->id);
+            Util::save_record($loan_payment, 'datos-de-un-registro-pago', 'registró pago : '. $loan_payment->code);
             DB::commit();
         } catch (\Exception $e) {
             DB::rollback();
@@ -848,6 +849,34 @@ class LoanController extends Controller
             'type' => $type
         ];
     }
+
+    /** @group Tesoreria
+     * Desembolso 
+     * Realiza el desembolso de un prestamo acorde a un ID de préstamo
+     * @urlParam loan required ID del prestamo. Example: 1
+     * @bodyParam disbursement_date date required Fecha de desembolso. Example: 2020-08-08
+     * @bodyParam payment_type_id integer required ID Tipo de pago. Example: 1
+     * @bodyParam number_payment_type integer required Número de tipo de pago. Example: 123234343
+     * @authenticated
+     * @responseFile responses/loan/disbursement.200.json
+     */
+
+    public function disbursement(DisbursementForm $request, Loan $loan)
+    {
+        $tesoreriaRol = Role::whereName('PRE-tesoreria')->first()->id;
+        $roles = Auth::user()->roles()->whereHas('module', function($query) {
+            return $query->whereName('prestamos');
+        })->whereId($tesoreriaRol)->pluck('id');
+        //return $roles;die;
+        if(count($roles)>0){
+            $loan->update($request->only('disbursement_date', 'payment_type_id', 'number_payment_type'));
+            return $loan;
+        }else
+        {
+            abort(403, 'Debe tener el rol de Tesoreria');
+        }
+    }
+
 
     /** @group Cobranzas
     * Impresión del Kardex de Pagos

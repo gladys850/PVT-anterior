@@ -38,8 +38,7 @@ class LoanPaymentForm extends FormRequest
         }
         $rules = [
             'estimated_date' => 'nullable|date_format:Y-m-d|after:'.$date,
-            'estimated_quota' => 'nullable|numeric|min:1',
-            'state_id' => 'required'
+            'estimated_quota' => 'nullable|numeric|min:1'
         ];
         switch ($this->method()) {
             case 'POST': {
@@ -59,8 +58,7 @@ class LoanPaymentForm extends FormRequest
     {
         return [
             'estimated_date.after_or_equal' => 'La fecha estimada debe ser igual a hoy o posterior',
-            'liquidate.boolean' => 'EL atributo liquidado debe ser (true or false)',
-            'state_id.requerid' => 'Es requerido el estado del tramite'
+            'liquidate.boolean' => 'EL atributo liquidado debe ser (true or false)'
         ];
     }
 }
