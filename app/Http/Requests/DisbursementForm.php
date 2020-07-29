@@ -29,4 +29,12 @@ class DisbursementForm extends FormRequest
             'number_payment_type' => 'required_if:payment_type_id,1|required_if:payment_type_id,2|integer|min:1'
         ];
     }
+
+    public function messages()
+    {
+        return [
+            'disbursement_date.required' => 'La fecha de desembolso es requerido',
+            'payment_type_id' => 'El tipo de pago es requerido'
+        ];
+    }
 }

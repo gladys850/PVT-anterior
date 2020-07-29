@@ -11,6 +11,7 @@ use App\Http\Controllers\Controller;
 use App\LoanPayment;
 use App\Voucher;
 use App\LoanState;
+use App\Affiliate;
 use App\Http\Requests\LoanPaymentForm;
 use App\Http\Requests\VoucherForm;
 use App\Events\LoanFlowEvent;
@@ -24,6 +25,73 @@ use App\Http\Controllers\Api\V1\LoanController;
 */
 class LoanPaymentController extends Controller
 {
+    /**
+    * Lista de Registro de pagos
+    * Devuelve el listado con los datos paginados
+    * @queryParam role_id integer Ver préstamos del rol, si es 0 se muestra la lista completa. Example: 73
+    * @queryParam state_id integer ID del estado del registro de pago. Example 6 
+    * @queryParam search Parámetro de búsqueda. Example: 2000
+    * @queryParam sortBy Vector de ordenamiento. Example: []
+    * @queryParam sortDesc Vector de orden descendente(true) o ascendente(false). Example: [true]
+    * @queryParam per_page Número de datos por página. Example: 8
+    * @queryParam page Número de página. Example: 1
+    * @authenticated
+    * @responseFile responses/loan_payment/index.200.json
+     */
+    public function index(Request $request){
+        $filters = [];
+        $relations = [];
+        if (!$request->has('role_id')) {
+            if (Auth::user()->can('show-all-loan') || Auth::user()->can('show-all-payment-loan')) {
+                $request->role_id = 0;
+            } else {
+                $role = Auth::user()->roles()->whereHas('module', function($query) {
+                    return $query->whereName('prestamos');
+                })->orderBy('sequence_number')->orderBy('name')->first();
+                if ($role) {
+                    $request->role_id = $role->id;
+                } else {
+                    abort(403);
+                }
+            }
+        } else {
+            $request->role_id = (integer)$request->role_id;
+            if (($request->role_id == 0 && !Auth::user()->can('show-all-loan') && !Auth::user()->can('show-all-payment-loan')) || ($request->role_id != 0 && !Auth::user()->roles->pluck('id')->contains($request->role_id))) {
+                abort(403);
+            }
+        }
+        if ($request->role_id != 0) {
+            $filters = [
+                'role_id' => $request->role_id
+            ];
+        }
+        if ($request->has('state_id')) {
+            $relations['state'] = [
+                'state_id' => $request->state_id
+            ];
+        }
+        $data = Util::search_sort(new LoanPayment(), $request, $filters, $relations);
+        return $data;
+    }
+
+    /**
+    * Detalle de Registro de pago
+    * Devuelve el detalle de un registro de pago mediante su ID
+    * @urlParam loan_payment required ID de registro de pago. Example: 4
+    * @authenticated
+    * @responseFile responses/loan/show.200.json
+    */
+    public function show(LoanPayment $loanPayment)
+    {
+        if (Auth::user()->can('show-all-loan') || Auth::user()->roles()->whereHas('module', function($query) {
+            return $query->whereName('prestamos');
+        })->pluck('id')->contains($loanPayment->role_id)) {
+            return $loanPayment;
+        } else {
+            abort(403);
+        }
+    }
+
     /**
     * Editar Registro de pago
     * Edita el Registro de Pago realizado.
@@ -70,7 +138,7 @@ class LoanPaymentController extends Controller
     }
 
     /**
-    * Nuevo pago por Tesoreria
+    * Registro de cobro de Préstamo
     * Insertar registro de pago (loan_payment).
     * @urlParam loan_payment required ID del registro de pago. Example: 2
     * @bodyParam payment_type_id integer required ID de tipo de pago. Example: 1
@@ -206,8 +274,27 @@ class LoanPaymentController extends Controller
             'lenders' => collect($lenders)
         ];
         $file_name = implode('_', ['voucher', $loanPayment->voucher->code]) . '.pdf';
-        $view = view()->make('loan.payments.payment_voucher')->with($data)->render();
-        if ($standalone) return Util::pdf_to_base64([$view], $file_name, 'letter', $request->copies ?? 1);
+            $view = view()->make('loan.payments.payment_voucher')->with($data)->render();
+            if ($standalone) return Util::pdf_to_base64([$view], $file_name, 'letter', $request->copies ?? 1);
         return $view;
+    }
+
+    /**
+    * Reactivar Registro de Pago
+    * Reactiva un registro de pago
+    * @urlParam loan_payment required ID del registro de pago. Example: 2
+    * @authenticated
+    * @responseFile responses/loan_payment/reactivate.200.json
+    */
+    public function reactivate(LoanPayment $loanPayment)
+    {
+        if($loanPayment->state_id == LoanState::whereName('Anulado')->first()->id){
+            $loanPayment->state_id = LoanState::whereName('Pendiente de Pago')->first()->id;
+            Util::save_record($loanPayment, 'datos-de-un-registro-pago', Util::concat_action($loanPayment));
+            $loanPayment->update($loanPayment->toArray());
+            return $loanPayment;
+        }else{
+            abort(403, 'El registro a reactivar no está en estado Anulado');
+        }
     }
 }
