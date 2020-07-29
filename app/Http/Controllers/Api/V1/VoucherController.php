@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use App\Voucher;
+use App\LoanState;
 use Illuminate\Http\Request;
 use App\Http\Requests\VoucherForm;
 use Util;
@@ -93,6 +94,9 @@ class VoucherController extends Controller
     {
         DB::beginTransaction();
         try {
+            $loanPayment = $voucher->payable;
+            $pendienteDePago = LoanState::whereName('Pendiente de Pago')->first()->id;
+            $loanPayment->update(['state_id' => $pendienteDePago]);
             $voucher->delete();
             Util::save_record($voucher, 'datos-de-un-pago', 'eliminó pago: ' . $voucher->code);
             DB::commit();

@@ -11,6 +11,7 @@ use App\Http\Controllers\Controller;
 use App\LoanPayment;
 use App\Voucher;
 use App\LoanState;
+use App\Affiliate;
 use App\Http\Requests\LoanPaymentForm;
 use App\Http\Requests\VoucherForm;
 use App\Events\LoanFlowEvent;
