@@ -120,7 +120,6 @@ Route::group([
             Route::get('loan/{loan}/print/contract', 'Api\V1\LoanController@print_contract');
             Route::get('loan/{loan}/print/kardex','Api\V1\LoanController@print_kardex');
             Route::get('loan_payment/{loan_payment}/print/voucher','Api\V1\LoanPaymentController@print_voucher');
-            Route::post('loan/{loan}/disbursement','Api\V1\LoanController@disbursement');
         });
         Route::group([
             'middleware' => 'permission:create-loan'
@@ -184,6 +183,11 @@ Route::group([
             'middleware' => 'permission:delete-payment'
         ], function () {
             Route::apiResource('voucher', 'Api\V1\VoucherController')->only('destroy');
+        });
+        Route::group([
+            'middleware' => 'permission:disbursement-loan'
+        ], function () {
+            Route::post('loan/{loan}/disbursement','Api\V1\LoanController@disbursement');
         });
         // Dirección
         Route::group([
