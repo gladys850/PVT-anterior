@@ -5,9 +5,9 @@
   >
     <v-card>
       <v-toolbar dense flat color="tertiary">
-        <v-toolbar-title v-show="!observation.edit && observation.accion=='devolver'">Ver Pago</v-toolbar-title>
-        <v-toolbar-title v-show="!observation.edit && observation.accion=='anular'">Nuevo Pago</v-toolbar-title>
-        <v-toolbar-title v-show="observation.edit">Editar Pago</v-toolbar-title>
+        <v-toolbar-title v-show="!observation.edit && observation.accion=='devolver'">Ver Cobro</v-toolbar-title>
+        <v-toolbar-title v-show="!observation.edit && observation.accion=='anular'">Nuevo Cobro</v-toolbar-title>
+        <v-toolbar-title v-show="observation.edit">Editar Cobro</v-toolbar-title>
         <v-spacer></v-spacer>
         <v-btn icon @click.stop="close()">
           <v-icon>mdi-close</v-icon>
@@ -28,7 +28,7 @@
                         <label><strong>Nro de Comprobante : 0001</strong></label>
                       </v-col>
                       <v-col cols="3" class="ma-0 pb-0">
-                        <label>TIPO DE AMORTIZACION:</label>
+                        <label>TIPO DE COBRO:</label>
                       </v-col>
                       <v-col cols="3" class="ma-0 pb-0">
                         <v-select
@@ -44,7 +44,7 @@
                        <v-col cols="1">
                       </v-col>
                         <v-col cols="4">
-                          <label> <strong>INTERES DE DIAS: 258931</strong></label> 
+                          <label> </label>
                       </v-col>
                         <v-col cols="3" class="ma-0 pb-0">
                         <label>TIPO DE PAGO:</label>
@@ -63,7 +63,7 @@
                          <v-col cols="1">
                       </v-col>
                       <v-col cols="4">
-                        <label><strong> CAPITAL: 258931</strong></label>
+                        <label></label>
                       </v-col>
                         <v-col cols="3" class="ma-0 pb-0">
                           <label>NRO DE COMPROBANTE:</label>
@@ -78,7 +78,7 @@
                       <v-col cols="1">
                       </v-col>
                       <v-col cols="4" class="ma-0 pb-0">
-                        <label> <strong>PENALES DE DIAS: 0.00</strong></label>
+                        <label> </label>
                       </v-col>
                       <v-col cols="3" class="ma-0 pb-0">
                         <label> FECHA DE PAGO:</label>
@@ -111,7 +111,7 @@
                          <v-col cols="1">
                       </v-col>
                       <v-col cols="4">
-                        <label><strong> CAPITAL: 258931</strong></label>
+                        <label></label>
                       </v-col>
 
                       <v-col cols="4" class="ma-0 pb-0">
@@ -148,12 +148,9 @@
       </v-card-text>
       <v-card-actions class="ma-0 pb-0">
         <v-spacer></v-spacer>
-         <v-btn @click.stop="savePayment($route.params.id)"
-          color="info"
-          >Calcular Pago</v-btn>
         <v-btn @click.stop="savePayment($route.params.id)"
           color="success"
-          >Registrar Pago</v-btn>
+          >Guardar</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -200,7 +197,6 @@ export default {
       id:3
       }
     ],
-     payment_types:[],
     dates: {
       disbursementDate:{
             formatted: null,
@@ -214,6 +210,7 @@ export default {
   }),
   beforeMount(){
     this.getObservationType()
+    this.getFlow(this.$route.params.id)
   },
   mounted() {
     this.formatDate('disbursementDate', this.loan.disbursement_date)
@@ -247,54 +244,6 @@ export default {
     close() {
       this.dialog = false
       this.observation = {}
-    },
-     async getPaymentTypes() {
-      try {
-        this.loading = true
-        let res = await axios.get(`payment_type`)
-        this.payment_types = res.data
-        console.log(this.payment_types+'este es el tipo de desembolso');
-      } catch (e) {
-        console.log(e)
-      } finally {
-        this.loading = false
-      }
-    },
-    async savePayment(){
-      try {
-          if(this.observation.edit)
-          {
-            let res = await axios.patch(`loan/${id}/payment`, {
-
-              estimated_date:this.observation.date,
-              estimated_quota: 2654,
-              liquidate	:true
-
-            })
-            this.payment=res.data
-       
-          }else{
-        
-             let res = await axios.post(`loan/${id}/payment`, {
-
-              estimated_date:this.observation.date,
-              estimated_quota: 2654,
-              liquidate	:true
-
-            })
-            this.payment=res.data
-              this.toastr.success("Se registro el pago correctamente.")
-              this.dialog = false
-
-             this.$router.push("/workflow")
-            }
-          
-          
-      } catch (e) {
-        console.log(e)
-      } finally {
-        this.loading = false
-      }
     },
     async saveObservation(id) {
       try {
@@ -354,7 +303,18 @@ export default {
       } finally {
         this.loading = false
       }
-    }
+    },
+    async getFlow(id) {
+      try {
+        let res = await axios.get(`loan/${id}/flow`)
+        this.flow = res.data
+        this.areas = this.$store.getters.roles.filter(o =>
+          this.flow.previous.includes(o.id)
+        )
+      } catch (e) {
+        console.log(e)
+      }
+    },
   }
 }
 </script>
