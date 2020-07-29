@@ -163,6 +163,11 @@ Route::group([
         ], function () {
             Route::apiResource('loan_payment', 'Api\V1\LoanPaymentController')->only('destroy');
         });
+        Route::group([
+            'middleware' => 'permission:show-all-payment-loan'
+        ], function () {
+            Route::patch('loan_payment/{loan_payment}/reactivate','Api\V1\LoanPaymentController@reactivate');
+        });
         //Registro de pago por tesoreria
         Route::group([
             'middleware' => 'permission:show-payment'

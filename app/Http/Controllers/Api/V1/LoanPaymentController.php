@@ -274,8 +274,27 @@ class LoanPaymentController extends Controller
             'lenders' => collect($lenders)
         ];
         $file_name = implode('_', ['voucher', $loanPayment->voucher->code]) . '.pdf';
-        $view = view()->make('loan.payments.payment_voucher')->with($data)->render();
-        if ($standalone) return Util::pdf_to_base64([$view], $file_name, 'letter', $request->copies ?? 1);
+            $view = view()->make('loan.payments.payment_voucher')->with($data)->render();
+            if ($standalone) return Util::pdf_to_base64([$view], $file_name, 'letter', $request->copies ?? 1);
         return $view;
+    }
+
+    /**
+    * Reactivar Registro de Pago
+    * Reactiva un registro de pago
+    * @urlParam loan_payment required ID del registro de pago. Example: 2
+    * @authenticated
+    * @responseFile responses/loan_payment/reactivate.200.json
+    */
+    public function reactivate(LoanPayment $loanPayment)
+    {
+        if($loanPayment->state_id == LoanState::whereName('Anulado')->first()->id){
+            $loanPayment->state_id = LoanState::whereName('Pendiente de Pago')->first()->id;
+            Util::save_record($loanPayment, 'datos-de-un-registro-pago', Util::concat_action($loanPayment));
+            $loanPayment->update($loanPayment->toArray());
+            return $loanPayment;
+        }else{
+            abort(403, 'El registro a reactivar no está en estado Anulado');
+        }
     }
 }
