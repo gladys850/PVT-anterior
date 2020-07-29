@@ -42,7 +42,7 @@ class LoanPaymentController extends Controller
         $filters = [];
         $relations = [];
         if (!$request->has('role_id')) {
-            if (Auth::user()->can('show-all-loan')) {
+            if (Auth::user()->can('show-all-loan') || Auth::user()->can('show-all-payment-loan')) {
                 $request->role_id = 0;
             } else {
                 $role = Auth::user()->roles()->whereHas('module', function($query) {
@@ -56,7 +56,7 @@ class LoanPaymentController extends Controller
             }
         } else {
             $request->role_id = (integer)$request->role_id;
-            if (($request->role_id == 0 && !Auth::user()->can('show-all-loan')) || ($request->role_id != 0 && !Auth::user()->roles->pluck('id')->contains($request->role_id))) {
+            if (($request->role_id == 0 && !Auth::user()->can('show-all-loan') && !Auth::user()->can('show-all-payment-loan')) || ($request->role_id != 0 && !Auth::user()->roles->pluck('id')->contains($request->role_id))) {
                 abort(403);
             }
         }
