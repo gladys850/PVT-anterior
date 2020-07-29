@@ -53,6 +53,9 @@ class LoanPermissionSeeder extends Seeder
                 'name' => 'delete-payment-loan',
                 'display_name' => 'Anular trámites de cobros'
             ],  [
+                'name' => 'show-all-payment',
+                'display_name' => 'Ver cobros'
+            ],  [
                 'name' => 'show-payment',
                 'display_name' => 'Ver cobros'
             ],  [
@@ -64,6 +67,9 @@ class LoanPermissionSeeder extends Seeder
             ],  [
                 'name' => 'delete-payment',
                 'display_name' => 'Eliminar cobros'
+            ],  [
+                'name' => 'disbursement-loan',
+                'display_name' => 'Permisos de desembolso'
             ]
         ];
         foreach ($permissions as $permission) {

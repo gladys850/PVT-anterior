@@ -863,20 +863,10 @@ class LoanController extends Controller
 
     public function disbursement(DisbursementForm $request, Loan $loan)
     {
-        $tesoreriaRol = Role::whereName('PRE-tesoreria')->first()->id;
-        $estadoDesembolsado = LoanState::whereName('Desembolsado')->first()->id;
-        $request['state_id'] = $estadoDesembolsado;
-        $roles = Auth::user()->roles()->whereHas('module', function($query) {
-            return $query->whereName('prestamos');
-        })->whereId($tesoreriaRol)->pluck('id');
-        //return $roles;die;
-        if(count($roles)>0){
-            $loan->update($request->only('disbursement_date', 'payment_type_id', 'number_payment_type','state_id'));
-            return $loan;
-        }else
-        {
-            abort(403, 'Debe tener el rol de Tesoreria');
-        }
+        $state_disbursement = LoanState::whereName('Desembolsado')->first()->id;
+        $request['state_id'] = $state_dirbursement;
+        if (Auth::user()->can('disbursement-loan')) $loan->update($request->only('disbursement_date', 'payment_type_id', 'number_payment_type', 'state_id'));
+        return $loan;
     }
 
 
