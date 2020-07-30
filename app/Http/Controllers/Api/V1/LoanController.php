@@ -856,12 +856,13 @@ class LoanController extends Controller
         ];
     }
 
-    /** @group Tesoreria
+     /** @group Tesoreria
      * Desembolso
      * Realiza el desembolso de un prestamo acorde a un ID de préstamo
      * @urlParam loan required ID del prestamo. Example: 1
      * @bodyParam disbursement_date date required Fecha de desembolso. Example: 2020-08-08
      * @bodyParam payment_type_id integer required ID Tipo de pago. Example: 1
+     * @bodyParam financial_entity_id integer ID del banco. Example: 1
      * @bodyParam number_payment_type integer required Número de tipo de pago. Example: 123234343
      * @authenticated
      * @responseFile responses/loan/disbursement.200.json
@@ -870,9 +871,14 @@ class LoanController extends Controller
     public function disbursement(DisbursementForm $request, Loan $loan)
     {
         $state_disbursement = LoanState::whereName('Desembolsado')->first()->id;
-        $request['state_id'] = $state_disbursement;
-        if (Auth::user()->can('disbursement-loan')) $loan->update($request->only('disbursement_date', 'payment_type_id', 'number_payment_type', 'state_id'));
-        return $loan;
+        if($loan->state_id != $state_disbursement){
+            $request['state_id'] = $state_disbursement;
+            if (Auth::user()->can('disbursement-loan')) $loan->update($request->only('disbursement_date', 'payment_type_id', 'number_payment_type', 'state_id','financial_entity_id'));
+            return $loan;
+        }else{
+            abort(403, 'El prestamo ya fue desembolsado');
+        }
+        
     }
 
 
