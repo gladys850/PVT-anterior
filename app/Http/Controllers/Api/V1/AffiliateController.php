@@ -111,6 +111,9 @@ class AffiliateController extends Controller
     * @bodyParam service_months integer Meses de servicio. Example: 4
     * @bodyParam affiliate_registration_number integer Número único de registro de afiliado. Example: 10512
     * @bodyParam file_code string Código de folder de afiliado. Example: AFW-12
+    * @bodyParam account_number integer Numero de Cuenta del afiliado. Example: 5412132113
+    * @bodyParam financial_entity_id integer Entidad financiera de la cuenta del afiliado. Example: 1
+    * @bodyParam sigep_status string Estado del SIGEP. Example: ACTIVO
     * @authenticated
     * @responseFile responses/affiliate/store.200.json
     */
@@ -171,6 +174,9 @@ class AffiliateController extends Controller
     * @bodyParam service_months integer Meses de servicio. Example: 4
     * @bodyParam affiliate_registration_number integer Número único de registro de afiliado. Example: 10512
     * @bodyParam file_code string Código de folder de afiliado. Example: AFW-12
+    * @bodyParam account_number integer Numero de Cuenta del afiliado. Example: 5412132113
+    * @bodyParam financial_entity_id integer Entidad financiera de la cuenta del afiliado. Example: 1
+    * @bodyParam sigep_status string Estado del SIGEP. Example: ACTIVO
     * @authenticated
     * @responseFile responses/affiliate/update.200.json
     */

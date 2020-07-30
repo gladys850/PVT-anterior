@@ -54,7 +54,10 @@ class Affiliate extends Model
         'due_date',
         'is_duedate_undefined',
         'affiliate_registration_number',
-        'file_code'
+        'file_code',
+        'account_number',
+        'financial_entity_id',
+        'sigep_status'
       ];
 
     public function getTitleAttribute()

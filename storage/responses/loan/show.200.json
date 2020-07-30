@@ -72,6 +72,9 @@
             "is_duedate_undefined": true,
             "affiliate_registration_number": null,
             "file_code": null,
+            "account_number": null,
+            "financial_entity_id": null,
+            "sigep_status": null,
             "pivot": {
                 "loan_id": 1,
                 "affiliate_id": 5146,
