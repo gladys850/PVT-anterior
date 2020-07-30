@@ -49,6 +49,30 @@
               </template>
               <span>Nuevo trámite</span>
             </v-tooltip>
+            <v-tooltip
+              left              
+            >
+              <template v-slot:activator="{ on }">
+                <v-btn
+                  fab
+                  dark
+                  small
+                  color="warning"
+                  bottom
+                  right
+                  absolute
+                  v-on="on"
+                  style="margin-right: 39px;"
+                 
+               
+                  :to="{ name: 'flowIndexAffiliate',params: { id: $route.params.id }}"      
+
+                >
+                  <v-icon>mdi-eye</v-icon>
+                </v-btn>
+              </template>
+              <span>Ver lista de préstamos</span>
+            </v-tooltip>
           </v-card-text>
         </v-card>
       </v-col>

@@ -54,11 +54,24 @@
         </template>
         <span>Ver trámite</span>
       </v-tooltip>
+      <v-tooltip bottom>
+        <template v-slot:activator="{ on }">
+          <v-btn
+            icon
+            small
+            v-on="on"
+            color="green darken-4"
+            :to="{ name: 'flowAdd', params: { id: item.id }}"
+          ><v-icon>mdi-account-cash</v-icon>
+          </v-btn>
+        </template>
+        <span>Amortización</span>
+      </v-tooltip>
 
       <v-menu
         offset-y
         close-on-content-click
-        v-if="$store.getters.permissions.includes('print-contract-loan') || $store.getters.permissions.includes('print-payment-plan') "
+        v-if="$store.getters.permissions.includes('print-contract-loan') || $store.getters.permissions.includes('print-payment-plan') || $store.getters.permissions.includes('print-payment-kardex-loan') "
       >
         <template v-slot:activator="{ on }">
           <v-btn
@@ -144,6 +157,12 @@ export default {
         align: 'center',
         sortable: true
       }, {
+        text: 'Modalidad',
+        class: ['normal', 'white--text'],
+        align: 'center',
+        value: 'procedure_modality_id',
+        sortable: true
+      }, {
         text: 'Fecha solicitud',
         value: 'request_date',
         class: ['normal', 'white--text'],
@@ -226,8 +245,10 @@ export default {
           res = await axios.get(`loan/${item}/print/contract`)
         }else if(id==2){
           res = await axios.get(`loan/${item}/print/form`)
-        }else {
+        }else if(id==3) {
           res = await axios.get(`loan/${item}/print/plan`)
+        }else {
+          res = await axios.get(`loan/${item}/print/kardex`)
         } 
         printJS({
             printable: res.data.content,
@@ -243,16 +264,16 @@ export default {
     updateHeader() {
       if (this.tray != 'all') {
         this.headers = this.headers.filter(o => o.value != 'role_id')
-        this.headers = this.headers.filter(o => o.value != 'procedure_modality_id')
+        //this.headers = this.headers.filter(o => o.value != 'procedure_modality_id')
       } else {
         if (!this.headers.some(o => o.value == 'role_id')) {
-          this.headers.unshift({
+          /*this.headers.unshift({
             text: 'Modalidad',
             class: ['normal', 'white--text'],
             align: 'center',
             value: 'procedure_modality_id',
             sortable: true
-          })
+          })*/
           this.headers.unshift({
             text: 'Área',
             class: ['normal', 'white--text'],
@@ -263,7 +284,7 @@ export default {
         }
       }
     },
-    docsLoans(){
+    /*docsLoans(){
       let docs =[]    
       if(this.$store.getters.permissions.includes('print-contract-loan') && this.$store.getters.permissions.includes('print-payment-plan')){
         docs=[
@@ -284,9 +305,30 @@ export default {
         ]
       }
       this.printDocs=docs
-    },
+    },*/
+      docsLoans(){
+        let docs =[]    
+        if(this.$store.getters.permissions.includes('print-contract-loan')){
+          docs.push(
+            { id: 1, title: 'Contrato', icon: 'mdi-file-document'},
+            { id: 2, title: 'Solicitud', icon: 'mdi-file'})
+        }
+        if(this.$store.getters.permissions.includes('print-payment-plan')){
+          docs.push(
+            { id: 3, title: 'Plan de pagos', icon: 'mdi-cash'})
+        }    
+        if(this.$store.getters.permissions.includes('print-payment-kardex-loan')){
+          docs.push(
+            { id: 4, title: 'Kardex', icon: 'mdi-view-list'})
+        }else{
+          console.log("error")
+        }
+        this.printDocs=docs
+        console.log(this.printDocs)
+      }
+    } 
   }
-}
+
 </script>
 <style>
 th.text-start {

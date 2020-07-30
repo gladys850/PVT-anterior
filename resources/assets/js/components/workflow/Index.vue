@@ -1,6 +1,6 @@
 <template>
   <v-card flat>
-    <v-card-title class="pb-0">
+    <v-card-title class="pb-0"> 
       <v-toolbar dense color="tertiary">
         <v-toolbar-title>
           <Breadcrumbs/>
@@ -10,8 +10,8 @@
           v-model="filters.traySelected"
           active-class="primary white--text"
           mandatory
-          v-if="!track"
-        >
+          v-if="!track" v-show="affiliate_id==0"
+        ><!--filtros superiores-->
           <v-btn
             v-for="tray in trays"
             :key="tray.name"
@@ -44,6 +44,7 @@
             clearable
           ></v-text-field>
         </v-flex>
+        <!--bandejas Seguimiento/Trabajo-->
         <template v-if="hasTray">
           <v-tooltip
             top
@@ -119,7 +120,7 @@
       </v-list>
     </v-tooltip>
     <v-card-text>
-      <v-row v-if="!track">
+      <v-row v-if="!track" v-show="affiliate_id==0">
         <v-toolbar flat>
           <v-col :cols="singleRol ? 12 : 10">
               <v-tabs
@@ -157,7 +158,14 @@
       </v-row>
       <v-row>
         <v-col cols="12">
-          <List :bus="bus" :tray="filters.traySelected" :procedureModalities="procedureModalities" :options.sync="options" :loans="loans" :totalLoans="totalLoans" :loading="loading" @allowFlow="allowFlow = $event"/>
+          <List :bus="bus" 
+          :tray="filters.traySelected" 
+          :procedureModalities="procedureModalities" 
+          :options.sync="options" 
+          :loans="loans" 
+          :totalLoans="totalLoans" 
+          :loading="loading" 
+          @allowFlow="allowFlow = $event"/>
         </v-col>
       </v-row>
     </v-card-text>
@@ -214,7 +222,9 @@ export default {
       loans: [],
       totalLoans: 0,
       loading: true,
-      procedureModalities: []
+      procedureModalities: [],
+      affiliate_id: this.$route.params.id > 0 ? this.$route.params.id : 0,
+      affiliate: []
     }
   },
   computed: {
@@ -247,12 +257,13 @@ export default {
     Echo.channel('loan').listen('.flow', (msg) => {
       if (msg.data.role_id == this.filters.roleSelected || this.filters.roleSelected == 0) this.newLoans = msg.data.derived
     })
-    this.$store.commit('setBreadcrumbs', [
+    /*this.$store.commit('setBreadcrumbs', [
       {
         text: 'Préstamos',
         to: { name: 'flowIndex' }
       }
-    ])
+    ])*/
+
   },
   mounted() {
     this.filters.procedureTypeSelected = this.$store.getters.procedureTypes[0]
@@ -260,6 +271,7 @@ export default {
     this.bus.$on('emitRefreshLoans', val => {
       this.updateLoanList();
     })
+    this.getAffiliate(this.$route.params.id)
   },
   watch: {
     search: _.debounce(function () {
@@ -349,6 +361,12 @@ export default {
           filters.validated = true
           break
       }
+      if(this.affiliate_id > 0){
+        filters = {
+          affiliate_id: this.affiliate_id,
+          role_id: this.filters.roleSelected
+        }
+      }
       this.params = filters
       this.updateLoanList()
     },
@@ -358,21 +376,49 @@ export default {
           this.track = true
         }
         this.loading = true
-        let res = await axios.get(`loan`, {
-          params: {...{
-            page: this.options.page,
-            per_page: this.options.itemsPerPage,
-            sortBy: this.options.sortBy,
-            sortDesc: this.options.sortDesc,
-            search: this.search
-          }, ...this.params}
-        })
+        let res
+        /*if(this.affiliate_id > 0){
+          res = await axios.get(`loan`, {
+            params: {
+           
+              
+              page: this.options.page,
+              per_page: this.options.itemsPerPage,
+              sortBy: this.options.sortBy,
+              sortDesc: this.options.sortDesc,
+              search: this.search
+            }
+          })
+        }
+        /*else if(this.track){
+          res = await axios.get(`loan`, {
+            params: {
+              page: this.options.page,
+              per_page: this.options.itemsPerPage,
+              sortBy: this.options.sortBy,
+              sortDesc: this.options.sortDesc,
+              search: this.search
+            }
+          })
+        }
+        else{*/
+          res = await axios.get(`loan`, {
+            params: {...{
+              page: this.options.page,
+              per_page: this.options.itemsPerPage,
+              sortBy: this.options.sortBy,
+              sortDesc: this.options.sortDesc,
+              search: this.search
+            }, ...this.params}
+          })
+        //}
         this.loans = res.data.data
         this.totalLoans = res.data.total
         delete res.data['data']
         this.options.page = res.data.current_page
         this.options.itemsPerPage = parseInt(res.data.per_page)
         this.options.totalItems = res.data.total
+        this.setBreadcrumbs()
       } catch (e) {
         console.log(e)
       } finally {
@@ -418,7 +464,34 @@ export default {
       } catch (e) {
         console.log(e)
       }
-    }
+    },
+    setBreadcrumbs() {
+      let breadcrumbs = [
+        {
+          text: "Préstamo",
+          to: { name: "flowIndex" }
+        }
+      ]
+        if(this.affiliate_id > 0){
+          breadcrumbs.push({
+          text: this.$options.filters.fullName(this.affiliate, true),
+          to: { name: "affiliateAdd", params: { id: this.affiliate_id } }
+        })
+      }
+
+      this.$store.commit("setBreadcrumbs", breadcrumbs)
+    },
+    async getAffiliate(id) {
+      try {
+        this.loading = true
+        let res = await axios.get(`affiliate/${id}`)
+        this.affiliate = res.data
+      } catch (e) {
+        console.log(e)
+      } finally {
+        this.loading = false
+      }
+    },
   }
 }
 </script>
