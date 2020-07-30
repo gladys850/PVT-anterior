@@ -43,7 +43,10 @@ class AffiliateForm extends FormRequest
             'date_entry' => 'nullable|date_format:"Y-m-d"',
             'date_derelict' => 'nullable|date_format:"Y-m-d"',
             'due_date' => 'nullable|date_format:"Y-m-d"',
-            'surname_husband' => 'nullable|alpha_spaces|min:3'
+            'surname_husband' => 'nullable|alpha_spaces|min:3',
+            'financial_entity_id' => 'nullable|exists:financial_entities,id',
+            'sigep_status' => 'nullable|alpha_spaces|min:3',
+            'account_number' => 'nullable|integer',
         ];
         switch ($this->method()) {
             case 'POST': {
@@ -76,6 +79,7 @@ class AffiliateForm extends FormRequest
             'surname_husband' => 'trim|uppercase',
             'gender' => 'trim|uppercase',
             'civil_status' => 'trim|uppercase',
+            'sigep_status' => 'trim|uppercase',
             'cell_phone_number' => 'cast:string'
         ];
     }

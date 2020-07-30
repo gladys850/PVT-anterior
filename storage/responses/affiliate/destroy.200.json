@@ -37,6 +37,9 @@
     "service_months": null,
     "death_certificate_number": null,
     "due_date": "2018-01-05",
+    "account_number": 656323232,
+    "financial_entity_id": 2,
+    "sigep_status": "ACTIVO",
     "is_duedate_undefined": false,
     "affiliate_registration_number": null,
     "file_code": null

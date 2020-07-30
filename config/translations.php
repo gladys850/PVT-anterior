@@ -37,6 +37,9 @@ return [
     'surname_husband' => 'Apellido del conyugue',
     'category_id' => 'Categoría',
     'image' => 'Imagen',
+    'account_number' => 'Número de Cuenta',
+    'financial_entity_id' => 'Entidad Financiera',
+    'sigep_status' => 'Estado SIGEP',
     // Spouse
     'civil_status' =>'Estado Civil',
     'marriage_date' =>'Fecha de casamiento',

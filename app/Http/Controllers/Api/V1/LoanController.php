@@ -870,7 +870,7 @@ class LoanController extends Controller
     public function disbursement(DisbursementForm $request, Loan $loan)
     {
         $state_disbursement = LoanState::whereName('Desembolsado')->first()->id;
-        $request['state_id'] = $state_dirbursement;
+        $request['state_id'] = $state_disbursement;
         if (Auth::user()->can('disbursement-loan')) $loan->update($request->only('disbursement_date', 'payment_type_id', 'number_payment_type', 'state_id'));
         return $loan;
     }
