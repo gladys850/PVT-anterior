@@ -107,6 +107,15 @@ export const routes = [
       requiresAuth: true
     }
   },
+
+  {
+    path: '/workflow/:id',
+    name: 'flowIndexAffiliate',
+    component: FlowIndex,
+    meta: {
+      requiresAuth: true
+    }
+  },
   {
     path: '/workflow',
     name: 'flowIndex',

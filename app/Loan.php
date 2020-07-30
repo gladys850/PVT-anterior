@@ -47,6 +47,7 @@ class Loan extends Model
         'number_payment_type',
         'personal_reference_id',
         'destiny_id',
+        'financial_entity_id',
         'role_id',
         'validated'
     ];
@@ -105,13 +106,20 @@ class Loan extends Model
     {
       return $this->belongsTo(LoanState::class, 'state_id','id');
     }
+
     public function city()
     {
         return $this->belongsTo(City::class);
     }
+
     public function payment_type()
     {
         return $this->belongsTo(PaymentType::class,'payment_type_id','id');
+    }
+
+    public function financial_entity()
+    {
+        return $this->belongsTo(FinancialEntity::class,'financial_entity_id','id');
     }
 
     public function submitted_documents()
@@ -156,11 +164,6 @@ class Loan extends Model
     {
         return $this->hasMany(LoanPayment::class)->orderBy('quota_number', 'desc')->orderBy('created_at');
     }
-
-    /*public function payments()
-    {
-        return $this->hasMany(LoanPayment::class)->orderBy('quota_number', 'asc')->orderBy('created_at');
-    }*/
 
     public function interest()
     {

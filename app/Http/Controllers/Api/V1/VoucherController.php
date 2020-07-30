@@ -74,8 +74,10 @@ class VoucherController extends Controller
             $payment->voucher_number = $request->input('voucher_number');
             $payment->voucher_type_id = $request->voucher_type_id;
             $payment->payment_type_id = $request->payment_type_id;
-            Util::save_record($voucher, 'datos-de-un-pago', Util::concat_action($voucher));
-            $voucher->update($payment->toArray());
+            if(Util::concat_action($voucher) != 'editó'){
+                Util::save_record($voucher, 'datos-de-un-pago', Util::concat_action($voucher));
+                $voucher->update($payment->toArray());
+            }
             DB::commit();
         } catch (\Exception $e) {
             DB::rollback();

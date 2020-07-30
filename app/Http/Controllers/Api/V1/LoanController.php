@@ -127,6 +127,7 @@ class LoanController extends Controller
     * @bodyParam city_id integer required ID de la ciudad. Example: 3
     * @bodyParam loan_term integer required plazo. Example: 2
     * @bodyParam payment_type_id integer required Tipo de desembolso. Example: 1
+    * @bodyParam financial_entity_id integer ID de entidad financiera. Example: 1
     * @bodyParam number_payment_type integer Número de cuenta o Número de cheque para el de desembolso. Example: 10000541214
     * @bodyParam lenders array required Lista de IDs de afiliados Titular de préstamo. Example: [5146]
     * @bodyParam payable_liquid_calculated numeric required Promedio liquido pagable. Example: 2000
@@ -230,6 +231,7 @@ class LoanController extends Controller
     * @bodyParam parent_loan_id integer ID de Préstamo Padre. Example: 1
     * @bodyParam parent_reason enum (REFINANCIAMIENTO, REPROGRAMACIÓN) Tipo de trámite hijo. Example: REFINANCIAMIENTO
     * @bodyParam personal_reference_id integer ID de referencia personal. Example: 4
+    * @bodyParam financial_entity_id integer ID de entidad financiera. Example: 1
     * @bodyParam number_payment_type integer Número de cuenta o Número de cheque para el de desembolso. Example: 10000541214
     * @bodyParam destiny_id integer required ID destino de Préstamo. Example: 1
     * @bodyParam role_id integer Rol al cual derivar o devolver. Example: 81
@@ -856,12 +858,13 @@ class LoanController extends Controller
         ];
     }
 
-    /** @group Tesoreria
+     /** @group Tesoreria
      * Desembolso
      * Realiza el desembolso de un prestamo acorde a un ID de préstamo
      * @urlParam loan required ID del prestamo. Example: 1
      * @bodyParam disbursement_date date required Fecha de desembolso. Example: 2020-08-08
      * @bodyParam payment_type_id integer required ID Tipo de pago. Example: 1
+     * @bodyParam financial_entity_id integer ID de la entidad financiera. Example: 1
      * @bodyParam number_payment_type integer required Número de tipo de pago. Example: 123234343
      * @authenticated
      * @responseFile responses/loan/disbursement.200.json
@@ -870,9 +873,14 @@ class LoanController extends Controller
     public function disbursement(DisbursementForm $request, Loan $loan)
     {
         $state_disbursement = LoanState::whereName('Desembolsado')->first()->id;
-        $request['state_id'] = $state_dirbursement;
-        if (Auth::user()->can('disbursement-loan')) $loan->update($request->only('disbursement_date', 'payment_type_id', 'number_payment_type', 'state_id'));
-        return $loan;
+        if($loan->state_id != $state_disbursement){
+            $request['state_id'] = $state_disbursement;
+            if (Auth::user()->can('disbursement-loan')) $loan->update($request->only('disbursement_date', 'payment_type_id', 'number_payment_type', 'state_id','financial_entity_id'));
+            return $loan;
+        }else{
+            abort(403, 'El prestamo ya fue desembolsado');
+        }
+        
     }
 
 

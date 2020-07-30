@@ -54,7 +54,10 @@ class Affiliate extends Model
         'due_date',
         'is_duedate_undefined',
         'affiliate_registration_number',
-        'file_code'
+        'file_code',
+        'account_number',
+        'financial_entity_id',
+        'sigep_status'
       ];
 
     public function getTitleAttribute()
@@ -188,6 +191,10 @@ class Affiliate extends Model
     public function pension_entity()
     {
       return $this->belongsTo(PensionEntity::class);
+    }
+    public function financial_entity()
+    {
+      return $this->belongsTo(FinancialEntity::class);
     }
       // add records
     public function records()
