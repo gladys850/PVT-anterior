@@ -20,4 +20,15 @@ class VoucherTypeController extends Controller
     {
         return VoucherType::orderBy('name')->get();
     }
+    /**
+    * Detalle del tipo de voucher
+    * Devuelve el detalle de un voucher mediante su ID
+    * @urlParam voucher_type required ID de ciudad. Example: 2
+    * @authenticated
+    * @responseFile responses/voucher_type/show.200.json
+    */
+    public function show(VoucherType $voucherType)
+    {
+        return $voucherType;
+    }
 }
