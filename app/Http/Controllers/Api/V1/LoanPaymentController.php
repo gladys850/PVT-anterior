@@ -297,4 +297,17 @@ class LoanPaymentController extends Controller
             abort(403, 'El registro a reactivar no está en estado Anulado');
         }
     }
+
+    public function changeStateEveryDay(){
+        $PendientePago = LoanState::whereName('Pendiente de Pago')->first()->id;
+        $Anulado = LoanState::whereName('Anulado')->first()->id;
+        $loanPayment = LoanPayment::where('state_id', $PendientePago);
+        $loanPayment->update(['state_id' => $Anulado]);
+    }
+
+    public function deleteCanceledPaymentRecord(){
+        $Anulado = LoanState::whereName('Anulado')->first()->id;
+        $loanPayment = LoanPayment::where('estimated_date','<=',Carbon::now()->subDay(15))->whereStateId($Anulado);
+        $loanPayment->delete();
+    }
 }
