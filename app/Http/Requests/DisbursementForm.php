@@ -26,7 +26,8 @@ class DisbursementForm extends FormRequest
         return [
             'disbursement_date' => ['required'],
             'payment_type_id' => ['required','exists:payment_types,id'],
-            'number_payment_type' => 'required_if:payment_type_id,1|required_if:payment_type_id,2|integer|min:1'
+            'number_payment_type' => 'required_if:payment_type_id,1|required_if:payment_type_id,2|integer|min:1',
+            'financial_entity_id' => ['required_if:payment_type_id,1','exists:financial_entities,id']
         ];
     }
 
