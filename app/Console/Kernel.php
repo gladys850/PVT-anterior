@@ -12,9 +12,7 @@ class Kernel extends ConsoleKernel
     *
     * @var array
     */
-    protected $commands = [
-        'App\Console\Commands\LoanPaymentChangeState',
-    ];
+    protected $commands = [];
 
     /**
     * Define the application's command schedule.
@@ -24,10 +22,13 @@ class Kernel extends ConsoleKernel
     */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command('loanPayment:changeState')->daily();
         $schedule->call(function () {
             app()->call([app()->make('App\Http\Controllers\Api\V1\LoanController'), 'switch_states']);
         })->monthly();
+        $schedule->call(function () {
+            app()->call([app()->make('App\Http\Controllers\Api\V1\LoanPaymentController'), 'changeStateEveryDay']);
+            app()->call([app()->make('App\Http\Controllers\Api\V1\LoanPaymentController'), 'deleteCanceledPaymentRecord']);
+        })->daily();
     }
 
     /**
