@@ -103,17 +103,19 @@ class LoanPaymentController extends Controller
     */
     public function update(Request $request, LoanPayment $loanPayment)
     {
-        DB::beginTransaction();
-        try {
-            $payment = $loanPayment;
-            $payment->description = $request->input('description');
-            Util::save_record($loanPayment, 'datos-de-un-registro-pago', Util::concat_action($loanPayment));
-            $loanPayment->update($payment->toArray());
-            DB::commit();
-        } catch (\Exception $e) {
-            DB::rollback();
-            return $e;
-        }
+            DB::beginTransaction();
+            try {
+                $payment = $loanPayment;
+                $payment->description = $request->input('description');
+                if(Util::concat_action($loanPayment) != 'editó'){
+                    Util::save_record($loanPayment, 'datos-de-un-registro-pago', Util::concat_action($loanPayment));
+                    $loanPayment->update($payment->toArray());                
+                }
+                DB::commit();
+            } catch (\Exception $e) {
+                DB::rollback();
+                return $e;
+            }
         return $payment;
     }
 
@@ -176,7 +178,7 @@ class LoanPaymentController extends Controller
             }
             return $payment;
         }
-        abort(403, 'Registro de Pago finalizado');
+        abort(403, 'Registro de Pago no realizado porque no está pendiente de pago');
     }
 
     /**
