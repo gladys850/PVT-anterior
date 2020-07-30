@@ -49,7 +49,8 @@ Route::group([
         Route::post('loan_payment/derivation/amortization','Api\V1\LoanPaymentController@derivation_amortization');
         Route::apiResource('record', 'Api\V1\RecordController')->only('index');
         Route::apiResource('statistic', 'Api\V1\StatisticController')->only('index', 'show');
-        Route::apiResource('voucher_type', 'Api\V1\VoucherTypeController')->only('index');
+        Route::apiResource('voucher_type', 'Api\V1\VoucherTypeController')->only('index', 'show');
+        Route::apiResource('financial_entity', 'Api\V1\FinancialEntityController')->only('index', 'show');
 
         // Afiliado
         Route::group([

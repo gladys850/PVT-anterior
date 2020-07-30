@@ -192,6 +192,10 @@ class Affiliate extends Model
     {
       return $this->belongsTo(PensionEntity::class);
     }
+    public function financial_entity()
+    {
+      return $this->belongsTo(FinancialEntity::class);
+    }
       // add records
     public function records()
     {
