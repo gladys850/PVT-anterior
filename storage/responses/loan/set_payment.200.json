@@ -1,26 +1,33 @@
 {
-    "estimated_date": "2020-09-30",
-    "quota_number": 2,
+    "code": "PAY000019-2020",
+    "estimated_date": "2020-10-31",
+    "quota_number": 3,
     "estimated_days": {
         "penal": 0,
         "accumulated": 0,
-        "current": 30
+        "current": 31
     },
     "paid_days": {
         "penal": 0,
         "accumulated": 0,
-        "current": 30
+        "current": 31
     },
-    "balance": 24509.6,
-    "capital_payment": 662.84,
-    "interest_payment": 402.9,
+    "balance": 4.84,
+    "capital_payment": 4.84,
+    "interest_payment": 0.15,
     "accumulated_payment": 0,
     "penal_payment": 0,
-    "estimated_quota": 1065.74,
-    "next_balance": 23846.76,
+    "estimated_quota": 4.99,
+    "next_balance": 0,
     "penal_remaining": 0,
     "accumulated_remaining": 0,
     "description": null,
     "state_id": 5,
-    "role_id": 91
+    "role_id": 91,
+    "procedure_modality_id": 48,
+    "attachment": {
+        "content": "JVBER3Qs3...",
+        "type": "pdf",
+        "file_name": "pagos_ANT-SA_PTMO000001-2020.pdf"
+    }
 }
