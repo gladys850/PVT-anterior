@@ -304,11 +304,6 @@ export default {
           { id: 3, title: 'Plan de pagos', icon: 'mdi-cash'}
         ]
       }
-      else if(this.$store.getters.permissions.includes('print-payment-kardex-loan')){
-        docs=[
-          { id: 4, title: 'Kardex', icon: 'mdi-view-list'}
-        ]
-      }
       this.printDocs=docs
     },*/
       docsLoans(){
