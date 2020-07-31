@@ -12,7 +12,7 @@
                       <template>
                       <v-row>
                         <v-col cols="2" class="ma-0 pb-0">
-                          <label>CODIGO:</label>
+                          <label>CODIGO:{{data_payment}}</label>
                         </v-col>
                         <v-col cols="2" class="ma-0 pb-0">
                         {{ payment.code}}
@@ -115,6 +115,10 @@ export default {
     payment: {
       type: Object,
       required: true
+    },
+    data_payment: {
+      type: Object,
+      required: true
     }
   },
   data: () => ({
@@ -141,9 +145,6 @@ export default {
       {name:"Total",
       id:2
       },
-      {name:"Garante",
-      id:3
-      }
     ],
      payment_types:[],
     dates: {
@@ -165,6 +166,19 @@ export default {
 
 
   methods: {
+
+      async getLoan() {
+      try {
+        this.loading = true
+        let res = await axios.get(`payment_type`)
+        this.payment_types = res.data
+        console.log(this.payment_types+'este es el tipo de desembolso');
+      } catch (e) {
+        console.log(e)
+      } finally {
+        this.loading = false
+      }
+    },
 
         async getPaymentTypes() {
       try {

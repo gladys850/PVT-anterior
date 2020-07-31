@@ -11,12 +11,20 @@
                     <v-form>
                       <template>
                       <v-row>
-                        <v-col cols="3" class="ma-0 pb-0">
+                         <v-col cols="8" class="ma-0 pb-0">
+                          <v-toolbar-title>{{'TITULAR: '+ loan.lenders[0].first_name+' '+loan.lenders[0].last_name+' '+loan.lenders[0].mothers_last_name}}</v-toolbar-title>
+                        </v-col>
+                        <v-col cols="4" class="ma-0 pb-0">
+                          <v-toolbar-title>{{'C.I.: '+ loan.lenders[0].identity_card}}</v-toolbar-title>
+                        </v-col>
+                         <v-col cols="3" class="ma-0 pb-0">
                           <label>TIPO DE AMORTIZACION:</label>
                         </v-col>
                         <v-col cols="3" class="ma-0 pb-0">
                           <v-select
                             dense
+                            v-model="data_payment.amortization"
+                            :outlined="!editable"
                             :items="tipo_de_amortizacion"
                             item-text="name"
                             item-value="id"
@@ -30,6 +38,8 @@
                         <v-col cols="3">
                           <v-select
                             dense
+                            v-model="data_payment.pago"
+                            :outlined="!editable"
                             :items="payment_types"
                             item-text="name"
                             item-value="id"
@@ -40,9 +50,11 @@
                           <label>NRO DE COMPROBANTE:</label>
                       </v-col>
                       <v-col cols="3" class="ma-0 pb-0">
-                         <v-text-field
+                        <v-text-field
+                          v-model="data_payment.comprobante"
+                          :outlined="!editable"
                           dense
-                               ></v-text-field>
+                        ></v-text-field>
                        </v-col>
                       <v-col cols="1">
                       </v-col>
@@ -50,16 +62,43 @@
                         <label> FECHA DE PAGO:</label>
                       </v-col>
                       <v-col cols="3">
+                           <v-menu
+                              v-model="dates.disbursementDate.show"
+                              :close-on-content-click="false"
+                              transition="scale-transition"
+                              offset-y
+                              max-width="290px"
+                              min-width="290px"
+                            >
+                            <template v-slot:activator="{ on }">
+                              <v-text-field
+                                dense
+                                :outlined="editable"
+                                :readonly="!editable"
+                                v-model="dates.disbursementDate.formatted"
+                                hint="Día/Mes/Año"
+                                persistent-hint
+                                append-icon="mdi-calendar"
+                                v-on="on"
+
+                              ></v-text-field>
+                            </template>
+                            <v-date-picker v-model="data_payment.payment_date" no-title @input="dates.disbursementDate.show = false"></v-date-picker>
+                            </v-menu>
                       </v-col>
                       <v-col cols="4" class="ma-0 pb-0">
                         <v-text-field
                           dense
+                          v-model="data_payment.pago_total"
+                          :outlined="!editable"
                           label="Total Pagado"
                           ></v-text-field>
                       </v-col>
                       <v-col cols="8" class="ma-0 pb-0">
                         <v-text-field
-                          dense
+                            v-model="data_payment.glosa"
+                            :outlined="!editable"
+                            dense
                             label="Glosa"
                           ></v-text-field>
                       </v-col>
@@ -80,56 +119,66 @@
 <script>
 export default {
   name: "loan-requirement",
+  props: {
+    data_payment: {
+      type: Object,
+      required: true
+    }
+  },
   data: () => ({
-    dialog: false,
-    observation: {},
-    tipo_de_pago: [
-      {name:"Efectivo",
-      id:1
-      },
-      {name:"Dep. en Cuenta",
-      id:2
-      },
-      {name:"Cheque",
-      id:3
-      },
-      {name:"Garante",
-      id:4
-      }
-    ],
+    loan: {},
+    editable: false,
+    //isNew:$route.params.hash,
     tipo_de_amortizacion: [
       {name:"Regular",
       id:1
       },
       {name:"Total",
       id:2
-      },
-      {name:"Garante",
-      id:3
       }
     ],
-     payment_types:[],
-    dates: {
-      disbursementDate:{
+    payment_types:[],
+      dates: {
+        disbursementDate:{
             formatted: null,
             picker: false
-          }
-      },
-    observation_type: [],
-    flow: {},
-    valArea: [],
-    areas: []
+            }
+          },
   }),
-  
- beforeMount(){
+  beforeMount(){
     this.getPaymentTypes()
-   
+    this.getLoan(this.$route.query.loan_id);
   },
-
-
+  mounted() {
+    this.getLoan(this.$route.query.loan_id);
+    this.formatDate('disbursementDate', this.data_payment.payment_date)
+  },
+  watch: {
+    'data_payment.payment_date': function(date) {
+      this.formatDate('disbursementDate', date)
+    }
+  },
   methods: {
-
-        async getPaymentTypes() {
+      formatDate(key, date) {
+      if (date) {
+        this.dates[key].formatted = this.$moment(date).format('L')
+      } else {
+        this.dates[key].formatted = null
+      }
+    },
+     async getLoan(id) {
+      try {
+        this.loading = true;
+        let res = await axios.get(`loan/${id}`);
+        this.loan = res.data;
+        console.log('esta sacando el loan')
+      } catch (e) {
+        console.log(e);
+      } finally {
+        this.loading = false;
+      }
+    },
+    async getPaymentTypes() {
       try {
         this.loading = true
         let res = await axios.get(`payment_type`)
