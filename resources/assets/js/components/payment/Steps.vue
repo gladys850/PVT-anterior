@@ -134,8 +134,8 @@ export default {
     //Metodo para la datos de la calculadora
     async savePayment(){
        try {
-          let res = await axios.post(`loan/${2}/payment`,{
-            estimated_date:'2020-09-15',
+          let res = await axios.post(`loan/${this.$route.query.loan_id}/payment`,{
+            estimated_date:'2020-10-15',
             estimated_quota:500,
             liquidate:false
 
@@ -152,8 +152,8 @@ console.log("este son los datos del payment"+payment)
     },
     async Calcular() {
       try {
-          let res = await axios.patch(`loan/${2}/payment`,{
-            estimated_date:'2020-09-15',
+          let res = await axios.patch(`loan/${this.$route.query.loan_id}/payment`,{
+            estimated_date:'2020-10-15',
             estimated_quota:500,
             liquidate:false
 
