@@ -31,6 +31,7 @@ use App\Http\Requests\DisbursementForm;
 use App\Events\LoanFlowEvent;
 use Carbon;
 use App\Helpers\Util;
+use App\Http\Controllers\Api\V1\LoanPaymentController;
 
 /** @group Préstamos
 * Datos de los trámites de préstamos y sus relaciones
@@ -663,9 +664,14 @@ class LoanController extends Controller
             DB::rollback();
             return $e;
         }
+        //generar PDF
+        $file_name = implode('_', ['pagos', $loan->modality->shortened, $loan->code]) . '.pdf';
+        $loanpayment = new LoanPaymentController;
+        $payment->attachment = Util::pdf_to_base64([
+            $loanpayment->print_loan_payment(new Request([]), $loan_payment, false)
+        ], $file_name, 'legal', $request->copies ?? 1);
         return $payment;
     }
-
     /** @group Cobranzas
     * Lista de pagos
     * Devuelve el listado de los pagos ordenados por cuota de manera descendente

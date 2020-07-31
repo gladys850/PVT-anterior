@@ -14,8 +14,30 @@
                     {{ item.code }} |
                     <strong>Desembolsado:</strong>
                     {{ item.amount_approved}}
-                    <strong>Saldo capital:</strong>
+                    <strong>Saldo capital:
                     {{ item.balance  }}
+                    </strong>
+                    <span>
+                      <v-tooltip
+                        left              
+                      >
+                        <template v-slot:activator="{ on }">
+                          <v-btn
+                            icon
+                            dark
+                            small
+                            color="warning"
+                            bottom
+                            right                        
+                            v-on="on" 
+                            :to="{ name: 'flowAdd', params: { id: item.id }}" 
+                          >
+                            <v-icon>mdi-eye</v-icon>
+                          </v-btn>
+                        </template>
+                        <span>Ver préstamo</span>
+                      </v-tooltip>            
+                    </span>
                     <v-progress-linear
                       :color="randomColor()"
                       height="15"
@@ -24,7 +46,10 @@
                     >
                       <strong>Porcentaje pagado: {{ (((item.amount_approved-item.balance)*100)/item.amount_approved).toFixed(2) }}%</strong>
                     </v-progress-linear>
+                  
                   </div>
+            <!---->
+
                 </li>
               </ul>
             </div>
@@ -48,30 +73,6 @@
                 </v-btn>
               </template>
               <span>Nuevo trámite</span>
-            </v-tooltip>
-            <v-tooltip
-              left              
-            >
-              <template v-slot:activator="{ on }">
-                <v-btn
-                  fab
-                  dark
-                  small
-                  color="warning"
-                  bottom
-                  right
-                  absolute
-                  v-on="on"
-                  style="margin-right: 39px;"
-                 
-               
-                  :to="{ name: 'flowIndexAffiliate',params: { id: $route.params.id }}"      
-
-                >
-                  <v-icon>mdi-eye</v-icon>
-                </v-btn>
-              </template>
-              <span>Ver lista de préstamos</span>
             </v-tooltip>
           </v-card-text>
         </v-card>

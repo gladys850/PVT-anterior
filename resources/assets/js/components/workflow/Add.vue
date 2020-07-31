@@ -6,6 +6,7 @@
           <Breadcrumbs />
         </v-toolbar-title>
         <v-spacer></v-spacer>
+    
           <v-tooltip top>
             <template v-slot:activator="{ on }">
               <v-btn
@@ -58,7 +59,25 @@
               </v-btn>
             </template>
             <span>Anular trámite</span>
-          </v-tooltip>
+          </v-tooltip> 
+       <!--
+          <v-divider
+            class="mx-2"
+            inset
+            vertical
+          ></v-divider>
+          <v-flex xs3>
+            <v-text-field
+              v-model="search"
+              append-icon="mdi-magnify"
+              label="Buscar"
+              class="mr-5 pr-5"
+              single-line
+              hide-details
+              clearable
+            ></v-text-field>
+          </v-flex>
+-->
       </v-toolbar>
     </v-card-title>
     <v-card-text>
@@ -87,6 +106,9 @@
           <v-icon v-if="icons">mdi-police-badge</v-icon>
         </v-tab>
         <v-tab :href="`#tab-6`">
+          <v-icon v-if="icons">mdi-format-list-checkbox</v-icon>
+        </v-tab>
+        <v-tab :href="`#tab-7`">
           <v-icon v-if="icons">mdi-comment-eye-outline</v-icon>
         </v-tab>
         <v-tab-item :value="'tab-1'">
@@ -171,7 +193,16 @@
             </v-card-text>
           </v-card>
         </v-tab-item>
+        
         <v-tab-item :value="'tab-6'" >
+          <v-card  flat tile>
+            <v-card-text class="pa-0 pl-3 pr-0 py-0">
+              <Kardex :bus="bus"/>
+            </v-card-text>
+          </v-card>
+        </v-tab-item>
+        
+        <v-tab-item :value="'tab-7'" >
           <v-card  flat tile>
             <v-card-text class="pa-0 pl-3 pr-0 py-0">
               <ObserverFlow :loan.sync="loan" :observations.sync="observations" :bus1="bus1"/>
@@ -192,6 +223,7 @@ import ObserverFlow from "@/components/workflow/ObserverFlow"
 import AddObservation from "@/components/workflow/AddObservation"
 import PoliceData from "@/components/affiliate/PoliceData"
 import Dashboard from "@/components/workflow/Dashboard"
+import Kardex from "@/components/payment/Kardex"
 
 export default {
   name: "flow-index",
@@ -203,10 +235,12 @@ export default {
     PoliceData,
     ObserverFlow,
     AddObservation,
-    Dashboard
+    Dashboard,
+    Kardex
   },
   data: () => ({
     bus: new Vue(),
+    search: '',
     bus1: new Vue(), //Creamos la instancia de bus1
     addresses: [],
     affiliate: {
@@ -243,6 +277,11 @@ export default {
     reload: false,
     tab: "tab-1"
   }),
+  watch: {
+    search: _.debounce(function () {
+      this.bus.$emit('search', this.search)
+    }, 1000)
+  },
   computed: {
     permission() {
       return {
