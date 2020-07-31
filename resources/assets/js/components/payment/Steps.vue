@@ -21,7 +21,8 @@
         <v-stepper-content :key="`${1}-content`" :step="1">
           <v-card color="grey lighten-1">
              <v-card class="ma-3">
-            <AddAmortization/>
+            <AddAmortization
+            :data_payment.sync="data_payment"/>
              </v-card>
             <v-container class="py-0">
               <v-row>
@@ -41,7 +42,8 @@
           <v-card color="grey lighten-1">
               <v-card class="ma-3">
               <AddPayment
-               :payment.sync="payment"/>
+                :payment.sync="payment"
+                :data_payment.sync="data_payment"/>
               </v-card>
             <v-container class="py-0">
               <v-row>
@@ -95,7 +97,8 @@ export default {
     bus: new Vue(),
     e1: 1,
     steps: 2,
-    payment:{}
+    payment:{},
+    data_payment:{},
   }),
   computed: {
     isNew() {
@@ -122,7 +125,6 @@ export default {
         }
         if(n==2)
         {
-             
                console.log('entro a guardar payments')
         }
         this.e1 = n + 1

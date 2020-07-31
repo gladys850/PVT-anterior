@@ -12,7 +12,7 @@
               absolute
               v-on="on"
               style="margin-right: -9px;"
-              :to="{ name: 'paymentAdd',  params: { hash: 'edit'},  query: { loan_id: $route.params.id}}" 
+              :to="{ name: 'paymentAdd',  params: { hash: 'new'},  query: { loan_id: $route.params.id}}" 
             >
               <v-icon>mdi-plus</v-icon>
             </v-btn>
