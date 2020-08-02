@@ -139,7 +139,7 @@ class LoanPaymentController extends Controller
         return $loanPayment;
     }
 
-    /**
+    /** @group Tesoreria
     * Registro de cobro de Préstamo
     * Insertar registro de pago (loan_payment).
     * @urlParam loan_payment required ID del registro de pago. Example: 2
@@ -290,13 +290,15 @@ class LoanPaymentController extends Controller
     */
     public function reactivate(LoanPayment $loanPayment)
     {
-        if($loanPayment->state_id == LoanState::whereName('Anulado')->first()->id){
-            $loanPayment->state_id = LoanState::whereName('Pendiente de Pago')->first()->id;
-            Util::save_record($loanPayment, 'datos-de-un-registro-pago', Util::concat_action($loanPayment));
-            $loanPayment->update($loanPayment->toArray());
-            return $loanPayment;
-        }else{
-            abort(403, 'El registro a reactivar no está en estado Anulado');
+        if (Auth::user()->can('show-all-payment-loan')){
+            if($loanPayment->state_id == LoanState::whereName('Anulado')->first()->id){
+                $loanPayment->state_id = LoanState::whereName('Pendiente de Pago')->first()->id;
+                Util::save_record($loanPayment, 'datos-de-un-registro-pago', Util::concat_action($loanPayment));
+                $loanPayment->update($loanPayment->toArray());
+                return $loanPayment;
+            }else{
+                abort(403, 'El registro a reactivar no está en estado Anulado');
+            }
         }
     }
 
@@ -311,5 +313,17 @@ class LoanPaymentController extends Controller
         $Anulado = LoanState::whereName('Anulado')->first()->id;
         $loanPayment = LoanPayment::where('estimated_date','<=',Carbon::now()->subDay(15))->whereStateId($Anulado);
         $loanPayment->delete();
+    }
+
+    /**
+    * Estado del Trámite de Cobro
+    * Devuelve el estado del trámite de cobro
+    * @urlParam loan_payment required ID de trámite de cobro. Example: 12
+    * @authenticated
+    * @responseFile responses/loan_payment/get_state.200.json
+    */
+    public function get_state(LoanPayment $loan_payment)
+    {
+        if ($loan_payment->state) return $loan_payment->state;
     }
 }

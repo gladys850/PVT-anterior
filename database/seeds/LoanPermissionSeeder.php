@@ -66,7 +66,7 @@ class LoanPermissionSeeder extends Seeder
                 'display_name' => 'Editar cobros'
             ],  [
                 'name' => 'delete-payment',
-                'display_name' => 'Eliminar cobros'
+                'display_name' => 'Anular cobros'
             ],  [
                 'name' => 'disbursement-loan',
                 'display_name' => 'Permisos de desembolso'
