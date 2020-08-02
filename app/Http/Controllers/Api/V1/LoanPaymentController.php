@@ -185,16 +185,17 @@ class LoanPaymentController extends Controller
     * Derivar en lote
     * Deriva o devuelve trámites en un lote mediante sus IDs
     * @bodyParam ids array required Lista de IDs de los trámites a derivar. Example: [1,2,3]
-    * @bodyParam to_role integer required ID del rol al cual derivar o devolver. Example: 82
+    * @bodyParam role_id integer required ID del rol al cual derivar o devolver. Example: 82
     * @authenticated
     * @responseFile responses/loan_payment/derivation_amortization.200.json
     */
     public function derivation_amortization(Request $request)
     {
         $PendientePago = LoanState::whereName('Pendiente de Pago')->first()->id;
+        $to_role = $request->role_id;
         $loanPayment =  LoanPayment::whereIn('id',$request->ids)->where('role_id', '!=', $request->role_id)->where('state_id', $PendientePago)->orderBy('code');
         $derived = $loanPayment->get();
-        $derived = Util::derivation($request->to_role, $derived, $loanPayment);
+        $derived = Util::derivation($to_role, $derived, $loanPayment);
         return $derived;
     }
 
