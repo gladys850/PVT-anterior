@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\DB;
 
 class LoanPayment extends Model
 {
+    use Traits\EloquentGetTableNameTrait;
     //protected $primaryKey = null;
     //public $incrementing = false;
     public $timestamps = true;
@@ -30,7 +31,8 @@ class LoanPayment extends Model
         'procedure_modality_id',
         'state_id',
         'role_id',
-        'description'
+        'description',
+        'validated'
     ];
 
     function __construct(array $attributes = [])
