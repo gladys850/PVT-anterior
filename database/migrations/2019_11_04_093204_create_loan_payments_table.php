@@ -34,6 +34,7 @@ class CreateLoanPaymentsTable extends Migration
             $table->foreign('state_id')->references('id')->on('loan_states'); // estado de registro de pago
             $table->unsignedBigInteger('role_id');  // id rol bandeja actual
             $table->foreign('role_id')->references('id')->on('roles');
+            $table->boolean('validated')->default(true);
             $table->text('description')->nullable(); // descripcion del pago
             $table->timestamps();
             $table->softDeletes();

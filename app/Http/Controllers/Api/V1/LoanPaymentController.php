@@ -79,7 +79,7 @@ class LoanPaymentController extends Controller
     * Devuelve el detalle de un registro de pago mediante su ID
     * @urlParam loan_payment required ID de registro de pago. Example: 4
     * @authenticated
-    * @responseFile responses/loan/show.200.json
+    * @responseFile responses/loan_payment/show.200.json
     */
     public function show(LoanPayment $loanPayment)
     {
@@ -103,13 +103,19 @@ class LoanPaymentController extends Controller
     */
     public function update(Request $request, LoanPayment $loanPayment)
     {
+        $request->validate([
+            'description' => 'nullable|string|min:2',
+            'validated' => 'boolean'
+        ]);
             DB::beginTransaction();
             try {
                 $payment = $loanPayment;
                 $payment->description = $request->input('description');
+                if($request->has('validated')) $payment->validated = $request->input('validated');
+                $payment->validated = $loanPayment->validated;
                 if(Util::concat_action($loanPayment) != 'editó'){
                     Util::save_record($loanPayment, 'datos-de-un-registro-pago', Util::concat_action($loanPayment));
-                    $loanPayment->update($payment->toArray());                
+                    $loanPayment->update($payment->toArray());
                 }
                 DB::commit();
             } catch (\Exception $e) {
