@@ -13,7 +13,7 @@ import Camara from '@/components/affiliate/Webcam'
 import FlowIndex from '@/components/workflow/Index'
 import FlowAdd from '@/components/workflow/Add'
 import PaymentIndex from '@/components/payment/Index'
-import PaymentAdd from '@/components/payment/Steps'
+import PaymentAdd from '@/components/payment/Add'
 
 export const routes = [
   {
@@ -132,7 +132,7 @@ export const routes = [
     }
   },
   {
-    path: '/payment/:hash',
+    path: '/kardex/:hash',
     name: 'paymentAdd',
     component: PaymentAdd,
     meta: {

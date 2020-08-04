@@ -1,7 +1,8 @@
 <template>
-  <v-container fluid>
+  <v-container >
     <ValidationObserver ref="observer">
       <v-form>
+        <v-card>
         <v-card-text class="ma-0 pb-0">
           <v-container fluid class="ma-0 pb-0">
             <v-row justify="center" class="ma-0 pb-0">
@@ -12,7 +13,7 @@
                       <template>
                       <v-row>
                         <v-col cols="2" class="ma-0 pb-0">
-                          <label>CODIGO:{{data_payment}}</label>
+                          <label>CODIGO:</label>
                         </v-col>
                         <v-col cols="2" class="ma-0 pb-0">
                         {{ payment.code}}
@@ -103,7 +104,7 @@
           </v-row>
         </v-container>
       </v-card-text>
-        <!--/v-card-->
+        </v-card>
       </v-form>
     </ValidationObserver>
   </v-container>
