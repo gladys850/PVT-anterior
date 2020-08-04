@@ -12,7 +12,7 @@
               absolute
               v-on="on"
               style="margin-right: -9px;"
-              :to="{ name: 'paymentAdd',  params: { hash: 'new'},  query: { loan_id: $route.params.id}}" 
+              :to="{ name: 'paymentAdd',  params: { hash: 'new'},  query: { loan_id: $route.params.id}}"
             >
               <v-icon>mdi-plus</v-icon>
             </v-btn>
@@ -58,7 +58,7 @@
             v-on="on"
             color="warning"
            
-            :to="{ name: 'paymentAdd',  params: { hash: 'edit'},  query: { voucher_id: item.id}}" 
+            :to="{ name: 'paymentAdd',  params: { hash: 'view'},  query: { loan_payment: item.id}}" 
           ><v-icon>mdi-eye</v-icon>
           </v-btn>
         </template>

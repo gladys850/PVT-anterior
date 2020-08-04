@@ -20,10 +20,8 @@
       <v-stepper-items>
         <v-stepper-content :key="`${1}-content`" :step="1">
           <v-card color="grey lighten-1">
-             <v-card class="ma-3">
             <AddAmortization
             :data_payment.sync="data_payment"/>
-             </v-card>
             <v-container class="py-0">
               <v-row>
                 <v-spacer></v-spacer> <v-spacer></v-spacer> <v-spacer></v-spacer>
@@ -40,11 +38,9 @@
         </v-stepper-content>
         <v-stepper-content :key="`${2}-content`" :step="2" >
           <v-card color="grey lighten-1">
-              <v-card class="ma-3">
               <AddPayment
                 :payment.sync="payment"
                 :data_payment.sync="data_payment"/>
-              </v-card>
             <v-container class="py-0">
               <v-row>
                 <v-spacer></v-spacer><v-spacer> </v-spacer> <v-spacer></v-spacer>
@@ -79,16 +75,6 @@ import AddPayment from '@/components/payment/AddPayment'
 
 export default {
   name: "payment-steps",
-  props: {
-    affiliate: {
-      type: Object,
-      required: true
-    },
-    addresses: {
-      type: Array,
-      required: true
-    }
-  },
   components: {
     AddAmortization,
     AddPayment
@@ -97,7 +83,9 @@ export default {
     bus: new Vue(),
     e1: 1,
     steps: 2,
-    payment:{},
+    payment:{
+      estimated_date:{}
+    },
     data_payment:{},
   }),
   computed: {
@@ -120,8 +108,16 @@ export default {
       else {
         if(n==1)
         {
-          this.Calcular()
-               console.log('entro a calcular')
+          if(!this.isNew)
+          {
+          this.savePaymentTreasury()
+          
+               console.log('entro por verdad')
+          }
+          else{
+this.Calcular()
+               console.log('entro por falso')
+          }
         }
         if(n==2)
         {
@@ -134,17 +130,58 @@ export default {
       this.e1 = n -1
     },
     //Metodo para la datos de la calculadora
+
+      async savePaymentTreasury() {
+      try {
+          console.log('entro a grabar tesoreria')
+          let res = await axios.post(`loan_payment/${4}/voucher`,{
+            payment_type_id:this.data_payment.pago,
+            voucher_type_id:2,
+            voucher_number:this.data_payment.comprobante,
+            description:this.data_payment.glosa
+          })
+            this.$router.push('/payment')
+      }catch (e) {
+        console.log(e)
+      }finally {
+        this.loading = false
+      }
+    },
     async savePayment(){
        try {
-          let res = await axios.post(`loan/${this.$route.query.loan_id}/payment`,{
-            estimated_date:'2020-10-15',
-            estimated_quota:500,
-            liquidate:false
+ if(this.data_payment.amortization==1)
+        {
+          console.log('entro a grabar'+this.data_payment.payment_date+this.data_payment.pago_total)
 
+          let res = await axios.post(`loan/${this.$route.query.loan_id}/payment`,{
+            estimated_date:this.data_payment.payment_date,
+            estimated_quota:this.data_payment.pago_total,
+            liquidate:false
           })
-        this.payment = res.data
-console.log("este son los datos del payment"+payment)
-      this.$router.push('/workflow')
+            printJS({
+            printable: res.data.attachment.content,
+            type: res.data.attachment.type,
+            base64: true
+          })
+          this.$router.push('/payment')
+           console.log('este es el resultado'+res.data)
+           this.payment = res.data
+        }
+        else{
+            let res = await axios.post(`loan/${this.$route.query.loan_id}/payment`,{
+            estimated_date:this.data_payment.payment_date,
+            estimated_quota:this.data_payment.pago_total,
+            liquidate:true
+          })
+             printJS({
+            printable: res.data.attachment.content,
+            type: res.data.attachment.type,
+            base64: true
+          })
+           this.payment = res.data
+            this.$router.push('/payment')
+           }
+    
       }catch (e) {
         console.log(e)
       }finally {
@@ -154,14 +191,24 @@ console.log("este son los datos del payment"+payment)
     },
     async Calcular() {
       try {
+       if(this.data_payment.amortization==1)
+        {
+          console.log('entro por uno')
           let res = await axios.patch(`loan/${this.$route.query.loan_id}/payment`,{
-            estimated_date:'2020-10-15',
-            estimated_quota:500,
+            estimated_date:this.data_payment.payment_date,
+            estimated_quota:this.data_payment.pago_total,
             liquidate:false
-
           })
-        this.payment = res.data
-console.log("este son los datos del payment"+payment)
+           this.payment = res.data
+        }
+        else{
+            let res = await axios.patch(`loan/${this.$route.query.loan_id}/payment`,{
+            estimated_date:this.data_payment.payment_date,
+            estimated_quota:this.data_payment.pago_total,
+            liquidate:true
+          })
+           this.payment = res.data
+        }
       }catch (e) {
         console.log(e)
       }finally {
