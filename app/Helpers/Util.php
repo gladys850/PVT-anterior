@@ -374,10 +374,9 @@ class Util
         }
     }
 
-    public static function derivation($to_role, $derived, $loanPayment){
+    public static function derivation($request, $to_role, $derived, $model){
         $to_role = Role::find($to_role);
-        if (count(array_unique($derived->pluck('role_id')->toArray())))
-            $from_role = $derived->first()->role_id;
+        if (count(array_unique($model->pluck('role_id')->toArray()))) $from_role = $derived->first()->role_id;
         if ($from_role) {
             $from_role = Role::find($from_role);
             $flow_message = Util::flow_message($derived->first()->modality->procedure_type->id, $from_role, $to_role);
@@ -389,9 +388,11 @@ class Util
                 $flow_message = Util::flow_message($item->modality->procedure_type->id, $from_role, $to_role);
             }
             $item['role_id'] = $to_role->id;
+            $item['validated'] = false;
             Util::save_record($item, $flow_message['type'], $flow_message['message']);
         });
-        $loanPayment->update(['role_id' => $to_role->id]);
+        //$loanPayment->update(['role_id' => $to_role->id]);
+        $model->update(array_merge($request->only('role_id'), ['validated' => false]));
         event(new LoanFlowEvent($derived));
         return $derived;
     }

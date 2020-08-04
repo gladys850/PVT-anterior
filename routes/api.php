@@ -46,7 +46,7 @@ Route::group([
         Route::get('module/{module}/observation_type', 'Api\V1\ModuleController@get_observation_types');
         Route::get('module/{module}/modality_loan', 'Api\V1\ModuleController@get_modality_types');
         Route::patch('loans', 'Api\V1\LoanController@bulk_update_role');
-        Route::post('loan_payment/derivation/amortization','Api\V1\LoanPaymentController@derivation_amortization');
+        Route::patch('loan_payments', 'Api\V1\LoanPaymentController@bulk_update_role');
         Route::apiResource('record', 'Api\V1\RecordController')->only('index');
         Route::apiResource('statistic', 'Api\V1\StatisticController')->only('index', 'show');
         Route::apiResource('voucher_type', 'Api\V1\VoucherTypeController')->only('index', 'show');
