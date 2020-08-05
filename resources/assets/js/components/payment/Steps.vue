@@ -28,7 +28,7 @@
                 <v-col class="py-0">
                   <v-btn
                     color="primary"
-                    @click="nextStep(1)">
+                    @click="nextStep(1)" v-show="!ver">
                     Siguiente
                   </v-btn>
                 </v-col>
@@ -91,7 +91,10 @@ export default {
   computed: {
     isNew() {
       return this.$route.params.hash == 'new'
-    }
+    },
+    ver(){
+       return  this.$route.params.hash == 'view'
+    },
   },
   watch: {
     steps (val) {
