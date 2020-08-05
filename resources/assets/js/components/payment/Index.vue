@@ -365,14 +365,14 @@ export default {
           this.track = true
         }
         this.loading = true
-        let res = await axios.get(`loan`, {
-          params: {...{
+        let res = await axios.get(`loan_payment`, {
+          params: {
             page: this.options.page,
             per_page: this.options.itemsPerPage,
             sortBy: this.options.sortBy,
             sortDesc: this.options.sortDesc,
             search: this.search
-          }, ...this.params}
+          }
         })
         this.loans = res.data.data
         this.totalLoans = res.data.total
