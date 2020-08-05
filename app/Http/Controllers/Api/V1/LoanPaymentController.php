@@ -12,7 +12,7 @@ use App\LoanPayment;
 use App\Voucher;
 use App\LoanState;
 use App\Affiliate;
-use App\Http\Requests\LoanPaymentForm;
+use App\Http\Requests\LoanPaymentsForm;
 use App\Http\Requests\VoucherForm;
 use App\Events\LoanFlowEvent;
 use Carbon;
@@ -190,18 +190,18 @@ class LoanPaymentController extends Controller
     /**
     * Derivar en lote
     * Deriva o devuelve trámites en un lote mediante sus IDs
-    * @bodyParam ids array required Lista de IDs de los trámites a derivar. Example: [1,2,3]
-    * @bodyParam role_id integer required ID del rol al cual derivar o devolver. Example: 82
+    * @bodyParam ids array required Lista de IDs de los trámites a derivar. Example: [1,2]
+    * @bodyParam role_id integer required ID del rol al cual derivar o devolver. Example: 89
     * @authenticated
-    * @responseFile responses/loan_payment/derivation_amortization.200.json
+    * @responseFile responses/loan_payment/bullk_update_role.200.json
     */
-    public function derivation_amortization(Request $request)
+    public function bulk_update_role( LoanPaymentsForm $request)
     {
         $PendientePago = LoanState::whereName('Pendiente de Pago')->first()->id;
         $to_role = $request->role_id;
         $loanPayment =  LoanPayment::whereIn('id',$request->ids)->where('role_id', '!=', $request->role_id)->where('state_id', $PendientePago)->orderBy('code');
         $derived = $loanPayment->get();
-        $derived = Util::derivation($to_role, $derived, $loanPayment);
+        $derived = Util::derivation($request, $to_role, $derived, $loanPayment);
         return $derived;
     }
 
