@@ -29,7 +29,10 @@ class LoanPaymentController extends Controller
     * Lista de Registro de pagos
     * Devuelve el listado con los datos paginados
     * @queryParam role_id integer Ver préstamos del rol, si es 0 se muestra la lista completa. Example: 73
-    * @queryParam state_id integer ID del estado del registro de pago. Example 6 
+    * @queryParam state_id integer ID del estado del registro de pago. Example 6
+    * @queryParam loan_id integer ID del tramite de préstamo. Example 1
+    * @queryParam validated Booleano para filtrar trámites válidados. Example: 1
+    * @queryParam trashed Booleano para obtener solo eliminados. Example: 1
     * @queryParam search Parámetro de búsqueda. Example: 2000
     * @queryParam sortBy Vector de ordenamiento. Example: []
     * @queryParam sortDesc Vector de orden descendente(true) o ascendente(false). Example: [true]
@@ -60,6 +63,7 @@ class LoanPaymentController extends Controller
                 abort(403);
             }
         }
+        if ($request->has('validated')) $filters['validated'] = $request->boolean('validated');
         if ($request->role_id != 0) {
             $filters = [
                 'role_id' => $request->role_id
@@ -68,6 +72,11 @@ class LoanPaymentController extends Controller
         if ($request->has('state_id')) {
             $relations['state'] = [
                 'state_id' => $request->state_id
+            ];
+        }
+        if ($request->has('loan_id')) {
+            $relations['loan'] = [
+                'loan_id' => $request->loan_id
             ];
         }
         $data = Util::search_sort(new LoanPayment(), $request, $filters, $relations);
@@ -95,11 +104,11 @@ class LoanPaymentController extends Controller
     /**
     * Editar Registro de pago
     * Edita el Registro de Pago realizado.
-    * @urlParam loan required ID del prestamo. Example: 2
-    * @urlParam loan_payment required ID del pago realizado. Example: 15
+    * @urlParam loan_payment required ID del pago realizado. Example: 1
 	* @bodyParam description string Texto de descripción. Example: Penalizacion regularizada
+    * @bodyParam validated boolean Estado validación del tramite de corbro. Example: true
     * @authenticated
-    * @responseFile responses/loan_payment/update_payment.200.json
+    * @responseFile responses/loan_payment/update.200.json
     */
     public function update(Request $request, LoanPayment $loanPayment)
     {
@@ -110,9 +119,10 @@ class LoanPaymentController extends Controller
             DB::beginTransaction();
             try {
                 $payment = $loanPayment;
-                $payment->description = $request->input('description');
                 if($request->has('validated')) $payment->validated = $request->input('validated');
                 $payment->validated = $loanPayment->validated;
+                if($request->has('description')) $payment->description = $request->input('description');
+                $payment->description = $loanPayment->description;
                 if(Util::concat_action($loanPayment) != 'editó'){
                     Util::save_record($loanPayment, 'datos-de-un-registro-pago', Util::concat_action($loanPayment));
                     $loanPayment->update($payment->toArray());
@@ -133,15 +143,11 @@ class LoanPaymentController extends Controller
     */
     public function destroy(LoanPayment $loanPayment)
     {
-        DB::beginTransaction();
-        try {
-            $loanPayment->delete();
-            Util::save_record($loanPayment, 'datos-de-un-registro-pago', 'eliminó registro pago: ' . $loanPayment->code);
-            DB::commit();
-        } catch (\Exception $e) {
-            DB::rollback();
-            return $e;
-        }
+        $state = LoanState::whereName('Anulado')->first();
+        $loanPayment->state()->associate($state);
+        $loanPayment->save();
+        $loanPayment->delete();
+        Util::save_record($loanPayment, 'datos-de-un-registro-pago', 'eliminó registro pago: ' . $loanPayment->code);
         return $loanPayment;
     }
 
