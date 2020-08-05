@@ -38,7 +38,7 @@ class AppServiceProvider extends ServiceProvider
             'loans' => 'App\Loan',
             'procedure_types' => 'App\ProcedureType',
             'loan_payments' => 'App\LoanPayment',
-            'voucher' => 'App\Voucher'
+            'vouchers' => 'App\Voucher'
 
         ]);
     }

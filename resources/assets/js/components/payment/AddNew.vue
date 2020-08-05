@@ -11,21 +11,7 @@
     <template>
       <v-container>
         <div>
-          <v-row>
-            <v-col  cols="4">
-              {{"TITULAR: "+this.loan.lenders[0].last_name+" "+this.loan.lenders[0].mothers_last_name+" "+this.loan.lenders[0].first_name+" "+this.loan.lenders[0].second_name}}
-            </v-col>
-            <v-col  cols="3">
-              {{"PRESTAMO: "+this.loan.code}}
-            </v-col>
-            <v-col  cols="2">
-              {{'MONTO:'+this.loan.amount_approved}}
-            </v-col>
-             <v-col  cols="2">
-              {{'CUOTA:'+this.loan.estimated_quota}}
-            </v-col>
-          </v-row>
-          <Steps/>
+          <StepsTreasury/>
         </div>
       </v-container>
     </template>
@@ -33,16 +19,20 @@
 </template>
 
 <script>
-import Steps from '@/components/payment/Steps'
+import StepsTreasury from '@/components/payment/StepsTreasury'
 import Breadcrumbs from '@/components/shared/Breadcrumbs'
 
 export default {
   name: "loan-add",
   components: {
-    Steps,
+    StepsTreasury,
     Breadcrumbs
   },
   data: () => ({
+    affiliate:{
+      phone_number:null,
+      cell_phone_number:null
+    },
     loan:{},
     degree_name: null,
     category_name: null

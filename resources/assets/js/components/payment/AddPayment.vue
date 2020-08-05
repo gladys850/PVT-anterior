@@ -1,7 +1,8 @@
 <template>
-  <v-container fluid>
+  <v-container >
     <ValidationObserver ref="observer">
       <v-form>
+        <v-card>
         <v-card-text class="ma-0 pb-0">
           <v-container fluid class="ma-0 pb-0">
             <v-row justify="center" class="ma-0 pb-0">
@@ -103,7 +104,7 @@
           </v-row>
         </v-container>
       </v-card-text>
-        <!--/v-card-->
+        </v-card>
       </v-form>
     </ValidationObserver>
   </v-container>
@@ -113,6 +114,10 @@ export default {
   name: "loan-requirement",
   props: {
     payment: {
+      type: Object,
+      required: true
+    },
+    data_payment: {
       type: Object,
       required: true
     }
@@ -141,9 +146,6 @@ export default {
       {name:"Total",
       id:2
       },
-      {name:"Garante",
-      id:3
-      }
     ],
      payment_types:[],
     dates: {
@@ -165,6 +167,19 @@ export default {
 
 
   methods: {
+
+      async getLoan() {
+      try {
+        this.loading = true
+        let res = await axios.get(`payment_type`)
+        this.payment_types = res.data
+        console.log(this.payment_types+'este es el tipo de desembolso');
+      } catch (e) {
+        console.log(e)
+      } finally {
+        this.loading = false
+      }
+    },
 
         async getPaymentTypes() {
       try {

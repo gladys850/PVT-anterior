@@ -46,7 +46,7 @@ Route::group([
         Route::get('module/{module}/observation_type', 'Api\V1\ModuleController@get_observation_types');
         Route::get('module/{module}/modality_loan', 'Api\V1\ModuleController@get_modality_types');
         Route::patch('loans', 'Api\V1\LoanController@bulk_update_role');
-        Route::post('loan_payment/derivation/amortization','Api\V1\LoanPaymentController@derivation_amortization');
+        Route::patch('loan_payments', 'Api\V1\LoanPaymentController@bulk_update_role');
         Route::apiResource('record', 'Api\V1\RecordController')->only('index');
         Route::apiResource('statistic', 'Api\V1\StatisticController')->only('index', 'show');
         Route::apiResource('voucher_type', 'Api\V1\VoucherTypeController')->only('index', 'show');
@@ -142,11 +142,14 @@ Route::group([
         });
         // payments
         Route::group([
-            'middleware' => 'permission:show-payment-loan'
+            'middleware' => 'permission:show-payment-loan|show-all-payment-loan'
+
         ], function () {
             Route::get('loan/{loan}/payment','Api\V1\LoanController@get_payments');
             Route::get('loan_payment/{loan_payment}/print/loan_payment','Api\V1\LoanPaymentController@print_loan_payment');
             Route::apiResource('loan_payment', 'Api\V1\LoanPaymentController')->only('index', 'show');
+            Route::get('loan_payment/{loan_payment}/state', 'Api\V1\LoanPaymentController@get_state');
+            Route::patch('loan_payment/{loan_payment}/reactivate','Api\V1\LoanPaymentController@reactivate');
         });
         Route::group([
             'middleware' => 'permission:create-payment-loan'
@@ -163,12 +166,6 @@ Route::group([
             'middleware' => 'permission:delete-payment-loan'
         ], function () {
             Route::apiResource('loan_payment', 'Api\V1\LoanPaymentController')->only('destroy');
-        });
-        Route::group([
-            'middleware' => 'permission:show-all-payment-loan'
-        ], function () {
-            Route::apiResource('loan_payment', 'Api\V1\LoanPaymentController')->only('index', 'show');
-            Route::patch('loan_payment/{loan_payment}/reactivate','Api\V1\LoanPaymentController@reactivate');
         });
         //Registro de pago por tesoreria
         Route::group([

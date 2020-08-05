@@ -12,8 +12,8 @@ import RecordIndex from '@/components/record/Index'
 import Camara from '@/components/affiliate/Webcam'
 import FlowIndex from '@/components/workflow/Index'
 import FlowAdd from '@/components/workflow/Add'
+import PaymentAdd from '@/components/payment/Add'
 import PaymentIndex from '@/components/payment/Index'
-import PaymentAdd from '@/components/payment/Steps'
 
 export const routes = [
   {
@@ -124,6 +124,15 @@ export const routes = [
     }
   },
   {
+    path: '/kardex/:hash',
+    name: 'paymentAdd',
+    component: PaymentAdd,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  //Cobros
+  {
     path: '/payment',
     name: 'paymentIndex',
     component: PaymentIndex,
@@ -131,12 +140,4 @@ export const routes = [
       requiresAuth: true
     }
   },
-  {
-    path: '/payment/:hash',
-    name: 'paymentAdd',
-    component: PaymentAdd,
-    meta: {
-      requiresAuth: true
-    }
-  }
 ]

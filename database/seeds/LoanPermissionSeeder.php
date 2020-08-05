@@ -42,31 +42,31 @@ class LoanPermissionSeeder extends Seeder
                 'display_name' => 'Imprimir kardex de pagos de préstamo'
             ],  [
                 'name' => 'create-payment-loan',
-                'display_name' => 'Crear tramites de cobros'
+                'display_name' => 'Crear tramites de cobranzas'
             ],  [
                 'name' => 'update-payment-loan',
-                'display_name' => 'Editar tramites de cobros'
+                'display_name' => 'Editar tramites de cobranzas'
             ],  [
                 'name' => 'show-payment-loan',
-                'display_name' => 'Ver trámites de cobros'
+                'display_name' => 'Ver trámites de cobranzas'
             ],  [
                 'name' => 'delete-payment-loan',
-                'display_name' => 'Anular trámites de cobros'
+                'display_name' => 'Anular trámites de cobranzas'
             ],  [
                 'name' => 'show-all-payment-loan',
-                'display_name' => 'Ver todos los trámites de cobros'
+                'display_name' => 'Ver todos los trámites de cobranzas'
             ],  [
                 'name' => 'show-payment',
-                'display_name' => 'Ver cobros'
+                'display_name' => 'Ver cobros de tesorería'
             ],  [
                 'name' => 'create-payment',
-                'display_name' => 'Registrar cobros'
+                'display_name' => 'Registrar cobros de tesorería'
             ],  [
                 'name' => 'update-payment',
-                'display_name' => 'Editar cobros'
+                'display_name' => 'Editar cobros de tesorería'
             ],  [
                 'name' => 'delete-payment',
-                'display_name' => 'Eliminar cobros'
+                'display_name' => 'Anular cobros de tesorería'
             ],  [
                 'name' => 'disbursement-loan',
                 'display_name' => 'Permisos de desembolso'
