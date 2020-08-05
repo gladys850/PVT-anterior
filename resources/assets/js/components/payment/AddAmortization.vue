@@ -12,10 +12,18 @@
                       <template>
                       <v-row>
                          <v-col cols="3" class="ma-0 pb-0" v-show="!editable">
-                          <label>TIPO DE AMORTIZACION:</label>
+                          <label v-if="isNew" >TIPO DE AMORTIZACION:</label>
+                           <label v-if="ver">TIPO DE VOUCHER:</label>
                         </v-col>
                         <v-col cols="3" class="ma-0 pb-0" v-show="!editable">
+                            <v-text-field
+                             v-if="ver"
+                            dense
+                            label="Amortización Préstamos"
+                            :readonly="true"
+                          ></v-text-field>
                           <v-select
+                            v-if="isNew"
                             dense
                             v-model="data_payment.amortization"
                             :outlined="!editable"
@@ -57,13 +65,13 @@
                               offset-y
                               max-width="290px"
                               min-width="290px"
-                              :disabled="editable"
+                              :disabled="editable || ver"
                             >
                             <template v-slot:activator="{ on }">
                               <v-text-field
                                 dense
-                                :outlined="!editable"
-                                :readonly="editable"
+                                :outlined="isNew"
+                                :readonly="editable || ver"
                                 v-model="dates.disbursementDate.formatted"
                                 hint="Día/Mes/Año"
                                 persistent-hint
@@ -82,16 +90,16 @@
                           <v-text-field
                             dense
                             v-model="data_payment.pago_total"
-                            :outlined="!editable"
-                            :readonly="editable"
+                            :outlined="isNew"
+                            :readonly="editable || ver"
                           ></v-text-field>
                        </v-col>
                       <v-col cols="1">
                       </v-col>
-                       <v-col cols="2" class="ma-0 pb-0" v-show="editable">
-                          <label>TIPO DE PAGO:</label>
+                       <v-col cols="2" class="ma-0 pb-0" v-show="editable" v-if="!ver">
+                          <label >TIPO DE PAGO:</label>
                       </v-col>
-                      <v-col cols="3" class="ma-0 pb-0" v-show="editable">
+                      <v-col cols="3" class="ma-0 pb-0" v-show="editable" v-if="!ver">
                         <v-select
                             dense
                             v-model="data_payment.pago"
@@ -103,10 +111,10 @@
                             persistent-hint
                         ></v-select>
                        </v-col>
-                        <v-col cols="3" class="ma-0 pb-0" v-show="editable">
-                          <label>NRO COMPROBANTE:</label>
+                        <v-col cols="3" class="ma-0 pb-0" v-show="editable" v-if="!ver">
+                          <label  >NRO COMPROBANTE:</label>
                       </v-col>
-                      <v-col cols="3" v-show="editable">
+                      <v-col cols="3" v-show="editable" v-if="!ver">
                          <v-text-field
                           v-model="data_payment.comprobante"
                           :outlined="editable"
@@ -114,7 +122,7 @@
                           dense
                         ></v-text-field>
                       </v-col>
-                      <v-col cols="6" class="ma-0 pb-0" v-show="editable">
+                      <v-col cols="6" class="ma-0 pb-0" v-show="editable" v-if="!ver">
                         <v-text-field
                             v-model="data_payment.glosa"
                             :outlined="editable"
@@ -181,10 +189,15 @@ export default {
   beforeMount(){
     this.getPaymentTypes()
     this.getVoucherTypes()
+    this.formatDate('disbursementDate', this.data_payment.payment_date)
     this.getLoan(this.$route.query.loan_id);
   },
   mounted() {
     if(this.$route.params.hash == 'edit')
+    {
+this.getLoanPayment()
+    }
+     if(this.$route.params.hash == 'view')
     {
 this.getLoanPayment()
     }
