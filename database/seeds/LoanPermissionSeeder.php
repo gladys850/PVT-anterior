@@ -48,7 +48,7 @@ class LoanPermissionSeeder extends Seeder
                 'display_name' => 'Editar tramites de cobranzas'
             ],  [
                 'name' => 'show-payment-loan',
-                'display_name' => 'Ver trámites de cobranzas'
+                'display_name' => 'Ver trámites de cobranzas para el rol'
             ],  [
                 'name' => 'delete-payment-loan',
                 'display_name' => 'Anular trámites de cobranzas'
