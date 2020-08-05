@@ -17,7 +17,7 @@ use DB;
 class VoucherController extends Controller
 {
     /**
-    * Registros de cobros
+    * Listado de cobros
     * Devuelve el listado con los datos paginados
     * @queryParam user_id Filtro por id de usuario. Example: 123
     * @queryParam loan_payment_id Filtro por id de préstamo. Example: 2
