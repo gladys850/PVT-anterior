@@ -106,7 +106,7 @@ class LoanPaymentController extends Controller
     * Edita el Registro de Pago realizado.
     * @urlParam loan_payment required ID del pago realizado. Example: 1
 	* @bodyParam description string Texto de descripción. Example: Penalizacion regularizada
-    * @bodyParam validated boolean Estado validación del tramite de corbro. Example: true
+    * @bodyParam validated boolean Estado validación del tramite de cobro. Example: true
     * @authenticated
     * @responseFile responses/loan_payment/update.200.json
     */
