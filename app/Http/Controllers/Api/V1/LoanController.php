@@ -676,12 +676,15 @@ class LoanController extends Controller
     * Lista de pagos
     * Devuelve el listado de los pagos ordenados por cuota de manera descendente
     * @urlParam loan required ID del préstamo. Example: 2
+    * @queryParam trashed Booleano para obtener solo pagos eliminadas. Example: 1
     * @authenticated
     * @responseFile responses/loan/get_payments.200.json
     */
-    public function get_payments(Loan $loan)
+    public function get_payments(Request $request, Loan $loan)
     {
-        return $loan->payments;
+        $query = $loan->payments();
+        if ($request->boolean('trashed')) $query = $query->onlyTrashed();
+        return $query->get();
     }
 
     /** @group Observaciones de Préstamos
