@@ -1,23 +1,24 @@
 {
-    "estimated_date": "2020-04-15",
-    "quota_number": 1,
+    "code": "PAY000008-2020",
+    "estimated_date": "2020-12-31",
+    "quota_number": 5,
     "estimated_days": {
-        "penal": 173,
-        "accumulated": 173,
-        "current": 15
+        "penal": 0,
+        "accumulated": 0,
+        "current": 31
     },
     "paid_days": {
-        "penal": 173,
-        "accumulated": 97,
-        "current": 0
+        "penal": 0,
+        "accumulated": 0,
+        "current": 31
     },
-    "balance": 2000,
-    "capital_payment": 1.78,
-    "interest_payment": 0,
-    "accumulated_payment": 191.34,
-    "penal_payment": 56.88,
-    "estimated_quota": 250,
-    "next_balance": 1998.22,
+    "balance": 22962.76,
+    "capital_payment": 675.69,
+    "interest_payment": 390.05,
+    "accumulated_payment": 0,
+    "penal_payment": 0,
+    "estimated_quota": 1065.74,
+    "next_balance": 22287.07,
     "penal_remaining": 0,
-    "accumulated_remaining": 91
+    "accumulated_remaining": 0
 }
