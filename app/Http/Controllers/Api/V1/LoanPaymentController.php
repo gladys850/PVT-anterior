@@ -15,6 +15,7 @@ use App\Affiliate;
 use App\Http\Requests\LoanPaymentsForm;
 use App\Http\Requests\VoucherForm;
 use App\Events\LoanFlowEvent;
+use App\RoleSequence;
 use Carbon;
 use DB;
 use App\Helpers\Util;
@@ -339,4 +340,17 @@ class LoanPaymentController extends Controller
     {
         if ($loan_payment->state) return $loan_payment->state;
     }
+
+    /**
+    * Flujo de trabajo
+    * Devuelve la lista de roles anteriores para devolver o posteriores para derivar el trámite
+    * @urlParam loan_payment required ID del tramite de cobro. Example: 2
+    * @authenticated
+    * @responseFile responses/loan_payment/get_flow.200.json
+    */
+    public function get_flow(LoanPayment $loan_payment)
+    {
+        return response()->json(RoleSequence::flow($loan_payment->modality->procedure_type->id, $loan_payment->role_id));
+    }
+
 }
