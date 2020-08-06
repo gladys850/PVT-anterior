@@ -64,12 +64,12 @@ class LoanPaymentController extends Controller
                 abort(403);
             }
         }
-        if ($request->has('validated')) $filters['validated'] = $request->boolean('validated');
         if ($request->role_id != 0) {
             $filters = [
                 'role_id' => $request->role_id
             ];
         }
+        if ($request->has('validated')) $filters['validated'] = $request->boolean('validated');
         if ($request->has('state_id')) {
             $relations['state'] = [
                 'state_id' => $request->state_id

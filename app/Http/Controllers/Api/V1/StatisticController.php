@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StatisticForm;
 use App\Module;
 use App\Loan;
+use App\LoanPayment;
 
 /** @group Estadísticas
 * Estadísticas de los trámites almacenados en la base de datos
@@ -68,9 +69,9 @@ class StatisticController extends Controller
             $data[] = [
                 'role_id' => $role->id,
                 'data' => [
-                    'received' => Loan::whereRoleId($role->id)->whereValidated(false)->count(),
-                    'validated' => Loan::whereRoleId($role->id)->whereValidated(true)->count(),
-                    'trashed' => Loan::whereRoleId($role->id)->onlyTrashed()->count()
+                    'received' => Loan::whereRoleId($role->id)->whereValidated(false)->count() + LoanPayment::whereRoleId($role->id)->whereValidated(false)->count(),
+                    'validated' => Loan::whereRoleId($role->id)->whereValidated(true)->count() + LoanPayment::whereRoleId($role->id)->whereValidated(true)->count(),
+                    'trashed' => Loan::whereRoleId($role->id)->onlyTrashed()->count() +  LoanPayment::whereRoleId($role->id)->onlyTrashed()->count()
                 ]
             ];
         }
@@ -96,13 +97,19 @@ class StatisticController extends Controller
                 $values = [
                     Loan::whereRoleId($role->id)->whereHas('modality', function($q) use ($procedure_type) {
                         $q->whereProcedureTypeId($procedure_type->id);
+                    })->whereValidated(false)->count() + LoanPayment::whereRoleId($role->id)->whereHas('modality', function($q) use ($procedure_type) {
+                        $q->whereProcedureTypeId($procedure_type->id);
                     })->whereValidated(false)->count(), //received
                     Loan::whereRoleId($role->id)->whereHas('modality', function($q) use ($procedure_type) {
+                        $q->whereProcedureTypeId($procedure_type->id);
+                    })->whereValidated(true)->count() + LoanPayment::whereRoleId($role->id)->whereHas('modality', function($q) use ($procedure_type) {
                         $q->whereProcedureTypeId($procedure_type->id);
                     })->whereValidated(true)->count(), //validated
                     Loan::whereRoleId($role->id)->whereHas('modality', function($q) use ($procedure_type) {
                         $q->whereProcedureTypeId($procedure_type->id);
-                    })->onlyTrashed()->count() //trashed
+                    })->onlyTrashed()->count() + LoanPayment::whereRoleId($role->id)->whereHas('modality', function($q) use ($procedure_type) {
+                        $q->whereProcedureTypeId($procedure_type->id);
+                    })->onlyTrashed()->count(), //trashed*/
                 ];
                 $i = 0;
                 foreach ($data[$key]['total'] as $total_key => $v) {
