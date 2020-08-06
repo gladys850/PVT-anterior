@@ -120,7 +120,7 @@
     </v-tooltip>
     <v-card-text>
       <v-row v-if="!track">
-        <v-toolbar flat>
+        <v-toolbar flat v-show="false">
           <v-col :cols="singleRol ? 12 : 10">
               <v-tabs
                 v-model="filters.procedureTypeSelected"
@@ -152,10 +152,11 @@
               dense
             ></v-select>
           </v-col>
-          <Fab v-show="allowFlow" :bus="bus"/>
+         
         </v-toolbar>
       </v-row>
       <v-row>
+         <Fab v-show="allowFlow" :bus="bus"/>
         <v-col cols="12">
           <List :bus="bus" 
           :tray="filters.traySelected" 
@@ -230,7 +231,7 @@ export default {
     },
     hasTray() {
       if (this.procedureModalities.length) {
-        return this.$store.getters.permissions.includes('update-loan') && this.$store.getters.permissions.includes('show-all-loan')
+        return this.$store.getters.permissions.includes('update-payment-loan') && this.$store.getters.permissions.includes('show-all-payment-loan')
       } else {
         return false
       }
@@ -265,6 +266,9 @@ export default {
     this.filters.procedureTypeSelected = this.$store.getters.procedureTypes[0]
     this.procedureTypesCount = new Array(this.$store.getters.procedureTypes.length).fill('-')
     this.bus.$on('emitRefreshLoans', val => {
+      this.updateLoanList();
+    })
+    this.bus.$on('openRemoveDialog', val => {
       this.updateLoanList();
     })
   },
@@ -323,8 +327,8 @@ export default {
       })
     },
     updateLoanList() {
-      this.getRoleStatistics()
-      this.getProcedureTypeStatistics()
+      //this.getRoleStatistics()
+      //this.getProcedureTypeStatistics()
       this.getLoans()
     },
     procedureTypeClass(index) {
@@ -345,7 +349,7 @@ export default {
     },
     setFilters(procedureType) {
       let filters = {
-        procedure_type_id: procedureType,
+        //procedure_type_id: procedureType,
         role_id: this.filters.roleSelected
       }
       switch (this.filters.traySelected) {
@@ -361,20 +365,26 @@ export default {
     },
     async getLoans() {
       try {
-        if (!this.$store.getters.permissions.includes('update-loan') && this.$store.getters.permissions.includes('show-all-loan')) {
+        if (!this.$store.getters.permissions.includes('update-payment-loan') && this.$store.getters.permissions.includes('show-all-payment-loan')) {
           this.track = true
         }
         this.loading = true
+
         let res = await axios.get(`loan_payment`, {
-          params: {
+          params: {...{
             page: this.options.page,
             per_page: this.options.itemsPerPage,
             sortBy: this.options.sortBy,
             sortDesc: this.options.sortDesc,
             search: this.search
-          }
+          }, ...this.params}
         })
         this.loans = res.data.data
+        for ( let i = 0; i < this.loans.length; i++) {
+           let res1 = await axios.get(`loan_payment/${this.loans[i].id}/state`)
+          console.log(res1.data.name );
+          this.loans[i].name = res1.data.name  
+        }
         this.totalLoans = res.data.total
         delete res.data['data']
         this.options.page = res.data.current_page

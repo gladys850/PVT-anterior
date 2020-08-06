@@ -100,10 +100,10 @@
             
               @click.stop="bus.$emit('openRemoveDialog', `loan_payment/${item.id}`)"
             >
-              <v-icon>mdi-delete</v-icon>
+              <v-icon>mdi-file-cancel-outline</v-icon>
             </v-btn>
           </template>
-          <span>Eliminar amortización</span>
+          <span>Anular amortización</span>
         </v-tooltip>
 
         <v-menu offset-y close-on-content-click>
