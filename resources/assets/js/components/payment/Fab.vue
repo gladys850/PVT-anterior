@@ -8,10 +8,11 @@
           dark
           small
           absolute
-          bottom
+          top
           right
           fab
           @click="sheet = true"
+           style="margin-right: -9px;margin-top: 90px;"
         >
           <v-icon>mdi-send</v-icon>
         </v-btn>
@@ -92,7 +93,7 @@ export default {
   methods: {
     async getFlow() {
       try {
-        let res = await axios.get(`loan/${this.selectedLoans[0].id}/flow`)
+        let res = await axios.get(`loan_payment/${this.selectedLoans[0].id}/flow`)
         this.flow = res.data
       } catch (e) {
         console.log(e)
@@ -104,7 +105,7 @@ export default {
       try {
         if(this.$store.getters.roles.filter(o => this.flow.next.includes(o.id)).length > 1){
           this.loading = true;
-            res = await axios.patch(`loans`, {
+            res = await axios.patch(`loan_payments`, {
               ids: this.idLoans,
               role_id: this.selectedRoleId
             });
@@ -113,7 +114,7 @@ export default {
             this.toastr.success("El trámite fue derivado." ) 
         }else{
             this.loading = true;
-            res = await axios.patch(`loans`, {
+            res = await axios.patch(`loan_payments`, {
               ids: this.idLoans,
               role_id: parseInt(this.$store.getters.roles.filter(o => this.flow.next.includes(o.id)).map(o => o.id)),
             });
@@ -121,12 +122,12 @@ export default {
             this.bus.$emit('emitRefreshLoans');
             this.toastr.success("El trámite fue derivado." ) 
         }
-            printJS({
+            /*printJS({
             printable: res.data.attachment.content,
             type: res.data.attachment.type,
             documentTitle: res.data.attachment.file_name,
             base64: true
-        })  
+        })  */
      
       } catch (e) {
         console.log(e)
