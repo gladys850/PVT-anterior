@@ -257,7 +257,7 @@ export default {
     })
     this.$store.commit('setBreadcrumbs', [
       {
-        text: 'Préstamos',
+        text: 'Cobros',
         to: { name: 'flowIndex' }
       }
     ])
@@ -327,7 +327,7 @@ export default {
       })
     },
     updateLoanList() {
-      //this.getRoleStatistics()
+      this.getRoleStatistics()
       //this.getProcedureTypeStatistics()
       this.getLoans()
     },

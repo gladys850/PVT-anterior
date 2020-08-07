@@ -12,7 +12,23 @@
     :show-select="tray == 'validated'"
     @update:options="updateOptions"
   >
-
+    <template v-slot:header.data-table-select="{ on, props }">
+      <v-simple-checkbox color="info" class="grey lighten-3" v-bind="props" v-on="on"></v-simple-checkbox>
+    </template>
+    <template v-slot:item.data-table-select="{ isSelected, select }">
+      <v-simple-checkbox color="success" :value="isSelected" @input="select($event)"></v-simple-checkbox>
+    </template>
+    <template v-slot:item.role_id="{ item }">
+      {{ $store.getters.roles.find(o => o.id == item.role_id).display_name }}
+    </template>
+    <!--<template v-slot:item.procedure_modality_id="{ item }">
+      <v-tooltip top>
+        <template v-slot:activator="{ on }">
+          <span v-on="on">{{ searchProcedureModality(item, 'shortened') }}</span>
+        </template>
+        <span>{{ searchProcedureModality(item, 'name') }}</span>
+      </v-tooltip>
+    </template>-->
  
 <template v-slot:item.estimated_date="{ item }">
       {{ item.estimated_date | date }}
@@ -251,13 +267,13 @@ export default {
         this.headers = this.headers.filter(o => o.value != 'procedure_modality_id')
       } else {
         if (!this.headers.some(o => o.value == 'role_id')) {
-          this.headers.unshift({
+         /* this.headers.unshift({
             text: 'Modalidad',
             class: ['normal', 'white--text'],
             align: 'center',
             value: 'procedure_modality_id',
             sortable: true
-          })
+          })*/
           this.headers.unshift({
             text: 'Área',
             class: ['normal', 'white--text'],
