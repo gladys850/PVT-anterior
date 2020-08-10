@@ -26,6 +26,11 @@ use App\Http\Controllers\Api\V1\LoanController;
 */
 class LoanPaymentController extends Controller
 {
+    public static function append_data(LoanPayment $loanPayment, $with_state = false)
+    {
+        if ($with_state) $loanPayment->state = $loanPayment->state;
+        return $loanPayment;
+    }
     /**
     * Lista de Registro de pagos
     * Devuelve el listado con los datos paginados
@@ -81,6 +86,9 @@ class LoanPaymentController extends Controller
             ];
         }
         $data = Util::search_sort(new LoanPayment(), $request, $filters, $relations);
+        $data->getCollection()->transform(function ($loanPayment) {
+            return self::append_data($loanPayment, true);
+        });
         return $data;
     }
 
@@ -96,7 +104,7 @@ class LoanPaymentController extends Controller
         if (Auth::user()->can('show-all-loan') || Auth::user()->roles()->whereHas('module', function($query) {
             return $query->whereName('prestamos');
         })->pluck('id')->contains($loanPayment->role_id)) {
-            return $loanPayment;
+            return self::append_data($loanPayment, true);
         } else {
             abort(403);
         }
@@ -259,13 +267,13 @@ class LoanPaymentController extends Controller
         return $view;
     }
 
-    /**
-    * Impresión del Voucher de Pagos
+    /** @group Tesoreria
+    * Impresión del Voucher de Pago
     * Devuelve un pdf del Voucher acorde a un ID de pago
     * @urlParam loanPayment required ID del pago. Example: 1
     * @queryParam copies Número de copias del documento. Example: 2
     * @authenticated
-    * @responseFile responses/voucher/printvoucher.200.json
+    * @responseFile responses/voucher/print_voucher.200.json
     */
 
     public function print_voucher(Request $request, LoanPayment $loanPayment, $standalone = true)

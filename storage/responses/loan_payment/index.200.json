@@ -2,26 +2,31 @@
     "current_page": 1,
     "data": [
         {
-            "id": 1,
+            "id": 2,
             "loan_id": 1,
-            "code": "PAY000001-2020",
+            "code": "PAY000002-2020",
             "procedure_modality_id": 48,
-            "estimated_date": "2020-07-31",
-            "quota_number": 1,
-            "estimated_quota": "997.53",
+            "estimated_date": "2020-09-30",
+            "quota_number": 2,
+            "estimated_quota": "1065.74",
             "penal_payment": "0",
             "accumulated_payment": "0",
-            "interest_payment": "243.62",
-            "capital_payment": "753.91",
+            "interest_payment": "399.52",
+            "capital_payment": "666.22",
             "penal_remaining": "0",
             "accumulated_remaining": "0",
-            "state_id": 6,
+            "state_id": 2,
             "role_id": 91,
             "validated": true,
             "description": null,
-            "created_at": "2020-07-28T17:44:05.000000Z",
-            "updated_at": "2020-07-28T17:45:02.000000Z",
-            "deleted_at": null
+            "created_at": "2020-08-05T14:05:59.000000Z",
+            "updated_at": "2020-08-05T17:12:13.000000Z",
+            "deleted_at": "2020-08-05T17:12:13.000000Z",
+            "state": {
+                "id": 2,
+                "name": "Anulado",
+                "description": "Tramite del prestamo Anulado"
+            }
         }
     ],
     "first_page_url": "http://localhost/api/v1/loan_payment?page=1",
