@@ -1,5 +1,5 @@
 {
-    "id": 2,
+    "id": 1,
     "loan_id": 1,
     "code": "PAY000001-2020",
     "procedure_modality_id": 48,
@@ -8,15 +8,20 @@
     "estimated_quota": "1065.74",
     "penal_payment": "0",
     "accumulated_payment": "0",
-    "interest_payment": "397.26",
-    "capital_payment": "668.48",
+    "interest_payment": "369.86",
+    "capital_payment": "695.88",
     "penal_remaining": "0",
     "accumulated_remaining": "0",
     "state_id": 5,
     "role_id": 91,
-    "validated": true,
-    "description": "p",
-    "created_at": "2020-08-03T14:34:43.000000Z",
-    "updated_at": "2020-08-03T14:37:24.000000Z",
-    "deleted_at": null
+    "validated": false,
+    "description": "Por pago de mora",
+    "created_at": "2020-08-05T14:05:54.000000Z",
+    "updated_at": "2020-08-05T17:47:34.000000Z",
+    "deleted_at": null,
+    "state": {
+        "id": 5,
+        "name": "Pendiente de Pago",
+        "description": "Registro de pago pendiente"
+    }
 }
