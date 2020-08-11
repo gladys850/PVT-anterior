@@ -347,6 +347,53 @@
                   </template>
                   </v-data-table>
                   </v-col>
+
+                    <v-col cols="12">
+                      <v-toolbar-title>DATOS FINANCIEROS </v-toolbar-title>
+                    </v-col>
+                    <v-col cols="12" md="6" >
+                      <ValidationProvider v-slot="{ errors }" vid="financial_entity_id" name="Entidad Financiera" rules="integer|min:1">
+                      <v-select
+                        :error-messages="errors"
+                        dense
+                        :loading="loading"
+                        :items="entity"
+                        item-text="name"
+                        item-value="id"
+                        label="Entidad Financiera"
+                        v-model="affiliate.financial_entity_id"
+                        :readonly="!editable || !permission.secondary"
+                        :outlined="editable && permission.secondary"
+                        :disabled="editable && !permission.secondary"
+                      ></v-select>
+                      </ValidationProvider>
+                    </v-col>
+                    <v-col cols="12" md="6" >
+                      <ValidationProvider v-slot="{ errors }" name="Numero de Cuenta" rules="min:1|max:20">
+                      <v-text-field
+                        :error-messages="errors"
+                        dense
+                        v-model="affiliate.account_number"
+                        label="Numero de Cuenta"
+                        :readonly="!editable || !permission.secondary"
+                        :outlined="editable && permission.secondary"
+                        :disabled="editable && !permission.secondary"
+                      ></v-text-field>
+                      </ValidationProvider>
+                    </v-col>
+                    <v-col cols="12" md="6" >
+                      <ValidationProvider v-slot="{ errors }" name="sigep_status" rules="min:1|max:12">
+                      <v-text-field
+                        :error-messages="errors"
+                        dense
+                        v-model="affiliate.sigep_status"
+                        label="Estado del Sigep"
+                        :readonly="!editable || !permission.secondary"
+                        :outlined="editable && permission.secondary"
+                        :disabled="editable && !permission.secondary"
+                      ></v-text-field>
+                      </ValidationProvider>
+                    </v-col>
                 </v-row>
               </v-container>
         </v-col>
@@ -391,6 +438,7 @@ export default {
       dialog: false,
       cel:[null,null],
       cities: [],
+      entity: [],
       headers: [
             { text: 'Ciudad', align: 'left', value: 'city_address_id' },
             { text: 'Zona', align: 'left', value: 'zone' },
@@ -443,6 +491,7 @@ export default {
   },
   beforeMount() {
     this.getCities()
+    this.getEntity()
   },
   mounted() {
     if (this.affiliate.id) {
@@ -485,6 +534,18 @@ export default {
         this.dates[key].formatted = null
       }
     },
+    async getEntity() {
+    try {
+      this.loading = true
+      let res = await axios.get(`financial_entity`)
+      this.entity = res.data
+    } catch (e) {
+      this.dialog = false
+      console.log(e)
+    }finally {
+        this.loading = false
+      }
+  },
     async getCities() {
     try {
       this.loading = true
@@ -498,7 +559,6 @@ export default {
       }
   },
     getCelular(){
-      
       let part = []
       if(this.affiliate.cell_phone_number!==null){
         part=this.affiliate.cell_phone_number.split(',')
@@ -514,14 +574,14 @@ export default {
           this.cel[0]=this.cel[0].trim()
           count++
           val = 0
-        }        
+        }
       }
       if(this.cel[1]){
         if(this.cel[1].trim() !== ''){
           this.cel[1]=this.cel[1].trim()
           count++
           val = 1
-        }        
+        }
       }
       if(count == 0){
         this.affiliate.cell_phone_number=null
