@@ -60,7 +60,7 @@
             </template>
             <span>Anular trámite</span>
           </v-tooltip> 
-       <!--
+       
           <v-divider
             class="mx-2"
             inset
@@ -77,7 +77,6 @@
               clearable
             ></v-text-field>
           </v-flex>
--->
       </v-toolbar>
     </v-card-title>
     <v-card-text>

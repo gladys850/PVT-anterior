@@ -123,6 +123,7 @@ export const routes = [
       requiresAuth: true
     }
   },
+  //Cobros
   {
     path: '/kardex/:hash',
     name: 'paymentAdd',
@@ -131,7 +132,6 @@ export const routes = [
       requiresAuth: true
     }
   },
-  //Cobros
   {
     path: '/payment',
     name: 'paymentIndex',

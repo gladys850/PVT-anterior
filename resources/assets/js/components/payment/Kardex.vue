@@ -36,7 +36,7 @@
       multi-sort
       single-expand
     >
-      <!--<template v-slot:header.data-table-select="{ on, props }">
+<template v-slot:header.data-table-select="{ on, props }">
       <v-simple-checkbox color="info" class="grey lighten-3" v-bind="props" v-on="on"></v-simple-checkbox>
     </template>
     <template v-slot:item.data-table-select="{ isSelected, select }">
@@ -45,16 +45,16 @@
     <template v-slot:item.role_id="{ item }">
       {{ $store.getters.roles.find(o => o.id == item.role_id).display_name }}
     </template>
-    <template v-slot:item.procedure_modality_id="{ item }">
+    <!--<template v-slot:item.procedure_modality_id="{ item }">
       <v-tooltip top>
         <template v-slot:activator="{ on }">
           <span v-on="on">{{ searchProcedureModality(item, 'shortened') }}</span>
         </template>
         <span>{{ searchProcedureModality(item, 'name') }}</span>
       </v-tooltip>
-      </template>-->
-
-    <template v-slot:item.estimated_date="{ item }">
+    </template>-->
+ 
+<template v-slot:item.estimated_date="{ item }">
       {{ item.estimated_date | date }}
     </template>
 
@@ -85,6 +85,21 @@
               :to="{ name: 'paymentAdd',  params: { hash: 'view'},  query: { loan_payment: item.id}}"
             >
               <v-icon>mdi-eye</v-icon>
+            </v-btn>
+          </template>
+          <span>Ver amortización</span>
+        </v-tooltip>
+
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on }">
+            <v-btn
+              icon
+              small
+              v-on="on"
+              color="light-blue accent-4"
+              :to="{ name: 'paymentAdd',  params: { hash: 'edit'},  query: { loan_payment: item.id}}"
+            >
+              <v-icon>mdi-pencil</v-icon>
             </v-btn>
           </template>
           <span>Ver amortización</span>
@@ -151,67 +166,59 @@ export default {
     //totalPayments: 0,
     paymentState: 0,
     headers: [
-      {
-        text: "Nro recibo",
-        value: "code",
-        class: ["normal", "white--text"],
-        align: "center",
+     {
+        text: 'Nro recibo',
+        value: 'code',
+        class: ['normal', 'white--text'],
+        align: 'center',
         sortable: true
-      },
-      {
-        text: "Fecha estimada de pago",
-        value: "estimated_date",
-        class: ["normal", "white--text"],
-        align: "center",
-        sortable: true
-      },
-      {
-        text: "Nro de cuota",
-        value: "quota_number",
-        class: ["normal", "white--text"],
-        align: "center",
+      },{
+        text: 'Fecha estimada de pago',
+        value: 'estimated_date',
+        class: ['normal', 'white--text'],
+        align: 'center',
         sortable: false
-      },
-      {
-        text: "Cuota [Bs]",
-        value: "estimated_quota",
-        class: ["normal", "white--text"],
-        align: "center",
+      }, {
+        text: 'Nro de cuota',
+        value: 'quota_number',
+        class: ['normal', 'white--text'],
+        align: 'center',
         sortable: false
-      },
-      {
-        text: "Interes [Bs]",
-        value: "interest_payment",
-        class: ["normal", "white--text"],
-        align: "center",
+      }, {
+        text: 'Cuota [Bs]',
+        value: 'estimated_quota',
+        class: ['normal', 'white--text'],
+        align: 'center',
         sortable: false
-      },
-      {
-        text: "Interes penal [Bs]",
-        value: "penal_payment",
-        class: ["normal", "white--text"],
-        align: "center",
+      }, {
+        text: 'Interes [Bs]',
+        value: 'interest_payment',
+        class: ['normal', 'white--text'],
+        align: 'center',
         sortable: false
-      },
-      {
-        text: "Capital pagado [Bs]",
-        value: "capital_payment",
-        class: ["normal", "white--text"],
-        align: "center",
+      }, {
+        text: 'Interes penal [Bs]',
+        value: 'penal_payment',
+        class: ['normal', 'white--text'],
+        align: 'center',
         sortable: false
-      },
-      {
-        text: "Estado",
-        value: "state_id",
-        class: ["normal", "white--text"],
-        align: "center",
+      }, {
+        text: 'Capital pagado [Bs]',
+        value: 'capital_payment',
+        class: ['normal', 'white--text'],
+        align: 'center',
         sortable: false
-      },
-      {
-        text: "Acciones",
-        value: "actions",
-        class: ["normal", "white--text"],
-        align: "center",
+      }, {
+        text: 'Estado',
+        value: 'state.name',
+        class: ['normal', 'white--text'],
+        align: 'center',
+        sortable: false
+      },{
+        text: 'Acciones',
+        value: 'actions',
+        class: ['normal', 'white--text'],
+        align: 'center',
         sortable: false
       }
     ],
@@ -252,15 +259,13 @@ export default {
   methods: {
     async getPayments() {
       try {
-        let res, res1,i
         this.loading = true;
-        res = await axios.get(`loan/${this.$route.params.id}/payment`);
-        this.payments = res.data
-        for ( i = 0; i < this.payments.length; i++) {
-           res1 = await axios.get(`loan_payment/${this.payments[i].id}/state`)
-          console.log(res1.data.name );
-          this.payments[i].name = res1.data.name  
-        }
+        let res = await axios.get(`loan_payment`,{
+          params:{
+            loan_id: this.$route.params.id
+          }
+        });
+        this.payments = res.data.data
       } catch (e) {
         console.log(e);
       } finally {

@@ -120,8 +120,8 @@
     </v-tooltip>
     <v-card-text>
       <v-row v-if="!track">
-        <v-toolbar flat v-show="false">
-          <v-col :cols="singleRol ? 12 : 10">
+        <v-toolbar flat >
+          <v-col :cols="singleRol ? 12 : 10" v-show="false">
               <v-tabs
                 v-model="filters.procedureTypeSelected"
                 dark
@@ -136,7 +136,7 @@
                     right
                     top
                   >
-                    {{ procedureType.second_name }}
+                    {{ procedureType.second_name }}   {{index}}
                   </v-badge>
                 </v-tab>
               </v-tabs>
@@ -171,12 +171,10 @@
     </v-card-text>
   </v-card>
 </template>
-
 <script>
 import Breadcrumbs from '@/components/shared/Breadcrumbs'
 import List from '@/components/payment/List'
 import Fab from '@/components/payment/Fab'
-
 export default {
   name: "payment-index",
   components: {
@@ -204,6 +202,12 @@ export default {
           display_name: 'VALIDADOS',
           count: 0,
           color: 'success'
+        },
+        {
+          name: 'trashed',
+          display_name: 'ANULADOS',
+          count: 0,
+          color: 'error'
         }
       ],
       filters: {
@@ -328,7 +332,7 @@ export default {
     },
     updateLoanList() {
       this.getRoleStatistics()
-      //this.getProcedureTypeStatistics()
+      this.getProcedureTypeStatistics()
       this.getLoans()
     },
     procedureTypeClass(index) {
@@ -359,6 +363,8 @@ export default {
         case 'validated':
           filters.validated = true
           break
+        case 'trashed':
+          filters.trashed = 1
       }
       this.params = filters
       this.updateLoanList()
@@ -369,7 +375,6 @@ export default {
           this.track = true
         }
         this.loading = true
-
         let res = await axios.get(`loan_payment`, {
           params: {...{
             page: this.options.page,
@@ -380,11 +385,6 @@ export default {
           }, ...this.params}
         })
         this.loans = res.data.data
-        for ( let i = 0; i < this.loans.length; i++) {
-           let res1 = await axios.get(`loan_payment/${this.loans[i].id}/state`)
-          console.log(res1.data.name );
-          this.loans[i].name = res1.data.name  
-        }
         this.totalLoans = res.data.total
         delete res.data['data']
         this.options.page = res.data.current_page
