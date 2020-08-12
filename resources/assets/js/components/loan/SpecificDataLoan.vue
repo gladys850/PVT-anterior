@@ -3,29 +3,30 @@
     <ValidationObserver ref="observer">
       <v-form>
         <!--v-card-->
-        <v-tooltip top>
-          <template v-slot:activator="{ on }">
-            <v-btn
-              fab
-              dark
-              x-small
-              :color="'error'"
-              top
-              right
-              absolute
-              v-on="on"
-              style="margin-right: 45px;"
-              @click.stop="resetForm()"
-              v-show="editable"
-            >
-              <v-icon>mdi-close</v-icon>
-            </v-btn>
-          </template>
-          <div>
-            <span>Cancelar</span>
-          </div>
-        </v-tooltip>
-
+        <div v-if="$store.getters.permissions.includes('disbursement-loan')">
+          <v-tooltip top>
+            <template v-slot:activator="{ on }">
+              <v-btn
+                fab
+                dark
+                x-small
+                :color="'error'"
+                top
+                right
+                absolute
+                v-on="on"
+                style="margin-right: 45px;"
+                @click.stop="resetForm()"
+                v-show="editable"
+              >
+                <v-icon>mdi-close</v-icon>
+              </v-btn>
+            </template>
+            <div>
+              <span>Cancelar</span>
+            </div>
+          </v-tooltip>
+        </div>
         <v-tooltip top v-if="$store.getters.userRoles.includes('PRE-tesoreria')">
           <template v-slot:activator="{ on }">
             <v-btn
@@ -60,15 +61,16 @@
                       <v-flex xs12 class="px-2">
                         <fieldset class="pa-3">
                           <v-toolbar-title>PRÉSTAMO</v-toolbar-title>
+                           <v-progress-linear></v-progress-linear>
                           <br>
-                          <p>PLAZO EN MESES: {{loan.loan_term}}</p>
-                          <p>MONTO SOLICITADO: {{loan.amount_approved}}</p>
-                          <p>PROMEDIO LIQUIDO PAGABLE: {{loan.payable_liquid_calculated}}</p>
-                          <p>TOTAL BONOS: {{loan.bonus_calculated}}</p>
-                          <p>LIQUIDO PARA CALIFICACION: {{loan.liquid_qualification_calculated}}</p>
-                          <p>CALCULO DE CUOTA: {{loan.estimated_quota}}</p>
-                          <p>INDICE DE ENDEUDAMIENTO: {{loan.indebtedness_calculated}}</p>
-                          <p>MONTO MAXIMO SUGERIDO : {{loan.amount_approved}}</p>
+                          <p style="margin-bottom: 10px;"><b>PLAZO EN MESES:</b>{{' '+loan.loan_term}}</p>
+                          <p style="margin-bottom: 10px;"><b>MONTO SOLICITADO:</b>{{' '+loan.amount_approved}}</p>
+                          <p style="margin-bottom: 10px;"><b>PROMEDIO LIQUIDO PAGABLE:</b>{{' '+loan.payable_liquid_calculated}}</p>
+                          <p style="margin-bottom: 10px;"><b>TOTAL BONOS:</b>{{' '+loan.bonus_calculated}}</p>
+                          <p style="margin-bottom: 10px;"><b>LIQUIDO PARA CALIFICACION:</b>{{' '+loan.liquid_qualification_calculated}}</p>
+                          <p style="margin-bottom: 10px;"><b>CALCULO DE CUOTA:</b>{{' '+loan.estimated_quota}}</p>
+                          <p style="margin-bottom: 10px;"><b>INDICE DE ENDEUDAMIENTO:</b>{{' '+loan.indebtedness_calculated}}</p>
+                          <p style="margin-bottom: 10px;"><b>MONTO MAXIMO SUGERIDO:</b>{{' '+loan.amount_approved}}</p>
                         </fieldset>
                       </v-flex>
                     </v-layout>
@@ -79,17 +81,17 @@
                         <v-flex xs12 class="px-2">
                           <fieldset class="pa-3">
                             <v-toolbar-title>GARANTE</v-toolbar-title>
+                              <v-progress-linear></v-progress-linear>
                             <ul style="list-style: none" class="pa-0">
                               <li v-for="(guarantor,i) in loan.guarantors" :key="i" >
                                 <br>
-                                <p>CÉDULA DE IDENTIDAD: {{guarantor.identity_card +" "+ identityCardExt(guarantor.city_identity_card_id) }}</p> 
-                                                         
+                                <p >CÉDULA DE IDENTIDAD: {{guarantor.identity_card +" "+ identityCardExt(guarantor.city_identity_card_id) }}</p>
                                 <p>NOMBRE COMPLETO: {{$options.filters.fullName(guarantor, true)}}</p>
                                 <p>PORCENTAJE DE PAGO: {{guarantor.pivot.payment_percentage}} %</p>
 
-                                </li>
-                              </ul>
-                              <br>
+                              </li>
+                            </ul>
+                            <br>
                                <p v-if="loan.guarantors.length==0">NO TIENE GARANTES</p>
                           </fieldset>
                         </v-flex>
@@ -102,6 +104,12 @@
                         <v-flex xs12 class="px-2">
                           <fieldset class="pa-3">
                             <v-toolbar-title>DESEMBOLSO</v-toolbar-title>
+                              <v-progress-linear></v-progress-linear>
+                            <br>
+                              <p style="margin-bottom: 0px;"><b>ENTIDAD FINANCIERA:</b>{{' '+cuenta}}</p>
+                              <p style="margin-bottom: 0px;"><b>NUMERO DE CUENTA:</b>{{' '+loan.lenders[0].account_number}}</p>
+                              <p><b>CUENTA SIGEP:</b> {{' '+loan.lenders[0].sigep_status}}</p>
+                            <v-progress-linear></v-progress-linear>
                             <br>
                             <v-menu
                               v-model="dates.disbursementDate.show"
@@ -172,7 +180,8 @@ export default {
     editable: false,
     reload: false,
     payment_types:[],
-    city: [],
+    entity: [],
+    entities:null,
     dates: {
     disbursementDate:{
           formatted: null,
@@ -182,7 +191,7 @@ export default {
   }),
   beforeMount(){
     this.getPaymentTypes()
-    this.getCity()
+    this.getEntity()
   },
   mounted() {
     this.formatDate('disbursementDate', this.loan.disbursement_date)
@@ -190,6 +199,17 @@ export default {
   watch: {
     'loan.disbursement_date': function(date) {
       this.formatDate('disbursementDate', date)
+    }
+  },
+  computed: {
+    cuenta() {
+       for (this.i = 0; this.i< this.entity.length; this.i++) {
+        if(this.loan.lenders[0].financial_entity_id==this.entity[this.i].id)
+        {
+          this.entities= this.entity[this.i].name
+        }
+      }
+      return this.entities
     }
   },
   methods:{
@@ -200,12 +220,12 @@ export default {
         this.dates[key].formatted = null
       }
     },
-    async getCity() {
+    async getEntity() {
       try {
         this.loading = true
-        let res = await axios.get(`city`)
-        this.city = res.data
-        console.log("ciudad "+ this.city)
+        let res = await axios.get(`financial_entity`)
+        this.entity = res.data
+        console.log("ciudad "+ this.entity)
 
       } catch (e) {
         console.log(e)
@@ -249,7 +269,6 @@ export default {
             this.editable = false
           }else{
             this.toastr.error('Faltan registar campos en Desembolso. Registre la fecha, tipo y nro de documento.');
-            
           }
 
         }

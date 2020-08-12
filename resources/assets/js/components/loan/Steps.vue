@@ -348,7 +348,7 @@ export default {
             }
         })
         this.modulo= resp.data.data[0].id
-        let res = await axios.get(`module/${this.modulo}/procedure_type`)
+        let res = await axios.get(`module/${this.modulo}/modality_loan`)
         this.modalities = res.data
       } catch (e) {
         console.log(e)
