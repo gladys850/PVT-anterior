@@ -64,24 +64,39 @@ class StatisticController extends Controller
 
     public function loans_by_role(Module $module)
     {
-        $data = [];
+        $data_loans = [];
         foreach ($module->roles()->whereNotNull('sequence_number')->orderBy('sequence_number')->orderBy('display_name')->get() as $role) {
-            $data[] = [
+            $data_loans[] = [
                 'role_id' => $role->id,
                 'data' => [
-                    'received' => Loan::whereRoleId($role->id)->whereValidated(false)->count() + LoanPayment::whereRoleId($role->id)->whereValidated(false)->count(),
-                    'validated' => Loan::whereRoleId($role->id)->whereValidated(true)->count() + LoanPayment::whereRoleId($role->id)->whereValidated(true)->count(),
-                    'trashed' => Loan::whereRoleId($role->id)->onlyTrashed()->count() +  LoanPayment::whereRoleId($role->id)->onlyTrashed()->count()
+                    'received' => Loan::whereRoleId($role->id)->whereValidated(false)->count(),
+                    'validated' => Loan::whereRoleId($role->id)->whereValidated(true)->count(),
+                    'trashed' => Loan::whereRoleId($role->id)->onlyTrashed()->count()
                 ]
             ];
         }
-        return $data;
+        $data_payments = [];
+        foreach ($module->roles()->whereNotNull('sequence_number')->orderBy('sequence_number')->orderBy('display_name')->get() as $role) {
+            $data_payments[] = [
+                'role_id' => $role->id,
+                'data' => [
+                    'received' => LoanPayment::whereRoleId($role->id)->whereValidated(false)->count(),
+                    'validated' => LoanPayment::whereRoleId($role->id)->whereValidated(true)->count(),
+                    'trashed' => LoanPayment::whereRoleId($role->id)->onlyTrashed()->count()
+                ]
+            ];
+        }
+        return  [
+            'data_loans' => $data_loans ,
+            'data_payments' => $data_payments
+        ];
+        //return $data;
     }
 
     public function loans_by_procedure_type(Module $module)
     {
         $data = [];
-        foreach ($module->procedure_types()->orderBy('name')->get() as $key => $procedure_type) {
+        foreach ($module->procedure_types()->where('name', 'NOT LIKE', '%Amortización%')->orderBy('name')->get() as $key => $procedure_type) {
             $data[] = [
                 'procedure_type_id' => $procedure_type->id,
                 'total' => [
@@ -97,17 +112,11 @@ class StatisticController extends Controller
                 $values = [
                     Loan::whereRoleId($role->id)->whereHas('modality', function($q) use ($procedure_type) {
                         $q->whereProcedureTypeId($procedure_type->id);
-                    })->whereValidated(false)->count() + LoanPayment::whereRoleId($role->id)->whereHas('modality', function($q) use ($procedure_type) {
-                        $q->whereProcedureTypeId($procedure_type->id);
                     })->whereValidated(false)->count(), //received
                     Loan::whereRoleId($role->id)->whereHas('modality', function($q) use ($procedure_type) {
                         $q->whereProcedureTypeId($procedure_type->id);
-                    })->whereValidated(true)->count() + LoanPayment::whereRoleId($role->id)->whereHas('modality', function($q) use ($procedure_type) {
-                        $q->whereProcedureTypeId($procedure_type->id);
                     })->whereValidated(true)->count(), //validated
                     Loan::whereRoleId($role->id)->whereHas('modality', function($q) use ($procedure_type) {
-                        $q->whereProcedureTypeId($procedure_type->id);
-                    })->onlyTrashed()->count() + LoanPayment::whereRoleId($role->id)->whereHas('modality', function($q) use ($procedure_type) {
                         $q->whereProcedureTypeId($procedure_type->id);
                     })->onlyTrashed()->count(), //trashed*/
                 ];
