@@ -246,7 +246,7 @@ export default {
             page: 1
           }
         })
-        res = await axios.get(`module/${res.data.data[0].id}/procedure_type`)
+        res = await axios.get(`module/${res.data.data[0].id}/modality_loan`)
         this.procedures = res.data
       } catch (e) {
         console.log(e)
