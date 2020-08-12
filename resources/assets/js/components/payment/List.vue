@@ -46,10 +46,6 @@
       {{ item.capital_payment | moneyString }}
     </template>
 
-    <template v-slot:item.state_id="{ item }">
-      {{ item.name }}
-    </template>
-
       <template v-slot:item.actions="{ item }">
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
@@ -61,6 +57,21 @@
               :to="{ name: 'paymentAdd',  params: { hash: 'view'},  query: { loan_payment: item.id}}"
             >
               <v-icon>mdi-eye</v-icon>
+            </v-btn>
+          </template>
+          <span>Ver amortización</span>
+        </v-tooltip>
+
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on }">
+            <v-btn
+              icon
+              small
+              v-on="on"
+              color="light-blue accent-4"
+              :to="{ name: 'paymentAdd',  params: { hash: 'edit'},  query: { loan_payment: item.id}}"
+            >
+              <v-icon>mdi-pencil</v-icon>
             </v-btn>
           </template>
           <span>Ver amortización</span>
@@ -194,7 +205,7 @@ export default {
         sortable: false
       }, {
         text: 'Estado',
-        value: 'state_id',
+        value: 'state.name',
         class: ['normal', 'white--text'],
         align: 'center',
         sortable: false
