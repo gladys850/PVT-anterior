@@ -1,10 +1,22 @@
-[
-    {
-        "role_id": 81,
-        "data": {
-            "received": 0,
-            "validated": 4,
-            "trashed": 2
-        }
-    }, {}
-]
+{
+    "data_loans": [
+        {
+            "role_id": 91,
+            "data": {
+                "received": 0,
+                "validated": 2,
+                "trashed": 0
+            }
+        }, {}
+    ],
+    "data_payments": [
+        {
+            "role_id": 91,
+            "data": {
+                "received": 1,
+                "validated": 2,
+                "trashed": 1
+            }
+        }, {}
+    ]
+}
