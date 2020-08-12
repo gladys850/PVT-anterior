@@ -1,0 +1,22 @@
+{
+    "id": 3,
+    "loan_id": 1,
+    "code": "PAY000003-2020",
+    "procedure_modality_id": 48,
+    "estimated_date": "2020-10-31",
+    "quota_number": 3,
+    "estimated_quota": "1065.74",
+    "penal_payment": "0",
+    "accumulated_payment": "0",
+    "interest_payment": "401.52",
+    "capital_payment": "664.22",
+    "penal_remaining": "0",
+    "accumulated_remaining": "0",
+    "state_id": 5,
+    "role_id": 91,
+    "validated": false,
+    "description": null,
+    "created_at": "2020-08-05T14:06:02.000000Z",
+    "updated_at": "2020-08-12T15:39:47.000000Z",
+    "deleted_at": null
+}

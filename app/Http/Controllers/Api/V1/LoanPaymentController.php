@@ -310,9 +310,11 @@ class LoanPaymentController extends Controller
     * @authenticated
     * @responseFile responses/loan_payment/reactivate.200.json
     */
-    public function reactivate(LoanPayment $loanPayment)
+    public function reactivate($id)
     {
-        if (Auth::user()->can('show-all-payment-loan')){
+        $loanPayment = LoanPayment::withTrashed()->where('id', '=', $id)->first();
+        $loanPayment->restore();
+        if($loanPayment){
             if($loanPayment->state_id == LoanState::whereName('Anulado')->first()->id){
                 $loanPayment->state_id = LoanState::whereName('Pendiente de Pago')->first()->id;
                 Util::save_record($loanPayment, 'datos-de-un-registro-pago', Util::concat_action($loanPayment));

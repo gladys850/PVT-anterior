@@ -1,10 +1,9 @@
 <?php
 
 namespace App\Observers;
-
 use App\LoanPayment;
 use App\Helpers\Util;
-use App\Affiliate;
+
 
 class LoanPaymentObserver
 {
@@ -25,9 +24,13 @@ class LoanPaymentObserver
      * @param  \App\LoanPayment  $loanPayment
      * @return void
      */
-    public function updated(LoanPayment $object)
+    /*public function updated(LoanPayment $object)
     {
         Util::save_record($object, 'datos-de-un-pago', Util::concat_action($object));
+    }*/
+    public function updating(LoanPayment $object)
+    {
+        Util::save_record($object, 'Datos de un registro pago', Util::concat_action($object));
     }
 
     /**
@@ -38,7 +41,7 @@ class LoanPaymentObserver
      */
     public function deleted(LoanPayment $object)
     {
-        Util::save_record($object, 'datos-de-un-pago', 'eliminó pago: ' . $object->id);
+        Util::save_record($object, 'Datos de un registro pago', 'eliminó pago: ' . $object->id);
     }
 
     /**
@@ -63,7 +66,7 @@ class LoanPaymentObserver
         //
     }
 
-    public function pivotUpdating(Loan $object, $relationName, $pivotIds, $pivotIdsAttributes)
+    public function pivotUpdating(LoanPayment $object, $relationName, $pivotIds, $pivotIdsAttributes)
     {
         Util::save_record($object, 'datos-de-un-pago', Util::relation_action($object, $relationName, $pivotIds, $pivotIdsAttributes, 'modificó'));
     }
