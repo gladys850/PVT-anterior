@@ -18,13 +18,13 @@
     "params": {}
   },
   {
-    "href": "paymentIndex",
     "title": "Cobros",
     "icon": "mdi-cash-register",
+    "permission": "show-payment-loan",
     "group": [
       {
-        "href": "paymentIndex",
-        "title": "Cobros de Préstamos",
+        "href": "loanPaymentIndex",
+        "title": "Préstamos",
         "icon": "mdi-account-cash",
         "permissions": "show-payment-loan",
         "params": {}
@@ -32,8 +32,8 @@
       {
         "href": "paymentIndex",
         "title": "Otros Cobros",
-        "icon": "mdi-cash-usd-outline",
-        "permissions": "show-payment-loan",
+        "icon": "mdi-cash-100",
+        "permissions": "show-payment",
         "params": {}
       }
     ]
