@@ -10,6 +10,7 @@ return [
     'loans' => 'Préstamo',
     'loan_destinies' => 'Destino de Préstamo',
     'procedure_types' => 'Tipo de trámite',
+    'loan_payments' => 'Pago de préstamo',
     // User
     'first_name' => 'Primer Nombre',
     'last_name' => 'Apellido Paterno',

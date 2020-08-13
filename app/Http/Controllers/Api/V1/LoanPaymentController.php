@@ -125,30 +125,19 @@ class LoanPaymentController extends Controller
             'description' => 'nullable|string|min:2',
             'validated' => 'boolean'
         ]);
-            DB::beginTransaction();
-            try {
-                $payment = $loanPayment;
-                if($request->has('validated')) $payment->validated = $request->input('validated');
-                $payment->validated = $loanPayment->validated;
-                if($request->has('description')) $payment->description = $request->input('description');
-                $payment->description = $loanPayment->description;
-                if(Util::concat_action($loanPayment) != 'editó'){
-                    Util::save_record($loanPayment, 'datos-de-un-registro-pago', Util::concat_action($loanPayment));
-                    $loanPayment->update($payment->toArray());
-                }
-                DB::commit();
-            } catch (\Exception $e) {
-                DB::rollback();
-                return $e;
-            }
-        return $payment;
+        if (Auth::user()->can('update-payment-loan')) {
+            $update = $request->only('description', 'validated');
+        }
+        $loanPayment->fill($update);
+        $loanPayment->save();
+        return  $loanPayment;
     }
 
     /**
     * Anular Registro de Pago
     * @urlParam loan_payment required ID del pago. Example: 1
     * @authenticated
-    * @responseFile responses/loan_payment/destroy_payment.200.json
+    * @responseFile responses/loan_payment/destroy.200.json
     */
     public function destroy(LoanPayment $loanPayment)
     {
@@ -156,7 +145,6 @@ class LoanPaymentController extends Controller
         $loanPayment->state()->associate($state);
         $loanPayment->save();
         $loanPayment->delete();
-        Util::save_record($loanPayment, 'datos-de-un-registro-pago', 'eliminó registro pago: ' . $loanPayment->code);
         return $loanPayment;
     }
 
@@ -317,7 +305,6 @@ class LoanPaymentController extends Controller
         if($loanPayment){
             if($loanPayment->state_id == LoanState::whereName('Anulado')->first()->id){
                 $loanPayment->state_id = LoanState::whereName('Pendiente de Pago')->first()->id;
-                Util::save_record($loanPayment, 'datos-de-un-registro-pago', Util::concat_action($loanPayment));
                 $loanPayment->update($loanPayment->toArray());
                 return $loanPayment;
             }else{

@@ -15,7 +15,7 @@ class LoanPaymentObserver
      */
     public function created(LoanPayment $object)
     {
-        Util::save_record($object, 'datos-de-un-pago', 'registró pago : '. $object->id);
+        Util::save_record($object, 'datos-de-un-tramite', 'registró pago : '. $object->code);
     }
 
     /**
@@ -30,7 +30,7 @@ class LoanPaymentObserver
     }*/
     public function updating(LoanPayment $object)
     {
-        Util::save_record($object, 'Datos de un registro pago', Util::concat_action($object));
+        Util::save_record($object, 'datos-de-un-tramite', Util::concat_action($object));
     }
 
     /**
@@ -41,7 +41,7 @@ class LoanPaymentObserver
      */
     public function deleted(LoanPayment $object)
     {
-        Util::save_record($object, 'Datos de un registro pago', 'eliminó pago: ' . $object->id);
+        Util::save_record($object, 'datos-de-un-tramite', 'eliminó registro pago: ' . $object->code);
     }
 
     /**
@@ -52,7 +52,7 @@ class LoanPaymentObserver
      */
     public function restored(LoanPayment $object)
     {
-        //
+        Util::save_record($object, 'datos-de-un-tramite', 'restauro registro pago: ' . $object->code);
     }
 
     /**
@@ -66,8 +66,8 @@ class LoanPaymentObserver
         //
     }
 
-    public function pivotUpdating(LoanPayment $object, $relationName, $pivotIds, $pivotIdsAttributes)
+    /*public function pivotUpdating(LoanPayment $object, $relationName, $pivotIds, $pivotIdsAttributes)
     {
         Util::save_record($object, 'datos-de-un-pago', Util::relation_action($object, $relationName, $pivotIds, $pivotIdsAttributes, 'modificó'));
-    }
+    }*/
 }
