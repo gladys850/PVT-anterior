@@ -129,7 +129,7 @@
                 center-active
                 active-class="secondary"
               >
-                <v-tab v-for="(procedureType, index) in $store.getters.procedureTypes" :key="procedureType.id">
+                <v-tab v-for="(procedureType, index) in $store.getters.modalityLoan" :key="procedureType.id">
                   <v-badge
                     :content="procedureTypesCount.hasOwnProperty(index) ? procedureTypesCount[index].toString() : '-'"
                     :color="procedureTypeClass(index)"
@@ -267,8 +267,8 @@ export default {
     ])
   },
   mounted() {
-    this.filters.procedureTypeSelected = this.$store.getters.procedureTypes[0]
-    this.procedureTypesCount = new Array(this.$store.getters.procedureTypes.length).fill('-')
+    this.filters.procedureTypeSelected = this.$store.getters.modalityLoan[0]
+    this.procedureTypesCount = new Array(this.$store.getters.modalityLoan.length).fill('-')
     this.bus.$on('emitRefreshLoans', val => {
       this.updateLoanList();
     })
@@ -284,7 +284,7 @@ export default {
       deep: true,
       handler(val) {
         if (val.traySelected != null && val.procedureTypeSelected != null && val.roleSelected != null) {
-          let procedureType = this.$store.getters.procedureTypes[this.filters.procedureTypeSelected]
+          let procedureType = this.$store.getters.modalityLoan[this.filters.procedureTypeSelected]
           if (procedureType) this.setFilters(procedureType.id)
         }
       }
@@ -307,7 +307,7 @@ export default {
         this.newLoans = []
         this.getLoans()
       } else {
-        this.filters.procedureTypeSelected = this.$store.getters.procedureTypes[0]
+        this.filters.procedureTypeSelected = this.$store.getters.modalityLoan[0]
         this.filters.roleSelected = this.roles[0].id
         this.clearNotification()
       }
@@ -315,7 +315,7 @@ export default {
   },
   methods: {
     getProcedureModalities() {
-      this.$store.getters.procedureTypes.forEach(async (procedureType) => {
+      this.$store.getters.modalityLoan.forEach(async (procedureType) => {
         try {
           let res = await axios.get(`procedure_modality`, {
             params: {
@@ -404,7 +404,7 @@ export default {
             filter: 'role'
           }
         })
-        res = res.data.find(o => o.role_id == this.filters.roleSelected)
+        res = res.data.data_payments.find(o => o.role_id == this.filters.roleSelected)
         if (res) {
           let index
           Object.entries(res.data).forEach(([key, val]) => {

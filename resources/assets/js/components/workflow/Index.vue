@@ -156,8 +156,8 @@
           <Fab v-show="allowFlow" :bus="bus"/>
         </v-toolbar>
       </v-row>
-      <v-row>  <v-col>procedureTypes{{$store.getters.procedureTypes}}</v-col>     </v-row>
-        <v-row>  <v-col>modalityLoan{{$store.getters.modalityLoan}}</v-col>     </v-row>
+      <!--<v-row>  <v-col>procedureTypes{{$store.getters.procedureTypes}}</v-col>     </v-row>
+        <v-row>  <v-col>modalityLoan{{$store.getters.modalityLoan}}</v-col>     </v-row>-->
       <v-row>
         <v-col cols="12">
           <List :bus="bus" 
@@ -435,7 +435,7 @@ export default {
             filter: 'role'
           }
         })
-        res = res.data.find(o => o.role_id == this.filters.roleSelected)
+        res = res.data.data_loans.find(o => o.role_id == this.filters.roleSelected)
         if (res) {
           let index
           Object.entries(res.data).forEach(([key, val]) => {
