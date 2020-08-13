@@ -5,6 +5,7 @@ import router from '@/plugins/router'
 import Role from '@/services/RoleService'
 import Module from '@/services/ModuleService'
 import ProcedureType from '@/services/ProcedureTypeService'
+import ModalityLoan from '@/services/ModalityLoanService'
 
 const vuexLocal = new VuexPersistence({
   key: 'pvt',
@@ -20,6 +21,7 @@ export default {
     roles: [],
     module: {},
     procedureTypes: [],
+    modalityLoan: [],
     userRoles: [],
     permissions: [],
     ldapAuth: JSON.parse(process.env.MIX_LDAP_AUTHENTICATION),
@@ -53,6 +55,9 @@ export default {
     },
     procedureTypes(state) {
       return state.procedureTypes
+    },
+    modalityLoan(state) {
+      return state.modalityLoan
     },
     userRoles(state) {
       return state.userRoles
@@ -93,7 +98,8 @@ export default {
       state.accessToken = null
       state.tokenExpiration = null
       state.module = {}
-      state.procedureTypes = []
+      state.procedureTypes = [],
+      state.modalityLoan = []
     },
     login(state, data) {
       state.id = data.id
@@ -130,10 +136,13 @@ export default {
     },
     setProcedureTypes(state, data) {
       state.procedureTypes = data
+    },
+    setModalityLoan(state, data) {
+      state.modalityLoan = data
     }
   },
   actions: {
-    selectModule({ commit }, name) {
+    selectModule2({ commit }, name) {
       const module = new Module()
       const procedureType = new ProcedureType()
       return module.get(null, {
@@ -149,6 +158,26 @@ export default {
         })
       }).then(res => {
         commit('setProcedureTypes', res.data)
+      }).catch(e => {
+        console.log(e)
+      })
+    },
+    selectModule({ commit }, name) {
+      const module = new Module()
+      const modalityLoan = new ModalityLoan()
+      return module.get(null, {
+        name: name,
+        page: 1,
+        per_page: 1
+      }).then(res => {
+        commit('setModule', res.data[0])
+        return modalityLoan.get(null, {
+          module_id: res.data[0].id,
+          page: 1,
+          per_page: 100
+        })
+      }).then(res => {
+        commit('setModalityLoan', res.data)
       }).catch(e => {
         console.log(e)
       })

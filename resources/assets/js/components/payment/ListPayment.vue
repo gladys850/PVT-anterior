@@ -1,42 +1,18 @@
 <template>
-  <div>
-    <template>
-      <v-col cols="12" class>
-        <v-toolbar-title>KARDEX</v-toolbar-title>
-      </v-col>
-    </template>
-    <v-tooltip top>
-      <template v-slot:activator="{ on }">
-        <v-btn
-          fab
-          dark
-          x-small
-          :color="'success'"
-          top
-          right
-          absolute
-          v-on="on"
-          style="margin-right: -9px;"
-          :to="{ name: 'paymentAdd',  params: { hash: 'new'},  query: { loan_id: $route.params.id}}"
-        >
-          <v-icon>mdi-plus</v-icon>
-        </v-btn>
-      </template>
-      <div>
-        <span>Nueva amortización</span>
-      </div>
-    </v-tooltip>
-
-    <v-data-table
-      :headers="headers"
-      :items="payments"
-      :loading="loading"
-      :options.sync="options"
-      :server-items-length="10"
-      multi-sort
-      single-expand
-    >
-<template v-slot:header.data-table-select="{ on, props }">
+<div>
+  <v-data-table
+    v-model="selectedLoans"
+    :headers="headers"
+    :items="loans"
+    :loading="loading"
+    :options="options"
+    :server-items-length="totalLoans"
+    :footer-props="{ itemsPerPageOptions: [8, 15, 30] }"
+    multi-sort
+    :show-select="tray == 'validated'"
+    @update:options="updateOptions"
+  >
+    <template v-slot:header.data-table-select="{ on, props }">
       <v-simple-checkbox color="info" class="grey lighten-3" v-bind="props" v-on="on"></v-simple-checkbox>
     </template>
     <template v-slot:item.data-table-select="{ isSelected, select }">
@@ -96,21 +72,6 @@
               icon
               small
               v-on="on"
-              color="light-blue accent-4"
-              :to="{ name: 'paymentAdd',  params: { hash: 'edit'},  query: { loan_payment: item.id}}"
-            >
-              <v-icon>mdi-pencil</v-icon>
-            </v-btn>
-          </template>
-          <span>Ver amortización</span>
-        </v-tooltip>
-
-        <v-tooltip bottom>
-          <template v-slot:activator="{ on }">
-            <v-btn
-              icon
-              small
-              v-on="on"
               color="error"
             
               @click.stop="bus.$emit('openRemoveDialog', `loan_payment/${item.id}`)"
@@ -144,28 +105,51 @@
 </template>
 
 <script>
+
 import RemoveItem from '@/components/shared/RemoveItem'
 export default {
-  name: "Kardex-list",
-  components:{
+  name: 'payment-list',
+    components:{
     RemoveItem
   },
-
-  data: () => ({
-    bus: new Vue(),
-    loading: true,
-    search: "",
-    options: {
-      page: 1,
-      itemsPerPage: 8,
-      sortBy: ["request_date"],
-      sortDesc: [true]
+  props: {
+    bus: {
+      type: Object,
+      required: true
     },
-    payments: [],
-    //selectedPayment: 0,
-    //totalPayments: 0,
-    paymentState: 0,
-    headers: [
+    tray: {
+      type: String,
+      default: 'received'
+    },
+    options: {
+      type: Object,
+      default: {
+        itemsPerPage: 8,
+        page: 1,
+        sortBy: ['request_date'],
+        sortDesc: [true]
+      }
+    },
+    loans: {
+      type: Array,
+      required: true
+    },
+    totalLoans: {
+      type: Number,
+      required: true
+    },
+    loading: {
+      type: Boolean,
+      required: true
+    },
+    procedureModalities: {
+      type: Array,
+      required: true
+    }
+  },
+  data: () => ({
+    selectedLoans: [],
+  headers: [
      {
         text: 'Nro recibo',
         value: 'code',
@@ -210,7 +194,7 @@ export default {
         sortable: false
       }, {
         text: 'Estado',
-        value: 'state.name',
+        value: 'state_id',
         class: ['normal', 'white--text'],
         align: 'center',
         sortable: false
@@ -222,87 +206,82 @@ export default {
         sortable: false
       }
     ],
-    printDocs: []
+        printDocs: []
   }),
   watch: {
-    options: function(newVal, oldVal) {
-      if (
-        newVal.page != oldVal.page ||
-        newVal.itemsPerPage != oldVal.itemsPerPage ||
-        newVal.sortBy != oldVal.sortBy ||
-        newVal.sortDesc != oldVal.sortDesc
-      ) {
-        this.getPayments();
+    selectedLoans(val) {
+      this.bus.$emit('selectLoans', this.selectedLoans)
+      if (val.length) {
+        this.$emit('allowFlow', true)
+      } else {
+        this.$emit('allowFlow', false)
       }
     },
-    search: function(newVal, oldVal) {
-      if (newVal != oldVal) {
-        this.options.page = 1;
-        this.getPayments();
-      }
+    tray(val) {
+      if (typeof val === 'string') this.updateHeader()
     }
   },
   mounted() {
-    this.bus.$on("added", val => {
-      this.getPayments();
-    });
-    this.bus.$on("removed", val => {
-      this.getPayments();
-    });
-    this.bus.$on("search", val => {
-      this.search = val;
-    });
-    this.getPayments();
-    this.docsLoans();
-    //this.getPaymentState()
+    this.bus.$on('emitRefreshLoans', val => {
+      this.selectedLoans = []
+    }),
+    this.docsLoans()
   },
   methods: {
-    async getPayments() {
-      try {
-        this.loading = true;
-        let res = await axios.get(`loan_payment`,{
-          params:{
-            loan_id: this.$route.params.id
-          }
-        });
-        this.payments = res.data.data
-      } catch (e) {
-        console.log(e);
-      } finally {
-        this.loading = false;
-      }
-    },
-    async deletePayment(id) {
-      try {
-        this.loading = true;
-        let res = await axios.delete(`loan_payment/${id}`);
-        this.payments = res.data
-        for ( i = 0; i < this.payments.length; i++) {
-           res1 = await axios.get(`loan_payment/${this.payments[i].id}/state`)
-          console.log(res1.data.name );
-          this.payments[i].name = res1.data.name  
+    searchProcedureModality(item, attribute = null) {
+      let procedureModality = this.procedureModalities.find(o => o.id == item.procedure_modality_id)
+      if (procedureModality) {
+        if (attribute) {
+          return procedureModality[attribute]
+        } else {
+          return procedureModality
         }
-      } catch (e) {
-        console.log(e);
-      } finally {
-        this.loading = false;
+      } else {
+        return null
       }
     },
-    async imprimir(id, item) {
+    updateOptions($event) {
+      if (this.options.page != $event.page || this.options.itemsPerPage != $event.itemsPerPage || this.options.sortBy != $event.sortBy || this.options.sortDesc != $event.sortDesc) this.$emit('update:options', $event)
+    },
+    async imprimir(id, item)
+    {
       try {
         let res;
         if (id == 5) {
           res = await axios.get(`loan_payment/${item}/print/loan_payment`);
         }
         printJS({
-          printable: res.data.content,
-          type: res.data.type,
-          documentTitle: res.data.file_name,
-          base64: true
-        });
+            printable: res.data.content,
+            type: res.data.type,
+            documentTitle: res.data.file_name,
+            base64: true
+        })  
       } catch (e) {
-        this.toastr.error("Ocurrió un error en la impresión.");
-        console.log(e);
+        this.toastr.error("Ocurrió un error en la impresión.")
+        console.log(e)
+      }      
+    },
+    updateHeader() {
+      if (this.tray != 'all') {
+        this.headers = this.headers.filter(o => o.value != 'role_id')
+        this.headers = this.headers.filter(o => o.value != 'procedure_modality_id')
+      } else {
+        if (!this.headers.some(o => o.value == 'role_id')) {
+         /* this.headers.unshift({
+            text: 'Modalidad',
+            class: ['normal', 'white--text'],
+            align: 'center',
+            value: 'procedure_modality_id',
+            sortable: true
+          })*/
+          this.headers.unshift({
+            text: 'Área',
+            class: ['normal', 'white--text'],
+            align: 'center',
+            value: 'role_id',
+            sortable: true
+          })
+        }
       }
     },
     docsLoans() {
@@ -316,5 +295,10 @@ export default {
       console.log(this.printDocs);
     }
   }
-};
+}
 </script>
+<style>
+th.text-start {
+  background-color: #757575;
+}
+</style>
