@@ -157,7 +157,7 @@
         </v-toolbar>
       </v-row>
       <!--<v-row>  <v-col>procedureTypes{{$store.getters.procedureTypes}}</v-col>     </v-row>
-        <v-row>  <v-col>modalityLoan{{$store.getters.modalityLoan}}</v-col>     </v-row>-->
+      <v-row>  <v-col>modalityLoan{{$store.getters.modalityLoan}}</v-col>     </v-row>-->
       <v-row>
         <v-col cols="12">
           <List :bus="bus" 
