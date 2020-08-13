@@ -10,8 +10,8 @@
           v-model="filters.traySelected"
           active-class="primary white--text"
           mandatory
-          v-if="!track" v-show="affiliate_id==0"
-        ><!--filtros superiores-->
+          v-if="!track"
+        >
           <v-btn
             v-for="tray in trays"
             :key="tray.name"
@@ -44,7 +44,6 @@
             clearable
           ></v-text-field>
         </v-flex>
-        <!--bandejas Seguimiento/Trabajo-->
         <template v-if="hasTray">
           <v-tooltip
             top
@@ -120,9 +119,9 @@
       </v-list>
     </v-tooltip>
     <v-card-text>
-      <v-row v-if="!track" v-show="affiliate_id==0">
-        <v-toolbar flat>
-          <v-col :cols="singleRol ? 12 : 10">
+      <v-row v-if="!track">
+        <v-toolbar flat >
+          <v-col :cols="singleRol ? 12 : 10" v-show="false">
               <v-tabs
                 v-model="filters.procedureTypeSelected"
                 dark
@@ -130,14 +129,14 @@
                 center-active
                 active-class="secondary"
               >
-                <v-tab v-for="(procedureType, index) in $store.getters.modalityLoan" :key="procedureType.id">
+                <v-tab v-for="(procedureType, index) in $store.getters.procedureTypes" :key="procedureType.id">
                   <v-badge
                     :content="procedureTypesCount.hasOwnProperty(index) ? procedureTypesCount[index].toString() : '-'"
                     :color="procedureTypeClass(index)"
                     right
                     top
                   >
-                    {{ procedureType.second_name }}
+                    {{ procedureType.second_name }}   {{index}}
                   </v-badge>
                 </v-tab>
               </v-tabs>
@@ -153,12 +152,11 @@
               dense
             ></v-select>
           </v-col>
-          <Fab v-show="allowFlow" :bus="bus"/>
+         
         </v-toolbar>
       </v-row>
-      <v-row>  <v-col>procedureTypes{{$store.getters.procedureTypes}}</v-col>     </v-row>
-        <v-row>  <v-col>modalityLoan{{$store.getters.modalityLoan}}</v-col>     </v-row>
       <v-row>
+         <Fab v-show="allowFlow" :bus="bus"/>
         <v-col cols="12">
           <List :bus="bus" 
           :tray="filters.traySelected" 
@@ -173,14 +171,12 @@
     </v-card-text>
   </v-card>
 </template>
-
 <script>
 import Breadcrumbs from '@/components/shared/Breadcrumbs'
-import List from '@/components/workflow/List'
-import Fab from '@/components/workflow/Fab'
-
+import List from '@/components/payment/ListPayment'
+import Fab from '@/components/payment/Fab'
 export default {
-  name: "workflow-index",
+  name: "payment-index",
   components: {
     Breadcrumbs,
     Fab,
@@ -206,6 +202,12 @@ export default {
           display_name: 'VALIDADOS',
           count: 0,
           color: 'success'
+        },
+        {
+          name: 'trashed',
+          display_name: 'ANULADOS',
+          count: 0,
+          color: 'error'
         }
       ],
       filters: {
@@ -224,9 +226,7 @@ export default {
       loans: [],
       totalLoans: 0,
       loading: true,
-      procedureModalities: [],
-      affiliate_id: this.$route.params.id > 0 ? this.$route.params.id : 0,
-      affiliate: []
+      procedureModalities: []
     }
   },
   computed: {
@@ -235,7 +235,7 @@ export default {
     },
     hasTray() {
       if (this.procedureModalities.length) {
-        return this.$store.getters.permissions.includes('update-loan') && this.$store.getters.permissions.includes('show-all-loan')
+        return this.$store.getters.permissions.includes('update-payment-loan') && this.$store.getters.permissions.includes('show-all-payment-loan')
       } else {
         return false
       }
@@ -259,21 +259,22 @@ export default {
     Echo.channel('loan').listen('.flow', (msg) => {
       if (msg.data.role_id == this.filters.roleSelected || this.filters.roleSelected == 0) this.newLoans = msg.data.derived
     })
-    /*this.$store.commit('setBreadcrumbs', [
+    this.$store.commit('setBreadcrumbs', [
       {
-        text: 'Préstamos',
+        text: 'Cobros',
         to: { name: 'flowIndex' }
       }
-    ])*/
-
+    ])
   },
   mounted() {
-    this.filters.procedureTypeSelected = this.$store.getters.modalityLoan[0]
-    this.procedureTypesCount = new Array(this.$store.getters.modalityLoan.length).fill('-')
+    this.filters.procedureTypeSelected = this.$store.getters.procedureTypes[0]
+    this.procedureTypesCount = new Array(this.$store.getters.procedureTypes.length).fill('-')
     this.bus.$on('emitRefreshLoans', val => {
       this.updateLoanList();
     })
-    this.getAffiliate(this.$route.params.id)
+    this.bus.$on('openRemoveDialog', val => {
+      this.updateLoanList();
+    })
   },
   watch: {
     search: _.debounce(function () {
@@ -283,7 +284,7 @@ export default {
       deep: true,
       handler(val) {
         if (val.traySelected != null && val.procedureTypeSelected != null && val.roleSelected != null) {
-          let procedureType = this.$store.getters.modalityLoan[this.filters.procedureTypeSelected]
+          let procedureType = this.$store.getters.procedureTypes[this.filters.procedureTypeSelected]
           if (procedureType) this.setFilters(procedureType.id)
         }
       }
@@ -306,7 +307,7 @@ export default {
         this.newLoans = []
         this.getLoans()
       } else {
-        this.filters.procedureTypeSelected = this.$store.getters.modalityLoan[0]
+        this.filters.procedureTypeSelected = this.$store.getters.procedureTypes[0]
         this.filters.roleSelected = this.roles[0].id
         this.clearNotification()
       }
@@ -314,7 +315,7 @@ export default {
   },
   methods: {
     getProcedureModalities() {
-      this.$store.getters.modalityLoan.forEach(async (procedureType) => {
+      this.$store.getters.procedureTypes.forEach(async (procedureType) => {
         try {
           let res = await axios.get(`procedure_modality`, {
             params: {
@@ -352,7 +353,7 @@ export default {
     },
     setFilters(procedureType) {
       let filters = {
-        procedure_type_id: procedureType,
+        //procedure_type_id: procedureType,
         role_id: this.filters.roleSelected
       }
       switch (this.filters.traySelected) {
@@ -362,65 +363,33 @@ export default {
         case 'validated':
           filters.validated = true
           break
-      }
-      if(this.affiliate_id > 0){
-        filters = {
-          affiliate_id: this.affiliate_id,
-          role_id: this.filters.roleSelected
-        }
+        case 'trashed':
+          filters.trashed = 1
       }
       this.params = filters
       this.updateLoanList()
     },
     async getLoans() {
       try {
-        if (!this.$store.getters.permissions.includes('update-loan') && this.$store.getters.permissions.includes('show-all-loan')) {
+        if (!this.$store.getters.permissions.includes('update-payment-loan') && this.$store.getters.permissions.includes('show-all-payment-loan')) {
           this.track = true
         }
         this.loading = true
-        let res
-        /*if(this.affiliate_id > 0){
-          res = await axios.get(`loan`, {
-            params: {
-           
-              
-              page: this.options.page,
-              per_page: this.options.itemsPerPage,
-              sortBy: this.options.sortBy,
-              sortDesc: this.options.sortDesc,
-              search: this.search
-            }
-          })
-        }
-        /*else if(this.track){
-          res = await axios.get(`loan`, {
-            params: {
-              page: this.options.page,
-              per_page: this.options.itemsPerPage,
-              sortBy: this.options.sortBy,
-              sortDesc: this.options.sortDesc,
-              search: this.search
-            }
-          })
-        }
-        else{*/
-          res = await axios.get(`loan`, {
-            params: {...{
-              page: this.options.page,
-              per_page: this.options.itemsPerPage,
-              sortBy: this.options.sortBy,
-              sortDesc: this.options.sortDesc,
-              search: this.search
-            }, ...this.params}
-          })
-        //}
+        let res = await axios.get(`loan_payment`, {
+          params: {...{
+            page: this.options.page,
+            per_page: this.options.itemsPerPage,
+            sortBy: this.options.sortBy,
+            sortDesc: this.options.sortDesc,
+            search: this.search
+          }, ...this.params}
+        })
         this.loans = res.data.data
         this.totalLoans = res.data.total
         delete res.data['data']
         this.options.page = res.data.current_page
         this.options.itemsPerPage = parseInt(res.data.per_page)
         this.options.totalItems = res.data.total
-        this.setBreadcrumbs()
       } catch (e) {
         console.log(e)
       } finally {
@@ -466,34 +435,7 @@ export default {
       } catch (e) {
         console.log(e)
       }
-    },
-    setBreadcrumbs() {
-      let breadcrumbs = [
-        {
-          text: "Préstamo",
-          to: { name: "flowIndex" }
-        }
-      ]
-        if(this.affiliate_id > 0){
-          breadcrumbs.push({
-          text: this.$options.filters.fullName(this.affiliate, true),
-          to: { name: "affiliateAdd", params: { id: this.affiliate_id } }
-        })
-      }
-
-      this.$store.commit("setBreadcrumbs", breadcrumbs)
-    },
-    async getAffiliate(id) {
-      try {
-        this.loading = true
-        let res = await axios.get(`affiliate/${id}`)
-        this.affiliate = res.data
-      } catch (e) {
-        console.log(e)
-      } finally {
-        this.loading = false
-      }
-    },
+    }
   }
 }
 </script>
