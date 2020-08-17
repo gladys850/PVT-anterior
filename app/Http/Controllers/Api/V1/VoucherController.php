@@ -10,6 +10,9 @@ use App\Http\Requests\VoucherForm;
 use Util;
 use Carbon;
 use DB;
+use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\Api\V1\LoanController;
+use App\Affiliate;
 
 /** @group Tesoreria
 * Datos de los registros de cobros
@@ -67,49 +70,68 @@ class VoucherController extends Controller
     * @bodyParam voucher_number integer número de voucher. Example: 12354121
 	* @bodyParam description string Texto de descripción. Example: Penalizacion regularizada
     * @authenticated
-    * @responseFile responses/voucher/update_voucher.200.json
+    * @responseFile responses/voucher/update.200.json
     */
     public function update(VoucherForm $request, Voucher $voucher)
     {
-        DB::beginTransaction();
-        try {
-            $payment = $voucher;
-            $payment->description = $request->input('description');
-            $payment->voucher_number = $request->input('voucher_number');
-            $payment->voucher_type_id = $request->voucher_type_id;
-            $payment->payment_type_id = $request->payment_type_id;
-            if(Util::concat_action($voucher) != 'editó'){
-                Util::save_record($voucher, 'datos-de-un-pago', Util::concat_action($voucher));
-                $voucher->update($payment->toArray());
-            }
-            DB::commit();
-        } catch (\Exception $e) {
-            DB::rollback();
-            return $e;
+        if (Auth::user()->can('update-payment')) {
+            $update = $request->only('voucher_type_id', 'description', 'voucher_number','payment_type_id');
         }
-        return $payment;
+        $voucher->fill($update);
+        $voucher->save();
+        return  $voucher;
     }
 
     /**
     * Anular registro de cobro
     * @urlParam voucher required ID del pago. Example: 1
     * @authenticated
-    * @responseFile responses/voucher/destroy_voucher.200.json
+    * @responseFile responses/voucher/destroy.200.json
     */
     public function destroy(Voucher $voucher)
     {
-        DB::beginTransaction();
-        try {
+        $payable_type = Voucher::findOrFail($voucher->id);
+        if($payable_type->payable_type = "loan_payments")
+        {
+            $state = LoanState::whereName('Pendiente de Pago')->first();
             $loanPayment = $voucher->payable;
-            $pendienteDePago = LoanState::whereName('Pendiente de Pago')->first()->id;
-            $loanPayment->update(['state_id' => $pendienteDePago]);
-            $voucher->delete();
-            Util::save_record($voucher, 'datos-de-un-pago', 'eliminó pago: ' . $voucher->code);
-            DB::commit();
-        } catch (\Exception $e) {
-            DB::rollback();
-            return $e;
+            $loanPayment->state()->associate($state);
+            $loanPayment->save();
         }
+        $voucher->delete();
         return $voucher;
+    }
+
+    /** @group Tesoreria
+    * Impresión del Voucher de Pago
+    * Devuelve un pdf del Voucher acorde a un ID de pago
+    * @urlParam voucher required ID del pago. Example: 2
+    * @queryParam copies Número de copias del documento. Example: 2
+    * @authenticated
+    * @responseFile responses/voucher/print_voucher.200.json
+    */
+
+    public function print_voucher(Request $request, Voucher $voucher, $standalone = true)
+    {
+        $affiliate = Affiliate::findOrFail($voucher->affiliate_id);
+        $lenders = [];
+        $lenders[] = LoanController::verify_spouse_disbursable($affiliate)->disbursable;
+        $data = [
+            'header' => [
+                'direction' => 'DIRECCIÓN DE ESTRATEGIAS SOCIALES E INVERSIONES',
+                'unity' => 'UNIDAD DE INVERSIÓN EN PRÉSTAMOS',
+                'table' => [
+                    ['Código', $voucher->code],
+                    ['Usuario', Auth::user()->username]
+                ]
+            ],
+            'title' => 'RECIBO OFICIAL',
+            'voucher' => $voucher,
+            'lenders' => collect($lenders)
+        ];
+        $file_name = implode('_', ['voucher', $voucher->code]) . '.pdf';
+        $view = view()->make('loan.payments.payment_voucher')->with($data)->render();
+        if ($standalone) return Util::pdf_to_base64([$view], $file_name, 'letter', $request->copies ?? 1);
+        return $view;
     }
 }

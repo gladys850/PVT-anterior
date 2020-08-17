@@ -146,6 +146,7 @@ return [
         App\Providers\ObservationModelServiceProvider::class,
         App\Providers\RoleSequenceModelServiceProvider::class,
         App\Providers\LoanPaymentModelServiceProvider::class,
+        App\Providers\VoucherModelServiceProvider::class,
 
         /*
         * Application Service Providers...

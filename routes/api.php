@@ -120,7 +120,6 @@ Route::group([
             Route::get('loan/{loan}/print/form', 'Api\V1\LoanController@print_form');
             Route::get('loan/{loan}/print/contract', 'Api\V1\LoanController@print_contract');
             Route::get('loan/{loan}/print/kardex','Api\V1\LoanController@print_kardex');
-            Route::get('loan_payment/{loan_payment}/print/voucher','Api\V1\LoanPaymentController@print_voucher');
         });
         Route::group([
             'middleware' => 'permission:create-loan'
@@ -174,6 +173,7 @@ Route::group([
             'middleware' => 'permission:show-payment'
         ], function () {
             Route::apiResource('voucher', 'Api\V1\VoucherController')->only('index', 'show');
+            Route::get('voucher/{voucher}/print/voucher','Api\V1\VoucherController@print_voucher');
         });
         Route::group([
             'middleware' => 'permission:create-payment'

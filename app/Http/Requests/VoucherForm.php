@@ -25,11 +25,23 @@ class VoucherForm extends FormRequest
     public function rules()
     {
             $rules = [
-                'payment_type_id' => 'required|exists:payment_types,id',
+                'payment_type_id' => 'exists:payment_types,id',
                 'voucher_number' => 'required_if:payment_type_id,1|integer|min:1',
-                'voucher_type_id' => 'required|exists:voucher_types,id'
+                'voucher_type_id' => 'exists:voucher_types,id',
+                'description' => 'min:3|nullable',
             ];
-        return $rules;
+            switch ($this->method()) {
+                case 'POST': {
+                    foreach (array_slice($rules, 0, 3) as $key => $rule) {
+                        $rules[$key] = implode('|', ['required', $rule]);
+                    }
+                    return $rules;
+                }
+                case 'PUT':
+                case 'PATCH':{
+                    return $rules;
+                }
+            }
     }
 
     public function messages()

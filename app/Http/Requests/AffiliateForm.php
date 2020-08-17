@@ -45,7 +45,7 @@ class AffiliateForm extends FormRequest
             'due_date' => 'nullable|date_format:"Y-m-d"',
             'surname_husband' => 'nullable|alpha_spaces|min:3',
             'financial_entity_id' => 'nullable|exists:financial_entities,id',
-            'sigep_status' => 'nullable|alpha_spaces|min:3',
+            'sigep_status' => 'nullable|alpha_spaces|min:3|in:ACTIVO, ELABORADO, VALIDADO, SIN REGISTRO',
             'account_number' => 'nullable|integer',
         ];
         switch ($this->method()) {
