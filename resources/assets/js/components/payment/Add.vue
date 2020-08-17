@@ -12,17 +12,35 @@
       <v-container>
         <div>
           <v-row>
-            <v-col  cols="4">
+            <v-col  cols="5" v-show="!ver">
               {{"TITULAR: "+this.loan.lenders[0].last_name+" "+this.loan.lenders[0].mothers_last_name+" "+this.loan.lenders[0].first_name+" "+this.loan.lenders[0].second_name}}
             </v-col>
-            <v-col  cols="3">
+            <v-col  cols="3" v-show="!ver">
               {{"PRESTAMO: "+this.loan.code}}
             </v-col>
-            <v-col  cols="2">
+            <v-col  cols="2" v-show="!ver">
               {{'MONTO:'+this.loan.amount_approved}}
             </v-col>
-             <v-col  cols="2">
+             <v-col  cols="2" v-show="!ver">
               {{'CUOTA:'+this.loan.estimated_quota}}
+            </v-col>
+              <v-col  cols="4" v-show="ver" class='mb-0 pb-0'>
+              {{"TITULAR: "+this.loan.lenders[0].last_name+" "+this.loan.lenders[0].mothers_last_name+" "+this.loan.lenders[0].first_name+" "+this.loan.lenders[0].second_name}}
+            </v-col>
+              <v-col  cols="4" v-show="ver" class='mb-0 pb-0'>
+              {{"CODIGO DEL PAGO: "+' '+this.loan_payment.code}}
+            </v-col>
+            <v-col  cols="4" v-show="ver" class='mb-0 pb-0'>
+              {{"PRESTAMO: "+this.loan.code}}
+            </v-col>
+            <v-col  cols="4" v-show="ver" class='py-1'>
+              {{"NÚMERO DE CUOTA: "+this.loan_payment.quota_number}}
+            </v-col>
+            <v-col  cols="4" v-show="ver" class='py-1'>
+              {{'MONTO:'+this.loan.amount_approved}}
+            </v-col>
+            <v-col  cols="4" v-show="ver" class='py-1'>
+              {{'CUOTA ESTIMADA MENSUAL :'+this.loan_payment.estimated_quota}}
             </v-col>
           </v-row>
           <Steps/>
@@ -37,34 +55,48 @@ import Steps from '@/components/payment/Steps'
 import Breadcrumbs from '@/components/shared/Breadcrumbs'
 
 export default {
-  name: "loan-add",
+  name: "payment-add",
   components: {
     Steps,
     Breadcrumbs
   },
   data: () => ({
-    loan:{},
+    loan:{
+      lenders:[{}]
+    },
+    loan_payment:{},
     degree_name: null,
-    category_name: null
+    category_name: null,
+    loan_id:null
   }),
   computed: {
     isNew() {
       return this.$route.params.hash == 'new'
-    }
+    },
+     editable(){
+      return  this.$route.params.hash == 'edit'
+    },
+    ver(){
+      return  this.$route.params.hash == 'view'
+    },
   },
   beforeMount() {
-    this.$store.commit('setBreadcrumbs', [
-      {
-        text: 'Nuevo Cobro',
-        to: { name: 'flowIndex' }
+    this.setBreadcrumbs()
+      if(this.ver){
+        this.getLoanPayment(this.$route.query.loan_payment)
       }
-    ])
   },
   mounted() {
-    this.getLoan(this.$route.query.loan_id);
+
+    if(this.editable){
+      this.getLoanPayment(this.$route.query.loan_payment)
+    }
+    if(this.isNew){
+      this.getLoan(this.$route.query.loan_id);
+    }
   },
   methods:{
-     async getLoan(id) {
+    async getLoan(id) {
       try {
         this.loading = true;
         let res = await axios.get(`loan/${id}`);
@@ -76,23 +108,43 @@ export default {
         this.loading = false;
       }
     },
+    async getLoanPayment(id) {
+      try {
+        this.loading = true
+        let res = await axios.get(`loan_payment/${id}`)
+        this.loan_payment = res.data
+        let res1 = await axios.get(`loan/${this.loan_payment.loan_id}`);
+        this.loan = res1.data;
+      } catch (e) {
+        console.log(e)
+      } finally {
+        this.loading = false
+      }
+    },
   setBreadcrumbs() {
     let breadcrumbs = [
       {
         text: 'Cobros',
-        to: { name: 'flowIndex' }
+        to: { name: 'paymentIndex' }
       }
     ]
     if (this.isNew) {
       breadcrumbs.push({
         text: 'Nuevo Cobro',
-        to: { name: 'flowIndex', params: { id: 'new' } }
+        to: { name: 'paymentIndex' }
       })
       } else {
-      breadcrumbs.push({
-        text: this.$options.filters.fullName(this.affiliate, true),
-        to: { name: 'flowIndex', params: { id: this.affiliate.id } }
-      })
+          if (this.ver) {
+            breadcrumbs.push({
+              text: 'Ver Cobro',
+              to: { name: 'paymentIndex' }
+            })
+            }else{
+               breadcrumbs.push({
+              text: 'Editar Cobro',
+              to: { name: 'paymentIndex' }
+            })
+            }
     }
     this.$store.commit('setBreadcrumbs', breadcrumbs)
   }

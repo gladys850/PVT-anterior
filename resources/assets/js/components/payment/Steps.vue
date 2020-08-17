@@ -3,13 +3,13 @@
     <v-stepper v-model="e1" >
       <v-stepper-header class=" !pa-0 ml-0" >
         <template>
-          <v-stepper-step editable
+          <v-stepper-step
             :key="`${1}-step`"
             :complete="e1 > 1"
             :step="1">Modalidad
           </v-stepper-step>
           <v-divider v-if="1 !== steps" :key="1" ></v-divider>
-          <v-stepper-step editable
+          <v-stepper-step
             :key="`${2}-step`"
             :complete="e1 > 2"
             :step="2">Calculo
@@ -84,7 +84,6 @@ export default {
     e1: 1,
     steps: 2,
     payment:{
-      estimated_date:{}
     },
     data_payment:{},
   }),
