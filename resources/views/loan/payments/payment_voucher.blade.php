@@ -21,17 +21,16 @@
                     <div class="font-semibold leading-tight text-center m-b-10 text-3xl">{{ $title }}</div>
                 </td>
                 <td class="w-25">
-                    <div class="font-semibold leading-tight rounded-full border text-center m-b-10 text-2xl">Bs. {{  Util::money_format($loanPayment->voucher->total)}} </div>
+                    <div class="font-semibold leading-tight rounded-full border text-center m-b-10 text-2xl">Bs. {{  Util::money_format($voucher->total)}} </div>
                 </td>
             </tr>
         </table>
     </div>
-
     <div class="block">
         <table class="table-info border w-100 my-20 text-2xl">
             <tr>
                 <td class="font-semibold w-25">
-                    Recibimos de: 
+                    Recibimos de:
                 </td>
                 <td class="w-75" colspan="3">
                     {{ $lenders[0]->full_name }}
@@ -39,54 +38,53 @@
             </tr>
             <tr>
                 <td class="font-semibold">
-                    La suma de: 
+                    La suma de:
                 </td>
                 <td class="uppercase" colspan="3">
-                {{  Util::money_format($loanPayment->voucher->total, true)}}
+                {{  Util::money_format($voucher->total, true)}}
                 </td>
             </tr>
             <tr>
                 <td class="font-semibold">
-                    Por Concepto de: 
+                    Por Concepto de:
                 </td>
-                <td class="" colspan="3">
-                    {{ $loanPayment->loan->destiny->name }}
+                <td class="uppercase" colspan="3">
+                    {{ $voucher->voucher_type->name }}
                 </td>
             </tr>
             <tr>
                 <td class="font-semibold">
-                    Forma de Pago: 
+                    Forma de Pago:
                 </td>
                 <td class="uppercase" colspan="3">
-                    {{ $loanPayment->voucher->payment_type->name }}
+                    {{ $voucher->payment_type->name }}
                 </td>
             </tr>
-            @if ($loanPayment->voucher->payment_type->id == 2)
-                <tr>
-                    <td class="font-semibold">Banco: </td>
-                    <td class="uppercase">{{ $loanPayment->voucher->bank }}</td>
-                    <td class="font-semibold">Número: </td>
-                    <td class="">{{ $loanPayment->voucher->bank_pay_number }}</td>
-                </tr>
-            @endif
         </table>
+    </div>
+    <div class="m-t-25 no-page-break">
+        <table>
+            <tbody>
+                <tr>
+                    <td>
+                        @php($user = Auth::user())
+                        @include('partials.signature_box', [
+                            'full_name' => $user->full_name,
+                            'position' => $user->position,
+                            'employee' => true
+                        ])
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="m-b-10">
+            Esta liquidación no es válida sin el Refrendo y Sello correspondiente </div>
     </div>
     <br>
-    <div>
-        <table>
-            <tr>
-                <td class="w-20">
-                    &nbsp;
-                </td>
-                <td class="w-80">
-                    <div class="font-semibold leading-tight text-center m-b-10 text-1xl"><strong>______________________<br>Cobrado por</strong><br>{{ Auth::user()->first_name }} {{ Auth::user()->last_name }} </div>
-                </td>
-                <td class="w-20">
-                    &nbsp;<br><br><br>
-                <div class="leading-tight text-center m-b-10 text">{{ Carbon::parse(now())->format('d/m/yy') }}</div>
-                </td>
-            </tr>
-        </table>
+    <div class="text-left">
+        <p class="center">
+        La Paz, {{ Carbon::parse(Carbon::parse(now()))->isoFormat('LL') }}
+        </p>
     </div>
 </body>
 </html>

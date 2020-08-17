@@ -10,6 +10,9 @@ use App\Http\Requests\VoucherForm;
 use Util;
 use Carbon;
 use DB;
+use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\Api\V1\LoanController;
+use App\Affiliate;
 
 /** @group Tesoreria
 * Datos de los registros de cobros
@@ -111,5 +114,38 @@ class VoucherController extends Controller
             return $e;
         }
         return $voucher;
+    }
+
+    /** @group Tesoreria
+    * Impresión del Voucher de Pago
+    * Devuelve un pdf del Voucher acorde a un ID de pago
+    * @urlParam voucher required ID del pago. Example: 2
+    * @queryParam copies Número de copias del documento. Example: 2
+    * @authenticated
+    * @responseFile responses/voucher/print_voucher.200.json
+    */
+
+    public function print_voucher(Request $request, Voucher $voucher, $standalone = true)
+    {
+        $affiliate = Affiliate::findOrFail($voucher->affiliate_id);
+        $lenders = [];
+        $lenders[] = LoanController::verify_spouse_disbursable($affiliate)->disbursable;
+        $data = [
+            'header' => [
+                'direction' => 'DIRECCIÓN DE ESTRATEGIAS SOCIALES E INVERSIONES',
+                'unity' => 'UNIDAD DE INVERSIÓN EN PRÉSTAMOS',
+                'table' => [
+                    ['Código', $voucher->code],
+                    ['Usuario', Auth::user()->username]
+                ]
+            ],
+            'title' => 'RECIBO OFICIAL',
+            'voucher' => $voucher,
+            'lenders' => collect($lenders)
+        ];
+        $file_name = implode('_', ['voucher', $voucher->code]) . '.pdf';
+        $view = view()->make('loan.payments.payment_voucher')->with($data)->render();
+        if ($standalone) return Util::pdf_to_base64([$view], $file_name, 'letter', $request->copies ?? 1);
+        return $view;
     }
 }
