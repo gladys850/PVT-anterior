@@ -149,7 +149,7 @@ Route::group([
             Route::get('loan_payment/{loan_payment}/print/loan_payment','Api\V1\LoanPaymentController@print_loan_payment');
             Route::apiResource('loan_payment', 'Api\V1\LoanPaymentController')->only('index', 'show');
             Route::get('loan_payment/{loan_payment}/state', 'Api\V1\LoanPaymentController@get_state');
-            Route::patch('loan_payment/{loan_payment}/reactivate','Api\V1\LoanPaymentController@reactivate');
+            Route::patch('loan_payment/{id}/reactivate','Api\V1\LoanPaymentController@reactivate');
             Route::get('loan_payment/{loan_payment}/flow','Api\V1\LoanPaymentController@get_flow');
 
         });
