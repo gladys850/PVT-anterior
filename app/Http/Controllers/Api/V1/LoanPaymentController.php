@@ -179,7 +179,6 @@ class LoanPaymentController extends Controller
                 $payment->voucher_number = $request->input('voucher_number', null);
                 $voucher = $loanPayment->voucher()->create($payment->toArray());
                 $loanPayment->update(['state_id' => $Pagado]);
-                Util::save_record($voucher, 'datos-de-un-pago', 'registró pago : '. $voucher->code);
                 DB::commit();
             } catch (\Exception $e) {
                 DB::rollback();

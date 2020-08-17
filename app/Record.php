@@ -45,6 +45,9 @@ class Record extends Model
                 case 'App\ProcedureType':
                     $action .= $this->recordable->name;
                     break;
+                case 'App\Voucher':
+                    $action .= $this->recordable->id;
+                break;
             }
         }
         unset($this['record_type'], $this['user'], $this['recordable']);
