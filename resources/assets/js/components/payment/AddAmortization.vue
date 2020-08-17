@@ -84,7 +84,7 @@
                             </v-menu>
                         </v-col>
                         <v-col cols="3" class="ma-0 pb-0">
-                          <label>TOTAL PAGADO:</label>
+                          <label>TOTAL PAGADO:{{data_payment.payment_date}}</label>
                       </v-col>
                       <v-col cols="3" class="ma-0 pb-0">
                           <v-text-field
@@ -146,7 +146,7 @@
 </template>
 <script>
 export default {
-  name: "loan-requirement",
+  name: "add-amortization",
   props: {
     data_payment: {
       type: Object,
@@ -189,19 +189,17 @@ export default {
   beforeMount(){
     this.getPaymentTypes()
     this.getVoucherTypes()
-    this.formatDate('disbursementDate', this.data_payment.payment_date)
-    this.getLoan(this.$route.query.loan_id);
   },
   mounted() {
     if(this.$route.params.hash == 'edit')
     {
-this.getLoanPayment()
+this.getLoanPayment(this.$route.query.loan_payment)
     }
      if(this.$route.params.hash == 'view')
     {
-this.getLoanPayment()
+      console.log('este el query'+this.$route.query.loan_payment)
+this.getLoanPayment(this.$route.query.loan_payment)
     }
-    this.getLoan(this.$route.query.loan_id);
     this.formatDate('disbursementDate', this.data_payment.payment_date)
   },
   watch: {
@@ -229,10 +227,10 @@ this.getLoanPayment()
         this.loading = false;
       }
     },
-     async getLoanPayment() {
+     async getLoanPayment(id) {
       try {
         this.loading = true
-        let res = await axios.get(`loan_payment/${4}`)
+        let res = await axios.get(`loan_payment/${id}`)
         this.loan_payment = res.data
         this.data_payment.payment_date= this.loan_payment.estimated_date
         this.data_payment.pago_total=this.loan_payment.estimated_quota
