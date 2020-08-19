@@ -190,11 +190,6 @@ Route::group([
         ], function () {
             Route::apiResource('voucher', 'Api\V1\VoucherController')->only('destroy');
         });
-        Route::group([
-            'middleware' => 'permission:disbursement-loan'
-        ], function () {
-            Route::post('loan/{loan}/disbursement','Api\V1\LoanController@disbursement');
-        });
         // Dirección
         Route::group([
             'middleware' => 'permission:create-address'

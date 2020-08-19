@@ -56,6 +56,9 @@ class LoanPermissionSeeder extends Seeder
                 'name' => 'show-all-payment-loan',
                 'display_name' => 'Ver todos los trámites de cobranzas'
             ],  [
+                'name' => 'print-payment-loan',
+                'display_name' => 'Imprimir registro de pago de cobranzas'
+            ],  [
                 'name' => 'show-payment',
                 'display_name' => 'Ver cobros de tesorería'
             ],  [
@@ -70,6 +73,9 @@ class LoanPermissionSeeder extends Seeder
             ],  [
                 'name' => 'disbursement-loan',
                 'display_name' => 'Permisos de desembolso'
+            ],  [
+                'name' => 'print-payment-voucher',
+                'display_name' => 'Imprimir registro de pago de tesorería'
             ]
         ];
         foreach ($permissions as $permission) {
