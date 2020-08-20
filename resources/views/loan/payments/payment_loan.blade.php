@@ -19,7 +19,7 @@
     </div>
     <div class="block">
         <table class="table-info w-100 text-center uppercase my-20">
-            <tr class="bg-grey-darker text-white">
+            <tr class="bg-grey-darker text-xxs text-white">
                 <td class="w-25">Código Tŕamite</td>
                 @if ($loan->parent_loan)
                 <td class="w-25">Trámite origen</td>
@@ -34,7 +34,7 @@
                 <td class="data-row py-5" colspan="{{ $loan->parent_loan ? 1 : 2 }}">{{ $loan->modality->name }}</td>
             </tr>
             @foreach ($lenders as $lender)
-            <tr class="bg-grey-darker text-white">
+            <tr class="bg-grey-darker text-xxs text-white">
                 <td>Fecha de Desembolso</td>
                 <td>DATOS DE{{ $plural ? ' LOS' : 'L' }} TITULAR{{ $plural ? 'ES' : ''}}</td>
                 <td>CI</td>
@@ -54,7 +54,7 @@
 
     <div class="block">
         <table class="table-info w-100 text-center my-20 uppercase">
-            <tr class="bg-grey-darker text-white">
+            <tr class="bg-grey-darker text-xxs text-white">
                 <td class="w-30">Número de cuota</td>
                 <td class="w-35">Saldo Anterior</td>
                 <td class="w-35">Fecha de Cálculo</td>
