@@ -24,8 +24,12 @@
             :data_payment.sync="data_payment"/>
             <v-container class="py-0">
               <v-row>
-                <v-spacer></v-spacer> <v-spacer></v-spacer> <v-spacer></v-spacer>
+                <v-spacer></v-spacer> <v-spacer></v-spacer> <v-spacer></v-spacer><v-spacer></v-spacer>
                 <v-col class="py-0">
+                  <v-btn color="seccundary"
+                    @click="atras()"  v-show="!isNew">
+                    Atras
+                  </v-btn>
                   <v-btn
                     color="primary"
                     @click="nextStep(1)" v-show="!ver">
@@ -84,8 +88,14 @@ export default {
     e1: 1,
     steps: 2,
     payment:{
+      estimated_days:{
+        penal:null
+      }
     },
-    data_payment:{},
+    data_payment:{
+      payment_date:null,
+      pago_total: null
+    },
   }),
   computed: {
     isNew() {
@@ -102,7 +112,30 @@ export default {
       }
     },
   },
+  mounted() {
+    if(this.$route.params.hash == 'edit')
+    {
+      this.getLoanPayment(this.$route.query.loan_payment)
+    }
+     if(this.$route.params.hash == 'view')
+    {
+      this.getLoanPayment(this.$route.query.loan_payment)
+    }
+  },
   methods: {
+    atras(){
+       try {
+        this.loading = true
+     //   let res = await axios.get(`loan_payment/${this.$route.query.loan_payment}`)
+     //  this.loan_payment = res.data
+     //   this.$router.push('/workflow/'+this.loan_payment.loan_id)
+       this.$router.push('/payment')
+      } catch (e) {
+        console.log(e)
+      } finally {
+        this.loading = false
+      }
+    },
     nextStep (n) {
       if (n == this.steps) {
         this.e1 = 1
@@ -136,7 +169,7 @@ this.Calcular()
       async savePaymentTreasury() {
       try {
           console.log('entro a grabar tesoreria')
-          let res = await axios.post(`loan_payment/${4}/voucher`,{
+          let res = await axios.post(`loan_payment/${this.$route.query.loan_payment}/voucher`,{
             payment_type_id:this.data_payment.pago,
             voucher_type_id:2,
             voucher_number:this.data_payment.comprobante,
@@ -190,6 +223,19 @@ this.Calcular()
         this.loading = false
       }
 
+    },
+     async getLoanPayment(id) {
+      try {
+        this.loading = true
+        let res = await axios.get(`loan_payment/${id}`)
+        this.loan_payment = res.data
+        this.data_payment.payment_date= this.loan_payment.estimated_date
+        this.data_payment.pago_total=this.loan_payment.estimated_quota
+      } catch (e) {
+        console.log(e)
+      } finally {
+        this.loading = false
+      }
     },
     async Calcular() {
       try {
