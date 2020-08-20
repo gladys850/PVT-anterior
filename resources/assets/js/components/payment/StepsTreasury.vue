@@ -6,7 +6,7 @@
           <v-stepper-step editable
             :key="`${1}-step`"
             :complete="e1 > 1"
-            :step="1">Modalidad
+            :step="1">Cobros
           </v-stepper-step>
           <v-divider v-if="1 !== steps" :key="1" ></v-divider>
           </template>
