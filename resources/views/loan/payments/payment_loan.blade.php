@@ -5,23 +5,21 @@
     <title>PLATAFORMA VIRTUAL ADMINISTRATIVA - MUSERPOL </title>
     <link rel="stylesheet" href="{{ public_path("/css/report-print.min.css") }}" media="all"/>
 </head>
-<body class="text-xxs">
+<body>
     @php ($plural = count($lenders) > 1)
     @php ($n = 1)
     @include('partials.header', $header)
 
     <div class="block">
-        <div class="font-semibold leading-tight text-center m-b-3">{{ $title }}</div>
-        <div class="font-semibold text-center m-b-3">Nro. {{ $loan_payment->code }}</div>
+        <div class="font-semibold leading-tight text-center m-b-10 text-xs">{{ $title }}</div>
+        <div class="font-semibold text-center m-b-3 text-xs">Nro. {{ $loan_payment->code }}</div>
     </div>
-
     <div class="block">
-        <div class="font-semibold leading-tight text-left m-b-3">{{ $n++ }}. DATOS DEL TRÁMITE</div>
+        <div class="font-semibold leading-tight text-left m-b-10 text-xs">{{ $n++ }}. DATOS DEL TRÁMITE</div>
     </div>
-
     <div class="block">
-        <table class="table-info w-100 text-center uppercase my-5">
-            <tr class="bg-grey-darker text-white">
+        <table class="table-info w-100 text-center uppercase my-20">
+            <tr class="bg-grey-darker text-xxs text-white">
                 <td class="w-25">Código Tŕamite</td>
                 @if ($loan->parent_loan)
                 <td class="w-25">Trámite origen</td>
@@ -36,7 +34,7 @@
                 <td class="data-row py-5" colspan="{{ $loan->parent_loan ? 1 : 2 }}">{{ $loan->modality->name }}</td>
             </tr>
             @foreach ($lenders as $lender)
-            <tr class="bg-grey-darker text-white">
+            <tr class="bg-grey-darker text-xxs text-white">
                 <td>Fecha de Desembolso</td>
                 <td>DATOS DE{{ $plural ? ' LOS' : 'L' }} TITULAR{{ $plural ? 'ES' : ''}}</td>
                 <td>CI</td>
@@ -51,15 +49,15 @@
     </div>
 
     <div class="block">
-        <div class="font-semibold leading-tight text-left m-b-3">{{ $n++ }}. DATOS DEL PAGO</div>
+        <div class="font-semibold leading-tight text-left m-b-10 text-xs">{{ $n++ }}. DATOS DEL PAGO</div>
     </div>
 
     <div class="block">
-        <table class="table-info w-100 text-center my-5 uppercase">
-            <tr class="bg-grey-darker text-white">
+        <table class="table-info w-100 text-center my-20 uppercase">
+            <tr class="bg-grey-darker text-xxs text-white">
                 <td class="w-30">Número de cuota</td>
                 <td class="w-35">Saldo Anterior</td>
-                <td class="w-35">Fecha de Calculo</td>
+                <td class="w-35">Fecha de Cálculo</td>
             </tr>
             <tr>
                 <td class="data-row py-5">{{ $loan_payment->quota_number }}</td>

@@ -655,26 +655,23 @@ class LoanController extends Controller
     */
     public function set_payment(LoanPaymentForm $request, Loan $loan)
     {
-        DB::beginTransaction();
-        try {
+        if($loan->balance!=0){
             $payment = $loan->next_payment($request->input('estimated_date', null), $request->input('estimated_quota', null), $request->input('liquidate', false));
             $payment->description = $request->input('description', null);
             $payment->state_id = LoanState::whereName('Pendiente de Pago')->first()->id;
             $payment->role_id = Role::whereName('PRE-cobranzas')->first()->id;
             $payment->procedure_modality_id = ProcedureModality::whereName('Amortización')->first()->id;
             $loan_payment = $loan->payments()->create($payment->toArray());
-            DB::commit();
-        } catch (\Exception $e) {
-            DB::rollback();
-            return $e;
+            //generar PDF
+            $file_name = implode('_', ['pagos', $loan->modality->shortened, $loan->code]) . '.pdf';
+            $loanpayment = new LoanPaymentController;
+            $payment->attachment = Util::pdf_to_base64([
+                $loanpayment->print_loan_payment(new Request([]), $loan_payment, false)
+            ], $file_name, 'legal', $request->copies ?? 1);
+            return $payment;
+        }else{
+            abort(403, 'El préstamo ya fue liquidado');
         }
-        //generar PDF
-        $file_name = implode('_', ['pagos', $loan->modality->shortened, $loan->code]) . '.pdf';
-        $loanpayment = new LoanPaymentController;
-        $payment->attachment = Util::pdf_to_base64([
-            $loanpayment->print_loan_payment(new Request([]), $loan_payment, false)
-        ], $file_name, 'legal', $request->copies ?? 1);
-        return $payment;
     }
     /** @group Cobranzas
     * Lista de pagos
