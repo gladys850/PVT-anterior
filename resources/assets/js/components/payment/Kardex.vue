@@ -93,6 +93,7 @@
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
             <v-btn
+             v-if="item.state_id==5"
               icon
               small
               v-on="on"
@@ -102,7 +103,7 @@
               <v-icon>mdi-pencil</v-icon>
             </v-btn>
           </template>
-          <span>Ver amortización</span>
+          <span>Editar amortización</span>
         </v-tooltip>
 
         <v-tooltip bottom>
@@ -112,7 +113,7 @@
               small
               v-on="on"
               color="error"
-            
+              v-if="item.state_id==5"
               @click.stop="bus.$emit('openRemoveDialog', `loan_payment/${item.id}`)"
             >
               <v-icon>mdi-file-cancel-outline</v-icon>
