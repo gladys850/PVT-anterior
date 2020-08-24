@@ -278,9 +278,13 @@ class LoanPaymentController extends Controller
 
     public function changeStateEveryDay(){
         $PendientePago = LoanState::whereName('Pendiente de Pago')->first()->id;
-        $Anulado = LoanState::whereName('Anulado')->first()->id;
-        $loanPayment = LoanPayment::where('state_id', $PendientePago);
-        $loanPayment->update(['state_id' => $Anulado]);
+        $state_anulado = LoanState::whereName('Anulado')->first();
+        $loanPayment = LoanPayment::where('state_id', $PendientePago)->get();
+        foreach($loanPayment as $loan_payment){
+            $loan_payment->state()->associate($state_anulado);
+            $loan_payment->save();
+            $loan_payment->delete();
+        }
     }
 
     public function deleteCanceledPaymentRecord(){
