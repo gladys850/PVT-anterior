@@ -142,7 +142,7 @@ export default {
     }
   },
   actions: {
-    selectModule2({ commit }, name) {
+    selectModule({ commit }, name) {
       const module = new Module()
       const procedureType = new ProcedureType()
       return module.get(null, {
@@ -162,7 +162,7 @@ export default {
         console.log(e)
       })
     },
-    selectModule({ commit }, name) {
+    selectModuleLoan({ commit }, name) {
       const module = new Module()
       const modalityLoan = new ModalityLoan()
       return module.get(null, {

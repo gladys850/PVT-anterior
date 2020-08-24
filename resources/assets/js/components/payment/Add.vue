@@ -13,7 +13,7 @@
         <div>
           <v-row>
             <v-col  cols="5" v-show="!ver">
-              {{"TITULAR: "+this.loan.lenders[0].last_name+" "+this.loan.lenders[0].mothers_last_name+" "+this.loan.lenders[0].first_name+" "+this.loan.lenders[0].second_name}}
+              {{"TITULAR: "+$options.filters.fullName(this.loan.lenders[0], true)}}
             </v-col>
             <v-col  cols="3" v-show="!ver">
               {{"PRESTAMO: "+this.loan.code}}
@@ -25,7 +25,7 @@
               {{'CUOTA:'+this.loan.estimated_quota}}
             </v-col>
               <v-col  cols="4" v-show="ver" class='mb-0 pb-0'>
-              {{"TITULAR: "+this.loan.lenders[0].last_name+" "+this.loan.lenders[0].mothers_last_name+" "+this.loan.lenders[0].first_name+" "+this.loan.lenders[0].second_name}}
+             {{"TITULAR: "+$options.filters.fullName(this.loan.lenders[0], true)}}
             </v-col>
               <v-col  cols="4" v-show="ver" class='mb-0 pb-0'>
               {{"CODIGO DEL PAGO: "+' '+this.loan_payment.code}}
