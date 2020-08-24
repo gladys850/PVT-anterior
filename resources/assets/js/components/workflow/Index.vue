@@ -243,7 +243,7 @@ export default {
   },
   beforeCreate() {
     let self = this
-    this.$store.dispatch('selectModule', 'prestamos').then(() => {
+    this.$store.dispatch('selectModuleLoan', 'prestamos').then(() => {
       this.getProcedureModalities()
       this.$store.getters.roles.filter(o => {
         return o.module_id == this.$store.getters.module.id && this.$store.getters.userRoles.includes(o.name)
