@@ -54,20 +54,6 @@
         </template>
         <span>Ver trámite</span>
       </v-tooltip>
-      <v-tooltip bottom>
-        <template v-slot:activator="{ on }">
-          <v-btn
-            icon
-            small
-            v-on="on"
-            color="green darken-4"
-            :to="{ name: 'flowAdd', params: { id: item.id }}"
-          ><v-icon>mdi-account-cash</v-icon>
-          </v-btn>
-        </template>
-        <span>Amortización</span>
-      </v-tooltip>
-
       <v-menu
         offset-y
         close-on-content-click

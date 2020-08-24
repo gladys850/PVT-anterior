@@ -74,7 +74,7 @@
               <v-icon>mdi-pencil</v-icon>
             </v-btn>
           </template>
-          <span>Ver amortización</span>
+          <span>Registro de cobro</span>
         </v-tooltip>
 
         <v-tooltip bottom>

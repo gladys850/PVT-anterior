@@ -10,6 +10,7 @@
           v-model="filters.traySelected"
           active-class="primary white--text"
           mandatory
+          v-show="false"
           v-if="!track"
         >
           <v-btn
@@ -119,7 +120,7 @@
       </v-list>
     </v-tooltip>
     <v-card-text>
-      <v-row v-if="!track">
+      <v-row   v-show="false" v-if="!track">
         <v-toolbar flat >
           <v-col :cols="singleRol ? 12 : 10" v-show="false">
               <v-tabs
@@ -156,6 +157,27 @@
         </v-toolbar>
       </v-row>
       <v-row>
+      <v-tooltip top>
+        <template v-slot:activator="{ on }">
+          <v-btn
+            fab
+            dark
+            x-small
+            :color="'success'"
+            top
+            right
+            absolute
+            v-on="on"
+            style="margin-right: -9px;margin-top: 90px;"
+            :to="{ name: 'paymentAdd',  params: { hash: 'new'},  query: { loan_id: $route.params.id}}"
+          >
+            <v-icon>mdi-plus</v-icon>
+          </v-btn>
+        </template>
+        <div>
+          <span>Nueva cobro</span>
+        </div>
+      </v-tooltip>
          <Fab v-show="allowFlow" :bus="bus"/>
         <v-col cols="12">
           <List :bus="bus" 
@@ -375,7 +397,7 @@ export default {
           this.track = true
         }
         this.loading = true
-        let res = await axios.get(`loan_payment`, {
+        let res = await axios.get(`voucher`, {
           params: {...{
             page: this.options.page,
             per_page: this.options.itemsPerPage,

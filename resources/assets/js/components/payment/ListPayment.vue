@@ -150,51 +150,39 @@ export default {
   data: () => ({
     selectedLoans: [],
   headers: [
-     {
+      {
+        text: 'Id',
+        value: 'id',
+        class: ['normal', 'white--text'],
+        align: 'center',
+        sortable: true
+      },{
         text: 'Nro recibo',
         value: 'code',
         class: ['normal', 'white--text'],
         align: 'center',
         sortable: true
       },{
-        text: 'Fecha estimada de pago',
-        value: 'estimated_date',
+        text: 'Afiliado',
+        value: 'affiliate_id',
         class: ['normal', 'white--text'],
         align: 'center',
-        sortable: false
-      }, {
-        text: 'Nro de cuota',
-        value: 'quota_number',
+        sortable: true
+      },{
+        text: 'Tipo de recibo',
+        value: 'voucher_type_id',
         class: ['normal', 'white--text'],
         align: 'center',
-        sortable: false
-      }, {
-        text: 'Cuota [Bs]',
-        value: 'estimated_quota',
+        sortable: true
+      },{
+        text: 'Total pagado',
+        value: 'paid_amount',
         class: ['normal', 'white--text'],
         align: 'center',
-        sortable: false
-      }, {
-        text: 'Interes [Bs]',
-        value: 'interest_payment',
-        class: ['normal', 'white--text'],
-        align: 'center',
-        sortable: false
-      }, {
-        text: 'Interes penal [Bs]',
-        value: 'penal_payment',
-        class: ['normal', 'white--text'],
-        align: 'center',
-        sortable: false
-      }, {
-        text: 'Capital pagado [Bs]',
-        value: 'capital_payment',
-        class: ['normal', 'white--text'],
-        align: 'center',
-        sortable: false
-      }, {
-        text: 'Estado',
-        value: 'state_id',
+        sortable: true
+      },{
+        text: 'Fecha de pago',
+        value: 'payment_date',
         class: ['normal', 'white--text'],
         align: 'center',
         sortable: false
