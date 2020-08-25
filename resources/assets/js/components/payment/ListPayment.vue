@@ -58,7 +58,7 @@
               small
               v-on="on"
               color="warning"
-              :to="{ name: 'paymentAdd',  params: { hash: 'view'},  query: { loan_payment: item.id}}"
+              :to="{ name: 'paymentAdd',  params: { hash: 'view'},  query: { voucher: item.id}}"
             >
               <v-icon>mdi-eye</v-icon>
             </v-btn>

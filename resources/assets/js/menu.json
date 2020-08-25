@@ -16,8 +16,7 @@
     "icon": "mdi-cash-multiple",
     "permission": "show-loan",
     "params": {}
-  },
-  {
+  }, {
     "title": "Cobros",
     "icon": "mdi-cash-register",
     "permission": "show-payment-loan",
@@ -28,15 +27,14 @@
         "icon": "mdi-account-cash",
         "permissions": "show-payment-loan",
         "params": {}
-      },
-      {
-        "href": "paymentIndex",
-        "title": "Otros Cobros",
-        "icon": "mdi-cash-100",
-        "permissions": "show-payment",
-        "params": {}
       }
     ]
+  }, {
+    "href": "paymentIndex",
+    "title": "Tesorería",
+    "icon": "mdi-cash-100",
+    "permissions": "show-payment",
+    "params": {}
   }, {
     "title": "Acceso",
     "icon": "mdi-key",
