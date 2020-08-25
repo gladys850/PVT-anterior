@@ -129,7 +129,7 @@ export default {
      //   let res = await axios.get(`loan_payment/${this.$route.query.loan_payment}`)
      //  this.loan_payment = res.data
      //   this.$router.push('/workflow/'+this.loan_payment.loan_id)
-       this.$router.push('/payment')
+       this.$router.push('/loanPayment')
       } catch (e) {
         console.log(e)
       } finally {
@@ -145,18 +145,11 @@ export default {
         {
           if(!this.isNew)
           {
-          this.savePaymentTreasury()
-          
-               console.log('entro por verdad')
+            this.savePaymentTreasury()
           }
           else{
-this.Calcular()
-               console.log('entro por falso')
+            this.Calcular()
           }
-        }
-        if(n==2)
-        {
-               console.log('entro a guardar payments')
         }
         this.e1 = n + 1
      }
@@ -164,8 +157,7 @@ this.Calcular()
     beforeStep (n) {
       this.e1 = n -1
     },
-    //Metodo para la datos de la calculadora
-
+    //Metodo para el creado del voucher
       async savePaymentTreasury() {
       try {
           console.log('entro a grabar tesoreria')
@@ -175,6 +167,9 @@ this.Calcular()
             voucher_number:this.data_payment.comprobante,
             description:this.data_payment.glosa
           })
+          let res1 = await axios.patch(`loan_payment/${this.$route.query.loan_payment}`,{
+            validated:true
+          })
             this.$router.push('/payment')
       }catch (e) {
         console.log(e)
@@ -182,12 +177,11 @@ this.Calcular()
         this.loading = false
       }
     },
+    //Metodo para crear el Pago
     async savePayment(){
-       try {
- if(this.data_payment.amortization==1)
+      try {
+        if(this.data_payment.amortization==1)
         {
-          console.log('entro a grabar'+this.data_payment.payment_date+this.data_payment.pago_total)
-
           let res = await axios.post(`loan/${this.$route.query.loan_id}/payment`,{
             estimated_date:this.data_payment.payment_date,
             estimated_quota:this.data_payment.pago_total,
@@ -199,8 +193,7 @@ this.Calcular()
             base64: true
           })
           this.$router.push('/payment')
-           console.log('este es el resultado'+res.data)
-           this.payment = res.data
+          this.payment = res.data
         }
         else{
             let res = await axios.post(`loan/${this.$route.query.loan_id}/payment`,{
@@ -213,10 +206,9 @@ this.Calcular()
             type: res.data.attachment.type,
             base64: true
           })
-           this.payment = res.data
+            this.payment = res.data
             this.$router.push('/payment')
            }
-    
       }catch (e) {
         console.log(e)
       }finally {
@@ -224,6 +216,7 @@ this.Calcular()
       }
 
     },
+     //Metodo para sacar datos del pago
      async getLoanPayment(id) {
       try {
         this.loading = true
@@ -237,11 +230,11 @@ this.Calcular()
         this.loading = false
       }
     },
+    //Metodo calculo de siguiente cuota
     async Calcular() {
       try {
        if(this.data_payment.amortization==1)
         {
-          console.log('entro por uno')
           let res = await axios.patch(`loan/${this.$route.query.loan_id}/payment`,{
             estimated_date:this.data_payment.payment_date,
             estimated_quota:this.data_payment.pago_total,
