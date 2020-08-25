@@ -16,8 +16,7 @@
     "icon": "mdi-cash-multiple",
     "permission": "show-loan",
     "params": {}
-  },
-  {
+  }, {
     "title": "Cobros",
     "icon": "mdi-cash-register",
     "permission": "show-payment-loan",
@@ -27,13 +26,6 @@
         "title": "Préstamos",
         "icon": "mdi-account-cash",
         "permissions": "show-payment-loan",
-        "params": {}
-      },
-      {
-        "href": "paymentIndex",
-        "title": "Otros Cobros",
-        "icon": "mdi-cash-100",
-        "permissions": "show-payment",
         "params": {}
       }
     ]

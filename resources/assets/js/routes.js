@@ -14,7 +14,6 @@ import FlowIndex from '@/components/workflow/Index'
 import FlowAdd from '@/components/workflow/Add'
 import PaymentAdd from '@/components/payment/Add'
 import LoanPaymentIndex from '@/components/payment/Index'
-import PaymentIndex from '@/components/payment/IndexPayment'
 
 export const routes = [
   {
@@ -140,13 +139,5 @@ export const routes = [
     meta: {
       requiresAuth: true
     }
-  },
-  {
-    path: '/payment',
-    name: 'paymentIndex',
-    component: PaymentIndex,
-    meta: {
-      requiresAuth: true
-    }
-  },
+  }
 ]

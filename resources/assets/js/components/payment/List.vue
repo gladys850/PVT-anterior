@@ -62,7 +62,7 @@
           <span>Ver amortización</span>
         </v-tooltip>
 
-        <v-tooltip bottom>
+        <v-tooltip bottom v-if="$store.getters.permissions.includes('create-payment') && $store.getters.userRoles.includes('PRE-tesoreria')">
           <template v-slot:activator="{ on }">
             <v-btn
               icon
@@ -77,7 +77,7 @@
           <span>Registro de cobro</span>
         </v-tooltip>
 
-        <v-tooltip bottom>
+        <v-tooltip bottom v-if="$store.getters.permissions.includes('delete-payment-loan')">
           <template v-slot:activator="{ on }">
             <v-btn
               icon

@@ -202,13 +202,13 @@ export default {
           display_name: 'VALIDADOS',
           count: 0,
           color: 'success'
-        },
-        {
+        }
+        /*{
           name: 'trashed',
           display_name: 'ANULADOS',
           count: 0,
           color: 'error'
-        }
+        }*/
       ],
       filters: {
         traySelected: null,
