@@ -12,7 +12,6 @@
                     <v-col cols="12" md="6" >
                       <ValidationProvider v-slot="{ errors }" vid="first_name" name="Primer Nombre" rules="required|alpha_spaces|min:3|max:20">
                       <v-text-field
-                      
                       :error-messages="errors"
                         dense
                       v-model="affiliate.first_name"
@@ -382,16 +381,20 @@
                       </ValidationProvider>
                     </v-col>
                     <v-col cols="12" md="6" >
-                      <ValidationProvider v-slot="{ errors }" name="sigep_status" rules="min:1|max:12">
-                      <v-text-field
+                      <ValidationProvider v-slot="{ errors }" name="Cuenta de Segip" rules="min:1|max:20">
+                       <v-select
                         :error-messages="errors"
                         dense
-                        v-model="affiliate.sigep_status"
+                        :items="sigep_status"
+                        item-text="name"
+                        item-value="id"
+                        :loading="loading"
                         label="Estado del Sigep"
+                        v-model="affiliate.sigep_status"
                         :readonly="!editable || !permission.secondary"
                         :outlined="editable && permission.secondary"
                         :disabled="editable && !permission.secondary"
-                      ></v-text-field>
+                      ></v-select>
                       </ValidationProvider>
                     </v-col>
                 </v-row>
@@ -439,6 +442,20 @@ export default {
       cel:[null,null],
       cities: [],
       entity: [],
+      sigep_status: [
+        { name:"ACTIVO",
+          value:"ACTIVO"
+        },
+        { name:"ELABORADO",
+          value:"ELABORADO"
+        },
+        { name:"SIN REGISTRO",
+          value:"SIN REGISTRO"
+        },
+        { name:"VALIDADO",
+          value:"VALIDADO"
+        }
+      ],
       headers: [
             { text: 'Ciudad', align: 'left', value: 'city_address_id' },
             { text: 'Zona', align: 'left', value: 'zone' },
