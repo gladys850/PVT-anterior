@@ -307,7 +307,7 @@ export default {
           docs.push(
             { id: 4, title: 'Kardex', icon: 'mdi-view-list'})
         }else{
-          console.log("error")
+          console.log("Se ha producido un error durante la generación de la impresión")
         }
         this.printDocs=docs
         console.log(this.printDocs)

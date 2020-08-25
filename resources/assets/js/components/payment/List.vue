@@ -260,6 +260,10 @@ export default {
         let res;
         if (id == 5) {
           res = await axios.get(`loan_payment/${item}/print/loan_payment`);
+        } else if(id == 6){
+          let resv = await axios.get(`loan_payment/${item}/voucher`)
+          let idVoucher = resv.data.id
+          res = await axios.get(`voucher/${idVoucher}/print/voucher`);
         }
         printJS({
             printable: res.data.content,
@@ -297,8 +301,11 @@ export default {
     },
     docsLoans() {
       let docs = [];
-      if (this.$store.getters.permissions.includes("print-payment-kardex-loan")) {
+      if (this.$store.getters.permissions.includes("print-payment-loan")) {
         docs.push({ id: 5, title: "Registro de pago", icon: "mdi-cash-multiple" });
+      }
+      if (this.$store.getters.permissions.includes("print-payment-voucher") && this.$store.getters.userRoles.includes('PRE-tesoreria')) {
+        docs.push({ id: 6, title: "Voucher de pago", icon: "mdi-file-check-outline" });
       } else {
         console.log("Se ha producido un error durante la generación de la impresión");
       }
