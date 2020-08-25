@@ -201,25 +201,14 @@ export default {
     }
   },
   methods: {
-      formatDate(key, date) {
+    formatDate(key, date) {
       if (date) {
         this.dates[key].formatted = this.$moment(date).format('L')
       } else {
         this.dates[key].formatted = null
       }
     },
-     async getLoan(id) {
-      try {
-        this.loading = true;
-        let res = await axios.get(`loan/${id}`);
-        this.loan = res.data;
-        console.log('esta sacando el loan')
-      } catch (e) {
-        console.log(e);
-      } finally {
-        this.loading = false;
-      }
-    },
+    //Metodo para sacar los tipos de voucher
      async getVoucherTypes() {
       try {
         this.loading = true
@@ -231,12 +220,12 @@ export default {
         this.loading = false
       }
     },
+    //Metodo para sacar los tipos de pago
     async getPaymentTypes() {
       try {
         this.loading = true
         let res = await axios.get(`payment_type`)
         this.payment_types = res.data
-        console.log(this.payment_types+'este es el tipo de desembolso');
       } catch (e) {
         console.log(e)
       } finally {
