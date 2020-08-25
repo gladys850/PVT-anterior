@@ -87,7 +87,6 @@ export default {
       }
   },
   mounted() {
-
     if(this.editable){
       this.getLoanPayment(this.$route.query.loan_payment)
     }
@@ -96,6 +95,7 @@ export default {
     }
   },
   methods:{
+    //Metodo para sacar datos del prestamo
     async getLoan(id) {
       try {
         this.loading = true;
@@ -108,6 +108,7 @@ export default {
         this.loading = false;
       }
     },
+    //Metodo para sacar datos del pago
     async getLoanPayment(id) {
       try {
         this.loading = true
@@ -121,6 +122,7 @@ export default {
         this.loading = false
       }
     },
+  //Metodo del cambio setBreadcrumbs
   setBreadcrumbs() {
     let breadcrumbs = [
       {
