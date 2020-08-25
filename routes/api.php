@@ -174,6 +174,7 @@ Route::group([
         ], function () {
             Route::apiResource('voucher', 'Api\V1\VoucherController')->only('index', 'show');
             Route::get('voucher/{voucher}/print/voucher','Api\V1\VoucherController@print_voucher');
+            Route::get('loan_payment/{loan_payment}/voucher', 'Api\V1\LoanPaymentController@get_voucher');
         });
         Route::group([
             'middleware' => 'permission:create-payment'

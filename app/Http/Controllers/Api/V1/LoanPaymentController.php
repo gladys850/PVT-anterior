@@ -317,4 +317,17 @@ class LoanPaymentController extends Controller
         return response()->json(RoleSequence::flow($loan_payment->modality->procedure_type->id, $loan_payment->role_id));
     }
 
+    /**
+    * Voucher del registro de cobro
+    * Devuelve el voucher del registro de cobro realizado por Tesoreria
+    * @urlParam loan_payment required ID de trámite de cobro. Example: 1
+    * @authenticated
+    * @responseFile responses/loan_payment/get_voucher.200.json
+    */
+    public function get_voucher(LoanPayment $loan_payment)
+    {
+        if ($loan_payment->voucher) return $loan_payment->voucher;
+        abort(403, 'No existe el registro de pago');
+    }
+
 }
