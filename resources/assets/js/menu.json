@@ -30,12 +30,6 @@
       }
     ]
   }, {
-    "href": "paymentIndex",
-    "title": "Tesorería",
-    "icon": "mdi-cash-100",
-    "permissions": "show-payment",
-    "params": {}
-  }, {
     "title": "Acceso",
     "icon": "mdi-key",
     "permission": "show-user",
