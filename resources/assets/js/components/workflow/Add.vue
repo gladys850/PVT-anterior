@@ -77,10 +77,7 @@
               clearable
             ></v-text-field>
           </v-flex>-->
-<<<<<<< HEAD
           
-=======
->>>>>>> 5b4df9c207876e90ea8717c40faacc076d4bf861
       </v-toolbar>
     </v-card-title>
     <v-card-text>
