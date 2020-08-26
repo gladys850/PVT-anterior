@@ -1,17 +1,63 @@
 <template>
   <v-container fluid >
-    <v-toolbar-title>DOCUMENTOS PRESENTADOS</v-toolbar-title>
-    <br>
+    <v-toolbar-title  class="pb-2">DOCUMENTOS PRESENTADOS</v-toolbar-title>
     <v-form>
-      <v-card>
-        <v-row>
-          <v-col cols="12" >
-            <v-data-iterator :items="docsRequired" hide-default-footer>
-              <template v-slot:header>
-                <v-toolbar-title class="font-weight-light align-end ma-0 pa-4 pl-8 pt-0">
-                  <h5>Documentos Requeridos</h5>
-                </v-toolbar-title>
-                <v-row>
+          <div v-if="$store.getters.userRoles.includes('PRE-revision-legal')">
+          <v-tooltip top>
+            <template v-slot:activator="{ on }">
+              <v-btn
+                fab
+                dark
+                x-small
+                :color="'error'"
+                top
+                right
+                absolute
+                v-on="on"
+                style="margin-right: 45px;"
+                @click.stop="resetForm()"
+                v-show="editable"
+              >
+                <v-icon>mdi-close</v-icon>
+              </v-btn>
+            </template>
+            <div>
+              <span>Cancelar</span>
+            </div>
+          </v-tooltip>
+        </div>
+        <v-tooltip top>
+          <template v-slot:activator="{ on }">
+            <v-btn
+              fab
+              dark
+              x-small
+              :color="editable ? 'danger' : 'success'"
+              top
+              right
+              absolute
+              v-on="on"
+              style="margin-right: -9px;"
+              @click.stop="validarDoc()"
+            >
+              <v-icon v-if="editable">mdi-check</v-icon>
+              <v-icon v-else>mdi-check-all</v-icon>
+            </v-btn>
+          </template>
+          <div>
+            <span v-if="editable">Guardar</span>
+            <span v-else>Validar documentos</span>
+        </div>
+        </v-tooltip>
+        
+      <v-toolbar-title>REQUERIDOS</v-toolbar-title>
+       <v-progress-linear></v-progress-linear>
+      <!--<v-card>-->
+       <!-- <v-row>
+          <v-col cols="12" >-->
+            <!--<v-data-iterator :items="docsRequired" hide-default-footer>-->
+              <!--<template>-->
+                <v-row  class="py-3">
                   <v-col v-for="(req,i) in docsRequired" :key="req.id" cols="12" class="py-1">
                     <v-card dense>
                       <v-row>
@@ -26,9 +72,7 @@
                                 </v-list-item-content>
                               </v-col>
                               <v-col cols="8" class="py-0 ml-n8">
-                                <v-list-item-content
-                                  class="align-end font-weight-light py-0"
-                                >{{ req.name }}</v-list-item-content>
+                              {{ req.name }}
                               </v-col>
                               <v-col cols="3" class="py-0 my-0">
                                 <div
@@ -39,7 +83,8 @@
                                     class="py-0"
                                     color="success"
                                     v-model="req.pivot.is_valid"
-                                    :disabled="editable"
+                                     @change="createObjectDocuments(req.id, req.pivot.is_valid, req.pivot.comment)"
+                                    :disabled="!editable"
                                   ></v-checkbox>
                                 </div>
                                 <v-spacer></v-spacer>
@@ -49,17 +94,18 @@
                         </v-col>
                       </v-row>
                       <v-row v-if="$store.getters.userRoles.includes('PRE-revision-legal')">
-                        <v-col cols="11" class="ma-0 pl-10 pr-2">
+                        <v-col cols="12" class="ma-0 py-0 px-10">
                           <v-text-field
                             dense
                             outlined
                             color="success"
                             label="Comentario"
                             v-model="req.pivot.comment"
-                            :disabled="editable"
+                             @change="createObjectDocuments(req.id, req.pivot.is_valid, req.pivot.comment)"
+                            :disabled="!editable"
                           ></v-text-field>
                         </v-col>
-                        <v-col cols="1" class="ma-0 pa-0">
+                        <!--<v-col cols="1" class="ma-0 pa-0">
                           <v-tooltip top>
                             <template v-slot:activator="{ on }">
                               <v-btn
@@ -74,23 +120,22 @@
                             </template>
                             <span>Guardar validación de documento</span>
                           </v-tooltip>
-                        </v-col>
+                        </v-col>-->
                       </v-row>
                     </v-card>
                   </v-col>
                 </v-row>
-              </template>
+              <!--</template>
             </v-data-iterator>
           </v-col>
-        </v-row>
+        </v-row>-->
         <v-row>
           <v-col cols="12" v-if="docsOptional.length >0" >
-            <v-data-iterator :items="docsOptional" hide-default-footer>
-              <template v-slot:header>
-                <v-toolbar-title class="align-end font-weight-light ma-0 pa-4 pl-8 pt-0">
-                  <h5>Documentos Adicionales </h5>
-                </v-toolbar-title>
-                <v-row>
+           <!--<v-data-iterator :items="docsOptional" hide-default-footer>-->
+              <template>
+                <v-toolbar-title>ADICIONALES</v-toolbar-title>
+                 <v-progress-linear></v-progress-linear>
+                <v-row  class="py-3">
                   <v-col v-for="(opt,i) in docsOptional" :key="opt.id" cols="12" class="py-1">
                     <v-card dense>
                       <v-row>
@@ -105,9 +150,7 @@
                                 </v-list-item-content>
                               </v-col>
                               <v-col cols="8" class="py-0 ml-n8">
-                                <v-list-item-content
-                                  class="align-end font-weight-light py-0"
-                                >{{ opt.name }}</v-list-item-content>
+                                {{ opt.name }}
                               </v-col>
                               <v-col cols="3" class="py-0 my-0">
                                 <div
@@ -118,7 +161,8 @@
                                     class="py-0"
                                     color="success"
                                     v-model="opt.pivot.is_valid"
-                                    :disabled="editable"
+                                    @change="createObjectDocuments(req.id, req.pivot.is_valid, req.pivot.comment)"
+                                    :disabled="!editable"
                                   ></v-checkbox>
                                 </div>
                                 <v-spacer></v-spacer>
@@ -128,17 +172,18 @@
                         </v-col>
                       </v-row>
                       <v-row v-if="$store.getters.userRoles.includes('PRE-revision-legal')">
-                        <v-col cols="11" class="ma-0 pl-10 pr-2">
+                        <v-col cols="12" class="ma-0 py-0 pl-10 pr-2">
                           <v-text-field
                             dense
                             outlined
                             color="success"
                             label="Comentario"
                             v-model="opt.pivot.comment"
-                            :disabled="editable"
+                            @change="createObjectDocuments(req.id, req.pivot.is_valid, req.pivot.comment)"
+                            :disabled="!editable"
                           ></v-text-field>
                         </v-col>
-                        <v-col cols="1" class="ma-0 pa-0">
+                        <!--<v-col cols="1" class="ma-0 pa-0">
                           <v-tooltip top>
                             <template v-slot:activator="{ on }">
                               <v-btn
@@ -153,7 +198,7 @@
                             </template>
                             <span>Guardar validación de documento</span>
                           </v-tooltip>
-                        </v-col>
+                        </v-col>-->
                       </v-row>
                     </v-card>
                   </v-col>
@@ -176,10 +221,10 @@
                   </v-col>
                 </v-row>
               </template>
-            </v-data-iterator>
+            <!--</v-data-iterator>-->
           </v-col>
         </v-row>
-      </v-card>
+      <!--</v-card>-->
     </v-form>
   </v-container>
 </template>
@@ -191,7 +236,9 @@ export default {
     docsRequired: [],
     docsOptional: [],
     notes: [],
-    editable: false
+    editable: false,
+    reload: false,
+    documents:[]
   }),
 
   beforeMount() {
@@ -225,23 +272,49 @@ export default {
         this.loading = false
       }
     },
-    async validarDoc(id, is_valid, comment) {
+    createObjectDocuments(id, is_valid, comment){
+      let document = {}
+      document.id = id,
+      document.is_valid = is_valid,
+      document.comment = comment
+      console.log("mostar objeto")
+      console.log(document)
+     
+          this.documents.push(document)
+      
+      console.log(this.documents)
+
+    },
+    async validarDoc() {
       try {
-        this.loading = true
-        let res = await axios.patch(
-          `loan/${this.$route.params.id}/document/${id}`,
-          {
-            is_valid: is_valid,
-            comment: comment
+        if (!this.editable) {
+          this.editable = true
+        } else {
+          for(let i=0; i < this.documents.length; i++){
+            console.log(this.documents[i].id)
+            let res = await axios.patch(`loan/${this.$route.params.id}/document/${this.documents[i].id}`,
+            {
+              is_valid: this.documents[i].is_valid,
+              comment: this.documents[i].comment
+            }
+          )
           }
-        )
-        this.toastr.success("El documento se valido correctamente")
+          this.toastr.success("Los documentos se validarón correctamente")
+          this.editable = false
+        }
       } catch (e) {
         console.log(e)
       } finally {
         this.loading = false
       }
-    }
+    },
+    resetForm() {
+      this.editable = false
+      this.reload = true
+      this.$nextTick(() => {
+      this.reload = false
+      })
+    },
   }
 }
 </script>
