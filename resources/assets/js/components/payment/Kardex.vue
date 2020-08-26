@@ -5,7 +5,7 @@
         <v-toolbar-title>KARDEX</v-toolbar-title>
       </v-col>
     </template>
-    <v-tooltip top>
+    <v-tooltip top v-if="$store.getters.userRoles.includes('PRE-cobranzas')">
       <template v-slot:activator="{ on }">
         <v-btn
           fab
