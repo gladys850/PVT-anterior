@@ -2,7 +2,7 @@
   <v-container fluid >
     <v-toolbar-title  class="pb-2">DOCUMENTOS PRESENTADOS</v-toolbar-title>
     <v-form>
-          <div v-if="$store.getters.userRoles.includes('PRE-revision-legal')">
+        <div v-if="$store.getters.userRoles.includes('PRE-revision-legal')">
           <v-tooltip top>
             <template v-slot:activator="{ on }">
               <v-btn
@@ -25,7 +25,7 @@
               <span>Cancelar</span>
             </div>
           </v-tooltip>
-        </div>
+        
         <v-tooltip top>
           <template v-slot:activator="{ on }">
             <v-btn
@@ -41,7 +41,7 @@
               @click.stop="validarDoc()"
             >
               <v-icon v-if="editable">mdi-check</v-icon>
-              <v-icon v-else>mdi-check-all</v-icon>
+              <v-icon v-else>mdi-check-bold</v-icon>
             </v-btn>
           </template>
           <div>
@@ -49,7 +49,7 @@
             <span v-else>Validar documentos</span>
         </div>
         </v-tooltip>
-        
+      </div>
       <v-toolbar-title>REQUERIDOS</v-toolbar-title>
        <v-progress-linear></v-progress-linear>
       <!--<v-card>-->
