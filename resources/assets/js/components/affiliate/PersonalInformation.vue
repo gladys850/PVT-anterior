@@ -262,7 +262,6 @@ import AddStreet from '@/components/affiliate/AddStreet'
   },
   beforeMount() {
     this.getCities()
-    this.getCelular()
   },
   mounted() {
       this.bus.$on('saveAddress', (address) => {
@@ -275,6 +274,7 @@ import AddStreet from '@/components/affiliate/AddStreet'
           }
         }
     })
+    this.getCelular()
   },
   methods: {
     resetForm() {
