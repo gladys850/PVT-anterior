@@ -170,7 +170,7 @@ export default {
           let res1 = await axios.patch(`loan_payment/${this.$route.query.loan_payment}`,{
             validated:true
           })
-            this.$router.push('/payment')
+            this.$router.push('/loanPayment')
       }catch (e) {
         console.log(e)
       }finally {
@@ -192,7 +192,7 @@ export default {
             type: res.data.attachment.type,
             base64: true
           })
-          this.$router.push('/payment')
+          this.$router.push('/loanPayment')
           this.payment = res.data
         }
         else{
@@ -207,7 +207,7 @@ export default {
             base64: true
           })
             this.payment = res.data
-            this.$router.push('/payment')
+            this.$router.push('/loanPayment')
            }
       }catch (e) {
         console.log(e)
