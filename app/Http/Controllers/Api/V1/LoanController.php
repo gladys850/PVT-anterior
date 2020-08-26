@@ -204,7 +204,7 @@ class LoanController extends Controller
     */
     public function show(Loan $loan)
     {
-        if (Auth::user()->can('show-all-loan') || Auth::user()->roles()->whereHas('module', function($query) {
+        if (Auth::user()->can('show-all-loan') || Auth::user()->can('show-payment-loan') || Auth::user()->roles()->whereHas('module', function($query) {
             return $query->whereName('prestamos');
         })->pluck('id')->contains($loan->role_id)) {
             return self::append_data($loan, true);
