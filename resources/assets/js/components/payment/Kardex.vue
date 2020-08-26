@@ -308,7 +308,7 @@ export default {
     },
     docsLoans() {
       let docs = [];
-      if (this.$store.getters.permissions.includes("print-payment-kardex-loan")) {
+      if (this.$store.getters.permissions.includes("print-payment-loan")) {
         docs.push({ id: 5, title: "Registro de pago", icon: "mdi-cash-multiple" });
       } else {
         console.log("Se ha producido un error durante la generación de la impresión");
