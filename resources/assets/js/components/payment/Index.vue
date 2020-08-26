@@ -120,7 +120,7 @@
     </v-tooltip>
     <v-card-text>
       <v-row v-if="!track">
-        <v-toolbar flat >
+        <v-toolbar flat v-show="!singleRol">
           <v-col :cols="singleRol ? 12 : 10" v-show="false">
               <v-tabs
                 v-model="filters.procedureTypeSelected"
