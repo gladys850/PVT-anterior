@@ -30,7 +30,7 @@
       </v-tooltip>
     </template>-->
  
-<template v-slot:item.estimated_date="{ item }">
+    <template v-slot:item.estimated_date="{ item }">
       {{ item.estimated_date | date }}
     </template>
 
@@ -47,7 +47,7 @@
     </template>
 
       <template v-slot:item.actions="{ item }">
-        <v-tooltip bottom>
+        <v-tooltip bottom v-if="$store.getters.userRoles.includes('PRE-cobranzas')">
           <template v-slot:activator="{ on }">
             <v-btn
               icon
@@ -59,7 +59,7 @@
               <v-icon>mdi-eye</v-icon>
             </v-btn>
           </template>
-          <span>Ver amortización</span>
+          <span>Ver registro de cobro</span>
         </v-tooltip>
 
         <v-tooltip bottom v-if="$store.getters.permissions.includes('create-payment') && $store.getters.userRoles.includes('PRE-tesoreria')">
@@ -71,13 +71,13 @@
               color="light-blue accent-4"
               :to="{ name: 'paymentAdd',  params: { hash: 'edit'},  query: { loan_payment: item.id}}"
             >
-              <v-icon>mdi-pencil</v-icon>
+              <v-icon>mdi-file-document-edit-outline</v-icon>
             </v-btn>
           </template>
-          <span>Registro de cobro</span>
+          <span>Registrar pago</span>
         </v-tooltip>
 
-        <v-tooltip bottom v-if="$store.getters.permissions.includes('delete-payment-loan')">
+        <v-tooltip bottom v-if="$store.getters.permissions.includes('delete-payment-loan') && $store.getters.userRoles.includes('PRE-cobranzas')">
           <template v-slot:activator="{ on }">
             <v-btn
               icon
@@ -90,7 +90,7 @@
               <v-icon>mdi-file-cancel-outline</v-icon>
             </v-btn>
           </template>
-          <span>Anular amortización</span>
+          <span>Anular registro de cobro</span>
         </v-tooltip>
 
         <v-menu offset-y close-on-content-click>
@@ -302,10 +302,10 @@ export default {
     docsLoans() {
       let docs = [];
       if (this.$store.getters.permissions.includes("print-payment-loan")) {
-        docs.push({ id: 5, title: "Registro de pago", icon: "mdi-cash-multiple" });
+        docs.push({ id: 5, title: "Registro de cobro", icon: "mdi-file-check-outline" });
       }
       if (this.$store.getters.permissions.includes("print-payment-voucher") && this.$store.getters.userRoles.includes('PRE-tesoreria')) {
-        docs.push({ id: 6, title: "Voucher de pago", icon: "mdi-file-check-outline" });
+        docs.push({ id: 6, title: "Registro de pago", icon: "mdi-cash-multiple" });
       } else {
         console.log("Se ha producido un error durante la generación de la impresión");
       }
