@@ -23,7 +23,7 @@
         </v-btn>
       </template>
       <div>
-        <span>Nueva amortización</span>
+        <span>Nuevo registro de cobro</span>
       </div>
     </v-tooltip>
 
@@ -87,10 +87,10 @@
               <v-icon>mdi-eye</v-icon>
             </v-btn>
           </template>
-          <span>Ver amortización</span>
+          <span>Ver registro de cobro</span>
         </v-tooltip>
 
-        <v-tooltip bottom>
+        <!--<v-tooltip bottom>
           <template v-slot:activator="{ on }">
             <v-btn
              v-if="item.state_id==5"
@@ -104,9 +104,9 @@
             </v-btn>
           </template>
           <span>Editar amortización</span>
-        </v-tooltip>
+        </v-tooltip>-->
 
-        <v-tooltip bottom>
+        <v-tooltip bottom v-if="$store.getters.permissions.includes('delete-payment-loan') && $store.getters.userRoles.includes('PRE-cobranzas')">
           <template v-slot:activator="{ on }">
             <v-btn
               icon
@@ -309,7 +309,7 @@ export default {
     docsLoans() {
       let docs = [];
       if (this.$store.getters.permissions.includes("print-payment-loan")) {
-        docs.push({ id: 5, title: "Registro de pago", icon: "mdi-cash-multiple" });
+        docs.push({ id: 5, title: "Registro de cobro", icon: "mdi-file-check-outline" });
       } else {
         console.log("Se ha producido un error durante la generación de la impresión");
       }
