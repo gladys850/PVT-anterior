@@ -13,7 +13,7 @@
                       <v-row>
                         <v-col cols="3" class="ma-0 pb-0" v-show="!editable">
                           <label v-if="isNew" >TIPO DE AMORTIZACION:</label>
-                          <label v-if="ver">TIPO DE VOUCHER:</label>
+                          <label v-if="ver">TIPO DE COBRO:</label>
                         </v-col>
                         <v-col cols="3" class="ma-0 pb-0" v-show="!editable">
                           <v-text-field
@@ -102,6 +102,7 @@
                           <v-select
                             dense
                             v-model="data_payment.pago"
+                            :onchange="Onchange()"
                             :outlined="editable"
                             :readonly="!editable"
                             :items="payment_types"
@@ -110,19 +111,21 @@
                             persistent-hint
                           ></v-select>
                         </v-col>
-                        <v-col cols="3" class="ma-0 pb-0" v-show="editable" v-if="!ver">
-                          <label  >NRO COMPROBANTE:</label>
+                        <v-col cols="3" class="ma-0 pb-0" v-show="efectivo">
+                          <label  v-show="editable" v-if="!ver" >NRO COMPROBANTE:</label>
                         </v-col>
-                        <v-col cols="3" v-show="editable" v-if="!ver">
+                        <v-col cols="3" v-show="efectivo">
                           <v-text-field
+                            v-show="editable" v-if="!ver"
                             v-model="data_payment.comprobante"
                             :outlined="editable"
                             :readonly="!editable"
                             dense
                           ></v-text-field>
                         </v-col>
-                        <v-col cols="6" class="ma-0 pb-0" v-show="editable" v-if="!ver">
+                        <v-col cols="6" class="ma-0 pb-0" >
                           <v-text-field
+                            v-show="editable" v-if="!ver"
                             v-model="data_payment.glosa"
                             :outlined="editable"
                             :readonly="!editable"
@@ -162,6 +165,7 @@ export default {
       id:2
       }
     ],
+    efectivo:false,
     loan_payment:{},
     payment_types:[],
     voucher_type:[],
@@ -201,6 +205,15 @@ export default {
     }
   },
   methods: {
+    Onchange(){
+      console.log('este es el dato'+this.data_payment.pago)
+        if(this.data_payment.pago==3)
+        {
+          this.efectivo= false
+        }else{
+          this.efectivo= true
+        }
+    },
     formatDate(key, date) {
       if (date) {
         this.dates[key].formatted = this.$moment(date).format('L')
