@@ -161,14 +161,14 @@ export default {
       async savePaymentTreasury() {
       try {
           console.log('entro a grabar tesoreria')
+               let res1 = await axios.patch(`loan_payment/${this.$route.query.loan_payment}`,{
+            validated:true
+          })
           let res = await axios.post(`loan_payment/${this.$route.query.loan_payment}/voucher`,{
             payment_type_id:this.data_payment.pago,
             voucher_type_id:2,
             voucher_number:this.data_payment.comprobante,
             description:this.data_payment.glosa
-          })
-          let res1 = await axios.patch(`loan_payment/${this.$route.query.loan_payment}`,{
-            validated:true
           })
             this.$router.push('/loanPayment')
       }catch (e) {
