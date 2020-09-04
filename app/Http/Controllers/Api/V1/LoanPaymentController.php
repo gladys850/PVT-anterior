@@ -12,6 +12,7 @@ use App\LoanPayment;
 use App\Voucher;
 use App\LoanState;
 use App\Affiliate;
+use App\LoanGlobalParameter;
 use App\Http\Requests\LoanPaymentsForm;
 use App\Http\Requests\VoucherForm;
 use App\Events\LoanFlowEvent;
@@ -265,31 +266,13 @@ class LoanPaymentController extends Controller
     {
         $loanPayment = LoanPayment::withTrashed()->where('id', '=', $id)->first();
         $loanPayment->restore();
-        if($loanPayment){
-            if($loanPayment->state_id == LoanState::whereName('Anulado')->first()->id){
-                $loanPayment->state_id = LoanState::whereName('Pendiente de Pago')->first()->id;
-                $loanPayment->update($loanPayment->toArray());
-                return $loanPayment;
-            }else{
-                abort(403, 'El registro a reactivar no está en estado Anulado');
-            }
-        }
-    }
-
-    public function changeStateEveryDay(){
-        $PendientePago = LoanState::whereName('Pendiente de Pago')->first()->id;
-        $state_anulado = LoanState::whereName('Anulado')->first();
-        $loanPayment = LoanPayment::where('state_id', $PendientePago)->get();
-        foreach($loanPayment as $loan_payment){
-            $loan_payment->state()->associate($state_anulado);
-            $loan_payment->save();
-            $loan_payment->delete();
-        }
+        return $loanPayment;
     }
 
     public function deleteCanceledPaymentRecord(){
-        $Anulado = LoanState::whereName('Anulado')->first()->id;
-        $loanPayment = LoanPayment::where('estimated_date','<=',Carbon::now()->subDay(15))->whereStateId($Anulado);
+        $PendientePago = LoanState::whereName('Pendiente de Pago')->first()->id;
+        $dias = LoanGlobalParameter::latest()->first()->date_delete_payment;
+        $loanPayment = LoanPayment::where('estimated_date','<=',Carbon::now()->subDay($dias))->whereStateId($PendientePago);
         $loanPayment->delete();
     }
 
