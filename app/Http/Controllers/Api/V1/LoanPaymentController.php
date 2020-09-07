@@ -142,11 +142,13 @@ class LoanPaymentController extends Controller
     */
     public function destroy(LoanPayment $loanPayment)
     {
-        $state = LoanState::whereName('Anulado')->first();
-        $loanPayment->state()->associate($state);
-        $loanPayment->save();
-        $loanPayment->delete();
-        return $loanPayment;
+        $PendientePago = LoanState::whereName('Pendiente de Pago')->first()->id;
+        if ($loanPayment->state_id != $PendientePago){
+            abort(403, 'El registro a eliminar no está pendiente de pago');
+        }else{
+            $loanPayment->delete();
+            return $loanPayment;
+        }
     }
 
     /** @group Tesoreria
@@ -265,6 +267,9 @@ class LoanPaymentController extends Controller
     public function reactivate($id)
     {
         $loanPayment = LoanPayment::withTrashed()->where('id', '=', $id)->first();
+        if(!$loanPayment){
+            abort(403, 'No existe el registro de pago a reactivar');
+        }
         $loanPayment->restore();
         return $loanPayment;
     }
