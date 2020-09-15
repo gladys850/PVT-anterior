@@ -72,7 +72,7 @@ class AffiliateController extends Controller
         return $data;
     }
 
-    /**
+     /**
     * Nuevo afiliado
     * Inserta nuevo afiliado
     * @bodyParam first_name string required Primer nombre. Example: JUAN
@@ -100,7 +100,12 @@ class AffiliateController extends Controller
     * @bodyParam date_derelict date Fecha de baja de la policía. Example: 2017-12-30
     * @bodyParam reason_derelict string Causa de baja de la policía. Example: Proceso administrativo
     * @bodyParam due_date date Fecha de vencimiento del CI. Example: 2018-01-05
-    * @bodyParam is_duedate_undefined /#afiliadosA. Example: 26271503
+    * @bodyParam is_duedate_undefined boolean Si la fecha de vencimiento de CI es indefinido . Example: 0
+    * @bodyParam change_date date Fecha de cambio. Example: 2015-02-03
+    * @bodyParam phone_number integer Número de teléfono fijo. Example: 2254101
+    * @bodyParam cell_phone_number array Números de celular. Example: [76543210,65432101]
+    * @bodyParam afp boolean Si el afiliado aporta a AFP(1) o SENASIR(0). Example: 1
+    * @bodyParam nua integer Número NUA. Example: 26271503
     * @bodyParam item integer Número de ítem policial. Example: 32706
     * @bodyParam service_years integer Años de servicio. Example: 6
     * @bodyParam service_months integer Meses de servicio. Example: 4
@@ -141,7 +146,7 @@ class AffiliateController extends Controller
     * @bodyParam city_identity_card_id integer ID de ciudad del CI. Example: 4
     * @bodyParam civil_status string Estado civil (S,C,D,V). Example: C
     * @bodyParam identity_card string Carnet de identidad. Example: 165134-1L
-    * @bodyParam affiliate_stat@group Observaciones de Afiliadoe_id integer ID de estado de afiliado. Example: 2
+    * @bodyParam affiliate_state_id integer ID de estado de afiliado. Example: 2
     * @bodyParam degree_id integer ID del grado policial. Example: 4
     * @bodyParam unit_id integer ID de unidad de destino. Example: 7
     * @bodyParam category_id integer ID de categoría. Example: 9
@@ -540,7 +545,7 @@ class AffiliateController extends Controller
     * @bodyParam original.message string required Mensaje de la observación original. Example: Subsanable en una semana
     * @bodyParam original.date date required Fecha de la observación original. Example: 2020-04-14 21:16:52
     * @bodyParam original.enabled boolean required Estado de la observación original. Example: false
-    * @bodyParam update.enabled boolean Estado de la $affiliate = Affiliate::whereIdentity_card($request->identity_card)->first();observación a actualizar. Example: true
+    * @bodyParam update.enabled boolean Estado de la observación a actualizar. Example: true
     * @authenticated
     * @responseFile responses/affiliate/update_observation.200.json
     */
