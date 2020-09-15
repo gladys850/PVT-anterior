@@ -72,7 +72,7 @@ class AffiliateController extends Controller
         return $data;
     }
 
-     /**
+    /**
     * Nuevo afiliado
     * Inserta nuevo afiliado
     * @bodyParam first_name string required Primer nombre. Example: JUAN
