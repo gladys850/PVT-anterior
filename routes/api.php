@@ -24,6 +24,7 @@ Route::group([
         Route::delete('auth', 'Api\V1\AuthController@logout');
         Route::get('procedure_modality/{procedure_modality}/requirement', 'Api\V1\ProcedureModalityController@get_requirements');
         Route::apiResource('calculator', 'Api\V1\CalculatorController')->only('store');
+        Route::post('simulator','Api\V1\CalculatorController@simulator');
         Route::apiResource('role', 'Api\V1\RoleController')->only('index', 'show');
         Route::apiResource('permission', 'Api\V1\PermissionController')->only('index');
         Route::apiResource('loan_global_parameter', 'Api\V1\LoanGlobalParameterController')->only('index', 'show', 'store', 'update', 'destroy');
