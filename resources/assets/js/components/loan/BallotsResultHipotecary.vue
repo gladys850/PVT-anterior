@@ -1,17 +1,17 @@
 <template>
-  <v-container fluid>
+  <v-container fluid class="py-0">
     <ValidationObserver ref="observer">
       <v-form>
         <!--v-card-->
           <v-row justify="center">
             <v-col cols="12">
-              <v-container class="py-0" v-show="datos.procedure_type_id!=12">
+              <v-container class="py-0">
                 <v-row>
                   <slot name="title"></slot>
                   <br />
-                  <v-col cols="12" md="3">
+                  <v-col cols="12" md="3"  class="py-0">
                     <v-layout row wrap>
-                      <v-flex xs12 class="px-2">
+                      <v-flex xs12 class="px-1">
                         <fieldset class="pa-3">
                       <ValidationProvider v-slot="{ errors }" name="plazo" :rules="'numeric|min_value:'+datos.minimum_term+'|max_value:'+datos.maximum_term" mode="aggressive">
                       <v-text-field
@@ -33,38 +33,38 @@
                       </v-flex>
                     </v-layout>
                   </v-col>
-                  <v-col cols="12" md="4">
+                  <v-col cols="12" md="9" class="py-0">
                     <v-card-text class="py-0">
                       <v-layout row wrap>
-                        <v-flex xs12 class="px-2">
-                          <fieldset class="pa-3">
-                            <p>PROMEDIO LIQUIDO PAGABLE:{{ calculos.payable_liquid_calculated}}</p>
-                            <p>TOTAL BONOS: {{ calculos.bonus_calculated }}</p>
-                            <p>LIQUIDO PARA CALIFICACION: {{ calculos.liquid_qualification_calculated}}</p>
+                        <v-flex xs12 class="px-1">
+                          <fieldset class="pa-2">
+                            <p class="success--text font-weight-black py-0 mb-0">NOMBRE DEL TITULAR : STEPHANIE LUNA QUEVEDO</p>
+                            <p class="py-0 mb-0">PROMEDIO LIQUIDO PAGABLE:{{ calculos.payable_liquid_calculated }}</p>
+                            <p class="py-0 mb-0">TOTAL BONOS: {{ calculos.bonus_calculated+ "  " }}LIQUIDO PARA CALIFICACION: {{ calculos.liquid_qualification_calculated}}</p>
+                            <p class="success--text font-weight-black py-0 mb-0">NOMBRE DEL TITULAR : STEPHANIE LUNA QUEVEDO</p>
+                            <p class="py-0 mb-0">PROMEDIO LIQUIDO PAGABLE:{{ calculos.payable_liquid_calculated }}</p>
+                            <p class="py-0 mb-0">TOTAL BONOS: {{ calculos.bonus_calculated+ "  " }}LIQUIDO PARA CALIFICACION: {{ calculos.liquid_qualification_calculated}}</p>
                           </fieldset>
                         </v-flex>
                       </v-layout>
                     </v-card-text>
                   </v-col>
-                  <v-col cols="12" md="4">
+                  <v-col cols="12" md="12" class="pl-1">
                     <v-card-text class="py-0">
                       <v-layout row wrap>
-                        <v-flex xs12 class="px-2">
+                        <v-flex xs12 class="px-0">
                           <fieldset class="pa-3">
-                            <p>CALCULO DE CUOTA: {{ calculos.quota_calculated }}</p>
-                            <p>INDICE DE ENDEUDAMIENTO: {{calculos.indebtedness_calculated }}</p>
-                            <p class="success--text font-weight-black">MONTO MAXIMO SUGERIDO : {{calculos.amount_maximum_suggested}}</p>
+                            <p class="py-0 mb-0">CALCULO DE CUOTA TOTAL: {{ calculos.quota_calculated }}</p>
+                            <p class="success--text font-weight-black py-0 mb-0">NOMBRE DEL TITULAR : STEPHANIE LUNA QUEVEDO</p>
+                              <p class="py-0 mb-0">INDICE DE ENDEUDAMIENTO: {{calculos.indebtedness_calculated }}</p>
+                            <p class="py-0 mb-0">PORCENTAJE DE PAGO : {{calculos.amount_maximum_suggested}}</p>
                           </fieldset>
                         </v-flex>
                       </v-layout>
                     </v-card-text>
                   </v-col>
-                  <v-col cols="12" md="1" class="ma-0 pa-0"></v-col>
-                </v-row>
+                 </v-row>
               </v-container>
-              <BallotsResultHipotecary
-              v-show="datos.procedure_type_id==12"
-              :datos.sync="datos"/>
             </v-col>
           </v-row>
         <!--/v-card-->
@@ -73,22 +73,28 @@
   </v-container>
 </template>
 <script>
-
-import BallotsResultHipotecary from '@/components/loan/BallotsResultHipotecary'
 export default {
-  name: "loan-requirement",
-   data: () => ({
-    ver:false
+  name: "ballots-result-hipotecary",
+  data: () => ({
+    datos: {},
+    bonos: {},
+    payable_liquid: {},
+    modalidad: {},
+    calculos: {},
+    editar:true,
+    monto:null,
+    plazo:null,
+    interval:[],
+    loanTypeSelected:null,
+    visible:false,
+    num_type:9,
+  
   }),
   props: {
-    procedure_type: {
-      type: Number,
-      required: true
-    },
-    datos: {
+   datos: {
       type: Object,
       required: true
-    },
+    },/*
     bonos: {
       type: Array,
       required: true
@@ -108,21 +114,7 @@ export default {
     calculos: {
       type: Object,
       required: true
-    }
-  },
-    components: {
-    BallotsResultHipotecary
-  },
- computed: {
-    ver1() {
-      if(this.datos.procedure_type_id==12)
-      {
-        return true
-      }else
-      {
-        return false
-      }
-    }
+    }*/
   },
   methods: {
     async Calculator() {

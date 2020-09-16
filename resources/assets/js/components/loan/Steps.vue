@@ -18,7 +18,7 @@
           <v-stepper-step editable
             :key="`${3}-step`"
             :complete="e1 > 3"
-            :step="3">Garantes 
+            :step="3">Garantia
           </v-stepper-step>
           <v-divider v-if="3 !== steps" :key="3" ></v-divider>
           <v-stepper-step editable
@@ -55,6 +55,7 @@
               :contributions1.sync="contributions1"
               :modalidad.sync="modalidad"
               :prueba.sync="prueba"
+              :procedure_type.sync="procedure_type"
             />
             <v-container class="py-0">
               <v-row>
@@ -79,12 +80,15 @@
                   :bonos.sync="bonos"
                   :payable_liquid.sync="payable_liquid"
                   :calculos.sync="calculos"
-                  :modalidad.sync="modalidad">
+                  :modalidad.sync="modalidad"
+                  :modalities.sync="modalities"
+                  :prueba.sync="prueba" 
+                  :procedure_type.sync="procedure_type">
                     <template v-slot:title>
                       <v-col cols="12" class="py-0">Resultado para el Préstamo</v-col>
                     </template>
                 </BallotsResult>
-              </v-card>            
+              </v-card>
             <v-container class="py-0">
               <v-row>
                 <v-spacer></v-spacer><v-spacer> </v-spacer> <v-spacer></v-spacer>
@@ -105,6 +109,7 @@
           <v-card color="grey lighten-1">
             <h3 class="text-uppercase text-center">{{modalidad.name}}</h3>
             <Guarantor
+              :datos.sync="datos"
               :modalidad_guarantors.sync="modalidad.guarantors"
               :prueba.sync="prueba"
               :calculos.sync="calculos"
@@ -234,6 +239,7 @@ export default {
    data: () => ({
     bus: new Vue(),
     e1: 1,
+    procedure_type:9,
     steps: 6,
     modalities: [],
     prueba: [],
