@@ -5,12 +5,11 @@ namespace App\Http\Requests;
 use App\ProcedureModality;
 use App\Rules\LoanIntervalAmount;
 use App\Rules\LoanIntervalTerm;
-use App\Rules\LoanParameterTicket;
 
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class CalculatorForm extends FormRequest
+class SimulatorForm extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -37,15 +36,19 @@ class CalculatorForm extends FormRequest
             ];
         }
         return[
-            'affiliate_id'=> ['required', 'integer', 'exists:affiliates,id'],
-            'parent_loan_id' => ['integer', 'nullable', 'exists:loans,id'],
-            'contributions' => ['required', 'array', 'min:1'],
-            'contributions.*.payable_liquid' => ['required'],
-            'contributions.*.border_bonus' => ['required'],
-            'contributions.*.seniority_bonus' => ['required'],
-            'contributions.*.public_security_bonus' => ['required'],
-            'contributions.*.east_bonus' => ['required'],
+            'amount_requested'=> ['nullable', 'required_if:guarantor,false', 'integer', 'min:200', 'max:700000', new LoanIntervalAmount($procedure_modality)],
+            'months_term'=> ['nullable', 'required_if:guarantor,false', 'integer', 'min:1', 'max:240', new LoanIntervalTerm($procedure_modality)],
+            'guarantor' => ['nullable', 'boolean'],
+            'quota_lender' => ['nullable', 'required_if:guarantor,true'],
         ];
     }
 
+    public function messages()
+    {
+        return [
+            'quota_lender.required_if' => 'La cuota total del titular es requerido',
+            'amount_requested.required_if' => 'El monto solicitado es requerido',
+            'months_term.required_if' => 'El plazo solicitado es requerido',
+        ];
+    }
 }
