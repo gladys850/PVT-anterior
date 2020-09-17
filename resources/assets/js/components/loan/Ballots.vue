@@ -40,7 +40,7 @@
                   </v-col>
                 </v-row>
               </v-container>
-              <v-container class="py-0">
+              <v-container class="py-0" v-show="!hipotecario">
                 <v-row>
                   <v-col cols="12" md="12" class="text-center" >
                     BOLETAS DE PAGO
@@ -113,6 +113,9 @@
                   </v-col>
                 </v-row>
               </v-container>
+              <BallotsHipotecary
+                v-show="hipotecario"
+                :contributions1.sync="contributions1"/>
             </v-card>
           </v-col>
         </v-row>
@@ -121,6 +124,7 @@
 </template>
 <script>
 
+import BallotsHipotecary from '@/components/loan/BallotsHipotecary'
 export default { 
   name: "ballots",
   data: () => ({
@@ -131,8 +135,13 @@ export default {
     loanTypeSelected:null,
     visible:false,
     num_type:9,
+    hipotecario:false
   }),
    props: {
+    procedure_type: {
+      type: Number,
+      required: true
+    },
     contributions1: {
       type: Array,
       required: true
@@ -162,6 +171,9 @@ export default {
       required: true
     },
   },
+    components: {
+    BallotsHipotecary
+  },
    beforeMount() {
     this.getLoanIntervals()
   },
@@ -174,6 +186,13 @@ export default {
       for (this.i = 0; this.i< this.interval.length; this.i++) {
         if(this.loanTypeSelected==this.interval[this.i].procedure_type_id)
         {
+          if(this.loanTypeSelected==12)
+          {
+            this.hipotecario=true
+          }
+          else{
+            this.hipotecario=false
+          }
           this.monto= this.interval[this.i].minimum_amount+' - '+this.interval[this.i].maximum_amount,
           this.plazo= this.interval[this.i].minimum_term+' - '+this.interval[this.i].maximum_term
           //intervalos es el monto, plazo y modalidad y id de una modalidad
@@ -183,6 +202,8 @@ export default {
           this.intervalos.minimum_term= this.interval[this.i].minimum_term
           this.intervalos.procedure_type_id= this.loanTypeSelected
           this.num_type=this.loanTypeSelected
+          this.procedure_type=this.loanTypeSelected
+          
                this.getLoanModality(this.$route.query.affiliate_id)
           this.getBallots(this.$route.query.affiliate_id)
           console.log('este es la modalidad del intervalo'+this.num_type)
