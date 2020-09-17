@@ -20,35 +20,38 @@ class CalculatorController extends Controller
 {
     /**
     * Liquido para calificación
-    * @bodyParam liquid_calification[0].payable_liquid integer required Líquido pagable. Example: 2000
-    * @bodyParam procedure_modality_id integer required ID de modalidad. Example: 41
-    * @bodyParam affiliate_id integer required ID del afiliado. Example: 9389
-    * @bodyParam parent_loan_id integer ID de Préstamo Padre. Example: 6
-    * @bodyParam contributions[0].payable_liquid integer required Líquido pagable. Example: 2000
-    * @bodyParam contributions[0].seniority_bonus integer required Bono Cargo . Example: 0.00
-    * @bodyParam contributions[0].border_bonus integer required Bono Frontera . Example: 0.00
-    * @bodyParam contributions[0].public_security_bonus integer required Bono Seguridad Ciudadana . Example: 0.00
-    * @bodyParam contributions[0].east_bonus integer required Bono Oriente. Example: 0.00
-    * @bodyParam contributions[1].payable_liquid integer Líquido pagable. Example: 2270
-    * @bodyParam contributions[1].seniority_bonus integer Bono Cargo . Example: 0.00
-    * @bodyParam contributions[1].border_bonus integer Bono Frontera . Example: 0.00
-    * @bodyParam contributions[1].public_security_bonus integer Bono Seguridad Ciudadana . Example: 0.00
-    * @bodyParam contributions[1].east_bonus integer Bono Oriente. Example: 0.00
-    * @bodyParam contributions[2].payable_liquid integer Líquido pagable. Example: 1563
-    * @bodyParam contributions[2].seniority_bonus integer Bono Cargo . Example: 0.00
-    * @bodyParam contributions[2].border_bonus integer Bono Frontera . Example: 0.00
-    * @bodyParam contributions[2].public_security_bonus integer Bono Seguridad Ciudadana . Example: 0.00
-    * @bodyParam contributions[2].east_bonus integer Bono Oriente. Example: 0.00
+    * @bodyParam liquid_calification[0].affiliate_id integer required ID del afiliado. Example: 9389
+    * @bodyParam liquid_calification[0].parent_loan_id integer ID de Préstamo Padre. Example: 6
+    * @bodyParam liquid_calification[0].contributions[0].payable_liquid integer required Líquido pagable. Example: 2000
+    * @bodyParam liquid_calification[0].contributions[0].seniority_bonus integer required Bono Cargo . Example: 0
+    * @bodyParam liquid_calification[0].contributions[0].border_bonus integer required Bono Frontera . Example: 0
+    * @bodyParam liquid_calification[0].contributions[0].public_security_bonus integer required Bono Seguridad Ciudadana . Example: 300
+    * @bodyParam liquid_calification[0].contributions[0].east_bonus integer required Bono Oriente. Example: 0
+    * @bodyParam liquid_calification[0].contributions[1].payable_liquid integer Líquido pagable. Example: 3000
+    * @bodyParam liquid_calification[0].contributions[1].seniority_bonus integer Bono Cargo . Example: 0
+    * @bodyParam liquid_calification[0].contributions[1].border_bonus integer Bono Frontera . Example: 0
+    * @bodyParam liquid_calification[0].contributions[1].public_security_bonus integer Bono Seguridad Ciudadana . Example: 300
+    * @bodyParam liquid_calification[0].contributions[1].east_bonus integer Bono Oriente. Example: 0
+    * @bodyParam liquid_calification[0].contributions[2].payable_liquid integer Líquido pagable. Example: 3500
+    * @bodyParam liquid_calification[0].contributions[2].seniority_bonus integer Bono Cargo . Example: 0
+    * @bodyParam liquid_calification[0].contributions[2].border_bonus integer Bono Frontera . Example: 0
+    * @bodyParam liquid_calification[0].contributions[2].public_security_bonus integer Bono Seguridad Ciudadana . Example: 300
+    * @bodyParam liquid_calification[0].contributions[2].east_bonus integer Bono Oriente. Example: 0
+    * @bodyParam liquid_calification[1].affiliate_id integer required ID del afiliado. Example: 1
+    * @bodyParam liquid_calification[1].parent_loan_id integer ID de Préstamo Padre. Example: 6
+    * @bodyParam liquid_calification[1].contributions[0].payable_liquid integer required Líquido pagable. Example: 2000
+    * @bodyParam liquid_calification[1].contributions[0].seniority_bonus integer required Bono Cargo . Example: 0
+    * @bodyParam liquid_calification[1].contributions[0].border_bonus integer required Bono Frontera . Example: 0
+    * @bodyParam liquid_calification[1].contributions[0].public_security_bonus integer required Bono Seguridad Ciudadana . Example: 300
+    * @bodyParam liquid_calification[1].contributions[0].east_bonus integer required Bono Oriente. Example: 0
     * @authenticated
     * @responseFile responses/calculator/store.200.json
     */
-    //public function store(CalculatorForm $request)
-    public function store(Request $request)
+    public function store(CalculatorForm $request)
     {
         $liquid_calification = $request->liquid_calification;
         $liquid_calificated = collect([]);
         foreach($liquid_calification as $liq){
-            $procedure_modality = ProcedureModality::findOrFail($liq['procedure_modality_id']);
             $affiliate = Affiliate::findOrFail($liq['affiliate_id']);
             if($request->has('parent_loan_id')){
                 $parent_loan = Loan::findOrFail($liq['parent_loan_id']);
