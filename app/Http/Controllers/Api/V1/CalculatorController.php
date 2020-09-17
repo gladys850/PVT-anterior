@@ -9,7 +9,6 @@ use Util;
 use App\ProcedureModality;
 use App\Loan;
 use App\Http\Requests\CalculatorForm;
-use App\Cosigner;
 
 
 /** @group Préstamos

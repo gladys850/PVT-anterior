@@ -1,6 +1,6 @@
 <template>
   <v-container fluid >
-    <v-row justify="center">
+    <v-row justify="center"  v-show="datos.procedure_type_id!=12">
          <v-col cols="12" class="py-0" >
           <v-card v-show="show_garante">
             <v-container v-if="modalidad_guarantors==0">
@@ -216,9 +216,14 @@
           </v-card>
         </v-col>
       </v-row>
+      <v-card>
+        <HipotecaryData v-show="datos.procedure_type_id==12"/>
+      </v-card>
     </v-container>
 </template>
 <script>
+
+import HipotecaryData from '@/components/loan/HipotecaryData'
   export default {
   name: "loan-information",
    props: {
@@ -232,6 +237,10 @@
     },
     prueba: {
       type: Array,
+      required: true
+    },
+    datos: {
+      type: Object,
       required: true
     },
     calculos: {
@@ -299,6 +308,9 @@
     
  
   }),
+     components: {
+   HipotecaryData
+  },
  
   computed: {
  
