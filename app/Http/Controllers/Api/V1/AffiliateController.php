@@ -613,16 +613,23 @@ class AffiliateController extends Controller
         $request->validate([
             'identity_card' => 'required|string'
         ]);
+        $b = array();
         $affiliate = Affiliate::whereIdentity_card($request->identity_card)->first();
         if(isset($affiliate)){
-            return self::append_data($affiliate, true);
+            $b["state"]=true;
+            $b["affiliate"]=$affiliate;
+            return json_encode($b);
+            //return self::append_data($affiliate, true);
         }else{
             $affiliate = Spouse::whereIdentity_card($request->identity_card)->first();
             if(isset($affiliate)){
-                return self::append_data($affiliate, true);
+                $b["state"]=true;
+                $b["affiliate"]=$affiliate;
+                return json_encode($b);
             }
             else{
-                return abort(403,"No se encontraron resultados");
+                $b["state"]=false;
+                return json_encode($b);
             }
         }
     }

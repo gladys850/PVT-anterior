@@ -72,7 +72,7 @@ Route::group([
             Route::patch('affiliate/{affiliate}/observation','Api\V1\AffiliateController@update_observation');
             Route::delete('affiliate/{affiliate}/observation','Api\V1\AffiliateController@unset_observation');
             Route::post('affiliate_guarantor', 'Api\V1\AffiliateController@test_guarantor');
-            Route::get('existence','Api\V1\AffiliateController@get_existence');
+            Route::get('affiliate_existence','Api\V1\AffiliateController@get_existence');
 
         });
         Route::group([
