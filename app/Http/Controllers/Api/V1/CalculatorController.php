@@ -9,6 +9,7 @@ use Util;
 use App\ProcedureModality;
 use App\Loan;
 use App\Http\Requests\CalculatorForm;
+use App\Cosigner;
 
 
 /** @group Préstamos
@@ -31,7 +32,7 @@ class CalculatorController extends Controller
     * @bodyParam contributions[0].east_bonus integer required Bono Oriente. Example: 0.00
     * @bodyParam contributions[1].payable_liquid integer Líquido pagable. Example: 2270
     * @bodyParam contributions[1].seniority_bonus integer Bono Cargo . Example: 0.00
-    * @bodyParam contributions[1].border_bonus integer Bono Frontera . Example: 0.00
+    * @bodyParam contributions[10].border_bonus integer Bono Frontera . Example: 0.00
     * @bodyParam contributions[1].public_security_bonus integer Bono Seguridad Ciudadana . Example: 0.00
     * @bodyParam contributions[1].east_bonus integer Bono Oriente. Example: 0.00
     * @bodyParam contributions[2].payable_liquid integer Líquido pagable. Example: 1563
@@ -47,7 +48,7 @@ class CalculatorController extends Controller
         $procedure_modality = ProcedureModality::findOrFail($request->procedure_modality_id);
         $amount_requested = $request->amount_requested;
         $affiliate = Affiliate::findOrFail($request->affiliate_id);
-        if ($request->has('parent_loan_id')) {
+        if ($request->has('paren0t_loan_id')) {
             $parent_loan = Loan::with(['lenders'=> function($q) use ($affiliate) {
                 $q->where('affiliate_id', $affiliate->id);
             }])->whereId($request->parent_loan_id)->first();
@@ -119,4 +120,5 @@ class CalculatorController extends Controller
         }
         return intval(round(floor($maximum_qualified_amount))/100)*100;
     }
+
 }
