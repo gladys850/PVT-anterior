@@ -23,7 +23,9 @@ Route::group([
         Route::patch('auth', 'Api\V1\AuthController@refresh');
         Route::delete('auth', 'Api\V1\AuthController@logout');
         Route::get('procedure_modality/{procedure_modality}/requirement', 'Api\V1\ProcedureModalityController@get_requirements');
-        Route::apiResource('calculator', 'Api\V1\CalculatorController')->only('store');
+        Route::post('calculator', 'Api\V1\CalculatorController@calculator');//se debe eliminar una ves arreglado front
+        Route::apiResource('liquid_calificated', 'Api\V1\CalculatorController')->only('store');
+        Route::post('simulator','Api\V1\CalculatorController@simulator');
         Route::apiResource('role', 'Api\V1\RoleController')->only('index', 'show');
         Route::apiResource('permission', 'Api\V1\PermissionController')->only('index');
         Route::apiResource('loan_global_parameter', 'Api\V1\LoanGlobalParameterController')->only('index', 'show', 'store', 'update', 'destroy');
@@ -69,6 +71,7 @@ Route::group([
             Route::patch('affiliate/{affiliate}/observation','Api\V1\AffiliateController@update_observation');
             Route::delete('affiliate/{affiliate}/observation','Api\V1\AffiliateController@unset_observation');
             Route::post('affiliate_guarantor', 'Api\V1\AffiliateController@test_guarantor');
+            Route::get('existence','Api\V1\AffiliateController@get_existence');
 
         });
         Route::group([

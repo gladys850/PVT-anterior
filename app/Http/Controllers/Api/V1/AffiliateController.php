@@ -599,4 +599,32 @@ class AffiliateController extends Controller
             abort(404, 'La observación fue modificada, no se puede eliminar');
         }
     }
+
+
+    /**
+    * Existencia del afiliado
+    * Devuelve si la persona esta afiliado a Muserpol
+    * @bodyParam identity_card string required Carnet de identidad. Example: 165134
+    * @authenticated
+    * @responseFile responses/affiliate/get_existence.200.json
+    */
+    public function get_existence(Request $request)
+    {
+        $request->validate([
+            'identity_card' => 'required|string'
+        ]);
+        $affiliate = Affiliate::whereIdentity_card($request->identity_card)->first();
+        if(isset($affiliate)){
+            return self::append_data($affiliate, true);
+        }else{
+            $affiliate = Spouse::whereIdentity_card($request->identity_card)->first();
+            if(isset($affiliate)){
+                return self::append_data($affiliate, true);
+            }
+            else{
+                return abort(403,"No se encontraron resultados");
+            }
+        }
+    }
+    
 }
