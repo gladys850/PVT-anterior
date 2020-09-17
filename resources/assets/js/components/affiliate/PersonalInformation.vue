@@ -1,153 +1,178 @@
 <template>
-  <v-container fluid >
+  <v-container fluid>
     <v-row justify="center">
-      <v-col cols="12" md="8" >
-        <v-container  class="ma-0 pa-0" >
-          <v-card >
-            <v-row  class="ma-0 pa-0">
+      <v-col cols="12" md="8">
+        <v-container class="ma-0 pa-0">
+          <v-card>
+            <v-row class="ma-0 pa-0">
               <v-col cols="12" md="6">
-                    <v-toolbar-title>DOMICILIO</v-toolbar-title>
-                  </v-col>
-                  <v-col cols="12" md="3">
-                    <v-tooltip top v-if="editable && permission.secondary">
-                      <template v-slot:activator="{ on }">
-                        <v-btn
-                          fab
-                          dark
-                          x-small
-                          v-on="on"
-                          color="info"
-                          @click.stop="bus.$emit('openDialog', { edit:true })"
-                        >
-                          <v-icon>mdi-plus</v-icon>
-                        </v-btn>
-                      </template>
-                    
-                      <span>Añadir Dirección</span>
-                    </v-tooltip>
-                  </v-col>
-                  <v-col cols="12">
-                  <v-data-table
-                      :headers="headers"
-                      :items="addresses"
-                      hide-default-footer
-                      class="elevation-1"
-                      v-if="cities.length > 0"
-                  >
+                <v-toolbar-title>DOMICILIO</v-toolbar-title>
+              </v-col>
+              <v-col cols="12" md="3">
+                <v-tooltip top v-if="editable && permission.secondary">
+                  <template v-slot:activator="{ on }">
+                    <v-btn
+                      fab
+                      dark
+                      x-small
+                      v-on="on"
+                      color="info"
+                      @click.stop="bus.$emit('openDialog', { edit:true })"
+                    >
+                      <v-icon>mdi-plus</v-icon>
+                    </v-btn>
+                  </template>
+
+                  <span>Añadir Dirección</span>
+                </v-tooltip>
+              </v-col>
+              <v-col cols="12">
+                <v-data-table
+                  :headers="headers"
+                  :items="addresses"
+                  hide-default-footer
+                  class="elevation-1"
+                  v-if="cities.length > 0"
+                >
                   <template v-slot:item="props">
-                  <tr>
-                    <td>{{ cities.find(o => o.id == props.item.city_address_id).name }}</td>
+                    <tr>
+                      <td>{{ cities.find(o => o.id == props.item.city_address_id).name }}</td>
                       <td>{{ props.item.zone }}</td>
                       <td>{{ props.item.street }}</td>
                       <td>{{ props.item.number_address }}</td>
                       <td v-show="editable && permission.secondary">
-                        <v-btn text icon color="warning" @click.stop="bus.$emit('openDialog', {...props.item, ...{edit:true}})">
+                        <v-btn
+                          text
+                          icon
+                          color="warning"
+                          @click.stop="bus.$emit('openDialog', {...props.item, ...{edit:true}})"
+                        >
                           <v-icon>mdi-pencil</v-icon>
                         </v-btn>
-                        <v-btn text icon color="error" @click.stop="bus.$emit('openRemoveDialog', `address/${props.item.id}`)">
+                        <v-btn
+                          text
+                          icon
+                          color="error"
+                          @click.stop="bus.$emit('openRemoveDialog', `address/${props.item.id}`)"
+                        >
                           <v-icon>mdi-delete</v-icon>
                         </v-btn>
                       </td>
                       <td v-show="!editable">
-                        <v-btn v-if="props.item.latitude && props.item.longitude" text icon color="info" @click.stop="bus.$emit('openDialog', {...props.item, ...{edit: false}})">
+                        <v-btn
+                          v-if="props.item.latitude && props.item.longitude"
+                          text
+                          icon
+                          color="info"
+                          @click.stop="bus.$emit('openDialog', {...props.item, ...{edit: false}})"
+                        >
                           <v-icon>mdi-google-maps</v-icon>
                         </v-btn>
                       </td>
                     </tr>
                   </template>
-                  </v-data-table>
-                  </v-col>
+                </v-data-table>
+              </v-col>
             </v-row>
           </v-card>
-          <ValidationObserver ref="observer">
-          <v-form>
           <v-card>
             <v-row class="ma-0 pa-0">
-             <v-col cols="12" class="py-2">
-              <v-toolbar-title>CIUDAD EXPEDICIÓN CI.</v-toolbar-title>
-            </v-col>
+              <v-col cols="12" class="py-2">
+                <v-toolbar-title>CIUDAD EXPEDICIÓN CI.</v-toolbar-title>
+              </v-col>
               <v-col cols="12" md="6">
-                      <v-text-field
-                        dense
-                        v-model="affiliate.identity_card"
-                        label="Cédula de Identidad"
-                        readonly
-                      ></v-text-field>
-                    </v-col>
-                    <v-col cols="12" md="6" >
-                      <ValidationProvider v-slot="{ errors }" vid="city_identity_card_id" name="Ciudad de Expedición" rules="required|integer|min:1">
-                      <v-select
-                        dense
-                        :error-messages="errors"
-                        :items="cities"
-                        item-text="name"
-                        item-value="id"
-                        :loading="loading"
-                        label="Ciudad de Expedición"
-                        v-model="affiliate.city_identity_card_id"
-                        :readonly="!editable || !permission.secondary"
-                        :outlined="editable && permission.secondary"
-                        :disabled="editable && !permission.secondary"
-                      ></v-select>
-                      </ValidationProvider>
-                    </v-col>
+                <v-text-field
+                  dense
+                  v-model="affiliate.identity_card"
+                  label="Cédula de Identidad"
+                  readonly
+                ></v-text-field>
+              </v-col>
+              <v-col cols="12" md="6">
+                <v-select
+                  dense
+                  :items="cities"
+                  item-text="name"
+                  item-value="id"
+                  :loading="loading"
+                  label="Ciudad de Expedición"
+                  v-model="affiliate.city_identity_card_id"
+                  :readonly="!editable || !permission.secondary"
+                  :outlined="editable && permission.secondary"
+                  :disabled="editable && !permission.secondary"
+                ></v-select>
+              </v-col>
             </v-row>
           </v-card>
-          </v-form>
-          </ValidationObserver>
         </v-container>
       </v-col>
       <v-col cols="12" md="3">
-        <v-container  class="ma-0 pa-0">
+        <v-container class="ma-0 pa-0">
           <ValidationObserver ref="observer">
-          <v-form>
-          <v-card>
-            <v-col cols="12" class="py-2" >
-              <v-toolbar-title>TELÉFONOS</v-toolbar-title>
-            </v-col>
-            <v-col cols="12"  class="py-0" >
-              <ValidationProvider v-slot="{ errors }" vid="celular1" name="celular1" rules="min:1|max:12" mode="aggressive">
-              <v-text-field
-                :error-messages="errors"
-                dense
-                v-model="cel[0]"
-                label="Celular 1"
-                :readonly="!editable || !permission.secondary"
-                :outlined="editable && permission.secondary"
-                :disabled="editable && !permission.secondary"
-                @change="updateCelular()"
-              ></v-text-field>
-              </ValidationProvider>
-            </v-col>
-            <v-col cols="12" class="py-0" >
-              <ValidationProvider v-slot="{ errors }" vid="celular" name="celular" rules="min:1|max:12" mode="aggressive">
-              <v-text-field class = "text-right"
-                :error-messages="errors"
-                dense
-                v-model="cel[1]"
-                label="Celular 2"
-                :readonly="!editable || !permission.secondary"
-                :outlined="editable && permission.secondary"
-                :disabled="editable && !permission.secondary" 
-                @change="updateCelular()"
-              ></v-text-field>
-              </ValidationProvider>
-            </v-col>
-            <v-col cols="12" class="py-0" >
-              <ValidationProvider v-slot="{ errors }" vid="telefono" name="telefono" rules="min:1|max:20" mode="aggressive">
-              <v-text-field
-                :error-messages="errors"
-                dense
-                v-model="affiliate.phone_number"
-                label="Fijo"
-                :readonly="!editable || !permission.secondary"
-                :outlined="editable && permission.secondary"
-                :disabled="editable && !permission.secondary" 
-              ></v-text-field>
-              </ValidationProvider>
-            </v-col>
-          </v-card>
-          </v-form>
+            <v-form>
+              <v-card>
+                <v-col cols="12" class="py-2">
+                  <v-toolbar-title>TELÉFONOS</v-toolbar-title>
+                </v-col>
+                <v-col cols="12" class="py-0">
+                  <ValidationProvider
+                    v-slot="{ errors }"
+                    vid="celular1"
+                    name="celular1"
+                    rules="min:1|max:20"
+                  >
+                    <v-text-field
+                      :error-messages="errors"
+                      dense
+                      v-model="getCelular[0]"
+                      label="Celular 1"
+                      @change="updateCelular()"
+                      :readonly="!editable || !permission.secondary"
+                      :outlined="editable && permission.secondary"
+                      :disabled="editable && !permission.secondary"
+                    ></v-text-field>
+                  </ValidationProvider>
+                </v-col>
+                <v-col cols="12" class="py-0">
+                  <ValidationProvider
+                    v-slot="{ errors }"
+                    vid="celular"
+                    name="celular"
+                    rules="min:1|max:20"
+                  >
+                    <v-text-field
+                      class="text-right"
+                      :error-messages="errors"
+                      dense
+                      v-model="getCelular[1]"
+                      label="Celular 2"
+                      @change="updateCelular()"
+                      :readonly="!editable || !permission.secondary"
+                      :outlined="editable && permission.secondary"
+                      :disabled="editable && !permission.secondary"
+                    ></v-text-field>
+                  </ValidationProvider>
+                </v-col>
+                <v-col cols="12" class="py-0">
+                  <ValidationProvider
+                    v-slot="{ errors }"
+                    vid="telefono"
+                    name="telefono"
+                    rules="min:1|max:20"
+                  >
+                    <v-text-field
+                      :error-messages="errors"
+                      dense
+                      v-model="affiliate.phone_number"
+                      label="Fijo"
+                      :readonly="!editable || !permission.secondary"
+                      :outlined="editable && permission.secondary"
+                      :disabled="editable && !permission.secondary"
+                    ></v-text-field>
+                  </ValidationProvider>
+                </v-col>
+              </v-card>
+            </v-form>
           </ValidationObserver>
         </v-container>
       </v-col>
@@ -173,7 +198,7 @@
             <span>Cancelar</span>
           </div>
         </v-tooltip>
-        <v-tooltip top >
+        <v-tooltip top>
           <template v-slot:activator="{ on }">
             <v-btn
               fab
@@ -193,19 +218,19 @@
           <div>
             <span v-if="editable">Guardar</span>
             <span v-else>Editar</span>
-        </div>
+          </div>
         </v-tooltip>
       </v-col>
     </v-row>
-    <AddStreet :bus="bus" :cities="cities"/>
-    <RemoveItem :bus="bus"/>
+    <AddStreet :bus="bus" :cities="cities" />
+    <RemoveItem :bus="bus" />
   </v-container>
 </template>
 <script>
-import RemoveItem from '@/components/shared/RemoveItem'
-import AddStreet from '@/components/affiliate/AddStreet'
+import RemoveItem from "@/components/shared/RemoveItem"
+import AddStreet from "@/components/affiliate/AddStreet"
 
-  export default {
+export default {
   name: "affiliate-personalInformation",
   props: {
     affiliate: {
@@ -224,16 +249,16 @@ import AddStreet from '@/components/affiliate/AddStreet'
   data: () => ({
     loading: true,
     dialog: false,
-    cel:[null,null],
+    cell: [null, null],
     editable: false,
     cities: [],
     headers: [
-          { text: 'Ciudad', align: 'left', value: 'city_address_id' },
-          { text: 'Zona', align: 'left', value: 'zone' },
-          { text: 'Calle', align: 'left', value: 'street' },
-          { text: 'Nro', align: 'left', value: 'number_address' },
-          { text: 'Acciones', align: 'center' }
-        ],
+      { text: "Ciudad", align: "left", value: "city_address_id" },
+      { text: "Zona", align: "left", value: "zone" },
+      { text: "Calle", align: "left", value: "street" },
+      { text: "Nro", align: "left", value: "number_address" },
+      { text: "Acciones", align: "center" }
+    ],
     city: [],
     cityTypeSelected: null,
     bus: new Vue()
@@ -247,34 +272,47 @@ import AddStreet from '@/components/affiliate/AddStreet'
     },
     secondaryPermission() {
       if (this.affiliate.id) {
-        return this.$store.getters.permissions.includes('update-affiliate-secondary')
+        return this.$store.getters.permissions.includes(
+          "update-affiliate-secondary"
+        )
       } else {
-        return this.$store.getters.permissions.includes('create-affiliate')
-    }
-  },
-  primaryPermission() {
+        return this.$store.getters.permissions.includes("create-affiliate")
+      }
+    },
+    primaryPermission() {
       if (this.affiliate.id) {
-        return this.$store.getters.permissions.includes('update-affiliate-primary')
+        return this.$store.getters.permissions.includes(
+          "update-affiliate-primary"
+        )
       } else {
-        return this.$store.getters.permissions.includes('create-affiliate')
+        return this.$store.getters.permissions.includes("create-affiliate")
+      }
+    },
+    getCelular() {
+      if (this.affiliate.cell_phone_number == null) {
+        return 0
+      } else {
+        let array = this.affiliate.cell_phone_number.split(",")
+        console.log("entro")
+        return array
       }
     }
   },
   beforeMount() {
     this.getCities()
+    //this.updateCelular()
   },
   mounted() {
-      this.bus.$on('saveAddress', (address) => {
-        if (address.id) {
-          let index = this.addresses.findIndex(o=> o.id == address.id)
-          if (index == -1) {
-            this.addresses.unshift(address)
-          } else {
-            this.addresses[index] = address
-          }
+    this.bus.$on("saveAddress", address => {
+      if (address.id) {
+        let index = this.addresses.findIndex(o => o.id == address.id)
+        if (index == -1) {
+          this.addresses.unshift(address)
+        } else {
+          this.addresses[index] = address
         }
+      }
     })
-    this.getCelular()
   },
   methods: {
     resetForm() {
@@ -282,34 +320,65 @@ import AddStreet from '@/components/affiliate/AddStreet'
     },
     close() {
       this.dialog = false
-      this.$emit('closeFab')
+      this.$emit("closeFab")
     },
     async getCities() {
-    try {
-      this.loading = true
-      let res = await axios.get(`city`)
-      this.cities = res.data
-    } catch (e) {
-      this.dialog = false
-      console.log(e)
-    }finally {
+      try {
+        this.loading = true
+        let res = await axios.get(`city`)
+        this.cities = res.data
+      } catch (e) {
+        this.dialog = false
+        console.log(e)
+      } finally {
         this.loading = false
       }
-  },
+    },
+    updateCelular() {
+      let count = 0
+      let val = 0
+      this.cell[0] = this.getCelular[0].trim()
+      this.cell[1] = this.getCelular[1].trim()
+      if (this.cell[0]) {
+        if (this.cell[0] !== "") {
+          this.cell[0] = this.cell[0]
+          count++
+          val = 0
+        }
+      }
+      if (this.cell[1]) {
+        if (this.cell[1] !== "") {
+          this.cell[1] = this.cell[1]
+          count++
+          val = 1
+        }
+      }
+      if (count == 0) {
+        this.affiliate.cell_phone_number = null
+      } else if (count == 1) {
+        this.affiliate.cell_phone_number = this.cell[val]
+      } else {
+        this.affiliate.cell_phone_number = this.cell.join(",")
+      }
+    },
     async saveAffiliate() {
       try {
         if (!this.editable) {
           this.editable = true
-          console.log('entro al grabar por verdadero :)')
+          console.log("entro al grabar por verdadero :)")
         } else {
-          console.log('entro al grabar por falso :)')
+          console.log("entro al grabar por falso :)")
           // Edit affiliate
           //await axios.patch(`affiliate/${this.affiliate.id}`, this.affiliate)
-          await axios.patch(`affiliate/${this.affiliate.id}`, {phone_number: this.affiliate.phone_number, cell_phone_number: this.affiliate.cell_phone_number, city_identity_card_id: this.affiliate.city_identity_card_id})
+          await axios.patch(`affiliate/${this.affiliate.id}`, {
+            phone_number: this.affiliate.phone_number,
+            cell_phone_number: this.affiliate.cell_phone_number,
+            city_identity_card_id: this.affiliate.city_identity_card_id
+          })
           await axios.patch(`affiliate/${this.affiliate.id}/address`, {
             addresses: this.addresses.map(o => o.id)
           })
-          this.toastr.success('Registro guardado correctamente')
+          this.toastr.success("Registro guardado correctamente")
           this.editable = false
         }
       } catch (e) {
@@ -317,41 +386,7 @@ import AddStreet from '@/components/affiliate/AddStreet'
       } finally {
         this.loading = false
       }
-    },
-     getCelular(){
-      let part = []
-      if(this.affiliate.cell_phone_number!==null){
-        part=this.affiliate.cell_phone_number.split(',')    
-        this.cel[0]= part[0]
-        this.cel[1]= part[1]  
-      }    
-    },
-    updateCelular(){
-      let count = 0
-      let val = 0
-      if(this.cel[0]){
-        if(this.cel[0].trim() !== ''){
-          this.cel[0]=this.cel[0].trim()
-          count++
-          val = 0
-        }        
-      }
-      if(this.cel[1]){
-        if(this.cel[1].trim() !== ''){
-          this.cel[1]=this.cel[1].trim()
-          count++
-          val = 1
-        }        
-      }
-      if(count == 0){
-        this.affiliate.cell_phone_number=null
-      } else if(count == 1){
-        this.affiliate.cell_phone_number=this.cel[val]
-      } else {
-        this.affiliate.cell_phone_number=this.cel.join(',')
-      }
     }
-  
   }
 }
 </script>

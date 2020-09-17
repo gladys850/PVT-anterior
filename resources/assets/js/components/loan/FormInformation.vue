@@ -125,6 +125,7 @@
             </v-col>
           </v-row>
         </v-container>
+        <CoDebtor/>
       </v-col>
     </v-row>
     </v-form>
@@ -133,8 +134,12 @@
   </v-container>
 </template>
 <script>
+import CoDebtor from '@/components/loan/CoDebtor'
   export default {
   name: "loan-information",
+  components:{
+    CoDebtor
+  },
     props: {
     formulario: {
       type: Array,
@@ -171,6 +176,7 @@
     loanTypeSelected2:null,
     payment_types:[],
     cities:[]
+
   }),
    watch: {
   ver()
