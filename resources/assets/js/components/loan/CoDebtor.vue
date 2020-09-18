@@ -2,7 +2,7 @@
 <div class="ma-3 pa-0">
   <v-data-table
     :headers="headers"
-    :items="personal_references"
+    :items="personal_codebtor"
     sort-by="identity_card"
     class="elevation-1 ma-0 pa-3"
   >
@@ -97,7 +97,7 @@
       <!--v-btn color="primary" @click="initialize">Reset</v-btn>-->
     </template>
   </v-data-table>
-  {{personal_references}}
+  {{personal_codebtor}}
 </div>
 </template>
 
@@ -105,8 +105,8 @@
   export default {
     name: "loan-codebtor",
     props:{
-      references:{
-        type: Boolean,
+      personal_codebtor: {
+        type: Array,
         requiered: true
       }
     },
@@ -124,7 +124,7 @@
         { text: 'Dirección', value: 'address' },
         { text: 'Actions', value: 'actions', sortable: false },
       ],
-      personal_references: [],
+      
       editedIndex: -1,
       editedItem: {
         identity_card: null,
@@ -169,7 +169,7 @@
 
     methods: {
       /*initialize () {
-        this.personal_references = [
+        this.personal_codebtor = [
           /*{
             name: 'Frozen Yogurt',
             calories: 159,
@@ -188,14 +188,14 @@
       },*/
 
       editItem (item) {
-        this.editedIndex = this.personal_references.indexOf(item)
+        this.editedIndex = this.personal_codebtor.indexOf(item)
         this.editedItem = Object.assign({}, item)
         this.dialog = true
       },
 
       deleteItem (item) {
-        const index = this.personal_references.indexOf(item)
-       this.personal_references.splice(index, 1)
+        const index = this.personal_codebtor.indexOf(item)
+       this.personal_codebtor.splice(index, 1)
        this.toastr.success( 'El registro fue removido')
       },
 
@@ -209,12 +209,11 @@
 
       save () {
         if (this.editedIndex > -1) {
-          Object.assign(this.personal_references[this.editedIndex], this.editedItem)
+          Object.assign(this.personal_codebtor[this.editedIndex], this.editedItem)
           console.log( this.editedIndex )//obtener el indice
           console.log( this.editedItem)//obtener el objeto
         } else {
-          this.personal_references.push(this.editedItem)
-          this.references = this.personal_references
+          this.personal_codebtor.push(this.editedItem)
           console.log("nuevo editedIndex "+this.editedItem)
           console.log(this.editedItem)
         }

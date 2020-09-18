@@ -157,7 +157,7 @@
         </v-stepper-content>
         <v-stepper-content :key="`${5}-content`" :step="5">
           <v-card color="grey lighten-1">
-            <h3 class="text-uppercase text-center">{{modalidad.name}}</h3>
+            <h3 class="text-uppercase text-center">{{modalidad.name}}{{personal_codebtor}}</h3>
             <FormInformation
               :formulario.sync="formulario"
               :modalidad_personal_reference.sync="modalidad.personal_reference"
@@ -166,9 +166,8 @@
               :calculos.sync="calculos"
               :intervalos.sync="intervalos"
             />
-            <CoDebtor
-             
-              :references.sync="references"
+            <CoDebtor  
+              :personal_codebtor ="personal_codebtor"
             />
             <v-container class="py-0">
               <v-row>
@@ -198,7 +197,9 @@
               :modalidad.sync="modalidad"
               :reference.sync="reference"
               :garantes.sync="garantes"
-              :modalidad_id.sync="modalidad.id"/>
+              :modalidad_id.sync="modalidad.id"
+              :personal_codebtor ="personal_codebtor"/>
+              
           </v-card>
         </v-stepper-content>
       </v-stepper-items>
@@ -259,6 +260,7 @@ export default {
     bonos:[0,0,0,0],
     formulario:[],
     personal_reference:{},
+    personal_codebtor:[],
     calculos:{
       promedio_liquido_pagable:0,
       total_bonos:0,
