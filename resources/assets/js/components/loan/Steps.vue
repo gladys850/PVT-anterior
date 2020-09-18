@@ -166,6 +166,10 @@
               :calculos.sync="calculos"
               :intervalos.sync="intervalos"
             />
+            <CoDebtor
+             
+              :references.sync="references"
+            />
             <v-container class="py-0">
               <v-row>
                 <v-spacer></v-spacer><v-spacer></v-spacer><v-spacer></v-spacer>
@@ -216,6 +220,7 @@ import BallotsResult from '@/components/loan/BallotsResult'
 import PersonalInformation from '@/components/affiliate/PersonalInformation'
 import FormInformation from '@/components/loan/FormInformation'
 import Guarantor from '@/components/loan/Guarantor'
+import CoDebtor from '@/components/loan/CoDebtor'
 export default {
   name: "loan-steps",
   props: {
@@ -234,7 +239,8 @@ export default {
     PersonalInformation,
     FormInformation,
     BallotsResult,
-    Guarantor
+    Guarantor,
+    CoDebtor
   },
    data: () => ({
     bus: new Vue(),

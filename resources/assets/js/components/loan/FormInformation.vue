@@ -8,7 +8,7 @@
         <v-container class="py-0">
           <v-row>
             <v-col cols="12" md="2" class="py-0">
-              <label> Tipo de Depositos:</label>
+              <label> Tipo de Depósitos:</label>
             </v-col>
             <v-col cols="12" md="3" class="py-0">
               <ValidationProvider v-slot="{ errors }" name="Tipo Desembolso" rules="required">
@@ -40,7 +40,7 @@
             </v-col>
             <v-col cols="12" md="6" v-show="espacio"></v-col>
             <v-col cols="12" md="2" class="py-1">
-              <label> Destino del Prestamo:</label>
+              <label> Destino del Préstamo:</label>
             </v-col>
             <v-col cols="12" md="6"  >
                 <ValidationProvider v-slot="{ errors }" name="destino" rules="required">
@@ -58,7 +58,7 @@
           </v-row>
         </v-container>
 
-
+        <!--validar con el estado campo codeudor tambien-->
          <v-container class="py-0" v-show="modalidad_personal_reference">
           <v-row>
             <v-col cols="12" md="12">
@@ -125,7 +125,7 @@
             </v-col>
           </v-row>
         </v-container>
-        <CoDebtor/>
+
       </v-col>
     </v-row>
     </v-form>
@@ -194,7 +194,7 @@ import CoDebtor from '@/components/loan/CoDebtor'
       for (this.i = 0; this.i< this.payment_types.length; this.i++) {
         if(this.loanTypeSelected==this.payment_types[this.i].id)
           {
-            if(this.payment_types[this.i].name=='Deposito Bancario')
+            if(this.payment_types[this.i].name=='Depósito Bancario')
               {
                 this.visible=true,
                 this.espacio=false

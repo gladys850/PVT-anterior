@@ -1,10 +1,10 @@
 <template>
-<div class="ma-2">
+<div class="ma-3 pa-0">
   <v-data-table
     :headers="headers"
-    :items="desserts"
-    sort-by="calories"
-    class="elevation-1"
+    :items="personal_references"
+    sort-by="identity_card"
+    class="elevation-1 ma-0 pa-3"
   >
     <template v-slot:top>
       <v-toolbar flat color="white">
@@ -23,7 +23,6 @@
               x-small
               v-on="on"
               color="info"
-              @click.stop="bus.$emit('openDialog', { edit: true })"
               v-bind="attrs"
             ><v-icon>mdi-plus</v-icon>
             </v-btn>
@@ -37,31 +36,31 @@
               <v-container>
                 <v-row>
                   <v-col cols="12" sm="6" md="3">
-                    <v-text-field v-model="editedItem.name" label="CI"></v-text-field>
+                    <v-text-field v-model="editedItem.identity_card" label="CI"></v-text-field>
                   </v-col>
                   <v-col cols="12" sm="6" md="3">
-                    <v-text-field v-model="editedItem.calories" label="Ciudad de Expedición"></v-text-field>
+                    <v-text-field v-model="editedItem.city_identity_card_id" label="Ciudad de Expedición"></v-text-field>
                   </v-col>
                   <v-col cols="12" sm="6" md="3">
-                    <v-text-field v-model="editedItem.fat" label="Primer Nombre"></v-text-field>
+                    <v-text-field v-model="editedItem.first_name" label="Primer Nombre"></v-text-field>
                   </v-col>
                   <v-col cols="12" sm="6" md="3">
-                    <v-text-field v-model="editedItem.carbs" label="Segundo nombre"></v-text-field>
+                    <v-text-field v-model="editedItem.second_name" label="Segundo nombre"></v-text-field>
                   </v-col>
                   <v-col cols="12" sm="6" md="3">
-                    <v-text-field v-model="editedItem.protein" label="Primer Apellido"></v-text-field>
+                    <v-text-field v-model="editedItem.last_name" label="Primer Apellido"></v-text-field>
                   </v-col>
                   <v-col cols="12" sm="6" md="3">
-                    <v-text-field v-model="editedItem.calories" label="Segundo Apellido"></v-text-field>
+                    <v-text-field v-model="editedItem.mothers_last_name" label="Segundo Apellido"></v-text-field>
                   </v-col>
                   <v-col cols="12" sm="6" md="3">
-                    <v-text-field v-model="editedItem.fat" label="Teléfono"></v-text-field>
+                    <v-text-field v-model="editedItem.phone_number" label="Teléfono"></v-text-field>
                   </v-col>
                   <v-col cols="12" sm="6" md="3">
-                    <v-text-field v-model="editedItem.carbs" label="Celular"></v-text-field>
+                    <v-text-field v-model="editedItem.cell_phone_number" label="Celular"></v-text-field>
                   </v-col>
                   <v-col cols="12" sm="6" md="12">
-                    <v-text-field v-model="editedItem.protein" label="Dirección"></v-text-field>
+                    <v-text-field v-model="editedItem.address" label="Dirección"></v-text-field>
                   </v-col>
                   
                 </v-row>
@@ -95,71 +94,83 @@
       </v-icon>
     </template>
     <template v-slot:no-data>
-      <v-btn color="primary" @click="initialize">Reset</v-btn>
+      <!--v-btn color="primary" @click="initialize">Reset</v-btn>-->
     </template>
   </v-data-table>
+  {{personal_references}}
 </div>
 </template>
 
 <script>
   export default {
+    name: "loan-codebtor",
+    props:{
+      references:{
+        type: Boolean,
+        requiered: true
+      }
+    },
     data: () => ({
       dialog: false,
       headers: [
-        {
-          text: 'CI',
-          align: 'start',
-          sortable: false,
-          value: 'carbs',
-        },
-        { text: 'Ciudad de Expedición', value: 'name' },
-        { text: 'Primer Nombre', value: 'name' },
-        { text: 'Segundo Nombre', value: 'name' },
-        { text: 'Primer Apellido', value: 'name' },
-        { text: 'Segundo Apellido', value: 'name' },
-        { text: 'Teléfono', value: 'carbs' },
-        { text: 'Celular', value: 'protein' },
-        { text: 'Dirección', value: 'protein' },
+        { text: 'CI', align: 'start', sortable: false, value: 'identity_card'},
+        { text: 'Ciudad de Expedición', value: 'city_identity_card_id' },
+        { text: 'Primer Nombre', value: 'first_name' },
+        { text: 'Segundo Nombre', value: 'second_name' },
+        { text: 'Primer Apellido', value: 'last_name' },
+        { text: 'Segundo Apellido', value: 'mothers_last_name' },
+        { text: 'Teléfono', value: 'phone_number' },
+        { text: 'Celular', value: 'cell_phone_number' },
+        { text: 'Dirección', value: 'address' },
         { text: 'Actions', value: 'actions', sortable: false },
       ],
-      desserts: [],
+      personal_references: [],
       editedIndex: -1,
       editedItem: {
-        name: '',
-        calories: 0,
-        fat: 0,
-        carbs: 0,
-        protein: 0,
+        identity_card: null,
+        city_identity_card_id: null,
+        first_name: null,
+        second_name: null,
+        last_name: null,
+        mothers_last_name: null,
+        phone_number: null,
+        cell_phone_number: null,
+        address: null
       },
       defaultItem: {
-        name: '',
-        calories: 0,
-        fat: 0,
-        carbs: 0,
-        protein: 0,
+        identity_card: null,
+        city_identity_card_id: null,
+        first_name: null,
+        second_name: null,
+        last_name: null,
+        mothers_last_name: null,
+        phone_number: null,
+        cell_phone_number: null,
+        address: null
       },
     }),
 
     computed: {
       formTitle () {
-        return this.editedIndex === -1 ? 'Nuevo Codeudor' : 'Editar Codeudor'
+        return this.editedIndex === -1 ? 'Nuevo' : 'Editar'
       },
     },
 
     watch: {
       dialog (val) {
+        console.log("entro aqui"+ val)
         val || this.close()
       },
     },
 
-    created () {
+    /*created () {
       this.initialize()
-    },
+    },*/
 
     methods: {
-      initialize () {
-        this.desserts = [
-          {
+      /*initialize () {
+        this.personal_references = [
+          /*{
             name: 'Frozen Yogurt',
             calories: 159,
             fat: 6.0,
@@ -174,17 +185,18 @@
             protein: 4.3,
           }
         ]
-      },
+      },*/
 
       editItem (item) {
-        this.editedIndex = this.desserts.indexOf(item)
+        this.editedIndex = this.personal_references.indexOf(item)
         this.editedItem = Object.assign({}, item)
         this.dialog = true
       },
 
       deleteItem (item) {
-        const index = this.desserts.indexOf(item)
-        confirm('Are you sure you want to delete this item?') && this.desserts.splice(index, 1)
+        const index = this.personal_references.indexOf(item)
+       this.personal_references.splice(index, 1)
+       this.toastr.success( 'El registro fue removido')
       },
 
       close () {
@@ -197,9 +209,14 @@
 
       save () {
         if (this.editedIndex > -1) {
-          Object.assign(this.desserts[this.editedIndex], this.editedItem)
+          Object.assign(this.personal_references[this.editedIndex], this.editedItem)
+          console.log( this.editedIndex )//obtener el indice
+          console.log( this.editedItem)//obtener el objeto
         } else {
-          this.desserts.push(this.editedItem)
+          this.personal_references.push(this.editedItem)
+          this.references = this.personal_references
+          console.log("nuevo editedIndex "+this.editedItem)
+          console.log(this.editedItem)
         }
         this.close()
       },
