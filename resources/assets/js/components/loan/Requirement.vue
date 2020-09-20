@@ -8,6 +8,7 @@
           <v-toolbar class="mb-0" color="ternary" dark flat>
             <v-toolbar-title>REQUISITOS{{reference.id}}</v-toolbar-title>
           </v-toolbar>
+          {{personal_codebtor}}
           <v-row>
             <v-col v-for="(group,i) in items" :key="i" cols="12" class="py-1">
               <v-card dense>
@@ -204,11 +205,18 @@ export default {
     bus: {
       type: Object,
       required: true
+    },
+    personal_codebtor: {
+      type: Array,
+      required: true 
     }
   },
   watch: {
     modalidad_id () {
       this.getRequirement(this.modalidad_id)
+    },
+    personal_codebtor(){
+      return true
     }
   },
   methods: {
