@@ -268,7 +268,7 @@ class LoanController extends Controller
 
     private function save_loan(Request $request, $loan = null)
     {
-        if (Auth::user()->can(['update-loan', 'create-loan']) && ($request->has('lenders') || $request->has('guarantors'))) {
+        /*if (Auth::user()->can(['update-loan', 'create-loan']) && ($request->has('lenders') || $request->has('guarantors'))) {
             $request->lenders = collect($request->has('lenders') ? $request->lenders : [])->unique();
             $request->guarantors = collect($request->has('guarantors') ? $request->guarantors : [])->unique();
             $request->guarantors = $request->guarantors->diff($request->lenders);
@@ -279,7 +279,9 @@ class LoanController extends Controller
                 $disbursable_id = $request->disbursable_id;
             }
             $disbursable = Affiliate::findOrFail($disbursable_id);
-        }
+        }*/
+        $disbursable_id = 1;
+        $disbursable = Affiliate::findOrFail($disbursable_id);
         if ($loan) {
             $exceptions = ['code', 'role_id'];
             if ($request->has('validated')) {
@@ -304,6 +306,36 @@ class LoanController extends Controller
 
         $loan->save();
         if (Auth::user()->can(['update-loan', 'create-loan']) && ($request->has('lenders') || $request->has('guarantors'))) {
+            $affiliates = []; $l = 0;
+            foreach ($request->lenders as $affiliate) {
+                $affiliates[$l] = [
+                    'affiliate_id' => $affiliate['affiliate_id'],
+                    'payment_percentage' => $affiliate['payment_percentage'],
+                    'payable_liquid_calculated' => $affiliate['payable_liquid_calculated'],
+                    'bonus_calculated' => $affiliate['bonus_calculated'],
+                    'quota_refinance' => $affiliate['quota_refinance'],
+                    'indebtedness_calculated' => $affiliate['indebtedness_calculated'],
+                    'liquid_qualification_calculated' => $affiliate['liquid_qualification_calculated'],
+                    'guarantor' => false
+                ];
+                $l++;
+            }
+            foreach ($request->guarantors as $affiliate) {
+                $affiliates[$l] = [
+                    'affiliate_id' => $affiliate['affiliate_id'],
+                    'payment_percentage' => $affiliate['payment_percentage'],
+                    'payable_liquid_calculated' => $affiliate['payable_liquid_calculated'],
+                    'bonus_calculated' => $affiliate['bonus_calculated'],
+                    'quota_refinance' => $affiliate['quota_refinance'],
+                    'indebtedness_calculated' => $affiliate['indebtedness_calculated'],
+                    'liquid_qualification_calculated' => $affiliate['liquid_qualification_calculated'],
+                    'guarantor' => true
+                ];
+                $l++;
+            }
+            if (count($affiliates) > 0) $loan->loan_affiliates()->sync($affiliates);
+        }
+        /*if (Auth::user()->can(['update-loan', 'create-loan']) && ($request->has('lenders') || $request->has('guarantors'))) {
             $percentage = Loan::get_percentage($request->lenders);
             $affiliates = [];
             foreach ($request->lenders as $affiliate) {
@@ -322,7 +354,7 @@ class LoanController extends Controller
                 }
             }
             if (count($affiliates) > 0) $loan->loan_affiliates()->sync($affiliates);
-        }
+        }*/
         return (object)[
             'request' => $request,
             'loan' => $loan
