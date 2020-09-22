@@ -166,9 +166,8 @@
               :calculos.sync="calculos"
               :intervalos.sync="intervalos"
             />
-            <CoDebtor  
-              :personal_codebtor ="personal_codebtor"
-            />
+            <CoDebtor
+              :personal_codebtor="personal_codebtor"/>
             <v-container class="py-0">
               <v-row>
                 <v-spacer></v-spacer><v-spacer></v-spacer><v-spacer></v-spacer>
@@ -198,8 +197,7 @@
               :reference.sync="reference"
               :garantes.sync="garantes"
               :modalidad_id.sync="modalidad.id"
-              :personal_codebtor ="personal_codebtor"/>
-              
+              :personal_codebtor="personal_codebtor"/>
           </v-card>
         </v-stepper-content>
       </v-stepper-items>
@@ -260,7 +258,6 @@ export default {
     bonos:[0,0,0,0],
     formulario:[],
     personal_reference:{},
-    personal_codebtor:[],
     calculos:{
       promedio_liquido_pagable:0,
       total_bonos:0,
@@ -268,7 +265,8 @@ export default {
       calculo_de_cuota:0,
       indice_endeudamiento:0,
       monto_maximo_sugerido:0
-    }
+    },
+    personal_codebtor:[]
   }),
   computed: {
     isNew() {

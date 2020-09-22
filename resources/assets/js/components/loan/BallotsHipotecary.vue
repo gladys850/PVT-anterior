@@ -32,7 +32,7 @@
                           x-small
                           v-on="on"
                           color="info"
-                          @click.stop="buscar()">
+                          @click.stop="searchCodebtor()">
                           <v-icon>mdi-magnify</v-icon>
                         </v-btn>
                       </template>
@@ -41,7 +41,7 @@
                   <v-data-table
                     :headers="headers1"
                     :items="contributions1"
-                    sort-by="calories"
+                    sort-by=""
                     class="elevation-1"
                   >
                     <template v-slot:top>
@@ -60,7 +60,7 @@
                                 x-small
                                 v-on="on"
                                 color="info"
-                                @click.stop="bus.$emit('openDialog', { edit: true })"
+                               
                                 v-bind="attrs"
                               ><v-icon>mdi-plus</v-icon>
                               </v-btn>
@@ -127,93 +127,7 @@
                         <v-btn color="primary" @click=" initialize">Reset</v-btn>
                       </template>
                     </v-data-table>
-                       <v-data-table
-                    :headers="headers1"
-                    :items="contributions1"
-                  >
-                    <template v-slot:top>
-                      <v-toolbar flat color="white">
-                        <v-toolbar-title>BOLETAS DE PAGO CODEUDOR</v-toolbar-title>
-                          <v-divider
-                            class="mx-4"
-                            inset
-                            vertical
-                          ></v-divider>
-                          <v-dialog v-model="dialog" max-width="500px">
-                            <template v-slot:activator="{ on, attrs }">
-                              <v-btn
-                                fab
-                                dark
-                                x-small
-                                v-on="on"
-                                color="info"
-                                @click.stop="bus.$emit('openDialog', { edit: true })"
-                                v-bind="attrs"
-                              ><v-icon>mdi-plus</v-icon>
-                              </v-btn>
-                            </template>
-                            <v-card>
-                              <v-card-title class="pa-0">
-                                <v-toolbar dense flat color="tertiary">
-                                  <v-toolbar-title>{{ formTitle }}</v-toolbar-title>
-                                  <v-spacer></v-spacer>
-                                  <v-btn icon @click.stop="close()">
-                                    <v-icon>mdi-close</v-icon>
-                                  </v-btn>
-                                </v-toolbar>
-                              </v-card-title>
-                              <v-card-text class="py-0">
-                                <v-container>
-                                  <v-row>
-                                    <v-col cols="12" sm="6" md="4">
-                                      <v-text-field v-model="editedItem.id_affiliate" dense label="Nombre"></v-text-field>
-                                    </v-col>
-                                    <v-col cols="12" sm="6" md="4">
-                                      <v-text-field v-model="editedItem.payable_liquid" dense label="Liquido Pagable"></v-text-field>
-                                    </v-col>
-                                    <v-col cols="12" sm="6" md="4">
-                                      <v-text-field v-model="editedItem.border_bonus" dense label="Bono Frontera"></v-text-field>
-                                    </v-col>
-                                    <v-col cols="12" sm="6" md="4">
-                                      <v-text-field v-model="editedItem.east_bonus" dense label="Bono Oriente"></v-text-field>
-                                    </v-col>
-                                    <v-col cols="12" sm="6" md="4">
-                                      <v-text-field v-model="editedItem.seniority_bonus" dense label="Bono Cargo"></v-text-field>
-                                    </v-col>
-                                    <v-col cols="12" sm="6" md="4">
-                                      <v-text-field v-model="editedItem.public_security_bonus" dense label="Bono Seguridad Ciudadana"></v-text-field>
-                                    </v-col>
-                                  </v-row>
-                                </v-container>
-                              </v-card-text>
-                              <v-card-actions class="pt-0">
-                                <v-spacer></v-spacer>
-                                <v-btn color="blue darken-1" dense text @click="close">Cancelar</v-btn>
-                                <v-btn color="blue darken-1" dense text @click="save">Guardar</v-btn>
-                              </v-card-actions>
-                            </v-card>
-                          </v-dialog>
-                        </v-toolbar>
-                      </template>
-                      <template v-slot:item.actions="{ item }">
-                        <v-icon
-                          small
-                          class="mr-2"
-                          @click="editItem(item)"
-                        >
-                          mdi-pencil
-                        </v-icon>
-                        <v-icon
-                          small
-                          @click="deleteItem(item)"
-                        >
-                          mdi-delete
-                        </v-icon>
-                      </template>
-                      <template v-slot:no-data>
-                        <v-btn color="primary" @click=" initialize">Reset</v-btn>
-                      </template>
-                    </v-data-table>
+
                 </v-row>
               </v-container>
           </v-col>
@@ -227,20 +141,20 @@ export default {
   data: () => ({
     affiliate_codebtor_ci:null,
     editar:true,
-    monto:null,
-    plazo:null,
-    interval:[],
+    //monto:null,
+    //plazo:null,
+    //interval:[],
     contributions1:[],
-    loanTypeSelected:null,
-    visible:false,
-    num_type:9,
+    //loanTypeSelected:null,
+    //visible:false,
+    //num_type:9,
     contributions1:{},
     modalidad: {},
     bonos: {},
     payable_liquid: {},
-    modalities: {},
-    prueba: {},
-    intervalos: {},
+    //modalities: {},
+    //prueba: {},
+    //intervalos: {},
     codeudor:true,
     ver:false,
 
@@ -266,7 +180,7 @@ export default {
           sortable: false,
           value: 'name',
         },
-        { text: 'Liquido Pagable', value: 'calories' },
+        { text: 'Liquido Pagable', value: 'payable_liquid' },
         { text: 'Bono Frontera', value: 'fat' },
         { text: 'Bono Oriente', value: 'carbs' },
         { text: 'Bono Cargo', value: 'protein' },
@@ -402,7 +316,7 @@ export default {
     this.close()
   },
 
- async buscar()
+ async searchCodebtor()
     {
       try {
    /*     if(this.affiliate_codebtor_ci==this.affiliate.identity_card)
