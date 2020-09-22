@@ -3,7 +3,7 @@
         "affiliate_id": 9389,
         "quota_calculated_estimated": "749,32",
         "indebtedness_calculated": 34,
-        "percentage_payment": 50,
+        "payment_percentage": 50,
         "amount_requested": 0,
         "amount_maximum_suggested": 0,
         "is_valid": true
