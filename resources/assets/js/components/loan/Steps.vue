@@ -157,7 +157,7 @@
         </v-stepper-content>
         <v-stepper-content :key="`${5}-content`" :step="5">
           <v-card color="grey lighten-1">
-            <h3 class="text-uppercase text-center">{{modalidad.name}}{{personal_codebtor}}</h3>
+            <h3 class="text-uppercase text-center">{{modalidad.name}}</h3>
             <FormInformation
               :formulario.sync="formulario"
               :modalidad_personal_reference.sync="modalidad.personal_reference"
