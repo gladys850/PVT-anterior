@@ -428,6 +428,17 @@ class LoanController extends Controller
     {
         return $loan->disbursable;
     }
+    /**
+    * Información de cálculo detallada de titulares y garantes
+    * Devuelve la información de los cálculos realizados para titulares y garantes
+    * @urlParam loan required ID del préstamo. Example: 8
+    * @authenticated
+    * @responseFile responses/loan/get_loan_affiliates.200.json
+    */
+    public function get_loan_affiliates(Loan $loan)
+    {
+        return $loan->lenders_guarantors;
+    }
 
     public static function verify_spouse_disbursable(Affiliate $affiliate)
     {
