@@ -5,6 +5,7 @@
     "guarantors": 0,
     "min_guarantor_category": null,
     "max_guarantor_category": null,
+    "max_cosigner": null,
     "personal_reference": false,
     "max_lenders": 1
 }
