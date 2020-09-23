@@ -12,6 +12,7 @@ use App\Loan;
 use App\ProcedureModality;
 use App\Rules\LoanParameterGuarantor;
 use App\Rules\LoanParameterIndebtedness;
+use App\Rules\LoanIntervalMaxLender;
 use Illuminate\Foundation\Http\FormRequest;
 
 class LoanForm extends FormRequest
@@ -41,12 +42,11 @@ class LoanForm extends FormRequest
             $procedure_modality = $this->loan->modality;
         }
         $rules = [
-            'procedure_modality_id' => ['integer', 'exists:procedure_modalities,id'],
+            'procedure_modality_id' => ['required','integer', 'exists:procedure_modalities,id'],
             'amount_requested' => ['integer', 'min:200', 'max:700000', new LoanIntervalAmount($procedure_modality)],
             'city_id' => ['integer', 'exists:cities,id'],
             'loan_term' => ['integer', 'min:1', 'max:240', new LoanIntervalTerm($procedure_modality)],
             'payment_type_id' => ['integer', 'exists:payment_types,id'],
-            'lenders' => ['array', 'min:1', 'exists:affiliates,id'],
             'destiny_id' => ['integer', 'exists:loan_destinies,id', new LoanDestiny($procedure_modality)],
             'documents' => ['array', 'min:1', new ProcedureRequirements($procedure_modality)],
             'payable_liquid_calculated' => ['numeric'],
@@ -54,7 +54,22 @@ class LoanForm extends FormRequest
             'liquid_qualification_calculated' => ['numeric'],
             'indebtedness_calculated' => ['numeric', 'max:90', new LoanParameterIndebtedness($procedure_modality)],
             'personal_reference_id' => ['nullable', 'exists:personal_references,id'],
-            'guarantors' => ['array', 'exists:affiliates,id',new LoanParameterGuarantor($procedure_modality)],
+            'lenders' => ['array', 'required','min:1', new LoanIntervalMaxLender($procedure_modality)],
+            'lenders.*.affiliate_id' => ['required', 'integer', 'exists:affiliates,id'],
+            'lenders.*.payment_percentage' => ['required', 'integer'],
+            'lenders.*.payable_liquid_calculated' => ['required', 'numeric'],
+            'lenders.*.bonus_calculated' => ['required', 'integer'],
+            'lenders.*.quota_refinance' => ['required', 'numeric'],
+            'lenders.*.indebtedness_calculated' => ['required', 'numeric'],
+            'lenders.*.liquid_qualification_calculated' => ['required', 'numeric'],
+            'guarantors' => ['array',new LoanParameterGuarantor($procedure_modality)],
+            'guarantors.*.affiliate_id' => ['required', 'integer', 'exists:affiliates,id'],
+            'guarantors.*.payment_percentage' => ['required', 'integer'],
+            'guarantors.*.payable_liquid_calculated' => ['required', 'numeric'],
+            'guarantors.*.bonus_calculated' => ['required', 'integer'],
+            'guarantors.*.quota_refinance' => ['required', 'numeric'],
+            'guarantors.*.indebtedness_calculated' => ['required', 'numeric'],
+            'guarantors.*.liquid_qualification_calculated' => ['required', 'numeric'],
             'documents.*' => ['exists:procedure_documents,id'],
             'disbursable_id' => ['integer'],
             'disbursable_type' => ['string', 'in:affiliates,spouses'],
@@ -71,7 +86,7 @@ class LoanForm extends FormRequest
         ];
         switch ($this->method()) {
             case 'POST': {
-                foreach (array_slice($rules, 0, $procedure_modality->loan_modality_parameter->personal_reference ? 13 :12 ) as $key => $rule) {
+                foreach (array_slice($rules, 0, $procedure_modality->loan_modality_parameter->personal_reference ? 12 :11 ) as $key => $rule) {
                     array_push($rules[$key], 'required');
                 }
                 if ($procedure_modality->loan_modality_parameter->guarantors) {
