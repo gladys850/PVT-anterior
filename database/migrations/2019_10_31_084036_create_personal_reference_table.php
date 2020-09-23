@@ -27,6 +27,7 @@ class CreatePersonalReferenceTable extends Migration
             $table->string('cell_phone_number')->nullable();
             $table->string('address')->nullable();
             $table->boolean('cosigner')->default(false);
+            $table->unsignedBigInteger('loan_id');  // id loan
             $table->foreign('loan_id')->references('id')->on('loans');
             $table->timestamps();
         });
