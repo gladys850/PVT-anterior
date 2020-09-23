@@ -120,7 +120,7 @@ class CalculatorController extends Controller
                 'affiliate_id' => $liquid['affiliate_id'],
                 'quota_calculated_estimated' => Util::money_format($quota_calculated),
                 'indebtedness_calculated' => intval($indebtedness_calculated),
-                'percentage_payment' => ($percentage_payment),
+                'payment_percentage' => ($percentage_payment),
                 'amount_requested' => $amount_requested,
                 'amount_maximum_suggested' => $amount_maximum_suggested,
                 'is_valid' => ($indebtedness_calculated) <= ($procedure_modality->loan_modality_parameter->decimal_index)*100
@@ -183,7 +183,7 @@ class CalculatorController extends Controller
     * @authenticated
     * @responseFile responses/calculator/store.200.json
     */
-    public function calculator(CalculatorForm $request)
+    public function calculator(Request $request)
     {
         $procedure_modality = ProcedureModality::findOrFail($request->procedure_modality_id);
         $amount_requested = $request->amount_requested;

@@ -170,6 +170,9 @@
               :calculos.sync="calculos"
               :intervalos.sync="intervalos"
             />
+            <CoDebtor  
+              :personal_codebtor ="personal_codebtor"
+            />
             <v-container class="py-0">
               <v-row>
                 <v-spacer></v-spacer><v-spacer></v-spacer><v-spacer></v-spacer>
@@ -198,7 +201,9 @@
               :modalidad.sync="modalidad"
               :reference.sync="reference"
               :garantes.sync="garantes"
-              :modalidad_id.sync="modalidad.id"/>
+              :modalidad_id.sync="modalidad.id"
+              :personal_codebtor ="personal_codebtor"/>
+              
           </v-card>
         </v-stepper-content>
       </v-stepper-items>
@@ -220,6 +225,7 @@ import BallotsResult from '@/components/loan/BallotsResult'
 import PersonalInformation from '@/components/affiliate/PersonalInformation'
 import FormInformation from '@/components/loan/FormInformation'
 import Guarantor from '@/components/loan/Guarantor'
+import CoDebtor from '@/components/loan/CoDebtor'
 export default {
   name: "loan-steps",
   props: {
@@ -238,7 +244,8 @@ export default {
     PersonalInformation,
     FormInformation,
     BallotsResult,
-    Guarantor
+    Guarantor,
+    CoDebtor
   },
    data: () => ({
     bus: new Vue(),
@@ -258,6 +265,7 @@ export default {
     formulario:[],
     personal_reference:{},
     calculo123:[],
+    personal_codebtor:[],
     calculos:{
       promedio_liquido_pagable:0,
       total_bonos:0,

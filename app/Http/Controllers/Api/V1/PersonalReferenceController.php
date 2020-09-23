@@ -39,6 +39,8 @@ class PersonalReferenceController extends Controller
     * @bodyParam second_name string Segundo nombre. Example: ROBERTO
     * @bodyParam phone_number integer Número de teléfono fijo. Example: 2254101
     * @bodyParam cell_phone_number integer Número de celular. Example: 76543210
+    * @bodyParam address string Direccion. Example: Villa Fatima Calle #2 Nro 100
+    * @bodyParam cosigner boolean Codeudor. Example: false
     * @authenticated
     * @responseFile responses/personal_reference/store.200.json
     */
