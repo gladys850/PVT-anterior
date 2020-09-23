@@ -10,6 +10,8 @@
     "civil_status": "C",
     "phone_number": 2254101,
     "cell_phone_number": 76543210,
+    "address string": "Villa Fatima Calle #2 Nro 100",
+    "cosigner":false,
     "updated_at": "2020-03-03 18:16:43",
     "created_at": "2020-03-03 18:16:43",
     "id": 5
