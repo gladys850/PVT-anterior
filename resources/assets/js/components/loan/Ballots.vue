@@ -204,7 +204,7 @@ export default {
           this.num_type=this.loanTypeSelected
           this.procedure_type=this.loanTypeSelected
           
-               this.getLoanModality(this.$route.query.affiliate_id)
+          this.getLoanModality(this.$route.query.affiliate_id)
           this.getBallots(this.$route.query.affiliate_id)
           console.log('este es la modalidad del intervalo'+this.num_type)
 
@@ -213,7 +213,7 @@ export default {
  
    
     },
-    clearForm()
+  /*  clearForm()
     {
       this.payable_liquid[0]=0
       this.payable_liquid[1]=0
@@ -222,8 +222,23 @@ export default {
       this.bonos[1]=0
       this.bonos[2]=0
       this.bonos[3]=0
-    },
-    //Medodo donde identifica la modalidad de acuerdo a las caracteristicas de un affiliado
+    },*/
+    /*Medodo donde identifica la modalidad de acuerdo a las caracteristicas de un affiliado
+      "id": 33,
+      "procedure_type_id": 9,
+      "name": "Anticipo sector pasivo",
+      "shortened": "ANT-SP",
+      "is_valid": true,
+      "loan_modality_parameter": {
+        "procedure_modality_id": 33,
+        "debt_index": "90",
+        "quantity_ballots": 1,
+        "guarantors": 0,
+        "min_guarantor_category": null,
+        "max_guarantor_category": null,
+        "personal_reference": false,
+        "max_lenders": 1
+    }*/
     async getLoanModality(id) {
       try {
         let resp = await axios.get(`affiliate/${id}/loan_modality`,{
@@ -235,12 +250,13 @@ export default {
         console.log('entro a get modality'+this.num_type)
           this.loan_modality= resp.data
           this.modalidad.id=this.loan_modality.id
+          this.modalidad.procedure_type_id=this.loan_modality.procedure_type_id
           this.modalidad.name=this.loan_modality.name
           this.modalidad.quantity_ballots=this.loan_modality.loan_modality_parameter.quantity_ballots
           this.modalidad.guarantors=this.loan_modality.loan_modality_parameter.guarantors
           this.modalidad.min_guarantor_category=this.loan_modality.loan_modality_parameter.min_guarantor_category
           this.modalidad.max_guarantor_category=this.loan_modality.loan_modality_parameter.max_guarantor_category
-         this.modalidad.personal_reference=this.loan_modality.loan_modality_parameter.personal_reference
+          this.modalidad.personal_reference=this.loan_modality.loan_modality_parameter.personal_reference
     
     
     //this.modalidad.personal_reference=true
