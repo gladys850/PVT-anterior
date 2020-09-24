@@ -1,6 +1,6 @@
 <template>
   <v-container fluid >
-    <v-row justify="center"  v-show="datos.procedure_type_id!=12">
+    <v-row justify="center"  v-show="modalidad.procedure_type_id!=12">
          <v-col cols="12" class="py-0" >
           <v-card v-show="show_garante">
             <v-container v-if="modalidad_guarantors==0">
@@ -89,7 +89,7 @@
                 </v-col>
                 <v-col cols="12" md="7" class="py-0" ></v-col>
                 <v-col cols="12" md="4" class="py-0">
-                  <v-btn 
+                  <v-btn
                     color="info"
                     @click="Calculator()">Calcular
                   </v-btn>
@@ -133,10 +133,10 @@
                   MATRICULA:{{affiliate_garantor.affiliate.registration}}
                 </v-col>
                 <v-col cols="12" md="6" class="text-uppercase py-0 font-weight-light">
-                  ESTADO:{{affiliate_garantor.affiliate.affiliate_state.name}}  
+                  ESTADO:{{affiliate_garantor.affiliate.affiliate_state.name}}
                 </v-col>
                 <v-col cols="12" md="12" class="font-weight-black ">
-                  PRESTAMOS VIGENTES QUE TIENE EL AFILIADO       
+                  PRESTAMOS VIGENTES QUE TIENE EL AFILIADO
                 </v-col>
                 <v-col cols="12" class="py-0">
                   <v-data-table
@@ -147,11 +147,11 @@
                   </v-data-table>
                 </v-col>
                 <v-col cols="12" md="6" class="font-weight-black" >
-                  PRESTAMOS QUE ESTA GARANTIZANDO:      
+                  PRESTAMOS QUE ESTA GARANTIZANDO:
                 </v-col>
                 <v-col cols="12" md="2" class="font-weight-black" >
-                  {{affiliate_garantor.active_guarantees_quantity}}       
-                </v-col>         
+                  {{affiliate_garantor.active_guarantees_quantity}}
+                </v-col>
               </v-row>
             </v-container>
           </v-card>
@@ -217,7 +217,7 @@
         </v-col>
       </v-row>
       <v-card>
-        <HipotecaryData v-show="datos.procedure_type_id==12"/>
+        <HipotecaryData v-show="modalidad.procedure_type_id==12"/>
       </v-card>
     </v-container>
 </template>
@@ -257,6 +257,10 @@ import HipotecaryData from '@/components/loan/HipotecaryData'
       required: true,
       default: 0
     },
+    modalidad: {
+      type: Object,
+      required: true
+    }
   },
   data: () => ({
     guarantor_ci:null,
