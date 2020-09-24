@@ -17,8 +17,8 @@
                       <v-text-field
                         :error-messages="errors"
                         label="Plazo en Meses"
-                        v-model="calculos.plazo"
-                        v-on:keyup.enter="Calculator()"
+                        v-model="intervalos.maximum_term"
+                        v-on:keyup.enter="calculadora()"
                       ></v-text-field>
                       </ValidationProvider>
                       <ValidationProvider v-slot="{ errors }" name="monto solicitado" :rules="'numeric|min_value:'+datos.minimun_amoun+'|max_value:'+datos.maximun_amoun" mode="aggressive">
@@ -38,12 +38,14 @@
                       <v-layout row wrap>
                         <v-flex xs12 class="px-1">
                           <fieldset class="pa-2">
-                            <p class="success--text font-weight-black py-0 mb-0">NOMBRE DEL TITULAR : STEPHANIE LUNA QUEVEDO {{calculo123}}</p>
-                            <p class="py-0 mb-0">PROMEDIO LIQUIDO PAGABLE:{{ calculos.payable_liquid_calculated }}</p>
-                            <p class="py-0 mb-0">TOTAL BONOS: {{ calculos.bonus_calculated+ "  " }}LIQUIDO PARA CALIFICACION: {{ calculos.liquid_qualification_calculated}}</p>
-                            <p class="success--text font-weight-black py-0 mb-0">NOMBRE DEL TITULAR : STEPHANIE LUNA QUEVEDO</p>
-                            <p class="py-0 mb-0">PROMEDIO LIQUIDO PAGABLE:{{ calculos.payable_liquid_calculated }}</p>
-                            <p class="py-0 mb-0">TOTAL BONOS: {{ calculos.bonus_calculated+ "  " }}LIQUIDO PARA CALIFICACION: {{ calculos.liquid_qualification_calculated}}</p>
+                              <v-toolbar-title>Liquido Pagable</v-toolbar-title>
+                             <ul style="list-style: none" class="pa-0">
+                              <li v-for="(liquido,i) in datos_calculadora_hipotecario" :key="i" >
+                                <v-progress-linear></v-progress-linear>
+                                <p class="py-0 mb-0">Nombre del Afiliado: {{ liquido.affiliate_name}}</p>
+                                <p class="py-0 mb-0">Liquido Pagable: {{liquido.payable_liquid_calculated+"  "}}{{"  "+"Total de Bonos:"+liquido.bonus_calculated}}{{" "}}Liquido para Calificacion: {{" "+liquido.liquid_qualification_calculated}}</p>
+                              </li>
+                            </ul>
                           </fieldset>
                         </v-flex>
                       </v-layout>
@@ -54,10 +56,14 @@
                       <v-layout row wrap>
                         <v-flex xs12 class="px-0">
                           <fieldset class="pa-3">
-                            <p class="py-0 mb-0">CALCULO DE CUOTA TOTAL: {{ calculos.quota_calculated }}</p>
-                            <p class="success--text font-weight-black py-0 mb-0">NOMBRE DEL TITULAR : STEPHANIE LUNA QUEVEDO</p>
-                              <p class="py-0 mb-0">INDICE DE ENDEUDAMIENTO: {{calculos.indebtedness_calculated }}</p>
-                            <p class="py-0 mb-0">PORCENTAJE DE PAGO : {{calculos.amount_maximum_suggested}}</p>
+                            <v-toolbar-title>Calculo</v-toolbar-title>
+                              <ul style="list-style: none" class="pa-0">
+                                <li v-for="(calculado,i) in calculo1234" :key="i" >
+                                  <v-progress-linear></v-progress-linear>
+                                  <p class="py-0 mb-0">Nombre del Afiliado: {{ calculado.affiliate_nombres}}</p>
+                                  <p class="py-0 mb-0">Cuota Estimada: {{calculado.quota_calculated_estimated+" "}}{{" "}}Interes Calculado: {{calculado.indebtedness_calculated}} % {{" "+"Porcentaje de Pago:"}} {{calculado.percentage_payment}}{{" "}}is_valid: {{calculado.is_valid}}</p>
+                                </li>
+                              </ul>
                           </fieldset>
                         </v-flex>
                       </v-layout>
@@ -88,11 +94,22 @@ export default {
     loanTypeSelected:null,
     visible:false,
     num_type:9,
-    monto_hipotecario:null
+    monto_hipotecario:null,
+    calculo1234:null,
+        calculo123:null,
+        nombres:[]
   
   }),
   props: {
    datos: {
+      type: Object,
+      required: true
+    },
+    datos_calculadora_hipotecario: {
+      type: Array,
+      required: true
+    },
+    intervalos: {
       type: Object,
       required: true
     },/*
@@ -115,56 +132,38 @@ export default {
     calculos: {
       type: Object,
       required: true
-    }
+    },
   },
   methods: {
     async calculadora() {
       try {
-          let res = await axios.post(`liquid_calificated`, {
-            procedure_modality_id: 41,
-            liquid_calification: [
-              {
-                affiliate_id: 123456,
-                contributions: [
-                {
-                    payable_liquid: 2000,
-                    seniority_bonus: 0,
-                    border_bonus: 0,
-                    public_security_bonus: 300,
-                    east_bonus: 0
-                },
-                {
-                    payable_liquid: 3000,
-                    seniority_bonus: 0,
-                    border_bonus: 0,
-                    public_security_bonus: 300,
-                    east_bonus: 0
-                },
-                {
-                    payable_liquid: 3500,
-                    seniority_bonus: 0,
-                    border_bonus: 0,
-                    public_security_bonus: 0,
-                    east_bonus: 0
-                }
-              ]
-            },
-               {
-            affiliate_id: 1,
-            parent_loan_id: 6,
-            contributions: [
-                {
-                    payable_liquid: 2000,
-                    seniority_bonus: 0,
-                    border_bonus: 0,
-                    public_security_bonus: 300,
-                    east_bonus: 0
-                }
-            ]
+      let res1 = await axios.post(`simulator`, {
+              procedure_modality_id: 46,
+              amount_requested: this.monto_hipotecario,
+              months_term: this.intervalos.maximum_term,
+              guarantor: true,
+              quota_lender: 1498,
+              liquid_calculated: [
+        {
+            affiliate_id: 51419,
+            liquid_qualification_calculated: 2200
+        },
+        {
+            affiliate_id:1,
+            liquid_qualification_calculated: 2700
         }
-            ]
+    ]
           })
-          this.calculo123 = res.data
+          this.calculo1234 = res1.data
+
+      for (this.j = 0; this.j< this.calculo1234.length; this.j++) {
+
+        this.calculo1234[this.j].affiliate_nombres=this.datos_calculadora_hipotecario[this.j].affiliate_name
+
+        console.log(""+this.calculo1234[this.j].affiliate_nombres)
+      }
+
+
       } catch (e) {
         console.log(e)
       } finally {

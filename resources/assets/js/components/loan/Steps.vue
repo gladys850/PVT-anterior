@@ -77,13 +77,16 @@
               <v-card class="ma-3">
                 <BallotsResult
                   :datos.sync="datos"
+                  :intervalos.sync="intervalos"
                   :bonos.sync="bonos"
                   :payable_liquid.sync="payable_liquid"
                   :calculos.sync="calculos"
                   :modalidad.sync="modalidad"
                   :modalities.sync="modalities"
-                  :prueba.sync="prueba" 
-                  :procedure_type.sync="procedure_type">
+                  :prueba.sync="prueba"
+                  :procedure_type.sync="procedure_type"
+                  :calculo123.sync="calculo123"
+                  :datos_calculadora_hipotecario="datos_calculadora_hipotecario">
                     <template v-slot:title>
                       <v-col cols="12" class="py-0">Resultado para el Préstamo</v-col>
                     </template>
@@ -111,6 +114,7 @@
             <Guarantor
               :datos.sync="datos"
               :modalidad_guarantors.sync="modalidad.guarantors"
+              :modalidad.sync="modalidad"
               :prueba.sync="prueba"
               :calculos.sync="calculos"
               :garantes.sync="garantes"
@@ -260,6 +264,7 @@ export default {
     bonos:[0,0,0,0],
     formulario:[],
     personal_reference:{},
+    calculo123:[],
     personal_codebtor:[],
     calculos:{
       promedio_liquido_pagable:0,
@@ -268,7 +273,8 @@ export default {
       calculo_de_cuota:0,
       indice_endeudamiento:0,
       monto_maximo_sugerido:0
-    }
+    },
+    datos_calculadora_hipotecario:[]
   }),
   computed: {
     isNew() {
@@ -296,9 +302,15 @@ export default {
       else {
         if(n==1)
         {
-          this.Calculator()
-               console.log('esta es la modalidad ultima prueba'+this.modalidad.id)
-     
+          if(this.modalidad.procedure_type_id==12)
+          {
+            this.calculadora_hipotecario()
+            console.log('esta entro por verdad con la modalidad'+ this.modalidad.procedure_type_id)
+          }
+          else{
+            this.Calculator()
+            console.log('esta entro por false'+this.modalidad.procedure_type_id)
+          }
         }
         if(n==2)
         {
@@ -349,7 +361,11 @@ export default {
         console.log('entro por verdader'+this.modalidad.personal_reference)
       }
     },
-    //Metodo para identificar el modulo
+    /*Metodo para identificar el modulo Ejemplo de respuesta:
+        "id": 9,
+        "module_id": 6,
+        "name": "Préstamo Anticipo"
+        "second_name": "Anticipo"*/
     async getProcedureType() {
       try {
         let resp = await axios.get(`module`,{
@@ -443,6 +459,64 @@ export default {
         this.loading = false
       }
     },
+     //Metodo para la datos de la calculadora en hipotecario
+     async calculadora_hipotecario() {
+      try {
+          let res = await axios.post(`liquid_calificated`, {
+            liquid_calification: [
+              {
+                affiliate_id: 51419,
+                contributions: [
+                {
+                    payable_liquid: 2000,
+                    seniority_bonus: 0,
+                    border_bonus: 0,
+                    public_security_bonus: 300,
+                    east_bonus: 0
+                },
+                {
+                    payable_liquid: 3000,
+                    seniority_bonus: 0,
+                    border_bonus: 0,
+                    public_security_bonus: 300,
+                    east_bonus: 0
+                },
+                {
+                    payable_liquid: 3500,
+                    seniority_bonus: 0,
+                    border_bonus: 0,
+                    public_security_bonus: 0,
+                    east_bonus: 0
+                }
+              ]
+            },
+               {
+            affiliate_id: 1,
+            contributions: [
+                {
+                    payable_liquid: 2000,
+                    seniority_bonus: 0,
+                    border_bonus: 0,
+                    public_security_bonus: 300,
+                    east_bonus: 0
+                }
+            ]
+        }
+            ]
+          })
+          this.datos_calculadora_hipotecario= res.data
+           for (this.i = 0; this.i< this.datos_calculadora_hipotecario.length; this.i++) {
+              let res5 = await axios.get(`affiliate/${this.datos_calculadora_hipotecario[this.i].affiliate_id}`)
+              this.affiliates = res5.data
+              this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_name
+             }
+             console.log("esta es la calculadora HIpótecaria"+this.datos_calculadora_hipotecario)
+      } catch (e) {
+        console.log(e)
+      } finally {
+        this.loading = false
+      }
+    },
     //metodo para armar las contribuciones del afiliado
     Contributios()
     {
@@ -482,7 +556,88 @@ export default {
           this.num_type=this.loanTypeSelected
         }
       }*/
-    }
+    },
+    async calculadora() {
+      try {
+        console.log("entro a liquido pagable")
+          let res = await axios.post(`liquid_calificated`, {
+            liquid_calification: [
+              {
+                affiliate_id: 51419,
+                contributions: [
+                {
+                    payable_liquid: 2000,
+                    seniority_bonus: 0,
+                    border_bonus: 0,
+                    public_security_bonus: 300,
+                    east_bonus: 0
+                },
+                {
+                    payable_liquid: 3000,
+                    seniority_bonus: 0,
+                    border_bonus: 0,
+                    public_security_bonus: 300,
+                    east_bonus: 0
+                },
+                {
+                    payable_liquid: 3500,
+                    seniority_bonus: 0,
+                    border_bonus: 0,
+                    public_security_bonus: 0,
+                    east_bonus: 0
+                }
+              ]
+            },
+               {
+            affiliate_id: 1,
+            contributions: [
+                {
+                    payable_liquid: 2000,
+                    seniority_bonus: 0,
+                    border_bonus: 0,
+                    public_security_bonus: 300,
+                    east_bonus: 0
+                }
+            ]
+        }
+            ]
+          })
+
+
+
+          this.calculo123 = res.data
+
+           for (this.i = 0; this.i< this.calculo123.length; this.i++) {
+
+              let res5 = await axios.get(`affiliate/${this.calculo123[this.i].affiliate_id}`)
+
+
+
+        this.afiliados = res5.data
+        this.calculo123[this.i].affiliate_name=this.afiliados.full_name
+      console.log("este es el nombre del usuario"+ this.calculo123[1].affiliate_name)
+      }
+
+/*
+    for (this.j = 0; this.j< this.calculo1234.length; this.j++) {
+
+              let res6 = await axios.get(`affiliate/${this.calculo1234[this.j].affiliate_id}`)
+
+
+
+        this.affiliate_total = res6.data
+        this.calculo1234[this.j].affiliate_name=this.affiliate_total.full_name
+      console.log("este es el nombre del usuario"+ this.calculo1234[1].affiliate_name)
+      }
+*/
+
+      } catch (e) {
+        console.log(e)
+      } finally {
+        this.loading = false
+      }
+    },
+
   },
 }
 </script>
