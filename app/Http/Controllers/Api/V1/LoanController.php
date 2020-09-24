@@ -123,25 +123,46 @@ class LoanController extends Controller
     /**
     * Nuevo préstamo
     * Inserta nuevo préstamo
-    * @bodyParam procedure_modality_id integer required ID de modalidad. Example: 32
-    * @bodyParam amount_requested integer required monto solicitado. Example: 2000
-    * @bodyParam city_id integer required ID de la ciudad. Example: 3
-    * @bodyParam loan_term integer required plazo. Example: 2
+    * @bodyParam procedure_modality_id integer required ID de modalidad. Example: 46
+    * @bodyParam amount_requested integer required monto solicitado. Example: 26000
+    * @bodyParam city_id integer required ID de la ciudad. Example: 4
+    * @bodyParam loan_term integer required plazo. Example: 40
     * @bodyParam payment_type_id integer required Tipo de desembolso. Example: 1
     * @bodyParam financial_entity_id integer ID de entidad financiera. Example: 1
     * @bodyParam number_payment_type integer Número de cuenta o Número de cheque para el de desembolso. Example: 10000541214
-    * @bodyParam lenders array required Lista de IDs de afiliados Titular de préstamo. Example: [5146]
     * @bodyParam payable_liquid_calculated numeric required Promedio liquido pagable. Example: 2000
     * @bodyParam bonus_calculated integer required Total de bono calculado. Example: 24
     * @bodyParam liquid_qualification_calculated numeric required Total de bono calculado. Example: 2000
     * @bodyParam indebtedness_calculated numeric required Indice de endeudamiento. Example: 52.26
-    * @bodyParam guarantors array Lista de IDs de afiliados Garante de préstamo. Example: []
     * @bodyParam parent_loan_id integer ID de Préstamo Padre. Example: 1
     * @bodyParam parent_reason enum (REFINANCIAMIENTO, REPROGRAMACIÓN) Tipo de trámite hijo. Example: REFINANCIAMIENTO
-    * @bodyParam personal_reference_id integer ID de referencia personal. Example: 4
-    * @bodyParam destiny_id integer required ID destino de Préstamo. Example: 1
-    * @bodyParam documents array required Lista de IDs de Documentos solicitados. Example: [40, 271, 273, 274]
+    * @bodyParam personal_reference_id integer ID de referencia personal. Example: 1
+    * @bodyParam destiny_id integer required ID destino de Préstamo. Example: 2
+    * @bodyParam documents array required Lista de IDs de Documentos solicitados. Example: [294,283,296,305,306,307,308,309,310,311,312,313,284,44,274]
     * @bodyParam notes array Lista de notas aclaratorias. Example: [Informe de baja policial, Carta de solicitud]
+    * @bodyParam lenders array required Lista de afiliados Titular(es) del préstamo.
+    * @bodyParam lenders[0].affiliate_id integer required ID del afiliado. Example: 47461
+    * @bodyParam lenders[0].payment_percentage integer required ID del afiliado. Example: 50
+    * @bodyParam lenders[0].payable_liquid_calculated numeric required ID del afiliado. Example: 2000
+    * @bodyParam lenders[0].bonus_calculated integer required ID del afiliado. Example: 300
+    * @bodyParam lenders[0].quota_refinance numeric required ID del afiliado. Example: 514.6
+    * @bodyParam lenders[0].indebtedness_calculated numeric required ID del afiliado. Example: 34
+    * @bodyParam lenders[0].liquid_qualification_calculated numeric required ID del afiliado. Example: 2000
+    * @bodyParam lenders[1].affiliate_id integer required ID del afiliado. Example: 22773
+    * @bodyParam lenders[1].payment_percentage integer required ID del afiliado. Example: 50
+    * @bodyParam lenders[1].payable_liquid_calculated numeric required ID del afiliado. Example: 2000
+    * @bodyParam lenders[1].bonus_calculated integer required ID del afiliado. Example: 300
+    * @bodyParam lenders[1].quota_refinance numeric required ID del afiliado. Example: 514.6
+    * @bodyParam lenders[1].indebtedness_calculated numeric required ID del afiliado. Example: 34
+    * @bodyParam lenders[1].liquid_qualification_calculated numeric required ID del afiliado. Example: 2000
+    * @bodyParam guarantors array required Lista de afiliados Garante(es) del préstamo.
+    * @bodyParam guarantors[0].affiliate_id integer required ID del afiliado. Example: 51925
+    * @bodyParam guarantors[0].payment_percentage integer required ID del afiliado. Example: 50
+    * @bodyParam guarantors[0].payable_liquid_calculated numeric required ID del afiliado. Example: 2000
+    * @bodyParam guarantors[0].bonus_calculated integer required ID del afiliado. Example: 300
+    * @bodyParam guarantors[0].quota_refinance numeric required ID del afiliado. Example: 0
+    * @bodyParam guarantors[0].indebtedness_calculated numeric required ID del afiliado. Example: 34
+    * @bodyParam guarantors[0].liquid_qualification_calculated numeric required ID del afiliado. Example: 2000
     * @authenticated
     * @responseFile responses/loan/store.200.json
     */
@@ -217,17 +238,15 @@ class LoanController extends Controller
     * Actualizar préstamo
     * Actualizar datos principales de préstamo
     * @urlParam loan required ID del préstamo. Example: 1
-    * @bodyParam procedure_modality_id integer required ID de modalidad. Example: 32
+    * @bodyParam procedure_modality_id integer required ID de modalidad. Example: 41
     * @bodyParam amount_requested integer required monto solicitado. Example: 2000
-    * @bodyParam city_id integer required ID de la ciudad. Example: 4
+    * @bodyParam city_id integer required ID de la ciudad. Example: 6
     * @bodyParam loan_term integer required plazo. Example: 2
     * @bodyParam payment_type_id integer required Tipo de desembolso. Example: 1
-    * @bodyParam lenders array required Lista de IDs de afiliados Titular de préstamo. Example: [5146]
     * @bodyParam payable_liquid_calculated numeric required Promedio liquido pagable. Example: 2000
     * @bodyParam bonus_calculated integer required Total de bono calculado. Example: 24
     * @bodyParam liquid_qualification_calculated numeric required Total de bono calculado. Example: 2000
     * @bodyParam indebtedness_calculated numeric required Indice de endeudamiento. Example: 52.26
-    * @bodyParam guarantors array Lista de IDs de afiliados Garante de préstamo. Example: []
     * @bodyParam disbursement_date date Fecha de desembolso. Example: 2020-02-01
     * @bodyParam parent_loan_id integer ID de Préstamo Padre. Example: 1
     * @bodyParam parent_reason enum (REFINANCIAMIENTO, REPROGRAMACIÓN) Tipo de trámite hijo. Example: REFINANCIAMIENTO
@@ -237,6 +256,29 @@ class LoanController extends Controller
     * @bodyParam destiny_id integer required ID destino de Préstamo. Example: 1
     * @bodyParam role_id integer Rol al cual derivar o devolver. Example: 81
     * @bodyParam validated boolean Estado validación del préstamo. Example: true
+    * @bodyParam lenders array required Lista de afiliados Titular(es) del préstamo.
+    * @bodyParam lenders[0].affiliate_id integer required ID del afiliado.Example: 47461
+    * @bodyParam lenders[0].payment_percentage integer required ID del afiliado. Example: 50
+    * @bodyParam lenders[0].payable_liquid_calculated numeric required ID del afiliado. Example: 2000
+    * @bodyParam lenders[0].bonus_calculated integer required ID del afiliado. Example: 300
+    * @bodyParam lenders[0].quota_refinance numeric required ID del afiliado. Example: 514.6
+    * @bodyParam lenders[0].indebtedness_calculated numeric required ID del afiliado. Example: 34
+    * @bodyParam lenders[0].liquid_qualification_calculated numeric required ID del afiliado. Example: 2000
+    * @bodyParam lenders[1].affiliate_id integer required ID del afiliado. Example: 22773
+    * @bodyParam lenders[1].payment_percentage integer required ID del afiliado. Example: 50
+    * @bodyParam lenders[1].payable_liquid_calculated numeric required ID del afiliado. Example: 2000
+    * @bodyParam lenders[1].bonus_calculated integer required ID del afiliado. Example: 300
+    * @bodyParam lenders[1].quota_refinance numeric required ID del afiliado. Example: 514.6
+    * @bodyParam lenders[1].indebtedness_calculated numeric required ID del afiliado. Example: 34
+    * @bodyParam lenders[1].liquid_qualification_calculated numeric required ID del afiliado. Example: 2000
+    * @bodyParam guarantors array required Lista de afiliados Garante(es) del préstamo.
+    * @bodyParam guarantors[0].affiliate_id integer required ID del afiliado. Example: 51925
+    * @bodyParam guarantors[0].payment_percentage integer required ID del afiliado. Example: 50
+    * @bodyParam guarantors[0].payable_liquid_calculated numeric required ID del afiliado. Example: 2000
+    * @bodyParam guarantors[0].bonus_calculated integer required ID del afiliado. Example: 300
+    * @bodyParam guarantors[0].quota_refinance numeric required ID del afiliado. Example: 0
+    * @bodyParam guarantors[0].indebtedness_calculated numeric required ID del afiliado. Example: 34
+    * @bodyParam guarantors[0].liquid_qualification_calculated numeric required ID del afiliado. Example: 2000
     * @authenticated
     * @responseFile responses/loan/update.200.json
     */
@@ -271,11 +313,15 @@ class LoanController extends Controller
         if (Auth::user()->can(['update-loan', 'create-loan']) && ($request->has('lenders') || $request->has('guarantors'))) {
             $request->lenders = collect($request->has('lenders') ? $request->lenders : [])->unique();
             $request->guarantors = collect($request->has('guarantors') ? $request->guarantors : [])->unique();
-            $request->guarantors = $request->guarantors->diff($request->lenders);
+            $a = 0;
+            foreach ($request->lenders as $lender) {
+                $affiliates[$a] = $lender['affiliate_id'];
+                $a++;
+            }
             if (!$request->has('disbursable_id')) {
-                $disbursable_id = $request->lenders[0];
+                $disbursable_id = $request->lenders[0]['affiliate_id'];
             } else {
-                if (!in_array($request->disbursable_id, $request->lenders)) abort(404);
+                if (!in_array($request->disbursable_id, $affiliates)) abort(404);
                 $disbursable_id = $request->disbursable_id;
             }
             $disbursable = Affiliate::findOrFail($disbursable_id);
@@ -304,22 +350,32 @@ class LoanController extends Controller
 
         $loan->save();
         if (Auth::user()->can(['update-loan', 'create-loan']) && ($request->has('lenders') || $request->has('guarantors'))) {
-            $percentage = Loan::get_percentage($request->lenders);
-            $affiliates = [];
+            $affiliates = []; $a = 0;
             foreach ($request->lenders as $affiliate) {
-                $affiliates[$affiliate] = [
-                    'payment_percentage' => $percentage,
+                $affiliates[$a] = [
+                    'affiliate_id' => $affiliate['affiliate_id'],
+                    'payment_percentage' => $affiliate['payment_percentage'],
+                    'payable_liquid_calculated' => $affiliate['payable_liquid_calculated'],
+                    'bonus_calculated' => $affiliate['bonus_calculated'],
+                    'quota_refinance' => $affiliate['quota_refinance'],
+                    'indebtedness_calculated' => $affiliate['indebtedness_calculated'],
+                    'liquid_qualification_calculated' => $affiliate['liquid_qualification_calculated'],
                     'guarantor' => false
                 ];
+                $a++;
             }
-            if($request->guarantors){
-                $percentage = Loan::get_percentage($request->guarantors);
-                foreach ($request->guarantors as $affiliate) {
-                    $affiliates[$affiliate] = [
-                        'payment_percentage' => $percentage,
-                        'guarantor' => true
-                    ];
-                }
+            foreach ($request->guarantors as $affiliate) {
+                $affiliates[$a] = [
+                    'affiliate_id' => $affiliate['affiliate_id'],
+                    'payment_percentage' => $affiliate['payment_percentage'],
+                    'payable_liquid_calculated' => $affiliate['payable_liquid_calculated'],
+                    'bonus_calculated' => $affiliate['bonus_calculated'],
+                    'quota_refinance' => $affiliate['quota_refinance'],
+                    'indebtedness_calculated' => $affiliate['indebtedness_calculated'],
+                    'liquid_qualification_calculated' => $affiliate['liquid_qualification_calculated'],
+                    'guarantor' => true
+                ];
+                $a++;
             }
             if (count($affiliates) > 0) $loan->loan_affiliates()->sync($affiliates);
         }
@@ -371,6 +427,17 @@ class LoanController extends Controller
     public function get_disbursable(Loan $loan)
     {
         return $loan->disbursable;
+    }
+    /**
+    * Información de cálculo detallada de titulares y garantes
+    * Devuelve la información de los cálculos realizados para titulares y garantes
+    * @urlParam loan required ID del préstamo. Example: 8
+    * @authenticated
+    * @responseFile responses/loan/get_loan_affiliates.200.json
+    */
+    public function get_loan_affiliates(Loan $loan)
+    {
+        return $loan->lenders_guarantors;
     }
 
     public static function verify_spouse_disbursable(Affiliate $affiliate)
