@@ -36,8 +36,10 @@ class LoanForm extends FormRequest
      */
     public function rules()
     {
+        $hypothecary = false;
         if ($this->procedure_modality_id) {
             $procedure_modality = ProcedureModality::findOrFail($this->procedure_modality_id);
+            if($procedure_modality->procedure_type->name == "Préstamo hipotecario") $hypothecary = true;
         } else {
             $procedure_modality = $this->loan->modality;
         }
@@ -53,7 +55,7 @@ class LoanForm extends FormRequest
             'bonus_calculated' => ['integer'],
             'liquid_qualification_calculated' => ['numeric'],
             'indebtedness_calculated' => ['numeric', 'max:90', new LoanParameterIndebtedness($procedure_modality)],
-            'personal_reference_id' => ['nullable', 'exists:personal_references,id'],
+            'property_id' => ['nullable', 'exists:loan_properties,id'],
             'lenders' => ['array', 'required','min:1', new LoanIntervalMaxLender($procedure_modality)],
             'lenders.*.affiliate_id' => ['required', 'integer', 'exists:affiliates,id'],
             'lenders.*.payment_percentage' => ['required', 'integer'],
@@ -86,7 +88,7 @@ class LoanForm extends FormRequest
         ];
         switch ($this->method()) {
             case 'POST': {
-                foreach (array_slice($rules, 0, $procedure_modality->loan_modality_parameter->personal_reference ? 12 :11 ) as $key => $rule) {
+                foreach (array_slice($rules, 0, $hypothecary ? 12 :11 ) as $key => $rule) { // $procedure_modality->loan_modality_parameter->personal_reference
                     array_push($rules[$key], 'required');
                 }
                 if ($procedure_modality->loan_modality_parameter->guarantors) {

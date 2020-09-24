@@ -45,7 +45,7 @@ class Loan extends Model
         'loan_term',
         'payment_type_id',
         'number_payment_type',
-        'personal_reference_id',
+        'property_id',
         'destiny_id',
         'financial_entity_id',
         'role_id',
@@ -80,6 +80,11 @@ class Loan extends Model
     public function personal_reference()
     {
         return $this->belongsTo(PersonalReference::class);
+    }
+
+    public function loan_property()
+    {
+        return $this->belongsTo(LoanProperty::class, 'property_id','id');
     }
 
     public function notes()

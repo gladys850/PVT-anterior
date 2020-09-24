@@ -1,0 +1,19 @@
+{
+    "id": 12,
+    "land_lot_number": "Nº0004",
+    "neighborhood_unit": "00000",
+    "urbanization": "LOS OLIVOS",
+    "surface": "000.00",
+    "cadastral_code": 123,
+    "limit": "NORTE NSC AL SUD EL LOTE NSC Y AL OESTE NSC",
+    "public_deed_number": "NRO. 000/2004",
+    "lawyer": "DRA. MARIA FERNANDEZ",
+    "registration_number": "2.00.1.01.0000000",
+    "real_folio_number": "A2",
+    "public_deed_date": "2020-09-23",
+    "net_realizable_value": 600000,
+    "​​real_right_city_id": 1,
+    "created_at": "2020-09-24T12:59:54.000000Z",
+    "updated_at": "2020-09-24T12:59:54.000000Z",
+    "measurement": "MTS"
+}
