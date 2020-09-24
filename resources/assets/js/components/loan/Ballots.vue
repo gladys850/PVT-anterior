@@ -40,7 +40,7 @@
                   </v-col>
                 </v-row>
               </v-container>
-              <v-container class="py-0" v-show="!hipotecario">
+              <v-container class="py-0" >
                 <v-row>
                   <v-col cols="12" md="12" class="text-center" >
                     BOLETAS DE PAGO
@@ -204,7 +204,7 @@ export default {
           this.num_type=this.loanTypeSelected
           this.procedure_type=this.loanTypeSelected
           
-          this.getLoanModality(this.$route.query.affiliate_id)
+               this.getLoanModality(this.$route.query.affiliate_id)
           this.getBallots(this.$route.query.affiliate_id)
           console.log('este es la modalidad del intervalo'+this.num_type)
 
@@ -213,7 +213,7 @@ export default {
  
    
     },
-  /*  clearForm()
+    /*clearForm() //FIXME ver si la funcion sera necesaria
     {
       this.payable_liquid[0]=0
       this.payable_liquid[1]=0
@@ -256,11 +256,11 @@ export default {
           this.modalidad.guarantors=this.loan_modality.loan_modality_parameter.guarantors
           this.modalidad.min_guarantor_category=this.loan_modality.loan_modality_parameter.min_guarantor_category
           this.modalidad.max_guarantor_category=this.loan_modality.loan_modality_parameter.max_guarantor_category
-          this.modalidad.personal_reference=this.loan_modality.loan_modality_parameter.personal_reference
+         this.modalidad.personal_reference=this.loan_modality.loan_modality_parameter.personal_reference
     
     
     //this.modalidad.personal_reference=true
-        this.prueba[0]=this.loan_modality.loan_modality_parameter.guarantors
+        this.prueba[0]=this.loan_modality.loan_modality_parameter.guarantors //FIXME prueba en este componente se genera, verificar si se usa en otro componente
         this.prueba[1]=this.loan_modality.loan_modality_parameter.min_guarantor_category
         this.prueba[2]=this.loan_modality.loan_modality_parameter.max_guarantor_category
         this.prueba[3]=this.loan_modality.loan_modality_parameter.personal_reference
@@ -303,23 +303,23 @@ export default {
       if(res.data.valid)
       {
         this.editar=false
-        this.datos=res.data.data
+        this.datos=res.data.data       
         for (this.i = 0; this.i< this.datos.length; this.i++) {
-          this.payable_liquid[this.i]= this.datos[this.i].payable_liquid,
-          this.bonos[0]= this.datos[0].border_bonus,
-          this.bonos[1]= this.datos[0].east_bonus,
-          this.bonos[2]= this.datos[0].seniority_bonus,
-          this.bonos[3]= this.datos[0].public_security_bonus
+          this.payable_liquid[this.i] = this.datos[this.i].payable_liquid,
+          this.bonos[0] = this.datos[0].border_bonus,
+          this.bonos[1] = this.datos[0].east_bonus,
+          this.bonos[2] = this.datos[0].seniority_bonus,
+          this.bonos[3] = this.datos[0].public_security_bonus
         }
           for(this.j = 0; this.j< this.datos.length; this.j++)
         {
-          this.contributions1[this.j].payable_liquid=this.datos[this.j].payable_liquid
-          this.contributions1[this.j].id_affiliate=this.datos[this.j].affiliate_id
-          if(this.j==0){
-            this.contributions1[this.j].border_bonus= this.datos[this.j].border_bonus,
-            this.contributions1[this.j].east_bonus= this.datos[this.j].east_bonus,
-            this.contributions1[this.j].seniority_bonus= this.datos[this.j].seniority_bonus,
-            this.contributions1[this.j].public_security_bonus= this.datos[this.j].public_security_bonus
+          this.contributions1[this.j].payable_liquid = this.datos[this.j].payable_liquid
+          this.contributions1[this.j].id_affiliate = this.datos[this.j].affiliate_id
+          if(this.j == 0){
+            this.contributions1[this.j].border_bonus = this.datos[this.j].border_bonus,
+            this.contributions1[this.j].east_bonus = this.datos[this.j].east_bonus,
+            this.contributions1[this.j].seniority_bonus = this.datos[this.j].seniority_bonus,
+            this.contributions1[this.j].public_security_bonus = this.datos[this.j].public_security_bonus
           }
           else{
             this.contributions1[this.j].border_bonus=0,

@@ -18,7 +18,7 @@
           <v-stepper-step editable
             :key="`${3}-step`"
             :complete="e1 > 3"
-            :step="3">Garantia
+            :step="3">Garantía
           </v-stepper-step>
           <v-divider v-if="3 !== steps" :key="3" ></v-divider>
           <v-stepper-step editable
@@ -114,7 +114,7 @@
             <Guarantor
               :datos.sync="datos"
               :modalidad_guarantors.sync="modalidad.guarantors"
-              :modalidad.sync="modalidad"
+               :modalidad.sync="modalidad"
               :prueba.sync="prueba"
               :calculos.sync="calculos"
               :garantes.sync="garantes"
@@ -165,9 +165,7 @@
             <FormInformation
               :formulario.sync="formulario"
               :modalidad_personal_reference.sync="modalidad.personal_reference"
-              :personal_reference.sync="personal_reference"
-              :prueba.sync="prueba"
-              :calculos.sync="calculos"
+              :personal_reference.sync="personal_reference"    
               :intervalos.sync="intervalos"
             />
             <CoDebtor
@@ -208,7 +206,7 @@
     </v-stepper>
   </div>
 </template>
-<style >
+<style>
 .v-expansion-panel-content__wrap {
     padding: 0 0px 0px;
 }
@@ -260,13 +258,10 @@ export default {
     contributions1:[{},{},{} ],
     payable_liquid:[0,0,0],
     bonos:[0,0,0,0],
-    formulario:[],
+    formulario:[],//TODO ESTA VARIABLE SE DEBE BORRAR YA QUE SOLO SIRVE PARA VERIFICAR LA INFORMACION DE CADA COMPONENTE
     personal_reference:{},
-<<<<<<< HEAD
-=======
     calculo123:[],
     personal_codebtor:[],
->>>>>>> 1217c9ce4d77a1ba14e2c0a09e6b7f14a02a4146
     calculos:{
       promedio_liquido_pagable:0,
       total_bonos:0,
@@ -275,11 +270,7 @@ export default {
       indice_endeudamiento:0,
       monto_maximo_sugerido:0
     },
-<<<<<<< HEAD
-    personal_codebtor:[]
-=======
-    datos_calculadora_hipotecario:[]
->>>>>>> 1217c9ce4d77a1ba14e2c0a09e6b7f14a02a4146
+      datos_calculadora_hipotecario:[]
   }),
   computed: {
     isNew() {
@@ -366,7 +357,7 @@ export default {
         console.log('entro por verdader'+this.modalidad.personal_reference)
       }
     },
-    /*Metodo para identificar el modulo Ejemplo de respuesta:
+        /*Metodo para identificar el modulo Ejemplo de respuesta:
         "id": 9,
         "module_id": 6,
         "name": "Préstamo Anticipo"
@@ -464,7 +455,7 @@ export default {
         this.loading = false
       }
     },
-     //Metodo para la datos de la calculadora en hipotecario
+    //Metodo para la datos de la calculadora en hipotecario
      async calculadora_hipotecario() {
       try {
           let res = await axios.post(`liquid_calificated`, {
@@ -561,7 +552,7 @@ export default {
           this.num_type=this.loanTypeSelected
         }
       }*/
-    },
+      },
     async calculadora() {
       try {
         console.log("entro a liquido pagable")
