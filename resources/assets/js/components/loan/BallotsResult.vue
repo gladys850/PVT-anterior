@@ -5,7 +5,7 @@
         <!--v-card-->
           <v-row justify="center">
             <v-col cols="12">
-              <v-container class="py-0" v-show="datos.procedure_type_id!=12">
+              <v-container class="py-0" v-show="modalidad.procedure_type_id!=12">
                 <v-row>
                   <slot name="title"></slot>
                   <br />
@@ -63,9 +63,12 @@
                 </v-row>
               </v-container>
               <BallotsResultHipotecary
-              v-show="datos.procedure_type_id==12"
+              v-show="modalidad.procedure_type_id==12"
+              :intervalos.sync="intervalos"
               :datos.sync="datos"
-              :calculos.sync="calculos"/>
+              :calculos.sync="calculos"
+              :datos_calculadora_hipotecario="datos_calculadora_hipotecario"
+             />
             </v-col>
           </v-row>
         <!--/v-card-->
@@ -82,6 +85,18 @@ export default {
     ver:false
   }),
   props: {
+    datos_calculadora_hipotecario: {
+      type: Array,
+      required: true
+    },
+     intervalos: {
+      type: Object,
+      required: true
+    },
+     calculo123: {
+      type: Array,
+      required: true
+    },
     procedure_type: {
       type: Number,
       required: true
@@ -116,7 +131,7 @@ export default {
   },
  computed: {
     ver1() {
-      if(this.datos.procedure_type_id==12)
+      if(this.intervalos.procedure_type_id==12)
       {
         return true
       }else
