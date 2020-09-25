@@ -45,6 +45,7 @@
                   <v-col cols="12" md="12" class="text-center" >
                     BOLETAS DE PAGO
                   </v-col>
+
                   <v-col cols="12" md="4" class="py-0"  >
                     <v-text-field
                       dense
@@ -115,7 +116,8 @@
               </v-container>
               <BallotsHipotecary
                 v-show="hipotecario"
-                :contributions1.sync="contributions1"/>
+                :contributions1.sync="contributions1"
+                :contrib_codebtor="contrib_codebtor"/>
             </v-card>
           </v-col>
         </v-row>
@@ -135,7 +137,10 @@ export default {
     loanTypeSelected:null,
     visible:false,
     num_type:9,
-    hipotecario:false
+    hipotecario:false,
+    //contrib_codebtor: [],
+    //contributions1_aux: [],
+    datos:[]
   }),
    props: {
     procedure_type: {
@@ -170,6 +175,10 @@ export default {
       type: Object,
       required: true
     },
+    contrib_codebtor: {
+      type: Array,
+      required:true
+    }
   },
     components: {
     BallotsHipotecary
@@ -204,7 +213,7 @@ export default {
           this.num_type=this.loanTypeSelected
           this.procedure_type=this.loanTypeSelected
           
-               this.getLoanModality(this.$route.query.affiliate_id)
+          this.getLoanModality(this.$route.query.affiliate_id)
           this.getBallots(this.$route.query.affiliate_id)
           console.log('este es la modalidad del intervalo'+this.num_type)
 
@@ -260,7 +269,7 @@ export default {
     
     
     //this.modalidad.personal_reference=true
-        this.prueba[0]=this.loan_modality.loan_modality_parameter.guarantors //FIXME prueba en este componente se genera, verificar si se usa en otro componente
+        this.prueba[0]=this.loan_modality.loan_modality_parameter.guarantors //FIXME prueba, en este componente se recuperan algunos datos, verificar si se usa en otro componente
         this.prueba[1]=this.loan_modality.loan_modality_parameter.min_guarantor_category
         this.prueba[2]=this.loan_modality.loan_modality_parameter.max_guarantor_category
         this.prueba[3]=this.loan_modality.loan_modality_parameter.personal_reference
@@ -300,11 +309,12 @@ export default {
           page: 1,
         }
       })
+      this.datos=res.data.data  
       if(res.data.valid)
       {
         this.editar=false
-        this.datos=res.data.data       
-        for (this.i = 0; this.i< this.datos.length; this.i++) {
+             
+        for (this.i = 0; this.i< 1; this.i++) {
           this.payable_liquid[this.i] = this.datos[this.i].payable_liquid,
           this.bonos[0] = this.datos[0].border_bonus,
           this.bonos[1] = this.datos[0].east_bonus,
@@ -313,8 +323,9 @@ export default {
         }
           for(this.j = 0; this.j< this.datos.length; this.j++)
         {
-          this.contributions1[this.j].payable_liquid = this.datos[this.j].payable_liquid
           this.contributions1[this.j].id_affiliate = this.datos[this.j].affiliate_id
+          this.contributions1[this.j].payable_liquid = this.datos[this.j].payable_liquid
+          
           if(this.j == 0){
             this.contributions1[this.j].border_bonus = this.datos[this.j].border_bonus,
             this.contributions1[this.j].east_bonus = this.datos[this.j].east_bonus,
@@ -328,13 +339,66 @@ export default {
             this.contributions1[this.j].public_security_bonus=0
           }
         }
+      } else{
+          this.contributions1[0].id_affiliate =  this.datos[0].affiliate_id
+          this.contributions1[0].payable_liquid = this.payable_liquid[0]
+    
+            this.contributions1[0].border_bonus = this.bonos[0]
+            this.contributions1[0].east_bonus =this.bonos[1]
+            this.contributions1[0].seniority_bonus = this.bonos[2]
+            this.contributions1[0].public_security_bonus =this.bonos[3]
       }
     } catch (e) {
       console.log(e)
     } finally {
       this.loading = false
     }
-  }
+  },
+
+
+    /*formatear() {    
+      let contribuciones =[]
+      contribuciones=this.contributions1.concat(this.contrib_codebtor)
+      console.log("CONTRIBUCIONES")
+      console.log(this.contribuciones)
+      let nuevoArray = [];
+      let i;
+      for (i = 0; i < contribuciones.length; i++) {
+        nuevoArray[i] = {
+          affiliate_id: contribuciones[i].id_affiliate,
+          contributions: [{
+            payable_liquid: parseFloat(contribuciones[i].payable_liquid),
+            border_bonus: parseFloat(contribuciones[i].border_bonus),
+            east_bonus: parseFloat(contribuciones[i].east_bonus),
+            seniority_bonus: parseFloat(contribuciones[i].seniority_bonus),
+            public_security_bonus: parseFloat(contribuciones[i].public_security_bonus)
+            }]
+        };
+        console.log("FORMATEAR");
+        console.log(nuevoArray);
+      }
+      //this.contrib_codebtor_aux = { liquid_calification: nuevoArray };
+      this.contributions1_aux = nuevoArray;
+      
+    },
+    async liquidCalificated(){
+      this.formatear()  
+      let resultado
+      try {
+            let res = await axios.post(`liquid_calificated`,{liquid_calification:this.contributions1_aux})
+            this.resultado=res.data
+            console.log("RESULTADO")
+            console.log(resultado)
+          
+      } catch (e) {
+        console.log(e)
+      } finally {
+        this.loading = false
+        console.log('entro por verdadero')
+      }
+    },
+*/
+
  }
 };
 </script>

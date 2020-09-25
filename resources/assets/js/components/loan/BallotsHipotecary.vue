@@ -2,6 +2,8 @@
   <v-flex xs12 class="px-3">
     <v-form>
       <v-row justify="center">
+        <v-toolbar-title>BOLETAS DE PAGO DEL CODEUDOR</v-toolbar-title>
+        <v-divider class="mx-4" inset vertical></v-divider>
         <v-col cols="12">
           <v-container class="py-0">
             <v-row>
@@ -38,18 +40,7 @@
                 class="elevation-1"
               >
                 <template v-slot:top>
-                  <div>
-                    <v-btn fab dark x-small color="green" @click.stop="formatear()">
-                      <v-icon>mdi-pencil</v-icon>
-                    </v-btn>
-                  </div>
-                  {{contrib_codebtor}}
-                  <p></p>
-
-                  {{contrib_codebtor_aux}}
                   <v-toolbar flat color="white">
-                    <v-toolbar-title>BOLETAS DE PAGO DEL CODEUDOR</v-toolbar-title>
-                    <v-divider class="mx-4" inset vertical></v-divider>
                     <v-dialog v-model="dialog" max-width="500px">
                       <!--<template v-slot:activator="{ on, attrs }">
                               <v-btn
@@ -129,11 +120,6 @@
                     </v-dialog>
                   </v-toolbar>
                 </template>
-
-                <template v-slot:item.actions="{ item }">
-                  <v-icon small class="mr-2" @click="editItem(item)">mdi-pencil</v-icon>
-                  <v-icon small @click="deleteItem(item)">mdi-delete</v-icon>
-                </template>
                 <template v-slot:no-data>
                   <!--<v-btn color="primary" @click=" initialize">Reset</v-btn>-->
                 </template>
@@ -148,6 +134,16 @@
 <script>
 export default {
   name: "ballots_hipotecary",
+  props:{
+    contributions1: {
+      type: Array,
+      required: true
+    },
+    contrib_codebtor:{
+      type: Array,
+      required: true
+    }
+  },
   data: () => ({
     affiliate_codebtor_ci: null,
     //editar:true,
@@ -169,8 +165,8 @@ export default {
     ver: false,
     dialog: false,
     ballots: [],
-    contrib_codebtor: [],
-    contrib_codebtor_aux: [],
+    //contrib_codebtor: [],
+    //contrib_codebtor_aux: [],
 
     headers1: [
       {
@@ -205,12 +201,7 @@ export default {
       public_security_bonus: 0
     }
   }),
-  props: {
-    contributions1: {
-      type: Array,
-      required: true
-    }
-  },
+
   computed: {
     formTitle() {
       return this.editedIndex === -1 ? "Nueva Boleta" : "Editar Boleta";
@@ -251,12 +242,11 @@ export default {
           //this.editar=false
           console.log("RESULTADOS DE BALLOT")
           console.log(this.modalidad.quantity_ballots)
-          console.info(res.data);
-         
+          console.log(res.data);         
           console.log(this.ballots);
           //for (i = 0; i < this.ballots.length; i++) {
-             (this.editedItem.id_affiliate = this.ballots[0].affiliate_id),
-            (this.editedItem.payable_liquid = this.ballots[0].payable_liquid),
+              (this.editedItem.id_affiliate = this.ballots[0].affiliate_id),
+              (this.editedItem.payable_liquid = this.ballots[0].payable_liquid),
               (this.editedItem.border_bonus = this.ballots[0].border_bonus),
               (this.editedItem.east_bonus = this.ballots[0].east_bonus),
               (this.editedItem.seniority_bonus = this.ballots[0].seniority_bonus),
@@ -321,12 +311,13 @@ export default {
       } else {
         this.contrib_codebtor.push(this.editedItem);
       }
+      //this.formatear()
       this.close();
     },
 
     async searchCodebtor() {
       try {
-        /*     if(this.affiliate_codebtor_ci==this.affiliate.identity_card)
+        /*     if(this.affiliate_codebtor_ci==this.affiliate.identity_card) //TODO verificar y/o adicionar validaciones
         {
           this.toastr.error("El garante no puede tener el mismo carnet que el titular.")
         }
@@ -341,25 +332,23 @@ export default {
         this.ver = true;
         console.log("Entro al metodo de codeudor" + this.affiliate_codebtor + "==>" +this.affiliate_codebtor_ci
         );
-
         /*}*/
         if (this.exist_codebtor) {
           this.getBallots(this.affiliate_codebtor.affiliate.id);
-          console.log(
-            "ID DEL AFILIADO " + this.affiliate_codebtor.affiliate.id
+          console.log("ID DEL AFILIADO " + this.affiliate_codebtor.affiliate.id
           );
           this.dialog = true;
         }
+        
       } catch (e) {
         console.log(e);
       } finally {
         this.loading = false;
       }
     },
-    formatear() {
+    /*formatear() {
       let nuevoArray = [];
       let i;
-
       for (i = 0; i < this.contrib_codebtor.length; i++) {
         nuevoArray[i] = {
           affiliate_id: this.contrib_codebtor[i].id_affiliate,
@@ -376,7 +365,7 @@ export default {
       }
       //this.contrib_codebtor_aux = { liquid_calification: nuevoArray };
       this.contrib_codebtor_aux = nuevoArray;
-    }
+    }*/
   }
 };
 </script>
