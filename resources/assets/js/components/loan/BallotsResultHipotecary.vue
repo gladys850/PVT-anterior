@@ -39,11 +39,10 @@
                         <v-flex xs12 class="px-1">
                           <fieldset class="pa-2">
                               <v-toolbar-title>Liquido Pagable</v-toolbar-title>
-                              {{liquid_calificated}}
-                             <ul style="list-style: none" class="pa-0">
-                              <li v-for="(liquido,i) in datos_calculadora_hipotecario" :key="i" >
+                              <ul style="list-style: none" class="pa-0">
+                              <li v-for="(liquido,i) in liquid_calificated" :key="i" >
                                 <v-progress-linear></v-progress-linear>
-                                <p class="py-0 mb-0">Nombre del Afiliado: {{ liquido.affiliate_name}}</p>
+                                <p class="py-0 mb-0">Nombre del Afiliado: {{ liquido.affiliate_id}}</p>
                                 <p class="py-0 mb-0">Liquido Pagable: {{liquido.payable_liquid_calculated+"  "}}{{"  "+"Total de Bonos:"+liquido.bonus_calculated}}{{" "}}Liquido para Calificacion: {{" "+liquido.liquid_qualification_calculated}}</p>
                               </li>
                             </ul>
@@ -59,10 +58,10 @@
                           <fieldset class="pa-3">
                             <v-toolbar-title>Calculo</v-toolbar-title>
                               <ul style="list-style: none" class="pa-0">
-                                <li v-for="(calculado,i) in calculo1234" :key="i" >
+                                <li v-for="(calculado,i) in simulator" :key="i" >
                                   <v-progress-linear></v-progress-linear>
-                                  <p class="py-0 mb-0">Nombre del Afiliado: {{ calculado.affiliate_nombres}}</p>
-                                  <p class="py-0 mb-0">Cuota Estimada: {{calculado.quota_calculated_estimated+" "}}{{" "}}Interes Calculado: {{calculado.indebtedness_calculated}} % {{" "+"Porcentaje de Pago:"}} {{calculado.percentage_payment}}{{" "}}is_valid: {{calculado.is_valid}}</p>
+                                  <p class="py-0 mb-0">Nombre del Afiliado: {{ calculado.affiliate_id}}</p>
+                                  <p class="py-0 mb-0">Cuota Estimada: {{calculado.quota_calculated_estimated}}<b> | </b>Interes Calculado: {{calculado.indebtedness_calculated}} % <b> | </b>Porcentaje de Pago: {{calculado.payment_percentage}}% <b> | </b> {{calculado.is_valid? 'Puede cubrir la cuota':'No puede cubrir la cuota'}}</p>
                                 </li>
                               </ul>
                           </fieldset>
@@ -96,7 +95,7 @@ export default {
     visible:false,
     num_type:9,
     monto_hipotecario:null,
-    calculo1234:null,
+    simulator:null,
         calculo123:null,
         nombres:[]
   
@@ -106,14 +105,11 @@ export default {
       type: Object,
       required: true
     },
-    datos_calculadora_hipotecario: {
-      type: Array,
-      required: true
-    },
     intervalos: {
       type: Object,
       required: true
-    },/*
+    },
+   /*
     bonos: {
       type: Array,
       required: true
@@ -148,26 +144,17 @@ export default {
               months_term: this.intervalos.maximum_term,
               guarantor: true,
               quota_lender: 1498,
-              liquid_calculated: [
-        {
-            affiliate_id: 51419,
-            liquid_qualification_calculated: 2200
-        },
-        {
-            affiliate_id:1,
-            liquid_qualification_calculated: 2700
-        }
-    ]
+              liquid_calculated:this.liquid_calificated
           })
-          this.calculo1234 = res1.data
+          this.simulator = res1.data
 
-      for (this.j = 0; this.j< this.calculo1234.length; this.j++) {
+/*      for (this.j = 0; this.j< this.simulator.length; this.j++) {
 
-        this.calculo1234[this.j].affiliate_nombres=this.datos_calculadora_hipotecario[this.j].affiliate_name
+        this.simulator[this.j].affiliate_nombres=this.datos_calculadora_hipotecario[this.j].affiliate_name
 
-        console.log(""+this.calculo1234[this.j].affiliate_nombres)
+        console.log(""+this.simulator[this.j].affiliate_nombres)
       }
-
+*/
 
       } catch (e) {
         console.log(e)
