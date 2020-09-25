@@ -32,8 +32,8 @@ class CreateLoansTable extends Migration
             $table->unsignedBigInteger('state_id')->nullable(false); //id estado del tramite
             $table->foreign('state_id')->references('id')->on('loan_states'); // estado de prestamo
             $table->unsignedMediumInteger('amount_approved')->nullable(); // monto aprobado
-            $table->float('payable_liquid_calculated',10,2); //promedio liquido pagable calculado
-            $table->unsignedMediumInteger('bonus_calculated'); //total bonos calculado
+            //$table->float('payable_liquid_calculated',10,2); //promedio liquido pagable calculado
+            //$table->unsignedMediumInteger('bonus_calculated'); //total bonos calculado
             $table->float('indebtedness_calculated',5,2); //indice de endeudamiento calculado
             $table->float('liquid_qualification_calculated',10,2); //liquido para calificación calculado
             $table->unsignedSmallInteger('loan_term'); // plazo del prestamo en meses
