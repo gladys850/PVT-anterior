@@ -154,14 +154,6 @@ import CoDebtor from '@/components/loan/CoDebtor'
       type: Object,
       required: true
     }, 
-    prueba: {
-      type: Array,
-      required: true
-    },
-      calculos: {
-      type: Object,
-      required: true
-    },
       intervalos: {
       type: Object,
       required: true

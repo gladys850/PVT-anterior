@@ -1,6 +1,9 @@
+codebtor
+
 <template>
 <div class="ma-3 pa-0">
   <v-data-table
+    dense
     :headers="headers"
     :items="personal_codebtor"
     sort-by="identity_card"
@@ -15,7 +18,7 @@
           vertical
         ></v-divider>
         <v-spacer></v-spacer>
-        <v-dialog v-model="dialog" max-width="500px">
+        <v-dialog v-model="dialog" max-width="600px">
           <template v-slot:activator="{ on, attrs }">
             <v-btn
               fab
@@ -36,31 +39,38 @@
               <v-container>
                 <v-row>
                   <v-col cols="12" sm="6" md="3">
-                    <v-text-field v-model="editedItem.identity_card" label="CI"></v-text-field>
+                    <v-text-field dense v-model="editedItem.identity_card" label="CI"></v-text-field>
                   </v-col>
                   <v-col cols="12" sm="6" md="3">
-                    <v-text-field v-model="editedItem.city_identity_card_id" label="Ciudad de Expedición"></v-text-field>
+                    <v-select
+                      v-model="editedItem.city_identity_card_id"
+                      dense
+                      :items="cities"
+                      item-text="name"
+                      item-value="id"
+                      label="Ciudad de Expedición"
+                    ></v-select>
                   </v-col>
                   <v-col cols="12" sm="6" md="3">
-                    <v-text-field v-model="editedItem.first_name" label="Primer Nombre"></v-text-field>
+                    <v-text-field dense v-model="editedItem.first_name" label="Primer Nombre"></v-text-field>
                   </v-col>
                   <v-col cols="12" sm="6" md="3">
-                    <v-text-field v-model="editedItem.second_name" label="Segundo nombre"></v-text-field>
+                    <v-text-field dense v-model="editedItem.second_name" label="Segundo nombre"></v-text-field>
                   </v-col>
                   <v-col cols="12" sm="6" md="3">
-                    <v-text-field v-model="editedItem.last_name" label="Primer Apellido"></v-text-field>
+                    <v-text-field dense v-model="editedItem.last_name" label="Primer Apellido"></v-text-field>
                   </v-col>
                   <v-col cols="12" sm="6" md="3">
-                    <v-text-field v-model="editedItem.mothers_last_name" label="Segundo Apellido"></v-text-field>
+                    <v-text-field dense v-model="editedItem.mothers_last_name" label="Segundo Apellido"></v-text-field>
                   </v-col>
                   <v-col cols="12" sm="6" md="3">
-                    <v-text-field v-model="editedItem.phone_number" label="Teléfono"></v-text-field>
+                    <v-text-field dense v-model="editedItem.phone_number" label="Teléfono"></v-text-field>
                   </v-col>
                   <v-col cols="12" sm="6" md="3">
-                    <v-text-field v-model="editedItem.cell_phone_number" label="Celular"></v-text-field>
+                    <v-text-field dense v-model="editedItem.cell_phone_number" label="Celular"></v-text-field>
                   </v-col>
                   <v-col cols="12" sm="6" md="12">
-                    <v-text-field v-model="editedItem.address" label="Dirección"></v-text-field>
+                    <v-text-field dense v-model="editedItem.address" label="Dirección"></v-text-field>
                   </v-col>
                   
                 </v-row>
@@ -148,6 +158,7 @@
         cell_phone_number: null,
         address: null
       },
+      cities: []
     }),
 
     computed: {
@@ -166,7 +177,9 @@
     /*created () {
       this.initialize()
     },*/
-
+    mounted() {
+      this.getCities()
+    },
     methods: {
       /*initialize () {
         this.personal_codebtor = [
@@ -218,6 +231,18 @@
           console.log(this.editedItem)
         }
         this.close()
+      },
+      async getCities() {
+      try {
+        this.loading = true
+        let res = await axios.get(`city`)
+        this.cities = res.data
+      } catch (e) {
+        this.dialog = false
+        console.log(e)
+      }finally {
+          this.loading = false
+        }
       },
     },
   }
