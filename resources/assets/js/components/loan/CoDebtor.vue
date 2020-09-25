@@ -8,6 +8,7 @@ codebtor
     :items="personal_codebtor"
     sort-by="identity_card"
     class="elevation-1 ma-0 pa-3"
+    hide-default-footer
   >
     <template v-slot:top>
       <v-toolbar flat color="white">
@@ -123,16 +124,16 @@ codebtor
     data: () => ({
       dialog: false,
       headers: [
-        { text: 'CI', align: 'start', sortable: false, value: 'identity_card'},
-        { text: 'Ciudad de Expedición', value: 'city_identity_card_id' },
-        { text: 'Primer Nombre', value: 'first_name' },
-        { text: 'Segundo Nombre', value: 'second_name' },
-        { text: 'Primer Apellido', value: 'last_name' },
-        { text: 'Segundo Apellido', value: 'mothers_last_name' },
-        { text: 'Teléfono', value: 'phone_number' },
-        { text: 'Celular', value: 'cell_phone_number' },
-        { text: 'Dirección', value: 'address' },
-        { text: 'Actions', value: 'actions', sortable: false },
+        { text: 'CI', align: 'start', class: ['normal', 'white--text'], sortable: false, value: 'identity_card'},
+        { text: 'Ciudad de Expedición', class: ['normal', 'white--text'], value: 'city_identity_card_id' },
+        { text: 'Primer Nombre', class: ['normal', 'white--text'], value: 'first_name' },
+        { text: 'Segundo Nombre', class: ['normal', 'white--text'], value: 'second_name' },
+        { text: 'Primer Apellido', class: ['normal', 'white--text'], value: 'last_name' },
+        { text: 'Segundo Apellido', class: ['normal', 'white--text'], value: 'mothers_last_name' },
+        { text: 'Teléfono', class: ['normal', 'white--text'], value: 'phone_number' },
+        { text: 'Celular', class: ['normal', 'white--text'], value: 'cell_phone_number' },
+        { text: 'Dirección', class: ['normal', 'white--text'], value: 'address' },
+        { text: 'Actions', class: ['normal', 'white--text'], value: 'actions', sortable: false },
       ],
       
       editedIndex: -1,

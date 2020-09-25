@@ -1,9 +1,10 @@
 <template>
   <v-flex xs12 class="px-3">
+    <div class="text-center">
+      BOLETAS DE PAGO DEL CODEUDOR</div>
     <v-form>
       <v-row justify="center">
-        <v-toolbar-title>BOLETAS DE PAGO DEL CODEUDOR</v-toolbar-title>
-        <v-divider class="mx-4" inset vertical></v-divider>
+       
         <v-col cols="12">
           <v-container class="py-0">
             <v-row>
@@ -16,6 +17,7 @@
               <v-col class="text-center" cols="12" md="8" v-if="!ver"></v-col>
               <v-col cols="12" md="3">
                 <v-text-field
+                  dense
                   label="C.I. CODEUDOR"
                   v-model="affiliate_codebtor_ci"
                   class="py-0"
@@ -33,14 +35,17 @@
                   </template>
                 </v-tooltip>
               </v-col>
+              <v-col>
               <v-data-table
+                dense
                 :headers="headers1"
                 :items="contrib_codebtor"
                 sort-by
-                class="elevation-1"
+                class="elevation-1 ma-0 pa-3 pb-6"
+                hide-default-footer
               >
                 <template v-slot:top>
-                  <v-toolbar flat color="white">
+                  
                     <v-dialog v-model="dialog" max-width="500px">
                       <!--<template v-slot:activator="{ on, attrs }">
                               <v-btn
@@ -117,13 +122,19 @@
                           <v-btn color="blue darken-1" dense text @click="save">Guardar</v-btn>
                         </v-card-actions>
                       </v-card>
-                    </v-dialog>
-                  </v-toolbar>
+                    </v-dialog>                 
+                </template>
+
+                  <template v-slot:item.actions="{ item }">
+                  <v-icon small class="mr-2" color="blue" @click="editItem(item)">mdi-pencil</v-icon>
+                  <v-icon small color="error" @click="deleteItem(item)">mdi-delete</v-icon>
                 </template>
                 <template v-slot:no-data>
                   <!--<v-btn color="primary" @click=" initialize">Reset</v-btn>-->
                 </template>
               </v-data-table>
+              </v-col>
+
             </v-row>
           </v-container>
         </v-col>
@@ -171,16 +182,36 @@ export default {
     headers1: [
       {
         text: "Nombre Afiliado",
-        align: "start",
+       
+        class: ['normal', 'white--text'],
         sortable: false,
         value: "id_affiliate"
       },
-      { text: "Liquido Pagable", value: "payable_liquid" },
-      { text: "Bono Frontera", value: "border_bonus" },
-      { text: "Bono Oriente", value: "east_bonus" },
-      { text: "Bono Cargo", value: "seniority_bonus" },
-      { text: "Bono Seguridad Ciudadana", value: "public_security_bonus" },
-      { text: "Actions", value: "actions", sortable: false }
+      { text: "Liquido Pagable", 
+        class: ['normal', 'white--text'],
+        value: "payable_liquid"
+      },
+      { text: "Bono Frontera", 
+        class: ['normal','white--text'],
+        value: "border_bonus" 
+      },
+      { text: "Bono Oriente", 
+        class: ['normal', 'white--text'],
+        value: "east_bonus" 
+      },
+      { text: "Bono Cargo", 
+        class: ['normal', 'white--text'],
+        value: "seniority_bonus" 
+      },
+      { text: "Bono Seguridad Ciudadana", 
+        class: ['normal', 'white--text'],
+        value: "public_security_bonus" 
+      },
+      { text: "Actions", 
+        class: ['normal', 'white--text'],
+        value: "actions", 
+        sortable: false
+      }
     ],
     //desserts: [],
     editedIndex: -1,
