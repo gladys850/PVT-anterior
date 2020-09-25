@@ -32,15 +32,15 @@ class CreateLoansTable extends Migration
             $table->unsignedBigInteger('state_id')->nullable(false); //id estado del tramite
             $table->foreign('state_id')->references('id')->on('loan_states'); // estado de prestamo
             $table->unsignedMediumInteger('amount_approved')->nullable(); // monto aprobado
-            $table->float('payable_liquid_calculated',10,2); //promedio liquido pagable calculado
-            $table->unsignedMediumInteger('bonus_calculated'); //total bonos calculado
+            //$table->float('payable_liquid_calculated',10,2); //promedio liquido pagable calculado
+            //$table->unsignedMediumInteger('bonus_calculated'); //total bonos calculado
             $table->float('indebtedness_calculated',5,2); //indice de endeudamiento calculado
             $table->float('liquid_qualification_calculated',10,2); //liquido para calificación calculado
             $table->unsignedSmallInteger('loan_term'); // plazo del prestamo en meses
             $table->unsignedBigInteger('payment_type_id'); // id tipo de desembolso
             $table->foreign('payment_type_id')->references('id')->on('payment_types');
             $table->unsignedBigInteger('number_payment_type')->nullable(); // numero de cheque o numero cuenta del titular para el desembolso
-            $table->unsignedBigInteger('personal_reference_id')->nullable(); // persona de referencia
+            //$table->unsignedBigInteger('personal_reference_id')->nullable(); // persona de referencia
             //$table->foreign('personal_reference_id')->references('id')->on('personal_references');
             $table->unsignedBigInteger('destiny_id'); // id tipo de desembolso
             $table->foreign('destiny_id')->references('id')->on('loan_destinies');

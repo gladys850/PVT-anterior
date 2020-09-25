@@ -39,7 +39,7 @@ class SimulatorForm extends FormRequest
             'amount_requested'=> ['nullable', 'required_if:guarantor,false', 'integer', 'min:200', 'max:700000', new LoanIntervalAmount($procedure_modality)],
             'months_term'=> ['nullable', 'required_if:guarantor,false', 'integer', 'min:1', 'max:240', new LoanIntervalTerm($procedure_modality)],
             'guarantor' => ['nullable', 'boolean'],
-            'quota_lender' => ['nullable', 'required_if:guarantor,true'],
+            'liquid_qualification_calculated_lender' => ['nullable', 'required_if:guarantor,true'],
             'liquid_calculated' => ['required', 'array', 'min:1'],
             'liquid_calculated.*.affiliate_id' => ['required'],
             'liquid_calculated.*.liquid_qualification_calculated' => ['required']
@@ -49,7 +49,7 @@ class SimulatorForm extends FormRequest
     public function messages()
     {
         return [
-            'quota_lender.required_if' => 'La cuota total del titular es requerido',
+            'liquid_qualification_calculated_lender.required_if' => 'La cuota total del titular es requerido',
             'amount_requested.required_if' => 'El monto solicitado es requerido',
             'months_term.required_if' => 'El plazo solicitado es requerido',
         ];
