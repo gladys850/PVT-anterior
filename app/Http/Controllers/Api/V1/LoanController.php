@@ -136,7 +136,7 @@ class LoanController extends Controller
     * @bodyParam indebtedness_calculated numeric required Indice de endeudamiento. Example: 52.26
     * @bodyParam parent_loan_id integer ID de Préstamo Padre. Example: 1
     * @bodyParam parent_reason enum (REFINANCIAMIENTO, REPROGRAMACIÓN) Tipo de trámite hijo. Example: REFINANCIAMIENTO
-    * @bodyParam personal_reference_id integer ID de referencia personal. Example: 1
+    * @bodyParam property_id integer ID de bien inmueble. Example: 4
     * @bodyParam destiny_id integer required ID destino de Préstamo. Example: 2
     * @bodyParam documents array required Lista de IDs de Documentos solicitados. Example: [294,283,296,305,306,307,308,309,310,311,312,313,284,44,274]
     * @bodyParam notes array Lista de notas aclaratorias. Example: [Informe de baja policial, Carta de solicitud]
@@ -250,7 +250,7 @@ class LoanController extends Controller
     * @bodyParam disbursement_date date Fecha de desembolso. Example: 2020-02-01
     * @bodyParam parent_loan_id integer ID de Préstamo Padre. Example: 1
     * @bodyParam parent_reason enum (REFINANCIAMIENTO, REPROGRAMACIÓN) Tipo de trámite hijo. Example: REFINANCIAMIENTO
-    * @bodyParam personal_reference_id integer ID de referencia personal. Example: 4
+    * @bodyParam property_id integer ID de bien inmueble. Example: 4
     * @bodyParam financial_entity_id integer ID de entidad financiera. Example: 1
     * @bodyParam number_payment_type integer Número de cuenta o Número de cheque para el de desembolso. Example: 10000541214
     * @bodyParam destiny_id integer required ID destino de Préstamo. Example: 1
