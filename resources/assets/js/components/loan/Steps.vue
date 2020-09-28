@@ -18,7 +18,7 @@
           <v-stepper-step editable
             :key="`${3}-step`"
             :complete="e1 > 3"
-            :step="3">Garantia
+            :step="3">Garantía
           </v-stepper-step>
           <v-divider v-if="3 !== steps" :key="3" ></v-divider>
           <v-stepper-step editable
@@ -56,6 +56,7 @@
               :modalidad.sync="modalidad"
               :prueba.sync="prueba"
               :procedure_type.sync="procedure_type"
+              :contrib_codebtor="contrib_codebtor"
             />
             <v-container class="py-0">
               <v-row>
@@ -86,7 +87,8 @@
                   :prueba.sync="prueba"
                   :procedure_type.sync="procedure_type"
                   :calculo123.sync="calculo123"
-                  :datos_calculadora_hipotecario="datos_calculadora_hipotecario">
+                  :datos_calculadora_hipotecario="datos_calculadora_hipotecario"
+                  :liquid_calificated="liquid_calificated" >
                     <template v-slot:title>
                       <v-col cols="12" class="py-0">Resultado para el Préstamo</v-col>
                     </template>
@@ -114,7 +116,7 @@
             <Guarantor
               :datos.sync="datos"
               :modalidad_guarantors.sync="modalidad.guarantors"
-              :modalidad.sync="modalidad"
+               :modalidad.sync="modalidad"
               :prueba.sync="prueba"
               :calculos.sync="calculos"
               :garantes.sync="garantes"
@@ -165,14 +167,11 @@
             <FormInformation
               :formulario.sync="formulario"
               :modalidad_personal_reference.sync="modalidad.personal_reference"
-              :personal_reference.sync="personal_reference"
-              :prueba.sync="prueba"
-              :calculos.sync="calculos"
+              :personal_reference.sync="personal_reference"    
               :intervalos.sync="intervalos"
             />
-            <CoDebtor  
-              :personal_codebtor ="personal_codebtor"
-            />
+            <CoDebtor
+              :personal_codebtor="personal_codebtor"/>
             <v-container class="py-0">
               <v-row>
                 <v-spacer></v-spacer><v-spacer></v-spacer><v-spacer></v-spacer>
@@ -202,15 +201,14 @@
               :reference.sync="reference"
               :garantes.sync="garantes"
               :modalidad_id.sync="modalidad.id"
-              :personal_codebtor ="personal_codebtor"/>
-              
+              :personal_codebtor="personal_codebtor"/>
           </v-card>
         </v-stepper-content>
       </v-stepper-items>
     </v-stepper>
   </div>
 </template>
-<style >
+<style>
 .v-expansion-panel-content__wrap {
     padding: 0 0px 0px;
 }
@@ -259,10 +257,10 @@ export default {
     datos:{},
     reference:{},
     intervalos:{},
-    contributions1:[{},{},{} ],
+    contributions1:[{}],
     payable_liquid:[0,0,0],
     bonos:[0,0,0,0],
-    formulario:[],
+    formulario:[],//TODO ESTA VARIABLE SE DEBE BORRAR YA QUE SOLO SIRVE PARA VERIFICAR LA INFORMACION DE CADA COMPONENTE
     personal_reference:{},
     calculo123:[],
     personal_codebtor:[],
@@ -274,7 +272,10 @@ export default {
       indice_endeudamiento:0,
       monto_maximo_sugerido:0
     },
-    datos_calculadora_hipotecario:[]
+      datos_calculadora_hipotecario:[],
+      contrib_codebtor: [],
+      contributions1_aux: [],
+      liquid_calificated:[]
   }),
   computed: {
     isNew() {
@@ -303,7 +304,7 @@ export default {
         if(n==1)
         {
           if(this.modalidad.procedure_type_id==12)
-          {
+          { this.liquidCalificated()
             this.calculadora_hipotecario()
             console.log('esta entro por verdad con la modalidad'+ this.modalidad.procedure_type_id)
           }
@@ -361,7 +362,7 @@ export default {
         console.log('entro por verdader'+this.modalidad.personal_reference)
       }
     },
-    /*Metodo para identificar el modulo Ejemplo de respuesta:
+        /*Metodo para identificar el modulo Ejemplo de respuesta:
         "id": 9,
         "module_id": 6,
         "name": "Préstamo Anticipo"
@@ -459,7 +460,7 @@ export default {
         this.loading = false
       }
     },
-     //Metodo para la datos de la calculadora en hipotecario
+    //Metodo para la datos de la calculadora en hipotecario
      async calculadora_hipotecario() {
       try {
           let res = await axios.post(`liquid_calificated`, {
@@ -556,7 +557,7 @@ export default {
           this.num_type=this.loanTypeSelected
         }
       }*/
-    },
+      },
     async calculadora() {
       try {
         console.log("entro a liquido pagable")
@@ -618,23 +619,64 @@ export default {
       console.log("este es el nombre del usuario"+ this.calculo123[1].affiliate_name)
       }
 
-/*
-    for (this.j = 0; this.j< this.calculo1234.length; this.j++) {
+        /*
+            for (this.j = 0; this.j< this.calculo1234.length; this.j++) {
 
-              let res6 = await axios.get(`affiliate/${this.calculo1234[this.j].affiliate_id}`)
+                      let res6 = await axios.get(`affiliate/${this.calculo1234[this.j].affiliate_id}`)
 
 
 
-        this.affiliate_total = res6.data
-        this.calculo1234[this.j].affiliate_name=this.affiliate_total.full_name
-      console.log("este es el nombre del usuario"+ this.calculo1234[1].affiliate_name)
-      }
-*/
+                this.affiliate_total = res6.data
+                this.calculo1234[this.j].affiliate_name=this.affiliate_total.full_name
+              console.log("este es el nombre del usuario"+ this.calculo1234[1].affiliate_name)
+              }
+        */
 
       } catch (e) {
         console.log(e)
       } finally {
         this.loading = false
+      }
+    },
+
+    formatear() {    
+      let contribuciones =[]
+      contribuciones=this.contributions1.concat(this.contrib_codebtor)
+      console.log("CONTRIBUCIONES")
+      console.log(this.contribuciones)
+      let nuevoArray = [];
+      let i;
+      for (i = 0; i < contribuciones.length; i++) {
+        nuevoArray[i] = {
+          affiliate_id: contribuciones[i].id_affiliate,
+          contributions: [{
+            payable_liquid: parseFloat(contribuciones[i].payable_liquid),
+            border_bonus: parseFloat(contribuciones[i].border_bonus),
+            east_bonus: parseFloat(contribuciones[i].east_bonus),
+            seniority_bonus: parseFloat(contribuciones[i].seniority_bonus),
+            public_security_bonus: parseFloat(contribuciones[i].public_security_bonus)
+            }]
+        };
+        console.log("FORMATEAR");
+        console.log(nuevoArray);
+      }
+      //this.contrib_codebtor_aux = { liquid_calification: nuevoArray };
+      this.contributions1_aux = nuevoArray;
+      
+    },
+    async liquidCalificated(){
+      this.formatear()
+      try {
+            let res = await axios.post(`liquid_calificated`,{liquid_calification:this.contributions1_aux})
+            this.liquid_calificated =res.data
+            console.log("RESULTADO")
+            console.log(resultado)
+          
+      } catch (e) {
+        console.log(e)
+      } finally {
+        this.loading = false
+        console.log('entro por verdadero')
       }
     },
 

@@ -39,6 +39,7 @@
                         <v-flex xs12 class="px-1">
                           <fieldset class="pa-2">
                               <v-toolbar-title>Liquido Pagable</v-toolbar-title>
+                              {{liquid_calificated}}
                              <ul style="list-style: none" class="pa-0">
                               <li v-for="(liquido,i) in datos_calculadora_hipotecario" :key="i" >
                                 <v-progress-linear></v-progress-linear>
@@ -133,6 +134,10 @@ export default {
       type: Object,
       required: true
     },
+    liquid_calificated: {
+      type: Array,
+      required: true
+    }
   },
   methods: {
     async calculadora() {

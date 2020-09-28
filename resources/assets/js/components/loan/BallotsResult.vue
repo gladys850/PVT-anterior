@@ -68,6 +68,7 @@
               :datos.sync="datos"
               :calculos.sync="calculos"
               :datos_calculadora_hipotecario="datos_calculadora_hipotecario"
+              :liquid_calificated="liquid_calificated"
              />
             </v-col>
           </v-row>
@@ -123,6 +124,10 @@ export default {
     },
     calculos: {
       type: Object,
+      required: true
+    },
+    liquid_calificated: {
+      type: Array,
       required: true
     }
   },

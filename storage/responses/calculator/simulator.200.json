@@ -1,12 +1,19 @@
-[
-    {
-        "affiliate_id": 9389,
-        "quota_calculated_estimated": "749,32",
-        "indebtedness_calculated": 34,
-        "payment_percentage": 50,
-        "amount_requested": 0,
-        "amount_maximum_suggested": 0,
-        "is_valid": true
-    },
-    {}
-]
+{
+    "quota_calculated_estimated": "826,79",
+    "indebtnes_calculated": 21.2,
+    "amount_requested": 26000,
+    "amount_maximum_suggested": 98100,
+    "is_valid": true,
+    "liquid_qualification_calculated": 3900,
+    "cosigners":[
+        {
+            "affiliate_id": 9389,
+            "quota_calculated_estimated": 463,
+            "indebtedness_calculated": null,
+            "payment_percentage": 56,
+            "liquid_qualification_calculated": 2200,
+            "is_valid": true
+        },
+        {}
+    ]
+}

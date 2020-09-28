@@ -54,7 +54,6 @@ Route::group([
         Route::apiResource('statistic', 'Api\V1\StatisticController')->only('index', 'show');
         Route::apiResource('voucher_type', 'Api\V1\VoucherTypeController')->only('index', 'show');
         Route::apiResource('financial_entity', 'Api\V1\FinancialEntityController')->only('index', 'show');
-        Route::get('loan_percent', 'Api\V1\CalculatorController@loan_percent');
 
         // Afiliado
         Route::group([
@@ -126,6 +125,8 @@ Route::group([
             Route::get('loan/{loan}/print/contract', 'Api\V1\LoanController@print_contract');
             Route::get('loan/{loan}/print/kardex','Api\V1\LoanController@print_kardex');
             Route::get('loan/{loan}/loan_affiliates', 'Api\V1\LoanController@get_loan_affiliates');
+            Route::apiResource('loan_property', 'Api\V1\LoanPropertyController')->only('index', 'store', 'show', 'destroy', 'update');
+
 
         });
         Route::group([
