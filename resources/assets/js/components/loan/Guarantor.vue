@@ -5,8 +5,9 @@
           <v-card v-show="show_garante">
             <v-container v-if="modalidad_guarantors==0">
               <v-row>
+                {{datos}}
                 <v-col class="text-center">
-                  <h2 class="success--text" > ESTA MODALIDAD NO NECESITA GARANTE</h2>
+                  <h2 class="success--text" > {{modalidad.procedure_type_id}}{{modalidad_id}}ESTA MODALIDAD NO NECESITA GARANTE</h2>
                 </v-col>
               </v-row>
             </v-container>
@@ -269,7 +270,6 @@ import HipotecaryData from '@/components/loan/HipotecaryData'
         category:{},
         affiliate_state:{}
       },
-      
     },
     show_garante:true,
     show_calculated:false,
