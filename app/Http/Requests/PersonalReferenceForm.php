@@ -32,6 +32,8 @@ class PersonalReferenceForm extends FormRequest
             'identity_card'=>'string|min:3',
             'last_name'=>'string|alpha_spaces|min:3',
             'first_name'=>'string|alpha_spaces|min:3',
+            'civil_status' => 'in:C,D,S,V',
+            'gender' => 'in:M,F',
             'mothers_last_name'=>'string|nullable|alpha_spaces|min:3',
             'second_name'=>'string|nullable|alpha_spaces|min:3',
             'surname_husband'=>'string|nullable|alpha_spaces|min:3',
@@ -41,7 +43,7 @@ class PersonalReferenceForm extends FormRequest
 
         switch ($this->method()) {
             case 'POST': {
-                foreach (array_slice($rules, 0, 4) as $key => $rule) {
+                foreach (array_slice($rules, 0, 6) as $key => $rule) {
                     $rules[$key] = implode('|', ['required', $rule]);
                 }
                 return $rules;
@@ -64,7 +66,7 @@ class PersonalReferenceForm extends FormRequest
             'identity_card' => 'trim|uppercase',
             'surname_husband' => 'trim|uppercase',
             'gender' => 'trim|uppercase',
-            'civil_status' => 'trim|uppercase'
+            'civil_status' => 'trim|uppercase',
         ];
     }
 }

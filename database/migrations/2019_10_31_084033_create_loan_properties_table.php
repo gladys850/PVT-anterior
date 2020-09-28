@@ -17,7 +17,7 @@ class CreateLoanPropertiesTable extends Migration
             $table->bigIncrements('id');
             $table->string('land_lot_number');//numero de lote de terreno
             $table->string('neighborhood_unit');//unidad vecinal
-            $table->string('urbanization');//urbanización
+            $table->string('location');//urbanización
             $table->string('surface');//superficie
             $table->string('measurement');//unidad de medida superficie
             $table->unsignedBigInteger('cadastral_code');//codigo catastral

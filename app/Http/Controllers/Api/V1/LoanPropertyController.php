@@ -33,7 +33,7 @@ class LoanPropertyController extends Controller
     * Inserta nuevo detalle de un bien inmueble
     * @bodyParam land_lot_number alpha_dash required Numero de lote de terreno. Example: Nº0004
     * @bodyParam neighborhood_unit string required Unidad Vecinal. Example: 00000
-    * @bodyParam urbanization string required Urbanización. Example: los olivos
+    * @bodyParam location string required Ubicación. Example:Urbanización los olivos
     * @bodyParam surface string required Superficie. Example: 000.00
     * @bodyParam measurement string required Unidad de medida superficie. Example: mts
     * @bodyParam cadastral_code integer required Codigo Catastral. Example: 123
@@ -71,7 +71,7 @@ class LoanPropertyController extends Controller
     * @urlParam loan_property required ID del bien inmueble. Example:13
     * @bodyParam land_lot_number alpha_dash required Numero de lote de terreno. Example: Nº0004
     * @bodyParam neighborhood_unit string required Unidad Vecinal. Example: 00000
-    * @bodyParam urbanization string required Urbanización. Example: los olivos mercedes
+    * @bodyParam location string required Ubicación. Example: Urbanización los olivos mercedes
     * @bodyParam surface string required Superficie. Example: 000.00
     * @bodyParam measurement string required Unidad de medida superficie. Example: mts
     * @bodyParam cadastral_code integer required Codigo Catastral. Example: 123

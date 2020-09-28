@@ -52,6 +52,8 @@ class LoanController extends Controller
             $loan->lenders = $loan->lenders;
             $loan->guarantors = $loan->guarantors;
         }
+        $loan->personal_references = $loan->personal_references;
+        $loan->consigners = $loan->consigners;
         return $loan;
     }
 
@@ -140,6 +142,8 @@ class LoanController extends Controller
     * @bodyParam destiny_id integer required ID destino de Préstamo. Example: 2
     * @bodyParam documents array required Lista de IDs de Documentos solicitados. Example: [294,283,296,305,306,307,308,309,310,311,312,313,284,44,274]
     * @bodyParam notes array Lista de notas aclaratorias. Example: [Informe de baja policial, Carta de solicitud]
+    * @bodyParam personal_references array Lista de IDs de personas de referencia del préstamo. Example: [1]
+    * @bodyParam consigners array Lista de IDs de codeudores no afiliados a la muserpol. Example: [2,3]
     * @bodyParam lenders array required Lista de afiliados Titular(es) del préstamo.
     * @bodyParam lenders[0].affiliate_id integer required ID del afiliado. Example: 47461
     * @bodyParam lenders[0].payment_percentage integer required ID del afiliado. Example: 50
@@ -256,6 +260,8 @@ class LoanController extends Controller
     * @bodyParam destiny_id integer required ID destino de Préstamo. Example: 1
     * @bodyParam role_id integer Rol al cual derivar o devolver. Example: 81
     * @bodyParam validated boolean Estado validación del préstamo. Example: true
+    * @bodyParam personal_references array Lista de personas de referencia del préstamo. Example: [1]
+    * @bodyParam consigners array Lista de codeudores no afiliados a la muserpol. Example: [2,3]
     * @bodyParam lenders array required Lista de afiliados Titular(es) del préstamo.
     * @bodyParam lenders[0].affiliate_id integer required ID del afiliado.Example: 47461
     * @bodyParam lenders[0].payment_percentage integer required ID del afiliado. Example: 50
@@ -378,6 +384,24 @@ class LoanController extends Controller
                 $a++;
             }
             if (count($affiliates) > 0) $loan->loan_affiliates()->sync($affiliates);
+        }
+        if (Auth::user()->can(['update-loan', 'create-loan']) && ($request->has('personal_references') || $request->has('consigners'))) {
+            $persons = [];
+            if($request->consigners){
+                foreach ($request->personal_references as $personal_reference) {
+                    $persons[$personal_reference] = [
+                        'cosigner' => false
+                    ];
+                }
+            }
+            if($request->consigners){
+                foreach ($request->consigners as $consigner) {
+                    $persons[$consigner] = [
+                        'cosigner' => true
+                    ];
+                }
+            }
+            if (count($persons) > 0) $loan->loan_persons()->sync($persons);
         }
         return (object)[
             'request' => $request,
