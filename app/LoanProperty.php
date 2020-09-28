@@ -11,7 +11,7 @@ class LoanProperty extends Model
     public $fillable = [
         'land_lot_number',
         'neighborhood_unit',
-        'urbanization',
+        'location',
         'surface',
         'cadastral_code',
         'limit',
