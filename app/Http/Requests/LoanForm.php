@@ -13,6 +13,7 @@ use App\ProcedureModality;
 use App\Rules\LoanParameterGuarantor;
 use App\Rules\LoanParameterIndebtedness;
 use App\Rules\LoanIntervalMaxLender;
+use App\Rules\LoanIntervalMaxCosigner;
 use Illuminate\Foundation\Http\FormRequest;
 
 class LoanForm extends FormRequest
@@ -51,8 +52,6 @@ class LoanForm extends FormRequest
             'payment_type_id' => ['integer', 'exists:payment_types,id'],
             'destiny_id' => ['integer', 'exists:loan_destinies,id', new LoanDestiny($procedure_modality)],
             'documents' => ['array', 'min:1', new ProcedureRequirements($procedure_modality)],
-            'payable_liquid_calculated' => ['numeric'],
-            'bonus_calculated' => ['integer'],
             'liquid_qualification_calculated' => ['numeric'],
             'indebtedness_calculated' => ['numeric', 'max:90', new LoanParameterIndebtedness($procedure_modality)],
             'property_id' => ['nullable', 'exists:loan_properties,id'],
@@ -72,6 +71,8 @@ class LoanForm extends FormRequest
             'guarantors.*.quota_refinance' => ['required', 'numeric'],
             'guarantors.*.indebtedness_calculated' => ['required', 'numeric'],
             'guarantors.*.liquid_qualification_calculated' => ['required', 'numeric'],
+            'personal_references' => ['array',$procedure_modality->loan_modality_parameter->personal_reference? 'min:1':'nullable' ],
+            'consigners' => ['array',new LoanIntervalMaxCosigner($procedure_modality)],
             'documents.*' => ['exists:procedure_documents,id'],
             'disbursable_id' => ['integer'],
             'disbursable_type' => ['string', 'in:affiliates,spouses'],
@@ -88,7 +89,7 @@ class LoanForm extends FormRequest
         ];
         switch ($this->method()) {
             case 'POST': {
-                foreach (array_slice($rules, 0, $hypothecary ? 12 :11 ) as $key => $rule) { // $procedure_modality->loan_modality_parameter->personal_reference
+                foreach (array_slice($rules, 0, $hypothecary ? 10 :9 ) as $key => $rule) {
                     array_push($rules[$key], 'required');
                 }
                 if ($procedure_modality->loan_modality_parameter->guarantors) {

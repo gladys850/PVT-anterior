@@ -77,11 +77,6 @@ class Loan extends Model
         $this->attributes['interest_id'] = $this->modality->current_interest->id;
     }
 
-    public function personal_reference()
-    {
-        return $this->belongsTo(PersonalReference::class);
-    }
-
     public function loan_property()
     {
         return $this->belongsTo(LoanProperty::class, 'property_id','id');
@@ -171,6 +166,21 @@ class Loan extends Model
             'lenders' => $this->details_lenders->sortBy('pivot.affiliate_id')->values(),
             'guarantors' => $this->details_guarantors->sortBy('pivot.affiliate_id')->values()
         ];
+    }
+
+    public function personal_references()
+    {
+        return $this->loan_persons()->withPivot('cosigner')->whereCosigner(false);
+    }
+
+    public function consigners()
+    {
+        return $this->loan_persons()->withPivot('cosigner')->whereCosigner(true);
+    }
+
+    public function loan_persons()
+    {
+        return $this->belongsToMany(PersonalReference::class, 'loan_persons');
     }
 
     public function modality()

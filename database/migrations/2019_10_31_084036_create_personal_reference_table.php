@@ -23,12 +23,11 @@ class CreatePersonalReferenceTable extends Migration
             $table->string('first_name');
             $table->string('second_name')->nullable();
             $table->string('surname_husband')->nullable();
+            $table->enum('civil_status', ['C','D','S','V']);// estado civil
+            $table->enum('gender', ['F','M']);
             $table->string('phone_number')->nullable();
             $table->string('cell_phone_number')->nullable();
             $table->string('address')->nullable();
-            $table->boolean('cosigner')->default(false);
-            $table->unsignedBigInteger('loan_id');  // id loan
-            $table->foreign('loan_id')->references('id')->on('loans');
             $table->timestamps();
         });
     }

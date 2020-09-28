@@ -30,7 +30,7 @@ class LoanPropertyForm extends FormRequest
         $rules = [
             'land_lot_number'=>'alpha_dash|min:3',
             'neighborhood_unit'=>'string|min:3',
-            'urbanization'=>'string|min:3',
+            'location'=>'string|min:3',
             'surface'=>'string|min:3',
             'cadastral_code'=>'integer|min:3',
             'limit'=>'string|min:3',
@@ -41,7 +41,7 @@ class LoanPropertyForm extends FormRequest
             'real_folio_number'=>'string|min:1',
             'public_deed_date'=>'date_format:"Y-m-d',
             'measurement'=>'string|min:1',
-            '​​real_right_city_id'=>'integer|exists:cities,id',
+            'real_city_id'=>'integer|exists:cities,id',
         ];
 
         switch ($this->method()) {
