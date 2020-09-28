@@ -41,7 +41,7 @@ class LoanPropertyForm extends FormRequest
             'real_folio_number'=>'string|min:1',
             'public_deed_date'=>'date_format:"Y-m-d',
             'measurement'=>'string|min:1',
-            '​​real_right_city_id'=>'integer|exists:cities,id',
+            'real_city_id'=>'integer|exists:cities,id',
         ];
 
         switch ($this->method()) {
