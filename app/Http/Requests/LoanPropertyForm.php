@@ -30,7 +30,7 @@ class LoanPropertyForm extends FormRequest
         $rules = [
             'land_lot_number'=>'alpha_dash|min:3',
             'neighborhood_unit'=>'string|min:3',
-            'urbanization'=>'string|min:3',
+            'location'=>'string|min:3',
             'surface'=>'string|min:3',
             'cadastral_code'=>'integer|min:3',
             'limit'=>'string|min:3',
