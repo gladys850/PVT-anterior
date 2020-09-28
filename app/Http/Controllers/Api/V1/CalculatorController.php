@@ -103,7 +103,7 @@ class CalculatorController extends Controller
             $amount_maximum_suggested_total = $this->maximum_amount_borrar($procedure_modality,$request->months_term,$liquid_qualification_calculated_lender);
             $indebtedness_calculated_total=round((($quota_calculated_total/$liquid_qualification_calculated_lender)*100),2);
             $calculated_data = collect([]);
-            if ($indebtedness_calculated_total<$debt_index)
+            if ($indebtedness_calculated_total<=$debt_index)
                 $evaluate=true;
             else
                 $evaluate = false;
@@ -130,7 +130,7 @@ class CalculatorController extends Controller
                 $calculated_data->push([
                     'affiliate_id' => $liquid['affiliate_id'],
                     'quota_calculated' => Util::money_format($quota_calculated),
-                    'indebtedness_calculated' => intval($indebtedness_calculated),
+                    'indebtedness_calculated' => round($indebtedness_calculated,2),
                     'payment_percentage' => ($percentage_payment),
                     'liquid_qualification_calculated' => $liquid['liquid_qualification_calculated'],
                     'is_valid' => ($indebtedness_calculated) <= ($procedure_modality->loan_modality_parameter->decimal_index)*100
@@ -290,7 +290,7 @@ class CalculatorController extends Controller
         $liquid_qualification_calculated = $liquid_qualification_calculated + (int)$obj["liquid_qualification_calculated"];
     }
     $ie=round((($ce/$liquid_qualification_calculated)*100),2);
-    if($ie<$debt_index){
+    if($ie<=$debt_index){
         $evaluate=true;
     }else{
         $evaluate=false;
@@ -359,13 +359,13 @@ class CalculatorController extends Controller
             $total_bonuses = $contribution_first['seniority_bonus']+$contribution_first['border_bonus']+$contribution_first['public_security_bonus']+$contribution_first['east_bonus'];
             $liquid_qualification_calculated = $this->liquid_qualification($payable_liquid_average, $total_bonuses, $affiliate, $parent_quota);
             $indebtedness_calculated = $quota_calculated/$liquid_qualification_calculated*100;
-            if ($indebtedness_calculated < $debt_index)
+            if ($indebtedness_calculated <= $debt_index)
                 $evaluate = true;
             else
                 $evaluate = false;
             $response = array(
                 "is_valid" => $evaluate,
-                "indebtnes_calculated" => intval($indebtedness_calculated),
+                "indebtnes_calculated" => round($indebtedness_calculated,2),
                 "payable_liquid" => $payable_liquid_average,
                 "bonus_calculated" => $total_bonuses,
                 "payable_liquid_calculated" => $liquid_qualification_calculated,

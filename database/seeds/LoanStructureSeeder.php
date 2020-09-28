@@ -459,7 +459,7 @@ class LoanStructureSeeder extends Seeder
             'guarantors' => 0,
             'personal_reference' => true,
             'max_lenders' => 2,
-            'max_cosigner'=>0
+            'max_cosigner'=>2
             ],
             'interest' => ['annual_interest' => 9,'penal_interest' => 6]
             ],
@@ -496,7 +496,7 @@ class LoanStructureSeeder extends Seeder
               'guarantors' => 0,
               'personal_reference' => true,
               'max_lenders' => 2,
-              'max_cosigner'=>0
+              'max_cosigner'=>2
             ],
             'interest' => ['annual_interest' => 9,'penal_interest' => 6]
             ],
