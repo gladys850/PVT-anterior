@@ -83,11 +83,11 @@
                   :payable_liquid.sync="payable_liquid"
                   :calculos.sync="calculos"
                   :modalidad.sync="modalidad"
+                  :modalidad_id.sync="modalidad.id"
                   :modalities.sync="modalities"
                   :prueba.sync="prueba"
                   :procedure_type.sync="procedure_type"
                   :calculo123.sync="calculo123"
-                  :datos_calculadora_hipotecario="datos_calculadora_hipotecario"
                   :liquid_calificated="liquid_calificated" >
                     <template v-slot:title>
                       <v-col cols="12" class="py-0">Resultado para el Préstamo</v-col>
@@ -171,6 +171,7 @@
               :intervalos.sync="intervalos"
             />
             <CoDebtor
+              v-show="modalidad.personal_reference"
               :personal_codebtor="personal_codebtor"/>
             <v-container class="py-0">
               <v-row>
@@ -272,7 +273,6 @@ export default {
       indice_endeudamiento:0,
       monto_maximo_sugerido:0
     },
-      datos_calculadora_hipotecario:[],
       contrib_codebtor: [],
       contributions1_aux: [],
       liquid_calificated:[]
@@ -305,7 +305,6 @@ export default {
         {
           if(this.modalidad.procedure_type_id==12)
           { this.liquidCalificated()
-            this.calculadora_hipotecario()
             console.log('esta entro por verdad con la modalidad'+ this.modalidad.procedure_type_id)
           }
           else{
@@ -457,64 +456,6 @@ export default {
       }catch (e) {
         console.log(e)
       }finally {
-        this.loading = false
-      }
-    },
-    //Metodo para la datos de la calculadora en hipotecario
-     async calculadora_hipotecario() {
-      try {
-          let res = await axios.post(`liquid_calificated`, {
-            liquid_calification: [
-              {
-                affiliate_id: 51419,
-                contributions: [
-                {
-                    payable_liquid: 2000,
-                    seniority_bonus: 0,
-                    border_bonus: 0,
-                    public_security_bonus: 300,
-                    east_bonus: 0
-                },
-                {
-                    payable_liquid: 3000,
-                    seniority_bonus: 0,
-                    border_bonus: 0,
-                    public_security_bonus: 300,
-                    east_bonus: 0
-                },
-                {
-                    payable_liquid: 3500,
-                    seniority_bonus: 0,
-                    border_bonus: 0,
-                    public_security_bonus: 0,
-                    east_bonus: 0
-                }
-              ]
-            },
-               {
-            affiliate_id: 1,
-            contributions: [
-                {
-                    payable_liquid: 2000,
-                    seniority_bonus: 0,
-                    border_bonus: 0,
-                    public_security_bonus: 300,
-                    east_bonus: 0
-                }
-            ]
-        }
-            ]
-          })
-          this.datos_calculadora_hipotecario= res.data
-           for (this.i = 0; this.i< this.datos_calculadora_hipotecario.length; this.i++) {
-              let res5 = await axios.get(`affiliate/${this.datos_calculadora_hipotecario[this.i].affiliate_id}`)
-              this.affiliates = res5.data
-              this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_name
-             }
-             console.log("esta es la calculadora HIpótecaria"+this.datos_calculadora_hipotecario)
-      } catch (e) {
-        console.log(e)
-      } finally {
         this.loading = false
       }
     },
@@ -670,8 +611,12 @@ export default {
             let res = await axios.post(`liquid_calificated`,{liquid_calification:this.contributions1_aux})
             this.liquid_calificated =res.data
             console.log("RESULTADO")
-            console.log(resultado)
-          
+             this.datos =this.intervalos
+   /* for (this.i = 0; this.i< this.datos_calculadora_hipotecario.length; this.i++) {
+              let res5 = await axios.get(`affiliate/${this.datos_calculadora_hipotecario[this.i].affiliate_id}`)
+              this.affiliates = res5.data
+              this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_name
+             }*/
       } catch (e) {
         console.log(e)
       } finally {

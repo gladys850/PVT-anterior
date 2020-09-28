@@ -67,7 +67,6 @@
               :intervalos.sync="intervalos"
               :datos.sync="datos"
               :calculos.sync="calculos"
-              :datos_calculadora_hipotecario="datos_calculadora_hipotecario"
               :liquid_calificated="liquid_calificated"
              />
             </v-col>
@@ -86,9 +85,10 @@ export default {
     ver:false
   }),
   props: {
-    datos_calculadora_hipotecario: {
-      type: Array,
-      required: true
+     modalidad_id: {
+      type: Number,
+      required: true,
+      default: 0
     },
      intervalos: {
       type: Object,

@@ -105,6 +105,20 @@
               ></v-text-field>
             </v-col>
              <v-col cols="12" md="6" class="py-0">
+               <v-text-field
+                dense
+                label="BNR (Valor Neto Realizado)"
+                readonly
+                outlined
+              ></v-text-field>
+            </v-col>
+              <v-col cols="12" md="12" class="py-0">
+               <v-text-field
+                dense
+                label="Nombre del Abogado"
+                readonly
+                outlined
+              ></v-text-field>
             </v-col>
             <v-col cols="12" md="12" class="py-0">
                      <v-data-table
