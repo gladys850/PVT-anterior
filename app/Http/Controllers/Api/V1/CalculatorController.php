@@ -328,8 +328,52 @@ class CalculatorController extends Controller
         );
         return $response;
     }
-    private function indebtedness_calculated($quota_calculated, $liquid_qualification_calculated){
-        return ($quota_calculated/$liquid_qualification_calculated)*100;
 
+    /**
+    * Evaluacion individual de garantes
+    * @bodyParam procedure_modality_id integer required ID de modalidad. Example: 34
+    * @bodyParam affiliate_id integer required ID del afiliado. Example: 1
+    * @bodyParam quota_calculated_total_lender cuota calculada del titular. Example: 900
+    * @bodyParam contributions[0].payable_liquid integer required Líquido pagable. Example: 2000
+    * @bodyParam contributions[0].seniority_bonus integer required Bono Cargo . Example: 0.00
+    * @bodyParam contributions[0].border_bonus integer required Bono Frontera . Example: 0.00
+    * @bodyParam contributions[0].public_security_bonus integer required Bono Seguridad Ciudadana . Example: 0.00
+    * @bodyParam contributions[0].east_bonus integer required Bono Oriente. Example: 0.00
+    * @authenticated
+    * @responseFile responses/calculator/evaluate_guarantor.200.json
+    */
+    public function evaluate_guarantor(Request $request){
+        $procedure_modality = ProcedureModality::findOrFail($request->procedure_modality_id);
+        $quantity_guarantors = $procedure_modality->loan_modality_parameter->guarantors;
+        if($quantity_guarantors > 0){
+            $debt_index = $procedure_modality->loan_modality_parameter->debt_index;
+            $amount_requested =$request->mount_requested;
+            $months_term = $request->montjs_term;
+            $affiliate_id = $request->affiliate_id;
+            $affiliate = Affiliate::findOrFail($request->affiliate_id);
+            $contributions = collect($request->contributions);
+            $payable_liquid_average = $contributions->avg('payable_liquid');
+            $parent_quota = 0;
+            $quota_calculated = $request->quota_calculated_total_lender/$quantity_guarantors;            
+            $contribution_first = $contributions->first();
+            $total_bonuses = $contribution_first['seniority_bonus']+$contribution_first['border_bonus']+$contribution_first['public_security_bonus']+$contribution_first['east_bonus'];
+            $liquid_qualification_calculated = $this->liquid_qualification($payable_liquid_average, $total_bonuses, $affiliate, $parent_quota);
+            $indebtedness_calculated = $quota_calculated/$liquid_qualification_calculated*100;
+            if ($indebtedness_calculated < $debt_index)
+                $evaluate = true;
+            else
+                $evaluate = false;
+            $response = array(
+                "is_valid" => $evaluate,
+                "indebtnes_calculated" => intval($indebtedness_calculated),
+                "payable_liquid" => $payable_liquid_average,
+                "bonus_calculated" => $total_bonuses,
+                "payable_liquid_calculated" => $liquid_qualification_calculated,
+            );
+            return $response;
+        }
+        else{
+            return abort(403, 'no corresponde a esta modalidad');
+        }
     }
 }

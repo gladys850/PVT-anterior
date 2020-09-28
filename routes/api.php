@@ -54,6 +54,7 @@ Route::group([
         Route::apiResource('statistic', 'Api\V1\StatisticController')->only('index', 'show');
         Route::apiResource('voucher_type', 'Api\V1\VoucherTypeController')->only('index', 'show');
         Route::apiResource('financial_entity', 'Api\V1\FinancialEntityController')->only('index', 'show');
+        Route::post('evaluate_garantor', 'Api\V1\CalculatorController@evaluate_guarantor');
 
         // Afiliado
         Route::group([
