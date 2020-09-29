@@ -28,10 +28,18 @@
                   ></v-text-field>
                 </v-col>
                 <v-col cols="12" md="12" class="py-0">
-                  <v-text-field dense label="Ubicación" v-model="loan_property.location" outlined></v-text-field>
+                  <v-text-field 
+                    dense label="Ubicación" 
+                    v-model="loan_property.location" 
+                    outlined
+                  ></v-text-field>
                 </v-col>
                 <v-col cols="12" md="3" class="py-0">
-                  <v-text-field dense label="Superficie" v-model="loan_property.surface" outlined></v-text-field>
+                  <v-text-field 
+                    dense label="Superficie" 
+                    v-model="loan_property.surface" 
+                    outlined
+                  ></v-text-field>
                 </v-col>
                 <v-col cols="12" md="3" class="py-0">
                   <v-select
@@ -39,7 +47,7 @@
                     :items="items_measurement"
                     item-text="name"
                     item-value="value"
-                    label="Unidad de medida superficie"
+                    label="Unidad de medida"
                     v-model="loan_property.measurement"
                     outlined
                   ></v-select>
@@ -262,31 +270,31 @@ export default {
     ]
   }),
   mounted() {
-    this.getCities();
-    this.formatDate("publicDeedDate", this.loan_property.public_deed_date);
+    this.getCities()
+    this.formatDate("publicDeedDate", this.loan_property.public_deed_date)
   },
   watch: {
     "loan_property.public_deed_date": function(date) {
-      this.formatDate("publicDeedDate", date);
+      this.formatDate("publicDeedDate", date)
     }
   },
   methods: {
     formatDate(key, date) {
       if (date) {
-        this.dates[key].formatted = this.$moment(date).format("L");
+        this.dates[key].formatted = this.$moment(date).format("L")
       } else {
-        this.dates[key].formatted = null;
+        this.dates[key].formatted = null
       }
     },
     async getCities() {
       try {
-        this.loading = true;
-        let res = await axios.get("city");
-        this.cities = res.data;
+        this.loading = true
+        let res = await axios.get("city")
+        this.cities = res.data
       } catch (e) {
-        console.log(e);
+        console.log(e)
       } finally {
-        this.loading = false;
+        this.loading = false
       }
     },
 
@@ -406,5 +414,5 @@ export default {
   
     
   }*/
-};
+}
 </script>

@@ -176,7 +176,7 @@
             />
             <CoDebtor
               v-show="modalidad.personal_reference"
-              :personal_codebtor="personal_codebtor"/>
+              :cosigners="cosigners"/>
             <v-container class="py-0">
               <v-row>
                 <v-spacer></v-spacer><v-spacer></v-spacer><v-spacer></v-spacer>
@@ -206,7 +206,7 @@
               :reference.sync="reference"
               :garantes.sync="garantes"
               :modalidad_id.sync="modalidad.id"
-              :personal_codebtor="personal_codebtor"/>
+              :cosigners="cosigners"/>
           </v-card>
         </v-stepper-content>
       </v-stepper-items>
@@ -270,7 +270,6 @@ export default {
     formulario:[],//TODO ESTA VARIABLE SE DEBE BORRAR YA QUE SOLO SIRVE PARA VERIFICAR LA INFORMACION DE CADA COMPONENTE
     personal_reference:{},
     calculo123:[],
-    personal_codebtor:[],
     calculos:{
       promedio_liquido_pagable:0,
       total_bonos:0,
@@ -284,6 +283,7 @@ export default {
       liquid_calificated:[],
       editedIndex: -1,
       loan_property: {},
+      cosigners:[],
   }),
   computed: {
     isNew() {
@@ -357,7 +357,7 @@ export default {
     },
     async personal()
     {
-      try {
+      try{
         if (this.modalidad.personal_reference) {
             let res = await axios.post(`personal_reference`, {
               city_identity_card_id:this.personal_reference.city_identity_card_id,
@@ -383,7 +383,7 @@ export default {
         "module_id": 6,
         "name": "Préstamo Anticipo"
         "second_name": "Anticipo"*/
-    async getProcedureType() {
+    async getProcedureType(){
       try {
         let resp = await axios.get(`module`,{
           params: {
