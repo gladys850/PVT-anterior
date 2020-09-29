@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Util;
 
 class PersonalReference extends Model
 {
@@ -16,11 +17,11 @@ class PersonalReference extends Model
         'first_name',
         'second_name',
         'surname_husband',
-        'birth_date',
         'gender',
         'civil_status',
         'phone_number',
-        'cell_phone_number'
+        'cell_phone_number',
+        'city_birth_id'
     ];
 
     public function getIdentityCardExtAttribute()
@@ -40,6 +41,11 @@ class PersonalReference extends Model
 
     public function loans()
     {
-        return $this->hasMany(Loan::class);
+        return $this->belongsToMany(Loan::class, 'loan_persons')->withPivot(['cosigner']);
+    }
+
+    public function getCivilStatusGenderAttribute()
+    {
+        return Util::get_civil_status($this->civil_status, $this->gender);
     }
 }
