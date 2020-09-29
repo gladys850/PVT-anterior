@@ -114,6 +114,10 @@
         <v-stepper-content :key="`${3}-content`" :step="3" >
           <v-card color="grey lighten-1">
             <h3 class="text-uppercase text-center">{{modalidad.name}}</h3>
+            <HipotecaryData 
+              v-show="modalidad.procedure_type_id==12"  
+              :modalidad.sync="modalidad"
+              :loan_property="loan_property"/>
             <Guarantor
               :datos.sync="datos"
               :modalidad_guarantors.sync="modalidad.guarantors"
@@ -227,6 +231,7 @@ import PersonalInformation from '@/components/affiliate/PersonalInformation'
 import FormInformation from '@/components/loan/FormInformation'
 import Guarantor from '@/components/loan/Guarantor'
 import CoDebtor from '@/components/loan/CoDebtor'
+import HipotecaryData from '@/components/loan/HipotecaryData'
 export default {
   name: "loan-steps",
   props: {
@@ -246,7 +251,8 @@ export default {
     FormInformation,
     BallotsResult,
     Guarantor,
-    CoDebtor
+    CoDebtor,
+    HipotecaryData
   },
    data: () => ({
     bus: new Vue(),
@@ -278,7 +284,9 @@ export default {
     },
       contrib_codebtor: [],
       contributions1_aux: [],
-      liquid_calificated:[]
+      liquid_calificated:[],
+      editedIndex: -1,
+      loan_property: {},
   }),
   computed: {
     isNew() {
@@ -318,6 +326,15 @@ export default {
         if(n==2)
         {
           console.log('segundo'+this.modalidad.guarantors )
+        }
+        if(n==3){
+          if(this.modalidad.procedure_type_id==12){ 
+            this.saveLoanProperty()
+            console.log('Es hipotecario')
+          }
+          else{
+            console.log("No es hipotecario")
+          }
         }
         if(n==4)
         {
@@ -582,7 +599,7 @@ export default {
         this.loading = false
       }
     },
-
+     //TAB1 Formatear datos obtenidos de las contribuciones, adecuandolo a formato para guardado y obtener liquido para calificación
     formatear() {    
       let contribuciones =[]
       contribuciones=this.contributions1.concat(this.contrib_codebtor)
@@ -608,6 +625,7 @@ export default {
       this.contributions1_aux = nuevoArray;
       
     },
+    //TAB1 Obtener liquido para calificación
     async liquidCalificated(){
       this.formatear()
       try {
@@ -628,7 +646,54 @@ export default {
         console.log('entro por verdadero')
       }
     },
-
+    //TAB 3 bien inmueble
+    async saveLoanProperty() {
+      try {
+        if (this.editedIndex == -1) {
+          let res = await axios.post("loan_property", {
+            land_lot_number: this.loan_property.land_lot_number,
+            neighborhood_unit: this.loan_property.neighborhood_unit,
+            location: this.loan_property.location,
+            surface: this.loan_property.surface,
+            measurement: this.loan_property.measurement,
+            cadastral_code: this.loan_property.cadastral_code,
+            limit: this.loan_property.limit,
+            public_deed_number: this.loan_property.public_deed_number,
+            lawyer: this.loan_property.lawyer,
+            registration_number: this.loan_property.registration_number,
+            real_folio_number: this.loan_property.real_folio_number,
+            public_deed_date: this.loan_property.public_deed_date,
+            net_realizable_value: this.loan_property.net_realizable_value,
+            real_city_id: this.loan_property.real_city_id
+          });
+          this.loan_property = res.data;
+          this.editedIndex = this.loan_property.id;
+        } else {
+          let res = await axios.patch(
+            `loan_property/${this.loan_property.id}`,
+            {
+              land_lot_number: this.loan_property.land_lot_number,
+              neighborhood_unit: this.loan_property.neighborhood_unit,
+              location: this.loan_property.location,
+              surface: this.loan_property.surface,
+              measurement: this.loan_property.measurement,
+              cadastral_code: this.loan_property.cadastral_code,
+              limit: this.loan_property.limit,
+              public_deed_number: this.loan_property.public_deed_number,
+              lawyer: this.loan_property.lawyer,
+              registration_number: this.loan_property.registration_number,
+              real_folio_number: this.loan_property.real_folio_number,
+              public_deed_date: this.loan_property.public_deed_date,
+              net_realizable_value: this.loan_property.net_realizable_value,
+              real_city_id: this.loan_property.real_city_id
+            }
+          );
+          this.loan_property = res.data;
+        }
+      } catch (e) {
+        console.log(e);
+      }
+    }
   },
 }
 </script>
