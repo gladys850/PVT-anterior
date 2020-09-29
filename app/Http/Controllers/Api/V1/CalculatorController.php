@@ -278,12 +278,11 @@ class CalculatorController extends Controller
     //division porcentual de las cuotas de los codeudores
     private function loan_percent(request $request){
         $procedure_modality = ProcedureModality::findOrFail($request->procedure_modality_id);
-        $debt_index = $procedure_modality->loan_modality_parameter->decimal_index;
+        $debt_index = $procedure_modality->loan_modality_parameter->debt_index;
         $lc=$request->liquid_calculated;
         $ms=$request->amount_requested;
         $plm=$request->months_term;
         $ticm=$procedure_modality->current_interest->monthly_current_interest;
-        //$ce= $this->quote_estimated($ticm,$plm, $ms);
         $ce= $this->quota_calculator($procedure_modality, $plm, $ms);
         $liquid_qualification_calculated=0;
     foreach($lc as $obj){
@@ -307,7 +306,7 @@ class CalculatorController extends Controller
             'indebtedness_calculated' => null,
             'payment_percentage'=>$plc,
             'liquid_qualification_calculated' => $obj2["liquid_qualification_calculated"],
-            'is_valid' => $evaluate
+            'is_valid' => null
     );
     array_push($cosigners,$cosigner);
     }
