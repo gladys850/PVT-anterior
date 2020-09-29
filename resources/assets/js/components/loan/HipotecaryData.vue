@@ -1,126 +1,147 @@
 <template>
-  <v-container fluid >
+  <v-container fluid>
     <ValidationObserver ref="observer">
-    <v-form>
-      <v-row justify="center">
-        <v-col cols="12">
-                <h3 class="text-uppercase text-center">INFORMACION DEL INMUEBLE</h3>
+      <v-form>
+        <v-row justify="center">
+          <v-col cols="12">
+            <h3 class="text-uppercase text-center">INFORMACIÓN DEL INMUEBLE</h3>
+          </v-col>
+          <v-col cols="12" md="6" class="v-card-profile">
+            <v-row justify="center">
+              <v-col cols="12" md="6" class="py-0">
+                <small>
+                  <v-text-field
+                    dense
+                    label="Nro de Lote de Terreno"
+                    v-model="loan_property.land_lot_number"
+                    outlined
+                  ></v-text-field>
+                </small>
               </v-col>
-          <v-col cols="12" md="6" class="v-card-profile" >
-              <v-row justify="center">
-            <v-col cols="12" md="6" class="py-0">
-              <small>
-              <v-text-field
-                dense
-                label="Nro de Lote de Terreno"
-                readonly
-                outlined
-              ></v-text-field>
-              </small>
-            </v-col>
-             <v-col cols="12" md="6" class="py-0">
-              <v-text-field
-                dense
-                label="Unidad Vecinal"
-                readonly
-                outlined
-              ></v-text-field>
-            </v-col>
-            <v-col cols="12" md="6" class="py-0" >
-               <v-text-field
-                dense
-                label="Urbanizacion"
-                readonly
-                outlined
-              ></v-text-field>
-            </v-col>
-            <v-col cols="12" md="6" class="py-0">
-              <v-text-field
-                dense
-                label="Superficie"
-                readonly
-                outlined
-              ></v-text-field>
-            </v-col>
-             <v-col cols="12" md="6" class="py-0">
-              <v-text-field
-                dense
-                label="Codigo Catastral"
-                readonly
-                outlined
-              ></v-text-field>
-            </v-col>
-            <v-col cols="12" md="6" class="py-0">
-               <v-text-field
-                dense
-                label="Colindancias"
-                readonly
-                outlined
-              ></v-text-field>
-            </v-col>
-                <v-col cols="12" md="6" class="py-0">
-              <v-text-field
-                dense
-                label="Nro de Escritura Publica"
-                readonly
-                outlined
-              ></v-text-field>
-            </v-col>
-             <v-col cols="12" md="6" class="py-0">
-              <v-text-field
-                dense
-                label="Fecha de Escritura Publica"
-                readonly
-                outlined
-              ></v-text-field>
-            </v-col>
-            <v-col cols="12" md="6" class="py-0" >
-               <v-text-field
-                dense
-                label="Nro Matricula Computarizada"
-                readonly
-                outlined
-              ></v-text-field>
-            </v-col>
-            <v-col cols="12" md="6" class="py-0">
-              <v-text-field
-                dense
-                label="Ciudad de Registro en Folio Real"
-                readonly
-                outlined
-              ></v-text-field>
-            </v-col>
-          </v-row>
-        </v-col>
-        <v-col cols="12" md="6" class="v-card-profile" >
-              <v-row justify="center">
-       
-           
-            <v-col cols="12" md="6" class="py-0">
-               <v-text-field
-                dense
-                label="Nro Asiento Folio Real"
-                readonly
-                outlined
-              ></v-text-field>
-            </v-col>
-             <v-col cols="12" md="6" class="py-0">
-               <v-text-field
-                dense
-                label="BNR (Valor Neto Realizado)"
-                readonly
-                outlined
-              ></v-text-field>
-            </v-col>
+              <v-col cols="12" md="6" class="py-0">
+                <v-text-field
+                  dense
+                  label="Unidad Vecinal"
+                  v-model="loan_property.neighborhood_unit"
+                  outlined
+                ></v-text-field>
+              </v-col>
               <v-col cols="12" md="12" class="py-0">
-               <v-text-field
-                dense
-                label="Nombre del Abogado"
-                readonly
-                outlined
-              ></v-text-field>
-            </v-col>
-            <v-col cols="12" md="12" class="py-0">
+                <v-text-field dense label="Ubicación" v-model="loan_property.location" outlined></v-text-field>
+              </v-col>
+              <v-col cols="12" md="3" class="py-0">
+                <v-text-field dense label="Superficie" v-model="loan_property.surface" outlined></v-text-field>
+              </v-col>
+              <v-col cols="12" md="3" class="py-0">
+                <v-select
+                  dense
+                  :items="items_measurement"
+                  item-text="name"
+                  item-value="value"
+                  label="Unidad de medida superficie"
+                  v-model="loan_property.measurement"
+                  outlined
+                ></v-select>
+              </v-col>
+              <v-col cols="12" md="6" class="py-0">
+                <v-text-field
+                  dense
+                  label="Código Catastral"
+                  v-model="loan_property.cadastral_code"
+                  outlined
+                ></v-text-field>
+              </v-col>
+              <v-col cols="12" md="12" class="py-0">
+                <v-text-field dense label="Colindancias" v-model="loan_property.limit" outlined></v-text-field>
+              </v-col>
+            </v-row>
+          </v-col>
+          <v-col cols="12" md="6" class="v-card-profile">
+            <v-row justify="center">
+              <v-col cols="12" md="6" class="py-0">
+                <v-text-field
+                  dense
+                  label="Nro de Escritura Pública"
+                  v-model="loan_property.public_deed_number"
+                  outlined
+                ></v-text-field>
+              </v-col>
+              <v-col cols="12" md="6" class="py-0">
+                <v-text-field
+                  dense
+                  label="Notaría de Fé Pública"
+                  v-model="loan_property.lawyer"
+                  outlined
+                ></v-text-field>
+              </v-col>
+              <v-col cols="12" md="6" class="py-0">
+                <v-text-field
+                  dense
+                  label="Nro Matrícula Computarizada"
+                  v-model="loan_property.registration_number"
+                  outlined
+                ></v-text-field>
+              </v-col>
+              <v-col cols="12" md="6" class="py-0">
+                <v-text-field
+                  dense
+                  label="Nro Asiento Folio Real"
+                  v-model="loan_property.real_folio_number"
+                  outlined
+                ></v-text-field>
+              </v-col>
+              <v-col cols="12" md="6" class="py-0">
+                <v-menu
+                  v-model="dates.publicDeedDate.show"
+                  :close-on-content-click="false"
+                  transition="scale-transition"
+                  offset-y
+                  max-width="290px"
+                  min-width="290px"
+                >
+                  <template v-slot:activator="{ on }">
+                    <v-text-field
+                      dense
+                      outlined
+                      readonly
+                      v-model="dates.publicDeedDate.formatted"
+                      label="Fecha de Escritura Pública"
+                      hint="Día/Mes/Año"
+                      persistent-hint
+                      append-icon="mdi-calendar"
+                      v-on="on"
+                    ></v-text-field>
+                  </template>
+                  <v-date-picker
+                    v-model="loan_property.public_deed_date"
+                    no-title
+                    @input="dates.publicDeedDate.show = false"
+                  ></v-date-picker>
+                </v-menu>
+              </v-col>
+              <v-col cols="12" md="6" class="py-0">
+                <v-select
+                  dense
+                  :items="cities"
+                  item-text="name"
+                  item-value="id"
+                  :loading="loading"
+                  label="Ciudad de registro en derechos reales"
+                  v-model="loan_property.real_city_id"
+                  outlined
+                ></v-select>
+              </v-col>
+              <v-col cols="12" md="6" class="py-0">
+                <v-text-field
+                  dense
+                  label="VNR (Valor Neto Realizado)"
+                  v-model="loan_property.net_realizable_value"
+                  outlined
+                ></v-text-field>
+              </v-col>
+              <v-col cols="12" md="6" class="py-0"></v-col>
+
+              <!--<v-col cols="12" md="12" class="py-0">
                      <v-data-table
                     :headers="headers"
                     :items="desserts"
@@ -201,21 +222,111 @@
                         <v-btn color="primary" @click="initialize">Reset</v-btn>
                       </template>
                     </v-data-table>
-            </v-col>
-          </v-row>
-        </v-col>
-        
-      </v-row>
-    </v-form>
+              </v-col>-->
+            </v-row>
+          </v-col>
+          <v-btn @click="saveLoanProperty()">saveLoanProperty</v-btn>
+        </v-row>
+      </v-form>
     </ValidationObserver>
   </v-container>
 </template>
 
 <script>
 export default {
-
   name: "hipotecari-data",
   data: () => ({
+    editedIndex: -1,
+    loan_property: {},
+    dates: {
+      publicDeedDate: {
+        formatted: null,
+        picker: false
+      }
+    },
+    cities: [],
+    items_measurement: [
+      { name: "Metros cuadrados", value: "Metros cuadrados" },
+      { name: "Hectáreas", value: "Hectáreas" }
+    ]
+  }),
+  mounted() {
+    this.getCities();
+    this.formatDate("publicDeedDate", this.loan_property.public_deed_date);
+  },
+  watch: {
+    "loan_property.public_deed_date": function(date) {
+      this.formatDate("publicDeedDate", date);
+    }
+  },
+  methods: {
+    formatDate(key, date) {
+      if (date) {
+        this.dates[key].formatted = this.$moment(date).format("L");
+      } else {
+        this.dates[key].formatted = null;
+      }
+    },
+    async getCities() {
+      try {
+        this.loading = true;
+        let res = await axios.get("city");
+        this.cities = res.data;
+      } catch (e) {
+        console.log(e);
+      } finally {
+        this.loading = false;
+      }
+    },
+    async saveLoanProperty() {
+      try {
+        if (this.editedIndex == -1) {
+          let res = await axios.post("loan_property", {
+            land_lot_number: this.loan_property.land_lot_number,
+            neighborhood_unit: this.loan_property.neighborhood_unit,
+            location: this.loan_property.location,
+            surface: this.loan_property.surface,
+            measurement: this.loan_property.measurement,
+            cadastral_code: this.loan_property.cadastral_code,
+            limit: this.loan_property.limit,
+            public_deed_number: this.loan_property.public_deed_number,
+            lawyer: this.loan_property.lawyer,
+            registration_number: this.loan_property.registration_number,
+            real_folio_number: this.loan_property.real_folio_number,
+            public_deed_date: this.loan_property.public_deed_date,
+            net_realizable_value: this.loan_property.net_realizable_value,
+            real_city_id: this.loan_property.real_city_id
+          });
+          this.loan_property = res.data;
+          this.editedIndex = this.loan_property.id;
+        } else {
+          let res = await axios.patch(
+            `loan_property/${this.loan_property.id}`,
+            {
+              land_lot_number: this.loan_property.land_lot_number,
+              neighborhood_unit: this.loan_property.neighborhood_unit,
+              location: this.loan_property.location,
+              surface: this.loan_property.surface,
+              measurement: this.loan_property.measurement,
+              cadastral_code: this.loan_property.cadastral_code,
+              limit: this.loan_property.limit,
+              public_deed_number: this.loan_property.public_deed_number,
+              lawyer: this.loan_property.lawyer,
+              registration_number: this.loan_property.registration_number,
+              real_folio_number: this.loan_property.real_folio_number,
+              public_deed_date: this.loan_property.public_deed_date,
+              net_realizable_value: this.loan_property.net_realizable_value,
+              real_city_id: this.loan_property.real_city_id
+            }
+          );
+          this.loan_property = res.data;
+        }
+      } catch (e) {
+        console.log(e);
+      }
+    }
+  }
+  /*data: () => ({
 
         headers: [
         { text: 'Entidad Financiera', value: 'calories' },
@@ -329,5 +440,6 @@ export default {
    
   
     
-  }}
+  }*/
+};
 </script>
