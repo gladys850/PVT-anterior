@@ -92,7 +92,8 @@
                 <v-col cols="12" md="4" class="py-0">
                   <v-btn
                     color="info"
-                    @click="Calculator()">Calcular
+                       rounded
+                    @click="Calculator1()">Calcular
                   </v-btn>
                 </v-col>
               </v-row>
@@ -144,10 +145,11 @@
                     :headers="headers"
                     :items="loan"
                     :items-per-page="4"
+                    hide-default-footer
                   >
                   </v-data-table>
                 </v-col>
-                <v-col cols="12" md="6" class="font-weight-black" >
+                <v-col cols="12" md="8" class="font-weight-black" >
                   PRESTAMOS QUE ESTA GARANTIZANDO:
                 </v-col>
                 <v-col cols="12" md="2" class="font-weight-black" >
@@ -160,28 +162,17 @@
           <v-card v-show="show_result">
             <v-container >
               <v-row>
-                <v-col cols="12" md="6">
-                  <v-card-text class="py-0">
-                    <v-layout row wrap class="py-0">
-                      <v-flex xs12 class="px-2" >
-                        <fieldset class="pa-3">
-                          <p class="py-0">TOTAL BONOS: {{ calculos1.bonus_calculated }}</p>
-                          <p class="py-0">LIQUIDO PARA CALIFICACION:{{ calculos1.liquid_qualification_calculated}} </p>
-                          <p class="py-0">CALCULO DE CUOTA:{{ calculos1.quota_calculated }} </p>
-                        </fieldset>
-                      </v-flex>
-                    </v-layout>
-                  </v-card-text>
-                </v-col>
-                <v-col cols="12" md="6">
+                <v-col cols="12" md="12">
                   <v-card-text class="py-0">
                     <v-layout row wrap>
                       <v-flex xs12 class="px-2">
                         <fieldset class="pa-3">
-                          <p class="py-0">INDICE DE ENDEUDAMIENTO:{{calculos1.indebtedness_calculated }}</p>
-                          <p class="py-0 success--text font-weight-black">MONTO MAXIMO SUGERIDO :{{calculos1.amount_maximum_suggested}} </p>                       
-                          <div class="text-right"  v-show="validated">
-                            <v-btn  
+                          <p class="py-0 mb-0">Liquido Total:{{evaluate_garantor.payable_liquid +' '}}<b>|</b> Total de Bonos:{{evaluate_garantor.bonus_calculated +' '}}<b>|</b> Liquido para la Calificacio:{{evaluate_garantor.payable_liquid_calculated }}</p>
+                          <p class="py-0 mb-0">Indice de Endeudamineto: {{evaluate_garantor.indebtnes_calculated+'% '}}<b>|</b> <b>{{evaluate_garantor.is_valid?'Cubre la Cuota ':'No Cubre la Cuota'}}</b></p>
+                          <div class="text-right"  v-show="evaluate_garantor.is_valid">
+                            <v-btn
+                              x-small
+                              class="py-0"
                               color="info"
                               rounded
                               @click="añadir()">Añadir Garante
@@ -207,11 +198,53 @@
                             <v-btn text icon color="error" @click.stop="deleteOtherDocument(index)">X</v-btn>
                               <v-divider></v-divider>
                           </div>
+                          <div class="text-right"  v-show="evaluate_garantor.is_valid">
+                            <v-btn
+                              class="py-0"
+                              color="info"
+                              rounded
+                               x-small
+                              @click="simulador()">Calculo de Cuota
+                            </v-btn>
+                          </div>
                         </fieldset>
                       </v-flex>
                     </v-layout>
                   </v-card-text>
                 </v-col>
+
+     <v-col cols="12" md="12">
+                  <v-card-text class="py-0">
+                    <v-layout row wrap>
+                      <v-flex xs12 class="px-2">
+                        <fieldset class="pa-3">
+                          <p class="py-0 mb-0">Monto del Prestamo: {{simulator_guarantors.amount_requested +' '}}<b>|</b> Plazo del Prestamo:{{simulator_guarantors.amount_requested +' '}}<b>|</b> Cuota del Titular:{{simulator_guarantors.quota_calculated_estimated_total  }}</p>
+                          <v-progress-linear></v-progress-linear>
+
+                            <ul style="list-style: none" class="pa-0">
+                              <li v-for="(afiliados,i) in simulator_guarantors.affiliates" :key="i" >
+                                <v-progress-linear></v-progress-linear>
+                                <p class="py-0 mb-0">Nombre del Afiliado: {{ afiliados.affiliate_id}}</p>
+                                <p class="py-0 mb-0">Cuota: {{afiliados.quota_calculated+"  "}}{{"  "+"Indice de Endeudamiento:"+afiliados.indebtedness_calculated}}{{" "}}Porcentaje de Pago: {{" "+afiliados.payment_percentage}}%</p>
+                              </li>
+                            </ul>
+                          
+                          
+                          <div class="text-right"  v-show="evaluate_garantor.is_valid">
+                            <v-btn
+                              class="py-0"
+                              color="info"
+                              rounded
+                               x-small
+                              @click="simulador()">Calculo de Cuota
+                            </v-btn>
+                          </div>
+                        </fieldset>
+                      </v-flex>
+                    </v-layout>
+                  </v-card-text>
+                </v-col>
+
               </v-row>
             </v-container>
           </v-card>
@@ -226,7 +259,7 @@
 
 import HipotecaryData from '@/components/loan/HipotecaryData'
   export default {
-  name: "loan-information",
+  name: "loan-guarantor",
    props: {
     garantes: {
       type: Array,
@@ -274,6 +307,7 @@ import HipotecaryData from '@/components/loan/HipotecaryData'
     show_garante:true,
     show_calculated:false,
     show_result:false,
+    simulator_guarantors:{},
     loan:[],
     index: [],
     garantes_detalle:[],
@@ -283,6 +317,7 @@ import HipotecaryData from '@/components/loan/HipotecaryData'
     payable_liquid:[0],
     bonos:[0,0,0,0],
     calculos1:{},
+    evaluate_garantor:{},
     headers: [
       {
         text: "Codigo",
@@ -348,7 +383,7 @@ ver()
     },
  async añadir()
     {
-      this.garantes.push(this.affiliate_garantor.affiliate.id);
+      this.garantes.push(this.affiliate_garantor,'hola');
       this.garantes_detalle.push(this.affiliate_garantor.affiliate.full_name);
     console.log('entro a garantes ==> '+this.garantes)
      console.log('entro a garantes ==> '+this.garantes_detalle)
@@ -395,7 +430,64 @@ console.log('este es el garante'+this.garantes[0])
         this.loading = false
       }
     },
-    
+     async Calculator1() {
+      try {
+        this.show_result=true  
+         let res = await axios.post(`evaluate_garantor`, {
+            procedure_modality_id:this.modalidad_id,
+            affiliate_id:this.affiliate_garantor.affiliate.id,
+            quota_calculated_total_lender:900,
+            contributions: [
+            {
+              payable_liquid: this.payable_liquid[0],
+              seniority_bonus:  this.bonos[2],
+              border_bonus: this.bonos[0],
+              public_security_bonus: this.bonos[3],
+              east_bonus:this.bonos[1]
+            }
+          ]
+        })
+        this.evaluate_garantor= res.data
+      }catch (e) {
+        console.log(e)
+      }finally {
+        this.loading = false
+      }
+    },
+    async simulador() {
+      try {
+      let res = await axios.post(`simulator`, {
+              procedure_modality_id: this.modalidad_id,
+              amount_requested: 68000,
+              months_term: 96,
+              guarantor: true,
+              liquid_qualification_calculated_lender: 2000,
+              liquid_calculated:[
+                {affiliate_id:1,
+                liquid_qualification_calculated:2000
+                },
+                {affiliate_id:37973,
+                liquid_qualification_calculated:2000
+                }
+                ]
+          })
+          this.simulator_guarantors = res.data
+          console.log('entro al simulador'+this.simulator_guarantors)
+
+/*      for (this.j = 0; this.j< this.simulator.length; this.j++) {
+
+        this.simulator[this.j].affiliate_nombres=this.datos_calculadora_hipotecario[this.j].affiliate_name
+
+        console.log(""+this.simulator[this.j].affiliate_nombres)
+      }
+*/
+
+      } catch (e) {
+        console.log(e)
+      } finally {
+        this.loading = false
+      }
+    },
    async activar()
     {
       try {
