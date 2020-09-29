@@ -226,7 +226,6 @@
                 </v-col>-->
               </v-row>
             </v-col>
-            <v-btn @click="saveLoanProperty()">saveLoanProperty</v-btn>
           </v-row>
         </v-card>
       </v-form>
