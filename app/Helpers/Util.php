@@ -88,6 +88,15 @@ class Util
         return $data;
     }
 
+    public static function number_integer($value, $literal = false)
+    {
+        if ($literal) {
+            $f = new \NumberFormatter('es', \NumberFormatter::SPELLOUT);
+            $data = $f->format(intval($value));
+        }
+        return $data;
+    }
+
     public static function search_sort($model, $request, $filter = [], $relations = [], $pivot = [])
     {
         $query = $model::query();

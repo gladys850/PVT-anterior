@@ -173,7 +173,7 @@ class Loan extends Model
         return $this->loan_persons()->withPivot('cosigner')->whereCosigner(false);
     }
 
-    public function consigners()
+    public function cosigners()
     {
         return $this->loan_persons()->withPivot('cosigner')->whereCosigner(true);
     }
