@@ -31,14 +31,15 @@ class PersonalReferenceForm extends FormRequest
             'city_identity_card_id'=>'integer|exists:cities,id',
             'identity_card'=>'string|min:3',
             'last_name'=>'string|alpha_spaces|min:3',
-            'first_name'=>'string|alpha_spaces|min:3',
-            'civil_status' => 'in:C,D,S,V',
-            'gender' => 'in:M,F',
             'mothers_last_name'=>'string|nullable|alpha_spaces|min:3',
+            'first_name'=>'string|alpha_spaces|min:3',
             'second_name'=>'string|nullable|alpha_spaces|min:3',
             'surname_husband'=>'string|nullable|alpha_spaces|min:3',
+            'civil_status' => 'in:C,D,S,V',
+            'gender' => 'in:M,F',
             'phone_number'=>'nullable',
-            'cell_phone_number'=>'nullable'
+            'cell_phone_number'=>'nullable',
+            'address'=>'nullable'
         ];
 
         switch ($this->method()) {

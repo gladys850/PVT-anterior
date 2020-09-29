@@ -100,7 +100,7 @@ class CalculatorController extends Controller
             $amount_requested = $request->amount_requested;
             $months_term = $request->months_term;
             $quota_calculated_total = $this->quota_calculator($procedure_modality, $request->months_term, $amount_requested);
-            $amount_maximum_suggested_total = $this->maximum_amount_borrar($procedure_modality,$request->months_term,$liquid_qualification_calculated_lender);
+            $amount_maximum_suggested_total = $this->maximum_amount($procedure_modality,$request->months_term,$liquid_qualification_calculated_lender);
             $indebtedness_calculated_total=round((($quota_calculated_total/$liquid_qualification_calculated_lender)*100),2);
             $calculated_data = collect([]);
             if ($indebtedness_calculated_total<=$debt_index)
@@ -136,7 +136,7 @@ class CalculatorController extends Controller
                     'is_valid' => ($indebtedness_calculated) <= ($procedure_modality->loan_modality_parameter->decimal_index)*100
                 ]);
             }
-            $response = $this->header($quota_calculated_total,$indebtedness_calculated_total,$request->amount_requested,$amount_maximum_suggested_total,$evaluate,$liquid_qualification_calculated_lender,$calculated_data);
+            $response = $this->header($quota_calculated_total,$indebtedness_calculated_total,$request->amount_requested,$months_term,$evaluate,$liquid_qualification_calculated_lender,$calculated_data);
         }
         else{
             $response = $this->loan_percent($request);
@@ -311,17 +311,17 @@ class CalculatorController extends Controller
     );
     array_push($cosigners,$cosigner);
     }
-    $response = $this->header($ce,$ie,$ms,$ams,$evaluate,$liquid_qualification_calculated,$cosigners);
+    $response = $this->header($ce,$ie,$ms,$plm,$evaluate,$liquid_qualification_calculated,$cosigners);
     return $response;
     }
 
     //colocado de la cabecera al array
-    private function header($ce,$ie,$ms,$ams,$evaluate,$liquid_qualification_calculated,$cosigners){
+    private function header($ce,$ie,$ms,$plm,$evaluate,$liquid_qualification_calculated,$cosigners){
         $response=array(            
             "quota_calculated_estimated_total"=>Util::money_format($ce),
             "indebtnes_calculated_total"=>intval($ie),
             "amount_requested"=>$ms,
-            "amount_maximum_suggested_total"=>$ams,
+            "months_term"=>$plm,
             "is_valid"=>$evaluate,
             'liquid_qualification_calculated_total' => $liquid_qualification_calculated,
             "affiliates"=>$cosigners

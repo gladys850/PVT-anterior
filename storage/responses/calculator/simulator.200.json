@@ -1,19 +1,18 @@
 {
-    "quota_calculated_estimated": "826,79",
-    "indebtnes_calculated": 21.2,
+    "quota_calculated_estimated_total": "878,55",
+    "indebtnes_calculated_total": 22,
     "amount_requested": 26000,
-    "amount_maximum_suggested": 98100,
+    "months_term": 36,
     "is_valid": true,
-    "liquid_qualification_calculated": 3900,
-    "cosigners":[
+    "liquid_qualification_calculated_total": 3900,
+    "affiliates": [
         {
             "affiliate_id": 9389,
-            "quota_calculated_estimated": 463,
-            "indebtedness_calculated": null,
-            "payment_percentage": 56,
-            "liquid_qualification_calculated": 2200,
+            "quota_calculated": "878,55",
+            "indebtedness_calculated": 43.93,
+            "payment_percentage": 100,
+            "liquid_qualification_calculated": 2000,
             "is_valid": true
-        },
-        {}
+        }
     ]
 }
