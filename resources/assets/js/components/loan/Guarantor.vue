@@ -218,13 +218,12 @@
         </v-col>
       </v-row>
       <v-card>
-        <HipotecaryData v-show="modalidad.procedure_type_id==12"/>
+        
       </v-card>
     </v-container>
 </template>
 <script>
 
-import HipotecaryData from '@/components/loan/HipotecaryData'
   export default {
   name: "loan-information",
    props: {
@@ -312,9 +311,6 @@ import HipotecaryData from '@/components/loan/HipotecaryData'
     
  
   }),
-     components: {
-   HipotecaryData
-  },
  
   computed: {
  
