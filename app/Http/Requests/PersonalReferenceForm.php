@@ -39,7 +39,8 @@ class PersonalReferenceForm extends FormRequest
             'second_name'=>'string|nullable|alpha_spaces|min:3',
             'surname_husband'=>'string|nullable|alpha_spaces|min:3',
             'phone_number'=>'nullable',
-            'cell_phone_number'=>'nullable'
+            'cell_phone_number'=>'nullable',
+            'address'=>'nullable'
         ];
 
         switch ($this->method()) {
