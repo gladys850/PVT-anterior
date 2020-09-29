@@ -77,6 +77,7 @@
             <h3 class="text-uppercase text-center">{{modalidad.name}}</h3>
               <v-card class="ma-3">
                 <BallotsResult
+                  :lenders.sync="lenders"
                   :datos.sync="datos"
                   :intervalos.sync="intervalos"
                   :bonos.sync="bonos"
@@ -198,6 +199,7 @@
             <h3 class="text-uppercase text-center">{{modalidad.name}}</h3>
             <Requirement
               :bus="bus"
+              :lenders.sync="lenders"
               :datos.sync="datos"
               :formulario.sync="formulario"
               :calculos.sync="calculos"
@@ -260,6 +262,7 @@ export default {
     modalities: [],
     prueba: [],
     garantes: [],
+    lenders:[],
     modalidad:{},
     datos:{},
     reference:{},
@@ -630,6 +633,7 @@ export default {
             this.liquid_calificated =res.data
             console.log("RESULTADO")
              this.datos =this.intervalos
+             this.lenders=res.data
    /* for (this.i = 0; this.i< this.datos_calculadora_hipotecario.length; this.i++) {
               let res5 = await axios.get(`affiliate/${this.datos_calculadora_hipotecario[this.i].affiliate_id}`)
               this.affiliates = res5.data

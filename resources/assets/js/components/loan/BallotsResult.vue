@@ -64,6 +64,7 @@
               </v-container>
               <BallotsResultHipotecary
               v-show="modalidad.procedure_type_id==12"
+              :lenders.sync="lenders"
               :intervalos.sync="intervalos"
               :datos.sync="datos"
               :calculos.sync="calculos"
@@ -85,6 +86,10 @@ export default {
     ver:false
   }),
   props: {
+      lenders: {
+      type: Array,
+      required: true
+    },
      modalidad_id: {
       type: Number,
       required: true,

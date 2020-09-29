@@ -9,6 +9,7 @@
             <v-toolbar-title>REQUISITOS{{reference.id}}</v-toolbar-title>
           </v-toolbar>
           {{personal_codebtor}}
+            {{lenders}}
           <v-row>
             <v-col v-for="(group,i) in items" :key="i" cols="12" class="py-1">
               <v-card dense>
@@ -169,6 +170,10 @@ export default {
     newOther: null
   }),
   props: {
+    lenders: {
+      type: Array,
+      required: true
+    },
     datos: {
       type: Object,
       required: true
@@ -249,7 +254,7 @@ export default {
             city_id: this.$store.getters.cityId,
             loan_term: this.calculos.plazo,
             payment_type_id:this.formulario[0],
-            lenders:[this.$route.query.affiliate_id],
+            lenders:this.lenders,
             payable_liquid_calculated:this.calculos.payable_liquid_calculated,
             bonus_calculated:this.calculos.bonus_calculated,
             liquid_qualification_calculated:this.calculos.liquid_qualification_calculated,

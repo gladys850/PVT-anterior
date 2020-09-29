@@ -51,17 +51,19 @@
                       </v-layout>
                     </v-card-text>
                   </v-col>
-                  <v-col cols="12" md="12" class="pl-1">
+                  <v-col cols="12" md="12" class="pl-1" v-show="is_valid" >
                     <v-card-text class="py-0">
+                      {{lenders}}
                       <v-layout row wrap>
                         <v-flex xs12 class="px-0">
                           <fieldset class="pa-3">
                             <v-toolbar-title>Calculo</v-toolbar-title>
+                              <p class="py-0 mb-0">Monto del Inmueble: {{simulator.amount_requested}}<b> | </b>Interes Calculado Total: {{simulator.indebtnes_calculated_total}} % <b> | </b> Liquido Calculado Total: {{simulator.liquid_qualification_calculated_total}}<b> | </b> Cuota Total del Prestamo: {{simulator.quota_calculated_estimated_total}}</p>
                               <ul style="list-style: none" class="pa-0">
-                                <li v-for="(calculado,i) in simulator" :key="i" >
+                                <li v-for="(calculado,i) in simulator.affiliates" :key="i" >
                                   <v-progress-linear></v-progress-linear>
                                   <p class="py-0 mb-0">Nombre del Afiliado: {{ calculado.affiliate_id}}</p>
-                                  <p class="py-0 mb-0">Cuota Estimada: {{calculado.quota_calculated_estimated}}<b> | </b>Interes Calculado: {{calculado.indebtedness_calculated}} % <b> | </b>Porcentaje de Pago: {{calculado.payment_percentage}}% <b> | </b> {{calculado.is_valid? 'Puede cubrir la cuota':'No puede cubrir la cuota'}}</p>
+                                  <p class="py-0 mb-0">Liquido para Callificacion: {{calculado.liquid_qualification_calculated}}<b> | </b>Cuota Estimada: {{calculado.quota_calculated_estimated}} <b> | </b>Porcentaje de Pago: {{calculado.payment_percentage}}% <b> | </b> {{calculado.is_valid? 'Puede cubrir la cuota':'No puede cubrir la cuota'}}</p>
                                 </li>
                               </ul>
                           </fieldset>
@@ -95,12 +97,17 @@ export default {
     visible:false,
     num_type:9,
     monto_hipotecario:null,
-    simulator:null,
+    simulator:{},
         calculo123:null,
-        nombres:[]
+        nombres:[],
+        is_valid:false
   
   }),
   props: {
+      lenders: {
+      type: Array,
+      required: true
+    },
    datos: {
       type: Object,
       required: true
@@ -138,23 +145,28 @@ export default {
   methods: {
     async calculadora() {
       try {
-      let res1 = await axios.post(`simulator`, {
-              procedure_modality_id: 46,
-              amount_requested: this.monto_hipotecario,
-              months_term: this.intervalos.maximum_term,
-              guarantor: true,
-              quota_lender: 1498,
-              liquid_calculated:this.liquid_calificated
-          })
-          this.simulator = res1.data
-
-/*      for (this.j = 0; this.j< this.simulator.length; this.j++) {
-
-        this.simulator[this.j].affiliate_nombres=this.datos_calculadora_hipotecario[this.j].affiliate_name
-
-        console.log(""+this.simulator[this.j].affiliate_nombres)
-      }
+        this.is_valid=true
+        let res = await axios.post(`simulator`, {
+          procedure_modality_id: 46,
+          amount_requested: this.monto_hipotecario,
+          months_term: this.intervalos.maximum_term,
+          guarantor: false,
+          liquid_qualification_calculated_lender: 0,
+          liquid_calculated:this.liquid_calificated
+        })
+      this.simulator = res.data
+      this.lenders=this.liquid_calificated
+/*      for (this.j = 0; this.j< this.simulator.length; this.j++){
+          this.simulator[this.j].affiliate_nombres=this.datos_calculadora_hipotecario[this.j].affiliate_name
+          console.log(""+this.simulator[this.j].affiliate_nombres)
+        }
 */
+        for (this.i = 0; this.i< this.lenders.length; this.i++){
+
+          this.lenders[this.i].payment_percentage=this.simulator.affiliates[this.i].payment_percentage
+          this.lenders[this.i].indebtedness_calculated=this.simulator.affiliates[this.i].indebtedness_calculated
+        }
+
 
       } catch (e) {
         console.log(e)
