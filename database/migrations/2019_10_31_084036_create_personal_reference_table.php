@@ -17,6 +17,8 @@ class CreatePersonalReferenceTable extends Migration
             $table->bigIncrements('id');
             $table->unsignedBigInteger('city_identity_card_id')->nullable();
             $table->foreign('city_identity_card_id')->references('id')->on('cities');
+            $table->foreign('city_birth_id')->references('id')->on('cities');
+            $table->unsignedBigInteger('city_birth_id')->nullable();
             $table->string('identity_card');
             $table->string('last_name');
             $table->string('mothers_last_name')->nullable();

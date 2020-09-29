@@ -71,7 +71,7 @@ class LoanForm extends FormRequest
             'guarantors.*.quota_refinance' => ['required', 'numeric'],
             'guarantors.*.indebtedness_calculated' => ['required', 'numeric'],
             'guarantors.*.liquid_qualification_calculated' => ['required', 'numeric'],
-            'personal_references' => ['array',$procedure_modality->loan_modality_parameter->personal_reference? 'min:1':'nullable' ],
+            'personal_references' => ['array',$procedure_modality->loan_modality_parameter->personal_reference? 'required':'nullable' ],
             'consigners' => ['array',new LoanIntervalMaxCosigner($procedure_modality)],
             'documents.*' => ['exists:procedure_documents,id'],
             'disbursable_id' => ['integer'],
