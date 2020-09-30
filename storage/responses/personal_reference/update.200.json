@@ -1,17 +1,18 @@
 {
-    "id": 2,
-    "city_identity_card_id": 5,
-    "identity_card": "165134-1L",
+    "id": 10,
+    "city_identity_card_id": null,
+    "city_birth_id": null,
+    "identity_card": null,
     "last_name": "SABIOO",
     "mothers_last_name": "OJAFFF",
     "first_name": "PEDRO",
     "second_name": "ROBERTO",
-    "surname_husband": "MARISCALLLLLLLLLL",
-    "civil_status": "C",
-    "gender": "F",
-    "phone_number": 22541013,
-    "cell_phone_number": 76543210,
+    "surname_husband": "MARISCAL",
+    "civil_status": null,
+    "gender": null,
+    "phone_number": "22541013",
+    "cell_phone_number": "76543210",
     "address": null,
-    "created_at": "2020-09-29T12:29:00.000000Z",
-    "updated_at": "2020-09-29T14:27:53.000000Z"
+    "created_at": "2020-09-30T14:22:35.000000Z",
+    "updated_at": "2020-09-30T14:42:23.000000Z"
 }

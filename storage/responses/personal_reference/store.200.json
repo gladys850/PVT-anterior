@@ -1,16 +1,17 @@
 {
     "city_identity_card_id": 5,
     "identity_card": "165134-1L",
-    "last_name": "SABIO",
+    "last_name": "SABIOO",
     "mothers_last_name": "OJAFFF",
     "first_name": "PEDRO",
     "second_name": "ROBERTO",
-    "surname_husband": "MARISCALLLLLLLLLL",
+    "surname_husband": "SALTA",
     "civil_status": "C",
     "gender": "F",
     "phone_number": 22541013,
     "cell_phone_number": 76543210,
-    "updated_at": "2020-09-29T12:29:00.000000Z",
-    "created_at": "2020-09-29T12:29:00.000000Z",
-    "id": 2
+    "city_birth_id": 2,
+    "updated_at": "2020-09-30T14:39:02.000000Z",
+    "created_at": "2020-09-30T14:39:02.000000Z",
+    "id": 11
 }
