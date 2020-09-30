@@ -302,6 +302,46 @@
         @endif
         @endif
     </div>
+
+
+    <div class = "m-t-100">
+        @if (count($loan->cosigners) == 1)
+        <table>
+            <tr>
+                <td>
+                @php ($lender = $loan->cosigners[0])
+                @include('partials.signature_box', [
+                    'full_name' => $lender->full_name,
+                    'identity_card' => $lender->identity_card_ext,
+                    'position' => 'CODEUDOR'
+                ])
+                </td>
+            </tr>
+        </table>
+        @endif
+        @if (count($loan->cosigners) == 2)
+        <table>
+            <tr>
+                <td width="50%">
+                @php ($lender = $loan->cosigners[0])
+                @include('partials.signature_box', [
+                    'full_name' => $lender->full_name,
+                    'identity_card' => $lender->identity_card_ext,
+                    'position' => 'CODEUDOR'
+                ])
+                </td>
+                <td width="50%">
+                @php ($lender = $loan->cosigners[1])
+                @include('partials.signature_box', [
+                    'full_name' => $lender->full_name,
+                    'identity_card' => $lender->identity_card_ext,
+                    'position' => 'CODEUDOR'
+                ])
+                </td>
+            </tr>
+        </table>
+        @endif
+    </div>
     <div class="m-t-75">
         <table>
             <tr>
