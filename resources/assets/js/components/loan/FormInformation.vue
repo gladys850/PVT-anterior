@@ -109,6 +109,40 @@
                 label="Ciudad de Expedición"
               ></v-select>
             </v-col>
+            <v-col>
+                <v-select
+                  dense
+                  :items="genders"
+                  item-text="name"
+                  item-value="value"
+                  v-model="personal_reference.gender"
+                  :loading="loading"
+                  label="Género"
+                ></v-select>
+            </v-col>
+             <v-col cols="12" md="3">
+                 <v-select
+                   dense
+                   :loading="loading"
+                   :items="civil_statuses"
+                   item-text="name"
+                   item-value="value"
+                   label="Estado civil"
+                   v-model="personal_reference.civil_status"
+                 ></v-select>
+            </v-col>
+            <v-col cols="12" md="3">
+              <v-select
+                v-model="personal_reference.city_birth_id"
+                dense
+                :items="cities"
+                item-text="name"
+                item-value="id"
+                label="Ciudad de nacimiento"
+              ></v-select>
+            </v-col>
+            
+
             <v-col cols="12" md="3">
               <v-text-field
                 v-model="personal_reference.phone_number"
@@ -167,7 +201,23 @@ import CoDebtor from '@/components/loan/CoDebtor'
     loanTypeSelected:null,
     loanTypeSelected2:null,
     payment_types:[],
-    cities:[]
+    cities:[],
+        civil_statuses: [
+      { name: "Soltero", value: "S" },
+      { name: "Casado", value: "C" },
+      { name: "Viudo", value: "V" },
+      { name: "Divorciado", value: "D" }
+    ],
+    genders: [
+      {
+        name: "Femenino",
+        value: "F"
+      },
+      {
+        name: "Masculino",
+        value: "M"
+      }
+    ]
 
   }),
    watch: {
