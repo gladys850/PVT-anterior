@@ -13,7 +13,7 @@ class PaymentTypeSeeder extends Seeder
     public function run()
     {
         $payment_types = [
-            ['name' => 'Deposito Bancario'],
+            ['name' => 'Depósito Bancario'],
             ['name' => 'Cheque'],
             ['name' => 'Efectivo'],
             ['name' => 'Descuento automático']
