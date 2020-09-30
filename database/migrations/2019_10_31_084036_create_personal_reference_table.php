@@ -25,8 +25,8 @@ class CreatePersonalReferenceTable extends Migration
             $table->string('first_name');
             $table->string('second_name')->nullable();
             $table->string('surname_husband')->nullable();
-            $table->enum('civil_status', ['C','D','S','V']);// estado civil
-            $table->enum('gender', ['F','M']);
+            $table->enum('civil_status', ['C','D','S','V'])->nullable();// estado civil
+            $table->enum('gender', ['F','M'])->nullable();
             $table->string('phone_number')->nullable();
             $table->string('cell_phone_number')->nullable();
             $table->string('address')->nullable();
