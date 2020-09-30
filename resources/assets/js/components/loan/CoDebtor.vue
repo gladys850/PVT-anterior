@@ -129,7 +129,7 @@ codebtor
 export default {
   name: "loan-codebtor",
   props: {
-    cosigners: {
+    personal_codebtor: {
       type: Array,
       required: true
     }
@@ -218,7 +218,7 @@ export default {
       city_birth_id: null
     },
     cities: [],
-    personal_codebtor: [],
+    //personal_codebtor: [],
     civil_statuses: [
       { name: "Soltero", value: "S" },
       { name: "Casado", value: "C" },
@@ -323,7 +323,7 @@ export default {
         this.loading = false;
       }
     },
-    async savePersonalReference() {
+   /* async savePersonalReference() {
       try {
         let i
         let ids_codebtor=[]
@@ -356,7 +356,7 @@ export default {
       } finally {
         this.loading = false;
       }
-    },
+    },*/
     checkLimit(){
       if(this.personal_codebtor.length < 1){
         console.log("no hacer nada")

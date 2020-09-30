@@ -177,7 +177,8 @@
             />
             <CoDebtor
               v-show="modalidad.personal_reference"
-              :cosigners="cosigners"/>
+              :personal_codebtor="personal_codebtor"
+             />
             <v-container class="py-0">
               <v-row>
                 <v-spacer></v-spacer><v-spacer></v-spacer><v-spacer></v-spacer>
@@ -273,6 +274,7 @@ export default {
     formulario:[],//TODO ESTA VARIABLE SE DEBE BORRAR YA QUE SOLO SIRVE PARA VERIFICAR LA INFORMACION DE CADA COMPONENTE
     personal_reference:{},
     calculo123:[],
+    personal_codebtor:[],
     cosigners:[],
     calculos:{
       promedio_liquido_pagable:0,
@@ -338,6 +340,7 @@ export default {
         }
         if(n==4)
         {
+          
           console.log('segundo'+this.modalidad.personal_reference)
              console.log('este es el formulario 0'+this.formulario[0])
              console.log('este es el formulario 1'+this.formulario[1])
@@ -347,6 +350,7 @@ export default {
         if(n==5)
         {
           this.personal()
+          this.savePersonalReference()
           console.log('segundo'+this.modalidad.personal_reference)
              console.log('este es el formulario 0'+this.formulario[0])
              console.log('este es el formulario 1'+this.formulario[1])
@@ -370,7 +374,11 @@ export default {
               first_name:this.personal_reference.first_name,
               second_name:this.personal_reference.second_name,
               phone_number:this.personal_reference.phone_number,
-              cell_phone_number:this.personal_reference.cell_phone_number
+              cell_phone_number:this.personal_reference.cell_phone_number,
+              civil_status: this.personal_reference.civil_status,
+              gender: this.personal_reference.gender,
+              cosigner: false,
+              city_birth_id: this.personal_reference.city_birth_id
             })
             this.reference=res.data
           }
@@ -693,7 +701,42 @@ export default {
       } catch (e) {
         console.log(e);
       }
-    }
-  },
+    },
+
+    async savePersonalReference() {
+      try {
+        let i
+        let ids_codebtor=[]
+        for (i = 0; i < this.personal_codebtor.length; i++) {
+          let res = await axios.post(`personal_reference`, {
+            city_identity_card_id: this.personal_codebtor[i]
+              .city_identity_card_id,
+            identity_card: this.personal_codebtor[i].identity_card,
+            last_name: this.personal_codebtor[i].last_name,
+            mothers_last_name: this.personal_codebtor[i].mothers_last_name,
+            first_name: this.personal_codebtor[i].first_name,
+            second_name: this.personal_codebtor[i].second_name,
+            phone_number: this.personal_codebtor[i].phone_number,
+            cell_phone_number: this.personal_codebtor[i].cell_phone_number,
+            address: this.personal_codebtor[i].address,
+            civil_status: this.personal_codebtor[i].civil_status,
+            gender: this.personal_codebtor[i].gender,
+            cosigner: true,
+            city_birth_id: this.personal_codebtor[i].city_birth_id
+          });
+          ids_codebtor.push(res.data.id);
+          console.log(this.personal_codebtor.length);
+          console.log(ids_codebtor);
+        }
+        this.cosigners = ids_codebtor
+        console.log(this.cosigners);
+      } catch (e) {
+        this.dialog = false;
+        console.log(e);
+      } finally {
+        this.loading = false;
+      }
+    },
+}
 }
 </script>
