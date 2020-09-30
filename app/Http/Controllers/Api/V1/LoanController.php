@@ -132,8 +132,6 @@ class LoanController extends Controller
     * @bodyParam payment_type_id integer required Tipo de desembolso. Example: 1
     * @bodyParam financial_entity_id integer ID de entidad financiera. Example: 1
     * @bodyParam number_payment_type integer Número de cuenta o Número de cheque para el de desembolso. Example: 10000541214
-    * @bodyParam payable_liquid_calculated numeric required Promedio liquido pagable. Example: 2000
-    * @bodyParam bonus_calculated integer required Total de bono calculado. Example: 24
     * @bodyParam liquid_qualification_calculated numeric required Total de bono calculado. Example: 2000
     * @bodyParam indebtedness_calculated numeric required Indice de endeudamiento. Example: 52.26
     * @bodyParam parent_loan_id integer ID de Préstamo Padre. Example: 1
@@ -247,8 +245,6 @@ class LoanController extends Controller
     * @bodyParam city_id integer required ID de la ciudad. Example: 6
     * @bodyParam loan_term integer required plazo. Example: 2
     * @bodyParam payment_type_id integer required Tipo de desembolso. Example: 1
-    * @bodyParam payable_liquid_calculated numeric required Promedio liquido pagable. Example: 2000
-    * @bodyParam bonus_calculated integer required Total de bono calculado. Example: 24
     * @bodyParam liquid_qualification_calculated numeric required Total de bono calculado. Example: 2000
     * @bodyParam indebtedness_calculated numeric required Indice de endeudamiento. Example: 52.26
     * @bodyParam disbursement_date date Fecha de desembolso. Example: 2020-02-01
