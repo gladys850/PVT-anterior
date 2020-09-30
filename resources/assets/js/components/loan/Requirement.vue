@@ -6,10 +6,13 @@
       <v-data-iterator :items="items" hide-default-footer>
         <template v-slot:header>
           <v-toolbar class="mb-0" color="ternary" dark flat>
-            <v-toolbar-title>REQUISITOS{{reference.id}}</v-toolbar-title>
+            <v-toolbar-title>REQUISITOS</v-toolbar-title>
           </v-toolbar>
-          {{personal_codebtor}}
+         REFERENCIA PERSONAL {{reference}}
+         CODEUDOR {{cosigners}}
+         BIEN INMUEBLE {{loan_property_id}}
             {{lenders}}
+            
           <v-row>
             <v-col v-for="(group,i) in items" :key="i" cols="12" class="py-1">
               <v-card dense>
@@ -204,17 +207,23 @@ export default {
       required: true
     },
     reference: {
-      type: Object,
+      type: Array,
       required: true
     },
     bus: {
       type: Object,
       required: true
     },
-    personal_codebtor: {
+
+    cosigners: {
       type: Array,
       required: true 
-    }
+    },
+    loan_property_id: {
+      type: Number,
+      required: true,
+      default: 0
+    },
   },
   watch: {
     modalidad_id () {
@@ -260,7 +269,9 @@ export default {
             liquid_qualification_calculated:this.calculos.liquid_qualification_calculated,
             indebtedness_calculated:this.calculos.indebtedness_calculated,
             guarantors: this.garantes,
-            personal_reference_id: this.reference.id,
+            property_id: this.loan_property_id,
+            personal_references: this.reference,
+            cosigners: this.cosigners,
             number_payment_type:this.formulario[1],
             destiny_id: this.formulario[2],
             documents: this.itemsOpc.concat(this.selected.concat(this.radios.filter(Boolean))),
