@@ -266,9 +266,10 @@ export default {
           this.modalidad.min_guarantor_category=this.loan_modality.loan_modality_parameter.min_guarantor_category
           this.modalidad.max_guarantor_category=this.loan_modality.loan_modality_parameter.max_guarantor_category
          this.modalidad.personal_reference=this.loan_modality.loan_modality_parameter.personal_reference
+         this.modalidad.max_cosigner=this.loan_modality.loan_modality_parameter.max_cosigner
     
     
-    //this.modalidad.personal_reference=true
+    //this.modalidad.personal_reference=true 
         this.prueba[0]=this.loan_modality.loan_modality_parameter.guarantors //FIXME prueba, en este componente se recuperan algunos datos, verificar si se usa en otro componente
         this.prueba[1]=this.loan_modality.loan_modality_parameter.min_guarantor_category
         this.prueba[2]=this.loan_modality.loan_modality_parameter.max_guarantor_category

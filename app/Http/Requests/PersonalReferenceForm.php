@@ -28,27 +28,25 @@ class PersonalReferenceForm extends FormRequest
     public function rules()
     {
         $rules = [
-            'city_identity_card_id'=>'integer|exists:cities,id',
-            'identity_card'=>'string|min:3',
-            'last_name'=>'string|alpha_spaces|min:3',
-            'first_name'=>'string|alpha_spaces|min:3',
-            'civil_status' => 'in:C,D,S,V',
-            'gender' => 'in:M,F',
-            'city_birth_id' =>'integer|exists:cities,id',
-            'mothers_last_name'=>'string|nullable|alpha_spaces|min:3',
-            'second_name'=>'string|nullable|alpha_spaces|min:3',
-            'surname_husband'=>'string|nullable|alpha_spaces|min:3',
-            'phone_number'=>'nullable',
-            'cell_phone_number'=>'nullable',
-            'address'=>'nullable'
+            'last_name'=>['string','alpha_spaces','min:3'],
+            'first_name'=>['string','alpha_spaces','min:3'],
+            'city_identity_card_id'=>['integer','exists:cities,id',$this->cosigner? 'required':'nullable'],
+            'identity_card'=>['string','min:3',$this->cosigner? 'required':'nullable'],
+            'civil_status' => ['in:C,D,S,V',$this->cosigner? 'required':'nullable'],
+            'gender' =>['in:M,F',$this->cosigner? 'required':'nullable'],
+            'city_birth_id' =>['integer','exists:cities,id',$this->cosigner? 'required':'nullable'],
+            'address'=>['string',$this->cosigner? 'required':'nullable'],
+            'mothers_last_name'=>['string','nullable','alpha_spaces','min:3'],
+            'second_name'=>['string','nullable','alpha_spaces','min:3'],
+            'surname_husband'=>['string','nullable','alpha_spaces','min:3'],
+            'phone_number'=>['nullable'],
+            'cell_phone_number'=>['nullable'],
         ];
-
         switch ($this->method()) {
             case 'POST': {
-                foreach (array_slice($rules, 0, 7) as $key => $rule) {
-                    $rules[$key] = implode('|', ['required', $rule]);
+                foreach (array_slice($rules, 0, 2 ) as $key => $rule) {
+                    array_push($rules[$key], 'required');
                 }
-                return $rules;
             }
             case 'PUT':
             case 'PATCH':{
