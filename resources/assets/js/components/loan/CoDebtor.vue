@@ -28,19 +28,6 @@
                 <v-container>
                   <v-row>
                     <v-col cols="12" sm="6" md="3">
-                      <v-text-field dense v-model="editedItem.identity_card" label="CI"></v-text-field>
-                    </v-col>
-                    <v-col cols="12" sm="6" md="3">
-                      <v-select
-                        v-model="editedItem.city_identity_card_id"
-                        dense
-                        :items="cities"
-                        item-text="name"
-                        item-value="id"
-                        label="Ciudad de Expedición"
-                      ></v-select>
-                    </v-col>
-                    <v-col cols="12" sm="6" md="3">
                       <v-text-field dense v-model="editedItem.first_name" label="Primer Nombre"></v-text-field>
                     </v-col>
                     <v-col cols="12" sm="6" md="3">
@@ -55,6 +42,30 @@
                         v-model="editedItem.mothers_last_name"
                         label="Segundo Apellido"
                       ></v-text-field>
+                    </v-col>
+                    <v-col cols="12" sm="6" md="3">
+                      <v-text-field dense v-model="editedItem.identity_card" label="CI"></v-text-field>
+                    </v-col>
+                    <v-col cols="12" sm="6" md="3">
+                      <v-select
+                        v-model="editedItem.city_identity_card_id"
+                        dense
+                        :items="cities"
+                        item-text="name"
+                        item-value="id"
+                        label="Ciudad de Expedición"
+                      ></v-select>
+                    </v-col>
+                    <v-col cols="12" sm="6" md="3">
+                      <v-select
+                        dense
+                        :items="genders"
+                        item-text="name"
+                        item-value="value"
+                        v-model="editedItem.gender"
+                        :loading="loading"
+                        label="Género"
+                      ></v-select>
                     </v-col>
                     <v-col cols="12" sm="6" md="3">
                       <v-select
@@ -77,17 +88,7 @@
                         label="Ciudad de Nacimiento"
                       ></v-select>
                     </v-col>
-                    <v-col cols="12" sm="6" md="3">
-                      <v-select
-                        dense
-                        :items="genders"
-                        item-text="name"
-                        item-value="value"
-                        v-model="editedItem.gender"
-                        :loading="loading"
-                        label="Género"
-                      ></v-select>
-                    </v-col>
+
                     <v-col cols="12" sm="6" md="3">
                       <v-text-field dense v-model="editedItem.phone_number" label="Teléfono"></v-text-field>
                     </v-col>
@@ -118,8 +119,6 @@
         <!--v-btn color="primary" @click="initialize">Reset</v-btn>-->
       </template>
     </v-data-table>
-    <v-btn @click="savePersonalReference()">savePersonalReference</v-btn>
-    {{personal_codebtor}}
   </div>
 </template>
 
@@ -129,6 +128,10 @@ export default {
   props: {
     personal_codebtor: {
       type: Array,
+      required: true
+    },
+    modalidad: {
+      type: Object,
       required: true
     }
   },
@@ -321,7 +324,7 @@ export default {
         this.loading = false;
       }
     },
-   /* async savePersonalReference() {
+    /* async savePersonalReference() {
       try {
         let i
         let ids_codebtor=[]
@@ -355,13 +358,14 @@ export default {
         this.loading = false;
       }
     },*/
-    checkLimit(){
-      if(this.personal_codebtor.length < 1){
-        console.log("no hacer nada")
-      }else{
+    checkLimit() {
+      if (this.personal_codebtor.length < this.modalidad.max_cosigner) {
+        console.log("no hacer nada");
+      } else {
         this.dialog = false;
-        this.toastr.error("El número maximo de codeudores es: 2");
-        
+        this.toastr.error(
+          "El número máximo de codeudores es: " + this.modalidad.max_cosigner
+        );
       }
     }
     /*compareObj(a, b) {

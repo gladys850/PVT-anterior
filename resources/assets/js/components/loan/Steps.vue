@@ -176,8 +176,9 @@
               :intervalos.sync="intervalos"
             />
             <CoDebtor
-              v-show="modalidad.personal_reference"
+              v-show="this.modalidad.max_cosigner > 0"
               :personal_codebtor="personal_codebtor"
+              :modalidad.sync="modalidad"
              />
             <v-container class="py-0">
               <v-row>
@@ -209,7 +210,8 @@
               :reference.sync="reference"
               :garantes.sync="garantes"
               :modalidad_id.sync="modalidad.id"
-              :cosigners="cosigners"/>
+              :cosigners="cosigners"
+              :loan_property_id ="loan_property.id"/>
           </v-card>
         </v-stepper-content>
       </v-stepper-items>
@@ -266,7 +268,7 @@ export default {
     lenders:[],
     modalidad:{},
     datos:{},
-    reference:{},
+    reference:[],
     intervalos:{},
     contributions1:[{}],
     payable_liquid:[0,0,0],
@@ -289,7 +291,7 @@ export default {
       liquid_calificated:[],
       editedIndex: -1,
       loan_property: {},
-      cosigners:[],
+      cosigners:[]
   }),
   computed: {
     isNew() {
@@ -381,7 +383,7 @@ export default {
               cosigner: false,
               city_birth_id: this.personal_reference.city_birth_id
             })
-            this.reference=res.data
+            this.reference.push(res.data.id)
           }
       } catch (e) {
         console.log(e)
