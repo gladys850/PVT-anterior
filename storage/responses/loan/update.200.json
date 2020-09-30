@@ -13,8 +13,6 @@
     "interest_id": 1,
     "state_id": 1,
     "amount_approved": 2000,
-    "payable_liquid_calculated": 2000,
-    "bonus_calculated": 24,
     "indebtedness_calculated": 52.26,
     "liquid_qualification_calculated": 2000,
     "loan_term": 2,

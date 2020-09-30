@@ -38,8 +38,6 @@ class Loan extends Model
         'interest_id',
         'state_id',
         'amount_approved',
-        'payable_liquid_calculated',
-        'bonus_calculated',
         'indebtedness_calculated',
         'liquid_qualification_calculated',
         'loan_term',
