@@ -12,6 +12,11 @@ use Util;
 */
 class PersonalReferenceController extends Controller
 {
+    public static function append_data(PersonalReference $personal_reference)
+    {
+        $personal_reference->loans = $personal_reference->loans;
+        return $personal_reference;
+    }
     /**
     * Lista de Personas de Referencia
     * Devuelve el listado con los datos paginados
@@ -25,13 +30,18 @@ class PersonalReferenceController extends Controller
     */
     public function index(Request $request)
     {
-        return Util::search_sort(new PersonalReference(), $request);
+        $data = Util::search_sort(new PersonalReference(), $request);
+        $data->getCollection()->transform(function ($personal_reference) {
+            return self::append_data($personal_reference);
+        });
+        return $data;
     }
 
     /**
     * Nueva Persona de Referencia
     * Inserta nueva persona de referencia
     * @bodyParam city_identity_card_id integer required ID de ciudad del CI. Example: 5
+    * @bodyParam city_birth_id integer required ID de ciudad del CI. Example: 5
     * @bodyParam identity_card string required Carnet de identidad. Example: 165134-1L
     * @bodyParam last_name string required Apellido paterno. Example: PINTO
     * @bodyParam mothers_last_name string Apellido materno. Example: ROJAS
@@ -40,7 +50,8 @@ class PersonalReferenceController extends Controller
     * @bodyParam phone_number integer Número de teléfono fijo. Example: 2254101
     * @bodyParam cell_phone_number integer Número de celular. Example: 76543210
     * @bodyParam address string Direccion. Example: Villa Fatima Calle #2 Nro 100
-    * @bodyParam cosigner boolean Codeudor. Example: false
+    * @bodyParam civil_status string required Estado civil (S,C,D,V). Example: C
+    * @bodyParam gender string required Género (M,F). Example: M
     * @authenticated
     * @responseFile responses/personal_reference/store.200.json
     */
@@ -58,7 +69,7 @@ class PersonalReferenceController extends Controller
     */
     public function show(PersonalReference $personal_reference)
     {
-        return $personal_reference;
+        return self::append_data($personal_reference, true);
     }
 
     /**
@@ -68,11 +79,15 @@ class PersonalReferenceController extends Controller
     * @bodyParam city_identity_card_id integer required ID de ciudad del CI. Example: 5
     * @bodyParam identity_card string required Carnet de identidad. Example: 165134-1L
     * @bodyParam last_name string required Apellido paterno. Example: PINTO
-    * @bodyParam mothers_last_name string Apellido materno. Example: ROJAZ
+    * @bodyParam mothers_last_name string Apellido materno. Example: ROJAS
     * @bodyParam first_name string required Primer nombre. Example: JUAN
     * @bodyParam second_name string Segundo nombre. Example: ROBERTO
     * @bodyParam phone_number integer Número de teléfono fijo. Example: 2254101
     * @bodyParam cell_phone_number integer Número de celular. Example: 76543210
+    * @bodyParam address string Direccion. Example: Villa Fatima Calle #2 Nro 100
+    * @bodyParam civil_status string required Estado civil (S,C,D,V). Example: C
+    * @bodyParam gender string required Género (M,F). Example: M
+    * @bodyParam cosigner boolean Codeudor. Example: false
     * @authenticated
     * @responseFile responses/personal_reference/update.200.json
     */
