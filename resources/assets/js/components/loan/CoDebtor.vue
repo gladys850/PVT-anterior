@@ -15,7 +15,7 @@
           <v-spacer></v-spacer>
           <v-dialog v-model="dialog" max-width="600px">
             <template v-slot:activator="{ on, attrs }">
-              <v-btn fab dark x-small v-on="on" color="info" v-bind="attrs">
+              <v-btn fab dark x-small v-on="on" color="info" v-bind="attrs" @click="checkLimit()">
                 <v-icon>mdi-plus</v-icon>
               </v-btn>
             </template>
@@ -57,6 +57,38 @@
                       ></v-text-field>
                     </v-col>
                     <v-col cols="12" sm="6" md="3">
+                      <v-select
+                        dense
+                        :loading="loading"
+                        :items="civil_statuses"
+                        item-text="name"
+                        item-value="value"
+                        label="Estado civil"
+                        v-model="editedItem.civil_status"
+                      ></v-select>
+                    </v-col>
+                    <v-col cols="12" sm="6" md="3">
+                      <v-select
+                        v-model="editedItem.city_birth_id"
+                        dense
+                        :items="cities"
+                        item-text="name"
+                        item-value="id"
+                        label="Ciudad de Nacimiento"
+                      ></v-select>
+                    </v-col>
+                    <v-col cols="12" sm="6" md="3">
+                      <v-select
+                        dense
+                        :items="genders"
+                        item-text="name"
+                        item-value="value"
+                        v-model="editedItem.gender"
+                        :loading="loading"
+                        label="Género"
+                      ></v-select>
+                    </v-col>
+                    <v-col cols="12" sm="6" md="3">
                       <v-text-field dense v-model="editedItem.phone_number" label="Teléfono"></v-text-field>
                     </v-col>
                     <v-col cols="12" sm="6" md="3">
@@ -86,6 +118,7 @@
         <!--v-btn color="primary" @click="initialize">Reset</v-btn>-->
       </template>
     </v-data-table>
+    <v-btn @click="savePersonalReference()">savePersonalReference</v-btn>
     {{personal_codebtor}}
   </div>
 </template>
@@ -96,7 +129,7 @@ export default {
   props: {
     personal_codebtor: {
       type: Array,
-      requiered: true
+      required: true
     }
   },
   data: () => ({
@@ -163,7 +196,10 @@ export default {
       mothers_last_name: null,
       phone_number: null,
       cell_phone_number: null,
-      address: null
+      address: null,
+      civil_status: null,
+      gender: null,
+      city_birth_id: null
     },
     defaultItem: {
       identity_card: null,
@@ -174,9 +210,29 @@ export default {
       mothers_last_name: null,
       phone_number: null,
       cell_phone_number: null,
-      address: null
+      address: null,
+      civil_status: null,
+      gender: null,
+      city_birth_id: null
     },
-    cities: []
+    cities: [],
+    //personal_codebtor: [],
+    civil_statuses: [
+      { name: "Soltero", value: "S" },
+      { name: "Casado", value: "C" },
+      { name: "Viudo", value: "V" },
+      { name: "Divorciado", value: "D" }
+    ],
+    genders: [
+      {
+        name: "Femenino",
+        value: "F"
+      },
+      {
+        name: "Masculino",
+        value: "M"
+      }
+    ]
   }),
 
   computed: {
@@ -264,7 +320,66 @@ export default {
       } finally {
         this.loading = false;
       }
+    },
+   /* async savePersonalReference() {
+      try {
+        let i
+        let ids_codebtor=[]
+        for (i = 0; i < this.personal_codebtor.length; i++) {
+          let res = await axios.post(`personal_reference`, {
+            city_identity_card_id: this.personal_codebtor[i]
+              .city_identity_card_id,
+            identity_card: this.personal_codebtor[i].identity_card,
+            last_name: this.personal_codebtor[i].last_name,
+            mothers_last_name: this.personal_codebtor[i].mothers_last_name,
+            first_name: this.personal_codebtor[i].first_name,
+            second_name: this.personal_codebtor[i].second_name,
+            phone_number: this.personal_codebtor[i].phone_number,
+            cell_phone_number: this.personal_codebtor[i].cell_phone_number,
+            address: this.personal_codebtor[i].address,
+            civil_status: this.personal_codebtor[i].civil_status,
+            gender: this.personal_codebtor[i].gender,
+            cosigner: false,
+            city_birth_id: this.personal_codebtor[i].city_birth_id
+          });
+          ids_codebtor.push(res.data.id);
+          console.log(this.personal_codebtor.length);
+          console.log(ids_codebtor);
+        }
+        this.cosigners = ids_codebtor
+        console.log(this.cosigners);
+      } catch (e) {
+        this.dialog = false;
+        console.log(e);
+      } finally {
+        this.loading = false;
+      }
+    },*/
+    checkLimit(){
+      if(this.personal_codebtor.length < 1){
+        console.log("no hacer nada")
+      }else{
+        this.dialog = false;
+        this.toastr.error("El número maximo de codeudores es: 2");
+        
+      }
     }
+    /*compareObj(a, b) {
+      var aKeys = Object.keys(a).sort();
+      var bKeys = Object.keys(b).sort();
+      if (aKeys.length !== bKeys.length) {
+        return false;
+      }
+      if (aKeys.join("") !== bKeys.join("")) {
+        return false;
+      }
+      for (var i = 0; i < aKeys.length; i++) {
+        if (a[aKeys[i]] !== b[bKeys[i]]) {
+          return false;
+        }
+      }
+      return true;
+    }*/
   }
 };
 </script>

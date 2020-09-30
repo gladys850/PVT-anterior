@@ -8,7 +8,7 @@
           <v-toolbar class="mb-0" color="ternary" dark flat>
             <v-toolbar-title>REQUISITOS{{reference.id}}</v-toolbar-title>
           </v-toolbar>
-          {{personal_codebtor}}
+         {{cosigners}}
             {{lenders}}
           <v-row>
             <v-col v-for="(group,i) in items" :key="i" cols="12" class="py-1">
@@ -211,7 +211,8 @@ export default {
       type: Object,
       required: true
     },
-    personal_codebtor: {
+
+    cosigners: {
       type: Array,
       required: true 
     }
