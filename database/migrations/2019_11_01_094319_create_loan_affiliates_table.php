@@ -21,7 +21,7 @@ class CreateLoanAffiliatesTable extends Migration
             $table->unsignedMediumInteger('payment_percentage');// porcentaje de descuento
             $table->boolean('guarantor')->default(false);//si es garante
             $table->float('payable_liquid_calculated',10,2); //promedio liquido pagable calculado
-            $table->unsignedMediumInteger('bonus_calculated'); //total bonos calculado
+            $table->float('bonus_calculated',5,2); //total bonos calculado
             $table->float('quota_refinance',5,2); //cuota de refinanciamiento
             $table->float('indebtedness_calculated',5,2)->nullable(); //indice de endeudamiento calculado
             $table->float('liquid_qualification_calculated',10,2); //liquido para calificación calculado
