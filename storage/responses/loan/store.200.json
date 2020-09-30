@@ -7,8 +7,6 @@
     "payment_type_id": 1,
     "financial_entity_id": 1,
     "number_payment_type": 10000541214,
-    "payable_liquid_calculated": 2000,
-    "bonus_calculated": 24,
     "liquid_qualification_calculated": 2000,
     "indebtedness_calculated": 49,
     "personal_reference_id": 1,
