@@ -177,7 +177,7 @@
             />
             <CoDebtor
               v-show="modalidad.personal_reference"
-              :personal_codebtor="personal_codebtor"/>
+              :cosigners="cosigners"/>
             <v-container class="py-0">
               <v-row>
                 <v-spacer></v-spacer><v-spacer></v-spacer><v-spacer></v-spacer>
@@ -208,7 +208,7 @@
               :reference.sync="reference"
               :garantes.sync="garantes"
               :modalidad_id.sync="modalidad.id"
-              :personal_codebtor="personal_codebtor"/>
+              :cosigners="cosigners"/>
           </v-card>
         </v-stepper-content>
       </v-stepper-items>
@@ -273,7 +273,7 @@ export default {
     formulario:[],//TODO ESTA VARIABLE SE DEBE BORRAR YA QUE SOLO SIRVE PARA VERIFICAR LA INFORMACION DE CADA COMPONENTE
     personal_reference:{},
     calculo123:[],
-    personal_codebtor:[],
+    cosigners:[],
     calculos:{
       promedio_liquido_pagable:0,
       total_bonos:0,
