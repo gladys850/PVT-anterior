@@ -377,11 +377,7 @@ export default {
               first_name:this.personal_reference.first_name,
               second_name:this.personal_reference.second_name,
               phone_number:this.personal_reference.phone_number,
-              cell_phone_number:this.personal_reference.cell_phone_number,
-              civil_status: this.personal_reference.civil_status,
-              gender: this.personal_reference.gender,
-              cosigner: false,
-              city_birth_id: this.personal_reference.city_birth_id
+              cell_phone_number:this.personal_reference.cell_phone_number
             })
             this.reference.push(res.data.id)
           }

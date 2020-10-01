@@ -109,6 +109,7 @@
                 label="Ciudad de Expedición"
               ></v-select>
             </v-col>
+            <!--
             <v-col>
                 <v-select
                   dense
@@ -141,7 +142,7 @@
                 label="Ciudad de nacimiento"
               ></v-select>
             </v-col>
-            
+            -->
 
             <v-col cols="12" md="3">
               <v-text-field
@@ -202,7 +203,7 @@ import CoDebtor from '@/components/loan/CoDebtor'
     loanTypeSelected2:null,
     payment_types:[],
     cities:[],
-        civil_statuses: [
+    /*civil_statuses: [
       { name: "Soltero", value: "S" },
       { name: "Casado", value: "C" },
       { name: "Viudo", value: "V" },
@@ -217,7 +218,7 @@ import CoDebtor from '@/components/loan/CoDebtor'
         name: "Masculino",
         value: "M"
       }
-    ]
+    ]*/
 
   }),
    watch: {
