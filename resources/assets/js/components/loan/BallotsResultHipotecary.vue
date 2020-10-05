@@ -53,7 +53,6 @@
                   </v-col>
                   <v-col cols="12" md="12" class="pl-1" v-show="is_valid" >
                     <v-card-text class="py-0">
-                      {{lenders}}
                       <v-layout row wrap>
                         <v-flex xs12 class="px-0">
                           <fieldset class="pa-3">
