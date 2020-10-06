@@ -89,7 +89,8 @@
                   :prueba.sync="prueba"
                   :procedure_type.sync="procedure_type"
                   :calculo123.sync="calculo123"
-                  :liquid_calificated="liquid_calificated" >
+                  :liquid_calificated="liquid_calificated"
+                  :modalidad_net_realizable_value.sync="modalidad.net_realizable_value" >
                     <template v-slot:title>
                       <v-col cols="12" class="py-0">Resultado para el Préstamo</v-col>
                     </template>
@@ -116,8 +117,9 @@
             <h3 class="text-uppercase text-center">{{modalidad.name}}</h3>
             <HipotecaryData 
               v-show="modalidad.procedure_type_id==12"  
-              :modalidad.sync="modalidad"
-              :loan_property="loan_property"/>
+              :modalidad_net_realizable_value.sync="modalidad.net_realizable_value"
+              :loan_property="loan_property"
+            />
             <Guarantor
               :datos.sync="datos"
               :modalidad_guarantors.sync="modalidad.guarantors"
@@ -641,6 +643,8 @@ export default {
             console.log("RESULTADO")
              this.datos =this.intervalos
              this.lenders=res.data
+             
+             
    /* for (this.i = 0; this.i< this.datos_calculadora_hipotecario.length; this.i++) {
               let res5 = await axios.get(`affiliate/${this.datos_calculadora_hipotecario[this.i].affiliate_id}`)
               this.affiliates = res5.data
@@ -670,7 +674,7 @@ export default {
             registration_number: this.loan_property.registration_number,
             real_folio_number: this.loan_property.real_folio_number,
             public_deed_date: this.loan_property.public_deed_date,
-            net_realizable_value: this.loan_property.net_realizable_value,
+            net_realizable_value: this.modalidad.net_realizable_value,
             real_city_id: this.loan_property.real_city_id
           });
           this.loan_property = res.data;
@@ -691,7 +695,7 @@ export default {
               registration_number: this.loan_property.registration_number,
               real_folio_number: this.loan_property.real_folio_number,
               public_deed_date: this.loan_property.public_deed_date,
-              net_realizable_value: this.loan_property.net_realizable_value,
+              net_realizable_value: this.modalidad.net_realizable_value,
               real_city_id: this.loan_property.real_city_id
             }
           );

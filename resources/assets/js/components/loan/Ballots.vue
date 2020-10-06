@@ -9,16 +9,19 @@
                   <v-col cols="12" class="py-0" >
                     <v-container class="py-0">
                       <v-row>
-                        <v-col cols="12" md="4" class="py-0 text-center">
-                          MODALIDAD DEL PRESTAMO
+                        <v-col cols="12" :md="window_size" class="py-0 text-center">
+                          MODALIDAD DEL PRÉSTAMO
                         </v-col>
-                        <v-col cols="12" md="4" class="py-0 text-center">
+                        <v-col cols="12" :md="window_size" class="py-0 text-center">
                           INTERVALO DE LOS MONTOS
                         </v-col>
-                        <v-col cols="12" md="4" class="py-0 text-center">
+                        <v-col cols="12" :md="window_size" class="py-0 text-center">
                           INTERVALO DEL PLAZO EN MESES
                         </v-col>
-                        <v-col cols="12" md="4" class="py-0">
+                        <v-col cols="12" :md="window_size" class="py-0 text-center" v-if="see_field">
+                          VALOR NETO REALIZADO (VNR)
+                        </v-col>
+                        <v-col cols="12" :md="window_size" class="py-0">
                           <v-select
                             dense
                             v-model="loanTypeSelected"
@@ -29,11 +32,17 @@
                             required
                           ></v-select>
                         </v-col>
-                        <v-col cols="12" md="4" class="py-0 text-center">
+                        <v-col cols="12" :md="window_size" class="py-0 text-center">
                           {{monto}}
                         </v-col>
-                        <v-col cols="12" md="4" class="py-0 text-center" >
+                        <v-col cols="12" :md="window_size" class="py-0 text-center" >
                           {{plazo}}
+                        </v-col>
+                        <v-col cols="12" :md="window_size" class="py-0" v-if="see_field">
+                          <v-text-field
+                            dense
+                            v-model="net_realizable_value"
+                          ></v-text-field>
                         </v-col>
                       </v-row>
                     </v-container>
@@ -140,7 +149,11 @@ export default {
     hipotecario:false,
     //contrib_codebtor: [],
     //contributions1_aux: [],
-    datos:[]
+    datos:[],
+    window_size:4,
+    see_field:false,
+    net_realizable_value: 0
+  
   }),
    props: {
     procedure_type: {
@@ -178,7 +191,8 @@ export default {
     contrib_codebtor: {
       type: Array,
       required:true
-    }
+    },
+
   },
     components: {
     BallotsHipotecary
@@ -198,9 +212,13 @@ export default {
           if(this.loanTypeSelected==12)
           {
             this.hipotecario=true
+            this.window_size=3
+            this.see_field=true
           }
           else{
             this.hipotecario=false
+            this.window_size=4
+            this.see_field=false
           }
           this.monto= this.interval[this.i].minimum_amount+' - '+this.interval[this.i].maximum_amount,
           this.plazo= this.interval[this.i].minimum_term+' - '+this.interval[this.i].maximum_term
@@ -267,6 +285,9 @@ export default {
           this.modalidad.max_guarantor_category=this.loan_modality.loan_modality_parameter.max_guarantor_category
          this.modalidad.personal_reference=this.loan_modality.loan_modality_parameter.personal_reference
          this.modalidad.max_cosigner=this.loan_modality.loan_modality_parameter.max_cosigner
+         this.modalidad.net_realizable_value=this.net_realizable_value
+         
+         
     
     
     //this.modalidad.personal_reference=true 

@@ -38,7 +38,7 @@
                       <v-layout row wrap>
                         <v-flex xs12 class="px-1">
                           <fieldset class="pa-2">
-                              <v-toolbar-title>Liquido Pagable</v-toolbar-title>
+                              <v-toolbar-title>Liquido Pagable{{modalidad_net_realizable_value}}</v-toolbar-title>
                               <ul style="list-style: none" class="pa-0">
                               <li v-for="(liquido,i) in liquid_calificated" :key="i" >
                                 <v-progress-linear></v-progress-linear>
@@ -139,6 +139,11 @@ export default {
     liquid_calificated: {
       type: Array,
       required: true
+    },
+    modalidad_net_realizable_value:{
+      type: Number,
+      required: true,
+      default:0
     }
   },
   methods: {

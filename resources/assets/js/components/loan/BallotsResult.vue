@@ -69,6 +69,7 @@
               :datos.sync="datos"
               :calculos.sync="calculos"
               :liquid_calificated="liquid_calificated"
+              :modalidad_net_realizable_value.sync="modalidad.net_realizable_value" 
              />
             </v-col>
           </v-row>
@@ -134,6 +135,11 @@ export default {
     liquid_calificated: {
       type: Array,
       required: true
+    },
+    modalidad_net_realizable_value:{
+      type: Number,
+      required: true,
+      default:0
     }
   },
     components: {
