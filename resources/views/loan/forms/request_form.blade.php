@@ -274,18 +274,7 @@
                             @include('partials.signature_box', $person)
                         </td>
                         @php ($cont ++)
-                        <!--@if ($signers->count() == $cont)
-                            <td width="50%">
-                                @php($user = Auth::user())
-                                @include('partials.signature_box', [
-                                    'full_name' => $user->full_name,
-                                    'position' => $user->position,
-                                    'employee' => true
-                                ])
-                            </td>
-                        @endif-->
                     @endforeach
-                <!--</tr>-->
                 @endforeach
                 @if ($signers->count() % 2 == 0)
                 </tr>
