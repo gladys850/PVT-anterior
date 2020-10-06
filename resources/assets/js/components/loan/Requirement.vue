@@ -8,11 +8,6 @@
           <v-toolbar class="mb-0" color="ternary" dark flat>
             <v-toolbar-title>REQUISITOS</v-toolbar-title>
           </v-toolbar>
-         REFERENCIA PERSONAL {{reference}}
-         CODEUDOR {{cosigners}}
-         BIEN INMUEBLE {{loan_property_id}}
-            {{lenders}}
-            
           <v-row>
             <v-col v-for="(group,i) in items" :key="i" cols="12" class="py-1">
               <v-card dense>
@@ -251,7 +246,6 @@ export default {
         this.loading = false;
       }
     },
-  
     async saveLoan() {
       try {
         this.idRequirements = this.selected.concat(this.radios.filter(Boolean))
@@ -259,21 +253,20 @@ export default {
           let res = await axios.post(`loan`, {
             copies: 2,
             procedure_modality_id:this.modalidad.id,
-            amount_requested: this.calculos.montos,
+            amount_requested: 44000,
             city_id: this.$store.getters.cityId,
-            loan_term: this.calculos.plazo,
+            loan_term: 240,
             payment_type_id:this.formulario[0],
-            lenders:this.lenders,
-            payable_liquid_calculated:this.calculos.payable_liquid_calculated,
-            bonus_calculated:this.calculos.bonus_calculated,
-            liquid_qualification_calculated:this.calculos.liquid_qualification_calculated,
-            indebtedness_calculated:this.calculos.indebtedness_calculated,
-            guarantors: this.garantes,
-            property_id: this.loan_property_id,
-            personal_references: this.reference,
-            cosigners: this.cosigners,
             number_payment_type:this.formulario[1],
             destiny_id: this.formulario[2],
+            liquid_qualification_calculated:2653,
+            indebtedness_calculated:14,
+            property_id: this.loan_property_id,
+            personal_references: this.reference,
+            cosigners:this.cosigners,
+            disbursable_id: this.$route.query.affiliate_id,
+            lenders:this.lenders,
+            guarantors: this.garantes,
             documents: this.itemsOpc.concat(this.selected.concat(this.radios.filter(Boolean))),
             notes: this.otherDocuments
           });
