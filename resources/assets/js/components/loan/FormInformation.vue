@@ -175,8 +175,8 @@ import CoDebtor from '@/components/loan/CoDebtor'
     CoDebtor
   },
     props: {
-    formulario: {
-      type: Array,
+    loan_detail: {
+      type: Object,
       required: true
     },
     modalidad_personal_reference: {
@@ -246,10 +246,10 @@ import CoDebtor from '@/components/loan/CoDebtor'
               }
           }
       }
-        this.formulario[0]=this.loanTypeSelected,
-        this.formulario[1]=this.cuenta,
-        this.formulario[2]=this.loanTypeSelected2
-        this.getLoanDestiny()
+      this.loan_detail.payment_type_id=this.loanTypeSelected,
+      this.loan_detail.number_payment_type=this.cuenta,
+      this.loan_detail.destiny_id=this.loanTypeSelected2
+      this.getLoanDestiny()
     },
      async getPaymentTypes() {
       try {
