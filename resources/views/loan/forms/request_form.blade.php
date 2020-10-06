@@ -266,7 +266,7 @@
         </div>
         <table>
             <tbody>
-                @php ($cont = 0)
+                @php ($cont = 0)             
                 @foreach ($signers->chunk(2) as $chunk)
                 <tr class="align-top">
                     @foreach ($chunk as $person)
@@ -274,7 +274,7 @@
                             @include('partials.signature_box', $person)
                         </td>
                         @php ($cont ++)
-                        @if ($signers->count() == $cont)
+                        <!--@if ($signers->count() == $cont)
                             <td width="50%">
                                 @php($user = Auth::user())
                                 @include('partials.signature_box', [
@@ -283,11 +283,12 @@
                                     'employee' => true
                                 ])
                             </td>
-                        @endif
+                        @endif-->
                     @endforeach
-                </tr>
+                <!--</tr>-->
                 @endforeach
                 @if ($signers->count() % 2 == 0)
+                </tr>
                 <tr>
                     <td colspan="2" width="100%">
                         @php($user = Auth::user())
@@ -297,6 +298,16 @@
                             'employee' => true
                         ])
                     </td>
+                </tr>
+                @else
+                <td width="50%">
+                @php($user = Auth::user())
+                @include('partials.signature_box', [
+                        'full_name' => $user->full_name,
+                        'position' => $user->position,
+                        'employee' => true
+                    ])
+                </td>
                 </tr>
                 @endif
             </tbody>
