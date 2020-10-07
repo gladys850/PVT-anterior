@@ -85,7 +85,8 @@
                   :calculos.sync="calculos"
                   :modalidad.sync="modalidad"
                   :modalidad_id.sync="modalidad.id"
-                  :liquid_calificated="liquid_calificated" >
+                  :liquid_calificated="liquid_calificated"
+                  :modalidad_net_realizable_value.sync="modalidad.net_realizable_value"  >
                     <template v-slot:title>
                       <v-col cols="12" class="py-0">Resultado para el Préstamo</v-col>
                     </template>
@@ -112,10 +113,11 @@
             <h3 class="text-uppercase text-center">{{modalidad.name}}</h3>
             <HipotecaryData 
               v-show="modalidad.procedure_type_id==12"  
-              :modalidad.sync="modalidad"
-              :loan_property="loan_property"/>
-            <Guarantor
+              :modalidad_net_realizable_value.sync="modalidad.net_realizable_value"
               :datos.sync="datos"
+              :loan_property="loan_property"
+            />
+            <Guarantor
               :modalidad_guarantors.sync="modalidad.guarantors"
                :modalidad.sync="modalidad"
               :prueba.sync="prueba"
@@ -579,27 +581,27 @@ console.log('entro a la calculadora de modalidades')
             this.liquid_calificated =res.data
             console.log("RESULTADO")
 
-let res1 = await axios.post(`simulator`, {
-          procedure_modality_id:this.modalidad.id,
-          amount_requested: this.intervalos.maximun_amoun,
-          months_term:  this.intervalos.maximum_term,
-          guarantor: false,
-          liquid_qualification_calculated_lender: 0,
-          liquid_calculated:this.liquid_calificated
+            let res1 = await axios.post(`simulator`, {
+            procedure_modality_id:this.modalidad.id,
+            amount_requested: this.intervalos.maximun_amoun,
+            months_term:  this.intervalos.maximum_term,
+            guarantor: false,
+            liquid_qualification_calculated_lender: 0,
+            liquid_calculated:this.liquid_calificated
         })
-      this.calculator_result = res1.data
+          this.calculator_result = res1.data
 
-             this.datos =this.intervalos
-             this.lenders=res.data
+          this.datos =this.intervalos
+          this.lenders=res.data
 
           this.lenders[0].payment_percentage=this.calculator_result.affiliates[0].payment_percentage
           this.lenders[0].indebtedness_calculated=this.calculator_result.affiliates[0].indebtedness_calculated
 
-this.loan_detail.amount_requested=this.intervalos.maximun_amoun
-this.loan_detail.months_term=this.intervalos.maximum_term
-this.loan_detail.liquid_qualification_calculated=this.calculator_result.liquid_qualification_calculated_total
-this.loan_detail.indebtedness_calculated=this.calculator_result.indebtnes_calculated_total
-
+          this.loan_detail.amount_requested=this.intervalos.maximun_amoun
+          this.loan_detail.months_term=this.intervalos.maximum_term
+          this.loan_detail.liquid_qualification_calculated=this.calculator_result.liquid_qualification_calculated_total
+          this.loan_detail.indebtedness_calculated=this.calculator_result.indebtnes_calculated_total
+          
   /*if( this.calculos.amount_maximum_suggested<this.intervalos.maximun_amoun){
           this.calculos.montos=this.calculos.amount_maximum_suggested
         }else{
@@ -636,7 +638,7 @@ this.loan_detail.indebtedness_calculated=this.calculator_result.indebtnes_calcul
             registration_number: this.loan_property.registration_number,
             real_folio_number: this.loan_property.real_folio_number,
             public_deed_date: this.loan_property.public_deed_date,
-            net_realizable_value: this.loan_property.net_realizable_value,
+            net_realizable_value: this.modalidad.net_realizable_value,
             real_city_id: this.loan_property.real_city_id
           });
           this.loan_property = res.data;
@@ -657,7 +659,7 @@ this.loan_detail.indebtedness_calculated=this.calculator_result.indebtnes_calcul
               registration_number: this.loan_property.registration_number,
               real_folio_number: this.loan_property.real_folio_number,
               public_deed_date: this.loan_property.public_deed_date,
-              net_realizable_value: this.loan_property.net_realizable_value,
+              net_realizable_value: this.modalidad.net_realizable_value,
               real_city_id: this.loan_property.real_city_id
             }
           );
