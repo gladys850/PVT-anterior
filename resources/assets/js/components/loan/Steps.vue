@@ -549,7 +549,7 @@ console.log('entro a la calculadora de modalidades')
       },
      //TAB1 Formatear datos obtenidos de las contribuciones, adecuandolo a formato para guardado y obtener liquido para calificación
     formatear() {    
-      let contribuciones =[]
+      let contribuciones = []
       contribuciones=this.contributions1.concat(this.contrib_codebtor)
       console.log("CONTRIBUCIONES")
       console.log(this.contribuciones)

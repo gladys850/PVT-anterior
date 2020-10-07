@@ -126,7 +126,8 @@
               <BallotsHipotecary
                 v-show="hipotecario"
                 :contributions1.sync="contributions1"
-                :contrib_codebtor="contrib_codebtor"/>
+                :contrib_codebtor="contrib_codebtor"
+                :modalidad.sync="modalidad"/>
             </v-card>
           </v-col>
         </v-row>
@@ -322,9 +323,9 @@ export default {
     },
     //Metodo para sacar boleta de un afiliado
   async getBallots(id) {
-    let data_ballots=[]
-    let i, j
     try {
+      let data_ballots=[]
+      let i, j
       let res = await axios.get(`affiliate/${id}/contribution`, {
         params:{
           city_id: this.$store.getters.cityId,

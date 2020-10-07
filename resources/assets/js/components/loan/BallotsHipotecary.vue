@@ -146,6 +146,10 @@
 export default {
   name: "ballots_hipotecary",
   props:{
+    modalidad: {
+      type: Object,
+      required: true
+    },
     contributions1: {
       type: Array,
       required: true
@@ -157,7 +161,7 @@ export default {
   },
   data: () => ({
     affiliate_codebtor_ci: null,
-    //editar:true,
+    editar:true,
     //monto:null,
     //plazo:null,contrib_codebtor
     //interval:[],
@@ -175,7 +179,7 @@ export default {
     exist_codebtor: true,
     ver: false,
     dialog: false,
-    ballots: [],
+    //ballots: [],
     //contrib_codebtor: [],
     //contrib_codebtor_aux: [],
 
@@ -257,41 +261,42 @@ export default {
     //Metodo para sacar boleta de un afiliado
     async getBallots(id) {
       try {
-        let i, j;
+        let data_ballots=[]
+        let i, j
         let res = await axios.get(`affiliate/${id}/contribution`, {
           params: {
             city_id: this.$store.getters.cityId,
             sortBy: ["month_year"],
             sortDesc: [1],
-            per_page: 1,//this.modalidad.quantity_ballots,
+            per_page: this.modalidad.quantity_ballots, //FIXME ver si en el caso hipotecario la boleta deberia enviarse solo 1
             page: 1
           }
         });
         console.log(res)
-         this.ballots = res.data.data;
+         data_ballots = res.data.data;
         if (res.data.valid) {
-          //this.editar=false
+          this.editar=false
           console.log("RESULTADOS DE BALLOT")
           console.log(this.modalidad.quantity_ballots)
           console.log(res.data);         
-          console.log(this.ballots);
-          //for (i = 0; i < this.ballots.length; i++) {
-              (this.editedItem.id_affiliate = this.ballots[0].affiliate_id),
-              (this.editedItem.payable_liquid = this.ballots[0].payable_liquid),
-              (this.editedItem.border_bonus = this.ballots[0].border_bonus),
-              (this.editedItem.east_bonus = this.ballots[0].east_bonus),
-              (this.editedItem.seniority_bonus = this.ballots[0].seniority_bonus),
-              (this.editedItem.public_security_bonus = this.ballots[0].public_security_bonus);
+          console.log(data_ballots);
+          //for (i = 0; i < data_ballots.length; i++) {
+              this.editedItem.id_affiliate = data_ballots[0].affiliate_id,
+              this.editedItem.payable_liquid = data_ballots[0].payable_liquid,
+              this.editedItem.border_bonus = data_ballots[0].border_bonus,
+              this.editedItem.east_bonus = data_ballots[0].east_bonus,
+              this.editedItem.seniority_bonus = data_ballots[0].seniority_bonus,
+              this.editedItem.public_security_bonus = data_ballots[0].public_security_bonus
           //}
-          /*for (j = 0; j < this.ballots.length; j++) {
-            this.contrib_codebtor[j].id_affiliate = this.ballots[j].affiliate_id;
-            this.contrib_codebtor[j].payable_liquid = this.ballots[j].payable_liquid;
+          /*for (j = 0; j < data_ballots.length; j++) {
+            this.contrib_codebtor[j].id_affiliate = data_ballots[j].affiliate_id;
+            this.contrib_codebtor[j].payable_liquid = data_ballots[j].payable_liquid;
 
             if (j == 0) {
-              (this.contrib_codebtor[j].border_bonus = this.ballots[j].border_bonus),
-              (this.contrib_codebtor[j].east_bonus = this.ballots[j].east_bonus),
-              (this.contrib_codebtor[j].seniority_bonus = this.ballots[j].seniority_bonus),
-              (this.contrib_codebtor[j].public_security_bonus = this.ballots[j].public_security_bonus);
+              (this.contrib_codebtor[j].border_bonus = data_ballots[j].border_bonus),
+              (this.contrib_codebtor[j].east_bonus = data_ballots[j].east_bonus),
+              (this.contrib_codebtor[j].seniority_bonus = data_ballots[j].seniority_bonus),
+              (this.contrib_codebtor[j].public_security_bonus = data_ballots[j].public_security_bonus);
             } else {
               (this.contrib_codebtor[j].border_bonus = 0),
               (this.contrib_codebtor[j].east_bonus = 0),
@@ -300,12 +305,12 @@ export default {
             }
           }*/
         } else{
-              (this.editedItem.id_affiliate = this.ballots[0].affiliate_id),
-              (this.editedItem.payable_liquid = 0),
-              (this.editedItem.border_bonus = 0),
-              (this.editedItem.east_bonus = 0),
-              (this.editedItem.seniority_bonus = 0),
-              (this.editedItem.public_security_bonus = 0)
+              this.editedItem.id_affiliate = data_ballots[0].affiliate_id,
+              this.editedItem.payable_liquid = 0,
+              this.editedItem.border_bonus = 0,
+              this.editedItem.east_bonus = 0,
+              this.editedItem.seniority_bonus = 0,
+              this.editedItem.public_security_bonus = 0
         }
       } catch (e) {
         console.log(e);
