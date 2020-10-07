@@ -148,16 +148,16 @@ class CalculatorController extends Controller
             if($modality->procedure_type->name == 'Préstamo Anticipo' || $modality->procedure_type->name == 'Préstamo a corto plazo' || $modality->procedure_type->name == 'Préstamo a largo plazo'){
                 if(count($liquid_calculated)>$modality->loan_modality_parameter->max_lenders)abort(403, 'La cantidad de titulares no corresponde a la modalidad');
                 foreach($liquid_calculated as $liquid){
-                    $quota_calculated = $this->quota_calculator($procedure_modality, $request->months_term, $amount_requested);
-                    $amount_maximum_suggested = $this->maximum_amount($procedure_modality,$request->months_term,$liquid['liquid_qualification_calculated']);
+                    $quota_calculated = $this->quota_calculator($modality, $request->months_term, $amount_requested);
+                    $amount_maximum_suggested = $this->maximum_amount($modality,$request->months_term,$liquid['liquid_qualification_calculated']);
                     if($amount_requested>$amount_maximum_suggested){
-                        $quota_calculated = $this->quota_calculator($procedure_modality, $request->months_term, $amount_maximum_suggested);
+                        $quota_calculated = $this->quota_calculator($modality, $request->months_term, $amount_maximum_suggested);
                         $amount_requested = $amount_maximum_suggested;
                     }
                     $maximum_suggested_valid = false;
                     if($modality->procedure_type->interval->minimum_amount<=$amount_maximum_suggested && $amount_maximum_suggested<=$modality->procedure_type->interval->maximum_amount) $maximum_suggested_valid = true;
                     $indebtedness_calculated = $quota_calculated/$liquid['liquid_qualification_calculated']*100;$valuate = false;
-                    if(($indebtedness_calculated) <= ($procedure_modality->loan_modality_parameter->decimal_index)*100) $valuate = true; $indebtedness_calculated = round($indebtedness_calculated,2);
+                    if(($indebtedness_calculated) <= ($modality->loan_modality_parameter->decimal_index)*100) $valuate = true; $indebtedness_calculated = round($indebtedness_calculated,2);
                     $calculated_data->push([
                         'affiliate_id' => $liquid['affiliate_id'],
                         'amount_maximum_suggested' => $amount_maximum_suggested,
