@@ -53,7 +53,6 @@
                   </v-col>
                   <v-col cols="12" md="12" class="pl-1" v-show="is_valid" >
                     <v-card-text class="py-0">
-                      {{lenders}}
                       <v-layout row wrap>
                         <v-flex xs12 class="px-0">
                           <fieldset class="pa-3">
@@ -88,7 +87,6 @@ export default {
     bonos: {},
     payable_liquid: {},
     modalidad: {},
-    calculos: {},
     editar:true,
     monto:null,
     plazo:null,
@@ -104,6 +102,10 @@ export default {
   
   }),
   props: {
+      loan_detail: {
+      type: Object,
+      required: true
+    },
       lenders: {
       type: Array,
       required: true
@@ -113,27 +115,6 @@ export default {
       required: true
     },
     intervalos: {
-      type: Object,
-      required: true
-    },
-   /*
-    bonos: {
-      type: Array,
-      required: true
-    },
-    payable_liquid: {
-      type: Array,
-      required: true
-    },
-    modalidad: {
-      type: Object,
-      required: true
-    },
-     prueba: {
-      type: Array,
-      required: true
-    },*/
-    calculos: {
       type: Object,
       required: true
     },
@@ -161,6 +142,10 @@ export default {
           console.log(""+this.simulator[this.j].affiliate_nombres)
         }
 */
+this.loan_detail.amount_requested=this.monto_hipotecario
+this.loan_detail.months_term=this.intervalos.maximum_term
+this.loan_detail.liquid_qualification_calculated=this.simulator.liquid_qualification_calculated_total
+this.loan_detail.indebtedness_calculated=this.simulator.indebtnes_calculated_total
         for (this.i = 0; this.i< this.lenders.length; this.i++){
 
           this.lenders[this.i].payment_percentage=this.simulator.affiliates[this.i].payment_percentage
@@ -174,91 +159,6 @@ export default {
         this.loading = false
       }
     },
-    async Calculator() {
-      try {
-        if (this.modalidad.quantity_ballots > 1) {
-          let res = await axios.post(`calculator`, {
-            procedure_modality_id: this.modalidad.id,
-            months_term: this.calculos.plazo,
-            amount_requested: this.calculos.montos,
-            affiliate_id: this.$route.query.affiliate_id,
-            contributions: [
-              {
-                payable_liquid: this.payable_liquid[0],
-                seniority_bonus: this.bonos[2],
-                border_bonus: this.bonos[0],
-                public_security_bonus: this.bonos[3],
-                east_bonus: this.bonos[1]
-              },
-              {
-                payable_liquid: this.payable_liquid[1],
-                seniority_bonus: 0,
-                border_bonus: 0,
-                public_security_bonus: 0,
-                east_bonus: 0
-              },
-              {
-                payable_liquid: this.payable_liquid[2],
-                seniority_bonus: 0,
-                border_bonus: 0,
-                public_security_bonus: 0,
-                east_bonus: 0
-              }
-            ]
-          })
-          this.calculo = res.data
-
-          this.calculos.payable_liquid_calculated = this.calculo.payable_liquid_calculated
-          this.calculos.bonus_calculated = this.calculo.bonus_calculated
-          this.calculos.liquid_qualification_calculated = this.calculo.liquid_qualification_calculated
-          this.calculos.quota_calculated = this.calculo.quota_calculated
-          this.calculos.indebtedness_calculated = this.calculo.indebtedness_calculated
-          this.calculos.amount_maximum_suggested = this.calculo.amount_maximum_suggested
-          this.calculos.plazo = this.calculos.plazo
-
-            if (this.calculos.montos>this.calculo.amount_maximum_suggested) {
-            this.calculos.montos = this.calculo.amount_maximum_suggested
-          } else {
-            this.calculos.montos = this.calculos.montos
-          }
-        } else {
-          let res = await axios.post(`calculator`, {
-            procedure_modality_id: this.modalidad.id,
-            months_term: this.calculos.plazo,
-            amount_requested: this.calculos.montos,
-            affiliate_id: this.$route.query.affiliate_id,
-            contributions: [
-              {
-                payable_liquid: this.payable_liquid[0],
-                seniority_bonus: this.bonos[2],
-                border_bonus: this.bonos[0],
-                public_security_bonus: this.bonos[3],
-                east_bonus: this.bonos[1]
-              }
-            ]
-          })
-          this.calculo = res.data
-
-          this.calculos.payable_liquid_calculated = this.calculo.payable_liquid_calculated
-          this.calculos.bonus_calculated = this.calculo.bonus_calculated
-          this.calculos.liquid_qualification_calculated = this.calculo.liquid_qualification_calculated
-          this.calculos.quota_calculated = this.calculo.quota_calculated
-          this.calculos.indebtedness_calculated = this.calculo.indebtedness_calculated
-          this.calculos.amount_maximum_suggested = this.calculo.amount_maximum_suggested
-          this.calculos.plazo = this.calculos.plazo
-
-            if (this.calculos.montos>this.calculo.amount_maximum_suggested) {
-            this.calculos.montos = this.calculo.amount_maximum_suggested
-          } else {
-            this.calculos.montos = this.calculos.montos
-          }  
-       }
-      } catch (e) {
-        console.log(e)
-      } finally {
-        this.loading = false
-      }
-    }
   }
 }
 </script>

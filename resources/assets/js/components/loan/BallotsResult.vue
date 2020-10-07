@@ -17,16 +17,16 @@
                       <v-text-field
                         :error-messages="errors"
                         label="Plazo en Meses"
-                        v-model="calculos.plazo"
-                        v-on:keyup.enter="Calculator()"
+                        v-model="calculator_result.months_term"
+                        v-on:keyup.enter="simuladores()"
                       ></v-text-field>
                       </ValidationProvider>
                       <ValidationProvider v-slot="{ errors }" name="monto solicitado" :rules="'numeric|min_value:'+datos.minimun_amoun+'|max_value:'+datos.maximun_amoun" mode="aggressive">
                       <v-text-field
                         :error-messages="errors"
                         label="Monto Solicitado"
-                        v-model ="calculos.montos"
-                        v-on:keyup.enter="Calculator()"
+                        v-model ="calculator_result.amount_requested"
+                        v-on:keyup.enter="simuladores()"
                       ></v-text-field>
                       </ValidationProvider>
                         </fieldset>
@@ -38,9 +38,9 @@
                       <v-layout row wrap>
                         <v-flex xs12 class="px-2">
                           <fieldset class="pa-3">
-                            <p>PROMEDIO LIQUIDO PAGABLE:{{ calculos.payable_liquid_calculated}}</p>
-                            <p>TOTAL BONOS: {{ calculos.bonus_calculated }}</p>
-                            <p>LIQUIDO PARA CALIFICACION: {{ calculos.liquid_qualification_calculated}}</p>
+                            <p>PROMEDIO LIQUIDO PAGABLE:{{ liquid_calificated[0].payable_liquid_calculated}}</p>
+                            <p>TOTAL BONOS: {{ liquid_calificated[0].bonus_calculated }}</p>
+                            <p>LIQUIDO PARA CALIFICACION: {{ liquid_calificated[0].liquid_qualification_calculated}}</p>
                           </fieldset>
                         </v-flex>
                       </v-layout>
@@ -51,9 +51,16 @@
                       <v-layout row wrap>
                         <v-flex xs12 class="px-2">
                           <fieldset class="pa-3">
-                            <p>CALCULO DE CUOTA: {{ calculos.quota_calculated }}</p>
-                            <p>INDICE DE ENDEUDAMIENTO: {{calculos.indebtedness_calculated }}</p>
+                            <p>CALCULO DE CUOTA: {{ calculator_result.quota_calculated_estimated_total }}</p>
+                            <p>INDICE DE ENDEUDAMIENTO: {{calculator_result.indebtnes_calculated_total }}</p>
                             <p class="success--text font-weight-black">MONTO MAXIMO SUGERIDO : {{calculos.amount_maximum_suggested}}</p>
+                            {{calculos}}
+                            <br>
+                            {{liquid_calificated}}
+                            <br>
+                            {{calculator_result}}
+                            <br>
+                            {{loan_detail}}
                           </fieldset>
                         </v-flex>
                       </v-layout>
@@ -67,8 +74,8 @@
               :lenders.sync="lenders"
               :intervalos.sync="intervalos"
               :datos.sync="datos"
-              :calculos.sync="calculos"
-              :liquid_calificated="liquid_calificated"
+              :liquid_calificated.sync="liquid_calificated"
+              :loan_detail.sync="loan_detail"
              />
             </v-col>
           </v-row>
@@ -86,6 +93,14 @@ export default {
     ver:false
   }),
   props: {
+    loan_detail: {
+      type: Object,
+      required: true
+    },
+    calculator_result: {
+      type: Object,
+      required: true
+    },
       lenders: {
       type: Array,
       required: true
@@ -99,32 +114,12 @@ export default {
       type: Object,
       required: true
     },
-     calculo123: {
-      type: Array,
-      required: true
-    },
-    procedure_type: {
-      type: Number,
-      required: true
-    },
     datos: {
       type: Object,
       required: true
     },
-    bonos: {
-      type: Array,
-      required: true
-    },
-    payable_liquid: {
-      type: Array,
-      required: true
-    },
     modalidad: {
       type: Object,
-      required: true
-    },
-     prueba: {
-      type: Array,
       required: true
     },
     calculos: {
@@ -151,6 +146,32 @@ export default {
     }
   },
   methods: {
+     async simuladores() {
+       try {
+        let res = await axios.post(`simulator`, {
+          procedure_modality_id:this.modalidad.id,
+          amount_requested: this.calculator_result.amount_requested,
+          months_term:  this.calculator_result.months_term,
+          guarantor: false,
+          liquid_qualification_calculated_lender: 0,
+          liquid_calculated:this.liquid_calificated
+        })
+      this.calculator_result = res.data
+      this.loan_detail.amount_requested=this.calculator_result.amount_requested
+this.loan_detail.months_term=this.calculator_result.months_term
+this.loan_detail.liquid_qualification_calculated=this.simulator.liquid_qualification_calculated_total
+this.loan_detail.indebtedness_calculated=this.simulator.indebtnes_calculated_total
+/*      for (this.j = 0; this.j< this.simulator.length; this.j++){
+          this.simulator[this.j].affiliate_nombres=this.datos_calculadora_hipotecario[this.j].affiliate_name
+          console.log(""+this.simulator[this.j].affiliate_nombres)
+        }
+*/
+      } catch (e) {
+        console.log(e)
+      } finally {
+        this.loading = false
+      }
+    },
     async Calculator() {
       try {
         if (this.modalidad.quantity_ballots > 1) {

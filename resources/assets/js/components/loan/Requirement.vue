@@ -8,11 +8,6 @@
           <v-toolbar class="mb-0" color="ternary" dark flat>
             <v-toolbar-title>REQUISITOS</v-toolbar-title>
           </v-toolbar>
-         REFERENCIA PERSONAL {{reference}}
-         CODEUDOR {{cosigners}}
-         BIEN INMUEBLE {{loan_property_id}}
-            {{lenders}}
-            
           <v-row>
             <v-col v-for="(group,i) in items" :key="i" cols="12" class="py-1">
               <v-card dense>
@@ -173,6 +168,10 @@ export default {
     newOther: null
   }),
   props: {
+      loan_detail: {
+      type: Object,
+      required: true
+    },
     lenders: {
       type: Array,
       required: true
@@ -182,10 +181,6 @@ export default {
       required: true
     },
     garantes: {
-      type: Array,
-      required: true
-    },
-    formulario: {
       type: Array,
       required: true
     },
@@ -222,7 +217,7 @@ export default {
     loan_property_id: {
       type: Number,
       required: true,
-      default: 0
+      default: null
     },
   },
   watch: {
@@ -251,7 +246,6 @@ export default {
         this.loading = false;
       }
     },
-  
     async saveLoan() {
       try {
         this.idRequirements = this.selected.concat(this.radios.filter(Boolean))
@@ -259,21 +253,20 @@ export default {
           let res = await axios.post(`loan`, {
             copies: 2,
             procedure_modality_id:this.modalidad.id,
-            amount_requested: this.calculos.montos,
+            amount_requested: this.loan_detail.amount_requested,
             city_id: this.$store.getters.cityId,
-            loan_term: this.calculos.plazo,
-            payment_type_id:this.formulario[0],
-            lenders:this.lenders,
-            payable_liquid_calculated:this.calculos.payable_liquid_calculated,
-            bonus_calculated:this.calculos.bonus_calculated,
-            liquid_qualification_calculated:this.calculos.liquid_qualification_calculated,
-            indebtedness_calculated:this.calculos.indebtedness_calculated,
-            guarantors: this.garantes,
+            loan_term:this.loan_detail.months_term,
+            payment_type_id:this.loan_detail.payment_type_id,
+            number_payment_type:this.loan_detail.number_payment_type,
+            destiny_id: this.loan_detail.destiny_id,
+            liquid_qualification_calculated:this.loan_detail.liquid_qualification_calculated,
+            indebtedness_calculated:this.loan_detail.indebtedness_calculated,
             property_id: this.loan_property_id,
             personal_references: this.reference,
-            cosigners: this.cosigners,
-            number_payment_type:this.formulario[1],
-            destiny_id: this.formulario[2],
+            cosigners:this.cosigners,
+            disbursable_id: this.$route.query.affiliate_id,
+            lenders:this.lenders,
+            guarantors: this.garantes,
             documents: this.itemsOpc.concat(this.selected.concat(this.radios.filter(Boolean))),
             notes: this.otherDocuments
           });
