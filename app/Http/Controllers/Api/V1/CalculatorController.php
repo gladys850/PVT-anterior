@@ -69,9 +69,9 @@ class CalculatorController extends Controller
             $liquid_calificated->push([
                 'affiliate_id' => $affiliate->id,
                 'payable_liquid_calculated' => round($payable_liquid_average),
-                'bonus_calculated' => $total_bonuses,
+                'bonus_calculated' => round($total_bonuses),
                 'liquid_qualification_calculated' => round($liquid_qualification_calculated),
-                'quota_refinance' => $parent_quota
+                'quota_refinance' => round($parent_quota)
             ]);
         }
         return $liquid_calificated;
@@ -91,24 +91,30 @@ class CalculatorController extends Controller
     * @responseFile responses/calculator/simulator.200.json
     */
     public function simulator(SimulatorForm $request){
+        $modality = ProcedureModality::findOrFail($request->procedure_modality_id);
+        $amount_requested = $request->amount_requested;
+        $liquid_calculated = collect($request->liquid_calculated);
+        $calculated_data = collect([]);
         if($request->guarantor)
         {
             //calculo de totales para la cabecera
-            $procedure_modality = ProcedureModality::findOrFail($request->procedure_modality_id);
-            $debt_index = $procedure_modality->loan_modality_parameter->debt_index;
+            $debt_index = $modality->loan_modality_parameter->debt_index;
             $liquid_qualification_calculated_lender = $request->liquid_qualification_calculated_lender;
-            $amount_requested = $request->amount_requested;
             $months_term = $request->months_term;
-            $quota_calculated_total = $this->quota_calculator($procedure_modality, $request->months_term, $amount_requested);
-            $amount_maximum_suggested_total = $this->maximum_amount($procedure_modality,$request->months_term,$liquid_qualification_calculated_lender);
+            $quota_calculated_total = $this->quota_calculator($modality, $request->months_term, $amount_requested);
+            $amount_maximum_suggested = $this->maximum_amount($modality,$request->months_term,$liquid_qualification_calculated_lender);
+            if($amount_requested>$amount_maximum_suggested){
+                $quota_calculated_total = $this->quota_calculator($modality, $request->months_term, $amount_maximum_suggested);
+                $amount_requested = $amount_maximum_suggested;
+            }
+            $maximum_suggested_valid = false;
+            if($modality->procedure_type->interval->minimum_amount<=$amount_maximum_suggested && $amount_maximum_suggested<=$modality->procedure_type->interval->maximum_amount) $maximum_suggested_valid = true;
             $indebtedness_calculated_total=round((($quota_calculated_total/$liquid_qualification_calculated_lender)*100),2);
-            $calculated_data = collect([]);
-            if ($indebtedness_calculated_total<=$debt_index)
-                $evaluate=true;
-            else
-                $evaluate = false;
+            //$calculated_data = collect([]);
+            $evaluate = false;
+            if ($indebtedness_calculated_total<=$debt_index) $evaluate=true;
             //calculo de garantes
-            $liquid_calculated = collect($request->liquid_calculated);
+            //$liquid_calculated = collect($request->liquid_calculated);
             $quantity_guarantors = count($liquid_calculated);
             $quota_calculated = $quota_calculated_total/$quantity_guarantors;
             $c=1;$percentage = 0;
@@ -125,21 +131,50 @@ class CalculatorController extends Controller
                         $percentage_payment = 100-$percentage;
                     }
                 }
-                $amount_requested = 0;
-                $amount_maximum_suggested = 0;
                 $calculated_data->push([
                     'affiliate_id' => $liquid['affiliate_id'],
                     'quota_calculated' => Util::money_format($quota_calculated),
                     'indebtedness_calculated' => round($indebtedness_calculated,2),
                     'payment_percentage' => ($percentage_payment),
                     'liquid_qualification_calculated' => $liquid['liquid_qualification_calculated'],
-                    'is_valid' => ($indebtedness_calculated) <= ($procedure_modality->loan_modality_parameter->decimal_index)*100
+                    'is_valid' => ($indebtedness_calculated) <= ($modality->loan_modality_parameter->decimal_index)*100
                 ]);
             }
-            $response = $this->header($quota_calculated_total,$indebtedness_calculated_total,$request->amount_requested,$months_term,$evaluate,$liquid_qualification_calculated_lender,$calculated_data);
+            $response = $this->header($quota_calculated_total,$indebtedness_calculated_total,$request->amount_requested,$months_term,$evaluate,$liquid_qualification_calculated_lender,$amount_maximum_suggested,$maximum_suggested_valid,$calculated_data);
+
         }
         else{
-            $response = $this->loan_percent($request);
+            $modality = ProcedureModality::find($request->procedure_modality_id);
+            if($modality->procedure_type->name == 'Préstamo Anticipo' || $modality->procedure_type->name == 'Préstamo a corto plazo' || $modality->procedure_type->name == 'Préstamo a largo plazo'){
+                if(count($liquid_calculated)>$modality->loan_modality_parameter->max_lenders)abort(403, 'La cantidad de titulares no corresponde a la modalidad');
+                foreach($liquid_calculated as $liquid){
+                    $quota_calculated = $this->quota_calculator($procedure_modality, $request->months_term, $amount_requested);
+                    $amount_maximum_suggested = $this->maximum_amount($procedure_modality,$request->months_term,$liquid['liquid_qualification_calculated']);
+                    if($amount_requested>$amount_maximum_suggested){
+                        $quota_calculated = $this->quota_calculator($procedure_modality, $request->months_term, $amount_maximum_suggested);
+                        $amount_requested = $amount_maximum_suggested;
+                    }
+                    $maximum_suggested_valid = false;
+                    if($modality->procedure_type->interval->minimum_amount<=$amount_maximum_suggested && $amount_maximum_suggested<=$modality->procedure_type->interval->maximum_amount) $maximum_suggested_valid = true;
+                    $indebtedness_calculated = $quota_calculated/$liquid['liquid_qualification_calculated']*100;$valuate = false;
+                    if(($indebtedness_calculated) <= ($procedure_modality->loan_modality_parameter->decimal_index)*100) $valuate = true; $indebtedness_calculated = round($indebtedness_calculated,2);
+                    $calculated_data->push([
+                        'affiliate_id' => $liquid['affiliate_id'],
+                        'amount_maximum_suggested' => $amount_maximum_suggested,
+                        'quota_calculated' => Util::money_format($quota_calculated),
+                        'indebtedness_calculated' => $indebtedness_calculated,
+                        'payment_percentage' => 100,
+                        'liquid_qualification_calculated' => $liquid['liquid_qualification_calculated'],
+                        'is_valid' =>$valuate
+                    ]);
+                }
+                $response = $this->header($quota_calculated,$indebtedness_calculated,$request->amount_requested,$request->months_term,$valuate,$liquid['liquid_qualification_calculated'],$amount_maximum_suggested,$maximum_suggested_valid,$calculated_data);
+
+
+            }else{
+                $response = $this->loan_percent($request);
+
+            }
         }
         return $response;
     }
@@ -168,7 +203,8 @@ class CalculatorController extends Controller
         } else {
             $maximum_qualified_amount = $maximum_qualified_amount;
         }
-        return intval(round(floor($maximum_qualified_amount))/100)*100;
+        return $maximum_qualified_amount;
+        //return intval(round(floor($maximum_qualified_amount))/100)*100;
     }
     //toda la información de abajo se debe borrar hasta que el front arregle
     /**
@@ -217,7 +253,11 @@ class CalculatorController extends Controller
         $total_bonuses = $contribution_first['seniority_bonus']+$contribution_first['border_bonus']+$contribution_first['public_security_bonus']+$contribution_first['east_bonus'];
         $liquid_qualification_calculated = $this->liquid_qualification_borrar($payable_liquid_average, $total_bonuses, $affiliate, $parent_quota, $request->guarantor);
         $quota_calculated = $this->quota_calculator_borrar($procedure_modality, $request->months_term, $amount_requested);
+
         $amount_maximum_suggested = $this->maximum_amount_borrar($procedure_modality,$request->months_term,$liquid_qualification_calculated);
+       
+       
+        //return $amount_maximum_suggested;
         if($amount_requested>$amount_maximum_suggested){
             $quota_calculated = $this->quota_calculator_borrar($procedure_modality, $request->months_term, $amount_maximum_suggested);
             $amount_requested = $amount_maximum_suggested;
@@ -272,11 +312,12 @@ class CalculatorController extends Controller
         } else {
             $maximum_qualified_amount = $maximum_qualified_amount;
         }
-        return intval(round(floor($maximum_qualified_amount))/100)*100;
+        return $maximum_qualified_amount;
+        //return intval(round(floor($maximum_qualified_amount))/100)*100;
     }
 
     //division porcentual de las cuotas de los codeudores
-    private function loan_percent(request $request){
+        private function loan_percent(request $request){
         $procedure_modality = ProcedureModality::findOrFail($request->procedure_modality_id);
         $debt_index = $procedure_modality->loan_modality_parameter->debt_index;
         $lc=$request->liquid_calculated;
@@ -285,44 +326,46 @@ class CalculatorController extends Controller
         $ticm=$procedure_modality->current_interest->monthly_current_interest;
         $ce= $this->quota_calculator($procedure_modality, $plm, $ms);
         $liquid_qualification_calculated=0;
-    foreach($lc as $obj){
+        foreach($lc as $obj){
         $liquid_qualification_calculated = $liquid_qualification_calculated + (int)$obj["liquid_qualification_calculated"];
-    }
-    $ie=round((($ce/$liquid_qualification_calculated)*100),2);
-    if($ie<=$debt_index){
-        $evaluate=true;
-    }else{
-        $evaluate=false;
-    }
-    $ams = $this->maximum_amount($procedure_modality,$plm,$liquid_qualification_calculated);
-    $cosigners=array();
-    foreach($lc as $obj2){
-        $plc = (int)$obj2["liquid_qualification_calculated"];
-        $plc = round(($plc/$liquid_qualification_calculated)*100);
-        $ce_c = round(($ce*$plc)/100,2);
-        $cosigner=array(
-            "affiliate_id"=>$obj2["affiliate_id"],
-            "quota_calculated_estimated"=>$ce_c,
-            'indebtedness_calculated' => null,
-            'payment_percentage'=>$plc,
-            'liquid_qualification_calculated' => $obj2["liquid_qualification_calculated"],
-            'is_valid' => null
-    );
-    array_push($cosigners,$cosigner);
-    }
-    $response = $this->header($ce,$ie,$ms,$plm,$evaluate,$liquid_qualification_calculated,$cosigners);
-    return $response;
-    }
+        }
+        $ie=round((($ce/$liquid_qualification_calculated)*100),2);
+        if($ie<=$debt_index){
+            $evaluate=true;
+        }else{
+            $evaluate=false;
+        }
+        $ams = $this->maximum_amount($procedure_modality,$plm,$liquid_qualification_calculated);
+        $cosigners=array();
+        foreach($lc as $obj2){
+            $plc = (int)$obj2["liquid_qualification_calculated"];
+            $plc = round(($plc/$liquid_qualification_calculated)*100);
+            $ce_c = round(($ce*$plc)/100,2);
+            $cosigner=array(
+                "affiliate_id"=>$obj2["affiliate_id"],
+                "quota_calculated_estimated"=>$ce_c,
+                'indebtedness_calculated' => null,
+                'payment_percentage'=>$plc,
+                'liquid_qualification_calculated' => $obj2["liquid_qualification_calculated"],
+                'is_valid' => null
+        );
+        array_push($cosigners,$cosigner);
+        }
+        $response = $this->header($ce,$ie,$ms,$plm,$evaluate,$liquid_qualification_calculated,$cosigners);
+        return $response;
+        }
 
     //colocado de la cabecera al array
-    private function header($ce,$ie,$ms,$plm,$evaluate,$liquid_qualification_calculated,$cosigners){
-        $response=array(            
+    private function header($ce,$ie,$ms,$plm,$evaluate,$liquid_qualification_calculated,$amount_maximum_suggested,$maximum_suggested_valid,$cosigners){
+        $response=array(
             "quota_calculated_estimated_total"=>Util::money_format($ce),
-            "indebtnes_calculated_total"=>intval($ie),
+            "indebtedness_calculated_total"=>intval($ie),
             "amount_requested"=>$ms,
             "months_term"=>$plm,
             "is_valid"=>$evaluate,
             'liquid_qualification_calculated_total' => $liquid_qualification_calculated,
+            'amount_maximum_suggested' => $amount_maximum_suggested,
+            'maximum_suggested_valid' => $maximum_suggested_valid,
             "affiliates"=>$cosigners
         );
         return $response;

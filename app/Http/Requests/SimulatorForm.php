@@ -36,8 +36,8 @@ class SimulatorForm extends FormRequest
             ];
         }
         return[
-            'amount_requested'=> ['nullable', 'required_if:guarantor,false', 'integer', 'min:200', 'max:700000', new LoanIntervalAmount($procedure_modality)],
-            'months_term'=> ['nullable', 'required_if:guarantor,false', 'integer', 'min:1', 'max:240', new LoanIntervalTerm($procedure_modality)],
+            'amount_requested'=> ['required', 'integer', 'min:200', 'max:700000', new LoanIntervalAmount($procedure_modality)],
+            'months_term'=> ['required', 'integer', 'min:1', 'max:240', new LoanIntervalTerm($procedure_modality)],
             'guarantor' => ['nullable', 'boolean'],
             'liquid_qualification_calculated_lender' => ['nullable', 'required_if:guarantor,true'],
             'liquid_calculated' => ['required', 'array', 'min:1'],
