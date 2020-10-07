@@ -119,6 +119,9 @@
               v-show="modalidad.procedure_type_id==12"  
               :modalidad_net_realizable_value.sync="modalidad.net_realizable_value"
               :datos.sync="datos"
+              :loan_property="loan_property"
+            />
+            <Guarantor
               :modalidad_guarantors.sync="modalidad.guarantors"
                :modalidad.sync="modalidad"
               :prueba.sync="prueba"
