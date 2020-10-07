@@ -168,6 +168,10 @@ export default {
     newOther: null
   }),
   props: {
+      loan_detail: {
+      type: Object,
+      required: true
+    },
     lenders: {
       type: Array,
       required: true
@@ -177,10 +181,6 @@ export default {
       required: true
     },
     garantes: {
-      type: Array,
-      required: true
-    },
-    formulario: {
       type: Array,
       required: true
     },
@@ -253,14 +253,14 @@ export default {
           let res = await axios.post(`loan`, {
             copies: 2,
             procedure_modality_id:this.modalidad.id,
-            amount_requested: 44000,
+            amount_requested: this.loan_detail.amount_requested,
             city_id: this.$store.getters.cityId,
-            loan_term: 240,
-            payment_type_id:this.formulario[0],
-            number_payment_type:this.formulario[1],
-            destiny_id: this.formulario[2],
-            liquid_qualification_calculated:2653,
-            indebtedness_calculated:14,
+            loan_term:this.loan_detail.months_term,
+            payment_type_id:this.loan_detail.payment_type_id,
+            number_payment_type:this.loan_detail.number_payment_type,
+            destiny_id: this.loan_detail.destiny_id,
+            liquid_qualification_calculated:this.loan_detail.liquid_qualification_calculated,
+            indebtedness_calculated:this.loan_detail.indebtedness_calculated,
             property_id: this.loan_property_id,
             personal_references: this.reference,
             cosigners:this.cosigners,
