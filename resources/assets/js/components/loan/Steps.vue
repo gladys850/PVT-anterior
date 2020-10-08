@@ -69,6 +69,7 @@
                   </v-btn>
                 </v-col>
               </v-row>
+              {{this.contributions1_aux }}
             </v-container>
           </v-card>
         </v-stepper-content>
@@ -270,7 +271,7 @@ export default {
     datos:{},
     reference:[],
     intervalos:{},
-    contributions1:[{}],
+    contributions1:[{}],//crear la cantidad de objetos necesarios segun modalidad 3 o 1
     payable_liquid:[0,0,0],
     bonos:[0,0,0,0],
     personal_reference:{},
@@ -508,32 +509,32 @@ console.log('entro a la calculadora de modalidades')
       }
     },
     //metodo para armar las contribuciones del afiliado
-    Contributios()
+    /*Contributios()//TODO REVISAR SI SE UTILIZA
     {
       if(this.payable_liquid.length>1)
       {
-        for (this.i = 0; this.i< this.payable_liquid.length; this.i++) {
-          this.contributions1[this.i].payable_liquid=this.payable_liquid[this.i]
-          if(this.i = 0){
-            this.contributions1[this.i].border_bonus= this.bonos[0],
-            this.contributions1[this.i].east_bonus= this.bonos[1],
-            this.contributions1[this.i].seniority_bonus= this.bonos[2],
-            this.contributions1[this.i].public_security_bonus= this.bonos[3]
+        for (let i = 0; i< this.payable_liquid.length; i++) {
+          this.contributions1[i].payable_liquid=this.payable_liquid[i]
+          if(i = 0){
+            this.contributions1[i].border_bonus= this.bonos[0],
+            this.contributions1[i].east_bonus= this.bonos[1],
+            this.contributions1[i].seniority_bonus= this.bonos[2],
+            this.contributions1[i].public_security_bonus= this.bonos[3]
           }
           else{
-            this.contributions1[this.i].border_bonus= 0,
-            this.contributions1[this.i].east_bonus= 0,
-            this.contributions1[this.i].seniority_bonus= 0,
-            this.contributions1[this.i].public_security_bonus= 0
+            this.contributions1[i].border_bonus= 0,
+            this.contributions1[i].east_bonus= 0,
+            this.contributions1[i].seniority_bonus= 0,
+            this.contributions1[i].public_security_bonus= 0
           }
         }
       }
       else{
-        this.contributions1[this.i].payable_liquid=this.payable_liquid[0]
-        this.contributions1[this.i].border_bonus= this.bonos[0],
-        this.contributions1[this.i].east_bonus= this.bonos[1],
-        this.contributions1[this.i].seniority_bonus= this.bonos[2],
-        this.contributions1[this.i].public_security_bonus= this.bonos[3]
+        this.contributions1[i].payable_liquid=this.payable_liquid[0]
+        this.contributions1[i].border_bonus= this.bonos[0],
+        this.contributions1[i].east_bonus= this.bonos[1],
+        this.contributions1[i].seniority_bonus= this.bonos[2],
+        this.contributions1[i].public_security_bonus= this.bonos[3]
       }
      /*for (this.i = 0; this.i< this.interval.length; this.i++) {
         if(this.loanTypeSelected==this.interval[this.i].procedure_type_id)
@@ -545,30 +546,66 @@ console.log('entro a la calculadora de modalidades')
           this.intervalos.procedure_type_id= this.loanTypeSelected
           this.num_type=this.loanTypeSelected
         }
-      }*/
-      },
+      }
+      },*/
      //TAB1 Formatear datos obtenidos de las contribuciones, adecuandolo a formato para guardado y obtener liquido para calificación
     formatear() {    
       let contribuciones = []
+      let nuevoArray = []
+      if(this.modalidad.quantity_ballots ==3 ){
+        nuevoArray = []
+        nuevoArray[0] = {
+            affiliate_id:this.$route.query.affiliate_id,
+            contributions: [
+            {
+              payable_liquid: this.payable_liquid[0],
+              seniority_bonus:  this.bonos[2],
+              border_bonus: this.bonos[0],
+              public_security_bonus: this.bonos[3],
+              east_bonus:this.bonos[1]
+            },
+            {
+              payable_liquid: this.payable_liquid[1],
+              seniority_bonus: 0,
+              border_bonus: 0,
+              public_security_bonus: 0,
+              east_bonus:0
+            },
+            {
+              payable_liquid: this.payable_liquid[2],
+              seniority_bonus: 0,
+              border_bonus:0,
+              public_security_bonus: 0,
+              east_bonus:0
+            }
+          ]
+        }
+        console.log("NUEVO ARRAY")
+        console.log(nuevoArray)
+      }else{
+
       contribuciones=this.contributions1.concat(this.contrib_codebtor)
       console.log("CONTRIBUCIONES")
       console.log(this.contribuciones)
-      let nuevoArray = [];
-      let i;
-      for (i = 0; i < contribuciones.length; i++) {
+      nuevoArray = []
+      for (let i = 0; i < contribuciones.length; i++) {
         nuevoArray[i] = {
           affiliate_id: contribuciones[i].id_affiliate,
-          contributions: [{
+          contributions: [
+            {
             payable_liquid: parseFloat(contribuciones[i].payable_liquid),
             border_bonus: parseFloat(contribuciones[i].border_bonus),
             east_bonus: parseFloat(contribuciones[i].east_bonus),
             seniority_bonus: parseFloat(contribuciones[i].seniority_bonus),
             public_security_bonus: parseFloat(contribuciones[i].public_security_bonus)
-            }]
+            }
+          ]
         };
-        console.log("FORMATEAR");
+        console.log("NUEVO ARRAY");
         console.log(nuevoArray);
       }
+      }
+
       //this.contrib_codebtor_aux = { liquid_calification: nuevoArray };
       this.contributions1_aux = nuevoArray;
       

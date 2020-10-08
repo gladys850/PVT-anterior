@@ -340,17 +340,17 @@ export default {
       {
         this.editar=false
              
-        for (i = 0; i< 1; i++) {
+        for (i = 0; i< data_ballots.length; i++) {//colocar 1
           this.payable_liquid[i] = data_ballots[i].payable_liquid,
           this.bonos[0] = data_ballots[0].border_bonus,
           this.bonos[1] = data_ballots[0].east_bonus,
           this.bonos[2] = data_ballots[0].seniority_bonus,
           this.bonos[3] = data_ballots[0].public_security_bonus
         }
-        for(j = 0; j< data_ballots.length; j++){
-          this.contributions1[j].id_affiliate = data_ballots[j].affiliate_id
+        for(j = 0; j<data_ballots.length;  j++){//colocar 1
+          this.contributions1[0].id_affiliate =  data_ballots[0].affiliate_id
           this.contributions1[j].payable_liquid = data_ballots[j].payable_liquid
-          
+          console.log(this.contributions1)
           if(j == 0){
             this.contributions1[j].border_bonus = data_ballots[j].border_bonus,
             this.contributions1[j].east_bonus = data_ballots[j].east_bonus,

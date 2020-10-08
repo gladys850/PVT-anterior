@@ -254,9 +254,9 @@ export default {
   beforeMount() {
     this.getBallots(this.$route.query.affiliate_id);
   },
-  mounted() {
+  /*mounted() {
     this.getLoanModality(this.$route.query.affiliate_id);
-  },
+  },*/
   methods: {
     //Metodo para sacar boleta de un afiliado
     async getBallots(id) {
