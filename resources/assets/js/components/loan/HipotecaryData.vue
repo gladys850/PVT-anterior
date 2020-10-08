@@ -5,7 +5,7 @@
         <v-card class="px-3">
           <v-row justify="center">
             <v-col cols="12">
-              <h3 class="text-uppercase text-center">INFORMACIÓN DEL INMUEBLE</h3>
+              <h3 class="text-uppercase text-center">INFORMACIÓN DEL INMUEBLE{{modalidad_net_realizable_value}}</h3>
             </v-col>
             <v-col cols="12" md="6" class="v-card-profile">
               <v-row justify="center">
@@ -134,7 +134,7 @@
                     :items="cities"
                     item-text="name"
                     item-value="id"
-                    :loading="loading"
+                    
                     label="Ciudad de registro en derechos reales"
                     v-model="loan_property.real_city_id"
                     outlined
@@ -144,7 +144,7 @@
                   <v-text-field
                     dense
                     label="VNR (Valor Neto Realizado)"
-                    v-model="loan_property.net_realizable_value"
+                    v-model="modalidad_net_realizable_value"
                     outlined
                   ></v-text-field>
                 </v-col>
@@ -245,9 +245,10 @@
 export default {
   name: "hipotecari-data",
   props: {
-    modalidad: {
-      type: Object,
-      required: true
+    modalidad_net_realizable_value: {
+      type: Number,
+      required: true,
+      default:0
     },
     loan_property:{
       type:Object,
@@ -288,13 +289,13 @@ export default {
     },
     async getCities() {
       try {
-        this.loading = true
+        //this.loading = true
         let res = await axios.get("city")
         this.cities = res.data
       } catch (e) {
         console.log(e)
       } finally {
-        this.loading = false
+        //this.loading = false
       }
     },
 

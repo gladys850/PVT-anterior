@@ -9,16 +9,19 @@
                   <v-col cols="12" class="py-0" >
                     <v-container class="py-0">
                       <v-row>
-                        <v-col cols="12" md="4" class="py-0 text-center">
-                          MODALIDAD DEL PRESTAMO
+                        <v-col cols="12" :md="window_size" class="py-0 text-center">
+                          MODALIDAD DEL PRÉSTAMO
                         </v-col>
-                        <v-col cols="12" md="4" class="py-0 text-center">
+                        <v-col cols="12" :md="window_size" class="py-0 text-center">
                           INTERVALO DE LOS MONTOS
                         </v-col>
-                        <v-col cols="12" md="4" class="py-0 text-center">
+                        <v-col cols="12" :md="window_size" class="py-0 text-center">
                           INTERVALO DEL PLAZO EN MESES
                         </v-col>
-                        <v-col cols="12" md="4" class="py-0">
+                        <v-col cols="12" :md="window_size" class="py-0 text-center" v-if="see_field">
+                          VALOR NETO REALIZADO (VNR)
+                        </v-col>
+                        <v-col cols="12" :md="window_size" class="py-0">
                           <v-select
                             dense
                             v-model="loanTypeSelected"
@@ -29,11 +32,17 @@
                             required
                           ></v-select>
                         </v-col>
-                        <v-col cols="12" md="4" class="py-0 text-center">
+                        <v-col cols="12" :md="window_size" class="py-0 text-center">
                           {{monto}}
                         </v-col>
-                        <v-col cols="12" md="4" class="py-0 text-center" >
+                        <v-col cols="12" :md="window_size" class="py-0 text-center" >
                           {{plazo}}
+                        </v-col>
+                        <v-col cols="12" :md="window_size" class="py-0" v-if="see_field">
+                          <v-text-field
+                            dense
+                            v-model="net_realizable_value"
+                          ></v-text-field>
                         </v-col>
                       </v-row>
                     </v-container>
@@ -140,7 +149,11 @@ export default {
     hipotecario:false,
     //contrib_codebtor: [],
     //contributions1_aux: [],
-    datos:[]
+    //datos:[],//TODO se declaro como variable local data_ballots, asi que se debe borrar 
+    window_size:4,
+    see_field:false,
+    net_realizable_value: 0
+  
   }),
    props: {
     procedure_type: {
@@ -178,7 +191,8 @@ export default {
     contrib_codebtor: {
       type: Array,
       required:true
-    }
+    },
+
   },
     components: {
     BallotsHipotecary
@@ -192,23 +206,28 @@ export default {
   methods:
  {//caldula los intervalos deacuerdo a una modalidad
     Onchange(){
-      for (this.i = 0; this.i< this.interval.length; this.i++) {
-        if(this.loanTypeSelected==this.interval[this.i].procedure_type_id)
+      let i
+      for (i = 0; i< this.interval.length; i++) {
+        if(this.loanTypeSelected==this.interval[i].procedure_type_id)
         {
           if(this.loanTypeSelected==12)
           {
             this.hipotecario=true
+            this.window_size=3
+            this.see_field=true
           }
           else{
             this.hipotecario=false
+            this.window_size=4
+            this.see_field=false
           }
-          this.monto= this.interval[this.i].minimum_amount+' - '+this.interval[this.i].maximum_amount,
-          this.plazo= this.interval[this.i].minimum_term+' - '+this.interval[this.i].maximum_term
+          this.monto= this.interval[i].minimum_amount+' - '+this.interval[i].maximum_amount,
+          this.plazo= this.interval[i].minimum_term+' - '+this.interval[i].maximum_term
           //intervalos es el monto, plazo y modalidad y id de una modalidad
-          this.intervalos.maximun_amoun=this.interval[this.i].maximum_amount
-          this.intervalos.maximum_term= this.interval[this.i].maximum_term
-          this.intervalos.minimun_amoun=this.interval[this.i].minimum_amount
-          this.intervalos.minimum_term= this.interval[this.i].minimum_term
+          this.intervalos.maximun_amoun=this.interval[i].maximum_amount
+          this.intervalos.maximum_term= this.interval[i].maximum_term
+          this.intervalos.minimun_amoun=this.interval[i].minimum_amount
+          this.intervalos.minimum_term= this.interval[i].minimum_term
           this.intervalos.procedure_type_id= this.loanTypeSelected
           this.num_type=this.loanTypeSelected
           this.procedure_type=this.loanTypeSelected
@@ -267,6 +286,9 @@ export default {
           this.modalidad.max_guarantor_category=this.loan_modality.loan_modality_parameter.max_guarantor_category
          this.modalidad.personal_reference=this.loan_modality.loan_modality_parameter.personal_reference
          this.modalidad.max_cosigner=this.loan_modality.loan_modality_parameter.max_cosigner
+         this.modalidad.net_realizable_value=this.net_realizable_value
+         
+         
     
     
     //this.modalidad.personal_reference=true 
@@ -299,7 +321,9 @@ export default {
       }
     },
     //Metodo para sacar boleta de un afiliado
-    async getBallots(id) {
+  async getBallots(id) {
+    let data_ballots=[]
+    let i, j
     try {
       let res = await axios.get(`affiliate/${id}/contribution`, {
         params:{
@@ -310,44 +334,43 @@ export default {
           page: 1,
         }
       })
-      this.datos=res.data.data  
+      data_ballots=res.data.data  
       if(res.data.valid)
       {
         this.editar=false
              
-        for (this.i = 0; this.i< 1; this.i++) {
-          this.payable_liquid[this.i] = this.datos[this.i].payable_liquid,
-          this.bonos[0] = this.datos[0].border_bonus,
-          this.bonos[1] = this.datos[0].east_bonus,
-          this.bonos[2] = this.datos[0].seniority_bonus,
-          this.bonos[3] = this.datos[0].public_security_bonus
+        for (i = 0; i< 1; i++) {
+          this.payable_liquid[i] = data_ballots[i].payable_liquid,
+          this.bonos[0] = data_ballots[0].border_bonus,
+          this.bonos[1] = data_ballots[0].east_bonus,
+          this.bonos[2] = data_ballots[0].seniority_bonus,
+          this.bonos[3] = data_ballots[0].public_security_bonus
         }
-          for(this.j = 0; this.j< this.datos.length; this.j++)
-        {
-          this.contributions1[this.j].id_affiliate = this.datos[this.j].affiliate_id
-          this.contributions1[this.j].payable_liquid = this.datos[this.j].payable_liquid
+        for(j = 0; j< data_ballots.length; j++){
+          this.contributions1[j].id_affiliate = data_ballots[j].affiliate_id
+          this.contributions1[j].payable_liquid = data_ballots[j].payable_liquid
           
-          if(this.j == 0){
-            this.contributions1[this.j].border_bonus = this.datos[this.j].border_bonus,
-            this.contributions1[this.j].east_bonus = this.datos[this.j].east_bonus,
-            this.contributions1[this.j].seniority_bonus = this.datos[this.j].seniority_bonus,
-            this.contributions1[this.j].public_security_bonus = this.datos[this.j].public_security_bonus
+          if(j == 0){
+            this.contributions1[j].border_bonus = data_ballots[j].border_bonus,
+            this.contributions1[j].east_bonus = data_ballots[j].east_bonus,
+            this.contributions1[j].seniority_bonus = data_ballots[j].seniority_bonus,
+            this.contributions1[j].public_security_bonus = data_ballots[j].public_security_bonus
           }
           else{
-            this.contributions1[this.j].border_bonus=0,
-            this.contributions1[this.j].east_bonus= 0,
-            this.contributions1[this.j].seniority_bonus=0,
-            this.contributions1[this.j].public_security_bonus=0
+            this.contributions1[j].border_bonus=0,
+            this.contributions1[j].east_bonus= 0,
+            this.contributions1[j].seniority_bonus=0,
+            this.contributions1[j].public_security_bonus=0
           }
         }
       } else{
-          this.contributions1[0].id_affiliate =  this.datos[0].affiliate_id
+          this.contributions1[0].id_affiliate =  data_ballots[0].affiliate_id
           this.contributions1[0].payable_liquid = this.payable_liquid[0]
     
-            this.contributions1[0].border_bonus = this.bonos[0]
-            this.contributions1[0].east_bonus =this.bonos[1]
-            this.contributions1[0].seniority_bonus = this.bonos[2]
-            this.contributions1[0].public_security_bonus =this.bonos[3]
+          this.contributions1[0].border_bonus = this.bonos[0]
+          this.contributions1[0].east_bonus =this.bonos[1]
+          this.contributions1[0].seniority_bonus = this.bonos[2]
+          this.contributions1[0].public_security_bonus =this.bonos[3]
       }
     } catch (e) {
       console.log(e)

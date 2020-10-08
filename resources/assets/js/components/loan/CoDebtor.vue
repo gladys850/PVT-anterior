@@ -63,14 +63,14 @@
                         item-text="name"
                         item-value="value"
                         v-model="editedItem.gender"
-                        :loading="loading"
+                       
                         label="Género"
                       ></v-select>
                     </v-col>
                     <v-col cols="12" sm="6" md="3">
                       <v-select
                         dense
-                        :loading="loading"
+                        
                         :items="civil_statuses"
                         item-text="name"
                         item-value="value"
@@ -314,14 +314,14 @@ export default {
     },
     async getCities() {
       try {
-        this.loading = true;
+        //this.loading = true;
         let res = await axios.get(`city`);
         this.cities = res.data;
       } catch (e) {
         this.dialog = false;
         console.log(e);
       } finally {
-        this.loading = false;
+        //this.loading = false;
       }
     },
     /* async savePersonalReference() {
