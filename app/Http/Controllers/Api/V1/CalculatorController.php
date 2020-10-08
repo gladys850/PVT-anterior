@@ -399,7 +399,16 @@ class CalculatorController extends Controller
             $affiliate = Affiliate::findOrFail($request->affiliate_id);
             $contributions = collect($request->contributions);
             $payable_liquid_average = $contributions->avg('payable_liquid');
-            $parent_quota = 0;
+            if ($request->has('parent_loan_id')) {
+                $parent_loan = Loan::with(['lenders'=> function($q) use ($affiliate) {
+                    $q->where('affiliate_id', $affiliate->id);
+                }])->whereId($request->parent_loan_id)->first();
+                if (!$parent_loan) abort(404);
+                $parent_quota = $parent_loan->next_payment()->estimated_quota * $parent_loan->lenders[0]->pivot->payment_percentage/100;
+            } else {
+                $parent_quota = 0;
+            }
+            //$parent_quota = 0;
             $quota_calculated = $request->quota_calculated_total_lender/$quantity_guarantors;
             $contribution_first = $contributions->first();
             $total_bonuses = $contribution_first['seniority_bonus']+$contribution_first['border_bonus']+$contribution_first['public_security_bonus']+$contribution_first['east_bonus'];
@@ -412,9 +421,9 @@ class CalculatorController extends Controller
             $response = array(
                 "is_valid" => $evaluate,
                 "indebtnes_calculated" => round($indebtedness_calculated,2),
-                "payable_liquid" => $payable_liquid_average,
-                "bonus_calculated" => $total_bonuses,
-                "payable_liquid_calculated" => $liquid_qualification_calculated,
+                "payable_liquid" => round($payable_liquid_average,2),
+                "bonus_calculated" => round($total_bonuses,2),
+                "payable_liquid_calculated" => round($liquid_qualification_calculated,2),
             );
             return $response;
         }
