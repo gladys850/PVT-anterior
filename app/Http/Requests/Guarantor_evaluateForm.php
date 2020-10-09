@@ -51,7 +51,7 @@ class Guarantor_evaluateForm extends FormRequest
     {
         return [
             'affiliate_id.required' => 'El id de afiliado es requerido',
-            'quota_calculated_total_lender.required' => 'la cuota del titula es requerida',
+            'quota_calculated_total_lender.required' => 'la cuota del titular es requerida',
             'contributions.required' => 'El garante es requerido',
             'contributions.*.payable_liquid.required' => 'El liquido pagable es requerido',
             'contributions.*.seniority_bonus.required' => 'El bono cargo es requerido',
