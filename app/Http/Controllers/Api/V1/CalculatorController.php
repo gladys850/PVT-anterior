@@ -10,6 +10,7 @@ use App\ProcedureModality;
 use App\Loan;
 use App\Http\Requests\CalculatorForm;
 use App\Http\Requests\SimulatorForm;
+use App\Http\Requests\Guarantor_evaluateForm;
 
 
 
@@ -388,13 +389,11 @@ class CalculatorController extends Controller
     * @authenticated
     * @responseFile responses/calculator/evaluate_guarantor.200.json
     */
-    public function evaluate_guarantor(Request $request){
+    public function evaluate_guarantor(Guarantor_evaluateForm $request){
         $procedure_modality = ProcedureModality::findOrFail($request->procedure_modality_id);
         $quantity_guarantors = $procedure_modality->loan_modality_parameter->guarantors;
         if($quantity_guarantors > 0){
             $debt_index = $procedure_modality->loan_modality_parameter->debt_index;
-            $amount_requested =$request->mount_requested;
-            $months_term = $request->montjs_term;
             $affiliate_id = $request->affiliate_id;
             $affiliate = Affiliate::findOrFail($request->affiliate_id);
             $contributions = collect($request->contributions);
@@ -410,11 +409,13 @@ class CalculatorController extends Controller
             else
                 $evaluate = false;
             $response = array(
-                "is_valid" => $evaluate,
+                "affiliate_id" => $affiliate_id,
+                "payable_liquid_calculated" => round($payable_liquid_average,2),
+                "bonus_calculated" => round($total_bonuses,2),
+                "liquid_qualification_calculated" => round($liquid_qualification_calculated,2),
+                'quota_refinance' => $parent_quota,
                 "indebtnes_calculated" => round($indebtedness_calculated,2),
-                "payable_liquid" => $payable_liquid_average,
-                "bonus_calculated" => $total_bonuses,
-                "payable_liquid_calculated" => $liquid_qualification_calculated,
+                "is_valid" => $evaluate,
             );
             return $response;
         }
