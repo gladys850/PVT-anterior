@@ -393,8 +393,6 @@ class CalculatorController extends Controller
         $quantity_guarantors = $procedure_modality->loan_modality_parameter->guarantors;
         if($quantity_guarantors > 0){
             $debt_index = $procedure_modality->loan_modality_parameter->debt_index;
-            $amount_requested =$request->mount_requested;
-            $months_term = $request->montjs_term;
             $affiliate_id = $request->affiliate_id;
             $affiliate = Affiliate::findOrFail($request->affiliate_id);
             $contributions = collect($request->contributions);
