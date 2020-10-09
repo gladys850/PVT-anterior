@@ -1,7 +1,9 @@
 {
-    "is_valid": true,
-    "indebtnes_calculated": 26,
-    "payable_liquid": 2000,
-    "bonus_calculated": 300,
-    "payable_liquid_calculated": 1700
+    "affiliate_id" : 11768,
+    "payable_liquid_calculated": 3500,
+    "bonus_calculated": 500,
+    "liquid_qualification_calculated": 3000,
+    "quota_refinance" : 0,
+    "indebtnes_calculated": 45,
+    "is_valid": true
 }
