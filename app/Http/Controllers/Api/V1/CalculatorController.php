@@ -10,6 +10,7 @@ use App\ProcedureModality;
 use App\Loan;
 use App\Http\Requests\CalculatorForm;
 use App\Http\Requests\SimulatorForm;
+use App\Http\Requests\Guarantor_evaluateForm;
 
 
 
@@ -388,7 +389,7 @@ class CalculatorController extends Controller
     * @authenticated
     * @responseFile responses/calculator/evaluate_guarantor.200.json
     */
-    public function evaluate_guarantor(Request $request){
+    public function evaluate_guarantor(Guarantor_evaluateForm $request){
         $procedure_modality = ProcedureModality::findOrFail($request->procedure_modality_id);
         $quantity_guarantors = $procedure_modality->loan_modality_parameter->guarantors;
         if($quantity_guarantors > 0){
