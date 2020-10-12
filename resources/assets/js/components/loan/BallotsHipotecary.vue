@@ -170,7 +170,7 @@ export default {
     //visible:false,
     //num_type:9,
     //contributions1:{},
-    modalidad: {},
+    //modalidad: {},
     bonos: {},
     payable_liquid: {},
     //modalities: {},
