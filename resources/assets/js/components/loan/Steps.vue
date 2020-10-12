@@ -323,7 +323,7 @@ export default {
             console.log('esta entro por verdad con la modalidad'+ this.modalidad.procedure_type_id)
           }
           else{
-            this.Calculator()
+            //this.Calculator() TODO borrar
             this.liquidCalificated()
             console.log('esta entro por false'+this.modalidad.procedure_type_id)
           }
@@ -432,11 +432,11 @@ export default {
       }
     },
     async calculadoraModalidades(){
-console.log('entro a la calculadora de modalidades')
+      console.log('entro a la calculadora de modalidades')
      this.simuladores()
       },
     //Metodo para la datos de la calculadora
-    async Calculator() {
+    /*async Calculator() {
       try {
         if(this.modalidad.quantity_ballots>1)
         {
@@ -507,7 +507,7 @@ console.log('entro a la calculadora de modalidades')
       }finally {
         this.loading = false
       }
-    },
+    },*/
     //metodo para armar las contribuciones del afiliado
     /*Contributios()//TODO REVISAR SI SE UTILIZA
     {
@@ -548,12 +548,13 @@ console.log('entro a la calculadora de modalidades')
         }
       }
       },*/
-     //TAB1 Formatear datos obtenidos de las contribuciones, adecuandolo a formato para guardado y obtener liquido para calificación
-    formatear() {    
-      let contribuciones = []
+     //TAB1 formatContributions datos obtenidos de los campos liquido y bonos, adecuandolo a formato para guardado y obtener liquido para calificación
+    formatContributions() {    
+      //let contribuciones = []
       let nuevoArray = []
-      if(this.modalidad.quantity_ballots ==3 ){
-        nuevoArray = []
+      let nuevoArrayCodebtor = []
+      if(this.modalidad.quantity_ballots > 1 ){
+        //nuevoArray = []
         nuevoArray[0] = {
             affiliate_id:this.$route.query.affiliate_id,
             contributions: [
@@ -583,21 +584,32 @@ console.log('entro a la calculadora de modalidades')
         console.log("NUEVO ARRAY")
         console.log(nuevoArray)
       }else{
-
-      contribuciones=this.contributions1.concat(this.contrib_codebtor)
-      console.log("CONTRIBUCIONES")
-      console.log(this.contribuciones)
-      nuevoArray = []
-      for (let i = 0; i < contribuciones.length; i++) {
-        nuevoArray[i] = {
-          affiliate_id: contribuciones[i].id_affiliate,
+        nuevoArray[0] = {
+            affiliate_id:this.$route.query.affiliate_id,
+            contributions: [
+            {
+              payable_liquid: this.payable_liquid[0],
+              seniority_bonus:  this.bonos[2],
+              border_bonus: this.bonos[0],
+              public_security_bonus: this.bonos[3],
+              east_bonus:this.bonos[1]
+            }
+          ]
+        }
+      //contribuciones=this.contrib_codebtor
+      //console.log("CONTRIBUCIONES")
+      //console.log(this.contribuciones)
+      //nuevoArray = []
+      for (let i = 0; i < this.contrib_codebtor.length; i++) {
+        nuevoArrayCodebtor[i] = {
+          affiliate_id: this.contrib_codebtor[i].id_affiliate,
           contributions: [
             {
-            payable_liquid: parseFloat(contribuciones[i].payable_liquid),
-            border_bonus: parseFloat(contribuciones[i].border_bonus),
-            east_bonus: parseFloat(contribuciones[i].east_bonus),
-            seniority_bonus: parseFloat(contribuciones[i].seniority_bonus),
-            public_security_bonus: parseFloat(contribuciones[i].public_security_bonus)
+            payable_liquid: this.contrib_codebtor[i].payable_liquid,
+            border_bonus: this.contrib_codebtor[i].border_bonus,
+            east_bonus: this.contrib_codebtor[i].east_bonus,
+            seniority_bonus: this.contrib_codebtor[i].seniority_bonus,
+            public_security_bonus: this.contrib_codebtor[i].public_security_bonus
             }
           ]
         };
@@ -607,12 +619,11 @@ console.log('entro a la calculadora de modalidades')
       }
 
       //this.contrib_codebtor_aux = { liquid_calification: nuevoArray };
-      this.contributions1_aux = nuevoArray;
-      
+      this.contributions1_aux = nuevoArray.concat(nuevoArrayCodebtor)
     },
     //TAB1 Obtener liquido para calificación
     async liquidCalificated(){
-      this.formatear()
+      this.formatContributions()
       try {
             let res = await axios.post(`liquid_calificated`,{liquid_calification:this.contributions1_aux})
             this.liquid_calificated =res.data
@@ -681,8 +692,7 @@ console.log('entro a la calculadora de modalidades')
           this.loan_property = res.data;
           this.editedIndex = this.loan_property.id;
         } else {
-          let res = await axios.patch(
-            `loan_property/${this.loan_property.id}`,
+          let res = await axios.patch(`loan_property/${this.loan_property.id}`,
             {
               land_lot_number: this.loan_property.land_lot_number,
               neighborhood_unit: this.loan_property.neighborhood_unit,
@@ -713,8 +723,7 @@ console.log('entro a la calculadora de modalidades')
         let ids_codebtor=[]
         for (i = 0; i < this.personal_codebtor.length; i++) {
           let res = await axios.post(`personal_reference`, {
-            city_identity_card_id: this.personal_codebtor[i]
-              .city_identity_card_id,
+            city_identity_card_id: this.personal_codebtor[i].city_identity_card_id,
             identity_card: this.personal_codebtor[i].identity_card,
             last_name: this.personal_codebtor[i].last_name,
             mothers_last_name: this.personal_codebtor[i].mothers_last_name,
@@ -727,7 +736,7 @@ console.log('entro a la calculadora de modalidades')
             gender: this.personal_codebtor[i].gender,
             cosigner: true,
             city_birth_id: this.personal_codebtor[i].city_birth_id
-          });
+          })
           ids_codebtor.push(res.data.id);
           console.log(this.personal_codebtor.length);
           console.log(ids_codebtor);
