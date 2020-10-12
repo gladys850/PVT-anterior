@@ -217,7 +217,7 @@ export default {
     loan_property_id: {
       type: Number,
       required: true,
-      default: null
+      default: 0
     },
   },
   watch: {
