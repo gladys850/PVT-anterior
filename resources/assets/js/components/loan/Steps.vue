@@ -305,7 +305,7 @@ export default {
     },
   },
   beforeMount(){
-    this.getProcedureType();
+    this.getProcedureType()
     this.bus.$on('beforeStepBus', (val) => {
       this.beforeStep(val)
     })
@@ -613,8 +613,8 @@ export default {
             }
           ]
         };
-        console.log("NUEVO ARRAY");
-        console.log(nuevoArray);
+        console.log("NUEVO ARRAY")
+        console.log(nuevoArray)
       }
       }
 
@@ -689,8 +689,8 @@ export default {
             net_realizable_value: this.modalidad.net_realizable_value,
             real_city_id: this.loan_property.real_city_id
           });
-          this.loan_property = res.data;
-          this.editedIndex = this.loan_property.id;
+          this.loan_property = res.data
+          this.editedIndex = this.loan_property.id
         } else {
           let res = await axios.patch(`loan_property/${this.loan_property.id}`,
             {
@@ -710,10 +710,10 @@ export default {
               real_city_id: this.loan_property.real_city_id
             }
           );
-          this.loan_property = res.data;
+          this.loan_property = res.data
         }
       } catch (e) {
-        console.log(e);
+        console.log(e)
       }
     },
 
@@ -737,17 +737,17 @@ export default {
             cosigner: true,
             city_birth_id: this.personal_codebtor[i].city_birth_id
           })
-          ids_codebtor.push(res.data.id);
-          console.log(this.personal_codebtor.length);
-          console.log(ids_codebtor);
+          ids_codebtor.push(res.data.id)
+          console.log(this.personal_codebtor.length)
+          console.log(ids_codebtor)
         }
         this.cosigners = ids_codebtor
-        console.log(this.cosigners);
+        console.log(this.cosigners)
       } catch (e) {
-        this.dialog = false;
-        console.log(e);
+        this.dialog = false
+        console.log(e)
       } finally {
-        this.loading = false;
+        this.loading = false
       }
     },
 }
