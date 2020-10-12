@@ -55,31 +55,46 @@
         <v-card v-show="show_calculated">
           <v-container class="py-0">
             <v-row>
-              <v-col cols="12" md="12">
+              <v-col cols="12" md="12" class="pb-0">
                 <v-layout row wrap>
                   <v-flex xs12 class="px-2">
                     <fieldset class="pa-3">
                       <v-text-field
+                        :outlined="editar"
+                        :readonly="!editar"
+                        dense
                         class="py-0"
                         label="Boleta de Pago"
                         v-model="payable_liquid[0]"
                       ></v-text-field>
                       <v-text-field
+                      :outlined="editar"
+                        :readonly="!editar"
+                         dense
                         class="py-0"
                         v-model="bonos[0]"
                         label="Bono Frontera"
                       ></v-text-field>
                       <v-text-field
+                      :outlined="editar"
+                        :readonly="!editar"
+                         dense
                         class="py-0"
                         v-model="bonos[1]"
                         label="Bono Oriente"
                       ></v-text-field>
                       <v-text-field
+                      :outlined="editar"
+                        :readonly="!editar"
+                         dense
                         class="py-0"
                         v-model="bonos[2]"
                         label="Bono Cargo"
                       ></v-text-field>
                       <v-text-field
+                      :outlined="editar"
+                        :readonly="!editar"
+                         dense
                         class="py-0"
                         v-model="bonos[3]"
                         label="Bono Seguridad"
@@ -88,10 +103,12 @@
                     </v-flex>
                   </v-layout>
                 </v-col>
-                <v-col cols="12" md="7" class="py-0" ></v-col>
+                <v-col cols="12" md="7" class="py-0" >{{data_ballots}}</v-col>
                 <v-col cols="12" md="4" class="py-0">
                   <v-btn
+                  class="py-0"
                     color="info"
+                    small
                        rounded
                     @click="Calculator1()">Calcular
                   </v-btn>
@@ -111,7 +128,7 @@
               </v-row>
             </v-container>
           </v-card>
-          <v-card v-show="!show_garante">
+          <v-card v-show="!show_garante" >
             <v-container class="py-0">
               <v-row>
                 <v-col cols="12" md="4"></v-col>
@@ -162,7 +179,7 @@
           <v-card v-show="show_result">
             <v-container >
               <v-row>
-                <v-col cols="12" md="12">
+                <v-col cols="12" md="12" >
                   <v-card-text class="py-0">
                     <v-layout row wrap>
                       <v-flex xs12 class="px-2">
@@ -303,9 +320,12 @@
         affiliate_state:{}
       },
     },
+    editar:true,
+    data_ballots:[],
     show_garante:true,
     show_calculated:false,
     show_result:false,
+    show_evaluated:false,
     simulator_guarantors:{},
     loan:[],
     index: [],
@@ -364,8 +384,8 @@ ver()
   methods: {
     async clear()
     {
-
-         this.payable_liquid[0]=0,
+    this.editar=true
+    this.payable_liquid[0]=0,
     this.bonos[0]=0
     this.bonos[1]=0
     this.bonos[2]=0
@@ -375,10 +395,10 @@ ver()
     this.calculos1.quota_calculated=null
     this.calculos1.indebtedness_calculated=null
     this.calculos1.amount_maximum_suggested=null
-    this.guarantor_ci=null
     },
  async añadir()
-    {
+    {  this.guarantor_ci=null
+ this.show_evaluated=false
       this.garantes.push(this.affiliate_garantor,'hola');
       this.garantes_detalle.push(this.affiliate_garantor.affiliate.full_name);
     console.log('entro a garantes ==> '+this.garantes)
@@ -428,7 +448,8 @@ console.log('este es el garante'+this.garantes[0])
     },
      async Calculator1() {
       try {
-        this.show_result=true  
+        this.show_result=true
+        this.show_evaluated=true    
          let res = await axios.post(`evaluate_garantor`, {
             procedure_modality_id:this.modalidad_id,
             affiliate_id:this.affiliate_garantor.affiliate.id,
@@ -486,6 +507,7 @@ console.log('este es el garante'+this.garantes[0])
     },
    async activar()
     {
+      this.clear()
       try {
         if(this.guarantor_ci==this.affiliate.identity_card)
         {
@@ -497,6 +519,53 @@ console.log('este es el garante'+this.garantes[0])
             procedure_modality_id:this.modalidad_id,
           })
           this.affiliate_garantor=resp.data
+
+
+ console.log("esta son boletas del garante"+ this.affiliate_garantor.affiliate.id)
+//let data_ballots=[]
+         let res = await axios.get(`affiliate/${this.affiliate_garantor.affiliate.id}/contribution`, {
+        params:{
+          city_id: this.$store.getters.cityId,
+          sortBy: ['month_year'],
+          sortDesc: [1],
+          per_page: 1,
+          page: 1,
+        }
+      })
+ this.data_ballots=res.data.data
+
+ if(res.data.valid)
+      {
+        this.editar=false
+             
+          this.payable_liquid[0] = this.data_ballots[0].payable_liquid,
+          this.bonos[0] = this.data_ballots[0].border_bonus,
+          this.bonos[1] = this.data_ballots[0].east_bonus,
+          this.bonos[2] = this.data_ballots[0].seniority_bonus,
+          this.bonos[3] = this.data_ballots[0].public_security_bonus
+      } else{
+           
+          this.contributions1[0].payable_liquid = this.payable_liquid[0]
+          this.contributions1[0].border_bonus = this.bonos[0]
+          this.contributions1[0].east_bonus =this.bonos[1]
+          this.contributions1[0].seniority_bonus = this.bonos[2]
+          this.contributions1[0].public_security_bonus =this.bonos[3]
+      }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ console.log("esta son boletas del garante"+this.data_ballots)
           this.validated=this.affiliate_garantor.guarantor
           this.validated1=this.affiliate_garantor.guarantor
           this.show_calculated=this.affiliate_garantor.guarantor
