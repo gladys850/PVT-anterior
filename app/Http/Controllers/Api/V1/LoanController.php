@@ -40,8 +40,6 @@ class LoanController extends Controller
 {
     public static function append_data(Loan $loan, $with_lenders = false)
     {
-        $loan->payable_liquid_calculated = $loan->payable_liquid_calculated;
-        $loan->bonus_calculated = $loan->bonus_calculated;
         $loan->indebtedness_calculated = $loan->indebtedness_calculated;
         $loan->liquid_qualification_calculated = $loan->liquid_qualification_calculated;
         $loan->balance = $loan->balance;
@@ -447,17 +445,6 @@ class LoanController extends Controller
     public function get_disbursable(Loan $loan)
     {
         return $loan->disbursable;
-    }
-    /**
-    * Información de cálculo detallada de titulares y garantes
-    * Devuelve la información de los cálculos realizados para titulares y garantes
-    * @urlParam loan required ID del préstamo. Example: 8
-    * @authenticated
-    * @responseFile responses/loan/get_loan_affiliates.200.json
-    */
-    public function get_loan_affiliates(Loan $loan)
-    {
-        return $loan->lenders_guarantors;
     }
 
     public static function verify_spouse_disbursable(Affiliate $affiliate)

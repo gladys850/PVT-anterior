@@ -135,35 +135,17 @@ class Loan extends Model
 
     public function guarantors()
     {
-        return $this->loan_affiliates()->withPivot('payment_percentage')->whereGuarantor(true);
+        return $this->loan_affiliates()->withPivot('payment_percentage','payable_liquid_calculated', 'bonus_calculated', 'quota_refinance', 'indebtedness_calculated','liquid_qualification_calculated')->whereGuarantor(true);
     }
 
     public function lenders()
     {
-        return $this->loan_affiliates()->withPivot('payment_percentage')->whereGuarantor(false);
+        return $this->loan_affiliates()->withPivot('payment_percentage','payable_liquid_calculated', 'bonus_calculated', 'quota_refinance', 'indebtedness_calculated','liquid_qualification_calculated')->whereGuarantor(false);
     }
 
     public function loan_affiliates()
     {
         return $this->belongsToMany(Affiliate::class, 'loan_affiliates');
-    }
-
-    public function details_lenders()
-    {
-        return $this->loan_affiliates()->withPivot('payment_percentage','payable_liquid_calculated', 'bonus_calculated', 'quota_refinance', 'indebtedness_calculated','liquid_qualification_calculated')->whereGuarantor(false);
-    }
-
-    public function details_guarantors()
-    {
-        return $this->loan_affiliates()->withPivot('payment_percentage','payable_liquid_calculated', 'bonus_calculated', 'quota_refinance', 'indebtedness_calculated','liquid_qualification_calculated')->whereGuarantor(true);
-    }
-
-    public function getLendersGuarantorsAttribute()
-    {
-        return [
-            'lenders' => $this->details_lenders->sortBy('pivot.affiliate_id')->values(),
-            'guarantors' => $this->details_guarantors->sortBy('pivot.affiliate_id')->values()
-        ];
     }
 
     public function personal_references()
