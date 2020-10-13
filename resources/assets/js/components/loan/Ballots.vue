@@ -25,7 +25,7 @@
                           <v-select
                             dense
                             v-model="loanTypeSelected"
-                            :onchange="Onchange()"
+                            @change="Onchange()"
                             :items="modalities"
                             item-text="name"
                             item-value="id"
@@ -41,7 +41,8 @@
                         <v-col cols="12" :md="window_size" class="py-0" v-if="see_field">
                           <v-text-field
                             dense
-                            v-model="net_realizable_value"
+                            v-model="loan_detail.net_realizable_value"
+                            editable
                           ></v-text-field>
                         </v-col>
                       </v-row>
@@ -52,7 +53,7 @@
               <v-container class="py-0" >
                 <v-row>
                   <v-col cols="12" md="12" class="text-center" >
-                    BOLETAS DE PAGO {{contributions1}}
+                    BOLETAS DE PAGO
                   </v-col>
 
                   <v-col cols="12" md="4" class="py-0"  >
@@ -146,21 +147,14 @@ export default {
     interval:[],
     loanTypeSelected:null,
     visible:false,
-   // num_type:9,
+
     hipotecario:false,
-    //contrib_codebtor: [],
-    //contributions1_aux: [],
-    //datos:[],//TODO se declaro como variable local data_ballots, asi que se debe borrar 
     window_size:4,
-    see_field:false,
-    net_realizable_value: 0
+    see_field:false
   
   }),
    props: {
-    procedure_type: {
-      type: Number,
-      required: true
-    },
+
     contributions1: {
       type: Array,
       required: true
@@ -193,6 +187,10 @@ export default {
       type: Array,
       required:true
     },
+    loan_detail: {
+      type: Object,
+      required: true
+    },
 
   },
     components: {
@@ -201,9 +199,7 @@ export default {
    beforeMount() {
     this.getLoanIntervals()
   },
-  // mounted(){
-   // this.getLoanModality(this.$route.query.affiliate_id)
-  //},
+
   methods:
  {//muestra los intervalos de acuerdo a una modalidad
     Onchange(){
@@ -226,15 +222,14 @@ export default {
           this.intervalos.minimun_amoun=this.interval[i].minimum_amount
           this.intervalos.minimum_term= this.interval[i].minimum_term
           this.intervalos.procedure_type_id= this.loanTypeSelected
-          //this.num_type=this.loanTypeSelected
-          //this.procedure_type=this.loanTypeSelected
-          
-          this.getLoanModality(this.$route.query.affiliate_id)
-          this.getBallots(this.$route.query.affiliate_id)
-          //console.log('este es la modalidad del intervalo'+this.num_type)
 
-        }
-       
+         
+          this.getLoanModality(this.$route.query.affiliate_id)
+          //this.getBallots(this.$route.query.affiliate_id)
+
+        }else{
+        console.log('NO ES IGUAL A MODALIDAD INTERVALS'+this.interval[i].procedure_type_id +"=="+this.loanTypeSelected )
+      }
       }
  
    
@@ -249,22 +244,7 @@ export default {
       this.bonos[2]=0
       this.bonos[3]=0
     },
-    /*Medodo donde identifica la modalidad de acuerdo a las caracteristicas de un affiliado
-      "id": 33,
-      "procedure_type_id": 9,
-      "name": "Anticipo sector pasivo",
-      "shortened": "ANT-SP",
-      "is_valid": true,
-      "loan_modality_parameter": {
-        "procedure_modality_id": 33,
-        "debt_index": "90",
-        "quantity_ballots": 1,
-        "guarantors": 0,
-        "min_guarantor_category": null,
-        "max_guarantor_category": null,
-        "personal_reference": false,
-        "max_lenders": 1
-    }*/
+
     //Obtiene los parametros de la modalidad
     async getLoanModality(id) {
       try {
@@ -274,7 +254,7 @@ export default {
             external_discount:0,
           }
         })
-        //console.log('entro a get modality'+this.num_type)
+        
           let loan_modality = resp.data
           this.modalidad.id = loan_modality.id
           this.modalidad.procedure_type_id = loan_modality.procedure_type_id
@@ -285,12 +265,12 @@ export default {
           this.modalidad.max_guarantor_category = loan_modality.loan_modality_parameter.max_guarantor_category
           this.modalidad.personal_reference = loan_modality.loan_modality_parameter.personal_reference
           this.modalidad.max_cosigner = loan_modality.loan_modality_parameter.max_cosigner
-          this.modalidad.net_realizable_value = this.net_realizable_value   
-          
+            
+       
           console.log("MODALIDAD")
           console.log(this.modalidad)
     
-    //this.modalidad.personal_reference=true 
+   
           this.prueba[0] = loan_modality.loan_modality_parameter.guarantors //FIXME prueba, en este componente se recuperan algunos datos, verificar si se usa en otro componente
           this.prueba[1] = loan_modality.loan_modality_parameter.min_guarantor_category
           this.prueba[2] = loan_modality.loan_modality_parameter.max_guarantor_category
@@ -300,6 +280,7 @@ export default {
           }else{
           this.visible = false
         }
+           this.getBallots(id)
         
       }catch (e) {
         console.log(e)
@@ -331,6 +312,7 @@ export default {
           page: 1,
         }
       })
+      
       console.log("-------")
       console.log(this.modalidad.quantity_ballots)
       data_ballots = res.data.data  
@@ -348,36 +330,11 @@ export default {
             this.bonos[3] = data_ballots[0].public_security_bonus
           }
         }
-        /*
-        //Arma el objeto contributions1
-        for(let j = 0; j < 1;  j++){//colocar 1
-          this.contributions1[0].id_affiliate =  data_ballots[0].affiliate_id
-          this.contributions1[j].payable_liquid = data_ballots[j].payable_liquid
-          
-          if(j == 0){
-            this.contributions1[j].border_bonus = data_ballots[j].border_bonus,
-            this.contributions1[j].east_bonus = data_ballots[j].east_bonus,
-            this.contributions1[j].seniority_bonus = data_ballots[j].seniority_bonus,
-            this.contributions1[j].public_security_bonus = data_ballots[j].public_security_bonus
-          }
-          else{
-            this.contributions1[j].border_bonus=0,
-            this.contributions1[j].east_bonus= 0,
-            this.contributions1[j].seniority_bonus=0,
-            this.contributions1[j].public_security_bonus=0
-          }
-        }           console.log("CONTRIBUTIONS1")
-          console.log(JSON.stringify(this.contributions1))*/
+
       } else{
-          /*this.contributions1[0].id_affiliate =  data_ballots[0].affiliate_id
-          this.contributions1[0].payable_liquid = this.payable_liquid[0]
-    
-          this.contributions1[0].border_bonus = this.bonos[0]
-          this.contributions1[0].east_bonus =this.bonos[1]
-          this.contributions1[0].seniority_bonus = this.bonos[2]
-          this.contributions1[0].public_security_bonus =this.bonos[3]*/
+
           console.log("No se tienen boletas del ultimo mes")
-          this.clearForm()//TODO ver si es necesario, ya que sin la funcion igual se carga los datos declarados por defecto de las variables
+          //this.clearForm()//TODO ver si es necesario, ya que sin la funcion igual se carga los datos declarados por defecto de las variables
           
       }
     } catch (e) {
@@ -386,50 +343,6 @@ export default {
       this.loading = false
     }
   },
-
-
-    /*formatear() {    
-      let contribuciones =[]
-      contribuciones=this.contributions1.concat(this.contrib_codebtor)
-      console.log("CONTRIBUCIONES")
-      console.log(this.contribuciones)
-      let nuevoArray = [];
-      let i;
-      for (i = 0; i < contribuciones.length; i++) {
-        nuevoArray[i] = {
-          affiliate_id: contribuciones[i].id_affiliate,
-          contributions: [{
-            payable_liquid: parseFloat(contribuciones[i].payable_liquid),
-            border_bonus: parseFloat(contribuciones[i].border_bonus),
-            east_bonus: parseFloat(contribuciones[i].east_bonus),
-            seniority_bonus: parseFloat(contribuciones[i].seniority_bonus),
-            public_security_bonus: parseFloat(contribuciones[i].public_security_bonus)
-            }]
-        };
-        console.log("FORMATEAR");
-        console.log(nuevoArray);
-      }
-      //this.contrib_codebtor_aux = { liquid_calification: nuevoArray };
-      this.contributions1_aux = nuevoArray;
-      
-    },
-    async liquidCalificated(){
-      this.formatear()  
-      let resultado
-      try {
-            let res = await axios.post(`liquid_calificated`,{liquid_calification:this.contributions1_aux})
-            this.resultado=res.data
-            console.log("RESULTADO")
-            console.log(resultado)
-          
-      } catch (e) {
-        console.log(e)
-      } finally {
-        this.loading = false
-        console.log('entro por verdadero')
-      }
-    },
-*/
 
  }
 };

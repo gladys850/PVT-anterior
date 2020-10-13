@@ -55,8 +55,9 @@
               :contributions1.sync="contributions1"
               :modalidad.sync="modalidad"
               :prueba.sync="prueba"
-              :procedure_type.sync="procedure_type"
+              
               :contrib_codebtor="contrib_codebtor"
+              :loan_detail.sync="loan_detail"
             />
             <v-container class="py-0">
               <v-row>
@@ -87,8 +88,7 @@
                 :calculos.sync="calculos"
                 :modalidad.sync="modalidad"
                 :modalidad_id.sync="modalidad.id"
-                :liquid_calificated="liquid_calificated"
-                :modalidad_net_realizable_value.sync="modalidad.net_realizable_value"  >
+                :liquid_calificated="liquid_calificated" >
                 <template v-slot:title>
                   <v-col cols="12" class="py-0">Resultado para el Préstamo</v-col>
                 </template>
@@ -101,7 +101,7 @@
                 :liquid_calificated.sync="liquid_calificated"
                 :loan_detail.sync="loan_detail"
               />
-            </v-card>
+              </v-card>
             <v-container class="py-0">
               <v-row>
               <v-spacer></v-spacer><v-spacer> </v-spacer> <v-spacer></v-spacer>
@@ -125,7 +125,7 @@
             <h3 class="text-uppercase text-center">{{modalidad.name}}</h3>
             <HipotecaryData
               v-show="modalidad.procedure_type_id==12"
-              :modalidad_net_realizable_value.sync="modalidad.net_realizable_value"
+              :loan_detail.sync="loan_detail"
               :datos.sync="datos"
               :loan_property="loan_property"
             />
@@ -269,14 +269,14 @@ export default {
     CoDebtor,
     HipotecaryData
   },
-  data: () => ({
+   data: () => ({
     bus: new Vue(),
     e1: 1,
     loan_detail:{
     maximum_suggested_valid:true
     },
     calculator_result:{},
-    procedure_type:9,
+    //procedure_type:9,
     steps: 6,
     modalities: [],
     prueba: [],
@@ -338,7 +338,7 @@ export default {
             console.log('esta entro por verdad con la modalidad'+ this.modalidad.procedure_type_id)
           }
           else{
-             //this.Calculator() TODO borrar
+            //this.Calculator() TODO borrar
             this.liquidCalificated()
             console.log('esta entro por false'+this.modalidad.procedure_type_id)
           }
@@ -348,7 +348,7 @@ export default {
           console.log('segundo'+this.modalidad.guarantors )
         }
         if(n==3){
-          if(this.modalidad.procedure_type_id==12){
+          if(this.modalidad.procedure_type_id==12){ 
             this.saveLoanProperty()
             console.log('Es hipotecario')
           }
@@ -358,7 +358,7 @@ export default {
         }
         if(n==4)
         {
-
+          
           console.log('segundo'+this.modalidad.personal_reference)
         }
         if(n==5)
@@ -366,14 +366,14 @@ export default {
           this.personal()
           this.savePersonalReference()
           console.log('segundo'+this.modalidad.personal_reference)
-        }
+          }
         this.e1 = n + 1
-      }
+     }
     },
     beforeStep (n) {
       this.e1 = n -1
     },
-
+    
     async personal()
     {
       try{
@@ -397,11 +397,7 @@ export default {
         console.log('entro por verdader'+this.modalidad.personal_reference)
       }
     },
-    /*Metodo para identificar el modulo Ejemplo de respuesta:
-"id": 9,
-"module_id": 6,
-"name": "Préstamo Anticipo"
-"second_name": "Anticipo"*/
+       
     async getProcedureType(){
       try {
         let resp = await axios.get(`module`,{
@@ -411,7 +407,7 @@ export default {
             sortDesc: ['false'],
             per_page: 10,
             page: 1
-          }
+            }
         })
         this.modulo= resp.data.data[0].id
         let res = await axios.get(`module/${this.modulo}/modality_loan`)
@@ -424,7 +420,7 @@ export default {
     },
     async simuladores() {
       this.liquidCalificated()
-       console.log('este es el liquido para calificacion'+this.liquid_calificated)
+      console.log('este es el liquido para calificacion'+this.liquid_calificated)
       try {
         let res = await axios.post(`simulator`, {
           procedure_modality_id:this.modalidad.id,
@@ -434,8 +430,8 @@ export default {
           liquid_qualification_calculated_lender: 0,
           liquid_calculated:this.liquid_calificated
         })
-        this.calculator_result = res.data
-  /*      for (this.j = 0; this.j< this.simulator.length; this.j++){
+      this.calculator_result = res.data
+        /*      for (this.j = 0; this.j< this.simulator.length; this.j++){
 this.simulator[this.j].affiliate_nombres=this.datos_calculadora_hipotecario[this.j].affiliate_name
 console.log(""+this.simulator[this.j].affiliate_nombres)
 }
@@ -565,11 +561,11 @@ console.log(""+this.simulator[this.j].affiliate_nombres)
       },*/
      //TAB1 formatContributions datos obtenidos de los campos liquido y bonos, adecuandolo a formato para guardado y obtener liquido para calificación
     formatContributions() {    
-      //let contribuciones = []
+  
       let nuevoArray = []
       let nuevoArrayCodebtor = []
       if(this.modalidad.quantity_ballots > 1 ){
-        //nuevoArray = []
+      
         nuevoArray[0] = {
             affiliate_id:this.$route.query.affiliate_id,
             contributions: [
@@ -611,10 +607,7 @@ console.log(""+this.simulator[this.j].affiliate_nombres)
             }
           ]
         }
-      //contribuciones=this.contrib_codebtor
-      //console.log("CONTRIBUCIONES")
-      //console.log(this.contribuciones)
-      //nuevoArray = []
+
       for (let i = 0; i < this.contrib_codebtor.length; i++) {
         nuevoArrayCodebtor[i] = {
           affiliate_id: this.contrib_codebtor[i].id_affiliate,
@@ -633,7 +626,6 @@ console.log(""+this.simulator[this.j].affiliate_nombres)
       }
       }
 
-      //this.contrib_codebtor_aux = { liquid_calification: nuevoArray };
       this.contributions1_aux = nuevoArray.concat(nuevoArrayCodebtor)
     },
     //TAB1 Obtener liquido para calificación
@@ -643,7 +635,6 @@ console.log(""+this.simulator[this.j].affiliate_nombres)
         let res = await axios.post(`liquid_calificated`,{liquid_calification:this.contributions1_aux})
         this.liquid_calificated =res.data
         console.log("RESULTADO")
-
         let res1 = await axios.post(`simulator`, {
           procedure_modality_id:this.modalidad.id,
           amount_requested: this.intervalos.maximun_amoun,
@@ -676,7 +667,7 @@ console.log(""+this.simulator[this.j].affiliate_nombres)
 let res5 = await axios.get(`affiliate/${this.datos_calculadora_hipotecario[this.i].affiliate_id}`)
 this.affiliates = res5.data
 this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_name
-}*/
+}*/   
       } catch (e) {
         console.log(e)
       } finally {
@@ -701,14 +692,14 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
             registration_number: this.loan_property.registration_number,
             real_folio_number: this.loan_property.real_folio_number,
             public_deed_date: this.loan_property.public_deed_date,
-            net_realizable_value: this.modalidad.net_realizable_value,
+            net_realizable_value: this.loan_detail.net_realizable_value,
             real_city_id: this.loan_property.real_city_id
           });
           this.loan_property = res.data
           this.editedIndex = this.loan_property.id
         } else {
-           let res = await axios.patch(`loan_property/${this.loan_property.id}`,
-           {
+          let res = await axios.patch(`loan_property/${this.loan_property.id}`,
+            {
               land_lot_number: this.loan_property.land_lot_number,
               neighborhood_unit: this.loan_property.neighborhood_unit,
               location: this.loan_property.location,
@@ -721,7 +712,7 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
               registration_number: this.loan_property.registration_number,
               real_folio_number: this.loan_property.real_folio_number,
               public_deed_date: this.loan_property.public_deed_date,
-              net_realizable_value: this.modalidad.net_realizable_value,
+              net_realizable_value: this.loan_detail.net_realizable_value,
               real_city_id: this.loan_property.real_city_id
             }
           );
