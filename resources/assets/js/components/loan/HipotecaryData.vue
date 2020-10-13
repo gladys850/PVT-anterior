@@ -5,7 +5,7 @@
         <v-card class="px-3">
           <v-row justify="center">
             <v-col cols="12">
-              <h3 class="text-uppercase text-center">INFORMACIÓN DEL INMUEBLE{{modalidad_net_realizable_value}}</h3>
+              <h3 class="text-uppercase text-center">INFORMACIÓN DEL INMUEBLE{{loan_detail.net_realizable_value}}</h3>
             </v-col>
             <v-col cols="12" md="6" class="v-card-profile">
               <v-row justify="center">
@@ -144,8 +144,9 @@
                   <v-text-field
                     dense
                     label="VNR (Valor Neto Realizado)"
-                    v-model="modalidad_net_realizable_value"
+                    v-model="loan_detail.net_realizable_value"
                     outlined
+                    readonly
                   ></v-text-field>
                 </v-col>
                 <v-col cols="12" md="6" class="py-0"></v-col>
@@ -245,10 +246,9 @@
 export default {
   name: "hipotecari-data",
   props: {
-    modalidad_net_realizable_value: {
-      type: Number,
-      required: true,
-      default:0
+    loan_detail: {
+      type: Object,
+      required: true
     },
     loan_property:{
       type:Object,
