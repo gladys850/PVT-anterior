@@ -43,7 +43,7 @@ class LoanPropertyController extends Controller
     * @bodyParam registration_number string required Número de matricula computarizada. Example: 2.00.1.01.0000000
     * @bodyParam real_folio_number string required Número de asiento del folio real. Example: A2
     * @bodyParam public_deed_date date required Fecha de escritura Publica. Example: 2020-09-23
-    * @bodyParam net_realizable_value integer required Valor Neto Realizable. Example: 600000
+    * @bodyParam net_realizable_value float required Valor Neto Realizable. Example: 600000.6
     * @bodyParam ​​real_city_id integer required Ciudad de registro en derechos reales. Example: 1
     * @authenticated
     * @responseFile responses/loan_property/store.200.json
@@ -81,7 +81,7 @@ class LoanPropertyController extends Controller
     * @bodyParam registration_number string required Número de matricula computarizada. Example: 2.00.1.01.0000000
     * @bodyParam real_folio_number string required Número de asiento del folio real. Example: A2
     * @bodyParam public_deed_date date required Fecha de escritura Publica. Example: 2020-09-23
-    * @bodyParam net_realizable_value integer required Valor Neto Realizable. Example: 600000
+    * @bodyParam net_realizable_value float required Valor Neto Realizable. Example: 600000.6
     * @bodyParam ​​real_city_id integer required Ciudad de registro en derechos reales. Example: 1
     * @authenticated
     * @responseFile responses/loan_property/update.200.json
