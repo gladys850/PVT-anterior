@@ -114,11 +114,6 @@ export default {
     liquid_calificated: {
       type: Array,
       required: true
-        },
-    modalidad_net_realizable_value:{
-      type: Number,
-      required: true,
-      default:0
     }
   },
   computed: {
