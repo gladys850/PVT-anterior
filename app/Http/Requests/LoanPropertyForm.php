@@ -35,7 +35,7 @@ class LoanPropertyForm extends FormRequest
             'cadastral_code'=>'integer|min:3',
             'limit'=>'string|min:3',
             'public_deed_number' => 'string|min:1',
-            'net_realizable_value'=>'integer|min:1',
+            'net_realizable_value'=>'min:1',
             'lawyer'=>'string|min:1',
             'registration_number'=>'string|min:1',
             'real_folio_number'=>'string|min:1',

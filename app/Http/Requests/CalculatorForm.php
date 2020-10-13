@@ -28,6 +28,8 @@ class CalculatorForm extends FormRequest
             'liquid_calification' => ['required', 'array', 'min:1'],
             'liquid_calification.*.affiliate_id' => ['required', 'integer', 'exists:affiliates,id'],
             'liquid_calification.*.parent_loan_id' => ['integer', 'nullable', 'exists:loans,id'],
+            'liquid_calification.*.sismu' => ['boolean', 'nullable'], // en caso de refinanciamiento verificación de sismu
+            'liquid_calification.*.quota_sismu' => ['nullable', 'required_if:liquid_calification.*.sismu,true'], // en caso de refinanciamiento cuota de sismu
             'liquid_calification.*.contributions' => ['required', 'array', 'min:1'],
             'liquid_calification.*.contributions.*.payable_liquid' => ['required'],
             'liquid_calification.*.contributions.*.border_bonus' => ['required'],

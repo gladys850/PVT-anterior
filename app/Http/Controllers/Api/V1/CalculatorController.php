@@ -22,29 +22,30 @@ class CalculatorController extends Controller
     /**
     * Liquido para calificación
     * @bodyParam liquid_calification[0].affiliate_id integer required ID del afiliado. Example: 9389
-    * @bodyParam liquid_calification[0].parent_loan_id integer ID de Préstamo Padre. Example: 6
-    * @bodyParam liquid_calification[0].contributions[0].payable_liquid integer required Líquido pagable. Example: 2000
-    * @bodyParam liquid_calification[0].contributions[0].seniority_bonus integer required Bono Cargo . Example: 0
-    * @bodyParam liquid_calification[0].contributions[0].border_bonus integer required Bono Frontera . Example: 0
-    * @bodyParam liquid_calification[0].contributions[0].public_security_bonus integer required Bono Seguridad Ciudadana . Example: 300
-    * @bodyParam liquid_calification[0].contributions[0].east_bonus integer required Bono Oriente. Example: 0
-    * @bodyParam liquid_calification[0].contributions[1].payable_liquid integer Líquido pagable. Example: 3000
-    * @bodyParam liquid_calification[0].contributions[1].seniority_bonus integer Bono Cargo . Example: 0
-    * @bodyParam liquid_calification[0].contributions[1].border_bonus integer Bono Frontera . Example: 0
-    * @bodyParam liquid_calification[0].contributions[1].public_security_bonus integer Bono Seguridad Ciudadana . Example: 300
-    * @bodyParam liquid_calification[0].contributions[1].east_bonus integer Bono Oriente. Example: 0
-    * @bodyParam liquid_calification[0].contributions[2].payable_liquid integer Líquido pagable. Example: 3500
-    * @bodyParam liquid_calification[0].contributions[2].seniority_bonus integer Bono Cargo . Example: 0
-    * @bodyParam liquid_calification[0].contributions[2].border_bonus integer Bono Frontera . Example: 0
-    * @bodyParam liquid_calification[0].contributions[2].public_security_bonus integer Bono Seguridad Ciudadana . Example: 300
-    * @bodyParam liquid_calification[0].contributions[2].east_bonus integer Bono Oriente. Example: 0
-    * @bodyParam liquid_calification[1].affiliate_id integer required ID del afiliado. Example: 1
-    * @bodyParam liquid_calification[1].parent_loan_id integer ID de Préstamo Padre. Example: 6
-    * @bodyParam liquid_calification[1].contributions[0].payable_liquid integer required Líquido pagable. Example: 2000
-    * @bodyParam liquid_calification[1].contributions[0].seniority_bonus integer required Bono Cargo . Example: 0
-    * @bodyParam liquid_calification[1].contributions[0].border_bonus integer required Bono Frontera . Example: 0
-    * @bodyParam liquid_calification[1].contributions[0].public_security_bonus integer required Bono Seguridad Ciudadana . Example: 300
-    * @bodyParam liquid_calification[1].contributions[0].east_bonus integer required Bono Oriente. Example: 0
+    * @bodyParam liquid_calification[0].sismu boolean En caso de tener un Préstamo Padre en el Sistema sismu. Example: true
+    * @bodyParam liquid_calification[0].quota_sismu float En caso de tener un Préstamo Padre en el Sistema sismu,  se requiere cuota. Example: 500
+    * @bodyParam liquid_calification[0].contributions[0].payable_liquid float required Líquido pagable. Example: 2000
+    * @bodyParam liquid_calification[0].contributions[0].seniority_bonus float required Bono Cargo . Example: 0
+    * @bodyParam liquid_calification[0].contributions[0].border_bonus float required Bono Frontera . Example: 0
+    * @bodyParam liquid_calification[0].contributions[0].public_security_bonus float required Bono Seguridad Ciudadana . Example: 0
+    * @bodyParam liquid_calification[0].contributions[0].east_bonus float Bono Oriente. Example: 950.6
+    * @bodyParam liquid_calification[0].contributions[1].payable_liquid float Líquido pagable. Example: 2000
+    * @bodyParam liquid_calification[0].contributions[1].seniority_bonus float Bono Cargo . Example: 0
+    * @bodyParam liquid_calification[0].contributions[1].border_bonus float Bono Frontera . Example: 0
+    * @bodyParam liquid_calification[0].contributions[1].public_security_bonus float Bono Seguridad Ciudadana . Example: 0
+    * @bodyParam liquid_calification[0].contributions[1].east_bonus float Bono Oriente. Example: 950.6
+    * @bodyParam liquid_calification[0].contributions[2].payable_liquid float Líquido pagable. Example: 2000
+    * @bodyParam liquid_calification[0].contributions[2].seniority_bonus float Bono Cargo . Example: 0
+    * @bodyParam liquid_calification[0].contributions[2].border_bonus float Bono Frontera . Example: 0
+    * @bodyParam liquid_calification[0].contributions[2].public_security_bonus float Bono Seguridad Ciudadana . Example: 0
+    * @bodyParam liquid_calification[0].contributions[2].east_bonus float Bono Oriente. Example: 950.6
+    * @bodyParam liquid_calification[1].affiliate_id integer required ID del afiliado. Example: 47461
+    * @bodyParam liquid_calification[1].parent_loan_id integer ID de Préstamo Padre. Example: 13
+    * @bodyParam liquid_calification[1].contributions[0].payable_liquid float required Líquido pagable. Example: 3000
+    * @bodyParam liquid_calification[1].contributions[0].seniority_bonus float required Bono Cargo . Example: 0
+    * @bodyParam liquid_calification[1].contributions[0].border_bonus float required Bono Frontera . Example: 0
+    * @bodyParam liquid_calification[1].contributions[0].public_security_bonus float required Bono Seguridad Ciudadana . Example: 0
+    * @bodyParam liquid_calification[1].contributions[0].east_bonus float required Bono Oriente. Example: 950.6
     * @authenticated
     * @responseFile responses/calculator/store.200.json
     */
@@ -54,12 +55,20 @@ class CalculatorController extends Controller
         $liquid_calificated = collect([]);
         foreach($liquid_calification as $liq){
             $affiliate = Affiliate::findOrFail($liq['affiliate_id']);
-            if($request->has('parent_loan_id')){
+            if(array_key_exists('parent_loan_id', $liq)){
                 $parent_loan = Loan::findOrFail($liq['parent_loan_id']);
                 if (!$parent_loan) abort(404);
-                $parent_quota = $parent_loan->next_payment()->estimated_quota * $parent_loan->lenders->find($liq['affiliate_id'])->pivot->payment_percentage/100;
+                $parent_lender = $parent_loan->lenders->find($liq['affiliate_id']);
+                if(!$parent_lender) abort(403,'El afiliado no es titular del préstamo');
+                $parent_quota = $parent_loan->next_payment()->estimated_quota *$parent_lender->pivot->payment_percentage/100;
             }else{
+                /** En caso de refinanciamiento sismu */
+                if (array_key_exists('sismu', $liq)) {
+                $parent_quota = $liq['quota_sismu'];
+                }else{
                 $parent_quota = 0;
+                }
+                /** fin */
             }
             $contributions = $liq['contributions'];
             $contributions = collect($contributions);
