@@ -97,6 +97,32 @@
                         :outlined="editable && permission.secondary"
                       ></v-select>
                     </v-col>
+                      <v-col cols="12" md="5" v-if="spouse.is_duedate_undefined==false">
+                      <v-menu
+                        v-model="dates.dueDate.show"
+                        :close-on-content-click="false"
+                        transition="scale-transition"
+                        offset-y
+                        max-width="290px"
+                        min-width="290px"
+                        :disabled="!editable || !permission.secondary"
+                      >
+                        <template v-slot:activator="{ on }">
+                          <v-text-field
+                            dense
+                            v-model="dates.dueDate.formatted"
+                            label="Fecha Vencimiento CI"
+                            hint="Día/Mes/Año"
+                            persistent-hint
+                            append-icon="mdi-calendar"
+                            readonly
+                            v-on="on"
+                            :outlined="editable && permission.secondary"
+                          ></v-text-field>
+                        </template>
+                        <v-date-picker v-model="spouse.due_date" no-title @input="dates.dueDate.show = false"></v-date-picker>
+                      </v-menu>
+                    </v-col>
                     <v-col cols="12" md="3">
                       <v-checkbox
                         v-model="spouse.is_duedate_undefined"
@@ -322,6 +348,10 @@ export default {
       }
     ],
     dates: {
+      dueDate: {
+        formatted: null,
+        picker: false
+      },
       birthDate: {
         formatted: null,
         picker: false
@@ -341,12 +371,16 @@ export default {
   },
   mounted(){
     if(this.spouse.id){
+      this.formatDate('dueDate', this.spouse.due_date),
       this.formatDate('birthDate', this.spouse.birth_date),
       this.formatDate('dateDeath', this.spouse.date_death),
       this.formatDate('marriageDate', this.spouse.marriage_date)
     }
   },
   watch: {
+    'spouse.due_date': function(date) {
+     this.formatDate('dueDate', date)
+    },
     'spouse.birth_date': function(date) {
      this.formatDate('birthDate', date)
     },
