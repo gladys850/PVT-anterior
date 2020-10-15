@@ -128,7 +128,6 @@ Route::group([
             Route::get('loan/{loan}/loan_affiliates', 'Api\V1\LoanController@get_loan_affiliates');
             Route::apiResource('loan_property', 'Api\V1\LoanPropertyController')->only('index', 'store', 'show', 'destroy', 'update');
 
-
         });
         Route::group([
             'middleware' => 'permission:create-loan'
