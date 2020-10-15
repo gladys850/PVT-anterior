@@ -37,7 +37,7 @@ class Guarantor_evaluateForm extends FormRequest
         }
         return[
             'affiliate_id'=> ['required', 'integer', 'exists:affiliates,id'],
-            'quota_calculated_total_lender'=> ['required', 'integer', 'min:1'],
+            'quota_calculated_total_lender'=> ['required', 'numeric', 'min:1'],
             'contributions' => ['array', 'required'],
             'contributions.*.payable_liquid' => ['required', 'numeric', 'min:0'],
             'contributions.*.seniority_bonus' => ['required', 'numeric', 'min:0'],
