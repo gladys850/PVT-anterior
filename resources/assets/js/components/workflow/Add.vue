@@ -263,7 +263,6 @@ export default {
     },
     bonos: [0, 0, 0, 0],
     payable_liquid: [0, 0, 0],
-    calculos: {},
     modalidad: {},
     loan: {},
     datos: {},
@@ -342,16 +341,7 @@ export default {
         this.loading = true
         let res = await axios.get(`loan/${id}`)
         this.loan = res.data
-        this.calculos.plazo = this.loan.loan_term
-        this.calculos.amount_approved = this.loan.amount_approved
-        this.calculos.quota_calculated = this.loan.estimated_quota
-        this.calculos.amount_maximum_suggested = this.loan.amount_approved
-        this.calculos.payable_liquid_calculated = this.loan.payable_liquid_calculated
-        this.calculos.bonus_calculated = this.loan.bonus_calculated
-        this.calculos.liquid_qualification_calculated = this.loan.liquid_qualification_calculated
-        this.calculos.indebtedness_calculated = this.loan.indebtedness_calculated
-        this.calculos.montos = this.loan.amount_approved
-
+        console.log("este es el loan"+this.loan)
         let res1 = await axios.get(`affiliate/${this.loan.disbursable_id}`)
         this.affiliate = res1.data
         this.setBreadcrumbs()

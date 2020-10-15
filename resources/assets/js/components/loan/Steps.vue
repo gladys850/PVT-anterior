@@ -55,7 +55,7 @@
               :contributions1.sync="contributions1"
               :modalidad.sync="modalidad"
               :prueba.sync="prueba"
-              
+
               :contrib_codebtor="contrib_codebtor"
               :loan_detail.sync="loan_detail"
             />
@@ -82,10 +82,8 @@
                 v-show="modalidad.procedure_type_id!=12"
                 :calculator_result.sync="calculator_result"
                 :loan_detail.sync="loan_detail"
-                :lenders.sync="lenders"
+                :loan_sismu.sync="loan_sismu"
                 :datos.sync="datos"
-                :intervalos.sync="intervalos"
-                :calculos.sync="calculos"
                 :modalidad.sync="modalidad"
                 :modalidad_id.sync="modalidad.id"
                 :liquid_calificated="liquid_calificated" >
@@ -95,13 +93,14 @@
               </BallotsResult>
               <BallotsResultHipotecary
                 v-show="modalidad.procedure_type_id==12"
+                :loan_sismu.sync="loan_sismu"
                 :lenders.sync="lenders"
                 :intervalos.sync="intervalos"
                 :datos.sync="datos"
                 :liquid_calificated.sync="liquid_calificated"
                 :loan_detail.sync="loan_detail"
               />
-              </v-card>
+            </v-card>
             <v-container class="py-0">
               <v-row>
               <v-spacer></v-spacer><v-spacer> </v-spacer> <v-spacer></v-spacer>
@@ -132,8 +131,8 @@
             <Guarantor
             :modalidad_guarantors.sync="modalidad.guarantors"
             :modalidad.sync="modalidad"
+            :loan_detail.sync="loan_detail"
             :prueba.sync="prueba"
-            :calculos.sync="calculos"
             :garantes.sync="garantes"
             :affiliate.sync="affiliate"
             :modalidad_id.sync="modalidad.id"/>
@@ -213,9 +212,6 @@
             :bus="bus"
             :loan_detail.sync="loan_detail"
             :lenders.sync="lenders"
-            :datos.sync="datos"
-            :calculos.sync="calculos"
-            :intervalos.sync="intervalos"
             :modalidad.sync="modalidad"
             :reference.sync="reference"
             :garantes.sync="garantes"
@@ -269,12 +265,13 @@ export default {
     CoDebtor,
     HipotecaryData
   },
-   data: () => ({
+  data: () => ({
     bus: new Vue(),
     e1: 1,
     loan_detail:{
     maximum_suggested_valid:true
     },
+    loan_sismu:{},
     calculator_result:{},
     //procedure_type:9,
     steps: 6,
@@ -292,14 +289,6 @@ export default {
     personal_reference:{},
     personal_codebtor:[],
     cosigners:[],
-    calculos:{
-      promedio_liquido_pagable:0,
-      total_bonos:0,
-      liquido_para_calificacion:0,
-      calculo_de_cuota:0,
-      indice_endeudamiento:0,
-      monto_maximo_sugerido:0
-    },
     contrib_codebtor: [],
     contributions1_aux: [],
     liquid_calificated:[],
@@ -333,12 +322,13 @@ export default {
       else {
         if(n==1)
         {
+          this.getLoan(10)
           if(this.modalidad.procedure_type_id==12)
           { this.liquidCalificated()
             console.log('esta entro por verdad con la modalidad'+ this.modalidad.procedure_type_id)
           }
           else{
-            //this.Calculator() TODO borrar
+             //this.Calculator() TODO borrar
             this.liquidCalificated()
             console.log('esta entro por false'+this.modalidad.procedure_type_id)
           }
@@ -348,7 +338,7 @@ export default {
           console.log('segundo'+this.modalidad.guarantors )
         }
         if(n==3){
-          if(this.modalidad.procedure_type_id==12){ 
+          if(this.modalidad.procedure_type_id==12){
             this.saveLoanProperty()
             console.log('Es hipotecario')
           }
@@ -358,7 +348,7 @@ export default {
         }
         if(n==4)
         {
-          
+
           console.log('segundo'+this.modalidad.personal_reference)
         }
         if(n==5)
@@ -366,14 +356,14 @@ export default {
           this.personal()
           this.savePersonalReference()
           console.log('segundo'+this.modalidad.personal_reference)
-          }
+        }
         this.e1 = n + 1
-     }
+      }
     },
     beforeStep (n) {
       this.e1 = n -1
     },
-    
+
     async personal()
     {
       try{
@@ -397,7 +387,7 @@ export default {
         console.log('entro por verdader'+this.modalidad.personal_reference)
       }
     },
-       
+
     async getProcedureType(){
       try {
         let resp = await axios.get(`module`,{
@@ -407,7 +397,7 @@ export default {
             sortDesc: ['false'],
             per_page: 10,
             page: 1
-            }
+          }
         })
         this.modulo= resp.data.data[0].id
         let res = await axios.get(`module/${this.modulo}/modality_loan`)
@@ -420,7 +410,7 @@ export default {
     },
     async simuladores() {
       this.liquidCalificated()
-      console.log('este es el liquido para calificacion'+this.liquid_calificated)
+       console.log('este es el liquido para calificacion'+this.liquid_calificated)
       try {
         let res = await axios.post(`simulator`, {
           procedure_modality_id:this.modalidad.id,
@@ -430,8 +420,8 @@ export default {
           liquid_qualification_calculated_lender: 0,
           liquid_calculated:this.liquid_calificated
         })
-      this.calculator_result = res.data
-        /*      for (this.j = 0; this.j< this.simulator.length; this.j++){
+        this.calculator_result = res.data
+  /*      for (this.j = 0; this.j< this.simulator.length; this.j++){
 this.simulator[this.j].affiliate_nombres=this.datos_calculadora_hipotecario[this.j].affiliate_name
 console.log(""+this.simulator[this.j].affiliate_nombres)
 }
@@ -446,126 +436,13 @@ console.log(""+this.simulator[this.j].affiliate_nombres)
      console.log('entro a la calculadora de modalidades')
       this.simuladores()
     },
-    //Metodo para la datos de la calculadora
-    /*async Calculator() {
-      try {
-        if(this.modalidad.quantity_ballots>1)
-        {
-          let res = await axios.post(`calculator`, {
-            procedure_modality_id:this.modalidad.id,
-            months_term: this.intervalos.maximum_term,
-            amount_requested:this.intervalos.maximun_amoun,
-            affiliate_id:this.$route.query.affiliate_id,
-            contributions: [
-            {
-              payable_liquid: this.payable_liquid[0],
-              seniority_bonus:  this.bonos[2],
-              border_bonus: this.bonos[0],
-              public_security_bonus: this.bonos[3],
-              east_bonus:this.bonos[1]
-            },
-            {
-              payable_liquid: this.payable_liquid[1],
-              seniority_bonus: 0,
-              border_bonus: 0,
-              public_security_bonus: 0,
-              east_bonus:0
-            },
-            {
-              payable_liquid: this.payable_liquid[2],
-              seniority_bonus: 0,
-              border_bonus:0,
-              public_security_bonus: 0,
-              east_bonus:0
-            }
-          ]
-        })
-        this.calculos= res.data
-        this.calculos.plazo=this.intervalos.maximum_term
-        if( this.calculos.amount_maximum_suggested<this.intervalos.maximun_amoun){
-          this.calculos.montos=this.calculos.amount_maximum_suggested
-        }else{
-          this.calculos.montos=this.intervalos.maximun_amoun
-        }
-        this.datos =this.intervalos
-        }else{
-          let res = await axios.post(`calculator`, {
-            procedure_modality_id:this.modalidad.id,
-            months_term: this.intervalos.maximum_term,
-            amount_requested:this.intervalos.maximun_amoun,
-            affiliate_id:this.$route.query.affiliate_id,
-            contributions: [
-            {
-              payable_liquid: this.payable_liquid[0],
-              seniority_bonus:  this.bonos[2],
-              border_bonus: this.bonos[0],
-              public_security_bonus: this.bonos[3],
-              east_bonus:this.bonos[1]
-            }
-          ]
-        })
-        this.calculos= res.data
-        this.calculos.plazo=this.intervalos.maximum_term
-         if( this.calculos.amount_maximum_suggested<this.intervalos.maximun_amoun){
-          this.calculos.montos=this.calculos.amount_maximum_suggested
-        }else{
-          this.calculos.montos=this.intervalos.maximun_amoun
-        }
-        this.datos =this.intervalos
-        }
-      }catch (e) {
-        console.log(e)
-      }finally {
-        this.loading = false
-      }
-    },*/
-    //metodo para armar las contribuciones del afiliado
-       /*Contributios()//TODO REVISAR SI SE UTILIZA
-      {
-      if(this.payable_liquid.length>1)
-      {
-        for (let i = 0; i< this.payable_liquid.length; i++) {
-          this.contributions1[i].payable_liquid=this.payable_liquid[i]
-          if(i = 0){
-            this.contributions1[i].border_bonus= this.bonos[0],
-            this.contributions1[i].east_bonus= this.bonos[1],
-            this.contributions1[i].seniority_bonus= this.bonos[2],
-            this.contributions1[i].public_security_bonus= this.bonos[3]
-          }
-          else{
-            this.contributions1[i].border_bonus= 0,
-            this.contributions1[i].east_bonus= 0,
-            this.contributions1[i].seniority_bonus= 0,
-            this.contributions1[i].public_security_bonus= 0
-          }
-        }
-      }
-      else{
-        this.contributions1[i].payable_liquid=this.payable_liquid[0]
-        this.contributions1[i].border_bonus= this.bonos[0],
-        this.contributions1[i].east_bonus= this.bonos[1],
-        this.contributions1[i].seniority_bonus= this.bonos[2],
-        this.contributions1[i].public_security_bonus= this.bonos[3]
-      }
-     /*for (this.i = 0; this.i< this.interval.length; this.i++) {
-        if(this.loanTypeSelected==this.interval[this.i].procedure_type_id)
-        {
-          this.monto= this.interval[this.i].minimum_amount+' - '+this.interval[this.i].maximum_amount,
-          this.plazo= this.interval[this.i].minimum_term+' - '+this.interval[this.i].maximum_term
-          this.intervalos.maximun_amoun=this.interval[this.i].maximum_amount
-          this.intervalos.maximum_term= this.interval[this.i].maximum_term
-          this.intervalos.procedure_type_id= this.loanTypeSelected
-          this.num_type=this.loanTypeSelected
-        }
-      }
-      },*/
      //TAB1 formatContributions datos obtenidos de los campos liquido y bonos, adecuandolo a formato para guardado y obtener liquido para calificación
-    formatContributions() {    
-  
+    formatContributions() {
+
       let nuevoArray = []
       let nuevoArrayCodebtor = []
       if(this.modalidad.quantity_ballots > 1 ){
-      
+
         nuevoArray[0] = {
             affiliate_id:this.$route.query.affiliate_id,
             contributions: [
@@ -656,6 +533,7 @@ console.log(""+this.simulator[this.j].affiliate_nombres)
         this.loan_detail.liquid_qualification_calculated=this.calculator_result.liquid_qualification_calculated_total
         this.loan_detail.indebtedness_calculated=this.calculator_result.indebtedness_calculated_total
         this.loan_detail.maximum_suggested_valid=this.calculator_result.maximum_suggested_valid
+        this.loan_detail.quota_calculated_total_lender=this.calculator_result.quota_calculated_estimated_total
 
         if( this.calculator_result.amount_maximum_suggested<this.intervalos.maximun_amoun){
           this.calculator_result.amount_requested=this.calculator_result.amount_maximum_suggested
@@ -667,7 +545,7 @@ console.log(""+this.simulator[this.j].affiliate_nombres)
 let res5 = await axios.get(`affiliate/${this.datos_calculadora_hipotecario[this.i].affiliate_id}`)
 this.affiliates = res5.data
 this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_name
-}*/   
+}*/
       } catch (e) {
         console.log(e)
       } finally {
@@ -698,8 +576,8 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
           this.loan_property = res.data
           this.editedIndex = this.loan_property.id
         } else {
-          let res = await axios.patch(`loan_property/${this.loan_property.id}`,
-            {
+           let res = await axios.patch(`loan_property/${this.loan_property.id}`,
+           {
               land_lot_number: this.loan_property.land_lot_number,
               neighborhood_unit: this.loan_property.neighborhood_unit,
               location: this.loan_property.location,
@@ -751,6 +629,18 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
         console.log(this.cosigners)
       } catch (e) {
         this.dialog = false
+        console.log(e)
+      } finally {
+        this.loading = false
+      }
+    },
+    async getLoan(id) {
+      try {
+        this.loading = true
+        let res = await axios.get(`loan/${id}`)
+        this.loan_sismu = res.data
+        console.log(this.loan)
+      } catch (e) {
         console.log(e)
       } finally {
         this.loading = false
