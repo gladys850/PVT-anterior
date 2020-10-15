@@ -118,7 +118,7 @@
                   <v-icon>mdi-plus</v-icon>
                 </v-btn>
               </template>
-              <span>Nuevo trámite</span>pa
+              <span>Nuevo trámite</span>
             </v-tooltip>
           </v-card-text>
         </v-card>
