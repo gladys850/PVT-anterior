@@ -108,6 +108,22 @@ export const routes = [
     }
   },
   {
+    path: '/refinancimiento',
+    name: 'loanAddref',
+    component: LoanAdd,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/reprogramacion',
+    name: 'loanAddrep',
+    component: LoanAdd,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
     path: '/workflow',
     name: 'flowIndex',
     component: FlowIndex,
