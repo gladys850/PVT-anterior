@@ -38,6 +38,52 @@
                         <span>Ver préstamo</span>
                       </v-tooltip>            
                     </span>
+                    
+                    <span>
+                    <v-tooltip
+                    left              
+                    >
+                    <template v-slot:activator="{ on }">
+                      <v-btn
+                        icon
+                        dark
+                        small
+                        color="success"
+                        bottom
+                        right                        
+                        v-on="on" 
+                        @click="validateRefinanciamiento($route.params.id,item.id)"  
+                      >
+                      <v-icon>mdi-cash-multiple</v-icon>
+                      </v-btn>
+                    </template>
+                    <span>Refinanciamiento</span>
+                    </v-tooltip>            
+                    </span>
+                    <span>
+
+                    <v-tooltip
+                    left              
+                    >
+                      <template v-slot:activator="{ on }">
+                        <v-btn
+                            icon
+                            dark
+                            small
+                            color="secondary"
+                            bottom
+                            right
+                            v-on="on" 
+                            @click="validateReprogramacion($route.params.id,item.id)"                         
+                          >
+                        <v-icon>mdi-file-eye</v-icon>
+                        </v-btn>
+                      </template>
+                      <span>Reprogramacion</span>
+                    </v-tooltip>            
+                    </span>
+
+
                     <v-progress-linear
                       :color="randomColor()"
                       height="15"
@@ -72,7 +118,7 @@
                   <v-icon>mdi-plus</v-icon>
                 </v-btn>
               </template>
-              <span>Nuevo trámite</span>
+              <span>Nuevo trámite</span>pa
             </v-tooltip>
           </v-card-text>
         </v-card>
@@ -179,6 +225,7 @@ export default {
       this.getProfilePictures(this.$route.params.id);
       this.getLoan(this.$route.params.id);
       this.getState_name(this.$route.params.id);
+
     }
   },
   methods: {
@@ -226,6 +273,19 @@ export default {
         this.loading = false;
       }
     },
+
+     async get_refinanciamiento(affiliateid, loanid) {
+      try {
+        this.loading = true;
+        let res = await axios.get(`affiliate/${affiliateid}/${loanid}`);
+        this.unit_name = res.data.name;
+      } catch (e) {
+        console.log(e);
+      } finally {
+        this.loading = false;
+      }
+    },
+
     async getLoan(id) {
       try {
         this.loading = true;
@@ -236,6 +296,8 @@ export default {
         });
         this.loan = res.data.data;
         let num = this.loan.length;
+        let idl=this.loan.id;
+       
       } catch (e) {
         console.log(e);
       } finally {
@@ -255,6 +317,16 @@ export default {
         this.loading = false;
       }
     },
+
+    validateRefinanciamiento(affiliateid, loanid){
+
+      this.$router.push({ name: 'loanAddref',  params: { hash: 'ref'}, query:{ affiliate_id: affiliateid,loan_id:loanid } })
+    },
+
+    validateReprogramacion(affiliateid, loanid){
+     this.$router.push({ name: 'loanAddrep',  params: { hash: 'ref'}, query:{ affiliate_id: affiliateid,loan_id:loanid } })
+    },
+
     validateAffiliate(id) {
       if(this.state_name_type != 'Baja' && this.state_name_status != 'Fallecido' && this.state_name != ''){
         if(this.affiliate.identity_card != null && this.affiliate.city_identity_card_id != null){
@@ -275,6 +347,8 @@ export default {
       }
       
     }
+
+    
   }
 };
 </script>
