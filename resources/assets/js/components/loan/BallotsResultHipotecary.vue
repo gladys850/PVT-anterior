@@ -4,6 +4,56 @@
       <v-form>
         <!--v-card-->
           <v-row justify="center">
+            <v-col cols="3" class="pt-5 py-0">
+            <v-text-field
+              class="py-0"
+              dense
+              :outlined="false"
+              :readonly="true"
+              label="Codigo de Prestamo Padre"
+              v-model="loan_sismu.code"
+            ></v-text-field>
+          </v-col>
+          <v-col cols="3" class="pt-5 py-0">
+            <v-text-field
+              class="py-0"
+              dense
+              :outlined="false"
+              :readonly="true"
+              label="Monto"
+              v-model="loan_sismu.amount_approved"
+            ></v-text-field>
+          </v-col>
+          <v-col cols="2" class="pt-5 py-0">
+            <v-text-field
+              class="py-0"
+              dense
+              :outlined="false"
+              :readonly="true"
+              label="Plazo"
+              v-model="loan_sismu.loan_term"
+            ></v-text-field>
+          </v-col>
+          <v-col cols="2" class="pt-5 py-0">
+            <v-text-field
+              class="py-0"
+              dense
+              :outlined="false"
+              :readonly="true"
+              label="Saldo"
+              v-model="loan_sismu.balance"
+            ></v-text-field>
+          </v-col>
+          <v-col cols="2" class="pt-5 py-0">
+            <v-text-field
+              class="py-0"
+              dense
+              :outlined="false"
+              :readonly="true"
+              label="Cuota"
+              v-model="loan_sismu.estimated_quota"
+            ></v-text-field>
+          </v-col>
             <v-col cols="12">
               <v-container class="py-0">
                 <v-row>
@@ -83,7 +133,7 @@
 export default {
   name: "ballots-result-hipotecary",
   data: () => ({
-    //datos: {},
+  //datos: {},
     bonos: {},
     payable_liquid: {},
     modalidad: {},
@@ -102,6 +152,10 @@ export default {
   
   }),
   props: {
+    loan_sismu: {
+      type: Object,
+      required: true
+    },
       loan_detail: {
       type: Object,
       required: true

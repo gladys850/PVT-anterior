@@ -188,7 +188,7 @@ import CoDebtor from '@/components/loan/CoDebtor'
     personal_reference: {
       type: Object,
       required: true
-    }, 
+    },
       intervalos: {
       type: Object,
       required: true
@@ -221,16 +221,9 @@ import CoDebtor from '@/components/loan/CoDebtor'
     ]*/
 
   }),
-   watch: {
-  ver()
-  {
-    modalidad
-  }
-  },
   beforeMount(){
     this.getCities()
     this.getPaymentTypes()
-   
   },
   methods: {
    Onchange(){
