@@ -225,15 +225,15 @@
   </v-card>
 </template>
 <script>
-import Breadcrumbs from "@/components/shared/Breadcrumbs";
-import Profile from "@/components/affiliate/Profile";
-import SpecificDataLoan from "@/components/loan/SpecificDataLoan";
-import DocumentsFlow from "@/components/workflow/DocumentsFlow";
-import ObserverFlow from "@/components/workflow/ObserverFlow";
-import AddObservation from "@/components/workflow/AddObservation";
-import PoliceData from "@/components/affiliate/PoliceData";
-import Dashboard from "@/components/workflow/Dashboard";
-import Kardex from "@/components/payment/Kardex";
+import Breadcrumbs from "@/components/shared/Breadcrumbs"
+import Profile from "@/components/affiliate/Profile"
+import SpecificDataLoan from "@/components/loan/SpecificDataLoan"
+import DocumentsFlow from "@/components/workflow/DocumentsFlow"
+import ObserverFlow from "@/components/workflow/ObserverFlow"
+import AddObservation from "@/components/workflow/AddObservation"
+import PoliceData from "@/components/affiliate/PoliceData"
+import Dashboard from "@/components/workflow/Dashboard"
+import Kardex from "@/components/payment/Kardex"
 
 export default {
   name: "flow-index",
@@ -289,7 +289,7 @@ export default {
   }),
   watch: {
     search: _.debounce(function() {
-      this.bus.$emit("search", this.search);
+      this.bus.$emit("search", this.search)
     }, 1000)
   },
   computed: {
@@ -305,7 +305,7 @@ export default {
           "update-affiliate-secondary"
         );
       } else {
-        return this.$store.getters.permissions.includes("create-affiliate");
+        return this.$store.getters.permissions.includes("create-affiliate")
       }
     },
     primaryPermission() {
@@ -314,7 +314,7 @@ export default {
           "update-affiliate-primary"
         );
       } else {
-        return this.$store.getters.permissions.includes("create-affiliate");
+        return this.$store.getters.permissions.includes("create-affiliate")
       }
     }
   },
@@ -329,11 +329,11 @@ export default {
   },
   methods: {
     resetForm() {
-      this.getAddress(this.$route.params.id);
-      this.editable = false;
-      this.reload = true;
+      this.getAddress(this.$route.params.id)
+      this.editable = false
+      this.reload = true
       this.$nextTick(() => {
-        this.reload = false;
+        this.reload = false
       });
     },
     setBreadcrumbs() {
@@ -347,50 +347,52 @@ export default {
         text: this.loan.code,
         to: { name: "flowAdd", params: { id: this.loan.id } }
       });
-      this.$store.commit("setBreadcrumbs", breadcrumbs);
+      this.$store.commit("setBreadcrumbs", breadcrumbs)
     },
     async getloan(id) {
       try {
-        this.loading = true;
-        let res = await axios.get(`loan/${id}`);
+        this.loading = true
+        let res = await axios.get(`loan/${id}`)
         this.loan = res.data;
-        console.log("este es el loan" + this.loan);
-        let res1 = await axios.get(`affiliate/${this.loan.disbursable_id}`);
-        this.affiliate = res1.data;
-        this.getSpouse(this.affiliate.id);
-        this.setBreadcrumbs();
-        console.log(this.loan);
+        console.log("este es el loan" + this.loan)
+        let res1 = await axios.get(`affiliate/${this.loan.lenders[0].id}`)
+        this.affiliate = res1.data
+        if (this.loan.disbursable_type=='spouse') {
+        this.getSpouse(this.loan.disbursable_id)
+        }
+        this.setBreadcrumbs()
+        console.log(this.loan)
       } catch (e) {
-        console.log(e);
+        console.log(e)
       } finally {
-        this.loading = false;
+        this.loading = false
       }
     },
     async getSpouse(id) {
       try {
-        this.loading = true;
-        let res = await axios.get(`affiliate/${id}/spouse`);
-        this.spouse = res.data;
-        console.log(spouse);
+        this.loading = true
+        let res = await axios.get(`affiliate/${id}/spouse`)
+        this.spouse = res.data
+        console.log(spouse)
       } catch (e) {
-        console.log(e);
+        console.log(e)
       } finally {
-        this.loading = false;
+        this.loading = false
       }
     },
     async getObservation(id) {
       try {
-        this.loading = true;
-        let res = await axios.get(`loan/${id}/observation`);
-        this.observations = res.data;
+        this.loading = true
+        let res = await axios.get(`loan/${id}/observation`)
+        this.observations = res.data
         for (this.i = 0; this.i < this.observations.length; this.i++) {
           let res1 = await axios.get(
             `user/${this.observations[this.i].user_id}`
           );
-          this.observations[this.i].user_name = res1.data.username;
+          this.observations[this.i].user_name = res1.data.username
         }
       } catch (e) {
-        console.log(e);
+        console.log(e)
       } finally {
         this.loading = false;
       }
@@ -398,18 +400,18 @@ export default {
     async getAddress(id) {
       try {
         this.loading = true;
-        let res = await axios.get(`affiliate/${id}/address`);
-        this.addresses = res.data;
+        let res = await axios.get(`affiliate/${id}/address`)
+        this.addresses = res.data
       } catch (e) {
-        console.log(e);
+        console.log(e)
       } finally {
         this.loading = false;
       }
     },
     async imprimir(item) {
       try {
-        let res = await axios.get(`loan/${item}/print/plan`);
-        console.log("plan " + item);
+        let res = await axios.get(`loan/${item}/print/plan`)
+        console.log("plan " + item)
         printJS({
           printable: res.data.content,
           type: res.data.type,
@@ -418,7 +420,7 @@ export default {
         });
       } catch (e) {
         this.toastr.error("Ocurrió un error en la impresión.");
-        console.log(e);
+        console.log(e)
       }
     }
   }
