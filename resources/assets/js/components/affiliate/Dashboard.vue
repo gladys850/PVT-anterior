@@ -52,7 +52,7 @@
                         bottom
                         right                        
                         v-on="on" 
-                        @click="validateRefinanciamiento($route.params.id,item.id)"  
+                        @click="validateRefinancing($route.params.id,item.id)"  
                       >
                       <v-icon>mdi-cash-multiple</v-icon>
                       </v-btn>
@@ -70,13 +70,13 @@
                             icon
                             dark
                             small
-                            color="secondary"
+                            color="info"
                             bottom
                             right
                             v-on="on" 
-                            @click="validateReprogramacion($route.params.id,item.id)"                         
+                            @click="validateReprogramming($route.params.id,item.id)"                         
                           >
-                        <v-icon>mdi-file-eye</v-icon>
+                        <v-icon>mdi-calendar-clock</v-icon>
                         </v-btn>
                       </template>
                       <span>Reprogramacion</span>
@@ -318,14 +318,14 @@ export default {
       }
     },
 
-    validateRefinanciamiento(affiliateid, loanid){
+    /*validateRefinanciamiento(affiliateid, loanid){
 
       this.$router.push({ name: 'loanAddref',  params: { hash: 'ref'}, query:{ affiliate_id: affiliateid,loan_id:loanid } })
     },
 
     validateReprogramacion(affiliateid, loanid){
      this.$router.push({ name: 'loanAddrep',  params: { hash: 'ref'}, query:{ affiliate_id: affiliateid,loan_id:loanid } })
-    },
+    },*/
 
     validateAffiliate(id) {
       if(this.state_name_type != 'Baja' && this.state_name_status != 'Fallecido' && this.state_name != ''){
@@ -346,6 +346,13 @@ export default {
         this.toastr.error("El afiliado no puede acceder a un préstamo por estar fallecido ó dado de baja ó no tener registrado su estado.")
       }
       
+    },
+    validateRefinancing(a_id, l_id){
+      this.$router.push({ name: 'loanAdd',  params: { hash: 'refinancing'}, query:{ affiliate_id: a_id, loan_id: l_id } })
+    },
+
+    validateReprogramming(a_id, l_id){
+      this.$router.push({ name: 'loanAdd',  params: { hash: 'reprogramming'}, query:{ affiliate_id: a_id, loan_id: l_id } })
     }
 
     
