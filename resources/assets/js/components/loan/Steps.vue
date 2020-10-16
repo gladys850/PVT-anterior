@@ -55,7 +55,7 @@
               :contributions1.sync="contributions1"
               :modalidad.sync="modalidad"
               :prueba.sync="prueba"
-
+              :affiliate.sync="affiliate"
               :contrib_codebtor="contrib_codebtor"
               :loan_detail.sync="loan_detail"
             />

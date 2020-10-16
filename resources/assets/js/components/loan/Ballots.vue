@@ -128,7 +128,8 @@
                 v-show="hipotecario"
                 :contributions1.sync="contributions1"
                 :contrib_codebtor="contrib_codebtor"
-                :modalidad.sync="modalidad"/>
+                :modalidad.sync="modalidad"
+                :affiliate.sync="affiliate"/>
             </v-card>
           </v-col>
         </v-row>
@@ -191,6 +192,10 @@ export default {
       type: Object,
       required: true
     },
+    affiliate: {
+      type: Object,
+      required: true
+    }
 
   },
     components: {
@@ -199,10 +204,17 @@ export default {
    beforeMount() {
     this.getLoanIntervals()
   },
-
+watch:{
+  loanTypeSelected(newVal, oldVal){
+    if(newVal!=oldVal){
+      this.getBallots(this.$route.query.affiliate_id)
+    }
+  }
+},
   methods:
  {//muestra los intervalos de acuerdo a una modalidad
     Onchange(){
+ 
       for (let i = 0; i< this.interval.length; i++) {
         if(this.loanTypeSelected==this.interval[i].procedure_type_id){
           if(this.loanTypeSelected==12){
@@ -222,7 +234,7 @@ export default {
           this.intervalos.minimun_amoun=this.interval[i].minimum_amount
           this.intervalos.minimum_term= this.interval[i].minimum_term
           this.intervalos.procedure_type_id= this.loanTypeSelected
-
+          //debugger
          
           this.getLoanModality(this.$route.query.affiliate_id)
           //this.getBallots(this.$route.query.affiliate_id)
@@ -265,7 +277,7 @@ export default {
           this.modalidad.max_guarantor_category = loan_modality.loan_modality_parameter.max_guarantor_category
           this.modalidad.personal_reference = loan_modality.loan_modality_parameter.personal_reference
           this.modalidad.max_cosigner = loan_modality.loan_modality_parameter.max_cosigner
-            
+            //debugger
        
           console.log("MODALIDAD")
           console.log(this.modalidad)
@@ -277,6 +289,7 @@ export default {
           this.prueba[3] = loan_modality.loan_modality_parameter.personal_reference
           if(loan_modality.loan_modality_parameter.quantity_ballots>1){
           this.visible = true
+          //debugger
           }else{
           this.visible = false
         }
@@ -317,20 +330,26 @@ export default {
       console.log(this.modalidad.quantity_ballots)
       data_ballots = res.data.data  
       console.log(data_ballots)
- 
+//debugger
       if(res.data.valid){
         this.editar=false
          //Carga los datos en los campos para ser visualizados en la interfaz    
         for (let i = 0; i < data_ballots.length; i++) {//colocar 1
           this.payable_liquid[i] = data_ballots[i].payable_liquid
+          console.log(this.payable_liquid[i])
           if(i==0){//solo se llena los bonos de la ultima boleta de pago
             this.bonos[0] = data_ballots[0].border_bonus
             this.bonos[1] = data_ballots[0].east_bonus
             this.bonos[2] = data_ballots[0].seniority_bonus
             this.bonos[3] = data_ballots[0].public_security_bonus
-          }
-        }
 
+            console.log(this.bonos[0])
+            console.log(this.bonos[1])
+            console.log(this.bonos[2])
+            console.log(this.bonos[3])
+          }
+
+        }
       } else{
 
           console.log("No se tienen boletas del ultimo mes")
