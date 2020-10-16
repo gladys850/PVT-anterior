@@ -134,6 +134,7 @@
             :loan_detail.sync="loan_detail"
             :prueba.sync="prueba"
             :garantes.sync="garantes"
+            :guarantors.sync="guarantors"
             :affiliate.sync="affiliate"
             :modalidad_id.sync="modalidad.id"/>
           <v-container class="py-0">
@@ -214,9 +215,9 @@
             :lenders.sync="lenders"
             :modalidad.sync="modalidad"
             :reference.sync="reference"
-            :garantes.sync="garantes"
             :modalidad_id.sync="modalidad.id"
             :cosigners="cosigners"
+            :guarantors.sync="guarantors"
             :loan_property_id ="loan_property.id"/>
         </v-card>
       </v-stepper-content>
@@ -278,6 +279,7 @@ export default {
     modalities: [],
     prueba: [],
     garantes: [],
+    guarantors: [],
     lenders:[],
     modalidad:{},
     datos:{},

@@ -166,15 +166,15 @@ export default {
     newOther: null
   }),
   props: {
+     guarantors: {
+      type: Array,
+      required: true
+    },
     loan_detail: {
       type: Object,
       required: true
     },
     lenders: {
-      type: Array,
-      required: true
-    },
-    garantes: {
       type: Array,
       required: true
     },
@@ -251,7 +251,7 @@ export default {
             cosigners:this.cosigners,
             disbursable_id: this.$route.query.affiliate_id,
             lenders:this.lenders,
-            guarantors: this.garantes,
+            guarantors: this.guarantors,
             documents: this.itemsOpc.concat(this.selected.concat(this.radios.filter(Boolean))),
             notes: this.otherDocuments
           });
