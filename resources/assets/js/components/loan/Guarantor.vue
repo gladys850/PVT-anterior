@@ -5,7 +5,6 @@
           <v-card v-show="show_garante">
             <v-container v-if="modalidad_guarantors==0">
               <v-row>
-               
                 <v-col class="text-center">
                   <h2 class="success--text" >ESTA MODALIDAD NO NECESITA GARANTE</h2>
                 </v-col>
@@ -103,7 +102,7 @@
                     </v-flex>
                   </v-layout>
                 </v-col>
-                <v-col cols="12" md="7" class="py-0" >{{data_ballots}}</v-col>
+                <v-col cols="12" md="7" class="py-0" ></v-col>
                 <v-col cols="12" md="4" class="py-0">
                   <v-btn
                   class="py-0"
@@ -184,7 +183,6 @@
                     <v-layout row wrap>
                       <v-flex xs12 class="px-2">
                         <fieldset class="pa-3">
-                          {{loan_detail}}
                           <p class="py-0 mb-0">Liquido Total:{{evaluate_garantor.payable_liquid +' '}}<b>|</b> Total de Bonos:{{evaluate_garantor.bonus_calculated +' '}}<b>|</b> Liquido para la Calificacio:{{evaluate_garantor.payable_liquid_calculated }}</p>
                           <p class="py-0 mb-0">Indice de Endeudamineto: {{evaluate_garantor.indebtnes_calculated+'% '}}<b>|</b> <b>{{evaluate_garantor.is_valid?'Cubre la Cuota ':'No Cubre la Cuota'}}</b></p>
                           <div class="text-right"  v-show="evaluate_garantor.is_valid">
@@ -230,49 +228,31 @@
                     </v-layout>
                   </v-card-text>
                 </v-col>
-
-     <v-col cols="12" md="12">
+                <v-col cols="12" md="12">
                   <v-card-text class="py-0">
                     <v-layout row wrap>
                       <v-flex xs12 class="px-2">
                         <fieldset class="pa-3">
                           <p class="py-0 mb-0">Monto del Prestamo: {{simulator_guarantors.amount_requested +' '}}<b>|</b> Plazo del Prestamo:{{simulator_guarantors.amount_requested +' '}}<b>|</b> Cuota del Titular:{{simulator_guarantors.quota_calculated_estimated_total  }}</p>
-                                    {{garantes_simulador}}
-
                           <v-progress-linear></v-progress-linear>
-
                             <ul style="list-style: none" class="pa-0">
                               <li v-for="(afiliados,i) in simulator_guarantors.affiliates" :key="i" >
                                 <v-progress-linear></v-progress-linear>
                                 <p class="py-0 mb-0">Nombre del Afiliado: {{ afiliados.affiliate_id}}</p>
                                 <p class="py-0 mb-0">Cuota: {{afiliados.quota_calculated+"  "}}{{"  "+"Indice de Endeudamiento:"+afiliados.indebtedness_calculated}}{{" "}}Porcentaje de Pago: {{" "+afiliados.payment_percentage}}%</p>
-                    
                               </li>
                             </ul>
-                          
-                          
-                          <div class="text-right"  v-show="evaluate_garantor.is_valid">
-                            <v-btn
-                              class="py-0"
-                              color="info"
-                              rounded
-                               x-small
-                              @click="simulador()">Calculo de Cuota
-                            </v-btn>
-                          </div>
                         </fieldset>
                       </v-flex>
                     </v-layout>
                   </v-card-text>
                 </v-col>
-
               </v-row>
             </v-container>
           </v-card>
         </v-col>
       </v-row>
       <v-card>
-        
       </v-card>
     </v-container>
 </template>
@@ -286,6 +266,10 @@
       required: true
     },
     garantes: {
+      type: Array,
+      required: true
+    },
+    guarantors: {
       type: Array,
       required: true
     },
@@ -334,6 +318,7 @@
     simulator_guarantors:{},
     loan:[],
     index: [],
+    guarantor_objeto:{},
     garantes_detalle:[],
     garantes_simulador:[],
     guarantor:[null],
@@ -409,10 +394,17 @@ ver()
       this.garante_boletas.affiliate_id=this.affiliate_garantor.affiliate.id
       this.garante_boletas.liquid_qualification_calculated=this.evaluate_garantor.payable_liquid_calculated
       
+      this.guarantor_objeto.affiliate_id=this.affiliate_garantor.affiliate.id
+      this.guarantor_objeto.bonus_calculated=this.evaluate_garantor.bonus_calculated
+       this.guarantor_objeto.payable_liquid_calculated=this.evaluate_garantor.payable_liquid_calculated
+ 
+
       this.garantes.push(this.affiliate_garantor,'hola');
       this.garantes_detalle.push(this.affiliate_garantor.affiliate.full_name);
       this.garantes_simulador.push(this.garante_boletas);
+      this.guarantors.push(this.guarantor_objeto);
       this.garante_boletas={}
+      this.guarantor_objeto={}
     console.log('entro a garantes ==> '+this.garantes)
      console.log('entro a garantes ==> '+this.garantes_detalle)
 
@@ -468,15 +460,14 @@ console.log('este es el garante'+this.garantes[0])
               liquid_calculated:this.garantes_simulador
           })
           this.simulator_guarantors = res.data
-          console.log('entro al simulador'+this.simulator_guarantors)
+    for (this.j = 0; this.j< this.guarantors.length; this.j++) {
 
-/*      for (this.j = 0; this.j< this.simulator.length; this.j++) {
+this.guarantors[this.j].payment_percentage=this.simulator_guarantors.affiliates[this.j].payment_percentage
+this.guarantors[this.j].indebtedness_calculated=this.simulator_guarantors.affiliates[this.j].indebtedness_calculated
+this.guarantors[this.j].liquid_qualification_calculated=this.simulator_guarantors.affiliates[this.j].liquid_qualification_calculated
 
-        this.simulator[this.j].affiliate_nombres=this.datos_calculadora_hipotecario[this.j].affiliate_name
-
-        console.log(""+this.simulator[this.j].affiliate_nombres)
       }
-*/
+
 
       } catch (e) {
         console.log(e)
