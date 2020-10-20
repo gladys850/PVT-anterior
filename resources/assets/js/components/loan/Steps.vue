@@ -52,12 +52,13 @@
               :bonos.sync="bonos"
               :payable_liquid="payable_liquid"
               :intervalos.sync="intervalos"
-              :contributions1.sync="contributions1"
               :modalidad.sync="modalidad"
               :prueba.sync="prueba"
               :affiliate.sync="affiliate"
               :contrib_codebtor="contrib_codebtor"
               :loan_detail.sync="loan_detail"
+              :loan.sync="loan"
+              :edit_refi_repro.sync="edit_refi_repro"
             />
             <v-container class="py-0">
               <v-row>
@@ -285,7 +286,6 @@ export default {
     datos:{},
     reference:[],
     intervalos:{},
-    contributions1:[{}],//crear la cantidad de objetos necesarios segun modalidad 3 o 1
     payable_liquid:[0,0,0],
     bonos:[0,0,0,0],
     personal_reference:{},
@@ -296,11 +296,21 @@ export default {
     liquid_calificated:[],
     editedIndex: -1,
     loan_property: {},
-    cosigners:[]
+    cosigners:[],
+    //Variables reprogramacion y refinanciamiento
+    loan: {},
+    edit_refi_repro: false
+
   }),
   computed: {
     isNew() {
       return this.$route.params.hash == 'new'
+    },
+    refinancing() {
+      return this.$route.params.hash == 'refinancing'
+    },
+    reprogramming() {
+      return this.$route.params.hash == 'reprogramming'
     }
   },
   watch: {
@@ -316,6 +326,9 @@ export default {
       this.beforeStep(val)
     })
   },
+  mounted(){
+    this.getLoan(this.$route.query.loan_id)
+  },
   methods: {
     nextStep (n) {
       if (n == this.steps) {
@@ -324,15 +337,14 @@ export default {
       else {
         if(n==1)
         {
-          this.getLoan(10)
-          if(this.modalidad.procedure_type_id==12)
-          { this.liquidCalificated()
-            console.log('esta entro por verdad con la modalidad'+ this.modalidad.procedure_type_id)
-          }
-          else{
-             //this.Calculator() TODO borrar
+          if(this.isNew){
             this.liquidCalificated()
-            console.log('esta entro por false'+this.modalidad.procedure_type_id)
+          }
+          if(this.refinancing){
+            this.liquidCalificated()
+          }
+          if(this.reprogramming){
+            this.liquidCalificated()
           }
         }
         if(n==2)
@@ -638,9 +650,12 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
     },
     async getLoan(id) {
       try {
+        let prueba_mod=10//FIXME borrar una vez se obtenga la modalidad troncal
         this.loading = true
         let res = await axios.get(`loan/${id}`)
         this.loan_sismu = res.data
+        this.loan = res.data
+        this.loan.procedure_modality_id = prueba_mod
         console.log(this.loan)
       } catch (e) {
         console.log(e)

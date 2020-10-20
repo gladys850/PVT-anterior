@@ -10,7 +10,7 @@
                     <v-container class="py-0">
                       <v-row>
                         <v-col cols="12" :md="window_size" class="py-0 text-center">
-                          MODALIDAD DEL PRÉSTAMO
+                          MODALIDAD DEL PRÉSTAMO {{loan.procedure_modality_id}} 
                         </v-col>
                         <v-col cols="12" :md="window_size" class="py-0 text-center">
                           INTERVALO DE LOS MONTOS
@@ -126,7 +126,6 @@
               </v-container>
               <BallotsHipotecary
                 v-show="hipotecario"
-                :contributions1.sync="contributions1"
                 :contrib_codebtor="contrib_codebtor"
                 :modalidad.sync="modalidad"
                 :affiliate.sync="affiliate"/>
@@ -155,11 +154,6 @@ export default {
   
   }),
    props: {
-
-    contributions1: {
-      type: Array,
-      required: true
-    },
     modalidad: {
       type: Object,
       required: true
@@ -195,8 +189,11 @@ export default {
     affiliate: {
       type: Object,
       required: true
+    },
+    loan: {
+      type: Object,
+      required: true
     }
-
   },
     components: {
     BallotsHipotecary
@@ -204,13 +201,13 @@ export default {
    beforeMount() {
     this.getLoanIntervals()
   },
-watch:{
+/*watch:{
   loanTypeSelected(newVal, oldVal){
     if(newVal!=oldVal){
       this.getBallots(this.$route.query.affiliate_id)
     }
   }
-},
+},*/
   methods:
  {//muestra los intervalos de acuerdo a una modalidad
     Onchange(){

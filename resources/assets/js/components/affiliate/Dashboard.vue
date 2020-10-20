@@ -274,7 +274,7 @@ export default {
       }
     },
 
-     async get_refinanciamiento(affiliateid, loanid) {
+    /* async get_refinanciamiento(affiliateid, loanid) {
       try {
         this.loading = true;
         let res = await axios.get(`affiliate/${affiliateid}/${loanid}`);
@@ -284,7 +284,7 @@ export default {
       } finally {
         this.loading = false;
       }
-    },
+    },*/
 
     async getLoan(id) {
       try {
@@ -296,8 +296,9 @@ export default {
         });
         this.loan = res.data.data;
         let num = this.loan.length;
+        /* FIXME no tiene uso
         let idl=this.loan.id;
-       
+       */
       } catch (e) {
         console.log(e);
       } finally {
@@ -348,14 +349,28 @@ export default {
       
     },
     validateRefinancing(a_id, l_id){
-      this.$router.push({ name: 'loanAdd',  params: { hash: 'refinancing'}, query:{ affiliate_id: a_id, loan_id: l_id } })
+      for(let i = 0; i < this.loan.length; i++){
+        if(l_id == this.loan[i].id){
+          if(this.loan[i].procedure_modality_id != 32 && this.loan[i].procedure_modality_id != 33){
+            this.$router.push({ name: 'loanAdd',  params: { hash: 'refinancing'}, query:{ affiliate_id: a_id, loan_id: l_id } })
+          }else{
+            this.toastr.error("No se puede realizar el REFINANCIAMIENTO para un trámite de Anticipo")
+          }
+        }
+      }
     },
 
     validateReprogramming(a_id, l_id){
-      this.$router.push({ name: 'loanAdd',  params: { hash: 'reprogramming'}, query:{ affiliate_id: a_id, loan_id: l_id } })
+      for(let i = 0; i < this.loan.length; i++){
+        if(l_id == this.loan[i].id){
+          if(this.loan[i].procedure_modality_id != 32 && this.loan[i].procedure_modality_id != 33){
+            this.$router.push({ name: 'loanAdd',  params: { hash: 'reprogramming'}, query:{ affiliate_id: a_id, loan_id: l_id } })
+          }else{
+            this.toastr.error("No se puede realizar la REPROGRAMACIÓN para un trámite de Anticipo")
+          }
+        }
+      }
     }
-
-    
   }
 };
 </script>

@@ -132,10 +132,6 @@ export default {
       type: Object,
       required: true
     },
-    contributions1: {
-      type: Array,
-      required: true
-    },
     contrib_codebtor: {
       type: Array,
       required: true
