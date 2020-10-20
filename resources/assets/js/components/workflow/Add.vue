@@ -278,7 +278,7 @@ export default {
     datos: {},
     formulario: [],
     observations: [],
-    spouse: [],
+    spouse:{},
     intervalos: {},
     modalidad: {},
     icons: true,
@@ -357,8 +357,8 @@ export default {
         console.log("este es el loan" + this.loan)
         let res1 = await axios.get(`affiliate/${this.loan.lenders[0].id}`)
         this.affiliate = res1.data
-        if (this.loan.disbursable_type=='spouse') {
-        this.getSpouse(this.loan.disbursable_id)
+        if (this.loan.disbursable_type=='spouses') {
+        this.getSpouse(this.affiliate.id)
         }
         this.setBreadcrumbs()
         console.log(this.loan)

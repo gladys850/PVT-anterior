@@ -26,7 +26,7 @@
             <p></p>
           </v-col>
           <v-col cols="12" class="text-center py-0">
-            <div v-if="loan.disbursable_type == 'spouse'">
+            <div v-if="loan.disbursable_type == 'spouses'">
               <v-card
                 class="py-0"
                 color="#406b32"
@@ -111,7 +111,9 @@ export default {
     unit_name: null,
     last_name: null,
     mothers_last_name: null,
-    first_name: null,
+    last_name:null,
+    first_name:null,
+    identity_card: null,
     procedure_modality_name: ""
   }),
   computed: {
