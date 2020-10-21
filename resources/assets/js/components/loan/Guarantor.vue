@@ -122,7 +122,7 @@
               <v-row>
                 <v-col class="text-center">
                     <h4 class="error--text" > CANTIDAD DE GARANTES QUE NECESITA ESTA MODALIDAD:{{modalidad_guarantors}}<br>
-                  EL GARANTE DEBE ESTAR ENTRE UNA CATEGORIA DE {{prueba[1]}} A {{prueba[2]}} </h4>
+                  EL GARANTE DEBE ESTAR ENTRE UNA CATEGORIA DE {{loan_detail.min_guarantor_category}} A {{loan_detail.max_guarantor_category}} </h4>
                 </v-col>
               </v-row>
             </v-container>
@@ -265,10 +265,6 @@
       type: Object,
       required: true
     },
-    garantes: {
-      type: Array,
-      required: true
-    },
     guarantors: {
       type: Array,
       required: true
@@ -277,14 +273,6 @@
       type: Object,
       required: true
     },
-    prueba: {
-      type: Array,
-      required: true
-    },
-    /*datos: {
-      type: Object,
-      required: true
-    },*/
     modalidad_guarantors: {
       type: Number,
       required: true,
@@ -398,23 +386,19 @@ ver()
       this.guarantor_objeto.bonus_calculated=this.evaluate_garantor.bonus_calculated
        this.guarantor_objeto.payable_liquid_calculated=this.evaluate_garantor.payable_liquid_calculated
  
-
-      this.garantes.push(this.affiliate_garantor,'hola');
       this.garantes_detalle.push(this.affiliate_garantor.affiliate.full_name);
       this.garantes_simulador.push(this.garante_boletas);
       this.guarantors.push(this.guarantor_objeto);
       this.garante_boletas={}
       this.guarantor_objeto={}
-    console.log('entro a garantes ==> '+this.garantes)
+
      console.log('entro a garantes ==> '+this.garantes_detalle)
 
 this.clear()
     },
     deleteOtherDocument(i) {
-      this.garantes.splice(i, 1);
       this.garantes_detalle.splice(i, 1);
-      console.log("other1 " + this.garantes);
-  
+
       console.log("other2 " + this.garantes_detalle);
     },
    /* async añadir()

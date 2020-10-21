@@ -62,7 +62,7 @@
                   <v-layout row wrap>
                     <v-flex xs12 class="px-2">
                       <fieldset class="pa-3">
-                        <ValidationProvider v-slot="{ errors }" name="plazo" :rules="'numeric|min_value:'+datos.minimum_term+'|max_value:'+datos.maximum_term" mode="aggressive">
+                        <ValidationProvider v-slot="{ errors }" name="plazo" :rules="'numeric|min_value:'+loan_detail.minimum_term+'|max_value:'+loan_detail.maximum_term" mode="aggressive">
                           <v-text-field
                             :error-messages="errors"
                             label="Plazo en Meses"
@@ -70,7 +70,7 @@
                             v-on:keyup.enter="simuladores()"
                           ></v-text-field>
                         </ValidationProvider>
-                       <ValidationProvider v-slot="{ errors }" name="monto solicitado" :rules="'numeric|min_value:'+datos.minimun_amoun+'|max_value:'+datos.maximun_amoun" mode="aggressive">
+                       <ValidationProvider v-slot="{ errors }" name="monto solicitado" :rules="'numeric|min_value:'+loan_detail.minimun_amoun+'|max_value:'+loan_detail.maximun_amoun" mode="aggressive">
                           <v-text-field
                             :error-messages="errors"
                             label="Monto Solicitado"
@@ -147,10 +147,6 @@ export default {
       type: Number,
       required: true,
       default: 0
-    },
-    datos: {
-      type: Object,
-      required: true
     },
     modalidad: {
       type: Object,

@@ -176,6 +176,10 @@ import CoDebtor from '@/components/loan/CoDebtor'
     CoDebtor
   },
     props: {
+      destino: {
+      type: Array,
+      required: true
+    },
     loan_detail: {
       type: Object,
       required: true
@@ -196,7 +200,6 @@ import CoDebtor from '@/components/loan/CoDebtor'
   },
   data: () => ({
     cuenta:null,
-    destino:[],
     visible:false,
     espacio:true,
     loanTypeSelected:null,
@@ -243,7 +246,6 @@ import CoDebtor from '@/components/loan/CoDebtor'
       this.loan_detail.payment_type_id=this.loanTypeSelected,
       this.loan_detail.number_payment_type=this.cuenta,
       this.loan_detail.destiny_id=this.loanTypeSelected2
-      this.getLoanDestiny()
     },
      async getPaymentTypes() {
       try {
@@ -269,7 +271,7 @@ import CoDebtor from '@/components/loan/CoDebtor'
         this.loading = false
       }
     },
-     async getLoanDestiny() {
+  /*   async getLoanDestiny() {
       try {
         this.loading = true
         let res = await axios.get(`procedure_type/${this.intervalos.procedure_type_id}/loan_destiny`)
@@ -280,7 +282,7 @@ import CoDebtor from '@/components/loan/CoDebtor'
       } finally {
         this.loading = false
       }
-    },
+    },*/
   }
 }
 </script>
