@@ -10,7 +10,7 @@
                     <v-container class="py-0">
                       <v-row>
                         <v-col cols="12" :md="window_size" class="py-0 text-center">
-                          MODALIDAD DEL PRÉSTAMO {{loan.procedure_modality_id}} 
+                          MODALIDAD DEL PRÉSTAMO {{loan.procedure_modality_id}}
                         </v-col>
                         <v-col cols="12" :md="window_size" class="py-0 text-center">
                           INTERVALO DE LOS MONTOS
@@ -25,11 +25,12 @@
                           <v-select
                             dense
                             v-model="loanTypeSelected"
-                            @change="Onchange()"
+                            :Onchange="Onchange()"
                             :items="modalities"
                             item-text="name"
                             item-value="id"
                             required
+                            :disabled="edit_refi_repro"
                           ></v-select>
                         </v-col>
                         <v-col cols="12" :md="window_size" class="py-0 text-center">
@@ -145,7 +146,7 @@ export default {
     monto:null,
     plazo:null,
     interval:[],
-    loanTypeSelected:null,
+    //loanTypeSelected:null,
     visible:false,
 
     hipotecario:false,
@@ -193,25 +194,34 @@ export default {
     loan: {
       type: Object,
       required: true
+    },
+    edit_refi_repro: {
+      type: Boolean,
+      required: true
+    },
+    loanTypeSelected:{
+      type: Number,
+      required: true,
+      default: 0
     }
   },
-    components: {
+  components: {
     BallotsHipotecary
   },
-   beforeMount() {
+  mounted() {
     this.getLoanIntervals()
   },
-/*watch:{
-  loanTypeSelected(newVal, oldVal){
+  watch: {
+    loanTypeSelected(newVal, oldVal){
     if(newVal!=oldVal){
-      this.getBallots(this.$route.query.affiliate_id)
+      this.Onchange()
     }
   }
-},*/
+},
   methods:
  {//muestra los intervalos de acuerdo a una modalidad
     Onchange(){
- 
+       
       for (let i = 0; i< this.interval.length; i++) {
         if(this.loanTypeSelected==this.interval[i].procedure_type_id){
           if(this.loanTypeSelected==12){
@@ -310,56 +320,55 @@ export default {
       }
     },
     //Metodo para sacar boleta de un afiliado
-  async getBallots(id) {
-    try {
-      let data_ballots=[]
-      let res = await axios.get(`affiliate/${id}/contribution`, {
-        params:{
-          city_id: this.$store.getters.cityId,
-          sortBy: ['month_year'],
-          sortDesc: [1],
-          per_page: this.modalidad.quantity_ballots,
-          page: 1,
-        }
-      })
-      
-      console.log("-------")
-      console.log(this.modalidad.quantity_ballots)
-      data_ballots = res.data.data  
-      console.log(data_ballots)
-//debugger
-      if(res.data.valid){
-        this.editar=false
-         //Carga los datos en los campos para ser visualizados en la interfaz    
-        for (let i = 0; i < data_ballots.length; i++) {//colocar 1
-          this.payable_liquid[i] = data_ballots[i].payable_liquid
-          console.log(this.payable_liquid[i])
-          if(i==0){//solo se llena los bonos de la ultima boleta de pago
-            this.bonos[0] = data_ballots[0].border_bonus
-            this.bonos[1] = data_ballots[0].east_bonus
-            this.bonos[2] = data_ballots[0].seniority_bonus
-            this.bonos[3] = data_ballots[0].public_security_bonus
-
-            console.log(this.bonos[0])
-            console.log(this.bonos[1])
-            console.log(this.bonos[2])
-            console.log(this.bonos[3])
+    async getBallots(id) {
+      try {
+        let data_ballots=[]
+        let res = await axios.get(`affiliate/${id}/contribution`, {
+          params:{
+            city_id: this.$store.getters.cityId,
+            sortBy: ['month_year'],
+            sortDesc: [1],
+            per_page: this.modalidad.quantity_ballots,
+            page: 1,
           }
+        })
+
+        console.log("-------")
+        console.log(this.modalidad.quantity_ballots)
+        data_ballots = res.data.data  
+        console.log(data_ballots)
+
+        if(res.data.valid){
+          this.editar=false
+           //Carga los datos en los campos para ser visualizados en la interfaz    
+          for (let i = 0; i < data_ballots.length; i++) {//colocar 1
+            this.payable_liquid[i] = data_ballots[i].payable_liquid
+            console.log(this.payable_liquid[i])
+            if(i==0){//solo se llena los bonos de la ultima boleta de pago
+              this.bonos[0] = data_ballots[0].border_bonus
+              this.bonos[1] = data_ballots[0].east_bonus
+              this.bonos[2] = data_ballots[0].seniority_bonus
+              this.bonos[3] = data_ballots[0].public_security_bonus
+
+              console.log(this.bonos[0])
+              console.log(this.bonos[1])
+              console.log(this.bonos[2])
+              console.log(this.bonos[3])
+            }
+
+          }
+        } else{
+
+            console.log("No se tienen boletas del ultimo mes")
+            //this.clearForm()//TODO ver si es necesario, ya que sin la funcion igual se carga los datos declarados por defecto de las variables
 
         }
-      } else{
-
-          console.log("No se tienen boletas del ultimo mes")
-          //this.clearForm()//TODO ver si es necesario, ya que sin la funcion igual se carga los datos declarados por defecto de las variables
-          
+      } catch (e) {
+        console.log(e)
+      } finally {
+        this.loading = false
       }
-    } catch (e) {
-      console.log(e)
-    } finally {
-      this.loading = false
-    }
-  },
-
- }
+    },
+  }
 };
 </script>

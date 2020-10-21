@@ -59,6 +59,7 @@
               :loan_detail.sync="loan_detail"
               :loan.sync="loan"
               :edit_refi_repro.sync="edit_refi_repro"
+              :loanTypeSelected.sync="loanTypeSelected"
             />
             <v-container class="py-0">
               <v-row>
@@ -299,7 +300,8 @@ export default {
     cosigners:[],
     //Variables reprogramacion y refinanciamiento
     loan: {},
-    edit_refi_repro: false
+    edit_refi_repro: false,
+    loanTypeSelected: 0
 
   }),
   computed: {
@@ -617,9 +619,8 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
 
     async savePersonalReference() {
       try {
-        let i
         let ids_codebtor=[]
-        for (i = 0; i < this.personal_codebtor.length; i++) {
+        for (let i = 0; i < this.personal_codebtor.length; i++) {
           let res = await axios.post(`personal_reference`, {
             city_identity_card_id: this.personal_codebtor[i].city_identity_card_id,
             identity_card: this.personal_codebtor[i].identity_card,
@@ -648,19 +649,23 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
         this.loading = false
       }
     },
-    async getLoan(id) {
+      async getLoan(id) {
       try {
-        let prueba_mod=10//FIXME borrar una vez se obtenga la modalidad troncal
         this.loading = true
         let res = await axios.get(`loan/${id}`)
         this.loan_sismu = res.data
         this.loan = res.data
-        this.loan.procedure_modality_id = prueba_mod
+      let res2= await axios.get(`procedure_modality/${this.loan.procedure_modality_id}`)
+      let mod_refi_repro=res2.data.procedure_type_id
+       console.log("------procedure_modality---")
+      console.log(mod_refi_repro)
+      this.loanTypeSelected=mod_refi_repro
+      this.edit_refi_repro=true
         console.log(this.loan)
       } catch (e) {
         console.log(e)
       } finally {
-        this.loading = false
+        //this.loading = false
       }
     },
   }

@@ -36,9 +36,9 @@
               >
                 <v-card-text class="headline font-weight-bold">
                   <v-icon large left style="font-size: 50px;">
-                    mdi-account-supervisor-circle
+                    mdi-account-heart
                   </v-icon>
-                  <h6><strong>CONYUGUE:</strong> {{ spouseNombre }}</h6>
+                  <h6><strong>CONYUGUE:</strong> {{ $options.filters.fullName(spouse, true) }}</h6>
                   <h6><strong>C.I:</strong> {{ spouse.identity_card }}</h6>
                 </v-card-text>
               </v-card>
@@ -120,7 +120,7 @@ export default {
     isNew() {
       return this.$route.params.id == "new"
     },
-    spouseNombre: function() {
+    /*spouseNombre: function() {
       return (
         this.spouse.mothers_last_name +
         " " +
@@ -128,7 +128,7 @@ export default {
         " " +
         this.spouse.first_name
       );
-    }
+    }*/
   },
 
   watch: {
