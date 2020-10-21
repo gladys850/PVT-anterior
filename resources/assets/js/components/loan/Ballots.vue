@@ -10,7 +10,7 @@
                     <v-container class="py-0">
                       <v-row>
                         <v-col cols="12" :md="window_size" class="py-0 text-center">
-                          MODALIDAD DEL PRÉSTAMO {{loan.procedure_modality_id}}
+                          MODALIDAD DEL PRÉSTAMO
                         </v-col>
                         <v-col cols="12" :md="window_size" class="py-0 text-center">
                           INTERVALO DE LOS MONTOS
@@ -171,10 +171,6 @@ export default {
       type: Array,
       required: true
     },
-     prueba: {
-      type: Array,
-      required: true
-    },
     intervalos: {
       type: Object,
       required: true
@@ -187,10 +183,10 @@ export default {
       type: Object,
       required: true
     },
-    affiliate: {
+      affiliate: {
       type: Object,
       required: true
-    },
+    },    
     loan: {
       type: Object,
       required: true
@@ -205,7 +201,7 @@ export default {
       default: 0
     }
   },
-  components: {
+    components: {
     BallotsHipotecary
   },
   mounted() {
@@ -221,7 +217,7 @@ export default {
   methods:
  {//muestra los intervalos de acuerdo a una modalidad
     Onchange(){
-       
+
       for (let i = 0; i< this.interval.length; i++) {
         if(this.loanTypeSelected==this.interval[i].procedure_type_id){
           if(this.loanTypeSelected==12){
@@ -242,7 +238,7 @@ export default {
           this.intervalos.minimum_term= this.interval[i].minimum_term
           this.intervalos.procedure_type_id= this.loanTypeSelected
           //debugger
-         
+
           this.getLoanModality(this.$route.query.affiliate_id)
           //this.getBallots(this.$route.query.affiliate_id)
 
@@ -289,11 +285,9 @@ export default {
           console.log("MODALIDAD")
           console.log(this.modalidad)
     
-   
-          this.prueba[0] = loan_modality.loan_modality_parameter.guarantors //FIXME prueba, en este componente se recuperan algunos datos, verificar si se usa en otro componente
-          this.prueba[1] = loan_modality.loan_modality_parameter.min_guarantor_category
-          this.prueba[2] = loan_modality.loan_modality_parameter.max_guarantor_category
-          this.prueba[3] = loan_modality.loan_modality_parameter.personal_reference
+          this.loan_detail.min_guarantor_category= loan_modality.loan_modality_parameter.min_guarantor_category
+          this.loan_detail.max_guarantor_category= loan_modality.loan_modality_parameter.max_guarantor_category
+
           if(loan_modality.loan_modality_parameter.quantity_ballots>1){
           this.visible = true
           //debugger
@@ -320,55 +314,48 @@ export default {
       }
     },
     //Metodo para sacar boleta de un afiliado
-    async getBallots(id) {
-      try {
-        let data_ballots=[]
-        let res = await axios.get(`affiliate/${id}/contribution`, {
-          params:{
-            city_id: this.$store.getters.cityId,
-            sortBy: ['month_year'],
-            sortDesc: [1],
-            per_page: this.modalidad.quantity_ballots,
-            page: 1,
-          }
-        })
-
-        console.log("-------")
-        console.log(this.modalidad.quantity_ballots)
-        data_ballots = res.data.data  
-        console.log(data_ballots)
-
-        if(res.data.valid){
-          this.editar=false
-           //Carga los datos en los campos para ser visualizados en la interfaz    
-          for (let i = 0; i < data_ballots.length; i++) {//colocar 1
-            this.payable_liquid[i] = data_ballots[i].payable_liquid
-            console.log(this.payable_liquid[i])
-            if(i==0){//solo se llena los bonos de la ultima boleta de pago
-              this.bonos[0] = data_ballots[0].border_bonus
-              this.bonos[1] = data_ballots[0].east_bonus
-              this.bonos[2] = data_ballots[0].seniority_bonus
-              this.bonos[3] = data_ballots[0].public_security_bonus
-
-              console.log(this.bonos[0])
-              console.log(this.bonos[1])
-              console.log(this.bonos[2])
-              console.log(this.bonos[3])
-            }
-
-          }
-        } else{
-
-            console.log("No se tienen boletas del ultimo mes")
-            //this.clearForm()//TODO ver si es necesario, ya que sin la funcion igual se carga los datos declarados por defecto de las variables
-
+  async getBallots(id) {
+    try {
+      let data_ballots=[]
+      let res = await axios.get(`affiliate/${id}/contribution`, {
+        params:{
+          city_id: this.$store.getters.cityId,
+          sortBy: ['month_year'],
+          sortDesc: [1],
+          per_page: this.modalidad.quantity_ballots,
+          page: 1,
         }
-      } catch (e) {
-        console.log(e)
-      } finally {
-        this.loading = false
+      })
+      
+      console.log("-------")
+      console.log(this.modalidad.quantity_ballots)
+      data_ballots = res.data.data  
+      console.log(data_ballots)
+    
+      if(res.data.valid){
+        this.editar=false
+         //Carga los datos en los campos para ser visualizados en la interfaz    
+        for (let i = 0; i < data_ballots.length; i++) {//colocar 1
+          this.payable_liquid[i] = data_ballots[i].payable_liquid
+          if(i==0){//solo se llena los bonos de la ultima boleta de pago
+            this.bonos[0] = data_ballots[0].border_bonus
+            this.bonos[1] = data_ballots[0].east_bonus
+            this.bonos[2] = data_ballots[0].seniority_bonus
+            this.bonos[3] = data_ballots[0].public_security_bonus
+          }
+        }
+
+      } else{
+
+          console.log("No se tienen boletas del ultimo mes")
+          //this.clearForm()//TODO ver si es necesario, ya que sin la funcion igual se carga los datos declarados por defecto de las variables
       }
-    },
-  }
+    } catch (e) {
+      console.log(e)
+    } finally {
+      this.loading = false
+    }
+  },
+ }
 };
 </script>
