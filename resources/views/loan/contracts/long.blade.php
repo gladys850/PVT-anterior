@@ -14,7 +14,7 @@
     </div>
 </div>
 <?php $modality = $loan->modality;
-if(($modality->name == 'Refinanciamiento de prestamos a largo Plazo para el sector activo - CPOP' || $modality->name == 'Refinanciamiento de prestamos a largo Plazo para el sector pasivo - CPOP') && $parent_loan){?>
+if(($modality->name == 'Refinanciamiento de prestamos a largo Plazo para el sector activo - CPOP' || $modality->name == 'Refinanciamiento de prestamos a largo Plazo para el sector pasivo - CPOP'|| $modality->name == 'Refinanciamiento de préstamos a largo Plazo con garantía personal para el sector activo y personal Adm Policial') && $parent_loan){?>
 <div class="block text-justify">
     <div>
         Conste en el presente contrato de préstamo de {{ $title }}, que al solo reconocimiento de firmas y rúbricas ante autoridad competente será elevado a Instrumento Público, por lo que las partes que intervienen lo suscriben al tenor de las siguientes claúsulas y condiciones:
@@ -48,7 +48,7 @@ if(($modality->name == 'Refinanciamiento de prestamos a largo Plazo para el sect
     <div>
     <?php $modality = $loan->modality;
             if(($modality->name == 'Refinanciamiento de prestamos a largo Plazo para el sector pasivo - CPOP') && $lender->afp){ ?>
-        <b>QUINTA.- (DE LA FORMA DE PAGO Y OTRAS CONTINGENGIAS):</b> Para el cumplimiento estricto de la obligación (capital e intereses) el PRESTATARIO, se obliga a cumplir con la cuota de amortización en forma mensual mediante pago directo en la oficina central de la MUSERPOL de la ciudad de La Paz o efectuar el depósito en la cuenta bancaria de la MUSERPOL y enviar la boleta de depósito original a la oficina central inmediatamente; caso contrario el PRESTATARIO se hará pasible al recargo correspondiente a los intereses que se generen al día de pago por la deuda contraída.
+        <b>SEXTA.- (DE LA FORMA DE PAGO Y OTRAS CONTINGENGIAS):</b> Para el cumplimiento estricto de la obligación (capital e intereses) el PRESTATARIO, se obliga a cumplir con la cuota de amortización en forma mensual mediante pago directo en la oficina central de la MUSERPOL de la ciudad de La Paz o efectuar el depósito en la cuenta bancaria de la MUSERPOL y enviar la boleta de depósito original a la oficina central inmediatamente; caso contrario el PRESTATARIO se hará pasible al recargo correspondiente a los intereses que se generen al día de pago por la deuda contraída.
         <?php }
         else{
             if($modality->name == 'Refinanciamiento de prestamos a largo Plazo para el sector activo - CPOP'){
@@ -56,8 +56,12 @@ if(($modality->name == 'Refinanciamiento de prestamos a largo Plazo para el sect
             }
             if($modality->name == 'Refinanciamiento de prestamos a largo Plazo para el sector pasivo - CPOP'){
                 $quinta = 'Servicio Nacional del Sistema de Reparto SENASIR';
-            }?>
-        <b>QUINTA.- (DE LA FORMA DE PAGO Y OTRAS CONTINGENGIAS):</b> Para el cumplimiento estricto de la obligación (capital e intereses) el PRESTATARIO, autoriza expresamente a MUSERPOL practicar los descuentos respectivos de los haberes que percibe en forma mensual a través del {{ $quinta }} conforme al Reglamento de Préstamos.
+            }
+            if($modality->name == 'Refinanciamiento de préstamos a largo Plazo con garantía personal para el sector activo y personal Adm Policial'){
+                $quinta = 'Servicio Nacional del Sistema de Reparto SENASIR';
+            }
+            ?>
+        <b>SEXTA.- (DE LA FORMA DE PAGO Y OTRAS CONTINGENGIAS):</b> Para el cumplimiento estricto de la obligación (capital e intereses) el PRESTATARIO, autoriza expresamente a MUSERPOL practicar los descuentos respectivos de los haberes que percibe en forma mensual a través del {{ $quinta }} conforme al Reglamento de Préstamos.
         <div>
         Si por cualquier motivo la MUSERPOL estuviera imposibilitada de realizar el descuento por el medio señalado, el PRESTATARIO se obliga a cumplir con la cuota de amortización mediante pago directo en la Oficina Central de MUSERPOL de la ciudad de La Paz o efectuar depósito bancario en la cuenta fiscal de la MUSERPOL y enviar la boleta de depósito original a la Oficina Central inmediatamente; sin necesidad de previo aviso; caso contrario el PRESTATARIO se hará pasible al recargo correspondiente a los intereses que se generen al día de pago por la deuda contraida.
         </div>
@@ -67,7 +71,7 @@ if(($modality->name == 'Refinanciamiento de prestamos a largo Plazo para el sect
         <?php }?>
     </div>
     <div>
-        <b>SEXTA.- (DERECHOS DEL PRESTATARIO):</b> Conforme al Artículo 29 del Reglamento de Préstamos las partes reconocen expresamente como derechos irrenunciables del PRESTATARIO, lo siguiente:
+        <b>SÉPTIMA.- (DERECHOS DEL PRESTATARIO):</b> Conforme al Artículo 29 del Reglamento de Préstamos las partes reconocen expresamente como derechos irrenunciables del PRESTATARIO, lo siguiente:
     </div>
     <div>
         <ol type="a">
@@ -79,7 +83,7 @@ if(($modality->name == 'Refinanciamiento de prestamos a largo Plazo para el sect
         </ol>
     </div>
     <div>
-        <b>SÉPTIMA.- (OBLIGACIONES DEL PRESTATARIO):</b> Conforme al Artículo 30 del Reglamento de Préstamos, las partes reconocen expresamente como obligaciones del PRESTATARIO, lo siguiente:
+        <b>OCTAVA.- (OBLIGACIONES DEL PRESTATARIO):</b> Conforme al Artículo 30 del Reglamento de Préstamos, las partes reconocen expresamente como obligaciones del PRESTATARIO, lo siguiente:
     </div>
     <div>
         <ol type="a">
@@ -95,7 +99,7 @@ if(($modality->name == 'Refinanciamiento de prestamos a largo Plazo para el sect
         </ol>
     </div>
     <div>
-        <b>OCTAVA.- (DE LA GARANTÍA):</b>El PRESTATARIO, garantiza el pago de lo adeudado con todos sus bienes, derechos y acciones habidos y por haber, presentes y futuros conforme lo determina el Art. 1335 del Código Civil y además con los beneficios del Fondo de Retiro Policial Solidario y Complemento Económico así como establece el Artículo 65 del Reglamento de Préstamos de la MUSERPOL. Asimismo se {{ count($guarantors) > 1 ? 'constituyen como garantes solidarios, mancomunados, e indivisibles' : 'constituye como garante solidario, mancomunado e indivisible' }}:
+        <b>NOVENA.- (DE LA GARANTÍA):</b>El PRESTATARIO, garantiza el pago de lo adeudado con todos sus bienes, derechos y acciones habidos y por haber, presentes y futuros conforme lo determina el Art. 1335 del Código Civil y además con los beneficios del Fondo de Retiro Policial Solidario y Complemento Económico así como establece el Artículo 65 del Reglamento de Préstamos de la MUSERPOL. Asimismo se {{ count($guarantors) > 1 ? 'constituyen como garantes solidarios, mancomunados, e indivisibles' : 'constituye como garante solidario, mancomunado e indivisible' }}:
         <?php $cont = 0; $concat_guarantor = "";
             foreach($guarantors as $guarantor){
                 $male_female_guarantor = Util::male_female($guarantor->gender);
@@ -109,8 +113,8 @@ if(($modality->name == 'Refinanciamiento de prestamos a largo Plazo para el sect
         quienes en amparo del Artículo 64 y 65 del Reglamento de Prestamos de la MUSERPOL garantizaran el cumplimiento de la obligación en caso que el PRESTATARIO incumpliera con el pago de sus obligaciones o se constituyera en mora al incumplimiento de una o más cuotas de amortización, autorizan el descuento mensual de sus haberes en su calidad de garantes bajo las mismas condiciones en las que se procedería a descontar al PRESTATARIO, hasta cubrir el pago total de la obligación pendiente de cumplimiento. Excluyendo a MUSERPOL de toda responsabilidad o reclamo posterior, sin perjuicio de que estos puedan iniciar las acciones legales correspondientes en contra del PRESTATARIO.
     </div>
     <div>
-        <b>NOVENA.- (MODIFICACIÓN DE LA SITUACIÓN DEL PRESTATARIO):</b> El PRESTATARIO y/o GARANTE en caso de fallecimiento, retiro voluntario o retiro forzoso garantizan con la totalidad de los Beneficios de Fondo de Retiro Policial Solidario y Complemento Económico otorgados por la MUSERPOL, el cumplimiento efectivo de la presente obligación; por cuanto la liquidación de dichos beneficios pasaran a cubrir el monto total de la obligación que resulte adeudada, más los intereses devengados a la fecha, previas las formalidades de ley.
-    <div>
+        <b>DECIMA.- (MODIFICACIÓN DE LA SITUACIÓN DEL PRESTATARIO):</b> El PRESTATARIO y/o GARANTE en caso de fallecimiento, retiro voluntario o retiro forzoso garantizan con la totalidad de los Beneficios de Fondo de Retiro Policial Solidario y Complemento Económico otorgados por la MUSERPOL, el cumplimiento efectivo de la presente obligación; por cuanto la liquidación de dichos beneficios pasaran a cubrir el monto total de la obligación que resulte adeudada, más los intereses devengados a la fecha, previas las formalidades de ley.
+    </div>
     <div>
         En caso de que se haya modificado la situación del PRESTATARIO y/o GARANTE del sector activo al sector pasivo de la Policía Boliviana teniendo un saldo deudor respecto del préstamo obtenido, este acepta amortizar la deuda con su complemento económico, en caso de corresponderle debiendo al efecto solicitar la reprogramación conforme establece el Artículo 90 del Reglamento de Préstamos de la MUSERPOL, por lo que el saldo se sujetara en función a su nuevo liquido pagable, estableciéndose una correlativa modificación de los plazos y cuota según sea el caso.
     </div>
@@ -121,10 +125,10 @@ if(($modality->name == 'Refinanciamiento de prestamos a largo Plazo para el sect
         La MUSERPOL, para el caso en que el PRESTATARIO o sus beneficiarios no inicien el trámite de solicitud de pago de la prestación que corresponda, se encuentra facultada a iniciar por su cuenta el trámite pertinente, cuyos costos serán imputados al total adeudado y descontados del total de la prestación.
     </div>
     <div>
-        <b>DÉCIMA.- (DE LA MORA):</b> El PRESTATARIO se constituirá en mora automática sin intimación o requerimiento alguno, de acuerdo a lo establecido por el artículo 341, (Núm. 1) del Código Civil, al incumplimiento del pago de cualquier amortización, sin necesidad de intimación o requerimiento alguno, o acto equivalente por parte de la MUSERPOL. En caso de que el PRESTATARIO incurra en mora, se le añadirá al total de la obligación adeudada, un interés moratorio anual del {{ $loan->interest->penal_interest }}%, que será efectiva por todo el tiempo que perdure el incumplimiento objeto de la mora, debiendo ser cobrados de acuerdo a la disponibilidad de saldo deudor y/o requerimiento de la MUSERPOL.
+        <b>DÉCIMA PRIMERA.- (DE LA MORA):</b> El PRESTATARIO se constituirá en mora automática sin intimación o requerimiento alguno, de acuerdo a lo establecido por el artículo 341, (Núm. 1) del Código Civil, al incumplimiento del pago de cualquier amortización, sin necesidad de intimación o requerimiento alguno, o acto equivalente por parte de la MUSERPOL. En caso de que el PRESTATARIO incurra en mora, se le añadirá al total de la obligación adeudada, un interés moratorio anual del {{ $loan->interest->penal_interest }}%, que será efectiva por todo el tiempo que perdure el incumplimiento objeto de la mora, debiendo ser cobrados de acuerdo a la disponibilidad de saldo deudor y/o requerimiento de la MUSERPOL.
     </div>
     <div>
-        <b>DÉCIMA PRIMERA.- (DE LOS EFECTOS DEL INCUMPLIMIENTO Y DE LA ACCIÓN EJECUTIVA):</b> El incumplimiento de pago mensual por parte del PRESTATARIO   dará lugar a que la totalidad de la obligación, incluidos los intereses moratorios, se determinen líquidos, exigible y de plazo vencido quedando la MUSERPOL facultada de iniciar las acciones legales correspondientes en amparo de los artículos 519 y 1465 del Código Civil así como de los artículos 378 y 379, (Núm. 2) del Código Procesal Civil, que otorgan a este documento la calidad de Titulo Ejecutivo, demandando el pago de la totalidad de la obligación contraída, más la cancelación de intereses convencionales y penales, daños y perjuicios así como la reparación de las costas procesales y honorarios profesionales que se generen por efecto de la acción legal que MUSERPOL instaure para lograr el cumplimiento total de la obligación.
+        <b>DÉCIMA SEGUNDA.- (DE LOS EFECTOS DEL INCUMPLIMIENTO Y DE LA ACCIÓN EJECUTIVA):</b> El incumplimiento de pago mensual por parte del PRESTATARIO   dará lugar a que la totalidad de la obligación, incluidos los intereses moratorios, se determinen líquidos, exigible y de plazo vencido quedando la MUSERPOL facultada de iniciar las acciones legales correspondientes en amparo de los artículos 519 y 1465 del Código Civil así como de los artículos 378 y 379, (Núm. 2) del Código Procesal Civil, que otorgan a este documento la calidad de Titulo Ejecutivo, demandando el pago de la totalidad de la obligación contraída, más la cancelación de intereses convencionales y penales, daños y perjuicios así como la reparación de las costas procesales y honorarios profesionales que se generen por efecto de la acción legal que MUSERPOL instaure para lograr el cumplimiento total de la obligación.
     </div>
     <div>
         El o los GARANTES están facultados a realizar el trámite de recuperación de los montos que se le hubieran sido descontados en función a la obligación objeto del presente contrato pudiendo recaer sobre el Beneficio de Fondo de Retiro Policial Solidario otorgados por la MUSERPOL y reconocidos al PRESTATARIO, conforme al Artículo 127 del Reglamento de Prestamos.
@@ -133,7 +137,7 @@ if(($modality->name == 'Refinanciamiento de prestamos a largo Plazo para el sect
         En caso de incumplimiento de los pagos mensuales estipulados en el presente contrato que generen mora de la obligación, el PRESTATARIO no tendrá derecho a acceder a otro crédito, hasta la cancelación total de la deuda.
     </div>
     <div>
-        <b>DÉCIMA SEGUNDA.- (DE LA CONFORMIDAD Y ACEPTACIÓN):</b> Por una parte en calidad de acreedora la MUSERPOL, representada por su {{ $employees[0]['position'] }} Cnl. {{ $employees[0]['name'] }} y su {{ $employees[1]['position'] }} Lic. {{ $employees[1]['name'] }} y por otra parte en calidad de
+        <b>DÉCIMA TERCERA.- (DE LA CONFORMIDAD Y ACEPTACIÓN):</b> Por una parte en calidad de acreedora la MUSERPOL, representada por su {{ $employees[0]['position'] }} Cnl. {{ $employees[0]['name'] }} y su {{ $employees[1]['position'] }} Lic. {{ $employees[1]['name'] }} y por otra parte en calidad de
         @if (count($lenders) == 1)
         <span>DEUDOR{{ $lender->gender == 'M' ? '' : 'A' }} {{ $lender->full_name }} de generales ya señaladas como PRESTATARIO; </span>
         <?php foreach($guarantors as $guarantor){ ?>
@@ -253,7 +257,7 @@ if(($modality->name == 'Refinanciamiento de prestamos a largo Plazo para el sect
         <b>QUINTA.- (DE LA FORMA DE PAGO Y OTRAS CONTINGENGIAS):</b> Para el cumplimiento estricto de la obligación (capital e intereses) el PRESTATARIO, se obliga a cumplir con la cuota de amortización en forma mensual mediante pago directo en la oficina central de la MUSERPOL de la ciudad de La Paz o efectuar el depósito en la cuenta bancaria de la MUSERPOL y enviar la boleta de depósito original a la oficina central inmediatamente; caso contrario el PRESTATARIO se hará pasible al recargo correspondiente a los intereses que se generen al día de pago por la deuda contraída.
         <?php }
         else{
-            if($modality->name == 'Largo Plazo con garantía personal para el sector activo y personal Adm Policial' || $modality->name == 'Largo Plazo con un solo garante para el sector activo - CPOP'){
+            if($modality->name == 'Largo Plazo con garantía personal para el sector activo y personal Adm Policial' || $modality->name == 'Largo Plazo con un solo garante para el sector activo - CPOP' || $modality->name == 'Refinanciamiento de préstamos a largo Plazo con garantía personal para el sector activo y personal Adm Policial'){
                 $quinta = 'Comando General de la Policía Boliviana';
             }
             if($modality->name == 'Largo Plazo con garantía personal para el sector pasivo' || $modality->name == 'Refinanciamiento de prestamos a largo Plazo para el sector pasivo - CPOP'){
@@ -312,7 +316,7 @@ if(($modality->name == 'Refinanciamiento de prestamos a largo Plazo para el sect
     </div>
     <div>
         <b>NOVENA.- (MODIFICACIÓN DE LA SITUACIÓN DEL PRESTATARIO):</b> El PRESTATARIO y/o GARANTE en caso de fallecimiento, retiro voluntario o retiro forzoso garantizan con la totalidad de los Beneficios de Fondo de Retiro Policial Solidario y Complemento Económico otorgados por la MUSERPOL, el cumplimiento efectivo de la presente obligación; por cuanto la liquidación de dichos beneficios pasaran a cubrir el monto total de la obligación que resulte adeudada, más los intereses devengados a la fecha, previas las formalidades de ley.
-    <div>
+    </div>
     <div>
         En caso de que se haya modificado la situación del PRESTATARIO y/o GARANTE del sector activo al sector pasivo de la Policía Boliviana teniendo un saldo deudor respecto del préstamo obtenido, este acepta amortizar la deuda con su complemento económico, en caso de corresponderle debiendo al efecto solicitar la reprogramación conforme establece el Artículo 90 del Reglamento de Préstamos de la MUSERPOL, por lo que el saldo se sujetara en función a su nuevo liquido pagable, estableciéndose una correlativa modificación de los plazos y cuota según sea el caso.
     </div>

@@ -15,7 +15,7 @@
 </div>
 
 <?php $modality = $loan->modality;
-if(($modality->name == 'Refinanciamiento de Préstamo a corto plazo para el sector Activo' || $modality->name == 'Refinanciamiento de Préstamo a corto plazo para el sector Pasivo y Viudas Senasir' || $modality->name == 'Refinanciamiento de Préstamo a corto plazo para el sector Pasivo y Viudas AFPs') && $parent_loan){?>
+if(($modality->name == 'Refinanciamiento de Préstamo a corto plazo para el sector Activo' || $modality->name == 'Refinanciamiento de Préstamo a corto plazo para el sector Pasivo y Viudas Senasir' || $modality->name == 'Refinanciamiento de Préstamo a corto plazo para el sector Pasivo y Viudas AFPs'|| $modality->name == 'Refinanciamiento de préstamos a Corto plazo con disponibilidad de letra "A"') && $parent_loan){?>
 <div class="block text-justify">
     <div>
         Conste en el presente contrato de préstamo de dinero a {{ $title }}, que al solo reconocimiento de firmas y rúbricas ante autoridad competente será elevado a Instrumento Público, por lo que las partes que intervienen lo suscriben al tenor de las siguientes claúsulas y condiciones:
@@ -57,7 +57,11 @@ if(($modality->name == 'Refinanciamiento de Préstamo a corto plazo para el sect
             }
             if($modality->name =='Refinanciamiento de Préstamo a corto plazo para el sector Pasivo y Viudas Senasir'){
                 $quinta = 'Servicio Nacional del Sistema de Reparto SENASIR';
-            }?>
+            }
+            if($modality->name == 'Refinanciamiento de préstamos a Corto plazo con disponibilidad de letra "A"'){
+                $quinta = 'Comando General de la Policía Boliviana';
+            }
+            ?>
             <b>SEXTA.- (DE LA FORMA DE PAGO Y OTRAS CONTINGENGIAS):</b> Para el cumplimiento estricto de la obligación (capital e intereses) el PRESTATARIO, autoriza expresamente a MUSERPOL practicar los descuentos respectivos de los haberes que percibe en forma mensual a través del {{ $quinta }} conforme al Reglamento de Préstamos.
             <div>
                 Si por cualquier motivo la MUSERPOL estuviera imposibilitada de realizar el descuento por el medio señalado, el PRESTATARIO se obliga a cumplir con la cuota de amortización mediante pago directo en la Oficina Central de MUSERPOL de la ciudad de La Paz o efectuar depósito en la cuenta bancaria de la MUSERPOL y enviar la boleta de depósito original a la Oficina Central inmediatamente; sin necesidad de previo aviso; caso contrario el PRESTATARIO se hará pasible al recargo correspondiente a los intereses que se generen al día de pago por la deuda contraida.
@@ -116,6 +120,9 @@ if(($modality->name == 'Refinanciamiento de Préstamo a corto plazo para el sect
                 <?php if($modality->name =='Refinanciamiento de Préstamo a corto plazo para el sector Pasivo y Viudas Senasir'){ ?>
                     <b>NOVENA.- (DE LA GARANTÍA):</b> El PRESTATARIO, garantiza el pago de la deuda con todos sus bienes, derechos y acciones habidos y por haber presentes y futuros conforme establece el Art. 1335 del Código Civil y así como también con su renta de vejez en curso de pago como señala el Reglamento de Préstamos de MUSERPOL, asimismo este acepta amortizar la deuda con su complemento económico.
                 <?php }?>
+                <?php if($modality->name =='Refinanciamiento de préstamos a Corto plazo con disponibilidad de letra "A"'){ ?>
+                    <b>NOVENA.- (DE LA GARANTÍA):</b> El PRESTATARIO, garantiza el pago de la deuda con todos sus bienes, derechos y acciones habidos y por haber presentes y futuros conforme establece el Art. 1335 del Código Civil y así como también con su renta de vejez en curso de pago como señala el Reglamento de Préstamos de MUSERPOL, asimismo este acepta amortizar la deuda con su complemento económico.
+                <?php }?>
         <?php   } ?>
     </div>
     <div>
@@ -129,7 +136,7 @@ if(($modality->name == 'Refinanciamiento de Préstamo a corto plazo para el sect
         </div>
         <?php }
             else{
-                if($modality->name == 'Refinanciamiento de Préstamo a corto plazo para el sector Activo'){ ?>
+                if($modality->name == 'Refinanciamiento de Préstamo a corto plazo para el sector Activo'||$modality->name =='Refinanciamiento de préstamos a Corto plazo con disponibilidad de letra "A"'){ ?>
                 <div>
                     <b>DECIMA.- (MODIFICACIÓN DE LA SITUACIÓN DEL PRESTATARIO):</b> El PRESTATARIO, en caso de fallecimiento, retiro voluntario o retiro forzoso garantizan con la totalidad de los beneficios de <b>Fondo de Retiro Policial Solidario y Complemento Económico</b> otorgados por la MUSERPOL, el cumplimiento efectivo de la presente obligación; por cuanto la liquidación de dichos beneficios pasarán a cubrir el monto total de la obligación que resulte adecuada, más los intereses devengados en fecha, previas las formalidades de ley.
                 <div>
@@ -163,7 +170,7 @@ if(($modality->name == 'Refinanciamiento de Préstamo a corto plazo para el sect
             DEUDOR{{ $lender->gender == 'M' ? '' : 'A' }} {{ $lender->full_name }} de generales ya señaladas como PRESTATARIO;
             <?php
             if($modality->name == 'Refinanciamiento de Préstamo a corto plazo para el sector Pasivo y Viudas AFPs'){ ?>
-             @if (count($guarantors) == 1)
+            @if (count($guarantors) == 1)
             @php ($guarantor = $guarantors[0])
             @php ($male_female_guarantor = Util::male_female($guarantor->gender))
             <span>
@@ -264,7 +271,7 @@ if(($modality->name == 'Refinanciamiento de Préstamo a corto plazo para el sect
         <b>QUINTA.- (DE LA FORMA DE PAGO Y OTRAS CONTINGENGIAS):</b> Para el cumplimiento estricto de la obligación (capital e intereses) el PRESTATARIO, se obliga a cumplir con la cuota de amortización en forma mensual mediante pago directo en la oficina central de la MUSERPOL de la ciudad de La Paz o efectuar el depósito en la cuenta bancaria de la MUSERPOL y enviar la boleta de depósito original a la oficina central inmediatamente; caso contrario el PRESTATARIO se hará pasible al recargo correspondiente a los intereses que se generen al día de pago por la deuda contraída. Caso contrario se procederá al descuento del garante personal incluido los intereses penales pasado los dos meses sin necesidad de previo aviso.
         <?php }
         else{
-            if($modality->name == 'Corto plazo sector activo' || $modality->name == 'Corto plazo con disponibilidad de letra "A"' || $modality->name == 'Refinanciamiento de Préstamo a corto plazo para el sector Activo'){
+            if($modality->name == 'Corto plazo sector activo' || $modality->name == 'Corto plazo con disponibilidad de letra "A"' || $modality->name == 'Refinanciamiento de Préstamo a corto plazo para el sector Activo'|| $modality->name == 'Refinanciamiento de préstamos a Corto plazo con disponibilidad de letra "A"'){
                 $quinta = 'Comando General de la Policía Boliviana';
             }
             if($modality->name == 'Corto plazo el sector pasivo y viudas Senasir' || $modality->name =='Refinanciamiento de Préstamo a corto plazo para el sector Pasivo y Viudas Senasir'){
@@ -322,7 +329,7 @@ if(($modality->name == 'Refinanciamiento de Préstamo a corto plazo para el sect
             @endif
         <?php }
             else{
-                if($modality->name == 'Corto plazo sector activo' || $modality->name == 'Corto plazo con disponibilidad de letra "A"' || $modality->name == 'Refinanciamiento de Préstamo a corto plazo para el sector Activo'){ ?>
+                if($modality->name == 'Corto plazo sector activo' || $modality->name == 'Corto plazo con disponibilidad de letra "A"' || $modality->name == 'Refinanciamiento de Préstamo a corto plazo para el sector Activo'||$modality->name =='Refinanciamiento de préstamos a Corto plazo con disponibilidad de letra "A"'){ ?>
                     <b>OCTAVA.- (DE LA GARANTÍA):</b> El PRESTATARIO, garantiza el pago de lo adeudado con todos sus bienes, derechos y acciones habidos y por haber, presentes y futuros conforme determina el Art. 1335 del Código Civil y además con los beneficios que otorga la <b>MUSERPOL, que son Fondo de Retiro Policial Solidario y Complemento Económico así como establece el Artículo 65 del Reglamento de Préstamos de la MUSERPOL.</b>
                 <?php }?>
                 <?php if($modality->name == 'Corto plazo el sector pasivo y viudas Senasir' || $modality->name =='Refinanciamiento de Préstamo a corto plazo para el sector Pasivo y Viudas Senasir'){ ?>
@@ -341,7 +348,7 @@ if(($modality->name == 'Refinanciamiento de Préstamo a corto plazo para el sect
         </div>
         <?php }
             else{
-                if($modality->name == 'Corto plazo sector activo' || $modality->name == 'Corto plazo con disponibilidad de letra "A"' || $modality->name == 'Refinanciamiento de Préstamo a corto plazo para el sector Activo'){ ?>
+                if($modality->name == 'Corto plazo sector activo' || $modality->name == 'Corto plazo con disponibilidad de letra "A"' || $modality->name == 'Refinanciamiento de Préstamo a corto plazo para el sector Activo'||$modality->name =='Refinanciamiento de préstamos a Corto plazo con disponibilidad de letra "A"'){ ?>
                 <div>
                     <b>NOVENA.- (MODIFICACIÓN DE LA SITUACIÓN DEL PRESTATARIO):</b> El PRESTATARIO, en caso de fallecimiento, retiro voluntario o retiro forzoso garantizan con la totalidad de los beneficios de <b>Fondo de Retiro Policial Solidario y Complemento Económico</b> otorgados por la MUSERPOL, el cumplimiento efectivo de la presente obligación; por cuanto la liquidación de dichos beneficios pasarán a cubrir el monto total de la obligación que resulte adecuada, más los intereses devengados en fecha, previas las formalidades de ley.
                 <div>
