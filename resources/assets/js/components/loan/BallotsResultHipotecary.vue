@@ -63,7 +63,7 @@
                     <v-layout row wrap>
                       <v-flex xs12 class="px-1">
                         <fieldset class="pa-3">
-                      <ValidationProvider v-slot="{ errors }" name="plazo" :rules="'numeric|min_value:'+datos.minimum_term+'|max_value:'+datos.maximum_term" mode="aggressive">
+                      <ValidationProvider v-slot="{ errors }" name="plazo" :rules="'numeric|min_value:'+loan_detail.minimum_term+'|max_value:'+loan_detail.maximum_term" mode="aggressive">
                       <v-text-field
                         :error-messages="errors"
                         label="Plazo en Meses"
@@ -71,7 +71,7 @@
                         v-on:keyup.enter="calculadora()"
                       ></v-text-field>
                       </ValidationProvider>
-                      <ValidationProvider v-slot="{ errors }" name="monto solicitado" :rules="'numeric|min_value:'+datos.minimun_amoun+'|max_value:'+datos.maximun_amoun" mode="aggressive">
+                      <ValidationProvider v-slot="{ errors }" name="monto solicitado" :rules="'numeric|min_value:'+loan_detail.minimun_amoun+'|max_value:'+loan_detail.maximun_amoun" mode="aggressive">
                       <v-text-field
                         :error-messages="errors"
                         label="Monto Solicitado"
@@ -133,7 +133,6 @@
 export default {
   name: "ballots-result-hipotecary",
   data: () => ({
-  //datos: {},
     bonos: {},
     payable_liquid: {},
     modalidad: {},
@@ -149,7 +148,6 @@ export default {
         calculo123:null,
         nombres:[],
         is_valid:false
-  
   }),
   props: {
     loan_sismu: {
@@ -162,10 +160,6 @@ export default {
     },
       lenders: {
       type: Array,
-      required: true
-    },
-   datos: {
-      type: Object,
       required: true
     },
     intervalos: {

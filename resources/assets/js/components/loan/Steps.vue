@@ -54,7 +54,6 @@
               :intervalos.sync="intervalos"
               :contributions1.sync="contributions1"
               :modalidad.sync="modalidad"
-              :prueba.sync="prueba"
               :affiliate.sync="affiliate"
               :contrib_codebtor="contrib_codebtor"
               :loan_detail.sync="loan_detail"
@@ -83,7 +82,6 @@
                 :calculator_result.sync="calculator_result"
                 :loan_detail.sync="loan_detail"
                 :loan_sismu.sync="loan_sismu"
-                :datos.sync="datos"
                 :modalidad.sync="modalidad"
                 :modalidad_id.sync="modalidad.id"
                 :liquid_calificated="liquid_calificated" >
@@ -96,7 +94,6 @@
                 :loan_sismu.sync="loan_sismu"
                 :lenders.sync="lenders"
                 :intervalos.sync="intervalos"
-                :datos.sync="datos"
                 :liquid_calificated.sync="liquid_calificated"
                 :loan_detail.sync="loan_detail"
               />
@@ -125,15 +122,12 @@
             <HipotecaryData
               v-show="modalidad.procedure_type_id==12"
               :loan_detail.sync="loan_detail"
-              :datos.sync="datos"
               :loan_property="loan_property"
             />
             <Guarantor
             :modalidad_guarantors.sync="modalidad.guarantors"
             :modalidad.sync="modalidad"
             :loan_detail.sync="loan_detail"
-            :prueba.sync="prueba"
-            :garantes.sync="garantes"
             :guarantors.sync="guarantors"
             :affiliate.sync="affiliate"
             :modalidad_id.sync="modalidad.id"/>
@@ -184,6 +178,7 @@
             :modalidad_personal_reference.sync="modalidad.personal_reference"
             :personal_reference.sync="personal_reference"
             :intervalos.sync="intervalos"
+            :destino.sync="destino"
           />
           <CoDebtor
             v-show="this.modalidad.max_cosigner > 0"
@@ -277,12 +272,9 @@ export default {
     //procedure_type:9,
     steps: 6,
     modalities: [],
-    prueba: [],
-    garantes: [],
     guarantors: [],
     lenders:[],
     modalidad:{},
-    datos:{},
     reference:[],
     intervalos:{},
     contributions1:[{}],//crear la cantidad de objetos necesarios segun modalidad 3 o 1
@@ -296,7 +288,8 @@ export default {
     liquid_calificated:[],
     editedIndex: -1,
     loan_property: {},
-    cosigners:[]
+    cosigners:[],
+    destino:[],
   }),
   computed: {
     isNew() {
@@ -324,7 +317,11 @@ export default {
       else {
         if(n==1)
         {
-          this.getLoan(10)
+          this.getLoanDestiny()
+          if(!this.isNew)
+          {
+            this.getLoan(this.$route.query.loan_id)
+          }
           if(this.modalidad.procedure_type_id==12)
           { this.liquidCalificated()
             console.log('esta entro por verdad con la modalidad'+ this.modalidad.procedure_type_id)
@@ -524,12 +521,15 @@ console.log(""+this.simulator[this.j].affiliate_nombres)
         })
         this.calculator_result = res1.data
 
-        this.datos =this.intervalos
         this.lenders=res.data
 
         this.lenders[0].payment_percentage=this.calculator_result.affiliates[0].payment_percentage
         this.lenders[0].indebtedness_calculated=this.calculator_result.affiliates[0].indebtedness_calculated
 
+        this.loan_detail.minimum_term=this.intervalos.minimum_term
+        this.loan_detail.maximum_term=this.intervalos.maximum_term
+        this.loan_detail.minimun_amoun=this.intervalos.minimun_amoun
+        this.loan_detail.maximun_amoun=this.intervalos.maximun_amoun
         this.loan_detail.amount_requested=this.intervalos.maximun_amoun
         this.loan_detail.months_term=this.intervalos.maximum_term
         this.loan_detail.liquid_qualification_calculated=this.calculator_result.liquid_qualification_calculated_total
@@ -648,6 +648,19 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
         this.loading = false
       }
     },
+    async getLoanDestiny() {
+      try {
+        this.loading = true
+        let res = await axios.get(`procedure_type/${this.intervalos.procedure_type_id}/loan_destiny`)
+        this.destino = res.data
+        console.log(this.destino+'estos son los destinos');
+      } catch (e) {
+        console.log(e)
+      } finally {
+        this.loading = false
+      }
+    }
+    
   }
 }
 </script>
