@@ -53,6 +53,7 @@
               :payable_liquid="payable_liquid"
               :intervalos.sync="intervalos"
               :modalidad.sync="modalidad"
+              :contributions1.sync="contributions1"
               :affiliate.sync="affiliate"
               :contrib_codebtor="contrib_codebtor"
               :loan_detail.sync="loan_detail"
@@ -279,6 +280,7 @@ export default {
     modalidad:{},
     reference:[],
     intervalos:{},
+    contributions1:[{}],
     payable_liquid:[0,0,0],
     bonos:[0,0,0,0],
     personal_reference:{},
