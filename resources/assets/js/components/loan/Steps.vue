@@ -52,11 +52,14 @@
               :bonos.sync="bonos"
               :payable_liquid="payable_liquid"
               :intervalos.sync="intervalos"
-              :contributions1.sync="contributions1"
               :modalidad.sync="modalidad"
+              :contributions1.sync="contributions1"
               :affiliate.sync="affiliate"
               :contrib_codebtor="contrib_codebtor"
               :loan_detail.sync="loan_detail"
+              :loan.sync="loan"
+              :edit_refi_repro.sync="edit_refi_repro"
+              :loanTypeSelected.sync="loanTypeSelected"
             />
             <v-container class="py-0">
               <v-row>
@@ -277,7 +280,7 @@ export default {
     modalidad:{},
     reference:[],
     intervalos:{},
-    contributions1:[{}],//crear la cantidad de objetos necesarios segun modalidad 3 o 1
+    contributions1:[{}],
     payable_liquid:[0,0,0],
     bonos:[0,0,0,0],
     personal_reference:{},
@@ -290,10 +293,20 @@ export default {
     loan_property: {},
     cosigners:[],
     destino:[],
+    //Variables reprogramacion y refinanciamiento
+    loan: {},
+    edit_refi_repro: false,
+    loanTypeSelected: 0
   }),
   computed: {
     isNew() {
       return this.$route.params.hash == 'new'
+    },
+    refinancing() {
+      return this.$route.params.hash == 'refinancing'
+    },
+    reprogramming() {
+      return this.$route.params.hash == 'reprogramming'
     }
   },
   watch: {
@@ -309,6 +322,9 @@ export default {
       this.beforeStep(val)
     })
   },
+  mounted(){
+    this.getLoan(this.$route.query.loan_id)
+  },
   methods: {
     nextStep (n) {
       if (n == this.steps) {
@@ -318,18 +334,14 @@ export default {
         if(n==1)
         {
           this.getLoanDestiny()
-          if(!this.isNew)
-          {
-            this.getLoan(this.$route.query.loan_id)
-          }
-          if(this.modalidad.procedure_type_id==12)
-          { this.liquidCalificated()
-            console.log('esta entro por verdad con la modalidad'+ this.modalidad.procedure_type_id)
-          }
-          else{
-             //this.Calculator() TODO borrar
+          if(this.isNew){
             this.liquidCalificated()
-            console.log('esta entro por false'+this.modalidad.procedure_type_id)
+          }
+          if(this.refinancing){
+            this.liquidCalificated()
+          }
+          if(this.reprogramming){
+            this.liquidCalificated()
           }
         }
         if(n==2)
@@ -347,7 +359,6 @@ export default {
         }
         if(n==4)
         {
-
           console.log('segundo'+this.modalidad.personal_reference)
         }
         if(n==5)
@@ -362,7 +373,6 @@ export default {
     beforeStep (n) {
       this.e1 = n -1
     },
-
     async personal()
     {
       try{
@@ -386,7 +396,6 @@ export default {
         console.log('entro por verdader'+this.modalidad.personal_reference)
       }
     },
-
     async getProcedureType(){
       try {
         let resp = await axios.get(`module`,{
@@ -437,11 +446,9 @@ console.log(""+this.simulator[this.j].affiliate_nombres)
     },
      //TAB1 formatContributions datos obtenidos de los campos liquido y bonos, adecuandolo a formato para guardado y obtener liquido para calificación
     formatContributions() {
-
       let nuevoArray = []
       let nuevoArrayCodebtor = []
       if(this.modalidad.quantity_ballots > 1 ){
-
         nuevoArray[0] = {
             affiliate_id:this.$route.query.affiliate_id,
             contributions: [
@@ -483,7 +490,6 @@ console.log(""+this.simulator[this.j].affiliate_nombres)
             }
           ]
         }
-
       for (let i = 0; i < this.contrib_codebtor.length; i++) {
         nuevoArrayCodebtor[i] = {
           affiliate_id: this.contrib_codebtor[i].id_affiliate,
@@ -501,7 +507,6 @@ console.log(""+this.simulator[this.j].affiliate_nombres)
         console.log(nuevoArray)
       }
       }
-
       this.contributions1_aux = nuevoArray.concat(nuevoArrayCodebtor)
     },
     //TAB1 Obtener liquido para calificación
@@ -520,12 +525,9 @@ console.log(""+this.simulator[this.j].affiliate_nombres)
           liquid_calculated:this.liquid_calificated
         })
         this.calculator_result = res1.data
-
         this.lenders=res.data
-
         this.lenders[0].payment_percentage=this.calculator_result.affiliates[0].payment_percentage
         this.lenders[0].indebtedness_calculated=this.calculator_result.affiliates[0].indebtedness_calculated
-
         this.loan_detail.minimum_term=this.intervalos.minimum_term
         this.loan_detail.maximum_term=this.intervalos.maximum_term
         this.loan_detail.minimun_amoun=this.intervalos.minimun_amoun
@@ -536,13 +538,11 @@ console.log(""+this.simulator[this.j].affiliate_nombres)
         this.loan_detail.indebtedness_calculated=this.calculator_result.indebtedness_calculated_total
         this.loan_detail.maximum_suggested_valid=this.calculator_result.maximum_suggested_valid
         this.loan_detail.quota_calculated_total_lender=this.calculator_result.quota_calculated_estimated_total
-
         if( this.calculator_result.amount_maximum_suggested<this.intervalos.maximun_amoun){
           this.calculator_result.amount_requested=this.calculator_result.amount_maximum_suggested
         }else{
           this.calculator_result.montos=this.intervalos.maximun_amoun
         }
-
         /* for (this.i = 0; this.i< this.datos_calculadora_hipotecario.length; this.i++) {
 let res5 = await axios.get(`affiliate/${this.datos_calculadora_hipotecario[this.i].affiliate_id}`)
 this.affiliates = res5.data
@@ -602,12 +602,10 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
         console.log(e)
       }
     },
-
     async savePersonalReference() {
       try {
-        let i
         let ids_codebtor=[]
-        for (i = 0; i < this.personal_codebtor.length; i++) {
+        for (let i = 0; i < this.personal_codebtor.length; i++) {
           let res = await axios.post(`personal_reference`, {
             city_identity_card_id: this.personal_codebtor[i].city_identity_card_id,
             identity_card: this.personal_codebtor[i].identity_card,
@@ -641,6 +639,13 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
         this.loading = true
         let res = await axios.get(`loan/${id}`)
         this.loan_sismu = res.data
+        this.loan = res.data
+        let res2= await axios.get(`procedure_modality/${this.loan.procedure_modality_id}`)
+        let mod_refi_repro=res2.data.procedure_type_id
+         console.log("------procedure_modality---")
+        console.log(mod_refi_repro)
+        this.loanTypeSelected=mod_refi_repro
+        this.edit_refi_repro=true
         console.log(this.loan)
       } catch (e) {
         console.log(e)
