@@ -116,6 +116,7 @@
                             persistent-hint
                             append-icon="mdi-calendar"
                             readonly
+                            clearable
                             v-on="on"
                             :outlined="editable && permission.secondary"
                           ></v-text-field>
@@ -150,6 +151,7 @@
                             persistent-hint
                             append-icon="mdi-calendar"
                             readonly
+                            clearable
                             v-on="on"
                             :outlined="editable && permission.secondary"
                           ></v-text-field>
@@ -204,6 +206,7 @@
                             persistent-hint
                             append-icon="mdi-calendar"
                             readonly
+                            clearable
                             v-on="on"
                             :outlined="editable && permission.secondary"
                           ></v-text-field>
@@ -268,7 +271,7 @@
             </ValidationProvider>
           </v-col>
           <v-col cols="12" >
-            <ValidationProvider v-slot="{ errors }" vid="departure" name="partida" rules="min:1|max:250">
+            <ValidationProvider v-slot="{ errors }" vid="departure" name="partida" rules="integer">
             <v-text-field
               :error-messages="errors"
               dense
@@ -299,6 +302,7 @@
                   persistent-hint
                   append-icon="mdi-calendar"
                   readonly
+                  clearable
                   v-on="on"
                   :outlined="editable && permission.secondary"
                 ></v-text-field>

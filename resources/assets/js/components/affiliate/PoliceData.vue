@@ -150,6 +150,7 @@
                     persistent-hint
                     append-icon="mdi-calendar"
                     readonly
+                    clearable
                     v-on="on"
                     :outlined="editable && permission.secondary"
                   ></v-text-field>
