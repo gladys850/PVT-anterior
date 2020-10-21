@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-tooltip top>
+    <!--<v-tooltip top>//FIXME Ver si se creara usuarios o se sincronizara solo con el LDAP
       <template v-slot:activator="{ on }">
         <v-btn
           fab
@@ -14,7 +14,7 @@
         </v-btn>
       </template>
       <span>Añadir usuario</span>
-    </v-tooltip>
+    </v-tooltip>-->
     <v-dialog
       v-model="dialog"
       width="500"
@@ -29,10 +29,7 @@
           </v-btn>
         </v-toolbar>
         <ValidationObserver ref="observer"  v-slot="{ invalid }">
-          <v-card-text>
-              <Ldap v-if="$store.getters.ldapAuth" :bus="bus" @input="setUser($event)"/>
-              <Form v-else :bus="bus" @input="setUser($event)"/>
-          </v-card-text>
+         
           <v-card-actions>
             <v-spacer></v-spacer>
             <v-btn
