@@ -25,11 +25,12 @@
                           <v-select
                             dense
                             v-model="loanTypeSelected"
-                            @change="Onchange()"
+                            :Onchange="Onchange()"
                             :items="modalities"
                             item-text="name"
                             item-value="id"
                             required
+                            :disabled="edit_refi_repro"
                           ></v-select>
                         </v-col>
                         <v-col cols="12" :md="window_size" class="py-0 text-center">
@@ -126,7 +127,6 @@
               </v-container>
               <BallotsHipotecary
                 v-show="hipotecario"
-                :contributions1.sync="contributions1"
                 :contrib_codebtor="contrib_codebtor"
                 :modalidad.sync="modalidad"
                 :affiliate.sync="affiliate"/>
@@ -137,7 +137,6 @@
   </v-flex>
 </template>
 <script>
-
 import BallotsHipotecary from '@/components/loan/BallotsHipotecary'
 export default { 
   name: "ballots",
@@ -146,20 +145,14 @@ export default {
     monto:null,
     plazo:null,
     interval:[],
-    loanTypeSelected:null,
+    //loanTypeSelected:null,
     visible:false,
-
     hipotecario:false,
     window_size:4,
     see_field:false
   
   }),
    props: {
-
-    contributions1: {
-      type: Array,
-      required: true
-    },
     modalidad: {
       type: Object,
       required: true
@@ -191,26 +184,37 @@ export default {
       affiliate: {
       type: Object,
       required: true
+    },    
+    loan: {
+      type: Object,
+      required: true
+    },
+    edit_refi_repro: {
+      type: Boolean,
+      required: true
+    },
+    loanTypeSelected:{
+      type: Number,
+      required: true,
+      default: 0
     }
-
   },
     components: {
     BallotsHipotecary
   },
-   beforeMount() {
+  mounted() {
     this.getLoanIntervals()
   },
-  watch:{
-  loanTypeSelected(newVal, oldVal){
+  watch: {
+    loanTypeSelected(newVal, oldVal){
     if(newVal!=oldVal){
-      this.getBallots(this.$route.query.affiliate_id)
+      this.Onchange()
     }
   }
 },
   methods:
  {//muestra los intervalos de acuerdo a una modalidad
     Onchange(){
-
       for (let i = 0; i< this.interval.length; i++) {
         if(this.loanTypeSelected==this.interval[i].procedure_type_id){
           if(this.loanTypeSelected==12){
@@ -231,10 +235,8 @@ export default {
           this.intervalos.minimum_term= this.interval[i].minimum_term
           this.intervalos.procedure_type_id= this.loanTypeSelected
           //debugger
-
           this.getLoanModality(this.$route.query.affiliate_id)
           //this.getBallots(this.$route.query.affiliate_id)
-
         }else{
         console.log('NO ES IGUAL A MODALIDAD INTERVALS'+this.interval[i].procedure_type_id +"=="+this.loanTypeSelected )
       }
@@ -252,7 +254,6 @@ export default {
       this.bonos[2]=0
       this.bonos[3]=0
     },
-
     //Obtiene los parametros de la modalidad
     async getLoanModality(id) {
       try {
@@ -280,7 +281,6 @@ export default {
     
           this.loan_detail.min_guarantor_category= loan_modality.loan_modality_parameter.min_guarantor_category
           this.loan_detail.max_guarantor_category= loan_modality.loan_modality_parameter.max_guarantor_category
-
           if(loan_modality.loan_modality_parameter.quantity_ballots>1){
           this.visible = true
           //debugger
@@ -324,7 +324,7 @@ export default {
       console.log(this.modalidad.quantity_ballots)
       data_ballots = res.data.data  
       console.log(data_ballots)
-      //debugger
+    
       if(res.data.valid){
         this.editar=false
          //Carga los datos en los campos para ser visualizados en la interfaz    
@@ -337,9 +337,7 @@ export default {
             this.bonos[3] = data_ballots[0].public_security_bonus
           }
         }
-
       } else{
-
           console.log("No se tienen boletas del ultimo mes")
           //this.clearForm()//TODO ver si es necesario, ya que sin la funcion igual se carga los datos declarados por defecto de las variables
       }
@@ -349,7 +347,6 @@ export default {
       this.loading = false
     }
   },
-
  }
 };
 </script>
