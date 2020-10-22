@@ -463,7 +463,9 @@ class AffiliateController extends Controller
     * Modalidad por afiliado
     * Devuelve la modalidad de trámite evaluando al afiliado y el tipo de trámite
     * @urlParam affiliate required ID de afiliado. Example: 5
-    * @queryParam procedure_type_id required ID de tipo de trámite. Example: 9
+    * @queryParam procedure_type_id required ID de tipo de trámite. Example: 11
+    * @queryParam type_sismu Tipo sismu. Example: true
+    * @queryParam cpop_sismu El afiliado es cpop del sismu. Example: true
     * @authenticated
     * @responseFile responses/affiliate/get_loan_modality.200.json
     */
@@ -472,8 +474,10 @@ class AffiliateController extends Controller
             'procedure_type_id' => 'required|integer|exists:procedure_types,id'
         ]);
         if(!$affiliate->affiliate_state) abort(403, 'Debe actualizar el estado del afiliado');
+        $type_sismu = $request->input('type_sismu',false);
+        $cpop_sismu = $request->input('cpop_sismu',false);
         $modality = ProcedureType::findOrFail($request->procedure_type_id);
-        $affiliate_modality= Loan::get_modality($modality->name, $affiliate);
+        $affiliate_modality= Loan::get_modality($modality->name, $affiliate,$type_sismu, $cpop_sismu);
         if(!$affiliate_modality) abort(403, 'El afiliado no califica para la modalidad');
         return $affiliate_modality;
     }

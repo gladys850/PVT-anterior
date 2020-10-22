@@ -99,7 +99,7 @@ class LoanStructureSeeder extends Seeder
               ],
               'interest' => ['annual_interest' => 20,'penal_interest' => 6]
             ],
-              // CORTO PLAZO SECTOR ACTIVO DISPONIBILIDAD LETRA 'A'
+              // CORTO PLAZO SECTOR ACTIVO DISPONIBILIDAD LETRA 'A', el refinanciamiento de esta sub mod no corresponde según reglamento de prestamos ART 76 I. c) 
               ['name'=>'Corto plazo con disponibilidad de letra "A"','shortened'=>'PCP-DLA','requirements'=>[
                 ['name' => 'Cédula de Identidad del (la) titular en copia simple.','number'=>1],
                 ['name' => 'Tres últimas Boletas de pago en copia simple..','number'=>2], //( 3 boletas)
@@ -257,35 +257,8 @@ class LoanStructureSeeder extends Seeder
                   'max_cosigner'=>0
                 ],
                 'interest' => ['annual_interest' => 20,'penal_interest' => 6]
-              ],
-               // REFINANCIAMIENTO CON DISPONIBILIDAD DE LETRA "A" **
-                ['name'=>'Refinanciamiento de préstamos a Corto plazo con disponibilidad de letra "A"','shortened'=>'PCP-R-DLA','requirements'=>[
-                ['name' => 'Cédula de Identidad del (la) titular en copia simple.','number'=>1],
-                ['name' => 'Tres últimas Boletas de pago en copia simple..','number'=>2], //( 3 boletas)
-                ['name' => 'Certificado de haberes considerando el último mes percibido.','number'=>2],  // En caso de no contar con la boleta de pago
-                ['name' => 'Memorándum de destino a disponibilidad a la letra "A" en copia simple.','number'=>3], // Nuevo
-                ['name' => 'Estado de cuenta original, vigente y emitido por el Banco Unión S.A','number'=>4],
-                ['name' => 'Certificado de años de servicio desglosado en copia simple emitido por el Comando General de la Policía Boliviana.','number'=>5],
-                ['name' => 'Certificado de años de servicio desglosado en copia simple emitido por los Comandos Regionales de la Policía Boliviana.','number'=>5],
-                ['name' => 'Certificado de calificación de años de servicio CAS emitido por el Ministerio de Economia y Finanzas Publicas','number'=>6],
-                ['name' => 'Formulario de Calificación y Aprobación de Préstamos FORM/CAYAP/PTMO/UIP/004.','number'=>7],
-                /*Estos documentos son solicitados por MUSERPOL en caso de ser adicionales*/
-                ['name' => 'Solicitud de aclaración de datos personales en la Boleta de Pago.','number'=>0],  // En caso de que el afiliado tenga datos erroneos en su boleta de pago
-                ['name' => 'Certificado de no adeudo, emitido por la instancia correspondiente.','number'=>0],  // en caso de que el afiliado haya tenido deudas de otras entidades (Ej: COMIPOL , COVIPOL)
-                ['name' => 'Certificado de pago emitido por la entidad correspondiente.','number'=>0],  // en caso de que el afiliado tenga deudas con otras entidades (Ej: COMIPOL , COVIPOL)
-                ['name' => 'Conformidad de devolución de descuento por garantía original o fotocopia legalizada.','number'=>0],
-              ],
-              'parameters' => [
-                'debt_index' => 50,
-                'quantity_ballots' => 3,
-                'guarantors' => 0,
-                'personal_reference' => true,
-                'max_lenders' => 1,
-                'max_cosigner'=>0
-              ],
-              'interest' => ['annual_interest' => 20,'penal_interest' => 6]
-              ],
-            ],
+              ]
+            ]
           ],
           'largo' => [
             'type' => ['module_id' => $module->id,'name'=>'Préstamo a largo plazo','second_name'=>'Largo plazo'],
