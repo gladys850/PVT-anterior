@@ -116,7 +116,7 @@
                             persistent-hint
                             append-icon="mdi-calendar"
                             readonly
-                            clearable
+                            :clearable="editable"
                             v-on="on"
                             :outlined="editable && permission.secondary"
                           ></v-text-field>
@@ -151,7 +151,7 @@
                             persistent-hint
                             append-icon="mdi-calendar"
                             readonly
-                            clearable
+                            :clearable="editable"
                             v-on="on"
                             :outlined="editable && permission.secondary"
                           ></v-text-field>
@@ -206,7 +206,7 @@
                             persistent-hint
                             append-icon="mdi-calendar"
                             readonly
-                            clearable
+                            :clearable="editable"
                             v-on="on"
                             :outlined="editable && permission.secondary"
                           ></v-text-field>
