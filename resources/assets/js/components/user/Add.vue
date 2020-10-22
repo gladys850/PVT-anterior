@@ -29,7 +29,10 @@
           </v-btn>
         </v-toolbar>
         <ValidationObserver ref="observer"  v-slot="{ invalid }">
-         
+          <v-card-text>
+              <Ldap v-if="$store.getters.ldapAuth" :bus="bus" @input="setUser($event)"/>
+              <Form v-else :bus="bus" @input="setUser($event)"/>
+          </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
             <v-btn
