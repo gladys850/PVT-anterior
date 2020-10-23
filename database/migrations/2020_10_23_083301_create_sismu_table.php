@@ -15,11 +15,11 @@ class CreateSismuTable extends Migration
     {
         Schema::create('sismu', function (Blueprint $table) {
             $table->bigIncrements('id');// id unico
-            $table->string('code')->nullable();//codigo
-            $table->float('amount_approved',8,2)->nullable(); // monto aprobado
-            $table->unsignedSmallInteger('loan_term')->nullable(); // plazo del prestamo en meses
-            $table->float('balance',8,2)->nullable(); // saldo
-            $table->float('estimated_quota',8,2)->nullable(); // cuota
+            $table->string('code');//codigo
+            $table->float('amount_approved',8,2); // monto aprobado
+            $table->unsignedSmallInteger('loan_term'); // plazo del prestamo en meses
+            $table->float('balance',8,2); // saldo
+            $table->float('estimated_quota',8,2); // cuota
             $table->unsignedBigInteger('loan_id');  //id del prestamo 
             $table->foreign('loan_id')->references('id')->on('loans');
             $table->timestamps();
