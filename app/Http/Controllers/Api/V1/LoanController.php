@@ -354,14 +354,20 @@ class LoanController extends Controller
 
         $loan->save();
         if (Auth::user()->can(['update-loan', 'create-loan']) && ($request->has('lenders') || $request->has('guarantors'))) {
-            $affiliates = []; $a = 0;
+            $affiliates = []; $a = 0; $previous = 0;
             foreach ($request->lenders as $affiliate) {
+                if($request->parent_loan_id)
+                {
+                    $quota_previous = $affiliate['quota_previous'];
+                }else{
+                    $quota_previous = $previous;
+                }
                 $affiliates[$a] = [
                     'affiliate_id' => $affiliate['affiliate_id'],
                     'payment_percentage' => $affiliate['payment_percentage'],
                     'payable_liquid_calculated' => $affiliate['payable_liquid_calculated'],
                     'bonus_calculated' => $affiliate['bonus_calculated'],
-                    'quota_refinance' => $affiliate['quota_refinance'],
+                    'quota_previous' => $quota_previous,
                     'indebtedness_calculated' => $affiliate['indebtedness_calculated'],
                     'liquid_qualification_calculated' => $affiliate['liquid_qualification_calculated'],
                     'guarantor' => false
@@ -374,7 +380,7 @@ class LoanController extends Controller
                     'payment_percentage' => $affiliate['payment_percentage'],
                     'payable_liquid_calculated' => $affiliate['payable_liquid_calculated'],
                     'bonus_calculated' => $affiliate['bonus_calculated'],
-                    'quota_refinance' => $affiliate['quota_refinance'],
+                    'quota_previous' => $previous,
                     'indebtedness_calculated' => $affiliate['indebtedness_calculated'],
                     'liquid_qualification_calculated' => $affiliate['liquid_qualification_calculated'],
                     'guarantor' => true

@@ -3,7 +3,6 @@
     "payable_liquid_calculated": 3500,
     "bonus_calculated": 500,
     "liquid_qualification_calculated": 3000,
-    "quota_refinance" : 0,
     "indebtnes_calculated": 45,
     "is_valid": true
 }

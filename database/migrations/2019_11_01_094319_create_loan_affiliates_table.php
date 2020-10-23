@@ -20,11 +20,11 @@ class CreateLoanAffiliatesTable extends Migration
             $table->foreign('affiliate_id')->references('id')->on('affiliates');
             $table->unsignedMediumInteger('payment_percentage');// porcentaje de descuento
             $table->boolean('guarantor')->default(false);//si es garante
-            $table->float('payable_liquid_calculated',10,2); //promedio liquido pagable calculado
+            $table->float('payable_liquid_calculated',10,2); //promedio liquido pagable calculado individual
             $table->float('bonus_calculated',5,2); //total bonos calculado
-            $table->float('quota_refinance',5,2); //cuota de refinanciamiento
-            $table->float('indebtedness_calculated',5,2)->nullable(); //indice de endeudamiento calculado
-            $table->float('liquid_qualification_calculated',10,2); //liquido para calificación calculado
+            $table->float('quota_previous',5,2); //cuota de refinanciamiento o reprogramación individual
+            $table->float('indebtedness_calculated',5,2)->nullable(); //indice de endeudamiento calculado individual
+            $table->float('liquid_qualification_calculated',10,2); //liquido para calificación calculado individual
         });
     }
 

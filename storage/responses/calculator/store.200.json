@@ -4,13 +4,13 @@
         "payable_liquid_calculated": 2000,
         "bonus_calculated": 950.6,
         "liquid_qualification_calculated": 1549.4,
-        "quota_refinance": 500
+        "quota_previous": 500
     },
     {
         "affiliate_id": 47461,
         "payable_liquid_calculated": 3000,
         "bonus_calculated": 950.6,
         "liquid_qualification_calculated": 2964.91,
-        "quota_refinance": 915.51
+        "quota_previous": 915.51
     }
 ]

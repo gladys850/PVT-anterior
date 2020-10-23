@@ -1,31 +1,30 @@
 {
     "procedure_modality_id": 41,
     "interest_id": 10,
-    "amount_requested": 26000,
+    "amount_requested": 34000,
     "city_id": 3,
-    "loan_term": 30,
+    "loan_term": 48,
     "payment_type_id": 1,
     "financial_entity_id": 1,
     "number_payment_type": 10000541214,
     "liquid_qualification_calculated": 2000,
     "indebtedness_calculated": 49,
-    "personal_reference_id": 1,
     "destiny_id": 1,
-    "property_id": 1,
-    "disbursable_id": 47461,
+    "disbursable_id": 21,
+    "parent_loan_id": null,
     "role_id": 82,
-    "disbursable_type": "affiliates",
-    "amount_approved": 26000,
-    "request_date": "2020-09-22T15:54:32.000000Z",
+    "disbursable_type": "spouses",
+    "amount_approved": 34000,
+    "request_date": "2020-10-22T18:10:40.000000Z",
     "state_id": 1,
-    "code": "PTMO000008-2020",
-    "updated_at": "2020-09-22T15:54:32.000000Z",
-    "created_at": "2020-09-22T15:54:32.000000Z",
-    "id": 8,
+    "code": "PTMO000049-2020",
+    "updated_at": "2020-10-22T18:10:40.000000Z",
+    "created_at": "2020-10-22T18:10:40.000000Z",
+    "id": 49,
     "attachment": {
-        "content": "JVBE...g==",
+        "content": "JVBERi...",
         "type": "pdf",
-        "file_name": "solicitud_prestamo_PTMO000008-2020.pdf"
+        "file_name": "solicitud_prestamo_PTMO000049-2020.pdf"
     },
     "modality": {
         "id": 41,
@@ -37,8 +36,8 @@
             "id": 11,
             "module_id": 6,
             "name": "Préstamo a largo plazo",
-            "created_at": "2020-09-21T12:56:52.000000Z",
-            "updated_at": "2020-09-21T12:56:52.000000Z",
+            "created_at": "2020-09-30T13:21:34.000000Z",
+            "updated_at": "2020-09-30T13:21:34.000000Z",
             "second_name": "Largo plazo"
         }
     },
@@ -47,8 +46,8 @@
             "id": 47461,
             "user_id": 1,
             "affiliate_state_id": 1,
-            "city_identity_card_id": 5,
-            "city_birth_id": 5,
+            "city_identity_card_id": 3,
+            "city_birth_id": 2,
             "degree_id": 26,
             "unit_id": 38,
             "category_id": 2,
@@ -65,18 +64,18 @@
             "civil_status": "S",
             "birth_date": "1991-11-25",
             "date_entry": "2014-01-01",
-            "date_death": null,
+            "date_death": "2014-01-01",
             "reason_death": null,
             "date_derelict": null,
             "reason_derelict": null,
             "change_date": "2020-05-01",
             "phone_number": null,
-            "cell_phone_number": "847545",
+            "cell_phone_number": "545454",
             "afp": true,
             "nua": 42883787,
             "item": 19723,
             "created_at": "2017-06-03T00:00:29.000000Z",
-            "updated_at": "2020-09-22T12:19:22.000000Z",
+            "updated_at": "2020-09-30T13:26:44.000000Z",
             "deleted_at": null,
             "service_years": null,
             "service_months": null,
@@ -89,67 +88,23 @@
             "financial_entity_id": null,
             "sigep_status": null,
             "pivot": {
-                "loan_id": 8,
+                "loan_id": 49,
                 "affiliate_id": 47461,
-                "payment_percentage": 50
-            },
-            "city_birth": {
-                "id": 5,
-                "name": "ORURO",
-                "first_shortened": "OR",
-                "second_shortened": "ORU",
-                "third_shortened": "ORU",
-                "to_bank": "OR",
-                "latitude": -17.969553496046,
-                "longitude": -67.114743590355
-            },
-            "city_identity_card": {
-                "id": 5,
-                "name": "ORURO",
-                "first_shortened": "OR",
-                "second_shortened": "ORU",
-                "third_shortened": "ORU",
-                "to_bank": "OR",
-                "latitude": -17.969553496046,
-                "longitude": -67.114743590355
-            },
-            "degree": {
-                "id": 26,
-                "hierarchy_id": 4,
-                "code": "15",
-                "name": "POLICIA",
-                "shortened": "POL.",
-                "correlative": 20
-            },
-            "affiliate_state": {
-                "id": 1,
-                "affiliate_state_type_id": 1,
-                "name": "Servicio",
-                "affiliate_state_type": {
-                    "id": 1,
-                    "name": "Activo"
-                }
-            },
-            "pension_entity": null,
-            "unit": {
-                "id": 38,
-                "breakdown_id": 10,
-                "district": "COCHABAMBA",
-                "code": "30184",
-                "name": "COMANDO DEPARTAMENTAL COCHABAMBA",
-                "shortened": "CDPN.CBBA.",
-                "created_at": "2017-06-01T14:41:04.000000Z",
-                "updated_at": "2017-06-01T14:41:04.000000Z",
-                "deleted_at": null
+                "payment_percentage": 100,
+                "payable_liquid_calculated": "2000",
+                "bonus_calculated": "300",
+                "quota_previous": "100",
+                "indebtedness_calculated": "34",
+                "liquid_qualification_calculated": "2000"
             }
-        },{}
+        }
     ],
     "guarantors": [
         {
             "id": 22773,
             "user_id": 1,
             "affiliate_state_id": 1,
-            "city_identity_card_id": 2,
+            "city_identity_card_id": 3,
             "city_birth_id": 2,
             "degree_id": 23,
             "unit_id": 45,
@@ -173,12 +128,12 @@
             "reason_derelict": null,
             "change_date": "2020-05-01",
             "phone_number": null,
-            "cell_phone_number": "55545341",
+            "cell_phone_number": "546545464",
             "afp": true,
             "nua": 31994738,
             "item": 29334,
             "created_at": "2017-06-01T16:35:26.000000Z",
-            "updated_at": "2020-09-22T12:17:11.000000Z",
+            "updated_at": "2020-10-22T12:57:50.000000Z",
             "deleted_at": null,
             "service_years": null,
             "service_months": null,
@@ -191,9 +146,14 @@
             "financial_entity_id": null,
             "sigep_status": null,
             "pivot": {
-                "loan_id": 8,
+                "loan_id": 49,
                 "affiliate_id": 22773,
-                "payment_percentage": 50
+                "payment_percentage": 50,
+                "payable_liquid_calculated": "2000",
+                "bonus_calculated": "300",
+                "quota_previous": "0",
+                "indebtedness_calculated": "34",
+                "liquid_qualification_calculated": "2000"
             },
             "degree": {
                 "id": 23,
@@ -204,14 +164,14 @@
                 "correlative": 17
             },
             "city_identity_card": {
-                "id": 2,
-                "name": "CHUQUISACA",
-                "first_shortened": "CH",
-                "second_shortened": "SUC",
-                "third_shortened": "CHQ",
-                "to_bank": "CH",
-                "latitude": -19.047900263875,
-                "longitude": -65.259593725204
+                "id": 3,
+                "name": "COCHABAMBA",
+                "first_shortened": "CB",
+                "second_shortened": "CBB",
+                "third_shortened": "CBB",
+                "to_bank": "CB",
+                "latitude": -17.393741314813,
+                "longitude": -66.157007217407
             },
             "affiliate_state": {
                 "id": 1,
@@ -233,50 +193,15 @@
                 "created_at": "2017-06-01T14:41:04.000000Z",
                 "updated_at": "2017-06-01T14:41:04.000000Z",
                 "deleted_at": null
-            },
-            "city_birth": {
-                "id": 2,
-                "name": "CHUQUISACA",
-                "first_shortened": "CH",
-                "second_shortened": "SUC",
-                "third_shortened": "CHQ",
-                "to_bank": "CH",
-                "latitude": -19.047900263875,
-                "longitude": -65.259593725204
             }
-        },
-        {}
+        }, {}
     ],
     "parent_loan": null,
     "payment_type": {
         "id": 1,
-        "name": "Deposito Bancario",
-        "created_at": "2020-09-21T12:56:54.000000Z",
-        "updated_at": "2020-09-21T12:56:54.000000Z"
-    },
-    "personal_reference": {
-        "id": 1,
-        "city_identity_card_id": 5,
-        "identity_card": "165134-1L",
-        "last_name": "PINTO",
-        "mothers_last_name": "ROJAS",
-        "first_name": "JUAN",
-        "second_name": "ROBERTO",
-        "surname_husband": null,
-        "phone_number": "2254101",
-        "cell_phone_number": "76543210",
-        "created_at": "2020-09-21T13:00:58.000000Z",
-        "updated_at": "2020-09-21T13:00:58.000000Z",
-        "city_identity_card": {
-            "id": 5,
-            "name": "ORURO",
-            "first_shortened": "OR",
-            "second_shortened": "ORU",
-            "third_shortened": "ORU",
-            "to_bank": "OR",
-            "latitude": -17.969553496046,
-            "longitude": -67.114743590355
-        }
+        "name": "Depósito Bancario",
+        "created_at": "2020-09-30T13:21:37.000000Z",
+        "updated_at": "2020-09-30T13:21:37.000000Z"
     },
     "submitted_documents": [
         {
@@ -286,9 +211,9 @@
             "updated_at": null,
             "expire_date": null,
             "pivot": {
-                "loan_id": 8,
+                "loan_id": 49,
                 "procedure_document_id": 294,
-                "reception_date": "2020-09-22",
+                "reception_date": "2020-10-22",
                 "comment": null,
                 "is_valid": false
             }
@@ -296,28 +221,20 @@
     ],
     "notes": [
         {
-            "id": 310,
-            "annotable_id": 8,
+            "id": 327,
+            "annotable_id": 49,
             "annotable_type": "loans",
             "message": "Informe de baja policial",
-            "date": "2020-09-22 11:54:32",
-            "created_at": "2020-09-22T15:54:32.000000Z",
-            "updated_at": "2020-09-22T15:54:32.000000Z"
+            "date": "2020-10-22 14:10:40",
+            "created_at": "2020-10-22T18:10:40.000000Z",
+            "updated_at": "2020-10-22T18:10:40.000000Z"
         }, {}
     ],
     "destiny": {
         "id": 1,
-        "name": "SALUD",
-        "description": "salud",
-        "created_at": "2020-09-21T20:16:45.000000Z",
-        "updated_at": "2020-09-21T20:16:45.000000Z"
-    },
-    "interest": {
-        "id": 10,
-        "procedure_modality_id": 41,
-        "annual_interest": "13.20",
-        "penal_interest": "6.00",
-        "created_at": "2020-09-21T12:56:52.000000Z",
-        "updated_at": "2020-09-21T12:56:52.000000Z"
+        "name": "CONSTRUCCION",
+        "description": "construccion",
+        "created_at": "2020-09-30T13:24:53.000000Z",
+        "updated_at": "2020-09-30T13:24:53.000000Z"
     }
 }
