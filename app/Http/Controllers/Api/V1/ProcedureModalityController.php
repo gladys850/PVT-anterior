@@ -12,6 +12,12 @@ use Util;
 */
 class ProcedureModalityController extends Controller
 {
+    public static function append_data(ProcedureModality $procedureModality)
+    {
+        $procedureModality->procedure_type = $procedureModality->procedure_type;
+        return $procedureModality;
+    }
+
     /**
     * Lista de modalidad de trámites
     * Devuelve el listado con los datos paginados
@@ -38,7 +44,7 @@ class ProcedureModalityController extends Controller
     */
     public function show(ProcedureModality $procedure_modality)
     {
-        return $procedure_modality;
+        return self::append_data($procedure_modality);
     }
 
     /**

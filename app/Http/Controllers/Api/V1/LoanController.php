@@ -145,14 +145,14 @@ class LoanController extends Controller
     * @bodyParam lenders[0].payment_percentage integer required ID del afiliado. Example: 50
     * @bodyParam lenders[0].payable_liquid_calculated numeric required ID del afiliado. Example: 2000
     * @bodyParam lenders[0].bonus_calculated integer required ID del afiliado. Example: 300
-    * @bodyParam lenders[0].quota_refinance numeric required ID del afiliado. Example: 514.6
+    * @bodyParam lenders[0].quota_previous numeric required ID del afiliado. Example: 514.6
     * @bodyParam lenders[0].indebtedness_calculated numeric required ID del afiliado. Example: 34
     * @bodyParam lenders[0].liquid_qualification_calculated numeric required ID del afiliado. Example: 2000
     * @bodyParam lenders[1].affiliate_id integer required ID del afiliado. Example: 22773
     * @bodyParam lenders[1].payment_percentage integer required ID del afiliado. Example: 50
     * @bodyParam lenders[1].payable_liquid_calculated numeric required ID del afiliado. Example: 2000
     * @bodyParam lenders[1].bonus_calculated integer required ID del afiliado. Example: 300
-    * @bodyParam lenders[1].quota_refinance numeric required ID del afiliado. Example: 514.6
+    * @bodyParam lenders[1].quota_previous numeric required ID del afiliado. Example: 514.6
     * @bodyParam lenders[1].indebtedness_calculated numeric required ID del afiliado. Example: 34
     * @bodyParam lenders[1].liquid_qualification_calculated numeric required ID del afiliado. Example: 2000
     * @bodyParam guarantors array required Lista de afiliados Garante(es) del préstamo.
@@ -160,7 +160,6 @@ class LoanController extends Controller
     * @bodyParam guarantors[0].payment_percentage integer required ID del afiliado. Example: 50
     * @bodyParam guarantors[0].payable_liquid_calculated numeric required ID del afiliado. Example: 2000
     * @bodyParam guarantors[0].bonus_calculated integer required ID del afiliado. Example: 300
-    * @bodyParam guarantors[0].quota_refinance numeric required ID del afiliado. Example: 0
     * @bodyParam guarantors[0].indebtedness_calculated numeric required ID del afiliado. Example: 34
     * @bodyParam guarantors[0].liquid_qualification_calculated numeric required ID del afiliado. Example: 2000
     * @authenticated
@@ -265,14 +264,14 @@ class LoanController extends Controller
     * @bodyParam lenders[0].payment_percentage integer required ID del afiliado. Example: 50
     * @bodyParam lenders[0].payable_liquid_calculated numeric required ID del afiliado. Example: 2000
     * @bodyParam lenders[0].bonus_calculated integer required ID del afiliado. Example: 300
-    * @bodyParam lenders[0].quota_refinance numeric required ID del afiliado. Example: 514.6
+    * @bodyParam lenders[0].quota_previous numeric required ID del afiliado. Example: 514.6
     * @bodyParam lenders[0].indebtedness_calculated numeric required ID del afiliado. Example: 34
     * @bodyParam lenders[0].liquid_qualification_calculated numeric required ID del afiliado. Example: 2000
     * @bodyParam lenders[1].affiliate_id integer required ID del afiliado. Example: 22773
     * @bodyParam lenders[1].payment_percentage integer required ID del afiliado. Example: 50
     * @bodyParam lenders[1].payable_liquid_calculated numeric required ID del afiliado. Example: 2000
     * @bodyParam lenders[1].bonus_calculated integer required ID del afiliado. Example: 300
-    * @bodyParam lenders[1].quota_refinance numeric required ID del afiliado. Example: 514.6
+    * @bodyParam lenders[1].quota_previous numeric required ID del afiliado. Example: 514.6
     * @bodyParam lenders[1].indebtedness_calculated numeric required ID del afiliado. Example: 34
     * @bodyParam lenders[1].liquid_qualification_calculated numeric required ID del afiliado. Example: 2000
     * @bodyParam guarantors array required Lista de afiliados Garante(es) del préstamo.
@@ -280,7 +279,6 @@ class LoanController extends Controller
     * @bodyParam guarantors[0].payment_percentage integer required ID del afiliado. Example: 50
     * @bodyParam guarantors[0].payable_liquid_calculated numeric required ID del afiliado. Example: 2000
     * @bodyParam guarantors[0].bonus_calculated integer required ID del afiliado. Example: 300
-    * @bodyParam guarantors[0].quota_refinance numeric required ID del afiliado. Example: 0
     * @bodyParam guarantors[0].indebtedness_calculated numeric required ID del afiliado. Example: 34
     * @bodyParam guarantors[0].liquid_qualification_calculated numeric required ID del afiliado. Example: 2000
     * @authenticated
