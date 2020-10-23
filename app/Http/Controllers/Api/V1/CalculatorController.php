@@ -407,9 +407,7 @@ class CalculatorController extends Controller
             $affiliate = Affiliate::findOrFail($request->affiliate_id);
             $contributions = collect($request->contributions);
             $payable_liquid_average = $contributions->avg('payable_liquid');
-            $quota_calculated_total_lender = str_replace('.','',$request->quota_calculated_total_lender);
-            $quota_calculated_total_lender = \str_replace(',','.',$quota_calculated_total_lender);
-            $quota_calculated = $quota_calculated_total_lender/$quantity_guarantors;
+            $quota_calculated = $request->quota_calculated_total_lender/$quantity_guarantors;
             $contribution_first = $contributions->first();
             $total_bonuses = $contribution_first['seniority_bonus']+$contribution_first['border_bonus']+$contribution_first['public_security_bonus']+$contribution_first['east_bonus'];
             $liquid_qualification_calculated = $this->liquid_qualification($payable_liquid_average, $total_bonuses, $affiliate);
