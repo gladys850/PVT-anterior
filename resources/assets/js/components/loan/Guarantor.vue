@@ -5,9 +5,8 @@
           <v-card v-show="show_garante">
             <v-container v-if="modalidad_guarantors==0">
               <v-row>
-                {{datos}}
                 <v-col class="text-center">
-                  <h2 class="success--text" > {{modalidad.procedure_type_id}}{{modalidad_id}}ESTA MODALIDAD NO NECESITA GARANTE</h2>
+                  <h2 class="success--text" >ESTA MODALIDAD NO NECESITA GARANTE</h2>
                 </v-col>
               </v-row>
             </v-container>
@@ -103,7 +102,7 @@
                     </v-flex>
                   </v-layout>
                 </v-col>
-                <v-col cols="12" md="7" class="py-0" >{{data_ballots}}</v-col>
+                <v-col cols="12" md="7" class="py-0" ></v-col>
                 <v-col cols="12" md="4" class="py-0">
                   <v-btn
                   class="py-0"
@@ -123,7 +122,7 @@
               <v-row>
                 <v-col class="text-center">
                     <h4 class="error--text" > CANTIDAD DE GARANTES QUE NECESITA ESTA MODALIDAD:{{modalidad_guarantors}}<br>
-                  EL GARANTE DEBE ESTAR ENTRE UNA CATEGORIA DE {{prueba[1]}} A {{prueba[2]}} </h4>
+                  EL GARANTE DEBE ESTAR ENTRE UNA CATEGORIA DE {{loan_detail.min_guarantor_category}} A {{loan_detail.max_guarantor_category}} </h4>
                 </v-col>
               </v-row>
             </v-container>
@@ -229,15 +228,13 @@
                     </v-layout>
                   </v-card-text>
                 </v-col>
-
-     <v-col cols="12" md="12">
+                <v-col cols="12" md="12">
                   <v-card-text class="py-0">
                     <v-layout row wrap>
                       <v-flex xs12 class="px-2">
                         <fieldset class="pa-3">
                           <p class="py-0 mb-0">Monto del Prestamo: {{simulator_guarantors.amount_requested +' '}}<b>|</b> Plazo del Prestamo:{{simulator_guarantors.amount_requested +' '}}<b>|</b> Cuota del Titular:{{simulator_guarantors.quota_calculated_estimated_total  }}</p>
                           <v-progress-linear></v-progress-linear>
-
                             <ul style="list-style: none" class="pa-0">
                               <li v-for="(afiliados,i) in simulator_guarantors.affiliates" :key="i" >
                                 <v-progress-linear></v-progress-linear>
@@ -245,30 +242,17 @@
                                 <p class="py-0 mb-0">Cuota: {{afiliados.quota_calculated+"  "}}{{"  "+"Indice de Endeudamiento:"+afiliados.indebtedness_calculated}}{{" "}}Porcentaje de Pago: {{" "+afiliados.payment_percentage}}%</p>
                               </li>
                             </ul>
-                          
-                          
-                          <div class="text-right"  v-show="evaluate_garantor.is_valid">
-                            <v-btn
-                              class="py-0"
-                              color="info"
-                              rounded
-                               x-small
-                              @click="simulador()">Calculo de Cuota
-                            </v-btn>
-                          </div>
                         </fieldset>
                       </v-flex>
                     </v-layout>
                   </v-card-text>
                 </v-col>
-
               </v-row>
             </v-container>
           </v-card>
         </v-col>
       </v-row>
       <v-card>
-        
       </v-card>
     </v-container>
 </template>
@@ -277,23 +261,15 @@
   export default {
   name: "loan-guarantor",
    props: {
-    garantes: {
+    loan_detail: {
+      type: Object,
+      required: true
+    },
+    guarantors: {
       type: Array,
       required: true
     },
      affiliate: {
-      type: Object,
-      required: true
-    },
-    prueba: {
-      type: Array,
-      required: true
-    },
-    datos: {
-      type: Object,
-      required: true
-    },
-    calculos: {
       type: Object,
       required: true
     },
@@ -321,6 +297,7 @@
       },
     },
     editar:true,
+    garante_boletas:{},
     data_ballots:[],
     show_garante:true,
     show_calculated:false,
@@ -329,7 +306,9 @@
     simulator_guarantors:{},
     loan:[],
     index: [],
+    guarantor_objeto:{},
     garantes_detalle:[],
+    garantes_simulador:[],
     guarantor:[null],
     validated:true,
     validated1:false,
@@ -399,18 +378,27 @@ ver()
  async añadir()
     {  this.guarantor_ci=null
  this.show_evaluated=false
-      this.garantes.push(this.affiliate_garantor,'hola');
+      
+      this.garante_boletas.affiliate_id=this.affiliate_garantor.affiliate.id
+      this.garante_boletas.liquid_qualification_calculated=this.evaluate_garantor.payable_liquid_calculated
+      
+      this.guarantor_objeto.affiliate_id=this.affiliate_garantor.affiliate.id
+      this.guarantor_objeto.bonus_calculated=this.evaluate_garantor.bonus_calculated
+       this.guarantor_objeto.payable_liquid_calculated=this.evaluate_garantor.payable_liquid_calculated
+ 
       this.garantes_detalle.push(this.affiliate_garantor.affiliate.full_name);
-    console.log('entro a garantes ==> '+this.garantes)
+      this.garantes_simulador.push(this.garante_boletas);
+      this.guarantors.push(this.guarantor_objeto);
+      this.garante_boletas={}
+      this.guarantor_objeto={}
+
      console.log('entro a garantes ==> '+this.garantes_detalle)
 
 this.clear()
     },
     deleteOtherDocument(i) {
-      this.garantes.splice(i, 1);
       this.garantes_detalle.splice(i, 1);
-      console.log("other1 " + this.garantes);
-  
+
       console.log("other2 " + this.garantes_detalle);
     },
    /* async añadir()
@@ -418,42 +406,16 @@ this.clear()
       console.log('entro a garantes')
 this.garantes[0]=this.affiliate_garantor.affiliate.id
     this.toastr.success("Se añadio satisfactoriamente al garante.")
-      
 console.log('este es el garante'+this.garantes[0])
     },*/
-    async Calculator() {
-      try {
-        this.show_result=true  
-         let res = await axios.post(`calculator`, {
-            procedure_modality_id:this.modalidad_id,
-            months_term:  this.calculos.plazo,
-            amount_requested: this.calculos.montos,
-            affiliate_id:this.affiliate_garantor.affiliate.id,
-            contributions: [
-            {
-              payable_liquid: this.payable_liquid[0],
-              seniority_bonus:  this.bonos[2],
-              border_bonus: this.bonos[0],
-              public_security_bonus: this.bonos[3],
-              east_bonus:this.bonos[1]
-            }
-          ]
-        })
-        this.calculos1= res.data     
-      }catch (e) {
-        console.log(e)
-      }finally {
-        this.loading = false
-      }
-    },
      async Calculator1() {
       try {
         this.show_result=true
-        this.show_evaluated=true    
+        this.show_evaluated=true
          let res = await axios.post(`evaluate_garantor`, {
             procedure_modality_id:this.modalidad_id,
             affiliate_id:this.affiliate_garantor.affiliate.id,
-            quota_calculated_total_lender:900,
+            quota_calculated_total_lender:this.loan_detail.quota_calculated_total_lender,
             contributions: [
             {
               payable_liquid: this.payable_liquid[0],
@@ -475,29 +437,21 @@ console.log('este es el garante'+this.garantes[0])
       try {
       let res = await axios.post(`simulator`, {
               procedure_modality_id: this.modalidad_id,
-              amount_requested: 68000,
-              months_term: 96,
+              amount_requested: this.loan_detail.amount_requested,
+              months_term: this.loan_detail.months_term,
               guarantor: true,
-              liquid_qualification_calculated_lender: 2000,
-              liquid_calculated:[
-                {affiliate_id:1,
-                liquid_qualification_calculated:2000
-                },
-                {affiliate_id:37973,
-                liquid_qualification_calculated:2000
-                }
-                ]
+              liquid_qualification_calculated_lender: this.loan_detail.liquid_qualification_calculated,
+              liquid_calculated:this.garantes_simulador
           })
           this.simulator_guarantors = res.data
-          console.log('entro al simulador'+this.simulator_guarantors)
+    for (this.j = 0; this.j< this.guarantors.length; this.j++) {
 
-/*      for (this.j = 0; this.j< this.simulator.length; this.j++) {
+this.guarantors[this.j].payment_percentage=this.simulator_guarantors.affiliates[this.j].payment_percentage
+this.guarantors[this.j].indebtedness_calculated=this.simulator_guarantors.affiliates[this.j].indebtedness_calculated
+this.guarantors[this.j].liquid_qualification_calculated=this.simulator_guarantors.affiliates[this.j].liquid_qualification_calculated
 
-        this.simulator[this.j].affiliate_nombres=this.datos_calculadora_hipotecario[this.j].affiliate_name
-
-        console.log(""+this.simulator[this.j].affiliate_nombres)
       }
-*/
+
 
       } catch (e) {
         console.log(e)

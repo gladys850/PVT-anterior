@@ -180,6 +180,7 @@ export default {
     editable: false,
     reload: false,
     payment_types:[],
+    city: [],
     entity: [],
     entities:null,
     dates: {
@@ -191,6 +192,7 @@ export default {
   }),
   beforeMount(){
     this.getPaymentTypes()
+    this.getCity()                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
     this.getEntity()
   },
   mounted() {
@@ -233,7 +235,33 @@ export default {
         this.loading = false
       }
     },
+    async getCity() {
+      try {
+        this.loading = true
+        let res = await axios.get(`city`)
+        this.city = res.data
+        console.log("ciudad "+ this.city)
+
+      } catch (e) {
+        console.log(e)
+      } finally {
+        this.loading = false
+      }
+    },
     identityCardExt(id){
+      let ext
+      if(id != null){
+        for(let i=0; i<this.city.length;i++){
+          if(this.city[i].id == id){
+            ext = this.city[i].first_shortened
+          }  
+        }
+      return ext
+      }else{
+        return ''
+      }
+    },
+    /*identityCardExt(id){
       let ext
       if(id != null){
       ext = this.city.find(o => o.id == id).first_shortened
@@ -242,7 +270,7 @@ export default {
       }else{
         return ''
       }
-    },
+    },*/
     resetForm() {
       this.editable = false
       this.reload = true

@@ -33,7 +33,7 @@ class LoanStructureSeeder extends Seeder
                   ['name' => 'Solicitud de aclaración de datos personales en la Boleta de Pago.','number'=>0],  // En caso de que el afiliado tenga datos erroneos en su boleta de pago
                   ['name' => 'Certificado de no adeudo, emitido por la instancia correspondiente.','number'=>0],  // en caso de que el afiliado haya tenido deudas de otras entidades (Ej: COMIPOL , COVIPOL)
                   ['name' => 'Certificado de pago emitido por la entidad correspondiente.','number'=>0],  // en caso de que el afiliado tenga deudas con otras entidades (Ej: COMIPOL , COVIPOL)
-                  ['name' => 'Conformidad de devolucion de descuento por garantia original o fotocopia legalizada.','number'=>0],
+                  ['name' => 'Conformidad de devolucion de descuento por garantía original o fotocopia legalizada.','number'=>0],
                 ],
                 'parameters' => [
                     'debt_index' => 90,
@@ -47,7 +47,7 @@ class LoanStructureSeeder extends Seeder
                     // ANTICIPO SECTOR PASIVO Y VIUDAS
                 ['name'=>'Anticipo sector pasivo','shortened'=>'ANT-SP','requirements'=>[
                   ['name' => 'Cédula de Identidad del (la) titular en copia simple.','number'=>1],
-                  ['name' => 'Ultima boleta de pago en copia simple.','number'=>2], //Nuevo *caso pasivo con renta de SENASIR, o AFP
+                  ['name' => 'Última boleta de pago en copia simple.','number'=>2], //Nuevo *caso pasivo con renta de SENASIR, o AFP
                   ['name' => 'Certificado de haberes considerando el último mes percibido.','number'=>2],  // En caso de no contar con la boleta de pago
                   ['name' => 'Estado de cuenta original, vigente y emitido por el Banco Unión S.A.','number'=>3], // Nuevo
                   ['name' => 'Formulario de Calificación y Aprobación de Préstamos FORM/CAYAP/PTMO/UIP/004.','number'=>4],
@@ -58,7 +58,7 @@ class LoanStructureSeeder extends Seeder
                   ['name' => 'Certificado de pago emitido por la entidad correspondiente.','number'=>0],  // en caso de que el afiliado tenga deudas con otras entidades (Ej: COMIPOL , COVIPOL)
                   ['name' => 'Certificado de aportes para el Auxilio Mortuorio de los 3 últimos meses de la unidad de Fondo de Retiro.','number'=>0], // para solicitantes AFPś
                   ['name' => 'Memorándum de agradecimiento de servicios en copia simple emitido por el Comando General de la Policía Boliviana.','number'=>0],  // *caso pasivo con renta en AFP , quien solicita el préstamo
-                  ['name' => 'Conformidad de devolución de descuento por garantia original o fotocopia legalizada.','number'=>0],
+                  ['name' => 'Conformidad de devolución de descuento por garantía original o fotocopia legalizada.','number'=>0],
                 ],
                 'parameters' => [
                     'debt_index' => 90,
@@ -87,7 +87,7 @@ class LoanStructureSeeder extends Seeder
                 ['name' => 'Solicitud de aclaración de datos personales en la Boleta de Pago.','number'=>0],  // En caso de que el afiliado tenga datos erroneos en su boleta de pago
                 ['name' => 'Certificado de no adeudo, emitido por la instancia correspondiente.','number'=>0],  // en caso de que el afiliado haya tenido deudas de otras entidades (Ej: COMIPOL , COVIPOL)
                 ['name' => 'Certificado de pago emitido por la entidad correspondiente.','number'=>0],  // en caso de que el afiliado tenga deudas con otras entidades (Ej: COMIPOL , COVIPOL)
-                ['name' => 'Conformidad de devolución de descuento por garantia original o fotocopia legalizada.','number'=>0],
+                ['name' => 'Conformidad de devolución de descuento por garantía original o fotocopia legalizada.','number'=>0],
               ],
               'parameters' => [
                   'debt_index' => 50,
@@ -99,7 +99,7 @@ class LoanStructureSeeder extends Seeder
               ],
               'interest' => ['annual_interest' => 20,'penal_interest' => 6]
             ],
-              // CORTO PLAZO SECTOR ACTIVO DISPONIBILIDAD LETRA 'A'
+              // CORTO PLAZO SECTOR ACTIVO DISPONIBILIDAD LETRA 'A', el refinanciamiento de esta sub mod no corresponde según reglamento de prestamos ART 76 I. c) 
               ['name'=>'Corto plazo con disponibilidad de letra "A"','shortened'=>'PCP-DLA','requirements'=>[
                 ['name' => 'Cédula de Identidad del (la) titular en copia simple.','number'=>1],
                 ['name' => 'Tres últimas Boletas de pago en copia simple..','number'=>2], //( 3 boletas)
@@ -114,7 +114,7 @@ class LoanStructureSeeder extends Seeder
                 ['name' => 'Solicitud de aclaración de datos personales en la Boleta de Pago.','number'=>0],  // En caso de que el afiliado tenga datos erroneos en su boleta de pago
                 ['name' => 'Certificado de no adeudo, emitido por la instancia correspondiente.','number'=>0],  // en caso de que el afiliado haya tenido deudas de otras entidades (Ej: COMIPOL , COVIPOL)
                 ['name' => 'Certificado de pago emitido por la entidad correspondiente.','number'=>0],  // en caso de que el afiliado tenga deudas con otras entidades (Ej: COMIPOL , COVIPOL)
-                ['name' => 'Conformidad de devolución de descuento por garantia original o fotocopia legalizada.','number'=>0],
+                ['name' => 'Conformidad de devolución de descuento por garantía original o fotocopia legalizada.','number'=>0],
               ],
               'parameters' => [
                 'debt_index' => 50,
@@ -141,7 +141,7 @@ class LoanStructureSeeder extends Seeder
                 ['name' => 'Certificado de no adeudo, emitido por la instancia correspondiente','number'=>0],  // en caso de que el afiliado haya tenido deudas de otras entidades (Ej: COMIPOL , COVIPOL)
                 ['name' => 'Certificado de pago emitido por la entidad correspondiente.','number'=>0],  // en caso de que el afiliado tenga deudas con otras entidades (Ej: COMIPOL , COVIPOL)
                 ['name' => 'Memorándum de agradecimiento de servicios en copia simple emitido por el Comando General de la Policía Boliviana.','number'=>0],  // *caso pasivo con renta en AFP , quien solicita el préstamo
-                ['name' => 'Conformidad de devolución de descuento por garantia original o fotocopia legalizada.','number'=>0],
+                ['name' => 'Conformidad de devolución de descuento por garantía original o fotocopia legalizada.','number'=>0],
 
               ],
               'parameters' => [
@@ -168,7 +168,7 @@ class LoanStructureSeeder extends Seeder
                 ['name' => 'Certificado de no adeudo, emitido por la instancia correspondiente','number'=>0],  // en caso de que el afiliado haya tenido deudas de otras entidades (Ej: COMIPOL , COVIPOL)
                 ['name' => 'Certificado de pago emitido por la entidad correspondiente.','number'=>0],  // en caso de que el afiliado tenga deudas con otras entidades (Ej: COMIPOL , COVIPOL)
                 ['name' => 'Memorándum de agradecimiento de servicios en copia simple emitido por el Comando General de la Policía Boliviana.','number'=>0],  // *caso pasivo con renta en AFP , quien solicita el préstamo
-                ['name' => 'Conformidad de devolución de descuento por garantia original o fotocopia legalizada.','number'=>0],
+                ['name' => 'Conformidad de devolución de descuento por garantía original o fotocopia legalizada.','number'=>0],
               ],
               'parameters' => [
                 'debt_index' => 50,
@@ -191,7 +191,7 @@ class LoanStructureSeeder extends Seeder
                 ['name' => 'Solicitud de aclaración de datos personales en la Boleta de Pago.','number'=>0],  // En caso de que el afiliado tenga datos erroneos en su boleta de pago
                 ['name' => 'Certificado de no adeudo, emitido por la instancia correspondiente.','number'=>0],  // en caso de que el afiliado haya tenido deudas de otras entidades (Ej: COMIPOL , COVIPOL)
                 ['name' => 'Certificado de pago emitido por la entidad correspondiente.','number'=>0],  // en caso de que el afiliado tenga deudas con otras entidades (Ej: COMIPOL , COVIPOL)
-                ['name' => 'Conformidad de devolución de descuento por garantia original o fotocopia legalizada.','number'=>0],
+                ['name' => 'Conformidad de devolución de descuento por garantía original o fotocopia legalizada.','number'=>0],
               ],
               'parameters' => [
                 'debt_index' => 50,
@@ -218,7 +218,7 @@ class LoanStructureSeeder extends Seeder
                 ['name' => 'Certificado de no adeudo, emitido por la instancia correspondiente','number'=>0],  // en caso de que el afiliado haya tenido deudas de otras entidades (Ej: COMIPOL , COVIPOL)
                 ['name' => 'Certificado de pago emitido por la entidad correspondiente.','number'=>0],  // en caso de que el afiliado tenga deudas con otras entidades (Ej: COMIPOL , COVIPOL)
                 ['name' => 'Memorándum de agradecimiento de servicios en copia simple emitido por el Comando General de la Policía Boliviana.','number'=>0],  // *caso pasivo con renta en AFP , quien solicita el préstamo
-                ['name' => 'Conformidad de devolución de descuento por garantia original o fotocopia legalizada.','number'=>0],
+                ['name' => 'Conformidad de devolución de descuento por garantía original o fotocopia legalizada.','number'=>0],
               ],
               'parameters' => [
                 'debt_index' => 50,
@@ -257,17 +257,17 @@ class LoanStructureSeeder extends Seeder
                   'max_cosigner'=>0
                 ],
                 'interest' => ['annual_interest' => 20,'penal_interest' => 6]
+              ]
             ]
-            ],
           ],
           'largo' => [
             'type' => ['module_id' => $module->id,'name'=>'Préstamo a largo plazo','second_name'=>'Largo plazo'],
             'limits' => ['maximum_amount' => 150000,'minimum_amount' => 25001,'maximum_term' => 96,'minimum_term' => 25],
             'modalities' => [
-                // LARGO PLAZO SECTOR ACTIVO Y ADMINISTRATIVO CON GARANTIA PERSONAL(2 GARANTES ACTIVOS)
+                // LARGO PLAZO SECTOR ACTIVO Y ADMINISTRATIVO CON GARANTÍA PERSONAL(2 GARANTES ACTIVOS)
               ['name'=>'Largo Plazo con garantía personal para el sector activo y personal Adm Policial','shortened'=>'PLP-GP-SAYADM','requirements'=>[
                 ['name' => 'Cédula de Identidad del (la) titular en copia simple','number'=>1],
-                ['name' => 'Ultima Boleta de pago en copia simple.','number'=>2], // Tambien de los 2 garantes
+                ['name' => 'Última Boleta de pago en copia simple.','number'=>2], // Tambien de los 2 garantes
                 ['name' => 'Certificado de haberes considerando el último mes percibido.','number'=>2],  // En caso de no tener la boleta de pago
                 ['name' => 'Certificado de años de servicio desglosado en original emitido por el Comando General de la Policía Boliviana','number'=>3],
                 ['name' => 'Certificado de años de servicio desglosado en copia legalizada emitido por el Comando General de la Policía Boliviana.','number'=>3],
@@ -281,7 +281,7 @@ class LoanStructureSeeder extends Seeder
                 ['name' => 'Fotocopia Testimonio de propiedad.','number'=>0],  // en caso de que el plazo sea mayor a 60 meses un prestamo para vivienda pero no hipotecario
                 ['name' => 'Folio Real Actualizado o Información rapida del inmueble.','number'=>0],  // en caso de que el plazo sea mayor a 60 meses un prestamo para vivienda pero no hipotecario
                 ['name' => 'Fotocopia de catastro.','number'=>0],  // en caso de que el plazo sea mayor a 60 meses un prestamo para vivienda pero no hipotecario
-                ['name' => 'Conformidad de devolución de descuento por garantia original o fotocopia legalizada.','number'=>0],
+                ['name' => 'Conformidad de devolución de descuento por garantía original o fotocopia legalizada.','number'=>0],
               ],
               'parameters' => [
                 'debt_index' => 50,
@@ -295,10 +295,10 @@ class LoanStructureSeeder extends Seeder
               ],
               'interest' => ['annual_interest' => 13.2,'penal_interest' => 6]
             ],
-                  // LARGO PLAZO SECTOR PASIVO CON GARANTIA PERSONAL
+                  // LARGO PLAZO SECTOR PASIVO CON GARANTÍA PERSONAL
               ['name'=>'Largo Plazo con garantía personal para el sector pasivo','shortened'=>'PLP-GP-SP','requirements'=>[
                 ['name' => 'Cédula de Identidad del (la) titular en copia simple.','number'=>1],// del solicitante y los garantes
-                ['name' => 'Ultima boleta de pago en copia simple.','number'=>2],
+                ['name' => 'Última boleta de pago en copia simple.','number'=>2],
                 ['name' => 'Certificado de haberes considerando el último mes percibido.','number'=>2],  // En caso de no tener la boleta de pago
                 ['name' => 'Estado de cuenta original, vigente y emitido por el Banco Unión S.A','number'=>3],
                 ['name' => 'Formulario de Calificación y Aprobación de Préstamos FORM/CAYAP/PTMO/UIP/004.','number'=>4],
@@ -309,7 +309,7 @@ class LoanStructureSeeder extends Seeder
                 ['name' => 'Certificado de no adeudo, emitido por la instancia correspondiente','number'=>0],  // en caso de que el afiliado haya tenido deudas de otras entidades (Ej: COMIPOL , COVIPOL)
                 ['name' => 'Certificado de pago emitido por la entidad correspondiente.','number'=>0],  // en caso de que el afiliado tenga deudas con otras entidades (Ej: COMIPOL , COVIPO
                 ['name' => 'Memorándum de agradecimiento de servicios en copia simple emitido por el Comando General de la Policía Boliviana.','number'=>0],  // *caso pasivo con renta en AFP , quien solicita el préstamo
-                ['name' => 'Conformidad de devolución de descuento por garantia original o fotocopia legalizada.','number'=>0],
+                ['name' => 'Conformidad de devolución de descuento por garantía original o fotocopia legalizada.','number'=>0],
 
               ],
               'parameters' => [
@@ -327,7 +327,7 @@ class LoanStructureSeeder extends Seeder
                 // LARGO PLAZO UN SOLO GARANTE SECTOR ACTIVO --Afiliados CPOP
               ['name'=>'Largo Plazo con un solo garante para el sector activo - CPOP','shortened'=>'PLP-CPOP','requirements'=>[
                 ['name' => 'Cédula de Identidad del (la) titular en copia simple','number'=>1],
-                ['name' => 'Ultima Boleta de pago en copia simple.','number'=>2], // Tambien de los 2 garantes
+                ['name' => 'Última Boleta de pago en copia simple.','number'=>2], // Tambien de los 2 garantes
                 ['name' => 'Certificado de haberes considerando el último mes percibido.','number'=>2],  // En caso de no tener la boleta de pago
                 ['name' => 'Certificado de años de servicio desglosado en original emitido por el Comando General de la Policía Boliviana','number'=>3],
                 ['name' => 'Certificado de años de servicio desglosado en fotocopia Legalizada emitido por el Comando General de la Policía Boliviana','number'=>3],
@@ -340,7 +340,7 @@ class LoanStructureSeeder extends Seeder
                 ['name' => 'Certificado de no adeudo, emitido por la instancia correspondiente.','number'=>0],  // en caso de que el afiliado haya tenido deudas de otras entidades (Ej: COMIPOL , COVIPOL)
                 ['name' => 'Certificado de pago emitido por la entidad correspondiente.','number'=>0],  // en caso de que el afiliado tenga deudas con otras entidades (Ej: COMIPOL , COVIPOL)
                 ['name' => 'Certificado de no ingreso a disponibilidad de las letras “C” y “A” en original emitido por el Comando General de la Policía Boliviana.','number'=>0], //verificacion, no encontrarse en disponibilidad de letra A o C o item 0
-                ['name' => 'Conformidad de devolución de descuento por garantia original o fotocopia legalizada.','number'=>0],
+                ['name' => 'Conformidad de devolución de descuento por garantía original o fotocopia legalizada.','number'=>0],
               ]
               ,
               'parameters' => [
@@ -358,7 +358,7 @@ class LoanStructureSeeder extends Seeder
               // REFINANCIANCIAMIENTO SECTOR ACTIVO CON UN SOLO GARANTE ---> En este caso el garante solo puede ser activo
               ['name'=>'Refinanciamiento de prestamos a largo Plazo para el sector activo - CPOP','shortened'=>'PLP-R-SA-CPOP','requirements'=>[
                 ['name' => 'Cédula de Identidad del (la) titular en copia simple','number'=>1],
-                ['name' => 'Ultima Boleta de pago en copia simple.','number'=>2], // Tambien de los 2 garantes
+                ['name' => 'Última Boleta de pago en copia simple.','number'=>2], // Tambien de los 2 garantes
                 ['name' => 'Certificado de haberes considerando el último mes percibido.','number'=>2],  // En caso de no tener la boleta de pago
             		['name' => 'Certificado de años de servicio desglosado en original emitido por el Comando General de la Policía Boliviana','number'=>3],
             		['name' => 'Certificado de años de servicio desglosado en fotocopia Legalizada emitido por el Comando General de la Policía Boliviana','number'=>3],
@@ -373,7 +373,7 @@ class LoanStructureSeeder extends Seeder
                 ['name' => 'Fotocopia Testimonio de propiedad.','number'=>0],  // en caso de que el plazo sea mayor a 60 meses un prestamo para vivienda pero no hipotecario
                 ['name' => 'Folio Real Actualizado o Información rapida del inmueble.','number'=>0],  // en caso de que el plazo sea mayor a 60 meses un prestamo para vivienda pero no hipotecario
                 ['name' => 'Fotocopia de catastro.','number'=>0],  // en caso de que el plazo sea mayor a 60 meses un prestamo para vivienda pero no hipotecario
-                ['name' => 'Conformidad de devolución de descuento por garantia original o fotocopia legalizada.','number'=>0],
+                ['name' => 'Conformidad de devolución de descuento por garantía original o fotocopia legalizada.','number'=>0],
 
               ],
               'parameters' => [
@@ -391,7 +391,7 @@ class LoanStructureSeeder extends Seeder
                  // REFINANCIANCIAMIENTO SECTOR PASIVO CON UN SOLO GARANTE
               ['name'=>'Refinanciamiento de prestamos a largo Plazo para el sector pasivo - CPOP','shortened'=>'PLP-R-SP-CPOP','requirements'=>[
                 ['name' => 'Cédula de Identidad del (la) titular en copia simple','number'=>1],
-                ['name' => 'Ultima boleta de pago en copia simple.','number'=>2],
+                ['name' => 'Última boleta de pago en copia simple.','number'=>2],
                 ['name' => 'Certificado de haberes considerando el último mes percibido.','number'=>2],  // En caso de no tener la boleta de pago
                 ['name' => 'Certificado de años de servicio desglosado en original emitido por el Comando General de la Policía Boliviana','number'=>3],
             		['name' => 'Certificado de años de servicio desglosado en fotocopia Legalizada emitido por el Comando General de la Policía Boliviana','number'=>3],
@@ -406,7 +406,7 @@ class LoanStructureSeeder extends Seeder
                 ['name' => 'Certificado de no adeudo, emitido por la instancia correspondiente','number'=>0],  // en caso de que el afiliado haya tenido deudas de otras entidades (Ej: COMIPOL , COVIPOL)
                 ['name' => 'Certificado de pago emitido por la entidad correspondiente.','number'=>0],  // en caso de que el afiliado tenga deudas con otras entidades (Ej: COMIPOL , COVIPO
                 ['name' => 'Memorándum de agradecimiento de servicios en copia simple emitido por el Comando General de la Policía Boliviana.','number'=>0],  // *caso pasivo con renta en AFP , quien solicita el préstamo
-                ['name' => 'Conformidad de devolución de descuento por garantia original o fotocopia legalizada.','number'=>0],
+                ['name' => 'Conformidad de devolución de descuento por garantía original o fotocopia legalizada.','number'=>0],
               ],
               'parameters' => [
                 'debt_index' => 60,
@@ -420,13 +420,44 @@ class LoanStructureSeeder extends Seeder
               ],
               'interest' => ['annual_interest' => 13.2,'penal_interest' => 6]
             ],
+                //REFINANCIAMIENTO LARGO PLAZO SECTOR ACTIVO Y ADMINISTRATIVO CON GARANTÍA PERSONAL(2 GARANTES ACTIVOS) **
+                ['name'=>'Refinanciamiento de préstamos a largo Plazo con garantía personal para el sector activo y personal Adm Policial','shortened'=>'PLP-R-GP-SAYADM','requirements'=>[
+                  ['name' => 'Cédula de Identidad del (la) titular en copia simple','number'=>1],
+                  ['name' => 'Última Boleta de pago en copia simple.','number'=>2], // Tambien de los 2 garantes
+                  ['name' => 'Certificado de haberes considerando el último mes percibido.','number'=>2],  // En caso de no tener la boleta de pago
+                  ['name' => 'Certificado de años de servicio desglosado en original emitido por el Comando General de la Policía Boliviana','number'=>3],
+                  ['name' => 'Certificado de años de servicio desglosado en copia legalizada emitido por el Comando General de la Policía Boliviana.','number'=>3],
+                  ['name' => 'Certificado de años de servicio desglosado emitido por los Comandos Regionales de la Policía Boliviana.','number'=>3],
+                  ['name' => 'Estado de cuenta original, vigente y emitido por el Banco Unión S.A','number'=>4],
+                  ['name' => 'Formulario de Calificación y Aprobación de Préstamos FORM/CAYAP/PTMO/UIP/004.','number'=>5],
+                  /*Estos documentos son solicitados por MUSERPOL en caso de ser requeridos*/
+                  ['name' => 'Solicitud de aclaración de datos personales en la Boleta de Pago.','number'=>0],  // En caso de que el afiliado tenga datos erroneos en su boleta de pago
+                  ['name' => 'Certificado de no adeudo, emitido por la instancia correspondiente.','number'=>0],  // en caso de que el afiliado haya tenido deudas de otras entidades (Ej: COMIPOL , COVIPOL)
+                  ['name' => 'Certificado de pago emitido por la entidad correspondiente.','number'=>0],  // en caso de que el afiliado tenga deudas con otras entidades (Ej: COMIPOL , COVIPOL)
+                  ['name' => 'Fotocopia Testimonio de propiedad.','number'=>0],  // en caso de que el plazo sea mayor a 60 meses un prestamo para vivienda pero no hipotecario
+                  ['name' => 'Folio Real Actualizado o Información rapida del inmueble.','number'=>0],  // en caso de que el plazo sea mayor a 60 meses un prestamo para vivienda pero no hipotecario
+                  ['name' => 'Fotocopia de catastro.','number'=>0],  // en caso de que el plazo sea mayor a 60 meses un prestamo para vivienda pero no hipotecario
+                  ['name' => 'Conformidad de devolución de descuento por garantía original o fotocopia legalizada.','number'=>0],
+                ],
+                'parameters' => [
+                  'debt_index' => 50,
+                  'quantity_ballots' => 1,
+                  'guarantors' => 2,
+                  'min_guarantor_category' =>0.35,
+                  'max_guarantor_category' =>1.00,
+                  'personal_reference' => true,
+                  'max_lenders' => 1,
+                  'max_cosigner'=>0
+                ],
+                'interest' => ['annual_interest' => 13.2,'penal_interest' => 6]
+              ]
             ]
           ],
           'hipotecario' => [
             'type' => ['module_id' => $module->id,'name'=>'Préstamo hipotecario','second_name'=>'Hipotecario'],
             'limits' => ['maximum_amount' => 700000,'minimum_amount' => 25001,'maximum_term' => 240,'minimum_term' => 25],
             'modalities' => [
-               // LARGO PLAZO GARANTIA HIPOTECARIA
+               // LARGO PLAZO GARANTÍA HIPOTECARIA
               ['name'=>'Préstamo con garantia hipotecaria de bien inmueble para el sector activo','shortened'=>'PLP-GH-SA','requirements'=>[
               ['name' => 'Cédula de Identidad del (la) titular en copia simple','number'=>1],
               ['name' => 'Tres últimas Boletas de pago en copia simple.','number'=>2],
@@ -438,7 +469,7 @@ class LoanStructureSeeder extends Seeder
               ['name' => 'Factura de Luz del Inmueble','number'=>5], //nuevo
               ['name' => 'Factura de Agua del Inmueble','number'=>6], //nuevo
               ['name' => 'Folio Real','number'=>7], //nuevo
-              ['name' => 'Informacion rapida del Inmueble','number'=>8], //nuevo
+              ['name' => 'Información rapida del Inmueble','number'=>8], //nuevo
               ['name' => 'Fotocopia de Testimonio de Propiedad','number'=>9], //nuevo
               ['name' => 'Fotocopia de Impuestos 3 Ultimos Años','number'=>10], //nuevo
               ['name' => 'Fotocopia de Plano de lote','number'=>11], //nuevo
@@ -450,7 +481,7 @@ class LoanStructureSeeder extends Seeder
               ['name' => 'Solicitud de aclaración de datos personales en la Boleta de Pago.','number'=>0],  // En caso de que el afiliado tenga datos erroneos en su boleta de pago
               ['name' => 'Certificado de no adeudo, emitido por la instancia correspondiente.','number'=>0],  // en caso de que el afiliado haya tenido deudas de otras entidades (Ej: COMIPOL , COVIPOL)
               ['name' => 'Certificado de pago emitido por la entidad correspondiente.','number'=>0],  // en caso de que el afiliado tenga deudas con otras entidades (Ej: COMIPOL , COVIPOL)
-              ['name' => 'Conformidad de devolución de descuento por garantia original o fotocopia legalizada.','number'=>0],
+              ['name' => 'Conformidad de devolución de descuento por garantía original o fotocopia legalizada.','number'=>0],
               /**/
             ],
             'parameters' => [
@@ -463,7 +494,7 @@ class LoanStructureSeeder extends Seeder
             ],
             'interest' => ['annual_interest' => 9,'penal_interest' => 6]
             ],
-             // LARGO PLAZO GARANTIA HIPOTECARIA CPOP
+             // LARGO PLAZO GARANTÍA HIPOTECARIA CPOP
               ['name'=>'Préstamo con garantia hipotecaria de bien inmueble para el sector activo - CPOP','shortened'=>'PLP-GH-CPOP','requirements'=>[
               ['name' =>'Cédula de Identidad del (la) titular en copia simple','number'=>1],
               ['name' => 'Certificado de años de servicio desglosado en original emitido por el Comando General de la Policía Boliviana','number'=>2],
@@ -500,7 +531,80 @@ class LoanStructureSeeder extends Seeder
             ],
             'interest' => ['annual_interest' => 9,'penal_interest' => 6]
             ],
-            ]
+              //REFINANCIAMIENTO DE PRÉSTAMOS A LARGO PLAZO GARANTÍA HIPOTECARIA PARA EL SECTOR ACTIVO
+              ['name'=>'Refinanciamiento de préstamos con garantía hipotecaria de bien inmueble para el sector activo','shortened'=>'PLP-R-GH-SA','requirements'=>[
+              ['name' => 'Cédula de Identidad del (la) titular en copia simple','number'=>1],
+              ['name' => 'Tres últimas Boletas de pago en copia simple.','number'=>2],
+              ['name' => 'Certificado de haberes considerando el último mes percibido.','number'=>2],  // En caso de no contar con la boleta de pago
+              ['name' => 'Certificado de años de servicio desglosado en original emitido por el Comando General de la Policía Boliviana','number'=>3],
+              ['name' => 'Certificado de años de servicio desglosado en fotocopia Legalizada emitido por el Comando General de la Policía Boliviana','number'=>3],
+              ['name' => 'Certificado de años de servicio desglosado en original emitido por el Comando Regional de la Policía Boliviana','number'=>3],
+              ['name' => 'Croquis de ubicación del inmueble','number'=>4], //nuevo
+              ['name' => 'Factura de Luz del Inmueble','number'=>5], //nuevo
+              ['name' => 'Factura de Agua del Inmueble','number'=>6], //nuevo
+              ['name' => 'Folio Real','number'=>7], //nuevo
+              ['name' => 'Información rapida del Inmueble','number'=>8], //nuevo
+              ['name' => 'Fotocopia de Testimonio de Propiedad','number'=>9], //nuevo
+              ['name' => 'Fotocopia de Impuestos 3 Ultimos Años','number'=>10], //nuevo
+              ['name' => 'Fotocopia de Plano de lote','number'=>11], //nuevo
+              ['name' => 'Fotocopia de Catastro','number'=>12], //nuevo
+              ['name' => 'Estado de cuenta original, vigente y emitido por el Banco Unión S.A','number'=>13],
+              ['name' => 'Certificado de estado civil en original emitido por el SERECI.','number'=>14],
+              ['name' => 'Formulario de Calificación y Aprobación de Préstamos FORM/CAYAP/PTMO/UIP/004.','number'=>15],
+              /*Estos documentos son solicitados por MUSERPOL en caso de ser requeridos*/
+              ['name' => 'Solicitud de aclaración de datos personales en la Boleta de Pago.','number'=>0],  // En caso de que el afiliado tenga datos erroneos en su boleta de pago
+              ['name' => 'Certificado de no adeudo, emitido por la instancia correspondiente.','number'=>0],  // en caso de que el afiliado haya tenido deudas de otras entidades (Ej: COMIPOL , COVIPOL)
+              ['name' => 'Certificado de pago emitido por la entidad correspondiente.','number'=>0],  // en caso de que el afiliado tenga deudas con otras entidades (Ej: COMIPOL , COVIPOL)
+              ['name' => 'Conformidad de devolución de descuento por garantía original o fotocopia legalizada.','number'=>0],
+              /**/
+            ],
+            'parameters' => [
+            'debt_index' => 80,
+            'quantity_ballots' => 1,
+            'guarantors' => 0,
+            'personal_reference' => true,
+            'max_lenders' => 2,
+            'max_cosigner'=>2
+            ],
+            'interest' => ['annual_interest' => 9,'penal_interest' => 6]
+            ],
+          //REFINANCIAMIENTO DE PRÉSTAMOS A LARGO PLAZO GARANTÍA HIPOTECARIA CPOP *
+          ['name'=>'Refinanciamiento de préstamos con garantía hipotecaria de bien inmueble para el sector activo - CPOP','shortened'=>'PLP-R-GH-CPOP','requirements'=>[
+            ['name' =>'Cédula de Identidad del (la) titular en copia simple','number'=>1],
+            ['name' => 'Certificado de años de servicio desglosado en original emitido por el Comando General de la Policía Boliviana','number'=>2],
+            ['name' => 'Certificado de años de servicio desglosado en fotocopia Legalizada emitido por el Comando General de la Policía Boliviana','number'=>2],
+            ['name' => 'Certificado de años de servicio desglosado en original emitido por el Comando Regional de la Policía Boliviana','number'=>2],
+            ['name' => 'Croquis de ubicación del inmueble','number'=>3], //nuevo
+            ['name' => 'Factura de Luz del Inmueble','number'=>4], //nuevo
+            ['name' => 'Factura de Agua del Inmueble','number'=>4], //nuevo
+            ['name' => 'Folio Real','number'=>5], //nuevo
+            ['name' => 'Información rapida del Inmueble','number'=>5], //nuevo
+            ['name' => 'Fotocopia de Testimonio de Propiedad','number'=>6], //nuevo
+            ['name' => 'Fotocopia de Impuestos 3 Ultimos Años','number'=>7], //nuevo
+            ['name' => 'Fotocopia de Plano de lote','number'=>8], //nuevo
+            ['name' => 'Fotocopia de Catastro','number'=>9], //nuevo
+            ['name' => 'Estado de cuenta original, vigente y emitido por el Banco Unión S.A','number'=>10],
+            ['name' => 'Certificado de estado civil en original emitido por el SERECI.','number'=>11],
+              /*Estos documentos son solicitados por MUSERPOL en caso de ser requeridos*/
+            ['name' => 'Boleta de pago en copia simple.','number'=>0],  // *caso garante activo
+            ['name' => 'Certificado de haberes considerando el último mes percibido.','number'=>0],  // En caso de no tener la boleta de pago
+            ['name' => 'Nota de aclaración de Boleta de Pago.','number'=>0],  // En caso de que el afiliado tenga datos erroneos en su boleta de pago
+            ['name' => 'Certificado de no adeudo.','number'=>0],  // en caso de que el afiliado haya tenido deudas de otras entidades (Ej: COMIPOL , COVIPOL)
+            ['name' => 'Certificado de pago emitido por la entidad correspondiente.','number'=>0],  // en caso de que el afiliado tenga deudas con otras entidades (Ej: COMIPOL , COVIPOL)
+            ['name' => 'Conformidad de devolución de descuento por garantía original o fotocopia legalizada.','number'=>0],
+            /**/
+          ],
+          'parameters' => [
+            'debt_index' => 80,
+            'quantity_ballots' => 1,
+            'guarantors' => 0,
+            'personal_reference' => true,
+            'max_lenders' => 2,
+            'max_cosigner'=>2
+          ],
+          'interest' => ['annual_interest' => 9,'penal_interest' => 6]
+          ]
+          ]
           ],
            ////Procedure Type Prestamo amortización
           'amortizacion' => [

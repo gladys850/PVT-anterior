@@ -1,18 +1,20 @@
+
 {
-    "id": 33,
-    "procedure_type_id": 9,
-    "name": "Anticipo sector pasivo",
-    "shortened": "ANT-SP",
+    "id": 44,
+    "procedure_type_id": 11,
+    "name": "Refinanciamiento de prestamos a largo Plazo para el sector activo - CPOP",
+    "shortened": "PLP-R-SA-CPOP",
     "is_valid": true,
     "loan_modality_parameter": {
-        "procedure_modality_id": 33,
-        "debt_index": "90",
+        "procedure_modality_id": 44,
+        "debt_index": "60",
         "quantity_ballots": 1,
-        "guarantors": 0,
-        "min_guarantor_category": null,
-        "max_guarantor_category": null,
+        "guarantors": 1,
+        "max_lenders": 1,
+        "min_guarantor_category": "0.35",
+        "max_guarantor_category": "1",
         "max_cosigner": 0,
-        "personal_reference": false,
-        "max_lenders": 1
+        "personal_reference": true
     }
 }
+

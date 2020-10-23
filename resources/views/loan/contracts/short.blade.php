@@ -163,7 +163,7 @@ if(($modality->name == 'Refinanciamiento de Préstamo a corto plazo para el sect
             DEUDOR{{ $lender->gender == 'M' ? '' : 'A' }} {{ $lender->full_name }} de generales ya señaladas como PRESTATARIO;
             <?php
             if($modality->name == 'Refinanciamiento de Préstamo a corto plazo para el sector Pasivo y Viudas AFPs'){ ?>
-             @if (count($guarantors) == 1)
+            @if (count($guarantors) == 1)
             @php ($guarantor = $guarantors[0])
             @php ($male_female_guarantor = Util::male_female($guarantor->gender))
             <span>

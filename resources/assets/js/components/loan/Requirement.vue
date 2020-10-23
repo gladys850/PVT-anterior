@@ -132,11 +132,11 @@
       <v-spacer></v-spacer>
       <v-spacer></v-spacer>
       <v-col class="py-0">
-        <v-btn 
-        text 
+        <v-btn
+        text
         @click="beforeStepBus(6)">Atras</v-btn>
-        <v-btn 
-        color="primary" 
+        <v-btn
+        color="primary"
         @click.stop="saveLoan()">Finalizar</v-btn>
       </v-col>
     </v-row>
@@ -147,7 +147,6 @@
 <script>
 
 export default {
-  
   name: "requirement",
   data: () => ({
     itemsPerPage: 10,
@@ -156,7 +155,6 @@ export default {
     newOptional: [],
     requirement: [],
     index: [],
-    prueba: null,
     cont: 0,
     checks: [],
     itemsOpc: [],
@@ -168,19 +166,15 @@ export default {
     newOther: null
   }),
   props: {
-      loan_detail: {
+     guarantors: {
+      type: Array,
+      required: true
+    },
+    loan_detail: {
       type: Object,
       required: true
     },
     lenders: {
-      type: Array,
-      required: true
-    },
-    datos: {
-      type: Object,
-      required: true
-    },
-    garantes: {
       type: Array,
       required: true
     },
@@ -193,14 +187,6 @@ export default {
       required: true,
       default: 0
     },
-    intervalos: {
-      type: Object,
-      required: true
-    },
-    calculos: {
-      type: Object,
-      required: true
-    },
     reference: {
       type: Array,
       required: true
@@ -209,10 +195,9 @@ export default {
       type: Object,
       required: true
     },
-
     cosigners: {
       type: Array,
-      required: true 
+      required: true
     },
     loan_property_id: {
       type: Number,
@@ -266,7 +251,7 @@ export default {
             cosigners:this.cosigners,
             disbursable_id: this.$route.query.affiliate_id,
             lenders:this.lenders,
-            guarantors: this.garantes,
+            guarantors: this.guarantors,
             documents: this.itemsOpc.concat(this.selected.concat(this.radios.filter(Boolean))),
             notes: this.otherDocuments
           });
@@ -308,7 +293,6 @@ export default {
       console.log(itemDelete)
       //insertarlo en newOptional
       this.newOptional.push(itemDelete)
-     
     },
     addOtherDocument() {
       //verificar si existe algun dato
@@ -318,9 +302,9 @@ export default {
           //si no existe repetido insertar item
           this.otherDocuments.push(this.newOther);
           console.log("other " + this.otherDocuments);
-          this.newOther = ""          
-        }else{  
-          this.toastr.error("El documento ya existe")  
+          this.newOther = ""
+        }else{
+          this.toastr.error("El documento ya existe")
         }
       } else {
         this.toastr.error("No registró ningún documento")

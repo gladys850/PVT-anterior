@@ -27,7 +27,7 @@ class CreateLoanPropertiesTable extends Migration
             $table->string('registration_number');//número de matricula computarizada
             $table->string('real_folio_number');//número de asiento del folio real
             $table->string('public_deed_date');//fecha de escritura publica
-            $table->unsignedBigInteger('net_realizable_value');//valor neto realizable
+            $table->float('net_realizable_value',10,2);//valor neto realizable
             $table->unsignedBigInteger('real_city_id');// ciudad de registro en derechos reales
             $table->foreign('real_city_id')->references('id')->on('cities');
             $table->timestamps();

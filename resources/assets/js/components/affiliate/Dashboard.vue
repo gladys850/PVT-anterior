@@ -38,6 +38,52 @@
                         <span>Ver préstamo</span>
                       </v-tooltip>            
                     </span>
+                    
+                    <span>
+                    <v-tooltip
+                    left              
+                    >
+                    <template v-slot:activator="{ on }">
+                      <v-btn
+                        icon
+                        dark
+                        small
+                        color="success"
+                        bottom
+                        right                        
+                        v-on="on" 
+                        @click="validateRefinancing($route.params.id,item.id)"  
+                      >
+                      <v-icon>mdi-cash-multiple</v-icon>
+                      </v-btn>
+                    </template>
+                    <span>Refinanciamiento</span>
+                    </v-tooltip>            
+                    </span>
+                    <span>
+
+                    <v-tooltip
+                    left              
+                    >
+                      <template v-slot:activator="{ on }">
+                        <v-btn
+                            icon
+                            dark
+                            small
+                            color="info"
+                            bottom
+                            right
+                            v-on="on" 
+                            @click="validateReprogramming($route.params.id,item.id)"                         
+                          >
+                        <v-icon>mdi-calendar-clock</v-icon>
+                        </v-btn>
+                      </template>
+                      <span>Reprogramacion</span>
+                    </v-tooltip>            
+                    </span>
+
+
                     <v-progress-linear
                       :color="randomColor()"
                       height="15"
@@ -226,6 +272,17 @@ export default {
         this.loading = false;
       }
     },
+    /* async get_refinanciamiento(affiliateid, loanid) {
+      try {
+        this.loading = true;
+        let res = await axios.get(`affiliate/${affiliateid}/${loanid}`);
+        this.unit_name = res.data.name;
+      } catch (e) {
+        console.log(e);
+      } finally {
+        this.loading = false;
+      }
+    },*/
     async getLoan(id) {
       try {
         this.loading = true;
@@ -236,6 +293,9 @@ export default {
         });
         this.loan = res.data.data;
         let num = this.loan.length;
+        /* FIXME no tiene uso
+        let idl=this.loan.id;
+       */
       } catch (e) {
         console.log(e);
       } finally {
@@ -255,6 +315,12 @@ export default {
         this.loading = false;
       }
     },
+    /*validateRefinanciamiento(affiliateid, loanid){
+      this.$router.push({ name: 'loanAddref',  params: { hash: 'ref'}, query:{ affiliate_id: affiliateid,loan_id:loanid } })
+    },
+    validateReprogramacion(affiliateid, loanid){
+     this.$router.push({ name: 'loanAddrep',  params: { hash: 'ref'}, query:{ affiliate_id: affiliateid,loan_id:loanid } })
+    },*/
     validateAffiliate(id) {
       if(this.state_name_type != 'Baja' && this.state_name_status != 'Fallecido' && this.state_name != ''){
         if(this.affiliate.identity_card != null && this.affiliate.city_identity_card_id != null){
@@ -274,6 +340,28 @@ export default {
         this.toastr.error("El afiliado no puede acceder a un préstamo por estar fallecido ó dado de baja ó no tener registrado su estado.")
       }
       
+    },
+    validateRefinancing(a_id, l_id){
+      for(let i = 0; i < this.loan.length; i++){
+        if(l_id == this.loan[i].id){
+          if(this.loan[i].procedure_modality_id != 32 && this.loan[i].procedure_modality_id != 33){
+            this.$router.push({ name: 'loanAdd',  params: { hash: 'refinancing'}, query:{ affiliate_id: a_id, loan_id: l_id } })
+          }else{
+            this.toastr.error("No se puede realizar el REFINANCIAMIENTO para un trámite de Anticipo")
+          }
+        }
+      }
+    },
+    validateReprogramming(a_id, l_id){
+      for(let i = 0; i < this.loan.length; i++){
+        if(l_id == this.loan[i].id){
+          if(this.loan[i].procedure_modality_id != 32 && this.loan[i].procedure_modality_id != 33){
+            this.$router.push({ name: 'loanAdd',  params: { hash: 'reprogramming'}, query:{ affiliate_id: a_id, loan_id: l_id } })
+          }else{
+            this.toastr.error("No se puede realizar la REPROGRAMACIÓN para un trámite de Anticipo")
+          }
+        }
+      }
     }
   }
 };

@@ -4,16 +4,65 @@
       <v-form>
         <!--v-card-->
         <v-row justify="center">
-          <v-col cols="12">
+          <v-col cols="3" class="py-2">
+            <v-text-field
+              class="py-0"
+              dense
+              :outlined="false"
+              :readonly="true"
+              label="Codigo de Prestamo Padre"
+              v-model="loan_sismu.code"
+            ></v-text-field>
+          </v-col>
+          <v-col cols="3" class="py-2">
+            <v-text-field
+              class="py-0"
+              dense
+              :outlined="false"
+              :readonly="true"
+              label="Monto"
+              v-model="loan_sismu.amount_approved"
+            ></v-text-field>
+          </v-col>
+          <v-col cols="2" class="py-2">
+            <v-text-field
+              class="py-0"
+              dense
+              :outlined="false"
+              :readonly="true"
+              label="Plazo"
+              v-model="loan_sismu.loan_term"
+            ></v-text-field>
+          </v-col>
+          <v-col cols="2" class="py-2">
+            <v-text-field
+              class="py-0"
+              dense
+              :outlined="false"
+              :readonly="true"
+              label="Saldo"
+              v-model="loan_sismu.balance"
+            ></v-text-field>
+          </v-col>
+          <v-col cols="2" class="py-2">
+            <v-text-field
+              class="py-0"
+              dense
+              :outlined="false"
+              :readonly="true"
+              label="Cuota"
+              v-model="loan_sismu.estimated_quota"
+            ></v-text-field>
+          </v-col>
+          <v-col cols="12" class="pt-0">
             <v-container class="py-0">
               <v-row>
                 <slot name="title"></slot>
-                <br />
                 <v-col cols="12" md="3">
                   <v-layout row wrap>
                     <v-flex xs12 class="px-2">
                       <fieldset class="pa-3">
-                        <ValidationProvider v-slot="{ errors }" name="plazo" :rules="'numeric|min_value:'+datos.minimum_term+'|max_value:'+datos.maximum_term" mode="aggressive">
+                        <ValidationProvider v-slot="{ errors }" name="plazo" :rules="'numeric|min_value:'+loan_detail.minimum_term+'|max_value:'+loan_detail.maximum_term" mode="aggressive">
                           <v-text-field
                             :error-messages="errors"
                             label="Plazo en Meses"
@@ -21,7 +70,7 @@
                             v-on:keyup.enter="simuladores()"
                           ></v-text-field>
                         </ValidationProvider>
-                       <ValidationProvider v-slot="{ errors }" name="monto solicitado" :rules="'numeric|min_value:'+datos.minimun_amoun+'|max_value:'+datos.maximun_amoun" mode="aggressive">
+                       <ValidationProvider v-slot="{ errors }" name="monto solicitado" :rules="'numeric|min_value:'+loan_detail.minimun_amoun+'|max_value:'+loan_detail.maximun_amoun" mode="aggressive">
                           <v-text-field
                             :error-messages="errors"
                             label="Monto Solicitado"
@@ -37,10 +86,14 @@
                   <v-card-text class="py-0">
                     <v-layout row wrap>
                       <v-flex xs12 class="px-2">
-                        <fieldset class="pa-3">
-                          <p>PROMEDIO LIQUIDO PAGABLE:{{ liquid_calificated[0].payable_liquid_calculated}}</p>
-                          <p>TOTAL BONOS: {{ liquid_calificated[0].bonus_calculated }}</p>
-                          <p>LIQUIDO PARA CALIFICACION: {{ liquid_calificated[0].liquid_qualification_calculated}}</p>
+                        <fieldset class="py-0">
+                          <ul style="list-style: none" class="py-3 ps-4 ">
+                            <li v-for="(liquid,i) in liquid_calificated" :key="i" >
+                              <p>PROMEDIO LIQUIDO PAGABLE:{{ liquid.payable_liquid_calculated}}</p>
+                              <p>TOTAL BONOS: {{ liquid.bonus_calculated }}</p>
+                              <p>LIQUIDO PARA CALIFICACION: {{ liquid.liquid_qualification_calculated}}</p>
+                              </li>
+                            </ul>
                         </fieldset>
                       </v-flex>
                     </v-layout>
@@ -78,6 +131,10 @@ export default {
     ver:false
   }),
   props: {
+    loan_sismu: {
+      type: Object,
+      required: true
+    },
     loan_detail: {
       type: Object,
       required: true
@@ -86,51 +143,19 @@ export default {
       type: Object,
       required: true
     },
-    lenders: {
-      type: Array,
-      required: true
-    },
     modalidad_id: {
       type: Number,
       required: true,
       default: 0
     },
-    intervalos: {
-      type: Object,
-      required: true
-    },
-    datos: {
-      type: Object,
-      required: true
-    },
     modalidad: {
-      type: Object,
-      required: true
-    },
-    calculos: {
       type: Object,
       required: true
     },
     liquid_calificated: {
       type: Array,
       required: true
-        },
-    modalidad_net_realizable_value:{
-      type: Number,
-      required: true,
-      default:0
-    }
-  },
-  computed: {
-    ver1() {
-      if(this.intervalos.procedure_type_id==12)
-      {
-        return true
-      }else
-      {
-        return false
-      }
-    }
+      },
   },
   methods: {
     async simuladores() {
@@ -156,97 +181,13 @@ export default {
         this.loan_detail.indebtedness_calculated=this.calculator_result.indebtedness_calculated_total
 
         this.loan_detail.maximum_suggested_valid=this.calculator_result.maximum_suggested_valid
+        this.loan_detail.quota_calculated_total_lender=this.calculator_result.quota_calculated_estimated_total
 
         /*      for (this.j = 0; this.j< this.simulator.length; this.j++){
           this.simulator[this.j].affiliate_nombres=this.datos_calculadora_hipotecario[this.j].affiliate_name
           console.log(""+this.simulator[this.j].affiliate_nombres)
         }
         */
-      } catch (e) {
-        console.log(e)
-      } finally {
-        this.loading = false
-      }
-    },
-    async Calculator() {
-      try {
-        if (this.modalidad.quantity_ballots > 1) {
-          let res = await axios.post(`calculator`, {
-            procedure_modality_id: this.modalidad.id,
-            months_term: this.calculos.plazo,
-            amount_requested: this.calculos.montos,
-            affiliate_id: this.$route.query.affiliate_id,
-            contributions: [
-              {
-                payable_liquid: this.payable_liquid[0],
-                seniority_bonus: this.bonos[2],
-                border_bonus: this.bonos[0],
-                public_security_bonus: this.bonos[3],
-                east_bonus: this.bonos[1]
-              },
-              {
-                payable_liquid: this.payable_liquid[1],
-                seniority_bonus: 0,
-                border_bonus: 0,
-                public_security_bonus: 0,
-                east_bonus: 0
-              },
-              {
-                payable_liquid: this.payable_liquid[2],
-                seniority_bonus: 0,
-                border_bonus: 0,
-                public_security_bonus: 0,
-                east_bonus: 0
-              }
-            ]
-          })
-          this.calculo = res.data
-
-          this.calculos.payable_liquid_calculated = this.calculo.payable_liquid_calculated
-          this.calculos.bonus_calculated = this.calculo.bonus_calculated
-          this.calculos.liquid_qualification_calculated = this.calculo.liquid_qualification_calculated
-          this.calculos.quota_calculated = this.calculo.quota_calculated
-          this.calculos.indebtedness_calculated = this.calculo.indebtedness_calculated
-          this.calculos.amount_maximum_suggested = this.calculo.amount_maximum_suggested
-          this.calculos.plazo = this.calculos.plazo
-
-          if (this.calculos.montos>this.calculo.amount_maximum_suggested) {
-            this.calculos.montos = this.calculo.amount_maximum_suggested
-          } else {
-            this.calculos.montos = this.calculos.montos
-          }
-        } else {
-          let res = await axios.post(`calculator`, {
-            procedure_modality_id: this.modalidad.id,
-            months_term: this.calculos.plazo,
-            amount_requested: this.calculos.montos,
-            affiliate_id: this.$route.query.affiliate_id,
-            contributions: [
-              {
-                payable_liquid: this.payable_liquid[0],
-                seniority_bonus: this.bonos[2],
-                border_bonus: this.bonos[0],
-                public_security_bonus: this.bonos[3],
-                east_bonus: this.bonos[1]
-              }
-            ]
-          })
-          this.calculo = res.data
-
-          this.calculos.payable_liquid_calculated = this.calculo.payable_liquid_calculated
-          this.calculos.bonus_calculated = this.calculo.bonus_calculated
-          this.calculos.liquid_qualification_calculated = this.calculo.liquid_qualification_calculated
-          this.calculos.quota_calculated = this.calculo.quota_calculated
-          this.calculos.indebtedness_calculated = this.calculo.indebtedness_calculated
-          this.calculos.amount_maximum_suggested = this.calculo.amount_maximum_suggested
-          this.calculos.plazo = this.calculos.plazo
-
-          if (this.calculos.montos>this.calculo.amount_maximum_suggested) {
-            this.calculos.montos = this.calculo.amount_maximum_suggested
-          } else {
-            this.calculos.montos = this.calculos.montos
-          }
-        }
       } catch (e) {
         console.log(e)
       } finally {

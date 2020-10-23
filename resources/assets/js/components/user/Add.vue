@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-tooltip top>
+    <!--<v-tooltip top>//FIXME Ver si se creara usuarios o se sincronizara solo con el LDAP
       <template v-slot:activator="{ on }">
         <v-btn
           fab
@@ -14,7 +14,7 @@
         </v-btn>
       </template>
       <span>Añadir usuario</span>
-    </v-tooltip>
+    </v-tooltip>-->
     <v-dialog
       v-model="dialog"
       width="500"

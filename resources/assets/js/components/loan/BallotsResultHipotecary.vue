@@ -4,6 +4,56 @@
       <v-form>
         <!--v-card-->
           <v-row justify="center">
+            <v-col cols="3" class="pt-5 py-0">
+            <v-text-field
+              class="py-0"
+              dense
+              :outlined="false"
+              :readonly="true"
+              label="Codigo de Prestamo Padre"
+              v-model="loan_sismu.code"
+            ></v-text-field>
+          </v-col>
+          <v-col cols="3" class="pt-5 py-0">
+            <v-text-field
+              class="py-0"
+              dense
+              :outlined="false"
+              :readonly="true"
+              label="Monto"
+              v-model="loan_sismu.amount_approved"
+            ></v-text-field>
+          </v-col>
+          <v-col cols="2" class="pt-5 py-0">
+            <v-text-field
+              class="py-0"
+              dense
+              :outlined="false"
+              :readonly="true"
+              label="Plazo"
+              v-model="loan_sismu.loan_term"
+            ></v-text-field>
+          </v-col>
+          <v-col cols="2" class="pt-5 py-0">
+            <v-text-field
+              class="py-0"
+              dense
+              :outlined="false"
+              :readonly="true"
+              label="Saldo"
+              v-model="loan_sismu.balance"
+            ></v-text-field>
+          </v-col>
+          <v-col cols="2" class="pt-5 py-0">
+            <v-text-field
+              class="py-0"
+              dense
+              :outlined="false"
+              :readonly="true"
+              label="Cuota"
+              v-model="loan_sismu.estimated_quota"
+            ></v-text-field>
+          </v-col>
             <v-col cols="12">
               <v-container class="py-0">
                 <v-row>
@@ -13,7 +63,7 @@
                     <v-layout row wrap>
                       <v-flex xs12 class="px-1">
                         <fieldset class="pa-3">
-                      <ValidationProvider v-slot="{ errors }" name="plazo" :rules="'numeric|min_value:'+datos.minimum_term+'|max_value:'+datos.maximum_term" mode="aggressive">
+                      <ValidationProvider v-slot="{ errors }" name="plazo" :rules="'numeric|min_value:'+loan_detail.minimum_term+'|max_value:'+loan_detail.maximum_term" mode="aggressive">
                       <v-text-field
                         :error-messages="errors"
                         label="Plazo en Meses"
@@ -21,7 +71,7 @@
                         v-on:keyup.enter="calculadora()"
                       ></v-text-field>
                       </ValidationProvider>
-                      <ValidationProvider v-slot="{ errors }" name="monto solicitado" :rules="'numeric|min_value:'+datos.minimun_amoun+'|max_value:'+datos.maximun_amoun" mode="aggressive">
+                      <ValidationProvider v-slot="{ errors }" name="monto solicitado" :rules="'numeric|min_value:'+loan_detail.minimun_amoun+'|max_value:'+loan_detail.maximun_amoun" mode="aggressive">
                       <v-text-field
                         :error-messages="errors"
                         label="Monto Solicitado"
@@ -38,7 +88,7 @@
                       <v-layout row wrap>
                         <v-flex xs12 class="px-1">
                           <fieldset class="pa-2">
-                              <v-toolbar-title>Liquido Pagable{{modalidad_net_realizable_value}}</v-toolbar-title>
+                              <v-toolbar-title>Liquido Pagable{{loan_detail.net_realizable_value}}</v-toolbar-title>
                               <ul style="list-style: none" class="pa-0">
                               <li v-for="(liquido,i) in liquid_calificated" :key="i" >
                                 <v-progress-linear></v-progress-linear>
@@ -83,7 +133,6 @@
 export default {
   name: "ballots-result-hipotecary",
   data: () => ({
-    datos: {},
     bonos: {},
     payable_liquid: {},
     modalidad: {},
@@ -99,19 +148,18 @@ export default {
         calculo123:null,
         nombres:[],
         is_valid:false
-  
   }),
   props: {
+    loan_sismu: {
+      type: Object,
+      required: true
+    },
       loan_detail: {
       type: Object,
       required: true
     },
       lenders: {
       type: Array,
-      required: true
-    },
-   datos: {
-      type: Object,
       required: true
     },
     intervalos: {
@@ -121,11 +169,6 @@ export default {
     liquid_calificated: {
       type: Array,
       required: true
-    },
-    modalidad_net_realizable_value:{
-      type: Number,
-      required: true,
-      default:0
     }
   },
   methods: {

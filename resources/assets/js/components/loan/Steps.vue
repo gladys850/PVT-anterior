@@ -52,11 +52,14 @@
               :bonos.sync="bonos"
               :payable_liquid="payable_liquid"
               :intervalos.sync="intervalos"
-              :contributions1.sync="contributions1"
               :modalidad.sync="modalidad"
-              :prueba.sync="prueba"
-              :procedure_type.sync="procedure_type"
+              :contributions1.sync="contributions1"
+              :affiliate.sync="affiliate"
               :contrib_codebtor="contrib_codebtor"
+              :loan_detail.sync="loan_detail"
+              :loan.sync="loan"
+              :edit_refi_repro.sync="edit_refi_repro"
+              :loanTypeSelected.sync="loanTypeSelected"
             />
             <v-container class="py-0">
               <v-row>
@@ -81,23 +84,19 @@
                 v-show="modalidad.procedure_type_id!=12"
                 :calculator_result.sync="calculator_result"
                 :loan_detail.sync="loan_detail"
-                :lenders.sync="lenders"
-                :datos.sync="datos"
-                :intervalos.sync="intervalos"
-                :calculos.sync="calculos"
+                :loan_sismu.sync="loan_sismu"
                 :modalidad.sync="modalidad"
                 :modalidad_id.sync="modalidad.id"
-                :liquid_calificated="liquid_calificated"
-                :modalidad_net_realizable_value.sync="modalidad.net_realizable_value"  >
+                :liquid_calificated="liquid_calificated" >
                 <template v-slot:title>
                   <v-col cols="12" class="py-0">Resultado para el Préstamo</v-col>
                 </template>
               </BallotsResult>
               <BallotsResultHipotecary
                 v-show="modalidad.procedure_type_id==12"
+                :loan_sismu.sync="loan_sismu"
                 :lenders.sync="lenders"
                 :intervalos.sync="intervalos"
-                :datos.sync="datos"
                 :liquid_calificated.sync="liquid_calificated"
                 :loan_detail.sync="loan_detail"
               />
@@ -125,16 +124,14 @@
             <h3 class="text-uppercase text-center">{{modalidad.name}}</h3>
             <HipotecaryData
               v-show="modalidad.procedure_type_id==12"
-              :modalidad_net_realizable_value.sync="modalidad.net_realizable_value"
-              :datos.sync="datos"
+              :loan_detail.sync="loan_detail"
               :loan_property="loan_property"
             />
             <Guarantor
             :modalidad_guarantors.sync="modalidad.guarantors"
             :modalidad.sync="modalidad"
-            :prueba.sync="prueba"
-            :calculos.sync="calculos"
-            :garantes.sync="garantes"
+            :loan_detail.sync="loan_detail"
+            :guarantors.sync="guarantors"
             :affiliate.sync="affiliate"
             :modalidad_id.sync="modalidad.id"/>
           <v-container class="py-0">
@@ -184,6 +181,7 @@
             :modalidad_personal_reference.sync="modalidad.personal_reference"
             :personal_reference.sync="personal_reference"
             :intervalos.sync="intervalos"
+            :destino.sync="destino"
           />
           <CoDebtor
             v-show="this.modalidad.max_cosigner > 0"
@@ -213,14 +211,11 @@
             :bus="bus"
             :loan_detail.sync="loan_detail"
             :lenders.sync="lenders"
-            :datos.sync="datos"
-            :calculos.sync="calculos"
-            :intervalos.sync="intervalos"
             :modalidad.sync="modalidad"
             :reference.sync="reference"
-            :garantes.sync="garantes"
             :modalidad_id.sync="modalidad.id"
             :cosigners="cosigners"
+            :guarantors.sync="guarantors"
             :loan_property_id ="loan_property.id"/>
         </v-card>
       </v-stepper-content>
@@ -275,41 +270,43 @@ export default {
     loan_detail:{
     maximum_suggested_valid:true
     },
+    loan_sismu:{},
     calculator_result:{},
-    procedure_type:9,
+    //procedure_type:9,
     steps: 6,
     modalities: [],
-    prueba: [],
-    garantes: [],
+    guarantors: [],
     lenders:[],
     modalidad:{},
-    datos:{},
     reference:[],
     intervalos:{},
-    contributions1:[{}],//crear la cantidad de objetos necesarios segun modalidad 3 o 1
+    contributions1:[{}],
     payable_liquid:[0,0,0],
     bonos:[0,0,0,0],
     personal_reference:{},
     personal_codebtor:[],
     cosigners:[],
-    calculos:{
-      promedio_liquido_pagable:0,
-      total_bonos:0,
-      liquido_para_calificacion:0,
-      calculo_de_cuota:0,
-      indice_endeudamiento:0,
-      monto_maximo_sugerido:0
-    },
     contrib_codebtor: [],
     contributions1_aux: [],
     liquid_calificated:[],
     editedIndex: -1,
     loan_property: {},
-    cosigners:[]
+    cosigners:[],
+    destino:[],
+    //Variables reprogramacion y refinanciamiento
+    loan: {},
+    edit_refi_repro: false,
+    loanTypeSelected: 0
   }),
   computed: {
     isNew() {
       return this.$route.params.hash == 'new'
+    },
+    refinancing() {
+      return this.$route.params.hash == 'refinancing'
+    },
+    reprogramming() {
+      return this.$route.params.hash == 'reprogramming'
     }
   },
   watch: {
@@ -325,6 +322,9 @@ export default {
       this.beforeStep(val)
     })
   },
+  mounted(){
+    this.getLoan(this.$route.query.loan_id)
+  },
   methods: {
     nextStep (n) {
       if (n == this.steps) {
@@ -333,14 +333,15 @@ export default {
       else {
         if(n==1)
         {
-          if(this.modalidad.procedure_type_id==12)
-          { this.liquidCalificated()
-            console.log('esta entro por verdad con la modalidad'+ this.modalidad.procedure_type_id)
-          }
-          else{
-             //this.Calculator() TODO borrar
+          this.getLoanDestiny()
+          if(this.isNew){
             this.liquidCalificated()
-            console.log('esta entro por false'+this.modalidad.procedure_type_id)
+          }
+          if(this.refinancing){
+            this.liquidCalificated()
+          }
+          if(this.reprogramming){
+            this.liquidCalificated()
           }
         }
         if(n==2)
@@ -358,7 +359,6 @@ export default {
         }
         if(n==4)
         {
-
           console.log('segundo'+this.modalidad.personal_reference)
         }
         if(n==5)
@@ -373,7 +373,6 @@ export default {
     beforeStep (n) {
       this.e1 = n -1
     },
-
     async personal()
     {
       try{
@@ -397,11 +396,6 @@ export default {
         console.log('entro por verdader'+this.modalidad.personal_reference)
       }
     },
-    /*Metodo para identificar el modulo Ejemplo de respuesta:
-"id": 9,
-"module_id": 6,
-"name": "Préstamo Anticipo"
-"second_name": "Anticipo"*/
     async getProcedureType(){
       try {
         let resp = await axios.get(`module`,{
@@ -450,126 +444,11 @@ console.log(""+this.simulator[this.j].affiliate_nombres)
      console.log('entro a la calculadora de modalidades')
       this.simuladores()
     },
-    //Metodo para la datos de la calculadora
-    /*async Calculator() {
-      try {
-        if(this.modalidad.quantity_ballots>1)
-        {
-          let res = await axios.post(`calculator`, {
-            procedure_modality_id:this.modalidad.id,
-            months_term: this.intervalos.maximum_term,
-            amount_requested:this.intervalos.maximun_amoun,
-            affiliate_id:this.$route.query.affiliate_id,
-            contributions: [
-            {
-              payable_liquid: this.payable_liquid[0],
-              seniority_bonus:  this.bonos[2],
-              border_bonus: this.bonos[0],
-              public_security_bonus: this.bonos[3],
-              east_bonus:this.bonos[1]
-            },
-            {
-              payable_liquid: this.payable_liquid[1],
-              seniority_bonus: 0,
-              border_bonus: 0,
-              public_security_bonus: 0,
-              east_bonus:0
-            },
-            {
-              payable_liquid: this.payable_liquid[2],
-              seniority_bonus: 0,
-              border_bonus:0,
-              public_security_bonus: 0,
-              east_bonus:0
-            }
-          ]
-        })
-        this.calculos= res.data
-        this.calculos.plazo=this.intervalos.maximum_term
-        if( this.calculos.amount_maximum_suggested<this.intervalos.maximun_amoun){
-          this.calculos.montos=this.calculos.amount_maximum_suggested
-        }else{
-          this.calculos.montos=this.intervalos.maximun_amoun
-        }
-        this.datos =this.intervalos
-        }else{
-          let res = await axios.post(`calculator`, {
-            procedure_modality_id:this.modalidad.id,
-            months_term: this.intervalos.maximum_term,
-            amount_requested:this.intervalos.maximun_amoun,
-            affiliate_id:this.$route.query.affiliate_id,
-            contributions: [
-            {
-              payable_liquid: this.payable_liquid[0],
-              seniority_bonus:  this.bonos[2],
-              border_bonus: this.bonos[0],
-              public_security_bonus: this.bonos[3],
-              east_bonus:this.bonos[1]
-            }
-          ]
-        })
-        this.calculos= res.data
-        this.calculos.plazo=this.intervalos.maximum_term
-         if( this.calculos.amount_maximum_suggested<this.intervalos.maximun_amoun){
-          this.calculos.montos=this.calculos.amount_maximum_suggested
-        }else{
-          this.calculos.montos=this.intervalos.maximun_amoun
-        }
-        this.datos =this.intervalos
-        }
-      }catch (e) {
-        console.log(e)
-      }finally {
-        this.loading = false
-      }
-    },*/
-    //metodo para armar las contribuciones del afiliado
-       /*Contributios()//TODO REVISAR SI SE UTILIZA
-      {
-      if(this.payable_liquid.length>1)
-      {
-        for (let i = 0; i< this.payable_liquid.length; i++) {
-          this.contributions1[i].payable_liquid=this.payable_liquid[i]
-          if(i = 0){
-            this.contributions1[i].border_bonus= this.bonos[0],
-            this.contributions1[i].east_bonus= this.bonos[1],
-            this.contributions1[i].seniority_bonus= this.bonos[2],
-            this.contributions1[i].public_security_bonus= this.bonos[3]
-          }
-          else{
-            this.contributions1[i].border_bonus= 0,
-            this.contributions1[i].east_bonus= 0,
-            this.contributions1[i].seniority_bonus= 0,
-            this.contributions1[i].public_security_bonus= 0
-          }
-        }
-      }
-      else{
-        this.contributions1[i].payable_liquid=this.payable_liquid[0]
-        this.contributions1[i].border_bonus= this.bonos[0],
-        this.contributions1[i].east_bonus= this.bonos[1],
-        this.contributions1[i].seniority_bonus= this.bonos[2],
-        this.contributions1[i].public_security_bonus= this.bonos[3]
-      }
-     /*for (this.i = 0; this.i< this.interval.length; this.i++) {
-        if(this.loanTypeSelected==this.interval[this.i].procedure_type_id)
-        {
-          this.monto= this.interval[this.i].minimum_amount+' - '+this.interval[this.i].maximum_amount,
-          this.plazo= this.interval[this.i].minimum_term+' - '+this.interval[this.i].maximum_term
-          this.intervalos.maximun_amoun=this.interval[this.i].maximum_amount
-          this.intervalos.maximum_term= this.interval[this.i].maximum_term
-          this.intervalos.procedure_type_id= this.loanTypeSelected
-          this.num_type=this.loanTypeSelected
-        }
-      }
-      },*/
      //TAB1 formatContributions datos obtenidos de los campos liquido y bonos, adecuandolo a formato para guardado y obtener liquido para calificación
-    formatContributions() {    
-      //let contribuciones = []
+    formatContributions() {
       let nuevoArray = []
       let nuevoArrayCodebtor = []
       if(this.modalidad.quantity_ballots > 1 ){
-        //nuevoArray = []
         nuevoArray[0] = {
             affiliate_id:this.$route.query.affiliate_id,
             contributions: [
@@ -611,10 +490,6 @@ console.log(""+this.simulator[this.j].affiliate_nombres)
             }
           ]
         }
-      //contribuciones=this.contrib_codebtor
-      //console.log("CONTRIBUCIONES")
-      //console.log(this.contribuciones)
-      //nuevoArray = []
       for (let i = 0; i < this.contrib_codebtor.length; i++) {
         nuevoArrayCodebtor[i] = {
           affiliate_id: this.contrib_codebtor[i].id_affiliate,
@@ -632,8 +507,6 @@ console.log(""+this.simulator[this.j].affiliate_nombres)
         console.log(nuevoArray)
       }
       }
-
-      //this.contrib_codebtor_aux = { liquid_calification: nuevoArray };
       this.contributions1_aux = nuevoArray.concat(nuevoArrayCodebtor)
     },
     //TAB1 Obtener liquido para calificación
@@ -643,7 +516,6 @@ console.log(""+this.simulator[this.j].affiliate_nombres)
         let res = await axios.post(`liquid_calificated`,{liquid_calification:this.contributions1_aux})
         this.liquid_calificated =res.data
         console.log("RESULTADO")
-
         let res1 = await axios.post(`simulator`, {
           procedure_modality_id:this.modalidad.id,
           amount_requested: this.intervalos.maximun_amoun,
@@ -653,25 +525,24 @@ console.log(""+this.simulator[this.j].affiliate_nombres)
           liquid_calculated:this.liquid_calificated
         })
         this.calculator_result = res1.data
-
-        this.datos =this.intervalos
         this.lenders=res.data
-
         this.lenders[0].payment_percentage=this.calculator_result.affiliates[0].payment_percentage
         this.lenders[0].indebtedness_calculated=this.calculator_result.affiliates[0].indebtedness_calculated
-
+        this.loan_detail.minimum_term=this.intervalos.minimum_term
+        this.loan_detail.maximum_term=this.intervalos.maximum_term
+        this.loan_detail.minimun_amoun=this.intervalos.minimun_amoun
+        this.loan_detail.maximun_amoun=this.intervalos.maximun_amoun
         this.loan_detail.amount_requested=this.intervalos.maximun_amoun
         this.loan_detail.months_term=this.intervalos.maximum_term
         this.loan_detail.liquid_qualification_calculated=this.calculator_result.liquid_qualification_calculated_total
         this.loan_detail.indebtedness_calculated=this.calculator_result.indebtedness_calculated_total
         this.loan_detail.maximum_suggested_valid=this.calculator_result.maximum_suggested_valid
-
+        this.loan_detail.quota_calculated_total_lender=this.calculator_result.quota_calculated_estimated_total
         if( this.calculator_result.amount_maximum_suggested<this.intervalos.maximun_amoun){
           this.calculator_result.amount_requested=this.calculator_result.amount_maximum_suggested
         }else{
           this.calculator_result.montos=this.intervalos.maximun_amoun
         }
-
         /* for (this.i = 0; this.i< this.datos_calculadora_hipotecario.length; this.i++) {
 let res5 = await axios.get(`affiliate/${this.datos_calculadora_hipotecario[this.i].affiliate_id}`)
 this.affiliates = res5.data
@@ -701,7 +572,7 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
             registration_number: this.loan_property.registration_number,
             real_folio_number: this.loan_property.real_folio_number,
             public_deed_date: this.loan_property.public_deed_date,
-            net_realizable_value: this.modalidad.net_realizable_value,
+            net_realizable_value: this.loan_detail.net_realizable_value,
             real_city_id: this.loan_property.real_city_id
           });
           this.loan_property = res.data
@@ -721,7 +592,7 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
               registration_number: this.loan_property.registration_number,
               real_folio_number: this.loan_property.real_folio_number,
               public_deed_date: this.loan_property.public_deed_date,
-              net_realizable_value: this.modalidad.net_realizable_value,
+              net_realizable_value: this.loan_detail.net_realizable_value,
               real_city_id: this.loan_property.real_city_id
             }
           );
@@ -731,12 +602,10 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
         console.log(e)
       }
     },
-
     async savePersonalReference() {
       try {
-        let i
         let ids_codebtor=[]
-        for (i = 0; i < this.personal_codebtor.length; i++) {
+        for (let i = 0; i < this.personal_codebtor.length; i++) {
           let res = await axios.post(`personal_reference`, {
             city_identity_card_id: this.personal_codebtor[i].city_identity_card_id,
             identity_card: this.personal_codebtor[i].identity_card,
@@ -765,6 +634,38 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
         this.loading = false
       }
     },
+    async getLoan(id) {
+      try {
+        this.loading = true
+        let res = await axios.get(`loan/${id}`)
+        this.loan_sismu = res.data
+        this.loan = res.data
+        let res2= await axios.get(`procedure_modality/${this.loan.procedure_modality_id}`)
+        let mod_refi_repro=res2.data.procedure_type_id
+         console.log("------procedure_modality---")
+        console.log(mod_refi_repro)
+        this.loanTypeSelected=mod_refi_repro
+        this.edit_refi_repro=true
+        console.log(this.loan)
+      } catch (e) {
+        console.log(e)
+      } finally {
+        this.loading = false
+      }
+    },
+    async getLoanDestiny() {
+      try {
+        this.loading = true
+        let res = await axios.get(`procedure_type/${this.intervalos.procedure_type_id}/loan_destiny`)
+        this.destino = res.data
+        console.log(this.destino+'estos son los destinos');
+      } catch (e) {
+        console.log(e)
+      } finally {
+        this.loading = false
+      }
+    }
+    
   }
 }
 </script>
