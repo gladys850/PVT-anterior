@@ -191,7 +191,7 @@ class CalculatorController extends Controller
         return ((($interest_rate)/(1-(1/pow((1+$interest_rate),$months_term))))*$amount_requested);
     }
     // liquido para calificacion
-    private function liquid_qualification($payable_liquid_average, $total_bonuses, $affiliate, $parent_quota){
+    private function liquid_qualification($payable_liquid_average, $total_bonuses, $affiliate, $parent_quota=null){
         $active_guarantees = $affiliate->active_guarantees(); $sum_quota_guarantor = 0;
         foreach($active_guarantees as $res){
             $sum_quota_guarantor+= ($res->estimated_quota*$res->pivot->payment_percentage)/100; // descuento en caso de tener garantias activas
@@ -407,13 +407,12 @@ class CalculatorController extends Controller
             $affiliate = Affiliate::findOrFail($request->affiliate_id);
             $contributions = collect($request->contributions);
             $payable_liquid_average = $contributions->avg('payable_liquid');
-           // $parent_quota = 0;
             $quota_calculated_total_lender = str_replace('.','',$request->quota_calculated_total_lender);
             $quota_calculated_total_lender = \str_replace(',','.',$quota_calculated_total_lender);
             $quota_calculated = $quota_calculated_total_lender/$quantity_guarantors;
             $contribution_first = $contributions->first();
             $total_bonuses = $contribution_first['seniority_bonus']+$contribution_first['border_bonus']+$contribution_first['public_security_bonus']+$contribution_first['east_bonus'];
-            $liquid_qualification_calculated = $this->liquid_qualification($payable_liquid_average, $total_bonuses, $affiliate, $parent_quota);
+            $liquid_qualification_calculated = $this->liquid_qualification($payable_liquid_average, $total_bonuses, $affiliate);
             $indebtedness_calculated = $quota_calculated/$liquid_qualification_calculated*100;
             if ($indebtedness_calculated <= $debt_index)
                 $evaluate = true;
@@ -424,7 +423,6 @@ class CalculatorController extends Controller
                 "payable_liquid_calculated" => round($payable_liquid_average,2),
                 "bonus_calculated" => round($total_bonuses,2),
                 "liquid_qualification_calculated" => round($liquid_qualification_calculated,2),
-                //'quota_refinance' => $parent_quota,
                 "indebtnes_calculated" => round($indebtedness_calculated,2),
                 "is_valid" => $evaluate,
             );
