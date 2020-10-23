@@ -987,13 +987,13 @@ class LoanController extends Controller
     /**
     * Evaluacion de prestamo para refinanciamiento
     * Devuelve un array con los estados de las validaciones
-    * @bodyParam loan_id integer required id de prestamo a evaluar. Example: 28
+    * @urlParam loan required id de prestamo a evaluar. Example: 28
     * @bodyParam type_procedure boolean required si es true la evaluacion evalua refinanciamiento caso contrario evalua reprogramacion
     * @authenticated
     * @responseFile responses/loan/loan_evaluate.200.json
     */
-    public function validate_refinancing(Request $request){
-        $loan_id = $request->loan_id;
+    public function validate_re_loan(Request $request, Loan $loan){
+        $loan_id = $loan->id;
         $loan = Loan::find($loan_id);
         $loan_payments = $loan->payments->sortBy('quota_number');
         $capital_paid = 0;
