@@ -589,6 +589,8 @@ class LoanController extends Controller
 				$view_type = 'hypothecary';
             	break;
         }
+        if($loan->parent_loan_id && $loan->parent_reason == "REPROGRAMACIÓN")
+        $view_type = 'reprogramming';
 		$view = view()->make('loan.contracts.' . $view_type)->with($data)->render();
         if ($standalone) return Util::pdf_to_base64([$view], $file_name, 'legal', $request->copies ?? 1);
         return $view;
@@ -985,7 +987,8 @@ class LoanController extends Controller
     /**
     * Evaluacion de prestamo para refinanciamiento
     * Devuelve un array con los estados de las validaciones
-    * @bodyParam id integer required id de prestamo a evaluar. Example: 28
+    * @bodyParam loan_id integer required id de prestamo a evaluar. Example: 28
+    * @bodyParam type_procedure boolean required si es true la evaluacion evalua refinanciamiento caso contrario evalua reprogramacion
     * @authenticated
     * @responseFile responses/loan/loan_evaluate.200.json
     */
@@ -995,24 +998,24 @@ class LoanController extends Controller
         $loan_payments = $loan->payments->sortBy('quota_number');
         $capital_paid = 0;
         $message = new \stdClass;
-        foreach($loan_payments as $payment){
-            $capital_paid = $capital_paid + $payment->capital_payment;
+        if($request->type_procedure == true){
+            foreach($loan_payments as $payment){
+                $capital_paid = $capital_paid + $payment->capital_payment;
+            }
+            $percentage_paid = round(($capital_paid/$loan->amount_approved)*100,2);
+            if($percentage_paid<25){
+                $message->percentage = false;
+            }
+            else {
+                $message->percentage = true;
+            }
         }
-        $percentage_paid = round(($capital_paid/$loan->amount_approved)*100,2);
-        if($percentage_paid<25){
-            $message->percentage = false;
-        }
-        else {
-            $message->percentage = true;
-        }
-        //array_push($messages, $message);
         if (count($loan->getPlanAttribute())>3){
             $message->paids = true;
         }
         else{
             $message->paids = false;
         }
-        //array_push($messages, $message);
 
         if (!$loan->defaulted){
             $message->defaulted = true;
@@ -1020,7 +1023,6 @@ class LoanController extends Controller
         else{
             $message->defaulted = false;
         }
-        //array_push($messages, $message);
         return json_encode($message);
     }
 }
