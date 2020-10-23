@@ -23,6 +23,7 @@ class CreateSismuTable extends Migration
             $table->unsignedBigInteger('loan_id');  //id del prestamo 
             $table->foreign('loan_id')->references('id')->on('loans');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
