@@ -43,6 +43,11 @@ class LoanForm extends FormRequest
                 'parent_loan_id' => null,
             ]);
         }
+        if($this->property_id==0 ){
+            $this->merge([
+                'property_id' => null,
+            ]);
+        }
     }
 
     public function rules():array
@@ -66,7 +71,7 @@ class LoanForm extends FormRequest
             'documents' => ['array', 'min:1', new ProcedureRequirements($procedure_modality)],
             'liquid_qualification_calculated' => ['numeric'],
             'indebtedness_calculated' => ['numeric', 'max:90', new LoanParameterIndebtedness($procedure_modality)],
-            'property_id' => ['nullable', 'exists:loan_properties,id'],
+            'property_id' => ['nullable','exists:loan_properties,id'],
             'lenders' => ['array', 'required','min:1', new LoanIntervalMaxLender($procedure_modality)],
             'lenders.*.affiliate_id' => ['required', 'integer', 'exists:affiliates,id'],
             'lenders.*.payment_percentage' => ['required', 'integer'],
@@ -83,6 +88,12 @@ class LoanForm extends FormRequest
             'guarantors.*.quota_previous' => ['numeric'],
             'guarantors.*.indebtedness_calculated' => ['nullable', 'numeric'],
             'guarantors.*.liquid_qualification_calculated' => ['required', 'numeric'],
+            /*'data_loan' =>['nullable'],
+            'data_loan.code'=>['required'],
+            'data_loan.amount_approved'=>['required','numeric'],
+            'data_loan.loan_term'=>['required','integer'],
+            'data_loan.balance'=>['required','numeric'],
+            'data_loan.estimated_quota'=>['required','numeric'],*/
             'personal_references' => ['array',$procedure_modality->loan_modality_parameter->personal_reference? 'required':'nullable','exists:personal_references,id' ],
             'cosigners' => ['array',new LoanIntervalMaxCosigner($procedure_modality),'exists:personal_references,id'],
             'documents.*' => ['exists:procedure_documents,id'],
