@@ -35,7 +35,17 @@ class LoanForm extends FormRequest
      *
      * @return array
      */
-    public function rules()
+
+    protected function prepareForValidation():void
+    {
+        if($this->parent_loan_id == 0){
+            $this->merge([
+                'parent_loan_id' => null,
+            ]);
+        }
+    }
+
+    public function rules():array
     {
         $hypothecary = false;
         if ($this->procedure_modality_id) {
@@ -44,6 +54,8 @@ class LoanForm extends FormRequest
         } else {
             $procedure_modality = $this->loan->modality;
         }
+        $quota_previous = false;
+        if($this->parent_loan_id>0) $quota_previous = true;
         $rules = [
             'procedure_modality_id' => ['required','integer', 'exists:procedure_modalities,id'],
             'amount_requested' => ['integer', 'min:200', 'max:700000', new LoanIntervalAmount($procedure_modality)],
@@ -60,7 +72,7 @@ class LoanForm extends FormRequest
             'lenders.*.payment_percentage' => ['required', 'integer'],
             'lenders.*.payable_liquid_calculated' => ['required', 'numeric'],
             'lenders.*.bonus_calculated' => ['required', 'numeric'],
-            'lenders.*.quota_refinance' => ['required', 'numeric'],
+            'lenders.*.quota_previous' => ['numeric', $quota_previous? 'required':'nullable'],
             'lenders.*.indebtedness_calculated' => ['nullable', 'numeric'],
             'lenders.*.liquid_qualification_calculated' => ['required', 'numeric'],
             'guarantors' => ['array',new LoanParameterGuarantor($procedure_modality)],
@@ -68,7 +80,7 @@ class LoanForm extends FormRequest
             'guarantors.*.payment_percentage' => ['required', 'integer'],
             'guarantors.*.payable_liquid_calculated' => ['required', 'numeric'],
             'guarantors.*.bonus_calculated' => ['required', 'numeric'],
-            'guarantors.*.quota_refinance' => ['required', 'numeric'],
+            'guarantors.*.quota_previous' => ['numeric'],
             'guarantors.*.indebtedness_calculated' => ['nullable', 'numeric'],
             'guarantors.*.liquid_qualification_calculated' => ['required', 'numeric'],
             'personal_references' => ['array',$procedure_modality->loan_modality_parameter->personal_reference? 'required':'nullable','exists:personal_references,id' ],

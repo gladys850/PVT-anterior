@@ -81,7 +81,7 @@ class CalculatorController extends Controller
                 'payable_liquid_calculated' => round($payable_liquid_average,2),
                 'bonus_calculated' => round($total_bonuses,2),
                 'liquid_qualification_calculated' => round($liquid_qualification_calculated,2),
-                'quota_refinance' => round($parent_quota,2)
+                'quota_previous' => round($parent_quota,2)
             ]);
         }
         return $liquid_calificated;
@@ -142,7 +142,7 @@ class CalculatorController extends Controller
                 }
                 $calculated_data->push([
                     'affiliate_id' => $liquid['affiliate_id'],
-                    'quota_calculated' => Util::money_format($quota_calculated),
+                    'quota_calculated' => round($quota_calculated,2),
                     'indebtedness_calculated' => round($indebtedness_calculated,2),
                     'payment_percentage' => $percentage_payment,
                     'liquid_qualification_calculated' => $liquid['liquid_qualification_calculated'],
@@ -168,7 +168,7 @@ class CalculatorController extends Controller
                     if(($indebtedness_calculated) <= ($modality->loan_modality_parameter->decimal_index)*100) $valuate = true;
                     $calculated_data->push([
                         'affiliate_id' => $liquid['affiliate_id'],
-                        'quota_calculated' => Util::money_format($quota_calculated),
+                        'quota_calculated' => round($quota_calculated,2),
                         'indebtedness_calculated' => round($indebtedness_calculated,2),
                         'payment_percentage' => 100,
                         'liquid_qualification_calculated' => $liquid['liquid_qualification_calculated'],
@@ -372,7 +372,7 @@ class CalculatorController extends Controller
     //colocado de la cabecera al array
     private function header($ce,$ie,$ms,$plm,$evaluate,$liquid_qualification_calculated,$amount_maximum_suggested,$maximum_suggested_valid,$cosigners){
         $response=array(
-            "quota_calculated_estimated_total"=>Util::money_format($ce),
+            "quota_calculated_estimated_total"=>round($ce,2),
             "indebtedness_calculated_total"=>round($ie,2),
             "amount_requested"=>$ms,
             "months_term"=>$plm,
@@ -407,7 +407,7 @@ class CalculatorController extends Controller
             $affiliate = Affiliate::findOrFail($request->affiliate_id);
             $contributions = collect($request->contributions);
             $payable_liquid_average = $contributions->avg('payable_liquid');
-            $parent_quota = 0;
+           // $parent_quota = 0;
             $quota_calculated_total_lender = str_replace('.','',$request->quota_calculated_total_lender);
             $quota_calculated_total_lender = \str_replace(',','.',$quota_calculated_total_lender);
             $quota_calculated = $quota_calculated_total_lender/$quantity_guarantors;
@@ -424,7 +424,7 @@ class CalculatorController extends Controller
                 "payable_liquid_calculated" => round($payable_liquid_average,2),
                 "bonus_calculated" => round($total_bonuses,2),
                 "liquid_qualification_calculated" => round($liquid_qualification_calculated,2),
-                'quota_refinance' => $parent_quota,
+                //'quota_refinance' => $parent_quota,
                 "indebtnes_calculated" => round($indebtedness_calculated,2),
                 "is_valid" => $evaluate,
             );
