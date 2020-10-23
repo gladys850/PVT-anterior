@@ -1,6 +1,6 @@
 <template>
   <div>
-    <!--<v-tooltip top>//FIXME Ver si se creara usuarios o se sincronizara solo con el LDAP
+    <v-tooltip top>
       <template v-slot:activator="{ on }">
         <v-btn
           fab
@@ -14,7 +14,7 @@
         </v-btn>
       </template>
       <span>Añadir usuario</span>
-    </v-tooltip>-->
+    </v-tooltip>
     <v-dialog
       v-model="dialog"
       width="500"
@@ -24,9 +24,6 @@
         <v-toolbar dense flat color="tertiary">
           <v-toolbar-title>Añadir usuario</v-toolbar-title>
           <v-spacer></v-spacer>
-          <v-btn icon @click.stop="close()">
-            <v-icon>mdi-close</v-icon>
-          </v-btn>
         </v-toolbar>
         <ValidationObserver ref="observer"  v-slot="{ invalid }">
           <v-card-text>
@@ -37,6 +34,11 @@
             <v-spacer></v-spacer>
             <v-btn
               color="error"
+              @click.stop="close()"
+            >Cerrar
+            </v-btn>
+            <v-btn
+              color="success"
               @click="saveUser()"
               :disabled="invalid"
             >Añadir</v-btn>

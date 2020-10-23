@@ -84,7 +84,7 @@
                 v-show="modalidad.procedure_type_id!=12"
                 :calculator_result.sync="calculator_result"
                 :loan_detail.sync="loan_detail"
-                :loan_sismu.sync="loan_sismu"
+                :data_loan.sync="data_loan"
                 :modalidad.sync="modalidad"
                 :modalidad_id.sync="modalidad.id"
                 :liquid_calificated="liquid_calificated" >
@@ -94,7 +94,7 @@
               </BallotsResult>
               <BallotsResultHipotecary
                 v-show="modalidad.procedure_type_id==12"
-                :loan_sismu.sync="loan_sismu"
+                :data_loan.sync="data_loan"
                 :lenders.sync="lenders"
                 :intervalos.sync="intervalos"
                 :liquid_calificated.sync="liquid_calificated"
@@ -270,7 +270,7 @@ export default {
     loan_detail:{
     maximum_suggested_valid:true
     },
-    loan_sismu:{},
+    data_loan:{},
     calculator_result:{},
     //procedure_type:9,
     steps: 6,
@@ -323,7 +323,10 @@ export default {
     })
   },
   mounted(){
-    this.getLoan(this.$route.query.loan_id)
+    if(!this.$route.query.type_sismu)
+    {
+      this.getLoan(this.$route.query.loan_id)
+    }
   },
   methods: {
     nextStep (n) {
@@ -638,7 +641,7 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
       try {
         this.loading = true
         let res = await axios.get(`loan/${id}`)
-        this.loan_sismu = res.data
+        this.data_loan = res.data
         this.loan = res.data
         let res2= await axios.get(`procedure_modality/${this.loan.procedure_modality_id}`)
         let mod_refi_repro=res2.data.procedure_type_id

@@ -4,57 +4,57 @@
       <v-form>
         <!--v-card-->
           <v-row justify="center">
-            <v-col cols="3" class="pt-5 py-0">
+             <v-col cols="3" class="py-2" v-show="editar">
             <v-text-field
               class="py-0"
               dense
-              :outlined="false"
-              :readonly="true"
+              :outlined="habilitar"
+              :readonly="!habilitar"
               label="Codigo de Prestamo Padre"
-              v-model="loan_sismu.code"
+              v-model="data_loan.code"
             ></v-text-field>
           </v-col>
-          <v-col cols="3" class="pt-5 py-0">
+          <v-col cols="3" class="py-2" v-show="editar">
             <v-text-field
               class="py-0"
               dense
-              :outlined="false"
-              :readonly="true"
+              :outlined="habilitar"
+              :readonly="!habilitar"
               label="Monto"
-              v-model="loan_sismu.amount_approved"
+              v-model="data_loan.amount_approved"
             ></v-text-field>
           </v-col>
-          <v-col cols="2" class="pt-5 py-0">
+          <v-col cols="2" class="py-2" v-show="editar">
             <v-text-field
               class="py-0"
               dense
-              :outlined="false"
-              :readonly="true"
+              :outlined="habilitar"
+              :readonly="!habilitar"
               label="Plazo"
-              v-model="loan_sismu.loan_term"
+              v-model="data_loan.loan_term"
             ></v-text-field>
           </v-col>
-          <v-col cols="2" class="pt-5 py-0">
+          <v-col cols="2" class="py-2" v-show="editar">
             <v-text-field
               class="py-0"
               dense
-              :outlined="false"
-              :readonly="true"
+              :outlined="habilitar"
+              :readonly="!habilitar"
               label="Saldo"
-              v-model="loan_sismu.balance"
+              v-model="data_loan.balance"
             ></v-text-field>
           </v-col>
-          <v-col cols="2" class="pt-5 py-0">
+          <v-col cols="2" class="py-2" v-show="editar">
             <v-text-field
               class="py-0"
               dense
-              :outlined="false"
-              :readonly="true"
+              :outlined="habilitar"
+              :readonly="!habilitar"
               label="Cuota"
-              v-model="loan_sismu.estimated_quota"
+              v-model="data_loan.estimated_quota"
             ></v-text-field>
           </v-col>
-            <v-col cols="12">
+            <v-col cols="12" class="py-2">
               <v-container class="py-0">
                 <v-row>
                   <slot name="title"></slot>
@@ -150,7 +150,7 @@ export default {
         is_valid:false
   }),
   props: {
-    loan_sismu: {
+    data_loan: {
       type: Object,
       required: true
     },
@@ -169,6 +169,40 @@ export default {
     liquid_calificated: {
       type: Array,
       required: true
+    }
+  },
+  computed: {
+    editar() {
+      if(this.$route.query.type_sismu)
+      {
+        return true
+      }
+      else{
+         if(this.$route.query.loan_id)
+          {
+            return true
+          }else{
+            return false
+          }
+      }
+      return this.$route.params.hash == 'new'
+    },
+    habilitar() {
+      if(this.$route.query.type_sismu)
+      {
+        return true
+      }
+      else{
+        return false
+      }
+      return this.$route.params.hash == 'new'
+    },
+
+    refinancing() {
+      return this.$route.params.hash == 'refinancing'
+    },
+    reprogramming() {
+      return this.$route.params.hash == 'reprogramming'
     }
   },
   methods: {
