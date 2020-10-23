@@ -172,6 +172,10 @@ class LoanController extends Controller
             return $query->whereName('prestamos');
         })->pluck('id');
         $procedure_modality = ProcedureModality::findOrFail($request->procedure_modality_id);
+        /*if (!is_numeric($request->property_id) || $request->property_id == 0){
+            $request->property_id = "cambiado";
+        }
+        return $request->property_id;*/
         $request->merge([
             'role_id' => $procedure_modality->procedure_type->workflow->pluck('role_id')->intersect($roles)->first()
         ]);
@@ -585,6 +589,8 @@ class LoanController extends Controller
 				$view_type = 'hypothecary';
             	break;
         }
+        if($loan->parent_loan_id && $loan->parent_reason == "REPROGRAMACIÓN")
+        $view_type = 'reprogramming';
 		$view = view()->make('loan.contracts.' . $view_type)->with($data)->render();
         if ($standalone) return Util::pdf_to_base64([$view], $file_name, 'legal', $request->copies ?? 1);
         return $view;
@@ -976,5 +982,47 @@ class LoanController extends Controller
         $view = view()->make('loan.payments.payment_kardex')->with($data)->render();
         if ($standalone) return Util::pdf_to_base64([$view], $file_name, 'legal', $request->copies ?? 1);
         return $view;
+    }
+
+    /**
+    * Evaluacion de prestamo para refinanciamiento
+    * Devuelve un array con los estados de las validaciones
+    * @urlParam loan required id de prestamo a evaluar. Example: 28
+    * @bodyParam type_procedure boolean required si es true la evaluacion evalua refinanciamiento caso contrario evalua reprogramacion
+    * @authenticated
+    * @responseFile responses/loan/loan_evaluate.200.json
+    */
+    public function validate_re_loan(Request $request, Loan $loan){
+        $loan_id = $loan->id;
+        $loan = Loan::find($loan_id);
+        $loan_payments = $loan->payments->sortBy('quota_number');
+        $capital_paid = 0;
+        $message = new \stdClass;
+        if($request->type_procedure == true){
+            foreach($loan_payments as $payment){
+                $capital_paid = $capital_paid + $payment->capital_payment;
+            }
+            $percentage_paid = round(($capital_paid/$loan->amount_approved)*100,2);
+            if($percentage_paid<25){
+                $message->percentage = false;
+            }
+            else {
+                $message->percentage = true;
+            }
+        }
+        if (count($loan->getPlanAttribute())>3){
+            $message->paids = true;
+        }
+        else{
+            $message->paids = false;
+        }
+
+        if (!$loan->defaulted){
+            $message->defaulted = true;
+        }
+        else{
+            $message->defaulted = false;
+        }
+        return json_encode($message);
     }
 }

@@ -127,7 +127,7 @@ Route::group([
             Route::get('loan/{loan}/print/kardex','Api\V1\LoanController@print_kardex');
             //Route::get('loan/{loan}/loan_affiliates', 'Api\V1\LoanController@get_loan_affiliates');
             Route::apiResource('loan_property', 'Api\V1\LoanPropertyController')->only('index', 'store', 'show', 'destroy', 'update');
-
+            Route::get('loan/{loan}/validate_re-loan', 'Api\V1\LoanController@validate_re_loan');
         });
         Route::group([
             'middleware' => 'permission:create-loan'
