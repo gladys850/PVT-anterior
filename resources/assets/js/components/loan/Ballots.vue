@@ -53,10 +53,9 @@
               </v-container>
               <v-container class="py-0" >
                 <v-row>
-                  <v-col cols="12" md="12" class="text-center" >
+                  <v-col cols="12" md="12">
                     BOLETAS DE PAGO
                   </v-col>
-
                   <v-col cols="12" md="4" class="py-0"  >
                     <v-text-field
                       dense
@@ -85,7 +84,7 @@
                      ></v-text-field>
                   </v-col>
                   <v-col cols="12" class="py-0" >
-                    BONOS
+                    BONOS {{data_sismu.type_sismu}}
                   </v-col>
                   <v-col cols="12" md="3" >
                     <v-text-field
@@ -122,7 +121,25 @@
                       :readonly="!editar"
                       :outlined="editar"
                      ></v-text-field>
+                  </v-col> 
+                  <template v-if="type_sismu">             
+                  <v-col cols="12" class="py-0">
+                    DATOS SISMU
                   </v-col>
+                  <v-col cols="12" md="3" >
+                    <v-text-field
+                      dense
+                      v-model="data_sismu.quota_sismu"
+                      label="Cuota"          
+                     ></v-text-field>
+                  </v-col>
+                  <v-col cols="12" md="3">
+                      <v-checkbox
+                        v-model="data_sismu.cpop_sismu"
+                        label="Afiliado CPOP"                   
+                      ></v-checkbox>
+                  </v-col>       
+                  </template>
                 </v-row>
               </v-container>
               <BallotsHipotecary
@@ -185,7 +202,7 @@ export default {
       type: Object,
       required: true
     },    
-    loan: {
+    data_loan: {
       type: Object,
       required: true
     },
@@ -197,6 +214,10 @@ export default {
       type: Number,
       required: true,
       default: 0
+    },
+    data_sismu:{
+      type: Object,
+      required: true
     }
   },
     components: {
@@ -204,6 +225,23 @@ export default {
   },
   mounted() {
     this.getLoanIntervals()
+  },
+  computed: {
+    isNew() {
+      return this.$route.params.hash == 'new'
+    },
+    refinancing() {
+      return this.$route.params.hash == 'refinancing'
+    },
+    reprogramming() {
+      return this.$route.params.hash == 'reprogramming'
+    },
+    type_sismu() {
+      if(this.$route.query.type_sismu){
+        this.data_sismu.type_sismu = this.$route.query.type_sismu
+      }
+      return this.data_sismu.type_sismu
+    }
   },
   watch: {
     loanTypeSelected(newVal, oldVal){
@@ -260,7 +298,9 @@ export default {
         let resp = await axios.get(`affiliate/${id}/loan_modality`,{
           params: {
             procedure_type_id:this.loanTypeSelected,
-            external_discount:0,
+            type_sismu: this.data_sismu.type_sismu,
+            cpop_sismu: this.data_sismu.cpop_sismu
+            //external_discount:0, //FIXME revisar si este paramtro no tiene uso, en otro caso borrar
           }
         })
         

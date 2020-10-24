@@ -57,9 +57,10 @@
               :affiliate.sync="affiliate"
               :contrib_codebtor="contrib_codebtor"
               :loan_detail.sync="loan_detail"
-              :loan.sync="loan"
+              :data_loan.sync="data_loan"
               :edit_refi_repro.sync="edit_refi_repro"
               :loanTypeSelected.sync="loanTypeSelected"
+              :data_sismu.sync ="data_sismu"
             />
             <v-container class="py-0">
               <v-row>
@@ -268,7 +269,8 @@ export default {
     bus: new Vue(),
     e1: 1,
     loan_detail:{
-    maximum_suggested_valid:true
+    maximum_suggested_valid:true,
+    net_realizable_value:0
     },
     loan_sismu:{},
     calculator_result:{},
@@ -294,9 +296,14 @@ export default {
     cosigners:[],
     destino:[],
     //Variables reprogramacion y refinanciamiento
-    loan: {},
+    data_loan: {},
     edit_refi_repro: false,
-    loanTypeSelected: 0
+    loanTypeSelected: 0,
+    data_sismu:{
+      type_sismu: false,
+      quota_sismu: 0,
+      cpop_sismu: false,
+    }
   }),
   computed: {
     isNew() {
@@ -307,6 +314,12 @@ export default {
     },
     reprogramming() {
       return this.$route.params.hash == 'reprogramming'
+    },
+    type_sismu() {
+      if(this.$route.query.type_sismu){
+        this.data_sismu.type_sismu = this.$route.query.type_sismu
+      }
+      return this.data_sismu.type_sismu
     }
   },
   watch: {
@@ -323,7 +336,11 @@ export default {
     })
   },
   mounted(){
-    this.getLoan(this.$route.query.loan_id)
+    if(!this.isNew){
+      this.getLoan(this.$route.query.loan_id)
+    }else{
+      //alert("Es nuevo")
+    }    
   },
   methods: {
     nextStep (n) {
@@ -335,6 +352,7 @@ export default {
         {
           this.getLoanDestiny()
           if(this.isNew){
+            this.loanTypeSelected=this.modalidad.procedure_type_id
             this.liquidCalificated()
           }
           if(this.refinancing){
@@ -493,6 +511,8 @@ console.log(""+this.simulator[this.j].affiliate_nombres)
       for (let i = 0; i < this.contrib_codebtor.length; i++) {
         nuevoArrayCodebtor[i] = {
           affiliate_id: this.contrib_codebtor[i].id_affiliate,
+          sismu: this.data_sismu.type_sismu,
+          quota_sismu: this.data_sismu.quota_sismu,
           contributions: [
             {
             payable_liquid: this.contrib_codebtor[i].payable_liquid,
@@ -639,14 +659,18 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
         this.loading = true
         let res = await axios.get(`loan/${id}`)
         this.loan_sismu = res.data
-        this.loan = res.data
-        let res2= await axios.get(`procedure_modality/${this.loan.procedure_modality_id}`)
+        this.data_loan = res.data
+
+        let res2 = await axios.get(`procedure_modality/${this.data_loan.procedure_modality_id}`)
         let mod_refi_repro=res2.data.procedure_type_id
-         console.log("------procedure_modality---")
-        console.log(mod_refi_repro)
-        this.loanTypeSelected=mod_refi_repro
-        this.edit_refi_repro=true
-        console.log(this.loan)
+        this.loanTypeSelected = res2.data.procedure_type_id
+        this.edit_refi_repro = true
+        
+        if(this.data_loan.property_id != null){
+          let res3 = await axios.get(`loan_property/${this.data_loan.property_id}`)
+          this.loan_detail.net_realizable_value = res3.data.net_realizable_value
+        }        
+        console.log(this.data_loan)
       } catch (e) {
         console.log(e)
       } finally {
