@@ -85,7 +85,7 @@
                 v-show="modalidad.procedure_type_id!=12"
                 :calculator_result.sync="calculator_result"
                 :loan_detail.sync="loan_detail"
-                :loan_sismu.sync="loan_sismu"
+                :data_loan.sync="data_loan"
                 :modalidad.sync="modalidad"
                 :modalidad_id.sync="modalidad.id"
                 :liquid_calificated="liquid_calificated" >
@@ -95,7 +95,7 @@
               </BallotsResult>
               <BallotsResultHipotecary
                 v-show="modalidad.procedure_type_id==12"
-                :loan_sismu.sync="loan_sismu"
+                :data_loan.sync="data_loan"
                 :lenders.sync="lenders"
                 :intervalos.sync="intervalos"
                 :liquid_calificated.sync="liquid_calificated"
@@ -272,7 +272,7 @@ export default {
     maximum_suggested_valid:true,
     net_realizable_value:0
     },
-    loan_sismu:{},
+    data_loan:{},
     calculator_result:{},
     //procedure_type:9,
     steps: 6,
@@ -341,7 +341,7 @@ export default {
     }else{
       //alert("Es nuevo")
     }    
-  },
+  }, 
   methods: {
     nextStep (n) {
       if (n == this.steps) {
@@ -658,7 +658,6 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
       try {
         this.loading = true
         let res = await axios.get(`loan/${id}`)
-        this.loan_sismu = res.data
         this.data_loan = res.data
 
         let res2 = await axios.get(`procedure_modality/${this.data_loan.procedure_modality_id}`)
