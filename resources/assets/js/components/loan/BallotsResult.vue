@@ -5,54 +5,69 @@
         <!--v-card-->
         <v-row justify="center">
           <v-col cols="3" class="py-2" v-show="editar">
-            <v-text-field
-              class="py-0"
-              dense
-              :outlined="habilitar"
-              :readonly="!habilitar"
-              label="Codigo de Prestamo Padre"
-              v-model="data_loan.code"
-            ></v-text-field>
+            <ValidationProvider v-slot="{ errors }" name="codigo" :rules="'required|min:2'" mode="aggressive">
+              <v-text-field
+                :error-messages="errors"
+                class="py-0"
+                dense
+                :outlined="habilitar"
+                :readonly="!habilitar"
+                label="Codigo de Prestamo Padre"
+                v-model="data_loan.code"
+              ></v-text-field>
+            </ValidationProvider>
           </v-col>
           <v-col cols="3" class="py-2" v-show="editar">
-            <v-text-field
-              class="py-0"
-              dense
-              :outlined="habilitar"
-              :readonly="!habilitar"
-              label="Monto"
-              v-model="data_loan.amount_approved"
-            ></v-text-field>
+            <ValidationProvider v-slot="{ errors }" name="monto" :rules="'required|numeric|min_value:'+calculator_result.amount_requested+'|max_value:'+loan_detail.maximun_amoun"  mode="aggressive">
+              <v-text-field
+                :error-messages="errors"
+                class="py-0"
+                dense
+                :outlined="habilitar"
+                :readonly="!habilitar"
+                label="Monto"
+                v-model="data_loan.amount_approved"
+              ></v-text-field>
+            </ValidationProvider>
           </v-col>
           <v-col cols="2" class="py-2" v-show="editar">
-            <v-text-field
-              class="py-0"
-              dense
-              :outlined="habilitar"
-              :readonly="!habilitar"
-              label="Plazo"
-              v-model="data_loan.loan_term"
-            ></v-text-field>
+            <ValidationProvider v-slot="{ errors }" name="plazo" :rules="'required|numeric|min_value:'+loan_detail.minimum_term+'|max_value:'+loan_detail.maximum_term" mode="aggressive">
+              <v-text-field
+                :error-messages="errors"
+                class="py-0"
+                dense
+                :outlined="habilitar"
+                :readonly="!habilitar"
+                label="Plazo"
+                v-model="data_loan.loan_term"
+              ></v-text-field>
+            </ValidationProvider>
           </v-col>
           <v-col cols="2" class="py-2" v-show="editar">
-            <v-text-field
-              class="py-0"
-              dense
-              :outlined="habilitar"
-              :readonly="!habilitar"
-              label="Saldo"
-              v-model="data_loan.balance"
-            ></v-text-field>
+            <ValidationProvider v-slot="{ errors }" name="saldo" :rules="'required|min:2'" mode="aggressive">
+              <v-text-field
+                :error-messages="errors"
+                class="py-0"
+                dense
+                :outlined="habilitar"
+                :readonly="!habilitar"
+                label="Saldo"
+                v-model="data_loan.balance"
+              ></v-text-field>
+            </ValidationProvider>
           </v-col>
           <v-col cols="2" class="py-2" v-show="editar">
-            <v-text-field
-              class="py-0"
-              dense
-              :outlined="habilitar"
-              :readonly="!habilitar"
-              label="Cuota"
-              v-model="data_loan.estimated_quota"
-            ></v-text-field>
+            <ValidationProvider v-slot="{ errors }" name="cuota" :rules="'required|min:2'" mode="aggressive">
+              <v-text-field
+                :error-messages="errors"
+                class="py-0"
+                dense
+                :outlined="habilitar"
+                :readonly="!habilitar"
+                label="Cuota"
+                v-model="data_loan.estimated_quota"
+              ></v-text-field>
+            </ValidationProvider>
           </v-col>
           <v-col cols="12" class="pt-0">
             <v-container class="py-0">
