@@ -409,7 +409,7 @@ export default {
     }*/
     async validateRefinancingLoan(a_id, l_id){
       try {
-          let res = await axios.get(`loan/${l_id}/validate_re-loan`,{
+          let res = await axios.post(`loan/${l_id}/validate_re_loan`,{
             type_procedure: true
           })
           let validate = res.data
@@ -432,7 +432,7 @@ export default {
     },
     async validateReprogrammingLoan(a_id, l_id){
       try {
-          let res = await axios.get(`loan/${l_id}/validate_re-loan`,{
+          let res = await axios.post(`loan/${l_id}/validate_re_loan`,{
             type_procedure: false
           })
           let validate = res.data

@@ -184,7 +184,7 @@ class Loan extends Model
     }
     public function data_loan()
     {
-        return $this->hasOne(Sismu::class);
+        return $this->hasOne(Sismu::class,'loan_id','id');
     }
 
     public function observations()

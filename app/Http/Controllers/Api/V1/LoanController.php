@@ -208,11 +208,7 @@ class LoanController extends Controller
                 ]);
             }
         }
-        /*if($request->has('data_loan') && $request->parent_loan_id == null && $request->parent_reason != null){
-            $sismu = new Sismu();
-            $data_loan = $request->data_loan[0];
-            $loan->loans()->Create($data_loan);
-        }*/
+
         // Generar PDFs
         $file_name = implode('_', ['solicitud', 'prestamo', $loan->code]) . '.pdf';
         if(Auth::user()->can('print-contract-loan')){
@@ -323,8 +319,8 @@ class LoanController extends Controller
         $loan->state()->associate($state);
         $loan->save();
         $loan->delete();
-        if($loan->sismu)
-        $loan->sismu->delete();
+        if($loan->data_loan)
+        $loan->data_loan->delete();
         return $loan;
     }
 
@@ -373,9 +369,9 @@ class LoanController extends Controller
         if($request->has('data_loan') && $request->parent_loan_id == null && $request->parent_reason != null){
             $data_loan = $request->data_loan[0];
             if($request->loan==null)
-            $loan->sismu()->create($data_loan);
+            $loan->data_loan()->create($data_loan);
             else
-            $loan->sismu()->update($data_loan);
+            $loan->data_loan()->update($data_loan);
         }
 
         if (Auth::user()->can(['update-loan', 'create-loan']) && ($request->has('lenders') || $request->has('guarantors'))) {
