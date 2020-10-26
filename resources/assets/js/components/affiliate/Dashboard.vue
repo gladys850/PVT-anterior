@@ -325,11 +325,15 @@ export default {
       if(this.state_name_type != 'Baja' && this.state_name_status != 'Fallecido' && this.state_name != ''){
         if(this.affiliate.identity_card != null && this.affiliate.city_identity_card_id != null){
           if(this.affiliate.civil_status != null){
-            if(this.affiliate.birth_date != null && this.affiliate.city_birth_id != null){
-              this.$router.push({ name: 'loanAdd',  params: { hash: 'new'},  query: { affiliate_id: id}})
+            if(this.affiliate.financial_entity_id != null && this.affiliate.account_number != null && this.affiliate.sigep_status != null){
+              if(this.affiliate.birth_date != null && this.affiliate.city_birth_id != null){
+                  this.$router.push({ name: 'loanAdd',  params: { hash: 'new'},  query: { affiliate_id: id}})
+                }else{
+                  this.toastr.error("El afiliado no tiene registrado su fecha de nacimiento ó ciudad de nacimiento.")
+                }
             }else{
-              this.toastr.error("El afiliado no tiene registrado su fecha de nacimiento ó ciudad de nacimiento.")
-            }          
+            this.toastr.error("El afiliado no tiene registrado la entidad financiera")
+            }         
           }else{
             this.toastr.error("El afiliado no tiene registrado su estado civil.")
           }          
