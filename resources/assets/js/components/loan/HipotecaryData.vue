@@ -5,7 +5,7 @@
         <v-card class="px-3">
           <v-row justify="center">
             <v-col cols="12">
-              <h3 class="text-uppercase text-center">INFORMACIÓN DEL INMUEBLE{{loan_detail.net_realizable_value}}</h3>
+              <h3 class="text-uppercase text-center">INFORMACIÓN DEL INMUEBLE</h3>
             </v-col>
             <v-col cols="12" md="6" class="v-card-profile">
               <v-row justify="center">

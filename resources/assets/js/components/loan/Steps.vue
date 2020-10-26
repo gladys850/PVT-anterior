@@ -95,11 +95,16 @@
               </BallotsResult>
               <BallotsResultHipotecary
                 v-show="modalidad.procedure_type_id==12"
+                :calculator_result.sync="calculator_result"
+                :loan_detail.sync="loan_detail"
                 :data_loan.sync="data_loan"
+                :modalidad.sync="modalidad"
+                :modalidad_id.sync="modalidad.id"
+                :liquid_calificated.sync="liquid_calificated"
                 :lenders.sync="lenders"
                 :intervalos.sync="intervalos"
-                :liquid_calificated.sync="liquid_calificated"
-                :loan_detail.sync="loan_detail"
+                
+               
               />
             </v-card>
             <v-container class="py-0">
@@ -435,34 +440,6 @@ export default {
         this.loading = false
       }
     },
-    async simuladores() {
-      this.liquidCalificated()
-       console.log('este es el liquido para calificacion'+this.liquid_calificated)
-      try {
-        let res = await axios.post(`simulator`, {
-          procedure_modality_id:this.modalidad.id,
-          amount_requested: this.intervalos.maximun_amoun,
-          months_term:  this.intervalos.maximum_term,
-          guarantor: false,
-          liquid_qualification_calculated_lender: 0,
-          liquid_calculated:this.liquid_calificated
-        })
-        this.calculator_result = res.data
-  /*      for (this.j = 0; this.j< this.simulator.length; this.j++){
-this.simulator[this.j].affiliate_nombres=this.datos_calculadora_hipotecario[this.j].affiliate_name
-console.log(""+this.simulator[this.j].affiliate_nombres)
-}
-*/
-      } catch (e) {
-        console.log(e)
-      } finally {
-        this.loading = false
-      }
-    },
-    async calculadoraModalidades(){
-     console.log('entro a la calculadora de modalidades')
-      this.simuladores()
-    },
      //TAB1 formatContributions datos obtenidos de los campos liquido y bonos, adecuandolo a formato para guardado y obtener liquido para calificación
     formatContributions() {
       let nuevoArray = []
@@ -536,21 +513,30 @@ console.log(""+this.simulator[this.j].affiliate_nombres)
       try {
         let res = await axios.post(`liquid_calificated`,{liquid_calification:this.contributions1_aux})
         this.liquid_calificated =res.data
-        console.log("RESULTADO")
-        let res1 = await axios.post(`simulator`, {
+
+        if(this.modalidad.procedure_type_id==12)
+        {
+          let res1 = await axios.post(`simulator`, {
           procedure_modality_id:this.modalidad.id,
-          amount_requested: this.intervalos.maximun_amoun,
+          amount_requested: this.loan_detail.net_realizable_value,
           months_term:  this.intervalos.maximum_term,
           guarantor: false,
           liquid_qualification_calculated_lender: 0,
           liquid_calculated:this.liquid_calificated
-        })
-        this.calculator_result = res1.data
+          })
+          this.calculator_result = res1.data
+
+          if( this.calculator_result.amount_maximum_suggested<this.loan_detail.net_realizable_value){
+            this.calculator_result.amount_requested=this.calculator_result.amount_maximum_suggested
+          }else{
+            this.calculator_result.montos=this.loan_detail.net_realizable_value
+          }
+
         this.lenders=res.data
         this.lenders[0].payment_percentage=this.calculator_result.affiliates[0].payment_percentage
         this.lenders[0].indebtedness_calculated=this.calculator_result.affiliates[0].indebtedness_calculated
         this.loan_detail.minimum_term=this.intervalos.minimum_term
-        this.loan_detail.maximum_term=this.intervalos.maximum_term
+         this.loan_detail.maximum_term=this.intervalos.maximum_term
         this.loan_detail.minimun_amoun=this.intervalos.minimun_amoun
         this.loan_detail.maximun_amoun=this.intervalos.maximun_amoun
         this.loan_detail.amount_requested=this.intervalos.maximun_amoun
@@ -559,11 +545,43 @@ console.log(""+this.simulator[this.j].affiliate_nombres)
         this.loan_detail.indebtedness_calculated=this.calculator_result.indebtedness_calculated_total
         this.loan_detail.maximum_suggested_valid=this.calculator_result.maximum_suggested_valid
         this.loan_detail.quota_calculated_total_lender=this.calculator_result.quota_calculated_estimated_total
-        if( this.calculator_result.amount_maximum_suggested<this.intervalos.maximun_amoun){
-          this.calculator_result.amount_requested=this.calculator_result.amount_maximum_suggested
-        }else{
-          this.calculator_result.montos=this.intervalos.maximun_amoun
+          console.log("hipotecario simulador")
         }
+        else{
+          let res1 = await axios.post(`simulator`, {
+          procedure_modality_id:this.modalidad.id,
+          amount_requested: this.intervalos.maximun_amoun,
+          months_term:  this.intervalos.maximum_term,
+          guarantor: false,
+          liquid_qualification_calculated_lender: 0,
+          liquid_calculated:this.liquid_calificated
+          })
+          this.calculator_result = res1.data
+
+          if( this.calculator_result.amount_maximum_suggested<this.intervalos.maximun_amoun){
+            this.calculator_result.amount_requested=this.calculator_result.amount_maximum_suggested
+          }else{
+            this.calculator_result.montos=this.intervalos.maximun_amoun
+          }
+              this.lenders=res.data
+        this.lenders[0].payment_percentage=this.calculator_result.affiliates[0].payment_percentage
+        this.lenders[0].indebtedness_calculated=this.calculator_result.affiliates[0].indebtedness_calculated
+        this.loan_detail.minimum_term=this.intervalos.minimum_term
+         this.loan_detail.maximum_term=this.intervalos.maximum_term
+        this.loan_detail.minimun_amoun=this.intervalos.minimun_amoun
+        this.loan_detail.maximun_amoun=this.intervalos.maximun_amoun
+        this.loan_detail.amount_requested=this.intervalos.maximun_amoun
+        this.loan_detail.months_term=this.intervalos.maximum_term
+        this.loan_detail.liquid_qualification_calculated=this.calculator_result.liquid_qualification_calculated_total
+        this.loan_detail.indebtedness_calculated=this.calculator_result.indebtedness_calculated_total
+        this.loan_detail.maximum_suggested_valid=this.calculator_result.maximum_suggested_valid
+        this.loan_detail.quota_calculated_total_lender=this.calculator_result.quota_calculated_estimated_total
+
+          console.log("otros simulador")
+        }
+       
+       
+       
         /* for (this.i = 0; this.i< this.datos_calculadora_hipotecario.length; this.i++) {
 let res5 = await axios.get(`affiliate/${this.datos_calculadora_hipotecario[this.i].affiliate_id}`)
 this.affiliates = res5.data
