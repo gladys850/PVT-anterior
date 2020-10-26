@@ -13,7 +13,7 @@ class CreateSismuTable extends Migration
      */
     public function up()
     {
-        Schema::create('sismu', function (Blueprint $table) {
+        Schema::create('sismus', function (Blueprint $table) {
             $table->bigIncrements('id');// id unico
             $table->string('code');//codigo
             $table->float('amount_approved',8,2); // monto aprobado
@@ -34,6 +34,6 @@ class CreateSismuTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('sismu');
+        Schema::dropIfExists('sismus');
     }
 }

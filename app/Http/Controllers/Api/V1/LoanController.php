@@ -23,6 +23,7 @@ use App\Role;
 use App\RoleSequence;
 use App\LoanPayment;
 use App\Voucher;
+use App\Sismu;
 use App\Http\Requests\LoansForm;
 use App\Http\Requests\LoanForm;
 use App\Http\Requests\LoanPaymentForm;
@@ -52,6 +53,7 @@ class LoanController extends Controller
         }
         $loan->personal_references = $loan->personal_references;
         $loan->cosigners = $loan->cosigners;
+        $loan->data_loan = $loan->sismu;
         return $loan;
     }
 
@@ -162,6 +164,12 @@ class LoanController extends Controller
     * @bodyParam guarantors[0].bonus_calculated integer required ID del afiliado. Example: 300
     * @bodyParam guarantors[0].indebtedness_calculated numeric required ID del afiliado. Example: 34
     * @bodyParam guarantors[0].liquid_qualification_calculated numeric required ID del afiliado. Example: 2000
+    * @bodyParam data_loan  array required Datos Sismu.
+    * @bodyParam data_loan[0].code string required Codigo del prestamo en el Sismu. Example: PRESTAMO123
+    * @bodyParam data_loan[0].amount_approved numeric required Monto aprovado del prestamo del Sismu. Example: 5000.50
+    * @bodyParam data_loan[0].loan_term integer required Plazo del prestamo del Sismu. Example: 25
+    * @bodyParam data_loan[0].balance numeric required saldo del prestamo del Sismu. Example: 10000.50
+    * @bodyParam data_loan[0].estimated_quota numeric required cuota del prestamo del Sismu. Example: 1000.50
     * @authenticated
     * @responseFile responses/loan/store.200.json
     */
@@ -200,6 +208,11 @@ class LoanController extends Controller
                 ]);
             }
         }
+        /*if($request->has('data_loan') && $request->parent_loan_id == null && $request->parent_reason != null){
+            $sismu = new Sismu();
+            $data_loan = $request->data_loan[0];
+            $loan->loans()->Create($data_loan);
+        }*/
         // Generar PDFs
         $file_name = implode('_', ['solicitud', 'prestamo', $loan->code]) . '.pdf';
         if(Auth::user()->can('print-contract-loan')){
@@ -277,11 +290,18 @@ class LoanController extends Controller
     * @bodyParam guarantors[0].bonus_calculated integer required ID del afiliado. Example: 300
     * @bodyParam guarantors[0].indebtedness_calculated numeric required ID del afiliado. Example: 34
     * @bodyParam guarantors[0].liquid_qualification_calculated numeric required ID del afiliado. Example: 2000
+    * @bodyParam data_loan  array required Datos Sismu.
+    * @bodyParam data_loan[0].code string required Codigo del prestamo en el Sismu. Example: PRESTAMO123
+    * @bodyParam data_loan[0].amount_approved numeric required Monto aprovado del prestamo del Sismu. Example: 5000.50
+    * @bodyParam data_loan[0].loan_term integer required Plazo del prestamo del Sismu. Example: 25
+    * @bodyParam data_loan[0].balance numeric required saldo del prestamo del Sismu. Example: 10000.50
+    * @bodyParam data_loan[0].estimated_quota numeric required cuota del prestamo del Sismu. Example: 1000.50
     * @authenticated
     * @responseFile responses/loan/update.200.json
     */
     public function update(LoanForm $request, Loan $loan)
     {
+        
         if($request->has('disbursement_date'))
         {
             $state_id = LoanState::whereName('Desembolsado')->first()->id;
@@ -347,6 +367,15 @@ class LoanController extends Controller
         }
 
         $loan->save();
+
+        if($request->has('data_loan') && $request->parent_loan_id == null && $request->parent_reason != null){
+            $data_loan = $request->data_loan[0];
+            if($request->loan==null)
+            $loan->sismu()->create($data_loan);
+            else
+            $loan->sismu()->update($data_loan);
+        }
+
         if (Auth::user()->can(['update-loan', 'create-loan']) && ($request->has('lenders') || $request->has('guarantors'))) {
             $affiliates = []; $a = 0; $previous = 0;
             foreach ($request->lenders as $affiliate) {
