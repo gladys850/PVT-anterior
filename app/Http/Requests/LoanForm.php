@@ -87,7 +87,7 @@ class LoanForm extends FormRequest
             'guarantors.*.payable_liquid_calculated' => ['required', 'numeric'],
             'guarantors.*.bonus_calculated' => ['required', 'numeric'],
             'guarantors.*.quota_previous' => ['numeric'],
-            'guarantors.*.indebtedness_calculated' => ['nullable', 'numeric'],
+            'guarantors.*.indebtedness_calculated' => ['required', 'numeric'],
             'guarantors.*.liquid_qualification_calculated' => ['required', 'numeric'],
             'cosigners' => ['array',new LoanIntervalMaxCosigner($procedure_modality),'exists:personal_references,id'],
             'documents.*' => ['exists:procedure_documents,id'],
