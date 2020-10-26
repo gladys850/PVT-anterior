@@ -23,6 +23,7 @@ use App\Role;
 use App\RoleSequence;
 use App\LoanPayment;
 use App\Voucher;
+use App\Sismu;
 use App\Http\Requests\LoansForm;
 use App\Http\Requests\LoanForm;
 use App\Http\Requests\LoanPaymentForm;
@@ -52,6 +53,7 @@ class LoanController extends Controller
         }
         $loan->personal_references = $loan->personal_references;
         $loan->cosigners = $loan->cosigners;
+        $loan->data_loan = $loan->data_loan;
         return $loan;
     }
 
@@ -155,13 +157,19 @@ class LoanController extends Controller
     * @bodyParam lenders[1].quota_previous numeric required ID del afiliado. Example: 514.6
     * @bodyParam lenders[1].indebtedness_calculated numeric required ID del afiliado. Example: 34
     * @bodyParam lenders[1].liquid_qualification_calculated numeric required ID del afiliado. Example: 2000
-    * @bodyParam guarantors array required Lista de afiliados Garante(es) del préstamo.
+    * @bodyParam guarantors array Lista de afiliados Garante(es) del préstamo.
     * @bodyParam guarantors[0].affiliate_id integer required ID del afiliado. Example: 51925
     * @bodyParam guarantors[0].payment_percentage integer required ID del afiliado. Example: 50
     * @bodyParam guarantors[0].payable_liquid_calculated numeric required ID del afiliado. Example: 2000
     * @bodyParam guarantors[0].bonus_calculated integer required ID del afiliado. Example: 300
     * @bodyParam guarantors[0].indebtedness_calculated numeric required ID del afiliado. Example: 34
     * @bodyParam guarantors[0].liquid_qualification_calculated numeric required ID del afiliado. Example: 2000
+    * @bodyParam data_loan array Datos Sismu.
+    * @bodyParam data_loan[0].code string required Codigo del prestamo en el Sismu. Example: PRESTAMO123
+    * @bodyParam data_loan[0].amount_approved numeric required Monto aprovado del prestamo del Sismu. Example: 5000.50
+    * @bodyParam data_loan[0].loan_term integer required Plazo del prestamo del Sismu. Example: 25
+    * @bodyParam data_loan[0].balance numeric required saldo del prestamo del Sismu. Example: 10000.50
+    * @bodyParam data_loan[0].estimated_quota numeric required cuota del prestamo del Sismu. Example: 1000.50
     * @authenticated
     * @responseFile responses/loan/store.200.json
     */
@@ -200,6 +208,7 @@ class LoanController extends Controller
                 ]);
             }
         }
+
         // Generar PDFs
         $file_name = implode('_', ['solicitud', 'prestamo', $loan->code]) . '.pdf';
         if(Auth::user()->can('print-contract-loan')){
@@ -282,6 +291,7 @@ class LoanController extends Controller
     */
     public function update(LoanForm $request, Loan $loan)
     {
+        
         if($request->has('disbursement_date'))
         {
             $state_id = LoanState::whereName('Desembolsado')->first()->id;
@@ -303,6 +313,8 @@ class LoanController extends Controller
         $loan->state()->associate($state);
         $loan->save();
         $loan->delete();
+        if($loan->data_loan)
+        $loan->data_loan->delete();
         return $loan;
     }
 
@@ -347,6 +359,15 @@ class LoanController extends Controller
         }
 
         $loan->save();
+
+        if($request->has('data_loan') && $request->parent_loan_id == null && $request->parent_reason != null){
+            $data_loan = $request->data_loan[0];
+            if($request->loan==null)
+            $loan->data_loan()->create($data_loan);
+            else
+            $loan->data_loan()->update($data_loan);
+        }
+
         if (Auth::user()->can(['update-loan', 'create-loan']) && ($request->has('lenders') || $request->has('guarantors'))) {
             $affiliates = []; $a = 0; $previous = 0; $indebtedness = 0;
             foreach ($request->lenders as $affiliate) {
@@ -1004,31 +1025,31 @@ class LoanController extends Controller
         $loan = Loan::find($loan_id);
         $loan_payments = $loan->payments->sortBy('quota_number');
         $capital_paid = 0;
-        $message = new \stdClass;
+        $message = array();
         if($request->type_procedure == true){
             foreach($loan_payments as $payment){
                 $capital_paid = $capital_paid + $payment->capital_payment;
             }
             $percentage_paid = round(($capital_paid/$loan->amount_approved)*100,2);
             if($percentage_paid<25){
-                $message->percentage = false;
+                $message['percentage'] = false;
             }
             else {
-                $message->percentage = true;
+                $message['percentage'] = true;
             }
         }
         if (count($loan->getPlanAttribute())>3){
-            $message->paids = true;
+            $message['paids'] = true;
         }
         else{
-            $message->paids = false;
+            $message['paids'] = false;
         }
 
         if (!$loan->defaulted){
-            $message->defaulted = true;
+            $message['defaulted'] = true;
         }
         else{
-            $message->defaulted = false;
+            $message['defaulted'] = false;
         }
         return json_encode($message);
     }

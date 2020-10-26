@@ -115,7 +115,7 @@
                   absolute
                   v-on="on"
                   style="margin-right: 99px;"
-                  @click="validateAffiliate($route.params.id)"                
+                  @click="validateAffiliate($route.params.id, 'is_new')"                
                 >
                   <v-icon>mdi-plus</v-icon>
                 </v-btn>
@@ -136,7 +136,7 @@
                   absolute
                   v-on="on"
                   style="margin-right: 49px;"
-                  :to="{ name: 'loanAdd', params: { hash: 'refinancing'}, query: { affiliate_id: affiliate.id, type_sismu: true}}"          
+                  @click="validateAffiliate($route.params.id, 'is_refinancing')"          
                 >
                   <v-icon>mdi-cash-multiple</v-icon>
                 </v-btn>
@@ -157,7 +157,7 @@
                   absolute
                   v-on="on"
                   style="margin-right: -9px;"
-                :to="{ name: 'loanAdd', params: { hash: 'reprogramming'}, query: { affiliate_id: affiliate.id, type_sismu: true}}"               
+                  @click="validateAffiliate($route.params.id, 'is_reprogramming')"              
                 >
                   <v-icon>mdi-calendar-clock</v-icon>
                 </v-btn>
@@ -365,13 +365,19 @@ export default {
     validateReprogramacion(affiliateid, loanid){
      this.$router.push({ name: 'loanAddrep',  params: { hash: 'ref'}, query:{ affiliate_id: affiliateid,loan_id:loanid } })
     },*/
-    validateAffiliate(id) {
+    validateAffiliate(id, type_procedure) {
       if(this.state_name_type != 'Baja' && this.state_name_status != 'Fallecido' && this.state_name != ''){
         if(this.affiliate.identity_card != null && this.affiliate.city_identity_card_id != null){
           if(this.affiliate.civil_status != null){
             if(this.affiliate.financial_entity_id != null && this.affiliate.account_number != null && this.affiliate.sigep_status != null){
               if(this.affiliate.birth_date != null && this.affiliate.city_birth_id != null){
+                if(type_procedure == "is_new"){
                   this.$router.push({ name: 'loanAdd',  params: { hash: 'new'},  query: { affiliate_id: id}})
+                } if(type_procedure == "is_refinancing"){
+                  this.$router.push({ name: 'loanAdd', params: { hash: 'refinancing'}, query: { affiliate_id: id, type_sismu: true}})
+                } if(type_procedure == "is_reprogramming"){
+                  this.$router.push({ name: 'loanAdd', params: { hash: 'reprogramming'}, query: { affiliate_id: id, type_sismu: true}})
+                }
                 }else{
                   this.toastr.error("El afiliado no tiene registrado su fecha de nacimiento ó ciudad de nacimiento.")
                 }
@@ -412,9 +418,8 @@ export default {
       }
     }*/
     async validateRefinancingLoan(a_id, l_id){
-      this.$router.push({ name: 'loanAdd',  params: { hash: 'refinancing'}, query:{ affiliate_id: a_id, loan_id: l_id } })
-      /*try {
-          let res = await axios.get(`loan/${l_id}/validate_re-loan`,{
+      try {
+          let res = await axios.post(`loan/${l_id}/validate_re_loan`,{
             type_procedure: true
           })
           let validate = res.data
@@ -433,12 +438,11 @@ export default {
           }
       } catch (e) {
         console.log(e)
-      }*/
+      }
     },
     async validateReprogrammingLoan(a_id, l_id){
-      this.$router.push({ name: 'loanAdd',  params: { hash: 'reprogramming'}, query:{ affiliate_id: a_id, loan_id: l_id } })
-      /*try {
-          let res = await axios.get(`loan/${l_id}/validate_re-loan`,{
+      try {
+          let res = await axios.post(`loan/${l_id}/validate_re_loan`,{
             type_procedure: false
           })
           let validate = res.data
@@ -453,7 +457,7 @@ export default {
             }          
       } catch (e) {
         console.log(e)
-      }*/
+      }
     },
   }
 };
