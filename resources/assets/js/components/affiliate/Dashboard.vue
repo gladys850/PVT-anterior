@@ -54,7 +54,7 @@
                         bottom
                         right                        
                         v-on="on" 
-                        :to="{ name: 'loanAdd', params: { hash: 'refinancing'}, query: { affiliate_id: affiliate.id, loan_id: item.id}}" 
+                        @click.stop="validateRefinancingLoan(affiliate.id, item.id)"
                       >
                       <v-icon>mdi-cash-multiple</v-icon>
                       </v-btn>
@@ -70,15 +70,15 @@
                     >
                       <template v-slot:activator="{ on }">
                         <v-btn
-                            icon
-                            dark
-                            small
-                            color="info"
-                            bottom
-                            right
-                            v-on="on" 
-                            :to="{ name: 'loanAdd', params: { hash: 'reprogramming'}, query: { affiliate_id: affiliate.id, loan_id: item.id}}"                          
-                          >
+                          icon
+                          dark
+                          small
+                          color="info"
+                          bottom
+                          right
+                          v-on="on" 
+                          @click.stop="validateReprogrammingLoan(affiliate.id, item.id)"
+                        >
                         <v-icon>mdi-calendar-clock</v-icon>
                         </v-btn>
                       </template>
@@ -407,6 +407,48 @@ export default {
         }
       }
     }*/
+    async validateRefinancingLoan(a_id, l_id){
+      try {
+          let res = await axios.get(`loan/${l_id}/validate_re-loan`,{
+            type_procedure: true
+          })
+          let validate = res.data
+          if(validate.percentage){
+            if(validate.paids){
+              if(!validate.defaulted){
+                this.$router.push({ name: 'loanAdd',  params: { hash: 'refinancing'}, query:{ affiliate_id: a_id, loan_id: l_id } })
+                }else{
+                  this.toastr.error("El préstamo se encuentra en MORA")
+                }
+            }else{
+              this.toastr.error("Tiene pendiente menos de TRES pagos para finalizar la deuda")
+            }
+          }else{
+            this.toastr.error("No tiene el 25% pagado de su préstamo para acceder a un refinanciamiento")
+          }
+      } catch (e) {
+        console.log(e)
+      }
+    },
+    async validateReprogrammingLoan(a_id, l_id){
+      try {
+          let res = await axios.get(`loan/${l_id}/validate_re-loan`,{
+            type_procedure: false
+          })
+          let validate = res.data
+           if(validate.paids){
+              if(!validate.defaulted){
+                this.$router.push({ name: 'loanAdd',  params: { hash: 'reprogramming'}, query:{ affiliate_id: a_id, loan_id: l_id } })
+                }else{
+                  this.toastr.error("El préstamo se encuentra en MORA")
+                }
+            }else{
+              this.toastr.error("Tiene pendiente menos de TRES pagos para finalizar la deuda")
+            }          
+      } catch (e) {
+        console.log(e)
+      }
+    },
   }
 };
 </script>
