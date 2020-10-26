@@ -415,7 +415,7 @@ export default {
           let validate = res.data
           if(validate.percentage){
             if(validate.paids){
-              if(!validate.defaulted){
+              if(validate.defaulted){
                 this.$router.push({ name: 'loanAdd',  params: { hash: 'refinancing'}, query:{ affiliate_id: a_id, loan_id: l_id } })
                 }else{
                   this.toastr.error("El préstamo se encuentra en MORA")
