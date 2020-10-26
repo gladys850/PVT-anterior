@@ -369,11 +369,15 @@ export default {
       if(this.state_name_type != 'Baja' && this.state_name_status != 'Fallecido' && this.state_name != ''){
         if(this.affiliate.identity_card != null && this.affiliate.city_identity_card_id != null){
           if(this.affiliate.civil_status != null){
-            if(this.affiliate.birth_date != null && this.affiliate.city_birth_id != null){
-              this.$router.push({ name: 'loanAdd',  params: { hash: 'new'},  query: { affiliate_id: id}})
+            if(this.affiliate.financial_entity_id != null && this.affiliate.account_number != null && this.affiliate.sigep_status != null){
+              if(this.affiliate.birth_date != null && this.affiliate.city_birth_id != null){
+                  this.$router.push({ name: 'loanAdd',  params: { hash: 'new'},  query: { affiliate_id: id}})
+                }else{
+                  this.toastr.error("El afiliado no tiene registrado su fecha de nacimiento ó ciudad de nacimiento.")
+                }
             }else{
-              this.toastr.error("El afiliado no tiene registrado su fecha de nacimiento ó ciudad de nacimiento.")
-            }          
+            this.toastr.error("El afiliado no tiene registrado la entidad financiera")
+            }         
           }else{
             this.toastr.error("El afiliado no tiene registrado su estado civil.")
           }          
@@ -408,7 +412,8 @@ export default {
       }
     }*/
     async validateRefinancingLoan(a_id, l_id){
-      try {
+      this.$router.push({ name: 'loanAdd',  params: { hash: 'refinancing'}, query:{ affiliate_id: a_id, loan_id: l_id } })
+      /*try {
           let res = await axios.get(`loan/${l_id}/validate_re-loan`,{
             type_procedure: true
           })
@@ -428,10 +433,11 @@ export default {
           }
       } catch (e) {
         console.log(e)
-      }
+      }*/
     },
     async validateReprogrammingLoan(a_id, l_id){
-      try {
+      this.$router.push({ name: 'loanAdd',  params: { hash: 'reprogramming'}, query:{ affiliate_id: a_id, loan_id: l_id } })
+      /*try {
           let res = await axios.get(`loan/${l_id}/validate_re-loan`,{
             type_procedure: false
           })
@@ -447,7 +453,7 @@ export default {
             }          
       } catch (e) {
         console.log(e)
-      }
+      }*/
     },
   }
 };
