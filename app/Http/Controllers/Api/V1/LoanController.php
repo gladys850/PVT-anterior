@@ -157,14 +157,14 @@ class LoanController extends Controller
     * @bodyParam lenders[1].quota_previous numeric required ID del afiliado. Example: 514.6
     * @bodyParam lenders[1].indebtedness_calculated numeric required ID del afiliado. Example: 34
     * @bodyParam lenders[1].liquid_qualification_calculated numeric required ID del afiliado. Example: 2000
-    * @bodyParam guarantors array required Lista de afiliados Garante(es) del préstamo.
+    * @bodyParam guarantors array Lista de afiliados Garante(es) del préstamo.
     * @bodyParam guarantors[0].affiliate_id integer required ID del afiliado. Example: 51925
     * @bodyParam guarantors[0].payment_percentage integer required ID del afiliado. Example: 50
     * @bodyParam guarantors[0].payable_liquid_calculated numeric required ID del afiliado. Example: 2000
     * @bodyParam guarantors[0].bonus_calculated integer required ID del afiliado. Example: 300
     * @bodyParam guarantors[0].indebtedness_calculated numeric required ID del afiliado. Example: 34
     * @bodyParam guarantors[0].liquid_qualification_calculated numeric required ID del afiliado. Example: 2000
-    * @bodyParam data_loan  array required Datos Sismu.
+    * @bodyParam data_loan array Datos Sismu.
     * @bodyParam data_loan[0].code string required Codigo del prestamo en el Sismu. Example: PRESTAMO123
     * @bodyParam data_loan[0].amount_approved numeric required Monto aprovado del prestamo del Sismu. Example: 5000.50
     * @bodyParam data_loan[0].loan_term integer required Plazo del prestamo del Sismu. Example: 25
