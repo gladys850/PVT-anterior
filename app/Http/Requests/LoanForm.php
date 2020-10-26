@@ -67,7 +67,7 @@ class LoanForm extends FormRequest
         $quota_previous = false;
         if($this->parent_loan_id>0) $quota_previous = true;
         $rules = [
-            'procedure_modality_id' => ['required','integer', 'exists:procedure_modalities,id'],
+            'procedure_modality_id' => ['integer', 'exists:procedure_modalities,id'],
             'amount_requested' => ['integer', 'min:200', 'max:700000', new LoanIntervalAmount($procedure_modality)],
             'city_id' => ['integer', 'exists:cities,id'],
             'loan_term' => ['integer', 'min:1', 'max:240', new LoanIntervalTerm($procedure_modality)],
@@ -76,9 +76,13 @@ class LoanForm extends FormRequest
             'documents' => ['array', 'min:1', new ProcedureRequirements($procedure_modality)],
             'liquid_qualification_calculated' => ['numeric'],
             'indebtedness_calculated' => ['numeric', 'max:90', new LoanParameterIndebtedness($procedure_modality)],
+<<<<<<< HEAD
             'property_id' => ['nullable','exists:loan_properties,id'],
             'financial_entity_id' => ['nullable', 'integer', 'exists:financial_entities,id'],
             'lenders' => ['array', 'required','min:1', new LoanIntervalMaxLender($procedure_modality)],
+=======
+            'lenders' => ['array','min:1', new LoanIntervalMaxLender($procedure_modality)],
+>>>>>>> a32a310d0e481731c3e369ffee79faeafef85313
             'lenders.*.affiliate_id' => ['required', 'integer', 'exists:affiliates,id'],
             'lenders.*.payment_percentage' => ['required', 'integer'],
             'lenders.*.payable_liquid_calculated' => ['required', 'numeric'],
@@ -86,6 +90,8 @@ class LoanForm extends FormRequest
             'lenders.*.quota_previous' => ['numeric', $quota_previous? 'required':'nullable'],
             'lenders.*.indebtedness_calculated' => ['nullable', 'numeric'],
             'lenders.*.liquid_qualification_calculated' => ['required', 'numeric'],
+            'personal_references' => ['nullable', 'array', 'exists:personal_references,id' ],
+            'property_id' => ['nullable', $hypothecary? 'required':'nullable','exists:loan_properties,id'],
             'guarantors' => ['array',new LoanParameterGuarantor($procedure_modality)],
             'guarantors.*.affiliate_id' => ['required', 'integer', 'exists:affiliates,id'],
             'guarantors.*.payment_percentage' => ['required', 'integer'],
@@ -94,6 +100,7 @@ class LoanForm extends FormRequest
             'guarantors.*.quota_previous' => ['numeric'],
             'guarantors.*.indebtedness_calculated' => ['nullable', 'numeric'],
             'guarantors.*.liquid_qualification_calculated' => ['required', 'numeric'],
+<<<<<<< HEAD
             'data_loan' =>['array','nullable'],
             'data_loan.*.code'=>['required','string'],
             'data_loan.*.amount_approved'=>['required','numeric'],
@@ -101,6 +108,8 @@ class LoanForm extends FormRequest
             'data_loan.*.balance'=>['required','numeric'],
             'data_loan.*.estimated_quota'=>['required','numeric'],
             'personal_references' => ['array', $procedure_modality->loan_modality_parameter->personal_reference? 'required':'nullable','exists:personal_references,id' ],
+=======
+>>>>>>> a32a310d0e481731c3e369ffee79faeafef85313
             'cosigners' => ['array',new LoanIntervalMaxCosigner($procedure_modality),'exists:personal_references,id'],
             'documents.*' => ['exists:procedure_documents,id'],
             'disbursable_id' => ['integer'],
@@ -113,11 +122,15 @@ class LoanForm extends FormRequest
             'amount_approved' => ['integer', 'min:200', 'max:700000', new LoanIntervalAmount($procedure_modality)],
             'notes' => ['array', 'nullable'],
             'validated' => ['boolean'],
+<<<<<<< HEAD
 
+=======
+            'financial_entity_id' => ['nullable', 'integer', 'exists:financial_entities,id']
+>>>>>>> a32a310d0e481731c3e369ffee79faeafef85313
         ];
         switch ($this->method()) {
             case 'POST': {
-                foreach (array_slice($rules, 0, $hypothecary ? 10 :9 ) as $key => $rule) {
+                foreach (array_slice($rules, 0, $procedure_modality->loan_modality_parameter->personal_reference? 11:10 ) as $key => $rule) {
                     array_push($rules[$key], 'required');
                 }
                 if ($procedure_modality->loan_modality_parameter->guarantors) {
