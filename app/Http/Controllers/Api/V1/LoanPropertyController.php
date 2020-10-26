@@ -69,20 +69,20 @@ class LoanPropertyController extends Controller
     * Actualizar Bien inmueble
     * Actualizar datos principales del Bien inmueble
     * @urlParam loan_property required ID del bien inmueble. Example:13
-    * @bodyParam land_lot_number alpha_dash required Numero de lote de terreno. Example: Nº0004
-    * @bodyParam neighborhood_unit string required Unidad Vecinal. Example: 00000
-    * @bodyParam location string required Ubicación. Example: Urbanización los olivos mercedes
-    * @bodyParam surface string required Superficie. Example: 000.00
-    * @bodyParam measurement string required Unidad de medida superficie. Example: mts
-    * @bodyParam cadastral_code integer required Codigo Catastral. Example: 123
-    * @bodyParam limit string required Colindancias. Example: Norte NSC al sud el lote NSC y al oeste NSC
+    * @bodyParam land_lot_number alpha_dash Numero de lote de terreno. Example: Nº0004
+    * @bodyParam neighborhood_unit string Unidad Vecinal. Example: 00000
+    * @bodyParam location string Ubicación. Example: Urbanización los olivos mercedes
+    * @bodyParam surface string Superficie. Example: 000.00
+    * @bodyParam measurement string Unidad de medida superficie. Example: mts
+    * @bodyParam cadastral_code integer Codigo Catastral. Example: 123
+    * @bodyParam limit string Colindancias. Example: Norte NSC al sud el lote NSC y al oeste NSC
     * @bodyParam public_deed_number string Número de escritura publica. Example: Nro. 000/2004
-    * @bodyParam lawyer string required Notaria de fe publica. Example: Dra. Maria fernandez
-    * @bodyParam registration_number string required Número de matricula computarizada. Example: 2.00.1.01.0000000
-    * @bodyParam real_folio_number string required Número de asiento del folio real. Example: A2
-    * @bodyParam public_deed_date date required Fecha de escritura Publica. Example: 2020-09-23
-    * @bodyParam net_realizable_value float required Valor Neto Realizable. Example: 600000.6
-    * @bodyParam real_city_id integer required. Example: 1
+    * @bodyParam lawyer string Notaria de fe publica. Example: Dra. Maria fernandez
+    * @bodyParam registration_number string Número de matricula computarizada. Example: 2.00.1.01.0000000
+    * @bodyParam real_folio_number string Número de asiento del folio real. Example: A2
+    * @bodyParam public_deed_date date Fecha de escritura Publica. Example: 2020-09-23
+    * @bodyParam net_realizable_value float Valor Neto Realizable. Example: 600000.6
+    * @bodyParam real_city_id integer Ciudad de registro en derechos reales. Example: 1
     * @authenticated
     * @responseFile responses/loan_property/update.200.json
     */
