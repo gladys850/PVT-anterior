@@ -76,7 +76,7 @@ class LoanForm extends FormRequest
             'documents' => ['array', 'min:1', new ProcedureRequirements($procedure_modality)],
             'liquid_qualification_calculated' => ['numeric'],
             'indebtedness_calculated' => ['numeric', 'max:90', new LoanParameterIndebtedness($procedure_modality)],
-            'property_id' => ['nullable','exists:loan_properties,id'],
+            //'property_id' => ['nullable','exists:loan_properties,id'],
             'financial_entity_id' => ['nullable', 'integer', 'exists:financial_entities,id'],
             'lenders' => ['array', 'required','min:1', new LoanIntervalMaxLender($procedure_modality)],
             'lenders.*.affiliate_id' => ['required', 'integer', 'exists:affiliates,id'],

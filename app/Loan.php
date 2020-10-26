@@ -182,7 +182,7 @@ class Loan extends Model
     {
         return $this->belongsTo(LoanInterest::class, 'interest_id', 'id');
     }
-    public function sismu()
+    public function data_loan()
     {
         return $this->hasOne(Sismu::class);
     }

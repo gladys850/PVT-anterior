@@ -53,7 +53,7 @@ class LoanController extends Controller
         }
         $loan->personal_references = $loan->personal_references;
         $loan->cosigners = $loan->cosigners;
-        $loan->data_loan = $loan->sismu;
+        $loan->data_loan = $loan->data_loan;
         return $loan;
     }
 
@@ -323,6 +323,8 @@ class LoanController extends Controller
         $loan->state()->associate($state);
         $loan->save();
         $loan->delete();
+        if($loan->sismu)
+        $loan->sismu->delete();
         return $loan;
     }
 
@@ -1026,31 +1028,31 @@ class LoanController extends Controller
         $loan = Loan::find($loan_id);
         $loan_payments = $loan->payments->sortBy('quota_number');
         $capital_paid = 0;
-        $message = new \stdClass;
+        $message = array();
         if($request->type_procedure == true){
             foreach($loan_payments as $payment){
                 $capital_paid = $capital_paid + $payment->capital_payment;
             }
             $percentage_paid = round(($capital_paid/$loan->amount_approved)*100,2);
             if($percentage_paid<25){
-                $message->percentage = false;
+                $message['percentage'] = false;
             }
             else {
-                $message->percentage = true;
+                $message['percentage'] = true;
             }
         }
         if (count($loan->getPlanAttribute())>3){
-            $message->paids = true;
+            $message['paids'] = true;
         }
         else{
-            $message->paids = false;
+            $message['paids'] = false;
         }
 
         if (!$loan->defaulted){
-            $message->defaulted = true;
+            $message['defaulted'] = true;
         }
         else{
-            $message->defaulted = false;
+            $message['defaulted'] = false;
         }
         return json_encode($message);
     }
