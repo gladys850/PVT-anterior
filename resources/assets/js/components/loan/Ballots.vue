@@ -24,7 +24,7 @@
                         <v-col cols="12" :md="window_size" class="py-0">
                           <v-select
                             dense
-                            v-model="loanTypeSelected"
+                            v-model="loanTypeSelected.id"
                             :Onchange="Onchange()"
                             :items="modalities"
                             item-text="name"
@@ -133,7 +133,7 @@
                       label="Cuota"          
                      ></v-text-field>
                   </v-col>
-                  <v-col cols="12" md="3">
+                  <v-col cols="12" md="3" v-if="this.loanTypeSelected.id==11 || this.loanTypeSelected.id==12">
                       <v-checkbox
                         v-model="data_sismu.cpop_sismu"
                         label="Afiliado CPOP"                   
@@ -211,9 +211,9 @@ export default {
       required: true
     },
     loanTypeSelected:{
-      type: Number,
+      type: Object,
       required: true,
-      default: 0
+      
     },
     data_sismu:{
       type: Object,
@@ -238,24 +238,24 @@ export default {
     },
     type_sismu() {
       if(this.$route.query.type_sismu){
-        this.data_sismu.type_sismu = this.$route.query.type_sismu
+        this.data_sismu.type_sismu = true
       }
       return this.data_sismu.type_sismu
     }
   },
-  watch: {
+  /*watch: {
     loanTypeSelected(newVal, oldVal){
     if(newVal!=oldVal){
       this.Onchange()
     }
   }
-},
+},*/
   methods:
  {//muestra los intervalos de acuerdo a una modalidad
     Onchange(){
       for (let i = 0; i< this.interval.length; i++) {
-        if(this.loanTypeSelected==this.interval[i].procedure_type_id){
-          if(this.loanTypeSelected==12){
+        if(this.loanTypeSelected.id==this.interval[i].procedure_type_id){
+          if(this.loanTypeSelected.id==12){
             this.hipotecario=true
             this.window_size=3
             this.see_field=true
@@ -271,12 +271,12 @@ export default {
           this.intervalos.maximum_term= this.interval[i].maximum_term
           this.intervalos.minimun_amoun=this.interval[i].minimum_amount
           this.intervalos.minimum_term= this.interval[i].minimum_term
-          this.intervalos.procedure_type_id= this.loanTypeSelected
+          this.intervalos.procedure_type_id= this.loanTypeSelected.id
           //debugger
           this.getLoanModality(this.$route.query.affiliate_id)
           //this.getBallots(this.$route.query.affiliate_id)
         }else{
-        console.log('NO ES IGUAL A MODALIDAD INTERVALS'+this.interval[i].procedure_type_id +"=="+this.loanTypeSelected )
+        console.log('NO ES IGUAL A MODALIDAD INTERVALS'+this.interval[i].procedure_type_id +"=="+this.loanTypeSelected.id )
       }
       }
  
@@ -297,7 +297,7 @@ export default {
       try {
         let resp = await axios.get(`affiliate/${id}/loan_modality`,{
           params: {
-            procedure_type_id:this.loanTypeSelected,
+            procedure_type_id:this.loanTypeSelected.id,
             type_sismu: this.data_sismu.type_sismu,
             cpop_sismu: this.data_sismu.cpop_sismu
             //external_discount:0, //FIXME revisar si este paramtro no tiene uso, en otro caso borrar

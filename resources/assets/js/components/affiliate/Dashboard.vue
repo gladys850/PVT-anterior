@@ -77,7 +77,7 @@
                             bottom
                             right
                             v-on="on" 
-                            :to="{ name: 'loanAdd', params: { hash: 'refinancing'}, query: { affiliate_id: affiliate.id, loan_id: item.id}}"                          
+                            :to="{ name: 'loanAdd', params: { hash: 'reprogramming'}, query: { affiliate_id: affiliate.id, loan_id: item.id}}"                          
                           >
                         <v-icon>mdi-calendar-clock</v-icon>
                         </v-btn>
@@ -157,7 +157,7 @@
                   absolute
                   v-on="on"
                   style="margin-right: -9px;"
-                :to="{ name: 'loanAdd', params: { hash: 'new'}, query: { affiliate_id: affiliate.id, type_sismu: true}}"               
+                :to="{ name: 'loanAdd', params: { hash: 'reprogramming'}, query: { affiliate_id: affiliate.id, type_sismu: true}}"               
                 >
                   <v-icon>mdi-calendar-clock</v-icon>
                 </v-btn>

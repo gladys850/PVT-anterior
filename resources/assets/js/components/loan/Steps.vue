@@ -298,7 +298,7 @@ export default {
     //Variables reprogramacion y refinanciamiento
     data_loan: {},
     edit_refi_repro: false,
-    loanTypeSelected: 0,
+    loanTypeSelected: {},
     data_sismu:{
       type_sismu: false,
       quota_sismu: 0,
@@ -317,7 +317,7 @@ export default {
     },
     type_sismu() {
       if(this.$route.query.type_sismu){
-        this.data_sismu.type_sismu = this.$route.query.type_sismu
+        this.data_sismu.type_sismu = true
       }
       return this.data_sismu.type_sismu
     }
@@ -336,7 +336,7 @@ export default {
     })
   },
   mounted(){
-    if(!this.isNew){
+    if(!this.isNew && !this.type_sismu){
       this.getLoan(this.$route.query.loan_id)
     }else{
       //alert("Es nuevo")
@@ -350,17 +350,8 @@ export default {
       else {
         if(n==1)
         {
+          this.liquidCalificated()
           this.getLoanDestiny()
-          if(this.isNew){
-            this.loanTypeSelected=this.modalidad.procedure_type_id
-            this.liquidCalificated()
-          }
-          if(this.refinancing){
-            this.liquidCalificated()
-          }
-          if(this.reprogramming){
-            this.liquidCalificated()
-          }
         }
         if(n==2)
         {
@@ -428,6 +419,16 @@ export default {
         this.modulo= resp.data.data[0].id
         let res = await axios.get(`module/${this.modulo}/modality_loan`)
         this.modalities = res.data
+        //Verifica si es refinaciamiento o reprogramación para no mostrar Anticipo
+        if(this.refinancing || this.reprogramming){  
+          let modalities_aux=[]        
+          for(let i = 0; i < this.modalities.length; i++ ){
+            if(this.modalities[i].name != "Préstamo Anticipo"){
+              modalities_aux.push(this.modalities[i])
+            }
+          }
+          this.modalities = modalities_aux
+        }
       } catch (e) {
         console.log(e)
       } finally {
@@ -662,7 +663,7 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
 
         let res2 = await axios.get(`procedure_modality/${this.data_loan.procedure_modality_id}`)
         let mod_refi_repro=res2.data.procedure_type_id
-        this.loanTypeSelected = res2.data.procedure_type_id
+        this.loanTypeSelected.id = res2.data.procedure_type_id
         this.edit_refi_repro = true
         
         if(this.data_loan.property_id != null){
