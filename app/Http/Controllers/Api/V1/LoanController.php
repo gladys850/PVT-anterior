@@ -348,7 +348,7 @@ class LoanController extends Controller
 
         $loan->save();
         if (Auth::user()->can(['update-loan', 'create-loan']) && ($request->has('lenders') || $request->has('guarantors'))) {
-            $affiliates = []; $a = 0; $previous = 0;
+            $affiliates = []; $a = 0; $previous = 0; $indebtedness = 0;
             foreach ($request->lenders as $affiliate) {
                 if($request->parent_loan_id)
                 {
@@ -356,13 +356,18 @@ class LoanController extends Controller
                 }else{
                     $quota_previous = $previous;
                 }
+                if (array_key_exists('indebtedness_calculated', $affiliate)) {
+                    $indebtedness = $affiliate['indebtedness_calculated'];
+                }else{
+                    $indebtedness = 0;
+                }
                 $affiliates[$a] = [
                     'affiliate_id' => $affiliate['affiliate_id'],
                     'payment_percentage' => $affiliate['payment_percentage'],
                     'payable_liquid_calculated' => $affiliate['payable_liquid_calculated'],
                     'bonus_calculated' => $affiliate['bonus_calculated'],
                     'quota_previous' => $quota_previous,
-                    'indebtedness_calculated' => $affiliate['indebtedness_calculated'],
+                    'indebtedness_calculated' => $indebtedness,
                     'liquid_qualification_calculated' => $affiliate['liquid_qualification_calculated'],
                     'guarantor' => false
                 ];
