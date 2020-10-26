@@ -182,6 +182,10 @@ class Loan extends Model
     {
         return $this->belongsTo(LoanInterest::class, 'interest_id', 'id');
     }
+    public function data_loan()
+    {
+        return $this->hasOne(Sismu::class,'loan_id','id');
+    }
 
     public function observations()
     {
@@ -525,6 +529,10 @@ class Loan extends Model
             $modality->loan_modality_parameter;
             return response()->json($modality);
         }
+    }
+
+    public function get_sismu(){
+        return Sismu::find($this->id);
     }
 }
 

@@ -412,9 +412,8 @@ export default {
       }
     }*/
     async validateRefinancingLoan(a_id, l_id){
-      this.$router.push({ name: 'loanAdd',  params: { hash: 'refinancing'}, query:{ affiliate_id: a_id, loan_id: l_id } })
-      /*try {
-          let res = await axios.get(`loan/${l_id}/validate_re-loan`,{
+      try {
+          let res = await axios.post(`loan/${l_id}/validate_re_loan`,{
             type_procedure: true
           })
           let validate = res.data
@@ -433,12 +432,11 @@ export default {
           }
       } catch (e) {
         console.log(e)
-      }*/
+      }
     },
     async validateReprogrammingLoan(a_id, l_id){
-      this.$router.push({ name: 'loanAdd',  params: { hash: 'reprogramming'}, query:{ affiliate_id: a_id, loan_id: l_id } })
-      /*try {
-          let res = await axios.get(`loan/${l_id}/validate_re-loan`,{
+      try {
+          let res = await axios.post(`loan/${l_id}/validate_re_loan`,{
             type_procedure: false
           })
           let validate = res.data
@@ -453,7 +451,7 @@ export default {
             }          
       } catch (e) {
         console.log(e)
-      }*/
+      }
     },
   }
 };
