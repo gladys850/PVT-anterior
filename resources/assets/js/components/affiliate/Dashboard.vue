@@ -10,6 +10,7 @@
               <ul style="list-style: none;" class="pa-0">
                 <li v-for="(item,index) in loan" :key="item.id" class="pb-2">
                   <div v-if="index < 3">
+                    {{item.procedure_modality_id}}
                     <strong>Cód.:</strong>
                     {{ item.code }} |
                     <strong>Desembolsado:</strong>
@@ -41,7 +42,8 @@
                     
                     <span>
                     <v-tooltip
-                    left              
+                    left  
+                    v-if="item.procedure_modality_id != 32 && item.procedure_modality_id != 33"            
                     >
                     <template v-slot:activator="{ on }">
                       <v-btn
@@ -52,7 +54,7 @@
                         bottom
                         right                        
                         v-on="on" 
-                        @click="validateRefinancing($route.params.id,item.id)"  
+                        @click.stop="validateRefinancingLoan(affiliate.id, item.id)"
                       >
                       <v-icon>mdi-cash-multiple</v-icon>
                       </v-btn>
@@ -63,19 +65,20 @@
                     <span>
 
                     <v-tooltip
-                    left              
+                    left   
+                    v-if="item.procedure_modality_id != 32 && item.procedure_modality_id != 33"            
                     >
                       <template v-slot:activator="{ on }">
                         <v-btn
-                            icon
-                            dark
-                            small
-                            color="info"
-                            bottom
-                            right
-                            v-on="on" 
-                            @click="validateReprogramming($route.params.id,item.id)"                         
-                          >
+                          icon
+                          dark
+                          small
+                          color="info"
+                          bottom
+                          right
+                          v-on="on" 
+                          @click.stop="validateReprogrammingLoan(affiliate.id, item.id)"
+                        >
                         <v-icon>mdi-calendar-clock</v-icon>
                         </v-btn>
                       </template>
@@ -94,7 +97,6 @@
                     </v-progress-linear>
                   
                   </div>
-            <!---->
 
                 </li>
               </ul>
@@ -112,13 +114,55 @@
                   right
                   absolute
                   v-on="on"
-                  style="margin-right: -9px;"
+                  style="margin-right: 99px;"
                   @click="validateAffiliate($route.params.id)"                
                 >
                   <v-icon>mdi-plus</v-icon>
                 </v-btn>
               </template>
               <span>Nuevo trámite</span>
+            </v-tooltip>
+            <v-tooltip
+              left v-if="$store.getters.permissions.includes('create-loan')"              
+            >
+              <template v-slot:activator="{ on }">
+                <v-btn
+                  fab
+                  dark
+                  small
+                  color="success"
+                  bottom
+                  right
+                  absolute
+                  v-on="on"
+                  style="margin-right: 49px;"
+                  :to="{ name: 'loanAdd', params: { hash: 'refinancing'}, query: { affiliate_id: affiliate.id, type_sismu: true}}"          
+                >
+                  <v-icon>mdi-cash-multiple</v-icon>
+                </v-btn>
+              </template>
+              <span>Refinanciamiento SISMU</span>
+            </v-tooltip>
+            <v-tooltip
+              left v-if="$store.getters.permissions.includes('create-loan')"              
+            >
+              <template v-slot:activator="{ on }">
+                <v-btn
+                  fab
+                  dark
+                  small
+                  color="info"
+                  bottom
+                  right
+                  absolute
+                  v-on="on"
+                  style="margin-right: -9px;"
+                :to="{ name: 'loanAdd', params: { hash: 'reprogramming'}, query: { affiliate_id: affiliate.id, type_sismu: true}}"               
+                >
+                  <v-icon>mdi-calendar-clock</v-icon>
+                </v-btn>
+              </template>
+              <span>Reprogramación SISMU</span>
             </v-tooltip>
           </v-card-text>
         </v-card>
@@ -341,7 +385,7 @@ export default {
       }
       
     },
-    validateRefinancing(a_id, l_id){
+   /* validateRefinancing(a_id, l_id){
       for(let i = 0; i < this.loan.length; i++){
         if(l_id == this.loan[i].id){
           if(this.loan[i].procedure_modality_id != 32 && this.loan[i].procedure_modality_id != 33){
@@ -362,7 +406,49 @@ export default {
           }
         }
       }
-    }
+    }*/
+    async validateRefinancingLoan(a_id, l_id){
+      try {
+          let res = await axios.get(`loan/${l_id}/validate_re-loan`,{
+            type_procedure: true
+          })
+          let validate = res.data
+          if(validate.percentage){
+            if(validate.paids){
+              if(validate.defaulted){
+                this.$router.push({ name: 'loanAdd',  params: { hash: 'refinancing'}, query:{ affiliate_id: a_id, loan_id: l_id } })
+                }else{
+                  this.toastr.error("El préstamo se encuentra en MORA")
+                }
+            }else{
+              this.toastr.error("Tiene pendiente menos de TRES pagos para finalizar la deuda")
+            }
+          }else{
+            this.toastr.error("No tiene el 25% pagado de su préstamo para acceder a un refinanciamiento")
+          }
+      } catch (e) {
+        console.log(e)
+      }
+    },
+    async validateReprogrammingLoan(a_id, l_id){
+      try {
+          let res = await axios.get(`loan/${l_id}/validate_re-loan`,{
+            type_procedure: false
+          })
+          let validate = res.data
+           if(validate.paids){
+              if(!validate.defaulted){
+                this.$router.push({ name: 'loanAdd',  params: { hash: 'reprogramming'}, query:{ affiliate_id: a_id, loan_id: l_id } })
+                }else{
+                  this.toastr.error("El préstamo se encuentra en MORA")
+                }
+            }else{
+              this.toastr.error("Tiene pendiente menos de TRES pagos para finalizar la deuda")
+            }          
+      } catch (e) {
+        console.log(e)
+      }
+    },
   }
 };
 </script>

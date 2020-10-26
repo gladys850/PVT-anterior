@@ -153,7 +153,7 @@
               dense
             ></v-select>
           </v-col>
-          <Fab v-show="allowFlow" :bus="bus"/>
+          <Fab v-show="allowFlow" :bus="bus"/> 
         </v-toolbar>
       </v-row>
       <!--<v-row>  <v-col>procedureTypes{{$store.getters.procedureTypes}}</v-col>     </v-row>
