@@ -80,19 +80,32 @@
                       <v-layout row wrap>
                         <v-flex xs12 class="px-2">
                           <fieldset class="pa-3">
-                            <v-toolbar-title>GARANTE</v-toolbar-title>
+                            <v-toolbar-title>GARANTIA</v-toolbar-title>
                               <v-progress-linear></v-progress-linear>
-                            <ul style="list-style: none" class="pa-0">
-                              <li v-for="(guarantor,i) in loan.guarantors" :key="i" >
+                              {{ loan.procedure_modality_id }}
+                            <ul style="list-style: none" class="pa-0" v-if="loan.procedure_modality_id == 41 || loan.procedure_modality_id == 40 || loan.procedure_modality_id == 42">
+                              <li v-for="(guarantor,i) in loan.guarantors" :key="i">
+                                
                                 <br>
-                                <p >CÉDULA DE IDENTIDAD: {{guarantor.identity_card +" "+ identityCardExt(guarantor.city_identity_card_id) }}</p>
+                                <p>CÉDULA DE IDENTIDAD: {{guarantor.identity_card +" "+ identityCardExt(guarantor.city_identity_card_id) }}</p>
                                 <p>NOMBRE COMPLETO: {{$options.filters.fullName(guarantor, true)}}</p>
                                 <p>PORCENTAJE DE PAGO: {{guarantor.pivot.payment_percentage}} %</p>
-
+                              </li>
+                            </ul>
+                            <ul style="list-style: none" class="pa-0" v-if="loan.procedure_modality_id == 46 || loan.procedure_modality_id == 47">                                
+                                <br>
+                                <p> CIUDAD: {{ loan_properties.land_lot_number }}</p>
+                                <p> UBICACION: {{ loan_properties.location}} </p>
+                                <p> NUMERO DE LOTE: {{ loan_properties.land_lot_number }} </p>
+                                <p> SUPERFICIE: {{ loan_properties.surface }} - {{ loan_properties.measurement }}</p>
+                                <p> CODIGO CATASTRAL: {{ loan_properties.cadastral_code}}</p>
+                                <p> NRO MATRICULA: {{ loan_properties.registration_number}}</p>
+                                <p> NRO FOLIO REAL: {{ loan_properties.real_folio_number}} </p>
+                                <p> VNR: {{ loan_properties.net_realizable_value}} </p>
                               </li>
                             </ul>
                             <br>
-                               <p v-if="loan.guarantors.length==0">NO TIENE GARANTES</p>
+                            <!--<p v-if="loan.guarantors.length==0">NO TIENE GARANTES</p>-->
                           </fieldset>
                         </v-flex>
                       </v-layout>
@@ -172,6 +185,10 @@ export default {
   name: "specific-data-loan",
   props: {
     loan: {
+      type: Object,
+      required: true
+    },
+    loan_properties: {
       type: Object,
       required: true
     }
