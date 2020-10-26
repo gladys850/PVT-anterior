@@ -295,13 +295,13 @@ export default {
     //Obtiene los parametros de la modalidad
     async getLoanModality(id) {
       try {
-        let resp = await axios.get(`affiliate/${id}/loan_modality`,{
-          params: {
+        let resp = await axios.post(`affiliate/${id}/loan_modality?procedure_type_id=${this.loanTypeSelected.id}`,{
+          type_sismu: this.data_sismu.type_sismu,
+          cpop_sismu: this.data_sismu.cpop_sismu,
+          /*params: {
             procedure_type_id:this.loanTypeSelected.id,
-            type_sismu: this.data_sismu.type_sismu,
-            cpop_sismu: this.data_sismu.cpop_sismu
             //external_discount:0, //FIXME revisar si este paramtro no tiene uso, en otro caso borrar
-          }
+          }*/
         })
         
           let loan_modality = resp.data

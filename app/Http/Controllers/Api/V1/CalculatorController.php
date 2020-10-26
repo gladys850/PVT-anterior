@@ -62,7 +62,7 @@ class CalculatorController extends Controller
                 if(!$parent_lender) abort(403,'El afiliado no es titular del préstamo');
                 $parent_quota = $parent_loan->next_payment()->estimated_quota *$parent_lender->pivot->payment_percentage/100;
             }else{
-                /** En caso de refinanciamiento sismu */
+                /** En caso de refinanciamiento y/o reprogramación sismu */
                 if (array_key_exists('sismu', $liq)) {
                 $parent_quota = $liq['quota_sismu'];
                 }else{

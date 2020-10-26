@@ -58,12 +58,15 @@ class LoanForm extends FormRequest
     public function rules():array
     {
         $hypothecary = false;
+        $sismu = false;
         if ($this->procedure_modality_id) {
             $procedure_modality = ProcedureModality::findOrFail($this->procedure_modality_id);
             if($procedure_modality->procedure_type->name == "Préstamo hipotecario") $hypothecary = true;
         } else {
             $procedure_modality = $this->loan->modality;
         }
+        if($this->parent_loan_id == null && $this->parent_reason != null)
+        $sismu = true;
         $quota_previous = false;
         if($this->parent_loan_id>0) $quota_previous = true;
         $rules = [
@@ -76,9 +79,8 @@ class LoanForm extends FormRequest
             'documents' => ['array', 'min:1', new ProcedureRequirements($procedure_modality)],
             'liquid_qualification_calculated' => ['numeric'],
             'indebtedness_calculated' => ['numeric', 'max:90', new LoanParameterIndebtedness($procedure_modality)],
-            //'property_id' => ['nullable','exists:loan_properties,id'],
-            'financial_entity_id' => ['nullable', 'integer', 'exists:financial_entities,id'],
-            'lenders' => ['array', 'required','min:1', new LoanIntervalMaxLender($procedure_modality)],
+            'lenders' => ['array','min:1', new LoanIntervalMaxLender($procedure_modality)],
+            'personal_references' => ['array', 'exists:personal_references,id' ],
             'lenders.*.affiliate_id' => ['required', 'integer', 'exists:affiliates,id'],
             'lenders.*.payment_percentage' => ['required', 'integer'],
             'lenders.*.payable_liquid_calculated' => ['required', 'numeric'],
@@ -86,7 +88,6 @@ class LoanForm extends FormRequest
             'lenders.*.quota_previous' => ['numeric', $quota_previous? 'required':'nullable'],
             'lenders.*.indebtedness_calculated' => ['nullable', 'numeric'],
             'lenders.*.liquid_qualification_calculated' => ['required', 'numeric'],
-            'personal_references' => ['nullable', 'array', 'exists:personal_references,id' ],
             'property_id' => ['nullable', $hypothecary? 'required':'nullable','exists:loan_properties,id'],
             'guarantors' => ['array',new LoanParameterGuarantor($procedure_modality)],
             'guarantors.*.affiliate_id' => ['required', 'integer', 'exists:affiliates,id'],
@@ -94,15 +95,14 @@ class LoanForm extends FormRequest
             'guarantors.*.payable_liquid_calculated' => ['required', 'numeric'],
             'guarantors.*.bonus_calculated' => ['required', 'numeric'],
             'guarantors.*.quota_previous' => ['numeric'],
-            'guarantors.*.indebtedness_calculated' => ['nullable', 'numeric'],
+            'guarantors.*.indebtedness_calculated' => ['required', 'numeric'],
             'guarantors.*.liquid_qualification_calculated' => ['required', 'numeric'],
-            'data_loan' =>['array','nullable'],
+            'data_loan' =>['array', $sismu? 'required':'nullable'],
             'data_loan.*.code'=>['required','string'],
             'data_loan.*.amount_approved'=>['required','numeric'],
             'data_loan.*.loan_term'=>['required','integer'],
             'data_loan.*.balance'=>['required','numeric'],
             'data_loan.*.estimated_quota'=>['required','numeric'],
-            'personal_references' => ['array', $procedure_modality->loan_modality_parameter->personal_reference? 'required':'nullable','exists:personal_references,id' ],
             'cosigners' => ['array',new LoanIntervalMaxCosigner($procedure_modality),'exists:personal_references,id'],
             'documents.*' => ['exists:procedure_documents,id'],
             'disbursable_id' => ['integer'],
@@ -113,8 +113,9 @@ class LoanForm extends FormRequest
             'parent_reason'=> ['string', 'nullable', 'in:REFINANCIAMIENTO,REPROGRAMACIÓN'],
             'state_id' => ['exists:loan_states,id'],
             'amount_approved' => ['integer', 'min:200', 'max:700000', new LoanIntervalAmount($procedure_modality)],
-            'notes' => ['array', 'nullable'],
+            'notes' => ['array'],
             'validated' => ['boolean'],
+            'financial_entity_id' => ['nullable', 'integer', 'exists:financial_entities,id']
         ];
         switch ($this->method()) {
             case 'POST': {
