@@ -134,7 +134,7 @@ Route::group([
         ], function () {
             Route::apiResource('loan', 'Api\V1\LoanController')->only('store');
             Route::get('loan/{loan}/print/documents', 'Api\V1\LoanController@print_documents');
-            Route::get('affiliate/{affiliate}/loan_modality', 'Api\V1\AffiliateController@get_loan_modality');
+            Route::post('affiliate/{affiliate}/loan_modality', 'Api\V1\AffiliateController@get_loan_modality');
         });
         Route::group([
             'middleware' => 'permission:update-loan'
