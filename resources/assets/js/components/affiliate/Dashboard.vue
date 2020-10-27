@@ -378,6 +378,7 @@ export default {
                 } if(type_procedure == "is_reprogramming"){
                   this.$router.push({ name: 'loanAdd', params: { hash: 'reprogramming'}, query: { affiliate_id: id, type_sismu: true}})
                 }
+
                 }else{
                   this.toastr.error("El afiliado no tiene registrado su fecha de nacimiento ó ciudad de nacimiento.")
                 }
