@@ -14,7 +14,7 @@
     </div>
 </div>
 <?php $modality = $loan->modality;
-if(($modality->name == 'Refinanciamiento de prestamos a largo Plazo para el sector activo - CPOP' || $modality->name == 'Refinanciamiento de prestamos a largo Plazo para el sector pasivo - CPOP'|| $modality->name == 'Refinanciamiento de préstamos a largo Plazo con garantía personal para el sector activo y personal Adm Policial') && $parent_loan){?>
+if(($modality->name == 'Refinanciamiento de prestamos a largo Plazo para el sector activo - CPOP' || $modality->name == 'Refinanciamiento de prestamos a largo Plazo para el sector pasivo - CPOP'|| $modality->name == 'Refinanciamiento de préstamos a largo Plazo con garantía personal para el sector activo y personal Adm Policial')){?>
 <div class="block text-justify">
     <div>
         Conste en el presente contrato de préstamo de {{ $title }}, que al solo reconocimiento de firmas y rúbricas ante autoridad competente será elevado a Instrumento Público, por lo que las partes que intervienen lo suscriben al tenor de las siguientes claúsulas y condiciones:
@@ -31,10 +31,21 @@ if(($modality->name == 'Refinanciamiento de prestamos a largo Plazo para el sect
         @endif
     </div>
     <div>
-        <b>SEGUNDA.- (DEL ANTECEDENTE):</b>Mediante contrato de préstamo {{ $parent_loan->code }} con fecha de desembolso {{ date_format($parent_loan->disbursement_date, "d/m/Y")}}, se ha suscrito entre MUSERPOL y el PRESTATARIO un préstamo por la suma de Bs. {{ $parent_loan->amount_approved }} (<span class="uppercase">{{ Util::money_format($parent_loan->amount_approved, true) }}</span> Bolivianos), con garantía de haberes y garantía personal si corresponde.
-    </div>
-    <div>
-        <b>TERCERA.- (DEL OBJETO):</b>  El objeto del presente contrato es el refinanciamiento del préstamo de dinero que MUSERPOL otorga al PRESTATARIO conforme a calificación, previa evaluación y autorización, de conformidad a los niveles de aprobación respectivos en la suma de Bs. {{ $loan->amount_requested }} (<span class="uppercase">{{ Util::money_format($loan->amount_requested, true) }}</span> Bolivianos), para lo cual el PRESTATARIO reconoce de manera expresa el saldo anterior de la deuda correspondiente al préstamo contraído con anterioridad, que asciende a la suma de Bs. {{ $parent_loan->balance }} (<span class="uppercase">{{ Util::money_format($parent_loan->balance, true) }}</span> Bolivianos), montos que hacen un total efectivo de {{ $loan->amount_requested + $parent_loan->balance }} (<span class="uppercase">{{ Util::money_format($loan->amount_requested + $parent_loan->balance, true) }}</span> Bolivianos), que representa la nueva obligación contraída sujeta a cumplimiento, en función a la operación de refinanciamiento.
+        <?php $modality = $loan->modality;
+        if($loan->data_loan){ ?>
+            <b>SEGUNDA.- (DEL ANTECEDENTE):</b>Mediante contrato de préstamo {{ $loan->data_loan->code }} SISMU suscrito entre MUSERPOL y el PRESTATARIO un préstamo por la suma de Bs. {{ $loan->data_loan->amount_approved }} (<span class="uppercase">{{ Util::money_format($loan->data_loan->amount_approved, true) }}</span> Bolivianos), con garantía de haberes y garantía personal si corresponde.
+            <div>
+            <b>TERCERA.- (DEL OBJETO):</b>  El objeto del presente contrato es el refinanciamiento del préstamo de dinero que MUSERPOL otorga al PRESTATARIO conforme a calificación, previa evaluación y autorización, de conformidad a los niveles de aprobación respectivos en la suma de Bs. {{ $loan->amount_requested }} (<span class="uppercase">{{ Util::money_format($loan->amount_requested, true) }}</span> Bolivianos), para lo cual el PRESTATARIO reconoce de manera expresa el saldo anterior de la deuda correspondiente al préstamo contraído con anterioridad, que asciende a la suma de Bs. {{ $loan->data_loan->balance }} (<span class="uppercase">{{ Util::money_format($loan->data_loan->balance, true) }}</span> Bolivianos), montos que hacen un total efectivo de {{ $loan->amount_requested + $loan->data_loan->balance }} (<span class="uppercase">{{ Util::money_format($loan->amount_requested + $loan->data_loan->balance, true) }}</span> Bolivianos), que representa la nueva obligación contraída sujeta a cumplimiento, en función a la operación de refinanciamiento.
+            </div>
+            <?php }
+        else{?>
+            <div>
+            <b>SEGUNDA.- (DEL ANTECEDENTE):</b>Mediante contrato de préstamo {{ $parent_loan->code }} con fecha de desembolso {{ date_format($parent_loan->disbursement_date, "d/m/Y")}}, se ha suscrito entre MUSERPOL y el PRESTATARIO un préstamo por la suma de Bs. {{ $parent_loan->amount_approved }} (<span class="uppercase">{{ Util::money_format($parent_loan->amount_approved, true) }}</span> Bolivianos), con garantía de haberes y garantía personal si corresponde.
+            </div>
+            <div>
+            <b>TERCERA.- (DEL OBJETO):</b>  El objeto del presente contrato es el refinanciamiento del préstamo de dinero que MUSERPOL otorga al PRESTATARIO conforme a calificación, previa evaluación y autorización, de conformidad a los niveles de aprobación respectivos en la suma de Bs. {{ $loan->amount_requested }} (<span class="uppercase">{{ Util::money_format($loan->amount_requested, true) }}</span> Bolivianos), para lo cual el PRESTATARIO reconoce de manera expresa el saldo anterior de la deuda correspondiente al préstamo contraído con anterioridad, que asciende a la suma de Bs. {{ $parent_loan->balance }} (<span class="uppercase">{{ Util::money_format($parent_loan->balance, true) }}</span> Bolivianos), montos que hacen un total efectivo de {{ $loan->amount_requested + $parent_loan->balance }} (<span class="uppercase">{{ Util::money_format($loan->amount_requested + $parent_loan->balance, true) }}</span> Bolivianos), que representa la nueva obligación contraída sujeta a cumplimiento, en función a la operación de refinanciamiento.
+            </div>
+        <?php }?>
     </div>
     <div>
         <b>CUARTA.- (DEL INTERÉS):</b> El préstamo objeto del presente contrato, devengará un interés ordinario del {{ $loan->interest->annual_interest }}% anual sobre saldo deudor, el mismo que se recargará con el interés penal en caso de mora de una o más amortizaciones. Esta tasa de interés podrá ser modificada en cualquier momento de acuerdo a las condiciones financieras que adopte MUSERPOL.
