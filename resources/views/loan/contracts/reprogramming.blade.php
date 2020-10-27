@@ -9,7 +9,11 @@
 <body>
 <div class="block">
     <div class="font-semibold leading-tight text-center m-b-10 text-xs">
+    @if($loan->parent_loan_id != null)
         ADENDA AL CONTRATO DE PRÉSTAMO POR REPROGRAMACION AL CONTRATO <font style="text-transform: uppercase;">{{ $loan->parent_loan->code }}</font>
+    @else
+    ADENDA AL CONTRATO DE PRÉSTAMO POR REPROGRAMACION AL CONTRATO <font style="text-transform: uppercase;">{{ $loan->data_loan->code }} SISMU</font>
+    @endif
         <div> {{ $title }}</div>
     </div>
 </div>
@@ -29,6 +33,7 @@
         @endif
     </div>
     <div>
+    @if($loan->parent_loan_id != null)
         <b>SEGUNDA.- (DEL ANTECEDENTE):</b> Mediante contrato de prestamo N° {{ $loan->parent_loan->code }} de fecha {{ Carbon::parse($loan->parent_loan->disbursement_date)->isoFormat('LL') }} suscrito entre MUSERPOL y el PRESTATARIO, se otorgo un prestamo por la suma de {{ $loan->parent_loan->amount_approved }} (<span class="uppercase">{{ Util::money_format($loan->parent_loan->amount_approved, true) }}</span> Bolivianos), con garantia de todos sus bienes habidos y por haber, asi como la garantia personal 
         <?php $cont = 0; $concat_guarantor = "";
             foreach($guarantors as $guarantor){
@@ -41,11 +46,28 @@
             </span>
         <?php } ?>
         ; programados a {{ $loan->parent_loan->loan_term}} meses de pago y cumplimiento de obligacion, con una amortizacion mensual de Bs. {{ $loan->parent_loan->estimated_quota }} (<span class="uppercase">{{ Util::money_format($loan->parent_loan->estimated_quota, true) }}</span> Bolivianos). 
+    @else
+    <b>SEGUNDA.- (DEL ANTECEDENTE):</b> Mediante contrato de prestamo N° {{ $loan->data_loan->code }} SISMU suscrito entre MUSERPOL y el PRESTATARIO, se otorgo un prestamo por la suma de {{ $loan->data_loan->amount_approved }} (<span class="uppercase">{{ Util::money_format($loan->data_loan->amount_approved, true) }}</span> Bolivianos), con garantia de todos sus bienes habidos y por haber, asi como la garantia personal 
+        <?php $cont = 0; $concat_guarantor = "";
+            foreach($guarantors as $guarantor){
+                $male_female_guarantor = Util::male_female($guarantor->gender);
+                $cont ++; $concat_guarantor = "(garante Nº ".$cont.")";
 
+            ?>
+            <span>
+            {{ $guarantor->gender == 'M' ? 'el Sr.' : 'la Sra' }} {{ $guarantor->full_name }}, con C.I. {{ $guarantor->identity_card_ext }}, {{ $guarantor->civil_status_gender }}, mayor de edad, hábil por derecho, natural de {{ $guarantor->city_birth->name }}, vecin{{ $male_female_guarantor }} de {{ $guarantor->city_identity_card->name }} y con domicilio especial en {{ $guarantor->address->full_address }} {{ $concat_guarantor }} ,
+            </span>
+        <?php } ?>
+        ; programados a {{ $loan->data_loan->loan_term}} meses de pago y cumplimiento de obligacion, con una amortizacion mensual de Bs. {{ $loan->data_loan->estimated_quota }} (<span class="uppercase">{{ Util::money_format($loan->data_loan->estimated_quota, true) }}</span> Bolivianos).
+    @endif
     </div>
     <div>
         <b>TERCERA.- (DEL OBJETO):</b>  El objeto del presente es la adenda modificatoria del contrato señalado en los antecedentes de la clausula segunda, a solicitud escrita del PRESTATARIO en fecha {{ Carbon::parse($loan->request_date)->isoFormat('LL') }}, la cual se encuentra respaldada por los documentos adjuntados en la solicitud, y en estricta sujeción con los previsto en el art. 22 del Reglamento de Prestamos, se suscribe la presente Adenda bajo las siguientes modificaciones y condiciones:
+        @if($loan->parent_loan_id != null)
         <br><b>3.1.- Se modifica la clausula (Plazo)</b>.-  El plazo para el pago total de la deuda establecida de {{ $loan->parent_loan->loan_term}} es reprogramado y modificado a {{ $loan->loan_term}}
+        @else
+        <br><b>3.1.- Se modifica la clausula (Plazo)</b>.-  El plazo para el pago total de la deuda establecida de {{ $loan->data_loan->loan_term}} es reprogramado y modificado a {{ $loan->loan_term}}
+        @endif
         <br><b>3.2.- Se modifica la clausula (Cuota de Amortizacion)</b>.-  la amortizacion del pago a capital e intereses mensual y constantes que el prestatario efectuara a partir de la fecha de la suscripcion de la presente adenda es de Bs. {{ $loan->estimated_cuota }} (<span class="uppercase">{{ Util::money_format($loan->estimated_quota, true) }}</span> Bolivianos). 
         <br><b>3.3.- Se modifica la clausula (De la Garantia)</b>.-  El PRESTATARIO garantizara el pago de lo adeudado con todos sus bienes, derechos y acciones habidas y por haber, presentes y futuros, ademas de todos los beneficios que otorga la MUSERPOL.
     </div>

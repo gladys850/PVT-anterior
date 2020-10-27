@@ -618,7 +618,7 @@ class LoanController extends Controller
 				$view_type = 'hypothecary';
             	break;
         }
-        if($loan->parent_loan_id && $loan->parent_reason == "REPROGRAMACIÓN")
+        if($loan->parent_loan_id != null && $loan->parent_reason == "REPROGRAMACIÓN" || $loan->parent_loan_id ==null && $loan->parent_reason == "REPROGRAMACIÓN")
         $view_type = 'reprogramming';
 		$view = view()->make('loan.contracts.' . $view_type)->with($data)->render();
         if ($standalone) return Util::pdf_to_base64([$view], $file_name, 'legal', $request->copies ?? 1);
