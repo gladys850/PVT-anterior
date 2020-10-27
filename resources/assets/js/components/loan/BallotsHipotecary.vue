@@ -1,6 +1,6 @@
 <template>
   <v-flex xs12 class="px-3">
-    <div class="text-center">BOLETAS DE PAGO DEL CODEUDOR</div>
+    <div class="text-center">BOLETAS DE PAGO DEL CODEUDOR AFILIADO</div>
     <v-form>
       <v-row justify="center">
         <v-col cols="12">
@@ -319,29 +319,29 @@ export default {
 
     async searchCodebtor() {
       try {
-        if (this.affiliate_codebtor_ci == this.affiliate.identity_card) {
-          //TODO verificar y/o adicionar validaciones
-          this.toastr.error(
-            "El garante no puede tener el mismo carnet que el titular."
-          )
-        } else {
-          let resp = await axios.get(`affiliate_existence`, {
-            params: {
-              identity_card: this.affiliate_codebtor_ci
+        if(this.affiliate_codebtor_ci != this.affiliate.identity_card) {
+          if(this.contrib_codebtor.length < this.modalidad.max_lenders-1){
+            let resp = await axios.get(`affiliate_existence`, {
+              params: {
+                identity_card: this.affiliate_codebtor_ci
+              }
+            })
+            this.affiliate_codebtor = resp.data
+            this.exist_codebtor = this.affiliate_codebtor.state
+            this.ver = true
+            if (this.exist_codebtor){
+              this.getBallots(this.affiliate_codebtor.affiliate.id)
+              //console.log("ID DEL AFILIADO " + this.affiliate_codebtor.affiliate.id)
+              this.getAffiliate(this.affiliate_codebtor.affiliate.id)
+              this.dialog = true
             }
-          })
-          this.affiliate_codebtor = resp.data
-          this.exist_codebtor = this.affiliate_codebtor.state
-          this.ver = true
-          console.log("Entro al metodo de codeudor" + this.affiliate_codebtor + "==>" +this.affiliate_codebtor_ci
-        )
+          }else{
+            this.toastr.error("La cantidad máxima de codeudores afiliados es de " + (this.modalidad.max_lenders -1) +".")
+          }
         }
-        if (this.exist_codebtor) {
-          this.getBallots(this.affiliate_codebtor.affiliate.id)
-          console.log("ID DEL AFILIADO " + this.affiliate_codebtor.affiliate.id)
-          this.getAffiliate(this.affiliate_codebtor.affiliate.id)
-          this.dialog = true
-        }
+        else{
+          this.toastr.error("El garante no puede tener el mismo carnet que el titular.")
+        } 
       } catch (e) {
         console.log(e)
       } finally {
