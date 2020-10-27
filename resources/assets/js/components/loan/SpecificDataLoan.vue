@@ -82,8 +82,8 @@
                           <fieldset class="pa-3">
                             <v-toolbar-title>GARANTIA</v-toolbar-title>
                               <v-progress-linear></v-progress-linear>
-                              {{ loan.procedure_modality_id }}
-                            <ul style="list-style: none" class="pa-0" v-if="loan.procedure_modality_id == 41 || loan.procedure_modality_id == 40 || loan.procedure_modality_id == 42">
+                              <div v-for="procedure_type in procedure_type" :key="procedure_type">
+                            <ul style="list-style: none" class="pa-0" v-if="procedure_type.name == 'Préstamo a largo plazo' || procedure_type.name == 'Préstamo a corto plazo'">
                               <li v-for="(guarantor,i) in loan.guarantors" :key="i">
                                 
                                 <br>
@@ -91,8 +91,9 @@
                                 <p>NOMBRE COMPLETO: {{$options.filters.fullName(guarantor, true)}}</p>
                                 <p>PORCENTAJE DE PAGO: {{guarantor.pivot.payment_percentage}} %</p>
                               </li>
+                              
                             </ul>
-                            <ul style="list-style: none" class="pa-0" v-if="loan.procedure_modality_id == 46 || loan.procedure_modality_id == 47">                                
+                            <ul style="list-style: none" class="pa-0" v-if="procedure_type.name == 'Préstamo hipotecario'">                                
                                 <br>
                                 <p> CIUDAD: {{ loan_properties.land_lot_number }}</p>
                                 <p> UBICACION: {{ loan_properties.location}} </p>
@@ -102,10 +103,14 @@
                                 <p> NRO MATRICULA: {{ loan_properties.registration_number}}</p>
                                 <p> NRO FOLIO REAL: {{ loan_properties.real_folio_number}} </p>
                                 <p> VNR: {{ loan_properties.net_realizable_value}} </p>
-                              </li>
+
                             </ul>
+                            <ul style="list-style: none" class="pa-0" v-if="procedure_type.name == 'Préstamo Anticipo'">
+                              <p> NO TIENE GARANTES</p>
+                            </ul>
+                            </div>
                             <br>
-                            <!--<p v-if="loan.guarantors.length==0">NO TIENE GARANTES</p>-->
+
                           </fieldset>
                         </v-flex>
                       </v-layout>
@@ -189,6 +194,10 @@ export default {
       required: true
     },
     loan_properties: {
+      type: Object,
+      required: true
+    },
+    procedure_type: {
       type: Object,
       required: true
     }

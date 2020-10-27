@@ -149,7 +149,7 @@
               </v-tooltip>
             </v-card-title>
             <v-card-text class="pl-10">
-              <SpecificDataLoan :loan.sync="loan" :loan_properties="loan_properties">
+              <SpecificDataLoan :loan.sync="loan" :loan_properties="loan_properties" :procedure_type="procedure_type">
                 <template v-slot:title>
                   <v-col cols="12" class="py-0">
                     <v-toolbar-title
@@ -280,6 +280,7 @@ export default {
     observations: [],
     spouse:{},
     loan_properties:{},
+    procedure_type:{},
     intervalos: {},
     modalidad: {},
     icons: true,
@@ -323,6 +324,7 @@ export default {
     this.getloan(this.$route.params.id);
     this.getSpouse(this.$route.params.id);
     this.getObservation(this.$route.params.id);
+    this.getProceduretype(this.$route.params.id);
     this.getLoanproperty(this.$route.params.id);
     this.bus1.$on("emitGetObservation", id => {
       //escuchamos la emision de ObserverFlow
@@ -360,6 +362,7 @@ export default {
         let res1 = await axios.get(`affiliate/${this.loan.lenders[0].id}`)
         this.affiliate = res1.data
         this.getLoanproperty(this.loan.property_id)
+        this.getProceduretype(this.loan.procedure_modality_id)
         if (this.loan.disbursable_type=='spouses') {
         this.getSpouse(this.affiliate.id)
         }
@@ -390,6 +393,19 @@ export default {
         let res = await axios.get(`loan_property/${id}`)
         this.loan_properties = res.data
         console.log(loan_properties)
+      } catch (e) {
+        console.log(e)
+      } finally {
+        this.loading = false
+      }
+    },
+
+     async getProceduretype(id) {
+      try {
+        this.loading = true
+        let res = await axios.get(`procedure_modality/${id}`)
+        this.procedure_type = res.data
+        console.log(procedure_type)
       } catch (e) {
         console.log(e)
       } finally {
