@@ -291,7 +291,6 @@ class LoanController extends Controller
     */
     public function update(LoanForm $request, Loan $loan)
     {
-        
         if($request->has('disbursement_date'))
         {
             $state_id = LoanState::whereName('Desembolsado')->first()->id;
@@ -360,11 +359,13 @@ class LoanController extends Controller
 
         $loan->save();
 
-        if($request->has('data_loan') && $request->parent_loan_id == null && $request->parent_reason != null){
+        if($request->has('data_loan') && $request->parent_loan_id == null && $request->parent_reason != null && !$request->has('id')){
             $data_loan = $request->data_loan[0];
-            if($request->loan==null)
             $loan->data_loan()->create($data_loan);
-            else
+            
+        }
+        if($request->loan!=null && $request->has('data_loan')){
+            $data_loan = $request->data_loan[0];
             $loan->data_loan()->update($data_loan);
         }
 
