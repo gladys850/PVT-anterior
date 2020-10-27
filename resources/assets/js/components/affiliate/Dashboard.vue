@@ -418,6 +418,7 @@ export default {
       }
     }*/
     async validateRefinancingLoan(a_id, l_id){
+      //this.$router.push({ name: 'loanAdd',  params: { hash: 'refinancing'}, query:{ affiliate_id: a_id, loan_id: l_id } })
       try {
           let res = await axios.post(`loan/${l_id}/validate_re_loan`,{
             type_procedure: true
@@ -431,7 +432,7 @@ export default {
                   this.toastr.error("El préstamo se encuentra en MORA")
                 }
             }else{
-              this.toastr.error("Tiene pendiente menos de TRES pagos para finalizar la deuda")
+              this.toastr.error("Tiene pendiente menos de CUATRO pagos para finalizar la deuda")
             }
           }else{
             this.toastr.error("No tiene el 25% pagado de su préstamo para acceder a un refinanciamiento")
@@ -440,20 +441,20 @@ export default {
         console.log(e)
       }
     },
-    async validateReprogrammingLoan(a_id, l_id){
+    async validateReprogrammingLoan(a_id, l_id){     
       try {
           let res = await axios.post(`loan/${l_id}/validate_re_loan`,{
             type_procedure: false
           })
           let validate = res.data
            if(validate.paids){
-              if(!validate.defaulted){
+              if(validate.defaulted){
                 this.$router.push({ name: 'loanAdd',  params: { hash: 'reprogramming'}, query:{ affiliate_id: a_id, loan_id: l_id } })
                 }else{
                   this.toastr.error("El préstamo se encuentra en MORA")
                 }
             }else{
-              this.toastr.error("Tiene pendiente menos de TRES pagos para finalizar la deuda")
+              this.toastr.error("Tiene pendiente menos de CUATRO pagos para finalizar la deuda")
             }          
       } catch (e) {
         console.log(e)
