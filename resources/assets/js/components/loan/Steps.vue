@@ -359,8 +359,9 @@ export default {
         }
         if(n==2)
         {
-          if(!this.$route.hash.new)
+          if(!this.isNew)
           {
+            console.log('entro a añadir loan')
             this.añadirDataLoan()
           }
 
