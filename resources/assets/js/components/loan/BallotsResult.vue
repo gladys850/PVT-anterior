@@ -13,12 +13,12 @@
                 :outlined="habilitar"
                 :readonly="!habilitar"
                 label="Codigo de Prestamo Padre"
-                v-model="data_loan.code"
+                v-model="data_loan_parent_aux.code"
               ></v-text-field>
             </ValidationProvider>
           </v-col>
           <v-col cols="3" class="py-2" v-show="editar">
-            <ValidationProvider v-slot="{ errors }" name="monto" :rules="'required|numeric|min_value:'+calculator_result.amount_requested+'|max_value:'+loan_detail.maximun_amoun"  mode="aggressive">
+            <ValidationProvider v-slot="{ errors }" name="monto" :rules="'required|numeric|min_value:'+loan_detail.minimun_amoun+'|max_value:'+calculator_result.amount_requested"  mode="aggressive">
               <v-text-field
                 :error-messages="errors"
                 class="py-0"
@@ -26,7 +26,7 @@
                 :outlined="habilitar"
                 :readonly="!habilitar"
                 label="Monto"
-                v-model="data_loan.amount_approved"
+                v-model="data_loan_parent_aux.amount_approved"
               ></v-text-field>
             </ValidationProvider>
           </v-col>
@@ -39,7 +39,7 @@
                 :outlined="habilitar"
                 :readonly="!habilitar"
                 label="Plazo"
-                v-model="data_loan.loan_term"
+                v-model="data_loan_parent_aux.loan_term"
               ></v-text-field>
             </ValidationProvider>
           </v-col>
@@ -52,7 +52,7 @@
                 :outlined="habilitar"
                 :readonly="!habilitar"
                 label="Saldo"
-                v-model="data_loan.balance"
+                v-model="data_loan_parent_aux.balance"
               ></v-text-field>
             </ValidationProvider>
           </v-col>
@@ -65,7 +65,7 @@
                 :outlined="habilitar"
                 :readonly="!habilitar"
                 label="Cuota"
-                v-model="data_loan.estimated_quota"
+                v-model="data_loan_parent_aux.estimated_quota"
               ></v-text-field>
             </ValidationProvider>
           </v-col>
@@ -146,7 +146,7 @@ export default {
     ver:false
   }),
   props: {
-    data_loan: {
+    data_loan_parent_aux: {
       type: Object,
       required: true
     },

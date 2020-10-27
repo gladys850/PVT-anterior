@@ -53,7 +53,6 @@
               :payable_liquid="payable_liquid"
               :intervalos.sync="intervalos"
               :modalidad.sync="modalidad"
-              :contributions1.sync="contributions1"
               :affiliate.sync="affiliate"
               :contrib_codebtor="contrib_codebtor"
               :loan_detail.sync="loan_detail"
@@ -85,7 +84,7 @@
                 v-show="modalidad.procedure_type_id!=12"
                 :calculator_result.sync="calculator_result"
                 :loan_detail.sync="loan_detail"
-                :data_loan.sync="data_loan"
+                :data_loan_parent_aux.sync="data_loan_parent_aux"
                 :modalidad.sync="modalidad"
                 :modalidad_id.sync="modalidad.id"
                 :liquid_calificated="liquid_calificated" >
@@ -97,12 +96,10 @@
                 v-show="modalidad.procedure_type_id==12"
                 :calculator_result.sync="calculator_result"
                 :loan_detail.sync="loan_detail"
-                :data_loan.sync="data_loan"
+                :data_loan_parent_aux.sync="data_loan_parent_aux"
                 :modalidad.sync="modalidad"
-                :modalidad_id.sync="modalidad.id"
                 :liquid_calificated.sync="liquid_calificated"
                 :lenders.sync="lenders"
-                :intervalos.sync="intervalos"
                 
                
               />
@@ -220,9 +217,10 @@
             :modalidad.sync="modalidad"
             :reference.sync="reference"
             :modalidad_id.sync="modalidad.id"
-            :cosigners="cosigners"
+            :cosigners.sync="cosigners"
             :guarantors.sync="guarantors"
-            :loan_property_id ="loan_property.id"/>
+            :loan_property_id.sync ="loan_property.id"
+            :data_loan_parent.sync="data_loan_parent"/>
         </v-card>
       </v-stepper-content>
     </v-stepper-items>
@@ -284,10 +282,11 @@ export default {
     modalities: [],
     guarantors: [],
     lenders:[],
+    data_loan_parent_aux:{},
+    data_loan_parent:[],
     modalidad:{},
     reference:[],
     intervalos:{},
-    contributions1:[{}],
     payable_liquid:[0,0,0],
     bonos:[0,0,0,0],
     personal_reference:{},
@@ -360,6 +359,11 @@ export default {
         }
         if(n==2)
         {
+          if(!this.$route.hash.new)
+          {
+            this.añadirDataLoan()
+          }
+
           console.log('segundo'+this.modalidad.guarantors )
         }
         if(n==3){
@@ -386,6 +390,13 @@ export default {
     },
     beforeStep (n) {
       this.e1 = n -1
+    },
+    async añadirDataLoan()
+    {
+      console.log('entro a añadir loan')
+      this.data_loan_parent.push(this.data_loan_parent_aux);
+      console.log(this.data_loan_parent)
+      
     },
     async personal()
     {
@@ -528,24 +539,28 @@ export default {
 
           if( this.calculator_result.amount_maximum_suggested<this.loan_detail.net_realizable_value){
             this.calculator_result.amount_requested=this.calculator_result.amount_maximum_suggested
+            this.loan_detail.amount_requested=this.calculator_result.amount_maximum_suggested
           }else{
             this.calculator_result.montos=this.loan_detail.net_realizable_value
+            this.loan_detail.amount_requested=this.loan_detail.net_realizable_value
           }
 
-        this.lenders=res.data
-        this.lenders[0].payment_percentage=this.calculator_result.affiliates[0].payment_percentage
-        this.lenders[0].indebtedness_calculated=this.calculator_result.affiliates[0].indebtedness_calculated
-        this.loan_detail.minimum_term=this.intervalos.minimum_term
-         this.loan_detail.maximum_term=this.intervalos.maximum_term
-        this.loan_detail.minimun_amoun=this.intervalos.minimun_amoun
-        this.loan_detail.maximun_amoun=this.intervalos.maximun_amoun
-        this.loan_detail.amount_requested=this.intervalos.maximun_amoun
-        this.loan_detail.months_term=this.intervalos.maximum_term
-        this.loan_detail.liquid_qualification_calculated=this.calculator_result.liquid_qualification_calculated_total
-        this.loan_detail.indebtedness_calculated=this.calculator_result.indebtedness_calculated_total
-        this.loan_detail.maximum_suggested_valid=this.calculator_result.maximum_suggested_valid
-        this.loan_detail.quota_calculated_total_lender=this.calculator_result.quota_calculated_estimated_total
-          console.log("hipotecario simulador")
+          this.lenders=res.data
+          for(let i = 0; i < this.lenders.length; i++ ){
+            this.lenders[i].payment_percentage=this.calculator_result.affiliates[i].payment_percentage
+            this.lenders[i].indebtedness_calculated=this.calculator_result.affiliates[i].indebtedness_calculated
+          }
+
+          this.loan_detail.minimum_term=this.intervalos.minimum_term
+          this.loan_detail.maximum_term=this.intervalos.maximum_term
+          this.loan_detail.minimun_amoun=this.intervalos.minimun_amoun
+          this.loan_detail.maximun_amoun=this.intervalos.maximun_amoun
+
+          this.loan_detail.months_term=this.intervalos.maximum_term
+          this.loan_detail.liquid_qualification_calculated=this.calculator_result.liquid_qualification_calculated_total
+          this.loan_detail.indebtedness_calculated=this.calculator_result.indebtedness_calculated_total
+          this.loan_detail.maximum_suggested_valid=this.calculator_result.maximum_suggested_valid
+          this.loan_detail.quota_calculated_total_lender=this.calculator_result.quota_calculated_estimated_total
         }
         else{
           let res1 = await axios.post(`simulator`, {
@@ -563,25 +578,20 @@ export default {
           }else{
             this.calculator_result.montos=this.intervalos.maximun_amoun
           }
-              this.lenders=res.data
-        this.lenders[0].payment_percentage=this.calculator_result.affiliates[0].payment_percentage
-        this.lenders[0].indebtedness_calculated=this.calculator_result.affiliates[0].indebtedness_calculated
-        this.loan_detail.minimum_term=this.intervalos.minimum_term
-         this.loan_detail.maximum_term=this.intervalos.maximum_term
-        this.loan_detail.minimun_amoun=this.intervalos.minimun_amoun
-        this.loan_detail.maximun_amoun=this.intervalos.maximun_amoun
-        this.loan_detail.amount_requested=this.intervalos.maximun_amoun
-        this.loan_detail.months_term=this.intervalos.maximum_term
-        this.loan_detail.liquid_qualification_calculated=this.calculator_result.liquid_qualification_calculated_total
-        this.loan_detail.indebtedness_calculated=this.calculator_result.indebtedness_calculated_total
-        this.loan_detail.maximum_suggested_valid=this.calculator_result.maximum_suggested_valid
-        this.loan_detail.quota_calculated_total_lender=this.calculator_result.quota_calculated_estimated_total
-
-          console.log("otros simulador")
-        }
-       
-       
-       
+          this.lenders=res.data
+          this.lenders[0].payment_percentage=this.calculator_result.affiliates[0].payment_percentage
+          this.lenders[0].indebtedness_calculated=this.calculator_result.affiliates[0].indebtedness_calculated
+          this.loan_detail.minimum_term=this.intervalos.minimum_term
+          this.loan_detail.maximum_term=this.intervalos.maximum_term
+          this.loan_detail.minimun_amoun=this.intervalos.minimun_amoun
+          this.loan_detail.maximun_amoun=this.intervalos.maximun_amoun
+          this.loan_detail.amount_requested=this.intervalos.maximun_amoun
+          this.loan_detail.months_term=this.intervalos.maximum_term
+          this.loan_detail.liquid_qualification_calculated=this.calculator_result.liquid_qualification_calculated_total
+          this.loan_detail.indebtedness_calculated=this.calculator_result.indebtedness_calculated_total
+          this.loan_detail.maximum_suggested_valid=this.calculator_result.maximum_suggested_valid
+          this.loan_detail.quota_calculated_total_lender=this.calculator_result.quota_calculated_estimated_total
+       }
         /* for (this.i = 0; this.i< this.datos_calculadora_hipotecario.length; this.i++) {
 let res5 = await axios.get(`affiliate/${this.datos_calculadora_hipotecario[this.i].affiliate_id}`)
 this.affiliates = res5.data
