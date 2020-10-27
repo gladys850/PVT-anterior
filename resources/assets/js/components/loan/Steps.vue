@@ -73,7 +73,7 @@
                   </v-btn>
                 </v-col>
               </v-row>
-              {{this.contributions1_aux }}
+              <!--{this.contributions1_aux }}-->
             </v-container>
           </v-card>
         </v-stepper-content>
