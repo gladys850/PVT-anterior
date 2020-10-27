@@ -6,7 +6,7 @@
       <v-data-iterator :items="items" hide-default-footer>
         <template v-slot:header>
           <v-toolbar class="mb-0" color="ternary" dark flat>
-            <v-toolbar-title>REQUISITOS parent_reason {{parent_reason}}-parent_loan {{parent_loan_id}}</v-toolbar-title>
+            <v-toolbar-title>REQUISITOS</v-toolbar-title>
           </v-toolbar>
           <v-row>
             <v-col v-for="(group,i) in items" :key="i" cols="12" class="py-1">
@@ -166,7 +166,11 @@ export default {
     newOther: null
   }),
   props: {
-     guarantors: {
+    guarantors: {
+      type: Array,
+      required: true
+    },
+    data_loan_parent: {
       type: Array,
       required: true
     },
@@ -225,7 +229,7 @@ export default {
     },
     parent_loan_id(){
       if(this.$route.query.type_sismu || this.$route.params.hash == 'new'){
-        return 0        
+        return 0
       }else{
         return this.$route.query.loan_id
       }
@@ -272,6 +276,7 @@ export default {
             disbursable_id: this.$route.query.affiliate_id,
             lenders:this.lenders,
             guarantors: this.guarantors,
+            data_loan:this.data_loan_parent,
             documents: this.itemsOpc.concat(this.selected.concat(this.radios.filter(Boolean))),
             notes: this.otherDocuments
           });

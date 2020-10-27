@@ -4,55 +4,70 @@
       <v-form>
         <!--v-card-->
           <v-row justify="center">
-             <v-col cols="3" class="py-2" v-show="editar">
-            <v-text-field
-              class="py-0"
-              dense
-              :outlined="habilitar"
-              :readonly="!habilitar"
-              label="Codigo de Prestamo Padre"
-              v-model="data_loan.code"
-            ></v-text-field>
+            <v-col cols="3" class="py-2" v-show="editar">
+            <ValidationProvider v-slot="{ errors }" name="codigo" :rules="'required|min:2'" mode="aggressive">
+              <v-text-field
+                :error-messages="errors"
+                class="py-0"
+                dense
+                :outlined="habilitar"
+                :readonly="!habilitar"
+                label="Codigo de Prestamo Padre"
+                v-model="data_loan_parent_aux.code"
+              ></v-text-field>
+            </ValidationProvider>
           </v-col>
           <v-col cols="3" class="py-2" v-show="editar">
-            <v-text-field
-              class="py-0"
-              dense
-              :outlined="habilitar"
-              :readonly="!habilitar"
-              label="Monto"
-              v-model="data_loan.amount_approved"
-            ></v-text-field>
+            <ValidationProvider v-slot="{ errors }" name="monto" :rules="'required|numeric|min_value:'+loan_detail.minimun_amoun+'|max_value:'+calculator_result.amount_requested"  mode="aggressive">
+              <v-text-field
+                :error-messages="errors"
+                class="py-0"
+                dense
+                :outlined="habilitar"
+                :readonly="!habilitar"
+                label="Monto"
+                v-model="data_loan_parent_aux.amount_approved"
+              ></v-text-field>
+            </ValidationProvider>
           </v-col>
           <v-col cols="2" class="py-2" v-show="editar">
-            <v-text-field
-              class="py-0"
-              dense
-              :outlined="habilitar"
-              :readonly="!habilitar"
-              label="Plazo"
-              v-model="data_loan.loan_term"
-            ></v-text-field>
+            <ValidationProvider v-slot="{ errors }" name="plazo" :rules="'required|numeric|min_value:'+loan_detail.minimum_term+'|max_value:'+loan_detail.maximum_term" mode="aggressive">
+              <v-text-field
+                :error-messages="errors"
+                class="py-0"
+                dense
+                :outlined="habilitar"
+                :readonly="!habilitar"
+                label="Plazo"
+                v-model="data_loan_parent_aux.loan_term"
+              ></v-text-field>
+            </ValidationProvider>
           </v-col>
           <v-col cols="2" class="py-2" v-show="editar">
-            <v-text-field
-              class="py-0"
-              dense
-              :outlined="habilitar"
-              :readonly="!habilitar"
-              label="Saldo"
-              v-model="data_loan.balance"
-            ></v-text-field>
+            <ValidationProvider v-slot="{ errors }" name="saldo" :rules="'required|min:2'" mode="aggressive">
+              <v-text-field
+                :error-messages="errors"
+                class="py-0"
+                dense
+                :outlined="habilitar"
+                :readonly="!habilitar"
+                label="Saldo"
+                v-model="data_loan_parent_aux.balance"
+              ></v-text-field>
+            </ValidationProvider>
           </v-col>
           <v-col cols="2" class="py-2" v-show="editar">
-            <v-text-field
-              class="py-0"
-              dense
-              :outlined="habilitar"
-              :readonly="!habilitar"
-              label="Cuota"
-              v-model="data_loan.estimated_quota"
-            ></v-text-field>
+            <ValidationProvider v-slot="{ errors }" name="cuota" :rules="'required|min:2'" mode="aggressive">
+              <v-text-field
+                :error-messages="errors"
+                class="py-0"
+                dense
+                :outlined="habilitar"
+                :readonly="!habilitar"
+                label="Cuota"
+                v-model="data_loan_parent_aux.estimated_quota"
+              ></v-text-field>
+            </ValidationProvider>
           </v-col>
             <v-col cols="12" class="py-2">
               <v-container class="py-0">
@@ -107,11 +122,11 @@
                         <v-flex xs12 class="px-0">
                           <fieldset class="pa-3">
                             <v-toolbar-title>Calculo</v-toolbar-title>
-                              <p class="py-0 mb-0">Monto del Inmueble: {{simulator.amount_requested}}<b> | </b>Interes Calculado Total: {{simulator.indebtedness_calculated_total}} % <b> | </b> Liquido Calculado Total: {{simulator.liquid_qualification_calculated_total}}<b> | </b> Cuota Total del Prestamo: {{simulator.quota_calculated_estimated_total}}</p>
+                              <p class="py-0 mb-0">Monto del Inmueble: {{calculator_result.amount_requested}}<b> | </b>Interes Calculado Total: {{calculator_result.indebtedness_calculated_total}} % <b> | </b> Liquido Calculado Total: {{calculator_result.liquid_qualification_calculated_total}}<b> | </b> Cuota Total del Prestamo: {{calculator_result.quota_calculated_estimated_total}}</p>
                               <ul style="list-style: none" class="pa-0">
-                                <li v-for="(calculado,i) in simulator.affiliates" :key="i" >
+                                <li v-for="(calculado,i) in calculator_result.affiliates" :key="i" >
                                   <v-progress-linear></v-progress-linear>
-                                  <p class="py-0 mb-0">Nombre del Afiliado: {{ calculado.affiliate_id}}{{loan_detail}}</p>
+                                  <p class="py-0 mb-0">Nombre del Afiliado: {{ calculado.affiliate_id}}</p>
                                   <p class="py-0 mb-0">Liquido para Callificacion: {{calculado.liquid_qualification_calculated}}<b> | </b>Cuota Estimada: {{calculado.quota_calculated_estimated}} <b> | </b>Porcentaje de Pago: {{calculado.payment_percentage}}% </p>
                                 </li>
                               </ul>
@@ -142,15 +157,11 @@ export default {
       type: Object,
       required: true
     },
-    modalidad_id: {
-      type: Number,
-      required: true,
-    },
     modalidad: {
       type: Object,
       required: true
     },
-    data_loan: {
+    data_loan_parent_aux: {
       type: Object,
       required: true
     },
@@ -160,10 +171,6 @@ export default {
     },
       lenders: {
       type: Array,
-      required: true
-    },
-    intervalos: {
-      type: Object,
       required: true
     },
     liquid_calificated: {
