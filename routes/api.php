@@ -127,14 +127,14 @@ Route::group([
             Route::get('loan/{loan}/print/kardex','Api\V1\LoanController@print_kardex');
             //Route::get('loan/{loan}/loan_affiliates', 'Api\V1\LoanController@get_loan_affiliates');
             Route::apiResource('loan_property', 'Api\V1\LoanPropertyController')->only('index', 'store', 'show', 'destroy', 'update');
-            Route::get('loan/{loan}/validate_re-loan', 'Api\V1\LoanController@validate_re_loan');
+            Route::post('loan/{loan}/validate_re_loan', 'Api\V1\LoanController@validate_re_loan');
         });
         Route::group([
             'middleware' => 'permission:create-loan'
         ], function () {
             Route::apiResource('loan', 'Api\V1\LoanController')->only('store');
             Route::get('loan/{loan}/print/documents', 'Api\V1\LoanController@print_documents');
-            Route::get('affiliate/{affiliate}/loan_modality', 'Api\V1\AffiliateController@get_loan_modality');
+            Route::post('affiliate/{affiliate}/loan_modality', 'Api\V1\AffiliateController@get_loan_modality');
         });
         Route::group([
             'middleware' => 'permission:update-loan'

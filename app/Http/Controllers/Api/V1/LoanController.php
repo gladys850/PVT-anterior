@@ -23,6 +23,7 @@ use App\Role;
 use App\RoleSequence;
 use App\LoanPayment;
 use App\Voucher;
+use App\Sismu;
 use App\Http\Requests\LoansForm;
 use App\Http\Requests\LoanForm;
 use App\Http\Requests\LoanPaymentForm;
@@ -52,6 +53,7 @@ class LoanController extends Controller
         }
         $loan->personal_references = $loan->personal_references;
         $loan->cosigners = $loan->cosigners;
+        $loan->data_loan = $loan->data_loan;
         return $loan;
     }
 
@@ -155,13 +157,19 @@ class LoanController extends Controller
     * @bodyParam lenders[1].quota_previous numeric required ID del afiliado. Example: 514.6
     * @bodyParam lenders[1].indebtedness_calculated numeric required ID del afiliado. Example: 34
     * @bodyParam lenders[1].liquid_qualification_calculated numeric required ID del afiliado. Example: 2000
-    * @bodyParam guarantors array required Lista de afiliados Garante(es) del préstamo.
+    * @bodyParam guarantors array Lista de afiliados Garante(es) del préstamo.
     * @bodyParam guarantors[0].affiliate_id integer required ID del afiliado. Example: 51925
     * @bodyParam guarantors[0].payment_percentage integer required ID del afiliado. Example: 50
     * @bodyParam guarantors[0].payable_liquid_calculated numeric required ID del afiliado. Example: 2000
     * @bodyParam guarantors[0].bonus_calculated integer required ID del afiliado. Example: 300
     * @bodyParam guarantors[0].indebtedness_calculated numeric required ID del afiliado. Example: 34
     * @bodyParam guarantors[0].liquid_qualification_calculated numeric required ID del afiliado. Example: 2000
+    * @bodyParam data_loan array Datos Sismu.
+    * @bodyParam data_loan[0].code string required Codigo del prestamo en el Sismu. Example: PRESTAMO123
+    * @bodyParam data_loan[0].amount_approved numeric required Monto aprovado del prestamo del Sismu. Example: 5000.50
+    * @bodyParam data_loan[0].loan_term integer required Plazo del prestamo del Sismu. Example: 25
+    * @bodyParam data_loan[0].balance numeric required saldo del prestamo del Sismu. Example: 10000.50
+    * @bodyParam data_loan[0].estimated_quota numeric required cuota del prestamo del Sismu. Example: 1000.50
     * @authenticated
     * @responseFile responses/loan/store.200.json
     */
@@ -200,6 +208,7 @@ class LoanController extends Controller
                 ]);
             }
         }
+
         // Generar PDFs
         $file_name = implode('_', ['solicitud', 'prestamo', $loan->code]) . '.pdf';
         if(Auth::user()->can('print-contract-loan')){
@@ -237,51 +246,52 @@ class LoanController extends Controller
     * Actualizar préstamo
     * Actualizar datos principales de préstamo
     * @urlParam loan required ID del préstamo. Example: 1
-    * @bodyParam procedure_modality_id integer required ID de modalidad. Example: 41
-    * @bodyParam amount_requested integer required monto solicitado. Example: 2000
-    * @bodyParam city_id integer required ID de la ciudad. Example: 6
-    * @bodyParam loan_term integer required plazo. Example: 2
-    * @bodyParam payment_type_id integer required Tipo de desembolso. Example: 1
-    * @bodyParam liquid_qualification_calculated numeric required Total de bono calculado. Example: 2000
-    * @bodyParam indebtedness_calculated numeric required Indice de endeudamiento. Example: 52.26
+    * @bodyParam procedure_modality_id integer ID de modalidad. Example: 41
+    * @bodyParam amount_requested integer monto solicitado. Example: 2000
+    * @bodyParam city_id integer ID de la ciudad. Example: 6
+    * @bodyParam loan_term integer plazo. Example: 2
+    * @bodyParam payment_type_id integer Tipo de desembolso. Example: 1
+    * @bodyParam liquid_qualification_calculated numeric Total de bono calculado. Example: 2000
+    * @bodyParam indebtedness_calculated numeric Indice de endeudamiento. Example: 52.26
     * @bodyParam disbursement_date date Fecha de desembolso. Example: 2020-02-01
     * @bodyParam parent_loan_id integer ID de Préstamo Padre. Example: 1
     * @bodyParam parent_reason enum (REFINANCIAMIENTO, REPROGRAMACIÓN) Tipo de trámite hijo. Example: REFINANCIAMIENTO
     * @bodyParam property_id integer ID de bien inmueble. Example: 4
     * @bodyParam financial_entity_id integer ID de entidad financiera. Example: 1
     * @bodyParam number_payment_type integer Número de cuenta o Número de cheque para el de desembolso. Example: 10000541214
-    * @bodyParam destiny_id integer required ID destino de Préstamo. Example: 1
+    * @bodyParam destiny_id integer ID destino de Préstamo. Example: 1
     * @bodyParam role_id integer Rol al cual derivar o devolver. Example: 81
     * @bodyParam validated boolean Estado validación del préstamo. Example: true
     * @bodyParam personal_references array Lista de personas de referencia del préstamo. Example: [1]
     * @bodyParam cosigners array Lista de codeudores no afiliados a la muserpol. Example: [2,3]
-    * @bodyParam lenders array required Lista de afiliados Titular(es) del préstamo.
-    * @bodyParam lenders[0].affiliate_id integer required ID del afiliado.Example: 47461
-    * @bodyParam lenders[0].payment_percentage integer required ID del afiliado. Example: 50
-    * @bodyParam lenders[0].payable_liquid_calculated numeric required ID del afiliado. Example: 2000
-    * @bodyParam lenders[0].bonus_calculated integer required ID del afiliado. Example: 300
-    * @bodyParam lenders[0].quota_previous numeric required ID del afiliado. Example: 514.6
-    * @bodyParam lenders[0].indebtedness_calculated numeric required ID del afiliado. Example: 34
-    * @bodyParam lenders[0].liquid_qualification_calculated numeric required ID del afiliado. Example: 2000
-    * @bodyParam lenders[1].affiliate_id integer required ID del afiliado. Example: 22773
-    * @bodyParam lenders[1].payment_percentage integer required ID del afiliado. Example: 50
-    * @bodyParam lenders[1].payable_liquid_calculated numeric required ID del afiliado. Example: 2000
-    * @bodyParam lenders[1].bonus_calculated integer required ID del afiliado. Example: 300
-    * @bodyParam lenders[1].quota_previous numeric required ID del afiliado. Example: 514.6
-    * @bodyParam lenders[1].indebtedness_calculated numeric required ID del afiliado. Example: 34
-    * @bodyParam lenders[1].liquid_qualification_calculated numeric required ID del afiliado. Example: 2000
-    * @bodyParam guarantors array required Lista de afiliados Garante(es) del préstamo.
-    * @bodyParam guarantors[0].affiliate_id integer required ID del afiliado. Example: 51925
-    * @bodyParam guarantors[0].payment_percentage integer required ID del afiliado. Example: 50
-    * @bodyParam guarantors[0].payable_liquid_calculated numeric required ID del afiliado. Example: 2000
-    * @bodyParam guarantors[0].bonus_calculated integer required ID del afiliado. Example: 300
-    * @bodyParam guarantors[0].indebtedness_calculated numeric required ID del afiliado. Example: 34
-    * @bodyParam guarantors[0].liquid_qualification_calculated numeric required ID del afiliado. Example: 2000
+    * @bodyParam lenders array Lista de afiliados Titular(es) del préstamo.
+    * @bodyParam lenders[0].affiliate_id integer ID del afiliado.Example: 47461
+    * @bodyParam lenders[0].payment_percentage integer ID del afiliado. Example: 50
+    * @bodyParam lenders[0].payable_liquid_calculated numeric ID del afiliado. Example: 2000
+    * @bodyParam lenders[0].bonus_calculated integer ID del afiliado. Example: 300
+    * @bodyParam lenders[0].quota_previous numeric ID del afiliado. Example: 514.6
+    * @bodyParam lenders[0].indebtedness_calculated numeric ID del afiliado. Example: 34
+    * @bodyParam lenders[0].liquid_qualification_calculated numeric ID del afiliado. Example: 2000
+    * @bodyParam lenders[1].affiliate_id integer ID del afiliado. Example: 22773
+    * @bodyParam lenders[1].payment_percentage integer ID del afiliado. Example: 50
+    * @bodyParam lenders[1].payable_liquid_calculated numeric ID del afiliado. Example: 2000
+    * @bodyParam lenders[1].bonus_calculated integer ID del afiliado. Example: 300
+    * @bodyParam lenders[1].quota_previous numeric ID del afiliado. Example: 514.6
+    * @bodyParam lenders[1].indebtedness_calculated numeric ID del afiliado. Example: 34
+    * @bodyParam lenders[1].liquid_qualification_calculated numeric ID del afiliado. Example: 2000
+    * @bodyParam guarantors array Lista de afiliados Garante(es) del préstamo.
+    * @bodyParam guarantors[0].affiliate_id integer ID del afiliado. Example: 51925
+    * @bodyParam guarantors[0].payment_percentage integer ID del afiliado. Example: 50
+    * @bodyParam guarantors[0].payable_liquid_calculated numeric ID del afiliado. Example: 2000
+    * @bodyParam guarantors[0].bonus_calculated integer ID del afiliado. Example: 300
+    * @bodyParam guarantors[0].indebtedness_calculated numeric ID del afiliado. Example: 34
+    * @bodyParam guarantors[0].liquid_qualification_calculated numeric ID del afiliado. Example: 2000
     * @authenticated
     * @responseFile responses/loan/update.200.json
     */
     public function update(LoanForm $request, Loan $loan)
     {
+        
         if($request->has('disbursement_date'))
         {
             $state_id = LoanState::whereName('Desembolsado')->first()->id;
@@ -303,6 +313,8 @@ class LoanController extends Controller
         $loan->state()->associate($state);
         $loan->save();
         $loan->delete();
+        if($loan->data_loan)
+        $loan->data_loan->delete();
         return $loan;
     }
 
@@ -347,8 +359,17 @@ class LoanController extends Controller
         }
 
         $loan->save();
+
+        if($request->has('data_loan') && $request->parent_loan_id == null && $request->parent_reason != null){
+            $data_loan = $request->data_loan[0];
+            if($request->loan==null)
+            $loan->data_loan()->create($data_loan);
+            else
+            $loan->data_loan()->update($data_loan);
+        }
+
         if (Auth::user()->can(['update-loan', 'create-loan']) && ($request->has('lenders') || $request->has('guarantors'))) {
-            $affiliates = []; $a = 0; $previous = 0;
+            $affiliates = []; $a = 0; $previous = 0; $indebtedness = 0;
             foreach ($request->lenders as $affiliate) {
                 if($request->parent_loan_id)
                 {
@@ -356,30 +377,37 @@ class LoanController extends Controller
                 }else{
                     $quota_previous = $previous;
                 }
+                if (array_key_exists('indebtedness_calculated', $affiliate)) {
+                    $indebtedness = $affiliate['indebtedness_calculated'];
+                }else{
+                    $indebtedness = 0;
+                }
                 $affiliates[$a] = [
                     'affiliate_id' => $affiliate['affiliate_id'],
                     'payment_percentage' => $affiliate['payment_percentage'],
                     'payable_liquid_calculated' => $affiliate['payable_liquid_calculated'],
                     'bonus_calculated' => $affiliate['bonus_calculated'],
                     'quota_previous' => $quota_previous,
-                    'indebtedness_calculated' => $affiliate['indebtedness_calculated'],
+                    'indebtedness_calculated' => $indebtedness,
                     'liquid_qualification_calculated' => $affiliate['liquid_qualification_calculated'],
                     'guarantor' => false
                 ];
                 $a++;
             }
-            foreach ($request->guarantors as $affiliate) {
-                $affiliates[$a] = [
-                    'affiliate_id' => $affiliate['affiliate_id'],
-                    'payment_percentage' => $affiliate['payment_percentage'],
-                    'payable_liquid_calculated' => $affiliate['payable_liquid_calculated'],
-                    'bonus_calculated' => $affiliate['bonus_calculated'],
-                    'quota_previous' => $previous,
-                    'indebtedness_calculated' => $affiliate['indebtedness_calculated'],
-                    'liquid_qualification_calculated' => $affiliate['liquid_qualification_calculated'],
-                    'guarantor' => true
-                ];
-                $a++;
+            if($request->guarantors){
+                foreach ($request->guarantors as $affiliate) {
+                    $affiliates[$a] = [
+                        'affiliate_id' => $affiliate['affiliate_id'],
+                        'payment_percentage' => $affiliate['payment_percentage'],
+                        'payable_liquid_calculated' => $affiliate['payable_liquid_calculated'],
+                        'bonus_calculated' => $affiliate['bonus_calculated'],
+                        'quota_previous' => $previous,
+                        'indebtedness_calculated' => $affiliate['indebtedness_calculated'],
+                        'liquid_qualification_calculated' => $affiliate['liquid_qualification_calculated'],
+                        'guarantor' => true
+                    ];
+                    $a++;
+                }
             }
             if (count($affiliates) > 0) $loan->loan_affiliates()->sync($affiliates);
         }
@@ -997,31 +1025,31 @@ class LoanController extends Controller
         $loan = Loan::find($loan_id);
         $loan_payments = $loan->payments->sortBy('quota_number');
         $capital_paid = 0;
-        $message = new \stdClass;
+        $message = array();
         if($request->type_procedure == true){
             foreach($loan_payments as $payment){
                 $capital_paid = $capital_paid + $payment->capital_payment;
             }
             $percentage_paid = round(($capital_paid/$loan->amount_approved)*100,2);
             if($percentage_paid<25){
-                $message->percentage = false;
+                $message['percentage'] = false;
             }
             else {
-                $message->percentage = true;
+                $message['percentage'] = true;
             }
         }
         if (count($loan->getPlanAttribute())>3){
-            $message->paids = true;
+            $message['paids'] = true;
         }
         else{
-            $message->paids = false;
+            $message['paids'] = false;
         }
 
         if (!$loan->defaulted){
-            $message->defaulted = true;
+            $message['defaulted'] = true;
         }
         else{
-            $message->defaulted = false;
+            $message['defaulted'] = false;
         }
         return json_encode($message);
     }

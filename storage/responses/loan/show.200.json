@@ -195,5 +195,17 @@
                 "cosigner": true
             }
         }
-    ]
+    ],
+    "data_loan": {
+        "id": 80,
+        "code": "prestamo123",
+        "amount_approved": "0",
+        "loan_term": 0,
+        "balance": "0",
+        "estimated_quota": "0",
+        "loan_id": 120,
+        "created_at": "2020-10-26T19:11:40.000000Z",
+        "updated_at": "2020-10-26T19:11:40.000000Z",
+        "deleted_at": null
+    }
 }

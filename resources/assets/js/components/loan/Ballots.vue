@@ -84,7 +84,7 @@
                      ></v-text-field>
                   </v-col>
                   <v-col cols="12" class="py-0" >
-                    BONOS {{data_sismu.type_sismu}}
+                    BONOS
                   </v-col>
                   <v-col cols="12" md="3" >
                     <v-text-field
@@ -133,10 +133,10 @@
                       label="Cuota"          
                      ></v-text-field>
                   </v-col>
-                  <v-col cols="12" md="3" v-if="this.loanTypeSelected.id==11 || this.loanTypeSelected.id==12">
-                      <v-checkbox
+                  <v-col cols="12" md="3" class="ma-0 pa-0" v-if="this.loanTypeSelected.id==11 || this.loanTypeSelected.id==12">
+                      <v-checkbox 
                         v-model="data_sismu.cpop_sismu"
-                        label="Afiliado CPOP"                   
+                        label="Afiliado CPOP"                 
                       ></v-checkbox>
                   </v-col>       
                   </template>
@@ -295,13 +295,13 @@ export default {
     //Obtiene los parametros de la modalidad
     async getLoanModality(id) {
       try {
-        let resp = await axios.get(`affiliate/${id}/loan_modality`,{
-          params: {
+        let resp = await axios.post(`affiliate/${id}/loan_modality?procedure_type_id=${this.loanTypeSelected.id}`,{
+          type_sismu: this.data_sismu.type_sismu,
+          cpop_sismu: this.data_sismu.cpop_sismu,
+          /*params: {
             procedure_type_id:this.loanTypeSelected.id,
-            type_sismu: this.data_sismu.type_sismu,
-            cpop_sismu: this.data_sismu.cpop_sismu
             //external_discount:0, //FIXME revisar si este paramtro no tiene uso, en otro caso borrar
-          }
+          }*/
         })
         
           let loan_modality = resp.data
