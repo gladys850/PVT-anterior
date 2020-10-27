@@ -133,10 +133,10 @@
                       label="Cuota"          
                      ></v-text-field>
                   </v-col>
-                  <v-col cols="12" md="3" v-if="this.loanTypeSelected.id==11 || this.loanTypeSelected.id==12">
-                      <v-checkbox
+                  <v-col cols="12" md="3" class="ma-0 pa-0" v-if="this.loanTypeSelected.id==11 || this.loanTypeSelected.id==12">
+                      <v-checkbox 
                         v-model="data_sismu.cpop_sismu"
-                        label="Afiliado CPOP"                   
+                        label="Afiliado CPOP"                 
                       ></v-checkbox>
                   </v-col>       
                   </template>
