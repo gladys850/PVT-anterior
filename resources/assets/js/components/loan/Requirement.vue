@@ -6,7 +6,7 @@
       <v-data-iterator :items="items" hide-default-footer>
         <template v-slot:header>
           <v-toolbar class="mb-0" color="ternary" dark flat>
-            <v-toolbar-title>REQUISITOS</v-toolbar-title>
+            <v-toolbar-title>REQUISITOS parent_reason {{parent_reason}}-parent_loan {{parent_loan_id}}</v-toolbar-title>
           </v-toolbar>
           <v-row>
             <v-col v-for="(group,i) in items" :key="i" cols="12" class="py-1">
@@ -213,6 +213,24 @@ export default {
       return true
     }
   },
+  computed: {
+    parent_reason(){
+      if(this.$route.params.hash == 'new'){
+        return null
+      } else if(this.$route.params.hash == 'refinancing'){
+        return 'REFINANCIAMIENTO'
+      }else if(this.$route.params.hash == 'reprogramming'){
+        return 'REPROGRAMACIÓN'
+      }
+    },
+    parent_loan_id(){
+      if(this.$route.query.type_sismu || this.$route.params.hash == 'new'){
+        return 0        
+      }else{
+        return this.$route.query.loan_id
+      }
+    }
+  },
   methods: {
     beforeStepBus(val) {
       this.bus.$emit("beforeStepBus", val)
@@ -246,6 +264,8 @@ export default {
             destiny_id: this.loan_detail.destiny_id,
             liquid_qualification_calculated:this.loan_detail.liquid_qualification_calculated,
             indebtedness_calculated:this.loan_detail.indebtedness_calculated,
+            parent_loan_id: this.parent_loan_id,
+            parent_reason: this.parent_reason,
             property_id: this.loan_property_id,
             personal_references: this.reference,
             cosigners:this.cosigners,
