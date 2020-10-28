@@ -118,7 +118,7 @@
         <v-tab-item :value="'tab-1'">
           <v-card flat tile>
             <v-card-text>
-              <Dashboard :affiliate.sync="affiliate" :loan.sync="loan" :spouse.sync="spouse" :cosigner.sync="cosigner" />
+              <Dashboard :affiliate.sync="affiliate" :loan.sync="loan" :spouse.sync="spouse" />
             </v-card-text>
           </v-card>
         </v-tab-item>
@@ -252,9 +252,6 @@ export default {
     search: "",
     bus1: new Vue(), //Creamos la instancia de bus1
     addresses: [],
-    loan:{
-      lenders:[{}]
-    },
     affiliate: {
       first_name: null,
       second_name: null,
@@ -281,7 +278,6 @@ export default {
     formulario: [],
     observations: [],
     spouse:{},
-    cosigner:[],
     loan_properties:{},
     procedure_type:{},
     intervalos: {},
@@ -372,17 +368,6 @@ export default {
         }
         this.setBreadcrumbs()
         console.log(this.loan)
-      } catch (e) {
-        console.log(e)
-      } finally {
-        this.loading = false
-      }
-    },
-    async getCosigner(id) {
-      try {
-        this.loading = true
-        let resc = await axios.get(`loan/${id}`)
-        this.cosigner = resc.data
       } catch (e) {
         console.log(e)
       } finally {
