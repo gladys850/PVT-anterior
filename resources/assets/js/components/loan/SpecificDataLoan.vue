@@ -46,7 +46,7 @@
             </v-btn>
           </template>
           <div>
-            <span v-if="editable">Guardar</span>
+            <span v-if="editable">Guardar</span> 
             <span v-else>Editar</span>
         </div>
         </v-tooltip>
@@ -56,53 +56,53 @@
                 <v-row>
                   <slot name="title"></slot>
                   <br />
-                  <v-col cols="12" md="4">
+                  <v-col cols="12" md="4" color="orange">
                     <v-layout row wrap>
                       <v-flex xs12 class="px-2">
-                        <fieldset class="pa-3">
-                          <v-toolbar-title>PRÉSTAMO</v-toolbar-title>
+                        <fieldset class="pa-3" style="background-color:#ecfeec; height:350px">
+                          <v-toolbar-title><b style="color:#0a1247">PRÉSTAMO</b></v-toolbar-title>
                            <v-progress-linear></v-progress-linear>
                           <br>
-                          <p style="margin-bottom: 10px;"><b>PLAZO EN MESES:</b>{{' '+loan.loan_term}}</p>
-                          <p style="margin-bottom: 10px;"><b>MONTO SOLICITADO:</b>{{' '+loan.amount_approved}}</p>
-                          <p style="margin-bottom: 10px;"><b>PROMEDIO LIQUIDO PAGABLE:</b>{{' '+loan.payable_liquid_calculated}}</p>
-                          <p style="margin-bottom: 10px;"><b>TOTAL BONOS:</b>{{' '+loan.bonus_calculated}}</p>
-                          <p style="margin-bottom: 10px;"><b>LIQUIDO PARA CALIFICACION:</b>{{' '+loan.liquid_qualification_calculated}}</p>
-                          <p style="margin-bottom: 10px;"><b>CALCULO DE CUOTA:</b>{{' '+loan.estimated_quota}}</p>
-                          <p style="margin-bottom: 10px;"><b>INDICE DE ENDEUDAMIENTO:</b>{{' '+loan.indebtedness_calculated}}</p>
-                          <p style="margin-bottom: 10px;"><b>MONTO MAXIMO SUGERIDO:</b>{{' '+loan.amount_approved}}</p>
+                          <p><b style="color:#0a1247">PLAZO EN MESES:</b>{{' '+loan.loan_term}}</p>
+                          <p><b style="color:#0a1247">MONTO SOLICITADO:</b>{{' '+loan.amount_approved}}</p>
+                          <p><b style="color:#0a1247">PROMEDIO LIQUIDO PAGABLE:</b>{{' '+loan.payable_liquid_calculated}}</p>
+                          <p><b style="color:#0a1247">TOTAL BONOS:</b>{{' '+loan.bonus_calculated}}</p>
+                          <p><b style="color:#0a1247">LIQUIDO PARA CALIFICACION:</b>{{' '+loan.liquid_qualification_calculated}}</p>
+                          <p><b style="color:#0a1247">CALCULO DE CUOTA:</b>{{' '+loan.estimated_quota}}</p>
+                          <p><b style="color:#0a1247">INDICE DE ENDEUDAMIENTO:</b>{{' '+loan.indebtedness_calculated}}</p>
+                          <p><b style="color:#0a1247">MONTO MAXIMO SUGERIDO:</b>{{' '+loan.amount_approved}}</p>
                         </fieldset>
                       </v-flex>
                     </v-layout>
                   </v-col>
                   <v-col cols="12" md="4">
                     <v-card-text class="py-0">
-                      <v-layout row wrap>
-                        <v-flex xs12 class="px-2">
-                          <fieldset class="pa-3">
-                            <v-toolbar-title>GARANTIA</v-toolbar-title>
+                      <v-layout row wrap >
+                        <v-flex xs12 class="px-2" >
+                          <fieldset class="pa-3" style="background-color:#ecfeec; height:350px">
+                            <v-toolbar-title><b style="color:#0a1247">GARANTIA</b></v-toolbar-title>
                               <v-progress-linear></v-progress-linear>
                               <div v-for="procedure_type in procedure_type" :key="procedure_type">
                             <ul style="list-style: none" class="pa-0" v-if="procedure_type.name == 'Préstamo a largo plazo' || procedure_type.name == 'Préstamo a corto plazo'">
                               <li v-for="(guarantor,i) in loan.guarantors" :key="i">
                                 
                                 <br>
-                                <p>CÉDULA DE IDENTIDAD: {{guarantor.identity_card +" "+ identityCardExt(guarantor.city_identity_card_id) }}</p>
-                                <p>NOMBRE COMPLETO: {{$options.filters.fullName(guarantor, true)}}</p>
-                                <p>PORCENTAJE DE PAGO: {{guarantor.pivot.payment_percentage}} %</p>
+                                <p><b style="color:#0a1247">CÉDULA DE IDENTIDAD:</b> {{guarantor.identity_card +" "+ identityCardExt(guarantor.city_identity_card_id) }}</p>
+                                <p><b style="color:#0a1247">NOMBRE:</b> {{$options.filters.fullName(guarantor, true)}}</p>
+                               <p><b style="color:#0a1247">PORCENTAJE DE PAGO:</b> {{guarantor.pivot.payment_percentage}} %</p>
                               </li>
                               
                             </ul>
                             <ul style="list-style: none" class="pa-0" v-if="procedure_type.name == 'Préstamo hipotecario'">                                
                                 <br>
-                                <p> CIUDAD: {{ loan_properties.land_lot_number }}</p>
-                                <p> UBICACION: {{ loan_properties.location}} </p>
-                                <p> NUMERO DE LOTE: {{ loan_properties.land_lot_number }} </p>
-                                <p> SUPERFICIE: {{ loan_properties.surface }} - {{ loan_properties.measurement }}</p>
-                                <p> CODIGO CATASTRAL: {{ loan_properties.cadastral_code}}</p>
-                                <p> NRO MATRICULA: {{ loan_properties.registration_number}}</p>
-                                <p> NRO FOLIO REAL: {{ loan_properties.real_folio_number}} </p>
-                                <p> VNR: {{ loan_properties.net_realizable_value}} </p>
+                                <p><b style="color:#0a1247">CIUDAD: </b>{{ loan_properties.land_lot_number }}</p>
+                                <p><b style="color:#0a1247">UBICACION: </b>{{ loan_properties.location}} </p>
+                                <p><b style="color:#0a1247">NUMERO DE LOTE: </b>{{ loan_properties.land_lot_number }} </p>
+                                <p><b style="color:#0a1247">SUPERFICIE: </b>{{ loan_properties.surface }} - {{ loan_properties.measurement }}</p>
+                                <p><b style="color:#0a1247">CODIGO CATASTRAL: </b>{{ loan_properties.cadastral_code}}</p>
+                                <p><b style="color:#0a1247">NRO MATRICULA: </b>{{ loan_properties.registration_number}}</p>
+                                <p><b style="color:#0a1247">NRO FOLIO REAL: </b>{{ loan_properties.real_folio_number}} </p>
+                                <p><b style="color:#0a1247">VNR: </b>{{ loan_properties.net_realizable_value}} </p>
 
                             </ul>
                             <ul style="list-style: none" class="pa-0" v-if="procedure_type.name == 'Préstamo Anticipo'">
@@ -120,13 +120,13 @@
                     <v-card-text class="py-0">
                       <v-layout row wrap>
                         <v-flex xs12 class="px-2">
-                          <fieldset class="pa-3">
-                            <v-toolbar-title>DESEMBOLSO</v-toolbar-title>
+                          <fieldset class="pa-3" style="background-color:#ecfeec; height:350px">
+                            <v-toolbar-title><b style="color:#0a1247">DESEMBOLSO</b></v-toolbar-title>
                               <v-progress-linear></v-progress-linear>
                             <br>
-                              <p style="margin-bottom: 0px;"><b>ENTIDAD FINANCIERA:</b>{{' '+cuenta}}</p>
-                              <p style="margin-bottom: 0px;"><b>NUMERO DE CUENTA:</b>{{' '+loan.lenders[0].account_number}}</p>
-                              <p><b>CUENTA SIGEP:</b> {{' '+loan.lenders[0].sigep_status}}</p>
+                              <p><b style="color:#0a1247">ENTIDAD FINANCIERA:</b>{{' '+cuenta}}</p>
+                              <p><b style="color:#0a1247">NUMERO DE CUENTA:</b>{{' '+loan.lenders[0].account_number}}</p>
+                              <p><b style="color:#0a1247">CUENTA SIGEP:</b> {{' '+loan.lenders[0].sigep_status}}</p>
                             <v-progress-linear></v-progress-linear>
                             <br>
                             <v-menu
