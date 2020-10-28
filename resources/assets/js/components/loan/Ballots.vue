@@ -4,6 +4,7 @@
         <v-row justify="center">
           <v-col cols="12"  >
             <v-card>
+              <ValidationObserver ref="observer">
               <v-container fluid >
                 <v-row justify="center" class="py-0">
                   <v-col cols="12" class="py-0" >
@@ -40,11 +41,16 @@
                           {{plazo}}
                         </v-col>
                         <v-col cols="12" :md="window_size" class="py-0" v-if="see_field">
+                          <ValidationProvider v-slot="{ errors }" name="VNR" :rules="'required|numeric|min_value:'+intervalos.minimun_amoun"  mode="aggressive">
                           <v-text-field
+                            :error-messages="errors"
                             dense
                             v-model="loan_detail.net_realizable_value"
+                            label="VNR"
+                            outlined
                             editable
                           ></v-text-field>
+                          </ValidationProvider>
                         </v-col>
                       </v-row>
                     </v-container>
@@ -127,11 +133,15 @@
                     DATOS SISMU
                   </v-col>
                   <v-col cols="12" md="3" >
+                    <ValidationProvider v-slot="{ errors }" name="cuota" :rules="'required|numeric|min_value:1'"  mode="aggressive">
                     <v-text-field
+                      :error-messages="errors"
                       dense
                       v-model="data_sismu.quota_sismu"
+                      outlined
                       label="Cuota"          
                      ></v-text-field>
+                     </ValidationProvider>
                   </v-col>
                   <v-col cols="12" md="3" class="ma-0 pa-0" v-if="this.loanTypeSelected.id==11 || this.loanTypeSelected.id==12">
                       <v-checkbox 
@@ -147,6 +157,7 @@
                 :contrib_codebtor="contrib_codebtor"
                 :modalidad.sync="modalidad"
                 :affiliate.sync="affiliate"/>
+             </ValidationObserver>    
             </v-card>
           </v-col>
         </v-row>
@@ -314,16 +325,15 @@ export default {
           this.modalidad.max_guarantor_category = loan_modality.loan_modality_parameter.max_guarantor_category
           this.modalidad.personal_reference = loan_modality.loan_modality_parameter.personal_reference
           this.modalidad.max_cosigner = loan_modality.loan_modality_parameter.max_cosigner
-            //debugger
-       
+          this.modalidad.max_lenders = loan_modality.loan_modality_parameter.max_lenders
+                   
           console.log("MODALIDAD")
           console.log(this.modalidad)
     
           this.loan_detail.min_guarantor_category= loan_modality.loan_modality_parameter.min_guarantor_category
           this.loan_detail.max_guarantor_category= loan_modality.loan_modality_parameter.max_guarantor_category
           if(loan_modality.loan_modality_parameter.quantity_ballots>1){
-          this.visible = true
-          //debugger
+            this.visible = true
           }else{
           this.visible = false
         }

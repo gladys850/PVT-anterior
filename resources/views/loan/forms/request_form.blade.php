@@ -165,12 +165,13 @@
     </div>
     @endif
 
-    @if ($loan->personal_reference)
+    @if (count($loan->personal_references)>0)
     <div class="block">
         <div class="font-semibold leading-tight text-left m-b-10 text-xs">{{ $n++ }}. REFERENCIAS PERSONALES</div>
     </div>
 
     <div class="block">
+    @foreach ($loan->personal_references as $personal_reference)
         <table class="table-info w-100 text-center uppercase my-20">
             <tr class="bg-grey-darker text-xxs text-white">
                 <td class="w-70">Referencia</td>
@@ -178,20 +179,21 @@
                 <td class="w-15">Teléfono(s)</td>
             </tr>
             <tr>
-                <td class="data-row py-5">{{ $loan->personal_reference->full_name }}</td>
-                <td class="data-row py-5">{{ $loan->personal_reference->identity_card_ext }}</td>
+                <td class="data-row py-5">{{ $personal_reference->full_name }}</td>
+                <td class="data-row py-5">{{ $personal_reference->identity_card_ext }}</td>
                 <td class="data-row py-5">
-                @if ($loan->personal_reference->phone_number != "" && $loan->personal_reference->phone_number != null)
-                    <div>{{ $loan->personal_reference->phone_number }}</div>
+                @if ($personal_reference->phone_number != "" && $personal_reference->phone_number != null)
+                    <div>{{ $personal_reference->phone_number }}</div>
                 @endif
-                @if ($loan->personal_reference->cell_phone_number != "" && $loan->personal_reference->cell_phone_number != null)
-                    @foreach(explode(',', $loan->personal_reference->cell_phone_number) as $phone)
+                @if ($personal_reference->cell_phone_number != "" && $personal_reference->cell_phone_number != null)
+                    @foreach(explode(',', $personal_reference->cell_phone_number) as $phone)
                         <div>{{ $phone }}</div>
                     @endforeach
                 @endif
                 </td>
             </tr>
         </table>
+        @endforeach
     </div>
     @endif
 
