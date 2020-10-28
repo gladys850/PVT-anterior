@@ -118,7 +118,7 @@
         <v-tab-item :value="'tab-1'">
           <v-card flat tile>
             <v-card-text>
-              <Dashboard :affiliate.sync="affiliate" :loan.sync="loan" :spouse.sync="spouse" />
+              <Dashboard :affiliate.sync="affiliate" :loan.sync="loan" :spouse.sync="spouse" :cosigner.sync="cosigner" />
             </v-card-text>
           </v-card>
         </v-tab-item>
@@ -152,8 +152,7 @@
               <SpecificDataLoan :loan.sync="loan" :loan_properties="loan_properties" :procedure_type="procedure_type">
                 <template v-slot:title>
                   <v-col cols="12" class="py-0">
-                    <v-toolbar-title
-                      >DATOS ESPECIFICOS DEL PRÉSTAMO</v-toolbar-title
+                    <v-toolbar-title><b>DATOS ESPECIFICOS DEL PRÉSTAMO</b></v-toolbar-title
                     >
                   </v-col>
                 </template>
@@ -253,6 +252,9 @@ export default {
     search: "",
     bus1: new Vue(), //Creamos la instancia de bus1
     addresses: [],
+    loan:{
+      lenders:[{}]
+    },
     affiliate: {
       first_name: null,
       second_name: null,
@@ -279,6 +281,7 @@ export default {
     formulario: [],
     observations: [],
     spouse:{},
+    cosigner:[],
     loan_properties:{},
     procedure_type:{},
     intervalos: {},
@@ -323,6 +326,7 @@ export default {
   mounted() {
     this.getloan(this.$route.params.id);
     this.getSpouse(this.$route.params.id);
+    this.getCosigner(this.$route.params.id);
     this.getObservation(this.$route.params.id);
     this.getProceduretype(this.$route.params.id);
     this.getLoanproperty(this.$route.params.id);
@@ -368,6 +372,17 @@ export default {
         }
         this.setBreadcrumbs()
         console.log(this.loan)
+      } catch (e) {
+        console.log(e)
+      } finally {
+        this.loading = false
+      }
+    },
+    async getCosigner(id) {
+      try {
+        this.loading = true
+        let resc = await axios.get(`loan/${id}`)
+        this.cosigner = resc.data
       } catch (e) {
         console.log(e)
       } finally {

@@ -3,16 +3,11 @@
     <v-row>
       <v-col cols="6" class="text-center">
         <v-row>
-          <v-col cols="12" class="text-center py-0">
-            <v-card
-              class="py-0"
-              color="#173B0B"
-              dark
-              max-width="100%"
-              max-height="1000"
+          <v-col cols="12" class="text-center py-0" style="margin-bottom:10px">
+            <v-card class="py-0" color="#173B0B" dark max-width="100%" max-height="1000"
             >
               <v-card-text class="headline font-weight-bold">
-                <v-icon large left style="font-size: 150px;">
+                <v-icon large left style="font-size: 100px;">
                   mdi-shield-account
                 </v-icon>
                 <h6>
@@ -23,16 +18,11 @@
                 <h6><strong>UNIDAD:</strong> {{ unit_name }}</h6>
               </v-card-text>
             </v-card>
-            <p></p>
           </v-col>
-          <v-col cols="12" class="text-center py-0">
+
+          <v-col cols="12" class="text-center py-0" style="margin-bottom:10px">
             <div v-if="loan.disbursable_type == 'spouses'">
-              <v-card
-                class="py-0"
-                color="#406b32"
-                dark
-                max-width="100%"
-                max-height="1000"
+              <v-card class="py-0" color="#406b32" dark max-width="100%" max-height="1000"
               >
                 <v-card-text class="headline font-weight-bold">
                   <v-icon large left style="font-size: 50px;">
@@ -44,6 +34,21 @@
               </v-card>
             </div>
           </v-col>
+          <v-col cols="12" class="text-center py-0">
+            <div v-if="loan.lenders[1]">
+              <v-card class="py-0" color="#25604c" dark max-width="100%" max-height="1000">
+                <v-card-text class="headline font-weight-bold">
+                  <v-icon large left style="font-size: 50px;">
+                    mdi-account-check
+                  </v-icon>
+                  <h6><strong>CODEUDOR:{{  $options.filters.fullName(loan.lenders[1],true)}}</strong></h6>
+                  <h6><strong>C.I:{{loan.lenders[1].identity_card}}</strong> </h6>
+                </v-card-text>
+              </v-card>
+              
+              </div>
+          </v-col>
+         
         </v-row>
       </v-col>
       <v-col cols="6" class="text-center">
@@ -70,14 +75,15 @@
               </v-card-text>
             </v-card>
           </v-col>
-          <v-col cols="12" class="text-center ">
-            <v-card class="mx-auto" color="#151515" dark max-height="285">
-              <v-icon large left style="font-size: 50px;">
-                mdi-bank
-              </v-icon>
+         
+          <v-col cols="12" class="text-center py-0" style="margin-top:10px">
+            <v-card class="mx-auto" color="#151515" dark max-height="400">
               <v-card-text class="headline font-weight-bold">
-                <strong>MODALIDAD:</strong>
-                {{ procedure_modality_name | uppercase }}
+                <v-icon large left style="font-size: 50px;">
+                 mdi-bank
+                </v-icon>
+                <h5><strong>MODALIDAD:</strong></h5>
+                <h5>{{ procedure_modality_name | uppercase }}</h5>
               </v-card-text>
             </v-card>
           </v-col>
@@ -102,6 +108,10 @@ export default {
     },
     spouse: {
       type: Object,
+      required: true
+    },
+    cosigner: {
+      type: Array,
       required: true
     }
   },
