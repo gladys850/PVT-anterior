@@ -11,6 +11,7 @@ use App\Loan;
 use App\Http\Requests\CalculatorForm;
 use App\Http\Requests\SimulatorForm;
 use App\Http\Requests\Guarantor_evaluateForm;
+use App\LoanGlobalParameter;
 
 
 
@@ -76,12 +77,17 @@ class CalculatorController extends Controller
             $contribution_first = $contributions->first();// se obtiene los bonos de la ultima boleta
             $total_bonuses = $contribution_first['seniority_bonus']+$contribution_first['border_bonus']+$contribution_first['public_security_bonus']+$contribution_first['east_bonus'];
             $liquid_qualification_calculated = $this->liquid_qualification($payable_liquid_average, $total_bonuses, $affiliate, $parent_quota);
+            $loan_global_parameter = LoanGlobalParameter::latest()->first();
+            $livelihood_amount = false;
+            if($liquid_qualification_calculated>$loan_global_parameter->livelihood_amount) $livelihood_amount=true;
+
             $liquid_calificated->push([
                 'affiliate_id' => $affiliate->id,
                 'payable_liquid_calculated' => round($payable_liquid_average,2),
                 'bonus_calculated' => round($total_bonuses,2),
                 'liquid_qualification_calculated' => round($liquid_qualification_calculated,2),
-                'quota_previous' => round($parent_quota,2)
+                'quota_previous' => round($parent_quota,2),
+                'livelihood_amount' => $livelihood_amount
             ]);
         }
         return $liquid_calificated;
