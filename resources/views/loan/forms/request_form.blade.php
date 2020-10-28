@@ -165,8 +165,7 @@
     </div>
     @endif
 
-
-    @if ($loan->personal_references)
+    @if (count($loan->personal_references)>0)
     <div class="block">
         <div class="font-semibold leading-tight text-left m-b-10 text-xs">{{ $n++ }}. REFERENCIAS PERSONALES</div>
     </div>
