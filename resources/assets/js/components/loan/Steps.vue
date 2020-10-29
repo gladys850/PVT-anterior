@@ -396,7 +396,7 @@ export default {
     async añadirDataLoan()
     {
       console.log('entro a añadir loan')
-      if(!this.isNew && !this.type_sismu){
+      if(!this.isNew){
         this.data_loan_parent.push(this.data_loan_parent_aux);
         console.log(this.data_loan_parent)
       }
