@@ -152,8 +152,7 @@
               <SpecificDataLoan :loan.sync="loan" :loan_properties="loan_properties" :procedure_type="procedure_type">
                 <template v-slot:title>
                   <v-col cols="12" class="py-0">
-                    <v-toolbar-title
-                      >DATOS ESPECIFICOS DEL PRÉSTAMO</v-toolbar-title
+                    <v-toolbar-title><b>DATOS ESPECIFICOS DEL PRÉSTAMO</b></v-toolbar-title
                     >
                   </v-col>
                 </template>
@@ -323,6 +322,7 @@ export default {
   mounted() {
     this.getloan(this.$route.params.id);
     this.getSpouse(this.$route.params.id);
+    this.getCosigner(this.$route.params.id);
     this.getObservation(this.$route.params.id);
     this.getProceduretype(this.$route.params.id);
     this.getLoanproperty(this.$route.params.id);
