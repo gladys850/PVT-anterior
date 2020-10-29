@@ -99,7 +99,31 @@
         </p>
     </div>
 </div>
-<div class="block m-t-100">
+<div class = "m-t-100">
+    <div>
+        @if (count($guarantors) == 1)
+        @php ($guarantor = $guarantors[0])
+        <table>
+            <tr>
+                <td  with = "50%">
+                @include('partials.signature_box', [
+                    'full_name' => $lender->full_name,
+                    'identity_card' => $lender->identity_card_ext,
+                    'position' => 'PRESTATARIO'
+                ])
+                </td>
+                <td  with = "50%">
+                @include('partials.signature_box', [
+                    'full_name' => $guarantor->full_name,
+                    'identity_card' => $guarantor->identity_card_ext,
+                    'position' => 'GARANTE'
+                ])
+                </td>
+            </tr>
+        </table>
+        @endif
+    </div>
+    @if (count($guarantors) == 2)
     <div>
         @include('partials.signature_box', [
             'full_name' => $lender->full_name,
@@ -107,11 +131,29 @@
             'position' => 'PRESTATARIO'
         ])
     </div>
-    <div class="m-t-75 w-100">
+    <div class = "no-page-break">
+        <div class = "m-t-100">
+            <table>
+                <tr>
+                    @foreach ($guarantors as $guarantor)
+                    <td with = "50%">
+                        @include('partials.signature_box', [
+                            'full_name' => $guarantor->full_name,
+                            'identity_card' => $guarantor->identity_card_ext,
+                            'position' => 'GARANTE'
+                        ])
+                    @endforeach
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    @endif
+    <div class="m-t-75">
         <table>
             <tr>
                 @foreach ($employees as $key => $employee)
-                <td>
+                <td width="50%">
                     @include('partials.signature_box', [
                         'full_name' => $employee['name'],
                         'identity_card' => $employee['identity_card'],
