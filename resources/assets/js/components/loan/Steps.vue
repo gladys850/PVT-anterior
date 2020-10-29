@@ -359,12 +359,7 @@ export default {
         }
         if(n==2)
         {
-         /* if(!this.isNew)
-          {
-            console.log('entro a añadir loan')
-            this.añadirDataLoan()
-          }*/
-          this.añadirDataLoan()
+          this.addDataLoan()
 
           console.log('segundo'+this.modalidad.guarantors )
         }
@@ -393,10 +388,10 @@ export default {
     beforeStep (n) {
       this.e1 = n -1
     },
-    async añadirDataLoan()
+    async addDataLoan()
     {
       console.log('entro a añadir loan')
-      if(!this.isNew && !this.type_sismu){
+      if(!this.isNew){
         this.data_loan_parent.push(this.data_loan_parent_aux);
         console.log(this.data_loan_parent)
       }
