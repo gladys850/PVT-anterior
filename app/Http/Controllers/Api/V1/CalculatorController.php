@@ -111,6 +111,7 @@ class CalculatorController extends Controller
         $amount_requested = $request->amount_requested;
         $liquid_calculated = collect($request->liquid_calculated);
         $calculated_data = collect([]);
+        $loan_global_parameter = LoanGlobalParameter::latest()->first();
         if($request->guarantor)
         {
             if(count($liquid_calculated) != $modality->loan_modality_parameter->guarantors)abort(403, 'La cantidad de garantes no corresponde a la modalidad');
@@ -146,19 +147,30 @@ class CalculatorController extends Controller
                         $percentage_payment = 100-$percentage;
                     }
                 }
+                $livelihood_amount = 0; $valuate_affiliate = false;
+                $livelihood_amount = $liquid['liquid_qualification_calculated'] - $quota_calculated; // liquido para calificacion menos la cuota estimada debe ser menor igual al monto de subsistencia
+                if(($indebtedness_calculated) <= ($modality->loan_modality_parameter->decimal_index)*100 && ($livelihood_amount>$loan_global_parameter->livelihood_amount)) $valuate_affiliate = true; // validar Indice de endeudamiento y monto de subsistencia
                 $calculated_data->push([
                     'affiliate_id' => $liquid['affiliate_id'],
                     'quota_calculated' => round($quota_calculated,2),
                     'indebtedness_calculated' => round($indebtedness_calculated,2),
                     'payment_percentage' => $percentage_payment,
                     'liquid_qualification_calculated' => $liquid['liquid_qualification_calculated'],
-                    'is_valid' => ($indebtedness_calculated) <= ($modality->loan_modality_parameter->decimal_index)*100
+                    'is_valid' => $valuate_affiliate
                 ]);
+            }
+            foreach($calculated_data as $data)
+            {
+                if($data['is_valid'] == false)
+                {
+                    $evaluate = false;
+                    break;
+                }
             }
             $response = $this->header($quota_calculated_total,$indebtedness_calculated_total,$request->amount_requested,$months_term,$evaluate,$liquid_qualification_calculated_lender,$amount_maximum_suggested,$maximum_suggested_valid,$calculated_data);
         }
         else{
-            $modality = ProcedureModality::find($request->procedure_modality_id);
+            $modality = ProcedureModality::findOrFail($request->procedure_modality_id);
             if($modality->procedure_type->name == 'Préstamo Anticipo' || $modality->procedure_type->name == 'Préstamo a corto plazo' || $modality->procedure_type->name == 'Préstamo a largo plazo'){
                 if(count($liquid_calculated)>$modality->loan_modality_parameter->max_lenders)abort(403, 'La cantidad de titulares no corresponde a la modalidad');
                 foreach($liquid_calculated as $liquid){
@@ -170,15 +182,17 @@ class CalculatorController extends Controller
                     }
                     $maximum_suggested_valid = false;
                     if($modality->procedure_type->interval->minimum_amount<=$amount_maximum_suggested && $amount_maximum_suggested<=$modality->procedure_type->interval->maximum_amount) $maximum_suggested_valid = true;
-                    $indebtedness_calculated = $quota_calculated/$liquid['liquid_qualification_calculated']*100;$valuate = false;
-                    if(($indebtedness_calculated) <= ($modality->loan_modality_parameter->decimal_index)*100) $valuate = true;
+                    $indebtedness_calculated = $quota_calculated/$liquid['liquid_qualification_calculated']*100;
+                    $livelihood_amount = 0; $valuate = false;
+                    $livelihood_amount = $liquid['liquid_qualification_calculated'] - $quota_calculated; // liquido para calificacion menos la cuota estimada debe ser menor igual al monto de subsistencia
+                    if(($indebtedness_calculated) <= ($modality->loan_modality_parameter->decimal_index)*100 && ($livelihood_amount>$loan_global_parameter->livelihood_amount)) $valuate = true;  // validar Indice de endeudamiento y monto de subsistencia
                     $calculated_data->push([
                         'affiliate_id' => $liquid['affiliate_id'],
                         'quota_calculated' => round($quota_calculated,2),
                         'indebtedness_calculated' => round($indebtedness_calculated,2),
                         'payment_percentage' => 100,
                         'liquid_qualification_calculated' => $liquid['liquid_qualification_calculated'],
-                        'is_valid' =>$valuate
+                        'is_valid' =>$valuate // debe estar en el rango de indice de endeudamiento y dentro del monto de subsistencia
                     ]);
                 }
                 $response = $this->header($quota_calculated,$indebtedness_calculated,$request->amount_requested,$request->months_term,$valuate,$liquid['liquid_qualification_calculated'],$amount_maximum_suggested,$maximum_suggested_valid,$calculated_data);
@@ -331,6 +345,7 @@ class CalculatorController extends Controller
 
     //division porcentual de las cuotas de los codeudores
     private function loan_percent(request $request){
+        $loan_global_parameter = LoanGlobalParameter::latest()->first();
         $procedure_modality = ProcedureModality::findOrFail($request->procedure_modality_id);
         $debt_index = $procedure_modality->loan_modality_parameter->debt_index;
         $lc = $request->liquid_calculated;
@@ -342,7 +357,7 @@ class CalculatorController extends Controller
         foreach($lc as $obj){
         $liquid_qualification_calculated = $liquid_qualification_calculated + $obj["liquid_qualification_calculated"];
         }
-        //***m */
+        /** m */
         $amount_maximum_suggested = $this->maximum_amount($procedure_modality,$plm,$liquid_qualification_calculated);
         if($ms>$amount_maximum_suggested){
             $ce = $this->quota_calculator($procedure_modality, $plm, $amount_maximum_suggested);
@@ -350,7 +365,7 @@ class CalculatorController extends Controller
         }
         $maximum_suggested_valid = false;
         if($procedure_modality->procedure_type->interval->minimum_amount<=$amount_maximum_suggested && $amount_maximum_suggested<=$procedure_modality->procedure_type->interval->maximum_amount) $maximum_suggested_valid = true;
-        //***end m */
+        /** end m */
         $ie = ($ce/$liquid_qualification_calculated)*100;
         if($ie<=$debt_index){
             $evaluate = true;
@@ -363,13 +378,28 @@ class CalculatorController extends Controller
             $plc = (int)$obj2["liquid_qualification_calculated"];
             $plc = round(($plc/$liquid_qualification_calculated)*100);
             $ce_c = round(($ce*$plc)/100,2);
+            /** m */
+            $livelihood_amount = 0; $valuate_affiliate = false;
+            $livelihood_amount = $obj2['liquid_qualification_calculated'] - $ce_c; // liquido para calificacion menos la cuota estimada debe ser menor igual al monto de subsistencia
+            if($livelihood_amount>$loan_global_parameter->livelihood_amount) $valuate_affiliate = true;  // validar Indice de endeudamiento y monto de subsistencia
+
+            /** end m */
             $cosigner=array(
-                "affiliate_id"=>$obj2["affiliate_id"],
-                "quota_calculated_estimated"=>$ce_c,
+                "affiliate_id" => $obj2["affiliate_id"],
+                "quota_calculated_estimated" => $ce_c,
                 'payment_percentage'=>$plc,
                 'liquid_qualification_calculated' => $obj2["liquid_qualification_calculated"],
+                'is_valid' => $valuate_affiliate // validar si supera al monto de subsistencia
         );
         array_push($cosigners,$cosigner);
+        }
+        foreach($cosigners as $cos)
+        {
+            if($cos['is_valid'] == false)
+            {
+                $evaluate = false;
+                break;
+            }
         }
         $response = $this->header($ce,$ie,$ms,$plm,$evaluate,$liquid_qualification_calculated,$amount_maximum_suggested,$maximum_suggested_valid,$cosigners);
         return $response;
