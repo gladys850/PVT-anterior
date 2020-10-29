@@ -4,16 +4,14 @@
     width="600"
   >
     <v-card>
-      <v-toolbar dense flat color="tertiary">
+      <v-toolbar dense flat color="">
         <v-toolbar-title v-show="!observation.edit && observation.accion=='devolver'">Devolver trámite</v-toolbar-title>
         <v-toolbar-title v-show="!observation.edit && observation.accion=='anular'">Anular trámite</v-toolbar-title>
         <v-toolbar-title v-show="!observation.edit && observation.accion=='validar'">Validar trámite</v-toolbar-title>
         <v-toolbar-title v-show="observation.edit">Editar Observacion</v-toolbar-title>         
         <v-spacer></v-spacer>
-        <v-btn icon @click.stop="close()">
-          <v-icon>mdi-close</v-icon>
-        </v-btn>
       </v-toolbar>
+      <v-divider></v-divider>
       <v-card-text class="ma-0 pb-0">
         <v-container fluid class="ma-0 pb-0">
           <v-row justify="center" class="ma-0 pb-0">
@@ -78,12 +76,12 @@
           </v-row>
         </v-container>
       </v-card-text>
+      <v-divider></v-divider>
       <v-card-actions class="ma-0 pb-0">
-        <v-spacer></v-spacer>
-        <v-btn @click.stop="saveObservation($route.params.id)"
-          color="success"
-          >Aceptar</v-btn>
-      </v-card-actions>
+      <v-spacer></v-spacer>
+      <v-btn color="error" text @click.stop="close()">Cerrar</v-btn>
+      <v-btn color="success" text @click.stop="saveObservation($route.params.id)">Aceptar</v-btn>
+    </v-card-actions>
     </v-card>
   </v-dialog>
 </template>

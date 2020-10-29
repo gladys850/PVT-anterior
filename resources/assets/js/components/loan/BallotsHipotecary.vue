@@ -46,14 +46,12 @@
                     <v-dialog v-model="dialog" max-width="500px">
                       <v-card>
                         <v-card-title class="pa-0">
-                          <v-toolbar dense flat color="tertiary">
+                          <v-toolbar dense flat color="">
                             <v-toolbar-title>{{ formTitle }}</v-toolbar-title>
                             <v-spacer></v-spacer>
-                            <v-btn icon @click.stop="close()">
-                              <v-icon>mdi-close</v-icon>
-                            </v-btn>
                           </v-toolbar>
                         </v-card-title>
+                        <v-divider></v-divider>
                         <v-card-text class="py-0">
                           <v-container>
                             <v-row>
@@ -99,10 +97,11 @@
                             </v-row>
                           </v-container>
                         </v-card-text>
-                        <v-card-actions class="pt-0">
-                          <v-spacer></v-spacer>
-                          <v-btn color="blue darken-1" dense text @click="close">Cancelar</v-btn>
-                          <v-btn color="blue darken-1" dense text @click="save">Guardar</v-btn>
+                        <v-divider></v-divider>
+                        <v-card-actions class="ma-0 pb-0">
+                        <v-spacer></v-spacer>
+                          <v-btn color="error" dense text @click.stop="close()">Cerrar</v-btn>
+                          <v-btn color="success" dense text @click="save">Guardar</v-btn>
                         </v-card-actions>
                       </v-card>
                     </v-dialog>
