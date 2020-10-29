@@ -100,8 +100,7 @@
                 :modalidad.sync="modalidad"
                 :liquid_calificated.sync="liquid_calificated"
                 :lenders.sync="lenders"
-                
-               
+                :lenders_aux.sync="lenders_aux"
               />
             </v-card>
             <v-container class="py-0">
@@ -282,6 +281,7 @@ export default {
     modalities: [],
     guarantors: [],
     lenders:[],
+    lenders_aux:[],
     data_loan_parent_aux:{},
     data_loan_parent:[],
     modalidad:{},
@@ -344,8 +344,8 @@ export default {
       this.getLoan(this.$route.query.loan_id)
     }else{
       //alert("Es nuevo")
-    }    
-  }, 
+    }
+  },
   methods: {
     nextStep (n) {
       if (n == this.steps) {
@@ -359,11 +359,12 @@ export default {
         }
         if(n==2)
         {
-          if(!this.isNew)
+         /* if(!this.isNew)
           {
             console.log('entro a añadir loan')
             this.añadirDataLoan()
-          }
+          }*/
+          this.añadirDataLoan()
 
           console.log('segundo'+this.modalidad.guarantors )
         }
@@ -397,7 +398,6 @@ export default {
       console.log('entro a añadir loan')
       this.data_loan_parent.push(this.data_loan_parent_aux);
       console.log(this.data_loan_parent)
-      
     },
     async personal()
     {
@@ -547,10 +547,18 @@ export default {
           }
 
           this.lenders=res.data
+
           for(let i = 0; i < this.lenders.length; i++ ){
+//Armar el nombre de los lenders
+        /*  let res4 = await axios.get(`affiliate/${this.lenders[i].affiliate_id}`)
+            this.lenders_aux[i] =res4.data.full_name
+*/
+
             this.lenders[i].payment_percentage=this.calculator_result.affiliates[i].payment_percentage
             this.lenders[i].indebtedness_calculated=this.calculator_result.affiliates[i].indebtedness_calculated
           }
+          console.log('estos son los lenders')
+          console.log(this.lenders)
 
           this.loan_detail.minimum_term=this.intervalos.minimum_term
           this.loan_detail.maximum_term=this.intervalos.maximum_term
@@ -689,6 +697,11 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
         this.loading = true
         let res = await axios.get(`loan/${id}`)
         this.data_loan = res.data
+        this.data_loan_parent_aux.code= res.data.code
+        this.data_loan_parent_aux.amount_approved= res.data.amount_approved
+        this.data_loan_parent_aux.loan_term= res.data.loan_term
+        this.data_loan_parent_aux.balance= res.data.balance
+        this.data_loan_parent_aux.estimated_quota= res.data.estimated_quota
 
         let res2 = await axios.get(`procedure_modality/${this.data_loan.procedure_modality_id}`)
         let mod_refi_repro=res2.data.procedure_type_id
