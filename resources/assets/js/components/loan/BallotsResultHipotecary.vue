@@ -5,9 +5,7 @@
         <!--v-card-->
           <v-row justify="center">
             <v-col cols="3" class="py-2" v-show="editar">
-            <ValidationProvider v-slot="{ errors }" name="codigo" :rules="'required|min:2'" mode="aggressive">
-              <v-text-field
-                :error-messages="errors"
+               <v-text-field
                 class="py-0"
                 dense
                 :outlined="habilitar"
@@ -15,10 +13,9 @@
                 label="Codigo de Prestamo Padre"
                 v-model="data_loan_parent_aux.code"
               ></v-text-field>
-            </ValidationProvider>
           </v-col>
           <v-col cols="3" class="py-2" v-show="editar">
-            <ValidationProvider v-slot="{ errors }" name="monto" :rules="'required|numeric|min_value:'+loan_detail.minimun_amoun+'|max_value:'+calculator_result.amount_requested"  mode="aggressive">
+            <ValidationProvider v-slot="{ errors }" name="monto" :rules="'required|numeric|min_value:'+loan_detail.minimun_amoun+'|max_value:'+loan_detail.maximun_amoun"  mode="aggressive">
               <v-text-field
                 :error-messages="errors"
                 class="py-0"
@@ -44,7 +41,7 @@
             </ValidationProvider>
           </v-col>
           <v-col cols="2" class="py-2" v-show="editar">
-            <ValidationProvider v-slot="{ errors }" name="saldo" :rules="'required|min:2'" mode="aggressive">
+            <ValidationProvider v-slot="{ errors }" name="saldo" :rules="'required|min_value:'+loan_detail.minimun_amoun+'|max_value:'+calculator_result.amount_requested" mode="aggressive">
               <v-text-field
                 :error-messages="errors"
                 class="py-0"
@@ -57,9 +54,7 @@
             </ValidationProvider>
           </v-col>
           <v-col cols="2" class="py-2" v-show="editar">
-            <ValidationProvider v-slot="{ errors }" name="cuota" :rules="'required|min:2'" mode="aggressive">
               <v-text-field
-                :error-messages="errors"
                 class="py-0"
                 dense
                 :outlined="habilitar"
@@ -67,7 +62,6 @@
                 label="Cuota"
                 v-model="data_loan_parent_aux.estimated_quota"
               ></v-text-field>
-            </ValidationProvider>
           </v-col>
             <v-col cols="12" class="py-2">
               <v-container class="py-0">
@@ -103,7 +97,7 @@
                       <v-layout row wrap>
                         <v-flex xs12 class="px-1">
                           <fieldset class="pa-2">
-                              <v-toolbar-title>Liquido Pagable</v-toolbar-title>
+                              <v-toolbar-title>Liquido Pagable {{lenders_aux}}</v-toolbar-title>
                               <ul style="list-style: none" class="pa-0">
                               <li v-for="(liquido,i) in liquid_calificated" :key="i" >
                                 <v-progress-linear></v-progress-linear>
@@ -126,7 +120,7 @@
                               <ul style="list-style: none" class="pa-0">
                                 <li v-for="(calculado,i) in calculator_result.affiliates" :key="i" >
                                   <v-progress-linear></v-progress-linear>
-                                  <p class="py-0 mb-0">Nombre del Afiliado: {{ calculado.affiliate_id}}</p>
+                                   <p class="py-0 mb-0">Nombre del Afiliado: {{ calculado.affiliate_id}}</p>
                                   <p class="py-0 mb-0">Liquido para Callificacion: {{calculado.liquid_qualification_calculated}}<b> | </b>Cuota Estimada: {{calculado.quota_calculated_estimated}} <b> | </b>Porcentaje de Pago: {{calculado.payment_percentage}}% </p>
                                 </li>
                               </ul>
@@ -169,7 +163,11 @@ export default {
       type: Object,
       required: true
     },
-      lenders: {
+    lenders: {
+      type: Array,
+      required: true
+    },
+    lenders_aux: {
       type: Array,
       required: true
     },
@@ -213,6 +211,7 @@ export default {
     }
   },
   methods: {
+
     async calculadora() {
       try {
         let res = await axios.post(`simulator`, {

@@ -109,7 +109,7 @@
                     color="info"
                     small
                        rounded
-                    @click="Calculator1()">Calcular
+                    @click="calculator()">Calcular
                   </v-btn>
                 </v-col>
               </v-row>
@@ -233,8 +233,6 @@
                     <v-layout row wrap>
                       <v-flex xs12 class="px-2">
                         <fieldset class="pa-3">
-                          {{guarantor}}
-                          {{garantes_simulador}}
                           <p class="py-0 mb-0">Monto del Prestamo: {{simulator_guarantors.amount_requested +' '}}<b>|</b> Plazo del Prestamo:{{simulator_guarantors.amount_requested +' '}}<b>|</b> Cuota del Titular:{{simulator_guarantors.quota_calculated_estimated_total  }}</p>
                           <v-progress-linear></v-progress-linear>
                             <ul style="list-style: none" class="pa-0">
@@ -323,7 +321,6 @@
     validated1:false,
     payable_liquid:[0],
     bonos:[0,0,0,0],
-    calculos1:{},
     evaluate_garantor:{},
     headers: [
       {
@@ -351,24 +348,13 @@
         value: "estimated_quota"
       }
     ],
-    
- 
   }),
- 
-  computed: {
- 
-  
- },
  watch:{
 ver()
 {
   añadir()
 }
  },
-  beforeMount() {
-  },
-  mounted() {
-  },
   methods: {
     async clear()
     {
@@ -378,32 +364,23 @@ ver()
     this.bonos[1]=0
     this.bonos[2]=0
     this.bonos[3]=0
-    this.calculos1.bonus_calculated=null
-    this.calculos1.liquid_qualification_calculated=null
-    this.calculos1.quota_calculated=null
-    this.calculos1.indebtedness_calculated=null
-    this.calculos1.amount_maximum_suggested=null
     },
- async añadir()
-    {  this.guarantor_ci=null
- this.show_evaluated=false
-      
+    async añadir()
+    {
+      this.guarantor_ci=null
+      this.show_evaluated=false
       this.garante_boletas.affiliate_id=this.affiliate_garantor.affiliate.id
       this.garante_boletas.liquid_qualification_calculated=this.evaluate_garantor.payable_liquid_calculated
-      
       this.guarantor_objeto.affiliate_id=this.affiliate_garantor.affiliate.id
       this.guarantor_objeto.bonus_calculated=this.evaluate_garantor.bonus_calculated
-       this.guarantor_objeto.payable_liquid_calculated=this.evaluate_garantor.payable_liquid_calculated
- 
+      this.guarantor_objeto.payable_liquid_calculated=this.evaluate_garantor.payable_liquid_calculated
       this.garantes_detalle.push(this.affiliate_garantor.affiliate.full_name);
       this.garantes_simulador.push(this.garante_boletas);
       this.guarantors.push(this.guarantor_objeto);
       this.garante_boletas={}
       this.guarantor_objeto={}
-
      console.log('entro a garantes ==> '+this.garantes_detalle)
-
-this.clear()
+    this.clear()
     },
     deleteOtherDocument(i) {
       this.garantes_detalle.splice(i, 1)
@@ -419,7 +396,7 @@ this.garantes[0]=this.affiliate_garantor.affiliate.id
     this.toastr.success("Se añadio satisfactoriamente al garante.")
 console.log('este es el garante'+this.garantes[0])
     },*/
-     async Calculator1() {
+     async calculator() {
       try {
         this.show_result=true
         this.show_evaluated=true
@@ -457,20 +434,16 @@ console.log('este es el garante'+this.garantes[0])
           })
           this.simulator_guarantors = res.data
     for (this.j = 0; this.j< this.guarantors.length; this.j++) {
-
-this.guarantors[this.j].payment_percentage=this.simulator_guarantors.affiliates[this.j].payment_percentage
-this.guarantors[this.j].indebtedness_calculated=this.simulator_guarantors.affiliates[this.j].indebtedness_calculated
-this.guarantors[this.j].liquid_qualification_calculated=this.simulator_guarantors.affiliates[this.j].liquid_qualification_calculated
-
+      this.guarantors[this.j].payment_percentage=this.simulator_guarantors.affiliates[this.j].payment_percentage
+      this.guarantors[this.j].indebtedness_calculated=this.simulator_guarantors.affiliates[this.j].indebtedness_calculated
+      this.guarantors[this.j].liquid_qualification_calculated=this.simulator_guarantors.affiliates[this.j].liquid_qualification_calculated
       }
-
-
-      } catch (e) {
-        console.log(e)
-      } finally {
-        this.loading = false
-      }
-    },
+    } catch (e) {
+      console.log(e)
+    } finally {
+      this.loading = false
+    }
+  },
    async activar()
     {
       this.clear()
@@ -487,8 +460,8 @@ this.guarantors[this.j].liquid_qualification_calculated=this.simulator_guarantor
           this.affiliate_garantor=resp.data
           this.affiliate_garantor_aux=this.affiliate_garantor
 
- console.log("esta son boletas del garante"+ this.affiliate_garantor.affiliate.id)
-//let data_ballots=[]
+        console.log("esta son boletas del garante"+ this.affiliate_garantor.affiliate.id)
+        //let data_ballots=[]
          let res = await axios.get(`affiliate/${this.affiliate_garantor.affiliate.id}/contribution`, {
         params:{
           city_id: this.$store.getters.cityId,
@@ -498,48 +471,32 @@ this.guarantors[this.j].liquid_qualification_calculated=this.simulator_guarantor
           page: 1,
         }
       })
- this.data_ballots=res.data.data
+        this.data_ballots=res.data.data
 
- if(res.data.valid)
+      if(res.data.valid)
       {
         this.editar=false
-             
-          this.payable_liquid[0] = this.data_ballots[0].payable_liquid,
-          this.bonos[0] = this.data_ballots[0].border_bonus,
-          this.bonos[1] = this.data_ballots[0].east_bonus,
-          this.bonos[2] = this.data_ballots[0].seniority_bonus,
-          this.bonos[3] = this.data_ballots[0].public_security_bonus
+        this.payable_liquid[0] = this.data_ballots[0].payable_liquid,
+        this.bonos[0] = this.data_ballots[0].border_bonus,
+        this.bonos[1] = this.data_ballots[0].east_bonus,
+        this.bonos[2] = this.data_ballots[0].seniority_bonus,
+        this.bonos[3] = this.data_ballots[0].public_security_bonus
       } else{
-           
-          this.payable_liquid[0] = this.payable_liquid[0]
-          this.bonos[0] = this.bonos[0]
-          this.bonos[1] =this.bonos[1]
-          this.bonos[2] = this.bonos[2]
-          this.bonos[3] =this.bonos[3]
+        this.payable_liquid[0] = this.payable_liquid[0]
+        this.bonos[0] = this.bonos[0]
+        this.bonos[1] =this.bonos[1]
+        this.bonos[2] = this.bonos[2]
+        this.bonos[3] =this.bonos[3]
       }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- console.log("esta son boletas del garante"+this.data_ballots)
+        console.log("esta son boletas del garante"+this.data_ballots)
           this.validated=this.affiliate_garantor.guarantor
           this.validated1=this.affiliate_garantor.guarantor
           this.show_calculated=this.affiliate_garantor.guarantor
           this.loan=this.affiliate_garantor.affiliate.loans
           this.guarantor=this.affiliate_garantor.affiliate.guarantor
           this.show_garante=false
-          console.log('Entro al metodo de garanyes'+this.affiliate_garantor+'==>'+this.guarantor_ci) 
-          console.log('prestamos'+this.loan)  
+          console.log('Entro al metodo de garanyes'+this.affiliate_garantor+'==>'+this.guarantor_ci)
+          console.log('prestamos'+this.loan)
           console.log('guarantor'+this.guarantor)
         }
       } catch (e) {
@@ -547,7 +504,6 @@ this.guarantors[this.j].liquid_qualification_calculated=this.simulator_guarantor
       } finally {
         this.loading = false
       }
-    
     }
   }
   }
