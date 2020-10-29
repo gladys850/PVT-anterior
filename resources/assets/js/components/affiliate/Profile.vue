@@ -354,7 +354,7 @@
                       <v-toolbar-title>DATOS FINANCIEROS </v-toolbar-title>
                     </v-col>
                     <v-col cols="12" md="6" >
-                      <ValidationProvider v-slot="{ errors }" vid="financial_entity_id" name="Entidad Financiera" rules="integer|min:1">
+                      <ValidationProvider v-slot="{ errors }" vid="financial_entity_id" name="Entidad Financiera" rules="required|integer|min:1">
                       <v-select
                         :error-messages="errors"
                         dense
@@ -371,7 +371,7 @@
                       </ValidationProvider>
                     </v-col>
                     <v-col cols="12" md="6" >
-                      <ValidationProvider v-slot="{ errors }" name="Numero de Cuenta" rules="min:1|max:20">
+                      <ValidationProvider v-slot="{ errors }" name="Numero de Cuenta" rules="required|min:1|max:20">
                       <v-text-field
                         :error-messages="errors"
                         dense
@@ -384,7 +384,7 @@
                       </ValidationProvider>
                     </v-col>
                     <v-col cols="12" md="6" >
-                      <ValidationProvider v-slot="{ errors }" name="Cuenta de Segip" rules="min:1|max:20">
+                      <ValidationProvider v-slot="{ errors }" name="Cuenta de Segip" rules="required|min:1|max:20">
                        <v-select
                         :error-messages="errors"
                         dense

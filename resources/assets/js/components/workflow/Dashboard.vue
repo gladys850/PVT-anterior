@@ -3,47 +3,49 @@
     <v-row>
       <v-col cols="6" class="text-center">
         <v-row>
-          <v-col cols="12" class="text-center py-0">
-            <v-card
-              class="py-0"
-              color="#173B0B"
-              dark
-              max-width="100%"
-              max-height="1000"
+          <v-col cols="12" class="text-center py-0" style="margin-bottom:10px">
+            <v-card class="py-0" color="#173B0B" dark max-width="100%" max-height="1000"
             >
               <v-card-text class="headline font-weight-bold">
-                <v-icon large left style="font-size: 150px;">
+                <v-icon large left style="font-size: 100px;">
                   mdi-shield-account
                 </v-icon>
                 <h6>
-                  <strong>PRESTATARIO:</strong>
+                  <strong><b style="color:white">PRESTATARIO: </b></strong>
                   {{ $options.filters.fullName(affiliate, true) }}
                 </h6>
-                <h6><strong>GRADO:</strong> {{ degree_name }}</h6>
-                <h6><strong>UNIDAD:</strong> {{ unit_name }}</h6>
+                <h6><strong><b style="color:white">GRADO: </b></strong> {{ degree_name }}</h6>
+                <h6><strong><b style="color:white">UNIDAD: </b></strong> {{ unit_name }}</h6>
               </v-card-text>
             </v-card>
-            <p></p>
           </v-col>
-          <v-col cols="12" class="text-center py-0">
+
+          <v-col cols="12" class="text-center py-0" style="margin-bottom:10px">
             <div v-if="loan.disbursable_type == 'spouses'">
-              <v-card
-                class="py-0"
-                color="#406b32"
-                dark
-                max-width="100%"
-                max-height="1000"
+              <v-card class="py-0" color="#406b32" dark max-width="100%" max-height="1000"
               >
                 <v-card-text class="headline font-weight-bold">
                   <v-icon large left style="font-size: 50px;">
                     mdi-account-heart
                   </v-icon>
-                  <h6><strong>CONYUGUE:</strong> {{ $options.filters.fullName(spouse, true) }}</h6>
-                  <h6><strong>C.I:</strong> {{ spouse.identity_card }}</h6>
+                  <h6><strong><b style="color:white">CONYUGUE:</b></strong> {{ $options.filters.fullName(spouse, true) }}</h6>
+                  <h6><strong><b style="color:white">C.I: </b></strong> {{ spouse.identity_card }}</h6>
                 </v-card-text>
               </v-card>
             </div>
           </v-col>
+          <v-col cols="12" class="text-center py-0">
+            <div v-for="(lenders,i) in loan.lenders" :key="i">
+              <v-card class="py-0" color="#25604c" dark max-width="100%" max-height="1000">
+                <v-card-text class="headline font-weight-bold" v-if="(lenders,i)>0" >
+                  <h6><strong><b style="color:white">CODEUDOR: </b>{{  $options.filters.fullName(lenders,true)}}</strong></h6>
+                  <h6><strong><b style="color:white">C.I: </b>{{lenders.identity_card}}</strong> </h6>
+                </v-card-text>
+              </v-card>
+              
+              </div>
+          </v-col>
+         
         </v-row>
       </v-col>
       <v-col cols="6" class="text-center">
@@ -54,7 +56,7 @@
                 <v-icon large left style="font-size: 50px;">
                   mdi-currency-usd
                 </v-icon>
-                <h5><strong>MONTO SOLICITADO:</strong></h5>
+                <h5><strong><b style="color:white">MONTO SOLICITADO:</b></strong></h5>
                 <h5>{{ loan.amount_requested + " Bs" }}</h5>
               </v-card-text>
             </v-card>
@@ -65,19 +67,20 @@
                 <v-icon large left style="font-size: 50px;">
                   mdi-timer-sand
                 </v-icon>
-                <h5><strong>MESES PLAZO:</strong></h5>
+                <h5><strong><b style="color:white">MESES PLAZO:</b></strong></h5>
                 <h5>{{ loan.loan_term }}</h5>
               </v-card-text>
             </v-card>
           </v-col>
-          <v-col cols="12" class="text-center ">
-            <v-card class="mx-auto" color="#151515" dark max-height="285">
-              <v-icon large left style="font-size: 50px;">
-                mdi-bank
-              </v-icon>
+         
+          <v-col cols="12" class="text-center py-0" style="margin-top:10px">
+            <v-card class="mx-auto" color="#151515" dark max-height="400">
               <v-card-text class="headline font-weight-bold">
-                <strong>MODALIDAD:</strong>
-                {{ procedure_modality_name | uppercase }}
+                <v-icon large left style="font-size: 50px;">
+                 mdi-bank
+                </v-icon>
+                <h5><strong><b style="color:white">MODALIDAD:</b></strong></h5>
+                <h5>{{ procedure_modality_name | uppercase }}</h5>
               </v-card-text>
             </v-card>
           </v-col>
