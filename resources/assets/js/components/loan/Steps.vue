@@ -396,8 +396,11 @@ export default {
     async añadirDataLoan()
     {
       console.log('entro a añadir loan')
-      this.data_loan_parent.push(this.data_loan_parent_aux);
-      console.log(this.data_loan_parent)
+      if(!this.isNew && !this.type_sismu){
+        this.data_loan_parent.push(this.data_loan_parent_aux);
+        console.log(this.data_loan_parent)
+      }
+
     },
     async personal()
     {
