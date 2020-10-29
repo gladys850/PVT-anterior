@@ -4,5 +4,6 @@
     "bonus_calculated": 500,
     "liquid_qualification_calculated": 3000,
     "indebtnes_calculated": 45,
-    "is_valid": true
+    "is_valid": true,
+    "livelihood_amount": true
 }

@@ -406,6 +406,8 @@ class CalculatorController extends Controller
     */
     public function evaluate_guarantor(Guarantor_evaluateForm $request){
         $procedure_modality = ProcedureModality::findOrFail($request->procedure_modality_id);
+        $loan_global_parameter = LoanGlobalParameter::latest()->first();
+        $livelihood_amount = false;
         $quantity_guarantors = $procedure_modality->loan_modality_parameter->guarantors;
         if($quantity_guarantors > 0){
             $debt_index = $procedure_modality->loan_modality_parameter->debt_index;
@@ -417,8 +419,9 @@ class CalculatorController extends Controller
             $contribution_first = $contributions->first();
             $total_bonuses = $contribution_first['seniority_bonus']+$contribution_first['border_bonus']+$contribution_first['public_security_bonus']+$contribution_first['east_bonus'];
             $liquid_qualification_calculated = $this->liquid_qualification($payable_liquid_average, $total_bonuses, $affiliate);
+            if ($liquid_qualification_calculated>$loan_global_parameter->livelihood_amount) $livelihood_amount = true;
             $indebtedness_calculated = $quota_calculated/$liquid_qualification_calculated*100;
-            if ($indebtedness_calculated <= $debt_index)
+            if ($indebtedness_calculated <= $debt_index && $livelihood_amount)
                 $evaluate = true;
             else
                 $evaluate = false;
@@ -429,6 +432,7 @@ class CalculatorController extends Controller
                 "liquid_qualification_calculated" => round($liquid_qualification_calculated,2),
                 "indebtnes_calculated" => round($indebtedness_calculated,2),
                 "is_valid" => $evaluate,
+                "livelihood_amount" => $livelihood_amount,
             );
             return $response;
         }
