@@ -356,7 +356,7 @@ class LoanStructureSeeder extends Seeder
               'interest' => ['annual_interest' => 13.2,'penal_interest' => 6]
             ],
               // REFINANCIANCIAMIENTO SECTOR ACTIVO CON UN SOLO GARANTE ---> En este caso el garante solo puede ser activo
-              ['name'=>'Refinanciamiento de prestamos a largo Plazo para el sector activo - CPOP','shortened'=>'PLP-R-SA-CPOP','requirements'=>[
+              ['name'=>'Refinanciamiento de Préstamo a largo Plazo para el sector activo - CPOP','shortened'=>'PLP-R-SA-CPOP','requirements'=>[
                 ['name' => 'Cédula de Identidad del (la) titular en copia simple','number'=>1],
                 ['name' => 'Última Boleta de pago en copia simple.','number'=>2], // Tambien de los 2 garantes
                 ['name' => 'Certificado de haberes considerando el último mes percibido.','number'=>2],  // En caso de no tener la boleta de pago
@@ -389,7 +389,7 @@ class LoanStructureSeeder extends Seeder
               'interest' => ['annual_interest' => 13.2,'penal_interest' => 6]
             ],
                  // REFINANCIANCIAMIENTO SECTOR PASIVO CON UN SOLO GARANTE
-              ['name'=>'Refinanciamiento de prestamos a largo Plazo para el sector pasivo - CPOP','shortened'=>'PLP-R-SP-CPOP','requirements'=>[
+              ['name'=>'Refinanciamiento de Préstamo a largo Plazo para el sector pasivo - CPOP','shortened'=>'PLP-R-SP-CPOP','requirements'=>[
                 ['name' => 'Cédula de Identidad del (la) titular en copia simple','number'=>1],
                 ['name' => 'Última boleta de pago en copia simple.','number'=>2],
                 ['name' => 'Certificado de haberes considerando el último mes percibido.','number'=>2],  // En caso de no tener la boleta de pago
@@ -421,7 +421,7 @@ class LoanStructureSeeder extends Seeder
               'interest' => ['annual_interest' => 13.2,'penal_interest' => 6]
             ],
                 //REFINANCIAMIENTO LARGO PLAZO SECTOR ACTIVO Y ADMINISTRATIVO CON GARANTÍA PERSONAL(2 GARANTES ACTIVOS) **
-                ['name'=>'Refinanciamiento de préstamos a largo Plazo con garantía personal para el sector activo y personal Adm Policial','shortened'=>'PLP-R-GP-SAYADM','requirements'=>[
+                ['name'=>'Refinanciamiento de Préstamo a largo Plazo con garantía personal para el sector activo y personal Adm Policial','shortened'=>'PLP-R-GP-SAYADM','requirements'=>[
                   ['name' => 'Cédula de Identidad del (la) titular en copia simple','number'=>1],
                   ['name' => 'Última Boleta de pago en copia simple.','number'=>2], // Tambien de los 2 garantes
                   ['name' => 'Certificado de haberes considerando el último mes percibido.','number'=>2],  // En caso de no tener la boleta de pago
@@ -532,7 +532,7 @@ class LoanStructureSeeder extends Seeder
             'interest' => ['annual_interest' => 9,'penal_interest' => 6]
             ],
               //REFINANCIAMIENTO DE PRÉSTAMOS A LARGO PLAZO GARANTÍA HIPOTECARIA PARA EL SECTOR ACTIVO
-              ['name'=>'Refinanciamiento de préstamos con garantía hipotecaria de bien inmueble para el sector activo','shortened'=>'PLP-R-GH-SA','requirements'=>[
+              ['name'=>'Refinanciamiento de Préstamo con garantía hipotecaria de bien inmueble para el sector activo','shortened'=>'PLP-R-GH-SA','requirements'=>[
               ['name' => 'Cédula de Identidad del (la) titular en copia simple','number'=>1],
               ['name' => 'Tres últimas Boletas de pago en copia simple.','number'=>2],
               ['name' => 'Certificado de haberes considerando el último mes percibido.','number'=>2],  // En caso de no contar con la boleta de pago
@@ -569,7 +569,7 @@ class LoanStructureSeeder extends Seeder
             'interest' => ['annual_interest' => 9,'penal_interest' => 6]
             ],
           //REFINANCIAMIENTO DE PRÉSTAMOS A LARGO PLAZO GARANTÍA HIPOTECARIA CPOP *
-          ['name'=>'Refinanciamiento de préstamos con garantía hipotecaria de bien inmueble para el sector activo - CPOP','shortened'=>'PLP-R-GH-CPOP','requirements'=>[
+          ['name'=>'Refinanciamiento de Préstamo con garantía hipotecaria de bien inmueble para el sector activo - CPOP','shortened'=>'PLP-R-GH-CPOP','requirements'=>[
             ['name' =>'Cédula de Identidad del (la) titular en copia simple','number'=>1],
             ['name' => 'Certificado de años de servicio desglosado en original emitido por el Comando General de la Policía Boliviana','number'=>2],
             ['name' => 'Certificado de años de servicio desglosado en fotocopia Legalizada emitido por el Comando General de la Policía Boliviana','number'=>2],

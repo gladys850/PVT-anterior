@@ -2,7 +2,7 @@
 {
     "id": 44,
     "procedure_type_id": 11,
-    "name": "Refinanciamiento de prestamos a largo Plazo para el sector activo - CPOP",
+    "name": "Refinanciamiento de Préstamo a largo Plazo para el sector activo - CPOP",
     "shortened": "PLP-R-SA-CPOP",
     "is_valid": true,
     "loan_modality_parameter": {

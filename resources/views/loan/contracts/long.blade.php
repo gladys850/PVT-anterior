@@ -14,7 +14,7 @@
     </div>
 </div>
 <?php $modality = $loan->modality;
-if(($modality->name == 'Refinanciamiento de prestamos a largo Plazo para el sector activo - CPOP' || $modality->name == 'Refinanciamiento de prestamos a largo Plazo para el sector pasivo - CPOP'|| $modality->name == 'Refinanciamiento de préstamos a largo Plazo con garantía personal para el sector activo y personal Adm Policial')){?>
+if(($modality->name == 'Refinanciamiento de Préstamo a largo Plazo para el sector activo - CPOP' || $modality->name == 'Refinanciamiento de Préstamo a largo Plazo para el sector pasivo - CPOP'|| $modality->name == 'Refinanciamiento de Préstamo a largo Plazo con garantía personal para el sector activo y personal Adm Policial')){?>
 <div class="block text-justify">
     <div>
         Conste en el presente contrato de préstamo de {{ $title }}, que al solo reconocimiento de firmas y rúbricas ante autoridad competente será elevado a Instrumento Público, por lo que las partes que intervienen lo suscriben al tenor de las siguientes claúsulas y condiciones:
@@ -58,17 +58,17 @@ if(($modality->name == 'Refinanciamiento de prestamos a largo Plazo para el sect
     </div>
     <div>
     <?php $modality = $loan->modality;
-            if(($modality->name == 'Refinanciamiento de prestamos a largo Plazo para el sector pasivo - CPOP') && $lender->afp){ ?>
+            if(($modality->name == 'Refinanciamiento de Préstamo a largo Plazo para el sector pasivo - CPOP') && $lender->afp){ ?>
         <b>SEXTA.- (DE LA FORMA DE PAGO Y OTRAS CONTINGENGIAS):</b> Para el cumplimiento estricto de la obligación (capital e intereses) el PRESTATARIO, se obliga a cumplir con la cuota de amortización en forma mensual mediante pago directo en la oficina central de la MUSERPOL de la ciudad de La Paz o efectuar el depósito en la cuenta bancaria de la MUSERPOL y enviar la boleta de depósito original a la oficina central inmediatamente; caso contrario el PRESTATARIO se hará pasible al recargo correspondiente a los intereses que se generen al día de pago por la deuda contraída.
         <?php }
         else{
-            if($modality->name == 'Refinanciamiento de prestamos a largo Plazo para el sector activo - CPOP'){
+            if($modality->name == 'Refinanciamiento de Préstamo a largo Plazo para el sector activo - CPOP'){
                 $quinta = 'Comando General de la Policía Boliviana';
             }
-            if($modality->name == 'Refinanciamiento de prestamos a largo Plazo para el sector pasivo - CPOP'){
+            if($modality->name == 'Refinanciamiento de Préstamo a largo Plazo para el sector pasivo - CPOP'){
                 $quinta = 'Servicio Nacional del Sistema de Reparto SENASIR';
             }
-            if($modality->name == 'Refinanciamiento de préstamos a largo Plazo con garantía personal para el sector activo y personal Adm Policial'){
+            if($modality->name == 'Refinanciamiento de Préstamo a largo Plazo con garantía personal para el sector activo y personal Adm Policial'){
                 $quinta = 'Servicio Nacional del Sistema de Reparto SENASIR';
             }
             ?>
@@ -264,14 +264,14 @@ if(($modality->name == 'Refinanciamiento de prestamos a largo Plazo para el sect
     </div>
     <div>
     <?php $modality = $loan->modality;
-            if(($modality->name == 'Largo Plazo con garantía personal para el sector pasivo' || $modality->name == 'Refinanciamiento de prestamos a largo Plazo para el sector pasivo - CPOP') && $lender->afp){ ?>
+            if(($modality->name == 'Largo Plazo con garantía personal para el sector pasivo' || $modality->name == 'Refinanciamiento de Préstamo a largo Plazo para el sector pasivo - CPOP') && $lender->afp){ ?>
         <b>QUINTA.- (DE LA FORMA DE PAGO Y OTRAS CONTINGENGIAS):</b> Para el cumplimiento estricto de la obligación (capital e intereses) el PRESTATARIO, se obliga a cumplir con la cuota de amortización en forma mensual mediante pago directo en la oficina central de la MUSERPOL de la ciudad de La Paz o efectuar el depósito en la cuenta bancaria de la MUSERPOL y enviar la boleta de depósito original a la oficina central inmediatamente; caso contrario el PRESTATARIO se hará pasible al recargo correspondiente a los intereses que se generen al día de pago por la deuda contraída.
         <?php }
         else{
-            if($modality->name == 'Largo Plazo con garantía personal para el sector activo y personal Adm Policial' || $modality->name == 'Largo Plazo con un solo garante para el sector activo - CPOP' || $modality->name == 'Refinanciamiento de préstamos a largo Plazo con garantía personal para el sector activo y personal Adm Policial'){
+            if($modality->name == 'Largo Plazo con garantía personal para el sector activo y personal Adm Policial' || $modality->name == 'Largo Plazo con un solo garante para el sector activo - CPOP' || $modality->name == 'Refinanciamiento de Préstamo a largo Plazo con garantía personal para el sector activo y personal Adm Policial'){
                 $quinta = 'Comando General de la Policía Boliviana';
             }
-            if($modality->name == 'Largo Plazo con garantía personal para el sector pasivo' || $modality->name == 'Refinanciamiento de prestamos a largo Plazo para el sector pasivo - CPOP'){
+            if($modality->name == 'Largo Plazo con garantía personal para el sector pasivo' || $modality->name == 'Refinanciamiento de Préstamo a largo Plazo para el sector pasivo - CPOP'){
                 $quinta = 'Servicio Nacional del Sistema de Reparto SENASIR';
             }?>
         <b>QUINTA.- (DE LA FORMA DE PAGO Y OTRAS CONTINGENGIAS):</b> Para el cumplimiento estricto de la obligación (capital e intereses) el PRESTATARIO, autoriza expresamente a MUSERPOL practicar los descuentos respectivos de los haberes que percibe en forma mensual a través del {{ $quinta }} conforme al Reglamento de Préstamos.
