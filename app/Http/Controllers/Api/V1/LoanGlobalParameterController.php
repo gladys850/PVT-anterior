@@ -55,4 +55,17 @@ class LoanGlobalParameterController extends Controller
         $loan_global_parameter->save();
         return  $loan_global_parameter;
     }
+
+    /**
+    * Obtener el ultimo parametro global de un Préstamo
+    * Obtiene el ultimo parametro global registrado
+    * @urlParam loan_global_parameter required ID de Parámetros Globales de Préstamo. Example: 1
+    * @authenticated
+    * @responseFile responses/loan_global_parameter/get_last_global_parameter.200.json
+    */
+    public function get_last_global_parameter()
+    {
+        $loan_global_parameter = LoanGlobalParameter::latest()->first();
+        return  $loan_global_parameter;
+    }
 }
