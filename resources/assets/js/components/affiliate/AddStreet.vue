@@ -4,14 +4,12 @@
     width="900"
   >
     <v-card>
-      <v-toolbar dense flat color="tertiary">
-        <v-toolbar-title v-show="address.edit">Añadir Dirección</v-toolbar-title>
-        <v-toolbar-title v-show="!address.edit">Dirección</v-toolbar-title>
-        <v-spacer></v-spacer>
-        <v-btn icon @click.stop="close()">
-          <v-icon>mdi-close</v-icon>
-        </v-btn>
+      <v-toolbar dense flat color="">
+        <v-card-title v-show="address.edit">Añadir Dirección</v-card-title>
+        <v-card-title v-show="!address.edit">Dirección</v-card-title>
+       
       </v-toolbar>
+       <v-divider></v-divider>
       <v-card-text>
   <v-container fluid >
       <v-row justify="center">
@@ -74,12 +72,12 @@
       </v-row>
   </v-container>
   </v-card-text>
-      <v-card-actions v-show="address.edit">
-        <v-spacer></v-spacer>
-        <v-btn @click.stop="adicionar()"
-          color="error"
-        >Guardar</v-btn>
-      </v-card-actions>
+  <v-divider></v-divider>
+    <v-card-actions v-show="address.edit">
+      <v-spacer></v-spacer>
+      <v-btn color="error" text  @click.stop="close()">Cerrar</v-btn>
+      <v-btn color="success" text @click.stop="adicionar()">Guardar</v-btn>
+    </v-card-actions>
     </v-card>
   </v-dialog>
 </template>

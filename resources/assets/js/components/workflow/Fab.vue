@@ -26,8 +26,10 @@
         inset 
         persistent>
         <v-card>
+          <v-toolbar dense flat color="">
           <v-card-title>Derivar {{ " ("+selectedLoans.length +") "}} trámites</v-card-title>
-          <v-divider></v-divider>
+           <v-spacer></v-spacer>
+          </v-toolbar>
           <v-card-text style="height: 300px;">
             <div >
             <v-select v-if="$store.getters.roles.filter(o => flow.next.includes(o.id)).length > 1"
@@ -47,6 +49,7 @@
           </v-card-text>
           <v-divider></v-divider>
           <v-card-actions>
+             <v-spacer></v-spacer>
             <v-btn color="error" text @click="sheet = false">Cerrar</v-btn>
             <v-btn color="success" text @click="derivationLoans()">Derivar</v-btn>
           </v-card-actions>

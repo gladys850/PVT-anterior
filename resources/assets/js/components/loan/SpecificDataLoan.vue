@@ -90,7 +90,7 @@
                                 <p><b>NOMBRE:</b> {{$options.filters.fullName(guarantor, true)}}</p>
                                 <p><b>PORCENTAJE DE PAGO:</b> {{guarantor.pivot.payment_percentage}} %</p>
                               </li>
-                              
+                              <li>NO TIENE GARANTES</li>
                             </ul>
                             <ul style="list-style: none" class="pa-0" v-if="procedure_type.name == 'Préstamo hipotecario'">                                
                                 <br>
