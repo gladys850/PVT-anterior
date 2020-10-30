@@ -110,10 +110,9 @@
                   <v-btn text
                     @click="beforeStep(2)">Atras</v-btn>
                   <v-btn
-                    v-show="loan_detail.maximum_suggested_valid"
                     right
                     color="primary"
-                    @click="nextStep(2)">
+                    @click.stop="validateStepsTwo()">
                     Siguiente
                   </v-btn>
                 </v-col>
@@ -359,7 +358,8 @@ export default {
         }
         if(n==2)
         {
-          this.addDataLoan()
+          //this.addDataLoan()
+          //this.validateStepsTwo()
 
           console.log('segundo'+this.modalidad.guarantors )
         }
@@ -435,8 +435,8 @@ export default {
         let res = await axios.get(`module/${this.modulo}/modality_loan`)
         this.modalities = res.data
         //Verifica si es refinaciamiento o reprogramación para no mostrar Anticipo
-        if(this.refinancing || this.reprogramming){  
-          let modalities_aux=[]        
+        if(this.refinancing || this.reprogramming){
+          let modalities_aux=[]
           for(let i = 0; i < this.modalities.length; i++ ){
             if(this.modalities[i].name != "Préstamo Anticipo"){
               modalities_aux.push(this.modalities[i])
@@ -728,8 +728,53 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
       } finally {
         this.loading = false
       }
-    }
-    
+    },
+    validateStepsTwo()
+    {
+      if(!this.loan_detail.maximum_suggested_valid){
+      //this.beforeStep(2)
+        this.toastr.error("El monto solicitado no pertenece a esta modalidad.")
+       // this.beforeStep(2)
+      }else{
+        if(!this.isNew){
+         if(this.data_loan_parent_aux.code==null)
+         {
+          this.toastr.error("Tiene que llenar el Codigo del Prestamo Padre.")
+         }else{
+           if(this.data_loan_parent_aux.amount_approved==null)
+            {
+              this.toastr.error("Tiene que llenar el Monto del Prestamo Padre.")
+            }else{
+              if(this.data_loan_parent_aux.loan_term==null)
+              {
+                this.toastr.error("Tiene que llenar el Plazo del Prestamo Padre.")
+              }else{
+                if(this.data_loan_parent_aux.balance==null)
+                {
+                  this.toastr.error("Tiene que llenar el Saldo del Prestamo Padre.")
+                }else{
+                  if(this.data_loan_parent_aux.balance <= this.calculator_result.amount_requested)
+                  {
+                    this.toastr.error("El saldo no puede ser mayor al Monto Solicitado.")
+                  }
+                  else{
+                    if(this.data_loan_parent_aux.estimated_quota==null)
+                    {
+                      this.toastr.error("Tiene que llenar la Cuota del Prestamo Padre.")
+                    }else{
+                      this.addDataLoan()
+                      this.nextStep(2)
+                    }
+                  }
+                }
+              }
+            }
+         }
+      }else{
+        this.nextStep(2)
+      }
+      }
+    },
   }
 }
 </script>
