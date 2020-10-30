@@ -6,7 +6,7 @@
         <v-col cols="12" md="11" class="v-card-profile" >
               <v-row justify="center">
               <v-col cols="12">
-                <v-toolbar-title>INFORMACION POLICIAL</v-toolbar-title>
+                <v-toolbar-title>INFORMACIÓN POLICIAL</v-toolbar-title>
               </v-col>
             <v-col cols="12" md="4" >
               <ValidationProvider v-slot="{ errors }" vid="affiliate_state_id" name="Estado" rules="required">
@@ -40,7 +40,7 @@
                   <v-text-field
                     dense
                     v-model="dates.dateEntry.formatted"
-                    label="Fecha Ingreso a la Institucion Policial"
+                    label="Fecha Ingreso a la Institución Policial"
                     hint="Día/Mes/Año"
                     persistent-hint
                     append-icon="mdi-calendar"
@@ -102,7 +102,7 @@
               </ValidationProvider>
             </v-col>
             <v-col cols="12" md="4" >
-              <ValidationProvider v-slot="{ errors }" vid="service_months" name="Meses de Servicio" rules="renumeric|min_value:0|max_value:12">
+              <ValidationProvider v-slot="{ errors }" vid="service_months" name="Meses de Servicio" rules="numeric|min_value:0|max_value:11">
               <v-text-field
                 dense
                 :error-messages="errors"
@@ -145,7 +145,7 @@
                   <v-text-field
                     dense
                     v-model="dates.dateDerelict.formatted"
-                    label="Fecha Desvinculacion"
+                    label="Fecha Desvinculación"
                     hint="Día/Mes/Año"
                     persistent-hint
                     append-icon="mdi-calendar"
