@@ -1022,8 +1022,6 @@ class LoanController extends Controller
     * @responseFile responses/loan/loan_evaluate.200.json
     */
     public function validate_re_loan(Request $request, Loan $loan){
-        $loan_id = $loan->id;
-        $loan = Loan::find($loan_id);
         $loan_payments = $loan->payments->sortBy('quota_number');
         $capital_paid = 0;
         $message = array();
@@ -1052,6 +1050,6 @@ class LoanController extends Controller
         else{
             $message['defaulted'] = false;
         }
-        return json_encode($message);
+        return $message;
     }
 }
