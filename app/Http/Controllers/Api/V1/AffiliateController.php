@@ -466,6 +466,7 @@ class AffiliateController extends Controller
     * @queryParam procedure_type_id required ID de tipo de trámite. Example: 11
     * @bodyParam type_sismu boolean Tipo sismu. Example: true
     * @bodyParam cpop_sismu boolean El afiliado es cpop del sismu. Example: true
+    * @bodyParam reprogramming boolean El Tramite es reprogramación. Example: true
     * @authenticated
     * @responseFile responses/affiliate/get_loan_modality.200.json
     */
@@ -477,7 +478,8 @@ class AffiliateController extends Controller
         $modality = ProcedureType::findOrFail($request->procedure_type_id);
         $type_sismu = $request->input('type_sismu',false);
         $cpop_sismu = $request->input('cpop_sismu',false);
-        $affiliate_modality= Loan::get_modality($modality->name, $affiliate, $type_sismu, $cpop_sismu);
+        $reprogramming = $request->input('reprogramming',false);
+        $affiliate_modality= Loan::get_modality($modality->name, $affiliate, $type_sismu, $cpop_sismu, $reprogramming);
         if(!$affiliate_modality) abort(403, 'El afiliado no califica para la modalidad');
         return $affiliate_modality;
     }
