@@ -622,18 +622,18 @@ class AffiliateController extends Controller
         if(isset($affiliate)){
             $b["state"]=true;
             $b["affiliate"]=$affiliate;
-            return json_encode($b);
+            return $b;
             //return self::append_data($affiliate, true);
         }else{
             $affiliate = Spouse::whereIdentity_card($request->identity_card)->first();
             if(isset($affiliate)){
                 $b["state"]=true;
                 $b["affiliate"]=$affiliate;
-                return json_encode($b);
+                return $b;
             }
             else{
                 $b["state"]=false;
-                return json_encode($b);
+                return $b;
             }
         }
     }
