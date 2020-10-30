@@ -29,6 +29,7 @@ Route::group([
         Route::apiResource('role', 'Api\V1\RoleController')->only('index', 'show');
         Route::apiResource('permission', 'Api\V1\PermissionController')->only('index');
         Route::apiResource('loan_global_parameter', 'Api\V1\LoanGlobalParameterController')->only('index', 'show', 'store', 'update', 'destroy');
+        Route::get('last_loan_global_parameter', 'Api\V1\LoanGlobalParameterController@get_last_global_parameter');
         Route::apiResource('loan_destiny', 'Api\V1\LoanDestinyController')->only('index', 'show', 'store', 'update', 'destroy');
         Route::apiResource('affiliate', 'Api\V1\AffiliateController')->only('show');
         Route::apiResource('affiliate_state', 'Api\V1\AffiliateStateController')->only('index');
