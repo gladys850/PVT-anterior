@@ -324,6 +324,39 @@ class LoanStructureSeeder extends Seeder
               ],
               'interest' => ['annual_interest' => 13.2,'penal_interest' => 6]
             ],
+                // LARGO PLAZO SECTOR PASIVO CON UN SOLO GARANTE - CPOP
+                ['name'=>'Largo Plazo con un solo garante para el sector pasivo - CPOP','shortened'=>'PLP-SP-CPOP','requirements'=>[
+                  ['name' => 'Cédula de Identidad del (la) titular en copia simple','number'=>1],
+                  ['name' => 'Última boleta de pago en copia simple.','number'=>2],
+                  ['name' => 'Certificado de haberes considerando el último mes percibido.','number'=>2],  // En caso de no tener la boleta de pago
+                  ['name' => 'Certificado de años de servicio desglosado en original emitido por el Comando General de la Policía Boliviana','number'=>3],
+                  ['name' => 'Certificado de años de servicio desglosado en fotocopia Legalizada emitido por el Comando General de la Policía Boliviana','number'=>3],
+                  ['name' => 'Certificado de años de servicio desglosado en original emitido por el Comando Regional de la Policía Boliviana','number'=>3],
+                  ['name' => 'Estado de cuenta original, vigente y emitido por el Banco Unión S.A','number'=>4],
+                  ['name' => 'Formulario de Calificación y Aprobación de Préstamos FORM/CAYAP/PTMO/UIP/004.','number'=>5],
+                  /*condiciones COP MUSERPOL*/
+                  /*Estos documentos son solicitados por MUSERPOL en caso de ser requeridos*/
+                  ['name' => 'Certificado de Renta de jubilación o fotocopia legalizada emitida por el servicio Nacional del Sistema de Reparto.','number'=>0],  //En caso de perdida de boleta de pago
+                  ['name' => 'Certificado de aportes para el Auxilio Mortuorio de los 3 últimos meses de la unidad de Fondo de Retiro.','number'=>0], // para solicitantes AFPś
+                  ['name' => 'Solicitud de aclaración de datos personales en la Boleta de Pago.','number'=>0],  // En caso de que el afiliado tenga datos erroneos en su boleta de pago
+                  ['name' => 'Certificado de no adeudo, emitido por la instancia correspondiente','number'=>0],  // en caso de que el afiliado haya tenido deudas de otras entidades (Ej: COMIPOL , COVIPOL)
+                  ['name' => 'Certificado de pago emitido por la entidad correspondiente.','number'=>0],  // en caso de que el afiliado tenga deudas con otras entidades (Ej: COMIPOL , COVIPO
+                  ['name' => 'Memorándum de agradecimiento de servicios en copia simple emitido por el Comando General de la Policía Boliviana.','number'=>0],  // *caso pasivo con renta en AFP , quien solicita el préstamo
+                  ['name' => 'Conformidad de devolución de descuento por garantía original o fotocopia legalizada.','number'=>0],
+                ],
+                'parameters' => [
+                  'debt_index' => 60,
+                  'quantity_ballots' => 1,
+                  'guarantors' => 1,
+                  'min_guarantor_category' =>0.35,
+                  'max_guarantor_category' =>0.85,
+                  'personal_reference' => true,
+                  'max_lenders' => 1,
+                  'max_cosigner'=>0
+                ],
+                'interest' => ['annual_interest' => 13.2,'penal_interest' => 6]
+              ],
+
                 // LARGO PLAZO UN SOLO GARANTE SECTOR ACTIVO --Afiliados CPOP
               ['name'=>'Largo Plazo con un solo garante para el sector activo - CPOP','shortened'=>'PLP-CPOP','requirements'=>[
                 ['name' => 'Cédula de Identidad del (la) titular en copia simple','number'=>1],
@@ -388,7 +421,36 @@ class LoanStructureSeeder extends Seeder
               ],
               'interest' => ['annual_interest' => 13.2,'penal_interest' => 6]
             ],
-                 // REFINANCIANCIAMIENTO SECTOR PASIVO CON UN SOLO GARANTE
+                 // REFINANCIANCIAMIENTO SECTOR PASIVO CON GARANTIA PERSONAL
+                ['name'=>'Refinanciamiento de Préstamo a largo Plazo con garantía personal para el sector pasivo','shortened'=>'PLP-R-GP-SP','requirements'=>[
+                  ['name' => 'Cédula de Identidad del (la) titular en copia simple.','number'=>1],// del solicitante y los garantes
+                  ['name' => 'Última boleta de pago en copia simple.','number'=>2],
+                  ['name' => 'Certificado de haberes considerando el último mes percibido.','number'=>2],  // En caso de no tener la boleta de pago
+                  ['name' => 'Estado de cuenta original, vigente y emitido por el Banco Unión S.A','number'=>3],
+                  ['name' => 'Formulario de Calificación y Aprobación de Préstamos FORM/CAYAP/PTMO/UIP/004.','number'=>4],
+                  /*Estos documentos son solicitados por MUSERPOL en caso de ser requeridos*/
+                  ['name' => 'Certificado de Renta de jubilación o fotocopia legalizada emitida por el servicio Nacional del Sistema de Reparto.','number'=>0],  //En caso de perdida de boleta de pago
+                  ['name' => 'Certificado de aportes para el Auxilio Mortuorio de los 3 últimos meses de la unidad de Fondo de Retiro.','number'=>0], // para solicitantes AFPś
+                  ['name' => 'Solicitud de aclaración de datos personales en la Boleta de Pago.','number'=>0],  // En caso de que el afiliado tenga datos erroneos en su boleta de pago
+                  ['name' => 'Certificado de no adeudo, emitido por la instancia correspondiente','number'=>0],  // en caso de que el afiliado haya tenido deudas de otras entidades (Ej: COMIPOL , COVIPOL)
+                  ['name' => 'Certificado de pago emitido por la entidad correspondiente.','number'=>0],  // en caso de que el afiliado tenga deudas con otras entidades (Ej: COMIPOL , COVIPO
+                  ['name' => 'Memorándum de agradecimiento de servicios en copia simple emitido por el Comando General de la Policía Boliviana.','number'=>0],  // *caso pasivo con renta en AFP , quien solicita el préstamo
+                  ['name' => 'Conformidad de devolución de descuento por garantía original o fotocopia legalizada.','number'=>0],
+  
+                ],
+                'parameters' => [
+                  'debt_index' => 50,
+                  'quantity_ballots' => 1,
+                  'guarantors' => 1,
+                  'min_guarantor_category' =>0.35,
+                  'max_guarantor_category' =>0.85,
+                  'personal_reference' => true,
+                  'max_lenders' => 1,
+                  'max_cosigner'=>0
+                ],
+                'interest' => ['annual_interest' => 13.2,'penal_interest' => 6]
+              ],
+                 // REFINANCIANCIAMIENTO SECTOR PASIVO CON UN SOLO GARANTE - CPOP 
               ['name'=>'Refinanciamiento de Préstamo a largo Plazo para el sector pasivo - CPOP','shortened'=>'PLP-R-SP-CPOP','requirements'=>[
                 ['name' => 'Cédula de Identidad del (la) titular en copia simple','number'=>1],
                 ['name' => 'Última boleta de pago en copia simple.','number'=>2],

@@ -100,7 +100,7 @@ if(($modality->name == 'Refinanciamiento de Préstamo con garantía hipotecaria 
         <?php }?>
     </div>
     <div>
-        <b>CUARTA.- (DESTINO Y USO):</b> LA ENTIDAD concede el préstamo pactado con destino exclusivo a {{ $loan->destiny->name }}. Su uso total o parcial en una finalidad diferente se reputará como incumplimiento y la obligación como vencida, líquida y exigible, obligando al/a los DEUDOR/ES a restituir el capital e intereses en forma inmediata y determinará la mora del/de los DEUDOR/ES. Para esta eventualidad y sin perjuicio del cobro coactivo, LA MUSERPOL se reserva el derecho de iniciar las acciones legales pertinentes.
+        <b>CUARTA.- (DESTINO Y USO):</b> LA ENTIDAD concede el préstamo pactado con destino exclusivo a {{ $loan->destiny->name }}. Su uso total o parcial en una finalidad diferente se reputará como incumplimiento y la obligación como vencida, líquida y exigible, obligando {{ $plural ? 'a los DEUDORES' : 'al DEUDOR'}} a restituir el capital e intereses en forma inmediata y determinará la mora {{ $plural ? 'de los DEUDORES' : 'del DEUDOR'}}. Para esta eventualidad y sin perjuicio del cobro coactivo, LA MUSERPOL se reserva el derecho de iniciar las acciones legales pertinentes.
     </div>
     <div>
         <b>QUINTA.- (DESEMBOLSO):</b> El préstamo concedido quedará perfeccionado mediante un solo desembolso que quedará acreditado mediante comprobante escrito en el que conste el abono efectuado a favor del PRESTATARIO, o a través de cuenta bancaria del Banco Unión a solicitud del prestatario; reconociendo ambas partes que al amparo de este procedimiento se cumple satisfactoriamente la exigencia contenida en el artículo 1331 del Código de Comercio.
