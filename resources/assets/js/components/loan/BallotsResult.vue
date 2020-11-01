@@ -117,7 +117,6 @@
                           <p>INDICE DE ENDEUDAMIENTO: {{calculator_result.indebtedness_calculated_total }}</p>
                           <p v-show="calculator_result.maximum_suggested_valid" class="success--text font-weight-black">MONTO MAXIMO SUGERIDO : {{calculator_result.amount_maximum_suggested}}</p>
                           <p v-show="!calculator_result.maximum_suggested_valid" class="error--text font-weight-black">MONTO MAXIMO SUGERIDO : {{calculator_result.amount_maximum_suggested}}</p>
-                          <p v-show="!calculator_result.maximum_suggested_valid" class="error--text font-weight-black">NO PUEDE ACCEDER A UN PRESTAMO DE ESTA MODALIDAD</p>
                         </fieldset>
                       </v-flex>
                     </v-layout>
@@ -137,7 +136,8 @@
 export default {
   name: "loan-requirement",
   data: () => ({
-    ver:false
+    ver:false,
+    calculator_result_aux:{}
   }),
   props: {
     data_loan_parent_aux: {
@@ -211,20 +211,20 @@ export default {
           liquid_qualification_calculated_lender: 0,
           liquid_calculated:this.liquid_calificated
         })
-        this.calculator_result = res.data
+        this.calculator_result_aux = res.data
 
-        if( this.calculator_result.amount_requested<this.calculator_result.amount_maximum_suggested){
-          this.calculator_result.amount_requested=this.calculator_result.amount_requested
-          this.loan_detail.amount_requested=this.calculator_result.amount_requested
+        if( this.calculator_result.amount_requested<this.calculator_result_aux.amount_maximum_suggested){
+          this.calculator_result.amount_requested=this.calculator_result_aux.amount_requested
+          this.loan_detail.amount_requested=this.calculator_result_aux.amount_requested
         }else{
-          this.calculator_result.amount_requested=this.calculator_result.amount_maximum_suggested
-          this.loan_detail.amount_requested=this.calculator_result.amount_maximum_suggested
+          this.calculator_result.amount_requested=this.calculator_result_aux.amount_maximum_suggested
+          this.loan_detail.amount_requested=this.calculator_result_aux.amount_maximum_suggested
         }
-        this.loan_detail.months_term=this.calculator_result.months_term
-        this.loan_detail.indebtedness_calculated=this.calculator_result.indebtedness_calculated_total
+        this.loan_detail.months_term=this.calculator_result_aux.months_term
+        this.loan_detail.indebtedness_calculated=this.calculator_result_aux.indebtedness_calculated_total
 
-        this.loan_detail.maximum_suggested_valid=this.calculator_result.maximum_suggested_valid
-        this.loan_detail.quota_calculated_total_lender=this.calculator_result.quota_calculated_estimated_total
+        this.loan_detail.maximum_suggested_valid=this.calculator_result_aux.maximum_suggested_valid
+        this.loan_detail.quota_calculated_total_lender=this.calculator_result_aux.quota_calculated_estimated_total
 
         /*      for (this.j = 0; this.j< this.simulator.length; this.j++){
           this.simulator[this.j].affiliate_nombres=this.datos_calculadora_hipotecario[this.j].affiliate_name
