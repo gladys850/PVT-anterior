@@ -636,8 +636,10 @@ class LoanController extends Controller
     public function print_form(Request $request, Loan $loan, $standalone = true)
     {
         $lenders = [];
+        $is_dead = false;
         foreach ($loan->lenders as $lender) {
             array_push($lenders, self::verify_spouse_disbursable($lender)->disbursable);
+            if($lender->dead) $is_dead = true;
         }
         $persons = collect([]);
         foreach ($lenders as $lender) {
@@ -669,7 +671,8 @@ class LoanController extends Controller
             'title' => 'SOLICITUD DE ' . ($loan->parent_loan ? $loan->parent_reason : 'PRÉSTAMO'),
             'loan' => $loan,
             'lenders' => collect($lenders),
-            'signers' => $persons
+            'signers' => $persons,
+            'is_dead'=> $is_dead
         ];
         $file_name = implode('_', ['solicitud', 'prestamo', $loan->code]) . '.pdf';
         $view = view()->make('loan.forms.request_form')->with($data)->render();
