@@ -156,7 +156,8 @@
                 v-show="hipotecario"
                 :contrib_codebtor="contrib_codebtor"
                 :modalidad.sync="modalidad"
-                :affiliate.sync="affiliate"/>
+                :affiliate.sync="affiliate"
+                :data_loan.sync="data_loan"/>
              </ValidationObserver>    
             </v-card>
           </v-col>
@@ -245,13 +246,17 @@ export default {
       return this.$route.params.hash == 'refinancing'
     },
     reprogramming() {
-      return this.$route.params.hash == 'reprogramming'
+      if(this.$route.params.hash == 'reprogramming'){
+        return true
+      }else{
+        return false
+      }
     },
     type_sismu() {
       if(this.$route.query.type_sismu){
-        this.data_sismu.type_sismu = true
+        return true
       }
-      return this.data_sismu.type_sismu
+      return false
     }
   },
   /*watch: {
@@ -309,6 +314,7 @@ export default {
         let resp = await axios.post(`affiliate/${id}/loan_modality?procedure_type_id=${this.loanTypeSelected.id}`,{
           type_sismu: this.data_sismu.type_sismu,
           cpop_sismu: this.data_sismu.cpop_sismu,
+          reprogramming: this.reprogramming
           /*params: {
             procedure_type_id:this.loanTypeSelected.id,
             //external_discount:0, //FIXME revisar si este paramtro no tiene uso, en otro caso borrar
