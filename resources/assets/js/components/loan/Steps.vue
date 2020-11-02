@@ -8,7 +8,6 @@
             :complete="e1 > 1"
             :step="1">Modalidad
           </v-stepper-step>
-          {{lenders}}
           <v-divider v-if="1 !== steps" :key="1" ></v-divider>
           <v-stepper-step editable
             :key="`${2}-step`"
