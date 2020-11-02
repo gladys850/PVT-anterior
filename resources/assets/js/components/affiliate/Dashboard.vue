@@ -266,7 +266,7 @@ export default {
     }
   },
   mounted() {
-    this.verifyLoans()
+    this.verifyLoans(this.$route.params.id)
     if (!this.isNew) {
       this.getProfilePictures(this.$route.params.id);
       this.getLoan(this.$route.params.id);
@@ -368,13 +368,14 @@ export default {
      this.$router.push({ name: 'loanAddrep',  params: { hash: 'ref'}, query:{ affiliate_id: affiliateid,loan_id:loanid } })
     },*/
     validateAffiliate(id, type_procedure) {
+      this.verifyLoans(id)
       if(this.state_name_type != 'Baja' && this.state_name_status != 'Fallecido' && this.state_name != ''){
         if(this.affiliate.identity_card != null && this.affiliate.city_identity_card_id != null){
           if(this.affiliate.civil_status != null){
             if(this.affiliate.financial_entity_id != null && this.affiliate.account_number != null && this.affiliate.sigep_status != null){
               if(this.affiliate.birth_date != null && this.affiliate.city_birth_id != null){
                 if(this.loan_affiliate.process_loans <= 1){
-                  if(process_loans.disbursement_loans <= 2 ){
+                  if(this.loan_affiliate.disbursement_loans <= 2 ){
                     if(type_procedure == "is_new"){
                       this.$router.push({ name: 'loanAdd',  params: { hash: 'new'},  query: { affiliate_id: id}})
                     } if(type_procedure == "is_refinancing"){
@@ -470,9 +471,9 @@ export default {
         console.log(e)
       }
     },
-    async verifyLoans(){
+    async verifyLoans(id){
       try {
-        let res = await axios.get(`affiliate/${this.affiliate.id}/maximum_loans`)
+        let res = await axios.get(`affiliate/${id}/maximum_loans`)
         this.loan_affiliate = res.data
         console.log(this.loan_affiliate)
       } catch (e) {
