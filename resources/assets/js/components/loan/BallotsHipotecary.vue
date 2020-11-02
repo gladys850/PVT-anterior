@@ -339,7 +339,7 @@ export default {
           }
         }
         else{
-          this.toastr.error("El garante no puede tener el mismo carnet que el titular.")
+          this.toastr.error("El Codeudor afiliado no puede tener el mismo carnet que el titular.")
         } 
       } catch (e) {
         console.log(e)
