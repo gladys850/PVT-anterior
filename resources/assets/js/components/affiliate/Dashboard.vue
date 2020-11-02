@@ -245,7 +245,8 @@ export default {
     loan: [],
     loan_one: null,
     loan_two: null,
-    loan_three: null
+    loan_three: null,
+    loan_affiliate: {}
   }),
   created() {
     this.randomColor = common.randomColor;
@@ -265,6 +266,7 @@ export default {
     }
   },
   mounted() {
+    this.verifyLoans()
     if (!this.isNew) {
       this.getProfilePictures(this.$route.params.id);
       this.getLoan(this.$route.params.id);
@@ -371,17 +373,24 @@ export default {
           if(this.affiliate.civil_status != null){
             if(this.affiliate.financial_entity_id != null && this.affiliate.account_number != null && this.affiliate.sigep_status != null){
               if(this.affiliate.birth_date != null && this.affiliate.city_birth_id != null){
-                if(type_procedure == "is_new"){
-                  this.$router.push({ name: 'loanAdd',  params: { hash: 'new'},  query: { affiliate_id: id}})
-                } if(type_procedure == "is_refinancing"){
-                  this.$router.push({ name: 'loanAdd', params: { hash: 'refinancing'}, query: { affiliate_id: id, type_sismu: true}})
-                } if(type_procedure == "is_reprogramming"){
-                  this.$router.push({ name: 'loanAdd', params: { hash: 'reprogramming'}, query: { affiliate_id: id, type_sismu: true}})
-                }
-
+                if(this.loan_affiliate.process_loans <= 1){
+                  if(process_loans.disbursement_loans <= 2 ){
+                    if(type_procedure == "is_new"){
+                      this.$router.push({ name: 'loanAdd',  params: { hash: 'new'},  query: { affiliate_id: id}})
+                    } if(type_procedure == "is_refinancing"){
+                      this.$router.push({ name: 'loanAdd', params: { hash: 'refinancing'}, query: { affiliate_id: id, type_sismu: true}})
+                    } if(type_procedure == "is_reprogramming"){
+                      this.$router.push({ name: 'loanAdd', params: { hash: 'reprogramming'}, query: { affiliate_id: id, type_sismu: true}})
+                    }
+                  }else{
+                    this.toastr.error("El afiliado no puede tener mas de DOS préstamos desembolsados. Actualemnte tiene "+ this.loan_affiliate.disbursement_loans+ " prestamos desembolsados")
+                  }
                 }else{
-                  this.toastr.error("El afiliado no tiene registrado su fecha de nacimiento ó ciudad de nacimiento.")
+                  this.toastr.error("El afiliado no puede tener mas de UN trámite en proceso. Actualemnte tiene "+ this.loan_affiliate.process_loans+ " prestamos en proceso")
                 }
+              }else{
+              this.toastr.error("El afiliado no tiene registrado su fecha de nacimiento ó ciudad de nacimiento.")
+              }
             }else{
             this.toastr.error("El afiliado no tiene registrado la entidad financiera")
             }         
@@ -461,6 +470,15 @@ export default {
         console.log(e)
       }
     },
+    async verifyLoans(){
+      try {
+        let res = await axios.get(`affiliate/${this.affiliate.id}/maximum_loans`)
+        this.loan_affiliate = res.data
+        console.log(this.loan_affiliate)
+      } catch (e) {
+        console.log(e)
+      }
+    }
   }
 };
 </script>

@@ -4,7 +4,7 @@
         <v-row justify="center">
           <v-col cols="12"  >
             <v-card>
-              <ValidationObserver ref="observer">
+              <ValidationObserver ref="observer" >
               <v-container fluid >
                 <v-row justify="center" class="py-0">
                   <v-col cols="12" class="py-0" >
@@ -63,77 +63,98 @@
                     BOLETAS DE PAGO
                   </v-col>
                   <v-col cols="12" md="4" class="py-0"  >
+                    <ValidationProvider v-slot="{ errors }" name="1ra Boleta de pago" :rules="'required|numeric|min_value:'+livelihood_amount"  mode="aggressive">
                     <v-text-field
+                      :error-messages="errors"
                       dense
                       v-model="payable_liquid[0]"
                       label="1ra Boleta"
                       :readonly="!editar"
                       :outlined="editar"
                      ></v-text-field>
+                    </ValidationProvider>
                   </v-col>
                   <v-col cols="12" md="4" class="py-0" v-if="visible">
+                    <ValidationProvider v-slot="{ errors }" name="2da Boleta de pago" :rules="'numeric|min_value:'+livelihood_amount"  mode="aggressive">
                     <v-text-field
+                    :error-messages="errors"
                       dense
                       v-model="payable_liquid[1]"
                       label="2ra Boleta"
                       :readonly="!editar"
                       :outlined="editar"
                   ></v-text-field>
+                  </ValidationProvider>
                   </v-col>
                   <v-col cols="12" md="4" class="py-0" v-if="visible" >
+                    <ValidationProvider v-slot="{ errors }" name="3ra Boleta de pago" :rules="'numeric|min_value:'+livelihood_amount"  mode="aggressive">
                     <v-text-field
+                    :error-messages="errors"
                       dense
                       v-model="payable_liquid[2]"
                       label="3ra Boleta"
                       :readonly="!editar"
                       :outlined="editar"
                      ></v-text-field>
+                     </ValidationProvider>
                   </v-col>
                   <v-col cols="12" class="py-0" >
                     BONOS
                   </v-col>
                   <v-col cols="12" md="3" >
+                    <ValidationProvider v-slot="{ errors }" name="Bono Frontera" :rules="'numeric|max_value:'+payable_liquid[0]"  mode="aggressive">
                     <v-text-field
+                    :error-messages="errors"
                       dense
                       v-model="bonos[0]"
                       label="Bono Frontera"
                       :readonly="!editar"
                       :outlined="editar"
                      ></v-text-field>
+                     </ValidationProvider>
                   </v-col>
                   <v-col cols="12" md="3">
+                    <ValidationProvider v-slot="{ errors }" name="Bono Oriente" :rules="'numeric|max_value:'+payable_liquid[0]"  mode="aggressive">
                     <v-text-field
+                    :error-messages="errors"
                       dense
                       v-model="bonos[1]"
                       label="Bono Oriente"
                       :readonly="!editar"
                       :outlined="editar"
                      ></v-text-field>
+                     </ValidationProvider>
                   </v-col>
                   <v-col cols="12" md="3" >
+                    <ValidationProvider v-slot="{ errors }" name="Bono Cargo" :rules="'numeric|max_value:'+payable_liquid[0]"  mode="aggressive">
                     <v-text-field
+                    :error-messages="errors"
                       dense
                       v-model="bonos[2]"
                       label="Bono Cargo"
                       :readonly="!editar"
                       :outlined="editar"
                     ></v-text-field>
+                    </ValidationProvider>
                   </v-col>
                   <v-col cols="12" md="3">
+                    <ValidationProvider v-slot="{ errors }" name="Bono Seguridad Ciudadana" :rules="'numeric|max_value:'+payable_liquid[0]" mode="aggressive">
                     <v-text-field
+                    :error-messages="errors"
                       dense
                       v-model="bonos[3]"
                       label="Bono Seguridad Ciudadana"
                       :readonly="!editar"
                       :outlined="editar"
                      ></v-text-field>
+                     </ValidationProvider>
                   </v-col> 
                   <template v-if="type_sismu">             
                   <v-col cols="12" class="py-0">
                     DATOS SISMU
                   </v-col>
                   <v-col cols="12" md="3" >
-                    <ValidationProvider v-slot="{ errors }" name="cuota" :rules="'required|numeric|min_value:1'"  mode="aggressive">
+                    <ValidationProvider v-slot="{ errors }" name="cuota" :rules="'numeric|min_value:1'"  mode="aggressive">
                     <v-text-field
                       :error-messages="errors"
                       dense
@@ -156,7 +177,8 @@
                 v-show="hipotecario"
                 :contrib_codebtor="contrib_codebtor"
                 :modalidad.sync="modalidad"
-                :affiliate.sync="affiliate"/>
+                :affiliate.sync="affiliate"
+                :data_loan.sync="data_loan"/>
              </ValidationObserver>    
             </v-card>
           </v-col>
@@ -229,7 +251,12 @@ export default {
     data_sismu:{
       type: Object,
       required: true
-    }
+    },
+  livelihood_amount:{
+    type: Number,
+    required:true,
+    default:0
+  }
   },
     components: {
     BallotsHipotecary
@@ -245,13 +272,17 @@ export default {
       return this.$route.params.hash == 'refinancing'
     },
     reprogramming() {
-      return this.$route.params.hash == 'reprogramming'
+      if(this.$route.params.hash == 'reprogramming'){
+        return true
+      }else{
+        return false
+      }
     },
     type_sismu() {
       if(this.$route.query.type_sismu){
-        this.data_sismu.type_sismu = true
+        return true
       }
-      return this.data_sismu.type_sismu
+      return false
     }
   },
   /*watch: {
@@ -309,6 +340,7 @@ export default {
         let resp = await axios.post(`affiliate/${id}/loan_modality?procedure_type_id=${this.loanTypeSelected.id}`,{
           type_sismu: this.data_sismu.type_sismu,
           cpop_sismu: this.data_sismu.cpop_sismu,
+          reprogramming: this.reprogramming
           /*params: {
             procedure_type_id:this.loanTypeSelected.id,
             //external_discount:0, //FIXME revisar si este paramtro no tiene uso, en otro caso borrar
