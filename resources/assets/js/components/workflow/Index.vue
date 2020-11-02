@@ -273,7 +273,9 @@ export default {
     this.bus.$on('emitRefreshLoans', val => {
       this.updateLoanList();
     })
-    this.getAffiliate(this.$route.params.id)
+    if(this.$route.params.id > 0){ //TODO revisar si se utiliza el filtro de afiliado para listar los prestamos del afiliado
+      this.getAffiliate(this.$route.params.id)
+    }
   },
   watch: {
     search: _.debounce(function () {

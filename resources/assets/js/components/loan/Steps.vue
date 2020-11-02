@@ -8,6 +8,7 @@
             :complete="e1 > 1"
             :step="1">Modalidad
           </v-stepper-step>
+          {{lenders_aux}}
           <v-divider v-if="1 !== steps" :key="1" ></v-divider>
           <v-stepper-step editable
             :key="`${2}-step`"
@@ -547,10 +548,10 @@ export default {
           this.lenders=res.data
 
           for(let i = 0; i < this.lenders.length; i++ ){
-//Armar el nombre de los lenders
-        /*  let res4 = await axios.get(`affiliate/${this.lenders[i].affiliate_id}`)
+            //Armar el nombre de los lenders
+            let res4 = await axios.get(`affiliate/${this.lenders[i].affiliate_id}`)
             this.lenders_aux[i] =res4.data.full_name
-*/
+
 
             this.lenders[i].payment_percentage=this.calculator_result.affiliates[i].payment_percentage
             this.lenders[i].indebtedness_calculated=this.calculator_result.affiliates[i].indebtedness_calculated

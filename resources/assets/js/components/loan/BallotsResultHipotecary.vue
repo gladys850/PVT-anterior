@@ -97,11 +97,11 @@
                       <v-layout row wrap>
                         <v-flex xs12 class="px-1">
                           <fieldset class="pa-2">
-                              <v-toolbar-title>Liquido Pagable {{lenders_aux}}</v-toolbar-title>
+                              <v-toolbar-title>Liquido Pagable</v-toolbar-title>
                               <ul style="list-style: none" class="pa-0">
-                              <li v-for="(liquido,i) in liquid_calificated" :key="i" >
+                              <li v-for="(liquido,i) in liquid_calificated" :key="i">
                                 <v-progress-linear></v-progress-linear>
-                                <p class="py-0 mb-0">Nombre del Afiliado: {{ liquido.affiliate_id}}</p>
+                                <p class="py-0 mb-0">Nombre del Afiliado: {{lenders_aux[i]}}</p>
                                 <p class="py-0 mb-0">Liquido Pagable: {{liquido.payable_liquid_calculated+"  "}}{{"  "+"Total de Bonos:"+liquido.bonus_calculated}}{{" "}}Liquido para Calificacion: {{" "+liquido.liquid_qualification_calculated}}</p>
                               </li>
                             </ul>
@@ -120,7 +120,7 @@
                               <ul style="list-style: none" class="pa-0">
                                 <li v-for="(calculado,i) in calculator_result.affiliates" :key="i" >
                                   <v-progress-linear></v-progress-linear>
-                                   <p class="py-0 mb-0">Nombre del Afiliado: {{ calculado.affiliate_id}}</p>
+                                   <p class="py-0 mb-0">Nombre del Afiliado: {{ lenders_aux[i]}}</p>
                                   <p class="py-0 mb-0">Liquido para Callificacion: {{calculado.liquid_qualification_calculated}}<b> | </b>Cuota Estimada: {{calculado.quota_calculated_estimated}} <b> | </b>Porcentaje de Pago: {{calculado.payment_percentage}}% </p>
                                 </li>
                               </ul>
