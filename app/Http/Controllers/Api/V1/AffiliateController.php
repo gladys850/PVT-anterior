@@ -472,7 +472,10 @@ class AffiliateController extends Controller
     */
     public function get_loan_modality(Request $request, Affiliate $affiliate) {
         $request->validate([
-            'procedure_type_id' => 'required|integer|exists:procedure_types,id'
+            'procedure_type_id' => 'required|integer|exists:procedure_types,id',
+            'type_sismu' => 'boolean',
+            'cpop_sismu' => 'boolean',
+            'reprogramming' => 'boolean'
         ]);
         if(!$affiliate->affiliate_state) abort(403, 'Debe actualizar el estado del afiliado');
         $modality = ProcedureType::findOrFail($request->procedure_type_id);
