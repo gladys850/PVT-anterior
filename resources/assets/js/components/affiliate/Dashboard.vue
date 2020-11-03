@@ -3,14 +3,14 @@
     <v-row>
       <v-col cols="8" class="text-center">
         <v-card color="#EDF2F4" shaped class="mx-5">
-          <v-card-title>Préstamos{{Object.entries(this.spouse).length }}</v-card-title>
+          <v-card-title>Préstamos</v-card-title>
           <v-card-text>
             <div>
               <h1 v-if="loan.length === 0">NO TIENE PRÉSTAMOS REGISTRADOS</h1>
               <ul style="list-style: none;" class="pa-0">
                 <li v-for="(item,index) in loan" :key="item.id" class="pb-2">
                   <div v-if="index < 3">
-                    {{item.procedure_modality_id}}
+                    <!--{{item.procedure_modality_id}}-->
                     <strong>Cód.:</strong>
                     {{ item.code }} |
                     <strong>Desembolsado:</strong>
