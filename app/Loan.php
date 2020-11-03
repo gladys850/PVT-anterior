@@ -102,7 +102,7 @@ class Loan extends Model
 
     public function state()
     {
-      return $this->belongsTo(LoanState::class, 'state_id','id');
+      return $this->belongsTo(LoanState::class, 'state_id','id'); 
     }
 
     public function city()
@@ -402,7 +402,12 @@ class Loan extends Model
                             if($reprogramming){ //reprogramacion PVT
                                 if($affiliate_state == "Servicio" || $affiliate_state == "Comisión" )
                                 {
-                                    $modality=ProcedureModality::whereShortened("PCP-SA")->first(); //corto plazo activo
+                                    foreach($affiliate->active_loans() as $loan){
+                                        if($loan->modality->shortened == 'PCP-R-SA')
+                                        $modality=ProcedureModality::whereShortened("PCP-R-SA")->first();
+                                        break; 
+                                    }
+                                    if(!$modality) $modality=ProcedureModality::whereShortened("PCP-SA")->first(); //corto plazo activo
                                 }else{
                                     $modality=ProcedureModality::whereShortened("PCP-DLA")->first(); // corto plazo activo letra A, no le corresponde refinanciamiento segun Art 76 del reglamento
                                 }
@@ -435,7 +440,12 @@ class Loan extends Model
                             if(!$type_sismu && !$cpop_sismu){
                                 if($affiliate->active_loans()){
                                     if($reprogramming){//reprogramacion PVT
-                                        $modality=ProcedureModality::whereShortened("PCP-SP-AFP")->first(); // Prestamo a corto plazo sector pasivo afp;
+                                        foreach($affiliate->active_loans() as $loan){
+                                            if($loan->modality->shortened == 'PCP-R-SP-AFP')
+                                            $modality=ProcedureModality::whereShortened("PCP-R-SP-AFP")->first();// repro afp pasivo
+                                            break; 
+                                        }
+                                        if(!$modality) $modality=ProcedureModality::whereShortened("PCP-SP-AFP")->first(); // Prestamo a corto plazo sector pasivo afp;
                                     }else{
                                         foreach($affiliate->active_loans() as $loan){
                                             if($loan->modality->shortened == 'PCP-SP-AFP')
@@ -454,8 +464,13 @@ class Loan extends Model
                             
                             if(!$type_sismu && !$cpop_sismu){
                                 if($affiliate->active_loans()){
-                                    if($reprogramming){ //reprogramacion PVT
-                                        $modality=ProcedureModality::whereShortened("PCP-SP-SEN")->first(); // Prestamo a corto plazo senarir 
+                                    if($reprogramming){ //reprogramacion 
+                                        foreach($affiliate->active_loans() as $loan){
+                                            if($loan->modality->shortened == 'PCP-R-SP-SEN')
+                                            $modality=ProcedureModality::whereShortened("PCP-R-SP-SEN")->first();
+                                            break; 
+                                        }
+                                        if(!$modality) $modality=ProcedureModality::whereShortened("PCP-SP-SEN")->first(); // Prestamo a corto plazo senarir 
                                     }
                                     foreach($affiliate->active_loans() as $loan){
                                         if($loan->modality->shortened == 'PCP-SP-SEN')
@@ -483,7 +498,12 @@ class Loan extends Model
                             if($affiliate->cpop){
                                 if($affiliate->active_loans()){
                                     if($reprogramming){ //reprogramacion PTV
-                                        $modality=ProcedureModality::whereShortened("PLP-CPOP")->first(); // Largo plazo activo cpop
+                                        foreach($affiliate->active_loans() as $loan){
+                                            if($loan->modality->shortened == 'PLP-R-SA-CPOP')
+                                            $modality=ProcedureModality::whereShortened("PLP-R-SA-CPOP")->first();
+                                            break; 
+                                        }
+                                        if(!$modality) $modality=ProcedureModality::whereShortened("PLP-CPOP")->first(); // Largo plazo activo cpop
                                     }else{
                                         foreach($affiliate->active_loans() as $loan){
                                             if($loan->modality->shortened == 'PLP-CPOP')
@@ -496,7 +516,12 @@ class Loan extends Model
                             }else{
                                 if($affiliate->active_loans()){
                                     if($reprogramming){ //reprogramacion PTV
-                                        $modality=ProcedureModality::whereShortened("PLP-GP-SAYADM")->first(); //Largo plazo activo  y adm con garantia personal
+                                        foreach($affiliate->active_loans() as $loan){
+                                            if($loan->modality->shortened == 'PLP-R-GP-SAYADM')
+                                            $modality=ProcedureModality::whereShortened("PLP-R-GP-SAYADM")->first();
+                                            break; 
+                                        }
+                                        if(!$modality) $modality=ProcedureModality::whereShortened("PLP-GP-SAYADM")->first(); //Largo plazo activo  y adm con garantia personal
                                     }else{
                                         foreach($affiliate->active_loans() as $loan){
                                             if($loan->modality->shortened == 'PLP-GP-SAYADM')
@@ -522,7 +547,12 @@ class Loan extends Model
                             if($affiliate->cpop){
                                 if($affiliate->active_loans()){
                                     if($reprogramming){
-                                        $modality=ProcedureModality::whereShortened("PLP-SP-CPOP")->first(); // largo plazo pasivo con  1 garante
+                                        foreach($affiliate->active_loans() as $loan){
+                                            if($loan->modality->shortened == 'PLP-R-SP-CPOP')
+                                            $modality=ProcedureModality::whereShortened("PLP-R-SP-CPOP")->first();
+                                            break; 
+                                        }
+                                        if(!$modality) $modality=ProcedureModality::whereShortened("PLP-SP-CPOP")->first(); // largo plazo pasivo con  1 garante
                                     }else{
                                         foreach($affiliate->active_loans() as $loan){
                                             if($loan->modality->shortened == 'PLP-SP-CPOP')
@@ -536,7 +566,12 @@ class Loan extends Model
                             }else{
                                 if($affiliate->active_loans()){
                                     if($reprogramming){
-                                        $modality=ProcedureModality::whereShortened("PLP-GP-SP")->first(); // Refi largo plazo pasivo 2 garantes
+                                        foreach($affiliate->active_loans() as $loan){
+                                            if($loan->modality->shortened == 'PLP-R-GP-SP')
+                                            $modality=ProcedureModality::whereShortened("PLP-R-GP-SP")->first();
+                                            break; 
+                                        }
+                                        if(!$modality) $modality=ProcedureModality::whereShortened("PLP-GP-SP")->first(); // Refi largo plazo pasivo 2 garantes
                                     }else{
                                         foreach($affiliate->active_loans() as $loan){
                                             if($loan->modality->shortened == 'PLP-GP-SP')
@@ -564,7 +599,12 @@ class Loan extends Model
                         if($affiliate->cpop){
                             if($affiliate->active_loans()){
                                 if($reprogramming){
-                                    $modality=ProcedureModality::whereShortened("PLP-GH-CPOP")->first(); //hipotecario CPOP 
+                                    foreach($affiliate->active_loans() as $loan){
+                                        if($loan->modality->shortened == 'PLP-R-GH-CPOP')
+                                        $modality=ProcedureModality::whereShortened("PLP-R-GH-CPOP")->first();
+                                        break; 
+                                    }
+                                    if(!$modality) $modality=ProcedureModality::whereShortened("PLP-GH-CPOP")->first(); //hipotecario CPOP 
                                 }else{
                                     foreach($affiliate->active_loans() as $loan){
                                         if($loan->modality->shortened == 'PLP-GH-CPOP')
@@ -577,6 +617,12 @@ class Loan extends Model
                         }else{
                             if($affiliate->active_loans()){
                                 if($reprogramming){
+                                    foreach($affiliate->active_loans() as $loan){
+                                        if($loan->modality->shortened == 'PLP-R-GH-SA')
+                                        $modality=ProcedureModality::whereShortened("PLP-R-GH-SA")->first();
+                                        break; 
+                                    }
+                                    if(!$modality)
                                     $modality=ProcedureModality::whereShortened("PLP-GH-SA")->first(); //hipotecario Sector Activo
                                 }else{
                                     foreach($affiliate->active_loans() as $loan){

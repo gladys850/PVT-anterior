@@ -60,6 +60,7 @@
               :edit_refi_repro.sync="edit_refi_repro"
               :loanTypeSelected.sync="loanTypeSelected"
               :data_sismu.sync ="data_sismu"
+              :livelihood_amount.sync="livelihood_amount"
             />
             <v-container class="py-0">
               <v-row>
@@ -67,7 +68,7 @@
                 <v-col class="py-0">
                   <v-btn
                     color="primary"
-                    @click="nextStep(1)">
+                    @click="validateStepsOne()">
                     Siguiente
                   </v-btn>
                 </v-col>
@@ -309,7 +310,8 @@ export default {
       quota_sismu: 0,
       cpop_sismu: false,
       livelihood_amount:true
-    }
+    },
+    livelihood_amount: 0
   }),
   computed: {
     isNew() {
@@ -342,6 +344,7 @@ export default {
     })
   },
   mounted(){
+    this.getGlobalParameters()
     if(!this.isNew && !this.type_sismu){
       this.getLoan(this.$route.query.loan_id)
     }else{
@@ -356,8 +359,8 @@ export default {
       else {
         if(n==1)
         {
-          this.liquidCalificated()
-          this.getLoanDestiny()
+          //this.liquidCalificated()
+          //this.getLoanDestiny()
         }
         if(n==2)
         {
@@ -549,11 +552,11 @@ export default {
 
               this.lenders=res.data
 
-              for(let i = 0; i < this.lenders.length; i++ ){
-    //Armar el nombre de los lenders
-        /*     let res4 = await axios.get(`affiliate/${this.lenders[i].affiliate_id}`)
-                this.lenders_aux[i] =res4.data.full_name
-    */
+          for(let i = 0; i < this.lenders.length; i++ ){
+            //Armar el nombre de los lenders
+            let res4 = await axios.get(`affiliate/${this.lenders[i].affiliate_id}`)
+            this.lenders_aux[i] =res4.data.full_name
+
 
                 this.lenders[i].payment_percentage=this.calculator_result.affiliates[i].payment_percentage
                 this.lenders[i].indebtedness_calculated=this.calculator_result.affiliates[i].indebtedness_calculated
@@ -740,6 +743,65 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
         console.log(e)
       } finally {
         this.loading = false
+      }
+    },
+    async getGlobalParameters(){
+      try {
+        let res = await axios.get(`loan_global_parameter`)
+        this.livelihood_amount = res.data.data[0].livelihood_amount
+      } catch (e) {
+        console.log(e)
+      }
+    },
+    validateStepsOne(){
+      if(this.loanTypeSelected.id > 0){
+        if(this.payable_liquid[0] >= this.livelihood_amount){
+          if((this.bonos[0]+ this.bonos[1]+this.bonos[2]+this.bonos[3]) < this.payable_liquid[0]){
+            if(!this.type_sismu){
+              if(this.modalidad.procedure_type_id==12){
+                if(this.loan_detail.net_realizable_value >= this.intervalos.minimun_amoun){
+                  this.liquidCalificated()
+                  this.getLoanDestiny()
+                  this.nextStep(1)
+                }else{
+                  this.toastr.error("El valor VNR debe ser mayor al monto minimo "+this.intervalos.minimun_amoun+ " correspondiente a la modalidad")
+                }
+              }else{
+                  this.liquidCalificated()
+                  this.getLoanDestiny()
+                  this.nextStep(1)
+              }
+            }else if(this.type_sismu){
+              if(this.modalidad.procedure_type_id==12){
+                if(this.loan_detail.net_realizable_value >= this.intervalos.minimun_amoun){
+                  if(this.data_sismu.quota_sismu > 0){
+                    this.liquidCalificated()
+                    this.getLoanDestiny()
+                    this.nextStep(1)
+                  }else{
+                    this.toastr.error("Introduzca la CUOTA del SISMU")
+                  }
+                }else{
+                  this.toastr.error("El valor VNR debe ser mayor al monto minimo "+this.intervalos.minimun_amoun+ " correspondiente a la modalidad")
+                }
+              }else{
+                  if(this.data_sismu.quota_sismu > 0){
+                    this.liquidCalificated()
+                    this.getLoanDestiny()
+                    this.nextStep(1)
+                  }else{
+                    this.toastr.error("Introduzca la CUOTA del SISMU")
+                  }
+              }
+            }
+            }else{
+            this.toastr.error("La sumatoria de bonos debe ser menor al Liquido pagable")
+          }
+        }else{
+          this.toastr.error("El Liquido Pagable debe ser mayor ó igual al Monto de subsistencia que son "+this.livelihood_amount+" Bs.")
+        }
+      }else{
+        this.toastr.error("Seleccione una modalidad")
       }
     },
     validateStepsTwo()
