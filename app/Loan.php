@@ -471,12 +471,13 @@ class Loan extends Model
                                             break; 
                                         }
                                         if(!$modality) $modality=ProcedureModality::whereShortened("PCP-SP-SEN")->first(); // Prestamo a corto plazo senarir 
-                                    }
-                                    foreach($affiliate->active_loans() as $loan){
-                                        if($loan->modality->shortened == 'PCP-SP-SEN')
-                                        $modality=ProcedureModality::whereShortened("PCP-R-SP-SEN")->first();// refi senasir pasivo
-                                        break;
-                                    }
+                                    }else{
+                                        foreach($affiliate->active_loans() as $loan){
+                                            if($loan->modality->shortened == 'PCP-SP-SEN')
+                                            $modality=ProcedureModality::whereShortened("PCP-R-SP-SEN")->first();// refi senasir pasivo
+                                            break;
+                                        }
+                                    } 
                                 }
                                 if(!$modality) $modality=ProcedureModality::whereShortened("PCP-SP-SEN")->first(); // Prestamo a corto plazo senarir
                             }
