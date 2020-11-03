@@ -183,7 +183,7 @@
                     <v-layout row wrap>
                       <v-flex xs12 class="px-2">
                         <fieldset class="pa-3">
-                          <p class="py-0 mb-0">Liquido Total:{{evaluate_garantor.payable_liquid_calculated +' '}}<b>|</b> Total de Bonos:{{evaluate_garantor.bonus_calculated +' '}}<b>|</b> Liquido para la Calificacio:{{evaluate_garantor.payable_liquid_calculated }}</p>
+                          <p class="py-0 mb-0">Liquido Total:{{evaluate_garantor.payable_liquid_calculated +' '}}<b>|</b> Total de Bonos:{{evaluate_garantor.bonus_calculated +' '}}<b>|</b> Liquido para la Calificacio:{{evaluate_garantor.liquid_qualification_calculated }}</p>
                           <p class="py-0 mb-0">Indice de Endeudamineto: {{evaluate_garantor.indebtnes_calculated+'% '}}<b>|</b> <b>{{evaluate_garantor.is_valid?'Cubre la Cuota ':'No Cubre la Cuota'}}</b></p>
                           <div class="text-right"  v-show="evaluate_garantor.is_valid">
                             <v-btn
@@ -233,7 +233,7 @@
                     <v-layout row wrap>
                       <v-flex xs12 class="px-2">
                         <fieldset class="pa-3">
-                          <p class="py-0 mb-0">Monto del Prestamo: {{simulator_guarantors.amount_requested +' '}}<b>|</b> Plazo del Prestamo:{{simulator_guarantors.amount_requested +' '}}<b>|</b> Cuota del Titular:{{simulator_guarantors.quota_calculated_estimated_total  }}</p>
+                          <p class="py-0 mb-0">Monto del Prestamo: {{simulator_guarantors.amount_requested +' '}}<b>|</b> Plazo del Prestamo:{{simulator_guarantors.amount_term +' '}}<b>|</b> Cuota del Titular:{{simulator_guarantors.quota_calculated_estimated_total  }}</p>
                           <v-progress-linear></v-progress-linear>
                             <ul style="list-style: none" class="pa-0">
                               <li v-for="(afiliados,i) in simulator_guarantors.affiliates" :key="i" >
