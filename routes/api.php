@@ -75,6 +75,8 @@ Route::group([
             Route::delete('affiliate/{affiliate}/observation','Api\V1\AffiliateController@unset_observation');
             Route::post('affiliate_guarantor', 'Api\V1\AffiliateController@test_guarantor');
             Route::get('affiliate_existence','Api\V1\AffiliateController@get_existence');
+            Route::get('affiliate/{affiliate}/maximum_loans','Api\V1\AffiliateController@evaluate_maximum_loans');
+
 
         });
         Route::group([

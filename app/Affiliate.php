@@ -141,6 +141,22 @@ class Affiliate extends Model
         return false;
     }
 
+    public function getDisbursementLoansAttribute()
+    {
+        $loans = $this->loans()->whereHas('state', function($q) {
+            $q->where('name', 'Desembolsado');
+        })->get();
+        return $loans;
+    }
+
+    public function getProcessLoansAttribute()
+    {
+        $loans = $this->loans()->whereHas('state', function($q) {
+            $q->where('name', 'En Proceso');
+        })->get();
+        return $loans;
+    }
+
     public function getAdministrativeAttribute()
     {
       $data = $this->degree;

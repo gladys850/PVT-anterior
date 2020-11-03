@@ -23,6 +23,9 @@ class CreateLoanGlobalParametersTable extends Migration
             $table->unsignedTinyInteger('max_guarantor_active'); // maximo de garantias para el sector activo
             $table->unsignedTinyInteger('max_guarantor_passive'); // maximo de garantias para el sector pasivo
             $table->unsignedTinyInteger('date_delete_payment'); // Días pasados para la eliminación del payment
+            $table->unsignedTinyInteger('max_loans_active'); // Maximo de préstamos vigentes
+            $table->unsignedTinyInteger('max_loans_process'); // Maximo de préstamos en proceso
+
             $table->timestamps();
         });
     }

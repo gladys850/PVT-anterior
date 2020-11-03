@@ -642,5 +642,24 @@ class AffiliateController extends Controller
             }
         }
     }
-    
+
+     /**
+    * Verificación de cantidad de préstamos que puede acceder un afiliado
+    * Verifica si un afiliado tiene prestamos vigentes maximo dos, y préstamos en proceso maximo uno.
+    * @urlParam affiliate required ID de afiliado. Example: 22773
+    * @authenticated
+    * @responseFile responses/affiliate/evaluate_maximum_loans.200.json
+    */
+    public function evaluate_maximum_loans(Affiliate $affiliate)
+    {
+        $maximum = false;
+        $process = $affiliate->process_loans;
+        $disbursement = $affiliate->disbursement_loans;
+        if(count($process)<1 && count($disbursement)<2) $maximum = true;
+        return response()->json([
+            'process_loans' => count($process),
+            'disbursement_loans' => count($disbursement),
+            'is_valid_maximum' => $maximum
+        ]);
+    }
 }
