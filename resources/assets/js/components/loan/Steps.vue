@@ -328,6 +328,13 @@ export default {
         this.data_sismu.type_sismu = true
       }
       return this.data_sismu.type_sismu
+    },
+    parent_loan_id(){
+      if(this.$route.query.type_sismu || this.$route.params.hash == 'new'){
+        return 0
+      }else{
+        return this.$route.query.loan_id
+      }
     }
   },
   watch: {
@@ -463,6 +470,8 @@ export default {
       if(this.modalidad.quantity_ballots > 1 ){
         nuevoArray[0] = {
             affiliate_id:this.$route.query.affiliate_id,
+            sismu: this.data_sismu.type_sismu,
+            quota_sismu: this.data_sismu.quota_sismu,
             contributions: [
             {
               payable_liquid: this.payable_liquid[0],
@@ -492,6 +501,8 @@ export default {
       }else{
         nuevoArray[0] = {
             affiliate_id:this.$route.query.affiliate_id,
+            sismu: this.data_sismu.type_sismu,
+            quota_sismu: this.data_sismu.quota_sismu,
             contributions: [
             {
               payable_liquid: this.payable_liquid[0],
@@ -505,8 +516,7 @@ export default {
       for (let i = 0; i < this.contrib_codebtor.length; i++) {
         nuevoArrayCodebtor[i] = {
           affiliate_id: this.contrib_codebtor[i].id_affiliate,
-          sismu: this.data_sismu.type_sismu,
-          quota_sismu: this.data_sismu.quota_sismu,
+          parent_loan_id: this.parent_loan_id,
           contributions: [
             {
             payable_liquid: this.contrib_codebtor[i].payable_liquid,
@@ -756,7 +766,7 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
     validateStepsOne(){
       if(this.loanTypeSelected.id > 0){
         if(this.payable_liquid[0] >= this.livelihood_amount){
-          if((this.bonos[0]+ this.bonos[1]+this.bonos[2]+this.bonos[3]) < this.payable_liquid[0]){
+          if((parseFloat(this.bonos[0])+ parseFloat(this.bonos[1])+ parseFloat(this.bonos[2])+ parseFloat(this.bonos[3])) < parseFloat(this.payable_liquid[0])){
             if(!this.type_sismu){
               if(this.modalidad.procedure_type_id==12){
                 if(this.loan_detail.net_realizable_value >= this.intervalos.minimun_amoun){
