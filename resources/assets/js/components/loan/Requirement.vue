@@ -163,7 +163,8 @@ export default {
     selectedOpc: null,
     idRequirements: [],
     otherDocuments: [],
-    newOther: null
+    newOther: null,
+    count_click:0
   }),
   props: {
     guarantors: {
@@ -257,35 +258,38 @@ export default {
       try {
         this.idRequirements = this.selected.concat(this.radios.filter(Boolean))
         if (this.idRequirements.length === this.items.length) {
-          let res = await axios.post(`loan`, {
-            copies: 2,
-            procedure_modality_id:this.modalidad.id,
-            amount_requested: this.loan_detail.amount_requested,
-            city_id: this.$store.getters.cityId,
-            loan_term:this.loan_detail.months_term,
-            payment_type_id:this.loan_detail.payment_type_id,
-            number_payment_type:this.loan_detail.number_payment_type,
-            destiny_id: this.loan_detail.destiny_id,
-            liquid_qualification_calculated:this.loan_detail.liquid_qualification_calculated,
-            indebtedness_calculated:this.loan_detail.indebtedness_calculated,
-            parent_loan_id: this.parent_loan_id,
-            parent_reason: this.parent_reason,
-            property_id: this.loan_property_id,
-            personal_references: this.reference,
-            cosigners:this.cosigners,
-            disbursable_id: this.$route.query.affiliate_id,
-            lenders:this.lenders,
-            guarantors: this.guarantors,
-            data_loan:this.data_loan_parent,
-            documents: this.itemsOpc.concat(this.selected.concat(this.radios.filter(Boolean))),
-            notes: this.otherDocuments
-          });
-          printJS({
-            printable: res.data.attachment.content,
-            type: res.data.attachment.type,
-            base64: true
-          })
-          this.$router.push('/workflow')
+          this.count_click++
+          if(this.count_click==1){
+            let res = await axios.post(`loan`, {
+              copies: 2,
+              procedure_modality_id:this.modalidad.id,
+              amount_requested: this.loan_detail.amount_requested,
+              city_id: this.$store.getters.cityId,
+              loan_term:this.loan_detail.months_term,
+              payment_type_id:this.loan_detail.payment_type_id,
+              number_payment_type:this.loan_detail.number_payment_type,
+              destiny_id: this.loan_detail.destiny_id,
+              liquid_qualification_calculated:this.loan_detail.liquid_qualification_calculated,
+              indebtedness_calculated:this.loan_detail.indebtedness_calculated,
+              parent_loan_id: this.parent_loan_id,
+              parent_reason: this.parent_reason,
+              property_id: this.loan_property_id,
+              personal_references: this.reference,
+              cosigners:this.cosigners,
+              disbursable_id: this.$route.query.affiliate_id,
+              lenders:this.lenders,
+              guarantors: this.guarantors,
+              data_loan:this.data_loan_parent,
+              documents: this.itemsOpc.concat(this.selected.concat(this.radios.filter(Boolean))),
+              notes: this.otherDocuments
+            });
+            printJS({
+              printable: res.data.attachment.content,
+              type: res.data.attachment.type,
+              base64: true
+            })
+            this.$router.push('/workflow')
+          }
         } else {
           this.toastr.error("Falta seleccionar requisitos, todos los requisitos deben ser presentados."
           )
