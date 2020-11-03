@@ -653,9 +653,10 @@ class AffiliateController extends Controller
     public function evaluate_maximum_loans(Affiliate $affiliate)
     {
         $maximum = false;
+        $loan_global_parameter = LoanGlobalParameter::latest()->first();
         $process = $affiliate->process_loans;
         $disbursement = $affiliate->disbursement_loans;
-        if(count($process)<1 && count($disbursement)<2) $maximum = true;
+        if(count($process)<$loan_global_parameter->max_loans_process && count($disbursement)<$loan_global_parameter->max_loans_active) $maximum = true;
         return response()->json([
             'process_loans' => count($process),
             'disbursement_loans' => count($disbursement),
