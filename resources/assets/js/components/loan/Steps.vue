@@ -303,6 +303,7 @@ export default {
     destino:[],
     //Variables reprogramacion y refinanciamiento
     data_loan: {},
+    amount_requested:0,
     edit_refi_repro: false,
     loanTypeSelected: {},
     data_sismu:{
@@ -539,25 +540,33 @@ export default {
       try {
         let res = await axios.post(`liquid_calificated`,{liquid_calification:this.contributions1_aux})
         this.liquid_calificated =res.data
-         
+
          if(this.modalidad.procedure_type_id==12)
             {
+              if(this.loan_detail.net_realizable_value<=this.intervalos.maximun_amoun)
+              {
+                this.amount_requested=this.loan_detail.net_realizable_value
+              }
+              else{
+                this.amount_requested=this.intervalos.maximun_amoun
+              }
               let res1 = await axios.post(`simulator`, {
               procedure_modality_id:this.modalidad.id,
-              amount_requested: this.loan_detail.net_realizable_value,
+              amount_requested: this.amount_requested,
               months_term:  this.intervalos.maximum_term,
               guarantor: false,
               liquid_qualification_calculated_lender: 0,
               liquid_calculated:this.liquid_calificated
               })
+
               this.calculator_result = res1.data
 
-              if( this.calculator_result.amount_maximum_suggested<this.loan_detail.net_realizable_value){
+              if( this.calculator_result.amount_maximum_suggested<this.amount_requested){
                 this.calculator_result.amount_requested=this.calculator_result.amount_maximum_suggested
                 this.loan_detail.amount_requested=this.calculator_result.amount_maximum_suggested
               }else{
-                this.calculator_result.montos=this.loan_detail.net_realizable_value
-                this.loan_detail.amount_requested=this.loan_detail.net_realizable_value
+                this.calculator_result.montos= this.amount_requested
+                this.loan_detail.amount_requested= this.amount_requested
               }
 
               this.lenders=res.data
@@ -584,7 +593,7 @@ export default {
               this.loan_detail.indebtedness_calculated=this.calculator_result.indebtedness_calculated_total
               this.loan_detail.maximum_suggested_valid=this.calculator_result.maximum_suggested_valid
               this.loan_detail.quota_calculated_total_lender=this.calculator_result.quota_calculated_estimated_total
-              for(let j = 0; j < this.liquid_calificated.length; j++ ){  
+              for(let j = 0; j < this.liquid_calificated.length; j++ ){
                 if(this.liquid_calificated[j].livelihood_amount==false)
                 {
                   this.data_sismu.livelihood_amount=this.liquid_calificated[j].livelihood_amount
@@ -595,7 +604,7 @@ export default {
             }
             else{
               this.data_sismu.livelihood_amount=this.liquid_calificated[0].livelihood_amount
-       
+
               let res1 = await axios.post(`simulator`, {
               procedure_modality_id:this.modalidad.id,
               amount_requested: this.intervalos.maximun_amoun,
@@ -624,7 +633,7 @@ export default {
               this.loan_detail.indebtedness_calculated=this.calculator_result.indebtedness_calculated_total
               this.loan_detail.maximum_suggested_valid=this.calculator_result.maximum_suggested_valid
               this.loan_detail.quota_calculated_total_lender=this.calculator_result.quota_calculated_estimated_total
-          }        
+          }
         /* for (this.i = 0; this.i< this.datos_calculadora_hipotecario.length; this.i++) {
 let res5 = await axios.get(`affiliate/${this.datos_calculadora_hipotecario[this.i].affiliate_id}`)
 this.affiliates = res5.data
