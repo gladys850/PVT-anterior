@@ -63,7 +63,7 @@ class LoanPermissionSeeder extends Seeder
                 'display_name' => 'Ver cobros de tesorería'
             ],  [
                 'name' => 'create-payment',
-                'display_name' => 'Registrar cobros de tesorería'
+                'display_name' => 'Crear cobros de tesorería'
             ],  [
                 'name' => 'update-payment',
                 'display_name' => 'Editar cobros de tesorería'
@@ -72,7 +72,7 @@ class LoanPermissionSeeder extends Seeder
                 'display_name' => 'Anular cobros de tesorería'
             ],  [
                 'name' => 'disbursement-loan',
-                'display_name' => 'Permisos de desembolso'
+                'display_name' => 'Permisos de desembolso de préstamo'
             ],  [
                 'name' => 'print-payment-voucher',
                 'display_name' => 'Imprimir registro de pago de tesorería'
