@@ -101,8 +101,8 @@
                               <ul style="list-style: none" class="pa-0">
                               <li v-for="(liquido,i) in liquid_calificated" :key="i">
                                 <v-progress-linear></v-progress-linear>
-                                <p class="py-0 mb-0">Nombre del Afiliado: {{lenders_aux[i]}}</p>
-                                <p class="py-0 mb-0">Liquido Pagable: {{liquido.payable_liquid_calculated+"  "}}{{"  "+"Total de Bonos:"+liquido.bonus_calculated}}{{" "}}Liquido para Calificacion: {{" "+liquido.liquid_qualification_calculated}}</p>
+                                  <p class="py-0 mb-0">Nombre del Afiliado: {{lenders_aux[i]}}</p>
+                                  <p class="py-0 mb-0">Liquido Pagable: {{liquido.payable_liquid_calculated+"  "}}{{"  "+"Total de Bonos:"+liquido.bonus_calculated}}{{" "}}Liquido para Calificacion: {{" "+liquido.liquid_qualification_calculated}}<v-spacer></v-spacer> <b>{{liquido.livelihood_amount?'Cubre la Cuota ':'No Cubre la Cuota'}}</b></p>
                               </li>
                             </ul>
                           </fieldset>
@@ -147,6 +147,10 @@ export default {
     simulator:{},
   }),
   props: {
+    data_sismu: {
+      type: Object,
+      required: true
+    },
     calculator_result: {
       type: Object,
       required: true

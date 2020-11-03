@@ -67,11 +67,20 @@
             <v-container class="py-0">
               <v-row>
                 <slot name="title"></slot>
-                <v-col cols="12" md="3">
+                <v-col cols="12" md="12" v-show="!data_sismu.livelihood_amount">
                   <v-layout row wrap>
                     <v-flex xs12 class="px-2">
                       <fieldset class="pa-3">
-                        <ValidationProvider v-slot="{ errors }" name="plazo" :rules="'numeric|min_value:'+loan_detail.minimum_term+'|max_value:'+loan_detail.maximum_term" mode="aggressive">
+                        <h1 class="success--text text-center">LA SUBSISTENCIA DEL AFILIADO ES MENOR A LO PERMITIDO</h1>
+                      </fieldset>
+                    </v-flex>
+                  </v-layout>
+                </v-col>
+                <v-col cols="12" md="3" v-show="data_sismu.livelihood_amount">
+                  <v-layout row wrap>
+                    <v-flex xs12 class="px-2">
+                      <fieldset class="pa-3">
+                         <ValidationProvider v-slot="{ errors }" name="plazo" :rules="'numeric|min_value:'+loan_detail.minimum_term+'|max_value:'+loan_detail.maximum_term" mode="aggressive">
                           <v-text-field
                             :error-messages="errors"
                             label="Plazo en Meses"
@@ -91,7 +100,7 @@
                     </v-flex>
                   </v-layout>
                 </v-col>
-                <v-col cols="12" md="4">
+                <v-col cols="12" md="4" v-show="data_sismu.livelihood_amount">
                   <v-card-text class="py-0">
                     <v-layout row wrap>
                       <v-flex xs12 class="px-2">
@@ -101,6 +110,7 @@
                               <p>PROMEDIO LIQUIDO PAGABLE:{{ liquid.payable_liquid_calculated}}</p>
                               <p>TOTAL BONOS: {{ liquid.bonus_calculated }}</p>
                               <p>LIQUIDO PARA CALIFICACION: {{ liquid.liquid_qualification_calculated}}</p>
+                              <p v-show="editar">CUOTA DE REFINANCIAMIENTO SISMU: {{ data_sismu.quota_sismu}}</p>
                               </li>
                             </ul>
                         </fieldset>
@@ -108,13 +118,14 @@
                     </v-layout>
                   </v-card-text>
                 </v-col>
-                <v-col cols="12" md="4">
+                <v-col cols="12" md="4" v-show="data_sismu.livelihood_amount">
                   <v-card-text class="py-0">
                     <v-layout row wrap>
                       <v-flex xs12 class="px-2">
                         <fieldset class="pa-3">
                           <p>CALCULO DE CUOTA: {{ calculator_result.quota_calculated_estimated_total }}</p>
                           <p>INDICE DE ENDEUDAMIENTO: {{calculator_result.indebtedness_calculated_total }}</p>
+                          <p>MONTO SOLICITADO: {{calculator_result.amount_requested }}</p>
                           <p v-show="calculator_result.maximum_suggested_valid" class="success--text font-weight-black">MONTO MAXIMO SUGERIDO : {{calculator_result.amount_maximum_suggested}}</p>
                           <p v-show="!calculator_result.maximum_suggested_valid" class="error--text font-weight-black">MONTO MAXIMO SUGERIDO : {{calculator_result.amount_maximum_suggested}}</p>
                         </fieldset>
@@ -140,6 +151,10 @@ export default {
     calculator_result_aux:{}
   }),
   props: {
+    data_sismu: {
+      type: Object,
+      required: true
+    },
     data_loan_parent_aux: {
       type: Object,
       required: true
@@ -166,7 +181,7 @@ export default {
       required: true
       },
   },
-    computed: {
+    computed: { 
     editar() {
       if(this.$route.query.type_sismu)
       {
@@ -212,6 +227,8 @@ export default {
           liquid_calculated:this.liquid_calificated
         })
         this.calculator_result_aux = res.data
+        this.calculator_result.quota_calculated_estimated_total= this.calculator_result_aux.quota_calculated_estimated_total
+        this.calculator_result.indebtedness_calculated_total= this.calculator_result_aux.indebtedness_calculated_total
 
         if( this.calculator_result.amount_requested<this.calculator_result_aux.amount_maximum_suggested){
           this.calculator_result.amount_requested=this.calculator_result_aux.amount_requested
@@ -220,6 +237,7 @@ export default {
           this.calculator_result.amount_requested=this.calculator_result_aux.amount_maximum_suggested
           this.loan_detail.amount_requested=this.calculator_result_aux.amount_maximum_suggested
         }
+      
         this.loan_detail.months_term=this.calculator_result_aux.months_term
         this.loan_detail.indebtedness_calculated=this.calculator_result_aux.indebtedness_calculated_total
 
