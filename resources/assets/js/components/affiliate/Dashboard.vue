@@ -3,7 +3,7 @@
     <v-row>
       <v-col cols="8" class="text-center">
         <v-card color="#EDF2F4" shaped class="mx-5">
-          <v-card-title>Préstamos</v-card-title>
+          <v-card-title>Préstamos{{Object.entries(this.spouse).length }}</v-card-title>
           <v-card-text>
             <div>
               <h1 v-if="loan.length === 0">NO TIENE PRÉSTAMOS REGISTRADOS</h1>
@@ -246,7 +246,8 @@ export default {
     loan_one: null,
     loan_two: null,
     loan_three: null,
-    loan_affiliate: {}
+    loan_affiliate: {},
+    spouse: {}
   }),
   created() {
     this.randomColor = common.randomColor;
@@ -266,11 +267,12 @@ export default {
     }
   },
   mounted() {
-    this.verifyLoans(this.$route.params.id)
     if (!this.isNew) {
       this.getProfilePictures(this.$route.params.id);
       this.getLoan(this.$route.params.id);
       this.getState_name(this.$route.params.id);
+      this.verifyLoans(this.$route.params.id)
+      this.getSpouse(this.$route.params.id)
     }
   },
   methods: {
@@ -361,6 +363,17 @@ export default {
         this.loading = false;
       }
     },
+    async getSpouse(id) {
+      try {
+        this.loading = true
+        let res = await axios.get(`affiliate/${id}/spouse`)
+        this.spouse = res.data
+      } catch (e) {
+        console.log(e)
+      } finally {
+        this.loading = false
+      }
+    },
     /*validateRefinanciamiento(affiliateid, loanid){
       this.$router.push({ name: 'loanAddref',  params: { hash: 'ref'}, query:{ affiliate_id: affiliateid,loan_id:loanid } })
     },
@@ -369,40 +382,44 @@ export default {
     },*/
     validateAffiliate(id, type_procedure) {
       this.verifyLoans(id)
-      if(this.state_name_type != 'Baja' && this.state_name_status != 'Fallecido' && this.state_name != ''){
-        if(this.affiliate.identity_card != null && this.affiliate.city_identity_card_id != null){
-          if(this.affiliate.civil_status != null){
-            if(this.affiliate.financial_entity_id != null && this.affiliate.account_number != null && this.affiliate.sigep_status != null){
-              if(this.affiliate.birth_date != null && this.affiliate.city_birth_id != null){
-                if(this.loan_affiliate.process_loans <= 1){
-                  if(this.loan_affiliate.disbursement_loans <= 2 ){
-                    if(type_procedure == "is_new"){
-                      this.$router.push({ name: 'loanAdd',  params: { hash: 'new'},  query: { affiliate_id: id}})
-                    } if(type_procedure == "is_refinancing"){
-                      this.$router.push({ name: 'loanAdd', params: { hash: 'refinancing'}, query: { affiliate_id: id, type_sismu: true}})
-                    } if(type_procedure == "is_reprogramming"){
-                      this.$router.push({ name: 'loanAdd', params: { hash: 'reprogramming'}, query: { affiliate_id: id, type_sismu: true}})
+      if(this.state_name_type != 'Baja'  && this.state_name != ''){
+        if((Object.entries(this.spouse).length === 0 && this.state_name_status != 'Fallecido') || (Object.entries(this.spouse).length !== 0 && this.state_name_status == 'Fallecido')) {
+          if(this.affiliate.identity_card != null && this.affiliate.city_identity_card_id != null){
+            if(this.affiliate.civil_status != null){
+              if(this.affiliate.financial_entity_id != null && this.affiliate.account_number != null && this.affiliate.sigep_status != null){
+                if(this.affiliate.birth_date != null && this.affiliate.city_birth_id != null){
+                  if(this.loan_affiliate.process_loans <= 1){
+                    if(this.loan_affiliate.disbursement_loans <= 2 ){
+                      if(type_procedure == "is_new"){
+                        this.$router.push({ name: 'loanAdd',  params: { hash: 'new'},  query: { affiliate_id: id}})
+                      } if(type_procedure == "is_refinancing"){
+                        this.$router.push({ name: 'loanAdd', params: { hash: 'refinancing'}, query: { affiliate_id: id, type_sismu: true}})
+                      } if(type_procedure == "is_reprogramming"){
+                        this.$router.push({ name: 'loanAdd', params: { hash: 'reprogramming'}, query: { affiliate_id: id, type_sismu: true}})
+                      }
+                    }else{
+                      this.toastr.error("El afiliado no puede tener mas de DOS préstamos desembolsados. Actualemnte tiene "+ this.loan_affiliate.disbursement_loans+ " prestamos desembolsados")
                     }
                   }else{
-                    this.toastr.error("El afiliado no puede tener mas de DOS préstamos desembolsados. Actualemnte tiene "+ this.loan_affiliate.disbursement_loans+ " prestamos desembolsados")
+                    this.toastr.error("El afiliado no puede tener mas de UN trámite en proceso. Actualemnte tiene "+ this.loan_affiliate.process_loans+ " prestamos en proceso")
                   }
                 }else{
-                  this.toastr.error("El afiliado no puede tener mas de UN trámite en proceso. Actualemnte tiene "+ this.loan_affiliate.process_loans+ " prestamos en proceso")
+                this.toastr.error("El afiliado no tiene registrado su fecha de nacimiento ó ciudad de nacimiento.")
                 }
               }else{
-              this.toastr.error("El afiliado no tiene registrado su fecha de nacimiento ó ciudad de nacimiento.")
-              }
+              this.toastr.error("El afiliado no tiene registrado la entidad financiera")
+              }         
             }else{
-            this.toastr.error("El afiliado no tiene registrado la entidad financiera")
-            }         
+              this.toastr.error("El afiliado no tiene registrado su estado civil.")
+            }          
           }else{
-            this.toastr.error("El afiliado no tiene registrado su estado civil.")
-          }          
-        }else{
           this.toastr.error("El afiliado no tiene registrado su CI ó ciudad de expedición del CI.")
         }
+        }else{
+          this.toastr.error("El afiliado no puede acceder a un préstamo por estar fallecido ó estar fallecido y no tener registrado a un(a) conyugue.")
+        }
       }else{
-        this.toastr.error("El afiliado no puede acceder a un préstamo por estar fallecido ó dado de baja ó no tener registrado su estado.")
+        this.toastr.error("El afiliado no puede acceder a un préstamo por estar dado de baja ó no tener registrado su estado.")
       }
       
     },
