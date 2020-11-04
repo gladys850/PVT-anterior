@@ -19,7 +19,8 @@ export default new Vuetify({
         info: '#0288D1',
         success: '#43A047',
         danger: '#ff6d00',
-        normal: '#757575'
+        normal: '#757575',
+        teal:'#29617b',
       }
     }
   },
