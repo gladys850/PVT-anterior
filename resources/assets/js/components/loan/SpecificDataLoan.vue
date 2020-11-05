@@ -62,15 +62,21 @@
                         <fieldset class="pa-3" max-width="100%">
                           <v-toolbar-title><b>PRÉSTAMO</b></v-toolbar-title>
                          <v-progress-linear></v-progress-linear>
+                        
                           <br>
                           <p><b>PLAZO EN MESES:</b>{{' '+loan.loan_term}}</p>
                           <p><b>MONTO SOLICITADO:</b>{{' '+loan.amount_approved}}</p>
-                          <p><b>PROMEDIO LIQUIDO PAGABLE:</b>{{' '+loan.payable_liquid_calculated}}</p>
-                          <p><b>TOTAL BONOS:</b>{{' '+loan.bonus_calculated}}</p>
                           <p><b>LIQUIDO PARA CALIFICACION:</b>{{' '+loan.liquid_qualification_calculated}}</p>
                           <p><b>CALCULO DE CUOTA:</b>{{' '+loan.estimated_quota}}</p>
                           <p><b>INDICE DE ENDEUDAMIENTO:</b>{{' '+loan.indebtedness_calculated}}</p>
-                          <p><b>MONTO MAXIMO SUGERIDO:</b>{{' '+loan.amount_approved}}</p>
+                          <div v-for="procedure_type in procedure_type" :key="procedure_type" v-if="procedure_type.name == 'Préstamo hipotecario'">
+                          <v-progress-linear></v-progress-linear><br>
+                           <p style="color:teal"><b>TIRULAR</b></p>
+                          <div v-for="(lenders,i) in loan.lenders" :key="i">
+                          <p><b>PROMEDIO LIQUIDO PAGABLE:</b>{{' '+lenders.pivot.payable_liquid_calculated}}</p>
+                          <p><b>TOTAL BONOS:</b>{{' '+lenders.pivot.bonus_calculated}}</p>
+                          </div>
+                          </div>
                         </fieldset>
                       </v-flex>
                     </v-layout>
@@ -82,8 +88,8 @@
                           <fieldset class="pa-3" max-width="100%">
                             <v-toolbar-title><b>GARANTIA</b></v-toolbar-title>
                               <v-progress-linear></v-progress-linear>
-                              <div v-for="procedure_type in procedure_type" :key="procedure_type">
-                            <ul style="list-style: none" class="pa-0" v-if="procedure_type.name == 'Préstamo a largo plazo' || procedure_type.name == 'Préstamo a corto plazo'">
+                              <div v-for="procedure_type in procedure_type" :key="procedure_type" >
+                              <ul style="list-style: none" class="pa-0" v-if="procedure_type.name == 'Préstamo a largo plazo' || procedure_type.name == 'Préstamo a corto plazo'">
                               <li v-for="(guarantor,i) in loan.guarantors" :key="i">
                                 <br>
                                 <p><b>CÉDULA DE IDENTIDAD:</b> {{guarantor.identity_card +" "+ identityCardExt(guarantor.city_identity_card_id) }}</p>
