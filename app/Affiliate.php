@@ -398,8 +398,20 @@ class Affiliate extends Model
       return response()->json([
           'affiliate' => AffiliateController::append_data($this, true),
           'guarantor' => $guarantor,
-          'active_guarantees_quantity' => count($this->active_guarantees())
+          'active_guarantees_quantity' => count($this->active_guarantees()),
+          'guarantor_information' => self::verify_guarantor($this)
+
       ]);
+  }
+
+  public static function verify_guarantor(Affiliate $affiliate)
+  {
+      $needed_keys = ['city_identity_card', 'affiliate_state', 'city_birth', 'category', 'address'];
+      $guarantor_information = true;
+      foreach ($needed_keys as $key) {
+          if (!$affiliate[$key]) $guarantor_information = false;//abort(409, 'Debe actualizar los datos personales de los garantes');
+      }
+      return $guarantor_information;
   }
 
 }
