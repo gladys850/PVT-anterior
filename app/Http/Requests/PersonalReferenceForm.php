@@ -28,7 +28,6 @@ class PersonalReferenceForm extends FormRequest
     public function rules()
     {
         $rules = [
-            'last_name'=>['string','alpha_spaces','min:3'],
             'first_name'=>['string','alpha_spaces','min:3'],
             'city_identity_card_id'=>['integer','exists:cities,id',$this->cosigner? 'required':'nullable'],
             'identity_card'=>['string','min:3',$this->cosigner? 'required':'nullable'],
@@ -36,7 +35,8 @@ class PersonalReferenceForm extends FormRequest
             'gender' =>['in:M,F',$this->cosigner? 'required':'nullable'],
             'city_birth_id' =>['integer','exists:cities,id',$this->cosigner? 'required':'nullable'],
             'address'=>['string',$this->cosigner? 'required':'nullable'],
-            'mothers_last_name'=>['string','nullable','alpha_spaces','min:3'],
+            'last_name'=>['required_without:mothers_last_name','string','nullable','alpha_spaces','min:3'],
+            'mothers_last_name'=>['required_without:last_name','string','nullable','alpha_spaces','min:3'],
             'second_name'=>['string','nullable','alpha_spaces','min:3'],
             'surname_husband'=>['string','nullable','alpha_spaces','min:3'],
             'phone_number'=>['nullable'],

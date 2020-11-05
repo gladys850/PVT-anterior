@@ -43,8 +43,8 @@ class PersonalReferenceController extends Controller
     * @bodyParam city_identity_card_id integer ID de ciudad del CI. Example: 5
     * @bodyParam city_birth_id integer ID de ciudad del CI. Example: 5
     * @bodyParam identity_card string Carnet de identidad. Example: 165134-1L
-    * @bodyParam last_name string required Apellido paterno. Example: PINTO
-    * @bodyParam mothers_last_name string Apellido materno. Example: ROJAS
+    * @bodyParam last_name string Apellido paterno es requerido si Apellido materno es vacio. Example: PINTO
+    * @bodyParam mothers_last_name string Apellido materno es requerido si Apellido paterno es vacio. Example: ROJAS
     * @bodyParam first_name string required Primer nombre. Example: JUAN
     * @bodyParam second_name string Segundo nombre. Example: ROBERTO
     * @bodyParam phone_number integer Número de teléfono fijo. Example: 2254101
