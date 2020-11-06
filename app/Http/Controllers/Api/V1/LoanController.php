@@ -319,6 +319,16 @@ class LoanController extends Controller
 
     private function save_loan(Request $request, $loan = null)
     {
+        /** Verificando información de los titulares y garantes */
+        if($request->lenders && $request->guarantors){
+            $lenders_guarantors = array_merge($request->lenders, $request->guarantors);
+            foreach ($lenders_guarantors as $lender_guarantor) {
+                $information_affiliate = Affiliate::findOrFail($lender_guarantor['affiliate_id']);
+                $is_valid_information = Affiliate::verify_information($information_affiliate);
+                if(!$is_valid_information) abort(409, 'Debe actualizar los datos personales de titulares y garantes');
+            }
+        }
+        /** fin validacion */
         if (Auth::user()->can(['update-loan', 'create-loan']) && ($request->has('lenders') || $request->has('guarantors'))) {
             $request->lenders = collect($request->has('lenders') ? $request->lenders : [])->unique();
             $request->guarantors = collect($request->has('guarantors') ? $request->guarantors : [])->unique();
@@ -362,7 +372,6 @@ class LoanController extends Controller
         if($request->has('data_loan') && $request->parent_loan_id == null && $request->parent_reason != null && !$request->has('id')){
             $data_loan = $request->data_loan[0];
             $loan->data_loan()->create($data_loan);
-            
         }
         if($request->loan!=null && $request->has('data_loan')){
             $data_loan = $request->data_loan[0];

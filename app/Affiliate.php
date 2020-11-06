@@ -62,7 +62,9 @@ class Affiliate extends Model
 
     public function getTitleAttribute()
     {
-        return $this->degree->shortened;
+      $data = "";
+      if ($this->degree) $data = $this->degree->shortened;;
+      return $data;
     }
 
     public function getPictureSavedAttribute()
@@ -399,12 +401,12 @@ class Affiliate extends Model
           'affiliate' => AffiliateController::append_data($this, true),
           'guarantor' => $guarantor,
           'active_guarantees_quantity' => count($this->active_guarantees()),
-          'guarantor_information' => self::verify_guarantor($this)
+          'guarantor_information' => self::verify_information($this)
 
       ]);
   }
 
-  public static function verify_guarantor(Affiliate $affiliate)
+  public static function verify_information(Affiliate $affiliate)
   {
       $needed_keys = ['city_identity_card', 'affiliate_state', 'city_birth', 'category', 'address'];
       $guarantor_information = true;
