@@ -247,7 +247,8 @@ export default {
     loan_two: null,
     loan_three: null,
     loan_affiliate: {},
-    spouse: {}
+    spouse: {},
+    global_parameters: {}
   }),
   created() {
     this.randomColor = common.randomColor;
@@ -267,6 +268,7 @@ export default {
     }
   },
   mounted() {
+    this.getGlobalParameters()
     if (!this.isNew) {
       this.getProfilePictures(this.$route.params.id);
       this.getLoan(this.$route.params.id);
@@ -320,17 +322,6 @@ export default {
         this.loading = false;
       }
     },
-    /* async get_refinanciamiento(affiliateid, loanid) {
-      try {
-        this.loading = true;
-        let res = await axios.get(`affiliate/${affiliateid}/${loanid}`);
-        this.unit_name = res.data.name;
-      } catch (e) {
-        console.log(e);
-      } finally {
-        this.loading = false;
-      }
-    },*/
     async getLoan(id) {
       try {
         this.loading = true;
@@ -341,9 +332,6 @@ export default {
         });
         this.loan = res.data.data;
         let num = this.loan.length;
-        /* FIXME no tiene uso
-        let idl=this.loan.id;
-       */
       } catch (e) {
         console.log(e);
       } finally {
@@ -374,12 +362,14 @@ export default {
         this.loading = false
       }
     },
-    /*validateRefinanciamiento(affiliateid, loanid){
-      this.$router.push({ name: 'loanAddref',  params: { hash: 'ref'}, query:{ affiliate_id: affiliateid,loan_id:loanid } })
+    async getGlobalParameters(){
+      try {
+        let res = await axios.get(`loan_global_parameter`)
+        this.global_parameters = res.data.data[0]
+      } catch (e) {
+        console.log(e)
+      }
     },
-    validateReprogramacion(affiliateid, loanid){
-     this.$router.push({ name: 'loanAddrep',  params: { hash: 'ref'}, query:{ affiliate_id: affiliateid,loan_id:loanid } })
-    },*/
     validateAffiliate(id, type_procedure) {
       this.verifyLoans(id)
       if(this.state_name_type != 'Baja'  && this.state_name != ''){
@@ -388,8 +378,8 @@ export default {
             if(this.affiliate.civil_status != null){
               if(this.affiliate.financial_entity_id != null && this.affiliate.account_number != null && this.affiliate.sigep_status != null){
                 if(this.affiliate.birth_date != null && this.affiliate.city_birth_id != null){
-                  if(this.loan_affiliate.process_loans <= 1){
-                    if(this.loan_affiliate.disbursement_loans <= 2 ){
+                  if(this.loan_affiliate.process_loans < this.global_parameters.max_loans_process){
+                    if(this.loan_affiliate.disbursement_loans < this.global_parameters.max_loans_active){
                       if(type_procedure == "is_new"){
                         this.$router.push({ name: 'loanAdd',  params: { hash: 'new'},  query: { affiliate_id: id}})
                       } if(type_procedure == "is_refinancing"){
@@ -398,10 +388,10 @@ export default {
                         this.$router.push({ name: 'loanAdd', params: { hash: 'reprogramming'}, query: { affiliate_id: id, type_sismu: true}})
                       }
                     }else{
-                      this.toastr.error("El afiliado no puede tener mas de DOS préstamos desembolsados. Actualemnte tiene "+ this.loan_affiliate.disbursement_loans+ " prestamos desembolsados")
+                      this.toastr.error("El afiliado no puede tener más de "+ this.global_parameters.max_loans_active +" préstamos desembolsados. Actualemnte ya tiene "+ this.loan_affiliate.disbursement_loans+ " préstamos desembolsados.")
                     }
                   }else{
-                    this.toastr.error("El afiliado no puede tener mas de UN trámite en proceso. Actualemnte tiene "+ this.loan_affiliate.process_loans+ " prestamos en proceso")
+                    this.toastr.error("El afiliado no puede tener más de "+ this.global_parameters.max_loans_process +" trámite en proceso. Actualmente ya tiene "+ this.loan_affiliate.process_loans+ " préstamos en proceso.")
                   }
                 }else{
                 this.toastr.error("El afiliado no tiene registrado su fecha de nacimiento ó ciudad de nacimiento.")
@@ -423,28 +413,7 @@ export default {
       }
       
     },
-   /* validateRefinancing(a_id, l_id){
-      for(let i = 0; i < this.loan.length; i++){
-        if(l_id == this.loan[i].id){
-          if(this.loan[i].procedure_modality_id != 32 && this.loan[i].procedure_modality_id != 33){
-            this.$router.push({ name: 'loanAdd',  params: { hash: 'refinancing'}, query:{ affiliate_id: a_id, loan_id: l_id } })
-          }else{
-            this.toastr.error("No se puede realizar el REFINANCIAMIENTO para un trámite de Anticipo")
-          }
-        }
-      }
-    },
-    validateReprogramming(a_id, l_id){
-      for(let i = 0; i < this.loan.length; i++){
-        if(l_id == this.loan[i].id){
-          if(this.loan[i].procedure_modality_id != 32 && this.loan[i].procedure_modality_id != 33){
-            this.$router.push({ name: 'loanAdd',  params: { hash: 'reprogramming'}, query:{ affiliate_id: a_id, loan_id: l_id } })
-          }else{
-            this.toastr.error("No se puede realizar la REPROGRAMACIÓN para un trámite de Anticipo")
-          }
-        }
-      }
-    }*/
+
     async validateRefinancingLoan(a_id, l_id){
       //this.$router.push({ name: 'loanAdd',  params: { hash: 'refinancing'}, query:{ affiliate_id: a_id, loan_id: l_id } })
       try {
