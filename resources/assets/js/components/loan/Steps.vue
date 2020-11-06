@@ -473,7 +473,7 @@ export default {
             affiliate_id:this.$route.query.affiliate_id,
             sismu: this.data_sismu.type_sismu,
             quota_sismu: this.data_sismu.quota_sismu,
-            //parent_loan_id: this.parent_loan_id,
+            parent_loan_id: this.parent_loan_id,
             contributions: [
             {
               payable_liquid: this.payable_liquid[0],
@@ -505,7 +505,7 @@ export default {
             affiliate_id:this.$route.query.affiliate_id,
             sismu: this.data_sismu.type_sismu,
             quota_sismu: this.data_sismu.quota_sismu,
-            //parent_loan_id: this.parent_loan_id,
+            parent_loan_id: this.parent_loan_id,
             contributions: [
             {
               payable_liquid: this.payable_liquid[0],
@@ -521,7 +521,7 @@ export default {
           affiliate_id: this.contrib_codebtor[i].id_affiliate,
           sismu: this.data_sismu.type_sismu,
           quota_sismu: this.data_sismu.quota_sismu,
-          //parent_loan_id: this.parent_loan_id,
+          parent_loan_id: this.parent_loan_id,
           contributions: [
             {
             payable_liquid: this.contrib_codebtor[i].payable_liquid,
