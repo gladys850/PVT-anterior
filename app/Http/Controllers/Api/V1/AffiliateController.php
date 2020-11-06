@@ -380,39 +380,43 @@ class AffiliateController extends Controller
         $filters = [
             'affiliate_id' => $affiliate->id
         ];
-        $contributions = Util::search_sort(new Contribution(), $request, $filters);
-        if ($request->has('city_id')) {
-            $is_latest = false;
-            $city = City::findOrFail($request->city_id);
-            $offset_day = LoanGlobalParameter::latest()->first()->offset_ballot_day;
-            $now = CarbonImmutable::now();
-            if ($now->day <= $offset_day || $city->name != 'LA PAZ') {
-                $before_month = 2;
-            } else {
-                $before_month = 1;
-            }
-            $current_ticket = CarbonImmutable::parse($contributions[0]->month_year);
-            if ($now->startOfMonth()->diffInMonths($current_ticket->startOfMonth()) <= $before_month) {
-                foreach ($contributions as $i => $ticket) {
-                    $is_latest = true;
-                    if ($ticket != $contributions->last()) {
-                        $current_ticket = CarbonImmutable::parse($ticket->month_year);
-                        $next_ticket = CarbonImmutable::parse($contributions[$i+1]->month_year);
-                        if ($current_ticket->startOfMonth()->diffInMonths($next_ticket->startOfMonth()) !== 1) {
-                            $is_latest = false;
-                            break;
+        if(count($affiliate->contributions)>1){
+            $contributions = Util::search_sort(new Contribution(), $request, $filters);
+            if ($request->has('city_id')) {
+                $is_latest = false;
+                $city = City::findOrFail($request->city_id);
+                $offset_day = LoanGlobalParameter::latest()->first()->offset_ballot_day;
+                $now = CarbonImmutable::now();
+                if ($now->day <= $offset_day || $city->name != 'LA PAZ') {
+                    $before_month = 2;
+                } else {
+                    $before_month = 1;
+                }
+                $current_ticket = CarbonImmutable::parse($contributions[0]->month_year);
+                if ($now->startOfMonth()->diffInMonths($current_ticket->startOfMonth()) <= $before_month) {
+                    foreach ($contributions as $i => $ticket) {
+                        $is_latest = true;
+                        if ($ticket != $contributions->last()) {
+                            $current_ticket = CarbonImmutable::parse($ticket->month_year);
+                            $next_ticket = CarbonImmutable::parse($contributions[$i+1]->month_year);
+                            if ($current_ticket->startOfMonth()->diffInMonths($next_ticket->startOfMonth()) !== 1) {
+                                $is_latest = false;
+                                break;
+                            }
                         }
                     }
+                } else {
+                    $is_latest = false;
                 }
-            } else {
-                $is_latest = false;
+                $contributions = collect([
+                    'valid' => $is_latest,
+                    'diff_months' => $before_month
+                ])->merge($contributions);
             }
-            $contributions = collect([
-                'valid' => $is_latest,
-                'diff_months' => $before_month
-            ])->merge($contributions);
+            return $contributions;
+        }else{
+            return [];
         }
-        return $contributions;
     }
 
     /** @group Préstamos
