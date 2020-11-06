@@ -36,7 +36,7 @@
                       </ValidationProvider>
                     </v-col>
                     <v-col cols="12" md="4" >
-                      <ValidationProvider v-slot="{ errors }" vid="last_name" name="Apellido Paterno" rules="required|alpha_spaces|min:3|max:20">
+                      <ValidationProvider v-slot="{ errors }" vid="last_name" name="Apellido Paterno" rules="alpha_spaces|min:3|max:20">
                       <v-text-field
                       :error-messages="errors"
                         dense

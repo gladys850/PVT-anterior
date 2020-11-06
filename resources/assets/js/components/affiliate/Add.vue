@@ -311,7 +311,8 @@ export default {
             await axios.patch(`affiliate/${this.affiliate.id}/address`, {
               addresses: this.addresses.map(o => o.id)
             })
-            //Preguntar si afiliado esta fallecido
+            this.toastr.success("Se Actualizó los datos del afiliado")
+            //Preguntar si afiliado esta fallecido 
             if((this.affiliate.date_death != null && this.affiliate.date_death != '') || 
                 (this.affiliate.reason_death != null && this.affiliate.reason_death != '')){
               if(this.spouse.id){
