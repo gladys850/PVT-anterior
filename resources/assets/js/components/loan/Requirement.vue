@@ -137,7 +137,10 @@
         @click="beforeStepBus(6)">Atras</v-btn>
         <v-btn
         color="primary"
-        @click.stop="saveLoan()">Finalizar</v-btn>
+        @click.stop="saveLoan()"
+        :disabled="this.status_click"
+        :loading="this.status_click"
+        >Finalizar</v-btn>
       </v-col>
     </v-row>
     </v-form>
@@ -164,7 +167,8 @@ export default {
     idRequirements: [],
     otherDocuments: [],
     newOther: null,
-    count_click:0
+    status_click: false,
+    loader: null,
   }),
   props: {
     guarantors: {
@@ -213,6 +217,8 @@ export default {
   watch: {
     modalidad_id () {
       this.getRequirement(this.modalidad_id)
+      this.selected = []
+      this.radios = []
     },
     personal_codebtor(){
       return true
@@ -258,8 +264,8 @@ export default {
       try {
         this.idRequirements = this.selected.concat(this.radios.filter(Boolean))
         if (this.idRequirements.length === this.items.length) {
-          this.count_click++
-          if(this.count_click==1){
+          this.status_click = true
+          if(this.status_click==true){
             let res = await axios.post(`loan`, {
               copies: 2,
               procedure_modality_id:this.modalidad.id,
@@ -282,20 +288,25 @@ export default {
               data_loan:this.data_loan_parent,
               documents: this.itemsOpc.concat(this.selected.concat(this.radios.filter(Boolean))),
               notes: this.otherDocuments
-            });
+            });             
+            if(res.status==201 || res.status == 200){
+              this.status_click = false        
+            }
             printJS({
               printable: res.data.attachment.content,
               type: res.data.attachment.type,
               base64: true
             })
-            this.$router.push('/workflow')
+            this.$router.push('/workflow')  
           }
         } else {
-          this.toastr.error("Falta seleccionar requisitos, todos los requisitos deben ser presentados."
-          )
+          this.toastr.error("Falta seleccionar requisitos, todos los requisitos deben ser presentados.")
+          this.status_click = false
+    
         }
       } catch (e) {
         console.log(e);
+        this.status_click = false
       } finally {
         this.loading = false;
       }
