@@ -69,7 +69,7 @@
                           <p><b>LIQUIDO PARA CALIFICACION:</b>{{' '+loan.liquid_qualification_calculated}}</p>
                           <p><b>CALCULO DE CUOTA:</b>{{' '+loan.estimated_quota}}</p>
                           <p><b>INDICE DE ENDEUDAMIENTO:</b>{{' '+loan.indebtedness_calculated}}</p>
-                          <div v-for="procedure_type in procedure_type" :key="procedure_type" v-if="procedure_type.name == 'Préstamo hipotecario'">
+                          <div v-for="procedure_type in procedure_type" :key="procedure_type" :v-if="procedure_type.name == 'Préstamo hipotecario'">
                           <v-progress-linear></v-progress-linear><br>
                            <p style="color:teal"><b>TIRULAR</b></p>
                           <div v-for="(lenders,i) in loan.lenders" :key="i">

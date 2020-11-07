@@ -95,14 +95,24 @@
                   <v-col cols="12" md="9" class="py-0">
                     <v-card-text class="py-0">
                       <v-layout row wrap>
-                        <v-flex xs12 class="px-1">
+                        <v-flex xs5 class="px-1">
                           <fieldset class="pa-2">
-                              <v-toolbar-title>Liquido Pagable</v-toolbar-title>
+                              <v-toolbar-title>Datos del Prestamo</v-toolbar-title>
+                                <v-progress-linear></v-progress-linear>
+                                 <p class="py-0 mb-0 caption">Monto del Inmueble: {{loan_detail.net_realizable_value }} <br>
+                                 Monto Solicitado: {{calculator_result.amount_requested}}<br>
+                                 Interes Calculado Total: {{calculator_result.indebtedness_calculated_total}} % <br> Liquido Calculado Total: {{calculator_result.liquid_qualification_calculated_total}}<br> Cuota Total del Prestamo: {{calculator_result.quota_calculated_estimated_total}}</p>
+                          </fieldset>
+                        </v-flex>
+                         <v-flex xs7 class="px-1">
+                          <fieldset class="pa-2">
+                              <v-toolbar-title>Datos del Afiliado</v-toolbar-title>
                               <ul style="list-style: none" class="pa-0">
                               <li v-for="(liquido,i) in liquid_calificated" :key="i">
                                 <v-progress-linear></v-progress-linear>
-                                  <p class="py-0 mb-0">Nombre del Afiliado: {{lenders_aux[i]}}</p>
-                                  <p class="py-0 mb-0">Liquido Pagable: {{liquido.payable_liquid_calculated+"  "}}{{"  "+"Total de Bonos:"+liquido.bonus_calculated}}{{" "}}Liquido para Calificacion: {{" "+liquido.liquid_qualification_calculated}}<v-spacer></v-spacer> <b>{{liquido.livelihood_amount?'Cubre la Cuota ':'No Cubre la Cuota'}}</b></p>
+                                <h1 class="py-0 mb-0 caption">Nombre del Afiliado: {{lenders_aux[i]}}</h1>
+                                <p class="py-0 mb-0 caption">Liquido Pagable:  {{liquido.payable_liquid_calculated}}<br>
+                                {{"  "+"Total de Bonos:"+liquido.bonus_calculated +" "}} <b>{{liquido.livelihood_amount?'Cubre la Cuota ':'No Cubre la Cuota'}}</b></p>
                               </li>
                             </ul>
                           </fieldset>
@@ -115,13 +125,12 @@
                       <v-layout row wrap>
                         <v-flex xs12 class="px-0">
                           <fieldset class="pa-3">
-                            <v-toolbar-title>Calculo</v-toolbar-title>
-                              <p class="py-0 mb-0">Monto del Inmueble: {{calculator_result.amount_requested}}<b> | </b>Interes Calculado Total: {{calculator_result.indebtedness_calculated_total}} % <b> | </b> Liquido Calculado Total: {{calculator_result.liquid_qualification_calculated_total}}<b> | </b> Cuota Total del Prestamo: {{calculator_result.quota_calculated_estimated_total}}</p>
+                            <v-toolbar-title>Calculo del porcentaje de pago del Prestamo</v-toolbar-title>
                               <ul style="list-style: none" class="pa-0">
                                 <li v-for="(calculado,i) in calculator_result.affiliates" :key="i" >
                                   <v-progress-linear></v-progress-linear>
-                                   <p class="py-0 mb-0">Nombre del Afiliado: {{ lenders_aux[i]}}</p>
-                                  <p class="py-0 mb-0">Liquido para Callificacion: {{calculado.liquid_qualification_calculated}}<b> | </b>Cuota Estimada: {{calculado.quota_calculated_estimated}} <b> | </b>Porcentaje de Pago: {{calculado.payment_percentage}}% </p>
+                                   <h5 class="py-0 mb-0 caption ">Nombre del Afiliado: {{ lenders_aux[i]}}</h5>
+                                  <p class="py-0 mb-0 caption">Liquido para Callificacion: {{calculado.liquid_qualification_calculated}} <b> | </b> Cuota Estimada: {{calculado.quota_calculated_estimated}} <b> | </b> Porcentaje de Pago: {{calculado.payment_percentage}}% </p>
                                 </li>
                               </ul>
                           </fieldset>

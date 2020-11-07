@@ -132,32 +132,37 @@
               <v-row>
                 <v-col cols="12" md="4"></v-col>
                 <v-col cols="12" md="6"  class="py-0" >
-                  <h2 class="red--text" v-show="!validated">NO PUEDE SER GARANTE</h2>
-                  <h2 class="success--text" v-show="validated1"> PUEDE SER GARANTE</h2>
+                  <h3 class="red--text" v-show="!validated">NO PUEDE SER GARANTE</h3>
+                  <h3 class="success--text" v-show="validated1"> PUEDE SER GARANTE</h3>
+                  {{affiliate_garantor.guarantor_information}}
                 </v-col>
                 <v-col cols="12" md="12" class="py-0" v-show="affiliate_garantor.affiliate.cpop">
                   <h5 class="success--text text-center">AFILIADO CPOP</h5>
                 </v-col>
-                <v-col cols="12" md="6" class="ma-0 pb-0 font-weight-light body-2">
+                <v-col cols="12" md="6" class="ma-0 pb-0 font-weight-light caption">
                   AFILIADO :{{affiliate_garantor.affiliate.full_name}}
                 </v-col>
-                <v-col cols="12" md="3" class="ma-0 pb-0 font-weight-light body-2" >
+                <v-col cols="12" md="3" class="ma-0 pb-0 font-weight-light caption" >
                   C.I :{{affiliate_garantor.affiliate.identity_card_ext}}
                 </v-col>
-                <v-col cols="12" md="3" class="ma-0 pb-0 font-weight-light body-2" >
+                <v-col cols="12" md="3" class="ma-0 pb-0 font-weight-light caption" >
                   CATEGORIA:   {{affiliate_garantor.affiliate.category.name}}
                 </v-col>
-                <v-col cols="12" md="6" class="py-0 font-weight-light body-2" >
+                <v-col cols="12" md="6" class="py-0 font-weight-light caption" >
                   MATRICULA:{{affiliate_garantor.affiliate.registration}}
                 </v-col>
-                <v-col cols="12" md="6" class="text-uppercase py-0 font-weight-light body-2">
+                <v-col cols="12" md="6" class="text-uppercase py-0 font-weight-light caption">
                   ESTADO:{{affiliate_garantor.affiliate.affiliate_state.name}}
                 </v-col>
-                <v-col cols="12" md="12" class="font-weight-black body-2">
-                  PRESTAMOS VIGENTES QUE TIENE EL AFILIADO
+                <v-col cols="12" md="8" class="font-weight-black caption">
+                  PRESTAMOS VIGENTES QUE TIENE EL AFILIADO:
                 </v-col>
-                <v-col cols="12" class="py-0">
+                 <v-col cols="12" md="2" class="font-weight-black caption">
+                 {{loan.length}}
+                </v-col>
+                <v-col cols="12" class="py-0" v-show="loan.length>0">
                   <v-data-table
+                    dense
                     :headers="headers"
                     :items="loan"
                     :items-per-page="4"
@@ -165,10 +170,10 @@
                   >
                   </v-data-table>
                 </v-col>
-                <v-col cols="12" md="8" class="font-weight-black body-2" >
+                <v-col cols="12" md="8" class="font-weight-black caption" >
                   PRESTAMOS QUE ESTA GARANTIZANDO:
                 </v-col>
-                <v-col cols="12" md="2" class="font-weight-black body-2" >
+                <v-col cols="12" md="2" class="font-weight-black caption" >
                   {{affiliate_garantor.active_guarantees_quantity}}
                 </v-col>
               </v-row>
@@ -181,12 +186,15 @@
                 <v-col cols="12" md="12" >
                   <v-card-text class="py-0">
                     <v-layout row wrap>
-                      <v-flex xs12 class="px-2">
-                        <fieldset class="pa-3">
-                          <p class="py-0 mb-0">Liquido Total:{{evaluate_garantor.payable_liquid_calculated +' '}}<b>|</b> Total de Bonos:{{evaluate_garantor.bonus_calculated +' '}}<b>|</b> Liquido para la Calificacio:{{evaluate_garantor.liquid_qualification_calculated }}</p>
-                          <p class="py-0 mb-0">Indice de Endeudamineto: {{evaluate_garantor.indebtnes_calculated+'% '}}<b>|</b> <b>{{evaluate_garantor.is_valid?'Cubre la Cuota ':'No Cubre la Cuota'}}</b></p>
+                      <v-flex xs6 class="px-2">
+                        <fieldset class="pa-3" v-show="false">
+                          <p class="py-0 mb-0 caption">Liquido Total:{{evaluate_garantor.payable_liquid_calculated +' '}}<br>
+                           Total de Bonos:{{evaluate_garantor.bonus_calculated +' '}}<br>
+                           Liquido para la Calificacio:{{evaluate_garantor.liquid_qualification_calculated }}</p>
+                          <p class="py-0 mb-0 caption">Indice de Endeudamineto: {{evaluate_garantor.indebtnes_calculated+'% '}}<br> <b>{{evaluate_garantor.is_valid?'Cubre la Cuota ':'No Cubre la Cuota'}}</b></p>
                           <div class="text-right"  v-show="evaluate_garantor.is_valid">
                             <v-btn
+                            v-show="garantes_detalle.length < modalidad_guarantors"
                               x-small
                               class="py-0"
                               color="info"
@@ -196,15 +204,10 @@
                           </div>
                         </fieldset>
                       </v-flex>
-                    </v-layout>
-                  </v-card-text>
-                </v-col>
-                <v-col cols="12" md="12">
-                  <v-card-text class="py-0">
-                    <v-layout row wrap class="py-0">
-                      <v-flex xs12 class="px-2" >
-                        <fieldset class="pa-3">
+                      <v-flex xs6 class="px-2" >
+                        <fieldset class="pa-3 caption">
                           {{'Cantidad de garantes a añadir: '+modalidad_guarantors}}
+                              <v-progress-linear></v-progress-linear>
                           <div
                             class="align-end font-weight-light ma-0 pa-0"
                             v-for="(otherDoc, index) of garantes_detalle"
@@ -233,13 +236,12 @@
                     <v-layout row wrap>
                       <v-flex xs12 class="px-2">
                         <fieldset class="pa-3">
-                          <p class="py-0 mb-0">Monto del Prestamo: {{simulator_guarantors.amount_requested +' '}}<b>|</b> Plazo del Prestamo:{{simulator_guarantors.amount_term +' '}}<b>|</b> Cuota del Titular:{{simulator_guarantors.quota_calculated_estimated_total  }}</p>
-                          <v-progress-linear></v-progress-linear>
+                          <p class="py-0 mb-0 caption">Monto del Prestamo: {{loan_detail.amount_requested +' '}}<b>|</b> Plazo del Prestamo:{{loan_detail.months_term+' '}}<b>|</b> Cuota del Titular:{{simulator_guarantors.quota_calculated_estimated_total  }}</p>
                             <ul style="list-style: none" class="pa-0">
                               <li v-for="(afiliados,i) in simulator_guarantors.affiliates" :key="i" >
                                 <v-progress-linear></v-progress-linear>
-                                <p class="py-0 mb-0">Nombre del Afiliado: {{ afiliados.affiliate_id}}</p>
-                                <p class="py-0 mb-0">Cuota: {{afiliados.quota_calculated+"  "}}{{"  "+"Indice de Endeudamiento:"+afiliados.indebtedness_calculated}}{{" "}}Porcentaje de Pago: {{" "+afiliados.payment_percentage}}%</p>
+                                <p class="py-0 mb-0 caption">Nombre del Afiliado: {{ garantes_detalle[i]}}</p>
+                                <p class="py-0 mb-0 caption">Cuota: {{afiliados.quota_calculated+"  "}}{{"  "+"Indice de Endeudamiento:"+afiliados.indebtedness_calculated}}{{" "}}Porcentaje de Pago: {{" "+afiliados.payment_percentage}}%</p>
                               </li>
                             </ul>
                         </fieldset>
@@ -398,23 +400,29 @@ console.log('este es el garante'+this.garantes[0])
     },*/
      async calculator() {
       try {
-        this.show_result=true
-        this.show_evaluated=true
-         let res = await axios.post(`evaluate_garantor`, {
-            procedure_modality_id:this.modalidad_id,
-            affiliate_id:this.affiliate_garantor.affiliate.id,
-            quota_calculated_total_lender:this.loan_detail.quota_calculated_total_lender,
-            contributions: [
-            {
-              payable_liquid: this.payable_liquid[0],
-              seniority_bonus:  this.bonos[2],
-              border_bonus: this.bonos[0],
-              public_security_bonus: this.bonos[3],
-              east_bonus:this.bonos[1]
-            }
-          ]
-        })
-        this.evaluate_garantor= res.data
+         if(this.affiliate_garantor.guarantor_information==true)
+        {
+            this.show_result=true
+            this.show_evaluated=true
+            let res = await axios.post(`evaluate_garantor`, {
+                procedure_modality_id:this.modalidad_id,
+                affiliate_id:this.affiliate_garantor.affiliate.id,
+                quota_calculated_total_lender:this.loan_detail.quota_calculated_total_lender,
+                contributions: [
+                {
+                  payable_liquid: this.payable_liquid[0],
+                  seniority_bonus:  this.bonos[2],
+                  border_bonus: this.bonos[0],
+                  public_security_bonus: this.bonos[3],
+                  east_bonus:this.bonos[1]
+                }
+              ]
+            })
+            this.evaluate_garantor= res.data
+            this.loan_detail.simulador=false
+        }else{
+          this.toastr.error("Tiene que actualizar los datos personales del afiliado.")
+        }
       }catch (e) {
         console.log(e)
       }finally {
@@ -438,6 +446,7 @@ console.log('este es el garante'+this.garantes[0])
       this.guarantors[this.j].indebtedness_calculated=this.simulator_guarantors.affiliates[this.j].indebtedness_calculated
       this.guarantors[this.j].liquid_qualification_calculated=this.simulator_guarantors.affiliates[this.j].liquid_qualification_calculated
       }
+      this.loan_detail.simulador=true
     } catch (e) {
       console.log(e)
     } finally {
