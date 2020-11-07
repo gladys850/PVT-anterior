@@ -52,16 +52,22 @@ class CalculatorController extends Controller
     */
     public function store(CalculatorForm $request)
     {
+        //return $request;
         $liquid_calification = $request->liquid_calification;
         $liquid_calificated = collect([]);
         foreach($liquid_calification as $liq){
             $affiliate = Affiliate::findOrFail($liq['affiliate_id']);
             if(array_key_exists('parent_loan_id', $liq)){
+                if($liq['parent_loan_id'] != null)
+                {
                 $parent_loan = Loan::findOrFail($liq['parent_loan_id']);
                 if (!$parent_loan) abort(404);
                 $parent_lender = $parent_loan->lenders->find($liq['affiliate_id']);
                 if(!$parent_lender) abort(403,'El afiliado no es titular del préstamo');
                 $parent_quota = $parent_loan->next_payment()->estimated_quota *$parent_lender->pivot->payment_percentage/100;
+            }else{
+                $parent_quota=0;
+            }
             }else{
                 /** En caso de refinanciamiento y/o reprogramación sismu */
                 if (array_key_exists('sismu', $liq)) {
