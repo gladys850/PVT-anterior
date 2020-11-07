@@ -146,7 +146,7 @@
                 @click="beforeStep(3)">Atras</v-btn>
                 <v-btn right
                 color="primary"
-                @click="nextStep(3)">
+                @click="validateStepsthree()">
                 Siguiente
                 </v-btn>
               </v-col>
@@ -332,7 +332,7 @@ export default {
     },
     parent_loan_id(){
       if(this.$route.query.type_sismu || this.$route.params.hash == 'new'){
-        return 0
+        return null
       }else{
         return this.$route.query.loan_id
       }
@@ -473,6 +473,7 @@ export default {
             affiliate_id:this.$route.query.affiliate_id,
             sismu: this.data_sismu.type_sismu,
             quota_sismu: this.data_sismu.quota_sismu,
+            parent_loan_id: this.parent_loan_id,
             contributions: [
             {
               payable_liquid: this.payable_liquid[0],
@@ -504,6 +505,7 @@ export default {
             affiliate_id:this.$route.query.affiliate_id,
             sismu: this.data_sismu.type_sismu,
             quota_sismu: this.data_sismu.quota_sismu,
+            parent_loan_id: this.parent_loan_id,
             contributions: [
             {
               payable_liquid: this.payable_liquid[0],
@@ -517,6 +519,8 @@ export default {
       for (let i = 0; i < this.contrib_codebtor.length; i++) {
         nuevoArrayCodebtor[i] = {
           affiliate_id: this.contrib_codebtor[i].id_affiliate,
+          sismu: this.data_sismu.type_sismu,
+          quota_sismu: this.data_sismu.quota_sismu,
           parent_loan_id: this.parent_loan_id,
           contributions: [
             {
@@ -775,6 +779,53 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
     validateStepsOne(){
       if(this.loanTypeSelected.id > 0){
         if(this.payable_liquid[0] >= this.livelihood_amount){
+           if(this.modalidad.procedure_type_id==10){
+            if((parseFloat(this.bonos[0])+ parseFloat(this.bonos[1])+ parseFloat(this.bonos[2])+ parseFloat(this.bonos[3])) < (parseFloat(this.payable_liquid[0]) + parseFloat(this.payable_liquid[0]) + parseFloat(this.payable_liquid[0]) ) ){
+              if(parseFloat(this.payable_liquid[0]) > 0 && parseFloat(this.payable_liquid[1]) > 0 && parseFloat(this.payable_liquid[2]) > 0 ){
+                if(!this.type_sismu){
+                  if(this.modalidad.procedure_type_id==12){
+                    if(this.loan_detail.net_realizable_value >= this.intervalos.minimun_amoun){
+                      this.liquidCalificated()
+                      this.getLoanDestiny()
+                      this.nextStep(1)
+                    }else{
+                      this.toastr.error("El valor VNR debe ser mayor al monto minimo "+this.intervalos.minimun_amoun+ " correspondiente a la modalidad")
+                    }
+                  }else{
+                      this.liquidCalificated()
+                      this.getLoanDestiny()
+                      this.nextStep(1)
+                  }
+                }else if(this.type_sismu){
+                  if(this.modalidad.procedure_type_id==12){
+                    if(this.loan_detail.net_realizable_value >= this.intervalos.minimun_amoun){
+                      if(this.data_sismu.quota_sismu > 0){
+                        this.liquidCalificated()
+                        this.getLoanDestiny()
+                        this.nextStep(1)
+                      }else{
+                        this.toastr.error("Introduzca la CUOTA del SISMU")
+                      }
+                    }else{
+                      this.toastr.error("El valor VNR debe ser mayor al monto minimo "+this.intervalos.minimun_amoun+ " correspondiente a la modalidad")
+                    }
+                  }else{
+                      if(this.data_sismu.quota_sismu > 0){
+                        this.liquidCalificated()
+                        this.getLoanDestiny()
+                        this.nextStep(1)
+                      }else{
+                        this.toastr.error("Introduzca la CUOTA del SISMU")
+                      }
+                  }
+                }
+              }else{
+                this.toastr.error("Debe registrar el monto en todas las boletas.")
+              }
+            }else{
+            this.toastr.error("La sumatoria de bonos debe ser menor al Liquido pagable")
+            }
+          }else{
           if((parseFloat(this.bonos[0])+ parseFloat(this.bonos[1])+ parseFloat(this.bonos[2])+ parseFloat(this.bonos[3])) < parseFloat(this.payable_liquid[0])){
             if(!this.type_sismu){
               if(this.modalidad.procedure_type_id==12){
@@ -815,6 +866,7 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
             }
             }else{
             this.toastr.error("La sumatoria de bonos debe ser menor al Liquido pagable")
+          }
           }
         }else{
           this.toastr.error("El Liquido Pagable debe ser mayor ó igual al Monto de subsistencia que son "+this.livelihood_amount+" Bs.")
@@ -867,6 +919,32 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
       }else{
         this.nextStep(2)
       }
+      }
+    },
+    validateStepsthree()
+    {
+      if(this.modalidad.procedure_type_id==12)
+      {
+        this.saveLoanProperty()
+      }
+      else{
+        if(this.modalidad.guarantors > 0)
+        {
+          if(this.modalidad.guarantors==this.guarantors.length)
+          {
+            if(this.loan_detail.simulador==true)
+            {
+              this.nextStep(3)
+            }else{
+               this.toastr.error("Debe calcular la cuota del garante")
+            }
+          }
+          else{
+            this.toastr.error("Le falta añadir garantes.")
+          }
+        }else{
+          this.nextStep(3)
+        }
       }
     },
   }

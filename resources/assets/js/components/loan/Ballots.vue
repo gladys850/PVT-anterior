@@ -41,7 +41,7 @@
                           {{plazo}}
                         </v-col>
                         <v-col cols="12" :md="window_size" class="py-0" v-if="see_field">
-                          <ValidationProvider v-slot="{ errors }" name="VNR" :rules="'required|numeric|min_value:'+intervalos.minimun_amoun"  mode="aggressive">
+                          <ValidationProvider v-slot="{ errors }" name="VNR" :rules="'required|min_value:'+intervalos.minimun_amoun"  mode="aggressive">
                           <v-text-field
                             :error-messages="errors"
                             dense
@@ -63,7 +63,7 @@
                     BOLETAS DE PAGO
                   </v-col>
                   <v-col cols="12" md="4" class="py-0"  >
-                    <ValidationProvider v-slot="{ errors }" name="1ra Boleta de pago" :rules="'required|numeric|min_value:'+livelihood_amount"  mode="aggressive">
+                    <ValidationProvider v-slot="{ errors }" name="1ra Boleta de pago" :rules="'required|min_value:'+livelihood_amount"  mode="aggressive">
                     <v-text-field
                       :error-messages="errors"
                       dense
@@ -75,7 +75,7 @@
                     </ValidationProvider>
                   </v-col>
                   <v-col cols="12" md="4" class="py-0" v-if="visible">
-                    <ValidationProvider v-slot="{ errors }" name="2da Boleta de pago" :rules="'numeric|min_value:'+livelihood_amount"  mode="aggressive">
+                    <ValidationProvider v-slot="{ errors }" name="2da Boleta de pago" :rules="'min_value:'+livelihood_amount"  mode="aggressive">
                     <v-text-field
                     :error-messages="errors"
                       dense
@@ -87,7 +87,7 @@
                   </ValidationProvider>
                   </v-col>
                   <v-col cols="12" md="4" class="py-0" v-if="visible" >
-                    <ValidationProvider v-slot="{ errors }" name="3ra Boleta de pago" :rules="'numeric|min_value:'+livelihood_amount"  mode="aggressive">
+                    <ValidationProvider v-slot="{ errors }" name="3ra Boleta de pago" :rules="'min_value:'+livelihood_amount"  mode="aggressive">
                     <v-text-field
                     :error-messages="errors"
                       dense
@@ -102,7 +102,7 @@
                     BONOS
                   </v-col>
                   <v-col cols="12" md="3" >
-                    <ValidationProvider v-slot="{ errors }" name="Bono Frontera" :rules="'numeric|max_value:'+payable_liquid[0]"  mode="aggressive">
+                    <ValidationProvider v-slot="{ errors }" name="Bono Frontera" :rules="'max_value:'+payable_liquid[0]"  mode="aggressive">
                     <v-text-field
                     :error-messages="errors"
                       dense
@@ -114,7 +114,7 @@
                      </ValidationProvider>
                   </v-col>
                   <v-col cols="12" md="3">
-                    <ValidationProvider v-slot="{ errors }" name="Bono Oriente" :rules="'numeric|max_value:'+payable_liquid[0]"  mode="aggressive">
+                    <ValidationProvider v-slot="{ errors }" name="Bono Oriente" :rules="'max_value:'+payable_liquid[0]"  mode="aggressive">
                     <v-text-field
                     :error-messages="errors"
                       dense
@@ -126,7 +126,7 @@
                      </ValidationProvider>
                   </v-col>
                   <v-col cols="12" md="3" >
-                    <ValidationProvider v-slot="{ errors }" name="Bono Cargo" :rules="'numeric|max_value:'+payable_liquid[0]"  mode="aggressive">
+                    <ValidationProvider v-slot="{ errors }" name="Bono Cargo" :rules="'max_value:'+payable_liquid[0]"  mode="aggressive">
                     <v-text-field
                     :error-messages="errors"
                       dense
@@ -138,7 +138,7 @@
                     </ValidationProvider>
                   </v-col>
                   <v-col cols="12" md="3">
-                    <ValidationProvider v-slot="{ errors }" name="Bono Seguridad Ciudadana" :rules="'numeric|max_value:'+payable_liquid[0]" mode="aggressive">
+                    <ValidationProvider v-slot="{ errors }" name="Bono Seguridad Ciudadana" :rules="'max_value:'+payable_liquid[0]" mode="aggressive">
                     <v-text-field
                     :error-messages="errors"
                       dense
@@ -154,7 +154,7 @@
                     DATOS SISMU
                   </v-col>
                   <v-col cols="12" md="3" >
-                    <ValidationProvider v-slot="{ errors }" name="cuota" :rules="'numeric|min_value:1'"  mode="aggressive">
+                    <ValidationProvider v-slot="{ errors }" name="cuota" :rules="'min_value:1'"  mode="aggressive">
                     <v-text-field
                       :error-messages="errors"
                       dense
