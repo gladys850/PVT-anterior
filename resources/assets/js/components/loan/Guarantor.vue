@@ -134,7 +134,7 @@
                 <v-col cols="12" md="6"  class="py-0" >
                   <h3 class="red--text" v-show="!validated">NO PUEDE SER GARANTE</h3>
                   <h3 class="success--text" v-show="validated1"> PUEDE SER GARANTE</h3>
-                  {{affiliate_garantor.guarantor_information}}
+                  <!--{{affiliate_garantor.guarantor_information}}-->
                 </v-col>
                 <v-col cols="12" md="12" class="py-0" v-show="affiliate_garantor.affiliate.cpop">
                   <h5 class="success--text text-center">AFILIADO CPOP</h5>
@@ -187,7 +187,7 @@
                   <v-card-text class="py-0">
                     <v-layout row wrap>
                       <v-flex xs6 class="px-2">
-                        <fieldset class="pa-3" v-show="false">
+                        <fieldset class="pa-3" >
                           <p class="py-0 mb-0 caption">Liquido Total:{{evaluate_garantor.payable_liquid_calculated +' '}}<br>
                            Total de Bonos:{{evaluate_garantor.bonus_calculated +' '}}<br>
                            Liquido para la Calificacio:{{evaluate_garantor.liquid_qualification_calculated }}</p>
