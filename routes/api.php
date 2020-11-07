@@ -131,6 +131,7 @@ Route::group([
             //Route::get('loan/{loan}/loan_affiliates', 'Api\V1\LoanController@get_loan_affiliates');
             Route::apiResource('loan_property', 'Api\V1\LoanPropertyController')->only('index', 'store', 'show', 'destroy', 'update');
             Route::post('loan/{loan}/validate_re_loan', 'Api\V1\LoanController@validate_re_loan');
+            //Route::get('calculate_percentage', 'Api\V1\LoanController@calculate_percentage');
         });
         Route::group([
             'middleware' => 'permission:create-loan'
