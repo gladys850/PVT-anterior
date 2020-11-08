@@ -126,10 +126,11 @@
         <v-stepper-content :key="`${3}-content`" :step="3" >
           <v-card color="grey lighten-1">
             <h3 class="text-uppercase text-center">{{modalidad.name}}</h3>
-            <HipotecaryData
+            <HipotecaryData ref="HipotecaryData"
               v-show="modalidad.procedure_type_id==12"
               :loan_detail.sync="loan_detail"
               :loan_property="loan_property"
+              :bus="bus"
             />
             <Guarantor
             :modalidad_guarantors.sync="modalidad.guarantors"
@@ -180,12 +181,13 @@
       <v-stepper-content :key="`${5}-content`" :step="5">
         <v-card color="grey lighten-1">
           <h3 class="text-uppercase text-center">{{modalidad.name}}</h3>
-          <FormInformation
+          <FormInformation ref="FormInformation"
             :loan_detail.sync="loan_detail"
             :modalidad_personal_reference.sync="modalidad.personal_reference"
             :personal_reference.sync="personal_reference"
             :intervalos.sync="intervalos"
             :destino.sync="destino"
+            :bus="bus"
           />
           <CoDebtor
             v-show="this.modalidad.max_cosigner > 0"
@@ -200,7 +202,7 @@
                 @click="beforeStep(5)">Atras</v-btn>
                 <v-btn
                 color="primary"
-                @click="nextStep(5)">
+                @click="validateStepsFive()">
                 Siguiente
                 </v-btn>
               </v-col>
@@ -392,9 +394,9 @@ export default {
         }
         if(n==5)
         {
-          this.personal()
-          this.savePersonalReference()
-          console.log('segundo'+this.modalidad.personal_reference)
+          //this.personal()
+          //this.savePersonalReference()
+          //console.log('segundo'+this.modalidad.personal_reference)
         }
         this.e1 = n + 1
       }
@@ -432,6 +434,38 @@ export default {
       } finally {
         this.loading = false
         console.log('entro por verdader'+this.modalidad.personal_reference)
+      }
+    },
+    async savePersonalReference() {
+      try {
+        let ids_codebtor=[]
+        for (let i = 0; i < this.personal_codebtor.length; i++) {
+          let res = await axios.post(`personal_reference`, {
+            city_identity_card_id: this.personal_codebtor[i].city_identity_card_id,
+            identity_card: this.personal_codebtor[i].identity_card,
+            last_name: this.personal_codebtor[i].last_name,
+            mothers_last_name: this.personal_codebtor[i].mothers_last_name,
+            first_name: this.personal_codebtor[i].first_name,
+            second_name: this.personal_codebtor[i].second_name,
+            phone_number: this.personal_codebtor[i].phone_number,
+            cell_phone_number: this.personal_codebtor[i].cell_phone_number,
+            address: this.personal_codebtor[i].address,
+            civil_status: this.personal_codebtor[i].civil_status,
+            gender: this.personal_codebtor[i].gender,
+            cosigner: true,
+            city_birth_id: this.personal_codebtor[i].city_birth_id
+          })
+          ids_codebtor.push(res.data.id)
+          console.log(this.personal_codebtor.length)
+          console.log(ids_codebtor)
+        }
+        this.cosigners = ids_codebtor
+        console.log(this.cosigners)
+      } catch (e) {
+        this.dialog = false
+        console.log(e)
+      } finally {
+        this.loading = false
       }
     },
     async getProcedureType(){
@@ -697,38 +731,6 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
         console.log(e)
       }
     },
-    async savePersonalReference() {
-      try {
-        let ids_codebtor=[]
-        for (let i = 0; i < this.personal_codebtor.length; i++) {
-          let res = await axios.post(`personal_reference`, {
-            city_identity_card_id: this.personal_codebtor[i].city_identity_card_id,
-            identity_card: this.personal_codebtor[i].identity_card,
-            last_name: this.personal_codebtor[i].last_name,
-            mothers_last_name: this.personal_codebtor[i].mothers_last_name,
-            first_name: this.personal_codebtor[i].first_name,
-            second_name: this.personal_codebtor[i].second_name,
-            phone_number: this.personal_codebtor[i].phone_number,
-            cell_phone_number: this.personal_codebtor[i].cell_phone_number,
-            address: this.personal_codebtor[i].address,
-            civil_status: this.personal_codebtor[i].civil_status,
-            gender: this.personal_codebtor[i].gender,
-            cosigner: true,
-            city_birth_id: this.personal_codebtor[i].city_birth_id
-          })
-          ids_codebtor.push(res.data.id)
-          console.log(this.personal_codebtor.length)
-          console.log(ids_codebtor)
-        }
-        this.cosigners = ids_codebtor
-        console.log(this.cosigners)
-      } catch (e) {
-        this.dialog = false
-        console.log(e)
-      } finally {
-        this.loading = false
-      }
-    },
     async getLoan(id) {
       try {
         this.loading = true
@@ -925,7 +927,16 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
     {
       if(this.modalidad.procedure_type_id==12)
       {
-        this.saveLoanProperty()
+        this.$refs.HipotecaryData.validateHipotecaryData()      
+        this.bus.$on('validHipotecaryData', (val) => {
+          console.log("VAL"+val)       
+          if(val){       
+            this.saveLoanProperty()
+            this.nextStep(3)
+          }else{         
+            console.log("no pasa")
+          }
+        })
       }
       else{
         if(this.modalidad.guarantors > 0)
@@ -947,6 +958,46 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
         }
       }
     },
+    validateStepsFive(){
+      this.$refs.FormInformation.validateDestiny()      
+      this.bus.$on('validDestiny', (val) => {
+      console.log("VAL"+val)       
+      if(val){       
+         //////
+        if(this.modalidad.personal_reference){
+          this.$refs.FormInformation.validatePerRef()      
+          this.bus.$on('validPerRef', (val2) => {
+          console.log("VAL"+val2)       
+          if(val2){
+              this.savePersonalReference()
+              this.personal()     
+              this.nextStep(5)
+          }else{         
+              console.log("no pasa")
+          }
+          }) 
+        }else{
+              this.savePersonalReference()
+              this.personal()     
+              this.nextStep(5)
+        } 
+         /////
+      }else{         
+          console.log("no pasa")
+      }
+      })
+
+
+      /*this.$refs.FormInformation.validatePerRef()      
+      this.bus.$on('validPerRef', (val) => {
+      console.log("VAL"+val)       
+      if(val){       
+          this.nextStep(5)
+      }else{         
+          console.log("no pasa")
+      }
+      })*/ 
+    }
   }
 }
 </script>
