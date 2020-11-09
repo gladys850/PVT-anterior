@@ -634,6 +634,7 @@ export default {
               this.loan_detail.indebtedness_calculated=this.calculator_result.indebtedness_calculated_total
               this.loan_detail.maximum_suggested_valid=this.calculator_result.maximum_suggested_valid
               this.loan_detail.quota_calculated_total_lender=this.calculator_result.quota_calculated_estimated_total
+              this.loan_detail.is_valid=this.calculator_result.is_valid
               for(let j = 0; j < this.liquid_calificated.length; j++ ){
                 if(this.liquid_calificated[j].livelihood_amount==false)
                 {
@@ -673,6 +674,7 @@ export default {
               this.loan_detail.liquid_qualification_calculated=this.calculator_result.liquid_qualification_calculated_total
               this.loan_detail.indebtedness_calculated=this.calculator_result.indebtedness_calculated_total
               this.loan_detail.maximum_suggested_valid=this.calculator_result.maximum_suggested_valid
+              this.loan_detail.is_valid=this.calculator_result.is_valid
               this.loan_detail.quota_calculated_total_lender=this.calculator_result.quota_calculated_estimated_total
           }
         /* for (this.i = 0; this.i< this.datos_calculadora_hipotecario.length; this.i++) {
@@ -749,11 +751,10 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
         let mod_refi_repro=res2.data.procedure_type_id
         this.loanTypeSelected.id = res2.data.procedure_type_id
         this.edit_refi_repro = true
-        
         if(this.data_loan.property_id != null){
           let res3 = await axios.get(`loan_property/${this.data_loan.property_id}`)
           this.loan_detail.net_realizable_value = res3.data.net_realizable_value
-        }        
+        }
         console.log(this.data_loan)
       } catch (e) {
         console.log(e)
@@ -887,59 +888,65 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
         this.toastr.error("El monto solicitado no pertenece a esta modalidad.")
        // this.beforeStep(2)
       }else{
-        if(!this.isNew){
-         if(this.data_loan_parent_aux.code==null)
-         {
-          this.toastr.error("Tiene que llenar el Codigo del Prestamo Padre.")
-         }else{
-           if(this.data_loan_parent_aux.amount_approved==null)
+        if(!this.loan_detail.is_valid)
+        {
+          this.toastr.error("No puede quedarse con un liquido menor al monto de subsistencia.")
+        }
+        else{
+           if(!this.isNew){
+            if(this.data_loan_parent_aux.code==null)
             {
-              this.toastr.error("Tiene que llenar el Monto del Prestamo Padre.")
+              this.toastr.error("Tiene que llenar el Codigo del Prestamo Padre.")
             }else{
-              if(this.data_loan_parent_aux.loan_term==null)
-              {
-                this.toastr.error("Tiene que llenar el Plazo del Prestamo Padre.")
-              }else{
-                if(this.data_loan_parent_aux.balance==null)
+              if(this.data_loan_parent_aux.amount_approved==null)
                 {
-                  this.toastr.error("Tiene que llenar el Saldo del Prestamo Padre.")
+                  this.toastr.error("Tiene que llenar el Monto del Prestamo Padre.")
                 }else{
-                  if(this.data_loan_parent_aux.balance >= this.calculator_result.amount_requested)
+                  if(this.data_loan_parent_aux.loan_term==null)
                   {
-                    this.toastr.error("El saldo no puede ser mayor al Monto Solicitado.")
-                  }
-                  else{
-                    if(this.data_loan_parent_aux.estimated_quota==null)
+                    this.toastr.error("Tiene que llenar el Plazo del Prestamo Padre.")
+                  }else{
+                    if(this.data_loan_parent_aux.balance==null)
                     {
-                      this.toastr.error("Tiene que llenar la Cuota del Prestamo Padre.")
+                      this.toastr.error("Tiene que llenar el Saldo del Prestamo Padre.")
                     }else{
-                      this.addDataLoan()
-                      this.nextStep(2)
+                      if(this.data_loan_parent_aux.balance >= this.calculator_result.amount_requested)
+                      {
+                        this.toastr.error("El saldo no puede ser mayor al Monto Solicitado.")
+                      }
+                      else{
+                        if(this.data_loan_parent_aux.estimated_quota==null)
+                        {
+                          this.toastr.error("Tiene que llenar la Cuota del Prestamo Padre.")
+                        }else{
+                          this.addDataLoan()
+                          this.nextStep(2)
+                        }
+                      }
                     }
                   }
                 }
               }
-            }
-         }
-      }else{
-        this.nextStep(2)
-      }
+            }else{
+            this.nextStep(2)
+          }
+        }
       }
     },
     validateStepsthree()
     {
       if(this.modalidad.procedure_type_id==12)
       {
-        this.$refs.HipotecaryData.validateHipotecaryData()      
+        this.$refs.HipotecaryData.validateHipotecaryData()
         this.bus.$on('validHipotecaryData', (val3) => {
-          console.log("VAL"+val3)       
+          console.log("VAL"+val3)
           this.valor3 = val3
           console.log("VALOR3"+val3)
         })
-        if(this.valor3 == true){       
+        if(this.valor3 == true){
           this.saveLoanProperty()
           this.nextStep(3)
-        }else{         
+        }else{
           console.log("no pasa")
         }
       }
@@ -963,51 +970,50 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
         }
       }
     },
-    validateStepsFive(){      
-      this.$refs.FormInformation.validateDestiny()      
+    validateStepsFive(){
+      this.$refs.FormInformation.validateDestiny()
       this.bus.$on('validDestiny', (val1) => {
       console.log("VAL"+val1)
       this.valor1 = val1
       console.log("VALOR1"+this.valor1)
       })
 
-      if(this.valor1 == true){   
-          
+      if(this.valor1 == true){
          //////
         if(this.modalidad.personal_reference){
-          this.$refs.FormInformation.validatePerRef()      
+          this.$refs.FormInformation.validatePerRef()
           this.bus.$on('validPerRef', (val2) => {
-          console.log("VAL2"+val2) 
-          this.valor2 = val2  
-          console.log("VALOR2"+this.valor2)     
+          console.log("VAL2"+val2)
+          this.valor2 = val2
+          console.log("VALOR2"+this.valor2)
           })
           if(this.valor2==true){
               this.savePersonalReference()
-              this.personal()     
+              this.personal()
               this.nextStep(5)
-          }else{         
+          }else{
               console.log("no pasa")
-          } 
+          }
         }else{
               this.savePersonalReference()
-              this.personal()     
+              this.personal()
               this.nextStep(5)
-        } 
+        }
          /////
-      }else{         
+      }else{
           console.log("no pasa")
       }
 
 
-      /*this.$refs.FormInformation.validatePerRef()      
+      /*this.$refs.FormInformation.validatePerRef()
       this.bus.$on('validPerRef', (val) => {
-      console.log("VAL"+val)       
-      if(val){       
+      console.log("VAL"+val)
+      if(val){
           this.nextStep(5)
-      }else{         
+      }else{
           console.log("no pasa")
       }
-      })*/ 
+      })*/
     }
   }
 }

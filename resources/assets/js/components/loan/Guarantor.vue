@@ -154,10 +154,16 @@
                 <v-col cols="12" md="6" class="text-uppercase py-0 font-weight-light caption">
                   ESTADO:{{affiliate_garantor.affiliate.affiliate_state.name}}
                 </v-col>
-                <v-col cols="12" md="8" class="font-weight-black caption">
+                <v-col cols="12" md="8" class="font-weight-black caption py-0" >
+                  PRESTAMOS QUE ESTA GARANTIZANDO:
+                </v-col>
+                <v-col cols="12" md="2" class="font-weight-black caption py-0" >
+                  {{affiliate_garantor.active_guarantees_quantity}}
+                </v-col>
+                <v-col cols="12" md="8" class="font-weight-black caption py-1">
                   PRESTAMOS VIGENTES QUE TIENE EL AFILIADO:
                 </v-col>
-                 <v-col cols="12" md="2" class="font-weight-black caption">
+                 <v-col cols="12" md="2" class="font-weight-black caption py-1">
                  {{loan.length}}
                 </v-col>
                 <v-col cols="12" class="py-0" v-show="loan.length>0">
@@ -169,12 +175,6 @@
                     hide-default-footer
                   >
                   </v-data-table>
-                </v-col>
-                <v-col cols="12" md="8" class="font-weight-black caption" >
-                  PRESTAMOS QUE ESTA GARANTIZANDO:
-                </v-col>
-                <v-col cols="12" md="2" class="font-weight-black caption" >
-                  {{affiliate_garantor.active_guarantees_quantity}}
                 </v-col>
               </v-row>
             </v-container>
@@ -188,13 +188,17 @@
                     <v-layout row wrap>
                       <v-flex xs6 class="px-2">
                         <fieldset class="pa-3" >
-                          <p class="py-0 mb-0 caption">Liquido Total:{{evaluate_garantor.payable_liquid_calculated +' '}}<br>
+                          <h1 class="caption" >{{'Cantidad de garantes faltantes a añadir: '}}{{modalidad_guarantors-garantes_detalle.length}}</h1>
+                          <v-progress-linear></v-progress-linear>
+                          <h1 class="caption" v-show="cont=0">{{'Calcular el porcentaje de pago del garante'}}</h1>
+                          <p class="py-0 mb-0 caption" v-show="show_data">Liquido Total:{{evaluate_garantor.payable_liquid_calculated +' '}}<br>
                            Total de Bonos:{{evaluate_garantor.bonus_calculated +' '}}<br>
                            Liquido para la Calificacio:{{evaluate_garantor.liquid_qualification_calculated }}</p>
-                          <p class="py-0 mb-0 caption">Indice de Endeudamineto: {{evaluate_garantor.indebtnes_calculated+'% '}}<br> <b>{{evaluate_garantor.is_valid?'Cubre la Cuota ':'No Cubre la Cuota'}}</b></p>
+                          <p class="py-0 mb-0 caption" v-show="show_data">Indice de Endeudamineto: {{evaluate_garantor.indebtnes_calculated+'% '}}<br> <b>{{evaluate_garantor.is_valid?'Cubre la Cuota ':'No Cubre la Cuota'}}</b></p>
                           <div class="text-right"  v-show="evaluate_garantor.is_valid">
                             <v-btn
-                            v-show="garantes_detalle.length < modalidad_guarantors"
+                              v-if="show_data"
+                              v-show="garantes_detalle.length < modalidad_guarantors"
                               x-small
                               class="py-0"
                               color="info"
@@ -305,6 +309,7 @@
       },
     },
     editar:true,
+    show_data:true,
     show_simulador:false,
     garante_boletas:{},
     data_ballots:[],
@@ -371,6 +376,8 @@ ver()
     {
       this.guarantor_ci=null
       this.show_evaluated=false
+      this.show_data=false
+
       this.garante_boletas.affiliate_id=this.affiliate_garantor.affiliate.id
       this.garante_boletas.liquid_qualification_calculated=this.evaluate_garantor.payable_liquid_calculated
       this.guarantor_objeto.affiliate_id=this.affiliate_garantor.affiliate.id
@@ -404,6 +411,7 @@ console.log('este es el garante'+this.garantes[0])
         {
             this.show_result=true
             this.show_evaluated=true
+            this.show_data=true
             let res = await axios.post(`evaluate_garantor`, {
                 procedure_modality_id:this.modalidad_id,
                 affiliate_id:this.affiliate_garantor.affiliate.id,

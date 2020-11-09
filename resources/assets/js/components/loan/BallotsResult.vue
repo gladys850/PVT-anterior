@@ -90,12 +90,22 @@
                         </ValidationProvider>
                        <ValidationProvider v-slot="{ errors }" name="monto solicitado" :rules="'numeric|min_value:'+loan_detail.minimun_amoun+'|max_value:'+loan_detail.maximun_amoun" mode="aggressive">
                           <v-text-field
+                            class="py-0"
                             :error-messages="errors"
                             label="Monto Solicitado"
                             v-model ="calculator_result.amount_requested"
                             v-on:keyup.enter="simuladores()"
                           ></v-text-field>
                         </ValidationProvider>
+                        <center>
+                          <v-btn
+                            class="py-0 text-right"
+                            color="info"
+                            rounded
+                            x-small
+                            @click="simuladores()">Calcular
+                          </v-btn>
+                        </center>
                       </fieldset>
                     </v-flex>
                   </v-layout>
@@ -237,11 +247,11 @@ export default {
           this.calculator_result.amount_requested=this.calculator_result_aux.amount_maximum_suggested
           this.loan_detail.amount_requested=this.calculator_result_aux.amount_maximum_suggested
         }
-      
         this.loan_detail.months_term=this.calculator_result_aux.months_term
         this.loan_detail.indebtedness_calculated=this.calculator_result_aux.indebtedness_calculated_total
 
         this.loan_detail.maximum_suggested_valid=this.calculator_result_aux.maximum_suggested_valid
+        this.loan_detail.is_valid=this.calculator_result_aux.is_valid
         this.loan_detail.quota_calculated_total_lender=this.calculator_result_aux.quota_calculated_estimated_total
 
         /*      for (this.j = 0; this.j< this.simulator.length; this.j++){
