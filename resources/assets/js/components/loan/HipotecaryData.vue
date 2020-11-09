@@ -1,6 +1,6 @@
 <template>
   <v-container fluid>
-    <ValidationObserver ref="observer">
+    <ValidationObserver ref="observerHipotecaryData">
       <v-form>
         <v-card class="px-3">
           <v-row justify="center">
@@ -11,93 +11,153 @@
               <v-row justify="center">
                 <v-col cols="12" md="6" class="py-0">
                   <small>
-                    <v-text-field
-                      dense
-                      label="Nro de Lote de Terreno"
-                      v-model="loan_property.land_lot_number"
-                      outlined
-                    ></v-text-field>
+                    <ValidationProvider
+                      v-slot="{ errors }"
+                      name="Nro de Lote de Terreno"
+                      rules="required"
+                    >
+                      <v-text-field
+                        :error-messages="errors"
+                        dense
+                        label="Nro de Lote de Terreno"
+                        v-model="loan_property.land_lot_number"
+                        outlined
+                      ></v-text-field>
+                    </ValidationProvider>
                   </small>
                 </v-col>
                 <v-col cols="12" md="6" class="py-0">
-                  <v-text-field
-                    dense
-                    label="Unidad Vecinal"
-                    v-model="loan_property.neighborhood_unit"
-                    outlined
-                  ></v-text-field>
+                  <ValidationProvider v-slot="{ errors }" name="Unidad Vecinal" rules="required">
+                    <v-text-field
+                      :error-messages="errors"
+                      dense
+                      label="Unidad Vecinal"
+                      v-model="loan_property.neighborhood_unit"
+                      outlined
+                    ></v-text-field>
+                  </ValidationProvider>
                 </v-col>
                 <v-col cols="12" md="12" class="py-0">
-                  <v-text-field 
-                    dense label="Ubicación" 
-                    v-model="loan_property.location" 
-                    outlined
-                  ></v-text-field>
+                  <ValidationProvider v-slot="{ errors }" name="Ubicación" rules="required">
+                    <v-text-field
+                      :error-messages="errors"
+                      dense
+                      label="Ubicación"
+                      v-model="loan_property.location"
+                      outlined
+                    ></v-text-field>
+                  </ValidationProvider>
                 </v-col>
                 <v-col cols="12" md="3" class="py-0">
-                  <v-text-field 
-                    dense label="Superficie" 
-                    v-model="loan_property.surface" 
-                    outlined
-                  ></v-text-field>
+                  <ValidationProvider v-slot="{ errors }" name="Superficie" rules="required">
+                    <v-text-field
+                      :error-messages="errors"
+                      dense
+                      label="Superficie"
+                      v-model="loan_property.surface"
+                      outlined
+                    ></v-text-field>
+                  </ValidationProvider>
                 </v-col>
                 <v-col cols="12" md="3" class="py-0">
-                  <v-select
-                    dense
-                    :items="items_measurement"
-                    item-text="name"
-                    item-value="value"
-                    label="Unidad de medida"
-                    v-model="loan_property.measurement"
-                    outlined
-                  ></v-select>
+                  <ValidationProvider v-slot="{ errors }" name="Unidad de medida" rules="required">
+                    <v-select
+                      :error-messages="errors"
+                      dense
+                      :items="items_measurement"
+                      item-text="name"
+                      item-value="value"
+                      label="Unidad de medida"
+                      v-model="loan_property.measurement"
+                      outlined
+                    ></v-select>
+                  </ValidationProvider>
                 </v-col>
                 <v-col cols="12" md="6" class="py-0">
-                  <v-text-field
-                    dense
-                    label="Código Catastral"
-                    v-model="loan_property.cadastral_code"
-                    outlined
-                  ></v-text-field>
+                  <ValidationProvider v-slot="{ errors }" name="Código Catastral" rules="required">
+                    <v-text-field
+                      :error-messages="errors"
+                      dense
+                      label="Código Catastral"
+                      v-model="loan_property.cadastral_code"
+                      outlined
+                    ></v-text-field>
+                  </ValidationProvider>
                 </v-col>
                 <v-col cols="12" md="12" class="py-0">
-                  <v-text-field dense label="Colindancias" v-model="loan_property.limit" outlined></v-text-field>
+                  <ValidationProvider v-slot="{ errors }" name="Colindancias" rules="required">
+                    <v-text-field
+                      :error-messages="errors"
+                      dense
+                      label="Colindancias"
+                      v-model="loan_property.limit"
+                      outlined
+                    ></v-text-field>
+                  </ValidationProvider>
                 </v-col>
               </v-row>
             </v-col>
             <v-col cols="12" md="6" class="v-card-profile">
               <v-row justify="center">
                 <v-col cols="12" md="6" class="py-0">
-                  <v-text-field
-                    dense
-                    label="Nro de Escritura Pública"
-                    v-model="loan_property.public_deed_number"
-                    outlined
-                  ></v-text-field>
+                  <ValidationProvider
+                    v-slot="{ errors }"
+                    name="Nro de Escritura Pública"
+                    rules="required"
+                  >
+                    <v-text-field
+                      :error-messages="errors"
+                      dense
+                      label="Nro de Escritura Pública"
+                      v-model="loan_property.public_deed_number"
+                      outlined
+                    ></v-text-field>
+                  </ValidationProvider>
                 </v-col>
                 <v-col cols="12" md="6" class="py-0">
-                  <v-text-field
-                    dense
-                    label="Notaría de Fé Pública"
-                    v-model="loan_property.lawyer"
-                    outlined
-                  ></v-text-field>
+                  <ValidationProvider
+                    v-slot="{ errors }"
+                    name="Notaría de Fé Pública"
+                    rules="required"
+                  >
+                    <v-text-field
+                      :error-messages="errors"
+                      dense
+                      label="Notaría de Fé Pública"
+                      v-model="loan_property.lawyer"
+                      outlined
+                    ></v-text-field>
+                  </ValidationProvider>
                 </v-col>
                 <v-col cols="12" md="6" class="py-0">
-                  <v-text-field
-                    dense
-                    label="Nro Matrícula Computarizada"
-                    v-model="loan_property.registration_number"
-                    outlined
-                  ></v-text-field>
+                  <ValidationProvider
+                    v-slot="{ errors }"
+                    name="Nro Matrícula Computarizada"
+                    rules="required"
+                  >
+                    <v-text-field
+                      :error-messages="errors"
+                      dense
+                      label="Nro Matrícula Computarizada"
+                      v-model="loan_property.registration_number"
+                      outlined
+                    ></v-text-field>
+                  </ValidationProvider>
                 </v-col>
                 <v-col cols="12" md="6" class="py-0">
-                  <v-text-field
-                    dense
-                    label="Nro Asiento Folio Real"
-                    v-model="loan_property.real_folio_number"
-                    outlined
-                  ></v-text-field>
+                  <ValidationProvider
+                    v-slot="{ errors }"
+                    name="Nro Asiento Folio Real"
+                    rules="required"
+                  >
+                    <v-text-field
+                      :error-messages="errors"
+                      dense
+                      label="Nro Asiento Folio Real"
+                      v-model="loan_property.real_folio_number"
+                      outlined
+                    ></v-text-field>
+                  </ValidationProvider>
                 </v-col>
                 <v-col cols="12" md="6" class="py-0">
                   <v-menu
@@ -109,17 +169,24 @@
                     min-width="290px"
                   >
                     <template v-slot:activator="{ on }">
-                      <v-text-field
-                        dense
-                        outlined
-                        readonly
-                        v-model="dates.publicDeedDate.formatted"
-                        label="Fecha de Escritura Pública"
-                        hint="Día/Mes/Año"
-                        persistent-hint
-                        append-icon="mdi-calendar"
-                        v-on="on"
-                      ></v-text-field>
+                      <ValidationProvider
+                        v-slot="{ errors }"
+                        name="Fecha de Escritura Pública"
+                        rules="required"
+                      >
+                        <v-text-field
+                          :error-messages="errors"
+                          dense
+                          outlined
+                          readonly
+                          v-model="dates.publicDeedDate.formatted"
+                          label="Fecha de Escritura Pública"
+                          hint="Día/Mes/Año"
+                          persistent-hint
+                          append-icon="mdi-calendar"
+                          v-on="on"
+                        ></v-text-field>
+                      </ValidationProvider>
                     </template>
                     <v-date-picker
                       v-model="loan_property.public_deed_date"
@@ -129,25 +196,38 @@
                   </v-menu>
                 </v-col>
                 <v-col cols="12" md="6" class="py-0">
-                  <v-select
-                    dense
-                    :items="cities"
-                    item-text="name"
-                    item-value="id"
-                    
-                    label="Ciudad de registro en derechos reales"
-                    v-model="loan_property.real_city_id"
-                    outlined
-                  ></v-select>
+                  <ValidationProvider
+                    v-slot="{ errors }"
+                    name="Ciudad de registro en derechos reales"
+                    rules="required"
+                  >
+                    <v-select
+                      :error-messages="errors"
+                      dense
+                      :items="cities"
+                      item-text="name"
+                      item-value="id"
+                      label="Ciudad de registro en derechos reales"
+                      v-model="loan_property.real_city_id"
+                      outlined
+                    ></v-select>
+                  </ValidationProvider>
                 </v-col>
                 <v-col cols="12" md="6" class="py-0">
-                  <v-text-field
-                    dense
-                    label="VNR (Valor Neto Realizado)"
-                    v-model="loan_detail.net_realizable_value"
-                    outlined
-                    readonly
-                  ></v-text-field>
+                  <ValidationProvider
+                    v-slot="{ errors }"
+                    name="VNR (Valor Neto Realizado)"
+                    rules="required"
+                  >
+                    <v-text-field
+                      :error-messages="errors"
+                      dense
+                      label="VNR (Valor Neto Realizado)"
+                      v-model="loan_detail.net_realizable_value"
+                      outlined
+                      readonly
+                    ></v-text-field>
+                  </ValidationProvider>
                 </v-col>
                 <v-col cols="12" md="6" class="py-0"></v-col>
 
@@ -250,9 +330,13 @@ export default {
       type: Object,
       required: true
     },
-    loan_property:{
-      type:Object,
+    loan_property: {
+      type: Object,
       required: true
+    },
+    bus:{
+      type: Object,
+      required:true
     }
   },
   data: () => ({
@@ -271,34 +355,47 @@ export default {
     ]
   }),
   mounted() {
-    this.getCities()
-    this.formatDate("publicDeedDate", this.loan_property.public_deed_date)
+    this.getCities();
+    this.formatDate("publicDeedDate", this.loan_property.public_deed_date);
   },
   watch: {
     "loan_property.public_deed_date": function(date) {
-      this.formatDate("publicDeedDate", date)
+      this.formatDate("publicDeedDate", date);
     }
   },
   methods: {
     formatDate(key, date) {
       if (date) {
-        this.dates[key].formatted = this.$moment(date).format("L")
+        this.dates[key].formatted = this.$moment(date).format("L");
       } else {
-        this.dates[key].formatted = null
+        this.dates[key].formatted = null;
       }
     },
     async getCities() {
       try {
         //this.loading = true
-        let res = await axios.get("city")
-        this.cities = res.data
+        let res = await axios.get("city");
+        this.cities = res.data;
       } catch (e) {
-        console.log(e)
+        console.log(e);
       } finally {
         //this.loading = false
       }
     },
-
+    async validateHipotecaryData() {
+      try {
+        let estado = false;
+        estado = await this.$refs.observerHipotecaryData.validate();
+        if (estado) {
+          this.bus.$emit("validHipotecaryData", estado);
+        } else {
+          this.bus.$emit("validHipotecaryData", estado);
+        }
+        console.log(" estado " + estado);
+      } catch (e) {
+        this.$refs.observerHipotecaryData.setErrors(e);
+      }
+    }
   }
   /*data: () => ({
 
@@ -415,5 +512,5 @@ export default {
   
     
   }*/
-}
+};
 </script>
