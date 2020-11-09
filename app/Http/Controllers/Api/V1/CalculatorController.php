@@ -25,6 +25,7 @@ class CalculatorController extends Controller
     * @bodyParam liquid_calification[0].affiliate_id integer required ID del afiliado. Example: 9389
     * @bodyParam liquid_calification[0].sismu boolean En caso de tener un Préstamo Padre en el Sistema sismu. Example: true
     * @bodyParam liquid_calification[0].quota_sismu float En caso de tener un Préstamo Padre en el Sistema sismu,  se requiere cuota. Example: 500
+    * @bodyParam liquid_calification[1].parent_loan_id integer ID de Préstamo Padre No-example.
     * @bodyParam liquid_calification[0].contributions[0].payable_liquid float required Líquido pagable. Example: 2000
     * @bodyParam liquid_calification[0].contributions[0].seniority_bonus float required Bono Cargo . Example: 0
     * @bodyParam liquid_calification[0].contributions[0].border_bonus float required Bono Frontera . Example: 0
@@ -42,6 +43,8 @@ class CalculatorController extends Controller
     * @bodyParam liquid_calification[0].contributions[2].east_bonus float Bono Oriente. Example: 950.6
     * @bodyParam liquid_calification[1].affiliate_id integer required ID del afiliado. Example: 47461
     * @bodyParam liquid_calification[1].parent_loan_id integer ID de Préstamo Padre. Example: 13
+    * @bodyParam liquid_calification[1].sismu boolean En caso de tener un Préstamo Padre en el Sistema sismu. Example: false
+    * @bodyParam liquid_calification[1].quota_sismu float En caso de tener un Préstamo Padre en el Sistema sismu,  se requiere cuota No-example.
     * @bodyParam liquid_calification[1].contributions[0].payable_liquid float required Líquido pagable. Example: 3000
     * @bodyParam liquid_calification[1].contributions[0].seniority_bonus float required Bono Cargo . Example: 0
     * @bodyParam liquid_calification[1].contributions[0].border_bonus float required Bono Frontera . Example: 0
@@ -71,7 +74,11 @@ class CalculatorController extends Controller
             }else{
                 /** En caso de refinanciamiento y/o reprogramación sismu */
                 if (array_key_exists('sismu', $liq)) {
-                $parent_quota = $liq['quota_sismu'];
+                    if($liq['sismu']){
+                        $parent_quota = $liq['quota_sismu'];
+                    }else{
+                        $parent_quota = 0;
+                    }
                 }else{
                 $parent_quota = 0;
                 }
