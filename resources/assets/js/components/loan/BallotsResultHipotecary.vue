@@ -242,7 +242,6 @@ export default {
           console.log(""+this.simulator[this.j].affiliate_nombres)
         }
 */
-
         if( this.simulator.amount_requested<this.calculator_result.amount_requested){
           this.calculator_result.amount_requested=this.simulator.amount_requested
           this.loan_detail.amount_requested=this.calculator_result.amount_requested
@@ -250,18 +249,16 @@ export default {
           this.calculator_result.amount_requested=this.simulator.amount_requested
           this.loan_detail.amount_requested=this.simulator.amount_requested
         }
-
-
-this.loan_detail.months_term=this.calculator_result.months_term
-this.loan_detail.liquid_qualification_calculated=this.simulator.liquid_qualification_calculated_total
-this.loan_detail.indebtedness_calculated=this.simulator.indebtedness_calculated_total
+        this.loan_detail.months_term=this.calculator_result.months_term
+        this.loan_detail.liquid_qualification_calculated=this.simulator.liquid_qualification_calculated_total
+        this.loan_detail.indebtedness_calculated=this.simulator.indebtedness_calculated_total
+        this.loan_detail.maximum_suggested_valid=this.simulator.maximum_suggested_valid
+        this.loan_detail.is_valid=this.simulator.is_valid
         for (this.i = 0; this.i< this.lenders.length; this.i++){
 
           this.lenders[this.i].payment_percentage=this.simulator.affiliates[this.i].payment_percentage
           this.lenders[this.i].indebtedness_calculated=this.simulator.affiliates[this.i].indebtedness_calculated
         }
-
-
       } catch (e) {
         console.log(e)
       } finally {
