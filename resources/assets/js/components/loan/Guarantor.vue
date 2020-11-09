@@ -379,7 +379,7 @@ ver()
       this.show_data=false
 
       this.garante_boletas.affiliate_id=this.affiliate_garantor.affiliate.id
-      this.garante_boletas.liquid_qualification_calculated=this.evaluate_garantor.payable_liquid_calculated
+      this.garante_boletas.liquid_qualification_calculated=this.evaluate_garantor.liquid_qualification_calculated
       this.guarantor_objeto.affiliate_id=this.affiliate_garantor.affiliate.id
       this.guarantor_objeto.bonus_calculated=this.evaluate_garantor.bonus_calculated
       this.guarantor_objeto.payable_liquid_calculated=this.evaluate_garantor.payable_liquid_calculated
