@@ -118,7 +118,7 @@
         <v-tab-item :value="'tab-1'">
           <v-card flat tile>
             <v-card-text>
-              <Dashboard :affiliate.sync="affiliate" :loan.sync="loan" :spouse.sync="spouse" />
+              <Dashboard :affiliate.sync="affiliate" :loan.sync="loan" :spouse.sync="spouse"/>
             </v-card-text>
           </v-card>
         </v-tab-item>
@@ -149,7 +149,7 @@
               </v-tooltip>
             </v-card-title>
             <v-card-text class="pl-10">
-              <SpecificDataLoan :loan.sync="loan" :loan_properties="loan_properties" :procedure_type="procedure_type">
+              <SpecificDataLoan :loan.sync="loan" :loan_properties="loan_properties" :procedure_types="procedure_types">
                 <template v-slot:title>
                   <v-col cols="12" class="py-0">
                     <v-toolbar-title><b>DATOS ESPECIFICOS DEL PRÉSTAMO</b></v-toolbar-title
@@ -279,7 +279,7 @@ export default {
     observations: [],
     spouse:{},
     loan_properties:{},
-    procedure_type:{},
+    procedure_types:{},
     intervalos: {},
     modalidad: {},
     icons: true,
@@ -322,7 +322,6 @@ export default {
   mounted() {
     this.getloan(this.$route.params.id);
     this.getSpouse(this.$route.params.id);
-    this.getCosigner(this.$route.params.id);
     this.getObservation(this.$route.params.id);
     this.getProceduretype(this.$route.params.id);
     this.getLoanproperty(this.$route.params.id);
@@ -404,8 +403,7 @@ export default {
       try {
         this.loading = true
         let res = await axios.get(`procedure_modality/${id}`)
-        this.procedure_type = res.data
-        console.log(procedure_type)
+        this.procedure_types = res.data
       } catch (e) {
         console.log(e)
       } finally {
