@@ -314,7 +314,10 @@ export default {
       cpop_sismu: false,
       livelihood_amount:true
     },
-    livelihood_amount: 0
+    livelihood_amount: 0,
+    valor1: false,
+    valor2: false,
+    valor3: false
   }),
   computed: {
     isNew() {
@@ -928,15 +931,17 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
       if(this.modalidad.procedure_type_id==12)
       {
         this.$refs.HipotecaryData.validateHipotecaryData()      
-        this.bus.$on('validHipotecaryData', (val) => {
-          console.log("VAL"+val)       
-          if(val){       
-            this.saveLoanProperty()
-            this.nextStep(3)
-          }else{         
-            console.log("no pasa")
-          }
+        this.bus.$on('validHipotecaryData', (val3) => {
+          console.log("VAL"+val3)       
+          this.valor3 = val3
+          console.log("VALOR3"+val3)
         })
+        if(this.valor3 == true){       
+          this.saveLoanProperty()
+          this.nextStep(3)
+        }else{         
+          console.log("no pasa")
+        }
       }
       else{
         if(this.modalidad.guarantors > 0)
@@ -958,24 +963,31 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
         }
       }
     },
-    validateStepsFive(){
+    validateStepsFive(){      
       this.$refs.FormInformation.validateDestiny()      
-      this.bus.$on('validDestiny', (val) => {
-      console.log("VAL"+val)       
-      if(val){       
+      this.bus.$on('validDestiny', (val1) => {
+      console.log("VAL"+val1)
+      this.valor1 = val1
+      console.log("VALOR1"+this.valor1)
+      })
+
+      if(this.valor1 == true){   
+          
          //////
         if(this.modalidad.personal_reference){
           this.$refs.FormInformation.validatePerRef()      
           this.bus.$on('validPerRef', (val2) => {
-          console.log("VAL"+val2)       
-          if(val2){
+          console.log("VAL2"+val2) 
+          this.valor2 = val2  
+          console.log("VALOR2"+this.valor2)     
+          })
+          if(this.valor2==true){
               this.savePersonalReference()
               this.personal()     
               this.nextStep(5)
           }else{         
               console.log("no pasa")
-          }
-          }) 
+          } 
         }else{
               this.savePersonalReference()
               this.personal()     
@@ -985,7 +997,6 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
       }else{         
           console.log("no pasa")
       }
-      })
 
 
       /*this.$refs.FormInformation.validatePerRef()      
