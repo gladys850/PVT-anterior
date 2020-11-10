@@ -472,10 +472,7 @@ ver()
             procedure_modality_id:this.modalidad_id,
           })
           this.affiliate_garantor=resp.data
-
-        console.log("esta son boletas del garante"+ this.affiliate_garantor.affiliate.id)
-        //let data_ballots=[]
-         let res = await axios.get(`affiliate/${this.affiliate_garantor.affiliate.id}/contribution`, {
+          let res = await axios.get(`affiliate/${this.affiliate_garantor.affiliate.id}/contribution`, {
         params:{
           city_id: this.$store.getters.cityId,
           sortBy: ['month_year'],
@@ -501,14 +498,11 @@ ver()
         this.bonos[2] = this.bonos[2]
         this.bonos[3] =this.bonos[3]
       }
-        console.log("esta son boletas del garante"+this.data_ballots)
           this.validated=this.affiliate_garantor.guarantor
           this.validated1=this.affiliate_garantor.guarantor
           this.show_calculated=this.affiliate_garantor.guarantor
           this.loan=this.affiliate_garantor.affiliate.loans
           this.show_garante=false
-          console.log('Entro al metodo de garanyes'+this.affiliate_garantor+'==>'+this.guarantor_ci)
-          console.log('prestamos'+this.loan)
         }
       } catch (e) {
         console.log(e)
