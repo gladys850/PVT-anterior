@@ -69,29 +69,79 @@
           v-show="!isNew"
           :href="`#tab-1`"
         >
-          <v-icon v-if="icons">mdi-trending-up</v-icon>
+        <v-tooltip bottom>
+        <template v-slot:activator="{ on, attrs }">
+          <v-icon 
+          v-if="icons"
+          v-bind="attrs"
+          v-on="on"
+          >mdi-trending-up
+          </v-icon>
+          </template>
+        <span><b>PRESTAMOS, REFINANCIAMIENTO Y REPROGRAMACION</b></span>
+        </v-tooltip>
         </v-tab>
         <v-tab
           :href="`#tab-2`"
         >
-          <v-icon v-if="icons">mdi-account</v-icon>
+        <v-tooltip bottom>
+        <template v-slot:activator="{ on, attrs }">
+          <v-icon 
+          v-if="icons"
+          v-bind="attrs"
+          v-on="on"
+          >mdi-account
+          </v-icon>
+        </template>
+        <span><b>DATOS PERSONALES DEL AFILIADO</b></span>
+      </v-tooltip>
         </v-tab>
         <v-tab
           :href="`#tab-3`"
         >
-          <v-icon v-if="icons">mdi-police-badge</v-icon>
+        <v-tooltip bottom>
+        <template v-slot:activator="{ on, attrs }">
+          <v-icon 
+          v-if="icons" 
+          v-bind="attrs"
+          v-on="on"
+          >mdi-police-badge
+          </v-icon>
+        </template>
+        <span><b>INFORMACION POLICIAL</b></span>
+      </v-tooltip>
         </v-tab>
         <v-tab
           :href="`#tab-4`"
           v-show="!isNew"
         >
-          <v-icon v-if="icons">mdi-account-heart</v-icon>
+        <v-tooltip bottom>
+        <template v-slot:activator="{ on, attrs }">
+          <v-icon 
+          v-if="icons"
+          v-bind="attrs"
+          v-on="on"
+          >mdi-account-heart
+          </v-icon>
+          </template>
+        <span><b>INFORMACION CONYUGE</b></span>
+      </v-tooltip>
         </v-tab>
         <v-tab
           v-show="!isNew"
           :href="`#tab-5`"
         >
-          <v-icon v-if="icons">mdi-fingerprint</v-icon>
+        <v-tooltip bottom>
+        <template v-slot:activator="{ on, attrs }">
+          <v-icon 
+          v-if="icons"
+          v-bind="attrs"
+          v-on="on"
+          >mdi-fingerprint
+          </v-icon>
+          </template>
+        <span><b>INFORMACION DEL BIOMETRICO</b></span>
+      </v-tooltip>
         </v-tab>
 
         <v-tab

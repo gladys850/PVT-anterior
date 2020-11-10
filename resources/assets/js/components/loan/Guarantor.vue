@@ -302,12 +302,6 @@
         affiliate_state:{}
       },
     },
-    affiliate_garantor_aux:{
-      affiliate:{
-        category:{},
-        affiliate_state:{}
-      },
-    },
     editar:true,
     show_data:true,
     show_simulador:false,
@@ -316,14 +310,12 @@
     show_garante:true,
     show_calculated:false,
     show_result:false,
-    show_evaluated:false,
     simulator_guarantors:{},
     loan:[],
     index: [],
     guarantor_objeto:{},
     garantes_detalle:[],
     garantes_simulador:[],
-    guarantor:[null],
     validated:true,
     validated1:false,
     payable_liquid:[0],
@@ -375,7 +367,6 @@ ver()
     async añadir()
     {
       this.guarantor_ci=null
-      this.show_evaluated=false
       this.show_data=false
 
       this.garante_boletas.affiliate_id=this.affiliate_garantor.affiliate.id
@@ -383,34 +374,40 @@ ver()
       this.guarantor_objeto.affiliate_id=this.affiliate_garantor.affiliate.id
       this.guarantor_objeto.bonus_calculated=this.evaluate_garantor.bonus_calculated
       this.guarantor_objeto.payable_liquid_calculated=this.evaluate_garantor.payable_liquid_calculated
-      this.garantes_detalle.push(this.affiliate_garantor.affiliate.full_name);
-      this.garantes_simulador.push(this.garante_boletas);
-      this.guarantors.push(this.guarantor_objeto);
-      this.garante_boletas={}
-      this.guarantor_objeto={}
-     console.log('entro a garantes ==> '+this.garantes_detalle)
+      if(this.garantes_detalle.length >= 1)
+      {
+        if(this.garantes_detalle[0]==this.affiliate_garantor.affiliate.full_name)
+        {
+          this.toastr.error("No puede añadir 2 veces al mismo garante.")
+        }
+        else{
+          this.garantes_detalle.push(this.affiliate_garantor.affiliate.full_name);
+          this.garantes_simulador.push(this.garante_boletas);
+          this.guarantors.push(this.guarantor_objeto);
+          this.garante_boletas={}
+          this.guarantor_objeto={}
+        }
+      }
+      else{
+        this.garantes_detalle.push(this.affiliate_garantor.affiliate.full_name);
+        this.garantes_simulador.push(this.garante_boletas);
+        this.guarantors.push(this.guarantor_objeto);
+        this.garante_boletas={}
+        this.guarantor_objeto={}
+      }
     this.clear()
     },
     deleteOtherDocument(i) {
+      this.show_simulador=false
       this.garantes_detalle.splice(i, 1)
       this.garantes_simulador.splice(i, 1)
       this.guarantors.splice(i, 1)
-
-      console.log("other2 " + this.garantes_detalle);
     },
-   /* async añadir()
-    {
-      console.log('entro a garantes')
-this.garantes[0]=this.affiliate_garantor.affiliate.id
-    this.toastr.success("Se añadio satisfactoriamente al garante.")
-console.log('este es el garante'+this.garantes[0])
-    },*/
      async calculator() {
       try {
          if(this.affiliate_garantor.guarantor_information==true)
         {
             this.show_result=true
-            this.show_evaluated=true
             this.show_data=true
             let res = await axios.post(`evaluate_garantor`, {
                 procedure_modality_id:this.modalidad_id,
@@ -475,11 +472,7 @@ console.log('este es el garante'+this.garantes[0])
             procedure_modality_id:this.modalidad_id,
           })
           this.affiliate_garantor=resp.data
-          this.affiliate_garantor_aux=this.affiliate_garantor
-
-        console.log("esta son boletas del garante"+ this.affiliate_garantor.affiliate.id)
-        //let data_ballots=[]
-         let res = await axios.get(`affiliate/${this.affiliate_garantor.affiliate.id}/contribution`, {
+          let res = await axios.get(`affiliate/${this.affiliate_garantor.affiliate.id}/contribution`, {
         params:{
           city_id: this.$store.getters.cityId,
           sortBy: ['month_year'],
@@ -505,16 +498,11 @@ console.log('este es el garante'+this.garantes[0])
         this.bonos[2] = this.bonos[2]
         this.bonos[3] =this.bonos[3]
       }
-        console.log("esta son boletas del garante"+this.data_ballots)
           this.validated=this.affiliate_garantor.guarantor
           this.validated1=this.affiliate_garantor.guarantor
           this.show_calculated=this.affiliate_garantor.guarantor
           this.loan=this.affiliate_garantor.affiliate.loans
-          this.guarantor=this.affiliate_garantor.affiliate.guarantor
           this.show_garante=false
-          console.log('Entro al metodo de garanyes'+this.affiliate_garantor+'==>'+this.guarantor_ci)
-          console.log('prestamos'+this.loan)
-          console.log('guarantor'+this.guarantor)
         }
       } catch (e) {
         console.log(e)
