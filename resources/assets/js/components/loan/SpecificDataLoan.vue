@@ -69,7 +69,7 @@
                           <p><b>LIQUIDO PARA CALIFICACION:</b>{{' '+loan.liquid_qualification_calculated}}</p>
                           <p><b>CALCULO DE CUOTA:</b>{{' '+loan.estimated_quota}}</p>
                           <p><b>INDICE DE ENDEUDAMIENTO:</b>{{' '+loan.indebtedness_calculated}}</p>
-                          <div v-for="procedure_type in procedure_types" :key="procedure_type" v-if="procedure_type.name == 'Préstamo hipotecario'">
+                          <div v-for="procedure_type in procedure_types" :key="procedure_type.id" v-if="procedure_type.name == 'Préstamo hipotecario'">
                           <v-progress-linear></v-progress-linear><br>
                            <p style="color:teal"><b>TITULAR</b></p>
                           <div v-for="(lenders,i) in loan.lenders" :key="i">
@@ -88,15 +88,15 @@
                           <fieldset class="pa-3" max-width="100%">
                             <v-toolbar-title><b>GARANTIA</b></v-toolbar-title>
                               <v-progress-linear></v-progress-linear>
-                              <div v-for="procedure_type in procedure_types" :key="procedure_type" >
+                              <div v-for="procedure_type in procedure_types" :key="procedure_type.id" >
                               <ul style="list-style: none" class="pa-0" v-if="procedure_type.name == 'Préstamo a largo plazo' || procedure_type.name == 'Préstamo a corto plazo'">
-                              <li v-for="(guarantor,i) in loan.guarantors" :key="i">
+                              <li v-for="guarantor in loan.guarantors" :key="guarantor.id">
                                 <br>
                                 <p><b>CÉDULA DE IDENTIDAD:</b> {{guarantor.identity_card +" "+ identityCardExt(guarantor.city_identity_card_id) }}</p>
                                 <p><b>NOMBRE:</b> {{$options.filters.fullName(guarantor, true)}}</p>
                                 <p><b>PORCENTAJE DE PAGO:</b> {{guarantor.pivot.payment_percentage}} %</p>
                               </li>
-                              <li>NO TIENE GARANTES</li>
+                               <p v-if="loan.guarantors.length==0">NO TIENE GARANTES</p>
                             </ul>
                             <ul style="list-style: none" class="pa-0" v-if="procedure_type.name == 'Préstamo hipotecario'">                                
                                 <br>
