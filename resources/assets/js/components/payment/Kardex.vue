@@ -32,9 +32,8 @@
       :items="payments"
       :loading="loading"
       :options.sync="options"
-      :server-items-length="10"
-      multi-sort
-      single-expand
+      :server-items-length="totalPayments"
+      :footer-props="{ itemsPerPageOptions: [8, 15, 30] }"
     >
 <template v-slot:header.data-table-select="{ on, props }">
       <v-simple-checkbox color="info" class="grey lighten-3" v-bind="props" v-on="on"></v-simple-checkbox>
@@ -159,12 +158,12 @@ export default {
     options: {
       page: 1,
       itemsPerPage: 8,
-      sortBy: ["request_date"],
-      sortDesc: [true]
+      sortBy: ["first_name"],
+      sortDesc: [false]
     },
     payments: [],
     //selectedPayment: 0,
-    //totalPayments: 0,
+    totalPayments: 0,
     paymentState: 0,
     headers: [
      {
@@ -227,12 +226,7 @@ export default {
   }),
   watch: {
     options: function(newVal, oldVal) {
-      if (
-        newVal.page != oldVal.page ||
-        newVal.itemsPerPage != oldVal.itemsPerPage ||
-        newVal.sortBy != oldVal.sortBy ||
-        newVal.sortDesc != oldVal.sortDesc
-      ) {
+      if (newVal.page != oldVal.page || newVal.itemsPerPage != oldVal.itemsPerPage || newVal.sortBy != oldVal.sortBy || newVal.sortDesc != oldVal.sortDesc) { 
         this.getPayments();
       }
     },
@@ -263,10 +257,20 @@ export default {
         this.loading = true;
         let res = await axios.get(`loan_payment`,{
           params:{
-            loan_id: this.$route.params.id
+            loan_id: this.$route.params.id,
+            page: this.options.page,
+            per_page: this.options.itemsPerPage,
+            sortBy: this.options.sortBy,
+            sortDesc: this.options.sortDesc,
+            search: this.search
           }
         });
         this.payments = res.data.data
+        this.totalPayments = res.data.total
+        delete res.data['data']
+        this.options.page = res.data.current_page
+        this.options.itemsPerPage = parseInt(res.data.per_page)
+        this.options.totalItems = res.data.total
       } catch (e) {
         console.log(e);
       } finally {
