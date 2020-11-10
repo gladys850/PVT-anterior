@@ -95,25 +95,92 @@
       >
         <v-tabs-slider></v-tabs-slider>
         <v-tab v-if="!editable" :href="`#tab-1`">
-          <v-icon v-if="icons">mdi-trending-up</v-icon>
+        <v-tooltip bottom>
+        <template v-slot:activator="{ on, attrs }">
+          <v-icon 
+          v-if="icons"
+          v-bind="attrs"
+          v-on="on"
+          >mdi-trending-up
+          </v-icon>
+        </template>
+        <span><b>DATOS DEL PRESTAMO</b></span>
+        </v-tooltip>
         </v-tab>
         <v-tab :href="`#tab-2`">
-          <v-icon v-if="icons">mdi-file-eye</v-icon>
+        <v-tooltip bottom>
+        <template v-slot:activator="{ on, attrs }">
+          <v-icon 
+          v-if="icons"
+          v-bind="attrs"
+          v-on="on"
+          >mdi-file-eye
+          </v-icon>
+        </template>
+        <span><b>DATOS ESPECIFICOS DEL PRESTAMO</b></span>
+        </v-tooltip>
         </v-tab>
         <v-tab :href="`#tab-3`">
-          <v-icon v-if="icons">mdi-file</v-icon>
+        <v-tooltip bottom>
+        <template v-slot:activator="{ on, attrs }">
+          <v-icon v-if="icons"
+          v-bind="attrs"
+          v-on="on"
+          >mdi-file
+          </v-icon>
+        </template>
+        <span><b>DOCUMENTOS PRESENTADOS</b></span>
+        </v-tooltip>
         </v-tab>
         <v-tab :href="`#tab-4`">
-          <v-icon v-if="icons">mdi-account</v-icon>
+        <v-tooltip bottom>
+        <template v-slot:activator="{ on, attrs }">
+          <v-icon 
+          v-if="icons"
+          v-bind="attrs"
+          v-on="on"
+          >mdi-account
+          </v-icon>
+          </template>
+        <span><b>DATOS PERSONALES DEL AFILIADO</b></span>
+        </v-tooltip>
         </v-tab>
         <v-tab :href="`#tab-5`">
-          <v-icon v-if="icons">mdi-police-badge</v-icon>
+        <v-tooltip bottom>
+        <template v-slot:activator="{ on, attrs }">
+          <v-icon 
+          v-if="icons"
+          v-bind="attrs"
+          v-on="on"
+          >mdi-police-badge
+          </v-icon>
+          </template>
+        <span><b>INFORMACION POLICIAL</b></span>
+        </v-tooltip>
         </v-tab>
         <v-tab :href="`#tab-6`">
-          <v-icon v-if="icons">mdi-format-list-checkbox</v-icon>
+        <v-tooltip bottom>
+        <template v-slot:activator="{ on, attrs }">
+          <v-icon 
+          v-if="icons"
+          v-bind="attrs"
+          v-on="on"
+          >mdi-format-list-checkbox</v-icon>
+          </template>
+        <span><b>KARDEX Y COBROS</b></span>
+        </v-tooltip>
         </v-tab>
         <v-tab :href="`#tab-7`">
-          <v-icon v-if="icons">mdi-comment-eye-outline</v-icon>
+        <v-tooltip bottom>
+        <template v-slot:activator="{ on, attrs }">
+          <v-icon 
+          v-if="icons"
+          v-bind="attrs"
+          v-on="on"
+          >mdi-comment-eye-outline</v-icon>
+        </template>
+        <span><b>HISTORIAL DEL TRAMITE</b></span>
+        </v-tooltip>
         </v-tab>
         <v-tab-item :value="'tab-1'">
           <v-card flat tile>
