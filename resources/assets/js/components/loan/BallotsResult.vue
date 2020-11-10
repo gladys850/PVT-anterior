@@ -41,7 +41,7 @@
             </ValidationProvider>
           </v-col>
           <v-col cols="2" class="py-2" v-show="editar">
-            <ValidationProvider v-slot="{ errors }" name="saldo" :rules="'required|min_value:'+loan_detail.minimun_amoun+'|max_value:'+calculator_result.amount_requested" mode="aggressive">
+            <ValidationProvider v-slot="{ errors }" name="saldo" :rules="'required|min_value:0 |max_value:'+calculator_result.amount_requested" mode="aggressive">
               <v-text-field
                 :error-messages="errors"
                 class="py-0"

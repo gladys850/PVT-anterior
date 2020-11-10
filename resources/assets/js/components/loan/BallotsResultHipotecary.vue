@@ -41,7 +41,7 @@
             </ValidationProvider>
           </v-col>
           <v-col cols="2" class="py-2" v-show="editar">
-            <ValidationProvider v-slot="{ errors }" name="saldo" :rules="'required|min_value:'+loan_detail.minimun_amoun+'|max_value:'+calculator_result.amount_requested" mode="aggressive">
+            <ValidationProvider v-slot="{ errors }" name="saldo" :rules="'required|min_value:0|max_value:'+calculator_result.amount_requested" mode="aggressive">
               <v-text-field
                 :error-messages="errors"
                 class="py-0"
@@ -235,13 +235,8 @@ export default {
           liquid_qualification_calculated_lender: 0,
           liquid_calculated:this.liquid_calificated
         })
-      this.simulator = res.data
-      this.lenders=this.liquid_calificated
-/*      for (this.j = 0; this.j< this.simulator.length; this.j++){
-          this.simulator[this.j].affiliate_nombres=this.datos_calculadora_hipotecario[this.j].affiliate_name
-          console.log(""+this.simulator[this.j].affiliate_nombres)
-        }
-*/
+        this.simulator = res.data
+        this.lenders=this.liquid_calificated
         if( this.simulator.amount_requested<this.calculator_result.amount_requested){
           this.calculator_result.amount_requested=this.simulator.amount_requested
           this.loan_detail.amount_requested=this.calculator_result.amount_requested
