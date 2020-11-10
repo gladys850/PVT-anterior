@@ -378,7 +378,6 @@ export default {
         this.loading = true
         let res = await axios.get(`affiliate/${id}/spouse`)
         this.spouse = res.data
-        console.log(spouse)
       } catch (e) {
         console.log(e)
       } finally {
@@ -391,7 +390,6 @@ export default {
         this.loading = true
         let res = await axios.get(`loan_property/${id}`)
         this.loan_properties = res.data
-        console.log(loan_properties)
       } catch (e) {
         console.log(e)
       } finally {

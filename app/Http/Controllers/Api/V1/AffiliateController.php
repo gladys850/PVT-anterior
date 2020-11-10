@@ -76,14 +76,14 @@ class AffiliateController extends Controller
     * Nuevo afiliado
     * Inserta nuevo afiliado
     * @bodyParam first_name string required Primer nombre. Example: JUAN
-    * @bodyParam last_name string required Apellido paterno. Example: PINTO
+    * @bodyParam last_name string Apellido paterno. Example: PINTO
     * @bodyParam gender string required Género (M,F). Example: M
     * @bodyParam birth_date date required Fecha de nacimiento (AÑO-MES-DÍA). Example: 1980-05-02
     * @bodyParam city_birth_id integer required ID de ciudad de nacimiento. Example: 10
     * @bodyParam city_identity_card_id integer required ID de ciudad del CI. Example: 4
     * @bodyParam civil_status string required Estado civil (S,C,D,V). Example: C
     * @bodyParam identity_card string required Carnet de identidad. Example: 165134-1L
-    * @bodyParam affiliate_state_id integer ID de estado de afiliado. Example: 2
+    * @bodyParam affiliate_state_id integer required ID de estado de afiliado. Example: 2
     * @bodyParam degree_id integer ID del grado policial. Example: 4
     * @bodyParam unit_id integer ID de unidad de destino. Example: 7
     * @bodyParam category_id integer ID de categoría. Example: 9
@@ -111,9 +111,9 @@ class AffiliateController extends Controller
     * @bodyParam service_months integer Meses de servicio. Example: 4
     * @bodyParam affiliate_registration_number integer Número único de registro de afiliado. Example: 10512
     * @bodyParam file_code string Código de folder de afiliado. Example: AFW-12
-    * @bodyParam account_number integer Numero de Cuenta del afiliado. Example: 5412132113
-    * @bodyParam financial_entity_id integer Entidad financiera de la cuenta del afiliado. Example: 1
-    * @bodyParam sigep_status string Estado del SIGEP. Example: ACTIVO
+    * @bodyParam account_number integer required Numero de Cuenta del afiliado. Example: 5412132113
+    * @bodyParam financial_entity_id required integer Entidad financiera de la cuenta del afiliado. Example: 1
+    * @bodyParam sigep_status string required Estado del SIGEP. Example: ACTIVO
     * @authenticated
     * @responseFile responses/affiliate/store.200.json
     */

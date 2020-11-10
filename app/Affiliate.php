@@ -310,70 +310,29 @@ class Affiliate extends Model
     }
 
     public function getCpopAttribute(){
-      if($this->defaulted_lender) return false;
-      // verificando prestamos activos
-      $active_loans = $this->active_loans(); $cpop = null;
-      $loans = []; $last_month = date('m', strtotime('-1 month')); // mes anterior a la fecha actual
-      //obteniendo prestamos activos con plazo mayor a 12
-      foreach($active_loans as $loan){
-        if($loan->loan_term >= 12){
-          array_push($loans, $loan);
-        }
-      }
-      if(count($loans)>0){
+      $cpop = false;
+      if($this->defaulted_lender) return $cpop ;
+      $date_now = Carbon::now()->format('Y-m-d');
+      $date_year_ago = Carbon::parse($date_now)->addYear(-1)->toDateString(); // para verificar registro de pagos un hasta 1 año a tras
+      $active_loans = $this->active_loans();
+      $inactive_loans = $this->inactive_loans();
+      $loans = array_merge($active_loans, $inactive_loans ); // se debe verificar en pagados y en vigencia
+      if(count($loans)>=1){
         foreach($loans as $loan){
-          if(count($loan->payments) > 0){
-            $loan_payment = $loan->last_payment; //ultimo registro de pago
-            $pay_date_month = substr($loan_payment->pay_date, 5, 2); // mes de la ultima fecha de pago
-              if($pay_date_month == $last_month){ //verificar si el ultimo pago es del mes anterior
-                foreach($loan->payments as $payment){ // el kardex debe estar inpecable
-                  if($payment->penal_payment == 0){
-                    $cpop = true;
-                  }else{
-                    $cpop = false;
-                    break;
-                  }
-                }
-              }else{
-                $cpop = false;
-              }
-          }else{
-            $cpop = false;
-          }
-          if($cpop == false){
-            break;
-          }
-        }
-      }
-      //verificando préstamos liquidados
-      if($cpop !== false){
-        $inactive_loans = $this->inactive_loans(); $liquidated_loans = [];
-        foreach($inactive_loans as $inactive){
-          if($inactive->loan_term >= 12){
-            array_push($liquidated_loans, $inactive);
-          }
-        }
-        if(count($liquidated_loans)){
-          foreach($liquidated_loans as $liquid_loan){
-            $loan_payment = $liquid_loan->last_payment; //ultimo registro de pago
-            $pay_date_month = substr($loan_payment->pay_date, 5, 2); // mes de la ultima fecha de pago
-            if($pay_date_month == $last_month){ //verificar si el ultimo pago es del mes anterior
-              foreach($liquid_loan->payments as $payment){
-                if($payment->penal_payment == 0){
-                  $cpop = true;
-                }else{
+          $c = 0;
+          if(count($loan->payments)>=12){
+            foreach ($loan->payments as $payment) {
+              if($c < 12){
+                if(($payment->estimated_date >= $date_year_ago) && ($payment->estimated_date <= $date_now)) $c++; $cpop = true;
+                if(!$payment->penal_payment == 0 ) { // verificar que en ese periodo no haya tenido penalidad
                   $cpop = false;
-                  break;
+                  return $cpop;
                 }
               }
-            }
-            if($cpop == false){
-            break;
             }
           }
         }
       }
-      if($cpop == null) $cpop = false;
       return $cpop;
     }
 
@@ -415,5 +374,4 @@ class Affiliate extends Model
       }
       return $guarantor_information;
   }
-
 }
