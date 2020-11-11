@@ -203,10 +203,6 @@ export default {
     CoDebtor
   },
   props: {
-    destino: {
-      type: Array,
-      required: true
-    },
     loan_detail: {
       type: Object,
       required: true
@@ -227,10 +223,16 @@ export default {
     bus: {
       type: Object,
       required: true
-    }
+    },
+    modalidad_id: {
+      type: Number,
+      required: true,
+      default: 0
+    },
   },
-  data: () => ({
+  data: () => ({  
     cuenta: null,
+    destino:[],
     visible: false,
     espacio: true,
     loanTypeSelected: null,
@@ -241,6 +243,9 @@ export default {
   watch: {
     loanTypeSelected(newVal, oldVal) {
       this.cuenta = null;
+    },
+    modalidad_id(newVal, oldVal){
+      this.getLoanDestiny()
     },
     modalidad_personal_reference() {
       if (this.modalidad_personal_reference == false) {
@@ -318,8 +323,8 @@ export default {
       } catch (e) {
         this.$refs.observerPerRef.setErrors(e);
       }
-    }
-    /*   async getLoanDestiny() {
+    },
+    async getLoanDestiny() {
       try {
         this.loading = true
         let res = await axios.get(`procedure_type/${this.intervalos.procedure_type_id}/loan_destiny`)
@@ -330,7 +335,7 @@ export default {
       } finally {
         this.loading = false
       }
-    },*/
+    },
   }
 };
 </script>
