@@ -183,6 +183,7 @@
           <h3 class="text-uppercase text-center">{{modalidad.name}}</h3>
           <FormInformation ref="FormInformation"
             :modalidad_id.sync="modalidad.id"
+            :affiliate.sync="affiliate"
             :loan_detail.sync="loan_detail"
             :modalidad_personal_reference.sync="modalidad.personal_reference"
             :personal_reference.sync="personal_reference"
@@ -386,11 +387,11 @@ export default {
         }
         if(n==3){
           if(this.modalidad.procedure_type_id==12){
-            this.saveLoanProperty()
-            console.log('Es hipotecario')
+            //this.saveLoanProperty()
+            //console.log('Es hipotecario')
           }
           else{
-            console.log("No es hipotecario")
+            //console.log("No es hipotecario")
           }
         }
         if(n==4)
@@ -422,7 +423,7 @@ export default {
     {
       try{
         if (this.modalidad.personal_reference) {
-        
+          this.reference = []        
           if (this.editedIndexPerRef == -1){
             let res = await axios.post(`personal_reference`, {
               city_identity_card_id:this.personal_reference.city_identity_card_id,
@@ -435,6 +436,7 @@ export default {
               cell_phone_number:this.personal_reference.cell_phone_number
             })         
             this.editedIndexPerRef = res.data.id
+            this.reference.push(res.data.id)
           }else{
             let res = await axios.patch(`personal_reference/${this.editedIndexPerRef}`, 
             {
@@ -446,9 +448,8 @@ export default {
               second_name:this.personal_reference.second_name,
               phone_number:this.personal_reference.phone_number,
               cell_phone_number:this.personal_reference.cell_phone_number
-            })  
-            this.reference = []
-            this.reference.push(res.data.id)       
+            })   
+            this.reference.push(res.data.id)     
           }
         }
       } catch (e) {
@@ -711,7 +712,7 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
     //TAB 3 bien inmueble
     async saveLoanProperty() {
       try {
-        if (this.editedIndex == -1) {
+        if (this.editedIndexProperty == -1) {
           let res = await axios.post("loan_property", {
             land_lot_number: this.loan_property.land_lot_number,
             neighborhood_unit: this.loan_property.neighborhood_unit,
@@ -939,7 +940,7 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
                           this.toastr.error("Tiene que llenar la Cuota del Prestamo Padre.")
                         }else{
                           this.addDataLoan()
-                          this.liquidCalificated()
+                          //this.liquidCalificated()
                           this.nextStep(2)
                         }
                       }
@@ -949,7 +950,7 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
               }
             }else{
             this.nextStep(2)
-            this.liquidCalificated()
+            //this.liquidCalificated()
           }
         }
       }

@@ -229,6 +229,10 @@ export default {
       required: true,
       default: 0
     },
+    affiliate: {
+      type: Object,
+      required: true
+    }
   },
   data: () => ({  
     cuenta: null,
