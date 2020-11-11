@@ -239,6 +239,7 @@ export default {
         this.calculator_result_aux = res.data
         this.calculator_result.quota_calculated_estimated_total= this.calculator_result_aux.quota_calculated_estimated_total
         this.calculator_result.indebtedness_calculated_total= this.calculator_result_aux.indebtedness_calculated_total
+        this.calculator_result.amount_maximum_suggested=this.calculator_result_aux.amount_maximum_suggested
 
         if( this.calculator_result.amount_requested<this.calculator_result_aux.amount_maximum_suggested){
           this.calculator_result.amount_requested=this.calculator_result_aux.amount_requested
