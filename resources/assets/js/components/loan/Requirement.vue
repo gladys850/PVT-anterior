@@ -273,6 +273,7 @@ export default {
               city_id: this.$store.getters.cityId,
               loan_term:this.loan_detail.months_term,
               payment_type_id:this.loan_detail.payment_type_id,
+              financial_entity_id: this.loan_detail.financial_entity_id,
               number_payment_type:this.loan_detail.number_payment_type,
               destiny_id: this.loan_detail.destiny_id,
               liquid_qualification_calculated:this.loan_detail.liquid_qualification_calculated,
