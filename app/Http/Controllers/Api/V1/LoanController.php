@@ -508,7 +508,7 @@ class LoanController extends Controller
                 abort(409, 'Debe actualizar la información de cónyugue para afiliados fallecidos');
             }
         }
-        $needed_keys = ['city_birth', 'city_identity_card', 'city_identity_card'];
+        $needed_keys = ['city_birth', 'city_identity_card', 'city_identity_card', 'address'];
         foreach ($needed_keys as $key) {
             if (!$object->disbursable[$key]) abort(409, 'Debe actualizar los datos personales del titular y garantes');
         }
