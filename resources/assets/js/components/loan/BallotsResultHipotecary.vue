@@ -82,12 +82,22 @@
                       </ValidationProvider>
                       <ValidationProvider v-slot="{ errors }" name="monto solicitado" :rules="'numeric|min_value:'+loan_detail.minimun_amoun+'|max_value:'+loan_detail.maximun_amoun" mode="aggressive">
                       <v-text-field
+                        dense
                         :error-messages="errors"
                         label="Monto Solicitado"
                         v-model ="calculator_result.amount_requested"
                         v-on:keyup.enter="calculadora()"
                       ></v-text-field>
                       </ValidationProvider>
+                         <center>
+                          <v-btn
+                            class="py-0 text-right"
+                            color="info"
+                            rounded
+                            x-small
+                            @click="calculadora()">Calcular
+                          </v-btn>
+                        </center>
                         </fieldset>
                       </v-flex>
                     </v-layout>
@@ -244,6 +254,8 @@ export default {
           this.calculator_result.amount_requested=this.simulator.amount_requested
           this.loan_detail.amount_requested=this.simulator.amount_requested
         }
+        this.calculator_result.indebtedness_calculated_total=this.simulator.indebtedness_calculated_total
+        this.calculator_result.quota_calculated_estimated_total=this.simulator.quota_calculated_estimated_total
         this.loan_detail.months_term=this.calculator_result.months_term
         this.loan_detail.liquid_qualification_calculated=this.simulator.liquid_qualification_calculated_total
         this.loan_detail.indebtedness_calculated=this.simulator.indebtedness_calculated_total
