@@ -561,9 +561,9 @@ class Loan extends Model
                                             break;
                                         }
                                     }
-                                }else{
-                                    $modality=ProcedureModality::whereShortened("PLP-SP-CPOP")->first(); // largo plazo pasivo con  1 garante
                                 }
+                                if(!$modality) $modality=ProcedureModality::whereShortened("PLP-SP-CPOP")->first(); // largo plazo pasivo con  1 garante
+                                
                             }else{
                                 if($affiliate->active_loans()){
                                     if($reprogramming){
@@ -580,9 +580,9 @@ class Loan extends Model
                                             break;
                                         }
                                     }
-                                }else{
-                                    $modality=ProcedureModality::whereShortened("PLP-GP-SP")->first(); // Refi largo plazo pasivo 2 garantes
                                 }
+                                if(!$modality) $modality=ProcedureModality::whereShortened("PLP-GP-SP")->first(); // Refi largo plazo pasivo 2 garantes
+                            
                             }
                         } 
                     }
