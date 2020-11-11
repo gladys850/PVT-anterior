@@ -487,7 +487,7 @@ class AffiliateController extends Controller
         $cpop_sismu = $request->input('cpop_sismu',false);
         $reprogramming = $request->input('reprogramming',false);
         $affiliate_modality= Loan::get_modality($modality->name, $affiliate, $type_sismu, $cpop_sismu, $reprogramming);
-        if(!$affiliate_modality) abort(403, 'El afiliado no califica para la modalidad');
+        if(!$affiliate_modality) abort(409, 'El afiliado no califica para la modalidad');
         return $affiliate_modality;
     }
 
