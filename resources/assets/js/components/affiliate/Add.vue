@@ -350,7 +350,8 @@ export default {
           if (this.isNew) {
           // New affiliate
             let res = await axios.post(`affiliate`, this.affiliate)
-            this.toastr.success('Afiliado adicionado')
+            this.toastr.success('Registro guardado correctamente')
+            this.editable = false
             //Actualizar dirección,  obteniendo respuesta POST afiliado nuevo (res.data.id)
             await axios.patch(`affiliate/${res.data.id}/address`, {
             addresses: this.addresses.map(o => o.id)
@@ -374,8 +375,7 @@ export default {
             }
             this.editable = false
           }
-        this.toastr.success('Registro guardado correctamente')
-        this.editable = false
+        
         }
       } catch (e) {
         console.log(e)
