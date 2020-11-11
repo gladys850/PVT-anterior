@@ -296,6 +296,18 @@ export default {
         this.loading = false;
       }
     },
+    async getLoanDestiny() {
+      try {
+        this.loading = true
+        let res = await axios.get(`procedure_type/${this.intervalos.procedure_type_id}/loan_destiny`)
+        this.destino = res.data
+        console.log(this.destino+'estos son los destinos');
+      } catch (e) {
+        console.log(e)
+      } finally {
+        this.loading = false
+      }
+    },
     async validateDestiny() {
       try {
         let estado = false;
@@ -322,18 +334,6 @@ export default {
         console.log(" estado " + estado);
       } catch (e) {
         this.$refs.observerPerRef.setErrors(e);
-      }
-    },
-    async getLoanDestiny() {
-      try {
-        this.loading = true
-        let res = await axios.get(`procedure_type/${this.intervalos.procedure_type_id}/loan_destiny`)
-        this.destino = res.data
-        console.log(this.destino+'estos son los destinos');
-      } catch (e) {
-        console.log(e)
-      } finally {
-        this.loading = false
       }
     },
   }
