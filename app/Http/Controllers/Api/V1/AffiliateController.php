@@ -628,7 +628,9 @@ class AffiliateController extends Controller
         $b = array();
         $affiliate = Affiliate::whereIdentity_card($request->identity_card)->first();
         if(isset($affiliate)){
+            $is_valid_information = Affiliate::verify_information($affiliate);
             $b["state"]=true;
+            $b["information"]=$is_valid_information;
             $b["affiliate"]=$affiliate;
             return $b;
             //return self::append_data($affiliate, true);

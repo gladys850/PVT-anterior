@@ -368,10 +368,10 @@ class Affiliate extends Model
   public static function verify_information(Affiliate $affiliate)
   {
       $needed_keys = ['city_identity_card', 'affiliate_state', 'city_birth', 'category', 'address'];
-      $guarantor_information = true;
+      $information = true;
       foreach ($needed_keys as $key) {
-          if (!$affiliate[$key]) $guarantor_information = false;//abort(409, 'Debe actualizar los datos personales de los garantes');
+          if (!$affiliate[$key]) $information = false;//abort(409, 'Debe actualizar los datos personales de los garantes');
       }
-      return $guarantor_information;
+      return $information;
   }
 }
