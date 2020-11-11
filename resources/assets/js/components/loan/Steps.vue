@@ -939,7 +939,7 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
                           this.toastr.error("Tiene que llenar la Cuota del Prestamo Padre.")
                         }else{
                           this.addDataLoan()
-                          this.liquidCalificated()
+                          //this.liquidCalificated()
                           this.nextStep(2)
                         }
                       }
@@ -949,7 +949,7 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
               }
             }else{
             this.nextStep(2)
-            this.liquidCalificated()
+            //this.liquidCalificated()
           }
         }
       }
