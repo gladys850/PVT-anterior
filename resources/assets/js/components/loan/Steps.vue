@@ -182,6 +182,7 @@
         <v-card color="grey lighten-1">
           <h3 class="text-uppercase text-center">{{modalidad.name}}</h3>
           <FormInformation ref="FormInformation"
+            :modalidad_id.sync="modalidad.id"
             :loan_detail.sync="loan_detail"
             :modalidad_personal_reference.sync="modalidad.personal_reference"
             :personal_reference.sync="personal_reference"
@@ -299,7 +300,8 @@ export default {
     contrib_codebtor: [],
     contributions1_aux: [],
     liquid_calificated:[],
-    editedIndex: -1,
+    editedIndexProperty: -1,
+    editedIndexPerRef: -1,
     loan_property: {},
     cosigners:[],
     destino:[],
@@ -420,17 +422,34 @@ export default {
     {
       try{
         if (this.modalidad.personal_reference) {
-          let res = await axios.post(`personal_reference`, {
-            city_identity_card_id:this.personal_reference.city_identity_card_id,
-            identity_card:this.personal_reference.identity_card,
-            last_name:this.personal_reference.last_name,
-            mothers_last_name:this.personal_reference.mothers_last_name,
-            first_name:this.personal_reference.first_name,
-            second_name:this.personal_reference.second_name,
-            phone_number:this.personal_reference.phone_number,
-            cell_phone_number:this.personal_reference.cell_phone_number
-          })
-          this.reference.push(res.data.id)
+        
+          if (this.editedIndexPerRef == -1){
+            let res = await axios.post(`personal_reference`, {
+              city_identity_card_id:this.personal_reference.city_identity_card_id,
+              identity_card:this.personal_reference.identity_card,
+              last_name:this.personal_reference.last_name,
+              mothers_last_name:this.personal_reference.mothers_last_name,
+              first_name:this.personal_reference.first_name,
+              second_name:this.personal_reference.second_name,
+              phone_number:this.personal_reference.phone_number,
+              cell_phone_number:this.personal_reference.cell_phone_number
+            })         
+            this.editedIndexPerRef = res.data.id
+          }else{
+            let res = await axios.patch(`personal_reference/${this.editedIndexPerRef}`, 
+            {
+              city_identity_card_id:this.personal_reference.city_identity_card_id,
+              identity_card:this.personal_reference.identity_card,
+              last_name:this.personal_reference.last_name,
+              mothers_last_name:this.personal_reference.mothers_last_name,
+              first_name:this.personal_reference.first_name,
+              second_name:this.personal_reference.second_name,
+              phone_number:this.personal_reference.phone_number,
+              cell_phone_number:this.personal_reference.cell_phone_number
+            })  
+            this.reference = []
+            this.reference.push(res.data.id)       
+          }
         }
       } catch (e) {
         console.log(e)
@@ -710,9 +729,9 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
             real_city_id: this.loan_property.real_city_id
           });
           this.loan_property = res.data
-          this.editedIndex = this.loan_property.id
+          this.editedIndexProperty = this.loan_property.id
         } else {
-           let res = await axios.patch(`loan_property/${this.loan_property.id}`,
+           let res = await axios.patch(`loan_property/${this.editedIndexProperty}`,
            {
               land_lot_number: this.loan_property.land_lot_number,
               neighborhood_unit: this.loan_property.neighborhood_unit,
@@ -762,7 +781,7 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
         this.loading = false
       }
     },
-    async getLoanDestiny() {
+    /*async getLoanDestiny() {
       try {
         this.loading = true
         let res = await axios.get(`procedure_type/${this.intervalos.procedure_type_id}/loan_destiny`)
@@ -773,7 +792,7 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
       } finally {
         this.loading = false
       }
-    },
+    },*/
     async getGlobalParameters(){
       try {
         let res = await axios.get(`loan_global_parameter`)
@@ -792,14 +811,14 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
                   if(this.modalidad.procedure_type_id==12){
                     if(this.loan_detail.net_realizable_value >= this.intervalos.minimun_amoun){
                       this.liquidCalificated()
-                      this.getLoanDestiny()
+                      //this.getLoanDestiny()
                       this.nextStep(1)
                     }else{
                       this.toastr.error("El valor VNR debe ser mayor al monto minimo "+this.intervalos.minimun_amoun+ " correspondiente a la modalidad")
                     }
                   }else{
                       this.liquidCalificated()
-                      this.getLoanDestiny()
+                      //this.getLoanDestiny()
                       this.nextStep(1)
                   }
                 }else if(this.type_sismu){
@@ -807,7 +826,7 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
                     if(this.loan_detail.net_realizable_value >= this.intervalos.minimun_amoun){
                       if(this.data_sismu.quota_sismu > 0){
                         this.liquidCalificated()
-                        this.getLoanDestiny()
+                        //this.getLoanDestiny()
                         this.nextStep(1)
                       }else{
                         this.toastr.error("Introduzca la CUOTA del SISMU")
@@ -818,7 +837,7 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
                   }else{
                       if(this.data_sismu.quota_sismu > 0){
                         this.liquidCalificated()
-                        this.getLoanDestiny()
+                        //this.getLoanDestiny()
                         this.nextStep(1)
                       }else{
                         this.toastr.error("Introduzca la CUOTA del SISMU")
@@ -837,14 +856,14 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
               if(this.modalidad.procedure_type_id==12){
                 if(this.loan_detail.net_realizable_value >= this.intervalos.minimun_amoun){
                   this.liquidCalificated()
-                  this.getLoanDestiny()
+                  //this.getLoanDestiny()
                   this.nextStep(1)
                 }else{
                   this.toastr.error("El valor VNR debe ser mayor al monto minimo "+this.intervalos.minimun_amoun+ " correspondiente a la modalidad")
                 }
               }else{
                   this.liquidCalificated()
-                  this.getLoanDestiny()
+                  //this.getLoanDestiny()
                   this.nextStep(1)
               }
             }else if(this.type_sismu){
@@ -852,7 +871,7 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
                 if(this.loan_detail.net_realizable_value >= this.intervalos.minimun_amoun){
                   if(this.data_sismu.quota_sismu > 0){
                     this.liquidCalificated()
-                    this.getLoanDestiny()
+                    //this.getLoanDestiny()
                     this.nextStep(1)
                   }else{
                     this.toastr.error("Introduzca la CUOTA del SISMU")
@@ -863,7 +882,7 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
               }else{
                   if(this.data_sismu.quota_sismu > 0){
                     this.liquidCalificated()
-                    this.getLoanDestiny()
+                    //this.getLoanDestiny()
                     this.nextStep(1)
                   }else{
                     this.toastr.error("Introduzca la CUOTA del SISMU")
