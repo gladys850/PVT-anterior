@@ -642,6 +642,8 @@ class Loan extends Model
         if ($modality) {
             $modality->loan_modality_parameter;
             return response()->json($modality);
+        }else{
+            return response()->json();
         }
     }
 
