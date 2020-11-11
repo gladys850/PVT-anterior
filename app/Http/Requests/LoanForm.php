@@ -58,7 +58,14 @@ class LoanForm extends FormRequest
     public function rules():array
     {
         $hypothecary = false;
+        $refinanciamiento=false;
         $sismu = false;
+
+        if ($this->procedure_modality_id) {
+            $procedure_modality = ProcedureModality::findOrFail($this->procedure_modality_id);
+            if(strpos($procedure_modality->name, 'Refinanciamiento') !== false ) $refinanciamiento = true;
+        } 
+
         if ($this->procedure_modality_id) {
             $procedure_modality = ProcedureModality::findOrFail($this->procedure_modality_id);
             if($procedure_modality->procedure_type->name == "Préstamo hipotecario") $hypothecary = true;
@@ -109,8 +116,8 @@ class LoanForm extends FormRequest
             'disbursable_type' => ['string', 'in:affiliates,spouses'],
             'number_payment_type' => ['nullable', 'integer', 'min:6'],
             'disbursement_date' => ['nullable', 'date_format:"Y-m-d"'],
-            'parent_loan_id' => ['integer', 'nullable', 'exists:loans,id'],
-            'parent_reason'=> ['string', 'nullable', 'in:REFINANCIAMIENTO,REPROGRAMACIÓN'],
+            'parent_loan_id' => ['integer', 'nullable',$refinanciamiento? 'required':'nullable', 'exists:loans,id'],
+            'parent_reason'=> ['string', 'nullable',$refinanciamiento? 'required':'nullable', 'in:REFINANCIAMIENTO,REPROGRAMACIÓN'],
             'state_id' => ['exists:loan_states,id'],
             'amount_approved' => ['integer', 'min:200', 'max:700000', new LoanIntervalAmount($procedure_modality)],
             'notes' => ['array'],
@@ -141,6 +148,12 @@ class LoanForm extends FormRequest
         return [
             'parent_reason' => 'trim|uppercase',
             'validated' => 'cast:boolean'
+        ];
+    }
+    public function messages(){
+        return[
+            'parent_loan_id.required' => 'El campo ID del préstamo Padre es requerido.',
+            'parent_reason.required' => 'El campo parent_reason es requerido.',
         ];
     }
 }
