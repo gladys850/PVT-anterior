@@ -235,7 +235,6 @@ export default {
       return this.editedIndex === -1 ? "Nueva Boleta" : "Editar Boleta"
     }
   },
-
   watch: {
     dialog(val) {
       val || this.close()
@@ -254,7 +253,7 @@ export default {
             city_id: this.$store.getters.cityId,
             sortBy: ["month_year"],
             sortDesc: [1],
-            per_page: this.modalidad.quantity_ballots, //FIXME ver si en el caso hipotecario la boleta deberia enviarse solo 1
+            per_page: this.modalidad.quantity_ballots,
             page: 1
           }
         })
@@ -262,10 +261,10 @@ export default {
         data_ballots = res.data.data
         if (res.data.valid) {
           this.editar = false
-          console.log("RESULTADOS DE BALLOT")
-          console.log(this.modalidad.quantity_ballots)
-          console.log(res.data)
-          console.log(data_ballots)
+          //console.log("RESULTADOS DE BALLOT")
+          //console.log(this.modalidad.quantity_ballots)
+          //console.log(res.data)
+          //console.log(data_ballots)
           this.editedItem.id_affiliate = data_ballots[0].affiliate_id
           this.editedItem.payable_liquid = data_ballots[0].payable_liquid
           this.editedItem.border_bonus = data_ballots[0].border_bonus
@@ -312,7 +311,6 @@ export default {
       } else {
         this.contrib_codebtor.push(this.editedItem)
       }
-      //this.formatear()
       this.close()
     },
 
@@ -327,12 +325,17 @@ export default {
             })
             this.affiliate_codebtor = resp.data
             this.exist_codebtor = this.affiliate_codebtor.state
+            let codebtor_information = this.affiliate_codebtor.information
             this.ver = true
             if (this.exist_codebtor){
-              this.getBallots(this.affiliate_codebtor.affiliate.id)
-              //console.log("ID DEL AFILIADO " + this.affiliate_codebtor.affiliate.id)
-              this.getAffiliate(this.affiliate_codebtor.affiliate.id)
-              this.dialog = true
+              if(codebtor_information){
+                this.getBallots(this.affiliate_codebtor.affiliate.id)
+                //console.log("ID DEL AFILIADO " + this.affiliate_codebtor.affiliate.id)
+                this.getAffiliate(this.affiliate_codebtor.affiliate.id)
+                this.dialog = true
+              }else{
+                this.toastr.error("No se tiene la información actualizada del Codeudor. Por favor actualice sus datos.")
+              }
             }
           }else{
             this.toastr.error("La cantidad máxima de codeudores afiliados es de " + (this.modalidad.max_lenders -1) +".")
