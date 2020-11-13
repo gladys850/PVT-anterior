@@ -133,13 +133,14 @@
               :bus="bus"
             />
             <Guarantor
+            v-show="modalidad.procedure_type_id!=12"
             :modalidad_guarantors.sync="modalidad.guarantors"
             :modalidad.sync="modalidad"
             :loan_detail.sync="loan_detail"
             :guarantors.sync="guarantors"
             :affiliate.sync="affiliate"
             :modalidad_id.sync="modalidad.id"/>
-          <v-container class="py-0">
+          <v-container class="py-0" v-show="modalidad.procedure_type_id!=12">
             <v-row>
             <v-spacer></v-spacer><v-spacer></v-spacer> <v-spacer></v-spacer>
               <v-col class="py-0">
@@ -186,18 +187,19 @@
             :affiliate.sync="affiliate"
             :loan_detail.sync="loan_detail"
             :modalidad_personal_reference.sync="modalidad.personal_reference"
-            :personal_reference.sync="personal_reference"
             :intervalos.sync="intervalos"
             :destino.sync="destino"
             :bus="bus"
+            :personal_codebtor="personal_codebtor"
+            :modalidad_max_cosigner.sync="modalidad.max_cosigner"
           />
-          <CoDebtor
+         <!-- <CoDebtor
             v-show="this.modalidad.max_cosigner > 0"
             :personal_codebtor="personal_codebtor"
             :modalidad.sync="modalidad"
-          />
+          />-->
           <v-container class="py-0">
-            <v-row>
+           <!-- <v-row>
             <v-spacer></v-spacer><v-spacer></v-spacer><v-spacer></v-spacer>
               <v-col class="py-0">
                 <v-btn text
@@ -208,7 +210,7 @@
                 Siguiente
                 </v-btn>
               </v-col>
-            </v-row>
+            </v-row>-->
           </v-container>
         </v-card>
       </v-stepper-content>
@@ -220,9 +222,9 @@
             :loan_detail.sync="loan_detail"
             :lenders.sync="lenders"
             :modalidad.sync="modalidad"
-            :reference.sync="reference"
+            
             :modalidad_id.sync="modalidad.id"
-            :cosigners.sync="cosigners"
+          
             :guarantors.sync="guarantors"
             :loan_property_id.sync ="loan_property.id"
             :data_loan_parent.sync="data_loan_parent"/>
@@ -292,20 +294,20 @@ export default {
     data_loan_parent_aux:{},
     data_loan_parent:[],
     modalidad:{},
-    reference:[],
+    //reference:[],
     intervalos:{},
     payable_liquid:[0,0,0],
     bonos:[0,0,0,0],
-    personal_reference:{},
+    //personal_reference:{},
     personal_codebtor:[],
-    cosigners:[],
+    //cosigners:[],
     contrib_codebtor: [],
     contributions1_aux: [],
     liquid_calificated:[],
-    editedIndexProperty: -1,
-    editedIndexPerRef: -1,
+    //editedIndexProperty: -1,
+    //editedIndexPerRef: -1,
     loan_property: {},
-    cosigners:[],
+    //cosigners:[],
     destino:[],
     //Variables reprogramacion y refinanciamiento
     data_loan: {},
@@ -358,6 +360,9 @@ export default {
     this.getProcedureType()
     this.bus.$on('beforeStepBus', (val) => {
       this.beforeStep(val)
+    })
+    this.bus.$on('nextStepBus', (val) => {
+      this.nextStep(val)
     })
   },
   mounted(){
@@ -420,11 +425,11 @@ export default {
       }
 
     },
-    async personal()
+    /*async personal()
     {
       try{
         if (this.modalidad.personal_reference) {
-          this.reference = []
+          this.reference = []        
           if (this.editedIndexPerRef == -1){
             let res = await axios.post(`personal_reference`, {
               city_identity_card_id:this.personal_reference.city_identity_card_id,
@@ -435,7 +440,7 @@ export default {
               second_name:this.personal_reference.second_name,
               phone_number:this.personal_reference.phone_number,
               cell_phone_number:this.personal_reference.cell_phone_number
-            })
+            })         
             this.editedIndexPerRef = res.data.id
             this.reference.push(res.data.id)
           }else{
@@ -459,8 +464,8 @@ export default {
         this.loading = false
         console.log('entro por verdader'+this.modalidad.personal_reference)
       }
-    },
-    async savePersonalReference() {
+    },*/
+    /*async savePersonalReference() {
       try {
         let ids_codebtor=[]
         for (let i = 0; i < this.personal_codebtor.length; i++) {
@@ -491,7 +496,7 @@ export default {
       } finally {
         this.loading = false
       }
-    },
+    },*/
     async getProcedureType(){
       try {
         let resp = await axios.get(`module`,{
@@ -712,7 +717,7 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
         console.log('entro por verdadero')
       }
     },
-    //TAB 3 bien inmueble
+    /*//TAB 3 bien inmueble
     async saveLoanProperty() {
       try {
         if (this.editedIndexProperty == -1) {
@@ -753,12 +758,12 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
               real_city_id: this.loan_property.real_city_id
             }
           );
-          this.loan_property = res.data
+          this.loan_property = res.data 
         }
       } catch (e) {
         console.log(e)
       }
-    },
+    },*/
     async getLoan(id) {
       try {
         this.loading = true
@@ -808,8 +813,8 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
     validateStepsOne(){
       console.log("ESTADO"+ this.loan_detail.not_exist_modality)
       if(this.loanTypeSelected.id > 0){
-         if(this.loan_detail.not_exist_modality==false){
-        if(this.payable_liquid[0] >= this.livelihood_amount){
+        if(this.loan_detail.not_exist_modality==false){
+          if(this.payable_liquid[0] >= this.livelihood_amount){
            if(this.modalidad.procedure_type_id==10){
             if((parseFloat(this.bonos[0])+ parseFloat(this.bonos[1])+ parseFloat(this.bonos[2])+ parseFloat(this.bonos[3])) < (parseFloat(this.payable_liquid[0]) + parseFloat(this.payable_liquid[0]) + parseFloat(this.payable_liquid[0]) ) ){
               if(parseFloat(this.payable_liquid[0]) > 0 && parseFloat(this.payable_liquid[1]) > 0 && parseFloat(this.payable_liquid[2]) > 0 ){
@@ -902,8 +907,8 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
         }else{
           this.toastr.error("El Liquido Pagable debe ser mayor ó igual al Monto de subsistencia que son "+this.livelihood_amount+" Bs.")
         }
-      }else{
-            this.toastr.error("El afiliado no puede ser evaluado en esta modalidad")
+        }else{
+          this.toastr.error("El afiliado no puede ser evaluado en esta modalidad")
         }
       }else{
         this.toastr.error("Seleccione una modalidad")
@@ -970,7 +975,7 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
     },
     validateStepsthree()
     {
-      if(this.modalidad.procedure_type_id==12)
+      /*if(this.modalidad.procedure_type_id==12)
       {
         this.$refs.HipotecaryData.validateHipotecaryData()
         this.bus.$on('validHipotecaryData', (val3) => {
@@ -985,7 +990,7 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
           console.log("no pasa")
         }
       }
-      else{
+      else{*/
         if(this.modalidad.guarantors > 0)
         {
           if(this.modalidad.guarantors==this.guarantors.length)
@@ -1003,9 +1008,9 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
         }else{
           this.nextStep(3)
         }
-      }
+      //}
     },
-    validateStepsFive(){
+    /*validateStepsFive(){
       this.$refs.FormInformation.validateDestiny()
       this.bus.$on('validDestiny', (val1) => {
       console.log("VAL"+val1)
@@ -1048,8 +1053,8 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
       }else{
           console.log("no pasa")
       }
-      })*/
-    }
+      })
+    }*/
   }
 }
 </script>

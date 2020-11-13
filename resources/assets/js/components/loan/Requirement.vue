@@ -196,18 +196,18 @@ export default {
       required: true,
       default: 0
     },
-    reference: {
+    /*reference: {
       type: Array,
       required: true
-    },
+    },*/
     bus: {
       type: Object,
       required: true
     },
-    cosigners: {
+    /*cosigners: {
       type: Array,
       required: true
-    },
+    },*/
     loan_property_id: {
       type: Number,
       required: true,
@@ -280,9 +280,9 @@ export default {
               indebtedness_calculated:this.loan_detail.indebtedness_calculated,
               parent_loan_id: this.parent_loan_id,
               parent_reason: this.parent_reason,
-              property_id: this.loan_property_id,
-              personal_references: this.reference,
-              cosigners:this.cosigners,
+              property_id: this.loan_detail.loan_property_id,
+              personal_references: this.loan_detail.reference,
+              cosigners:this.loan_detail.cosigners,
               disbursable_id: this.$route.query.affiliate_id,
               lenders:this.lenders,
               guarantors: this.guarantors,
