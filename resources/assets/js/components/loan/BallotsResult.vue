@@ -191,7 +191,7 @@ export default {
       required: true
       },
   },
-    computed: { 
+    computed: {
     editar() {
       if(this.$route.query.type_sismu)
       {
@@ -228,13 +228,15 @@ export default {
   methods: {
     async simuladores() {
       try {
-        let res = await axios.post(`simulator`, {
-          procedure_modality_id:this.modalidad.id,
-          amount_requested: this.calculator_result.amount_requested,
-          months_term:  this.calculator_result.months_term,
-          guarantor: false,
-          liquid_qualification_calculated_lender: 0,
-          liquid_calculated:this.liquid_calificated
+        if(this.loan_detail.maximun_amoun>=this.calculator_result.amount_requested)
+        {
+          let res = await axios.post(`simulator`, {
+            procedure_modality_id:this.modalidad.id,
+            amount_requested: this.calculator_result.amount_requested,
+            months_term:  this.calculator_result.months_term,
+            guarantor: false,
+            liquid_qualification_calculated_lender: 0,
+            liquid_calculated:this.liquid_calificated
         })
         this.calculator_result_aux = res.data
         this.calculator_result.quota_calculated_estimated_total= this.calculator_result_aux.quota_calculated_estimated_total
@@ -252,14 +254,13 @@ export default {
         this.loan_detail.indebtedness_calculated=this.calculator_result_aux.indebtedness_calculated_total
 
         this.loan_detail.maximum_suggested_valid=this.calculator_result_aux.maximum_suggested_valid
+        this.loan_detail.amount_maximum_suggested=this.calculator_result_aux.amount_maximum_suggested
         this.loan_detail.is_valid=this.calculator_result_aux.is_valid
         this.loan_detail.quota_calculated_total_lender=this.calculator_result_aux.quota_calculated_estimated_total
-
-        /*      for (this.j = 0; this.j< this.simulator.length; this.j++){
-          this.simulator[this.j].affiliate_nombres=this.datos_calculadora_hipotecario[this.j].affiliate_name
-          console.log(""+this.simulator[this.j].affiliate_nombres)
         }
-        */
+        else{
+          this.toastr.error("El Monto Solicitado no corresponde a la Modalidad")
+        }
       } catch (e) {
         console.log(e)
       } finally {
