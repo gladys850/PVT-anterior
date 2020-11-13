@@ -81,7 +81,7 @@
           <v-card color="grey lighten-1">
             <h3 class="text-uppercase text-center">{{modalidad.name}}</h3>
             <v-card class="ma-3">
-              <BallotsResult
+              <BallotsResult ref="BallotsResult"
                 v-show="modalidad.procedure_type_id!=12"
                 :data_sismu.sync="data_sismu"
                 :calculator_result.sync="calculator_result"
@@ -384,7 +384,7 @@ export default {
           //this.addDataLoan()
           //this.validateStepsTwo()
 
-          console.log('segundo'+this.modalidad.guarantors )
+          this.$refs.BallotsResult.simuladores()
         }
         if(n==3){
           if(this.modalidad.procedure_type_id==12){
@@ -424,7 +424,7 @@ export default {
     {
       try{
         if (this.modalidad.personal_reference) {
-          this.reference = []        
+          this.reference = []
           if (this.editedIndexPerRef == -1){
             let res = await axios.post(`personal_reference`, {
               city_identity_card_id:this.personal_reference.city_identity_card_id,
@@ -435,7 +435,7 @@ export default {
               second_name:this.personal_reference.second_name,
               phone_number:this.personal_reference.phone_number,
               cell_phone_number:this.personal_reference.cell_phone_number
-            })         
+            })
             this.editedIndexPerRef = res.data.id
             this.reference.push(res.data.id)
           }else{
@@ -681,16 +681,18 @@ export default {
               if( this.calculator_result.amount_maximum_suggested<this.intervalos.maximun_amoun){
                 this.calculator_result.amount_requested=this.calculator_result.amount_maximum_suggested
               }else{
-                this.calculator_result.montos=this.intervalos.maximun_amoun
+                this.calculator_result.amount_requested=this.intervalos.maximun_amoun
               }
               this.lenders=res.data
               this.lenders[0].payment_percentage=this.calculator_result.affiliates[0].payment_percentage
               this.lenders[0].indebtedness_calculated=this.calculator_result.affiliates[0].indebtedness_calculated
+
               this.loan_detail.minimum_term=this.intervalos.minimum_term
               this.loan_detail.maximum_term=this.intervalos.maximum_term
               this.loan_detail.minimun_amoun=this.intervalos.minimun_amoun
               this.loan_detail.maximun_amoun=this.intervalos.maximun_amoun
-              this.loan_detail.amount_requested=this.intervalos.maximun_amoun
+              this.loan_detail.amount_requested=this.calculator_result.amount_requested
+              this.loan_detail.amount_maximum_suggested=this.calculator_result.amount_maximum_suggested
               this.loan_detail.months_term=this.intervalos.maximum_term
               this.loan_detail.liquid_qualification_calculated=this.calculator_result.liquid_qualification_calculated_total
               this.loan_detail.indebtedness_calculated=this.calculator_result.indebtedness_calculated_total
@@ -806,8 +808,8 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
     validateStepsOne(){
       console.log("ESTADO"+ this.loan_detail.not_exist_modality)
       if(this.loanTypeSelected.id > 0){
-        if(this.loan_detail.not_exist_modality==false){
-          if(this.payable_liquid[0] >= this.livelihood_amount){
+         if(this.loan_detail.not_exist_modality==false){
+        if(this.payable_liquid[0] >= this.livelihood_amount){
            if(this.modalidad.procedure_type_id==10){
             if((parseFloat(this.bonos[0])+ parseFloat(this.bonos[1])+ parseFloat(this.bonos[2])+ parseFloat(this.bonos[3])) < (parseFloat(this.payable_liquid[0]) + parseFloat(this.payable_liquid[0]) + parseFloat(this.payable_liquid[0]) ) ){
               if(parseFloat(this.payable_liquid[0]) > 0 && parseFloat(this.payable_liquid[1]) > 0 && parseFloat(this.payable_liquid[2]) > 0 ){
@@ -900,8 +902,8 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
         }else{
           this.toastr.error("El Liquido Pagable debe ser mayor ó igual al Monto de subsistencia que son "+this.livelihood_amount+" Bs.")
         }
-        }else{
-          this.toastr.error("El afiliado no puede ser evaluado en esta modalidad")
+      }else{
+            this.toastr.error("El afiliado no puede ser evaluado en esta modalidad")
         }
       }else{
         this.toastr.error("Seleccione una modalidad")
@@ -955,8 +957,13 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
                 }
               }
             }else{
-            this.nextStep(2)
-            //this.liquidCalificated()
+              if(this.calculator_result.amount_requested>this.loan_detail.amount_maximum_suggested)
+              {
+                this.toastr.error("El Monto Solicitado no puede ser mayor al Monto maximo sugerido")
+              }
+              else{
+                this.nextStep(2)
+              }
           }
         }
       }
@@ -991,7 +998,7 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
             }
           }
           else{
-            this.toastr.error("Le falta añadir garantes."+this.guarantors.length)
+            this.toastr.error("Le falta añadir garantes.")
           }
         }else{
           this.nextStep(3)
