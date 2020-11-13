@@ -136,7 +136,7 @@ Después del login del usuario administrador, debe hacer clic en el botón ubica
 
   
 
-![IMAGE](./img/Seleccion_Cambiar_contraseña_admin.png)
+![IMAGE](./img/seleccion_cambio_contraseña_admin.png)
 
   
 
