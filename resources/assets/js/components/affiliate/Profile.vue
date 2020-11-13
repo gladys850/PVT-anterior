@@ -319,7 +319,7 @@
                     </v-tooltip>
                   </v-col>
                   <v-col cols="12">
-                  <v-data-table
+                  <v-data-table height="200px"
                       :headers="headers"
                       :items="addresses"
                       hide-default-footer
@@ -336,9 +336,9 @@
                         <v-btn text icon color="warning" @click.stop="bus.$emit('openDialog', {...props.item, ...{edit: true}})">
                           <v-icon>mdi-pencil</v-icon>
                         </v-btn>
-                        <v-btn text icon color="error" @click.stop="bus.$emit('openRemoveDialog', `address/${props.item.id}`)">
+                        <!--<v-btn text icon color="error" @click.stop="bus.$emit('openRemoveDialog', `address/${props.item.id}`)">
                           <v-icon>mdi-delete</v-icon>
-                        </v-btn>
+                        </v-btn>--> 
                       </td>
                       <td v-show="!editable">
                         <v-btn v-if="props.item.latitude && props.item.longitude" text icon color="info" @click.stop="bus.$emit('openDialog', {...props.item, ...{edit: false}})">
