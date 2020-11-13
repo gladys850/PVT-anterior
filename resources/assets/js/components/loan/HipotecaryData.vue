@@ -309,7 +309,7 @@
                         </v-icon>
                       </template>
                       <template v-slot:no-data>
-                        <v-btn color="primary" @click="initialize">Reset</v-btn>
+                        <v-btn color="primary" @click="initialize">Reset</v-btn> 
                       </template>
                     </v-data-table>
                 </v-col>-->
@@ -317,6 +317,20 @@
             </v-col>
           </v-row>
         </v-card>
+    <v-container class="py-0">
+          <v-row>
+            <v-spacer></v-spacer><v-spacer></v-spacer><v-spacer></v-spacer>
+              <v-col class="py-0 pt-2">
+                <v-btn text
+                @click="beforeStepBus(3)">Atras</v-btn>
+                <v-btn
+                color="primary"
+                @click="validateStepsThreeHipotecary()">
+                Siguiente
+                </v-btn>
+              </v-col>
+            </v-row>
+    </v-container>
       </v-form>
     </ValidationObserver>
   </v-container>
@@ -340,8 +354,8 @@ export default {
     }
   },
   data: () => ({
-    //editedIndex: -1,
-    //loan_property: {},
+    editedIndexProperty: -1,
+    val_hipotecary: false,
     dates: {
       publicDeedDate: {
         formatted: null,
@@ -364,6 +378,12 @@ export default {
     }
   },
   methods: {
+    beforeStepBus(val) {
+      this.bus.$emit("beforeStepBus", val)
+    },
+    nextStepBus(val) {
+      this.bus.$emit("nextStepBus", val)
+    },
     formatDate(key, date) {
       if (date) {
         this.dates[key].formatted = this.$moment(date).format("L");
@@ -382,7 +402,56 @@ export default {
         //this.loading = false
       }
     },
-    async validateHipotecaryData() {
+        //TAB 3 bien inmueble
+    async saveLoanProperty() {
+      try {
+        if (this.editedIndexProperty == -1) {
+          let res = await axios.post("loan_property", {
+            land_lot_number: this.loan_property.land_lot_number,
+            neighborhood_unit: this.loan_property.neighborhood_unit,
+            location: this.loan_property.location,
+            surface: this.loan_property.surface,
+            measurement: this.loan_property.measurement,
+            cadastral_code: this.loan_property.cadastral_code,
+            limit: this.loan_property.limit,
+            public_deed_number: this.loan_property.public_deed_number,
+            lawyer: this.loan_property.lawyer,
+            registration_number: this.loan_property.registration_number,
+            real_folio_number: this.loan_property.real_folio_number,
+            public_deed_date: this.loan_property.public_deed_date,
+            net_realizable_value: this.loan_detail.net_realizable_value,
+            real_city_id: this.loan_property.real_city_id
+          });
+          
+          this.editedIndexProperty = res.data.id
+          this.loan_detail.loan_property_id = res.data.id
+        } else {
+           let res = await axios.patch(`loan_property/${this.editedIndexProperty}`,
+           {
+              land_lot_number: this.loan_property.land_lot_number,
+              neighborhood_unit: this.loan_property.neighborhood_unit,
+              location: this.loan_property.location,
+              surface: this.loan_property.surface,
+              measurement: this.loan_property.measurement,
+              cadastral_code: this.loan_property.cadastral_code,
+              limit: this.loan_property.limit,
+              public_deed_number: this.loan_property.public_deed_number,
+              lawyer: this.loan_property.lawyer,
+              registration_number: this.loan_property.registration_number,
+              real_folio_number: this.loan_property.real_folio_number,
+              public_deed_date: this.loan_property.public_deed_date,
+              net_realizable_value: this.loan_detail.net_realizable_value,
+              real_city_id: this.loan_property.real_city_id
+            }
+          );
+          
+          this.loan_detail.loan_property_id = res.data.id
+        }
+      } catch (e) {
+        console.log(e)
+      }
+    },
+    /*async validateHipotecaryData() {
       try {
         let estado = false;
         estado = await this.$refs.observerHipotecaryData.validate();
@@ -395,8 +464,20 @@ export default {
       } catch (e) {
         this.$refs.observerHipotecaryData.setErrors(e);
       }
+    },*/
+    async validateStepsThreeHipotecary(){
+      try {
+        this.val_hipotecary = await this.$refs.observerHipotecaryData.validate();
+        if(this.val_hipotecary == true){
+          this.saveLoanProperty()
+          this.nextStepBus(3)
+        }
+      } catch (e) {
+        this.$refs.observerHipotecaryData.setErrors(e);
+      }
     }
   }
+  
   /*data: () => ({
 
         headers: [

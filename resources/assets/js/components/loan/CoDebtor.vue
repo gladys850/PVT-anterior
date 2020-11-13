@@ -229,9 +229,10 @@ export default {
       type: Array,
       required: true
     },
-    modalidad: {
-      type: Object,
-      required: true
+    modalidad_max_cosigner: {
+      type: Number,
+      required: true,
+      default:0
     }
   },
   data: () => ({
@@ -409,12 +410,12 @@ export default {
       }
     },
     checkLimit() {
-      if (this.personal_codebtor.length < this.modalidad.max_cosigner) {
+      if (this.personal_codebtor.length < this.modalidad_max_cosigner) {
         console.log("no hacer nada");
       } else {
         this.dialog = false;
         this.toastr.error(
-          "El número máximo de codeudores es: " + this.modalidad.max_cosigner
+          "El número máximo de codeudores es: " + this.modalidad_max_cosigner
         );
       }
     }
