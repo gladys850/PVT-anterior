@@ -199,8 +199,7 @@ export default {
     visible:false,
     hipotecario:false,
     window_size:4,
-    see_field:false
-  
+    see_field:false  
   }),
    props: {
     modalidad: {
@@ -245,14 +244,13 @@ export default {
     },
     loanTypeSelected:{
       type: Object,
-      required: true,
-      
+      required: true,      
     },
     data_sismu:{
       type: Object,
       required: true
     },
-  livelihood_amount:{
+    livelihood_amount:{
     type: Number,
     required:true,
     default:0
@@ -285,13 +283,6 @@ export default {
       return false
     }
   },
-  /*watch: {
-    loanTypeSelected(newVal, oldVal){
-    if(newVal!=oldVal){
-      this.Onchange()
-    }
-  }
-},*/
   methods:
  {//muestra los intervalos de acuerdo a una modalidad
     Onchange(){
@@ -314,15 +305,11 @@ export default {
           this.intervalos.minimun_amoun=this.interval[i].minimum_amount
           this.intervalos.minimum_term= this.interval[i].minimum_term
           this.intervalos.procedure_type_id= this.loanTypeSelected.id
-          //debugger
           this.getLoanModality(this.$route.query.affiliate_id)
-          //this.getBallots(this.$route.query.affiliate_id)
-        }else{
+        } /*else{
         console.log('NO ES IGUAL A MODALIDAD INTERVALS'+this.interval[i].procedure_type_id +"=="+this.loanTypeSelected.id )
-      }
-      }
- 
-   
+        }*/
+      }   
     },
     clearForm() //FIXME ver si la funcion sera necesaria
     {
@@ -341,12 +328,11 @@ export default {
           type_sismu: this.data_sismu.type_sismu,
           cpop_sismu: this.data_sismu.cpop_sismu,
           reprogramming: this.reprogramming
-          /*params: {
-            procedure_type_id:this.loanTypeSelected.id,
-            //external_discount:0, //FIXME revisar si este paramtro no tiene uso, en otro caso borrar
-          }*/
         })
-        
+        if(resp.data ==''){
+          this.loan_detail.not_exist_modality = true
+          this.toastr.error("El afiliado no puede ser evaluado en esta modalidad")
+        }else{
           let loan_modality = resp.data
           this.modalidad.id = loan_modality.id
           this.modalidad.procedure_type_id = loan_modality.procedure_type_id
@@ -359,18 +345,15 @@ export default {
           this.modalidad.max_cosigner = loan_modality.loan_modality_parameter.max_cosigner
           this.modalidad.max_lenders = loan_modality.loan_modality_parameter.max_lenders
                    
-          console.log("MODALIDAD")
-          console.log(this.modalidad)
-    
           this.loan_detail.min_guarantor_category= loan_modality.loan_modality_parameter.min_guarantor_category
           this.loan_detail.max_guarantor_category= loan_modality.loan_modality_parameter.max_guarantor_category
           if(loan_modality.loan_modality_parameter.quantity_ballots>1){
             this.visible = true
           }else{
-          this.visible = false
+            this.visible = false
+          }
+          this.getBallots(id)        
         }
-           this.getBallots(id)
-        
       }catch (e) {
         console.log(e)
       }finally {
@@ -400,12 +383,11 @@ export default {
           per_page: this.modalidad.quantity_ballots,
           page: 1,
         }
-      })
-      
-      console.log("-------")
-      console.log(this.modalidad.quantity_ballots)
+      })      
+      //console.log("-------")
+      //console.log(this.modalidad.quantity_ballots)
       data_ballots = res.data.data  
-      console.log(data_ballots)
+      //console.log(data_ballots)
     
       if(res.data.valid){
         this.editar=false

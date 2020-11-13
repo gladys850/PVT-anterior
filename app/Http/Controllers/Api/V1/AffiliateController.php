@@ -487,7 +487,6 @@ class AffiliateController extends Controller
         $cpop_sismu = $request->input('cpop_sismu',false);
         $reprogramming = $request->input('reprogramming',false);
         $affiliate_modality= Loan::get_modality($modality->name, $affiliate, $type_sismu, $cpop_sismu, $reprogramming);
-        if(!$affiliate_modality) abort(409, 'El afiliado no califica para la modalidad');
         return $affiliate_modality;
     }
 
@@ -629,7 +628,9 @@ class AffiliateController extends Controller
         $b = array();
         $affiliate = Affiliate::whereIdentity_card($request->identity_card)->first();
         if(isset($affiliate)){
+            $is_valid_information = Affiliate::verify_information($affiliate);
             $b["state"]=true;
+            $b["information"]=$is_valid_information;
             $b["affiliate"]=$affiliate;
             return $b;
             //return self::append_data($affiliate, true);

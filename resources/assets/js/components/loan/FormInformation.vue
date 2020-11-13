@@ -24,24 +24,23 @@
                       ></v-select>
                     </ValidationProvider>
                   </v-col>
-                  <v-col cols="12" md="2" class="py-0" v-show="visible">
-                    <label>Nro de Cuenta:</label>
-                  </v-col>
-                  <v-col cols="12" md="4" class="py-0" v-show="visible">
-                    <ValidationProvider
-                      v-slot="{ errors }"
-                      name="cuenta"
-                      :rules="visible ? 'required' : ''+'|numeric|min:1|max:20'"
-                      mode="aggressive"
-                    >
+                  <v-col cols="12" md="3" class="py-0" v-show="visible">
                       <v-text-field
+                        label="Entidad Financiera"
                         class="py-0"
-                        :error-messages="errors"
                         dense
-                        outlined
-                        v-model="cuenta"
+                        v-model="entity"
+                        readonly
                       ></v-text-field>
-                    </ValidationProvider>
+                  </v-col>
+                  <v-col cols="12" md="3" class="py-0" v-show="visible">
+                      <v-text-field
+                        label="Cuenta"
+                        class="py-0"
+                        dense
+                        v-model="affiliate.account_number"
+                        readonly
+                      ></v-text-field>
                   </v-col>
                   <v-col cols="12" md="6" v-show="espacio"></v-col>
                   <v-col cols="12" md="2" class="py-1">
@@ -229,6 +228,10 @@ export default {
       required: true,
       default: 0
     },
+    affiliate: {
+      type: Object,
+      required: true
+    }
   },
   data: () => ({  
     cuenta: null,
@@ -238,12 +241,10 @@ export default {
     loanTypeSelected: null,
     loanTypeSelected2: null,
     payment_types: [],
-    cities: []
+    cities: [],
+    entity: null
   }),
   watch: {
-    loanTypeSelected(newVal, oldVal) {
-      this.cuenta = null;
-    },
     modalidad_id(newVal, oldVal){
       this.getLoanDestiny()
     },
@@ -262,15 +263,27 @@ export default {
       for (this.i = 0; this.i < this.payment_types.length; this.i++) {
         if (this.loanTypeSelected == this.payment_types[this.i].id) {
           if (this.payment_types[this.i].name == "Depósito Bancario") {
-            (this.visible = true), (this.espacio = false);
+            this.visible = true
+            this.espacio = false
+            this.getEntity()
           } else {
-            (this.visible = false), (this.espacio = true);
+            this.visible = false
+            this.espacio = true
+            
           }
         }
       }
-      (this.loan_detail.payment_type_id = this.loanTypeSelected),
-        (this.loan_detail.number_payment_type = this.cuenta),
-        (this.loan_detail.destiny_id = this.loanTypeSelected2);
+      if(this.visible){
+        this.loan_detail.payment_type_id = this.loanTypeSelected
+        this.loan_detail.financial_entity_id = this.affiliate.financial_entity_id
+        this.loan_detail.number_payment_type = this.affiliate.account_number
+        this.loan_detail.destiny_id = this.loanTypeSelected2
+      }else{
+        this.loan_detail.payment_type_id = this.loanTypeSelected
+        this.loan_detail.financial_entity_id = null
+        this.loan_detail.number_payment_type = null
+        this.loan_detail.destiny_id = this.loanTypeSelected2
+      }
     },
     async getPaymentTypes() {
       try {
@@ -307,6 +320,19 @@ export default {
       } finally {
         this.loading = false
       }
+    },
+    async getEntity() {
+      try {
+        this.loading = true
+        let res = await axios.get(`financial_entity/${this.affiliate.financial_entity_id}`)
+        this.entity = res.data.name
+        console.log("XXXXXXXXXXXXXXXXX")
+        console.log(this.entity)
+      } catch (e) {
+        console.log(e)
+      }finally {
+          this.loading = false
+        }
     },
     async validateDestiny() {
       try {
