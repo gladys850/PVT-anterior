@@ -237,8 +237,13 @@ export default {
 
     async calculadora() {
       try {
-        if(this.calculator_result.amount_requested<=this.loan_detail.net_realizable_value)
+        console.log('Entro a calculadora hipotecario')
+          console.log(this.calculator_result.amount_requested)
+              console.log(this.loan_detail.net_realizable_value)
+        if( parseFloat(this.calculator_result.amount_requested)  <= parseFloat(this.loan_detail.net_realizable_value))
         {
+          console.log(this.calculator_result.amount_requested)
+              console.log(this.loan_detail.net_realizable_value)
           let res = await axios.post(`simulator`, {
           procedure_modality_id: this.modalidad.id,
           amount_requested: this.calculator_result.amount_requested,
@@ -271,7 +276,7 @@ export default {
 
         }
         else{
-            this.loan_detail.maximum_suggested_valid=false
+     
           this.toastr.error("El Monto Solicitado no puede ser mayor al Monto del Inmueble")
         }
       } catch (e) {

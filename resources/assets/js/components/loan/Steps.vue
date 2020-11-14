@@ -962,12 +962,22 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
                 }
               }
             }else{
-              if(this.calculator_result.amount_requested>this.loan_detail.amount_maximum_suggested)
-              {
-                this.toastr.error("El Monto Solicitado no puede ser mayor al Monto maximo sugerido")
-              }
-              else{
-                this.nextStep(2)
+              if(this.modalidad.procedure_type_id==12){
+                 if(parseFloat(this.calculator_result.amount_requested) > parseFloat(this.loan_detail.net_realizable_value) )
+                {
+                  this.toastr.error("El Monto Solicitado no puede ser mayor al Monto del Inmueble")
+                }
+                else{
+                  this.nextStep(2)
+                }
+              }else{
+                if(this.calculator_result.amount_requested>this.loan_detail.amount_maximum_suggested)
+                {
+                  this.toastr.error("El Monto Solicitado no puede ser mayor al Monto maximo sugerido")
+                }
+                else{
+                  this.nextStep(2)
+                }
               }
           }
         }
