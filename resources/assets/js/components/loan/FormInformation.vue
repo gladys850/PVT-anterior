@@ -190,8 +190,27 @@
             </v-form>
           </ValidationObserver>
         </v-col>
+          <CoDebtor
+            v-show="this.modalidad_max_cosigner > 0"
+            :personal_codebtor="personal_codebtor"
+            :modalidad_max_cosigner.sync="modalidad_max_cosigner"
+          />
       </v-row>
     </v-card>
+    <v-container class="py-0">
+          <v-row>
+            <v-spacer></v-spacer><v-spacer></v-spacer><v-spacer></v-spacer>
+              <v-col class="py-0 pt-2">
+                <v-btn text
+                @click="beforeStepBus(5)">Atras</v-btn>
+                <v-btn
+                color="primary"
+                @click="validateStepsFive()">
+                Siguiente
+                </v-btn>
+              </v-col>
+            </v-row>
+    </v-container>
   </v-container>
 </template>
 <script>
@@ -211,10 +230,6 @@ export default {
       required: true,
       default: false
     },
-    personal_reference: {
-      type: Object,
-      required: true
-    },
     intervalos: {
       type: Object,
       required: true
@@ -231,6 +246,15 @@ export default {
     affiliate: {
       type: Object,
       required: true
+    },
+    personal_codebtor: {
+      type: Array,
+      required: true
+    },
+    modalidad_max_cosigner: {
+      type: Number,
+      required: true,
+      default:0
     }
   },
   data: () => ({  
@@ -242,7 +266,13 @@ export default {
     loanTypeSelected2: null,
     payment_types: [],
     cities: [],
-    entity: null
+    entity: null,
+    editedIndexPerRef: -1,
+    personal_reference:{},
+    val_destiny: false,
+    val_per_ref: false,
+    reference: [],
+    cosigners:[],
   }),
   watch: {
     modalidad_id(newVal, oldVal){
@@ -259,6 +289,12 @@ export default {
     this.getPaymentTypes();
   },
   methods: {
+    beforeStepBus(val) {
+      this.bus.$emit("beforeStepBus", val)
+    },
+    nextStepBus(val) {
+      this.bus.$emit("nextStepBus", val)
+    },
     Onchange() {
       for (this.i = 0; this.i < this.payment_types.length; this.i++) {
         if (this.loanTypeSelected == this.payment_types[this.i].id) {
@@ -268,8 +304,7 @@ export default {
             this.getEntity()
           } else {
             this.visible = false
-            this.espacio = true
-            
+            this.espacio = true            
           }
         }
       }
@@ -326,42 +361,144 @@ export default {
         this.loading = true
         let res = await axios.get(`financial_entity/${this.affiliate.financial_entity_id}`)
         this.entity = res.data.name
-        console.log("XXXXXXXXXXXXXXXXX")
-        console.log(this.entity)
+        //console.log("XXXXXXXXXXXXXXXXX")
+        //console.log(this.entity)
       } catch (e) {
         console.log(e)
       }finally {
           this.loading = false
         }
     },
-    async validateDestiny() {
-      try {
-        let estado = false;
-        estado = await this.$refs.observerDestiny.validate();
-        if (estado) {
-          this.bus.$emit("validDestiny", estado);
-        } else {
-          this.bus.$emit("validDestiny", estado);
+    async savePersonalReference()
+    {
+      try{
+        if (this.modalidad_personal_reference) {
+          this.reference = []        
+          if (this.editedIndexPerRef == -1){
+            let res = await axios.post(`personal_reference`, {
+              city_identity_card_id:this.personal_reference.city_identity_card_id,
+              identity_card:this.personal_reference.identity_card,
+              last_name:this.personal_reference.last_name,
+              mothers_last_name:this.personal_reference.mothers_last_name,
+              first_name:this.personal_reference.first_name,
+              second_name:this.personal_reference.second_name,
+              phone_number:this.personal_reference.phone_number,
+              cell_phone_number:this.personal_reference.cell_phone_number
+            })         
+            this.editedIndexPerRef = res.data.id
+            this.reference.push(res.data.id)
+          }else{
+            let res = await axios.patch(`personal_reference/${this.editedIndexPerRef}`, 
+            {
+              city_identity_card_id:this.personal_reference.city_identity_card_id,
+              identity_card:this.personal_reference.identity_card,
+              last_name:this.personal_reference.last_name,
+              mothers_last_name:this.personal_reference.mothers_last_name,
+              first_name:this.personal_reference.first_name,
+              second_name:this.personal_reference.second_name,
+              phone_number:this.personal_reference.phone_number,
+              cell_phone_number:this.personal_reference.cell_phone_number
+            })   
+            this.reference.push(res.data.id)     
+          }
+          this.loan_detail.reference = this.reference
         }
-        console.log(" estado " + estado);
+      } catch (e) {
+        console.log(e)
+         this.$refs.observer.setErrors(e)
+      } finally {
+        this.loading = false
+      }
+    },
+    async savePCosigner() {
+      try {
+        let ids_codebtor=[]
+        for (let i = 0; i < this.personal_codebtor.length; i++) {
+          let res = await axios.post(`personal_reference`, {
+            city_identity_card_id: this.personal_codebtor[i].city_identity_card_id,
+            identity_card: this.personal_codebtor[i].identity_card,
+            last_name: this.personal_codebtor[i].last_name,
+            mothers_last_name: this.personal_codebtor[i].mothers_last_name,
+            first_name: this.personal_codebtor[i].first_name,
+            second_name: this.personal_codebtor[i].second_name,
+            phone_number: this.personal_codebtor[i].phone_number,
+            cell_phone_number: this.personal_codebtor[i].cell_phone_number,
+            address: this.personal_codebtor[i].address,
+            civil_status: this.personal_codebtor[i].civil_status,
+            gender: this.personal_codebtor[i].gender,
+            cosigner: true,
+            city_birth_id: this.personal_codebtor[i].city_birth_id
+          })
+          ids_codebtor.push(res.data.id)
+          console.log(this.personal_codebtor.length)
+          console.log(ids_codebtor)
+        }
+        this.loan_detail.cosigners = ids_codebtor
+        console.log(this.loan_detail.cosigners)
+      } catch (e) {
+        this.dialog = false
+        console.log(e)
+      } finally {
+        this.loading = false
+      }
+    },
+    /*async validateDestiny() {
+      try {
+        this.val_destiny = await this.$refs.observerDestiny.validate();
+        if (this.val_destiny ) {
+          this.val_destiny == true
+        } else {
+          this.val_destiny == false
+        }
+        console.log(" val_destiny " + this.val_destiny);
       } catch (e) {
         this.$refs.observerPerRef.setErrors(e);
       }
     },
     async validatePerRef() {
       try {
-        let estado = false;
-        estado = await this.$refs.observerPerRef.validate();
-        if (estado) {
-          this.bus.$emit("validPerRef", estado);
+        this.val_per_ref = await this.$refs.observerDestiny.validate();
+        if (this.val_per_ref ) {
+          this.val_per_ref == true
+          this.personal()
         } else {
-          this.bus.$emit("validPerRef", estado);
+          this.val_per_ref == false
         }
-        console.log(" estado " + estado);
+        console.log(" val_per_ref " + this.val_per_ref);
       } catch (e) {
         this.$refs.observerPerRef.setErrors(e);
       }
-    },
+    },*/
+     async validateStepsFive(){
+
+      try {
+        this.val_destiny = await this.$refs.observerDestiny.validate();
+        if (this.val_destiny ) {
+          if(this.modalidad_personal_reference){
+            this.val_per_ref = await this.$refs.observerPerRef.validate();
+            if(this.val_per_ref){
+                this.savePersonalReference()
+                this.savePCosigner() 
+                this.nextStepBus(5)
+            }else{
+                console.log("no pasa")
+            }
+          }else{
+            this.savePersonalReference()
+            this.savePCosigner() 
+            this.nextStepBus(5)
+          }
+        }else{
+          console.log("no pasa")
+        }
+    
+      }catch (e) {
+        this.$refs.observerDestiny.setErrors(e);
+        if(this.modalidad_personal_reference){
+        this.$refs.observerPerRef.setErrors(e)
+        }
+      }
+     }
   }
 };
 </script>

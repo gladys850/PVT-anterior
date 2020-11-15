@@ -81,7 +81,7 @@
           <v-card color="grey lighten-1">
             <h3 class="text-uppercase text-center">{{modalidad.name}}</h3>
             <v-card class="ma-3">
-              <BallotsResult
+              <BallotsResult ref="BallotsResult"
                 v-show="modalidad.procedure_type_id!=12"
                 :data_sismu.sync="data_sismu"
                 :calculator_result.sync="calculator_result"
@@ -133,13 +133,14 @@
               :bus="bus"
             />
             <Guarantor
+            v-show="modalidad.procedure_type_id!=12"
             :modalidad_guarantors.sync="modalidad.guarantors"
             :modalidad.sync="modalidad"
             :loan_detail.sync="loan_detail"
             :guarantors.sync="guarantors"
             :affiliate.sync="affiliate"
             :modalidad_id.sync="modalidad.id"/>
-          <v-container class="py-0">
+          <v-container class="py-0" v-show="modalidad.procedure_type_id!=12">
             <v-row>
             <v-spacer></v-spacer><v-spacer></v-spacer> <v-spacer></v-spacer>
               <v-col class="py-0">
@@ -186,18 +187,19 @@
             :affiliate.sync="affiliate"
             :loan_detail.sync="loan_detail"
             :modalidad_personal_reference.sync="modalidad.personal_reference"
-            :personal_reference.sync="personal_reference"
             :intervalos.sync="intervalos"
             :destino.sync="destino"
             :bus="bus"
+            :personal_codebtor="personal_codebtor"
+            :modalidad_max_cosigner.sync="modalidad.max_cosigner"
           />
-          <CoDebtor
+         <!-- <CoDebtor
             v-show="this.modalidad.max_cosigner > 0"
             :personal_codebtor="personal_codebtor"
             :modalidad.sync="modalidad"
-          />
+          />-->
           <v-container class="py-0">
-            <v-row>
+           <!-- <v-row>
             <v-spacer></v-spacer><v-spacer></v-spacer><v-spacer></v-spacer>
               <v-col class="py-0">
                 <v-btn text
@@ -208,7 +210,7 @@
                 Siguiente
                 </v-btn>
               </v-col>
-            </v-row>
+            </v-row>-->
           </v-container>
         </v-card>
       </v-stepper-content>
@@ -220,9 +222,9 @@
             :loan_detail.sync="loan_detail"
             :lenders.sync="lenders"
             :modalidad.sync="modalidad"
-            :reference.sync="reference"
+            
             :modalidad_id.sync="modalidad.id"
-            :cosigners.sync="cosigners"
+          
             :guarantors.sync="guarantors"
             :loan_property_id.sync ="loan_property.id"
             :data_loan_parent.sync="data_loan_parent"/>
@@ -292,20 +294,20 @@ export default {
     data_loan_parent_aux:{},
     data_loan_parent:[],
     modalidad:{},
-    reference:[],
+    //reference:[],
     intervalos:{},
     payable_liquid:[0,0,0],
     bonos:[0,0,0,0],
-    personal_reference:{},
+    //personal_reference:{},
     personal_codebtor:[],
-    cosigners:[],
+    //cosigners:[],
     contrib_codebtor: [],
     contributions1_aux: [],
     liquid_calificated:[],
-    editedIndexProperty: -1,
-    editedIndexPerRef: -1,
+    //editedIndexProperty: -1,
+    //editedIndexPerRef: -1,
     loan_property: {},
-    cosigners:[],
+    //cosigners:[],
     destino:[],
     //Variables reprogramacion y refinanciamiento
     data_loan: {},
@@ -359,6 +361,9 @@ export default {
     this.bus.$on('beforeStepBus', (val) => {
       this.beforeStep(val)
     })
+    this.bus.$on('nextStepBus', (val) => {
+      this.nextStep(val)
+    })
   },
   mounted(){
     this.getGlobalParameters()
@@ -384,7 +389,7 @@ export default {
           //this.addDataLoan()
           //this.validateStepsTwo()
 
-          console.log('segundo'+this.modalidad.guarantors )
+          this.$refs.BallotsResult.simuladores()
         }
         if(n==3){
           if(this.modalidad.procedure_type_id==12){
@@ -420,7 +425,7 @@ export default {
       }
 
     },
-    async personal()
+    /*async personal()
     {
       try{
         if (this.modalidad.personal_reference) {
@@ -459,8 +464,8 @@ export default {
         this.loading = false
         console.log('entro por verdader'+this.modalidad.personal_reference)
       }
-    },
-    async savePersonalReference() {
+    },*/
+    /*async savePersonalReference() {
       try {
         let ids_codebtor=[]
         for (let i = 0; i < this.personal_codebtor.length; i++) {
@@ -491,7 +496,7 @@ export default {
       } finally {
         this.loading = false
       }
-    },
+    },*/
     async getProcedureType(){
       try {
         let resp = await axios.get(`module`,{
@@ -681,16 +686,18 @@ export default {
               if( this.calculator_result.amount_maximum_suggested<this.intervalos.maximun_amoun){
                 this.calculator_result.amount_requested=this.calculator_result.amount_maximum_suggested
               }else{
-                this.calculator_result.montos=this.intervalos.maximun_amoun
+                this.calculator_result.amount_requested=this.intervalos.maximun_amoun
               }
               this.lenders=res.data
               this.lenders[0].payment_percentage=this.calculator_result.affiliates[0].payment_percentage
               this.lenders[0].indebtedness_calculated=this.calculator_result.affiliates[0].indebtedness_calculated
+
               this.loan_detail.minimum_term=this.intervalos.minimum_term
               this.loan_detail.maximum_term=this.intervalos.maximum_term
               this.loan_detail.minimun_amoun=this.intervalos.minimun_amoun
               this.loan_detail.maximun_amoun=this.intervalos.maximun_amoun
-              this.loan_detail.amount_requested=this.intervalos.maximun_amoun
+              this.loan_detail.amount_requested=this.calculator_result.amount_requested
+              this.loan_detail.amount_maximum_suggested=this.calculator_result.amount_maximum_suggested
               this.loan_detail.months_term=this.intervalos.maximum_term
               this.loan_detail.liquid_qualification_calculated=this.calculator_result.liquid_qualification_calculated_total
               this.loan_detail.indebtedness_calculated=this.calculator_result.indebtedness_calculated_total
@@ -710,7 +717,7 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
         console.log('entro por verdadero')
       }
     },
-    //TAB 3 bien inmueble
+    /*//TAB 3 bien inmueble
     async saveLoanProperty() {
       try {
         if (this.editedIndexProperty == -1) {
@@ -751,12 +758,12 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
               real_city_id: this.loan_property.real_city_id
             }
           );
-          this.loan_property = res.data
+          this.loan_property = res.data 
         }
       } catch (e) {
         console.log(e)
       }
-    },
+    },*/
     async getLoan(id) {
       try {
         this.loading = true
@@ -955,15 +962,30 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
                 }
               }
             }else{
-            this.nextStep(2)
-            //this.liquidCalificated()
+              if(this.modalidad.procedure_type_id==12){
+                 if(parseFloat(this.calculator_result.amount_requested) > parseFloat(this.loan_detail.net_realizable_value) )
+                {
+                  this.toastr.error("El Monto Solicitado no puede ser mayor al Monto del Inmueble")
+                }
+                else{
+                  this.nextStep(2)
+                }
+              }else{
+                if(this.calculator_result.amount_requested>this.loan_detail.amount_maximum_suggested)
+                {
+                  this.toastr.error("El Monto Solicitado no puede ser mayor al Monto maximo sugerido")
+                }
+                else{
+                  this.nextStep(2)
+                }
+              }
           }
         }
       }
     },
     validateStepsthree()
     {
-      if(this.modalidad.procedure_type_id==12)
+      /*if(this.modalidad.procedure_type_id==12)
       {
         this.$refs.HipotecaryData.validateHipotecaryData()
         this.bus.$on('validHipotecaryData', (val3) => {
@@ -978,7 +1000,7 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
           console.log("no pasa")
         }
       }
-      else{
+      else{*/
         if(this.modalidad.guarantors > 0)
         {
           if(this.modalidad.guarantors==this.guarantors.length)
@@ -991,14 +1013,14 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
             }
           }
           else{
-            this.toastr.error("Le falta añadir garantes."+this.guarantors.length)
+            this.toastr.error("Le falta añadir garantes.")
           }
         }else{
           this.nextStep(3)
         }
-      }
+      //}
     },
-    validateStepsFive(){
+    /*validateStepsFive(){
       this.$refs.FormInformation.validateDestiny()
       this.bus.$on('validDestiny', (val1) => {
       console.log("VAL"+val1)
@@ -1041,8 +1063,8 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
       }else{
           console.log("no pasa")
       }
-      })*/
-    }
+      })
+    }*/
   }
 }
 </script>

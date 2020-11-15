@@ -80,7 +80,7 @@
                         v-on:keyup.enter="calculadora()"
                       ></v-text-field>
                       </ValidationProvider>
-                      <ValidationProvider v-slot="{ errors }" name="monto solicitado" :rules="'numeric|min_value:'+loan_detail.minimun_amoun+'|max_value:'+loan_detail.maximun_amoun" mode="aggressive">
+                      <ValidationProvider v-slot="{ errors }" name="monto solicitado" :rules="'numeric|min_value:'+loan_detail.minimun_amoun+'|max_value:'+loan_detail.net_realizable_value" mode="aggressive">
                       <v-text-field
                         dense
                         :error-messages="errors"
@@ -237,7 +237,14 @@ export default {
 
     async calculadora() {
       try {
-        let res = await axios.post(`simulator`, {
+        console.log('Entro a calculadora hipotecario')
+          console.log(this.calculator_result.amount_requested)
+              console.log(this.loan_detail.net_realizable_value)
+        if( parseFloat(this.calculator_result.amount_requested)  <= parseFloat(this.loan_detail.net_realizable_value))
+        {
+          console.log(this.calculator_result.amount_requested)
+              console.log(this.loan_detail.net_realizable_value)
+          let res = await axios.post(`simulator`, {
           procedure_modality_id: this.modalidad.id,
           amount_requested: this.calculator_result.amount_requested,
           months_term: this.calculator_result.months_term,
@@ -265,6 +272,12 @@ export default {
 
           this.lenders[this.i].payment_percentage=this.simulator.affiliates[this.i].payment_percentage
           this.lenders[this.i].indebtedness_calculated=this.simulator.affiliates[this.i].indebtedness_calculated
+        }
+
+        }
+        else{
+     
+          this.toastr.error("El Monto Solicitado no puede ser mayor al Monto del Inmueble")
         }
       } catch (e) {
         console.log(e)
