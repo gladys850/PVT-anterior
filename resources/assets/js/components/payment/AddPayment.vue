@@ -6,9 +6,16 @@
         <v-card-text class="ma-0 pb-0">
           <v-container fluid class="ma-0 pb-0">
             <v-row justify="center" class="ma-0 pb-0">
-              <v-col cols="12" class="ma-0 pb-0">
-                <v-container class="py-0">
-                  <ValidationObserver ref="observer">
+              <v-col cols="12" >
+                   <v-layout row wrap>
+                    <v-flex xs12 class="px-2">      
+                      <fieldset class="pa-3">
+                        <center>
+                          <v-toolbar-title>DATOS DE LA AMORTIZACION</v-toolbar-title>
+                        </center>
+                        <v-progress-linear></v-progress-linear>
+                <v-container >
+                <ValidationObserver ref="observer">
                     <v-form>
                       <template>
                       <v-row>
@@ -31,7 +38,11 @@
                         {{ payment.quota_number}}
                         </v-col>
                         <v-col cols="12" class="ma-0 pb-0">
-                          <label>DIAS ESTIMADOS:</label>
+                        <v-progress-linear></v-progress-linear>
+                        <center>
+                          <v-toolbar-title>CALCULO DE LOS DIAS ESTIMADOS</v-toolbar-title>
+                        </center>
+                        <v-progress-linear></v-progress-linear>
                         </v-col>
                         <v-col cols="2" class="ma-0 pb-0">
                           <label>PENAL:</label>
@@ -40,18 +51,6 @@
                         {{payment.estimated_days.penal}}
                         </v-col>
                         <v-col cols="2" class="ma-0 pb-0">
-                          <label>ACUMULADO:</label>
-                        </v-col>
-                        <v-col cols="2" class="ma-0 pb-0">
-                        {{payment.estimated_days.accumulated}}
-                        </v-col>
-                        <v-col cols="2" class="ma-0 pb-0">
-                          <label>CORRIENTE:</label>
-                        </v-col>
-                        <v-col cols="2" class="ma-0 pb-0">
-                        {{payment.estimated_days.current}}
-                        </v-col>
-                            <v-col cols="2" class="ma-0 pb-0">
                           <label>BALANCE:</label>
                         </v-col>
                         <v-col cols="2" class="ma-0 pb-0">
@@ -63,17 +62,29 @@
                         <v-col cols="2" class="ma-0 pb-0">
                         {{payment.capital_payment}}
                         </v-col>
+                          <v-col cols="2" class="ma-0 pb-0">
+                          <label>ACUMULADO:</label>
+                        </v-col>
+                        <v-col cols="2" class="ma-0 pb-0">
+                        {{payment.estimated_days.accumulated}}
+                        </v-col>  
+                        <v-col cols="2" class="ma-0 pb-0">
+                          <label>CUOTA ESTIMADA:</label>
+                        </v-col>
+                        <v-col cols="2" class="ma-0 pb-0">
+                        {{payment.estimated_quota}}
+                        </v-col>                    
                         <v-col cols="2" class="ma-0 pb-0">
                           <label>INTERES DEL PAGO:</label>
                         </v-col>
                         <v-col cols="2" class="ma-0 pb-0">
                         {{payment.interest_payment}}
                         </v-col>
-                           <v-col cols="2" class="ma-0 pb-0">
-                          <label>CUOTA ESTIMADA:</label>
+                        <v-col cols="2" class="ma-0 pb-0">
+                          <label>CORRIENTE:</label>
                         </v-col>
                         <v-col cols="2" class="ma-0 pb-0">
-                        {{payment.estimated_quota}}
+                        {{payment.estimated_days.current}}
                         </v-col>
                         <v-col cols="2" class="ma-0 pb-0">
                           <label>SIGUIENTE BALANCE:</label>
@@ -100,6 +111,12 @@
                   </v-form>
                 </ValidationObserver>
               </v-container>
+                
+                      </fieldset>
+                    </v-flex>
+                  </v-layout>
+
+                  
             </v-col>
           </v-row>
         </v-container>
