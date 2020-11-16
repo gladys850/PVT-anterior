@@ -677,7 +677,7 @@ class LoanController extends Controller
                     ['Usuario', Auth::user()->username]
                 ]
             ],
-            'title' => 'SOLICITUD DE ' . ($loan->parent_loan ? $loan->parent_reason : 'PRÉSTAMO'),
+            'title' => 'SOLICITUD DE ' . ($loan->parent_loan  ? $loan->parent_reason : 'PRÉSTAMO'),
             'loan' => $loan,
             'lenders' => collect($lenders),
             'signers' => $persons,

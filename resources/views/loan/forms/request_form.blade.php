@@ -23,7 +23,7 @@
         <table class="table-info w-100 text-center uppercase my-20">
             <tr class="bg-grey-darker text-xxs text-white">
                 <td class="w-25">Código Tŕamite</td>
-                @if ($loan->parent_loan)
+                @if ($loan->parent_loan || $loan->parent_reason)
                 <td class="w-25">Trámite origen</td>
                 @endif
                 <td class="{{ $loan->parent_loan ? 'w-50' : 'w-75' }}" colspan="{{ $loan->parent_loan ? 1 : 2 }}">Modalidad de trámite</td>
@@ -33,7 +33,10 @@
                 @if ($loan->parent_loan)
                 <td class="data-row py-5">{{ $loan->parent_loan->code }}</td>
                 @endif
-                <td class="data-row py-5" colspan="{{ $loan->parent_loan ? 1 : 2 }}">{{ $loan->modality->name }}</td>
+                @if ($loan->parent_reason && !$loan->parent_loan_id)
+                <td class="data-row py-5">{{ $loan->data_loan->code }}</td>
+                @endif
+                <td class="data-row py-5" colspan="{{ $loan->parent_loan ? 1 : 2 }}">@if($loan->parent_reason == "REPROGRAMACIÓN") {{$loan->parent_reason}} @endif {{ $loan->modality->name }}</td>
             </tr>
             <tr class="bg-grey-darker text-xxs text-white">
                 <td>Monto solicitado</td>
