@@ -14,8 +14,8 @@
           <v-divider class="mx-4" inset vertical></v-divider>
           <v-spacer></v-spacer>
           <v-dialog v-model="dialog" max-width="600px">
-            <template v-slot:activator="{ on, attrs }">
-              <v-btn fab dark x-small v-on="on" color="info" v-bind="attrs" @click="checkLimit()">
+            <template v-slot:activator="{ on}">
+              <v-btn fab dark x-small v-on="on" color="info" @click="checkLimit()">
                 <v-icon>mdi-plus</v-icon>
               </v-btn>
             </template>
@@ -246,11 +246,6 @@ export default {
         value: "identity_card"
       },
       {
-        text: "Ciudad de Expedición",
-        class: ["normal", "white--text"],
-        value: "city_identity_card_id"
-      },
-      {
         text: "Primer Nombre",
         class: ["normal", "white--text"],
         value: "first_name"
@@ -297,6 +292,7 @@ export default {
       second_name: null,
       last_name: null,
       mothers_last_name: null,
+      full_name:null,
       phone_number: null,
       cell_phone_number: null,
       address: null,
@@ -311,6 +307,7 @@ export default {
       second_name: null,
       last_name: null,
       mothers_last_name: null,
+      full_name:null,
       phone_number: null,
       cell_phone_number: null,
       address: null,
@@ -390,8 +387,6 @@ export default {
             console.log(this.editedItem);
           }
           this.close();
-        } else {
-          alert("valide datos");
         }
       } catch (e) {
         this.$refs.observerCodebtor.setErrors(e);
