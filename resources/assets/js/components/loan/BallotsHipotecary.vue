@@ -359,7 +359,7 @@ export default {
         this.editedItem.second_name = data_codebtor.second_name
         this.editedItem.last_name = data_codebtor.last_name
         this.editedItem.mothers_last_name = data_codebtor.mothers_last_name
-        this.editedItem.full_name = data_codebtor.first_name + " " + data_codebtor.last_name + " " +data_codebtor.mothers_last_name
+        this.editedItem.full_name = this.$options.filters.fullName(data_codebtor, true)
         console.log(data_codebtor)
       } catch (e) {
         console.log(e)
