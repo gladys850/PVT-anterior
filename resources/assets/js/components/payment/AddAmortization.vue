@@ -1,14 +1,21 @@
 <template>
   <v-container >
-    <ValidationObserver ref="observer">
-      <v-form>
         <v-card>
           <v-card-text >
             <v-row justify="center" class="ma-0 pb-0">
               <v-col cols="12" class="ma-0 pb-0">
                 <v-container class="py-0">
-                  <ValidationObserver ref="observer">
+                  <v-col cols="12" md="12">
+                  <v-layout row wrap>
+                    <v-flex xs12 class="px-2">      
+                      <fieldset class="pa-3">
+                    <ValidationObserver ref="observer">
                     <v-form>
+                      <center>
+                       <v-toolbar-title>AMORTIZACIONES</v-toolbar-title>
+                      </center>
+                                  <v-progress-linear></v-progress-linear>
+                     
                       <template>
                       <v-row>
                         <v-col cols="3" class="ma-0 pb-0" v-show="!editable">
@@ -25,6 +32,7 @@
                           <v-select
                             v-if="isNew"
                             dense
+                            :onchange="onchangeOne()"
                             v-model="data_payment.amortization"
                             :outlined="!editable"
                             :readonly="editable"
@@ -55,7 +63,7 @@
                         </v-col>
                         <v-col cols="1" class="ma-0 pb-0"></v-col>
                         <v-col cols="2" class="ma-0 pb-0">
-                          <label> FECHA DE PAGO:</label>
+                          <label> FECHA DE CALCULO:</label>
                         </v-col>
                         <v-col cols="3">
                           <v-menu
@@ -82,10 +90,10 @@
                             <v-date-picker v-model="data_payment.payment_date" no-title @input="dates.paymentDate.show = false"></v-date-picker>
                           </v-menu>
                         </v-col>
-                        <v-col cols="3" class="ma-0 pb-0">
+                        <v-col cols="3" class="ma-0 pb-0" v-show="view">
                           <label>TOTAL PAGADO:</label>
                         </v-col>
-                        <v-col cols="3" class="ma-0 pb-0">
+                        <v-col cols="3" class="ma-0 pb-0" v-show="view">
                           <v-text-field
                             dense
                             v-model="data_payment.pago_total"
@@ -137,13 +145,15 @@
                     </template>
                   </v-form>
                 </ValidationObserver>
+                      </fieldset>
+                    </v-flex>
+                  </v-layout>
+                </v-col>
               </v-container>
             </v-col>
           </v-row>
         </v-card-text>
       </v-card>
-    </v-form>
-  </ValidationObserver>
   </v-container>
 </template>
 <script>
@@ -165,6 +175,7 @@ export default {
       id:2
       }
     ],
+    view:true,
     efectivo:false,
     loan_payment:{},
     payment_types:[],
@@ -212,6 +223,14 @@ export default {
           this.efectivo= false
         }else{
           this.efectivo= true
+        }
+    },
+    onchangeOne(){
+        if(this.data_payment.amortization==2)
+        {
+          this.view= false
+        }else{
+          this.view= true
         }
     },
     formatDate(key, date) {

@@ -421,18 +421,26 @@ export default {
             type_procedure: true
           })
           let validate = res.data
-          if(validate.percentage){
-            if(validate.paids){
-              if(validate.defaulted){
-                this.$router.push({ name: 'loanAdd',  params: { hash: 'refinancing'}, query:{ affiliate_id: a_id, loan_id: l_id } })
+          if(this.loan_affiliate.process_loans < this.global_parameters.max_loans_process){
+            if(this.loan_affiliate.disbursement_loans <= this.global_parameters.max_loans_active){
+              if(validate.percentage){
+                if(validate.paids){
+                  if(validate.defaulted){
+                    this.$router.push({ name: 'loanAdd',  params: { hash: 'refinancing'}, query:{ affiliate_id: a_id, loan_id: l_id } })
+                    }else{
+                      this.toastr.error("El préstamo se encuentra en MORA")
+                    }
                 }else{
-                  this.toastr.error("El préstamo se encuentra en MORA")
+                  this.toastr.error("Tiene pendiente menos de CUATRO pagos para finalizar la deuda")
                 }
+              }else{
+                this.toastr.error("No tiene el 25% pagado de su préstamo para acceder a un refinanciamiento")
+              }
             }else{
-              this.toastr.error("Tiene pendiente menos de CUATRO pagos para finalizar la deuda")
+              this.toastr.error("El afiliado no puede tener más de "+ this.global_parameters.max_loans_active +" préstamos desembolsados. Actualemnte ya tiene "+ this.loan_affiliate.disbursement_loans+ " préstamos desembolsados.")
             }
           }else{
-            this.toastr.error("No tiene el 25% pagado de su préstamo para acceder a un refinanciamiento")
+            this.toastr.error("El afiliado no puede tener más de "+ this.global_parameters.max_loans_process +" trámite en proceso. Actualmente ya tiene "+ this.loan_affiliate.process_loans+ " préstamos en proceso.")
           }
       } catch (e) {
         console.log(e)
@@ -444,15 +452,23 @@ export default {
             type_procedure: false
           })
           let validate = res.data
-           if(validate.paids){
-              if(validate.defaulted){
-                this.$router.push({ name: 'loanAdd',  params: { hash: 'reprogramming'}, query:{ affiliate_id: a_id, loan_id: l_id } })
+          if(this.loan_affiliate.process_loans < this.global_parameters.max_loans_process){
+            if(this.loan_affiliate.disbursement_loans <= this.global_parameters.max_loans_active){
+              if(validate.paids){
+                if(validate.defaulted){
+                  this.$router.push({ name: 'loanAdd',  params: { hash: 'reprogramming'}, query:{ affiliate_id: a_id, loan_id: l_id } })
                 }else{
                   this.toastr.error("El préstamo se encuentra en MORA")
                 }
+              }else{
+                this.toastr.error("Tiene pendiente menos de CUATRO pagos para finalizar la deuda")
+              } 
             }else{
-              this.toastr.error("Tiene pendiente menos de CUATRO pagos para finalizar la deuda")
-            }          
+              this.toastr.error("El afiliado no puede tener más de "+ this.global_parameters.max_loans_active +" préstamos desembolsados. Actualemnte ya tiene "+ this.loan_affiliate.disbursement_loans+ " préstamos desembolsados.")
+            }
+          }else{
+            this.toastr.error("El afiliado no puede tener más de "+ this.global_parameters.max_loans_process +" trámite en proceso. Actualmente ya tiene "+ this.loan_affiliate.process_loans+ " préstamos en proceso.")
+          }         
       } catch (e) {
         console.log(e)
       }
