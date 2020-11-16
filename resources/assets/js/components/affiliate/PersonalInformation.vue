@@ -253,7 +253,7 @@ export default {
     editable: false,
     cities: [],
     headers: [
-      { text: "Ciudad78", align: "left", value: "city_address_id" },
+      { text: "Ciudad", align: "left", value: "city_address_id" },
       { text: "Zona", align: "left", value: "zone" },
       { text: "Calle", align: "left", value: "street" },
       { text: "Nro", align: "left", value: "number_address" },
