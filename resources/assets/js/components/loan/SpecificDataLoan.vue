@@ -170,12 +170,26 @@
                               label="TIPO"
                               v-model="loan.payment_type_id"
                              ></v-select>
+                            
+                            <div v-if="loan.payment_type_id=='1'">
                             <v-text-field
                               :outlined="editable"
                               :readonly="!editable"
-                              :label="loan.payment_type_id=='1'? 'NRO DE CUENTA':loan.payment_type_id=='2'? 'NRO DE CHEQUE':loan.payment_type_id=='3'?'NRO DE RECIBO':'OTRO'"
+                              :label="'NRO DE DEPOSITO'"
+                              @click="desembolso()"
+                              v-model="loan.number_payment_type"
+                              
+                            ></v-text-field>
+                             </div>
+                              <div v-if="loan.payment_type_id!='1'">
+                            <v-text-field
+                              :outlined="editable"
+                              :readonly="!editable"
+                                @click="desembolso()"
+                              :label="loan.payment_type_id=='2'? 'NRO DE CHEQUE':loan.payment_type_id=='3'?'NRO DE RECIBO':'OTRO'"
                               v-model="loan.number_payment_type"
                             ></v-text-field>
+                             </div>
                           </fieldset>
                         </v-flex>
                       </v-layout>
@@ -252,6 +266,13 @@ export default {
       } else {
         this.dates[key].formatted = null
       }
+    },
+    desembolso () {
+      if(this.loan.payment_type_id=='1'){
+      this.loan.number_payment_type = this.loan.lenders[0].account_number;
+      }else{
+      this.loan.number_payment_type = null
+    }
     },
     async getEntity() {
       try {
