@@ -27,7 +27,7 @@
                 </v-tooltip>
               </v-col>
               <v-col cols="12">
-                <v-data-table
+                <v-data-table height="250px"
                   :headers="headers"
                   :items="addresses"
                   hide-default-footer
@@ -253,7 +253,7 @@ export default {
     editable: false,
     cities: [],
     headers: [
-      { text: "Ciudad", align: "left", value: "city_address_id" },
+      { text: "Ciudad78", align: "left", value: "city_address_id" },
       { text: "Zona", align: "left", value: "zone" },
       { text: "Calle", align: "left", value: "street" },
       { text: "Nro", align: "left", value: "number_address" },

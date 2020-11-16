@@ -262,7 +262,7 @@
                         :error-messages="errors" 
                         dense
                         v-model="cel[0]"
-                        label="Celular 1"
+                        label="Celular1"
                         :readonly="!editable || !permission.secondary"
                         :outlined="editable && permission.secondary"
                         :disabled="editable && !permission.secondary"
@@ -271,12 +271,12 @@
                       </ValidationProvider> 
                     </v-col>
                     <v-col cols="12" md="4" >
-                      <ValidationProvider v-slot="{ errors }" name="celular" rules="min:1|max:12">
+                      <ValidationProvider v-slot="{ errors }" name="celular2" rules="min:1|max:12">
                       <v-text-field
                         :error-messages="errors"
                         dense
                         v-model="cel[1]"
-                        label="Celular 2"
+                        label="Celular2"
                         :readonly="!editable || !permission.secondary"
                         :outlined="editable && permission.secondary"
                         :disabled="editable && !permission.secondary"
