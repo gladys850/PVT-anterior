@@ -262,7 +262,7 @@
                         :error-messages="errors" 
                         dense
                         v-model="cel[0]"
-                        label="Celular 1"
+                        label="Celular1"
                         :readonly="!editable || !permission.secondary"
                         :outlined="editable && permission.secondary"
                         :disabled="editable && !permission.secondary"
@@ -271,12 +271,12 @@
                       </ValidationProvider> 
                     </v-col>
                     <v-col cols="12" md="4" >
-                      <ValidationProvider v-slot="{ errors }" name="celular" rules="min:1|max:12">
+                      <ValidationProvider v-slot="{ errors }" name="celular2" rules="min:1|max:12">
                       <v-text-field
                         :error-messages="errors"
                         dense
                         v-model="cel[1]"
-                        label="Celular 2"
+                        label="Celular2"
                         :readonly="!editable || !permission.secondary"
                         :outlined="editable && permission.secondary"
                         :disabled="editable && !permission.secondary"
@@ -319,7 +319,7 @@
                     </v-tooltip>
                   </v-col>
                   <v-col cols="12">
-                  <v-data-table
+                  <v-data-table height="200px"
                       :headers="headers"
                       :items="addresses"
                       hide-default-footer
@@ -336,9 +336,9 @@
                         <v-btn text icon color="warning" @click.stop="bus.$emit('openDialog', {...props.item, ...{edit: true}})">
                           <v-icon>mdi-pencil</v-icon>
                         </v-btn>
-                        <v-btn text icon color="error" @click.stop="bus.$emit('openRemoveDialog', `address/${props.item.id}`)">
+                        <!--<v-btn text icon color="error" @click.stop="bus.$emit('openRemoveDialog', `address/${props.item.id}`)">
                           <v-icon>mdi-delete</v-icon>
-                        </v-btn>
+                        </v-btn>--> 
                       </td>
                       <td v-show="!editable">
                         <v-btn v-if="props.item.latitude && props.item.longitude" text icon color="info" @click.stop="bus.$emit('openDialog', {...props.item, ...{edit: false}})">
