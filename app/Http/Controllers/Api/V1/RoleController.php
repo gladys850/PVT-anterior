@@ -22,7 +22,7 @@ class RoleController extends Controller
     {
         $query = Role::orderBy('name');
         if ($request->has('name')) $query = $query->whereName($request->name);
-        return $query->where('name','NOT LIKE', '%PRE-prestamos%')->get();
+        return $query->get();
     }
 
     /**
