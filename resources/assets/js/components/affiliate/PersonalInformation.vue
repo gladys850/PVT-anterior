@@ -27,7 +27,7 @@
                 </v-tooltip>
               </v-col>
               <v-col cols="12">
-                <v-data-table height="250px"
+                <v-data-table
                   :headers="headers"
                   :items="addresses"
                   hide-default-footer

@@ -319,7 +319,7 @@
                     </v-tooltip>
                   </v-col>
                   <v-col cols="12">
-                  <v-data-table height="200px"
+                  <v-data-table
                       :headers="headers"
                       :items="addresses"
                       hide-default-footer
@@ -327,7 +327,7 @@
                       v-if="cities.length > 0"
                   >
                   <template v-slot:item="props">
-                  <tr>
+                  <tr >
                     <td>{{ cities.find(o => o.id == props.item.city_address_id).name }}</td>
                       <td>{{ props.item.zone }}</td>
                       <td>{{ props.item.street }}</td>
