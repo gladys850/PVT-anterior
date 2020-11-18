@@ -431,7 +431,7 @@ class Loan extends Model
                 }else{
                     if($affiliate_state_type == "Pasivo"){
                         
-                        if($affiliate->afp){
+                        if($affiliate->pension_entity->name != 'SENASIR'){
                             
                             if($type_sismu && !$cpop_sismu) $modality=ProcedureModality::whereShortened("PCP-R-SP-AFP")->first();// refi afp pasivo sismu
 

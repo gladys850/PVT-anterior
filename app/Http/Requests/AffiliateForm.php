@@ -35,7 +35,7 @@ class AffiliateForm extends FormRequest
             'identity_card' => 'alpha_dash|min:5|max:15',
             'affiliate_state_id' => 'nullable|exists:affiliate_states,id',
             'degree_id' => 'nullable|exists:degrees,id',
-            'pension_entity_id' => 'nullable|exists:pension_entities,id',
+            'pension_entity_id' => 'nullable|required_if:affiliate_state_id,4,5,6|exists:pension_entities,id',
             'last_name' => 'sometimes|required_without:mothers_last_name|nullable|alpha_spaces|min:3',
             'mothers_last_name' =>'sometimes|required_without:last_name|nullable|alpha_spaces|min:3',
             'second_name' =>'nullable|alpha_spaces|min:3',
@@ -85,4 +85,12 @@ class AffiliateForm extends FormRequest
             'cell_phone_number' => 'cast:string'
         ];
     }
+
+    public function messages()
+    {
+        return [
+            'pension_entity_id.required_if' => 'El campo Ente Gestor es requerido por que el estado del Afiliado es Pasivo'
+        ];
+    }
+
 }
