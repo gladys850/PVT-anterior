@@ -26,7 +26,7 @@ class AdvanceRoleSeeder extends Seeder
         }
         $module = Module::whereName('prestamos')->first();
         $receipt_permissions = ['update-affiliate-secondary', 'show-affiliate', 'show-all-loan', 'show-loan', 'create-loan', 'create-address', 'update-address', 'delete-address', 'update-loan', 'delete-loan', 'print-contract-loan', 'show-deleted-loan'];
-        $sequence_permissions = ['update-affiliate-secondary', 'show-affiliate', 'show-loan', 'update-address'];
+        $sequence_permissions = ['update-affiliate-secondary', 'show-affiliate', 'show-loan', 'update-address', 'update-loan'];
         $leadership_permissions = ['show-all-loan', 'update-loan', 'delete-loan', 'show-setting', 'show-deleted-loan'];
         $executive_permissions = ['update-setting'];
         $pay_permissions_treasury = ['print-payment-plan', 'print-payment-kardex-loan', 'show-loan', 'update-payment', 'show-payment','create-payment', 'show-payment-loan', 'disbursement-loan', 'delete-payment', 'print-payment-voucher', 'update-payment-loan', 'update-loan'];
