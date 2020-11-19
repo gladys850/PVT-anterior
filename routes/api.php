@@ -7,6 +7,8 @@ Route::group([
     // Rutas abiertas
     Route::get('config', 'Api\V1\ConfigController');
     Route::apiResource('auth', 'Api\V1\AuthController')->only('store');
+    Route::get('excel', 'Api\V1\LoanPaymentController@download');
+
 
     // INDEFINIDO (TODO)
     Route::get('document/{affiliate_id}', 'Api\V1\ScannedDocumentController@create_document');
