@@ -171,7 +171,9 @@ return [
         // Sanitizer
         Waavi\Sanitizer\Laravel\SanitizerServiceProvider::class,
         // ApiDoc Generator
-        Mpociot\ApiDoc\ApiDocGeneratorServiceProvider::class
+        Mpociot\ApiDoc\ApiDocGeneratorServiceProvider::class,
+        // Excel
+        Maatwebsite\Excel\ExcelServiceProvider::class,
     ],
 
     /*
@@ -236,6 +238,8 @@ return [
         'DNS1D' => Milon\Barcode\Facades\DNS1DFacade::class,
         'DNS2D' => Milon\Barcode\Facades\DNS2DFacade::class,
         // Sanitizer
-        'Sanitizer' => Waavi\Sanitizer\Laravel\Facade::class
+        'Sanitizer' => Waavi\Sanitizer\Laravel\Facade::class,
+         // Excel
+        'Excel' => Maatwebsite\Excel\Facades\Excel::class,
     ],
 ];
