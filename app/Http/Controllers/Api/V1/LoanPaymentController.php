@@ -21,6 +21,8 @@ use Carbon;
 use DB;
 use App\Helpers\Util;
 use App\Http\Controllers\Api\V1\LoanController;
+use App\Exports\ArchivoPrimarioExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 /** @group Cobranzas
 * Datos de los trámites de Cobranzas
@@ -316,6 +318,27 @@ class LoanPaymentController extends Controller
     {
         if ($loan_payment->voucher) return $loan_payment->voucher;
         abort(403, 'No existe el registro de pago');
+    }
+
+    public function download(Request $request)
+    {
+        $File="Pagos";
+        $data=array(
+            array("Nro", "Codigo", "Cuota Estimada", "Numero de Cuota", "Pago Penal", "Fecha estimada" )
+        );
+        $pay=LoanPayment::get();
+        foreach ($pay as $row){
+            array_push($data, array(
+                $row->id,
+                $row->loan_id,
+                $row->estimated_quota,
+                $row->quota_number,
+                $row->penal_payment,
+                $row->estimated_date,
+            ));
+        }
+        $export = new ArchivoPrimarioExport($data);
+        return Excel::download($export, $File.'.xlsx');
     }
 
 }
