@@ -3,39 +3,39 @@
     <v-stepper v-model="e1" >
       <v-stepper-header class=" !pa-0 ml-0" >
         <template>
-         <v-stepper-step 
+         <v-stepper-step
             :key="`${1}-step`"
             :complete="e1 > 1"
             :step="1">Modalidad
           </v-stepper-step>
           <v-divider v-if="1 !== steps" :key="1" ></v-divider>
-          <v-stepper-step 
+          <v-stepper-step
             :key="`${2}-step`"
             :complete="e1 > 2"
             :step="2">Calculo
           </v-stepper-step>
           <v-divider v-if="2 !== steps" :key="2" ></v-divider>
-          <v-stepper-step 
+          <v-stepper-step
             :key="`${3}-step`"
             :complete="e1 > 3"
             :step="3">Garantía
           </v-stepper-step>
           <v-divider v-if="3 !== steps" :key="3" ></v-divider>
-          <v-stepper-step 
+          <v-stepper-step
             :key="`${4}-step`"
             :complete="e1 > 4"
             :step="4"
             >Afiliado
           </v-stepper-step>
           <v-divider v-if="4 !== steps" :key="4" ></v-divider>
-          <v-stepper-step  
+          <v-stepper-step
             :key="`${5}-step`"
             :complete="e1 > 5"
             :step="5"
            >Formulario
           </v-stepper-step>
           <v-divider v-if="5 !== steps" :key="5" ></v-divider>
-          <v-stepper-step 
+          <v-stepper-step
             :key="`${6}-step`"
             :complete="e1 > 6"
             :step="6"
@@ -222,9 +222,7 @@
             :loan_detail.sync="loan_detail"
             :lenders.sync="lenders"
             :modalidad.sync="modalidad"
-            
             :modalidad_id.sync="modalidad.id"
-          
             :guarantors.sync="guarantors"
             :loan_property_id.sync ="loan_property.id"
             :data_loan_parent.sync="data_loan_parent"/>
@@ -429,7 +427,7 @@ export default {
     {
       try{
         if (this.modalidad.personal_reference) {
-          this.reference = []        
+          this.reference = []
           if (this.editedIndexPerRef == -1){
             let res = await axios.post(`personal_reference`, {
               city_identity_card_id:this.personal_reference.city_identity_card_id,
@@ -440,11 +438,11 @@ export default {
               second_name:this.personal_reference.second_name,
               phone_number:this.personal_reference.phone_number,
               cell_phone_number:this.personal_reference.cell_phone_number
-            })         
+            })
             this.editedIndexPerRef = res.data.id
             this.reference.push(res.data.id)
           }else{
-            let res = await axios.patch(`personal_reference/${this.editedIndexPerRef}`, 
+            let res = await axios.patch(`personal_reference/${this.editedIndexPerRef}`,
             {
               city_identity_card_id:this.personal_reference.city_identity_card_id,
               identity_card:this.personal_reference.identity_card,
@@ -454,8 +452,8 @@ export default {
               second_name:this.personal_reference.second_name,
               phone_number:this.personal_reference.phone_number,
               cell_phone_number:this.personal_reference.cell_phone_number
-            })   
-            this.reference.push(res.data.id)     
+            })
+            this.reference.push(res.data.id)
           }
         }
       } catch (e) {
@@ -758,7 +756,7 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
               real_city_id: this.loan_property.real_city_id
             }
           );
-          this.loan_property = res.data 
+          this.loan_property = res.data
         }
       } catch (e) {
         console.log(e)
@@ -849,6 +847,7 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
                       if(this.data_sismu.quota_sismu > 0){
                         this.liquidCalificated()
                         //this.getLoanDestiny()
+                        this.data_loan_parent_aux.estimated_quota= this.data_sismu.quota_sismu
                         this.nextStep(1)
                       }else{
                         this.toastr.error("Introduzca la CUOTA del SISMU")
@@ -894,6 +893,7 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
                   if(this.data_sismu.quota_sismu > 0){
                     this.liquidCalificated()
                     //this.getLoanDestiny()
+                    this.data_loan_parent_aux.estimated_quota= this.data_sismu.quota_sismu
                     this.nextStep(1)
                   }else{
                     this.toastr.error("Introduzca la CUOTA del SISMU")
