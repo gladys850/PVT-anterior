@@ -120,7 +120,7 @@
                               <p>PROMEDIO LIQUIDO PAGABLE:{{ liquid.payable_liquid_calculated}}</p>
                               <p>TOTAL BONOS: {{ liquid.bonus_calculated }}</p>
                               <p>LIQUIDO PARA CALIFICACION: {{ liquid.liquid_qualification_calculated}}</p>
-                              <p v-show="editar">CUOTA DE REFINANCIAMIENTO SISMU: {{ data_sismu.quota_sismu}}</p>
+                              <p v-show="type_sismu">CUOTA DE REFINANCIAMIENTO SISMU: {{ data_sismu.quota_sismu}}</p>
                               </li>
                             </ul>
                         </fieldset>
@@ -192,6 +192,13 @@ export default {
       },
   },
     computed: {
+
+    type_sismu() {
+      if(this.$route.query.type_sismu)
+      {
+        return true
+      }
+    },
     editar() {
       if(this.$route.query.type_sismu)
       {

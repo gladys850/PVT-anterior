@@ -112,6 +112,7 @@
                                  <p class="py-0 mb-0 caption">Monto del Inmueble: {{loan_detail.net_realizable_value }} <br>
                                  Monto Solicitado: {{calculator_result.amount_requested}}<br>
                                  Interes Calculado Total: {{calculator_result.indebtedness_calculated_total}} % <br> Liquido Calculado Total: {{calculator_result.liquid_qualification_calculated_total}}<br> Cuota Total del Prestamo: {{calculator_result.quota_calculated_estimated_total}}</p>
+                                <p class="py-0 mb-0 caption" v-show="type_sismu">Cuota de refinanciamiento Sismu: {{ data_sismu.quota_sismu}}</p>
                           </fieldset>
                         </v-flex>
                          <v-flex xs7 class="px-1">
@@ -200,6 +201,12 @@ export default {
     }
   },
   computed: {
+    type_sismu() {
+      if(this.$route.query.type_sismu)
+      {
+        return true
+      }
+    },
     editar() {
       if(this.$route.query.type_sismu)
       {
