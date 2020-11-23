@@ -148,8 +148,8 @@
                       :outlined="editar"
                      ></v-text-field>
                      </ValidationProvider>
-                  </v-col> 
-                  <template v-if="type_sismu">             
+                  </v-col>
+                  <template v-if="type_sismu">
                   <v-col cols="12" class="py-0">
                     DATOS SISMU
                   </v-col>
@@ -160,16 +160,16 @@
                       dense
                       v-model="data_sismu.quota_sismu"
                       outlined
-                      label="Cuota"          
+                      label="Cuota"
                      ></v-text-field>
                      </ValidationProvider>
                   </v-col>
                   <v-col cols="12" md="3" class="ma-0 pa-0" v-if="this.loanTypeSelected.id==11 || this.loanTypeSelected.id==12">
-                      <v-checkbox 
+                      <v-checkbox
                         v-model="data_sismu.cpop_sismu"
-                        label="Afiliado CPOP"                 
+                        label="Afiliado CPOP"
                       ></v-checkbox>
-                  </v-col>       
+                  </v-col>
                   </template>
                 </v-row>
               </v-container>
@@ -179,7 +179,7 @@
                 :modalidad.sync="modalidad"
                 :affiliate.sync="affiliate"
                 :data_loan.sync="data_loan"/>
-             </ValidationObserver>    
+             </ValidationObserver>
             </v-card>
           </v-col>
         </v-row>
@@ -188,7 +188,7 @@
 </template>
 <script>
 import BallotsHipotecary from '@/components/loan/BallotsHipotecary'
-export default { 
+export default {
   name: "ballots",
   data: () => ({
     editar:true,
@@ -199,7 +199,7 @@ export default {
     visible:false,
     hipotecario:false,
     window_size:4,
-    see_field:false  
+    see_field:false
   }),
    props: {
     modalidad: {
@@ -233,7 +233,7 @@ export default {
       affiliate: {
       type: Object,
       required: true
-    },    
+    },
     data_loan: {
       type: Object,
       required: true
@@ -244,7 +244,7 @@ export default {
     },
     loanTypeSelected:{
       type: Object,
-      required: true,      
+      required: true,
     },
     data_sismu:{
       type: Object,
@@ -309,7 +309,7 @@ export default {
         } /*else{
         console.log('NO ES IGUAL A MODALIDAD INTERVALS'+this.interval[i].procedure_type_id +"=="+this.loanTypeSelected.id )
         }*/
-      }   
+      }
     },
     clearForm() //FIXME ver si la funcion sera necesaria
     {
@@ -344,7 +344,7 @@ export default {
           this.modalidad.personal_reference = loan_modality.loan_modality_parameter.personal_reference
           this.modalidad.max_cosigner = loan_modality.loan_modality_parameter.max_cosigner
           this.modalidad.max_lenders = loan_modality.loan_modality_parameter.max_lenders
-                   
+
           this.loan_detail.min_guarantor_category= loan_modality.loan_modality_parameter.min_guarantor_category
           this.loan_detail.max_guarantor_category= loan_modality.loan_modality_parameter.max_guarantor_category
           if(loan_modality.loan_modality_parameter.quantity_ballots>1){
@@ -352,7 +352,7 @@ export default {
           }else{
             this.visible = false
           }
-          this.getBallots(id)        
+          this.getBallots(id)
         }
       }catch (e) {
         console.log(e)
@@ -383,15 +383,15 @@ export default {
           per_page: this.modalidad.quantity_ballots,
           page: 1,
         }
-      })      
+      })
       //console.log("-------")
       //console.log(this.modalidad.quantity_ballots)
-      data_ballots = res.data.data  
+      data_ballots = res.data.data
       //console.log(data_ballots)
-    
+
       if(res.data.valid){
         this.editar=false
-         //Carga los datos en los campos para ser visualizados en la interfaz    
+         //Carga los datos en los campos para ser visualizados en la interfaz
         for (let i = 0; i < data_ballots.length; i++) {//colocar 1
           this.payable_liquid[i] = data_ballots[i].payable_liquid
           if(i==0){//solo se llena los bonos de la ultima boleta de pago
