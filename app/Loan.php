@@ -303,15 +303,15 @@ class Loan extends Model
                 }
             } while ($total_interests > $amount);
             // Calcular amortización de capital
-            if ($total_interests > 0) {
+            //if ($total_interests > 0) {
                 if (($quota->balance + $total_interests) > $amount) {
                     $quota->capital_payment = Util::round($amount - $total_interests);
                 } else {
                     $quota->capital_payment = $quota->balance;
                 }
-            }
+            //}
             // Calcular monto total de la cuota
-            $quota->estimated_quota = $quota->capital_payment + $total_interests;
+            $quota->estimated_quota = Util::round($quota->capital_payment + $total_interests);
             $quota->next_balance = Util::round($quota->balance - $quota->capital_payment);
             $quota->penal_remaining = $quota->estimated_days->penal - $quota->paid_days->penal;
             $quota->accumulated_remaining = $quota->estimated_days->accumulated - $quota->paid_days->accumulated + $quota->estimated_days->current - $quota->paid_days->current;
