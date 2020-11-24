@@ -37,7 +37,7 @@ class LoanPaymentForm extends FormRequest
             $date = $this->loan->disbursement_date;
         }
         $rules = [
-            'estimated_date' => 'nullable|date_format:Y-m-d|after:'.$date,
+            'estimated_date' => 'nullable|date_format:Y-m-d|after_or_equal:'.$date,
             'estimated_quota' => 'nullable|numeric|min:1'
         ];
         switch ($this->method()) {
