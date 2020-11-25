@@ -2,11 +2,11 @@
   <v-container fluid>
     <v-card>
       <v-card-text>
-        <v-select
+       <!--v-select
           :items="loanTypes"
           label="Tipo de préstamo"
           v-model="loanTypeSelected"
-        ></v-select>
+        ></-v-select-->
       </v-card-text>
       <div>
         <Anticipo v-if="loanTypeSelected == 'Anticipo'"/>

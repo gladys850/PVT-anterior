@@ -62,7 +62,7 @@
                         </ValidationProvider>
                       </v-col>
                       <v-col cols="12" md="12">
-                        <LMap :address.sync="address" :cities.sync="countryCities" :edit.sync="address.edit"/>
+                        <LMap :address.sync="address" :cities.sync="countryCities" :edit.sync="address.edit" class="pa-0 ma-0"/>
                       </v-col>
                     </v-row>
                   </v-form>
