@@ -2,7 +2,7 @@
   <div>
     <l-map
       v-if="!loading"
-      style="height: 480px; width: 800px;"
+      style="height: 350px; width: 800px;"
       :zoom="zoom"
       :center="center"
       @update:zoom="zoomUpdated(18)"
