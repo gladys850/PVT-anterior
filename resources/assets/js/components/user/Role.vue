@@ -42,7 +42,7 @@
                     :key="role.id"
                     class="my-3"
                   >
-                    <v-hover v-slot:default="{ hover }" v-if ="role.id!='16'">
+                    <v-hover v-slot:default="{ hover }">
                       <v-chip
                         :class="hover ? 'elevation-4' : 'elevation-0'"
                         :color="selectedRoles.includes(role.id) ? 'info' : 'secondary'"
