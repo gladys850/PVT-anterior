@@ -21,3 +21,4 @@
 yarn-error.log
 npm-debug.log
 !/public/docs/collection.json
+composer.lock
