@@ -141,6 +141,53 @@
                             label="Glosa"
                           ></v-text-field>
                         </v-col>
+                          <v-col cols="1">
+                        </v-col>
+                        <v-col cols="2" class="ma-0 pb-0" v-show="editable" v-if="!ver">
+                          <label >AFILIADO:</label>
+                        </v-col>
+                        <v-col cols="3" class="ma-0 pb-0" v-show="editable" v-if="!ver">
+                          <v-select
+                            dense
+                            v-model="tipo_afiliado.id"
+                            :onchange="onchangetwo()"
+                            :outlined="editable"
+                            :readonly="!editable"
+                            :items="tipo_afiliado"
+                            item-text="name"
+                            item-value="id"
+                            persistent-hint
+                          ></v-select>
+                        </v-col>
+                           <v-col cols="1">
+                        </v-col>
+                        <v-col cols="2" class="ma-0 pb-0" v-show="editable" v-if="!ver">
+                          <label v-show="garante_show" >TIPO DE PAGO:</label>
+                        </v-col>
+                        <v-col cols="3" class="ma-0 pb-0" v-show="editable" v-if="!ver">
+                          <v-select
+                          v-show="garante_show"
+                            dense
+                            v-model="garante.id"
+                            :outlined="editable"
+                            :readonly="!editable"
+                            :items="garante"
+                            item-text="name"
+                            item-value="id"
+                            persistent-hint
+                          ></v-select>
+                        </v-col>
+                        <v-col cols="3" class="ma-0 pb-0">
+                          <label  v-show="!editable" v-if="ver">CODIGO DE COMPROBANTE:</label>
+                        </v-col>
+                        <v-col cols="3">
+                          <v-text-field
+                            v-show="!editable" v-if="ver"
+                            :outlined="editable"
+                            :readonly="!editable"
+                            dense
+                          ></v-text-field>
+                        </v-col>
                       </v-row>
                     </template>
                   </v-form>
@@ -167,11 +214,28 @@ export default {
   },
   data: () => ({
     loan: {},
+    garante_show: false,
     tipo_de_amortizacion: [
       {name:"Regular",
       id:1
       },
       {name:"Total",
+      id:2
+      }
+    ],
+    tipo_afiliado:[
+      {name:"Titular",
+      id:1
+      },
+      {name:"Garante",
+      id:2
+      }
+    ],
+      garante:[
+      {name:"GAR1",
+      id:1
+      },
+      {name:"GAR2",
       id:2
       }
     ],
@@ -223,6 +287,14 @@ export default {
           this.efectivo= false
         }else{
           this.efectivo= true
+        }
+    },
+    onchangetwo(){
+        if(this.tipo_afiliado.id==2)
+        {
+          this.garante_show= true
+        }else{
+          this.efegarante_show= false
         }
     },
     onchangeOne(){
