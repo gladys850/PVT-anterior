@@ -214,7 +214,7 @@ export default {
   },
   data: () => ({
     loan: {},
-    garante_show=false,
+    garante_show: false,
     tipo_de_amortizacion: [
       {name:"Regular",
       id:1
