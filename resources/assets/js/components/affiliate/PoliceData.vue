@@ -70,7 +70,7 @@
             ></v-select>
             </ValidationProvider>
             </v-col>
-            <v-col cols="12" md="4" >
+            <v-col cols="12" md="2" >
               <ValidationProvider v-slot="{ errors }" vid="category_id" name="Categoria" rules="required">
               <v-select
                 dense
@@ -88,7 +88,24 @@
               ></v-select>
               </ValidationProvider>
             </v-col>
-            <v-col cols="12" md="4">
+            <v-col cols="12" md="6" >
+              <ValidationProvider v-slot="{ errors }" vid="unit_id" name="Unidad" rules="required">
+              <v-select
+                :error-messages="errors"
+                dense
+                :loading="loading"
+                :items="unit"
+                item-text="name"
+                item-value="id"
+                label="Unidad"
+                v-model="affiliate.unit_id"
+                persistent-hint
+                :readonly="!editable || !permission.secondary"
+                :outlined="editable && permission.secondary"
+              ></v-select>
+              </ValidationProvider>
+            </v-col>
+            <v-col cols="12" md="2">
               <ValidationProvider v-slot="{ errors }" vid="service_years" name="Años de Servicio" rules="numeric|min_value:0|max_value:100">
               <v-text-field
                 dense
@@ -101,7 +118,7 @@
               ></v-text-field>
               </ValidationProvider>
             </v-col>
-            <v-col cols="12" md="4" >
+            <v-col cols="12" md="2" >
               <ValidationProvider v-slot="{ errors }" vid="service_months" name="Meses de Servicio" rules="numeric|min_value:0|max_value:11">
               <v-text-field
                 dense
@@ -189,6 +206,7 @@ export default {
     category: [],
     degree: [],
     pension_entity: [],
+    unit: [],
     dates: {
       dateEntry: {
         formatted: null,
@@ -231,6 +249,7 @@ export default {
     this.getDegree();
     this.getPensionEntity();
     this.getAffiliateState();
+    this.getUnit();
     this.getCalculateCategory;
   },
     mounted() {
@@ -302,6 +321,18 @@ export default {
         this.loading = false
       }
     },
+     async getUnit() {
+    try {
+      this.loading = true
+      let res = await axios.get(`unit`);
+      this.unit = res.data;
+    } catch (e) {
+      this.dialog = false;
+      console.log(e);
+    }finally {
+        this.loading = false
+      }
+  },
   }
   }
 </script>
