@@ -325,6 +325,11 @@ export default {
       type: Object,
       required: true
     },
+    affiliate_state_id: {
+      type: Number,
+      required: true,
+      default:0
+    },
     editable: {
       type: Boolean,
       required: true
@@ -370,6 +375,21 @@ export default {
       }
     }
   }),
+  watch:{
+    affiliate_state_id(newVal, oldVal){
+      if(newVal!=oldVal){
+        if(this.affiliate_state_id == 4){
+          this.editable = true
+          this.permission.secondary = true
+          console.log(this.affiliate_state_id )
+        }else{
+          this.editable = false
+          this.permission.secondary = false
+          console.log(this.affiliate_state_id )
+        }
+      }
+    }
+  },
   beforeMount() {
     this.getCities()
   },
