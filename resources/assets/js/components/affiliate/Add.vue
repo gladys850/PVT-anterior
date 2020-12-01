@@ -186,6 +186,7 @@
                 :affiliate.sync="affiliate"
                 :editable.sync="editable"
                 :permission="permission"
+                :has_registered_spouse="has_registered_spouse"
               />
             </v-card-text>
           </v-card>
@@ -200,6 +201,7 @@
                 :spouse.sync="spouse"
                 :editable.sync="editable"
                 :permission="permission"
+                :affiliate_state_id.sync="affiliate.affiliate_state_id"
               />
             </v-card-text>
           </v-card>
@@ -296,7 +298,8 @@ export default {
     tabs: 3,
     editable: false,
     reload: false,
-    tab: 'tab-1'
+    tab: 'tab-1',
+    has_registered_spouse: false
   }),
   computed: {
     isNew() {
@@ -364,8 +367,7 @@ export default {
             })
             this.toastr.success("Se Actualizó los datos del afiliado")
             //Preguntar si afiliado esta fallecido 
-            if((this.affiliate.date_death != null && this.affiliate.date_death != '') || 
-                (this.affiliate.reason_death != null && this.affiliate.reason_death != '')){
+            if(this.affiliate.dead){
               if(this.spouse.id){
                 await axios.patch(`spouse/${this.spouse.id}`, this.spouse)
               }else{
@@ -409,9 +411,9 @@ export default {
         let res = await axios.get(`affiliate/${id}`)
         this.affiliate = res.data
         this.setBreadcrumbs()
-        if (this.affiliate.dead) {
+        //if (this.affiliate.dead) {
           this.getSpouse(this.affiliate.id)
-        }
+        //}
       } catch (e) {
         console.log(e)
       } finally {
@@ -423,6 +425,11 @@ export default {
         this.loading = true
         let res = await axios.get(`affiliate/${id}/spouse`)
         this.spouse = res.data
+        if(Object.entries(this.spouse).length === 0){
+          this.has_registered_spouse = false
+        }else{
+          this.has_registered_spouse = true
+        }
       } catch (e) {
         console.log(e)
       } finally {

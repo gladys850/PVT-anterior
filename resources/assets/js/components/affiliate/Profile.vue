@@ -209,7 +209,7 @@
                       ></v-select>
                       </ValidationProvider>
                     </v-col>
-                    <v-col cols="12" md="6">
+                    <!--<v-col cols="12" md="6">
                       <v-menu
                         v-model="dates.dateDeath.show"
                         :close-on-content-click="false"
@@ -246,7 +246,7 @@
                         :outlined="editable && permission.secondary"
                         :disabled="editable && !permission.secondary"
                       ></v-text-field>
-                    </v-col>
+                    </v-col>-->
                 </v-row>
               </v-container>
         </v-col>
@@ -501,10 +501,10 @@ export default {
           formatted: null,
           picker: false
         },
-        dateDeath: {
+        /*dateDeath: {
           formatted: null,
           picker: false
-        }
+        }*/
       },
       bus: new Vue()
     }
@@ -517,7 +517,7 @@ export default {
     if (this.affiliate.id) {
       this.formatDate('dueDate', this.affiliate.due_date)
       this.formatDate('birthDate', this.affiliate.birth_date)
-      this.formatDate('dateDeath', this.affiliate.date_death)
+      //this.formatDate('dateDeath', this.affiliate.date_death)
       this.getCelular()
     }
       this.bus.$on('saveAddress', (address) => {
@@ -537,10 +537,10 @@ export default {
     },
     'affiliate.birth_date': function(date) {
       this.formatDate('birthDate', date)
-    },
-    'affiliate.date_death': function(date) {
-      this.formatDate('dateDeath', date)
     }
+    /*'affiliate.date_death': function(date) {
+      this.formatDate('dateDeath', date)
+    }*/
   },
   methods: {
     close() {

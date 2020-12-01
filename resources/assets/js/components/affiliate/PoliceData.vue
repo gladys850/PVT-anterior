@@ -1,6 +1,6 @@
 <template>
   <v-container fluid >
-    <ValidationObserver ref="observer">
+    <ValidationObserver ref="observer"> 
     <v-form>
       <v-row justify="center">
         <v-col cols="12" md="11" class="v-card-profile" >
@@ -19,12 +19,67 @@
                 item-value="id"
                 label="Estado"
                 v-model="affiliate.affiliate_state_id"
+                :onchange="Onchange()"
                 persistent-hint
                 :readonly="!editable || !permission.secondary"
                 :outlined="editable && permission.secondary"
               ></v-select>
               </ValidationProvider>
             </v-col>
+            <v-col cols="12" md="8" v-if="!visible">
+             <span class="red--text" v-show="has_registered_spouse">* Se tiene registrado datos del conyugue, cambie el estado del afiliado. <br></span>
+             <span class="red--text" v-show="(affiliate.death_certificate_number !=null || affiliate.date_death != null  || affiliate.reason_death != null) &&
+                  (affiliate.death_certificate_number !='' || affiliate.date_death !=''  || affiliate.reason_death !='')">
+                   ** Se tiene registrado datos de fallecimiento del afiliado, cambie el estado del afiliado a Fallecido.</span>  
+            </v-col>
+            <v-col cols="12" md="4" v-if="visible">
+               <v-menu
+                 v-model="dates.dateDeath.show"
+                 :close-on-content-click="false"
+                 transition="scale-transition"
+                 offset-y
+                 max-width="290px"
+                 min-width="290px"
+                 :disabled="!editable || !permission.secondary"
+               >
+                 <template v-slot:activator="{ on }">
+                   <v-text-field
+                     dense
+                     v-model="dates.dateDeath.formatted"
+                     label="Fecha Fallecimiento"
+                     hint="Día/Mes/Año"
+                     persistent-hint
+                     append-icon="mdi-calendar"
+                     readonly
+                     :clearable="editable"
+                     v-on="on"
+                     :outlined="editable && permission.secondary"
+                     :disabled="editable && !permission.secondary"
+                   ></v-text-field>
+                 </template>
+                 <v-date-picker v-model="affiliate.date_death" no-title @input="dates.dateDeath.show = false"></v-date-picker>
+               </v-menu>
+             </v-col>
+             <v-col cols="12" md="4" v-if="visible">
+               <v-text-field
+                 dense
+                 v-model="affiliate.death_certificate_number"
+                 label="N° de Certificado de Defunción"
+                 :readonly="!editable || !permission.secondary"
+                 :outlined="editable && permission.secondary"
+                 :disabled="editable && !permission.secondary"
+               ></v-text-field>
+             </v-col>
+              <v-col cols="12" md="12" v-if="visible">
+               <v-text-field
+                 dense
+                 v-model="affiliate.reason_death"
+                 label="Causa Fallecimiento"
+                 :readonly="!editable || !permission.secondary"
+                 :outlined="editable && permission.secondary"
+                 :disabled="editable && !permission.secondary"
+               ></v-text-field>
+             </v-col>
             <v-col cols="12" md="4" >
               <v-menu
                 v-model="dates.dateEntry.show"
@@ -88,7 +143,24 @@
               ></v-select>
               </ValidationProvider>
             </v-col>
-            <v-col cols="12" md="4">
+            <v-col cols="12" md="6" >
+            <ValidationProvider v-slot="{ errors }" vid="unit_id" name="Unidad" rules="required">
+              <v-select
+                :error-messages="errors"
+                dense
+                :loading="loading"
+                :items="unit"
+                item-text="name"
+                item-value="id"
+                label="Unidad"
+                v-model="affiliate.unit_id"
+                persistent-hint
+                :readonly="!editable || !permission.secondary"
+                :outlined="editable && permission.secondary"
+              ></v-select>
+              </ValidationProvider>
+            </v-col>
+            <v-col cols="12" md="3">
               <ValidationProvider v-slot="{ errors }" vid="service_years" name="Años de Servicio" rules="numeric|min_value:0|max_value:100">
               <v-text-field
                 dense
@@ -101,7 +173,7 @@
               ></v-text-field>
               </ValidationProvider>
             </v-col>
-            <v-col cols="12" md="4" >
+            <v-col cols="12" md="3" >
               <ValidationProvider v-slot="{ errors }" vid="service_months" name="Meses de Servicio" rules="numeric|min_value:0|max_value:11">
               <v-text-field
                 dense
@@ -182,6 +254,10 @@ export default {
     permission: {
       type: Object,
       required: true
+    },
+    has_registered_spouse: {
+      type: Boolean,
+      required: true
     }
   },
   data: () => ({
@@ -189,6 +265,7 @@ export default {
     category: [],
     degree: [],
     pension_entity: [],
+    unit: [],
     dates: {
       dateEntry: {
         formatted: null,
@@ -197,8 +274,13 @@ export default {
       dateDerelict: {
         formatted: null,
         picker: false
+      },
+      dateDeath: {
+        formatted: null,
+        picker: false
       }
-    }
+    },
+    visible: false
   }),
   computed: {
     getCalculateCategory(){
@@ -231,12 +313,14 @@ export default {
     this.getDegree();
     this.getPensionEntity();
     this.getAffiliateState();
+    this.getUnit();
     this.getCalculateCategory;
   },
     mounted() {
     if (this.affiliate.id) {
       this.formatDate('dateEntry', this.affiliate.date_entry)
-      this.formatDate('dateDerelict', this.affiliate.date_derelict)    }
+      this.formatDate('dateDerelict', this.affiliate.date_derelict)
+      this.formatDate('dateDeath', this.affiliate.date_death)   }
   },
   watch: {
     'affiliate.date_entry': function(date) {
@@ -244,6 +328,9 @@ export default {
     },
     'affiliate.date_derelict': function(date) {
       this.formatDate('dateDerelict',date)
+    },
+    'affiliate.date_death': function(date) {
+      this.formatDate('dateDeath', date)
     }
   },
   methods: {
@@ -296,12 +383,37 @@ export default {
       let res = await axios.get(`pension_entity`);
       this.pension_entity = res.data;
     } catch (e) {
-      this.dialog = false;
+      this.dialog = false
       console.log(e);
     }finally {
         this.loading = false
       }
     },
+    Onchange(){
+      for(let i=0; i< this.affiliateState.length; i++){
+        if(this.affiliate.affiliate_state_id == this.affiliateState[i].id){
+          if(this.affiliateState[i].name == 'Fallecido'){
+              this.visible =true
+            }else{
+              this.visible =false
+          }
+        }
+        console.log(this.affiliate.affiliate_state_id)
+      }
+
+    },
+  async getUnit() {
+    try {
+      this.loading = true
+      let res = await axios.get(`unit`);
+      this.unit = res.data;
+    } catch (e) {
+      this.dialog = false;
+      console.log(e);
+    }finally {
+        this.loading = false
+      }
+  },
   }
   }
 </script>
