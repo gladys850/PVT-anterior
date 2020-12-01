@@ -32,7 +32,7 @@
                   </v-btn>
                   <v-btn
                     color="primary"
-                    @click="nextStep(1)" v-show="!ver">
+                    @click="validatedStepOne()" v-show="!ver">
                     Siguiente
                   </v-btn>
                 </v-col>
@@ -256,6 +256,24 @@ export default {
         this.loading = false
       }
     },
+    async validatedStepOne() {
+      try {
+           if(!this.isNew)
+          {
+            this.savePaymentTreasury()
+            //this.toastr.error("Paso a tesoreria")
+          }
+          else{
+           // this.toastr.error("Esta en cobranzas")
+            this.Calcular()
+            nextStep(1)
+          }
+      }catch (e) {
+        console.log(e)
+      }finally {
+        this.loading = false
+      }
+    }
   },
 }
 </script>
