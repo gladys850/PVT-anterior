@@ -198,10 +198,10 @@
             <v-card-text>
               <Spouse
                 v-if="!reload"
+                :state_id.sync="affiliate.affiliate_state_id"
                 :spouse.sync="spouse"
                 :editable.sync="editable"
                 :permission="permission"
-                :affiliate_state_id.sync="affiliate.affiliate_state_id"
               />
             </v-card-text>
           </v-card>
@@ -270,7 +270,8 @@ export default {
       city_identity_card_id:null,
       date_entry:null,
       date_derelict:null,
-      unit_name:null
+      unit_name:null,
+      affiliate_state_id: null
     },
     spouse: {
     affiliate_id: null,
@@ -301,6 +302,23 @@ export default {
     tab: 'tab-1',
     has_registered_spouse: false
   }),
+    watch:{
+    estado_id(newVal, oldVal){
+      if(newVal!=oldVal){
+        if(this.estado_id == 4){
+          this.editable = true
+          this.permission.secondary = true
+          console.log(this.affiliate_state_id )
+          alert('es 4')
+        }else{
+          this.editable = false
+          this.permission.secondary = false
+          console.log(this.affiliate_state_id )
+           alert('no es 4')
+        }
+      }
+    }
+  },
   computed: {
     isNew() {
       return this.$route.params.id == 'new'
@@ -367,7 +385,7 @@ export default {
             })
             this.toastr.success("Se Actualizó los datos del afiliado")
             //Preguntar si afiliado esta fallecido 
-            if(this.affiliate.dead){
+            if(this.affiliate.affiliate_state_id == 4){
               if(this.spouse.id){
                 await axios.patch(`spouse/${this.spouse.id}`, this.spouse)
               }else{
