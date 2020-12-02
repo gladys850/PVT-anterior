@@ -125,7 +125,7 @@
             ></v-select>
             </ValidationProvider>
             </v-col>
-            <v-col cols="12" md="2" >
+            <v-col cols="12" md="4" >
               <ValidationProvider v-slot="{ errors }" vid="category_id" name="Categoria" rules="required">
               <v-select
                 dense
@@ -137,9 +137,9 @@
                 label="Categoria"
                 name="categoria"
                 v-model="affiliate.category_id"
-                :readonly="!editable || !permission.primary"
-                :outlined="editable && permission.primary"
-                :disabled="editable && !permission.primary"
+                :readonly="!editable || !permission.secondary"
+                :outlined="editable && permission.secondary"
+                :disabled="editable && !permission.secondary"
               ></v-select>
               </ValidationProvider>
             </v-col>
@@ -187,7 +187,7 @@
                </ValidationProvider>
             </v-col>
             <v-col cols="12"  md="6" >
-              <ValidationProvider v-slot="{ errors }" vid="pension_entity_id" name="Ente Gestor" rules="required">
+              <ValidationProvider v-slot="{ errors }" vid="pension_entity_id" name="Ente Gestor" :rules="(affiliate.affiliate_state_id >= 4 && affiliate.affiliate_state_id <= 6)? 'required':''">
               <v-select
                 dense
                 :error-messages="errors"
