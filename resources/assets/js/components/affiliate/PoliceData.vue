@@ -19,8 +19,8 @@
                 item-value="id"
                 label="Estado"
                 v-model="affiliate.affiliate_state_id"
-                :onchange="Onchange()"
-                persistent-hint
+                :Onchange="Onchange()"
+  
                 :readonly="!editable || !permission.secondary"
                 :outlined="editable && permission.secondary"
               ></v-select>
@@ -390,7 +390,7 @@ export default {
       }
     },
     Onchange(){
-      for(let i=0; i< this.affiliateState.length; i++){
+      /*for(let i=0; i< this.affiliateState.length; i++){
         if(this.affiliate.affiliate_state_id == this.affiliateState[i].id){
           if(this.affiliateState[i].name == 'Fallecido'){
               this.visible =true
@@ -398,9 +398,14 @@ export default {
               this.visible =false
           }
         }
-        console.log(this.affiliate.affiliate_state_id)
+        this.estado.id=this.affiliate.affiliate_state_id
+      }*/
+      if(this.affiliate.affiliate_state_id  == 4){
+          this.visible = true
+        }else{
+          this.visible = false
       }
-
+      console.log(this.affiliate.affiliate_state_id)
     },
   async getUnit() {
     try {
