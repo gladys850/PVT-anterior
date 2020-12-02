@@ -296,9 +296,9 @@ export default {
       this.bus.$emit("nextStepBus", val)
     },
     Onchange() {
-      for (this.i = 0; this.i < this.payment_types.length; this.i++) {
-        if (this.loanTypeSelected == this.payment_types[this.i].id) {
-          if (this.payment_types[this.i].name == "Depósito Bancario") {
+      for (let i = 0; i < this.payment_types.length; i++) {
+        if (this.loanTypeSelected == this.payment_types[i].id) {
+          if (this.payment_types[i].name == "Depósito Bancario") {
             this.visible = true
             this.espacio = false
             this.getEntity()

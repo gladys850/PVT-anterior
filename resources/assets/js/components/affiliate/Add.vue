@@ -186,6 +186,7 @@
                 :affiliate.sync="affiliate"
                 :editable.sync="editable"
                 :permission="permission"
+                :has_registered_spouse="has_registered_spouse"
               />
             </v-card-text>
           </v-card>
@@ -197,6 +198,7 @@
             <v-card-text>
               <Spouse
                 v-if="!reload"
+                :state_id.sync="affiliate.affiliate_state_id"
                 :spouse.sync="spouse"
                 :editable.sync="editable"
                 :permission="permission"
@@ -268,7 +270,8 @@ export default {
       city_identity_card_id:null,
       date_entry:null,
       date_derelict:null,
-      unit_name:null
+      unit_name:null,
+      affiliate_state_id: null
     },
     spouse: {
     affiliate_id: null,
@@ -296,8 +299,26 @@ export default {
     tabs: 3,
     editable: false,
     reload: false,
-    tab: 'tab-1'
+    tab: 'tab-1',
+    has_registered_spouse: false
   }),
+    watch:{
+    estado_id(newVal, oldVal){
+      if(newVal!=oldVal){
+        if(this.estado_id == 4){
+          this.editable = true
+          this.permission.secondary = true
+          console.log(this.affiliate_state_id )
+          alert('es 4')
+        }else{
+          this.editable = false
+          this.permission.secondary = false
+          console.log(this.affiliate_state_id )
+           alert('no es 4')
+        }
+      }
+    }
+  },
   computed: {
     isNew() {
       return this.$route.params.id == 'new'
@@ -364,8 +385,7 @@ export default {
             })
             this.toastr.success("Se Actualizó los datos del afiliado")
             //Preguntar si afiliado esta fallecido 
-            if((this.affiliate.date_death != null && this.affiliate.date_death != '') || 
-                (this.affiliate.reason_death != null && this.affiliate.reason_death != '')){
+            if(this.affiliate.affiliate_state_id == 4){
               if(this.spouse.id){
                 await axios.patch(`spouse/${this.spouse.id}`, this.spouse)
               }else{
@@ -409,9 +429,9 @@ export default {
         let res = await axios.get(`affiliate/${id}`)
         this.affiliate = res.data
         this.setBreadcrumbs()
-        if (this.affiliate.dead) {
+        //if (this.affiliate.dead) {
           this.getSpouse(this.affiliate.id)
-        }
+        //}
       } catch (e) {
         console.log(e)
       } finally {
@@ -423,6 +443,11 @@ export default {
         this.loading = true
         let res = await axios.get(`affiliate/${id}/spouse`)
         this.spouse = res.data
+        if(Object.entries(this.spouse).length === 0){
+          this.has_registered_spouse = false
+        }else{
+          this.has_registered_spouse = true
+        }
       } catch (e) {
         console.log(e)
       } finally {
