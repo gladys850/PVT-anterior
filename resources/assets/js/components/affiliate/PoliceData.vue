@@ -125,7 +125,7 @@
             ></v-select>
             </ValidationProvider>
             </v-col>
-            <v-col cols="12" md="4" >
+            <v-col cols="12" md="2" >
               <ValidationProvider v-slot="{ errors }" vid="category_id" name="Categoria" rules="required">
               <v-select
                 dense
@@ -144,7 +144,7 @@
               </ValidationProvider>
             </v-col>
             <v-col cols="12" md="6" >
-            <ValidationProvider v-slot="{ errors }" vid="unit_id" name="Unidad" rules="required">
+              <ValidationProvider v-slot="{ errors }" vid="unit_id" name="Unidad" rules="required">
               <v-select
                 :error-messages="errors"
                 dense
