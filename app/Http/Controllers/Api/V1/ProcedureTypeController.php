@@ -33,6 +33,18 @@ class ProcedureTypeController extends Controller
     }
 
     /**
+    * Detalle de un trámite
+    * Devuelve el detalle de un tramite mediante su ID
+    * @urlParam procedure_type required ID del trámite. Example: 30
+    * @authenticated
+    * @responseFile responses/procedure_type/show.200.json
+    */
+    public function show(ProcedureType $procedure_type)
+    {
+        return $procedure_type;
+    }
+
+    /**
     * Listado de destinos de préstamo
     * Obtiene la lista de destinos de préstamos por modalidad
     * @urlParam procedure_type required ID de la modalidad. Example: 9
@@ -104,5 +116,17 @@ class ProcedureTypeController extends Controller
             RoleSequence::create($sequence);
         }
         return $procedure_type->workflow;
+    }
+
+    /**
+    * Obtener modalidades acorde al trámite
+    * Obtiene la lista de modalidades de un trámite en especifico
+    * @urlParam procedure_type required ID del trámite. Example: 27
+    * @authenticated
+    * @responseFile responses/procedure_type/get_modality.200.json
+    */
+    public function get_modality(ProcedureType $procedure_type)
+    {
+        return $procedure_type->procedure_modalities;
     }
 }

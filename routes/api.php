@@ -41,7 +41,8 @@ Route::group([
         Route::apiResource('degree', 'Api\V1\DegreeController')->only('index', 'show');
         Route::apiResource('category', 'Api\V1\CategoryController')->only('index', 'show');
         Route::apiResource('unit', 'Api\V1\UnitController')->only('index', 'show');
-        Route::apiResource('procedure_type', 'Api\V1\ProcedureTypeController')->only('index');
+        Route::apiResource('procedure_type', 'Api\V1\ProcedureTypeController')->only('index', 'show');
+        Route::get('procedure_type/{procedure_type}/modality', 'Api\V1\ProcedureTypeController@get_modality');
         Route::get('procedure_type/{procedure_type}/flow', 'Api\V1\ProcedureTypeController@get_flow');
         Route::apiResource('payment_type', 'Api\V1\PaymentTypeController')->only('index', 'show');
         Route::apiResource('procedure_modality', 'Api\V1\ProcedureModalityController')->only('index', 'show');
