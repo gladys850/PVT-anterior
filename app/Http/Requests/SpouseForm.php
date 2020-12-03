@@ -33,8 +33,8 @@ class SpouseForm extends FormRequest
             'affiliate_id' => 'exists:affiliates,id', 
             'identity_card' => 'min:3',
             'civil_status' => 'in:C,D,S,V',
-            'birth_date' => 'nullable|date_format:"Y-m-d"',
-            'city_birth_id' => 'nullable|exists:cities,id', 
+            'city_birth_id' => 'exists:cities,id', 
+            'birth_date' => 'nullable|date_format:"Y-m-d"',   
             'second_name' =>'nullable|alpha_spaces|min:3',
             'mothers_last_name' =>'sometimes|required_without:last_name|nullable|alpha_spaces|min:3',
             'due_date' => 'nullable|date_format:"Y-m-d"',
@@ -47,7 +47,7 @@ class SpouseForm extends FormRequest
         ];
         switch ($this->method()) {
             case 'POST': {
-                foreach (array_slice($rules, 0, 6) as $key => $rule) {
+                foreach (array_slice($rules, 0, 7) as $key => $rule) {
                     $rules[$key] = implode('|', ['required', $rule]);
                 }
                 $rules['identity_card'] = implode('|', ['unique:spouses', $rules['identity_card']]);
