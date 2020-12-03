@@ -126,7 +126,6 @@
                             hint="Día/Mes/Año"
                             persistent-hint
                             append-icon="mdi-calendar"
-                            readonly
                             :clearable="editable"
                             v-on="on"
                             :outlined="editable && permission.secondary"
@@ -181,7 +180,6 @@
                             hint="Día/Mes/Año"
                             persistent-hint
                             append-icon="mdi-calendar"
-                            readonly
                             :clearable="editable"
                             v-on="on"
                             :outlined="editable && permission.secondary"

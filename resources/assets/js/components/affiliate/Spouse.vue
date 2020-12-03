@@ -163,7 +163,6 @@
                             hint="Día/Mes/Año"
                             persistent-hint
                             append-icon="mdi-calendar"
-                            readonly
                             :clearable="editable"
                             v-on="on"
                             :outlined="(state_id == 4)"
@@ -205,7 +204,6 @@
                             hint="Día/Mes/Año"
                             persistent-hint
                             append-icon="mdi-calendar"
-                            readonly
                             :clearable="editable"
                             v-on="on"
                             :outlined="(state_id == 4)"
