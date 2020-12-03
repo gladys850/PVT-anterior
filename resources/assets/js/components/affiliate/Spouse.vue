@@ -3,7 +3,7 @@
     <ValidationObserver ref="observer">
     <v-form>
       <v-row justify="center">
-        <v-col cols="12" md="7" >
+        <v-col cols="12" md="8" >
               <v-container class="py-0">
                 <v-row>
                   <v-col cols="12">
@@ -83,7 +83,7 @@
                       ></v-text-field>
                       </ValidationProvider>
                     </v-col>
-                    <v-col cols="12" md="5" >
+                    <v-col cols="12" md="4" >
                       <v-select
                         dense
                         :items="cities"
@@ -132,6 +132,20 @@
                       ></v-checkbox>
                     </v-col>
                     <v-col cols="12" md="4" >
+                      <v-select
+                        dense
+                        :loading="loading"
+                        :items="civil"
+                        item-text="name"
+                        item-value="value"
+                        label="Estado Civil"
+                        name="estado_civil"
+                        v-model="spouse.civil_status"
+                        :readonly="state_id != 4"
+                        :outlined="state_id == 4"
+                      ></v-select>
+                    </v-col>
+                    <v-col cols="12" md="4" >
                       <v-menu
                         v-model="dates.birthDate.show"
                         :close-on-content-click="false"
@@ -172,20 +186,7 @@
                         :outlined="state_id == 4"
                       ></v-select>
                     </v-col>
-                    <v-col cols="12" md="4" >
-                      <v-select
-                        dense
-                        :loading="loading"
-                        :items="civil"
-                        item-text="name"
-                        item-value="value"
-                        label="Estado Civil"
-                        name="estado_civil"
-                        v-model="spouse.civil_status"
-                        :readonly="state_id != 4"
-                        :outlined="state_id == 4"
-                      ></v-select>
-                    </v-col>
+                    
                     <v-col cols="12" md="4">
                       <v-menu
                         v-model="dates.dateDeath.show"
@@ -208,12 +209,13 @@
                             :clearable="editable"
                             v-on="on"
                             :outlined="(state_id == 4)"
+                            :Onclick="Death()"
                           ></v-text-field>
                         </template>
                         <v-date-picker v-model="spouse.date_death" no-title @input="dates.dateDeath.show = false"></v-date-picker>
                       </v-menu>
                     </v-col>
-                    <v-col cols="12" md="4">
+                    <v-col cols="12" md="4" v-if="!visible">
                       <v-text-field
                         dense
                         v-model="spouse.reason_death"
@@ -223,7 +225,7 @@
                         :outlined="state_id == 4"
                       ></v-text-field>
                     </v-col>
-                    <v-col cols="12" md="4">
+                    <v-col cols="12" md="4" v-if="!visible">
                       <ValidationProvider v-slot="{ errors }" vid="death_certificate_number" name="cert. de defunción" rules="min:1|max:20">
                       <v-text-field
                       :error-messages="errors"
@@ -239,7 +241,8 @@
                 </v-row>
               </v-container>
         </v-col>
-        <v-col cols="12" md="4" class="v-card-profile" >
+        <!-- ESTA INFORMACION SE UTILIZARA EN OTRO MODULO-->
+        <!--<v-col cols="12" md="4" class="v-card-profile" >
         <v-col cols="12">
             <v-toolbar-title>INFORMACION DE SERECI</v-toolbar-title>
           </v-col>
@@ -309,8 +312,8 @@
               <v-date-picker v-model="spouse.marriage_date" no-title @input="dates.marriageDate.show = false"></v-date-picker>
             </v-menu>
           </v-col>
-        </v-col>
-      </v-row>
+        </v-col>-->
+      </v-row>-
     </v-form>
     </ValidationObserver>
   </v-container>
@@ -370,8 +373,9 @@ export default {
       marriageDate: {
         formatted: null,
         picker: false
-      }
-    }
+      },
+    },
+    visible: false
   }),
   beforeMount() {
     this.getCities()
@@ -425,6 +429,15 @@ export default {
         this.loading = false
       }
   },
+  
+  Death(){
+      if(this.dates.dateDeath.formatted == null){
+          this.visible = true
+        }else{
+          this.visible = false
+      }
+    },
+
   }
   }
 </script>
