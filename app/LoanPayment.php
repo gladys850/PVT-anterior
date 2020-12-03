@@ -32,7 +32,12 @@ class LoanPayment extends Model
         'state_id',
         'role_id',
         'description',
-        'validated'
+        'validated',
+        'voucher',
+        'paid_by',
+        'affiliate_id',
+        'payment_type_id'
+
     ];
 
     function __construct(array $attributes = [])
@@ -52,7 +57,7 @@ class LoanPayment extends Model
 
     public function payment_type()
     {
-        return $this->belongsTo(PaymentType::class);
+        return $this->belongsTo(PaymentType::class,'payment_type_id','id');
     }
 
     public function voucher()
@@ -161,5 +166,9 @@ class LoanPayment extends Model
     public function records()
     {
         return $this->morphMany(Record::class, 'recordable')->latest('updated_at');
+    }
+    public function affiliate()
+    {
+        return $this->belongsTo(Affiliate::class,'affiliate_id','id');
     }
 }
