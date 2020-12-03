@@ -33,7 +33,7 @@ class ProcedureAmortizationSeeder extends Seeder
                 ],
                 'amortizacion automatica' => [
                     'type' => ['module_id' => $module->id,'name'=>'Amortización Automática','second_name'=>'Amortización Automática'],
-                    'modalities' => [ ['name'=>'Amortización Pendiente','shortened'=>'AP','requirements'=>[],
+                    'modalities' => [ ['name'=>'Amortización Automática','shortened'=>'AP','requirements'=>[],
                     ]]
                 ],
             ]
