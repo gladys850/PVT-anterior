@@ -63,14 +63,12 @@
                     BOLETAS DE PAGO
                   </v-col>
                   <v-col cols="12" md="4" class="py-0"  >
-                    <ValidationProvider v-slot="{ errors }" name="1ra Boleta de pago" :rules="'required|min_value:'+livelihood_amount"  mode="aggressive">
+                    <ValidationProvider v-slot="{ errors }" name="1ra Boleta de pago" mode="aggressive">
                     <v-text-field
                       :error-messages="errors"
                       dense
                       v-model="payable_liquid[0]"
                       label="1ra Boleta"
-                      :readonly="!editar"
-                      :outlined="editar"
                      ></v-text-field>
                     </ValidationProvider>
                   </v-col>
@@ -81,7 +79,6 @@
                       dense
                       v-model="payable_liquid[1]"
                       label="2ra Boleta"
-                      :readonly="!editar"
                       :outlined="editar"
                   ></v-text-field>
                   </ValidationProvider>
@@ -93,7 +90,6 @@
                       dense
                       v-model="payable_liquid[2]"
                       label="3ra Boleta"
-                      :readonly="!editar"
                       :outlined="editar"
                      ></v-text-field>
                      </ValidationProvider>
@@ -108,7 +104,6 @@
                       dense
                       v-model="bonos[0]"
                       label="Bono Frontera"
-                      :readonly="!editar"
                       :outlined="editar"
                      ></v-text-field>
                      </ValidationProvider>
@@ -120,7 +115,6 @@
                       dense
                       v-model="bonos[1]"
                       label="Bono Oriente"
-                      :readonly="!editar"
                       :outlined="editar"
                      ></v-text-field>
                      </ValidationProvider>
@@ -132,7 +126,6 @@
                       dense
                       v-model="bonos[2]"
                       label="Bono Cargo"
-                      :readonly="!editar"
                       :outlined="editar"
                     ></v-text-field>
                     </ValidationProvider>
@@ -144,7 +137,7 @@
                       dense
                       v-model="bonos[3]"
                       label="Bono Seguridad Ciudadana"
-                      :readonly="!editar"
+
                       :outlined="editar"
                      ></v-text-field>
                      </ValidationProvider>
@@ -191,7 +184,7 @@ import BallotsHipotecary from '@/components/loan/BallotsHipotecary'
 export default {
   name: "ballots",
   data: () => ({
-    editar:true,
+    editar:false,
     monto:null,
     plazo:null,
     interval:[],
@@ -380,7 +373,7 @@ export default {
           city_id: this.$store.getters.cityId,
           sortBy: ['month_year'],
           sortDesc: [1],
-          per_page: this.modalidad.quantity_ballots,
+          //per_page: this.modalidad.quantity_ballots,
           page: 1,
         }
       })
