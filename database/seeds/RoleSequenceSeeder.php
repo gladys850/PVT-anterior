@@ -32,7 +32,7 @@ class RoleSequenceSeeder extends Seeder
         //Flujo de Registro de Pago
         RoleSequence::flushEventListeners();
         $sequences = [
-            'Amortización' => [
+            'Amortización Manual' => [
                 ['PRE-cobranzas'],
                 ['PRE-tesoreria']
             ]

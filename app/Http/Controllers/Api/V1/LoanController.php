@@ -781,7 +781,7 @@ class LoanController extends Controller
             $payment->description = $request->input('description', null);
             $payment->state_id = LoanState::whereName('Pendiente de Pago')->first()->id;
             $payment->role_id = Role::whereName('PRE-cobranzas')->first()->id;
-            $payment->procedure_modality_id = ProcedureModality::whereName('Amortización')->first()->id;
+            $payment->procedure_modality_id = ProcedureModality::whereName('Amortización Manual')->first()->id;
             $loan_payment = $loan->payments()->create($payment->toArray());
             //generar PDF
             $file_name = implode('_', ['pagos', $loan->modality->shortened, $loan->code]) . '.pdf';
