@@ -668,13 +668,6 @@ class LoanStructureSeeder extends Seeder
           ]
           ]
           ],
-           ////Procedure Type Prestamo amortización
-          'amortizacion' => [
-            'type' => ['module_id' => $module->id,'name'=>'Amortización','second_name'=>'Amortización'],
-            'limits' => [],
-            'modalities' => [ ['name'=>'Amortización','shortened'=>'A','requirements'=>[],
-            ]]
-          ],
         ]
       ];
       foreach ($data['procedures'] as $procedure) {

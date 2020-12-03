@@ -90,14 +90,13 @@ class StatisticController extends Controller
             'data_loans' => $data_loans ,
             'data_payments' => $data_payments
         ];
-        //return $data;
     }
 
     public function loans_by_procedure_type(Module $module)
     {
-        $data = [];
-        foreach ($module->procedure_types()->where('name', 'NOT LIKE', '%Amortización%')->orderBy('name')->get() as $key => $procedure_type) {
-            $data[] = [
+        $data_loans = [];
+        foreach ($module->procedure_types()->where('name', 'LIKE', '%Préstamo%')->orderBy('name')->get()as $key => $procedure_type) {
+            $data_loans[] = [
                 'procedure_type_id' => $procedure_type->id,
                 'total' => [
                     'received' => 0,
@@ -106,7 +105,7 @@ class StatisticController extends Controller
                 ]
             ];
             foreach ($module->roles()->whereNotNull('sequence_number')->orderBy('sequence_number')->orderBy('display_name')->get() as $subkey => $role) {
-                $data[$key]['data'][$subkey] = [
+                $data_loans[$key]['data'][$subkey] = [
                     'role_id' => $role->id
                 ];
                 $values = [
@@ -118,16 +117,52 @@ class StatisticController extends Controller
                     })->whereValidated(true)->count(), //validated
                     Loan::whereRoleId($role->id)->whereHas('modality', function($q) use ($procedure_type) {
                         $q->whereProcedureTypeId($procedure_type->id);
-                    })->onlyTrashed()->count(), //trashed*/
+                    })->onlyTrashed()->count(), //trashed
                 ];
                 $i = 0;
-                foreach ($data[$key]['total'] as $total_key => $v) {
-                    $data[$key]['total'][$total_key] += $values[$i];
-                    $data[$key]['data'][$subkey]['data'][$total_key] = $values[$i];
+                foreach ($data_loans[$key]['total'] as $total_key => $v) {
+                    $data_loans[$key]['total'][$total_key] += $values[$i];
+                    $data_loans[$key]['data'][$subkey]['data'][$total_key] = $values[$i];
                     $i++;
                 }
             }
         }
-        return $data;
+        $data_payments = [];
+        foreach ($module->procedure_types()->where('name', 'LIKE', '%Amortización%')->orderBy('name')->get()as $key => $procedure_type) {
+            $data_payments[] = [
+                'procedure_type_id' => $procedure_type->id,
+                'total' => [
+                    'received' => 0,
+                    'validated' => 0,
+                    'trashed' => 0
+                ]
+            ];
+            foreach ($module->roles()->whereNotNull('sequence_number')->orderBy('sequence_number')->orderBy('display_name')->get() as $subkey => $role) {
+                $data_payments[$key]['data'][$subkey] = [
+                    'role_id' => $role->id
+                ];
+                $values = [
+                    LoanPayment::whereRoleId($role->id)->whereHas('modality', function($q) use ($procedure_type) {
+                        $q->whereProcedureTypeId($procedure_type->id);
+                    })->whereValidated(false)->count(), //received
+                    LoanPayment::whereRoleId($role->id)->whereHas('modality', function($q) use ($procedure_type) {
+                        $q->whereProcedureTypeId($procedure_type->id);
+                    })->whereValidated(true)->count(), //validated
+                    LoanPayment::whereRoleId($role->id)->whereHas('modality', function($q) use ($procedure_type) {
+                        $q->whereProcedureTypeId($procedure_type->id);
+                    })->onlyTrashed()->count(), //trashed
+                ];
+                $i = 0;
+                foreach ($data_payments[$key]['total'] as $total_key => $v) {
+                    $data_payments[$key]['total'][$total_key] += $values[$i];
+                    $data_payments[$key]['data'][$subkey]['data'][$total_key] = $values[$i];
+                    $i++;
+                }
+            }
+        }
+        return  [
+            'data_loans' => $data_loans ,
+            'data_payments' => $data_payments
+        ];
     }
 }
