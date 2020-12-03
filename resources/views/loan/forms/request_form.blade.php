@@ -120,7 +120,7 @@
         <div class="font-semibold leading-tight text-left m-b-10 text-xs">{{ $n++ }}. DATOS DE{{ $plural ? ' LOS' : 'L' }} GARANTE{{ $plural ? 'S' : ''}}</div>
     </div>
 
-    <div class="block">
+    <div class="block ">
         @foreach ($loan->guarantors as $guarantor)
         <table class="table-info w-100 text-center uppercase my-20">
             <tr class="bg-grey-darker text-xxs text-white">
@@ -232,48 +232,18 @@
         </table>
     </div>
 
-    <div class="block text-xs text-justify m-b-10">
-        <div class="m-b-10">
+    <div class="block text-xs text-justify ">
+        <div>
             La presente solicitud se constituye en una <span class="font-bold">DECLARACIÓN JURADA</span>, consignandose los datos como fidedignos por los interesados.
         </div>
         <div>
             El suscrito Asistente de Oficina y/o Responsable Regional y/o Atención al Afiliado de la MUSERPOL, CERTIFICA LA AUTENTICIDAD de la documentación presentada y la firma suscrita por {{ $plural ? 'los' : 'el/la' }} Solicitante{{ $plural ? 's' : '' }}, dando FÉ de que la misma fue estampada en mi presencia y en forma voluntaria con puño y letra {{ $plural ? 'de los' : 'del' }} Solicitante{{ $plural ? 's' : '' }}.
         </div>
     </div>
-
-    <hr class="my-20" style="margin-top: 0; padding-top: 0;">
-
-    <div class="block text-xs">
-        <div class="m-b-10 text-right">
-            La Paz, {{ Carbon::now()->isoFormat('LL') }}
-        </div>
-        <div>Señor</div>
-        <div class="m-b-10 leading-tight font-bold">
-            <div>DIRECTOR GENERAL EJECUTIVO</div>
-            <div>MUSERPOL</div>
-            <div>Presente.- </div>
-        </div>
-        <div class="m-b-10 text-right leading-tight font-bold">
-            REF.: {{ $title }}
-        </div>
-        <div class="text-justify">
-            <div class="m-b-10">
-                De mi mayor consideración:
-            </div>
-            <div class="m-b-10">
-                El objeto de la presente es para solicitar un Préstamo por un monto de Bs. {{ $loan->amount_requested }} (<span class="uppercase">{{ Util::money_format($loan->amount_requested, true) }}</span> Bolivianos) a un plazo de {{$loan->loan_term}} meses, el cual que será aprobado conforme con los procedimientos del Reglamento de Préstamos vigente en la MUSERPOL.
-            </div>
-            <div class="m-b-10">
-                El destino del préstamo es <span class="lowercase font-bold">{{ $loan->destiny->name }}</span>. A tal efecto, adjunto los requisitos solicitados y declaro que toda la documentación presentada es veraz y fidedigna; en caso de demostrarse cualquier falsedad, distorsión u omisión en la documentación, reconozco que la Unidad de Inversión en Préstamos procederá a la anulación del trámite y podrá efectuar las acciones correspondientes conforme a los Artículo 17 y 18 de del Capítulo II CONSIDERACIONES DEL PRESTATARIO PARA ACCEDER AL PRÉSTAMO del Reglamento de Préstamos vigente.
-            </div>
-        </div>
-    </div>
-
     <div class="block no-page-break">
-        <div class="m-b-10">
-            Sin otro particular, {{ $plural ? 'me despido' : 'nos despedimos'}} de usted con las consideraciones mas distinguidas:
-        </div>
-        <table>
+    </div>
+    <hr class="my-20" style="margin-top: 0; padding-top: 0;">
+    <table>
             <tbody>
                 @php ($cont = 0)             
                 @foreach ($signers->chunk(2) as $chunk)
@@ -308,6 +278,64 @@
                 </td>
                 </tr>
                 @endif
+            </tbody>
+        </table>
+    <div style="page-break-after: always"></div>
+    <div class="block no-page-break">
+    </div>
+    <div class="block">
+        <br>
+        <br>
+        <div class="text-right">
+        <br>
+            La Paz, {{ Carbon::now()->isoFormat('LL') }}
+        </div>
+        <br>
+        <br>
+        <div class="text-xl ">Señor</div>
+        <div class="leading-tight font-bold">
+            <div>DIRECTOR GENERAL EJECUTIVO</div>
+            <div>Mutual de Servicios al Policía</div>
+            <div>Presente.- </div>
+        </div>
+        <br>
+        <br>
+        <div class="text-right leading-tight font-bold">
+            REF.: {{ $title }}
+        </div>
+        <br>
+        <br>
+        <div class="block text-justify">
+            <div>
+                De mi mayor consideración:
+            </div >
+            <br>
+            <div >
+                El objeto de la presente es para solicitar un Préstamo por un monto de Bs. {{ $loan->amount_requested }} (<span class="uppercase">{{ Util::money_format($loan->amount_requested, true) }}</span> Bolivianos) a un plazo de {{$loan->loan_term}} meses, el cual que será aprobado conforme con los procedimientos del Reglamento de Préstamos vigente en la MUSERPOL.
+            </div>
+            <br>
+            <div>
+                El destino del préstamo es <span class="lowercase font-bold">{{ $loan->destiny->name }}</span>. A tal efecto, adjunto los requisitos solicitados y declaro que toda la documentación presentada es veraz y fidedigna; en caso de demostrarse cualquier falsedad, distorsión u omisión en la documentación, reconozco que la Unidad de Inversión en Préstamos procederá a la anulación del trámite y podrá efectuar las acciones correspondientes conforme a los Artículo 17 y 18 de del Capítulo II CONSIDERACIONES DEL PRESTATARIO PARA ACCEDER AL PRÉSTAMO del Reglamento de Préstamos vigente.
+            </div>
+        </div>
+    </div>
+    <br>
+    <div class="block no-page-break">
+        <div>
+            Sin otro particular, {{ $plural ? 'me despido' : 'nos despedimos'}} de usted con las consideraciones mas distinguidas:
+        </div>
+        <table>
+            <tbody>   
+                <tr class="align-top">
+                  
+                <td width="50%">
+                    @include('partials.signature_box', [
+                    'full_name' => $lender->full_name,
+                    'identity_card' => $lender->identity_card_ext,
+                    'position' => 'SOLICITANTE'
+                ])
+                </td>       
+                </tr>      
             </tbody>
         </table>
     </div>
