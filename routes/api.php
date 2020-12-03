@@ -51,6 +51,7 @@ Route::group([
         Route::get('module/{module}/procedure_type', 'Api\V1\ModuleController@get_procedure_types');
         Route::get('module/{module}/observation_type', 'Api\V1\ModuleController@get_observation_types');
         Route::get('module/{module}/modality_loan', 'Api\V1\ModuleController@get_modality_types');
+        Route::get('module/{module}/amortization_loan', 'Api\V1\ModuleController@get_amortization_types');
         Route::patch('loans', 'Api\V1\LoanController@bulk_update_role');
         Route::patch('loan_payments', 'Api\V1\LoanPaymentController@bulk_update_role');
         Route::apiResource('record', 'Api\V1\RecordController')->only('index');

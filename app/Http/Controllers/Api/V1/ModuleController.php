@@ -92,4 +92,16 @@ class ModuleController extends Controller
     {
         return $module->procedure_types()->where('name','LIKE', '%Préstamo%')->get();
     }
+
+    /**
+    * Tipos de amortizaciones de préstamo asociados al módulo
+    * Devuelve la lista de tipos de amortizaciones de préstamo asociados a un módulo
+    * @urlParam module required ID del módulo. Example: 6
+    * @authenticated
+    * @responseFile responses/module/get_amortization_types.200.json
+    */
+    public function get_amortization_types(Module $module)
+    {
+        return $module->procedure_types()->where('name','LIKE', '%Amortización%')->get();
+    }
 }
