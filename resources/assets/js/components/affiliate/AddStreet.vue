@@ -28,18 +28,19 @@
                           v-model="address.city_address_id"
                         ></v-select>
                       </v-col>
-                      <v-col cols="12" md="3" v-show="address.edit">
-                        <ValidationProvider v-slot="{ errors }" vid="zone" name="zona" rules="required|min:3|max:20">
+                      <v-col cols="12" md="9" v-show="address.edit">
+                        <ValidationProvider v-slot="{ errors }" vid="zone" name="zona" rules="required">
                           <v-text-field
                           :error-messages="errors"
                           dense
                           v-model="address.zone"
-                          label="Zona"
+                          label="Direccion"
                           class="purple-input"
                           ></v-text-field>
                         </ValidationProvider>
                       </v-col>
-                      <v-col cols="12" md="4" v-show="address.edit">
+                      
+                      <!--<v-col cols="12" md="4" v-show="address.edit">
                         <ValidationProvider v-slot="{ errors }" vid="street" name="calle" rules="min:3|max:20">
                           <v-text-field
                           :error-messages="errors"
@@ -60,7 +61,7 @@
                           class="purple-input"
                           ></v-text-field>
                         </ValidationProvider>
-                      </v-col>
+                      </v-col>-->
                       <v-col cols="12" md="12">
                         <LMap :address.sync="address" :cities.sync="countryCities" :edit.sync="address.edit" class="pa-0 ma-0"/>
                       </v-col>

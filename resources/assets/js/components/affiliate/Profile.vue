@@ -108,7 +108,7 @@
                       ></v-select>
                       </ValidationProvider>
                     </v-col>
-                    <v-col cols="12" md="5" v-if="affiliate.is_duedate_undefined==false">
+                    <v-col cols="12" md="6" v-if="affiliate.is_duedate_undefined==false">
                       <v-menu
                         v-model="dates.dueDate.show"
                         :close-on-content-click="false"
@@ -144,7 +144,7 @@
                         :label="`Indefinido`"
                       ></v-checkbox>
                     </v-col>
-                    <v-col cols="12" md="4" >
+                    <v-col cols="12" md="3" >
                       <ValidationProvider v-slot="{ errors }" vid="civil_status" name="Estado Civil" rules="oneOf:C,D,S,V">
                       <v-select
                         :error-messages="errors"
@@ -330,8 +330,8 @@
                   <tr >
                     <td>{{ cities.find(o => o.id == props.item.city_address_id).name }}</td>
                       <td>{{ props.item.zone }}</td>
-                      <td>{{ props.item.street }}</td>
-                      <td>{{ props.item.number_address }}</td>
+                      <!--<td>{{ props.item.street }}</td>
+                      <td>{{ props.item.number_address }}</td>-->
                       <td v-show="editable && permission.secondary">
                         <v-btn text icon color="warning" @click.stop="bus.$emit('openDialog', {...props.item, ...{edit: true}})">
                           <v-icon>mdi-pencil</v-icon>
@@ -461,10 +461,10 @@ export default {
       ],
       headers: [
             { text: 'Ciudad', align: 'left', value: 'city_address_id' },
-            { text: 'Zona', align: 'left', value: 'zone' },
-            { text: 'Calle', align: 'left', value: 'street' },
+            { text: 'Direccion', align: 'left', value: 'Direccion' },
+            /*{ text: 'Calle', align: 'left', value: 'street' },
             { text: 'Nro', align: 'left', value: 'number_address' },
-            { text: 'Acciones', align: 'center' }
+            { text: 'Acciones', align: 'center' }*/
           ],
       civil_statuses: [
         { name:"Soltero",
