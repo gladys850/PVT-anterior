@@ -463,8 +463,8 @@ export default {
             { text: 'Ciudad', align: 'left', value: 'city_address_id' },
             { text: 'Direccion', align: 'left', value: 'Direccion' },
             /*{ text: 'Calle', align: 'left', value: 'street' },
-            { text: 'Nro', align: 'left', value: 'number_address' },
-            { text: 'Acciones', align: 'center' }*/
+            { text: 'Nro', align: 'left', value: 'number_address' }, */
+            { text: 'Acciones', align: 'center' }
           ],
       civil_statuses: [
         { name:"Soltero",
