@@ -57,7 +57,7 @@ class LoanPayment extends Model
 
     public function payment_type()
     {
-        return $this->belongsTo(PaymentType::class,'payment_type_id','id');
+        return $this->belongsTo(PaymentType::class);
     }
 
     public function voucher()
@@ -169,6 +169,6 @@ class LoanPayment extends Model
     }
     public function affiliate()
     {
-        return $this->belongsTo(Affiliate::class,'affiliate_id','id');
+        return $this->belongsTo(Affiliate::class);
     }
 }
