@@ -44,9 +44,9 @@ class AffiliateForm extends FormRequest
             'date_derelict' => 'nullable|date_format:"Y-m-d"',
             'due_date' => 'nullable|date_format:"Y-m-d"',
             'surname_husband' => 'nullable|alpha_spaces|min:3',
-            'financial_entity_id' => 'sometimes|required|exists:financial_entities,id',
-            'sigep_status' => 'sometimes|required|alpha_spaces|min:3|in:ACTIVO,ELABORADO,VALIDADO,SIN REGISTRO',
-            'account_number' => 'sometimes|required|integer',
+            'financial_entity_id' => 'nullable|exists:financial_entities,id',
+            'sigep_status' => 'nullable|alpha_spaces|min:3|in:ACTIVO,ELABORADO,VALIDADO,SIN REGISTRO',
+            'account_number' => 'nullable|integer',
             'service_years' => 'nullable|integer|min:0',
             'service_months' => 'nullable|integer|min:0|max:11'
         ];
