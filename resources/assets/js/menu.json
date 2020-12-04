@@ -27,6 +27,20 @@
         "icon": "mdi-account-cash",
         "permissions": "show-payment-loan",
         "params": {}
+      },
+      {
+        "href": "ImportComand",
+        "title": "Imp. Comando",
+        "icon": "mdi-file-move",
+        "permissions": "show-payment-loan",
+        "params": {}
+      },
+      {
+        "href": "",
+        "title": "Imp. Senasir",
+        "icon": "mdi-file-move-outline",
+        "permissions": "show-payment-loan",
+        "params": {}
       }
     ]
   }, {
