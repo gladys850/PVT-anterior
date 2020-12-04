@@ -422,4 +422,54 @@ class Util
             'type' => $type
         ];
     }
+
+    public static function process_by_procedure_type($model, $object, $module){
+        foreach ($object as $key => $procedure_type) {
+            $data[] = [
+                'procedure_type_id' => $procedure_type->id,
+                'total' => [
+                    'received' => 0,
+                    'validated' => 0,
+                    'trashed' => 0
+                ]
+            ];
+            foreach ($module->roles()->whereNotNull('sequence_number')->orderBy('sequence_number')->orderBy('display_name')->get() as $subkey => $role) {
+                $data[$key]['data'][$subkey] = [
+                    'role_id' => $role->id
+                ];
+                $values = [
+                    $model::whereRoleId($role->id)->whereHas('modality', function($q) use ($procedure_type) {
+                        $q->whereProcedureTypeId($procedure_type->id);
+                    })->whereValidated(false)->count(), //received
+                    $model::whereRoleId($role->id)->whereHas('modality', function($q) use ($procedure_type) {
+                        $q->whereProcedureTypeId($procedure_type->id);
+                    })->whereValidated(true)->count(), //validated
+                    $model::whereRoleId($role->id)->whereHas('modality', function($q) use ($procedure_type) {
+                        $q->whereProcedureTypeId($procedure_type->id);
+                    })->onlyTrashed()->count(), //trashed
+                ];
+                $i = 0;
+                foreach ($data[$key]['total'] as $total_key => $v) {
+                    $data[$key]['total'][$total_key] += $values[$i];
+                    $data[$key]['data'][$subkey]['data'][$total_key] = $values[$i];
+                    $i++;
+                }
+            }
+        }
+        return $data;
+    }
+
+    public static function process_by_role($model, $module){
+        foreach ($module->roles()->whereNotNull('sequence_number')->orderBy('sequence_number')->orderBy('display_name')->get() as $role) {
+            $data[] = [
+                'role_id' => $role->id,
+                'data' => [
+                    'received' => $model::whereRoleId($role->id)->whereValidated(false)->count(),
+                    'validated' => $model::whereRoleId($role->id)->whereValidated(true)->count(),
+                    'trashed' => $model::whereRoleId($role->id)->onlyTrashed()->count()
+                ]
+            ];
+        }
+        return $data;
+    }
 }
