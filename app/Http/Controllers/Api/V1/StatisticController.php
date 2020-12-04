@@ -7,6 +7,7 @@ use App\Http\Requests\StatisticForm;
 use App\Module;
 use App\Loan;
 use App\LoanPayment;
+use App\Helpers\Util;
 
 /** @group Estadísticas
 * Estadísticas de los trámites almacenados en la base de datos
@@ -19,13 +20,21 @@ class StatisticController extends Controller
     {
         $this->filters = [
             'prestamos' => [
-                'role' => [
+                'role_loans' => [
                     'display_name' => 'Número de trámites por área',
                     'method' => 'loans_by_role'
                 ],
-                'procedure_type' => [
+                'role_amortizations' => [
+                    'display_name' => 'Número de trámites por área',
+                    'method' => 'amortizations_by_role'
+                ],
+                'procedure_type_loans' => [
                     'display_name' => 'Número de trámites por tipo trámite',
                     'method' => 'loans_by_procedure_type'
+                ],
+                'procedure_type_amortizations' => [
+                    'display_name' => 'Número de trámites por tipo trámite',
+                    'method' => 'amortizations_by_procedure_type'
                 ],
             ]
         ];
@@ -39,7 +48,10 @@ class StatisticController extends Controller
     * Datos estadísticos
     * Devuelve los datos estatdísticos de acuerdo al filtro seleccionado
     * @queryParam module Nombre de módulo para obtener las estadísticas. Example: prestamos
-    * @queryParam filter Filtro para consultar en la base de datos. Example: role
+    * @queryParam filter Filtro para consultar en la base de datos. Example: procedure_type_amortizations
+    * @queryParam filter Filtro para consultar en la base de datos. Example: role_amortizations
+    * @queryParam filter Filtro para consultar en la base de datos. Example: procedure_type_loans
+    * @queryParam filter Filtro para consultar en la base de datos. Example: role_loans
     * @authenticated
     * @responseFile responses/statistic/index.200.json
     */
@@ -64,105 +76,23 @@ class StatisticController extends Controller
 
     public function loans_by_role(Module $module)
     {
-        $data_loans = [];
-        foreach ($module->roles()->whereNotNull('sequence_number')->orderBy('sequence_number')->orderBy('display_name')->get() as $role) {
-            $data_loans[] = [
-                'role_id' => $role->id,
-                'data' => [
-                    'received' => Loan::whereRoleId($role->id)->whereValidated(false)->count(),
-                    'validated' => Loan::whereRoleId($role->id)->whereValidated(true)->count(),
-                    'trashed' => Loan::whereRoleId($role->id)->onlyTrashed()->count()
-                ]
-            ];
-        }
-        $data_payments = [];
-        foreach ($module->roles()->whereNotNull('sequence_number')->orderBy('sequence_number')->orderBy('display_name')->get() as $role) {
-            $data_payments[] = [
-                'role_id' => $role->id,
-                'data' => [
-                    'received' => LoanPayment::whereRoleId($role->id)->whereValidated(false)->count(),
-                    'validated' => LoanPayment::whereRoleId($role->id)->whereValidated(true)->count(),
-                    'trashed' => LoanPayment::whereRoleId($role->id)->onlyTrashed()->count()
-                ]
-            ];
-        }
-        return  [
-            'data_loans' => $data_loans ,
-            'data_payments' => $data_payments
-        ];
+        return Util:: process_by_role(new Loan(), $module);
+    }
+
+    public function amortizations_by_role(Module $module)
+    {
+        return Util:: process_by_role(new LoanPayment(), $module);
     }
 
     public function loans_by_procedure_type(Module $module)
     {
-        $data_loans = [];
-        foreach ($module->procedure_types()->where('name', 'LIKE', '%Préstamo%')->orderBy('name')->get()as $key => $procedure_type) {
-            $data_loans[] = [
-                'procedure_type_id' => $procedure_type->id,
-                'total' => [
-                    'received' => 0,
-                    'validated' => 0,
-                    'trashed' => 0
-                ]
-            ];
-            foreach ($module->roles()->whereNotNull('sequence_number')->orderBy('sequence_number')->orderBy('display_name')->get() as $subkey => $role) {
-                $data_loans[$key]['data'][$subkey] = [
-                    'role_id' => $role->id
-                ];
-                $values = [
-                    Loan::whereRoleId($role->id)->whereHas('modality', function($q) use ($procedure_type) {
-                        $q->whereProcedureTypeId($procedure_type->id);
-                    })->whereValidated(false)->count(), //received
-                    Loan::whereRoleId($role->id)->whereHas('modality', function($q) use ($procedure_type) {
-                        $q->whereProcedureTypeId($procedure_type->id);
-                    })->whereValidated(true)->count(), //validated
-                    Loan::whereRoleId($role->id)->whereHas('modality', function($q) use ($procedure_type) {
-                        $q->whereProcedureTypeId($procedure_type->id);
-                    })->onlyTrashed()->count(), //trashed
-                ];
-                $i = 0;
-                foreach ($data_loans[$key]['total'] as $total_key => $v) {
-                    $data_loans[$key]['total'][$total_key] += $values[$i];
-                    $data_loans[$key]['data'][$subkey]['data'][$total_key] = $values[$i];
-                    $i++;
-                }
-            }
-        }
-        $data_payments = [];
-        foreach ($module->procedure_types()->where('name', 'LIKE', '%Amortización%')->orderBy('name')->get()as $key => $procedure_type) {
-            $data_payments[] = [
-                'procedure_type_id' => $procedure_type->id,
-                'total' => [
-                    'received' => 0,
-                    'validated' => 0,
-                    'trashed' => 0
-                ]
-            ];
-            foreach ($module->roles()->whereNotNull('sequence_number')->orderBy('sequence_number')->orderBy('display_name')->get() as $subkey => $role) {
-                $data_payments[$key]['data'][$subkey] = [
-                    'role_id' => $role->id
-                ];
-                $values = [
-                    LoanPayment::whereRoleId($role->id)->whereHas('modality', function($q) use ($procedure_type) {
-                        $q->whereProcedureTypeId($procedure_type->id);
-                    })->whereValidated(false)->count(), //received
-                    LoanPayment::whereRoleId($role->id)->whereHas('modality', function($q) use ($procedure_type) {
-                        $q->whereProcedureTypeId($procedure_type->id);
-                    })->whereValidated(true)->count(), //validated
-                    LoanPayment::whereRoleId($role->id)->whereHas('modality', function($q) use ($procedure_type) {
-                        $q->whereProcedureTypeId($procedure_type->id);
-                    })->onlyTrashed()->count(), //trashed
-                ];
-                $i = 0;
-                foreach ($data_payments[$key]['total'] as $total_key => $v) {
-                    $data_payments[$key]['total'][$total_key] += $values[$i];
-                    $data_payments[$key]['data'][$subkey]['data'][$total_key] = $values[$i];
-                    $i++;
-                }
-            }
-        }
-        return  [
-            'data_loans' => $data_loans ,
-            'data_payments' => $data_payments
-        ];
+        $procedure_loans = $module->procedure_types()->where('name', 'LIKE', '%Préstamo%')->orderBy('name')->get();
+        return Util:: process_by_procedure_type(new Loan(), $procedure_loans, $module);
+    }
+
+    public function amortizations_by_procedure_type(Module $module)
+    {
+        $procedure_amortizations = $module->procedure_types()->where('name', 'LIKE', '%Amortización%')->orderBy('name')->get();
+        return Util:: process_by_procedure_type(new LoanPayment(), $procedure_amortizations, $module);
     }
 }

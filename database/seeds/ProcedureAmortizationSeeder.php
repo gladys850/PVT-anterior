@@ -17,22 +17,22 @@ class ProcedureAmortizationSeeder extends Seeder
         $data = [
             'procedures' => [
                 'amortizacion manual' => [
-                    'type' => ['module_id' => $module->id,'name'=>'Amortización Manual','second_name'=>'Amortización Manual'],
+                    'type' => ['module_id' => $module->id,'name'=>'Amortización Manual','second_name'=>'Amort.  Manual'],
                     'modalities' => [ ['name'=>'Amortización Manual','shortened'=>'AR','requirements'=>[],
                     ]]
                 ],
                 'amortizacion complemento' => [
-                    'type' => ['module_id' => $module->id,'name'=>'Amortización Complemento Economico','second_name'=>'Amortización Complemento Economico'],
+                    'type' => ['module_id' => $module->id,'name'=>'Amortización Complemento Economico','second_name'=>'Amort. CE'],
                     'modalities' => [ ['name'=>'Amortización Complemento Economico','shortened'=>'ACE','requirements'=>[],
                     ]]
                 ],
                 'amortizacion fondo' => [
-                    'type' => ['module_id' => $module->id,'name'=>'Amortización Fondo de Retiro','second_name'=>'Amortización Fondo de Retiro'],
+                    'type' => ['module_id' => $module->id,'name'=>'Amortización Fondo de Retiro','second_name'=>'Amort. FR'],
                     'modalities' => [ ['name'=>'Amortización Fondo de Retiro','shortened'=>'AFR','requirements'=>[],
                     ]]
                 ],
                 'amortizacion automatica' => [
-                    'type' => ['module_id' => $module->id,'name'=>'Amortización Automática','second_name'=>'Amortización Automática'],
+                    'type' => ['module_id' => $module->id,'name'=>'Amortización Automática','second_name'=>'Amort.  Aut'],
                     'modalities' => [ ['name'=>'Amortización Automática','shortened'=>'AP','requirements'=>[],
                     ]]
                 ],
