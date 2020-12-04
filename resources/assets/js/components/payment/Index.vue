@@ -11,7 +11,7 @@
           active-class="primary white--text"
           mandatory
           v-if="!track"
-        >
+        ><!--filtros superiores-->
           <v-btn
             v-for="tray in trays"
             :key="tray.name"
@@ -44,6 +44,7 @@
             clearable
           ></v-text-field>
         </v-flex>
+        <!--bandejas Seguimiento/Trabajo-->
         <template v-if="hasTray">
           <v-tooltip
             top
@@ -120,8 +121,8 @@
     </v-tooltip>
     <v-card-text>
       <v-row v-if="!track">
-        <v-toolbar flat v-show="!singleRol">
-          <v-col :cols="singleRol ? 12 : 10" v-show="false">
+        <v-toolbar flat>
+          <v-col :cols="singleRol ? 12 : 10">
               <v-tabs
                 v-model="filters.procedureTypeSelected"
                 dark
@@ -129,14 +130,14 @@
                 center-active
                 active-class="secondary"
               >
-                <v-tab v-for="(procedureType, index) in $store.getters.modalityLoan" :key="procedureType.id">
+                <v-tab v-for="(procedureType, index) in $store.getters.amortizationLoan" :key="procedureType.id">
                   <v-badge
                     :content="procedureTypesCount.hasOwnProperty(index) ? procedureTypesCount[index].toString() : '-'"
                     :color="procedureTypeClass(index)"
                     right
                     top
                   >
-                    {{ procedureType.second_name }}   {{index}}
+                    {{ procedureType.second_name }} {{index}}
                   </v-badge>
                 </v-tab>
               </v-tabs>
@@ -152,11 +153,12 @@
               dense
             ></v-select>
           </v-col>
-         
+          <Fab v-show="allowFlow" :bus="bus"/> 
         </v-toolbar>
       </v-row>
+      <!--<v-row>  <v-col>procedureTypes{{$store.getters.procedureTypes}}</v-col>     </v-row>
+      <v-row>  <v-col>amortizationLoan{{$store.getters.amortizationLoan}}</v-col>     </v-row>-->
       <v-row>
-         <Fab v-show="allowFlow" :bus="bus"/>
         <v-col cols="12">
           <List :bus="bus" 
           :tray="filters.traySelected" 
@@ -171,10 +173,12 @@
     </v-card-text>
   </v-card>
 </template>
+
 <script>
 import Breadcrumbs from '@/components/shared/Breadcrumbs'
 import List from '@/components/payment/List'
 import Fab from '@/components/payment/Fab'
+
 export default {
   name: "payment-index",
   components: {
@@ -243,7 +247,7 @@ export default {
   },
   beforeCreate() {
     let self = this
-    this.$store.dispatch('selectModuleLoan', 'prestamos').then(() => {
+    this.$store.dispatch('selectModuleAmortization', 'prestamos').then(() => {
       this.getProcedureModalities()
       this.$store.getters.roles.filter(o => {
         return o.module_id == this.$store.getters.module.id && this.$store.getters.userRoles.includes(o.name)
@@ -267,8 +271,8 @@ export default {
     ])
   },
   mounted() {
-    this.filters.procedureTypeSelected = this.$store.getters.modalityLoan[0]
-    this.procedureTypesCount = new Array(this.$store.getters.modalityLoan.length).fill('-')
+    this.filters.procedureTypeSelected = this.$store.getters.amortizationLoan[0]
+    this.procedureTypesCount = new Array(this.$store.getters.amortizationLoan.length).fill('-')
     this.bus.$on('emitRefreshLoans', val => {
       this.updateLoanList();
     })
@@ -284,7 +288,7 @@ export default {
       deep: true,
       handler(val) {
         if (val.traySelected != null && val.procedureTypeSelected != null && val.roleSelected != null) {
-          let procedureType = this.$store.getters.modalityLoan[this.filters.procedureTypeSelected]
+          let procedureType = this.$store.getters.amortizationLoan[this.filters.procedureTypeSelected]
           if (procedureType) this.setFilters(procedureType.id)
         }
       }
@@ -307,7 +311,7 @@ export default {
         this.newLoans = []
         this.getLoans()
       } else {
-        this.filters.procedureTypeSelected = this.$store.getters.modalityLoan[0]
+        this.filters.procedureTypeSelected = this.$store.getters.amortizationLoan[0]
         this.filters.roleSelected = this.roles[0].id
         this.clearNotification()
       }
@@ -315,7 +319,7 @@ export default {
   },
   methods: {
     getProcedureModalities() {
-      this.$store.getters.modalityLoan.forEach(async (procedureType) => {
+      this.$store.getters.amortizationLoan.forEach(async (procedureType) => {
         try {
           let res = await axios.get(`procedure_modality`, {
             params: {
@@ -353,7 +357,7 @@ export default {
     },
     setFilters(procedureType) {
       let filters = {
-        //procedure_type_id: procedureType,
+        procedure_type_id: procedureType,
         role_id: this.filters.roleSelected
       }
       switch (this.filters.traySelected) {
@@ -377,19 +381,20 @@ export default {
         this.loading = true
         let res = await axios.get(`loan_payment`, {
           params: {...{
-            page: this.options.page,
-            per_page: this.options.itemsPerPage,
-            sortBy: this.options.sortBy,
-            sortDesc: this.options.sortDesc,
-            search: this.search
-          }, ...this.params}
-        })
+              page: this.options.page,
+              per_page: this.options.itemsPerPage,
+              sortBy: this.options.sortBy,
+              sortDesc: this.options.sortDesc,
+              search: this.search
+            }, ...this.params}
+          })
         this.loans = res.data.data
         this.totalLoans = res.data.total
         delete res.data['data']
         this.options.page = res.data.current_page
         this.options.itemsPerPage = parseInt(res.data.per_page)
         this.options.totalItems = res.data.total
+        this.setBreadcrumbs()
       } catch (e) {
         console.log(e)
       } finally {
@@ -401,10 +406,10 @@ export default {
         let res = await axios.get(`statistic`, {
           params: {
             module: 'prestamos',
-            filter: 'role'
+            filter: 'role_amortizations'
           }
         })
-        res = res.data.data_payments.find(o => o.role_id == this.filters.roleSelected)
+        res = res.data.find(o => o.role_id == this.filters.roleSelected)
         if (res) {
           let index
           Object.entries(res.data).forEach(([key, val]) => {
@@ -421,7 +426,7 @@ export default {
         let res = await axios.get(`statistic`, {
           params: {
             module: 'prestamos',
-            filter: 'procedure_type'
+            filter: 'procedure_type_amortizations'
           }
         })
         res.data.forEach((procedure, index) => {
