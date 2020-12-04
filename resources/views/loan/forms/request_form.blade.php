@@ -326,16 +326,32 @@
         </div>
         <table>
             <tbody>   
-                <tr class="align-top">
-                  
-                <td width="50%">
+            @if (count($lenders) == 1)                 
+            <td width="50%">
                     @include('partials.signature_box', [
                     'full_name' => $lender->full_name,
                     'identity_card' => $lender->identity_card_ext,
                     'position' => 'SOLICITANTE'
                 ])
-                </td>       
-                </tr>      
+            </td>   
+            @endif   
+            </tbody>
+        </table>
+        <table>
+            <tbody>   
+            @if (count($lenders) == 2)  
+            @php ($cont = 0)             
+                @foreach ($signers->chunk(2) as $chunk)
+                <tr class="align-top">
+                    @foreach ($chunk as $person)
+                        <td width="50%">
+                            @include('partials.signature_box', $person)
+                        </td>
+                        @php ($cont ++)
+                    @endforeach
+                @endforeach          
+                </tr>  
+            @endif
             </tbody>
         </table>
     </div>
