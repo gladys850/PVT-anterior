@@ -126,10 +126,15 @@ class LoanPaymentController extends Controller
     {
         $request->validate([
             'description' => 'nullable|string|min:2',
-            'validated' => 'boolean'
+            'validated' => 'boolean',
+            'procedure_modality_id'=> 'exists:procedure_modalities,id',
+            'payment_type_id'=> 'exists:payment_types,id',
+            'affiliate_id'=> 'exists:affiliates,id',
+            'voucher'=> 'nullable|string|min:3',
+            'paid_by'=> 'string|in:T,G',
         ]);
         if (Auth::user()->can('update-payment-loan')) {
-            $update = $request->only('description', 'validated');
+            $update = $request->only('description', 'validated','procedure_modality_id','payment_type_id','affiliate_id','voucher','paid_by');
         }
         $loanPayment->fill($update);
         $loanPayment->save();

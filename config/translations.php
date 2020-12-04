@@ -53,7 +53,7 @@ return [
     'phone_number' =>'Número de teléfono',
     'cell_phone_number'=>'Numero de Celular',
     // Loan
-    'procedure_modality_id'=>'Modalidad de Préstamo',
+    'procedure_modality_id'=>'Modalidad',
     'procedure_documents' => 'Documento',
     'submitted_documents' => 'Documento Presentado',
     'request_date'=>'Fecha de solicitud',

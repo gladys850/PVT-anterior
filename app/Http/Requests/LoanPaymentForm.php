@@ -35,8 +35,13 @@ class LoanPaymentForm extends FormRequest
             $date = $latest_payment->estimated_date;
         } else {
             $date = $this->loan->disbursement_date;
-        }
+        } 
         $rules = [
+            'procedure_modality_id' => ['required','integer', 'exists:procedure_modalities,id'],
+            'affiliate_id' => ['required','integer', 'exists:affiliates,id'],
+            'payment_type_id' => ['required','integer', 'exists:payment_types,id'],
+            'paid_by' => ['required','string', 'in:T,G'],
+            'voucher' => ['nullable','string','min:3'],
             'estimated_date' => 'nullable|date_format:Y-m-d|after_or_equal:'.$date,
             'estimated_quota' => 'nullable|numeric|min:1'
         ];

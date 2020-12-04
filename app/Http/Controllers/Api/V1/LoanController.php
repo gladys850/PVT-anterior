@@ -770,7 +770,12 @@ class LoanController extends Controller
 	* @bodyParam estimated_date date Fecha para el cálculo del interés. Example: 2020-04-30
 	* @bodyParam estimated_quota float Monto para el cálculo de los días de interés pagados. Example: 600
     * @bodyParam liquidate boolean Booleano para hacer el cálculo con el monto máximo que liquidará el préstamo. Example: false
-	* @bodyParam description string Texto de descripción. Example: Penalizacion regularizada
+    * @bodyParam description string Texto de descripción. Example: Penalizacion regularizada
+    * @bodyParam voucher string Comprobante de pago GAR-ABV o D-10/20 o CONT-123. Example: CONT-123
+    * @bodyParam payment_type_id integer required ID del tipo de pago. Example: 1
+    * @bodyParam affiliate_id integer required ID del afiliado. Example: 57950
+    * @bodyParam paid_by enum required Pago realizado por Titular(T) o Garante(G). Example: T
+    * @bodyParam procedure_modality_id integer required ID de la modalidad de amortización. Example: 53
     * @authenticated
     * @responseFile responses/loan/set_payment.200.json
     */
@@ -781,7 +786,12 @@ class LoanController extends Controller
             $payment->description = $request->input('description', null);
             $payment->state_id = LoanState::whereName('Pendiente de Pago')->first()->id;
             $payment->role_id = Role::whereName('PRE-cobranzas')->first()->id;
-            $payment->procedure_modality_id = ProcedureModality::whereName('Amortización Manual')->first()->id;
+            //$payment->procedure_modality_id = ProcedureModality::whereName('Amortización')->first()->id;
+            $payment->procedure_modality_id = $request->input('procedure_modality_id');
+            $payment->voucher = $request->input('voucher', null);
+            $payment->payment_type_id = $request->input('payment_type_id');
+            $payment->affiliate_id = $request->input('affiliate_id');
+            $payment->paid_by = $request->input('paid_by');
             $loan_payment = $loan->payments()->create($payment->toArray());
             //generar PDF
             $file_name = implode('_', ['pagos', $loan->modality->shortened, $loan->code]) . '.pdf';
