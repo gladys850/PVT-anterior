@@ -1,42 +1,20 @@
-{
-    "data_loans": [
-        {
-            "procedure_type_id": 10,
-            "total": {
-                "received": 2,
-                "validated": 0,
-                "trashed": 0
-            },
-            "data": [
-                {
-                    "role_id": 90,
-                    "data": {
-                        "received": 2,
-                        "validated": 0,
-                        "trashed": 0
-                    }
-                }, {}
-            ]
-        }, {}
-    ],
-    "data_payments": [
-        {
-            "procedure_type_id": 13,
-            "total": {
-                "received": 0,
-                "validated": 10,
-                "trashed": 6
-            },
-            "data": [
-                {
-                    "role_id": 90,
-                    "data": {
-                        "received": 0,
-                        "validated": 10,
-                        "trashed": 6
-                    }
-                }, {}
-            ]
-        }, {}
-    ]
-}
+[
+    {
+        "procedure_type_id": 13,
+        "total": {
+            "received": 0,
+            "validated": 13,
+            "trashed": 6
+        },
+        "data": [
+            {
+                "role_id": 90,
+                "data": {
+                    "received": 0,
+                    "validated": 12,
+                    "trashed": 6
+                }
+            }, {}
+        ]
+    }, {}
+]

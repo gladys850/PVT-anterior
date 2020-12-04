@@ -18,5 +18,9 @@
     "description": "Por pago de mora",
     "created_at": "2020-08-05T14:05:54.000000Z",
     "updated_at": "2020-08-05T17:37:52.000000Z",
-    "deleted_at": null
+    "deleted_at": null,
+    "voucher": "5624",
+    "paid_by": "T",
+    "affiliate_id": 57950,
+    "payment_type_id": 1
 }

@@ -6,6 +6,7 @@ import Role from '@/services/RoleService'
 import Module from '@/services/ModuleService'
 import ProcedureType from '@/services/ProcedureTypeService'
 import ModalityLoan from '@/services/ModalityLoanService'
+import AmortizationLoan from '@/services/AmortizationLoanService'
 
 const vuexLocal = new VuexPersistence({
   key: 'pvt',
@@ -22,6 +23,7 @@ export default {
     module: {},
     procedureTypes: [],
     modalityLoan: [],
+    amortizationLoan: [],
     userRoles: [],
     permissions: [],
     ldapAuth: JSON.parse(process.env.MIX_LDAP_AUTHENTICATION),
@@ -58,6 +60,9 @@ export default {
     },
     modalityLoan(state) {
       return state.modalityLoan
+    },
+    amortizationLoan(state) {
+      return state.amortizationLoan
     },
     userRoles(state) {
       return state.userRoles
@@ -99,7 +104,8 @@ export default {
       state.tokenExpiration = null
       state.module = {}
       state.procedureTypes = [],
-      state.modalityLoan = []
+      state.modalityLoan = [],
+      state.amortizationLoan = []
     },
     login(state, data) {
       state.id = data.id
@@ -139,6 +145,9 @@ export default {
     },
     setModalityLoan(state, data) {
       state.modalityLoan = data
+    },
+    setAmortizationLoan(state, data) {
+      state.amortizationLoan = data
     }
   },
   actions: {
@@ -178,6 +187,26 @@ export default {
         })
       }).then(res => {
         commit('setModalityLoan', res.data)
+      }).catch(e => {
+        console.log(e)
+      })
+    },
+    selectModuleAmortization({ commit }, name) {
+      const module = new Module()
+      const amortizationLoan = new AmortizationLoan()
+      return module.get(null, {
+        name: name,
+        page: 1,
+        per_page: 1
+      }).then(res => {
+        commit('setModule', res.data[0])
+        return amortizationLoan.get(null, {
+          module_id: res.data[0].id,
+          page: 1,
+          per_page: 100
+        })
+      }).then(res => {
+        commit('setAmortizationLoan', res.data)
       }).catch(e => {
         console.log(e)
       })
