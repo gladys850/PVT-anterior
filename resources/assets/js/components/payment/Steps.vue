@@ -185,7 +185,12 @@ export default {
           let res = await axios.post(`loan/${this.$route.query.loan_id}/payment`,{
             estimated_date:this.data_payment.payment_date,
             estimated_quota:this.data_payment.pago_total,
-            liquidate:false
+            liquidate:false,
+            voucher:this.data_payment.voucher,
+            payment_type_id:this.data_payment.pago,
+            affiliate_id:this.data_payment.affiliate_id_paid_by,
+            paid_by:this.data_payment.affiliate_id,
+            procedure_modality_id:this.data_payment.procedure_modality_id
           })
             printJS({
             printable: res.data.attachment.content,
@@ -222,8 +227,13 @@ export default {
         this.loading = true
         let res = await axios.get(`loan_payment/${id}`)
         this.loan_payment = res.data
+        this.data_payment.code=this.loan_payment.code
         this.data_payment.payment_date= this.loan_payment.estimated_date
         this.data_payment.pago_total=this.loan_payment.estimated_quota
+        this.data_payment.affiliate_id =this.loan_payment.paid_by
+        this.data_payment.voucher=this.loan_payment.voucher
+        this.data_payment.pago  =this.loan_payment.payment_type_id
+
       } catch (e) {
         console.log(e)
       } finally {
@@ -238,7 +248,12 @@ export default {
           let res = await axios.patch(`loan/${this.$route.query.loan_id}/payment`,{
             estimated_date:this.data_payment.payment_date,
             estimated_quota:this.data_payment.pago_total,
-            liquidate:false
+            liquidate:false,
+            voucher:this.data_payment.voucher,
+            payment_type_id:this.data_payment.pago,
+            affiliate_id:this.data_payment.affiliate_id_paid_by,
+            paid_by:this.data_payment.affiliate_id,
+            procedure_modality_id:this.data_payment.procedure_modality_id
           })
            this.payment = res.data
         }
@@ -246,7 +261,12 @@ export default {
             let res = await axios.patch(`loan/${this.$route.query.loan_id}/payment`,{
             estimated_date:this.data_payment.payment_date,
             estimated_quota:this.data_payment.pago_total,
-            liquidate:true
+            liquidate:true,
+            voucher:this.data_payment.voucher,
+            payment_type_id:this.data_payment.pago ,
+            affiliate_id:this.data_payment.affiliate_id_paid_by,
+            paid_by:this.data_payment.affiliate_id,
+            procedure_modality_id:this.data_payment.procedure_modality_id
           })
            this.payment = res.data
         }
@@ -266,7 +286,7 @@ export default {
           else{
            // this.toastr.error("Esta en cobranzas")
             this.Calcular()
-            nextStep(1)
+            this.nextStep(1)
           }
       }catch (e) {
         console.log(e)
