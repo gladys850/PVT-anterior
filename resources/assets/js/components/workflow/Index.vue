@@ -226,7 +226,8 @@ export default {
       loading: true,
       procedureModalities: [],
       affiliate_id: this.$route.params.id > 0 ? this.$route.params.id : 0,
-      affiliate: []
+      affiliate: [],
+      resultado:[]
     }
   },
   computed: {
@@ -434,10 +435,10 @@ export default {
         let res = await axios.get(`statistic`, {
           params: {
             module: 'prestamos',
-            filter: 'role'
+            filter: 'role_loans'
           }
         })
-        res = res.data.data_loans.find(o => o.role_id == this.filters.roleSelected)
+        res = res.data.find(o => o.role_id == this.filters.roleSelected)
         if (res) {
           let index
           Object.entries(res.data).forEach(([key, val]) => {
@@ -454,9 +455,10 @@ export default {
         let res = await axios.get(`statistic`, {
           params: {
             module: 'prestamos',
-            filter: 'procedure_type'
+            filter: 'procedure_type_loans'
           }
         })
+        this.resultado = res.data.data_loans
         res.data.forEach((procedure, index) => {
           let role = procedure.data.find(o => o.role_id == this.filters.roleSelected)
           if (role) {
