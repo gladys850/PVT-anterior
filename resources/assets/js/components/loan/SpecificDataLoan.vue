@@ -65,16 +65,22 @@
                         
                           <br>
                           <p><b>PLAZO EN MESES:</b>{{' '+loan.loan_term}}</p>
-                          <p><b>MONTO SOLICITADO:</b>{{' '+loan.amount_approved}}</p>
-                          <p><b>LIQUIDO PARA CALIFICACION:</b>{{' '+loan.liquid_qualification_calculated}}</p>
-                          <p><b>CALCULO DE CUOTA:</b>{{' '+loan.estimated_quota}}</p>
-                          <p><b>INDICE DE ENDEUDAMIENTO:</b>{{' '+loan.indebtedness_calculated}}</p>
-                          <div v-for="procedure_type in procedure_types" :key="procedure_type.id" :v-if="procedure_type.name == 'Préstamo hipotecario'">
+                          <p><b>MONTO SOLICITADO:</b>{{' '+loan.amount_approved}} Bs.</p>
+                          <p><b>LIQUIDO PARA CALIFICACION:</b>{{' '+loan.liquid_qualification_calculated}} Bs.</p>
+                          <p><b>CALCULO DE CUOTA:</b>{{' '+loan.estimated_quota}} Bs.</p>
+                          <p><b>PROMEDIO LIQUIDO PAGABLE</b>{{' '+loan.lenders[0].pivot.payable_liquid_calculated}} Bs.</p>
+                          <p><b>TOTAL BONOS:</b>{{' '+loan.lenders[0].pivot.bonus_calculated}}</p>
+                          <p><b>INDICE DE ENDEUDAMIENTO:</b>{{' '+loan.indebtedness_calculated}} Bs.</p>
+                          <div v-for="procedure_type in procedure_types" :key="procedure_type.id">
+                          <div v-if="procedure_type.name === 'Préstamo hipotecario'">
                           <v-progress-linear></v-progress-linear><br>
-                           <p style="color:teal"><b>TITULAR</b></p>
+                           <p style="color:teal"><b>CODEUDOR</b></p>
                           <div v-for="(lenders,i) in loan.lenders" :key="i">
+                          <div  v-if="(lenders,i)>0">
                           <p><b>PROMEDIO LIQUIDO PAGABLE:</b>{{' '+lenders.pivot.payable_liquid_calculated}}</p>
                           <p><b>TOTAL BONOS:</b>{{' '+lenders.pivot.bonus_calculated}}</p>
+                          </div>
+                          </div>
                           </div>
                           </div>
                         </fieldset>
@@ -94,6 +100,7 @@
                                 <br>
                                 <p><b>CÉDULA DE IDENTIDAD:</b> {{guarantor.identity_card +" "+ identityCardExt(guarantor.city_identity_card_id) }}</p>
                                 <p><b>NOMBRE:</b> {{$options.filters.fullName(guarantor, true)}}</p>
+                                <p><b>TELEFONO:</b> {{guarantor.cell_phone_number}}</p>
                                 <p><b>PORCENTAJE DE PAGO:</b> {{guarantor.pivot.payment_percentage}} %</p>
                               </li>
                                <p v-if="loan.guarantors.length==0">NO TIENE GARANTES</p>

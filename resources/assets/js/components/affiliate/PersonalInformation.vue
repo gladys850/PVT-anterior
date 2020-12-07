@@ -38,8 +38,8 @@
                     <tr>
                       <td>{{ cities.find(o => o.id == props.item.city_address_id).name }}</td>
                       <td>{{ props.item.zone }}</td>
-                      <td>{{ props.item.street }}</td>
-                      <td>{{ props.item.number_address }}</td>
+                      <!--*<td>{{ props.item.street }}</td>
+                      <td>{{ props.item.number_address }}</td>-->
                       <td v-show="editable && permission.secondary">
                         <v-btn
                           text
@@ -255,8 +255,8 @@ export default {
     headers: [
       { text: "Ciudad", align: "left", value: "city_address_id" },
       { text: "Zona", align: "left", value: "zone" },
-      { text: "Calle", align: "left", value: "street" },
-      { text: "Nro", align: "left", value: "number_address" },
+      //{ text: "Calle", align: "left", value: "street" },
+      //{ text: "Nro", align: "left", value: "number_address" },
       { text: "Acciones", align: "center" }
     ],
     city: [],

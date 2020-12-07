@@ -88,7 +88,7 @@
                       dense
                       v-model="payable_liquid[1]"
                       label="2ra Boleta"
-                      :readonly="!enabled"
+                      :disabled="!enabled"
                       :outlined="editar"
                   ></v-text-field>
                   </ValidationProvider>
@@ -100,7 +100,7 @@
                       dense
                       v-model="payable_liquid[2]"
                       label="3ra Boleta"
-                      :readonly="!enabled"
+                      :disabled="!enabled"
                       :outlined="editar"
                      ></v-text-field>
                      </ValidationProvider>
@@ -115,7 +115,7 @@
                       dense
                       v-model="bonos[0]"
                       label="Bono Frontera"
-                      :readonly="!enabled"
+                      :disabled="!enabled"
                       :outlined="editar"
                      ></v-text-field>
                      </ValidationProvider>
@@ -127,7 +127,7 @@
                       dense
                       v-model="bonos[1]"
                       label="Bono Oriente"
-                      :readonly="!enabled"
+                      :disabled="!enabled"
                       :outlined="editar"
                      ></v-text-field>
                      </ValidationProvider>
@@ -139,7 +139,7 @@
                       dense
                       v-model="bonos[2]"
                       label="Bono Cargo"
-                      :readonly="!enabled"
+                      :disabled="!enabled"
                       :outlined="editar"
                     ></v-text-field>
                     </ValidationProvider>
@@ -151,7 +151,7 @@
                       dense
                       v-model="bonos[3]"
                       label="Bono Seguridad Ciudadana"
-                      :readonly="!editar"
+                      :disabled="!enabled"
                       :outlined="editar"
                      ></v-text-field>
                      </ValidationProvider>
@@ -397,9 +397,9 @@ export default {
       //console.log(this.modalidad.quantity_ballots)
       data_ballots = res.data.data
       //console.log(data_ballots)
-
-      if(res.data.valid && this.editar==true){
+      if(res.data.valid ){
         this.editar=false
+       
          //Carga los datos en los campos para ser visualizados en la interfaz
         for (let i = 0; i < data_ballots.length; i++) {//colocar 1
           this.payable_liquid[i] = data_ballots[i].payable_liquid
@@ -411,6 +411,8 @@ export default {
           }
         }
       } else{
+          this.enabled=true
+          this.editar=true
           console.log("No se tienen boletas del ultimo mes")
           this.payable_liquid[0]=this.payable_liquid[0]
           this.payable_liquid[1]=this.payable_liquid[1]
