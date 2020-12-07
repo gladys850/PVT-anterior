@@ -29,21 +29,21 @@
         "params": {}
       },
       {
-        "href": "ImportComand",
-        "title": "Imp. Comando",
+        "href": "ImportExport",
+        "title": "Imp./Exp.",
         "icon": "mdi-file-move",
-        "permissions": "show-payment-loan",
-        "params": {}
-      },
-      {
-        "href": "",
-        "title": "Imp. Senasir",
-        "icon": "mdi-file-move-outline",
         "permissions": "show-payment-loan",
         "params": {}
       }
     ]
-  }, {
+  }, 
+  {
+    "href": "report",
+    "title": "Reportes",
+    "icon": "mdi-file-document-outline",
+    "permission": "show-loan",
+    "params": {}
+  },{
     "title": "Acceso",
     "icon": "mdi-key",
     "permission": "show-user",
