@@ -99,7 +99,6 @@
                     hint="Día/Mes/Año"
                     persistent-hint
                     append-icon="mdi-calendar"
-                    readonly
                     v-on="on"
                     :outlined="editable && permission.secondary"
                   ></v-text-field>
@@ -137,9 +136,9 @@
                 label="Categoria"
                 name="categoria"
                 v-model="affiliate.category_id"
-                :readonly="!editable || !permission.secondary"
-                :outlined="editable && permission.secondary"
-                :disabled="editable && !permission.secondary"
+                :readonly="!editable || !permission.primary"
+                :outlined="editable && permission.primary"
+                :disabled="editable && !permission.primary"
               ></v-select>
               </ValidationProvider>
             </v-col>
@@ -221,7 +220,6 @@
                     hint="Día/Mes/Año"
                     persistent-hint
                     append-icon="mdi-calendar"
-                    readonly
                     clearable
                     v-on="on"
                     :outlined="editable && permission.secondary"

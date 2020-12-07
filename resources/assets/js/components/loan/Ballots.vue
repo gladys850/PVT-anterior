@@ -57,10 +57,17 @@
                   </v-col>
                 </v-row>
               </v-container>
-              <v-container class="py-0" >
+              <v-container cols="12" md="12">
                 <v-row>
-                  <v-col cols="12" md="12">
+                  <v-col cols="12" md="2">
                     BOLETAS DE PAGO
+                  </v-col>
+                  <v-col cols="12" md="10" style="margin-top:-20px">
+                    <v-checkbox
+                    v-model="enabled"
+                    hide-details
+                    label="Habilitar Edicion"
+                  ></v-checkbox>
                   </v-col>
                   <v-col cols="12" md="4" class="py-0"  >
                     <ValidationProvider v-slot="{ errors }" name="1ra Boleta de pago" :rules="'required|min_value:'+livelihood_amount"  mode="aggressive">
@@ -69,7 +76,7 @@
                       dense
                       v-model="payable_liquid[0]"
                       label="1ra Boleta"
-                      :readonly="!editar"
+                      :disabled="!enabled"
                       :outlined="editar"
                      ></v-text-field>
                     </ValidationProvider>
@@ -81,7 +88,7 @@
                       dense
                       v-model="payable_liquid[1]"
                       label="2ra Boleta"
-                      :readonly="!editar"
+                      :readonly="!enabled"
                       :outlined="editar"
                   ></v-text-field>
                   </ValidationProvider>
@@ -93,7 +100,7 @@
                       dense
                       v-model="payable_liquid[2]"
                       label="3ra Boleta"
-                      :readonly="!editar"
+                      :readonly="!enabled"
                       :outlined="editar"
                      ></v-text-field>
                      </ValidationProvider>
@@ -108,7 +115,7 @@
                       dense
                       v-model="bonos[0]"
                       label="Bono Frontera"
-                      :readonly="!editar"
+                      :readonly="!enabled"
                       :outlined="editar"
                      ></v-text-field>
                      </ValidationProvider>
@@ -120,7 +127,7 @@
                       dense
                       v-model="bonos[1]"
                       label="Bono Oriente"
-                      :readonly="!editar"
+                      :readonly="!enabled"
                       :outlined="editar"
                      ></v-text-field>
                      </ValidationProvider>
@@ -132,7 +139,7 @@
                       dense
                       v-model="bonos[2]"
                       label="Bono Cargo"
-                      :readonly="!editar"
+                      :readonly="!enabled"
                       :outlined="editar"
                     ></v-text-field>
                     </ValidationProvider>
@@ -191,6 +198,8 @@ import BallotsHipotecary from '@/components/loan/BallotsHipotecary'
 export default {
   name: "ballots",
   data: () => ({
+    includeFiles: true,
+    enabled: false,
     editar:true,
     monto:null,
     plazo:null,
@@ -389,7 +398,7 @@ export default {
       data_ballots = res.data.data
       //console.log(data_ballots)
 
-      if(res.data.valid){
+      if(res.data.valid && this.editar==true){
         this.editar=false
          //Carga los datos en los campos para ser visualizados en la interfaz
         for (let i = 0; i < data_ballots.length; i++) {//colocar 1
@@ -403,6 +412,13 @@ export default {
         }
       } else{
           console.log("No se tienen boletas del ultimo mes")
+          this.payable_liquid[0]=this.payable_liquid[0]
+          this.payable_liquid[1]=this.payable_liquid[1]
+          this.payable_liquid[2]=this.payable_liquid[2]
+          this.bonos[0]= this.bonos[0]
+          this.bonos[1]= this.bonos[1]
+          this.bonos[2]= this.bonos[2]
+          this.bonos[3]= this.bonos[3]
           //this.clearForm()//TODO ver si es necesario, ya que sin la funcion igual se carga los datos declarados por defecto de las variables
       }
     } catch (e) {

@@ -14,6 +14,7 @@ import FlowIndex from '@/components/workflow/Index'
 import FlowAdd from '@/components/workflow/Add'
 import PaymentAdd from '@/components/payment/Add'
 import LoanPaymentIndex from '@/components/payment/Index'
+import ImportComand from '@/components/payment/ImportComand'
 
 export const routes = [
   {
@@ -107,22 +108,14 @@ export const routes = [
       requiresAuth: true
     }
   },
-  /*{
-    path: '/refinancimiento',
-    name: 'loanAddref',
-    component: LoanAdd,
+  {
+    path: '*',
+    name: 'loanAdd',
+    component: ImportComand,
     meta: {
       requiresAuth: true
     }
   },
-  {
-    path: '/reprogramacion',
-    name: 'loanAddrep',
-    component: LoanAdd,
-    meta: {
-      requiresAuth: true
-    }
-  },*/
   {
     path: '/workflow',
     name: 'flowIndex',
@@ -152,6 +145,14 @@ export const routes = [
     path: '/loanPayment',
     name: 'loanPaymentIndex',
     component: LoanPaymentIndex,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: '*',
+    name: 'ImportComand',
+    component: ImportComand,
     meta: {
       requiresAuth: true
     }
