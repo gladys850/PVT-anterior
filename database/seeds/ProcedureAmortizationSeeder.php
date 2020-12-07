@@ -18,7 +18,7 @@ class ProcedureAmortizationSeeder extends Seeder
             'procedures' => [
                 'amortizacion manual' => [
                     'type' => ['module_id' => $module->id,'name'=>'Amortización Manual','second_name'=>'Amort.  Manual'],
-                    'modalities' => [ ['name'=>'Amortización Manual','shortened'=>'AR','requirements'=>[],
+                    'modalities' => [ ['name'=>'Amortización Manual','shortened'=>'AM','requirements'=>[],
                     ]]
                 ],
                 'amortizacion complemento' => [
@@ -33,7 +33,7 @@ class ProcedureAmortizationSeeder extends Seeder
                 ],
                 'amortizacion automatica' => [
                     'type' => ['module_id' => $module->id,'name'=>'Amortización Automática','second_name'=>'Amort.  Aut'],
-                    'modalities' => [ ['name'=>'Amortización Automática','shortened'=>'AP','requirements'=>[],
+                    'modalities' => [ ['name'=>'Amortización Automática','shortened'=>'AA','requirements'=>[],
                     ]]
                 ],
             ]
