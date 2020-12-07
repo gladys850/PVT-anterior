@@ -108,7 +108,7 @@
                       ></v-select>
                       </ValidationProvider>
                     </v-col>
-                    <v-col cols="12" md="6" v-if="affiliate.is_duedate_undefined==false">
+                    <v-col cols="12" md="5" v-if="affiliate.is_duedate_undefined==false">
                       <v-menu
                         v-model="dates.dueDate.show"
                         :close-on-content-click="false"
@@ -126,6 +126,7 @@
                             hint="Día/Mes/Año"
                             persistent-hint
                             append-icon="mdi-calendar"
+                            readonly
                             :clearable="editable"
                             v-on="on"
                             :outlined="editable && permission.secondary"
@@ -143,7 +144,7 @@
                         :label="`Indefinido`"
                       ></v-checkbox>
                     </v-col>
-                    <v-col cols="12" md="3" >
+                    <v-col cols="12" md="4" >
                       <ValidationProvider v-slot="{ errors }" vid="civil_status" name="Estado Civil" rules="oneOf:C,D,S,V">
                       <v-select
                         :error-messages="errors"
@@ -180,6 +181,7 @@
                             hint="Día/Mes/Año"
                             persistent-hint
                             append-icon="mdi-calendar"
+                            readonly
                             :clearable="editable"
                             v-on="on"
                             :outlined="editable && permission.secondary"
@@ -459,9 +461,9 @@ export default {
       ],
       headers: [
             { text: 'Ciudad', align: 'left', value: 'city_address_id' },
-            { text: 'Direccion', align: 'left', value: 'Direccion' },
-            /*{ text: 'Calle', align: 'left', value: 'street' },
-            { text: 'Nro', align: 'left', value: 'number_address' }, */
+            { text: 'Zona', align: 'left', value: 'zone' },
+            //{ text: 'Calle', align: 'left', value: 'street' },
+            //{ text: 'Nro', align: 'left', value: 'number_address' },
             { text: 'Acciones', align: 'center' }
           ],
       civil_statuses: [
