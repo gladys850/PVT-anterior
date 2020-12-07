@@ -295,6 +295,40 @@ class LoanController extends Controller
         {
             $state_id = LoanState::whereName('Desembolsado')->first()->id;
             $request['state_id'] = $state_id;
+        //si es refinanciamiento o reprogramacion colocar la etiqueta correspondiente al padre del préstamo
+        $user = User::whereUsername('admin')->first();
+        $refinanciamiento_tag = Tag::whereSlug('refinanciamiento')->first();
+        $reprogramacion_tag = Tag::whereSlug('reprogramacion')->first();
+        $parent_loan  = Loan::find($loan->parent_loan_id);
+            if($loan->parent_reason == 'REFINANCIAMIENTO'){
+                    $parent_loan ->tags()->detach($refinanciamiento_tag);
+                    $parent_loan ->tags()->attach([$refinanciamiento_tag->id => [
+                        'user_id' => $user->id,
+                        'date' => Carbon::now()
+                    ]]);
+                    foreach ($parent_loan->lenders as $lender) {
+                        $lender->records()->create([
+                            'user_id' => $user->id,
+                            'record_type_id' => RecordType::whereName('etiquetas')->first()->id,
+                            'action' => 'etiquetó  el prestamo como refinanciado'
+                        ]);
+                    }
+            } 
+            if($loan->parent_reason == 'REPROGRAMACIÓN'){
+                    $parent_loan ->tags()->detach($reprogramacion_tag);
+                    $parent_loan ->tags()->attach([$reprogramacion_tag->id => [
+                        'user_id' => $user->id,
+                        'date' => Carbon::now()
+                    ]]);
+                    foreach ($parent_loan->lenders as $lender) {
+                        $lender->records()->create([
+                            'user_id' => $user->id,
+                            'record_type_id' => RecordType::whereName('etiquetas')->first()->id,
+                            'action' => 'etiquetó  el prestamo como reprogramado'
+                        ]);
+                    }
+            }
+           
         }
         $saved = $this->save_loan($request, $loan);
         return $saved->loan;
