@@ -7,33 +7,54 @@
                 <v-container class="py-0">
                   <v-col cols="12" md="12">
                   <v-layout row wrap>
-                    <v-flex xs12 class="px-2">      
+                    <v-flex xs12 class="px-2">
                       <fieldset class="pa-3">
                     <ValidationObserver ref="observer">
                     <v-form>
                       <center>
                        <v-toolbar-title>AMORTIZACIONES</v-toolbar-title>
                       </center>
-                                  <v-progress-linear></v-progress-linear>
-                     
+                      <v-progress-linear></v-progress-linear>
                       <template>
                       <v-row>
-                        <v-col cols="3" class="ma-0 pb-0" v-show="!editable">
-                          <label v-if="isNew" >TIPO DE AMORTIZACION:</label>
-                          <label v-if="ver">TIPO DE COBRO:</label>
+                        <v-col cols="7" class="ma-0 pb-0" v-show="!isNew">
                         </v-col>
-                        <v-col cols="3" class="ma-0 pb-0" v-show="!editable">
-                          <v-text-field
-                            v-if="ver"
-                            dense
-                            label="Amortización Préstamos"
-                            :readonly="true"
-                          ></v-text-field>
+                        <v-col cols="2" class="ma-0 pb-0" v-show="!isNew">
+                          <label class="caption"><strong> CODIGO DE PAGO:</strong></label>
+                        </v-col>
+                        <v-col cols="3" class="ma-0 pb-0" v-show="!isNew">
+                          <label class="caption"><strong>{{data_payment.code}}</strong></label>
+                        </v-col>
+                        <v-col cols="2" class="ma-0  pr-1">
+                          <label class="caption">Tipo de Tramite: </label>
+                        </v-col>
+                        <v-col cols="2" class="ma-0  pr-1" v-show="!isNew">
+                          <label class="caption">AMORTIZACIONES PRESTAMOS </label>
+                        </v-col>
+                        <v-col cols="3" class="ma-0 pb-0"  v-show="isNew">
                           <v-select
-                            v-if="isNew"
                             dense
-                            :onchange="onchangeOne()"
-                            v-model="data_payment.amortization"
+                            class="caption"
+                            style="font-size: 10px;"
+                            :Onchange="Onchange()"
+                            v-model="loanTypeSelected"
+                            :outlined="!editable"
+                            :readonly="editable"
+                            :items="tipo_tramite"
+                            item-text="name"
+                            item-value="id"
+                          ></v-select>
+                        </v-col>
+                        <v-col cols="2" class="ma-0 pb-0" v-show="isNew" >
+                          <label class="caption" >Tipo de Amortizacion:</label>
+                        </v-col>
+                        <v-col cols="2" class="ma-0 pb-0" v-show="isNew">
+                          <v-select
+                            dense
+                            class="caption"
+                            style="font-size: 10px;"
+                            :Onchange="OnchangeAmortization()"
+                            v-model="loanTypeSelectedOne"
                             :outlined="!editable"
                             :readonly="editable"
                             :items="tipo_de_amortizacion"
@@ -42,30 +63,75 @@
                             persistent-hint
                           ></v-select>
                         </v-col>
-                        <v-col cols="8" class="ma-0 pb-0" v-show="editable">
-                        </v-col>
-                        <v-col cols="2" class="ma-0 pb-0" v-show="editable">
-                          <label><strong> CODIGO DE PAGO: </strong></label>
-                        </v-col>
-                        <v-col cols="2" class="ma-0 pb-0" v-show="editable">
-                          <label><strong>{{loan_payment.code}}</strong></label>
-                        </v-col>
-                        <v-col cols="3" class="ma-0 pb-0" v-show="editable">
-                          <label>TIPO DE VOUCHER:</label>
-                        </v-col>
-                        <v-col cols="3" class="ma-0 pb-0" v-show="editable">
-                          <v-text-field
+                        <v-col cols="1" class="ma-0 pb-0" v-show="isNew">
+                          <label class="caption">Pago:</label>
+                          </v-col>
+                        <v-col cols="2" class="ma-0 pb-0" v-show="isNew">
+                          <v-select
                             dense
-                            label="Amortización Préstamos"
+                            class="caption"
+                            style="font-size: 10px;"
+                            v-model="data_payment.amortization"
                             :outlined="!editable"
                             :readonly="editable"
+                            :items="tipo_de_pago_amortizacion"
+                            item-text="name"
+                            item-value="id"
+                            persistent-hint
+                          ></v-select>
+                        </v-col>
+                          <v-col cols="1" class="ma-0 pb-0" >
+                          <label class="caption">Pago del :</label>
+                        </v-col>
+                        <v-col cols="2" class="ma-0 pb-0">
+                          <v-select
+                            dense
+                            class="caption"
+                            style="font-size: 10px;"
+                            :Onchange="OnchangeAffiliate()"
+                            v-model="data_payment.affiliate_id"
+                            :outlined="isNew"
+                            :readonly="!isNew"
+                            :items="tipo_afiliado"
+                            item-text="name"
+                            item-value="id"
+                            persistent-hint
+                          ></v-select>
+                        </v-col>
+                        <v-col cols="4" class="ma-0 pb-0" v-show="garante_show">
+                            <!--ul style="list-style: none" class="pa-0" >
+                              <li v-for="guarantor in garantes.lenders" :key="guarantor.id">
+                                <br>
+                                <p> {{$options.filters.fullName(guarantor, true)}} </p>
+                                   
+                               </li>
+                               <li>
+<v-radio-group  v-model="radios[i]" class="py-0">
+                            <v-radio
+                              color="info"
+                              :value="doc.id"
+                              class="py-0"
+                            ></v-radio>
+                          </v-radio-group>
+                               </-li-->
+                               
+                            <!--/ul-->
+                        </v-col>
+                        <v-col cols="2" class="ma-0 pb-0" v-show="!editable">
+                          <label>Codigo de Comprobante:</label>
+                        </v-col>
+                        <v-col cols="2" class="ma-0 pb-0" v-show="!editable">
+                          <v-text-field
+                            dense
+                            v-model="data_payment.voucher"
+                            :outlined="isNew"
+                            :readonly="!isNew"
                           ></v-text-field>
                         </v-col>
-                        <v-col cols="1" class="ma-0 pb-0"></v-col>
                         <v-col cols="2" class="ma-0 pb-0">
-                          <label> FECHA DE CALCULO:</label>
+                          <label class="caption"> Fecha de Calculo:</label>
                         </v-col>
-                        <v-col cols="3">
+                        <v-col cols="2">
                           <v-menu
                             v-model="dates.paymentDate.show"
                             :close-on-content-click="false"
@@ -77,6 +143,7 @@
                           >
                             <template v-slot:activator="{ on }">
                               <v-text-field
+                                style="font-size: 15px;"
                                 dense
                                 :outlined="isNew"
                                 :readonly="editable || ver"
@@ -90,10 +157,10 @@
                             <v-date-picker v-model="data_payment.payment_date" no-title @input="dates.paymentDate.show = false"></v-date-picker>
                           </v-menu>
                         </v-col>
-                        <v-col cols="3" class="ma-0 pb-0" v-show="view">
+                        <v-col cols="2" class="ma-0 pb-0" v-show="view">
                           <label>TOTAL PAGADO:</label>
                         </v-col>
-                        <v-col cols="3" class="ma-0 pb-0" v-show="view">
+                        <v-col cols="2" class="ma-0 pb-0" v-show="view">
                           <v-text-field
                             dense
                             v-model="data_payment.pago_total"
@@ -101,30 +168,33 @@
                             :readonly="editable || ver"
                           ></v-text-field>
                         </v-col>
-                        <v-col cols="1">
+                        <v-col cols="1" class="ma-0 pb-0" v-show="!isNew" >
+                           <label  >TIPO DE PAGO:</label>
                         </v-col>
-                        <v-col cols="2" class="ma-0 pb-0" v-show="editable" v-if="!ver">
+                        <v-col cols="2" class="ma-0 pb-0" v-show="isNew">
                           <label >TIPO DE PAGO:</label>
                         </v-col>
-                        <v-col cols="3" class="ma-0 pb-0" v-show="editable" v-if="!ver">
+                        <v-col cols="3" class="ma-0 pb-0">
                           <v-select
+                             class="caption"
+                            style="font-size: 10px;"
                             dense
                             v-model="data_payment.pago"
-                            :onchange="Onchange()"
-                            :outlined="editable"
-                            :readonly="!editable"
+                            :outlined="isNew"
+                            :readonly="!isNew"
                             :items="payment_types"
                             item-text="name"
                             item-value="id"
                             persistent-hint
                           ></v-select>
                         </v-col>
-                        <v-col cols="3" class="ma-0 pb-0" v-show="efectivo">
-                          <label  v-show="editable" v-if="!ver" >NRO COMPROBANTE:</label>
+                         <v-col cols="2" class="ma-0 pb-0" v-show="editable" >
                         </v-col>
-                        <v-col cols="3" v-show="efectivo">
+                        <v-col cols="3" class="ma-0 pb-0" v-show="editable">
+                          <label  >NRO DE COMPROBANTE:</label>
+                        </v-col>
+                        <v-col cols="3" v-show="editable" >
                           <v-text-field
-                            v-show="editable" v-if="!ver"
                             v-model="data_payment.comprobante"
                             :outlined="editable"
                             :readonly="!editable"
@@ -141,52 +211,7 @@
                             label="Glosa"
                           ></v-text-field>
                         </v-col>
-                          <v-col cols="1">
-                        </v-col>
-                        <v-col cols="2" class="ma-0 pb-0" v-show="editable" v-if="!ver">
-                          <label >AFILIADO:</label>
-                        </v-col>
-                        <v-col cols="3" class="ma-0 pb-0" v-show="editable" v-if="!ver">
-                          <v-select
-                            dense
-                            v-model="tipo_afiliado.id"
-                            :onchange="onchangetwo()"
-                            :outlined="editable"
-                            :readonly="!editable"
-                            :items="tipo_afiliado"
-                            item-text="name"
-                            item-value="id"
-                            persistent-hint
-                          ></v-select>
-                        </v-col>
                            <v-col cols="1">
-                        </v-col>
-                        <v-col cols="2" class="ma-0 pb-0" v-show="editable" v-if="!ver">
-                          <label v-show="garante_show" >TIPO DE PAGO:</label>
-                        </v-col>
-                        <v-col cols="3" class="ma-0 pb-0" v-show="editable" v-if="!ver">
-                          <v-select
-                          v-show="garante_show"
-                            dense
-                            v-model="garante.id"
-                            :outlined="editable"
-                            :readonly="!editable"
-                            :items="garante"
-                            item-text="name"
-                            item-value="id"
-                            persistent-hint
-                          ></v-select>
-                        </v-col>
-                        <v-col cols="3" class="ma-0 pb-0">
-                          <label  v-show="!editable" v-if="ver">CODIGO DE COMPROBANTE:</label>
-                        </v-col>
-                        <v-col cols="3">
-                          <v-text-field
-                            v-show="!editable" v-if="ver"
-                            :outlined="editable"
-                            :readonly="!editable"
-                            dense
-                          ></v-text-field>
                         </v-col>
                       </v-row>
                     </template>
@@ -214,8 +239,16 @@ export default {
   },
   data: () => ({
     loan: {},
+    radios:[],
     garante_show: false,
-    tipo_de_amortizacion: [
+    loanTypeSelected:null,
+    loanTypeSelectedOne:null,
+    loanTypeSelectedTwo:null,
+    loanTypeSelectedThree:null,
+    tipo_tramite: [],
+    garantes:null,
+    tipo_de_amortizacion: [],
+    tipo_de_pago_amortizacion: [
       {name:"Regular",
       id:1
       },
@@ -225,10 +258,10 @@ export default {
     ],
     tipo_afiliado:[
       {name:"Titular",
-      id:1
+      id:"T"
       },
       {name:"Garante",
-      id:2
+      id:"G"
       }
     ],
       garante:[
@@ -263,8 +296,10 @@ export default {
     },
   },
   beforeMount(){
+    this.getTypeProcedure()
     this.getPaymentTypes()
     this.getVoucherTypes()
+    this.getTypeAmortization(29)
     if(this.$route.params.hash == 'view')
     {
       this.formatDate('paymentDate',this.data_payment.payment_date)
@@ -274,13 +309,79 @@ export default {
       this.formatDate('paymentDate',this.data_payment.payment_date)
     }
   },
+  mounted(){
+     this.getLoan(this.$route.query.loan_id)
+  },
    watch: {
     'data_payment.payment_date': function(date) {
       this.formatDate('paymentDate', date)
     }
   },
   methods: {
+      OnchangeAffiliate(){
+  
+     if(this.data_payment.affiliate_id=="G")
+     {this.garante_show= true
+     this.data_payment.affiliate_id_paid_by=1
+     }
+     else{
+  this.garante_show= false
+  this.data_payment.affiliate_id_paid_by=1
+       console.log("garante")}
+
+
+  
+    
+    },
+    OnchangeAmortization(){
+this.data_payment.procedure_modality_id=this.loanTypeSelectedOne
+},
     Onchange(){
+  
+      if(this.loanTypeSelected!=null)
+      {
+        //this.getTypeAmortization(this.loanTypeSelected)
+            console.log("verdadero"+this.loanTypeSelected)
+      }
+      else{
+    console.log("falso"+this.loanTypeSelected)
+      }
+     
+    
+    },
+    async getTypeProcedure() {
+      try {
+        this.loading = true
+        let resp = await axios.get(`module`,{
+          params: {
+            name: 'prestamos',
+            sortBy: ['name'],
+            sortDesc: ['false'],
+            per_page: 10,
+            page: 1
+          }
+        })
+        this.modulo= resp.data.data[0].id
+        let res = await axios.get(`module/${this.modulo}/amortization_loan`)
+        this.tipo_tramite = res.data
+      } catch (e) {
+        console.log(e)
+      } finally {
+        this.loading = false
+      }
+    },
+    async getTypeAmortization(id) {
+      try {
+        this.loading = true
+        let res = await axios.get(`procedure_type/${id}/modality`)
+        this.tipo_de_amortizacion = res.data
+      } catch (e) {
+        console.log(e)
+      } finally {
+        this.loading = false
+      }
+    },
+    /*async OnchangeThree(){
       console.log('este es el dato'+this.data_payment.pago)
         if(this.data_payment.pago==3)
         {
@@ -289,22 +390,27 @@ export default {
           this.efectivo= true
         }
     },
-    onchangetwo(){
-        if(this.tipo_afiliado.id==2)
+ 
+    async onchangeTwo(){
+       console.log(this.loanTypeSelectedOne)
+        if(this.loanTypeSelectedOne==2)
         {
+          console.log("entro por garante")
           this.garante_show= true
+
         }else{
-          this.efegarante_show= false
+          console.log("entro por titular")
+          this.garante_show= false
         }
     },
-    onchangeOne(){
+    async onchangeOne(){
         if(this.data_payment.amortization==2)
         {
           this.view= false
         }else{
           this.view= true
         }
-    },
+    },*/
     formatDate(key, date) {
       if (date) {
         this.dates[key].formatted = this.$moment(date).format('L')
@@ -330,6 +436,18 @@ export default {
         this.loading = true
         let res = await axios.get(`payment_type`)
         this.payment_types = res.data
+      } catch (e) {
+        console.log(e)
+      } finally {
+        this.loading = false
+      }
+    },
+    async getLoan(id) {
+      try {
+        this.loading = true
+        let res = await axios.get(`loan/${id}`)
+        this.garantes=res.data
+        console.log('entro al get loan')
       } catch (e) {
         console.log(e)
       } finally {
