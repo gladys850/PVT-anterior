@@ -397,8 +397,8 @@ export default {
       //console.log(this.modalidad.quantity_ballots)
       data_ballots = res.data.data
       //console.log(data_ballots)
-      if(res.data.valid && this.editar==true){
-        //this.editar=false
+      if(res.data.valid ){
+        this.editar=false
        
          //Carga los datos en los campos para ser visualizados en la interfaz
         for (let i = 0; i < data_ballots.length; i++) {//colocar 1
