@@ -140,7 +140,9 @@ export default {
           this.toastr.success('Domicilio Adicionado')
           this.bus.$emit('saveAddress', res.data)
           }
-      } catch (e) {
+          this.$forceUpdate()
+      } 
+      catch (e) {
         this.$refs.observer.setErrors(e)
       } finally {
         this.loading = false
