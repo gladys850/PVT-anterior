@@ -38,7 +38,7 @@ class LoanForm extends FormRequest
 
     protected function prepareForValidation():void
     {
-       if($this->parent_loan_id && $this->parent_loan_id == 0){
+       if($this->parent_loan_id == 0){
             $this->merge([
                 'parent_loan_id' => null,
             ]);
