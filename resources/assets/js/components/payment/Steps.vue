@@ -21,8 +21,7 @@
         <v-stepper-content :key="`${1}-content`" :step="1">
           <v-card color="grey lighten-1">
             <AddAmortization
-            :data_payment.sync="data_payment"
-            :loan_payment.sync="loan_payment"/>
+            :data_payment.sync="data_payment"/>
             <v-container class="py-0">
               <v-row>
                 <v-spacer></v-spacer> <v-spacer></v-spacer> <v-spacer></v-spacer><v-spacer></v-spacer>

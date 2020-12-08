@@ -12,9 +12,8 @@
                     <ValidationObserver ref="observer">
                     <v-form>
                       <center>
-                       <v-toolbar-title>AMORTIZACIONES   {{loan_payment}}</v-toolbar-title>
+                       <v-toolbar-title>AMORTIZACIONES</v-toolbar-title>
                       </center>
-                     
                       <v-progress-linear></v-progress-linear>
                       <template>
                       <v-row>
@@ -173,10 +172,10 @@
                           ></v-text-field>
                         </v-col>
                         <v-col cols="1" class="ma-0 pb-0" v-show="!isNew" >
-                           <label  >TIPO DE PAGO:</label>
+                           <label  >TIPO DE COBRO:</label>
                         </v-col>
                         <v-col cols="2" class="ma-0 pb-0" v-show="isNew">
-                          <label >TIPO DE PAGO:</label>
+                          <label >TIPO DE COBRO:</label>
                         </v-col>
                         <v-col cols="2" class="ma-0 pb-0">
                           <v-select
@@ -240,10 +239,6 @@ export default {
       type: Object,
       required: true
     },
-    loan_payment: {
-      type: Object,
-      required: true
-    }
   },
   data: () => ({
     loan: {},
@@ -310,7 +305,10 @@ export default {
   },
   beforeMount(){
     this.getTypeProcedure()
-    this.getPaymentTypes()
+    if(this.isNew)
+    {
+      this.getPaymentTypes()
+    }
     this.getVoucherTypes()
     this.getTypeAmortization(13)
     if(this.$route.params.hash == 'view')
@@ -323,7 +321,10 @@ export default {
     }
   },
   mounted(){
-     this.getLoan(this.$route.query.loan_id)
+    if(this.isNew)
+    {
+      this.getLoan(this.$route.query.loan_id)
+    }
   },
    watch: {
     'data_payment.payment_date': function(date) {
@@ -338,7 +339,11 @@ export default {
       }
      else{
         this.garante_show= false
-        this.data_payment.voucher=null
+        if(this.isNew)
+        {
+          this.data_payment.voucher=null
+        }
+       // this.data_payment.voucher=null
          for (let i = 0; i<  this.garantes.lenders.length; i++) {
             this.data_payment.affiliate_id_paid_by=this.garantes.lenders[0].id
          }
