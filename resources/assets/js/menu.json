@@ -37,13 +37,14 @@
       }
     ]
   }, 
-  {
+  /*{
     "href": "report",
     "title": "Reportes",
     "icon": "mdi-file-document-outline",
     "permission": "show-loan",
     "params": {}
-  },{
+  },*/
+  {
     "title": "Acceso",
     "icon": "mdi-key",
     "permission": "show-user",
