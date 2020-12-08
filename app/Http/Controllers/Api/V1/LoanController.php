@@ -297,12 +297,12 @@ class LoanController extends Controller
             $request['state_id'] = $state_id;
         //si es refinanciamiento o reprogramacion colocar la etiqueta correspondiente al padre del préstamo
         $user = User::whereUsername('admin')->first();
-        $refinanciamiento_tag = Tag::whereSlug('refinanciamiento')->first();
-        $reprogramacion_tag = Tag::whereSlug('reprogramacion')->first();
+        $refinancing_tag = Tag::whereSlug('refinanciamiento')->first();
+        $reprogramming_tag = Tag::whereSlug('reprogramacion')->first();
         $parent_loan  = Loan::find($loan->parent_loan_id);
             if($loan->parent_reason == 'REFINANCIAMIENTO'){
-                    $parent_loan ->tags()->detach($refinanciamiento_tag);
-                    $parent_loan ->tags()->attach([$refinanciamiento_tag->id => [
+                    $parent_loan ->tags()->detach($refinancing_tag);
+                    $parent_loan ->tags()->attach([$refinancing_tag->id => [
                         'user_id' => $user->id,
                         'date' => Carbon::now()
                     ]]);
@@ -315,8 +315,8 @@ class LoanController extends Controller
                     }
             } 
             if($loan->parent_reason == 'REPROGRAMACIÓN'){
-                    $parent_loan ->tags()->detach($reprogramacion_tag);
-                    $parent_loan ->tags()->attach([$reprogramacion_tag->id => [
+                    $parent_loan ->tags()->detach($reprogramming_tag);
+                    $parent_loan ->tags()->attach([$reprogramming_tag->id => [
                         'user_id' => $user->id,
                         'date' => Carbon::now()
                     ]]);
