@@ -21,7 +21,8 @@
         <v-stepper-content :key="`${1}-content`" :step="1">
           <v-card color="grey lighten-1">
             <AddAmortization
-            :data_payment.sync="data_payment"/>
+            :data_payment.sync="data_payment"
+            :loan_payment.sync="loan_payment"/>
             <v-container class="py-0">
               <v-row>
                 <v-spacer></v-spacer> <v-spacer></v-spacer> <v-spacer></v-spacer><v-spacer></v-spacer>
@@ -227,6 +228,8 @@ export default {
         this.loading = true
         let res = await axios.get(`loan_payment/${id}`)
         this.loan_payment = res.data
+console.log('este es el loan')
+console.log(this.loan_payment)
         this.data_payment.code=this.loan_payment.code
         this.data_payment.payment_date= this.loan_payment.estimated_date
         this.data_payment.pago_total=this.loan_payment.estimated_quota
