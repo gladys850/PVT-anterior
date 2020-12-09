@@ -214,6 +214,29 @@
                   <span>Imprimir plan de pagos</span>
                 </div>
               </v-tooltip>
+              <!--FORMULARIO PARA CALIFICACION-->
+            </v-card-title>
+            <v-card-title v-if="$store.getters.userRoles.includes('PRE-calificacion')">
+               <v-tooltip top>
+                <template v-slot:activator="{ on }">
+                  <v-btn
+                    fab
+                    x-small
+                    color="info"
+                    top
+                    right
+                    absolute
+                    v-on="on"
+                    style="margin-right: -9px;margin-top: 78px;"
+                    @click="calificacionprint($route.params.id)"
+                  >
+                    <v-icon>mdi-printer-check</v-icon>
+                  </v-btn>
+                </template>
+                <div>
+                  <span>Imprimir Formulario de calificacion</span>
+                </div>
+              </v-tooltip>
             </v-card-title>
             <v-card-text class="pl-10">
               <SpecificDataLoan :loan.sync="loan" :loan_properties="loan_properties" :procedure_types="procedure_types">
@@ -507,6 +530,21 @@ export default {
     async imprimir(item) {
       try {
         let res = await axios.get(`loan/${item}/print/plan`)
+        console.log("plan " + item)
+        printJS({
+          printable: res.data.content,
+          type: res.data.type,
+          file_name: res.data.file_name,
+          base64: true
+        });
+      } catch (e) {
+        this.toastr.error("Ocurrió un error en la impresión.");
+        console.log(e)
+      }
+    },
+     async calificacionprint(item) {
+      try {
+        let res = await axios.get(`loan/${item}/print/qualification`)
         console.log("plan " + item)
         printJS({
           printable: res.data.content,
