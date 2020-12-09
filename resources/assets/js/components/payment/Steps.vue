@@ -165,7 +165,7 @@ export default {
             validated:true
           })
           let res = await axios.post(`loan_payment/${this.$route.query.loan_payment}/voucher`,{
-            payment_type_id:this.data_payment.pago,
+            payment_type_id:1,
             voucher_type_id:2,
             voucher_number:this.data_payment.comprobante,
             description:this.data_payment.glosa
@@ -227,12 +227,14 @@ export default {
         this.loading = true
         let res = await axios.get(`loan_payment/${id}`)
         this.loan_payment = res.data
+console.log('este es el loan')
+console.log(this.loan_payment)
         this.data_payment.code=this.loan_payment.code
         this.data_payment.payment_date= this.loan_payment.estimated_date
         this.data_payment.pago_total=this.loan_payment.estimated_quota
         this.data_payment.affiliate_id =this.loan_payment.paid_by
         this.data_payment.voucher=this.loan_payment.voucher
-        this.data_payment.pago  =this.loan_payment.payment_type_id
+        this.data_payment.pago  =1
 
       } catch (e) {
         console.log(e)

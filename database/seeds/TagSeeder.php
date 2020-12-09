@@ -20,6 +20,12 @@ class TagSeeder extends Seeder
             ], [
                 'name' => 'Pagando Cuotas',
                 'shortened' => 'Amortizando',
+            ],[
+                'name' => 'Préstamo refinanciado',
+                'shortened' => 'Refinanciamiento',
+            ],[
+                'name' => 'Préstamo reprogramado',
+                'shortened' => 'Reprogramación',
             ]
         ];
 

@@ -98,24 +98,27 @@
                             persistent-hint
                           ></v-select>
                         </v-col>
-                        <v-col cols="4" class="ma-0 pb-0" v-show="garante_show">
-                            <!--ul style="list-style: none" class="pa-0" >
-                              <li v-for="guarantor in garantes.lenders" :key="guarantor.id">
-                                <br>
-                                <p> {{$options.filters.fullName(guarantor, true)}} </p>
-                                   
+                        <v-col cols="3" class="ma-0 pb-0" v-show="garante_show">
+                            <ul style="list-style: none" class="pa-0" >
+                               <li v-for="guarantor in garantes.guarantors" :key="guarantor.id" class="mb-4">
+                                 {{$options.filters.fullName(guarantor, true)}}
+                                 <br>
                                </li>
-                               <li>
-<v-radio-group  v-model="radios[i]" class="py-0">
-                            <v-radio
+                            </ul>
+                        </v-col>
+                         <v-col cols="1" class="my-0 pb-0" v-show="garante_show">
+                            <ul style="list-style: none" class="pa-0 my-0" >
+                               <li v-for="guarantor in garantes.guarantors" :key="guarantor.id" class="my-0">
+                                  <v-radio-group  v-model="radios" class="py-0 my-0">
+                              <v-radio
                               color="info"
-                              :value="doc.id"
-                              class="py-0"
+                               :click="prueba()"
+                              :value="guarantor.id"
+                              class="py-0  my-0"
                             ></v-radio>
                           </v-radio-group>
-                               </-li-->
-                               
-                            <!--/ul-->
+                               </li>
+                            </ul>
                         </v-col>
                         <v-col cols="2" class="ma-0 pb-0" v-show="!editable">
                           <label>Codigo de Comprobante:</label>
@@ -169,12 +172,12 @@
                           ></v-text-field>
                         </v-col>
                         <v-col cols="1" class="ma-0 pb-0" v-show="!isNew" >
-                           <label  >TIPO DE PAGO:</label>
+                           <label  >TIPO DE COBRO:</label>
                         </v-col>
                         <v-col cols="2" class="ma-0 pb-0" v-show="isNew">
-                          <label >TIPO DE PAGO:</label>
+                          <label >TIPO DE COBRO:</label>
                         </v-col>
-                        <v-col cols="3" class="ma-0 pb-0">
+                        <v-col cols="2" class="ma-0 pb-0">
                           <v-select
                              class="caption"
                             style="font-size: 10px;"
@@ -235,7 +238,7 @@ export default {
     data_payment: {
       type: Object,
       required: true
-    }
+    },
   },
   data: () => ({
     loan: {},
@@ -246,7 +249,12 @@ export default {
     loanTypeSelectedTwo:null,
     loanTypeSelectedThree:null,
     tipo_tramite: [],
-    garantes:null,
+    garantes:{
+      lenders:[]
+    },
+    radio:null,
+    codigo:null,
+    separa:[],
     tipo_de_amortizacion: [],
     tipo_de_pago_amortizacion: [
       {name:"Regular",
@@ -297,9 +305,12 @@ export default {
   },
   beforeMount(){
     this.getTypeProcedure()
-    this.getPaymentTypes()
+    if(this.isNew)
+    {
+      this.getPaymentTypes()
+    }
     this.getVoucherTypes()
-    this.getTypeAmortization(29)
+    this.getTypeAmortization(13)
     if(this.$route.params.hash == 'view')
     {
       this.formatDate('paymentDate',this.data_payment.payment_date)
@@ -310,7 +321,10 @@ export default {
     }
   },
   mounted(){
-     this.getLoan(this.$route.query.loan_id)
+    if(this.isNew)
+    {
+      this.getLoan(this.$route.query.loan_id)
+    }
   },
    watch: {
     'data_payment.payment_date': function(date) {
@@ -319,35 +333,96 @@ export default {
   },
   methods: {
       OnchangeAffiliate(){
-  
-     if(this.data_payment.affiliate_id=="G")
-     {this.garante_show= true
-     this.data_payment.affiliate_id_paid_by=1
-     }
+      if(this.data_payment.affiliate_id=="G")
+      {
+        this.garante_show= true
+      }
      else{
-  this.garante_show= false
-  this.data_payment.affiliate_id_paid_by=1
-       console.log("garante")}
+        this.garante_show= false
+        if(this.isNew)
+        {
+          this.data_payment.voucher=null
+        }
+       // this.data_payment.voucher=null
+         for (let i = 0; i<  this.garantes.lenders.length; i++) {
+            this.data_payment.affiliate_id_paid_by=this.garantes.lenders[0].id
+         }
+        console.log("garante"+ this.data_payment.affiliate_id_paid_by)}
+    },
+    prueba()
+    {
+      if(this.data_payment.affiliate_id=='G')
+      {
+        for (let i = 0; i<  this.garantes.guarantors.length; i++) {
+        if(this.garantes.guarantors[i].id==this.radios)
+        {
+          this.data_payment.affiliate_id_paid_by=this.radios
+          if(this.garantes.guarantors[i].first_name!=null && this.garantes.guarantors[i].second_name  && this.garantes.guarantors[i].last_name && this.garantes.guarantors[i].mothers_last_name)
+          {
+            this.separa[0]=this.garantes.guarantors[i].first_name
+            this.separa[1]=this.garantes.guarantors[i].second_name
+            this.separa[2]=this.garantes.guarantors[i].last_name
+            this.separa[3]=this.garantes.guarantors[i].mothers_last_name
+            this.data_payment.voucher='GAR-'+this.separa[0].charAt(0)+ this.separa[1].charAt(0)+this.separa[2].charAt(0)+this.separa[3].charAt(0)
+          }
+          else{
+            if(this.garantes.guarantors[i].second_name!=null && this.garantes.guarantors[i].last_name!=null && this.garantes.guarantors[i].mothers_last_name!=null){
+              this.separa[0]=this.garantes.guarantors[i].second_name
+              this.separa[1]=this.garantes.guarantors[i].last_name
+              this.separa[2]=this.garantes.guarantors[i].mothers_last_name
+              this.data_payment.voucher='GAR-'+this.separa[0].charAt(0)+ this.separa[1].charAt(0)+this.separa[2].charAt(0)
+          }else{
+              if(this.garantes.guarantors[i].first_name!=null && this.garantes.guarantors[i].last_name!=null && this.garantes.guarantors[i].mothers_last_name!=null){
+                this.separa[0]=this.garantes.guarantors[i].first_name
+                this.separa[1]=this.garantes.guarantors[i].last_name
+                this.separa[2]=this.garantes.guarantors[i].mothers_last_name
+                this.data_payment.voucher='GAR-'+this.separa[0].charAt(0)+ this.separa[1].charAt(0)+this.separa[2].charAt(0)
+            }else{
+                if(this.garantes.guarantors[i].first_name!=null && this.garantes.guarantors[i].last_name!=null){
+                  this.separa[0]=this.garantes.guarantors[i].first_name
+                  this.separa[1]=this.garantes.guarantors[i].last_name
+                  this.data_payment.voucher='GAR-'+this.separa[0].charAt(0)+ this.separa[1].charAt(0)
+              }else{
+                  if(this.garantes.guarantors[i].first_name!=null && this.garantes.guarantors[i].mothers_last_name!=null){
+                    this.separa[0]=this.garantes.guarantors[i].first_name
+                    this.separa[1]=this.garantes.guarantors[i].mothers_last_name
+                    this.data_payment.voucher='GAR-'+this.separa[0].charAt(0)+ this.separa[1].charAt(0)
+              }else{
+                if(this.garantes.guarantors[i].second_name!=null && this.garantes.guarantors[i].last_name!=null){
+                      this.separa[0]=this.garantes.guarantors[i].second_name
+                      this.separa[1]=this.garantes.guarantors[i].last_name
+                      this.data_payment.voucher='GAR-'+this.separa[0].charAt(0)+ this.separa[1].charAt(0)
+              }else{
+                  if(this.garantes.guarantors[i].second_name!=null && this.garantes.guarantors[i].mothers_last_name!=null){
+                      this.separa[0]=this.garantes.guarantors[i].second_name
+                      this.separa[1]=this.garantes.guarantors[i].mothers_last_name
+                      this.data_payment.voucher='GAR-'+this.separa[0].charAt(0)+ this.separa[1].charAt(0)
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+        }
+      }
 
+      }else{
 
-  
-    
+      }
     },
     OnchangeAmortization(){
-this.data_payment.procedure_modality_id=this.loanTypeSelectedOne
-},
+      this.data_payment.procedure_modality_id=this.loanTypeSelectedOne
+    },
     Onchange(){
-  
       if(this.loanTypeSelected!=null)
       {
         //this.getTypeAmortization(this.loanTypeSelected)
             console.log("verdadero"+this.loanTypeSelected)
       }
       else{
-    console.log("falso"+this.loanTypeSelected)
+        console.log("falso"+this.loanTypeSelected)
       }
-     
-    
     },
     async getTypeProcedure() {
       try {

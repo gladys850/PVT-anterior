@@ -137,7 +137,7 @@
                     right
                     top
                   >
-                    {{ procedureType.second_name }} {{index}}
+                    {{ procedureType.second_name }}
                   </v-badge>
                 </v-tab>
               </v-tabs>

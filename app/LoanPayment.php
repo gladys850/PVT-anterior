@@ -60,7 +60,7 @@ class LoanPayment extends Model
         return $this->belongsTo(PaymentType::class);
     }
 
-    public function voucher()
+    public function voucher_treasury()
     {
         return $this->morphOne(Voucher::class, 'payable')->latest('updated_at');
     }
