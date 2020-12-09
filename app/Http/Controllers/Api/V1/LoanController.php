@@ -758,6 +758,39 @@ class LoanController extends Controller
         return $view;
     }
 
+      /**
+    * Metodo para imprimir formulario de Calificacion
+    * Devuelve el pdf del Formulario de solicitud acorde a un ID de préstamo
+    * Devuelve la lista de notas relacionadas con el préstamo
+    * @urlParam loan required ID del préstamo
+    */
+    public function print_qualification(Loan $loan, $standalone = true){
+        $procedure_modality = $loan->modality;
+        $lenders = [];
+        foreach ($loan->lenders as $lender) {
+            $lenders[] = self::verify_spouse_disbursable($lender);
+        }  
+       $data = [
+           'header' => [
+               'direction' => 'DIRECCIÓN DE ESTRATEGIAS SOCIALES E INVERSIONES',
+               'unity' => 'UNIDAD DE INVERSIÓN EN PRÉSTAMOS',
+               'table' => [
+                   ['Tipo', $loan->modality->procedure_type->second_name],
+                   ['Modalidad', $loan->modality->shortened],
+                   ['Usuario', Auth::user()->username]
+               ]
+           ],
+           'title' => $procedure_modality->name,
+           'loan' => $loan,
+           'lenders' => collect($lenders),        
+       ];
+       $file_name = implode([$loan->code]). '.pdf';
+       $view = view()->make('loan.forms.qualification_form')->with($data)->render();
+       if ($standalone) return Util::pdf_to_base64([$view], $file_name, 'legal', $request->copies ?? 1);
+       return $view;
+      
+   }
+
     /**
     * Lista de Notas aclaratorias
     * Devuelve la lista de notas relacionadas con el préstamo
