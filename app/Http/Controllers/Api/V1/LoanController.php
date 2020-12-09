@@ -780,7 +780,6 @@ class LoanController extends Controller
                    ['Usuario', Auth::user()->username]
                ]
            ],
-           'title' => $procedure_modality->name,
            'loan' => $loan,
            'lenders' => collect($lenders),        
        ];
