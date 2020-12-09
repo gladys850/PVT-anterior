@@ -9,7 +9,6 @@ Route::group([
     Route::apiResource('auth', 'Api\V1\AuthController')->only('store');
     Route::get('excel', 'Api\V1\LoanPaymentController@download');
 
-
     // INDEFINIDO (TODO)
     Route::get('document/{affiliate_id}', 'Api\V1\ScannedDocumentController@create_document');
 
@@ -131,7 +130,8 @@ Route::group([
             Route::delete('loan/{loan}/observation','Api\V1\LoanController@unset_observation');
             Route::get('loan/{loan}/print/form', 'Api\V1\LoanController@print_form');
             Route::get('loan/{loan}/print/contract', 'Api\V1\LoanController@print_contract');
-            Route::get('loan/{loan}/print/kardex','Api\V1\LoanController@print_kardex');
+            Route::get('loan/{loan}/print/kardex','Api\V1\LoanController@print_kardex');      
+            Route::get('loan/{loan}/print/qualification', 'Api\V1\LoanController@print_qualification');
             //Route::get('loan/{loan}/loan_affiliates', 'Api\V1\LoanController@get_loan_affiliates');
             Route::apiResource('loan_property', 'Api\V1\LoanPropertyController')->only('index', 'store', 'show', 'destroy', 'update');
             Route::post('loan/{loan}/validate_re_loan', 'Api\V1\LoanController@validate_re_loan');
