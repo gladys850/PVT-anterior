@@ -745,7 +745,7 @@ class LoanController extends Controller
                 'table' => [
                     ['Tipo', $loan->modality->procedure_type->second_name],
                     ['Modalidad', $loan->modality->shortened],
-                    ['Usuario', Auth::user()->username]
+                    ['Usuario', Auth::user()->username],
                 ]
             ],
             'title' => 'PLAN DE PAGOS',
@@ -757,6 +757,41 @@ class LoanController extends Controller
         if ($standalone) return Util::pdf_to_base64([$view], $file_name, 'legal', $request->copies ?? 1);
         return $view;
     }
+
+    /**
+    * Impresión formulario de Calificación
+    * Devuelve el pdf del Formulario de Calificación acorde a un ID de préstamo
+    * Devuelve datos relacionadas con el préstamo
+    * @urlParam loan required ID del préstamo Example: 1
+    * @queryParam copies Número de copias del documento. Example: 2
+    * @authenticated
+    * @responseFile responses/loan/print_qualification.200.json
+    */
+  
+    public function print_qualification(Request $request, Loan $loan, $standalone = true){
+        $procedure_modality = $loan->modality;
+        $lenders = [];
+        foreach ($loan->lenders as $lender) {
+            $lenders[] = self::verify_spouse_disbursable($lender);
+        }  
+       $data = [
+           'header' => [
+               'direction' => 'DIRECCIÓN DE ESTRATEGIAS SOCIALES E INVERSIONES',
+               'unity' => 'UNIDAD DE INVERSIÓN EN PRÉSTAMOS',
+               'table' => [
+                   ['Tipo', $loan->modality->procedure_type->second_name],
+                   ['Modalidad', $loan->modality->shortened],
+                   ['Usuario', Auth::user()->username]
+               ]
+           ],
+           'loan' => $loan,
+           'lenders' => collect($lenders),        
+       ];
+       $file_name =implode('_', ['calificación', $procedure_modality->shortened, $loan->code]) . '.pdf'; 
+       $view = view()->make('loan.forms.qualification_form')->with($data)->render();
+       if ($standalone) return Util::pdf_to_base64([$view], $file_name, 'legal', $request->copies ?? 1);  
+       return $view; 
+   }
 
     /**
     * Lista de Notas aclaratorias
