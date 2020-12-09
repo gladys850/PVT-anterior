@@ -764,7 +764,7 @@ class LoanController extends Controller
     * Devuelve la lista de notas relacionadas con el préstamo
     * @urlParam loan required ID del préstamo
     */
-    public function print_qualification(Loan $loan, $standalone = true){
+    public function print_qualification(Loan $loan){
         $procedure_modality = $loan->modality;
         $lenders = [];
         foreach ($loan->lenders as $lender) {
@@ -777,18 +777,16 @@ class LoanController extends Controller
                'table' => [
                    ['Tipo', $loan->modality->procedure_type->second_name],
                    ['Modalidad', $loan->modality->shortened],
-                   ['Usuario', Auth::user()->username]
+                 //  ['Usuario', Auth::user()->username]
                ]
            ],
            'title' => $procedure_modality->name,
            'loan' => $loan,
            'lenders' => collect($lenders),        
        ];
-       $file_name = implode([$loan->code]). '.pdf';
+       $file_name =implode('_', ['calificación', $procedure_modality->shortened, $loan->code]) . '.pdf'; 
        $view = view()->make('loan.forms.qualification_form')->with($data)->render();
-       if ($standalone) return Util::pdf_to_base64([$view], $file_name, 'legal', $request->copies ?? 1);
-       return $view;
-      
+       return Util::pdf_to_base64([$view], $file_name, 'legal', $request->copies ?? 1);   
    }
 
     /**
