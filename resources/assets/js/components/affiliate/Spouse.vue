@@ -96,7 +96,7 @@
                         :outlined="state_id == 4"
                       ></v-select>
                     </v-col>
-                      <v-col cols="12" md="4" v-if="spouse.is_duedate_undefined==false">
+                      <v-col cols="12" md="5" v-if="spouse.is_duedate_undefined==false">
                       <v-menu
                         v-model="dates.dueDate.show"
                         :close-on-content-click="false"
@@ -123,7 +123,7 @@
                         <v-date-picker v-model="spouse.due_date" no-title @input="dates.dueDate.show = false"></v-date-picker>
                       </v-menu>
                     </v-col>
-                    <v-col cols="12" md="4">
+                    <v-col cols="12" md="3">
                       <v-checkbox
                         v-model="spouse.is_duedate_undefined"
                         :readonly="!editable || !permission.secondary"
@@ -145,36 +145,7 @@
                         :outlined="state_id == 4"
                       ></v-select>
                     </v-col>
-                  <v-col cols="12" md="4">
-                    <v-menu
-                        v-model="dates.birthDate.show"
-                        :close-on-content-click="false"
-                        transition="scale-transition"
-                        offset-y
-                        max-width="290px"
-                        min-width="290px"
-                        :disabled="(state_id != 4)"
-                    >
-                    <template v-slot:activator="{ on, attrs }">
-                    <v-text-field
-                    dense
-                      v-model="dateFormatted"
-                      label="Fecha Nacimiento"
-                      hint="Día/Mes/Año"
-                      persistent-hint
-                      append-icon="mdi-calendar"
-                      v-bind="attrs"
-                      @blur="date = parseDate(dateFormatted)"
-                      :clearable="editable"
-                      v-on="on"
-                      :outlined="(state_id == 4)"
-                    ></v-text-field>
-                    </template>
-                    <v-date-picker v-model="date" no-title @input="menu1 = false"></v-date-picker>
-                  </v-menu>
-                    <center> <strong>{{ date }}</strong></center>
-                  </v-col>
-                    <!--<v-col cols="12" md="4" >
+                    <v-col cols="12" md="4" >
                       <v-menu
                         v-model="dates.birthDate.show"
                         :close-on-content-click="false"
@@ -199,7 +170,7 @@
                         </template>
                         <v-date-picker v-model="spouse.birth_date" no-title @input="dates.birthDate.show = false"></v-date-picker>
                       </v-menu>
-                    </v-col>-->
+                    </v-col>
                     <v-col cols="12" md="4" >
                       <v-select
                         dense
@@ -268,12 +239,8 @@
                 </v-row>
               </v-container>
         </v-col>
-        <v-container>
-      <v-row>
-      </v-row>
-    </v-container>
         <!-- ESTA INFORMACION SE UTILIZARA EN OTRO MODULO-->
-        <v-col cols="12" md="4" class="v-card-profile" v-if="!visible">
+        <!--<v-col cols="12" md="4" class="v-card-profile" >
         <v-col cols="12">
             <v-toolbar-title>INFORMACION DE SERECI</v-toolbar-title>
           </v-col>
@@ -343,7 +310,7 @@
               <v-date-picker v-model="spouse.marriage_date" no-title @input="dates.marriageDate.show = false"></v-date-picker>
             </v-menu>
           </v-col>
-        </v-col>-
+        </v-col>-->
       </v-row>-
     </v-form>
     </ValidationObserver>
@@ -372,8 +339,6 @@ export default {
     }
   },
   data: () => ({
-    date: new Date().toISOString().substr(0, 10),
-    menu1: false,  
     loading: true,
     cities: [],
     civil: [
@@ -396,7 +361,7 @@ export default {
         picker: false
       },
       birthDate: {
-        dateFormatted: null,
+        formatted: null,
         picker: false
       },
       dateDeath: {
@@ -413,29 +378,26 @@ export default {
   beforeMount() {
     this.getCities()
   },
- /* mounted(){
+  mounted(){
     if(this.spouse.id){
       this.formatDate('dueDate', this.spouse.due_date),
       this.formatDate('birthDate', this.spouse.birth_date),
       this.formatDate('dateDeath', this.spouse.date_death),
       this.formatDate('marriageDate', this.spouse.marriage_date)
     }
-  },*/
+  },
   watch: {
     'spouse.due_date': function(date) {
      this.formatDate('dueDate', date)
     },
-    'spouse.birth_date': function(dates) {
-     this.formatDate('birthDate', dates)
+    'spouse.birth_date': function(date) {
+     this.formatDate('birthDate', date)
     },
     'spouse.date_death': function(date) {
       this.formatDate('dateDeath', date)
     },
     'spouse.marriage_date': function(date) {
       this.formatDate('marriageDate', date)
-    },
-    date (val) {
-      this.dateFormatted = this.formatDate(this.date)
     },
     state_id(){  
         if(this.state_id == 4){
@@ -446,26 +408,13 @@ export default {
     }
   },
   methods: {
-    /*formatDate(key, date){
+    formatDate(key, date){
       if(date){
         this.dates[key].formatted = this.$moment(date).format('L')
       }else{
         this.dates[key].formatted = null
       }
-    },*/
-    formatDate (dates) {
-      if (!dates) return null
-
-      const [year, month, day] = dates.split('-')
-      return `${month}/${day}/${year}`
     },
-    parseDate (dates) {
-      if (!dates) return null
-
-      const [month, day, year] = dates.split('/')
-      return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`
-    },
-
     async getCities() {
     try {
       this.loading = true
