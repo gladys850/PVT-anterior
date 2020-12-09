@@ -758,13 +758,17 @@ class LoanController extends Controller
         return $view;
     }
 
-      /**
-    * Metodo para imprimir formulario de Calificacion
-    * Devuelve el pdf del Formulario de solicitud acorde a un ID de préstamo
-    * Devuelve la lista de notas relacionadas con el préstamo
-    * @urlParam loan required ID del préstamo
+    /**
+    * Impresión formulario de Calificación
+    * Devuelve el pdf del Formulario de Calificación acorde a un ID de préstamo
+    * Devuelve datos relacionadas con el préstamo
+    * @urlParam loan required ID del préstamo Example: 1
+    * @queryParam copies Número de copias del documento. Example: 2
+    * @authenticated
+    * @responseFile responses/loan/print_qualification.200.json
     */
-    public function print_qualification(Loan $loan){
+  
+    public function print_qualification(Request $request, Loan $loan, $standalone = true){
         $procedure_modality = $loan->modality;
         $lenders = [];
         foreach ($loan->lenders as $lender) {
@@ -785,7 +789,8 @@ class LoanController extends Controller
        ];
        $file_name =implode('_', ['calificación', $procedure_modality->shortened, $loan->code]) . '.pdf'; 
        $view = view()->make('loan.forms.qualification_form')->with($data)->render();
-       return Util::pdf_to_base64([$view], $file_name, 'legal', $request->copies ?? 1);   
+       if ($standalone) return Util::pdf_to_base64([$view], $file_name, 'legal', $request->copies ?? 1);  
+       return $view; 
    }
 
     /**
