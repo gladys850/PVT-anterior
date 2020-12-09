@@ -745,7 +745,7 @@ class LoanController extends Controller
                 'table' => [
                     ['Tipo', $loan->modality->procedure_type->second_name],
                     ['Modalidad', $loan->modality->shortened],
-                    ['Usuario', Auth::user()->username]
+                    ['Usuario', Auth::user()->username],
                 ]
             ],
             'title' => 'PLAN DE PAGOS',
@@ -777,7 +777,7 @@ class LoanController extends Controller
                'table' => [
                    ['Tipo', $loan->modality->procedure_type->second_name],
                    ['Modalidad', $loan->modality->shortened],
-                 //  ['Usuario', Auth::user()->username]
+                   ['Usuario', Auth::user()->username]
                ]
            ],
            'title' => $procedure_modality->name,
