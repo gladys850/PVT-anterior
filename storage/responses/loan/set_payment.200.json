@@ -1,37 +1,37 @@
 {
-    "code": "PAY000002-2020",
-    "estimated_date": "2020-12-30",
-    "quota_number": 4,
+    "code": "PAY000001-2020",
+    "estimated_date": "2020-12-31",
+    "quota_number": 1,
     "estimated_days": {
         "penal": 0,
         "accumulated": 0,
-        "current": 0
+        "current": 22
     },
     "paid_days": {
         "penal": 0,
         "accumulated": 0,
-        "current": 0
+        "current": 22
     },
-    "balance": 24046.58,
-    "capital_payment": 600,
-    "interest_payment": 0,
+    "balance": 25000,
+    "capital_payment": 298.63,
+    "interest_payment": 301.37,
     "accumulated_payment": 0,
     "penal_payment": 0,
     "estimated_quota": 600,
-    "next_balance": 23446.58,
+    "next_balance": 24701.37,
     "penal_remaining": 0,
     "accumulated_remaining": 0,
     "description": "Penalizacion regularizada",
     "state_id": 5,
     "role_id": 90,
     "procedure_modality_id": 53,
-    "voucher": "GAR-AVG",
-    "payment_type_id": 2,
+    "voucher": "CONT-123",
+    "amortization_type_id": 1,
     "affiliate_id": 57950,
     "paid_by": "T",
     "attachment": {
-        "content": "JVBER3Qs3...",
+        "content": "JVBER...",
         "type": "pdf",
-        "file_name": "pagos_ANT-SA_PTMO000001-2020.pdf"
+        "file_name": "pagos_PCP-SA_PTMO000001-2020.pdf"
     }
 }

@@ -36,7 +36,7 @@ class LoanPayment extends Model
         'voucher',
         'paid_by',
         'affiliate_id',
-        'payment_type_id'
+        'amortization_type_id'
 
     ];
 
@@ -44,7 +44,8 @@ class LoanPayment extends Model
     {
         parent::__construct($attributes);
         if (!$this->code) {
-            $latest_payments = DB::table('loan_payments')->orderBy('created_at', 'desc')->limit(1)->first();
+            //$latest_payments = DB::table('loan_payments')->orderBy('created_at', 'desc')->limit(1)->first();
+            $latest_payments = DB::table('loan_payments')->orderBy('id', 'desc')->latest()->first();
             if (!$latest_payments) $latest_payments = (object)['id' => 0];
             $this->code = implode(['PAY', str_pad($latest_payments->id + 1, 6, '0', STR_PAD_LEFT), '-', Carbon::now()->year]);
         }
@@ -58,6 +59,11 @@ class LoanPayment extends Model
     public function payment_type()
     {
         return $this->belongsTo(PaymentType::class);
+    }
+
+    public function amortization_type()
+    {
+        return $this->belongsTo(AmortizationType::class);
     }
 
     public function voucher_treasury()

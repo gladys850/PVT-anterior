@@ -125,6 +125,11 @@ class LoanPaymentController extends Controller
     * @urlParam loan_payment required ID del pago realizado. Example: 1
 	* @bodyParam description string Texto de descripción. Example: Penalizacion regularizada
     * @bodyParam validated boolean Estado validación del tramite de cobro. Example: true
+    * @bodyParam voucher string Comprobante de pago GAR-ABV o D-10/20 o CONT-123. Example: CONT-123
+    * @bodyParam amortization_type_id integer ID del tipo de pago. Example: 1
+    * @bodyParam affiliate_id integer ID del afiliado. Example: 57950
+    * @bodyParam paid_by enum Pago realizado por Titular(T) o Garante(G). Example: T
+    * @bodyParam procedure_modality_id integer ID de la modalidad de amortización. Example: 53
     * @authenticated
     * @responseFile responses/loan_payment/update.200.json
     */
@@ -134,13 +139,13 @@ class LoanPaymentController extends Controller
             'description' => 'nullable|string|min:2',
             'validated' => 'boolean',
             'procedure_modality_id'=> 'exists:procedure_modalities,id',
-            'payment_type_id'=> 'exists:payment_types,id',
+            'amortization_type_id'=> 'exists:amortization_types,id',
             'affiliate_id'=> 'exists:affiliates,id',
             'voucher'=> 'nullable|string|min:3',
             'paid_by'=> 'string|in:T,G',
         ]);
         if (Auth::user()->can('update-payment-loan')) {
-            $update = $request->only('description', 'validated','procedure_modality_id','payment_type_id','affiliate_id','voucher','paid_by');
+            $update = $request->only('description', 'validated','procedure_modality_id','amortization_type_id','affiliate_id','voucher','paid_by');
         }
         $loanPayment->fill($update);
         $loanPayment->save();
