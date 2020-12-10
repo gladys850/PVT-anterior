@@ -18,7 +18,7 @@ class PaymentTypeController extends Controller
     */
     public function index()
     {
-        return PaymentType::orderBy('id')->where('name', 'NOT LIKE', '%Descuento automático%')->get();
+        return PaymentType::orderBy('name')->get();
     }
 
     /**

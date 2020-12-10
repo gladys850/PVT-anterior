@@ -18,8 +18,8 @@ class AddColumsToLoanPayments extends Migration
             $table->enum('paid_by', ['T', 'G']);// Pago realizado por Titular o Garante
             $table->unsignedBigInteger('affiliate_id')->unsigned(); // Id del afiliado
             $table->foreign('affiliate_id')->references('id')->on('affiliates');
-            $table->unsignedBigInteger('payment_type_id')->unsigned(); // Id del tipo de pago 
-            $table->foreign('payment_type_id')->references('id')->on('payment_types');
+            $table->unsignedBigInteger('amortization_type_id')->unsigned(); // Id del tipo de pago 
+            $table->foreign('amortization_type_id')->references('id')->on('amortization_types');
         });
     }
 
