@@ -806,7 +806,7 @@ class LoanController extends Controller
     * @bodyParam liquidate boolean Booleano para hacer el cálculo con el monto máximo que liquidará el préstamo. Example: false
     * @bodyParam description string Texto de descripción. Example: Penalizacion regularizada
     * @bodyParam voucher string Comprobante de pago GAR-ABV o D-10/20 o CONT-123. Example: CONT-123
-    * @bodyParam payment_type_id integer required ID del tipo de pago. Example: 1
+    * @bodyParam amortization_type_id integer required ID del tipo de pago. Example: 1
     * @bodyParam affiliate_id integer required ID del afiliado. Example: 57950
     * @bodyParam paid_by enum required Pago realizado por Titular(T) o Garante(G). Example: T
     * @bodyParam procedure_modality_id integer required ID de la modalidad de amortización. Example: 53
@@ -823,7 +823,7 @@ class LoanController extends Controller
             //$payment->procedure_modality_id = ProcedureModality::whereName('Amortización')->first()->id;
             $payment->procedure_modality_id = $request->input('procedure_modality_id');
             $payment->voucher = $request->input('voucher', null);
-            $payment->payment_type_id = $request->input('payment_type_id');
+            $payment->amortization_type_id = $request->input('amortization_type_id');
             $payment->affiliate_id = $request->input('affiliate_id');
             $payment->paid_by = $request->input('paid_by');
             $loan_payment = $loan->payments()->create($payment->toArray());
