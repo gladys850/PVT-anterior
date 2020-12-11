@@ -23,6 +23,11 @@ use App\Helpers\Util;
 use App\Http\Controllers\Api\V1\LoanController;
 use App\Exports\ArchivoPrimarioExport;
 use Maatwebsite\Excel\Facades\Excel;
+use App\Loan;
+use App\Role;
+use App\ProcedureModality;
+use App\PaymentType;
+use App\AmortizationType;
 
 /** @group Cobranzas
 * Datos de los trámites de Cobranzas
@@ -357,4 +362,39 @@ class LoanPaymentController extends Controller
         return Excel::download($export, $File.'.xlsx');
     }
 
+    /**
+    * Registrar trámites de pagos en lote activos y pasivos
+	* @bodyParam estimated_date date Fecha para el cálculo del interés. Example: 2020-12-31
+    * @bodyParam description string Texto de descripción. Example: Por descuento automatico
+    * @bodyParam voucher string Comprobante de pago A-12/20 o CONT-123. Example: A-12/20
+    * @authenticated
+    */
+    public function command_senasir_save_payment(Request $request)
+    {
+        $estimated_date = $request->estimated_date? Carbon::parse($request->estimated_date) : Carbon::now()->endOfMonth();
+        $loan = Loan::get();
+        $disbursement_loan = $loan->where('disbursement_date','!=',null)->where('disbursable_type','LIKE','affiliates');
+        $payment_type = AmortizationType::get();
+        $payment_type_desc = $payment_type->where('name', 'LIKE', 'Descuento automático')->first();
+        $description = $request->description? $request->description : 'Por descuento automatico';
+        $procedure_modality = ProcedureModality::whereName('Amortización Automática')->first();
+        $voucher = $request->voucher? $request->voucher : "AUTOMATICO";
+        $paid_by = "T";
+        foreach($disbursement_loan as $loan){
+            if($loan->balance != 0){
+                if($loan->disbursable->affiliate_state->name == 'Servicio' || $loan->disbursable->affiliate_state->name == 'Disponibilidad' || $loan->disbursable->affiliate_state->name == 'Jubilado' || $loan->disbursable->affiliate_state->name == 'Jubilado Invalidez'){
+                    $disbursement_date = $loan->disbursement_date;
+                    if($disbursement_date->lessThan($estimated_date)){
+                        if($disbursement_date->year == $estimated_date->year && $disbursement_date->month == $estimated_date->month){
+                            if($disbursement_date->day<LoanGlobalParameter::latest()->first()->offset_interest_day){
+                                LoanPayment::registry_payment($loan, $estimated_date, $description, $procedure_modality, $voucher, $paid_by, $payment_type_desc);
+                            }
+                        }else{
+                            LoanPayment::registry_payment($loan, $estimated_date, $description, $procedure_modality, $voucher, $paid_by, $payment_type_desc);
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
