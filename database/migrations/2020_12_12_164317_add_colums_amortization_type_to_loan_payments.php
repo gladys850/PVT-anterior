@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddColumsToLoanPayments extends Migration
+class AddColumsAmortizationTypeToLoanPayments extends Migration
 {
     /**
      * Run the migrations.
@@ -14,11 +14,7 @@ class AddColumsToLoanPayments extends Migration
     public function up()
     {
         Schema::table('loan_payments', function (Blueprint $table) {
-            $table->text('voucher')->nullable(); // Comprobante del pago 
-            $table->enum('paid_by', ['T', 'G']);// Pago realizado por Titular o Garante
-            $table->unsignedBigInteger('affiliate_id')->unsigned(); // Id del afiliado
-            $table->foreign('affiliate_id')->references('id')->on('affiliates');
-            $table->unsignedBigInteger('amortization_type_id')->unsigned(); // Id del tipo de pago 
+            $table->unsignedBigInteger('amortization_type_id')->unsigned(); // Id del tipo de cobro
             $table->foreign('amortization_type_id')->references('id')->on('amortization_types');
         });
     }
