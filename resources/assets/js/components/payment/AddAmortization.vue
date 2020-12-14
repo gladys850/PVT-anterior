@@ -36,7 +36,7 @@
                             dense
                             class="caption"
                             style="font-size: 10px;"
-                            :Onchange="Onchange()"
+                            @change="Onchange()"
                             v-model="loanTypeSelected"
                             :outlined="!editable"
                             :readonly="editable"
@@ -53,7 +53,6 @@
                             dense
                             class="caption"
                             style="font-size: 10px;"
-                            :Onchange="OnchangeAmortization()"
                             v-model="loanTypeSelectedOne"
                             :outlined="!editable"
                             :readonly="editable"
@@ -191,6 +190,23 @@
                             persistent-hint
                           ></v-select>
                         </v-col>
+                        <v-col cols="2" class="ma-0 pb-0" v-show="editable">
+                          <label >TIPO DE PAGO:</label>
+                        </v-col>
+                        <v-col cols="2" class="ma-0 pb-0" v-show="editable">
+                          <v-select
+                            class="caption"
+                            style="font-size: 10px;"
+                            dense
+                            v-model="data_payment.tipo_pago"
+                            :outlined="isNew"
+                            :readonly="!isNew"
+                            :items="payment_type_treasury"
+                            item-text="name"
+                            item-value="id"
+                            persistent-hint
+                          ></v-select>
+                        </v-col>
                          <v-col cols="2" class="ma-0 pb-0" v-show="editable" >
                         </v-col>
                         <v-col cols="3" class="ma-0 pb-0" v-show="editable">
@@ -272,19 +288,12 @@ export default {
       id:"G"
       }
     ],
-      garante:[
-      {name:"GAR1",
-      id:1
-      },
-      {name:"GAR2",
-      id:2
-      }
-    ],
     view:true,
     efectivo:false,
     loan_payment:{},
     payment_types:[],
     voucher_type:[],
+    payment_type_treasury:[],
     dates: {
       paymentDate:{
         formatted: null,
@@ -305,12 +314,9 @@ export default {
   },
   beforeMount(){
     this.getTypeProcedure()
-    if(this.isNew)
-    {
-      this.getPaymentTypes()
-    }
+    this.getPymentTypes()
+    this.getAmortizationTypes()
     this.getVoucherTypes()
-    this.getTypeAmortization(13)
     if(this.$route.params.hash == 'view')
     {
       this.formatDate('paymentDate',this.data_payment.payment_date)
@@ -406,9 +412,6 @@ export default {
         }
         }
       }
-
-      }else{
-
       }
     },
     OnchangeAmortization(){
@@ -417,7 +420,7 @@ export default {
     Onchange(){
       if(this.loanTypeSelected!=null)
       {
-        //this.getTypeAmortization(this.loanTypeSelected)
+        this.getTypeAmortization(this.loanTypeSelected)
             console.log("verdadero"+this.loanTypeSelected)
       }
       else{
@@ -456,36 +459,18 @@ export default {
         this.loading = false
       }
     },
-    /*async OnchangeThree(){
-      console.log('este es el dato'+this.data_payment.pago)
-        if(this.data_payment.pago==3)
-        {
-          this.efectivo= false
-        }else{
-          this.efectivo= true
-        }
+    //Metodo para sacar los tipos de pagos
+    async getPymentTypes() {
+      try {
+        this.loading = true
+        let res = await axios.get(`payment_type`)
+        this.payment_type_treasury = res.data
+      } catch (e) {
+        console.log(e)
+      } finally {
+        this.loading = false
+      }
     },
- 
-    async onchangeTwo(){
-       console.log(this.loanTypeSelectedOne)
-        if(this.loanTypeSelectedOne==2)
-        {
-          console.log("entro por garante")
-          this.garante_show= true
-
-        }else{
-          console.log("entro por titular")
-          this.garante_show= false
-        }
-    },
-    async onchangeOne(){
-        if(this.data_payment.amortization==2)
-        {
-          this.view= false
-        }else{
-          this.view= true
-        }
-    },*/
     formatDate(key, date) {
       if (date) {
         this.dates[key].formatted = this.$moment(date).format('L')
@@ -505,11 +490,11 @@ export default {
         this.loading = false
       }
     },
-    //Metodo para sacar los tipos de pago
-    async getPaymentTypes() {
+    //Metodo para sacar los tipos de cobros
+    async getAmortizationTypes() {
       try {
         this.loading = true
-        let res = await axios.get(`payment_type`)
+        let res = await axios.get(`amortization_type`)
         this.payment_types = res.data
       } catch (e) {
         console.log(e)

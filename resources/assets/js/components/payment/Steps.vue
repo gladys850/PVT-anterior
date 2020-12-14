@@ -165,7 +165,7 @@ export default {
             validated:true
           })
           let res = await axios.post(`loan_payment/${this.$route.query.loan_payment}/voucher`,{
-            payment_type_id:1,
+            payment_type_id:this.data_payment.payment_type_treasury,
             voucher_type_id:2,
             voucher_number:this.data_payment.comprobante,
             description:this.data_payment.glosa
@@ -187,7 +187,7 @@ export default {
             estimated_quota:this.data_payment.pago_total,
             liquidate:false,
             voucher:this.data_payment.voucher,
-            payment_type_id:this.data_payment.pago,
+            amortization_type_id:this.data_payment.pago,
             affiliate_id:this.data_payment.affiliate_id_paid_by,
             paid_by:this.data_payment.affiliate_id,
             procedure_modality_id:this.data_payment.procedure_modality_id
@@ -234,7 +234,7 @@ console.log(this.loan_payment)
         this.data_payment.pago_total=this.loan_payment.estimated_quota
         this.data_payment.affiliate_id =this.loan_payment.paid_by
         this.data_payment.voucher=this.loan_payment.voucher
-        this.data_payment.pago  =1
+        this.data_payment.pago  =this.loan_payment.amortization_type_id
 
       } catch (e) {
         console.log(e)
@@ -252,7 +252,7 @@ console.log(this.loan_payment)
             estimated_quota:this.data_payment.pago_total,
             liquidate:false,
             voucher:this.data_payment.voucher,
-            payment_type_id:this.data_payment.pago,
+            amortization_type_id:this.data_payment.pago,
             affiliate_id:this.data_payment.affiliate_id_paid_by,
             paid_by:this.data_payment.affiliate_id,
             procedure_modality_id:this.data_payment.procedure_modality_id
@@ -265,7 +265,7 @@ console.log(this.loan_payment)
             estimated_quota:this.data_payment.pago_total,
             liquidate:true,
             voucher:this.data_payment.voucher,
-            payment_type_id:this.data_payment.pago ,
+            amortization_type_id:this.data_payment.pago ,
             affiliate_id:this.data_payment.affiliate_id_paid_by,
             paid_by:this.data_payment.affiliate_id,
             procedure_modality_id:this.data_payment.procedure_modality_id
