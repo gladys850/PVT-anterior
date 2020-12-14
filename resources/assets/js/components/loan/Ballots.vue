@@ -70,7 +70,7 @@
                   ></v-checkbox>
                   </v-col>
                   <v-col cols="12" md="4" class="py-0"  >
-                    <ValidationProvider v-slot="{ errors }" name="1ra Boleta de pago" :rules="'required|min_value:'+livelihood_amount"  mode="aggressive">
+                    <ValidationProvider v-slot="{ errors }" name="1ra Boleta de pago"   :rules="'required|min_value:'+livelihood_amount"  mode="aggressive"> <b style="text-align:center"></b>
                     <v-text-field
                       :error-messages="errors"
                       dense
@@ -78,7 +78,8 @@
                       label="1ra Boleta"
                       :disabled="!enabled"
                       :outlined="editar"
-                     ></v-text-field>
+                     ></v-text-field> 
+                     {{ period[0]}}                 
                     </ValidationProvider>
                   </v-col>
                   <v-col cols="12" md="4" class="py-0" v-if="visible">
@@ -91,9 +92,10 @@
                       :disabled="!enabled"
                       :outlined="editar"
                   ></v-text-field>
+                  {{ period[1]}}
                   </ValidationProvider>
                   </v-col>
-                  <v-col cols="12" md="4" class="py-0" v-if="visible" >
+                  <v-col cols="12" md="4" class="py-0" v-if="visible">
                     <ValidationProvider v-slot="{ errors }" name="3ra Boleta de pago" :rules="'min_value:'+livelihood_amount"  mode="aggressive">
                     <v-text-field
                     :error-messages="errors"
@@ -103,6 +105,7 @@
                       :disabled="!enabled"
                       :outlined="editar"
                      ></v-text-field>
+                    {{ period[2]}}
                      </ValidationProvider>
                   </v-col>
                   <v-col cols="12" class="py-0" >
@@ -216,6 +219,10 @@ export default {
       required: true
     },
     bonos: {
+      type: Array,
+      required: true
+    },
+    period: {
       type: Array,
       required: true
     },
@@ -397,21 +404,27 @@ export default {
       //console.log(this.modalidad.quantity_ballots)
       data_ballots = res.data.data
       //console.log(data_ballots)
+      this.fecha= new Date();
       if(res.data.valid && this.enabled==false){
         this.editar=false
          //Carga los datos en los campos para ser visualizados en la interfaz
         for (let i = 0; i < data_ballots.length; i++) {//colocar 1
+        this.period[i] = this.$moment(data_ballots[i].month_year).subtract(1,'months').format('MMMM')
+       // console.log(this.period[i]);
           this.payable_liquid[i] = data_ballots[i].payable_liquid
           if(i==0){//solo se llena los bonos de la ultima boleta de pago
             this.bonos[0] = data_ballots[0].border_bonus
             this.bonos[1] = data_ballots[0].east_bonus
-            this.bonos[2] = data_ballots[0].seniority_bonus
+            this.bonos[2] = data_ballots[0].position_bonus
             this.bonos[3] = data_ballots[0].public_security_bonus
           }
         }
       } else{
           this.enabled=true
           this.editar=true
+          this.period[0] = this.$moment(this.fecha).subtract(1,'months').format('MMMM')
+          this.period[1] = this.$moment(this.fecha).subtract(2,'months').format('MMMM')
+          this.period[2] = this.$moment(this.fecha).subtract(3,'months').format('MMMM')
           console.log("No se tienen boletas del ultimo mes")
           this.payable_liquid[0]=this.payable_liquid[0]
           this.payable_liquid[1]=this.payable_liquid[1]

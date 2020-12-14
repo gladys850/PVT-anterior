@@ -51,6 +51,7 @@
               :modalities.sync="modalities"
               :bonos.sync="bonos"
               :payable_liquid="payable_liquid"
+              :period="period"
               :intervalos.sync="intervalos"
               :modalidad.sync="modalidad"
               :affiliate.sync="affiliate"
@@ -296,6 +297,7 @@ export default {
     intervalos:{},
     payable_liquid:[0,0,0],
     bonos:[0,0,0,0],
+    period:[0,0,0],
     //personal_reference:{},
     personal_codebtor:[],
     //cosigners:[],
@@ -541,21 +543,25 @@ export default {
               seniority_bonus:  this.bonos[2],
               border_bonus: this.bonos[0],
               public_security_bonus: this.bonos[3],
-              east_bonus:this.bonos[1]
+              east_bonus:this.bonos[1],
+              period: this.period[0]
             },
             {
               payable_liquid: this.payable_liquid[1],
               seniority_bonus: 0,
               border_bonus: 0,
               public_security_bonus: 0,
-              east_bonus:0
+              east_bonus:0,
+              period: this.period[0],
             },
             {
               payable_liquid: this.payable_liquid[2],
               seniority_bonus: 0,
               border_bonus:0,
+              period:0,
               public_security_bonus: 0,
-              east_bonus:0
+              east_bonus:0,
+              period: this.period[0]
             }
           ]
         }
