@@ -176,6 +176,7 @@ Route::group([
         ], function () {
             Route::patch('loan/{loan}/payment','Api\V1\LoanController@get_next_payment');
             Route::post('loan/{loan}/payment','Api\V1\LoanController@set_payment');
+            Route::post('loan_payment/importation_command_senasir', 'Api\V1\LoanPaymentController@importation_command_senasir');//importacion de pagos 
         });
         Route::group([
             'middleware' => 'permission:update-payment-loan'
