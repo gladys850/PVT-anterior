@@ -53,7 +53,7 @@
                             dense
                             class="caption"
                             style="font-size: 10px;"
-                            v-model="loanTypeSelectedOne"
+                            v-model="data_payment.procedure_modality_id"
                             :outlined="!editable"
                             :readonly="editable"
                             :items="tipo_de_amortizacion"
