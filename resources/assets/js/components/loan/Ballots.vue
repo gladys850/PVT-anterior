@@ -397,9 +397,8 @@ export default {
       //console.log(this.modalidad.quantity_ballots)
       data_ballots = res.data.data
       //console.log(data_ballots)
-      if(res.data.valid ){
+      if(res.data.valid && this.enabled==false){
         this.editar=false
-       
          //Carga los datos en los campos para ser visualizados en la interfaz
         for (let i = 0; i < data_ballots.length; i++) {//colocar 1
           this.payable_liquid[i] = data_ballots[i].payable_liquid

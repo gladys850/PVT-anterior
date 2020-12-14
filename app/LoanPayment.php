@@ -36,7 +36,7 @@ class LoanPayment extends Model
         'voucher',
         'paid_by',
         'affiliate_id',
-        'payment_type_id'
+        'amortization_type_id'
 
     ];
 
@@ -44,7 +44,8 @@ class LoanPayment extends Model
     {
         parent::__construct($attributes);
         if (!$this->code) {
-            $latest_payments = DB::table('loan_payments')->orderBy('created_at', 'desc')->limit(1)->first();
+            //$latest_payments = DB::table('loan_payments')->orderBy('created_at', 'desc')->limit(1)->first();
+            $latest_payments = DB::table('loan_payments')->orderBy('id', 'desc')->latest()->first();
             if (!$latest_payments) $latest_payments = (object)['id' => 0];
             $this->code = implode(['PAY', str_pad($latest_payments->id + 1, 6, '0', STR_PAD_LEFT), '-', Carbon::now()->year]);
         }
@@ -58,6 +59,11 @@ class LoanPayment extends Model
     public function payment_type()
     {
         return $this->belongsTo(PaymentType::class);
+    }
+
+    public function amortization_type()
+    {
+        return $this->belongsTo(AmortizationType::class);
     }
 
     public function voucher_treasury()
@@ -170,5 +176,19 @@ class LoanPayment extends Model
     public function affiliate()
     {
         return $this->belongsTo(Affiliate::class);
+    }
+
+    public static function registry_payment(Loan $loan, $estimated_date, $description, $procedure_modality, $voucher, $paid_by, $payment_type)
+    {
+        $payment = $loan->next_payment($estimated_date, null, null);
+        $payment->description = $description;
+        $payment->state_id = LoanState::whereName('Pendiente de Pago')->first()->id;
+        $payment->role_id = Role::whereName('PRE-cobranzas')->first()->id;
+        $payment->procedure_modality_id = $procedure_modality->id;
+        $payment->affiliate_id = $loan->disbursable->id;
+        $payment->voucher = $voucher;
+        $payment->paid_by = $paid_by;
+        $payment->amortization_type_id = $payment_type->id;
+        $loan_payment = $loan->payments()->create($payment->toArray());
     }
 }

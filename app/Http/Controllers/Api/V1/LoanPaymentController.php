@@ -23,6 +23,12 @@ use App\Helpers\Util;
 use App\Http\Controllers\Api\V1\LoanController;
 use App\Exports\ArchivoPrimarioExport;
 use Maatwebsite\Excel\Facades\Excel;
+use App\Loan;
+use App\Role;
+use App\ProcedureModality;
+use App\PaymentType;
+use App\AmortizationType;
+use App\Imports\LoanPaymentImport;
 
 /** @group Cobranzas
 * Datos de los trámites de Cobranzas
@@ -125,6 +131,11 @@ class LoanPaymentController extends Controller
     * @urlParam loan_payment required ID del pago realizado. Example: 1
 	* @bodyParam description string Texto de descripción. Example: Penalizacion regularizada
     * @bodyParam validated boolean Estado validación del tramite de cobro. Example: true
+    * @bodyParam voucher string Comprobante de pago GAR-ABV o D-10/20 o CONT-123. Example: CONT-123
+    * @bodyParam amortization_type_id integer ID del tipo de pago. Example: 1
+    * @bodyParam affiliate_id integer ID del afiliado. Example: 57950
+    * @bodyParam paid_by enum Pago realizado por Titular(T) o Garante(G). Example: T
+    * @bodyParam procedure_modality_id integer ID de la modalidad de amortización. Example: 53
     * @authenticated
     * @responseFile responses/loan_payment/update.200.json
     */
@@ -134,13 +145,13 @@ class LoanPaymentController extends Controller
             'description' => 'nullable|string|min:2',
             'validated' => 'boolean',
             'procedure_modality_id'=> 'exists:procedure_modalities,id',
-            'payment_type_id'=> 'exists:payment_types,id',
+            'amortization_type_id'=> 'exists:amortization_types,id',
             'affiliate_id'=> 'exists:affiliates,id',
             'voucher'=> 'nullable|string|min:3',
             'paid_by'=> 'string|in:T,G',
         ]);
         if (Auth::user()->can('update-payment-loan')) {
-            $update = $request->only('description', 'validated','procedure_modality_id','payment_type_id','affiliate_id','voucher','paid_by');
+            $update = $request->only('description', 'validated','procedure_modality_id','amortization_type_id','affiliate_id','voucher','paid_by');
         }
         $loanPayment->fill($update);
         $loanPayment->save();
@@ -352,4 +363,127 @@ class LoanPaymentController extends Controller
         return Excel::download($export, $File.'.xlsx');
     }
 
-}
+    /**
+    * Registrar trámites de pagos en lote activos y pasivos
+	* @bodyParam estimated_date date Fecha para el cálculo del interés. Example: 2020-12-31
+    * @bodyParam description string Texto de descripción. Example: Por descuento automatico
+    * @bodyParam voucher string Comprobante de pago A-12/20 o CONT-123. Example: A-12/20
+    * @authenticated
+    */
+    public function command_senasir_save_payment(Request $request)
+    {
+        $estimated_date = $request->estimated_date? Carbon::parse($request->estimated_date) : Carbon::now()->endOfMonth();
+        $loan = Loan::get();
+        $disbursement_loan = $loan->where('disbursement_date','!=',null)->where('disbursable_type','LIKE','affiliates');
+        $payment_type = AmortizationType::get();
+        $payment_type_desc = $payment_type->where('name', 'LIKE', 'Descuento automático')->first();
+        $description = $request->description? $request->description : 'Por descuento automatico';
+        $procedure_modality = ProcedureModality::whereName('Amortización Automática')->first();
+        $voucher = $request->voucher? $request->voucher : "AUTOMATICO";
+        $paid_by = "T";
+        foreach($disbursement_loan as $loan){
+            if($loan->balance != 0){
+                if($loan->disbursable->affiliate_state->name == 'Servicio' || $loan->disbursable->affiliate_state->name == 'Disponibilidad' || $loan->disbursable->affiliate_state->name == 'Jubilado' || $loan->disbursable->affiliate_state->name == 'Jubilado Invalidez'){
+                    $disbursement_date = $loan->disbursement_date;
+                    if($disbursement_date->lessThan($estimated_date)){
+                        if($disbursement_date->year == $estimated_date->year && $disbursement_date->month == $estimated_date->month){
+                            if($disbursement_date->day<LoanGlobalParameter::latest()->first()->offset_interest_day){
+                                LoanPayment::registry_payment($loan, $estimated_date, $description, $procedure_modality, $voucher, $paid_by, $payment_type_desc);
+                            }
+                        }else{
+                            LoanPayment::registry_payment($loan, $estimated_date, $description, $procedure_modality, $voucher, $paid_by, $payment_type_desc);
+                        }
+                    }
+                }
+            }
+        }
+    }
+  
+    /**
+    * Importación de Pagos Comando SENASIR
+    * Realiza la importación de pagos.
+	* @bodyParam file file required Archivo de importación. Example: file.xls
+    * @bodyParam state boolean required Tipo importacion Activo(1) o Pasivo(0). Example: 1
+    * @bodyParam estimated_date date Fecha estimada para la importacion. Example: 2020-12-31
+    * @bodyParam voucher_payment string Comprobante de pago. Example: D-12/20
+    * @authenticated
+    * @responseFile responses/loan_payment/importation_payments.200.json
+    */
+    public function importation_command_senasir(Request $request)
+    {
+        $request->validate([
+            'file' => 'required',
+            'state'=> 'required|boolean',
+            'estimated_date'=> 'nullable|date_format:"Y-m-d"',
+            'voucher_payment' => 'nullable|string|min:3'
+        ]);
+
+        $file = $request->file('file');
+        $json = collect([]);
+        $payment_automatic = collect([]);//pagos automaticos confirmados
+        $payment_no_automatic = collect([]);//pagos no efectivizados
+        $array = Excel::toArray(new LoanPaymentImport, $file);
+        $pendientePago = LoanState::whereName('Pendiente de Pago')->first()->id;
+        $pagado = LoanState::whereName('Pagado')->first()->id;
+        $procedure_modality = ProcedureModality::whereName('Amortización Automática')->first();
+        $estimated_date_importation = $request->estimated_date? Carbon::parse($request->estimated_date) : Carbon::now()->endOfMonth();
+        
+            for($i=1;$i<count($array[0]);$i++){   
+                
+                $totalLoanAmount = 0; 
+                $have_payment=false;
+
+                if($request->state){
+                    $ci=(int)$array[0][$i][0];
+                    $affiliate = Affiliate::where('identity_card', '=',$ci)->first();
+                }else{
+                    $matricula= $array[0][$i][0];
+                    $affiliate = Affiliate::where('registration', '=',$matricula)->first();
+                }
+               
+                $loanPayments = LoanPayment::where('affiliate_id',$affiliate->id)->get();
+
+                foreach ($loanPayments as $loanPayment){
+                    $payment_estimated_date=Carbon::parse($loanPayment->estimated_date);
+                    if($loanPayment->procedure_modality_id == $procedure_modality->id && $loanPayment->state_id == $pendientePago){
+                        if($payment_estimated_date->year == $estimated_date_importation->year && $payment_estimated_date->month == $estimated_date_importation->month){
+                            $totalLoanAmount = $totalLoanAmount + $loanPayment->estimated_quota;
+                            $have_payment=true;
+                        }
+                    }
+                }
+                
+                if ($totalLoanAmount == $array[0][$i][1] && $have_payment){
+                    foreach ($loanPayments as $loanPayment){
+                        $payment_estimated_date=Carbon::parse($loanPayment->estimated_date);
+                        if($loanPayment->procedure_modality_id == $procedure_modality->id && $loanPayment->state_id == $pendientePago){
+                            if($payment_estimated_date->year == $estimated_date_importation->year && $payment_estimated_date->month == $estimated_date_importation->month){
+                                $loanPayment->state_id = $pagado;
+                                if($request->voucher_payment){
+                                    $loanPayment->voucher = $request->voucher_payment;
+                                }
+                                $loanPayment->update();
+                                $payment_automatic->push($loanPayment);
+                            }
+                        }
+                    }
+                }else{
+                    foreach ($loanPayments as $loanPayment){
+                        $payment_estimated_date=Carbon::parse($loanPayment->estimated_date);
+                        if($loanPayment->procedure_modality_id == $procedure_modality->id && $loanPayment->state_id == $pendientePago){
+                            if($payment_estimated_date->year == $estimated_date_importation->year && $payment_estimated_date->month == $estimated_date_importation->month){
+                                $payment_no_automatic->push($loanPayment);
+                            }
+                        }
+                    }
+                }
+            }
+
+            return response()->json([
+                'payments_automatic' => $payment_automatic,
+                'payments_no_automatic' => $payment_no_automatic,
+            ], 409);
+    
+        }
+    }
+    
