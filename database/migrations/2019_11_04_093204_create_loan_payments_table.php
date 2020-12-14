@@ -31,7 +31,7 @@ class CreateLoanPaymentsTable extends Migration
             $table->float('penal_remaining',10,2)->default(0); // interés penal previo
             $table->float('accumulated_remaining',10,2)->default(0); // interés acumulado previo
             $table->unsignedBigInteger('state_id')->nullable(false); //id estado del tramite
-            $table->text('voucher')->nullable(); // Comprobante del pago 
+            $table->text('voucher')->nullable(); // Comprobante del pago
             $table->enum('paid_by', ['T', 'G']);// Pago realizado por Titular o Garante
             $table->foreign('state_id')->references('id')->on('loan_states'); // estado de registro de pago
             $table->unsignedBigInteger('role_id');  // id rol bandeja actual
@@ -40,7 +40,7 @@ class CreateLoanPaymentsTable extends Migration
             $table->foreign('affiliate_id')->references('id')->on('affiliates');
             $table->unsignedBigInteger('amortization_type_id')->unsigned(); // Id del tipo de cobro
             $table->foreign('amortization_type_id')->references('id')->on('amortization_types');
-            $table->boolean('validated')->default(true);
+            $table->boolean('validated')->default(false);
             $table->text('description')->nullable(); // descripcion del pago
             $table->timestamps();
             $table->softDeletes();
