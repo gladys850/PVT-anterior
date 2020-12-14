@@ -75,11 +75,10 @@
                       :error-messages="errors"
                       dense
                       v-model="payable_liquid[0]"
-                      label="1ra Boleta"
+                      :label = period[0]
                       :disabled="!enabled"
                       :outlined="editar"
-                     ></v-text-field> 
-                     {{ period[0]}}                 
+                    ></v-text-field>             
                     </ValidationProvider>
                   </v-col>
                   <v-col cols="12" md="4" class="py-0" v-if="visible">
@@ -88,11 +87,10 @@
                     :error-messages="errors"
                       dense
                       v-model="payable_liquid[1]"
-                      label="2ra Boleta"
+                      :label= period[1]
                       :disabled="!enabled"
                       :outlined="editar"
                   ></v-text-field>
-                  {{ period[1]}}
                   </ValidationProvider>
                   </v-col>
                   <v-col cols="12" md="4" class="py-0" v-if="visible">
@@ -101,11 +99,10 @@
                     :error-messages="errors"
                       dense
                       v-model="payable_liquid[2]"
-                      label="3ra Boleta"
+                      :label= period[2]
                       :disabled="!enabled"
                       :outlined="editar"
                      ></v-text-field>
-                    {{ period[2]}}
                      </ValidationProvider>
                   </v-col>
                   <v-col cols="12" class="py-0" >
