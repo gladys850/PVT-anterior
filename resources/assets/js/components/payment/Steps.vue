@@ -251,11 +251,6 @@ console.log(this.loan_payment)
             estimated_date:this.data_payment.payment_date,
             estimated_quota:this.data_payment.pago_total,
             liquidate:false,
-            voucher:this.data_payment.voucher,
-            amortization_type_id:this.data_payment.pago,
-            affiliate_id:this.data_payment.affiliate_id_paid_by,
-            paid_by:this.data_payment.affiliate_id,
-            procedure_modality_id:this.data_payment.procedure_modality_id
           })
            this.payment = res.data
         }
@@ -264,11 +259,6 @@ console.log(this.loan_payment)
             estimated_date:this.data_payment.payment_date,
             estimated_quota:this.data_payment.pago_total,
             liquidate:true,
-            voucher:this.data_payment.voucher,
-            amortization_type_id:this.data_payment.pago ,
-            affiliate_id:this.data_payment.affiliate_id_paid_by,
-            paid_by:this.data_payment.affiliate_id,
-            procedure_modality_id:this.data_payment.procedure_modality_id
           })
            this.payment = res.data
         }
