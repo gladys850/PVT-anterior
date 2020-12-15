@@ -302,23 +302,6 @@ export default {
     tab: 'tab-1',
     has_registered_spouse: false
   }),
-    watch:{
-    estado_id(newVal, oldVal){
-      if(newVal!=oldVal){
-        if(this.estado_id == 4){
-          this.editable = true
-          this.permission.secondary = true
-          console.log(this.affiliate_state_id )
-          alert('es 4')
-        }else{
-          this.editable = false
-          this.permission.secondary = false
-          console.log(this.affiliate_state_id )
-           alert('no es 4')
-        }
-      }
-    }
-  },
   computed: {
     isNew() {
       return this.$route.params.id == 'new'

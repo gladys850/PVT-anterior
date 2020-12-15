@@ -266,7 +266,7 @@ export default {
     this.$store.commit('setBreadcrumbs', [
       {
         text: 'Cobros',
-        to: { name: 'flowIndex' }
+        to: { name: 'loanPaymentIndex' }
       }
     ])
   },
@@ -394,7 +394,7 @@ export default {
         this.options.page = res.data.current_page
         this.options.itemsPerPage = parseInt(res.data.per_page)
         this.options.totalItems = res.data.total
-        this.setBreadcrumbs()
+        //this.setBreadcrumbs()
       } catch (e) {
         console.log(e)
       } finally {
