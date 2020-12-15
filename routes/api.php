@@ -8,7 +8,7 @@ Route::group([
     Route::get('config', 'Api\V1\ConfigController');
     Route::apiResource('auth', 'Api\V1\AuthController')->only('store');
     Route::get('excel', 'Api\V1\LoanPaymentController@download');
-    Route::get('command_senasir_save_payment', 'Api\V1\LoanPaymentController@command_senasir_save_payment');
+    Route::post('command_senasir_save_payment', 'Api\V1\LoanPaymentController@command_senasir_save_payment');
     //Route::get('senasir_save_payment', 'Api\V1\LoanPaymentController@senasir_save_payment');
 
     // INDEFINIDO (TODO)

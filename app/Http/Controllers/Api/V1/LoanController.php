@@ -861,6 +861,7 @@ class LoanController extends Controller
             $payment->amortization_type_id = $request->input('amortization_type_id');
             $payment->affiliate_id = $request->input('affiliate_id');
             $payment->paid_by = $request->input('paid_by');
+            $payment->validated = true;
             $loan_payment = $loan->payments()->create($payment->toArray());
             //generar PDF
             $file_name = implode('_', ['pagos', $loan->modality->shortened, $loan->code]) . '.pdf';
