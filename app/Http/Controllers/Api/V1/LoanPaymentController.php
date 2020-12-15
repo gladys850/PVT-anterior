@@ -479,12 +479,11 @@ class LoanPaymentController extends Controller
                     }
                 }
             }
-            
+
             return response()->json([
                     'payments_automatic' => $payment_automatic,
                     'payments_no_automatic' => $payment_no_automatic
-                ], 409);
-    
+                ]);
     }
 }
     
