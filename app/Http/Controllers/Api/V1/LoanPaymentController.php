@@ -462,6 +462,7 @@ class LoanPaymentController extends Controller
                                 if($request->voucher_payment){
                                     $loanPayment->voucher = $request->voucher_payment;
                                 }
+                                $loanPayment->validated = true;
                                 $loanPayment->update();
                                 $payment_automatic->push($loanPayment);
                             }
@@ -478,12 +479,12 @@ class LoanPaymentController extends Controller
                     }
                 }
             }
-
+            
             return response()->json([
-                'payments_automatic' => $payment_automatic,
-                'payments_no_automatic' => $payment_no_automatic,
-            ], 409);
+                    'payments_automatic' => $payment_automatic,
+                    'payments_no_automatic' => $payment_no_automatic
+                ], 409);
     
-        }
     }
+}
     
