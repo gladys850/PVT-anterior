@@ -246,9 +246,10 @@ class LoanPaymentController extends Controller
     {
         $loan = LoanPayment::findOrFail($loan_payment->id)->loan;
         $procedure_modality = $loan->modality;
-        $lenders = [];
+        $lenders = []; $is_dead = false;
         foreach ($loan->lenders as $lender) {
             $lenders[] = LoanController::verify_spouse_disbursable($lender)->disbursable;
+            if($lender->dead) $is_dead = true;
         }
         $persons = collect([]);
         foreach ($lenders as $lender) {
@@ -273,7 +274,8 @@ class LoanPaymentController extends Controller
             'loan' => $loan,
             'lenders' => collect($lenders),
             'loan_payment' => $loan_payment,
-            'signers' => $persons
+            'signers' => $persons,
+            'is_dead'=> $is_dead
         ];
         $file_name = implode('_', ['pagos', $procedure_modality->shortened, $loan->code]) . '.pdf';
         $view = view()->make('loan.payments.payment_loan')->with($data)->render();
