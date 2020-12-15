@@ -53,7 +53,7 @@
                   @click="beforeStep(2)">Atras</v-btn>
                   <v-btn right
                     color="primary"
-                    @click="savePayment()">
+                    @click="validatedStepTwo()">
                     Siguiente
                   </v-btn>
                 </v-col>
@@ -104,6 +104,9 @@ export default {
     ver(){
        return  this.$route.params.hash == 'view'
     },
+    editar(){
+       return  this.$route.params.hash == 'edit'
+    },
   },
   watch: {
     steps (val) {
@@ -141,16 +144,6 @@ export default {
         this.e1 = 1
       }
       else {
-        if(n==1)
-        {
-          if(!this.isNew)
-          {
-            this.savePaymentTreasury()
-          }
-          else{
-            this.Calcular()
-          }
-        }
         this.e1 = n + 1
      }
     },
@@ -165,7 +158,7 @@ export default {
             validated:true
           })
           let res = await axios.post(`loan_payment/${this.$route.query.loan_payment}/voucher`,{
-            payment_type_id:this.data_payment.payment_type_treasury,
+            payment_type_id:this.data_payment.tipo_pago,
             voucher_type_id:2,
             voucher_number:this.data_payment.comprobante,
             description:this.data_payment.glosa
@@ -242,6 +235,32 @@ console.log(this.loan_payment)
         this.loading = false
       }
     },
+    //Metodo para editar el pago
+   /* async editLoanPayment(id) {
+      try {
+        this.loading = true
+        let res = await axios.patch(`loan_payment/${id}`,{
+
+
+
+
+        })
+        this.loan_payment = res.data
+
+
+        this.data_payment.code=this.loan_payment.code
+        this.data_payment.payment_date= this.loan_payment.estimated_date
+        this.data_payment.pago_total=this.loan_payment.estimated_quota
+        this.data_payment.affiliate_id =this.loan_payment.paid_by
+        this.data_payment.voucher=this.loan_payment.voucher
+        this.data_payment.pago  =this.loan_payment.amortization_type_id
+
+      } catch (e) {
+        console.log(e)
+      } finally {
+        this.loading = false
+      }
+    },*/
     //Metodo calculo de siguiente cuota
     async Calcular() {
       try {
@@ -262,6 +281,28 @@ console.log(this.loan_payment)
           })
            this.payment = res.data
         }
+      }catch (e) {
+        console.log(e)
+      }finally {
+        this.loading = false
+      }
+    },
+    async validatedStepTwo()
+    {
+      try {
+        if(this.isNew)
+          {
+            this.savePayment()
+          }
+          else{
+            if(this.editar)
+            {
+              this.toastr.error("entro por editar")
+              //this.savePayment()
+            }else{
+              this.toastr.error("entro por editar")
+            }
+          }
       }catch (e) {
         console.log(e)
       }finally {

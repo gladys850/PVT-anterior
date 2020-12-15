@@ -199,17 +199,15 @@
                             style="font-size: 10px;"
                             dense
                             v-model="data_payment.tipo_pago"
-                            :outlined="isNew"
-                            :readonly="!isNew"
+                            :outlined="editable"
+                            :readonly="!editable"
                             :items="payment_type_treasury"
                             item-text="name"
                             item-value="id"
                             persistent-hint
                           ></v-select>
                         </v-col>
-                         <v-col cols="2" class="ma-0 pb-0" v-show="editable" >
-                        </v-col>
-                        <v-col cols="3" class="ma-0 pb-0" v-show="editable">
+                        <v-col cols="2" class="ma-0 pb-0" v-show="editable">
                           <label  >NRO DE COMPROBANTE:</label>
                         </v-col>
                         <v-col cols="3" v-show="editable" >
@@ -220,7 +218,7 @@
                             dense
                           ></v-text-field>
                         </v-col>
-                        <v-col cols="6" class="ma-0 pb-0" >
+                        <v-col cols="7" class="ma-0 pb-0" >
                           <v-text-field
                             v-show="editable" v-if="!ver"
                             v-model="data_payment.glosa"
@@ -420,6 +418,7 @@ export default {
     Onchange(){
       if(this.loanTypeSelected!=null)
       {
+        this.data_payment.procedure_id=this.loanTypeSelected
         this.getTypeAmortization(this.loanTypeSelected)
             console.log("verdadero"+this.loanTypeSelected)
       }
