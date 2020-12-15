@@ -108,32 +108,21 @@
                       ></v-select>
                       </ValidationProvider>
                     </v-col>
-                    <v-col cols="12" md="5" v-if="affiliate.is_duedate_undefined==false">
-                      <v-menu
-                        v-model="dates.dueDate.show"
-                        :close-on-content-click="false"
-                        transition="scale-transition"
-                        offset-y
-                        max-width="290px"
-                        min-width="290px"
-                        :disabled="!editable || !permission.secondary"
-                      >
-                        <template v-slot:activator="{ on }">
-                          <v-text-field
-                            dense
-                            v-model="dates.dueDate.formatted"
-                            label="Fecha Vencimiento CI"
-                            hint="Día/Mes/Año"
-                            persistent-hint
-                            append-icon="mdi-calendar"
-                            readonly
-                            :clearable="editable"
-                            v-on="on"
-                            :outlined="editable && permission.secondary"
-                          ></v-text-field>
-                        </template>
-                        <v-date-picker v-model="affiliate.due_date" no-title @input="dates.dueDate.show = false"></v-date-picker>
-                      </v-menu>
+                  
+                  <v-col cols="12" md="5" v-if="affiliate.is_duedate_undefined==false">
+                      <v-text-field
+                        dense
+                        v-model="affiliate.due_date"
+                        label="Fecha Vencimiento C.I"
+                        hint="Día/Mes/Año"
+                        class="purple-input"
+                        type="date"
+                        :clearable="editable"
+                        v-on="on"
+                        :readonly="!editable || !permission.secondary"
+                        :outlined="editable && permission.secondary"
+                        :disabled="editable && !permission.secondary"
+                      ></v-text-field>
                     </v-col>
                     <v-col cols="12" md="3">
                       <v-checkbox
@@ -161,7 +150,7 @@
                       ></v-select>
                       </ValidationProvider>
                     </v-col>
-                    <v-col cols="12" md="6" >
+                    <!--<v-col cols="12" md="6" >
                       <v-menu
                         v-model="dates.birthDate.show"
                         :close-on-content-click="false"
@@ -191,6 +180,19 @@
                         </template>
                         <v-date-picker v-model="affiliate.birth_date" no-title @input="dates.birthDate.show = false"></v-date-picker>
                       </v-menu>
+                    </v-col>-->
+                    <v-col cols="12" md="6">
+                      <v-text-field
+                        dense
+                        v-model="affiliate.birth_date"
+                        label="Fecha Nacimiento"
+                        hint="Día/Mes/Año"
+                        class="purple-input"
+                        type="date"
+                        :readonly="!editable || !permission.secondary"
+                        :outlined="editable && permission.secondary"
+                        :disabled="editable && !permission.secondary"
+                      ></v-text-field>
                     </v-col>
                     <v-col cols="12" md="6" >
                       <ValidationProvider v-slot="{ errors }" vid="city_birth_id" name="Ciudad de Nacimiento" rules="integer|min:1">
@@ -515,8 +517,8 @@ export default {
   },
   mounted() {
     if (this.affiliate.id) {
-      this.formatDate('dueDate', this.affiliate.due_date)
-      this.formatDate('birthDate', this.affiliate.birth_date)
+      //this.formatDate('dueDate', this.affiliate.due_date)
+      //this.formatDate('birthDate', this.affiliate.birth_date)
       //this.formatDate('dateDeath', this.affiliate.date_death)
       this.getCelular()
     }
@@ -535,10 +537,10 @@ export default {
     'affiliate.due_date': function(date) {
       this.formatDate('dueDate', date)
     },
-    'affiliate.birth_date': function(date) {
+    /*'affiliate.birth_date': function(date) {
       this.formatDate('birthDate', date)
     }
-    /*'affiliate.date_death': function(date) {
+    'affiliate.date_death': function(date) {
       this.formatDate('dateDeath', date)
     }*/
   },

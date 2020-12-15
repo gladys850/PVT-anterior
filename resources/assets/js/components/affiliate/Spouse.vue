@@ -145,32 +145,19 @@
                         :outlined="state_id == 4"
                       ></v-select>
                     </v-col>
-                    <v-col cols="12" md="4" >
-                      <v-menu
-                        v-model="dates.birthDate.show"
-                        :close-on-content-click="false"
-                        transition="scale-transition"
-                        offset-y
-                        max-width="290px"
-                        min-width="290px"
-                        :disabled="(state_id != 4)"
-                      >
-                        <template v-slot:activator="{ on }">
-                          <v-text-field
-                            dense
-                            v-model="dates.birthDate.formatted"
-                            label="Fecha Nacimiento"
-                            hint="Día/Mes/Año"
-                            persistent-hint
-                            append-icon="mdi-calendar"
-                            :clearable="editable"
-                            v-on="on"
-                            :outlined="(state_id == 4)"
-                          ></v-text-field>
-                        </template>
-                        <v-date-picker v-model="spouse.birth_date" no-title @input="dates.birthDate.show = false"></v-date-picker>
-                      </v-menu>
+                    <v-col cols="12" md="4">
+                      <v-text-field
+                        dense
+                        v-model="spouse.birth_date"
+                        name="spouse_birth_date"
+                        label="Fecha Nacimiento"
+                        hint="Día/Mes/Año"
+                        :readonly="state_id != 4"
+                        :outlined="state_id == 4"
+                        type="date"
+                      ></v-text-field>
                     </v-col>
+
                     <v-col cols="12" md="4" >
                       <v-select
                         dense
@@ -185,34 +172,20 @@
                         :outlined="state_id == 4"
                       ></v-select>
                     </v-col>
-                    
                     <v-col cols="12" md="4">
-                      <v-menu
-                        v-model="dates.dateDeath.show"
-                        :close-on-content-click="false"
-                        transition="scale-transition"
-                        offset-y
-                        max-width="290px"
-                        min-width="290px"
-                        :disabled="(state_id != 4)"
-                      >
-                        <template v-slot:activator="{ on }">
-                          <v-text-field
-                            dense
-                            v-model="dates.dateDeath.formatted"
-                            label="Fecha Fallecimiento"
-                            hint="Día/Mes/Año"
-                            persistent-hint
-                            append-icon="mdi-calendar"
-                            :clearable="editable"
-                            v-on="on"
-                            :outlined="(state_id == 4)"
-                            :Onclick="Death()"
-                          ></v-text-field>
-                        </template>
-                        <v-date-picker v-model="spouse.date_death" no-title @input="dates.dateDeath.show = false"></v-date-picker>
-                      </v-menu>
+                      <v-text-field
+                        dense
+                        v-model="spouse.date_death"
+                        label="Fecha Fallecimiento"
+                        hint="Día/Mes/Año"
+                        class="purple-input"
+                        :readonly="state_id != 4"
+                        :outlined="state_id == 4"
+                        type="date"
+                        :onclick="Death()"
+                      ></v-text-field>
                     </v-col>
+
                     <v-col cols="12" md="4" v-if="!visible">
                       <v-text-field
                         dense
@@ -360,10 +333,10 @@ export default {
         formatted: null,
         picker: false
       },
-      birthDate: {
+     /* birthDate: {
         formatted: null,
         picker: false
-      },
+      },*/
       dateDeath: {
         formatted: null,
         picker: false
@@ -381,7 +354,7 @@ export default {
   mounted(){
     if(this.spouse.id){
       this.formatDate('dueDate', this.spouse.due_date),
-      this.formatDate('birthDate', this.spouse.birth_date),
+      //this.formatDate('birthDate', this.spouse.birth_date),
       this.formatDate('dateDeath', this.spouse.date_death),
       this.formatDate('marriageDate', this.spouse.marriage_date)
     }
@@ -390,9 +363,9 @@ export default {
     'spouse.due_date': function(date) {
      this.formatDate('dueDate', date)
     },
-    'spouse.birth_date': function(date) {
+    /*'spouse.birth_date': function(date) {
      this.formatDate('birthDate', date)
-    },
+    },*/
     'spouse.date_death': function(date) {
       this.formatDate('dateDeath', date)
     },
@@ -429,7 +402,7 @@ export default {
   },
   
   Death(){
-      if(this.dates.dateDeath.formatted == null){
+      if(this.spouse.birth_date == null){
           this.visible = true
         }else{
           this.visible = false
