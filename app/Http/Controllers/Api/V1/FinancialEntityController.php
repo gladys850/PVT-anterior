@@ -19,7 +19,7 @@ class FinancialEntityController extends Controller
     */
     public function index()
     {
-        return FinancialEntity::orderBy('name')->get();
+        return FinancialEntity::orderBy('id')->get();
     }
 
     /**
