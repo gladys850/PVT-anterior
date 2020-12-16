@@ -29,66 +29,17 @@
                               <v-progress-linear></v-progress-linear>
                               <br />
                               <v-layout row wrap>
-                                <v-col cols="12" md="12" class="py-0" v-if="item.value=='export'">
-                                  <v-menu
-                                    v-model="dates.cutOffDate.show"
-                                    :close-on-content-click="false"
-                                    transition="scale-transition"
-                                    offset-y
-                                    max-width="290px"
-                                    min-width="290px"
-                                  >
-                                    <template v-slot:activator="{ on }">
-                                      <v-text-field
-                                        dense
-                                        v-model="dates.cutOffDate.formatted"
-                                        label="Fecha de corte"
-                                        hint="Día/Mes/Año"
-                                        persistent-hint
-                                        append-icon="mdi-calendar"
-                                        clearable
-                                        v-on="on"
-                                        outlined
-                                        readonly
-                                      ></v-text-field>
-                                    </template>
-                                    <v-date-picker
-                                      v-model="import_export.cutoff_date"
-                                      no-title
-                                      @input="dates.cutOffDate.show = false"
-                                    ></v-date-picker>
-                                  </v-menu>
+                                <v-col cols="12" md="12" class="py-0">
+                                  <v-text-field
+                                    dense
+                                    v-model="import_export.cutoff_date"
+                                    label="Fecha de corte"
+                                    hint="Día/Mes/Año"
+                                    type="date"
+                                    outlined
+                                  ></v-text-field>
                                 </v-col>
-                                <v-col cols="12" md="12" class="py-0" v-if="item.value=='import'">
-                                  <v-menu
-                                    v-model="dates.cutOffDateImport.show"
-                                    :close-on-content-click="false"
-                                    transition="scale-transition"
-                                    offset-y
-                                    max-width="290px"
-                                    min-width="290px"
-                                  >
-                                    <template v-slot:activator="{ on }">
-                                      <v-text-field
-                                        dense
-                                        v-model="dates.cutOffDateImport.formatted"
-                                        label="Fecha de corte"
-                                        hint="Día/Mes/Año"
-                                        persistent-hint
-                                        append-icon="mdi-calendar"
-                                        clearable
-                                        v-on="on"
-                                        outlined
-                                        readonly
-                                      ></v-text-field>
-                                    </template>
-                                    <v-date-picker
-                                      v-model="import_export.cutoff_date_import"
-                                      no-title
-                                      @input="dates.cutOffDateImport.show = false"
-                                    ></v-date-picker>
-                                  </v-menu>
-                                </v-col>
+
                                 <v-col cols="12" md="12" class="py-0">
                                   <ValidationProvider
                                     v-slot="{ errors }"
@@ -139,6 +90,7 @@
                                   <v-btn
                                     color="primary"
                                     @click.stop="registerPaymentsBatch()"
+                                    
                                   >Generar Información</v-btn>
                                   <br />
                                   <v-btn
@@ -152,14 +104,15 @@
                                     @click.stop="importationPaymentsBatch()"
                                   >Importar Información</v-btn>
                                   <br />
-                                  <v-btn
-                                    color="primary"
-                                    @click.stop="excel()"
-                                  >Ver Reporte de importación</v-btn>
-                                  {{visible}}
+
+                            
                                   <template v-if="visible == true">
-                                    <p style="color: teal">Cantidad de pagos importados: {{import_payments.automatic}}</p>
-                                    <p style="color: teal">Cantidad de pagos NO importados: {{import_payments.no_automatic}}</p>
+                                    <p
+                                      style="color: teal"
+                                    >Cantidad de pagos importados: {{import_payments.automatic}}</p>
+                                    <p
+                                      style="color: teal"
+                                    >Cantidad de pagos NO importados: {{import_payments.no_automatic}}</p>
                                   </template>
                                 </v-col>
                               </v-layout>
@@ -221,16 +174,16 @@ export default {
     visible: false
   }),
   mounted() {
-    this.formatDate("cutOffDate", this.import_export.cutoff_date);
-    this.formatDate("cutOffDate", this.import_export.cutoff_date_import);
+    //this.formatDate("cutOffDate", this.import_export.cutoff_date);
+    //this.formatDate("cutOffDate", this.import_export.cutoff_date_import);
   },
   watch: {
     "import_export.cutoff_date": function(date) {
       this.formatDate("cutOffDate", date);
-    },
-    "import_export.cutoff_date_import": function(date) {
-      this.formatDate("cutOffDateImport", date);
     }
+    /*"import_export.cutoff_date_import": function(date) {
+      this.formatDate("cutOffDateImport", date);
+    }*/
   },
   methods: {
     formatDate(key, date) {
@@ -248,6 +201,7 @@ export default {
           voucher: this.import_export.code_voucher
         });
         this.paymentsBatch = res.data;
+        this.toastr.success("Se Realizo la exportación correctamente")
       } catch (e) {
         console.log(e);
       }
