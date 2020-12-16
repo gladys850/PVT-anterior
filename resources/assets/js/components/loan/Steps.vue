@@ -297,7 +297,7 @@ export default {
     intervalos:{},
     payable_liquid:[0,0,0],
     bonos:[0,0,0,0],
-    period:[0,0,0],
+    period:[],
     //personal_reference:{},
     personal_codebtor:[],
     //cosigners:[],
