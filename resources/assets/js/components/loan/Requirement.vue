@@ -287,7 +287,7 @@ export default {
               lenders:this.lenders,
               guarantors: this.guarantors,
               data_loan:this.data_loan_parent,
-              documents: this.itemsOpc.concat(this.selected.concat(this.radios.filter(Boolean))),
+              documents: this.selected.concat(this.itemsOpc.concat(this.radios.filter(Boolean))),
               notes: this.otherDocuments
             });             
             if(res.status==201 || res.status == 200){

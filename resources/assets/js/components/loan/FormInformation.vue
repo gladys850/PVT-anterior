@@ -130,7 +130,7 @@
                       ></v-text-field>
                     </ValidationProvider>
                   </v-col>
-                  <v-col cols="12" md="3">
+                  <!--<v-col cols="12" md="3">
                     <ValidationProvider v-slot="{ errors }" name="CI" rules="required|min:3">
                       <v-text-field
                         :error-messages="errors"
@@ -156,7 +156,7 @@
                         label="Ciudad de Expedición"
                       ></v-select>
                     </ValidationProvider>
-                  </v-col>
+                  </v-col>-->
                   <v-col cols="12" md="3">
                     <ValidationProvider
                       v-slot="{ errors }"
