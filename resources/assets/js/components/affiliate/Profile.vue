@@ -118,7 +118,6 @@
                         class="purple-input"
                         type="date"
                         :clearable="editable"
-                        v-on="on"
                         :readonly="!editable || !permission.secondary"
                         :outlined="editable && permission.secondary"
                         :disabled="editable && !permission.secondary"

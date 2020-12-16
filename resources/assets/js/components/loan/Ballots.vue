@@ -75,7 +75,7 @@
                       :error-messages="errors"
                       dense
                       v-model="payable_liquid[0]"
-                      :label = period[0]
+                      :label = "period[0]"
                       :disabled="!enabled"
                       :outlined="editar"
                     ></v-text-field>             
@@ -87,7 +87,7 @@
                     :error-messages="errors"
                       dense
                       v-model="payable_liquid[1]"
-                      :label= period[1]
+                      :label= "period[1]"
                       :disabled="!enabled"
                       :outlined="editar"
                   ></v-text-field>
@@ -99,7 +99,7 @@
                     :error-messages="errors"
                       dense
                       v-model="payable_liquid[2]"
-                      :label= period[2]
+                      :label= "period[2]"
                       :disabled="!enabled"
                       :outlined="editar"
                      ></v-text-field>
