@@ -185,6 +185,16 @@
                       ></v-text-field>
                     </ValidationProvider>
                   </v-col>
+                  <v-col cols="12" md="6">
+                    <ValidationProvider v-slot="{ errors }" rules="required">
+                      <v-text-field
+                        :error-messages="errors"
+                        dense
+                        v-model="personal_reference.address"
+                        label="Dirección"
+                        ></v-text-field>
+                      </ValidationProvider>
+                  </v-col>
                 </v-row>
               </v-container>
             </v-form>
@@ -383,7 +393,8 @@ export default {
               first_name:this.personal_reference.first_name,
               second_name:this.personal_reference.second_name,
               phone_number:this.personal_reference.phone_number,
-              cell_phone_number:this.personal_reference.cell_phone_number
+              cell_phone_number:this.personal_reference.cell_phone_number,
+              address:this.personal_reference.address
             })         
             this.editedIndexPerRef = res.data.id
             this.reference.push(res.data.id)
@@ -397,7 +408,8 @@ export default {
               first_name:this.personal_reference.first_name,
               second_name:this.personal_reference.second_name,
               phone_number:this.personal_reference.phone_number,
-              cell_phone_number:this.personal_reference.cell_phone_number
+              cell_phone_number:this.personal_reference.cell_phone_number,
+              address:this.personal_reference.address
             })   
             this.reference.push(res.data.id)     
           }

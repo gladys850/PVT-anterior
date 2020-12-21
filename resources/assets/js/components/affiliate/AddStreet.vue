@@ -29,7 +29,7 @@
                         ></v-select>
                       </v-col>
                       <v-col cols="12" md="9" v-show="address.edit">
-                        <ValidationProvider v-slot="{ errors }" vid="zone" name="zona" rules="required">
+                        <ValidationProvider v-slot="{ errors }" vid="zone" name="Direccion" rules="required">
                           <v-text-field
                           :error-messages="errors"
                           dense

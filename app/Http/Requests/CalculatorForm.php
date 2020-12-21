@@ -33,7 +33,7 @@ class CalculatorForm extends FormRequest
             'liquid_calification.*.contributions' => ['required', 'array', 'min:1'],
             'liquid_calification.*.contributions.*.payable_liquid' => ['required'],
             'liquid_calification.*.contributions.*.border_bonus' => ['required'],
-            'liquid_calification.*.contributions.*.seniority_bonus' => ['required'],
+            'liquid_calification.*.contributions.*.position_bonus' => ['required'],
             'liquid_calification.*.contributions.*.public_security_bonus' => ['required'],
             'liquid_calification.*.contributions.*.east_bonus' => ['required']
         ];

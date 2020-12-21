@@ -44,7 +44,7 @@ class PersonalReferenceForm extends FormRequest
         ];
         switch ($this->method()) {
             case 'POST': {
-                foreach (array_slice($rules, 0, 2 ) as $key => $rule) {
+                foreach (array_slice($rules, 0, 1 ) as $key => $rule) {
                     array_push($rules[$key], 'required');
                 }
             }
@@ -69,4 +69,5 @@ class PersonalReferenceForm extends FormRequest
             'civil_status' => 'trim|uppercase',
         ];
     }
+   
 }

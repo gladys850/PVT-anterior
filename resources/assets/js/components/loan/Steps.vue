@@ -141,7 +141,7 @@
             :guarantors.sync="guarantors"
             :affiliate.sync="affiliate"
             :modalidad_id.sync="modalidad.id"/>
-          <v-container class="py-0" v-show="modalidad.procedure_type_id!=12">
+          <v-container class="py-0" v-show="modalidad.procedure_type_id!=12 ">
             <v-row>
             <v-spacer></v-spacer><v-spacer></v-spacer> <v-spacer></v-spacer>
               <v-col class="py-0">
@@ -297,7 +297,7 @@ export default {
     intervalos:{},
     payable_liquid:[0,0,0],
     bonos:[0,0,0,0],
-    period:[0,0,0],
+    period:[],
     //personal_reference:{},
     personal_codebtor:[],
     //cosigners:[],
@@ -540,7 +540,7 @@ export default {
             contributions: [
             {
               payable_liquid: this.payable_liquid[0],
-              seniority_bonus:  this.bonos[2],
+              position_bonus:  this.bonos[2],
               border_bonus: this.bonos[0],
               public_security_bonus: this.bonos[3],
               east_bonus:this.bonos[1],
@@ -548,7 +548,7 @@ export default {
             },
             {
               payable_liquid: this.payable_liquid[1],
-              seniority_bonus: 0,
+              position_bonus: 0,
               border_bonus: 0,
               public_security_bonus: 0,
               east_bonus:0,
@@ -556,7 +556,7 @@ export default {
             },
             {
               payable_liquid: this.payable_liquid[2],
-              seniority_bonus: 0,
+              position_bonus: 0,
               border_bonus:0,
               period:0,
               public_security_bonus: 0,
@@ -576,7 +576,7 @@ export default {
             contributions: [
             {
               payable_liquid: this.payable_liquid[0],
-              seniority_bonus:  this.bonos[2],
+              position_bonus:  this.bonos[2],
               border_bonus: this.bonos[0],
               public_security_bonus: this.bonos[3],
               east_bonus:this.bonos[1]
@@ -594,7 +594,7 @@ export default {
             payable_liquid: this.contrib_codebtor[i].payable_liquid,
             border_bonus: this.contrib_codebtor[i].border_bonus,
             east_bonus: this.contrib_codebtor[i].east_bonus,
-            seniority_bonus: this.contrib_codebtor[i].seniority_bonus,
+            position_bonus: this.contrib_codebtor[i].position_bonus,
             public_security_bonus: this.contrib_codebtor[i].public_security_bonus
             }
           ]
