@@ -27,17 +27,17 @@ class CalculatorController extends Controller
     * @bodyParam liquid_calification[0].quota_sismu float En caso de tener un Préstamo Padre en el Sistema sismu,  se requiere cuota. Example: 500
     * @bodyParam liquid_calification[1].parent_loan_id integer ID de Préstamo Padre No-example.
     * @bodyParam liquid_calification[0].contributions[0].payable_liquid float required Líquido pagable. Example: 2000
-    * @bodyParam liquid_calification[0].contributions[0].seniority_bonus float required Bono Cargo . Example: 0
+    * @bodyParam liquid_calification[0].contributions[0].position_bonus float required Bono Cargo . Example: 0
     * @bodyParam liquid_calification[0].contributions[0].border_bonus float required Bono Frontera . Example: 0
     * @bodyParam liquid_calification[0].contributions[0].public_security_bonus float required Bono Seguridad Ciudadana . Example: 0
     * @bodyParam liquid_calification[0].contributions[0].east_bonus float Bono Oriente. Example: 950.6
     * @bodyParam liquid_calification[0].contributions[1].payable_liquid float Líquido pagable. Example: 2000
-    * @bodyParam liquid_calification[0].contributions[1].seniority_bonus float Bono Cargo . Example: 0
+    * @bodyParam liquid_calification[0].contributions[1].position_bonus float Bono Cargo . Example: 0
     * @bodyParam liquid_calification[0].contributions[1].border_bonus float Bono Frontera . Example: 0
     * @bodyParam liquid_calification[0].contributions[1].public_security_bonus float Bono Seguridad Ciudadana . Example: 0
     * @bodyParam liquid_calification[0].contributions[1].east_bonus float Bono Oriente. Example: 950.6
     * @bodyParam liquid_calification[0].contributions[2].payable_liquid float Líquido pagable. Example: 2000
-    * @bodyParam liquid_calification[0].contributions[2].seniority_bonus float Bono Cargo . Example: 0
+    * @bodyParam liquid_calification[0].contributions[2].position_bonus float Bono Cargo . Example: 0
     * @bodyParam liquid_calification[0].contributions[2].border_bonus float Bono Frontera . Example: 0
     * @bodyParam liquid_calification[0].contributions[2].public_security_bonus float Bono Seguridad Ciudadana . Example: 0
     * @bodyParam liquid_calification[0].contributions[2].east_bonus float Bono Oriente. Example: 950.6
@@ -46,7 +46,7 @@ class CalculatorController extends Controller
     * @bodyParam liquid_calification[1].sismu boolean En caso de tener un Préstamo Padre en el Sistema sismu. Example: false
     * @bodyParam liquid_calification[1].quota_sismu float En caso de tener un Préstamo Padre en el Sistema sismu,  se requiere cuota No-example.
     * @bodyParam liquid_calification[1].contributions[0].payable_liquid float required Líquido pagable. Example: 3000
-    * @bodyParam liquid_calification[1].contributions[0].seniority_bonus float required Bono Cargo . Example: 0
+    * @bodyParam liquid_calification[1].contributions[0].position_bonus float required Bono Cargo . Example: 0
     * @bodyParam liquid_calification[1].contributions[0].border_bonus float required Bono Frontera . Example: 0
     * @bodyParam liquid_calification[1].contributions[0].public_security_bonus float required Bono Seguridad Ciudadana . Example: 0
     * @bodyParam liquid_calification[1].contributions[0].east_bonus float required Bono Oriente. Example: 950.6
@@ -81,7 +81,8 @@ class CalculatorController extends Controller
             $contributions = collect($contributions);
             $payable_liquid_average = $contributions->avg('payable_liquid');
             $contribution_first = $contributions->first();// se obtiene los bonos de la ultima boleta
-            $total_bonuses = $contribution_first['seniority_bonus']+$contribution_first['border_bonus']+$contribution_first['public_security_bonus']+$contribution_first['east_bonus'];
+            //$total_bonuses = $contribution_first['seniority_bonus']+$contribution_first['border_bonus']+$contribution_first['public_security_bonus']+$contribution_first['east_bonus'];
+            $total_bonuses = $contribution_first['position_bonus']+$contribution_first['border_bonus']+$contribution_first['public_security_bonus']+$contribution_first['east_bonus'];
             $liquid_qualification_calculated = $this->liquid_qualification($payable_liquid_average, $total_bonuses, $affiliate, $parent_quota);
             $loan_global_parameter = LoanGlobalParameter::latest()->first();
             $livelihood_amount = false;
@@ -249,17 +250,17 @@ class CalculatorController extends Controller
     * @bodyParam parent_loan_id integer ID de Préstamo Padre.. Example: 1
     * @bodyParam guarantor boolean Afiliado evaluado como garante. Example: false
     * @bodyParam contributions[0].payable_liquid integer required Líquido pagable. Example: 2000
-    * @bodyParam contributions[0].seniority_bonus integer required Bono Cargo . Example: 0.00
+    * @bodyParam contributions[0].position_bonus integer required Bono Cargo . Example: 0.00
     * @bodyParam contributions[0].border_bonus integer required Bono Frontera . Example: 0.00
     * @bodyParam contributions[0].public_security_bonus integer required Bono Seguridad Ciudadana . Example: 0.00
     * @bodyParam contributions[0].east_bonus integer required Bono Oriente. Example: 0.00
     * @bodyParam contributions[1].payable_liquid integer Líquido pagable. Example: 2270
-    * @bodyParam contributions[1].seniority_bonus integer Bono Cargo . Example: 0.00
+    * @bodyParam contributions[1].position_bonus integer Bono Cargo . Example: 0.00
     * @bodyParam contributions[1].border_bonus integer Bono Frontera . Example: 0.00
     * @bodyParam contributions[1].public_security_bonus integer Bono Seguridad Ciudadana . Example: 0.00
     * @bodyParam contributions[1].east_bonus integer Bono Oriente. Example: 0.00
     * @bodyParam contributions[2].payable_liquid integer Líquido pagable. Example: 1563
-    * @bodyParam contributions[2].seniority_bonus integer Bono Cargo . Example: 0.00
+    * @bodyParam contributions[2].position_bonus integer Bono Cargo . Example: 0.00
     * @bodyParam contributions[2].border_bonus integer Bono Frontera . Example: 0.00
     * @bodyParam contributions[2].public_security_bonus integer Bono Seguridad Ciudadana . Example: 0.00
     * @bodyParam contributions[2].east_bonus integer Bono Oriente. Example: 0.00
@@ -283,7 +284,7 @@ class CalculatorController extends Controller
         $contributions = collect($request->contributions);
         $payable_liquid_average = $contributions->avg('payable_liquid');
         $contribution_first = $contributions->first();// se obtiene los bonos de la ultima boleta
-        $total_bonuses = $contribution_first['seniority_bonus']+$contribution_first['border_bonus']+$contribution_first['public_security_bonus']+$contribution_first['east_bonus'];
+        $total_bonuses = $contribution_first['position_bonus']+$contribution_first['border_bonus']+$contribution_first['public_security_bonus']+$contribution_first['east_bonus'];
         $liquid_qualification_calculated = $this->liquid_qualification_borrar($payable_liquid_average, $total_bonuses, $affiliate, $parent_quota, $request->guarantor);
         $quota_calculated = $this->quota_calculator_borrar($procedure_modality, $request->months_term, $amount_requested);
 
@@ -433,7 +434,7 @@ class CalculatorController extends Controller
     * @bodyParam affiliate_id integer required ID del afiliado. Example: 1
     * @bodyParam quota_calculated_total_lender cuota calculada del titular. Example: 900
     * @bodyParam contributions[0].payable_liquid integer required Líquido pagable. Example: 2000
-    * @bodyParam contributions[0].seniority_bonus integer required Bono Cargo . Example: 0.00
+    * @bodyParam contributions[0].position_bonus integer required Bono Cargo . Example: 0.00
     * @bodyParam contributions[0].border_bonus integer required Bono Frontera . Example: 0.00
     * @bodyParam contributions[0].public_security_bonus integer required Bono Seguridad Ciudadana . Example: 0.00
     * @bodyParam contributions[0].east_bonus integer required Bono Oriente. Example: 0.00
@@ -453,7 +454,7 @@ class CalculatorController extends Controller
             $payable_liquid_average = $contributions->avg('payable_liquid');
             $quota_calculated = $request->quota_calculated_total_lender/$quantity_guarantors;
             $contribution_first = $contributions->first();
-            $total_bonuses = $contribution_first['seniority_bonus']+$contribution_first['border_bonus']+$contribution_first['public_security_bonus']+$contribution_first['east_bonus'];
+            $total_bonuses = $contribution_first['position_bonus']+$contribution_first['border_bonus']+$contribution_first['public_security_bonus']+$contribution_first['east_bonus'];
             $liquid_qualification_calculated = $this->liquid_qualification($payable_liquid_average, $total_bonuses, $affiliate);
             $indebtedness_calculated = $quota_calculated/$liquid_qualification_calculated*100;
             if($liquid_qualification_calculated < $loan_global_parameter->livelihood_amount)
