@@ -140,7 +140,7 @@
                               <ul style="list-style: none" class="pa-0">
                                 <li v-for="(calculado,i) in calculator_result.affiliates" :key="i" >
                                   <v-progress-linear></v-progress-linear>
-                                   <h5 class="py-0 mb-0 caption ">Nombre del Afiliado: {{ lenders_aux[i]}}</h5>
+                                   <h5 class="py-0 mb-0 caption ">Nombre del Afiliado: {{ lenders_aux[i] }}</h5>
                                   <p class="py-0 mb-0 caption">Liquido para Callificacion: {{calculado.liquid_qualification_calculated}} <b> | </b> Cuota Estimada: {{calculado.quota_calculated_estimated}} <b> | </b> Porcentaje de Pago: {{calculado.payment_percentage}}% </p>
                                 </li>
                               </ul>

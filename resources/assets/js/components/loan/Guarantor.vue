@@ -1,6 +1,6 @@
 <template>
-  <v-container fluid >
-    <v-row justify="center"  v-show="modalidad.procedure_type_id!=12">
+  <v-container fluid > 
+    <v-row justify="center"  v-show="modalidad.procedure_type_id!=12 ">
          <v-col cols="12" class="py-0" >
           <v-card v-show="show_garante">
             <v-container v-if="modalidad_guarantors==0">
@@ -416,7 +416,7 @@ ver()
                 contributions: [
                 {
                   payable_liquid: this.payable_liquid[0],
-                  seniority_bonus:  this.bonos[2],
+                  position_bonus:  this.bonos[2],
                   border_bonus: this.bonos[0],
                   public_security_bonus: this.bonos[3],
                   east_bonus:this.bonos[1]
@@ -489,7 +489,7 @@ ver()
         this.payable_liquid[0] = this.data_ballots[0].payable_liquid,
         this.bonos[0] = this.data_ballots[0].border_bonus,
         this.bonos[1] = this.data_ballots[0].east_bonus,
-        this.bonos[2] = this.data_ballots[0].seniority_bonus,
+        this.bonos[2] = this.data_ballots[0].position_bonus,
         this.bonos[3] = this.data_ballots[0].public_security_bonus
       } else{
         this.payable_liquid[0] = this.payable_liquid[0]
