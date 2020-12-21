@@ -32,34 +32,19 @@
                   (affiliate.death_certificate_number !='' || affiliate.date_death !=''  || affiliate.reason_death !='')">
                    ** Se tiene registrado datos de fallecimiento del afiliado, cambie el estado del afiliado a Fallecido.</span>  
             </v-col>
-            <v-col cols="12" md="4" v-if="visible">
-               <v-menu
-                 v-model="dates.dateDeath.show"
-                 :close-on-content-click="false"
-                 transition="scale-transition"
-                 offset-y
-                 max-width="290px"
-                 min-width="290px"
-                 :disabled="!editable || !permission.secondary"
-               >
-                 <template v-slot:activator="{ on }">
-                   <v-text-field
-                     dense
-                     v-model="dates.dateDeath.formatted"
-                     label="Fecha Fallecimiento"
-                     hint="Día/Mes/Año"
-                     persistent-hint
-                     append-icon="mdi-calendar"
-                     readonly
-                     :clearable="editable"
-                     v-on="on"
-                     :outlined="editable && permission.secondary"
-                     :disabled="editable && !permission.secondary"
-                   ></v-text-field>
-                 </template>
-                 <v-date-picker v-model="affiliate.date_death" no-title @input="dates.dateDeath.show = false"></v-date-picker>
-               </v-menu>
-             </v-col>
+             <v-col cols="12" md="4" v-if="visible">
+              <v-text-field
+                dense
+                v-model="affiliate.birth_date"
+                  label="Fecha Fallecimiento"
+                  hint="Día/Mes/Año"
+                  class="purple-input"
+                  type="date"
+                  :readonly="!editable || !permission.secondary"
+                  :outlined="editable && permission.secondary"
+                :disabled="editable && !permission.secondary"
+              ></v-text-field>
+              </v-col>
              <v-col cols="12" md="4" v-if="visible">
                <v-text-field
                  dense
@@ -80,31 +65,19 @@
                  :disabled="editable && !permission.secondary"
                ></v-text-field>
              </v-col>
-            <v-col cols="12" md="4" >
-              <v-menu
-                v-model="dates.dateEntry.show"
-                :close-on-content-click="false"
-                transition="scale-transition"
-                offset-y
-                max-width="290px"
-                min-width="290px"
-                :disabled="!editable || !permission.secondary"
+            <v-col cols="12" md="4" v-if="affiliate.is_duedate_undefined==false">
+              <v-text-field
+                dense
+                v-model="affiliate.date_entry"
+                label="Fecha Ingreso a la Institución Policial"
+                hint="Día/Mes/Año"
+                class="purple-input"
+                type="date"
+                :clearable="editable"
+                :readonly="!editable || !permission.secondary"
                 :outlined="editable && permission.secondary"
-              >
-                <template v-slot:activator="{ on }">
-                  <v-text-field
-                    dense
-                    v-model="dates.dateEntry.formatted"
-                    label="Fecha Ingreso a la Institución Policial"
-                    hint="Día/Mes/Año"
-                    persistent-hint
-                    append-icon="mdi-calendar"
-                    v-on="on"
-                    :outlined="editable && permission.secondary"
-                  ></v-text-field>
-                </template>
-                <v-date-picker v-model="affiliate.date_entry" no-title @input="dates.dateEntry.show = false"></v-date-picker>
-              </v-menu>
+                :disabled="editable && !permission.secondary"
+              ></v-text-field>
             </v-col>
             <v-col cols="12" md="4" >
             <ValidationProvider v-slot="{ errors }" vid="degree_id" name="Grado" rules="required">
@@ -202,31 +175,18 @@
             ></v-select>
             </ValidationProvider>
             </v-col>
-            <v-col cols="12"  md="6">
-              <v-menu
-                v-model="dates.dateDerelict.show"
-                :close-on-content-click="false"
-                transition="scale-transition"
-                offset-y
-                max-width="290px"
-                min-width="290px"
-                :disabled="!editable || !permission.secondary"
-              >
-                <template v-slot:activator="{ on }">
-                  <v-text-field
-                    dense
-                    v-model="dates.dateDerelict.formatted"
-                    label="Fecha Desvinculación"
-                    hint="Día/Mes/Año"
-                    persistent-hint
-                    append-icon="mdi-calendar"
-                    clearable
-                    v-on="on"
-                    :outlined="editable && permission.secondary"
-                  ></v-text-field>
-                </template>
-                <v-date-picker v-model="affiliate.date_derelict" no-title @input="dates.dateDerelict.show = false"></v-date-picker>
-              </v-menu>
+             <v-col cols="12" md="6">
+              <v-text-field
+                dense
+                v-model="affiliate.date_derelict"
+                label="Fecha Desvinculacion"
+                hint="Día/Mes/Año"
+                class="purple-input"
+                type="date"
+                :readonly="!editable || !permission.secondary"
+                :outlined="editable && permission.secondary"
+                :disabled="editable && !permission.secondary"
+              ></v-text-field>
             </v-col>
           </v-row>
         </v-col>
