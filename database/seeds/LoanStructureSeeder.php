@@ -24,7 +24,7 @@ class LoanStructureSeeder extends Seeder
             'modalities' => [
                 // ANTICIPO SECTOR ACTIVO
                 ['name'=>'Anticipo sector activo','shortened'=>'ANT-SA','requirements'=>[
-                  ['name' => 'Cédula de Identidad  del (la) titular (Original y Fotocopia).','number'=>1],
+                  ['name' => 'Cédula de Identidad  del(la) Titular (Original y Fotocopia).','number'=>1],
                   ['name' => 'Última Boleta de Pago (Original y Fotocopia) y/o Certificado de haberes.','number'=>2],
                   ['name' => 'Estado de cuenta original, vigente y emitido por el Banco Unión S.A.','number'=>3],
                   ['name' => 'Formulario SIGEP.','number'=>4],
@@ -50,7 +50,7 @@ class LoanStructureSeeder extends Seeder
             ],
                     // ANTICIPO SECTOR PASIVO Y VIUDAS
                 ['name'=>'Anticipo sector pasivo','shortened'=>'ANT-SP','requirements'=>[
-                  ['name' => 'Cédula de Identidad  del (la) titular (Original y Fotocopia).','number'=>1], 
+                  ['name' => 'Cédula de Identidad  del(la) Titular (Original y Fotocopia).','number'=>1], 
                   ['name' => 'Última Boleta de Pago (Original y Fotocopia) y/o  Certificado de haberes.','number'=>2], 
                   ['name' => 'Estado de cuenta original, vigente y emitido por el Banco Unión S.A.','number'=>3], // Nuevo
                   ['name' => 'Formulario SIGEP.','number'=>4],
@@ -85,7 +85,7 @@ class LoanStructureSeeder extends Seeder
             'modalities' => [
               // CORTO PLAZO SECTOR ACTIVO SERVICIO
               ['name'=>'Corto plazo sector activo','shortened'=>'PCP-SA','requirements'=>[
-                ['name' => 'Cédula de Identidad  del (la) titular (Original y Fotocopia).','number'=>1],
+                ['name' => 'Cédula de Identidad  del(la) Titular (Original y Fotocopia).','number'=>1],
                 ['name' => 'Tres últimas boletas (Original y Fotocopia) y/o Certificado de haberes.','number'=>2],
                // ['name' => 'Certificado de haberes considerando el último mes percibido.','number'=>2],  // En caso de no contar con la boleta de pago
                 ['name' => 'Estado de cuenta original, vigente y emitido por el Banco Unión S.A.','number'=>3],
@@ -112,7 +112,7 @@ class LoanStructureSeeder extends Seeder
             ],
               // CORTO PLAZO SECTOR ACTIVO DISPONIBILIDAD LETRA 'A', el refinanciamiento de esta sub mod no corresponde según reglamento de prestamos ART 76 I. c) 
               ['name'=>'Corto plazo con disponibilidad de letra "A"','shortened'=>'PCP-DLA','requirements'=>[
-                ['name' => 'Cédula de Identidad  del (la) titular (Original y Fotocopia).','number'=>1],
+                ['name' => 'Cédula de Identidad  del(la) Titular (Original y Fotocopia).','number'=>1],
                 ['name' => 'Tres últimas boletas (Original y Fotocopia) y/o Certificado de haberes.','number'=>2], //( 3 boletas)
                 ['name' => 'Memorándum de asignación de la Letra (Original y Fotocopia).','number'=>3],
                 ['name' => 'Certificado de años de servicio.','number'=>4],
@@ -144,7 +144,7 @@ class LoanStructureSeeder extends Seeder
             ],
                // CORTO PLAZO SECTOR PASIVO Y VIUDAS AFP
               ['name'=>'Corto plazo el sector pasivo y viudas AFPs','shortened'=>'PCP-SP-AFP','requirements'=>[
-                ['name' => 'Cédula de Identidad  del (la) titular (Original y Fotocopia).','number'=>1],
+                ['name' => 'Cédula de Identidad  del(la) Titular (Original y Fotocopia).','number'=>1],
                 ['name' => 'Tres últimas boletas (Original y Fotocopia) y/o Certificado de haberes.','number'=>2],      //Nuevo *caso pasivo con renta en AFP , quien solicita el préstamo
                 ['name' => 'Cédula de Identidad  - Garante (Original y Fotocopia).','number'=>3],
                 ['name' => 'Última Boleta de Pago - Garante (Original y Fotocopia).','number'=>4],
@@ -178,7 +178,7 @@ class LoanStructureSeeder extends Seeder
             ],
               // CORTO PLAZO SECTOR PASIVO Y VIUDAS SENASIR
               ['name'=>'Corto plazo el sector pasivo y viudas Senasir','shortened'=>'PCP-SP-SEN','requirements'=>[
-                ['name' => 'Cédula de Identidad  del (la) titular (Original y Fotocopia).','number'=>1],
+                ['name' => 'Cédula de Identidad  del(la) Titular (Original y Fotocopia).','number'=>1],
                 ['name' => 'Tres últimas boletas (Original y Fotocopia) y/o Certificado de haberes.','number'=>2], //Nuevo *caso pasivo con renta de SENASIR, quien solicita el préstamo
                 //['name' => 'Certificado de haberes considerando el último mes percibido.','number'=>2],  // En caso de no contar con la boleta de pago
                 ['name' => 'Estado de cuenta original, vigente y emitido por el Banco Unión S.A.','number'=>3],
@@ -204,7 +204,7 @@ class LoanStructureSeeder extends Seeder
             ],
               // REFINANCIAMIENTO ACTIVO
               ['name'=>'Refinanciamiento de Préstamo a corto plazo para el sector Activo','shortened'=>'PCP-R-SA','requirements'=>[
-                ['name' => 'Cédula de Identidad  del (la) titular (Original y Fotocopia).','number'=>1],
+                ['name' => 'Cédula de Identidad  del(la) Titular (Original y Fotocopia).','number'=>1],
                 ['name' => 'Tres últimas boletas (Original y Fotocopia) y/o Certificado de haberes.','number'=>2],
                 //['name' => 'Cédula de Identidad del (la) titular en copia simple.','number'=>1],
                 //['name' => 'Tres últimas Boletas de pago en copia simple.','number'=>2],
@@ -233,7 +233,7 @@ class LoanStructureSeeder extends Seeder
             ],
                // REFINANCIAMIENTO PASIVOS Y VIUDAS - AFP
               ['name'=>'Refinanciamiento de Préstamo a corto plazo para el sector Pasivo y Viudas AFPs','shortened'=>'PCP-R-SP-AFP','requirements'=>[
-                ['name' => 'Cédula de Identidad del (la) titular (Original y Fotocopia).','number'=>1],
+                ['name' => 'Cédula de Identidad del(la) Titular (Original y Fotocopia).','number'=>1],
                 ['name' => 'Tres últimas boletas (Original y Fotocopia) y/o Certificado de haberes.','number'=>2],
                 ['name' => 'Cédula de Identidad - Garante (Original y Fotocopia).','number'=>3],
                 ['name' => 'Última Boleta de Pago - Garante (Original y Fotocopia).','number'=>4],
@@ -270,7 +270,7 @@ class LoanStructureSeeder extends Seeder
               // REFINANCIAMIENTO PASIVOS Y VIUDAS - SENASIR
               ['name'=>'Refinanciamiento de Préstamo a corto plazo para el sector Pasivo y Viudas Senasir','shortened'=>'PCP-R-SP-SEN',
               'requirements'=>[
-                ['name' => 'Cédula de Identidad  del (la) titular (Original y Fotocopia).','number'=>1],
+                ['name' => 'Cédula de Identidad  del(la) Titular (Original y Fotocopia).','number'=>1],
                 ['name' => 'Tres últimas boletas (Original y Fotocopia) y/o Certificado de haberes.','number'=>2],
                 ['name' => 'Estado de cuenta original, vigente y emitido por el Banco Unión S.A.','number'=>3],
                 ['name' => 'Formulario SIGEP.','number'=>4],
@@ -305,7 +305,7 @@ class LoanStructureSeeder extends Seeder
             'modalities' => [
                 // LARGO PLAZO SECTOR ACTIVO Y ADMINISTRATIVO CON GARANTÍA PERSONAL(2 GARANTES ACTIVOS)
               ['name'=>'Largo Plazo con garantía personal para el sector activo y personal Adm Policial','shortened'=>'PLP-GP-SAYADM','requirements'=>[
-                ['name' => 'Cédula de Identidad  del (la) titular (Original y Fotocopia).','number'=>1],
+                ['name' => 'Cédula de Identidad  del(la) Titular (Original y Fotocopia).','number'=>1],
                 ['name' => 'Última Boleta de Pago del(la) Titular (Original y Fotocopia) y/o Certificado de haberes.','number'=>2],
                 ['name' => 'Cédula de Identidad - 2 Garantes (Original y Fotocopia).','number'=>3],
                 ['name' => 'Última Boleta de Pago - 2 Garantes (Original y Fotocopia).','number'=>4],
@@ -344,8 +344,8 @@ class LoanStructureSeeder extends Seeder
             ],
                   // LARGO PLAZO SECTOR PASIVO CON GARANTÍA PERSONAL
               ['name'=>'Largo Plazo con garantía personal para el sector pasivo','shortened'=>'PLP-GP-SP','requirements'=>[
-                ['name' => 'Cédula de Identidad  del (la) titular (Original y Fotocopia).','number'=>1],
-                ['name' => 'Última Boleta de Pago del (la) Titular (Original y Fotocopia) y/o Certificado de haberes.','number'=>2],
+                ['name' => 'Cédula de Identidad  del(la) Titular (Original y Fotocopia).','number'=>1],
+                ['name' => 'Última Boleta de Pago del(la) Titular (Original y Fotocopia) y/o Certificado de haberes.','number'=>2],
                 ['name' => 'Cédula de Identidad - Garante (Original y Fotocopia).','number'=>3],
                 ['name' => 'Última Boleta de Pago - Garante (Original y Fotocopia).','number'=>4],
                 ['name' => 'Estado de cuenta original, vigente y emitido por el Banco Unión S.A.','number'=>5],
@@ -380,7 +380,7 @@ class LoanStructureSeeder extends Seeder
             ],
                 // LARGO PLAZO SECTOR PASIVO CON UN SOLO GARANTE - CPOP  //Eliminar en caso de que no proceda
                 ['name'=>'Largo Plazo con un solo garante para el sector pasivo - CPOP','shortened'=>'PLP-SP-CPOP','requirements'=>[
-                  ['name' => 'Cédula de Identidad  del (la) titular (Original y Fotocopia).','number'=>1],
+                  ['name' => 'Cédula de Identidad  del(la) Titular (Original y Fotocopia).','number'=>1],
                   ['name' => 'Última Boleta de Pago del(la) Titular (Original y Fotocopia) y/o Certificado de haberes.','number'=>2],
                   ['name' => 'Cédula de Identidad – 1 Garante (Original y Fotocopia).','number'=>3],
                   ['name' => 'Última Boleta de Pago – 1 Garante (Original y Fotocopia).','number'=>4],
@@ -420,8 +420,8 @@ class LoanStructureSeeder extends Seeder
 
                 // LARGO PLAZO UN SOLO GARANTE SECTOR ACTIVO --Afiliados CPOP
               ['name'=>'Largo Plazo con un solo garante para el sector activo - CPOP','shortened'=>'PLP-CPOP','requirements'=>[
-                ['name' => 'Cédula de Identidad  del (la) titular (Original y Fotocopia).','number'=>1],
-                ['name' => 'Última Boleta de Pago del (la) Titular (Original y Fotocopia) y/o Certificado de haberes.','number'=>2],
+                ['name' => 'Cédula de Identidad  del(la) Titular (Original y Fotocopia).','number'=>1],
+                ['name' => 'Última Boleta de Pago del(la) Titular (Original y Fotocopia) y/o Certificado de haberes.','number'=>2],
                 ['name' => 'Cédula de Identidad - 1 Garante (Original y Fotocopia).','number'=>3],
                 ['name' => 'Última Boleta de Pago - 1 Garante (Original y Fotocopia).','number'=>4],
                 ['name' => 'Estado de cuenta original, vigente y emitido por el Banco Unión S.A.','number'=>5],
@@ -460,7 +460,7 @@ class LoanStructureSeeder extends Seeder
             ],
               // REFINANCIANCIAMIENTO SECTOR ACTIVO CON UN SOLO GARANTE ---> En este caso el garante solo puede ser activo
               ['name'=>'Refinanciamiento de Préstamo a largo Plazo para el sector activo - CPOP','shortened'=>'PLP-R-SA-CPOP','requirements'=>[
-                ['name' => 'Cédula de Identidad  del (la) titular (Original y Fotocopia).','number'=>1],
+                ['name' => 'Cédula de Identidad  del(la) Titular (Original y Fotocopia).','number'=>1],
                 ['name' => 'Última Boleta de Pago del(la) Titular (Original y Fotocopia) y/o Certificado de haberes.','number'=>2],
                 ['name' => 'Cédula de Identidad - 1 Garante (Original y Fotocopia).','number'=>3],
                 ['name' => 'Última Boleta de Pago - 1 Garante (Original y Fotocopia).','number'=>4],
@@ -502,7 +502,7 @@ class LoanStructureSeeder extends Seeder
             ],
                  // REFINANCIANCIAMIENTO SECTOR PASIVO CON GARANTIA PERSONAL 
                 ['name'=>'Refinanciamiento de Préstamo a largo Plazo con garantía personal para el sector pasivo','shortened'=>'PLP-R-GP-SP','requirements'=>[
-                  ['name' => 'Cédula de Identidad  del (la) titular (Original y Fotocopia).','number'=>1],
+                  ['name' => 'Cédula de Identidad  del(la) Titular (Original y Fotocopia).','number'=>1],
                   ['name' => 'Última Boleta de Pago del(la) Titular (Original y Fotocopia) y/o Certificado de haberes.','number'=>2],
                   ['name' => 'Cédula de Identidad -  Garante (Original y Fotocopia).','number'=>3],
                   ['name' => 'Última Boleta de Pago - Garante (Original y Fotocopia).','number'=>4],
@@ -538,7 +538,7 @@ class LoanStructureSeeder extends Seeder
               ],
                  // REFINANCIANCIAMIENTO SECTOR PASIVO CON UN SOLO GARANTE - CPOP //Eliminar en caso de que no proceda
               ['name'=>'Refinanciamiento de Préstamo a largo Plazo para el sector pasivo - CPOP','shortened'=>'PLP-R-SP-CPOP','requirements'=>[
-                ['name' => 'Cédula de Identidad  del (la) titular (Original y Fotocopia).','number'=>1],
+                ['name' => 'Cédula de Identidad  del(la) Titular (Original y Fotocopia).','number'=>1],
                 ['name' => 'Última Boleta de Pago del(la) Titular (Original y Fotocopia) y/o Certificado de haberes.','number'=>2],
                 ['name' => 'Cédula de Identidad –  Garante (Original y Fotocopia).','number'=>3],
                 ['name' => 'Última Boleta de Pago – Garante (Original y Fotocopia).','number'=>4],
@@ -578,8 +578,8 @@ class LoanStructureSeeder extends Seeder
             ],
                 //REFINANCIAMIENTO LARGO PLAZO SECTOR ACTIVO Y ADMINISTRATIVO CON GARANTÍA PERSONAL(2 GARANTES ACTIVOS) **
                 ['name'=>'Refinanciamiento de Préstamo a largo Plazo con garantía personal para el sector activo y personal Adm Policial','shortened'=>'PLP-R-GP-SAYADM','requirements'=>[
-                  ['name' => 'Cédula de Identidad  del (la) Titular (Original y Fotocopia).','number'=>1],
-                  ['name' => 'Última Boleta de Pago del (la) Titular (Original y Fotocopia) y/o Certificado de haberes.','number'=>2],
+                  ['name' => 'Cédula de Identidad  del(la) Titular (Original y Fotocopia).','number'=>1],
+                  ['name' => 'Última Boleta de Pago del(la) Titular (Original y Fotocopia) y/o Certificado de haberes.','number'=>2],
                   ['name' => 'Cédula de Identidad - 2 Garantes (Original y Fotocopia).','number'=>3],
                   ['name' => 'Última Boleta de Pago - 2 Garantes (Original y Fotocopia).','number'=>4],
                   ['name' => 'Estado de cuenta original, vigente y emitido por el Banco Unión S.A.','number'=>5],
@@ -623,8 +623,8 @@ class LoanStructureSeeder extends Seeder
             'modalities' => [
                // LARGO PLAZO GARANTÍA HIPOTECARIA
               ['name'=>'Préstamo con garantia hipotecaria de bien inmueble para el sector activo','shortened'=>'PLP-GH-SA','requirements'=>[
-              ['name' => 'Cedula de Identidad  del (la) titular (Original y Fotocopia).','number'=>1],
-              ['name' => 'Tres Últimas Boleta de Pago del (la) Titular (Original y Fotocopia) y/o Certificado de haberes.','number'=>2],
+              ['name' => 'Cedula de Identidad  del(la) Titular (Original y Fotocopia).','number'=>1],
+              ['name' => 'Tres Últimas Boleta de Pago del(la) Titular (Original y Fotocopia) y/o Certificado de haberes.','number'=>2],
               ['name' => 'Certificado de años de servicio (Original y/o fotocopia legalizada).','number'=>3],
               ['name' => 'Croquis de ubicación del inmueble.','number'=>4],
               ['name' => 'Factura de Agua o Luz del inmueble (Con antigüedad no mayor a 60 días).','number'=>5],
@@ -675,7 +675,7 @@ class LoanStructureSeeder extends Seeder
             ],
              // LARGO PLAZO GARANTÍA HIPOTECARIA CPOP //Eliminar en caso de que no proceda
               ['name'=>'Préstamo con garantia hipotecaria de bien inmueble para el sector activo - CPOP','shortened'=>'PLP-GH-CPOP','requirements'=>[
-              ['name' =>'Cédula de Identidad del (la) titular en copia simple','number'=>1],
+              ['name' =>'Cédula de Identidad del(la) Titular en copia simple','number'=>1],
               ['name' => 'Certificado de años de servicio desglosado en original emitido por el Comando General de la Policía Boliviana','number'=>2],
               ['name' => 'Certificado de años de servicio desglosado en fotocopia Legalizada emitido por el Comando General de la Policía Boliviana','number'=>2],
               ['name' => 'Certificado de años de servicio desglosado en original emitido por el Comando Regional de la Policía Boliviana','number'=>2],
@@ -712,7 +712,7 @@ class LoanStructureSeeder extends Seeder
             ],
               //REFINANCIAMIENTO DE PRÉSTAMOS A LARGO PLAZO GARANTÍA HIPOTECARIA PARA EL SECTOR ACTIVO //Eliminar en caso de que no proceda
               ['name'=>'Refinanciamiento de Préstamo con garantía hipotecaria de bien inmueble para el sector activo','shortened'=>'PLP-R-GH-SA','requirements'=>[
-              ['name' => 'Cedula de Identidad  del (la) titular (Original y Fotocopia).','number'=>1],
+              ['name' => 'Cedula de Identidad  del(la) Titular (Original y Fotocopia).','number'=>1],
               ['name' => 'Tres Últimas Boleta de Pago del(la) Titular (Original y Fotocopia) y/o Certificado de haberes','number'=>2],
               ['name' => 'Certificado de años de servicio (Original y/o fotocopia legalizada).','number'=>3],
               ['name' => 'Croquis de ubicación del inmueble.','number'=>4],
@@ -764,7 +764,7 @@ class LoanStructureSeeder extends Seeder
             ],
           //REFINANCIAMIENTO DE PRÉSTAMOS A LARGO PLAZO GARANTÍA HIPOTECARIA CPOP * //Eliminar en caso de que no proceda
           ['name'=>'Refinanciamiento de Préstamo con garantía hipotecaria de bien inmueble para el sector activo - CPOP','shortened'=>'PLP-R-GH-CPOP','requirements'=>[
-            ['name' => 'Cédula de Identidad del (la) titular en copia simple','number'=>1],
+            ['name' => 'Cédula de Identidad del(la) Titular en copia simple','number'=>1],
             ['name' => 'Certificado de años de servicio desglosado en original emitido por el Comando General de la Policía Boliviana','number'=>2],
             ['name' => 'Certificado de años de servicio desglosado en fotocopia Legalizada emitido por el Comando General de la Policía Boliviana','number'=>2],
             ['name' => 'Certificado de años de servicio desglosado en original emitido por el Comando Regional de la Policía Boliviana','number'=>2],
