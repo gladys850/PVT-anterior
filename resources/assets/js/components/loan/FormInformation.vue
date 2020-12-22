@@ -186,7 +186,7 @@
                     </ValidationProvider>
                   </v-col>
                   <v-col cols="12" md="6">
-                    <ValidationProvider v-slot="{ errors }" rules="required">
+                    <ValidationProvider v-slot="{ errors }" name="Direccion" rules="required">
                       <v-text-field
                         :error-messages="errors"
                         dense
