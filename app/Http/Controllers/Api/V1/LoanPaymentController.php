@@ -28,7 +28,10 @@ use App\Role;
 use App\ProcedureModality;
 use App\PaymentType;
 use App\AmortizationType;
+use App\AffiliateStateType;
+use App\AffiliateState;
 use App\Imports\LoanPaymentImport;
+use App\Tag;
 
 /** @group Cobranzas
 * Datos de los trámites de Cobranzas
@@ -483,9 +486,52 @@ class LoanPaymentController extends Controller
             }
 
             return response()->json([
-                    'payments_automatic' => $payment_automatic,
-                    'payments_no_automatic' => $payment_no_automatic
-                ]);
+                'payments_automatic' => $payment_automatic,
+                'payments_no_automatic' => $payment_no_automatic
+            ]);
+    }
+
+    /** @group Reportes préstamos
+    * Préstamos en móra
+    * muestra los prestamos que se encuentran en Móra.
+    */
+   
+    public function loans_mora(Request $request)
+    {
+        $mora_tag = Tag::whereSlug('mora')->first();
+        $loansMora = DB::table('loans')
+        ->join('taggables','taggables.taggable_id','=','loans.id')
+        ->join('tags','tags.id','=','taggables.tag_id')
+        ->join('affiliates','affiliates.id','=','loans.disbursable_id')
+        ->join('affiliate_states','affiliate_states.id','=','affiliates.affiliate_state_id')
+        ->where('taggables.tag_id','=',$mora_tag->id)
+        ->where('taggables.taggable_type','=','loans')
+        ->select('affiliates.identity_card','affiliates.registration','affiliates.last_name','affiliates.mothers_last_name',
+        'affiliates.first_name','affiliates.second_name','affiliate_states.name','affiliate_states.name','loans.code','loans.amount_approved','loans.loan_term','loans.disbursement_date')
+        ->get();
+
+        $File="PrestamosEnMora";
+        $data=array(
+            array("Ci del afiliado", "Matrícula afiliado", "Apellido primero", "Apellido segundo", "Primer Nombre", "Segundo Nombre", 
+            "Estádo del Afiliado","Código del préstamo","Monto aprobado","Tiempo del préstamo","Fecha de desembolso")
+        );
+        foreach ($loansMora as $row){
+            array_push($data, array(
+                $row->identity_card,
+                $row->registration,
+                $row->last_name,
+                $row->mothers_last_name,
+                $row->first_name,
+                $row->second_name,
+                $row->name,
+                $row->code,
+                $row->amount_approved,
+                $row->loan_term,
+                $row->disbursement_date
+            ));
+        }
+       $export = new ArchivoPrimarioExport($data);
+       return Excel::download($export, $File.'.xlsx'); 
     }
 }
     
