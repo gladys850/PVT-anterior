@@ -340,13 +340,6 @@ export default {
         this.data_sismu.type_sismu = true
       }
       return this.data_sismu.type_sismu
-    },
-    parent_loan_id(){
-      if(this.$route.query.type_sismu || this.$route.params.hash == 'new'){
-        return null
-      }else{
-        return this.$route.query.loan_id
-      }
     }
   },
   watch: {
