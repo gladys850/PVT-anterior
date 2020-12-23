@@ -371,6 +371,7 @@ class LoanPaymentController extends Controller
     * @bodyParam description string Texto de descripción. Example: Por descuento automatico
     * @bodyParam voucher string Comprobante de pago A-12/20 o CONT-123. Example: A-12/20
     * @authenticated
+    * @responseFile responses/loan_payment/command_senasir_save_payment.200.json
     */
     public function command_senasir_save_payment(Request $request)
     {
@@ -404,7 +405,9 @@ class LoanPaymentController extends Controller
                 }
             }
         }
-        return $loans_quantity;
+        return response()->json([
+            'loans_quantity' => $loans_quantity
+        ]);
     }
 
     /**
