@@ -1,14 +1,12 @@
 <template>
   <v-container fluid > 
-    <v-row justify="center"  v-show="modalidad.procedure_type_id!=12 ">
-         <v-col cols="12" class="py-0" >
-          <v-card v-show="show_garante">
-            <v-container v-if="modalidad_guarantors==0">
-              <v-row>
-                <v-col class="text-center">
-                  <h2 class="success--text" >ESTA MODALIDAD NO NECESITA GARANTE</h2>
-                </v-col>
-              </v-row>
+    <v-row justify="center"  v-show="modalidad.procedure_type_id!=12">
+         <v-col cols="12" class="py-0" v-if="modalidad_guarantors == 0">
+          <v-card>
+            <v-container class="py-0">
+              <v-col class="text-center">
+                <h2 class="success--text" >ESTA MODALIDAD NO NECESITA GARANTE </h2>
+              </v-col>
             </v-container>
           </v-card>
          </v-col>
