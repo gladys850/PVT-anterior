@@ -89,6 +89,10 @@ class Loan extends Model
     {
         return $this->morphToMany(Tag::class, 'taggable')->withPivot('user_id', 'date')->withTimestamps();
     }
+    public function tags_loans()
+    {
+        return $this->morphToMany(Tag::class, 'taggable')->withPivot('user_id', 'date')->get();
+    }
 
     public function role()
     {

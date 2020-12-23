@@ -28,7 +28,10 @@ use App\Role;
 use App\ProcedureModality;
 use App\PaymentType;
 use App\AmortizationType;
+use App\AffiliateStateType;
+use App\AffiliateState;
 use App\Imports\LoanPaymentImport;
+use App\Tag;
 
 /** @group Cobranzas
 * Datos de los trámites de Cobranzas
@@ -492,9 +495,49 @@ class LoanPaymentController extends Controller
             }
 
             return response()->json([
-                    'payments_automatic' => $payment_automatic,
-                    'payments_no_automatic' => $payment_no_automatic
-                ]);
+                'payments_automatic' => $payment_automatic,
+                'payments_no_automatic' => $payment_no_automatic
+            ]);
+    }
+
+    /** @group Reportes préstamos
+    * Préstamos en móra
+    * Descarga en xls los prestamos que se encuentran en Móra.
+    */
+   
+    public function loans_delay(Request $request)
+    {
+        $delay_tag = Tag::whereSlug('mora')->first();
+        $loans=Loan::get();
+        $delay_loans = collect([]); $delays = collect([]);
+        foreach ($loans as $loan){
+            if(!$loan->tags_loans()->isEmpty()){
+                $delay_loans->push($loan->tags_loans());
+            }
+        }
+        $delay_loans =$delay_loans[0];
+        foreach ($delay_loans as $loans){
+            if($loans->id == $delay_tag->id){
+                $id_loan=$loans->pivot->taggable_id;
+                $loan_search=Loan::find($id_loan);
+                $delays->push($loan_search);
+            }
+        }
+        
+        $File="PrestamosEnMora";
+        $data=array(
+            array("Código del préstamo","Monto aprobado","Tiempo del préstamo","Fecha de desembolso")
+        );
+        foreach ($delays as $row){
+            array_push($data, array(
+                $row->code,
+                $row->amount_approved,
+                $row->loan_term,
+                $row->disbursement_date
+            ));
+        }
+       $export = new ArchivoPrimarioExport($data);
+       return Excel::download($export, $File.'.xlsx'); 
     }
 }
     
