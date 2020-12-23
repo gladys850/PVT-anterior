@@ -43,12 +43,12 @@ class LoanForm extends FormRequest
                 'parent_loan_id' => null,
             ]);
         }
-        if($this->property_id==0 ){
+        if($this->property_id==0 && $this->has('property_id')){
             $this->merge([
                 'property_id' => null,
             ]);
         }
-        if($this->financial_entity_id==0 ){
+        if($this->financial_entity_id==0 && $this->has('financial_entity_id')){
             $this->merge([
                 'financial_entity_id' => null,
             ]);
