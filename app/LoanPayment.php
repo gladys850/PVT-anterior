@@ -178,9 +178,9 @@ class LoanPayment extends Model
         return $this->belongsTo(Affiliate::class);
     }
 
-    public static function registry_payment(Loan $loan, $estimated_date, $description, $procedure_modality, $voucher, $paid_by, $payment_type)
+    public static function registry_payment(Loan $loan, $estimated_date, $description, $procedure_modality, $voucher, $paid_by, $payment_type, $percentage_quota)
     {
-        $payment = $loan->next_payment($estimated_date, null, null);
+        $payment = $loan->next_payment($estimated_date, $percentage_quota, null); //$percentage_quota
         $payment->description = $description;
         $payment->state_id = LoanState::whereName('Pendiente de Pago')->first()->id;
         $payment->role_id = Role::whereName('PRE-cobranzas')->first()->id;
