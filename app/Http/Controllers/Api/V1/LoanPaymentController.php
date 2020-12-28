@@ -518,7 +518,9 @@ class LoanPaymentController extends Controller
                 $delay_loans->push($loan->tags_loans());
             }
         }
-        $delay_loans =$delay_loans[0];
+        if(!$delay_loans->isEmpty()){
+            $delay_loans = $delay_loans[0];
+        }
         foreach ($delay_loans as $loans){
             if($loans->id == $delay_tag->id){
                 $id_loan=$loans->pivot->taggable_id;
