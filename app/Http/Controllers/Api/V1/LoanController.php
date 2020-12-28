@@ -54,6 +54,7 @@ class LoanController extends Controller
         $loan->personal_references = $loan->personal_references;
         $loan->cosigners = $loan->cosigners;
         $loan->data_loan = $loan->data_loan;
+        $loan->user=$loan->records[0]->user;
         return $loan;
     }
 

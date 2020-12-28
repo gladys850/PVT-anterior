@@ -8,16 +8,16 @@
 <body>
     @include('partials.header', $header)
 <div class="block">
-        <div class="font-semibold leading-tight text-center m-b-10 text-xs">FORMULARIO DE CALIFICACIÓN Y APROBACIÓN DE PRÉSTAMO</div>
+        <div class="font-semibold leading-tight text-center m-b-10 text-lg">FORMULARIO DE CALIFICACIÓN Y APROBACIÓN DE PRÉSTAMO</div>
         @php ($lender = $lenders[0]->disbursable)
 </div>
 @php ($n = 1)
 <div class="block">
-        <div class="font-semibold leading-tight text-left m-b-10 text-xs">{{ $n++ }}. DATOS DEL TRÁMITE</div>
+        <div class="font-semibold leading-tight text-left m-b-10 text-base">{{ $n++ }}. DATOS DEL TRÁMITE</div>
     </div>
 <div class="block">
         <table class="table-info w-100 text-center uppercase my-20">
-            <tr class="bg-grey-darker text-xxs text-white">
+            <tr class="bg-grey-darker text-sm-1 text-white">
                 <td class="w-25">Código Tŕamite</td>
                 @if ($loan->parent_loan || $loan->parent_reason)
                 <td class="w-25">Trámite origen</td>
@@ -34,7 +34,7 @@
                 @endif
                 <td class="data-row py-5" colspan="{{ $loan->parent_loan ? 1 : 2 }}">@if($loan->parent_reason == "REPROGRAMACIÓN") {{$loan->parent_reason}} @endif {{ $loan->modality->name }}</td>
             </tr>
-            <tr class="bg-grey-darker text-xxs text-white">
+            <tr class="bg-grey-darker text-sm-1 text-white">
                 <td>Monto solicitado</td>
                 <td>Plazo</td>
                 <td>Tipo de Desembolso</td>
@@ -54,18 +54,18 @@
         </table>
     </div>
     <div class="block">
-        <div class="font-semibold leading-tight text-left m-b-10 text-xs">{{ $n++ }}. DATOS DE BOLETA</div>
+        <div class="font-semibold leading-tight text-left m-b-10 text-base">{{ $n++ }}. DATOS DE BOLETA</div>
     </div>
 <div class="block">
         <table class="table-info w-100 text-center uppercase my-20">
-            <tr class="bg-grey-darker text-xxs text-white">
+            <tr class="bg-grey-darker text-sm-1 text-white">
                 <td colspan="2" >INGRESOS</td>
             </tr>
             <tr >
             <td class="w-50 text-left px-10">LÍQUIDO PAGABLE</td>
             <td class="w-50 text-left">{{ $lender->pivot->payable_liquid_calculated}} </td>
             </tr>
-            <tr class="bg-grey-darker text-xxs text-white">
+            <tr class="bg-grey-darker text-sm-1 text-white">
                 <td colspan="2" class="w-100">EGRESOS</td>
             </tr>
             <tr >
@@ -80,11 +80,11 @@
     </div>
    </div>
    <div class="block">
-        <div class="font-semibold leading-tight text-left m-b-10 text-xs">{{ $n++ }}. PROPUESTA DE APROBACIÓN</div>
+        <div class="font-semibold leading-tight text-left m-b-10 text-base">{{ $n++ }}. PROPUESTA DE APROBACIÓN</div>
     </div>
     <div class="block">
         <table class="table-info w-100 text-center uppercase my-20">
-            <tr class="bg-grey-darker text-xxs text-white">
+            <tr class="bg-grey-darker text-sm-1 text-white">
                 <td colspan="2" >PROPUESTA Y APROBACIÓN </td>
             </tr>
             <tr  class="w-100">
