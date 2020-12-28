@@ -44,7 +44,7 @@
                                   <ValidationProvider
                                     v-slot="{ errors }"
                                     name="Estado del afiliado"
-                                    rules="required"
+                                    rules=""
                                   >
                                     <v-select
                                       :error-messages="errors"
@@ -62,7 +62,7 @@
                                   <ValidationProvider
                                     v-slot="{ errors }"
                                     name="Código comprobante"
-                                    rules="alpha_dash|min:2|max:20"
+                                    rules="min:2|max:20"
                                   >
                                     <v-text-field
                                       :error-messages="errors"
