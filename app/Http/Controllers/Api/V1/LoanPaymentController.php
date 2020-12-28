@@ -32,6 +32,7 @@ use App\AffiliateStateType;
 use App\AffiliateState;
 use App\Imports\LoanPaymentImport;
 use App\Tag;
+use Carbon\CarbonImmutable;
 
 /** @group Cobranzas
 * Datos de los trámites de Cobranzas
@@ -40,6 +41,8 @@ class LoanPaymentController extends Controller
 {
     public static function append_data(LoanPayment $loanPayment, $with_state = false)
     {
+        $loanPayment->loan = $loanPayment->loan;
+        $loanPayment->affiliate = $loanPayment->affiliate;
         if ($with_state) $loanPayment->state = $loanPayment->state;
         return $loanPayment;
     }
@@ -392,7 +395,7 @@ class LoanPaymentController extends Controller
                     $percentage = $lender->pivot->payment_percentage;
                     $percentage_quota = ($percentage)*($loan->next_payment()->estimated_quota)/100;
                     if($lender->affiliate_state->name == 'Servicio' || $lender->affiliate_state->name == 'Disponibilidad' || $lender->affiliate_state->name == 'Jubilado' || $lender->affiliate_state->name == 'Jubilado Invalidez'){
-                        $disbursement_date = $loan->disbursement_date;
+                        $disbursement_date = CarbonImmutable::parse($loan->disbursement_date);
                         if($disbursement_date->lessThan($estimated_date)){
                             if($disbursement_date->year == $estimated_date->year && $disbursement_date->month == $estimated_date->month){
                                 if($disbursement_date->day<LoanGlobalParameter::latest()->first()->offset_interest_day){

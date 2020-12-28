@@ -73,7 +73,11 @@
             <tr>
                 <td class="data-row py-5">{{ $lender->title }} {{ $lender->full_name }}</td>
                 <td class="data-row py-5">{{ $lender->identity_card_ext }}</td>
+                @if(!$is_dead)
                 <td class="data-row py-5">{{ $lender->affiliate_state->affiliate_state_type->name }}</td>
+                @else
+                <td class="data-row py-5">no corresponde</td>
+                @endif
             </tr>
         </table>
         @endforeach

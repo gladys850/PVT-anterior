@@ -54,6 +54,7 @@ class LoanController extends Controller
         $loan->personal_references = $loan->personal_references;
         $loan->cosigners = $loan->cosigners;
         $loan->data_loan = $loan->data_loan;
+        $loan->user=$loan->records[0]->user;
         $loan->city = $loan->city;
         return $loan;
     }
@@ -736,8 +737,11 @@ class LoanController extends Controller
     {
         $procedure_modality = $loan->modality;
         $lenders = [];
+        $is_dead = false;
         foreach ($loan->lenders as $lender) {
-            $lenders[] = self::verify_spouse_disbursable($lender)->disbursable;
+            array_push($lenders, self::verify_spouse_disbursable($lender)->disbursable);
+            //$lenders[] = self::verify_spouse_disbursable($lender)->disbursable;
+            if($lender->dead) $is_dead = true;
         }
         $data = [
             'header' => [
@@ -751,7 +755,8 @@ class LoanController extends Controller
             ],
             'title' => 'PLAN DE PAGOS',
             'loan' => $loan,
-            'lenders' => collect($lenders)
+            'lenders' => collect($lenders),
+            'is_dead'=> $is_dead
         ];
         $file_name = implode('_', ['plan', $procedure_modality->shortened, $loan->code]) . '.pdf';
         $view = view()->make('loan.payments.payment_plan')->with($data)->render();
