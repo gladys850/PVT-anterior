@@ -20,6 +20,9 @@
     <template v-slot:item.role_id="{ item }">
       {{ $store.getters.roles.find(o => o.id == item.role_id).display_name }}
     </template>
+    <template v-slot:item.user="{ item }">
+      {{ item.user }}
+    </template>
     <template v-slot:item.procedure_modality_id="{ item }">
       <v-tooltip top>
         <template v-slot:activator="{ on }">
@@ -139,6 +142,13 @@ export default {
       {
         text: 'Correlativo',
         value: 'code',
+        class: ['normal', 'white--text'],
+        align: 'center',
+        sortable: true
+      },
+       {
+        text: 'Usuario',
+        value: 'user.username',
         class: ['normal', 'white--text'],
         align: 'center',
         sortable: true
