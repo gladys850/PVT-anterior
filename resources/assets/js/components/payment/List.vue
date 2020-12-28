@@ -18,9 +18,7 @@
     <template v-slot:item.data-table-select="{ isSelected, select }">
       <v-simple-checkbox color="success" :value="isSelected" @input="select($event)"></v-simple-checkbox>
     </template>
-    <template v-slot:item.role_id="{ item }">
-      {{ $store.getters.roles.find(o => o.id == item.role_id).display_name }}
-    </template>
+
     <!--<template v-slot:item.procedure_modality_id="{ item }">
       <v-tooltip top>
         <template v-slot:activator="{ on }">
@@ -29,6 +27,9 @@
         <span>{{ searchProcedureModality(item, 'name') }}</span>
       </v-tooltip>
     </template>-->
+    <template v-slot:item.affiliate="{ item }">
+      {{ $options.filters.fullName(item.affiliate, true) }}
+    </template>
  
     <template v-slot:item.estimated_date="{ item }">
       {{ item.estimated_date | date }}
@@ -161,14 +162,28 @@ export default {
   data: () => ({
     selectedLoans: [],
   headers: [
-     {
+      {
+        text: 'Préstamo',
+        value: 'loan.code',
+        class: ['normal', 'white--text'],
+        align: 'center',
+        sortable: true
+      },
+           {
+        text: 'Nombre',
+        value: 'affiliate',
+        class: ['normal', 'white--text'],
+        align: 'center',
+        sortable: true
+      },
+      {
         text: 'Nro recibo',
         value: 'code',
         class: ['normal', 'white--text'],
         align: 'center',
         sortable: true
       },{
-        text: 'Fecha estimada de pago',
+        text: 'Fecha de pago',
         value: 'estimated_date',
         class: ['normal', 'white--text'],
         align: 'center',

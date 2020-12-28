@@ -15,9 +15,6 @@
     <template v-slot:header.data-table-select="{ on, props }">
       <v-simple-checkbox color="info" class="grey lighten-3" v-bind="props" v-on="on"></v-simple-checkbox>
     </template>
-    <template v-slot:item.city.name="{ item }">
-      {{ item.city.name}}
-    </template>
     <template v-slot:item.data-table-select="{ isSelected, select }">
       <v-simple-checkbox color="success" :value="isSelected" @input="select($event)"></v-simple-checkbox>
     </template>
@@ -29,9 +26,6 @@
     </template>
     <template v-slot:item.role_id="{ item }">
       {{ $store.getters.roles.find(o => o.id == item.role_id).display_name }}
-    </template>
-    <template v-slot:item.user="{ item }">
-      {{ item.user }}
     </template>
     <template v-slot:item.procedure_modality_id="{ item }">
       <v-tooltip top>
@@ -52,6 +46,9 @@
     </template>
     <template v-slot:item.estimated_quota="{ item }">
       {{ item.estimated_quota | money }}
+    </template>
+    <template v-slot:item.user="{ item }">
+      {{ item.user }}
     </template>
     <template v-slot:item.actions="{ item }">
       <v-tooltip bottom>
@@ -162,13 +159,6 @@ export default {
         sortable: true
       },
       {
-        text: 'Creado por',
-        value: 'user.username',
-        class: ['normal', 'white--text'],
-        align: 'center',
-        sortable: true
-      },
-      {
         text: 'CI',
         value: 'lenders[0].identity_card',
         class: ['normal', 'white--text'],
@@ -217,7 +207,14 @@ export default {
         class: ['normal', 'white--text'],
         align: 'center',
         sortable: false
-      }, {
+      }, 
+      {
+        text: 'Creado por',
+        value: 'user.username',
+        class: ['normal', 'white--text'],
+        align: 'center',
+        sortable: true
+      },{
         text: 'Acciones',
         value: 'actions',
         class: ['normal', 'white--text'],

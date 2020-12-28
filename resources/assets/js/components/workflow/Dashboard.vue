@@ -11,6 +11,10 @@
                   mdi-shield-account
                 </v-icon>
                 <h6>
+                  <strong><b style="color:white">CI: </b></strong>
+                  {{ loan.lenders[0].identity_card }}
+                </h6>
+                <h6>
                   <strong><b style="color:white">PRESTATARIO: </b></strong>
                   {{ $options.filters.fullName(affiliate, true) }}
                 </h6>
