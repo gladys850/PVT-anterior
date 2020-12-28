@@ -1,5 +1,6 @@
 <template>
   <v-data-table
+    dense
     v-model="selectedLoans"
     :headers="headers"
     :items="loans"
@@ -14,8 +15,17 @@
     <template v-slot:header.data-table-select="{ on, props }">
       <v-simple-checkbox color="info" class="grey lighten-3" v-bind="props" v-on="on"></v-simple-checkbox>
     </template>
+    <template v-slot:item.city.name="{ item }">
+      {{ item.city.name}}
+    </template>
     <template v-slot:item.data-table-select="{ isSelected, select }">
       <v-simple-checkbox color="success" :value="isSelected" @input="select($event)"></v-simple-checkbox>
+    </template>
+    <template v-slot:item.lenders[0].identity_card="{ item }">
+      {{ item.lenders[0].identity_card }}
+    </template>
+    <template v-slot:item.lenders="{ item }">
+      {{ $options.filters.fullName(item.lenders[0], true) }}
     </template>
     <template v-slot:item.role_id="{ item }">
       {{ $store.getters.roles.find(o => o.id == item.role_id).display_name }}
@@ -133,12 +143,38 @@ export default {
       required: true
     }
   },
+  computed:{
+    fullname(item) {
+      return this.$options.filters.fullName(item, true)
+    }
+  },
   data: () => ({
     selectedLoans: [],
     headers: [
       {
+        text: 'Ciudad',
+        value: 'city.name',
+        class: ['normal', 'white--text'],
+        align: 'center',
+        sortable: true
+      },
+      {
         text: 'Correlativo',
         value: 'code',
+        class: ['normal', 'white--text'],
+        align: 'center',
+        sortable: true
+      },
+      {
+        text: 'CI',
+        value: 'lenders[0].identity_card',
+        class: ['normal', 'white--text'],
+        align: 'center',
+        sortable: true
+      },
+      {
+        text: 'Nombre',
+        value: 'lenders',
         class: ['normal', 'white--text'],
         align: 'center',
         sortable: true
