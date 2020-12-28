@@ -30,6 +30,9 @@
     <template v-slot:item.role_id="{ item }">
       {{ $store.getters.roles.find(o => o.id == item.role_id).display_name }}
     </template>
+    <template v-slot:item.user="{ item }">
+      {{ item.user }}
+    </template>
     <template v-slot:item.procedure_modality_id="{ item }">
       <v-tooltip top>
         <template v-slot:activator="{ on }">
@@ -152,15 +155,15 @@ export default {
     selectedLoans: [],
     headers: [
       {
-        text: 'Ciudad',
-        value: 'city.name',
+        text: 'Correlativo',
+        value: 'code',
         class: ['normal', 'white--text'],
         align: 'center',
         sortable: true
       },
       {
-        text: 'Correlativo',
-        value: 'code',
+        text: 'Creado por',
+        value: 'user.username',
         class: ['normal', 'white--text'],
         align: 'center',
         sortable: true
