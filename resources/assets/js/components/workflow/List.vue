@@ -147,7 +147,7 @@ export default {
         sortable: true
       },
        {
-        text: 'Usuario',
+        text: 'Creado por',
         value: 'user.username',
         class: ['normal', 'white--text'],
         align: 'center',
