@@ -28,7 +28,7 @@ class LoanPropertyForm extends FormRequest
     public function rules()
     {
         $rules = [
-            'land_lot_number'=>'alpha_dash|min:3',
+            'land_lot_number'=>'alpha_dash|min:1',
             'neighborhood_unit'=>'string|min:3',
             'location'=>'string|min:3',
             'surface'=>'min:1',

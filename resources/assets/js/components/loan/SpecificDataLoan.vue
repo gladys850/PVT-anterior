@@ -66,10 +66,10 @@
                           <br>
                           <p><b>PLAZO EN MESES:</b>{{' '+loan.loan_term}}</p>
                           <p><b>MONTO SOLICITADO:</b>{{' '+loan.amount_approved}} Bs.</p>
-                          <p><b>LIQUIDO PARA CALIFICACION:</b>{{' '+loan.liquid_qualification_calculated}} Bs.</p>
-                          <p><b>CALCULO DE CUOTA:</b>{{' '+loan.estimated_quota}} Bs.</p>
                           <p><b>PROMEDIO LIQUIDO PAGABLE</b>{{' '+loan.lenders[0].pivot.payable_liquid_calculated}} Bs.</p>
                           <p><b>TOTAL BONOS:</b>{{' '+loan.lenders[0].pivot.bonus_calculated}}</p>
+                          <p><b>LIQUIDO PARA CALIFICACION:</b>{{' '+loan.liquid_qualification_calculated}} Bs.</p>
+                          <p><b>CALCULO DE CUOTA:</b>{{' '+loan.estimated_quota}} Bs.</p>
                           <p><b>INDICE DE ENDEUDAMIENTO:</b>{{' '+loan.indebtedness_calculated}} Bs.</p>
                           <div v-for="procedure_type in procedure_types" :key="procedure_type.id">
                           <div v-if="procedure_type.name === 'Préstamo hipotecario'">
@@ -141,32 +141,15 @@
                               <p><b>CUENTA SIGEP:</b> {{' '+loan.lenders[0].sigep_status}}</p>
                             <v-progress-linear></v-progress-linear>
                             <br>
-                            <v-menu
-                              v-model="dates.disbursementDate.show"
-                              :close-on-content-click="false"
-                              transition="scale-transition"
-                              offset-y
-                              max-width="290px"
-                              min-width="290px"
-                              :disabled="!editable"
-
-                            >
-                            <template v-slot:activator="{ on }">
-                              <v-text-field
-                                dense
-                                :outlined="editable"
-                                :readonly="!editable"
-                                v-model="dates.disbursementDate.formatted"
-                                label="FECHA DE DESEMBOLSO"
-                                hint="Día/Mes/Año"
-                                persistent-hint
-                                append-icon="mdi-calendar"
-                                v-on="on"
-
-                              ></v-text-field>
-                            </template>
-                            <v-date-picker v-model="loan.disbursement_date" no-title @input="dates.disbursementDate.show = false"></v-date-picker>
-                            </v-menu><br>
+                            <v-text-field
+                              dense
+                              v-model="loan.disbursement_date"
+                              label="FECHA DE DESEMBOLSO"
+                              hint="Día/Mes/Año"
+                              type="date"
+                              :outlined="editable"
+                              :readonly="!editable"
+                            ></v-text-field>
                             <v-select
                               dense
                               :outlined="editable"
@@ -226,6 +209,10 @@ export default {
     procedure_types: {
       type: Object,
       required: true
+    },
+    validate:{
+      type: Object,
+      required: false
     }
   },
    data: () => ({
@@ -235,25 +222,11 @@ export default {
     city: [],
     entity: [],
     entities:null,
-    dates: {
-    disbursementDate:{
-          formatted: null,
-          picker: false
-        }
-      },
   }),
   beforeMount(){
     this.getPaymentTypes()
     this.getCity()                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
     this.getEntity()
-  },
-  mounted() {
-    this.formatDate('disbursementDate', this.loan.disbursement_date)
-  },
-  watch: {
-    'loan.disbursement_date': function(date) {
-      this.formatDate('disbursementDate', date)
-    }
   },
   computed: {
     cuenta() {
@@ -267,13 +240,6 @@ export default {
     }
   },
   methods:{
-    formatDate(key, date) {
-      if (date) {
-        this.dates[key].formatted = this.$moment(date).format('L')
-      } else {
-        this.dates[key].formatted = null
-      }
-    },
     desembolso () {
       if(this.loan.payment_type_id=='1'){
       this.loan.number_payment_type = this.loan.lenders[0].account_number;
@@ -345,19 +311,18 @@ export default {
         } else {
           console.log('entro al grabar por falso :)')
           //Edit desembolso
-          if((this.loan.disbursement_date != '' && this.loan.number_payment_type != '') && (this.loan.disbursement_date != null && this.loan.number_payment_type != null)){
             let res = await axios.patch(`loan/${this.loan.id}`, {
             disbursement_date:this.loan.disbursement_date,
             payment_type_id: this.loan.payment_type_id,
-            number_payment_type: this.loan.number_payment_type,
-            validated: this.loan.number_payment_type
+            number_payment_type: this.loan.number_payment_type
           })
             this.toastr.success('Se registró correctamente.')
             this.editable = false
-          }else{
-            this.toastr.error('Faltan registar campos en Desembolso. Registre la fecha, tipo y nro de documento.');
-          }
-
+             if((this.loan.disbursement_date != '' && this.loan.number_payment_type != '') && (this.loan.disbursement_date != null && this.loan.number_payment_type != null)){
+               this.validate.valid_disbursement = true
+             }else{
+               this.validate.valid_disbursement = false
+             }
         }
       } catch (e) {
         console.log(e)
@@ -380,6 +345,3 @@ export default {
   }
 }
 </script>
-<style>
-
-</style>

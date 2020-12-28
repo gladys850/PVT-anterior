@@ -55,6 +55,7 @@ class LoanController extends Controller
         $loan->cosigners = $loan->cosigners;
         $loan->data_loan = $loan->data_loan;
         $loan->user=$loan->records[0]->user;
+        $loan->city = $loan->city;
         return $loan;
     }
 
@@ -297,38 +298,38 @@ class LoanController extends Controller
             $state_id = LoanState::whereName('Desembolsado')->first()->id;
             $request['state_id'] = $state_id;
         //si es refinanciamiento o reprogramacion colocar la etiqueta correspondiente al padre del préstamo
-        $user = User::whereUsername('admin')->first();
-        $refinancing_tag = Tag::whereSlug('refinanciamiento')->first();
-        $reprogramming_tag = Tag::whereSlug('reprogramacion')->first();
-        $parent_loan  = Loan::find($loan->parent_loan_id);
-            if($loan->parent_reason == 'REFINANCIAMIENTO'){
-                    $parent_loan ->tags()->detach($refinancing_tag);
-                    $parent_loan ->tags()->attach([$refinancing_tag->id => [
-                        'user_id' => $user->id,
-                        'date' => Carbon::now()
-                    ]]);
-                    foreach ($parent_loan->lenders as $lender) {
-                        $lender->records()->create([
+            $user = User::whereUsername('admin')->first();
+            $refinancing_tag = Tag::whereSlug('refinanciamiento')->first();
+            $reprogramming_tag = Tag::whereSlug('reprogramacion')->first();
+            $parent_loan  = Loan::find($loan->parent_loan_id);
+                if($loan->parent_reason == 'REFINANCIAMIENTO'){
+                        $parent_loan ->tags()->detach($refinancing_tag);
+                        $parent_loan ->tags()->attach([$refinancing_tag->id => [
                             'user_id' => $user->id,
-                            'record_type_id' => RecordType::whereName('etiquetas')->first()->id,
-                            'action' => 'etiquetó  el prestamo como refinanciado'
-                        ]);
-                    }
-            } 
-            if($loan->parent_reason == 'REPROGRAMACIÓN'){
-                    $parent_loan ->tags()->detach($reprogramming_tag);
-                    $parent_loan ->tags()->attach([$reprogramming_tag->id => [
-                        'user_id' => $user->id,
-                        'date' => Carbon::now()
-                    ]]);
-                    foreach ($parent_loan->lenders as $lender) {
-                        $lender->records()->create([
+                            'date' => Carbon::now()
+                        ]]);
+                        foreach ($parent_loan->lenders as $lender) {
+                            $lender->records()->create([
+                                'user_id' => $user->id,
+                                'record_type_id' => RecordType::whereName('etiquetas')->first()->id,
+                                'action' => 'etiquetó  el prestamo como refinanciado'
+                            ]);
+                        }
+                } 
+                if($loan->parent_reason == 'REPROGRAMACIÓN'){
+                        $parent_loan ->tags()->detach($reprogramming_tag);
+                        $parent_loan ->tags()->attach([$reprogramming_tag->id => [
                             'user_id' => $user->id,
-                            'record_type_id' => RecordType::whereName('etiquetas')->first()->id,
-                            'action' => 'etiquetó  el prestamo como reprogramado'
-                        ]);
-                    }
-            }
+                            'date' => Carbon::now()
+                        ]]);
+                        foreach ($parent_loan->lenders as $lender) {
+                            $lender->records()->create([
+                                'user_id' => $user->id,
+                                'record_type_id' => RecordType::whereName('etiquetas')->first()->id,
+                                'action' => 'etiquetó  el prestamo como reprogramado'
+                            ]);
+                        }
+                }
            
         }
         $saved = $this->save_loan($request, $loan);
@@ -736,8 +737,11 @@ class LoanController extends Controller
     {
         $procedure_modality = $loan->modality;
         $lenders = [];
+        $is_dead = false;
         foreach ($loan->lenders as $lender) {
-            $lenders[] = self::verify_spouse_disbursable($lender)->disbursable;
+            array_push($lenders, self::verify_spouse_disbursable($lender)->disbursable);
+            //$lenders[] = self::verify_spouse_disbursable($lender)->disbursable;
+            if($lender->dead) $is_dead = true;
         }
         $data = [
             'header' => [
@@ -751,7 +755,8 @@ class LoanController extends Controller
             ],
             'title' => 'PLAN DE PAGOS',
             'loan' => $loan,
-            'lenders' => collect($lenders)
+            'lenders' => collect($lenders),
+            'is_dead'=> $is_dead
         ];
         $file_name = implode('_', ['plan', $procedure_modality->shortened, $loan->code]) . '.pdf';
         $view = view()->make('loan.payments.payment_plan')->with($data)->render();
