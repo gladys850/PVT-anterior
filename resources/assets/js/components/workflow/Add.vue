@@ -6,7 +6,6 @@
           <Breadcrumbs />
         </v-toolbar-title>
         <v-spacer></v-spacer>
-
         <v-tooltip top>
           <template v-slot:activator="{ on }">
             <v-btn
@@ -17,9 +16,7 @@
               small
               color="success"
               class="darken-2 ml-4"
-              @click="
-                bus.$emit('openDialog', { edit: false, accion: 'validar' })
-              "
+              @click="validation()"
             >
               <v-icon dark>mdi-file-check</v-icon>
             </v-btn>
@@ -36,9 +33,7 @@
               small
               color="orange"
               class="ml-4"
-              @click="
-                bus.$emit('openDialog', { edit: false, accion: 'devolver' })
-              "
+              @click.stop="validation()"
             >
               <v-icon>mdi-file-undo</v-icon>
             </v-btn>
@@ -81,7 +76,7 @@
               hide-details
               clearable
             ></v-text-field>
-          </v-flex>-->
+        </v-flex>-->
       </v-toolbar>
     </v-card-title>
     <v-card-text>
@@ -95,105 +90,85 @@
       >
         <v-tabs-slider></v-tabs-slider>
         <v-tab v-if="!editable" :href="`#tab-1`">
-        <v-tooltip bottom>
-        <template v-slot:activator="{ on, attrs }">
-          <v-icon 
-          v-if="icons"
-          v-bind="attrs"
-          v-on="on"
-          >mdi-trending-up
-          </v-icon>
-        </template>
-        <span><b>DATOS DEL PRESTAMO</b></span>
-        </v-tooltip>
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on, attrs }">
+              <v-icon v-if="icons" v-bind="attrs" v-on="on">mdi-trending-up</v-icon>
+            </template>
+            <span>
+              <b>DATOS DEL PRESTAMO</b>
+            </span>
+          </v-tooltip>
         </v-tab>
         <v-tab :href="`#tab-2`">
-        <v-tooltip bottom>
-        <template v-slot:activator="{ on, attrs }">
-          <v-icon 
-          v-if="icons"
-          v-bind="attrs"
-          v-on="on"
-          >mdi-file-eye
-          </v-icon>
-        </template>
-        <span><b>DATOS ESPECIFICOS DEL PRESTAMO</b></span>
-        </v-tooltip>
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on, attrs }">
+              <v-icon v-if="icons" v-bind="attrs" v-on="on">mdi-file-eye</v-icon>
+            </template>
+            <span>
+              <b>DATOS ESPECIFICOS DEL PRESTAMO</b>
+            </span>
+          </v-tooltip>
         </v-tab>
         <v-tab :href="`#tab-3`">
-        <v-tooltip bottom>
-        <template v-slot:activator="{ on, attrs }">
-          <v-icon v-if="icons"
-          v-bind="attrs"
-          v-on="on"
-          >mdi-file
-          </v-icon>
-        </template>
-        <span><b>DOCUMENTOS PRESENTADOS</b></span>
-        </v-tooltip>
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on, attrs }">
+              <v-icon v-if="icons" v-bind="attrs" v-on="on">mdi-file</v-icon>
+            </template>
+            <span>
+              <b>DOCUMENTOS PRESENTADOS</b>
+            </span>
+          </v-tooltip>
         </v-tab>
         <v-tab :href="`#tab-4`">
-        <v-tooltip bottom>
-        <template v-slot:activator="{ on, attrs }">
-          <v-icon 
-          v-if="icons"
-          v-bind="attrs"
-          v-on="on"
-          >mdi-account
-          </v-icon>
-          </template>
-        <span><b>DATOS PERSONALES DEL AFILIADO</b></span>
-        </v-tooltip>
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on, attrs }">
+              <v-icon v-if="icons" v-bind="attrs" v-on="on">mdi-account</v-icon>
+            </template>
+            <span>
+              <b>DATOS PERSONALES DEL AFILIADO</b>
+            </span>
+          </v-tooltip>
         </v-tab>
         <v-tab :href="`#tab-5`">
-        <v-tooltip bottom>
-        <template v-slot:activator="{ on, attrs }">
-          <v-icon 
-          v-if="icons"
-          v-bind="attrs"
-          v-on="on"
-          >mdi-police-badge
-          </v-icon>
-          </template>
-        <span><b>INFORMACION POLICIAL</b></span>
-        </v-tooltip>
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on, attrs }">
+              <v-icon v-if="icons" v-bind="attrs" v-on="on">mdi-police-badge</v-icon>
+            </template>
+            <span>
+              <b>INFORMACION POLICIAL</b>
+            </span>
+          </v-tooltip>
         </v-tab>
         <v-tab :href="`#tab-6`">
-        <v-tooltip bottom>
-        <template v-slot:activator="{ on, attrs }">
-          <v-icon 
-          v-if="icons"
-          v-bind="attrs"
-          v-on="on"
-          >mdi-format-list-checkbox</v-icon>
-          </template>
-        <span><b>KARDEX Y COBROS</b></span>
-        </v-tooltip>
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on, attrs }">
+              <v-icon v-if="icons" v-bind="attrs" v-on="on">mdi-format-list-checkbox</v-icon>
+            </template>
+            <span>
+              <b>KARDEX Y COBROS</b>
+            </span>
+          </v-tooltip>
         </v-tab>
         <v-tab :href="`#tab-7`">
-        <v-tooltip bottom>
-        <template v-slot:activator="{ on, attrs }">
-          <v-icon 
-          v-if="icons"
-          v-bind="attrs"
-          v-on="on"
-          >mdi-comment-eye-outline</v-icon>
-        </template>
-        <span><b>HISTORIAL DEL TRAMITE</b></span>
-        </v-tooltip>
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on, attrs }">
+              <v-icon v-if="icons" v-bind="attrs" v-on="on">mdi-comment-eye-outline</v-icon>
+            </template>
+            <span>
+              <b>HISTORIAL DEL TRAMITE</b>
+            </span>
+          </v-tooltip>
         </v-tab>
         <v-tab-item :value="'tab-1'">
           <v-card flat tile>
             <v-card-text>
-              <Dashboard :affiliate.sync="affiliate" :loan.sync="loan" :spouse.sync="spouse"/>
+              <Dashboard :affiliate.sync="affiliate" :loan.sync="loan" :spouse.sync="spouse" />
             </v-card-text>
           </v-card>
         </v-tab-item>
         <v-tab-item :value="'tab-2'">
           <v-card flat tile>
-            <v-card-title
-              v-if="$store.getters.permissions.includes('print-payment-plan')"
-            >
+            <v-card-title v-if="$store.getters.permissions.includes('print-payment-plan')">
               <v-tooltip top>
                 <template v-slot:activator="{ on }">
                   <v-btn
@@ -204,7 +179,7 @@
                     right
                     absolute
                     v-on="on"
-                    style="margin-right: -9px;margin-top: 38px;"
+                    style="margin-right: -9pxmargin-top: 38px;"
                     @click="imprimir($route.params.id)"
                   >
                     <v-icon>mdi-printer</v-icon>
@@ -217,7 +192,7 @@
               <!--FORMULARIO PARA CALIFICACION-->
             </v-card-title>
             <v-card-title v-if="$store.getters.userRoles.includes('PRE-calificacion')">
-               <v-tooltip top>
+              <v-tooltip top>
                 <template v-slot:activator="{ on }">
                   <v-btn
                     fab
@@ -239,11 +214,17 @@
               </v-tooltip>
             </v-card-title>
             <v-card-text class="pl-10">
-              <SpecificDataLoan :loan.sync="loan" :loan_properties="loan_properties" :procedure_types="procedure_types">
+              <SpecificDataLoan
+                :loan.sync="loan"
+                :loan_properties="loan_properties"
+                :procedure_types="procedure_types"
+                :validate.sync="validate"
+              >
                 <template v-slot:title>
                   <v-col cols="12" class="py-0">
-                    <v-toolbar-title><b>DATOS ESPECIFICOS DEL PRÉSTAMO</b></v-toolbar-title
-                    >
+                    <v-toolbar-title>
+                      <b>DATOS ESPECIFICOS DEL PRÉSTAMO</b>
+                    </v-toolbar-title>
                   </v-col>
                 </template>
               </SpecificDataLoan>
@@ -255,7 +236,7 @@
             <v-card-text class="pl-12">
               <DocumentsFlow>
                 <template v-slot:title>
-                  <v-col cols="12" class="">
+                  <v-col cols="12" class>
                     <v-toolbar-title>DOCUMENTOS PRESENTADOS</v-toolbar-title>
                   </v-col>
                 </template>
@@ -300,11 +281,7 @@
         <v-tab-item :value="'tab-7'">
           <v-card flat tile>
             <v-card-text class="pa-0 pl-3 pr-0 py-0">
-              <ObserverFlow
-                :loan.sync="loan"
-                :observations.sync="observations"
-                :bus1="bus1"
-              />
+              <ObserverFlow :loan.sync="loan" :observations.sync="observations" :bus1="bus1" />
             </v-card-text>
           </v-card>
         </v-tab-item>
@@ -367,16 +344,19 @@ export default {
     datos: {},
     formulario: [],
     observations: [],
-    spouse:{},
-    loan_properties:{},
-    procedure_types:{},
+    spouse: {},
+    loan_properties: {},
+    procedure_types: {},
     intervalos: {},
     modalidad: {},
     icons: true,
     vertical: true,
     editable: false,
     reload: false,
-    tab: "tab-1"
+    tab: "tab-1",
+    validate: {
+      valid_disbursement: false
+    }
   }),
   watch: {
     search: _.debounce(function() {
@@ -388,13 +368,13 @@ export default {
       return {
         primary: this.primaryPermission,
         secondary: this.secondaryPermission
-      };
+      }
     },
     secondaryPermission() {
       if (this.affiliate.id) {
         return this.$store.getters.permissions.includes(
           "update-affiliate-secondary"
-        );
+        )
       } else {
         return this.$store.getters.permissions.includes("create-affiliate")
       }
@@ -403,22 +383,21 @@ export default {
       if (this.affiliate.id) {
         return this.$store.getters.permissions.includes(
           "update-affiliate-primary"
-        );
+        )
       } else {
         return this.$store.getters.permissions.includes("create-affiliate")
       }
     }
   },
   mounted() {
-    this.getloan(this.$route.params.id);
-    this.getSpouse(this.$route.params.id);
-    this.getObservation(this.$route.params.id);
-    this.getProceduretype(this.$route.params.id);
-    this.getLoanproperty(this.$route.params.id);
+    this.getloan(this.$route.params.id)
+    this.getSpouse(this.$route.params.id)
+    this.getObservation(this.$route.params.id)
+    this.getProceduretype(this.$route.params.id)
     this.bus1.$on("emitGetObservation", id => {
       //escuchamos la emision de ObserverFlow
-      this.getObservation(id); //y monstramos la lista de observaciones segun el id del prestamo
-    });
+      this.getObservation(id) //y monstramos la lista de observaciones segun el id del prestamo
+    })
   },
   methods: {
     resetForm() {
@@ -427,7 +406,7 @@ export default {
       this.reload = true
       this.$nextTick(() => {
         this.reload = false
-      });
+      })
     },
     setBreadcrumbs() {
       let breadcrumbs = [
@@ -435,27 +414,27 @@ export default {
           text: "Préstamo",
           to: { name: "flowIndex" }
         }
-      ];
+      ]
       breadcrumbs.push({
         text: this.loan.code,
         to: { name: "flowAdd", params: { id: this.loan.id } }
-      });
+      })
       this.$store.commit("setBreadcrumbs", breadcrumbs)
     },
     async getloan(id) {
       try {
         this.loading = true
         let res = await axios.get(`loan/${id}`)
-        this.loan = res.data;
+        this.loan = res.data
         console.log("este es el loan" + this.loan)
         let res1 = await axios.get(`affiliate/${this.loan.lenders[0].id}`)
         this.affiliate = res1.data
-        if(this.loan.property_id!=null){
-        this.getLoanproperty(this.loan.property_id)
+        if (this.loan.property_id != null) {
+          this.getLoanproperty(this.loan.property_id)
         }
         this.getProceduretype(this.loan.procedure_modality_id)
-        if (this.loan.disbursable_type=='spouses') {
-        this.getSpouse(this.affiliate.id)
+        if (this.loan.disbursable_type == "spouses") {
+          this.getSpouse(this.affiliate.id)
         }
         this.setBreadcrumbs()
         console.log(this.loan)
@@ -489,7 +468,7 @@ export default {
       }
     },
 
-     async getProceduretype(id) {
+    async getProceduretype(id) {
       try {
         this.loading = true
         let res = await axios.get(`procedure_modality/${id}`)
@@ -507,26 +486,25 @@ export default {
         let res = await axios.get(`loan/${id}/observation`)
         this.observations = res.data
         for (this.i = 0; this.i < this.observations.length; this.i++) {
-          let res1 = await axios.get(
-            `user/${this.observations[this.i].user_id}`
-          );
+          let res1 = await axios.get(`user/${this.observations[this.i].user_id}`
+          )
           this.observations[this.i].user_name = res1.data.username
         }
       } catch (e) {
         console.log(e)
       } finally {
-        this.loading = false;
+        this.loading = false
       }
     },
     async getAddress(id) {
       try {
-        this.loading = true;
+        this.loading = true
         let res = await axios.get(`affiliate/${id}/address`)
         this.addresses = res.data
       } catch (e) {
         console.log(e)
       } finally {
-        this.loading = false;
+        this.loading = false
       }
     },
     async imprimir(item) {
@@ -538,13 +516,13 @@ export default {
           type: res.data.type,
           file_name: res.data.file_name,
           base64: true
-        });
+        })
       } catch (e) {
-        this.toastr.error("Ocurrió un error en la impresión.");
+        this.toastr.error("Ocurrió un error en la impresión.")
         console.log(e)
       }
     },
-     async calificacionprint(item) {
+    async calificacionprint(item) {
       try {
         let res = await axios.get(`loan/${item}/print/qualification`)
         console.log("plan " + item)
@@ -553,12 +531,20 @@ export default {
           type: res.data.type,
           file_name: res.data.file_name,
           base64: true
-        });
+        })
       } catch (e) {
-        this.toastr.error("Ocurrió un error en la impresión.");
+        this.toastr.error("Ocurrió un error en la impresión.")
         console.log(e)
       }
+    },
+    validation(){
+      if(this.$store.getters.userRoles.includes('PRE-tesoreria') && this.validate.valid_disbursement==false){
+         this.toastr.error('Faltan registar campos en Desembolso. Registre la fecha, tipo y nro de documento.')
+        }else{
+          this.bus.$emit('openDialog', { edit: false, accion: 'validar' })
+        }
+
     }
   }
-};
+}
 </script>

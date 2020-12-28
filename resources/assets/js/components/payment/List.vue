@@ -172,7 +172,7 @@ export default {
         value: 'estimated_date',
         class: ['normal', 'white--text'],
         align: 'center',
-        sortable: false
+        sortable: true
       }, {
         text: 'Nro de cuota',
         value: 'quota_number',

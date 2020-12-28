@@ -12,12 +12,12 @@ use Util;
 class Loan extends Model
 {
     use Traits\EloquentGetTableNameTrait;
-    // use Traits\RelationshipsTrait;
+    //use Traits\RelationshipsTrait;
     use PivotEventTrait;
     use SoftDeletes;
 
     protected $dates = [
-        'disbursement_date',
+        //'disbursement_date',
         'request_date'
     ];
     // protected $appends = ['balance', 'estimated_quota', 'defaulted'];
@@ -88,6 +88,10 @@ class Loan extends Model
     public function tags()
     {
         return $this->morphToMany(Tag::class, 'taggable')->withPivot('user_id', 'date')->withTimestamps();
+    }
+    public function tags_loans()
+    {
+        return $this->morphToMany(Tag::class, 'taggable')->withPivot('user_id', 'date')->get();
     }
 
     public function role()

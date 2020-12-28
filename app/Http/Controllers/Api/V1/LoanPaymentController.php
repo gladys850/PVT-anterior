@@ -28,7 +28,11 @@ use App\Role;
 use App\ProcedureModality;
 use App\PaymentType;
 use App\AmortizationType;
+use App\AffiliateStateType;
+use App\AffiliateState;
 use App\Imports\LoanPaymentImport;
+use App\Tag;
+use Carbon\CarbonImmutable;
 
 /** @group Cobranzas
 * Datos de los trámites de Cobranzas
@@ -37,6 +41,8 @@ class LoanPaymentController extends Controller
 {
     public static function append_data(LoanPayment $loanPayment, $with_state = false)
     {
+        $loanPayment->loan = $loanPayment->loan;
+        $loanPayment->affiliate = $loanPayment->affiliate;
         if ($with_state) $loanPayment->state = $loanPayment->state;
         return $loanPayment;
     }
@@ -371,36 +377,45 @@ class LoanPaymentController extends Controller
     * @bodyParam description string Texto de descripción. Example: Por descuento automatico
     * @bodyParam voucher string Comprobante de pago A-12/20 o CONT-123. Example: A-12/20
     * @authenticated
+    * @responseFile responses/loan_payment/command_senasir_save_payment.200.json
     */
     public function command_senasir_save_payment(Request $request)
     {
         $estimated_date = $request->estimated_date? Carbon::parse($request->estimated_date) : Carbon::now()->endOfMonth();
-        $loan = Loan::get();
-        $disbursement_loan = $loan->where('disbursement_date','!=',null)->where('disbursable_type','LIKE','affiliates');
+        $loans = Loan::get();
         $payment_type = AmortizationType::get();
         $payment_type_desc = $payment_type->where('name', 'LIKE', 'Descuento automático')->first();
         $description = $request->description? $request->description : 'Por descuento automatico';
         $procedure_modality = ProcedureModality::whereName('Amortización Automática')->first();
         $voucher = $request->voucher? $request->voucher : "AUTOMATICO";
-        $paid_by = "T";
-        foreach($disbursement_loan as $loan){
+        $paid_by = "T"; $loans_quantity = 0;
+        foreach($loans as $loan){
             if($loan->balance != 0){
-                if($loan->disbursable->affiliate_state->name == 'Servicio' || $loan->disbursable->affiliate_state->name == 'Disponibilidad' || $loan->disbursable->affiliate_state->name == 'Jubilado' || $loan->disbursable->affiliate_state->name == 'Jubilado Invalidez'){
-                    $disbursement_date = $loan->disbursement_date;
-                    if($disbursement_date->lessThan($estimated_date)){
-                        if($disbursement_date->year == $estimated_date->year && $disbursement_date->month == $estimated_date->month){
-                            if($disbursement_date->day<LoanGlobalParameter::latest()->first()->offset_interest_day){
-                                LoanPayment::registry_payment($loan, $estimated_date, $description, $procedure_modality, $voucher, $paid_by, $payment_type_desc);
+                foreach($loan->lenders as $lender){
+                    $percentage = $lender->pivot->payment_percentage;
+                    $percentage_quota = ($percentage)*($loan->next_payment()->estimated_quota)/100;
+                    if($lender->affiliate_state->name == 'Servicio' || $lender->affiliate_state->name == 'Disponibilidad' || $lender->affiliate_state->name == 'Jubilado' || $lender->affiliate_state->name == 'Jubilado Invalidez'){
+                        $disbursement_date = CarbonImmutable::parse($loan->disbursement_date);
+                        if($disbursement_date->lessThan($estimated_date)){
+                            if($disbursement_date->year == $estimated_date->year && $disbursement_date->month == $estimated_date->month){
+                                if($disbursement_date->day<LoanGlobalParameter::latest()->first()->offset_interest_day){
+                                    LoanPayment::registry_payment($loan, $estimated_date, $description, $procedure_modality, $voucher, $paid_by, $payment_type_desc, $percentage_quota);
+                                    $loans_quantity++;
+                                }
+                            }else{
+                                LoanPayment::registry_payment($loan, $estimated_date, $description, $procedure_modality, $voucher, $paid_by, $payment_type_desc, $percentage_quota);
+                                $loans_quantity++;
                             }
-                        }else{
-                            LoanPayment::registry_payment($loan, $estimated_date, $description, $procedure_modality, $voucher, $paid_by, $payment_type_desc);
                         }
                     }
                 }
             }
         }
+        return response()->json([
+            'loans_quantity' => $loans_quantity
+        ]);
     }
-  
+
     /**
     * Importación de Pagos Comando SENASIR
     * Realiza la importación de pagos.
@@ -483,9 +498,49 @@ class LoanPaymentController extends Controller
             }
 
             return response()->json([
-                    'payments_automatic' => $payment_automatic,
-                    'payments_no_automatic' => $payment_no_automatic
-                ]);
+                'payments_automatic' => $payment_automatic,
+                'payments_no_automatic' => $payment_no_automatic
+            ]);
+    }
+
+    /** @group Reportes préstamos
+    * Préstamos en móra
+    * Descarga en xls los prestamos que se encuentran en Móra.
+    */
+   
+    public function loans_delay(Request $request)
+    {
+        $delay_tag = Tag::whereSlug('mora')->first();
+        $loans=Loan::get();
+        $delay_loans = collect([]); $delays = collect([]);
+        foreach ($loans as $loan){
+            if(!$loan->tags_loans()->isEmpty()){
+                $delay_loans->push($loan->tags_loans());
+            }
+        }
+        $delay_loans =$delay_loans[0];
+        foreach ($delay_loans as $loans){
+            if($loans->id == $delay_tag->id){
+                $id_loan=$loans->pivot->taggable_id;
+                $loan_search=Loan::find($id_loan);
+                $delays->push($loan_search);
+            }
+        }
+        
+        $File="PrestamosEnMora";
+        $data=array(
+            array("Código del préstamo","Monto aprobado","Tiempo del préstamo","Fecha de desembolso")
+        );
+        foreach ($delays as $row){
+            array_push($data, array(
+                $row->code,
+                $row->amount_approved,
+                $row->loan_term,
+                $row->disbursement_date
+            ));
+        }
+       $export = new ArchivoPrimarioExport($data);
+       return Excel::download($export, $File.'.xlsx'); 
     }
 }
     
