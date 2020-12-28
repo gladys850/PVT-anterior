@@ -41,6 +41,8 @@ class LoanPaymentController extends Controller
 {
     public static function append_data(LoanPayment $loanPayment, $with_state = false)
     {
+        $loanPayment->loan = $loanPayment->loan;
+        $loanPayment->affiliate = $loanPayment->affiliate;
         if ($with_state) $loanPayment->state = $loanPayment->state;
         return $loanPayment;
     }
