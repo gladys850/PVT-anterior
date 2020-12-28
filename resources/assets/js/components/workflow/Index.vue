@@ -368,8 +368,7 @@ export default {
       }
       if(this.affiliate_id > 0){
         filters = {
-          affiliate_id: this.affiliate_id,
-          role_id: this.filters.roleSelected
+          affiliate_id: this.affiliate_id
         }
       }
       this.params = filters
@@ -382,7 +381,7 @@ export default {
         }
         this.loading = true
         let res
-        /*if(this.affiliate_id > 0){
+        if(this.affiliate_id > 0){
           res = await axios.get(`loan`, {
             params: {
            
@@ -395,7 +394,7 @@ export default {
             }
           })
         }
-        /*else if(this.track){
+        else if(this.track){
           res = await axios.get(`loan`, {
             params: {
               page: this.options.page,
@@ -406,7 +405,7 @@ export default {
             }
           })
         }
-        else{*/
+        else{
           res = await axios.get(`loan`, {
             params: {...{
               page: this.options.page,
@@ -416,7 +415,7 @@ export default {
               search: this.search
             }, ...this.params}
           })
-        //}
+        }
         this.loans = res.data.data
         this.totalLoans = res.data.total
         delete res.data['data']
