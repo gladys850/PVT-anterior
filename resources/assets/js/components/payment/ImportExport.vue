@@ -40,7 +40,7 @@
                                   ></v-text-field>
                                 </v-col>
 
-                                <v-col cols="12" md="12" class="py-0">
+                                <v-col cols="12" md="12" class="py-0" v-if="item.value=='import'">
                                   <ValidationProvider
                                     v-slot="{ errors }"
                                     name="Estado del afiliado"
@@ -62,7 +62,7 @@
                                   <ValidationProvider
                                     v-slot="{ errors }"
                                     name="Código comprobante"
-                                    rules="required"
+                                    rules="alpha_dash|min:2|max:20"
                                   >
                                     <v-text-field
                                       :error-messages="errors"
@@ -90,7 +90,6 @@
                                   <v-btn
                                     color="primary"
                                     @click.stop="registerPaymentsBatch()"
-                                    
                                   >Generar Información</v-btn>
                                   <br />
                                   <v-btn
@@ -105,7 +104,6 @@
                                   >Importar Información</v-btn>
                                   <br />
 
-                            
                                   <template v-if="visible == true">
                                     <p
                                       style="color: teal"
@@ -143,19 +141,7 @@ export default {
       file: null,
       state_affiliate: null,
       cutoff_date: null,
-      cutoff_date_import: null,
       code_voucher: null
-    },
-
-    dates: {
-      cutOffDate: {
-        formatted: null,
-        picker: false
-      },
-      cutOffDateImport: {
-        formatted: null,
-        picker: false
-      }
     },
     actions: [
       { nameTab: "Exportación", value: "export" },
@@ -173,27 +159,7 @@ export default {
     },
     visible: false
   }),
-  mounted() {
-    //this.formatDate("cutOffDate", this.import_export.cutoff_date);
-    //this.formatDate("cutOffDate", this.import_export.cutoff_date_import);
-  },
-  watch: {
-    "import_export.cutoff_date": function(date) {
-      this.formatDate("cutOffDate", date);
-    }
-    /*"import_export.cutoff_date_import": function(date) {
-      this.formatDate("cutOffDateImport", date);
-    }*/
-  },
   methods: {
-    formatDate(key, date) {
-      if (date) {
-        this.dates[key].formatted = this.$moment(date).format("L");
-      } else {
-        this.dates[key].formatted = null;
-      }
-      this.visible = false;
-    },
     async registerPaymentsBatch() {
       try {
         let res = await axios.post(`command_senasir_save_payment`, {
@@ -201,7 +167,8 @@ export default {
           voucher: this.import_export.code_voucher
         });
         this.paymentsBatch = res.data;
-        this.toastr.success("Se Realizo la exportación correctamente")
+        this.toastr.success("Se realizo el registro de: "+ this.paymentsBatch.loans_quantity +" pago del mes de "+ this.import_export.cutoff_date);
+        console.log(this.paymentsBatch)
       } catch (e) {
         console.log(e);
       }
@@ -231,7 +198,6 @@ export default {
       (this.import_export.file = null),
         (this.import_export.state_affiliate = null),
         (this.import_export.cutoff_date = null),
-        (this.import_export.cutoff_date_import = null),
         (this.import_export.code_voucher = null);
     },
     async importationPaymentsBatch() {
@@ -241,7 +207,7 @@ export default {
       const formData = new FormData();
       formData.append("file", this.import_export.file);
       formData.append("state", this.import_export.state_affiliate);
-      formData.append("estimated_date", this.import_export.cutoff_date_import);
+      formData.append("estimated_date", this.import_export.cutoff_date);
       formData.append("voucher_payment", this.import_export.code_voucher);
       //formData.append("override", this.override);
       //formData.append("refresh", this.refresh);
