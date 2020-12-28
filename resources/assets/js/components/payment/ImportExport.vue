@@ -91,18 +91,8 @@
                                     color="primary"
                                     @click.stop="registerPaymentsBatch()"
                                   >Generar Información</v-btn>
-                                  <br />
-                                  <v-btn
-                                    color="primary"
-                                    @click.stop="excel()"
-                                  >Ver Reporte de Descuento</v-btn>
-                                </v-col>
-                                <v-col cols="12" md="4" class="py-0" v-if="item.value=='import'">
-                                  <v-btn
-                                    color="primary"
-                                    @click.stop="importationPaymentsBatch()"
-                                  >Importar Información</v-btn>
-                                  <br />
+                                  <br /><br /><br />
+
 
                                   <template v-if="visible == true">
                                     <p
@@ -112,6 +102,22 @@
                                       style="color: teal"
                                     >Cantidad de pagos NO importados: {{import_payments.no_automatic}}</p>
                                   </template>
+                                                                    <v-btn
+                                    color="primary"
+                                    @click.stop="excel()"
+                                  >Ver Reporte de Descuento</v-btn>
+                                <br />
+                                  <v-btn
+                                    color="primary"
+                                    @click.stop="mora()"
+                                  >Ver Reporte de Trámites en Mora</v-btn>
+                                </v-col>
+                                <v-col cols="12" md="4" class="py-0" v-if="item.value=='import'">
+                                  <v-btn
+                                    color="primary"
+                                    @click.stop="importationPaymentsBatch()"
+                                  >Importar Información</v-btn>
+                                  <br />
                                 </v-col>
                               </v-layout>
                             </v-col>
@@ -173,27 +179,6 @@ export default {
         console.log(e);
       }
     },
-    async excel() {
-      await axios({
-        url: "/excel",
-        method: "GET",
-        responseType: "blob", // important
-        headers: { Accept: "application/vnd.ms-excel" },
-        data: this.datos
-      })
-        .then(response => {
-          console.log(response);
-          const url = window.URL.createObjectURL(new Blob([response.data]));
-          const link = document.createElement("a");
-          link.href = url;
-          link.setAttribute("download", "ReporteDecuento.xlsx");
-          document.body.appendChild(link);
-          link.click();
-        })
-        .catch(error => {
-          console.log(error);
-        });
-    },
     clearInputs() {
       (this.import_export.file = null),
         (this.import_export.state_affiliate = null),
@@ -229,7 +214,50 @@ export default {
       //this.showResults = true;
       //this.loadingButton = false;
       //this.refresh = false;
-    }
+    },
+    //REPORTES
+    async excel() {
+      await axios({
+        url: "/excel",
+        method: "GET",
+        responseType: "blob", // important
+        headers: { Accept: "application/vnd.ms-excel" },
+        data: this.datos
+      })
+        .then(response => {
+          console.log(response);
+          const url = window.URL.createObjectURL(new Blob([response.data]));
+          const link = document.createElement("a");
+          link.href = url;
+          link.setAttribute("download", "ReporteDecuento.xlsx");
+          document.body.appendChild(link);
+          link.click();
+        })
+        .catch(error => {
+          console.log(error);
+        });
+    },
+    async mora() {
+      await axios({
+        url: "/loans_delay",
+        method: "GET",
+        responseType: "blob", // important
+        headers: { Accept: "application/vnd.ms-excel" },
+        data: this.datos
+      })
+        .then(response => {
+          console.log(response);
+          const url = window.URL.createObjectURL(new Blob([response.data]));
+          const link = document.createElement("a");
+          link.href = url;
+          link.setAttribute("download", "ReporteTramitesMora.xlsx");
+          document.body.appendChild(link);
+          link.click();
+        })
+        .catch(error => {
+          console.log(error);
+        });
+    },
   }
 };
 </script>
