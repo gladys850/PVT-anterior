@@ -541,7 +541,11 @@ export default {
       if(this.$store.getters.userRoles.includes('PRE-tesoreria') && this.validate.valid_disbursement==false){
          this.toastr.error('Faltan registar campos en Desembolso. Registre la fecha, tipo y nro de documento.')
         }else{
-          this.bus.$emit('openDialog', { edit: false, accion: 'validar' })
+          if(this.$store.getters.userRoles.includes('PRE-jefatura') || this.$store.getters.userRoles.includes('PRE-aprobacion-direccion') || this.$store.getters.userRoles.includes('PRE-tesoreria')){
+            this.bus.$emit('openDialog', { edit: false, accion: 'validar' })
+          }else{
+            this.bus.$emit('openDialog', { edit: false, accion: 'validar' })
+          }
         }
 
     }
