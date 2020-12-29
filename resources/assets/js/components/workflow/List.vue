@@ -8,6 +8,7 @@
     :options="options"
     :server-items-length="totalLoans"
     :footer-props="{ itemsPerPageOptions: [8, 15, 30] }"
+    :item-class="itemRowBackground"
     multi-sort
     :show-select="tray == 'validated'"
     @update:options="updateOptions"
@@ -244,6 +245,9 @@ export default {
     this.docsLoans()
   },
   methods: {
+    itemRowBackground: function (item) {
+      return item.observed === true ? 'style-1' : 'style-2'
+    },
     searchProcedureModality(item, attribute = null) {
       let procedureModality = this.procedureModalities.find(o => o.id == item.procedure_modality_id)
       if (procedureModality) {
@@ -355,5 +359,8 @@ export default {
 <style>
 th.text-start {
   background-color: #757575;
+}
+.style-1 {
+  background-color: rgb(245, 241, 202)
 }
 </style>
