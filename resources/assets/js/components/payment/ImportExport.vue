@@ -94,30 +94,28 @@
                                   <br /><br /><br />
 
 
-                                  <template v-if="visible == true">
-                                    <p
-                                      style="color: teal"
-                                    >Cantidad de pagos importados: {{import_payments.automatic}}</p>
-                                    <p
-                                      style="color: teal"
-                                    >Cantidad de pagos NO importados: {{import_payments.no_automatic}}</p>
-                                  </template>
+
                                                                     <v-btn
-                                    color="primary"
+                                    color="succes"
                                     @click.stop="excel()"
                                   >Ver Reporte de Descuento</v-btn>
                                 <br />
-                                  <v-btn
-                                    color="primary"
-                                    @click.stop="mora()"
-                                  >Ver Reporte de Trámites en Mora</v-btn>
+
                                 </v-col>
                                 <v-col cols="12" md="4" class="py-0" v-if="item.value=='import'">
                                   <v-btn
                                     color="primary"
                                     @click.stop="importationPaymentsBatch()"
                                   >Importar Información</v-btn>
-                                  <br />
+                                  <br /><br />
+                                    <template v-if="visible == true">
+                                    <p
+                                      style="color: green"
+                                    >Cantidad de pagos importados: {{import_payments.automatic}}</p>
+                                    <p
+                                      style="color: red"
+                                    >Cantidad de pagos NO importados: {{import_payments.no_automatic}}</p>
+                                  </template>
                                 </v-col>
                               </v-layout>
                             </v-col>

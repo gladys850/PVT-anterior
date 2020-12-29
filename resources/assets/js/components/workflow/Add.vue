@@ -33,7 +33,7 @@
               small
               color="orange"
               class="ml-4"
-              @click.stop="validation()"
+              @click="bus.$emit('openDialog', { edit: false, accion: 'devolver'})"
             >
               <v-icon>mdi-file-undo</v-icon>
             </v-btn>

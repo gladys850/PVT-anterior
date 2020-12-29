@@ -63,7 +63,7 @@
           <span>Ver registro de cobro</span>
         </v-tooltip>
 
-        <v-tooltip bottom v-if="$store.getters.permissions.includes('create-payment') && $store.getters.userRoles.includes('PRE-tesoreria')">
+        <v-tooltip bottom v-if="$store.getters.permissions.includes('create-payment')">
           <template v-slot:activator="{ on }">
             <v-btn
               icon
