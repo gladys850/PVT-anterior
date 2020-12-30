@@ -510,35 +510,26 @@ class LoanPaymentController extends Controller
    
     public function loans_delay(Request $request)
     {
-        $delay_tag = Tag::whereSlug('mora')->first();
-        $loans=Loan::get();
-        $delay_loans = collect([]); $delays = collect([]);
-        foreach ($loans as $loan){
-            if(!$loan->tags_loans()->isEmpty()){
-                $delay_loans->push($loan->tags_loans());
+        $loans = Loan::whereHas('state', function($query) {
+            $query->whereName('Desembolsado');
+        })->get();
+        $delays = collect([]);
+        foreach ($loans as $loan) {
+            if ($loan->defaulted) {
+                $delays->push($loan);
             }
         }
-        if(!$delay_loans->isEmpty()){
-            $delay_loans = $delay_loans[0];
-        }
-        foreach ($delay_loans as $loans){
-            if($loans->id == $delay_tag->id){
-                $id_loan=$loans->pivot->taggable_id;
-                $loan_search=Loan::find($id_loan);
-                $delays->push($loan_search);
-            }
-        }
-        
         $File="PrestamosEnMora";
         $data=array(
-            array("Código del préstamo","Monto aprobado","Tiempo del préstamo","Fecha de desembolso")
+            array("Código del préstamo","Monto aprobado","Tiempo del préstamo","Fecha de desembolso","días penal")
         );
         foreach ($delays as $row){
             array_push($data, array(
                 $row->code,
                 $row->amount_approved,
                 $row->loan_term,
-                $row->disbursement_date
+                $row->disbursement_date,
+                $row->getdelay()
             ));
         }
        $export = new ArchivoPrimarioExport($data);
