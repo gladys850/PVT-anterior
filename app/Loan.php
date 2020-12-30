@@ -176,6 +176,10 @@ class Loan extends Model
     {
         return LoanPayment::days_interest($this)->penal > 0 ? true : false;
     }
+    public function getdelay()
+    {
+        return LoanPayment::days_interest($this)->penal;
+    }
 
     public function payments()
     {
