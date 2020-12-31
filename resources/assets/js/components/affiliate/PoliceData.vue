@@ -132,7 +132,7 @@
               ></v-select>
               </ValidationProvider>
             </v-col>
-            <v-col cols="12" md="3">
+            <!--<v-col cols="12" md="3">
               <ValidationProvider v-slot="{ errors }" vid="service_years" name="Años de Servicio" rules="numeric|min_value:0|max_value:100">
               <v-text-field
                 dense
@@ -157,7 +157,7 @@
                 :disabled="editable && !permission.primary"
               ></v-text-field>
                </ValidationProvider>
-            </v-col>
+            </v-col>--> 
             <v-col cols="12"  md="6" >
               <ValidationProvider v-slot="{ errors }" vid="pension_entity_id" name="Ente Gestor" :rules="(affiliate.affiliate_state_id >= 4 && affiliate.affiliate_state_id <= 6)? 'required':''">
               <v-select
