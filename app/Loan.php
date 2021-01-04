@@ -176,9 +176,9 @@ class Loan extends Model
     {
         return LoanPayment::days_interest($this)->penal > 0 ? true : false;
     }
-    public function getdelay()
-    {
-        return LoanPayment::days_interest($this)->penal;
+    public function getdelay()	
+    {	
+        return LoanPayment::days_interest($this)->penal;	
     }
 
     public function payments()
@@ -193,6 +193,11 @@ class Loan extends Model
     public function data_loan()
     {
         return $this->hasOne(Sismu::class,'loan_id','id');
+    }
+    
+    public function getRecordsUserAttribute()
+    {
+        return $this->records()->first()->user;
     }
 
     public function observations()
