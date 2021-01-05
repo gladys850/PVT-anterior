@@ -190,6 +190,11 @@ class Loan extends Model
     {
         return $this->hasOne(Sismu::class,'loan_id','id');
     }
+    
+    public function getRecordsUserAttribute()
+    {
+        return $this->records()->first()->user;
+    }
 
     public function observations()
     {
