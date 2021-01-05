@@ -521,15 +521,24 @@ class LoanPaymentController extends Controller
         }
         $File="PrestamosEnMora";
         $data=array(
-            array("Código del préstamo","Monto aprobado","Tiempo del préstamo","Fecha de desembolso","días penal")
+            array("id","CI","Primer apellido","Segundo apellido","Primer nombre","Segundo nombre","Código del préstamo","Estado del préstamo","Monto aprobado","Tiempo del préstamo","Fecha de desembolso","Días penal","Días Acumulados","Días corrientes")
         );
         foreach ($delays as $row){
             array_push($data, array(
+                $row->loan_affiliates()->get()[0]->id,
+                $row->loan_affiliates()->get()[0]->identity_card,
+                $row->loan_affiliates()->get()[0]->last_name,
+                $row->loan_affiliates()->get()[0]->mothers_last_name,
+                $row->loan_affiliates()->get()[0]->first_name,
+                $row->loan_affiliates()->get()[0]->second_name,
                 $row->code,
+                $row->state()->get()[0]->name,
                 $row->amount_approved,
                 $row->loan_term,
                 $row->disbursement_date,
-                $row->getdelay()
+                $row->getdelay()->penal,
+                $row->getdelay()->accumulated,
+                $row->getdelay()->current
             ));
         }
        $export = new ArchivoPrimarioExport($data);
