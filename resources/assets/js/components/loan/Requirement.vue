@@ -25,7 +25,7 @@
                         </v-list-item-content>
                       </v-col>
                       <v-col cols="10" class="py-0 ml-n8">
-                        <v-list-item-content class="align-end font-weight-light py-0">{{doc.name}}</v-list-item-content>
+                        <v-list-item-content class="align-end font-weight-light py-0">{{doc.id}}{{doc.name}}</v-list-item-content>
                       </v-col>
                       <v-col cols="1" class="py-0 my-n1">
                         <div v-if="group.length == 1" class="py-0">
@@ -169,6 +169,7 @@ export default {
     newOther: null,
     status_click: false,
     loader: null,
+    ids_items: []
   }),
   props: {
     guarantors: {
@@ -219,6 +220,7 @@ export default {
       this.getRequirement(this.modalidad_id)
       this.selected = []
       this.radios = []
+      this.ids_items = []
     },
     personal_codebtor(){
       return true
@@ -254,6 +256,14 @@ export default {
         this.items = this.requirement.required;
         this.optional = this.requirement.optional;
         this.newOptional = this.requirement.optional;
+        console.log(this.items)
+        for(let i = 0; i < this.items.length; i++ ){
+          for(let j = 0; j < 1; j++ ){
+           this.ids_items.push(this.items[i][j].id)
+            console.log(this.ids_items )
+          }
+        }
+         console.log(this.id_items )
       } catch (e) {
         console.log(e);
       } finally {
@@ -287,7 +297,7 @@ export default {
               lenders:this.lenders,
               guarantors: this.guarantors,
               data_loan:this.data_loan_parent,
-              documents: this.selected.concat(this.itemsOpc.concat(this.radios.filter(Boolean))),
+              documents: this.ids_items.concat(this.itemsOpc.concat(this.radios.filter(Boolean))),
               notes: this.otherDocuments
             });             
             if(res.status==201 || res.status == 200){
