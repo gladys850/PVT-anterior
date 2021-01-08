@@ -25,7 +25,7 @@
                         </v-list-item-content>
                       </v-col>
                       <v-col cols="10" class="py-0 ml-n8">
-                        <v-list-item-content class="align-end font-weight-light py-0">{{doc.id}}{{doc.name}}</v-list-item-content>
+                        <v-list-item-content class="align-end font-weight-light py-0">{{doc.name}}</v-list-item-content>
                       </v-col>
                       <v-col cols="1" class="py-0 my-n1">
                         <div v-if="group.length == 1" class="py-0">
