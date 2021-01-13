@@ -1,0 +1,42 @@
+{
+    "last_name": "TEMO",
+    "mothers_last_name": "JOU",
+    "names": "MANUELA TEMO JOU",
+    "message": "Viuda",
+    "sismu_tit": [
+        {
+            "PresNumero": "N-    7273   ",
+            "PresCuotaMensual": "432.2500",
+            "PresEstPtmo": "X",
+            "PresMntDesembolso": "11000.0000",
+            "PrdDsc": "GARANTIA PERSONAL             ",
+            "PadMatricula": "345329TUM",
+            "PadCedulaIdentidad": "1700723        ",
+            "PadMatriculaTit": "270927UZR"
+        },
+        {
+            "PresNumero": "P18-20900368 ",
+            "PresCuotaMensual": "403.1900",
+            "PresEstPtmo": "X",
+            "PresMntDesembolso": "8484.0000",
+            "PrdDsc": "PASIVOS AL 1.1% MENSUAL       ",
+            "PadMatricula": "345329TUM",
+            "PadCedulaIdentidad": "1700723        ",
+            "PadMatriculaTit": "270927UZR"
+        }
+    ],
+    "sismu_gar": [
+        {
+            "PresNumero": "N-    6673   ",
+            "PresCuotaMensual": "615.2000",
+            "PresEstPtmo": "X",
+            "PresMntDesembolso": "10000.0000",
+            "PrdDsc": "GARANTIA PERSONAL             ",
+            "PadMatricula": "345329TUM",
+            "PadCedulaIdentidad": "1700723        ",
+            "PadMatriculaTit": "270927UZR"
+        }
+    ],
+    "pvt_tit": null,
+    "pvt_gar": null
+}

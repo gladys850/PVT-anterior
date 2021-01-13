@@ -31,6 +31,7 @@ use App\Http\Controllers\Controller;
 use App\Events\FingerprintSavedEvent;
 use Illuminate\Support\Facades\Storage;
 use Carbon\CarbonImmutable;
+use Illuminate\Support\Facades\DB;
 
 /** @group Afiliados
 * Datos de los afiliados y métodos para obtener y establecer sus relaciones
@@ -667,5 +668,100 @@ class AffiliateController extends Controller
             'disbursement_loans' => count($disbursement),
             'is_valid_maximum' => $maximum
         ]);
+    }
+
+    /**
+    * Historial de Tramites
+    * Devuelve el Historio de tramites de un afiliado.
+    * @urlParam affiliate required CI de afiliado. Example: 1700723
+    * @authenticated
+    * @responseFile responses/affiliate/affiliate_record.200.json
+    */
+    public function affiliate_record($ci)
+    {
+        $data = array();
+        $loans = "";
+        $loans_guarantees = "";
+        $paterno = "";
+        $materno = "";
+        $nombres = "";
+        $registration = "";
+        $type = "";
+        $affiliate = Affiliate::whereIdentity_card($ci)->first();
+        if($affiliate){
+            $paterno = $affiliate->last_name;
+            $materno = $affiliate->mothers_last_name;
+            $nombres = $affiliate->full_name;
+            $ci = $affiliate->identity_card;
+            $registration = $affiliate->registration;
+            $type = "titular";
+            $message = "afiliado titular en PVT";
+            $loans = $affiliate->loans;
+            $loans_guarantees = $affiliate->guarantees;
+        }
+        else
+        {
+            $affiliate = Spouse::whereIdentity_card($ci)->first();
+            if($affiliate){
+                $paterno = $affiliate->last_name;
+                $materno = $affiliate->mothers_last_name;
+                $nombres = $affiliate->full_name;
+                $ci = $affiliate->identity_card;
+                $registration = $affiliate->registration;
+                $type = "Viuda";
+                $message = "Viuda";
+                $loans = $affiliate->loans;
+                $loans_guarantees = $affiliate->guarantees;
+            }
+            else{
+                $sismu = "SELECT * from 
+                            Padron where PadCedulaIdentidad = '$ci'";
+                $affiliate = DB::connection('sqlsrv')->select($sismu);
+                if(isset($affiliate)){
+                    $paterno = $affiliate[0]->PadPaterno;
+                    $materno = $affiliate[0]->PadMaterno;
+                    $nombres = $affiliate[0]->PadNombres;
+                    $ci = $affiliate[0]->PadCedulaIdentidad;
+                    if($affiliate[0]->PadMatriculaTit = "")
+                    $type = "Titular";
+                    else
+                    $type = "Viuda";
+                    $registration = $affiliate[0]->PadMatricula;
+                    $message = "afiliado no existente en PVT";
+                }
+                else
+                $message = "afiliado inexistente";
+            }
+        }
+        $query = "SELECT Prestamos.PresNumero, Prestamos.PresCuotaMensual, Prestamos.PresEstPtmo, Prestamos.PresMntDesembolso, Producto.PrdDsc, Padron.PadMatricula, Padron.PadCedulaIdentidad, Padron.PadMatriculaTit
+                    FROM Prestamos
+                    join Padron ON Prestamos.idPadron = Padron.idPadron
+                    join Producto ON Prestamos.PrdCod = Producto.PrdCod
+                    where Padron.padMatricula LIKE '%$ci%'
+                    or Padron.padCedulaIdentidad LIKE '%$ci%'
+                    or Padron.padMatriculaTit LIKE '%$ci%'";
+        $prestamos = DB::connection('sqlsrv')->select($query);
+
+        $query2 = "SELECT Prestamos.PresNumero, Prestamos.PresCuotaMensual, Prestamos.PresEstPtmo, Prestamos.PresMntDesembolso, Producto.PrdDsc, Padron.PadMatricula, Padron.PadCedulaIdentidad, Padron.PadMatriculaTit
+                    FROM Prestamos
+                    join PrestamosLevel1 ON Prestamos.IdPrestamo = PrestamosLevel1.IdPrestamo
+                    join Padron ON Padron.IdPadron = PrestamosLevel1.IdPadronGar
+                    join Producto ON Prestamos.PrdCod = Producto.PrdCod
+                    where Padron.padMatricula LIKE '%$ci%'
+                                    or Padron.padCedulaIdentidad LIKE '%$ci%'
+                                    or Padron.padMatriculaTit LIKE '%$ci%'";
+        $garantias = DB::connection('sqlsrv')->select($query2);
+
+        $data = array(
+            "last_name" => $paterno,
+            "mothers_last_name" => $materno,
+            "names" => $nombres,
+            "message" => $message,
+            "sismu_tit" => $prestamos,
+            "sismu_gar" => $garantias,
+            "pvt_tit" => $loans,
+            "pvt_gar" => $loans_guarantees,
+        );
+        return $data;
     }
 }
