@@ -1,7 +1,8 @@
 {
+    "id": 12483,
     "last_name": "",
     "mothers_last_name": "OLGUIN",
-    "first_names": "JULIO",
+    "first_name": "JULIO",
     "second_name": "",
     "identity_card": "2894734",
     "registration": null,
@@ -10,7 +11,10 @@
         {
             "IdPrestamo": "28565",
             "PresNumero": "A18-2908534  ",
+            "PresFechaPrestamo": "2011-11-18 00:00:00.000",
+            "PresFechaDesembolso": "2011-11-18 00:00:00.000",
             "PresCuotaMensual": "750.6400",
+            "PresMeses": "48",
             "PresEstDsc": "CANCELADO           ",
             "PresMntDesembolso": "28000.0000",
             "PresSaldoAct": ".0000",
@@ -23,7 +27,10 @@
         {
             "IdPrestamo": "33492",
             "PresNumero": "PTMO-00001060",
+            "PresFechaPrestamo": "2014-12-26 00:00:00.000",
+            "PresFechaDesembolso": "1753-01-01 00:00:00.000",
             "PresCuotaMensual": "567.5500",
+            "PresMeses": "48",
             "PresEstDsc": "ANULADO             ",
             "PresMntDesembolso": ".0000",
             "PresSaldoAct": ".0000",
@@ -38,7 +45,10 @@
         {
             "IdPrestamo": "28302",
             "PresNumero": "A18-2908271  ",
+            "PresFechaPrestamo": "2011-11-14 00:00:00.000",
+            "PresFechaDesembolso": "2011-11-14 00:00:00.000",
             "PresCuotaMensual": "541.0700",
+            "PresMeses": "40",
             "PresEstDsc": "PENDIENTE           ",
             "PresMntDesembolso": "17500.0000",
             "PresSaldoAct": ".0000",
@@ -51,7 +61,10 @@
         {
             "IdPrestamo": "32194",
             "PresNumero": "PTMO-00001282",
+            "PresFechaPrestamo": "2013-12-12 00:00:00.000",
+            "PresFechaDesembolso": "1753-01-01 00:00:00.000",
             "PresCuotaMensual": "785.9200",
+            "PresMeses": "30",
             "PresEstDsc": "ANULADO             ",
             "PresMntDesembolso": ".0000",
             "PresSaldoAct": ".0000",
@@ -64,13 +77,16 @@
     ],
     "pvt_tit": [
         {
-            "idPrestamo": 4,
-            "PresNumero": "PTMO000004-2021",
-            "PresCuotaMensual": 1045.22,
-            "PresEstPtmo": "En Proceso",
-            "PresMntDesembolso": 2000,
+            "id": 4,
+            "code": "PTMO000004-2021",
+            "disbursement_date": null,
+            "request_date": "2021-01-13T04:00:00.000000Z",
+            "estimated_quota": 1045.22,
+            "loan_term": 2,
+            "state": "En Proceso",
+            "amount": 2000,
             "balance": 2000,
-            "PrdDsc": "Anticipo sector pasivo"
+            "modality": "Anticipo sector pasivo"
         }
     ],
     "pvt_gar": []
