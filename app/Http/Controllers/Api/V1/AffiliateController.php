@@ -704,26 +704,28 @@ class AffiliateController extends Controller
             $loans = $affiliate->loans;
             foreach($loans as $loan){
                 $data_loan = array(
-                    "idPrestamo" => $loan->id,
-                    "PresNumero" => $loan->code,
-                    "PresCuotaMensual" => $loan->estimated_quota,
-                    "PresEstPtmo" => $loan->state->name,
-                    "PresMntDesembolso" => $loan->amount_approved,
-                    "balance" => $loan->balance,
-                    "PrdDsc" => $loan->modality->name,
-                );
-                array_push($loans1, $data_loan);
-            }
-            $loans_guarantees = $affiliate->guarantees;
-            foreach($loans_guarantees as $guarantees){
-                $data_loan = array(
                     "id" => $loan->id,
                     "code" => $loan->code,
-                    "quota" => $loan->estimated_quota,
+                    "estimated_quota" => $loan->estimated_quota,
+                    "loan_term" => $loan->loan_term,
                     "state" => $loan->state->name,
                     "amount" => $loan->amount_approved,
                     "balance" => $loan->balance,
                     "modality" => $loan->modality->name,
+                );
+                array_push($loans1, $data_loan);
+            }
+            $loans_guarantees = $affiliate->active_guarantees();
+            foreach($loans_guarantees as $guarantees){
+                $data_loan = array(
+                    "id" => $guarantees->id,
+                    "code" => $guarantees->code,
+                    "estimated_quota" => $guarantees->estimated_quota,
+                    "loan_term" => $guarantees->loan_term,
+                    "state" => $guarantees->state->name,
+                    "amount_approved" => $guarantees->amount_approved,
+                    "balance" => $guarantees->balance,
+                    "modality" => $guarantees->modality->name,
                     );
                     array_push($l_guarantees, $data_loan);
             }
@@ -762,10 +764,10 @@ class AffiliateController extends Controller
                     $message = "afiliado no existente en PVT";
                 }
                 else
-                $message = "afiliado inexistente";
+                $message = "inexistente";
             }
         }
-        $query = "SELECT Prestamos.IdPrestamo, Prestamos.PresNumero, Prestamos.PresCuotaMensual, EstadoPrestamo.PresEstDsc, Prestamos.PresMntDesembolso, Prestamos.PresSaldoAct, Producto.PrdDsc, trim(Padron.PadCedulaIdentidad) as PadCedulaIdentidad, trim(Padron.PadMatricula) as PadMatricula, trim(Padron.PadMatriculaTit) as PadMatriculaTit
+        $query = "SELECT Prestamos.IdPrestamo, Prestamos.PresNumero, Prestamos.PresCuotaMensual, Prestamos.PresMeses, EstadoPrestamo.PresEstDsc, Prestamos.PresMntDesembolso, Prestamos.PresSaldoAct, Producto.PrdDsc, trim(Padron.PadCedulaIdentidad) as PadCedulaIdentidad, trim(Padron.PadMatricula) as PadMatricula, trim(Padron.PadMatriculaTit) as PadMatriculaTit
                     FROM Prestamos
                     join Padron ON Prestamos.idPadron = Padron.idPadron
                     join Producto ON Prestamos.PrdCod = Producto.PrdCod
@@ -783,6 +785,7 @@ class AffiliateController extends Controller
                 "IdPrestamo" => $prestamo->IdPrestamo,
                 "PresNumero" => $prestamo->PresNumero,
                 "PresCuotaMensual" => $prestamo->PresCuotaMensual,
+                "PresMeses" => $prestamo->PresMeses,
                 "PresEstDsc" => $prestamo->PresEstDsc,
                 "PresMntDesembolso" => $prestamo->PresMntDesembolso,
                 "PresSaldoAct" => $prestamo->PresSaldoAct,
@@ -794,7 +797,7 @@ class AffiliateController extends Controller
             );
             array_push($prest, $data_prestamos);
         }
-        $query2 = "SELECT Prestamos.IdPrestamo, Prestamos.PresNumero, Prestamos.PresCuotaMensual, EstadoPrestamo.PresEstDsc, Prestamos.PresMntDesembolso, Prestamos.PresSaldoAct, Producto.PrdDsc, trim(Padron.PadCedulaIdentidad) as PadCedulaIdentidad, trim(Padron.PadMatricula) as PadMatricula, trim(Padron.PadMatriculaTit) as PadMatriculaTit
+        $query2 = "SELECT Prestamos.IdPrestamo, Prestamos.PresNumero, Prestamos.PresCuotaMensual, Prestamos.PresMeses, EstadoPrestamo.PresEstDsc, Prestamos.PresMntDesembolso, Prestamos.PresSaldoAct, Producto.PrdDsc, trim(Padron.PadCedulaIdentidad) as PadCedulaIdentidad, trim(Padron.PadMatricula) as PadMatricula, trim(Padron.PadMatriculaTit) as PadMatriculaTit
                     FROM Prestamos
                     join PrestamosLevel1 ON Prestamos.IdPrestamo = PrestamosLevel1.IdPrestamo
                     join Padron ON Padron.IdPadron = PrestamosLevel1.IdPadronGar
@@ -813,6 +816,7 @@ class AffiliateController extends Controller
                 "IdPrestamo" => $garantia->IdPrestamo,
                 "PresNumero" => $garantia->PresNumero,
                 "PresCuotaMensual" => $garantia->PresCuotaMensual,
+                "PresMeses" => $garantia->PresMeses,
                 "PresEstDsc" => $garantia->PresEstDsc,
                 "PresMntDesembolso" => $garantia->PresMntDesembolso,
                 "PresSaldoAct" => $garantia->PresSaldoAct,
@@ -828,7 +832,7 @@ class AffiliateController extends Controller
         $data = array(
             "last_name" => $paterno,
             "mothers_last_name" => $materno,
-            "first_names" => $nombre1,
+            "first_name" => $nombre1,
             "second_name" => $nombre2,
             "identity_card" => $cil,
             "registration" => $registration,
