@@ -684,20 +684,49 @@ class AffiliateController extends Controller
         $loans_guarantees = "";
         $paterno = "";
         $materno = "";
-        $nombres = "";
+        $nombre1 = "";
+        $nombre2 = "";
         $registration = "";
         $type = "";
+        $cil = "";
+        $l_guarantees = array();
+        $loans1 = array();
         $affiliate = Affiliate::whereIdentity_card($ci)->first();
         if($affiliate){
             $paterno = $affiliate->last_name;
             $materno = $affiliate->mothers_last_name;
-            $nombres = $affiliate->full_name;
-            $ci = $affiliate->identity_card;
+            $nombre1 = $affiliate->first_name;
+            $nombre2 = $affiliate->second_name;
+            $cil = $affiliate->identity_card;
             $registration = $affiliate->registration;
             $type = "titular";
-            $message = "afiliado titular en PVT";
+            $message = "afiliado existente en PVT";
             $loans = $affiliate->loans;
+            foreach($loans as $loan){
+                $data_loan = array(
+                    "idPrestamo" => $loan->id,
+                    "PresNumero" => $loan->code,
+                    "PresCuotaMensual" => $loan->estimated_quota,
+                    "PresEstPtmo" => $loan->state->name,
+                    "PresMntDesembolso" => $loan->amount_approved,
+                    "balance" => $loan->balance,
+                    "PrdDsc" => $loan->modality->name,
+                );
+                array_push($loans1, $data_loan);
+            }
             $loans_guarantees = $affiliate->guarantees;
+            foreach($loans_guarantees as $guarantees){
+                $data_loan = array(
+                    "id" => $loan->id,
+                    "code" => $loan->code,
+                    "quota" => $loan->estimated_quota,
+                    "state" => $loan->state->name,
+                    "amount" => $loan->amount_approved,
+                    "balance" => $loan->balance,
+                    "modality" => $loan->modality->name,
+                    );
+                    array_push($l_guarantees, $data_loan);
+            }
         }
         else
         {
@@ -705,8 +734,9 @@ class AffiliateController extends Controller
             if($affiliate){
                 $paterno = $affiliate->last_name;
                 $materno = $affiliate->mothers_last_name;
-                $nombres = $affiliate->full_name;
-                $ci = $affiliate->identity_card;
+                $nombre1 = $affiliate->first_name;
+                $nombre2 = $affiliate->second_name;
+                $cil = $affiliate->identity_card;
                 $registration = $affiliate->registration;
                 $type = "Viuda";
                 $message = "Viuda";
@@ -715,17 +745,19 @@ class AffiliateController extends Controller
             }
             else{
                 $sismu = "SELECT * from 
-                            Padron where PadCedulaIdentidad = '$ci'";
+                            Padron where trim(Padron.PadCedulaIdentidad) = '$ci'
+                            or trim(Padron.PadMatricula) = '$ci'
+                            or trim(Padron.PadMatriculaTit) = '$ci'";
                 $affiliate = DB::connection('sqlsrv')->select($sismu);
-                if(isset($affiliate)){
+                if($affiliate){
                     $paterno = $affiliate[0]->PadPaterno;
                     $materno = $affiliate[0]->PadMaterno;
-                    $nombres = $affiliate[0]->PadNombres;
-                    $ci = $affiliate[0]->PadCedulaIdentidad;
-                    if($affiliate[0]->PadMatriculaTit = "")
-                    $type = "Titular";
+                    $nombre1 = $affiliate[0]->PadNombres;
+                    $cil = $affiliate[0]->PadCedulaIdentidad;
+                    if($affiliate[0]->PadMatriculaTit == "" || $affiliate[0]->PadMatriculaTit == $affiliate[0]->PadMatricula || $affiliate[0]->PadMatriculaTit == $affiliate[0]->PadCedulaIdentidad)
+                    $type = "Titular sismu";
                     else
-                    $type = "Viuda";
+                    $type = "Viuda sismu";
                     $registration = $affiliate[0]->PadMatricula;
                     $message = "afiliado no existente en PVT";
                 }
@@ -733,34 +765,78 @@ class AffiliateController extends Controller
                 $message = "afiliado inexistente";
             }
         }
-        $query = "SELECT Prestamos.PresNumero, Prestamos.PresCuotaMensual, Prestamos.PresEstPtmo, Prestamos.PresMntDesembolso, Producto.PrdDsc, Padron.PadMatricula, Padron.PadCedulaIdentidad, Padron.PadMatriculaTit
+        $query = "SELECT Prestamos.IdPrestamo, Prestamos.PresNumero, Prestamos.PresCuotaMensual, EstadoPrestamo.PresEstDsc, Prestamos.PresMntDesembolso, Prestamos.PresSaldoAct, Producto.PrdDsc, trim(Padron.PadCedulaIdentidad) as PadCedulaIdentidad, trim(Padron.PadMatricula) as PadMatricula, trim(Padron.PadMatriculaTit) as PadMatriculaTit
                     FROM Prestamos
                     join Padron ON Prestamos.idPadron = Padron.idPadron
                     join Producto ON Prestamos.PrdCod = Producto.PrdCod
-                    where Padron.padMatricula LIKE '%$ci%'
-                    or Padron.padCedulaIdentidad LIKE '%$ci%'
-                    or Padron.padMatriculaTit LIKE '%$ci%'";
+                    join EstadoPrestamo ON Prestamos.PresEstPtmo = EstadoPrestamo.PresEstPtmo
+                    where Padron.padMatricula = '$ci'
+                    or Padron.padCedulaIdentidad = '$ci'";
         $prestamos = DB::connection('sqlsrv')->select($query);
 
-        $query2 = "SELECT Prestamos.PresNumero, Prestamos.PresCuotaMensual, Prestamos.PresEstPtmo, Prestamos.PresMntDesembolso, Producto.PrdDsc, Padron.PadMatricula, Padron.PadCedulaIdentidad, Padron.PadMatriculaTit
+        $prest = array();
+        foreach($prestamos as $prestamo){
+            $state = true;
+            if($prestamo->PadCedulaIdentidad != $ci && $prestamo->PadMatricula == $cil)
+            $state = false;
+            $data_prestamos = array(
+                "IdPrestamo" => $prestamo->IdPrestamo,
+                "PresNumero" => $prestamo->PresNumero,
+                "PresCuotaMensual" => $prestamo->PresCuotaMensual,
+                "PresEstDsc" => $prestamo->PresEstDsc,
+                "PresMntDesembolso" => $prestamo->PresMntDesembolso,
+                "PresSaldoAct" => $prestamo->PresSaldoAct,
+                "PrdDsc" => $prestamo->PrdDsc,
+                "state"=>$state,
+                "ci"=>$prestamo->PadCedulaIdentidad,
+                "matricula"=>$prestamo->PadMatricula,
+                "matriculaTit"=>$prestamo->PadMatriculaTit,
+            );
+            array_push($prest, $data_prestamos);
+        }
+        $query2 = "SELECT Prestamos.IdPrestamo, Prestamos.PresNumero, Prestamos.PresCuotaMensual, EstadoPrestamo.PresEstDsc, Prestamos.PresMntDesembolso, Prestamos.PresSaldoAct, Producto.PrdDsc, trim(Padron.PadCedulaIdentidad) as PadCedulaIdentidad, trim(Padron.PadMatricula) as PadMatricula, trim(Padron.PadMatriculaTit) as PadMatriculaTit
                     FROM Prestamos
                     join PrestamosLevel1 ON Prestamos.IdPrestamo = PrestamosLevel1.IdPrestamo
                     join Padron ON Padron.IdPadron = PrestamosLevel1.IdPadronGar
                     join Producto ON Prestamos.PrdCod = Producto.PrdCod
-                    where Padron.padMatricula LIKE '%$ci%'
-                                    or Padron.padCedulaIdentidad LIKE '%$ci%'
-                                    or Padron.padMatriculaTit LIKE '%$ci%'";
+                    join EstadoPrestamo ON Prestamos.PresEstPtmo = EstadoPrestamo.PresEstPtmo
+                    where Padron.padMatricula = '$ci'
+                    or Padron.padCedulaIdentidad = '$ci'";
         $garantias = DB::connection('sqlsrv')->select($query2);
+
+        $gar = array();
+        foreach($garantias as $garantia){
+            $state = false;
+            if($garantia->PadCedulaIdentidad == $ci && $garantia->PadMatricula == $cil)
+            $state = true;
+            $data_garantias = array(
+                "IdPrestamo" => $garantia->IdPrestamo,
+                "PresNumero" => $garantia->PresNumero,
+                "PresCuotaMensual" => $garantia->PresCuotaMensual,
+                "PresEstDsc" => $garantia->PresEstDsc,
+                "PresMntDesembolso" => $garantia->PresMntDesembolso,
+                "PresSaldoAct" => $garantia->PresSaldoAct,
+                "PrdDsc" => $garantia->PrdDsc,
+                "state"=>$state,
+                "ci"=>$garantia->PadCedulaIdentidad,
+                "matricula"=>$garantia->PadMatricula,
+                "matriculaTit"=>$garantia->PadMatriculaTit,
+            );
+            array_push($gar, $data_garantias);
+        }
 
         $data = array(
             "last_name" => $paterno,
             "mothers_last_name" => $materno,
-            "names" => $nombres,
+            "first_names" => $nombre1,
+            "second_name" => $nombre2,
+            "identity_card" => $cil,
+            "registration" => $registration,
             "message" => $message,
-            "sismu_tit" => $prestamos,
-            "sismu_gar" => $garantias,
-            "pvt_tit" => $loans,
-            "pvt_gar" => $loans_guarantees,
+            "sismu_tit" => $prest,
+            "sismu_gar" => $gar,
+            "pvt_tit" => $loans1,
+            "pvt_gar" => $l_guarantees,
         );
         return $data;
     }

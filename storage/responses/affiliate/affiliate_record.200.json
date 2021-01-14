@@ -1,42 +1,77 @@
 {
-    "last_name": "TEMO",
-    "mothers_last_name": "JOU",
-    "names": "MANUELA TEMO JOU",
-    "message": "Viuda",
+    "last_name": "",
+    "mothers_last_name": "OLGUIN",
+    "first_names": "JULIO",
+    "second_name": "",
+    "identity_card": "2894734",
+    "registration": null,
+    "message": "afiliado existente en PVT",
     "sismu_tit": [
         {
-            "PresNumero": "N-    7273   ",
-            "PresCuotaMensual": "432.2500",
-            "PresEstPtmo": "X",
-            "PresMntDesembolso": "11000.0000",
-            "PrdDsc": "GARANTIA PERSONAL             ",
-            "PadMatricula": "345329TUM",
-            "PadCedulaIdentidad": "1700723        ",
-            "PadMatriculaTit": "270927UZR"
+            "IdPrestamo": "28565",
+            "PresNumero": "A18-2908534  ",
+            "PresCuotaMensual": "750.6400",
+            "PresEstDsc": "CANCELADO           ",
+            "PresMntDesembolso": "28000.0000",
+            "PresSaldoAct": ".0000",
+            "PrdDsc": "ACTIVOS AL 1.1% MENSUAL       ",
+            "state": true,
+            "ci": "2894734",
+            "matricula": "2894734",
+            "matriculaTit": ""
         },
         {
-            "PresNumero": "P18-20900368 ",
-            "PresCuotaMensual": "403.1900",
-            "PresEstPtmo": "X",
-            "PresMntDesembolso": "8484.0000",
-            "PrdDsc": "PASIVOS AL 1.1% MENSUAL       ",
-            "PadMatricula": "345329TUM",
-            "PadCedulaIdentidad": "1700723        ",
-            "PadMatriculaTit": "270927UZR"
+            "IdPrestamo": "33492",
+            "PresNumero": "PTMO-00001060",
+            "PresCuotaMensual": "567.5500",
+            "PresEstDsc": "ANULADO             ",
+            "PresMntDesembolso": ".0000",
+            "PresSaldoAct": ".0000",
+            "PrdDsc": "GARANTIA PERSONAL             ",
+            "state": true,
+            "ci": "2894734",
+            "matricula": "2894734",
+            "matriculaTit": ""
         }
     ],
     "sismu_gar": [
         {
-            "PresNumero": "N-    6673   ",
-            "PresCuotaMensual": "615.2000",
-            "PresEstPtmo": "X",
-            "PresMntDesembolso": "10000.0000",
+            "IdPrestamo": "28302",
+            "PresNumero": "A18-2908271  ",
+            "PresCuotaMensual": "541.0700",
+            "PresEstDsc": "PENDIENTE           ",
+            "PresMntDesembolso": "17500.0000",
+            "PresSaldoAct": ".0000",
+            "PrdDsc": "ACTIVOS AL 1.1% MENSUAL       ",
+            "state": true,
+            "ci": "2894734",
+            "matricula": "2894734",
+            "matriculaTit": ""
+        },
+        {
+            "IdPrestamo": "32194",
+            "PresNumero": "PTMO-00001282",
+            "PresCuotaMensual": "785.9200",
+            "PresEstDsc": "ANULADO             ",
+            "PresMntDesembolso": ".0000",
+            "PresSaldoAct": ".0000",
             "PrdDsc": "GARANTIA PERSONAL             ",
-            "PadMatricula": "345329TUM",
-            "PadCedulaIdentidad": "1700723        ",
-            "PadMatriculaTit": "270927UZR"
+            "state": true,
+            "ci": "2894734",
+            "matricula": "2894734",
+            "matriculaTit": ""
         }
     ],
-    "pvt_tit": null,
-    "pvt_gar": null
+    "pvt_tit": [
+        {
+            "idPrestamo": 4,
+            "PresNumero": "PTMO000004-2021",
+            "PresCuotaMensual": 1045.22,
+            "PresEstPtmo": "En Proceso",
+            "PresMntDesembolso": 2000,
+            "balance": 2000,
+            "PrdDsc": "Anticipo sector pasivo"
+        }
+    ],
+    "pvt_gar": []
 }
