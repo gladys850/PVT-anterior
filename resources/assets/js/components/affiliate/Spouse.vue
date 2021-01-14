@@ -2,9 +2,9 @@
   <v-container fluid >
     <ValidationObserver ref="observer">
     <v-form>
-      <v-row justify="center">
-        <v-col cols="12" md="8" >
-              <v-container class="py-0">
+      <v-row justify="center" >
+        <v-col cols="12" md="11" class="v-card-profile">
+        
                 <v-row>
                   <v-col cols="12">
                     <v-toolbar-title>INFORMACION CONYUGE</v-toolbar-title>
@@ -96,7 +96,7 @@
                         :outlined="state_id == 4"
                       ></v-select>
                     </v-col>
-                      <v-col cols="12" md="5" v-if="spouse.is_duedate_undefined==false">
+                      <v-col cols="12" md="4" v-if="spouse.is_duedate_undefined==false">
                       <v-menu
                         v-model="dates.dueDate.show"
                         :close-on-content-click="false"
@@ -210,7 +210,7 @@
                       </ValidationProvider>
                     </v-col>
                 </v-row>
-              </v-container>
+           
         </v-col>
         <!-- ESTA INFORMACION SE UTILIZARA EN OTRO MODULO-->
         <!--<v-col cols="12" md="4" class="v-card-profile" >

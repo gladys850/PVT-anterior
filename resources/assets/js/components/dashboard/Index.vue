@@ -78,14 +78,15 @@
                       CATEGORÍA: {{ affiliate.affiliate.category_id }}</v-col
                     >
                     <v-col cols="12" md="6" class="ma-0 pb-1">
-                      ESTADO: {{ affiliate.affiliate.affiliate_state.name }}
+                      ESTADO: {{ affiliate.affiliate.affiliate_state}}
                     </v-col>
                     <v-col
                       cols="12"
                       md="8"
                       class="font-weight-black caption ma-0 py-0"
                     >
-                      NRO DE PRÉSTAMOS DEL AFILIADO:
+                      NRO DE PRÉSTAMOS SOLICITADOS:
+                      {{ loans.sismu_tit.length + loans.sismu_tit.length }}
                     </v-col>
                     <v-col
                       cols="12"
@@ -93,74 +94,179 @@
                       class="font-weight-black caption ma-0 pt-0 pb-1"
                     >
                       NRO DE PRÉSTAMOS GARANTIZADOS:
+                      {{ loans.pvt_gar.length + loans.sismu_gar.length }}
                     </v-col>
                   </template>
                 </v-row>
               </v-card>
             </v-col>
           </v-row>
-          <h3 class="pa-1">PRESTAMOS SOLICITADOS</h3>
-          <v-row>
-   
-            <v-col cols="12" md="6" class="py-0">
-              
-              <v-card>
-                <div>PVT</div>
-                <v-data-table
-                  dense
-                  :headers="headers"
-                  :items="loans.pvt_tit"
-                  :items-per-page="4"
-                  hide-default-footer
-                >
-                </v-data-table>
-              </v-card>
-            </v-col>
-            <v-col cols="12" md="6" class="py-0">
-              <v-card>
-                <div>SISMU</div>
-                <v-data-table
-                  dense
-                  :headers="headers"
-                  :items="loans.sismu_tit"
-                  :items-per-page="4"
-                  hide-default-footer
-                >
-                </v-data-table>
-              </v-card>
-            </v-col>
-          </v-row>
-           <h3 class="pa-1">PRESTAMOS GARANTIZADOS</h3>
-          <v-row>
-            
-            <v-col cols="12" md="6" class="py-0">
-             
-              <v-card>
-                <div>PVT</div>
-                <v-data-table
-                  dense
-                  :headers="headers"
-                  :items="loans.pvt_gar"
-                  :items-per-page="4"
-                  hide-default-footer
-                >
-                </v-data-table>
-              </v-card>
-            </v-col>
-            <v-col cols="12" md="6" class="py-0">
-              <v-card>
-                <div>SISMU</div>
-                <v-data-table
-                  dense
-                  :headers="headers"
-                  :items="loans.sismu_gar"
-                  :items-per-page="4"
-                  hide-default-footer
-                >
-                </v-data-table>
-              </v-card>
-            </v-col>
-          </v-row>
+          <template v-if="ver && exist_affiliate">
+            <h3 class="pa-1 text-center" v-if="(loans.pvt_tit.length + loans.sismu_tit.length) > 0">PRESTAMOS SOLICITADOS</h3>
+            <v-row>
+              <v-col
+                cols="12"
+                md="12"
+                class="py-0"
+                v-if="loans.pvt_tit.length > 0"
+              >
+                <v-card>
+                  <h4 class="pa-1">PVT</h4>
+                  <v-data-table
+                    dense
+                    :headers="headers"
+                    :items="loans.pvt_tit"
+                    :items-per-page="4"
+                    hide-default-footer
+                  >
+                    <template v-slot:item.actions="{ item }">
+                      <v-tooltip top>
+                        <template v-slot:activator="{ on }">
+                          <v-btn
+                            icon
+                            small
+                            v-on="on"
+                            color="warning"
+                            :to="{ name: 'flowAdd', params: { id: item.id } }"
+                            ><v-icon>mdi-eye</v-icon>
+                          </v-btn>
+                        </template>
+                        <span>Ver trámite</span>
+                      </v-tooltip>
+                      <v-tooltip top>
+                        <template v-slot:activator="{ on }">
+                          <v-btn
+                            icon
+                            small
+                            v-on="on"
+                            color="error"
+                            :to="{ name: 'flowAdd', params: { id: item.id } }"
+                            ><v-icon>mdi-message-alert</v-icon>
+                          </v-btn>
+                        </template>
+                        <span>Ver mensaje</span>
+                      </v-tooltip>
+                    </template>
+                  </v-data-table>
+                </v-card>
+              </v-col>
+              <v-col
+                cols="12"
+                md="12"
+                class="py-0"
+                v-if="loans.sismu_tit.length > 0"
+              >
+                <v-card>
+                  <h4 class="pa-1">SISMU</h4>
+                  <v-data-table
+                    dense
+                    :headers="headers"
+                    :items="loans.sismu_tit"
+                    :items-per-page="4"
+                    hide-default-footer
+                  >
+                    <template v-slot:item.actions="{ item }">
+                      <v-tooltip top>
+                        <template v-slot:activator="{ on }">
+                          <v-btn
+                            icon
+                            small
+                            v-on="on"
+                            color="error"
+                            :to="{ name: 'flowAdd', params: { id: item.id } }"
+                            ><v-icon>mdi-message-alert</v-icon>
+                          </v-btn>
+                        </template>
+                        <span>Ver mensaje</span>
+                      </v-tooltip>
+                    </template>
+                  </v-data-table>
+                </v-card>
+              </v-col>
+            </v-row>
+            <h3 class="pa-1 text-center" v-if="(loans.pvt_gar.length + loans.sismu_gar.length) > 0">PRESTAMOS GARANTIZADOS</h3>
+            <v-row>
+              <v-col
+                cols="12"
+                md="12"
+                class="py-0"
+                v-if="loans.pvt_gar.length > 0"
+              >
+                <v-card>
+                  <h4 class="pa-1">PVT</h4>
+                  <v-data-table
+                    dense
+                    :headers="headers"
+                    :items="loans.pvt_gar"
+                    :items-per-page="4"
+                    hide-default-footer
+                  >
+                    <template v-slot:item.actions="{ item }">
+                      <v-tooltip top>
+                        <template v-slot:activator="{ on }">
+                          <v-btn
+                            icon
+                            small
+                            v-on="on"
+                            color="warning"
+                            :to="{ name: 'flowAdd', params: { id: item.id } }"
+                            ><v-icon>mdi-eye</v-icon>
+                          </v-btn>
+                        </template>
+                        <span>Ver trámite</span>
+                      </v-tooltip>
+                      <v-tooltip top>
+                        <template v-slot:activator="{ on }">
+                          <v-btn
+                            icon
+                            small
+                            v-on="on"
+                            color="error"
+                            :to="{ name: 'flowAdd', params: { id: item.id } }"
+                            ><v-icon>mdi-message-alert</v-icon>
+                          </v-btn>
+                        </template>
+                        <span>Ver mensaje</span>
+                      </v-tooltip>
+                    </template>
+                  </v-data-table>
+                </v-card>
+              </v-col>
+              <v-col
+                cols="12"
+                md="12"
+                class="py-0"
+                v-if="loans.sismu_gar.length > 0"
+              >
+                <v-card>
+                  <h4 class="pa-1">SISMU</h4>
+                  <v-data-table
+                    dense
+                    :headers="headers"
+                    :items="loans.sismu_gar"
+                    :items-per-page="4"
+                    hide-default-footer
+                  >
+                    <template v-slot:item.actions="{ item }">
+                      <v-tooltip top>
+                        <template v-slot:activator="{ on }">
+                          <v-btn
+                            icon
+                            small
+                            v-on="on"
+                            color="error"
+                            :to="{ name: 'flowAdd', params: { id: item.id } }"
+                            ><v-icon>mdi-message-alert</v-icon>
+                          </v-btn>
+                        </template>
+                        <span>Ver mensaje</span>
+                      </v-tooltip>
+                    </template>
+                  </v-data-table>
+                </v-card>
+              </v-col>
+            </v-row>
+          </template>
         </v-card>
       </v-container>
     </v-card-text>
@@ -223,7 +329,7 @@ export default {
         value: "estimated_quota",
       },
     ],
-        headers: [
+    headers: [
       {
         text: "PresNumero",
         class: ["normal", "white--text"],
@@ -246,7 +352,6 @@ export default {
         text: "Plazo",
         class: ["normal", "white--text"],
         align: "left",
-      
       },
       {
         text: "Cuota",
@@ -267,10 +372,11 @@ export default {
         value: "PresEstDsc",
       },
       {
-        text: "Ver",
+        text: "Acciones",
+        value: "actions",
         class: ["normal", "white--text"],
-        align: "left",
-        value: "estimated_quota",
+        align: "center",
+        sortable: false,
       },
     ],
     loan: [
@@ -298,15 +404,16 @@ export default {
           },
         });
         this.affiliate = resp.data;
-        console.log(this.affiliate.affiliate.affiliate_state);
+        //console.log(this.affiliate.affiliate.affiliate_state);
         this.exist_affiliate = this.affiliate.state;
         this.ver = true;
         if (this.exist_affiliate) {
           let resp2 = await axios.get(`affiliate_record/${this.affiliate_ci}`);
-          this.loans.resp2.data;
-
+          this.loans = resp2.data;
         } else {
-          this.exist_affiliate;
+          this.exist_affiliate = false;
+          this.ver = true;
+          console.log("no coincide");
         }
       } catch (e) {
         console.log(e);

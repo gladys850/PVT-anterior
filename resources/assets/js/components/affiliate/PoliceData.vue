@@ -115,7 +115,7 @@
               ></v-select>
               </ValidationProvider>
             </v-col>
-            <v-col cols="12" md="6" >
+            <v-col cols="12" md="4" >
               <ValidationProvider v-slot="{ errors }" vid="unit_id" name="Unidad" rules="required">
               <v-select
                 :error-messages="errors"
@@ -158,7 +158,7 @@
               ></v-text-field>
                </ValidationProvider>
             </v-col>--> 
-            <v-col cols="12"  md="6" >
+            <v-col cols="12"  md="4" >
               <ValidationProvider v-slot="{ errors }" vid="pension_entity_id" name="Ente Gestor" :rules="(affiliate.affiliate_state_id >= 4 && affiliate.affiliate_state_id <= 6)? 'required':''">
               <v-select
                 dense
@@ -175,7 +175,7 @@
             ></v-select>
             </ValidationProvider>
             </v-col>
-             <v-col cols="12" md="6">
+             <v-col cols="12" md="4">
               <v-text-field
                 dense
                 v-model="affiliate.date_derelict"
