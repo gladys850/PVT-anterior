@@ -100,9 +100,10 @@ index final
             </v-col>
           </v-row>
           <template v-if="ver && exist_affiliate">
+            <template v-if="loans.pvt_tit.length + loans.sismu_tit.length > 0">
             <h3
               class="pa-1 text-center"
-              v-if="loans.pvt_tit.length + loans.sismu_tit.length > 0"
+              
             >
               PRESTAMOS SOLICITADOS
             </h3>
@@ -176,9 +177,11 @@ index final
                 </v-card>
               </v-col>-->
             </v-row>
+            </template>
+            <template v-if="loans.pvt_gar.length + loans.sismu_gar.length > 0">
             <h3
               class="pa-1 text-center"
-              v-if="loans.pvt_gar.length + loans.sismu_gar.length > 0"
+              
             >
               PRESTAMOS GARANTIZADOS
             </h3>
@@ -248,6 +251,7 @@ index final
                 </v-card>
               </v-col>-->
             </v-row>
+            </template>
           </template>
         </v-card>
       </v-container>
