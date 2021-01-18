@@ -1,81 +1,17 @@
 {
-    "id": 12483,
-    "last_name": "",
-    "mothers_last_name": "OLGUIN",
-    "first_name": "JULIO",
-    "second_name": "",
+    "id": "10",
+    "last_name": "OLGUIN",
+    "mothers_last_name": "",
+    "full_name": "JULIO",
     "identity_card": "2894734",
-    "registration": null,
-    "message": "afiliado existente en PVT",
-    "sismu_tit": [
-        {
-            "IdPrestamo": "28565",
-            "PresNumero": "A18-2908534  ",
-            "PresFechaPrestamo": "2011-11-18 00:00:00.000",
-            "PresFechaDesembolso": "2011-11-18 00:00:00.000",
-            "PresCuotaMensual": "750.6400",
-            "PresMeses": "48",
-            "PresEstDsc": "CANCELADO           ",
-            "PresMntDesembolso": "28000.0000",
-            "PresSaldoAct": ".0000",
-            "PrdDsc": "ACTIVOS AL 1.1% MENSUAL       ",
-            "state": true,
-            "ci": "2894734",
-            "matricula": "2894734",
-            "matriculaTit": ""
-        },
-        {
-            "IdPrestamo": "33492",
-            "PresNumero": "PTMO-00001060",
-            "PresFechaPrestamo": "2014-12-26 00:00:00.000",
-            "PresFechaDesembolso": "1753-01-01 00:00:00.000",
-            "PresCuotaMensual": "567.5500",
-            "PresMeses": "48",
-            "PresEstDsc": "ANULADO             ",
-            "PresMntDesembolso": ".0000",
-            "PresSaldoAct": ".0000",
-            "PrdDsc": "GARANTIA PERSONAL             ",
-            "state": true,
-            "ci": "2894734",
-            "matricula": "2894734",
-            "matriculaTit": ""
-        }
-    ],
-    "sismu_gar": [
-        {
-            "IdPrestamo": "28302",
-            "PresNumero": "A18-2908271  ",
-            "PresFechaPrestamo": "2011-11-14 00:00:00.000",
-            "PresFechaDesembolso": "2011-11-14 00:00:00.000",
-            "PresCuotaMensual": "541.0700",
-            "PresMeses": "40",
-            "PresEstDsc": "PENDIENTE           ",
-            "PresMntDesembolso": "17500.0000",
-            "PresSaldoAct": ".0000",
-            "PrdDsc": "ACTIVOS AL 1.1% MENSUAL       ",
-            "state": true,
-            "ci": "2894734",
-            "matricula": "2894734",
-            "matriculaTit": ""
-        },
-        {
-            "IdPrestamo": "32194",
-            "PresNumero": "PTMO-00001282",
-            "PresFechaPrestamo": "2013-12-12 00:00:00.000",
-            "PresFechaDesembolso": "1753-01-01 00:00:00.000",
-            "PresCuotaMensual": "785.9200",
-            "PresMeses": "30",
-            "PresEstDsc": "ANULADO             ",
-            "PresMntDesembolso": ".0000",
-            "PresSaldoAct": ".0000",
-            "PrdDsc": "GARANTIA PERSONAL             ",
-            "state": true,
-            "ci": "2894734",
-            "matricula": "2894734",
-            "matriculaTit": ""
-        }
-    ],
-    "pvt_tit": [
+    "registration": "2894734",
+    "observation": false,
+    "message": [],
+    "tit_pvt": true,
+    "spouse_pvt": false,
+    "tit_sismu": true,
+    "spouse_sismu": false,
+    "loans": [
         {
             "id": 4,
             "code": "PTMO000004-2021",
@@ -86,8 +22,68 @@
             "state": "En Proceso",
             "amount": 2000,
             "balance": 2000,
-            "modality": "Anticipo sector pasivo"
+            "modality": "Anticipo sector pasivo",
+            "shortened": "ANT-SP",
+            "origin": "PVT"
+        },
+        {
+            "id": "28565",
+            "code": "A18-2908534",
+            "request_date": "2011-11-18 00:00:00.000",
+            "disbursement_date": "2011-11-18 00:00:00.000",
+            "estimated_quota": "750.6400",
+            "loan_term": "48",
+            "state": "CANCELADO",
+            "amount": "28000.0000",
+            "balance": ".0000",
+            "modality": "ACTIVOS AL 1.1% MENSUAL",
+            "shortened": "AA1M",
+            "origin": "SISMU"
+        },
+        {
+            "id": "33492",
+            "code": "PTMO-00001060",
+            "request_date": "2014-12-26 00:00:00.000",
+            "disbursement_date": "1753-01-01 00:00:00.000",
+            "estimated_quota": "567.5500",
+            "loan_term": "48",
+            "state": "ANULADO",
+            "amount": ".0000",
+            "balance": ".0000",
+            "modality": "GARANTIA PERSONAL",
+            "shortened": "GP",
+            "origin": "SISMU"
         }
     ],
-    "pvt_gar": []
+    "guarantees": [
+        {
+            "id": "28302",
+            "code": "A18-2908271",
+            "request_date": "2011-11-14 00:00:00.000",
+            "disbursement_date": "2011-11-14 00:00:00.000",
+            "estimated_quota": "541.0700",
+            "loan_term": "40",
+            "state": "PENDIENTE",
+            "amount": "17500.0000",
+            "balance": ".0000",
+            "modality": "ACTIVOS AL 1.1% MENSUAL",
+            "shortened": "AA1M",
+            "origin": "SISMU"
+        },
+        {
+            "id": "32194",
+            "code": "PTMO-00001282",
+            "request_date": "2013-12-12 00:00:00.000",
+            "disbursement_date": "1753-01-01 00:00:00.000",
+            "estimated_quota": "785.9200",
+            "loan_term": "30",
+            "state": "ANULADO",
+            "amount": ".0000",
+            "balance": ".0000",
+            "modality": "GARANTIA PERSONAL",
+            "shortened": "GP",
+            "origin": "SISMU"
+        }
+    ],
+    "observables": []
 }
