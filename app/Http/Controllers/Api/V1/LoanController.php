@@ -862,13 +862,16 @@ class LoanController extends Controller
             $payment->description = $request->input('description', null);
             $payment->state_id = LoanState::whereName('Pendiente de Pago')->first()->id;
             $payment->role_id = Role::whereName('PRE-cobranzas')->first()->id;
-            //$payment->procedure_modality_id = ProcedureModality::whereName('Amortización')->first()->id;
+            if($request->has('procedure_modality_id')){
+                $modality = ProcedureModality::findOrFail($request->procedure_modality_id)->procedure_type;
+                if($modality->name == "Amortización Manual") $payment->validated = true;
+            }
             $payment->procedure_modality_id = $request->input('procedure_modality_id');
             $payment->voucher = $request->input('voucher', null);
             $payment->amortization_type_id = $request->input('amortization_type_id');
             $payment->affiliate_id = $request->input('affiliate_id');
             $payment->paid_by = $request->input('paid_by');
-            $payment->validated = true;
+            //$payment->validated = true;
             $loan_payment = $loan->payments()->create($payment->toArray());
             //generar PDF
             $file_name = implode('_', ['pagos', $loan->modality->shortened, $loan->code]) . '.pdf';
