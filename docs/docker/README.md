@@ -26,19 +26,19 @@ cp -f docs/docker/env-example laradock/.env
 ```sh
 cd laradock
 ```
-
-* Modificar el archivo `.env` de laradock de acuerdo a los puertos que se irán a utilizar.
-
-* Generar las imágenes:
+* Verificar que se copiaron los archivos 
 
 ```sh
-docker-compose build --parallel nginx php-fpm workspace laravel-echo-server redis postgres
+laradock/docker-compose.yml
+laradock/.env
 ```
+
+* Modificar el archivo `.env` de laradock de acuerdo a los puertos que se irán a utilizar.
 
 * Levantar los contenedores:
 
 ```sh
-docker-compose up -d nginx laravel-echo-server postgres
+docker-compose up -d nginx php-fpm workspace laravel-echo-server redis
 ```
 
 ## Instalar las dependencias
@@ -52,7 +52,7 @@ docker-compose ps
 * Instalar las fuentes dentro del contenedor `php-fpm`:
 
 ```sh
-docker-compose exec workspace /var/www/install-roboto-fonts.sh
+docker-compose exec php-fpm /var/www/install-roboto-fonts.sh
 ```
 
 * Instalar el soporte para lenguaje español:
