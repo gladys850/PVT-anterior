@@ -82,7 +82,7 @@
                               </v-col>
                               <v-col cols="12" sm="6" md="4">
                                 <v-text-field
-                                  v-model="editedItem.seniority_bonus"
+                                  v-model="editedItem.position_bonus"
                                   dense
                                   label="Bono Cargo"
                                 ></v-text-field>
@@ -185,7 +185,7 @@ export default {
       {
         text: "Bono Cargo",
         class: ["normal", "white--text"],
-        value: "seniority_bonus"
+        value: "position_bonus"
       },
       {
         text: "Bono Seguridad Ciudadana",
@@ -211,7 +211,7 @@ export default {
       payable_liquid: 0,
       border_bonus: 0,
       east_bonus: 0,
-      seniority_bonus: 0,
+      position_bonus: 0,
       public_security_bonus: 0
     },
     defaultItem: {
@@ -225,7 +225,7 @@ export default {
       payable_liquid: 0,
       border_bonus: 0,
       east_bonus: 0,
-      seniority_bonus: 0,
+      position_bonus: 0,
       public_security_bonus: 0
     }
   }),
@@ -269,14 +269,14 @@ export default {
           this.editedItem.payable_liquid = data_ballots[0].payable_liquid
           this.editedItem.border_bonus = data_ballots[0].border_bonus
           this.editedItem.east_bonus = data_ballots[0].east_bonus
-          this.editedItem.seniority_bonus = data_ballots[0].seniority_bonus
+          this.editedItem.position_bonus = data_ballots[0].position_bonus
           this.editedItem.public_security_bonus = data_ballots[0].public_security_bonus
         } else {
           this.editedItem.id_affiliate = data_ballots[0].affiliate_id
           this.editedItem.payable_liquid = 0
           this.editedItem.border_bonus = 0
           this.editedItem.east_bonus = 0
-          this.editedItem.seniority_bonus = 0
+          this.editedItem.position_bonus = 0
           this.editedItem.public_security_bonus = 0
         }
       } catch (e) {
