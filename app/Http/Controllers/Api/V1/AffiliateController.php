@@ -673,7 +673,7 @@ class AffiliateController extends Controller
     /**
     * Historial de Tramites
     * Devuelve el Historio de tramites de un afiliado.
-    * @urlParam affiliate required CI de afiliado. Example: 1700723
+    * @bodyParam identity_card string required Carnet de identidad. Example:1700723
     * @authenticated
     * @responseFile responses/affiliate/affiliate_record.200.json
     */
@@ -935,9 +935,5 @@ class AffiliateController extends Controller
                     or Padron.padCedulaIdentidad = '$ci'";
         $loans = DB::connection('sqlsrv')->select($query);
         return $loans;
-    }
-
-    public function prueba(){
-        
     }
 }

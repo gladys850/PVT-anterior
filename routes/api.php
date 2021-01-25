@@ -12,6 +12,7 @@ Route::group([
     //Route::get('senasir_save_payment', 'Api\V1\LoanPaymentController@senasir_save_payment');
     Route::get('loans_delay', 'Api\V1\LoanPaymentController@loans_delay');
     //sismu
+    Route::get('prueba/{ci}', 'Api\V1\AffiliateController@get_mixed_loans');
 
     // INDEFINIDO (TODO)
     Route::get('document/{affiliate_id}', 'Api\V1\ScannedDocumentController@create_document');
@@ -84,7 +85,7 @@ Route::group([
             Route::post('affiliate_guarantor', 'Api\V1\AffiliateController@test_guarantor');
             Route::get('affiliate_existence','Api\V1\AffiliateController@get_existence');
             Route::get('affiliate/{affiliate}/maximum_loans','Api\V1\AffiliateController@evaluate_maximum_loans');
-            Route::get('affiliate_record/{ci}', 'Api\V1\AffiliateController@affiliate_record');
+            Route::get('affiliate_record', 'Api\V1\AffiliateController@affiliate_record');
 
 
         });
