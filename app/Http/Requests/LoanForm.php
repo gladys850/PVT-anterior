@@ -122,7 +122,8 @@ class LoanForm extends FormRequest
             'amount_approved' => ['integer', 'min:200', 'max:700000', new LoanIntervalAmount($procedure_modality)],
             'notes' => ['array'],
             'validated' => ['boolean'],
-            'financial_entity_id' => ['nullable', 'integer', 'exists:financial_entities,id']
+            'financial_entity_id' => ['nullable', 'integer', 'exists:financial_entities,id'],
+            'user_id' => ['nullable', 'integer', 'exists:users,id']
         ];
         switch ($this->method()) {
             case 'POST': {

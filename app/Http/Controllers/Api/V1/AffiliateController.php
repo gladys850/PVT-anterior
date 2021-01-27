@@ -673,47 +673,48 @@ class AffiliateController extends Controller
     /**
     * Historial de Tramites
     * Devuelve el Historio de tramites de un afiliado.
-    * @bodyParam identity_card string required Carnet de identidad. Example:1700723
+    * @bodyParam ci string required Carnet de identidad. Example:1700723
     * @authenticated
     * @responseFile responses/affiliate/affiliate_record.200.json
     */
     public function affiliate_record(Request $request)
     {
-        $data_affiliate = $this->verify_affiliate($request->ci);
-        //return $data_affiliate['id'];
-        $observation = false;
-        $message = array();
-        if(!$data_affiliate['tit_pvt'] && !$data_affiliate['spouse_pvt'] && !$data_affiliate['tit_sismu'] && !$data_affiliate['spouse_sismu']){
-            array_push($message, "afiliado-inexistente");
-            $observation = true;
-        }
-        else{
-            $message = $data_affiliate['message'];
-            if($message)
+        if($request->ci){
+            $data_affiliate = $this->verify_affiliate($request->ci);
+            $observation = false;
+            $message = array();
+            if(!$data_affiliate['tit_pvt'] && !$data_affiliate['spouse_pvt'] && !$data_affiliate['tit_sismu'] && !$data_affiliate['spouse_sismu']){
+                array_push($message, "afiliado-inexistente");
                 $observation = true;
+            }
+            else{
+                $message = $data_affiliate['message'];
+                if($message)
+                    $observation = true;
+            }
+            if(sizeof($this->get_observables($request->ci))>0){
+                array_push($message, 'existen '.sizeof($this->get_observables($request->ci)).' coincidencias, revisar');
+                $observation = true;
+            }
+            $data = array(
+                "id" => $data_affiliate['id'],
+                "last_name" => $data_affiliate['last_name'],
+                "mothers_last_name" => $data_affiliate['mother_last_name'],
+                "fullname" => $data_affiliate['full_name'],
+                "identity_card" => $data_affiliate['identity_card'],
+                "registration" => $data_affiliate['registration'],
+                "observation" => $observation,
+                "message" => $message,
+                "tit_pvt" => $data_affiliate['tit_pvt'],
+                "spouse_pvt" => $data_affiliate['spouse_pvt'],
+                "tit_sismu" => $data_affiliate['tit_sismu'],
+                "spouse_sismu" => $data_affiliate['spouse_sismu'],
+                "loans" => $this->get_mixed_loans($request->ci),
+                "guarantees" => $this->get_mixed_guarantees($request->ci),
+                "observables" => $this->get_observables($request->ci),
+            );
+            return $data;
         }
-        if(sizeof($this->get_observables($request->ci))>0){
-            array_push($message, 'existen '.sizeof($this->get_observables($request->ci)).' coincidencias, revisar');
-            $observation = true;
-        }
-        $data = array(
-            "id" => $data_affiliate['id'],
-            "last_name" => $data_affiliate['last_name'],
-            "mothers_last_name" => $data_affiliate['mother_last_name'],
-            "full_name" => $data_affiliate['full_name'],
-            "identity_card" => $data_affiliate['identity_card'],
-            "registration" => $data_affiliate['registration'],
-            "observation" => $observation,
-            "message" => $message,
-            "tit_pvt" => $data_affiliate['tit_pvt'],
-            "spouse_pvt" => $data_affiliate['spouse_pvt'],
-            "tit_sismu" => $data_affiliate['tit_sismu'],
-            "spouse_sismu" => $data_affiliate['spouse_sismu'],
-            "loans" => $this->get_mixed_loans($request->ci),
-            "guarantees" => $this->get_mixed_guarantees($request->ci),
-            "observables" => $this->get_observables($request->ci),
-        );
-        return $data;
     }
 
     public function verify_affiliate($ci){
@@ -757,7 +758,7 @@ class AffiliateController extends Controller
         $sismu = "SELECT Padron.IdPadron, trim(Padron.PadPaterno) as PadPaterno, trim(Padron.PadMaterno) as PadMaterno, trim(Padron.PadApellidoCasada) as PadApellidoCasada, trim(Padron.PadNombres) as PadNombres, trim(Padron.PadCedulaIdentidad) as PadCedulaIdentidad, trim(Padron.PadMatricula) as PadMatricula
                     from Padron 
                     where trim(Padron.PadCedulaIdentidad) = '$ci'
-                    AND trim(Padron.PadMatriculaTit) <> '$ci'";
+                    OR trim(Padron.PadMatricula) = '$ci'";
         $affiliate = DB::connection('sqlsrv')->select($sismu);
         if(sizeof($affiliate)>=2)
                 array_push($message, "mas de un registro en SISMU");
