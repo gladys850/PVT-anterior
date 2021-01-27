@@ -54,7 +54,7 @@ class LoanController extends Controller
         $loan->personal_references = $loan->personal_references;
         $loan->cosigners = $loan->cosigners;
         $loan->data_loan = $loan->data_loan;
-        $loan->user = $loan->records_user;
+        //$loan->user = $loan->records_user;
         $loan->city = $loan->city;
         $loan->observations = $loan->observations->last();
         return $loan;
@@ -125,6 +125,21 @@ class LoanController extends Controller
         return $data;
     }
 
+    /** Mis Prestamos
+    * Devuelve los prestamos que fueron derivados al usuario
+    * @queryParam user_id required id del usuario. Example:70
+    * @queryParam per_page ver cantidad de prestamos. Example:1
+    * @queryParam page Numero de pagina. Example:1
+    * @authenticated
+    * @responseFile responses/loan/my_loans.200.json
+    */
+    public function my_loans(Request $request){
+        if(!$request->per_page)
+            $request->per_page = 0;
+        $loans = Loan::whereUser_idAndValidated($request->user_id, false)->paginate($request->per_page);
+        return $loans;
+    }
+
     /**
     * Nuevo préstamo
     * Inserta nuevo préstamo
@@ -178,6 +193,7 @@ class LoanController extends Controller
     */
     public function store(LoanForm $request)
     {
+        //return $request;
         $roles = Auth::user()->roles()->whereHas('module', function($query) {
             return $query->whereName('prestamos');
         })->pluck('id');

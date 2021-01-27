@@ -47,6 +47,8 @@ class CreateLoansTable extends Migration
             $table->unsignedBigInteger('property_id')->nullable(); // id del bien inmueble
             $table->foreign('property_id')->references('id')->on('loan_properties');
             $table->boolean('validated')->default(true);
+            $table->unsignedBigInteger('user_id')->nullable();  // id usuario
+            $table->foreign('user_id')->references('id')->on('users');
             $table->timestamps();
             $table->softDeletes();
         });

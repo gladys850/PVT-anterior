@@ -22,6 +22,8 @@ class CreateRecordsTable extends Migration
             $table->timestamps();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('record_type_id')->references('id')->on('record_types')->onDelete('cascade');
+            $table->unsignedBigInteger('role_id');
+            $table->foreign('rol_id')->references('id')->on('roles');
         });
     }
 

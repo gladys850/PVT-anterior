@@ -47,7 +47,8 @@ class Loan extends Model
         'destiny_id',
         'financial_entity_id',
         'role_id',
-        'validated'
+        'validated',
+        'user_id'
     ];
 
     function __construct(array $attributes = [])
@@ -193,7 +194,7 @@ class Loan extends Model
     
     public function getRecordsUserAttribute()
     {
-        return $this->records()->first()->user;
+        return $this->records()->first()->user();
     }
 
     public function observations()
@@ -659,6 +660,7 @@ class Loan extends Model
     public function get_sismu(){
         return Sismu::find($this->id);
     }
+    public function user(){
+        return $this->hasOne(User::class,'id','id');
+    }
 }
-
-
