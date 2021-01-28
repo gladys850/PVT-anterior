@@ -1,4 +1,3 @@
-index final
 <template>
   <v-card flat>
     <v-card-title>
@@ -20,12 +19,15 @@ index final
                     <v-col cols="12" md="1"></v-col>
                     <v-col cols="12" md="8">
                       <v-text-field
-                        label="C.I."
+                        dense
+                        label="CI ó Matrícula"
                         v-model="affiliate_ci"
                         class="py-0"
                         single-line
                         hide-details
                         clearable
+                        :loading="loading"
+                        @keyup.enter="getLoansHistory()"
                       ></v-text-field>
                     </v-col>
                     <v-col cols="12" md="2">
@@ -60,7 +62,17 @@ index final
                     v-show="!exist_affiliate"
                     v-if="ver"
                   >
-                    <h2 class="error--text">NO EXISTE COINDICENCIAS</h2>
+                    <h3 class="error--text aling-text--center">
+                      <ul style="list-style: none" class="pa-0">
+                        <li
+                          v-for="(message, index) in loans.message"
+                          :key="index"
+                          class="pb-2"
+                        >
+                          {{ message }}
+                        </li>
+                      </ul>
+                    </h3>
                   </v-col>
                   <template v-if="ver && exist_affiliate">
                     <v-col cols="12" md="12" class="ma-0 pb-0 text-center">
@@ -72,19 +84,27 @@ index final
                       C.I: {{ loans.identity_card }}</v-col
                     >
                     <v-col cols="12" md="6" class="ma-0 pb-0">
-                      MATRÍCULA:{{ loans.registration }}
+                      MATRÍCULA: {{ loans.registration }}
                     </v-col>
                     <v-col cols="12" md="6" class="ma-0 pb-0">
-                      CATEGORÍA:
+                      CATEGORÍA: {{ category_name }}
                     </v-col>
-                    <v-col cols="12" md="6" class="ma-0 pb-1"> ESTADO: </v-col>
+                    <v-col cols="12" md="6" class="ma-0 pb-0">
+                      ESTADO: {{ state_name_status }}</v-col
+                    >
+                    <v-col cols="12" md="6" class="ma-0 pb-0">
+                      GRADO: {{ degree_name }}
+                    </v-col>
+                    <v-col cols="12" md="6" class="ma-0 pb-2">
+                      UNIDAD: {{ unit_name }}
+                    </v-col>
                     <v-col
                       cols="12"
                       md="8"
                       class="font-weight-black caption ma-0 py-0"
                     >
                       NRO DE PRÉSTAMOS SOLICITADOS:
-                      {{ loans.pvt_tit.length + loans.sismu_tit.length }}
+                      {{ loans.loans.length }}
                     </v-col>
                     <v-col
                       cols="12"
@@ -92,165 +112,245 @@ index final
                       class="font-weight-black caption ma-0 pt-0 pb-1"
                     >
                       NRO DE PRÉSTAMOS GARANTIZADOS:
-                      {{ loans.pvt_gar.length + loans.sismu_gar.length }}
+                      {{ loans.guarantees.length }}
+                    </v-col>
+                    <v-col
+                      cols="12"
+                      md="8"
+                      class="font-weight-black caption ma-0 pt-0 pb-1 red--text"
+                      v-if="loans.observables.length > 0"
+                    >
+                      <ul style="list-style: none" class="pa-0">
+                        <li
+                          v-for="(message, index) in loans.message"
+                          :key="index"
+                          class="pb-2"
+                        >
+                          {{ message }}
+                        </li>
+                      </ul>
                     </v-col>
                   </template>
                 </v-row>
               </v-card>
             </v-col>
           </v-row>
-          <template v-if="ver && exist_affiliate">
-            <template v-if="loans.pvt_tit.length + loans.sismu_tit.length > 0">
-            <h3
-              class="pa-1 text-center"
-              
-            >
-              PRESTAMOS SOLICITADOS
-            </h3>
-            <v-row>
-              <v-col cols="12" md="12" class="py-0">
-                <v-card>
-                  <!-- <h4 class="pa-1">PVT</h4>-->
-                  <v-data-table
-                    class="text-uppercase"
-                    dense
-                    :headers="headers2"
-                    :items="lender_loans"
-                    :items-per-page="4"
-                    hide-default-footer
-                  >
-                    <template v-slot:item.request_date="{ item }">
-                      {{ item.request_date | date }}
-                    </template>
-                    <template v-slot:item.disbursement_date="{ item }">
-                      {{ item.disbursement_date | date }}
-                    </template>
-                    <template v-slot:item.amount="{ item }">
-                      {{ item.amount | moneyString }}
-                    </template>
-                    <template v-slot:item.estimated_quota="{ item }">
-                      {{ item.estimated_quota | moneyString }}
-                    </template>
-                    <template v-slot:item.balance="{ item }">
-                      {{ item.balance | moneyString }}
-                    </template>
+          <template>
+            <template v-if="ver && exist_affiliate && loans.loans.length > 0">
+              <h3 class="pa-1 text-center">PRESTAMOS SOLICITADOS</h3>
+              <v-row>
+                <v-col cols="12" md="12" class="py-0">
+                  <v-card>
+                    <v-data-table
+                      class="text-uppercase"
+                      dense
+                      :headers="headers_loans"
+                      :items="loans.loans"
+                      :items-per-page="4"
+                      hide-default-footer
+                    >
+                      <template v-slot:[`item.shortened`]="{ item }">
+                        <v-tooltip top>
+                          <template v-slot:activator="{ on }">
+                            <span v-on="on">{{ item.shortened }}</span>
+                          </template>
+                          <span> {{ item.modality }}</span>
+                        </v-tooltip>
+                      </template>
 
-                    <template v-slot:item.actions="{ item }">
-                      <v-tooltip top>
-                        <template v-slot:activator="{ on }">
-                          <v-btn
-                            icon
-                            small
-                            v-on="on"
-                            color="warning"
-                            :to="{
-                              name: 'flowAdd',
-                              params: { id: item.id },
-                            }"
-                            ><v-icon>mdi-eye</v-icon>
-                          </v-btn>
-                        </template>
-                        <span>Ver trámite</span>
-                      </v-tooltip>
-                    </template>
-                  </v-data-table>
-                </v-card>
-              </v-col>
-              <!-- <v-col
-                cols="12"
-                md="12"
-                class="py-0"
-                v-if="loans.sismu_tit.length > 0"
-              >
-                <v-card>
-                  <h4 class="pa-1">SISMU</h4>
-                  <v-data-table
-                    class="text-uppercase"
-                    dense
-                    :headers="headers2"
-                    :items="loans.sismu_tit"
-                    :items-per-page="4"
-                    hide-default-footer
-                    :item-class="itemRowBackground"
-                  >
-                  </v-data-table>
-                </v-card>
-              </v-col>-->
-            </v-row>
+                      <template v-slot:[`item.request_date`]="{ item }">
+                        {{ item.request_date | date }}
+                      </template>
+                      <template v-slot:[`item.disbursement_date`]="{ item }">
+                        {{ item.disbursement_date | date }}
+                      </template>
+                      <template v-slot:[`item.amount`]="{ item }">
+                        {{ item.amount | moneyString }}
+                      </template>
+                      <template v-slot:[`item.estimated_quota`]="{ item }">
+                        {{ item.estimated_quota | moneyString }}
+                      </template>
+                      <template v-slot:[`item.balance`]="{ item }">
+                        {{ item.balance | moneyString }}
+                      </template>
+
+                      <template v-slot:[`item.actions`]="{ item }">
+                        <v-tooltip top>
+                          <template v-slot:activator="{ on }">
+                            <v-btn
+                              v-if="item.origin == 'PVT'"
+                              icon
+                              small
+                              v-on="on"
+                              color="warning"
+                              :to="{
+                                name: 'flowAdd',
+                                params: { id: item.id },
+                              }"
+                              target="_blank"
+                              ><v-icon>mdi-eye</v-icon>
+                            </v-btn>
+                            <v-btn
+                              v-else
+                              icon
+                              small
+                              v-on="on"
+                              color="warning"
+                              @click.stop="routeSismu(item.id)"
+                              ><v-icon>mdi-eye</v-icon>
+                            </v-btn>
+                          </template>
+                          <span>Ver trámite</span>
+                        </v-tooltip>
+                      </template>
+                    </v-data-table>
+                  </v-card>
+                </v-col>
+              </v-row>
             </template>
-            <template v-if="loans.pvt_gar.length + loans.sismu_gar.length > 0">
-            <h3
-              class="pa-1 text-center"
-              
+            <template
+              v-if="ver && exist_affiliate && loans.guarantees.length > 0"
             >
-              PRESTAMOS GARANTIZADOS
-            </h3>
-            <v-row>
-              <v-col cols="12" md="12" class="py-0">
-                <v-card>
-                  <!--<h4 class="pa-1">PVT</h4>-->
-                  <v-data-table
-                    class="text-uppercase"
-                    dense
-                    :headers="headers2"
-                    :items="guaranteed_loans"
-                    :items-per-page="4"
-                    hide-default-footer
-                  >
-                    <template v-slot:item.request_date="{ item }">
-                      {{ item.request_date | date }}
-                    </template>
-                    <template v-slot:item.disbursement_date="{ item }">
-                      {{ item.disbursement_date | date }}
-                    </template>
-                    <template v-slot:item.amount="{ item }">
-                      {{ item.amount | moneyString }}
-                    </template>
-                    <template v-slot:item.estimated_quota="{ item }">
-                      {{ item.estimated_quota | moneyString }}
-                    </template>
-                    <template v-slot:item.balance="{ item }">
-                      {{ item.balance | moneyString }}
-                    </template>
-                    <template v-slot:item.actions="{ item }">
-                      <v-tooltip top>
-                        <template v-slot:activator="{ on }">
-                          <v-btn
-                            icon
-                            small
-                            v-on="on"
-                            color="warning"
-                            :to="{ name: 'flowAdd', params: { id: item.id } }"
-                            ><v-icon>mdi-eye</v-icon>
-                          </v-btn>
-                        </template>
-                        <span>Ver trámite</span>
-                      </v-tooltip>
-                    </template>
-                  </v-data-table>
-                </v-card>
-              </v-col>
-              <!--<v-col
-                cols="12"
-                md="12"
-                class="py-0"
-                v-if="loans.sismu_gar.length > 0"
-              >
-                <v-card>
-                  <h4 class="pa-1">SISMU</h4>
-                  <v-data-table
-                    class="text-uppercase"
-                    dense
-                    :headers="headers2"
-                    :items="loans.sismu_gar"
-                    :items-per-page="4"
-                    hide-default-footer
-                    :item-class="itemRowBackground"
-                  >
-                  </v-data-table>
-                </v-card>
-              </v-col>-->
-            </v-row>
+              <h3 class="pa-1 text-center">PRESTAMOS GARANTIZADOS</h3>
+              <v-row>
+                <v-col cols="12" md="12" class="py-0">
+                  <v-card>
+                    <v-data-table
+                      class="text-uppercase"
+                      dense
+                      :headers="headers_loans"
+                      :items="loans.guarantees"
+                      :items-per-page="4"
+                      hide-default-footer
+                    >
+                      <template v-slot:[`item.shortened`]="{ item }">
+                        <v-tooltip top>
+                          <template v-slot:activator="{ on }">
+                            <span v-on="on">{{ item.shortened }}</span>
+                          </template>
+                          <span> {{ item.modality }}</span>
+                        </v-tooltip>
+                      </template>
+
+                      <template v-slot:[`item.request_date`]="{ item }">
+                        {{ item.request_date | date }}
+                      </template>
+                      <template v-slot:[`item.disbursement_date`]="{ item }">
+                        {{ item.disbursement_date | date }}
+                      </template>
+                      <template v-slot:[`item.amount`]="{ item }">
+                        {{ item.amount | moneyString }}
+                      </template>
+                      <template v-slot:[`item.estimated_quota`]="{ item }">
+                        {{ item.estimated_quota | moneyString }}
+                      </template>
+                      <template v-slot:[`item.balance`]="{ item }">
+                        {{ item.balance | moneyString }}
+                      </template>
+
+                      <template v-slot:[`item.actions`]="{ item }">
+                        <v-tooltip top>
+                          <template v-slot:activator="{ on }">
+                            <v-btn
+                              v-if="item.origin == 'PVT'"
+                              icon
+                              small
+                              v-on="on"
+                              color="warning"
+                              :to="{
+                                name: 'flowAdd',
+                                params: { id: item.id },
+                              }"
+                              ><v-icon>mdi-eye</v-icon>
+                            </v-btn>
+                            <v-btn
+                              v-else
+                              icon
+                              small
+                              v-on="on"
+                              color="warning"
+                              @click.stop="routeSismu(item.id)"
+                              ><v-icon>mdi-eye</v-icon>
+                            </v-btn>
+                          </template>
+                          <span>Ver trámite</span>
+                        </v-tooltip>
+                      </template>
+                    </v-data-table>
+                  </v-card>
+                </v-col>
+              </v-row>
+            </template>
+
+            <template v-if="ver && loans.observables.length > 0">
+              <h3 class="pa-1 text-center">PRÉSTAMOS COINCIDENTES</h3>
+              <v-row>
+                <v-col cols="12" md="12" class="py-0">
+                  <v-card>
+                    <v-data-table
+                      class="text-uppercase"
+                      dense
+                      :headers="headers_observables"
+                      :items="loans.observables"
+                      :items-per-page="10"
+                    >
+                      <template v-slot:[`item.PrdDsc`]="{ item }">
+                        <v-tooltip top>
+                          <template v-slot:activator="{ on }">
+                            <span v-on="on">{{ item.PrdDsc }}</span>
+                          </template>
+                          <span> {{ item.PrdDsc }}</span>
+                        </v-tooltip>
+                      </template>
+
+                      <template v-slot:[`item.request_date`]="{ item }">
+                        {{ item.request_date | date }}
+                      </template>
+                      <template v-slot:[`item.disbursement_date`]="{ item }">
+                        {{ item.disbursement_date | date }}
+                      </template>
+                      <template v-slot:[`item.PresMntDesembolso`]="{ item }">
+                        {{ item.PresMntDesembolso | moneyString }}
+                      </template>
+                      <template v-slot:[`item.PresCuotaMensual`]="{ item }">
+                        {{ item.PresCuotaMensual | moneyString }}
+                      </template>
+                      <template v-slot:[`item.PresSaldoAct`]="{ item }">
+                        {{ item.PresSaldoAct | moneyString }}
+                      </template>
+
+                      <template v-slot:[`item.actions`]="{ item }">
+                        <v-tooltip top>
+                          <template v-slot:activator="{ on }">
+                            <v-btn
+                              v-if="item.origin == 'PVT'"
+                              icon
+                              small
+                              v-on="on"
+                              color="warning"
+                              :to="{
+                                name: 'flowAdd',
+                                params: { id: item.id },
+                              }"
+                              ><v-icon>mdi-eye</v-icon>
+                            </v-btn>
+                            <v-btn
+                              v-else
+                              icon
+                              small
+                              v-on="on"
+                              color="warning"
+                              @click.stop="routeSismu(item.IdPrestamo)"
+                              ><v-icon>mdi-eye</v-icon>
+                            </v-btn>
+                          </template>
+                          <span>Ver trámite</span>
+                        </v-tooltip>
+                      </template>
+                    </v-data-table>
+                  </v-card>
+                </v-col>
+              </v-row>
             </template>
           </template>
         </v-card>
@@ -263,7 +363,7 @@ index final
 export default {
   name: "dashboard-index",
   data: () => ({
-    headers2: [
+    headers_loans: [
       {
         text: "Código",
         class: ["normal", "white--text"],
@@ -275,8 +375,8 @@ export default {
         text: "Modalidad",
         class: ["normal", "white--text"],
         align: "left",
-        value: "modality",
-        width: "20%",
+        value: "shortened",
+        width: "5%",
       },
       {
         text: "Fecha Solicitud",
@@ -322,10 +422,17 @@ export default {
         width: "10%",
       },
       {
+        text: "Tipo Trámite",
+        class: ["normal", "white--text"],
+        align: "left",
+        value: "origin",
+        width: "10%",
+      },
+      {
         text: "Estado",
         class: ["normal", "white--text"],
         align: "left",
-        value: "state1",
+        value: "state",
         width: "15%",
       },
       {
@@ -337,7 +444,14 @@ export default {
         width: "5%",
       },
     ],
-    headers: [
+    headers_observables: [
+      {
+        text: "CI",
+        class: ["normal", "white--text"],
+        align: "left",
+        value: "PadCedulaIdentidad",
+        width: "15%",
+      },
       {
         text: "Código",
         class: ["normal", "white--text"],
@@ -396,60 +510,44 @@ export default {
         width: "10%",
       },
     ],
-    loan: [
-      {
-        code: "Frozen Yogurt",
-        amount_approved: 159,
-        loan_term: 2,
-        estimated_quota: 24,
-      },
-    ],
-    loans: [],
+    loans: {},
     affiliate_ci: null,
     affiliate: {},
     exist_affiliate: false,
     ver: false,
+    loading: false,
+    degree_name: null,
+    category_name: null,
+    unit_name: null,
+    state_name_status: null
   }),
-  methods: {
-    /*async getLoansHistory2() {
-      try {
-        //let loansHistory = await axios.get(`affiliate_record/${this.affiliate_ci}`)
-
-        let resp = await axios.get(`affiliate_existence`, {
-          params: {
-            identity_card: this.affiliate_ci,
-          },
-        });
-        this.affiliate = resp.data;
-        //console.log(this.affiliate.affiliate.affiliate_state);
-        this.exist_affiliate = this.affiliate.state;
-        this.ver = true;
-        if (this.exist_affiliate) {
-          let resp2 = await axios.get(`affiliate_record/${this.affiliate_ci}`);
-          this.loans = resp2.data;
-        } else {
-          this.exist_affiliate = false;
-          this.ver = true;
-          console.log("no coincide");
-        }
-      } catch (e) {
-        console.log(e);
+  watch: {
+    affiliate_ci() {
+      this.ver = false;
+    },
+    /* affiliate_ci(newVal, oldVal) {
+      if (oldVal != newVal) {
+        this.ver = false;
+        if (newVal.hasOwnProperty('category_id')) this.getCategory_name(newVal.category_id)
+        if (newVal.hasOwnProperty('degree_id')) this.getDegree_name(newVal.degree_id)
+        if (newVal.hasOwnProperty('unit_id')) this.getUnit_name(newVal.unit_id)
       }
-    },*/
+    }*/
+  },
+  methods: {
     async getLoansHistory() {
       try {
-        this.guaranteed_loans = [];
-        this.lender_loans = [];
-        let message = "";
-        let res = await axios.get(`affiliate_record/${this.affiliate_ci}`);
+        this.loading = true;
+        let message = [];
+        let res = await axios.post(`affiliate_record`, {
+          ci: this.affiliate_ci,
+        });
         this.loans = res.data;
-        this.guaranteed_loans = this.loans.pvt_gar.concat(this.loans.sismu_gar);
-        this.lender_loans = this.loans.pvt_tit.concat(this.loans.sismu_tit);
-        message = this.loans.message;
-
-        if (message != "inexistente") {
+        message = this.loans.message[0];
+        if (message != "afiliado-inexistente") {
           this.exist_affiliate = true;
           this.ver = true;
+          this.getAffiliate(this.loans.id);
         } else {
           this.exist_affiliate = false;
           this.ver = true;
@@ -457,6 +555,75 @@ export default {
         }
       } catch (e) {
         console.log(e);
+      } finally {
+        this.loading = false;
+      }
+    },
+    routeSismu(id) {
+      window.open(
+        "http://sismu.muserpol.gob.bo/musepol/akardex.aspx?" + id,
+        "_blank"
+      );
+    },
+    async getAffiliate(id) {
+      try {
+        this.loading = true;
+        let res = await axios.get(`affiliate/${id}`);
+        this.affiliate = res.data;
+        this.getDegree_name(this.affiliate.degree_id);
+        this.getCategory_name(this.affiliate.category_id);
+        this.getUnit_name(this.affiliate.unit_id);
+        this.getState_name(id)
+      } catch (e) {
+        console.log(e);
+      } finally {
+        this.loading = false;
+      }
+    },
+    async getDegree_name(id) {
+      try {
+        this.loading = true;
+        let res = await axios.get(`degree/${id}`);
+        this.degree_name = res.data.name;
+      } catch (e) {
+        console.log(e);
+      } finally {
+        this.loading = false;
+      }
+    },
+    async getCategory_name(id) {
+      try {
+        this.loading = true;
+        let res = await axios.get(`category/${id}`);
+        this.category_name = res.data.name;
+      } catch (e) {
+        console.log(e);
+      } finally {
+        this.loading = false;
+      }
+    },
+    async getUnit_name(id) {
+      try {
+        this.loading = true;
+        let res = await axios.get(`unit/${id}`);
+        this.unit_name = res.data.name;
+      } catch (e) {
+        console.log(e);
+      } finally {
+        this.loading = false;
+      }
+    },
+        async getState_name(id) {
+      try {
+        this.loading = true;
+        let res = await axios.get(`affiliate/${id}/state`);
+        this.state_name = res.data;
+        this.state_name_type = this.state_name.affiliate_state_type.name;
+        this.state_name_status = this.state_name.name;
+      } catch (e) {
+        console.log(e);
+      } finally {
+        this.loading = false;
       }
     },
     itemRowBackground: function (item) {

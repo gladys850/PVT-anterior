@@ -32,9 +32,9 @@ Vue.filter('moneyString', value => {
 Vue.filter('fullName', (value, byFirstName = false) => {
   let fullName = []
 	if (byFirstName) {
-		fullName = [value.first_name, value.second_name, value.last_name, value.mothers_last_name]
+		fullName = [value.fullname, value.first_name, value.second_name, value.last_name, value.mothers_last_name] // se usa el parametro value.full_name solo para el historial
 	} else {
-    fullName = [value.last_name, value.mothers_last_name, value.first_name, value.second_name]
+    fullName = [value.lastname, value.mothers_last_name, value.first_name, value.second_name, value.full_name]
   }
   return fullName.filter(o => o).join(' ')
 })
