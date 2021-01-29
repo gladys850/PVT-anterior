@@ -26,7 +26,7 @@ if(($modality->name == 'Refinanciamiento de Préstamo con garantía hipotecaria 
     <div>
         <b>PRIMERA.- (PARTES DEL CONTRATO):</b> Las siguientes partes celebran el presente contrato de refinanciamiento:
         <ol>
-            <li><b>LA ENTIDAD:</b> La Mutual de Servicios al Policía "MUSERPOL", representada legalmente por su por el {{ $employees[0]['position'] }} Cnl. {{ $employees[0]['name'] }} con C.I. {{ $employees[0]['identity_card'] }} y su {{ $employees[1]['position'] }} Lic. {{ $employees[1]['name'] }} con C.I. {{ $employees[1]['identity_card'] }}, que para fines de éste contrato en adelante se denominará MUSERPOL con domicilio en la Z. Sopocachi, Av. 6 de agosto N° 2354.</li>
+            <li><b>LA ENTIDAD:</b> La Mutual de Servicios al Policía "MUSERPOL", representada legalmente por su por el {{ $employees[0]['position'] }} Cnl. {{ $employees[0]['name'] }} con C.I. {{ $employees[0]['identity_card'] }} y su {{ $employees[1]['position'] }} Lic. {{ $employees[1]['name'] }} con C.I. {{ $employees[1]['identity_card'] }}, que para fines de este contrato en adelante se denominará MUSERPOL con domicilio en la Z. Sopocachi, Av. 6 de agosto N° 2354.</li>
             @if (count($lenders) == 1)
             @php ($lender = $lenders[0]->disbursable)
             @php ($male_female = Util::male_female($lender->gender))
@@ -118,16 +118,16 @@ if(($modality->name == 'Refinanciamiento de Préstamo con garantía hipotecaria 
         Los intereses generados entre la fecha del desembolso del préstamo y la fecha de primer pago, serán cobrados con la primera cuota; conforme lo establece el Reglamento de Préstamos.
     </div>
     <div>
-        <b>SEPTIMA.- (INTERESES Y GASTOS):</b> El préstamo concedido en virtud del presente contrato de refinanciamiento, estará sujeto, al pago periódico mensual, de una tasa de interés del {{ $loan->interest->annual_interest }}% fijo anual sobre saldo deudor.
+        <b>SÉPTIMA.- (INTERESES Y GASTOS):</b> El préstamo concedido en virtud del presente contrato de refinanciamiento, estará sujeto, al pago periódico mensual, de una tasa de interés del {{ round($loan->interest->annual_interest) }}% fijo anual sobre saldo deudor.
     </div>
     <div>
         Todos los gastos relativos a la concesión del presente préstamo serán a cargo y cuenta exclusiva {{ $plural ? 'de los DEUDORES' : 'del DEUDOR'}}.
     </div>
     <div>
-        <b>OCTAVA.- (DE LA FORMA DE PAGO Y OTRAS CONTINGENGIAS):</b> Para el cumplimiento estricto de la obligación (capital e intereses) el DEUDOR, autoriza expresamente a MUSERPOL practicar los descuentos respectivos de los haberes que percibe en forma mensual a través del Comando General de la Policía Boliviana.
+        <b>OCTAVA.- (DE LA FORMA DE PAGO Y OTRAS CONTINGENCIAS):</b> Para el cumplimiento estricto de la obligación (capital e intereses) el DEUDOR, autoriza expresamente a MUSERPOL practicar los descuentos respectivos de los haberes que percibe en forma mensual a través del Comando General de la Policía Boliviana.
     </div>
     <div>
-        Si por cualquier motivo la MUSERPOL estuviera imposibilitada de realizar el descuento por el medio señalado, el PRESTATARIO se obliga a cumplir con la cuota de amortización mediante pago directo en la Oficina Central de MUSERPOL de la ciudad de La Paz o efectuar depósito bancario en la cuenta fiscal de la MUSERPOL y enviar la boleta de depósito original a la Oficina Central inmediatamente; sin necesidad de previo aviso; caso contrario el PRESTATARIO se hará pasible al recargo correspondiente a los intereses que se generen al día de pago por la deuda contraida.
+        Si por cualquier motivo la MUSERPOL estuviera imposibilitada de realizar el descuento por el medio señalado, el PRESTATARIO se obliga a cumplir con la cuota de amortización mediante pago directo en la Oficina Central de MUSERPOL de la ciudad de La Paz o efectuar depósito bancario en la cuenta fiscal de la MUSERPOL y enviar la boleta de depósito original a la Oficina Central inmediatamente; sin necesidad de previo aviso; caso contrario el PRESTATARIO se hará pasible al recargo correspondiente a los intereses que se generen al día de pago por la deuda contraída.
     </div>
     <div>
         Asi mismo el PRESTATARIO se compromete a hacer conocer oportunamente a MUSERPOL sobre la omisión del descuento mensual que se hubiera dado a efectos de solicitar al Comando General de la Policía Boliviana se regularice este descuento, sin perjuicio que realice el depósito directo del mes omitido, de acuerdo a lo estipulado en el párrafo precedente.
@@ -140,18 +140,18 @@ if(($modality->name == 'Refinanciamiento de Préstamo con garantía hipotecaria 
             <li>
                 <b>Garantía Hipotecaria</b>
             </li>
-            <div>{{ $plural ? ' Los DEUDORES' : 'El deudor' }}, asimismo LA MUSERPOL reconocen los derechos de la Matrícula descripción del inmueble <b>(Folio Real)</b>, como producto de un crédito el cual sera cancelado con el presente préstamo para lo cual {{ $plural ? 'los deudores' : 'el deudor' }} también propetarios y LA MUSERPOL dan su consentimiento para la constitución de la presente hipoteca de inmmueble en el grado de prelación que corresponda. </div>
-            <div>La hipoteca en el grado de prelación que corresponda debe efectuarse sobre el bien inmueble consistente en un Lote de Terreno asignado como el {{$loan->loan_property->land_lot_number}}, Unidad Vecinal {{$loan->loan_property->neighborhood_unit}} de la {{$loan->loan_property->location}}, con una superficie de {{$loan->loan_property->surface}} {{$loan->loan_property->measurement}}, con Codigo Catastral {{$loan->loan_property->cadastral_code}}, cuyas colindancias son las siguientes: {{$loan->loan_property->limit}}. El bien inmueble es de propiedad de {{ $plural ? ' los DEUDORES' : 'el deudor' }} 
+            <div>{{ $plural ? ' Los DEUDORES' : 'El deudor' }}, asimismo LA MUSERPOL reconocen los derechos de la Matrícula descripción del inmueble <b>(Folio Real)</b>, como producto de un crédito el cual será cancelado con el presente préstamo para lo cual {{ $plural ? 'los deudores' : 'el deudor' }} también propietarios y LA MUSERPOL dan su consentimiento para la constitución de la presente hipoteca de inmueble en el grado de prelación que corresponda. </div>
+            <div>La hipoteca en el grado de prelación que corresponda debe efectuarse sobre el bien inmueble consistente en un Lote de Terreno asignado como el {{$loan->loan_property->land_lot_number}}, Unidad Vecinal {{$loan->loan_property->neighborhood_unit}} de la {{$loan->loan_property->location}}, con una superficie de {{$loan->loan_property->surface}} {{$loan->loan_property->measurement}}, con Código Catastral {{$loan->loan_property->cadastral_code}}, cuyas colindancias son las siguientes: {{$loan->loan_property->limit}}. El bien inmueble es de propiedad de {{ $plural ? ' los DEUDORES' : 'el deudor' }} 
             @foreach ($lenders as $lender)
             {{ $lender->disbursable->full_name }},
             @endforeach
-            de generales descritas en la claúsula primera del presente documento, conforme se evidencia en la Escritura Pública {{$loan->loan_property->public_deed_number}} de {{$loan->loan_property->public_deed_date}}. Extendida por ante Motaría de Fe Pública de Fe Pública a cargo de {{$loan->loan_property->lawyer}} dicho inmueble se encuentra registrado bajo la Matricula Computarizada Nº {{$loan->loan_property->registration_number}}. Bajo el asiento {{$loan->loan_property->real_folio_number}}
-            del Folio Real, incluidas todas las construcciones, mejores incorporadas, presentes y futuras, acciones y derechos correspondientes.</div>
-            <div>Asimismo, {{ $plural ? 'los propietarios' : 'el propietario'}} de la garantia autorizan expresamente al registro del presente documento en oficinas de Derechos Reales de la ciudad {{$loan->loan_property->public_deed_date}}</div>
+            de generales descritas en la cláusula primera del presente documento, conforme se evidencia en la Escritura Pública {{$loan->loan_property->public_deed_number}} de {{$loan->loan_property->public_deed_date}}. Extendida por ante Notaría de Fe Pública de Fe Pública a cargo de {{$loan->loan_property->lawyer}} dicho inmueble se encuentra registrado bajo la Matricula Computarizada Nº {{$loan->loan_property->registration_number}}. Bajo el asiento {{$loan->loan_property->real_folio_number}}
+            del Folio Real, incluidas todas las construcciones, mejoras incorporadas, presentes y futuras, acciones y derechos correspondientes.</div>
+            <div>Asimismo, {{ $plural ? 'los propietarios' : 'el propietario'}} de la garantía autorizan expresamente al registro del presente documento en oficinas de Derechos Reales de la ciudad {{$loan->loan_property->public_deed_date}}</div>
         <ol>
     </div>
     <div>
-        <b>DECIMA.- (CADUCIDAD Y DERECHOS DE ACELERACIÓN)</b>De acuerdo a lo estipulado en el Art. 569 del Código Civil y 805 del Código de Comercio, antes del vencimiento del plazo pactado, LA MUSERPOL podrá resolver el presente contrato en forma anticipada declarando el monto del préstamo, sus intereses y accesorios pendientes de pago, de plazo vencido, sumas líquidas y exigibles y en mora y proceder a la cobranza judicial sin necesidad de ninguna intimación o requerimiento judicial o extrajudicial si {{ $plural ? ' los DEUDORES incurrieran' : 'El DEUDOR incurriera' }} en cualquiera de las siguientes causales:
+        <b>DÉCIMA.- (CADUCIDAD Y DERECHOS DE ACELERACIÓN)</b>De acuerdo a lo estipulado en el Art. 569 del Código Civil y 805 del Código de Comercio, antes del vencimiento del plazo pactado, LA MUSERPOL podrá resolver el presente contrato en forma anticipada declarando el monto del préstamo, sus intereses y accesorios pendientes de pago, de plazo vencido, sumas líquidas y exigibles y en mora y proceder a la cobranza judicial sin necesidad de ninguna intimación o requerimiento judicial o extrajudicial si {{ $plural ? ' los DEUDORES incurrieran' : 'El DEUDOR incurriera' }} en cualquiera de las siguientes causales:
     </div>
     <div>
         Incumplimiento de cualquiera de las obligaciones estipuladas en el presente contrato.
@@ -175,13 +175,13 @@ if(($modality->name == 'Refinanciamiento de Préstamo con garantía hipotecaria 
         Desde ese momento, la totalidad de la suma adeudada por capital, intereses ordinarios y penales, impuestos, gastos, costas, honorarios y otros se reputarán de plazo vencido, líquido y exigible por lo que LA MUSERPOL podrá perseguir el pago del monto adeudado mediante proceso coactivo u otro que viere conveniente. {{ $plural ? 'los DEUDORES aceptan' : 'el DEUDOR acepta'}} desde ahora como buenas y exactas las cuentas que formule LA MUSERPOL respecto de este préstamo de dinero como líquido y exigible el saldo que se reclame sin necesidad de notificación previa o posterior.
     </div>
     <div>
-        <b>DECIMA.- (MORA)</b> Se deja expresamente establecido que a la falta de pago total o parcial a capital, intereses en el plazo estipulado o la simple demora,{{ $plural ? 'los DEUDORES' : 'el DEUDOR'}} se constituirán en mora por la totalidad de la obligación, la cual se considerará como vencida, líquida y exigible, sin necesidad de intimación, requerimiento, solicitud u otra formalidad previa judicial o extrajudicial, de acuerdo a lo  establecido por el artículo 341, Núm. 1) del Código Civil, al incumplimiento del pago de cualquier amortización, sin necesidad de intimación o requerimiento alguno, o acto equivalente por parte de la MUSERPOL.
+        <b>DÉCIMA.- (MORA)</b> Se deja expresamente establecido que a la falta de pago total o parcial a capital, intereses en el plazo estipulado o la simple demora,{{ $plural ? 'los DEUDORES' : 'el DEUDOR'}} se constituirán en mora por la totalidad de la obligación, la cual se considerará como vencida, líquida y exigible, sin necesidad de intimación, requerimiento, solicitud u otra formalidad previa judicial o extrajudicial, de acuerdo a lo  establecido por el artículo 341, Núm. 1) del Código Civil, al incumplimiento del pago de cualquier amortización, sin necesidad de intimación o requerimiento alguno, o acto equivalente por parte de la MUSERPOL.
     </div>
     <div>
-        En caso de que el PRESTATARIO incurra en mora, se le añadirá al total de la obligación adeudada, un interés moratorio anual del {{ $loan->interest->penal_interest }}%, que será efectiva por todo el tiempo que perdure el incumplimiento objeto de la mora, debiendo ser cobrados de acuerdo a la disponibilidad de saldo deudor y/o requerimiento de la MUSERPOL.
+        En caso de que el PRESTATARIO incurra en mora, se le añadirá al total de la obligación adeudada, un interés moratorio anual del {{ round($loan->interest->penal_interest) }}%, que será efectiva por todo el tiempo que perdure el incumplimiento objeto de la mora, debiendo ser cobrados de acuerdo a la disponibilidad de saldo deudor y/o requerimiento de la MUSERPOL.
     </div>
     <div>
-        <b>DECIMA PRIMERA.- (OBLIGACIONES ESPECIALES)</b> {{ $plural ? 'Los DEUDORES quedan reatados' : 'El DEUDOR queda reatado'}}  al cumplimiento de las siguientes obligaciones especiales:
+        <b>DÉCIMA PRIMERA.- (OBLIGACIONES ESPECIALES)</b> {{ $plural ? 'Los DEUDORES quedan reatados' : 'El DEUDOR queda reatado'}}  al cumplimiento de las siguientes obligaciones especiales:
     </div>
     <div>
         <ol>
@@ -196,13 +196,13 @@ if(($modality->name == 'Refinanciamiento de Préstamo con garantía hipotecaria 
         El incumplimiento por parte {{ $plural ? 'de los DEUDORES' : 'del DEUDOR'}} de cualquiera de las obligaciones señaladas, dará lugar a que el préstamo se considere de plazo vencido, líquido y exigible, pudiendo LA MUSERPOL iniciar las acciones judiciales correspondientes a efecto de perseguir el pago del monto adeudado.
     </div>
     <div>
-        <b>DECIMA SEGUNDA.- (FUERZA COACTIVA)</b> Se deja expresamente establecido que el prestatario, codeudores o fiadores, depositarios, propietarios, garantes hipotecarios y/o prendarios y otros obligados, que a los efectos de una acción judicial que inicie <b>LA MUSERPOL</b> por el incumplimiento al presente contrato, renuncian en forma irrevocable y expresa a los trámites del proceso ejecutivo, reconociendo al presente contrato como título coactivo civil incuestionable, a la que expresamente se someten aplicándose en ejecución lo previsto por la Ley N° 439 deL Código Procesal Civil en sus artículos 404 y siguientes, según corresponda.
+        <b>DÉCIMA SEGUNDA.- (FUERZA COACTIVA)</b> Se deja expresamente establecido que el prestatario, codeudores o fiadores, depositarios, propietarios, garantes hipotecarios y/o prendarios y otros obligados, que a los efectos de una acción judicial que inicie <b>LA MUSERPOL</b> por el incumplimiento al presente contrato, renuncian en forma irrevocable y expresa a los trámites del proceso ejecutivo, reconociendo al presente contrato como título coactivo civil incuestionable, a la que expresamente se someten aplicándose en ejecución lo previsto por la Ley N° 439 deL Código Procesal Civil en sus artículos 404 y siguientes, según corresponda.
     </div>
     <div>
         Sin perjuicio de la renuncia efectuada, LA MUSERPOL se reserva el derecho de efectuar la ejecución judicial para el cobro de lo adeudado, por la vía coactiva o ejecutiva, de acuerdo a su simple elección, a lo cual el prestatario y demás obligados simplemente se adhieren.
     </div>
     <div>
-        <b>DECIMA TERCERA.- (CESIÓN DE CRÉDITO)</b> {{ $plural ? 'Los DEUDORES autorizan' : 'El DEUDOR autoriza'}} en forma expresa a LA MUSERPOL a ceder, transmitir, pignorar, o delegar el presente contrato, sus accesorios, garantías, intereses, flujos demás activos o cualquier derecho emergente del presente contrato de préstamo a favor de cualquier entidad financiera, sociedad de titularización y/o de terceros que LA MUSERPOL juzgue conveniente, constituyendo la presente cláusula notificación suficiente para el efecto señalado, tal como establece el Art. 818º del  Código de Comercio. En esta eventualidad la gestión efectuada surtirá plenos efectos jurídicos respecto {{ $plural ? 'de los DEUDORES' : 'del DEUDOR'}} sin necesidad de requisitos formales y con sujeción a disposiciones legales vigentes.
+        <b>DÉCIMA TERCERA.- (CESIÓN DE CRÉDITO)</b> {{ $plural ? 'Los DEUDORES autorizan' : 'El DEUDOR autoriza'}} en forma expresa a LA MUSERPOL a ceder, transmitir, pignorar, o delegar el presente contrato, sus accesorios, garantías, intereses, flujos demás activos o cualquier derecho emergente del presente contrato de préstamo a favor de cualquier entidad financiera, sociedad de titularización y/o de terceros que LA MUSERPOL juzgue conveniente, constituyendo la presente cláusula notificación suficiente para el efecto señalado, tal como establece el Art. 818º del  Código de Comercio. En esta eventualidad la gestión efectuada surtirá plenos efectos jurídicos respecto {{ $plural ? 'de los DEUDORES' : 'del DEUDOR'}} sin necesidad de requisitos formales y con sujeción a disposiciones legales vigentes.
     </div>
     <div>
         Se encuentran comprendidos dentro de dicha autorización la facultad de ceder y/o transmitir total o parcialmente los derechos derivados de las pólizas de seguro que amparen los bienes objeto de garantía.
@@ -211,25 +211,25 @@ if(($modality->name == 'Refinanciamiento de Préstamo con garantía hipotecaria 
         {{ $plural ? 'Los DEUDORES dan' : 'El DEUDOR da'}} su pleno consentimiento para que se realicen los registros e inscripciones sobre los derechos del presente contrato o de los bienes objeto de las garantías constituidas en el mismo o sobre otros aspectos relacionados con este contrato que sean necesarios como efecto de la celebración, eficacia, perfeccionamiento y/o ejecución de la cesión o transmisión conforme a la presente cláusula.
     </div>
     <div>
-        <b>DECIMA CUARTA.- (MODIFICACIÓN DE LA SITUACIÓN DEL PRESTATARIO)</b> En caso de fallecimiento, retiro voluntario, retiro forzoso, LOS DEUDORES garantizan con la totalidad de sus Beneficios Fondo de Retiro Policial Solidario  y Complemento Económico que otorga la MUSERPOL, el cumplimiento efectivo de la presente obligación; por cuanto la liquidación de dichos beneficios pasaran a cubrir el monto total de la obligación que resulte adeudada, más los intereses devengados a la fecha, previa las formalidades de ley.
+        <b>DÉCIMA CUARTA.- (MODIFICACIÓN DE LA SITUACIÓN DEL PRESTATARIO)</b> En caso de fallecimiento, retiro voluntario, retiro forzoso, LOS DEUDORES garantizan con la totalidad de sus Beneficios Fondo de Retiro Policial Solidario  y Complemento Económico que otorga la MUSERPOL, el cumplimiento efectivo de la presente obligación; por cuanto la liquidación de dichos beneficios pasarán a cubrir el monto total de la obligación que resulte adeudada, más los intereses devengados a la fecha, previa las formalidades de ley.
     </div>
     <div>
-        En caso de que se haya modificado la situación del DEUDOR, del sector activo al sector pasivo de la Policía Boliviana, teniendo un saldo deudor respecto del préstamo obtenido, éste acepta amortizar la deuda con su Complemento Económico, en caso de corresponderle, debiendo al efecto solicitar la reprogramación conforme establece  el  Artículo  90 del Reglamento de Préstamos de la MUSERPOL, por lo que el saldo se sujetara en función a su nuevo liquido pagable, estableciéndose una correlativa modificación de los plazos y cuota según sea el caso.
+        En caso de que se haya modificado la situación del DEUDOR, del sector activo al sector pasivo de la Policía Boliviana, teniendo un saldo deudor respecto del préstamo obtenido, este acepta amortizar la deuda con su Complemento Económico, en caso de corresponderle, debiendo al efecto solicitar la reprogramación conforme establece  el  Artículo  90 del Reglamento de Préstamos de la MUSERPOL, por lo que el saldo se sujetará en función a su nuevo liquido pagable, estableciéndose una correlativa modificación de los plazos y cuota según sea el caso.
     </div>
     <div>
         La MUSERPOL, para el caso en que el DEUDOR o sus beneficiarios no inicien el trámite de solicitud de pago de la prestación que corresponda, se encuentra facultada a iniciar por su cuenta el trámite pertinente, cuyos costos serán imputados al total adeudado y descontados del total de la prestación.
     </div>
     <div>
-        <b>DECIMA QUINTA.- (INVESTIGACIÓN Y SUPERVISIÓN)</b> {{ $plural ? 'Autorizan' : 'Autoriza'}} a LA MUSERPOL y/o a otros a quien éste faculte a realizar inspecciones para verificar el destino del préstamo otorgado, la situación de las garantías, así como su situación económica y se compromete/n a suministrar toda la información que LA MUSERPOL requiera.
+        <b>DÉCIMA QUINTA.- (INVESTIGACIÓN Y SUPERVISIÓN)</b> {{ $plural ? 'Autorizan' : 'Autoriza'}} a LA MUSERPOL y/o a otros a quien este faculte a realizar inspecciones para verificar el destino del préstamo otorgado, la situación de las garantías, así como su situación económica y se compromete/n a suministrar toda la información que LA MUSERPOL requiera.
     </div>
     <div>
-        Asimismo {{ $plural ? 'autorizan' : 'autoriza'}} a LA MUSERPOL y/o a otros a quien éste faculte a realizar inspecciones para verificar el destino y uso del préstamo otorgado, la situación de las garantías, así como su situación económica y se compromete/n a suministrar toda la información que se requiera.
+        Asimismo {{ $plural ? 'autorizan' : 'autoriza'}} a LA MUSERPOL y/o a otros a quien este faculte a realizar inspecciones para verificar el destino y uso del préstamo otorgado, la situación de las garantías, así como su situación económica y se compromete/n a suministrar toda la información que se requiera.
     </div>
     <div>
-        <b>DECIMA SEXTA.- (INFORMACIÓN)</b> {{ $plural ? 'Los DEUDORES podrán' : 'El DEUDOR podra'}} solicitar a LA MUSERPOL en cualquier momento información detallada referida a los pagos y cobros efectuados, el cronograma de pagos, la forma de cálculo y así como la liquidación total o parcial del préstamo.
+        <b>DÉCIMA SEXTA.- (INFORMACIÓN)</b> {{ $plural ? 'Los DEUDORES podrán' : 'El DEUDOR podrá'}} solicitar a LA MUSERPOL en cualquier momento información detallada referida a los pagos y cobros efectuados, el cronograma de pagos, la forma de cálculo y así como la liquidación total o parcial del préstamo.
     </div>
     <div>
-        <b>DECIMA SÉPTIMA.- (CONFORMIDAD)</b> Nosotros, LA MUSERPOL, como ACREEDORES representado por su {{ $employees[0]['position'] }} Cnl. {{ $employees[0]['name'] }} y su {{ $employees[1]['position'] }} Lic. {{ $employees[1]['name'] }} por una parte y
+        <b>DÉCIMA SÉPTIMA.- (CONFORMIDAD)</b> Nosotros, LA MUSERPOL, como ACREEDORES representado por su {{ $employees[0]['position'] }} Cnl. {{ $employees[0]['name'] }} y su {{ $employees[1]['position'] }} Lic. {{ $employees[1]['name'] }} por una parte y
         @if (count($lenders) == 1)
             @php ($lender = $lenders[0]->disbursable)
             @php ($male_female = Util::male_female($lender->gender))
@@ -386,7 +386,7 @@ if(($modality->name == 'Refinanciamiento de Préstamo con garantía hipotecaria 
     <div>
         <b>PRIMERA.- (PARTES DEL CONTRATO):</b> Las siguientes partes celebran el presente contrato:
         <ol>
-            <li><b>LA ENTIDAD:</b> La Mutual de Servicios al Policía "MUSERPOL", representada legalmente por su por el {{ $employees[0]['position'] }} Cnl. {{ $employees[0]['name'] }} con C.I. {{ $employees[0]['identity_card'] }} y su {{ $employees[1]['position'] }} Lic. {{ $employees[1]['name'] }} con C.I. {{ $employees[1]['identity_card'] }}, que para fines de éste contrato en adelante se denominará MUSERPOL con domicilio en la Z. Sopocachi, Av. 6 de agosto N° 2354.</li>
+            <li><b>LA ENTIDAD:</b> La Mutual de Servicios al Policía "MUSERPOL", representada legalmente por su por el {{ $employees[0]['position'] }} Cnl. {{ $employees[0]['name'] }} con C.I. {{ $employees[0]['identity_card'] }} y su {{ $employees[1]['position'] }} Lic. {{ $employees[1]['name'] }} con C.I. {{ $employees[1]['identity_card'] }}, que para fines de este contrato en adelante se denominará MUSERPOL con domicilio en la Z. Sopocachi, Av. 6 de agosto N° 2354.</li>
             @if (count($lenders) == 1)
             @php ($lender = $lenders[0]->disbursable)
             @php ($male_female = Util::male_female($lender->gender))
@@ -463,16 +463,16 @@ if(($modality->name == 'Refinanciamiento de Préstamo con garantía hipotecaria 
         Los intereses generados entre la fecha del desembolso del préstamo y la fecha de primer pago, serán cobrados con la primera cuota; conforme lo establece el Reglamento de Préstamos.
     </div>
     <div>
-        <b>SEXTA.- (INTERESES Y GASTOS):</b> El préstamo concedido en virtud del presente contrato, estará sujeto, al pago periódico mensual, de una tasa de interés del {{ $loan->interest->annual_interest }}% fijo anual sobre saldo deudor.
+        <b>SEXTA.- (INTERESES Y GASTOS):</b> El préstamo concedido en virtud del presente contrato, estará sujeto, al pago periódico mensual, de una tasa de interés del {{ round($loan->interest->annual_interest) }}% fijo anual sobre saldo deudor.
     </div>
     <div>
         Todos los gastos relativos a la concesión del presente préstamo serán a cargo y cuenta exclusiva {{ $plural ? 'de los DEUDORES' : 'del DEUDOR'}}.
     </div>
     <div>
-        <b>SÉPTIMA.- (DE LA FORMA DE PAGO Y OTRAS CONTINGENGIAS):</b> Para el cumplimiento estricto de la obligación (capital e intereses) el DEUDOR, autoriza expresamente a MUSERPOL practicar los descuentos respectivos de los haberes que percibe en forma mensual a través del Comando General de la Policía Boliviana.
+        <b>SÉPTIMA.- (DE LA FORMA DE PAGO Y OTRAS CONTINGENCIAS):</b> Para el cumplimiento estricto de la obligación (capital e intereses) el DEUDOR, autoriza expresamente a MUSERPOL practicar los descuentos respectivos de los haberes que percibe en forma mensual a través del Comando General de la Policía Boliviana.
     </div>
     <div>
-        Si por cualquier motivo la MUSERPOL estuviera imposibilitada de realizar el descuento por el medio señalado, el PRESTATARIO se obliga a cumplir con la cuota de amortización mediante pago directo en la Oficina Central de MUSERPOL de la ciudad de La Paz o efectuar depósito bancario en la cuenta fiscal de la MUSERPOL y enviar la boleta de depósito original a la Oficina Central inmediatamente; sin necesidad de previo aviso; caso contrario el PRESTATARIO se hará pasible al recargo correspondiente a los intereses que se generen al día de pago por la deuda contraida.
+        Si por cualquier motivo la MUSERPOL estuviera imposibilitada de realizar el descuento por el medio señalado, el PRESTATARIO se obliga a cumplir con la cuota de amortización mediante pago directo en la Oficina Central de MUSERPOL de la ciudad de La Paz o efectuar depósito bancario en la cuenta fiscal de la MUSERPOL y enviar la boleta de depósito original a la Oficina Central inmediatamente; sin necesidad de previo aviso; caso contrario el PRESTATARIO se hará pasible al recargo correspondiente a los intereses que se generen al día de pago por la deuda contraída.
     </div>
     <div>
         Asi mismo el PRESTATARIO se compromete a hacer conocer oportunamente a MUSERPOL sobre la omisión del descuento mensual que se hubiera dado a efectos de solicitar al Comando General de la Policía Boliviana se regularice este descuento, sin perjuicio que realice el depósito directo del mes omitido, de acuerdo a lo estipulado en el párrafo precedente.
@@ -485,14 +485,14 @@ if(($modality->name == 'Refinanciamiento de Préstamo con garantía hipotecaria 
             <li>
                 <b>Garantía Hipotecaria</b>
             </li>
-            <div>{{ $plural ? ' Los DEUDORES' : 'El deudor' }}, asimismo LA MUSERPOL reconocen los derechos de la Matrícula descripción del inmueble <b>(Folio Real)</b>, como producto de un crédito el cual sera cancelado con el presente préstamo para lo cual {{ $plural ? 'los deudores' : 'el deudor' }} también propetarios y LA MUSERPOL dan su consentimiento para la constitución de la presente hipoteca de inmmueble en el grado de prelación que corresponda. </div>
-            <div>La hipoteca en el grado de prelación que corresponda debe efectuarse sobre el bien inmueble consistente en un Lote de Terreno asignado como el {{$loan->loan_property->land_lot_number}}, Unidad Vecinal {{$loan->loan_property->neighborhood_unit}} de la {{$loan->loan_property->location}}, con una superficie de {{$loan->loan_property->surface}} {{$loan->loan_property->measurement}}, con Codigo Catastral {{$loan->loan_property->cadastral_code}}, cuyas colindancias son las siguientes: {{$loan->loan_property->limit}}. El bien inmueble es de propiedad de {{ $plural ? ' los DEUDORES' : 'el deudor' }} 
+            <div>{{ $plural ? ' Los DEUDORES' : 'El deudor' }}, asimismo LA MUSERPOL reconocen los derechos de la Matrícula descripción del inmueble <b>(Folio Real)</b>, como producto de un crédito el cual será cancelado con el presente préstamo para lo cual {{ $plural ? 'los deudores' : 'el deudor' }} también propietarios y LA MUSERPOL dan su consentimiento para la constitución de la presente hipoteca de inmueble en el grado de prelación que corresponda. </div>
+            <div>La hipoteca en el grado de prelación que corresponda debe efectuarse sobre el bien inmueble consistente en un Lote de Terreno asignado como el {{$loan->loan_property->land_lot_number}}, Unidad Vecinal {{$loan->loan_property->neighborhood_unit}} de la {{$loan->loan_property->location}}, con una superficie de {{$loan->loan_property->surface}} {{$loan->loan_property->measurement}}, con Código Catastral {{$loan->loan_property->cadastral_code}}, cuyas colindancias son las siguientes: {{$loan->loan_property->limit}}. El bien inmueble es de propiedad de {{ $plural ? ' los DEUDORES' : 'el deudor' }} 
             @foreach ($lenders as $lender)
             {{ $lender->disbursable->full_name }},
             @endforeach
-            de generales descritas en la claúsula primera del presente documento, conforme se evidencia en la Escritura Pública {{$loan->loan_property->public_deed_number}} de {{$loan->loan_property->public_deed_date}}. Extendida por ante Motaría de Fe Pública de Fe Pública a cargo de {{$loan->loan_property->lawyer}} dicho inmueble se encuentra registrado bajo la Matricula Computarizada Nº {{$loan->loan_property->registration_number}}. Bajo el asiento {{$loan->loan_property->real_folio_number}}
-            del Folio Real, incluidas todas las construcciones, mejores incorporadas, presentes y futuras, acciones y derechos correspondientes.</div>
-            <div>Asimismo, {{ $plural ? 'los propietarios' : 'el propietario'}} de la garantia autorizan expresamente al registro del presente documento en oficinas de Derechos Reales de la ciudad {{$loan->loan_property->public_deed_date}}</div>
+            de generales descritas en la cláusula primera del presente documento, conforme se evidencia en la Escritura Pública {{$loan->loan_property->public_deed_number}} de {{$loan->loan_property->public_deed_date}}. Extendida por ante Notaría de Fe Pública de Fe Pública a cargo de {{$loan->loan_property->lawyer}} dicho inmueble se encuentra registrado bajo la Matricula Computarizada Nº {{$loan->loan_property->registration_number}}. Bajo el asiento {{$loan->loan_property->real_folio_number}}
+            del Folio Real, incluidas todas las construcciones, mejoras incorporadas, presentes y futuras, acciones y derechos correspondientes.</div>
+            <div>Asimismo, {{ $plural ? 'los propietarios' : 'el propietario'}} de la garantía autorizan expresamente al registro del presente documento en oficinas de Derechos Reales de la ciudad {{$loan->loan_property->public_deed_date}}</div>
         <ol>
     </div>
     <div>
@@ -520,13 +520,13 @@ if(($modality->name == 'Refinanciamiento de Préstamo con garantía hipotecaria 
         Desde ese momento, la totalidad de la suma adeudada por capital, intereses ordinarios y penales, impuestos, gastos, costas, honorarios y otros se reputarán de plazo vencido, líquido y exigible por lo que LA MUSERPOL podrá perseguir el pago del monto adeudado mediante proceso coactivo u otro que viere conveniente. {{ $plural ? 'los DEUDORES aceptan' : 'el DEUDOR acepta'}} desde ahora como buenas y exactas las cuentas que formule LA MUSERPOL respecto de este préstamo de dinero como líquido y exigible el saldo que se reclame sin necesidad de notificación previa o posterior.
     </div>
     <div>
-        <b>DECIMA.- (MORA)</b> Se deja expresamente establecido que a la falta de pago total o parcial a capital, intereses en el plazo estipulado o la simple demora,{{ $plural ? 'los DEUDORES' : 'el DEUDOR'}} se constituirán en mora por la totalidad de la obligación, la cual se considerará como vencida, líquida y exigible, sin necesidad de intimación, requerimiento, solicitud u otra formalidad previa judicial o extrajudicial, de acuerdo a lo  establecido por el artículo 341, Núm. 1) del Código Civil, al incumplimiento del pago de cualquier amortización, sin necesidad de intimación o requerimiento alguno, o acto equivalente por parte de la MUSERPOL.
+        <b>DÉCIMA.- (MORA)</b> Se deja expresamente establecido que a la falta de pago total o parcial a capital, intereses en el plazo estipulado o la simple demora,{{ $plural ? 'los DEUDORES' : 'el DEUDOR'}} se constituirán en mora por la totalidad de la obligación, la cual se considerará como vencida, líquida y exigible, sin necesidad de intimación, requerimiento, solicitud u otra formalidad previa judicial o extrajudicial, de acuerdo a lo  establecido por el artículo 341, Núm. 1) del Código Civil, al incumplimiento del pago de cualquier amortización, sin necesidad de intimación o requerimiento alguno, o acto equivalente por parte de la MUSERPOL.
     </div>
     <div>
-        En caso de que el PRESTATARIO incurra en mora, se le añadirá al total de la obligación adeudada, un interés moratorio anual del {{ $loan->interest->penal_interest }}%, que será efectiva por todo el tiempo que perdure el incumplimiento objeto de la mora, debiendo ser cobrados de acuerdo a la disponibilidad de saldo deudor y/o requerimiento de la MUSERPOL.
+        En caso de que el PRESTATARIO incurra en mora, se le añadirá al total de la obligación adeudada, un interés moratorio anual del {{ round($loan->interest->penal_interest) }}%, que será efectiva por todo el tiempo que perdure el incumplimiento objeto de la mora, debiendo ser cobrados de acuerdo a la disponibilidad de saldo deudor y/o requerimiento de la MUSERPOL.
     </div>
     <div>
-        <b>DECIMA PRIMERA.- (OBLIGACIONES ESPECIALES)</b> {{ $plural ? 'Los DEUDORES quedan reatados' : 'El DEUDOR queda reatado'}}  al cumplimiento de las siguientes obligaciones especiales:
+        <b>DÉCIMA PRIMERA.- (OBLIGACIONES ESPECIALES)</b> {{ $plural ? 'Los DEUDORES quedan reatados' : 'El DEUDOR queda reatado'}}  al cumplimiento de las siguientes obligaciones especiales:
     </div>
     <div>
         <ol>
@@ -541,13 +541,13 @@ if(($modality->name == 'Refinanciamiento de Préstamo con garantía hipotecaria 
         El incumplimiento por parte {{ $plural ? 'de los DEUDORES' : 'del DEUDOR'}} de cualquiera de las obligaciones señaladas, dará lugar a que el préstamo se considere de plazo vencido, líquido y exigible, pudiendo LA MUSERPOL iniciar las acciones judiciales correspondientes a efecto de perseguir el pago del monto adeudado.
     </div>
     <div>
-        <b>DECIMA SEGUNDA.- (FUERZA COACTIVA)</b> Se deja expresamente establecido que el prestatario, codeudores o fiadores, depositarios, propietarios, garantes hipotecarios y/o prendarios y otros obligados, que a los efectos de una acción judicial que inicie <b>LA MUSERPOL</b> por el incumplimiento al presente contrato, renuncian en forma irrevocable y expresa a los trámites del proceso ejecutivo, reconociendo al presente contrato como título coactivo civil incuestionable, a la que expresamente se someten aplicándose en ejecución lo previsto por la Ley N° 439 deL Código Procesal Civil en sus artículos 404 y siguientes, según corresponda.
+        <b>DÉCIMA SEGUNDA.- (FUERZA COACTIVA)</b> Se deja expresamente establecido que el prestatario, codeudores o fiadores, depositarios, propietarios, garantes hipotecarios y/o prendarios y otros obligados, que a los efectos de una acción judicial que inicie <b>LA MUSERPOL</b> por el incumplimiento al presente contrato, renuncian en forma irrevocable y expresa a los trámites del proceso ejecutivo, reconociendo al presente contrato como título coactivo civil incuestionable, a la que expresamente se someten aplicándose en ejecución lo previsto por la Ley N° 439 deL Código Procesal Civil en sus artículos 404 y siguientes, según corresponda.
     </div>
     <div>
         Sin perjuicio de la renuncia efectuada, LA MUSERPOL se reserva el derecho de efectuar la ejecución judicial para el cobro de lo adeudado, por la vía coactiva o ejecutiva, de acuerdo a su simple elección, a lo cual el prestatario y demás obligados simplemente se adhieren.
     </div>
     <div>
-        <b>DECIMA TERCERA.- (CESIÓN DE CRÉDITO)</b> {{ $plural ? 'Los DEUDORES autorizan' : 'El DEUDOR autoriza'}} en forma expresa a LA MUSERPOL a ceder, transmitir, pignorar, o delegar el presente contrato, sus accesorios, garantías, intereses, flujos demás activos o cualquier derecho emergente del presente contrato de préstamo a favor de cualquier entidad financiera, sociedad de titularización y/o de terceros que LA MUSERPOL juzgue conveniente, constituyendo la presente cláusula notificación suficiente para el efecto señalado, tal como establece el Art. 818º del  Código de Comercio. En esta eventualidad la gestión efectuada surtirá plenos efectos jurídicos respecto {{ $plural ? 'de los DEUDORES' : 'del DEUDOR'}} sin necesidad de requisitos formales y con sujeción a disposiciones legales vigentes.
+        <b>DÉCIMA TERCERA.- (CESIÓN DE CRÉDITO)</b> {{ $plural ? 'Los DEUDORES autorizan' : 'El DEUDOR autoriza'}} en forma expresa a LA MUSERPOL a ceder, transmitir, pignorar, o delegar el presente contrato, sus accesorios, garantías, intereses, flujos demás activos o cualquier derecho emergente del presente contrato de préstamo a favor de cualquier entidad financiera, sociedad de titularización y/o de terceros que LA MUSERPOL juzgue conveniente, constituyendo la presente cláusula notificación suficiente para el efecto señalado, tal como establece el Art. 818º del  Código de Comercio. En esta eventualidad la gestión efectuada surtirá plenos efectos jurídicos respecto {{ $plural ? 'de los DEUDORES' : 'del DEUDOR'}} sin necesidad de requisitos formales y con sujeción a disposiciones legales vigentes.
     </div>
     <div>
         Se encuentran comprendidos dentro de dicha autorización la facultad de ceder y/o transmitir total o parcialmente los derechos derivados de las pólizas de seguro que amparen los bienes objeto de garantía.
@@ -556,25 +556,25 @@ if(($modality->name == 'Refinanciamiento de Préstamo con garantía hipotecaria 
         {{ $plural ? 'Los DEUDORES dan' : 'El DEUDOR da'}} su pleno consentimiento para que se realicen los registros e inscripciones sobre los derechos del presente contrato o de los bienes objeto de las garantías constituidas en el mismo o sobre otros aspectos relacionados con este contrato que sean necesarios como efecto de la celebración, eficacia, perfeccionamiento y/o ejecución de la cesión o transmisión conforme a la presente cláusula.
     </div>
     <div>
-        <b>DECIMA CUARTA.- (MODIFICACIÓN DE LA SITUACIÓN DEL PRESTATARIO)</b> En caso de fallecimiento, retiro voluntario, retiro forzoso, LOS DEUDORES garantizan con la totalidad de sus Beneficios Fondo de Retiro Policial Solidario  y Complemento Económico que otorga la MUSERPOL, el cumplimiento efectivo de la presente obligación; por cuanto la liquidación de dichos beneficios pasaran a cubrir el monto total de la obligación que resulte adeudada, más los intereses devengados a la fecha, previa las formalidades de ley.
+        <b>DÉCIMA CUARTA.- (MODIFICACIÓN DE LA SITUACIÓN DEL PRESTATARIO)</b> En caso de fallecimiento, retiro voluntario, retiro forzoso, LOS DEUDORES garantizan con la totalidad de sus Beneficios Fondo de Retiro Policial Solidario  y Complemento Económico que otorga la MUSERPOL, el cumplimiento efectivo de la presente obligación; por cuanto la liquidación de dichos beneficios pasarán a cubrir el monto total de la obligación que resulte adeudada, más los intereses devengados a la fecha, previa las formalidades de ley.
     </div>
     <div>
-        En caso de que se haya modificado la situación del DEUDOR, del sector activo al sector pasivo de la Policía Boliviana, teniendo un saldo deudor respecto del préstamo obtenido, éste acepta amortizar la deuda con su Complemento Económico, en caso de corresponderle, debiendo al efecto solicitar la reprogramación conforme establece  el  Artículo  90 del Reglamento de Préstamos de la MUSERPOL, por lo que el saldo se sujetara en función a su nuevo liquido pagable, estableciéndose una correlativa modificación de los plazos y cuota según sea el caso.
+        En caso de que se haya modificado la situación del DEUDOR, del sector activo al sector pasivo de la Policía Boliviana, teniendo un saldo deudor respecto del préstamo obtenido, este acepta amortizar la deuda con su Complemento Económico, en caso de corresponderle, debiendo al efecto solicitar la reprogramación conforme establece  el  Artículo  90 del Reglamento de Préstamos de la MUSERPOL, por lo que el saldo se sujetará en función a su nuevo liquido pagable, estableciéndose una correlativa modificación de los plazos y cuota según sea el caso.
     </div>
     <div>
         La MUSERPOL, para el caso en que el DEUDOR o sus beneficiarios no inicien el trámite de solicitud de pago de la prestación que corresponda, se encuentra facultada a iniciar por su cuenta el trámite pertinente, cuyos costos serán imputados al total adeudado y descontados del total de la prestación.
     </div>
     <div>
-        <b>DECIMA QUINTA.- (INVESTIGACIÓN Y SUPERVISIÓN)</b> {{ $plural ? 'Autorizan' : 'Autoriza'}} a LA MUSERPOL y/o a otros a quien éste faculte a realizar inspecciones para verificar el destino del préstamo otorgado, la situación de las garantías, así como su situación económica y se compromete/n a suministrar toda la información que LA MUSERPOL requiera.
+        <b>DÉCIMA QUINTA.- (INVESTIGACIÓN Y SUPERVISIÓN)</b> {{ $plural ? 'Autorizan' : 'Autoriza'}} a LA MUSERPOL y/o a otros a quien este faculte a realizar inspecciones para verificar el destino del préstamo otorgado, la situación de las garantías, así como su situación económica y se compromete/n a suministrar toda la información que LA MUSERPOL requiera.
     </div>
     <div>
-        Asimismo {{ $plural ? 'autorizan' : 'autoriza'}} a LA MUSERPOL y/o a otros a quien éste faculte a realizar inspecciones para verificar el destino y uso del préstamo otorgado, la situación de las garantías, así como su situación económica y se compromete/n a suministrar toda la información que se requiera.
+        Asimismo {{ $plural ? 'autorizan' : 'autoriza'}} a LA MUSERPOL y/o a otros a quien este faculte a realizar inspecciones para verificar el destino y uso del préstamo otorgado, la situación de las garantías, así como su situación económica y se compromete/n a suministrar toda la información que se requiera.
     </div>
     <div>
-        <b>DECIMA SEXTA.- (INFORMACIÓN)</b> {{ $plural ? 'Los DEUDORES podrán' : 'El DEUDOR podra'}} solicitar a LA MUSERPOL en cualquier momento información detallada referida a los pagos y cobros efectuados, el cronograma de pagos, la forma de cálculo y así como la liquidación total o parcial del préstamo.
+        <b>DÉCIMA SEXTA.- (INFORMACIÓN)</b> {{ $plural ? 'Los DEUDORES podrán' : 'El DEUDOR podrá'}} solicitar a LA MUSERPOL en cualquier momento información detallada referida a los pagos y cobros efectuados, el cronograma de pagos, la forma de cálculo y así como la liquidación total o parcial del préstamo.
     </div>
     <div>
-        <b>DECIMA SÉPTIMA.- (CONFORMIDAD)</b> Nosotros, LA MUSERPOL, como ACREEDORES representado por su {{ $employees[0]['position'] }} Cnl. {{ $employees[0]['name'] }} y su {{ $employees[1]['position'] }} Lic. {{ $employees[1]['name'] }} por una parte y
+        <b>DÉCIMA SÉPTIMA.- (CONFORMIDAD)</b> Nosotros, LA MUSERPOL, como ACREEDORES representado por su {{ $employees[0]['position'] }} Cnl. {{ $employees[0]['name'] }} y su {{ $employees[1]['position'] }} Lic. {{ $employees[1]['name'] }} por una parte y
         @if (count($lenders) == 1)
             @php ($lender = $lenders[0]->disbursable)
             @php ($male_female = Util::male_female($lender->gender))
