@@ -357,6 +357,31 @@ class Util
         ];
     }
 
+
+    public static function pdf_to_base64contract($views, $file_name, $size = 'letter', $copies = 1, $portrait = true)
+    {
+        $footerHtml = view()->make('partials.footer')->with(array('paginator' => true, 'print_date' => true, 'date' => Carbon::now()->ISOFormat('L H:m')))->render();
+        $options = [
+            'copies' => $copies ?? 1,
+            'footer-html' => $footerHtml,
+            'user-style-sheet' => public_path('css/report-print.min.css'),
+            'orientation' => $portrait ? 'portrait' : 'landscape',
+            'margin-top' => '15',
+            'margin-right' => '20',
+            'margin-left' => '13', 
+            'margin-bottom' => '15',
+            'encoding' => 'UTF-8',
+            'page-width' => '216'  
+        ];
+        $options['page-height'] = $size == 'letter' ? '279' : '330';
+        $content = base64_encode(\PDF::getOutputFromHtml($views, $options));
+        return [
+            'content' => $content,
+            'type' => 'pdf',
+            'file_name' => $file_name
+        ];
+    }
+
     public static function request_rrhh_employee($position)
     {
         $employee = [

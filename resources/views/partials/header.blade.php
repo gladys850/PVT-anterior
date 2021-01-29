@@ -9,7 +9,7 @@
         <tr>
             <th class="w-20 text-left no-padding no-margins align-middle">
                 <div class="text-left">
-                    <img src="{{ public_path("/img/logo.png") }}" class="w-50">
+                    <img src="{{ public_path("/img/logo.png") }}" class="w-75">
                 </div>
             </th>
             <th class="w-60 align-top">
