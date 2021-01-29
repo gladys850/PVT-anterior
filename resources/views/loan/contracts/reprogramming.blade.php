@@ -38,7 +38,7 @@
     </div>
     <div>
     @if($loan->parent_loan_id != null)
-        <b>SEGUNDA.- (DEL ANTECEDENTE):</b> Mediante contrato de préstamo N° {{ $loan->parent_loan->code }} de fecha {{ Carbon::parse($loan->parent_loan->disbursement_date)->isoFormat('LL') }} suscrito entre MUSERPOL y el PRESTATARIO, se otorgo un préstamo por la suma de {{ $loan->parent_loan->amount_approved }} (<span class="uppercase">{{ Util::money_format($loan->parent_loan->amount_approved, true) }}</span> Bolivianos), con garantía de todos sus bienes habidos y por haber, así como la garantía personal, 
+        <b>SEGUNDA.- (DEL ANTECEDENTE):</b> Mediante contrato de préstamo N° {{ $loan->parent_loan->code }} de fecha {{ Carbon::parse($loan->parent_loan->disbursement_date)->isoFormat('LL') }}, suscrito entre MUSERPOL y el PRESTATARIO, se otorgo un préstamo por la suma de {{ $loan->parent_loan->amount_approved }} (<span class="uppercase">{{ Util::money_format($loan->parent_loan->amount_approved, true) }}</span> Bolivianos), con garantía de todos sus bienes habidos y por haber, así como la garantía personal, 
         <?php $cont = 0; $concat_guarantor = "";
             foreach($guarantors as $guarantor){
                 $male_female_guarantor = Util::male_female($guarantor->gender);
