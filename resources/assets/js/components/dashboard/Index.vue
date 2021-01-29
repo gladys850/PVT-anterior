@@ -86,18 +86,26 @@
                     <v-col cols="12" md="6" class="ma-0 pb-0">
                       MATRÍCULA: {{ loans.registration }}
                     </v-col>
-                    <v-col cols="12" md="6" class="ma-0 pb-0">
-                      CATEGORÍA: {{ category_name }}
-                    </v-col>
-                    <v-col cols="12" md="6" class="ma-0 pb-0">
-                      ESTADO: {{ state_name_status }}</v-col
-                    >
-                    <v-col cols="12" md="6" class="ma-0 pb-0">
-                      GRADO: {{ degree_name }}
-                    </v-col>
-                    <v-col cols="12" md="6" class="ma-0 pb-2">
-                      UNIDAD: {{ unit_name }}
-                    </v-col>
+                    <template v-if="loans.tit_pvt">
+                      <v-col cols="12" md="6" class="ma-0 pb-0">
+                        CATEGORÍA: {{ category_name }}
+                      </v-col>
+                      <v-col cols="12" md="6" class="ma-0 pb-0">
+                        ESTADO: {{ state_name_status }}</v-col
+                      >
+                      <v-col cols="12" md="6" class="ma-0 pb-0">
+                        GRADO: {{ degree_name }}
+                      </v-col>
+                      <v-col cols="12" md="6" class="ma-0 pb-2">
+                        UNIDAD: {{ unit_name }}
+                      </v-col>
+                    </template>
+                    <template v-if="loans.spouse_pvt || loans.spouse_sismu">
+                      <v-col cols="12" md="6" class="ma-0 pb-2">
+                        CONYUGUE
+                      </v-col>
+                    </template>
+
                     <v-col
                       cols="12"
                       md="8"
@@ -200,7 +208,7 @@
                               ><v-icon>mdi-eye</v-icon>
                             </v-btn>
                           </template>
-                          <span>Ver trámite</span>
+                          <span>Ver información</span>
                         </v-tooltip>
                       </template>
                     </v-data-table>
@@ -273,7 +281,7 @@
                               ><v-icon>mdi-eye</v-icon>
                             </v-btn>
                           </template>
-                          <span>Ver trámite</span>
+                          <span>Ver información</span>
                         </v-tooltip>
                       </template>
                     </v-data-table>
@@ -344,7 +352,7 @@
                               ><v-icon>mdi-eye</v-icon>
                             </v-btn>
                           </template>
-                          <span>Ver trámite</span>
+                          <span>Ver información</span>
                         </v-tooltip>
                       </template>
                     </v-data-table>
@@ -519,35 +527,31 @@ export default {
     degree_name: null,
     category_name: null,
     unit_name: null,
-    state_name_status: null
+    state_name_status: null,
   }),
   watch: {
     affiliate_ci() {
       this.ver = false;
     },
-    /* affiliate_ci(newVal, oldVal) {
-      if (oldVal != newVal) {
-        this.ver = false;
-        if (newVal.hasOwnProperty('category_id')) this.getCategory_name(newVal.category_id)
-        if (newVal.hasOwnProperty('degree_id')) this.getDegree_name(newVal.degree_id)
-        if (newVal.hasOwnProperty('unit_id')) this.getUnit_name(newVal.unit_id)
-      }
-    }*/
   },
   methods: {
     async getLoansHistory() {
       try {
         this.loading = true;
         let message = [];
-        let res = await axios.post(`affiliate_record`, {
-          ci: this.affiliate_ci,
+        let res = await axios.get(`affiliate_record`, {
+          params: {
+            ci: this.affiliate_ci,
+          },
         });
         this.loans = res.data;
         message = this.loans.message[0];
         if (message != "afiliado-inexistente") {
           this.exist_affiliate = true;
           this.ver = true;
-          this.getAffiliate(this.loans.id);
+          if (this.loans.tit_pvt) {
+            this.getAffiliate(this.loans.id);
+          }
         } else {
           this.exist_affiliate = false;
           this.ver = true;
@@ -573,7 +577,7 @@ export default {
         this.getDegree_name(this.affiliate.degree_id);
         this.getCategory_name(this.affiliate.category_id);
         this.getUnit_name(this.affiliate.unit_id);
-        this.getState_name(id)
+        this.getState_name(id);
       } catch (e) {
         console.log(e);
       } finally {
@@ -613,7 +617,7 @@ export default {
         this.loading = false;
       }
     },
-        async getState_name(id) {
+    async getState_name(id) {
       try {
         this.loading = true;
         let res = await axios.get(`affiliate/${id}/state`);
