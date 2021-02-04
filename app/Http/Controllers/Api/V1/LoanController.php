@@ -108,7 +108,7 @@ class LoanController extends Controller
                 'role_id' => $request->role_id
             ];
         }
-        //if ($request->has('validated')) $filters['validated'] = $request->boolean('validated');
+        if ($request->has('validated')) $filters['validated'] = $request->boolean('validated');
         if ($request->has('procedure_type_id')) {
             $relations['modality'] = [
                 'procedure_type_id' => $request->procedure_type_id
@@ -125,8 +125,8 @@ class LoanController extends Controller
             ];
         }
         else{
-            if($request->validated == 0){
-                $filters['validated'] = false;
+            if($request->validated){
+                $filters['validated'] = $request->validated;
                 $relations['user'] = [
                     'user_id' => null
                 ];
@@ -178,6 +178,7 @@ class LoanController extends Controller
     * @bodyParam notes array Lista de notas aclaratorias. Example: [Informe de baja policial, Carta de solicitud]
     * @bodyParam personal_references array Lista de IDs de personas de referencia del préstamo. Example: [1]
     * @bodyParam cosigners array Lista de IDs de codeudores no afiliados a la muserpol. Example: [2,3]
+    * @bodyParam user_id integer ID del usuario. Example: 1.
     * @bodyParam lenders array required Lista de afiliados Titular(es) del préstamo.
     * @bodyParam lenders[0].affiliate_id integer required ID del afiliado. Example: 47461
     * @bodyParam lenders[0].payment_percentage integer required ID del afiliado. Example: 50
@@ -301,6 +302,7 @@ class LoanController extends Controller
     * @bodyParam validated boolean Estado validación del préstamo. Example: true
     * @bodyParam personal_references array Lista de personas de referencia del préstamo. Example: [1]
     * @bodyParam cosigners array Lista de codeudores no afiliados a la muserpol. Example: [2,3]
+    * @bodyParam user_id integer ID del usuario. Example: 1.
     * @bodyParam lenders array Lista de afiliados Titular(es) del préstamo.
     * @bodyParam lenders[0].affiliate_id integer ID del afiliado.Example: 47461
     * @bodyParam lenders[0].payment_percentage integer ID del afiliado. Example: 50
@@ -855,19 +857,20 @@ class LoanController extends Controller
     */
     public function get_flow(Loan $loan)
     {
-        /*$records = $loan->records;
+        $records = $loan->records;
         $previous_user = [];
-        $previous = [];
-        $next = [];
-        //return $records;
-        foreach($records as $record)
-        {
-            if($record->record_type->name == "derivacion")
-            {
-                array_push($previous_user, $record->user_id);
-                array_push($previous, $record->role_id);
-            }
+        $user = '';
+        $record = response()->json(RoleSequence::flow($loan->modality->procedure_type->id, $loan->role_id));
+        $previous = $record->getData()->previous;
+        $next = $record->getData()->next;
+        foreach($previous as $prev){
+            $user = Record::whereRole_id($prev)->whereRecord_type_id(3)->whereRecordable_id($loan->id)->first();
+            if($user)
+                array_push($previous_user, $user->user_id);
+            else
+                array_push($previous_user, '');
         }
+        //return $previous_user;
         $data = [
             "current" => $loan->role_id,
             "previous" => $previous,
@@ -875,8 +878,8 @@ class LoanController extends Controller
             "next" => $next,
             "next_user" => $next
         ];
-        return $data;*/
-        return response()->json(RoleSequence::flow($loan->modality->procedure_type->id, $loan->role_id));
+        return $data;
+        //return response()->json(RoleSequence::flow($loan->modality->procedure_type->id, $loan->role_id));
     }
 
     /** @group Cobranzas
