@@ -278,7 +278,7 @@ class Util
                 ]);
                 $record->record_type()->associate($record_type);
                 //if($record->role_id)
-                $record->role_id = $role->id;
+                    $record->role_id = $role->id;
                 if ($recordable) $record->recordable()->associate($recordable);
                 $record->save();
             }
@@ -494,9 +494,10 @@ class Util
             $data[] = [
                 'role_id' => $role->id,
                 'data' => [
-                    'received' => $model::whereRoleId($role->id)->whereValidated(false)->count(),
+                    'received' => $model::whereRoleId($role->id)->whereValidated(false)->whereUserId(null)->count(),
                     'validated' => $model::whereRoleId($role->id)->whereValidated(true)->count(),
-                    'trashed' => $model::whereRoleId($role->id)->onlyTrashed()->count()
+                    'trashed' => $model::whereRoleId($role->id)->onlyTrashed()->count(),
+                    'my_received' => $model::whereRoleId($role->id)->whereValidated(false)->whereUserId(Auth::user()->id)->count()
                 ]
             ];
         }
