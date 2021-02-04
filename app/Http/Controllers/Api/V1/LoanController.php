@@ -701,7 +701,7 @@ class LoanController extends Controller
         if($loan->parent_loan_id != null && $loan->parent_reason == "REPROGRAMACIÓN" || $loan->parent_loan_id ==null && $loan->parent_reason == "REPROGRAMACIÓN")
         $view_type = 'reprogramming';
 		$view = view()->make('loan.contracts.' . $view_type)->with($data)->render();
-        if ($standalone) return Util::pdf_to_base64([$view], $file_name, 'legal', $request->copies ?? 1);
+        if ($standalone) return Util::pdf_to_base64contract([$view], $file_name, 'legal', $request->copies ?? 1);
         return $view;
     }
 
@@ -830,7 +830,7 @@ class LoanController extends Controller
        ];
        $file_name =implode('_', ['calificación', $procedure_modality->shortened, $loan->code]) . '.pdf'; 
        $view = view()->make('loan.forms.qualification_form')->with($data)->render();
-       if ($standalone) return Util::pdf_to_base64([$view], $file_name, 'legal', $request->copies ?? 1);  
+       if ($standalone) return  Util::pdf_to_base64([$view], $file_name, 'legal', $request->copies ?? 1);  
        return $view; 
    }
 
