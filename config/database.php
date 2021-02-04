@@ -43,7 +43,17 @@ return [
             'prefix' => '',
             'schema' => 'public',
             'sslmode' => 'prefer',
-        ]
+        ],
+        'sqlsrv' => [
+            'driver' => 'sqlsrv',
+            'host' => env('DB_LOAN_HOST', 'localhost'),
+            'port' => env('DB_LOAN_PORT', '1433'),
+            'database' => env('DB_LOAN_DATABASE', 'forge'),
+            'username' => env('DB_LOAN_USERNAME', 'forge'),
+            'password' => env('DB_LOAN_PASSWORD', ''),
+            'charset' => 'utf8',
+            'prefix' => '',
+          ],
     ],
 
     /*

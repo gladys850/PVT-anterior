@@ -12,7 +12,7 @@ class Record extends Model
 
     public $timestamps = true;
     public $guarded = ['id'];
-    protected $fillable = ['user_id', 'record_type_id', 'recordable_id', 'recordable_type', 'action'];
+    protected $fillable = ['user_id', 'role_id', 'record_type_id', 'recordable_id', 'recordable_type', 'action'];
 
     public function __construct(array $attributes = array())
     {
@@ -67,5 +67,9 @@ class Record extends Model
     public function record_type()
     {
         return $this->belongsTo(RecordType::class);
+    }
+
+    public function role(){
+        return $this->belongsTo(Role::class);
     }
 }

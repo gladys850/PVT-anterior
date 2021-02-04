@@ -24,6 +24,7 @@ use App\RoleSequence;
 use App\LoanPayment;
 use App\Voucher;
 use App\Sismu;
+use App\Record;
 use App\Http\Requests\LoansForm;
 use App\Http\Requests\LoanForm;
 use App\Http\Requests\LoanPaymentForm;
@@ -107,7 +108,7 @@ class LoanController extends Controller
                 'role_id' => $request->role_id
             ];
         }
-        if ($request->has('validated')) $filters['validated'] = $request->boolean('validated');
+        //if ($request->has('validated')) $filters['validated'] = $request->boolean('validated');
         if ($request->has('procedure_type_id')) {
             $relations['modality'] = [
                 'procedure_type_id' => $request->procedure_type_id
@@ -117,6 +118,19 @@ class LoanController extends Controller
             $relations['lenders'] = [
                 'affiliate_id' => $request->affiliate_id
             ];
+        }
+        if ($request->has('user_id')) {
+            $relations['user'] = [
+                'user_id' => $request->user_id
+            ];
+        }
+        else{
+            if($request->validated == 0){
+                $filters['validated'] = false;
+                $relations['user'] = [
+                    'user_id' => null
+                ];
+            }
         }
         $data = Util::search_sort(new Loan(), $request, $filters, $relations);
         $data->getCollection()->transform(function ($loan) {
@@ -134,9 +148,13 @@ class LoanController extends Controller
     * @responseFile responses/loan/my_loans.200.json
     */
     public function my_loans(Request $request){
-        if(!$request->per_page)
+        if(!$request->per_page){
             $request->per_page = 0;
+        }
         $loans = Loan::whereUser_idAndValidated($request->user_id, false)->paginate($request->per_page);
+        $loans->getCollection()->transform(function ($loan) {
+            return self::append_data($loan, true);
+        });
         return $loans;
     }
 
@@ -837,6 +855,27 @@ class LoanController extends Controller
     */
     public function get_flow(Loan $loan)
     {
+        /*$records = $loan->records;
+        $previous_user = [];
+        $previous = [];
+        $next = [];
+        //return $records;
+        foreach($records as $record)
+        {
+            if($record->record_type->name == "derivacion")
+            {
+                array_push($previous_user, $record->user_id);
+                array_push($previous, $record->role_id);
+            }
+        }
+        $data = [
+            "current" => $loan->role_id,
+            "previous" => $previous,
+            "previous_user" => $previous_user,
+            "next" => $next,
+            "next_user" => $next
+        ];
+        return $data;*/
         return response()->json(RoleSequence::flow($loan->modality->procedure_type->id, $loan->role_id));
     }
 
