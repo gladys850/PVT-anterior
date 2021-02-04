@@ -36,6 +36,10 @@ class StatisticController extends Controller
                     'display_name' => 'Número de trámites por tipo trámite',
                     'method' => 'amortizations_by_procedure_type'
                 ],
+                'user_loans' => [
+                    'display_name' => 'Número de trámites por usuario',
+                    'method' => 'loans_by_user'
+                ],
             ]
         ];
     }
@@ -52,6 +56,7 @@ class StatisticController extends Controller
     * @queryParam filter Filtro para consultar en la base de datos. Example: role_amortizations
     * @queryParam filter Filtro para consultar en la base de datos. Example: procedure_type_loans
     * @queryParam filter Filtro para consultar en la base de datos. Example: role_loans
+    * @queryParam filter Filtro para consultar en la base de datos. Example: user_loans
     * @authenticated
     * @responseFile responses/statistic/index.200.json
     */
@@ -94,5 +99,11 @@ class StatisticController extends Controller
     {
         $procedure_amortizations = $module->procedure_types()->where('name', 'LIKE', '%Amortización%')->orderBy('name')->get();
         return Util:: process_by_procedure_type(new LoanPayment(), $procedure_amortizations, $module);
+    }
+
+    public function loans_by_user(Module $module)
+    {
+        $procedure_loans = $module->procedure_types()->where('name', 'LIKE', '%Préstamo%')->orderBy('name')->get();
+        return Util::loans_by_user(new Loan(), $procedure_loans, $module);
     }
 }

@@ -673,7 +673,7 @@ class AffiliateController extends Controller
     /**
     * Historial de Tramites
     * Devuelve el Historio de tramites de un afiliado.
-    * @bodyParam ci string required Carnet de identidad. Example:1700723
+    * @queryParam ci string required Carnet de identidad. Example:1700723
     * @authenticated
     * @responseFile responses/affiliate/affiliate_record.200.json
     */
@@ -732,8 +732,14 @@ class AffiliateController extends Controller
         $observation = false;
         $message = array();
         $affiliate = Affiliate::whereIdentity_card($ci)->first();
-        if($affiliate){
+        if($affiliate)
             $tit_pvt = true;
+        else{
+            $affiliate = Affiliate::whereRegistration($ci)->first();
+            if($affiliate)
+                $tit_pvt = true;
+        }
+        if($tit_pvt){
             $id = $affiliate->id;
             $last_name = $affiliate->last_name;
             $mothers_last_name = $affiliate->mothers_last_name;
@@ -744,8 +750,14 @@ class AffiliateController extends Controller
         }
         else{
             $affiliate = Spouse::whereIdentity_card($ci)->first();
-            if($affiliate){
+            if($affiliate)
                 $spouse_pvt = true;
+            else{
+                $affiliate = Spouse::whereRegistration($ci)->first();
+                if($affiliate)
+                    $spouse_pvt = true;
+            }
+            if($spouse_pvt){
                 $id = $affiliate->id;
                 $last_name = $affiliate->last_name;
                 $mothers_last_name = $affiliate->mothers_last_name;
@@ -755,6 +767,7 @@ class AffiliateController extends Controller
                 $registration = $affiliate->registration;
             }
         }
+
         $sismu = "SELECT Padron.IdPadron, trim(Padron.PadPaterno) as PadPaterno, trim(Padron.PadMaterno) as PadMaterno, trim(Padron.PadApellidoCasada) as PadApellidoCasada, trim(Padron.PadNombres) as PadNombres, trim(Padron.PadCedulaIdentidad) as PadCedulaIdentidad, trim(Padron.PadMatricula) as PadMatricula
                     from Padron 
                     where trim(Padron.PadCedulaIdentidad) = '$ci'
@@ -763,7 +776,8 @@ class AffiliateController extends Controller
         if(sizeof($affiliate)>=2)
                 array_push($message, "mas de un registro en SISMU");
         if($affiliate){
-            $id = $affiliate[0]->IdPadron;
+            if(!$tit_pvt)
+                $id = $affiliate[0]->IdPadron;
             $last_name = $affiliate[0]->PadPaterno;
             $mothers_last_name = $affiliate[0]->PadMaterno;
             $surname_husband = $affiliate[0]->PadApellidoCasada;
@@ -776,12 +790,14 @@ class AffiliateController extends Controller
             $sismu = "SELECT Padron.IdPadron, trim(Padron.PadPaterno) as PadPaterno, trim(Padron.PadMaterno) as PadMaterno, trim(Padron.PadApellidoCasada) as PadApellidoCasada, trim(Padron.PadNombres) as PadNombres, trim(Padron.PadCedulaIdentidad) as PadCedulaIdentidad, trim(Padron.PadMatricula) as PadMatricula
                     from Padron 
                     where trim(Padron.PadMatriculaTit) = '$ci'
-                    AND trim(Padron.PadCedulaIdentidad) <> '$ci'";
+                    AND trim(Padron.PadCedulaIdentidad) <> '$ci'
+                    AND trim(Padron.PadMatricula) <> '$ci'";
             $affiliate = DB::connection('sqlsrv')->select($sismu);
             if(sizeof($affiliate)>=2)
                 array_push($message, "mas de un registro en SISMU");
             if($affiliate){
-                $id = $affiliate[0]->IdPadron;
+                if(!$spouse_pvt)
+                    $id = $affiliate[0]->IdPadron;
                 $last_name = $affiliate[0]->PadPaterno;
                 $mothers_last_name = $affiliate[0]->PadMaterno;
                 $surname_husband = $affiliate[0]->PadApellidoCasada;
@@ -835,8 +851,10 @@ class AffiliateController extends Controller
                     join Padron ON Prestamos.idPadron = Padron.idPadron
                     join Producto ON Prestamos.PrdCod = Producto.PrdCod
                     join EstadoPrestamo ON Prestamos.PresEstPtmo = EstadoPrestamo.PresEstPtmo
-                    where trim(Padron.padMatricula) = '$ci'
-                    OR trim(Padron.PadMatricula) = '$ci'";
+                    where trim(Padron.PadCedulaIdentidad) = '$ci'
+                    and Prestamos.PresEstPtmo <> 'N'
+                    OR trim(Padron.PadMatricula) = '$ci'
+                    and Prestamos.PresEstPtmo <> 'N'";
         $prestamos = DB::connection('sqlsrv')->select($query);
         foreach($prestamos as $prestamo){
             $short = explode(" ", $prestamo->PrdDsc);
@@ -890,7 +908,8 @@ class AffiliateController extends Controller
                     join Padron ON Padron.IdPadron = PrestamosLevel1.IdPadronGar
                     join Producto ON Prestamos.PrdCod = Producto.PrdCod
                     join EstadoPrestamo ON Prestamos.PresEstPtmo = EstadoPrestamo.PresEstPtmo
-                    where trim(Padron.padCedulaIdentidad) = '$ci'";
+                    where trim(Padron.padCedulaIdentidad) = '$ci'
+                    and Prestamos.PresEstPtmo <> 'N'";
         $loans = DB::connection('sqlsrv')->select($query);
         foreach($loans as $loan){
             $short = explode(" ", $loan->PrdDsc);
@@ -917,7 +936,7 @@ class AffiliateController extends Controller
     }
 
     public function get_observables($ci){
-        $query = "SELECT Prestamos.IdPrestamo, Prestamos.PresNumero, Prestamos.PresCuotaMensual, EstadoPrestamo.PresEstDsc, Prestamos.PresMntDesembolso, Prestamos.PresSaldoAct, Producto.PrdDsc, trim(Padron.PadCedulaIdentidad) as PadCedulaIdentidad, trim(Padron.PadMatricula) as PadMatricula, trim(Padron.PadMatriculaTit) as PadMatriculaTit
+        $query = "SELECT Prestamos.IdPrestamo, Prestamos.PresNumero, Prestamos.PresCuotaMensual, Prestamos.PresMeses, EstadoPrestamo.PresEstDsc, Prestamos.PresMntDesembolso, Prestamos.PresSaldoAct, Producto.PrdDsc, trim(Padron.PadCedulaIdentidad) as PadCedulaIdentidad, trim(Padron.PadMatricula) as PadMatricula, trim(Padron.PadMatriculaTit) as PadMatriculaTit
                     FROM Prestamos
                     join PrestamosLevel1 ON Prestamos.IdPrestamo = PrestamosLevel1.IdPrestamo
                     join Padron ON Padron.IdPadron = PrestamosLevel1.IdPadronGar
@@ -926,7 +945,7 @@ class AffiliateController extends Controller
                     where Padron.padMatricula like '%$ci%'
                     or Padron.padCedulaIdentidad like '%$ci%'
             EXCEPT 
-                    SELECT Prestamos.IdPrestamo, Prestamos.PresNumero, Prestamos.PresCuotaMensual, EstadoPrestamo.PresEstDsc, Prestamos.PresMntDesembolso, Prestamos.PresSaldoAct, Producto.PrdDsc, trim(Padron.PadCedulaIdentidad) as PadCedulaIdentidad, trim(Padron.PadMatricula) as PadMatricula, trim(Padron.PadMatriculaTit) as PadMatriculaTit
+                    SELECT Prestamos.IdPrestamo, Prestamos.PresNumero, Prestamos.PresCuotaMensual, Prestamos.PresMeses, EstadoPrestamo.PresEstDsc, Prestamos.PresMntDesembolso, Prestamos.PresSaldoAct, Producto.PrdDsc, trim(Padron.PadCedulaIdentidad) as PadCedulaIdentidad, trim(Padron.PadMatricula) as PadMatricula, trim(Padron.PadMatriculaTit) as PadMatriculaTit
                     FROM Prestamos
                     join PrestamosLevel1 ON Prestamos.IdPrestamo = PrestamosLevel1.IdPrestamo
                     join Padron ON Padron.IdPadron = PrestamosLevel1.IdPadronGar

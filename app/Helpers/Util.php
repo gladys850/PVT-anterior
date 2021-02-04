@@ -270,10 +270,15 @@ class Util
         if ($action) {
             $record_type = RecordType::whereName($type)->first();
             if ($record_type) {
+                $role = Auth::user()->roles()->whereHas('module', function($query) {
+                    return $query->whereName('prestamos');
+                })->orderBy('sequence_number')->orderBy('name')->first();
                 $record = $object->records()->make([
                     'action' => $action
                 ]);
                 $record->record_type()->associate($record_type);
+                //if($record->role_id)
+                $record->role_id = $role->id;
                 if ($recordable) $record->recordable()->associate($recordable);
                 $record->save();
             }
@@ -494,6 +499,46 @@ class Util
                     'trashed' => $model::whereRoleId($role->id)->onlyTrashed()->count()
                 ]
             ];
+        }
+        return $data;
+    }
+
+    public static function loans_by_user($model, $object, $module){
+        foreach ($object as $key => $procedure_type) {
+            $data[] = [
+                'procedure_type_id' => $procedure_type->id,
+                'total' => [
+                    'received' => 0,
+                    'validated' => 0,
+                    'trashed' => 0,
+                    'my_received' => 0
+                ]
+            ];
+            foreach ($module->roles()->whereNotNull('sequence_number')->orderBy('sequence_number')->orderBy('display_name')->get() as $subkey => $role) {
+                $data[$key]['data'][$subkey] = [
+                    'role_id' => $role->id
+                ];
+                $values = [
+                    $model::whereRoleId($role->id)->whereHas('modality', function($q) use ($procedure_type) {
+                        $q->whereProcedureTypeId($procedure_type->id);
+                    })->whereValidated(false)->whereUserId(null)->count(), //received
+                    $model::whereRoleId($role->id)->whereHas('modality', function($q) use ($procedure_type) {
+                        $q->whereProcedureTypeId($procedure_type->id);
+                    })->whereValidated(true)->whereUserId(Auth::user()->id)->count(), //validated
+                    $model::whereRoleId($role->id)->whereHas('modality', function($q) use ($procedure_type) {
+                        $q->whereProcedureTypeId($procedure_type->id);
+                    })->onlyTrashed()->whereUserId(Auth::user()->id)->count(), //trashed
+                    $model::whereRoleId($role->id)->whereHas('modality', function($q) use ($procedure_type) {
+                        $q->whereProcedureTypeId($procedure_type->id);
+                    })->whereValidated(false)->whereUserId(Auth::user()->id)->count(), //my_received
+                ];
+                $i = 0;
+                foreach ($data[$key]['total'] as $total_key => $v) {
+                    $data[$key]['total'][$total_key] += $values[$i];
+                    $data[$key]['data'][$subkey]['data'][$total_key] = $values[$i];
+                    $i++;
+                }
+            }
         }
         return $data;
     }
