@@ -178,6 +178,7 @@ class LoanController extends Controller
     * @bodyParam notes array Lista de notas aclaratorias. Example: [Informe de baja policial, Carta de solicitud]
     * @bodyParam personal_references array Lista de IDs de personas de referencia del préstamo. Example: [1]
     * @bodyParam cosigners array Lista de IDs de codeudores no afiliados a la muserpol. Example: [2,3]
+    * @bodyParam user_id integer ID del usuario. Example: 1.
     * @bodyParam lenders array required Lista de afiliados Titular(es) del préstamo.
     * @bodyParam lenders[0].affiliate_id integer required ID del afiliado. Example: 47461
     * @bodyParam lenders[0].payment_percentage integer required ID del afiliado. Example: 50
@@ -301,6 +302,7 @@ class LoanController extends Controller
     * @bodyParam validated boolean Estado validación del préstamo. Example: true
     * @bodyParam personal_references array Lista de personas de referencia del préstamo. Example: [1]
     * @bodyParam cosigners array Lista de codeudores no afiliados a la muserpol. Example: [2,3]
+    * @bodyParam user_id integer ID del usuario. Example: 1.
     * @bodyParam lenders array Lista de afiliados Titular(es) del préstamo.
     * @bodyParam lenders[0].affiliate_id integer ID del afiliado.Example: 47461
     * @bodyParam lenders[0].payment_percentage integer ID del afiliado. Example: 50
