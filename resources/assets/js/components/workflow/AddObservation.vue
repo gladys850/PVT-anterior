@@ -31,7 +31,9 @@
                           :items="areas"
                           item-text="display_name"
                           item-value="id"
+                          :onchange="searchUserFlow()"
                         ></v-select>
+                        <h4 class="text-center">{{user_name}}</h4>
                       </v-col>
                     </v-row>
                     <v-row>
@@ -105,7 +107,10 @@ export default {
     observation_type: [],
     flow: {},
     valArea: [],
-    areas: []
+    areas: [],
+    user_id_previous: 0,
+    user_name: null,
+    length_previus: 0
   }),
   beforeMount(){
     this.getObservationType()
@@ -151,7 +156,8 @@ export default {
           }else{
             if(this.observation.accion=='validar'){
                 let res = await axios.patch(`loan/${id}`, {
-                validated: true
+                validated: true,
+                user_id: this.$store.getters.id
               })
               this.toastr.success("Se validó el trámite correctamente.")
             }else{
@@ -160,7 +166,8 @@ export default {
               message:this.observation.message})
               if(this.observation.accion=='devolver'){
                 let res1 = await axios.patch(`loan/${id}`, {
-                role_id: this.valArea
+                role_id: this.valArea,
+                user_id: this.user_id_previous
                 })
                  this.toastr.success("Se devolvio el tramite correctamente.")
               }else{
@@ -194,6 +201,7 @@ export default {
       try {
         let res = await axios.get(`loan/${id}/flow`)
         this.flow = res.data
+        this.length_previus = this.flow.previous.length
         this.areas = this.$store.getters.roles.filter(o =>
           this.flow.previous.includes(o.id)
         )
@@ -201,6 +209,26 @@ export default {
         console.log(e)
       }
     },
+    async getUser(id) {
+      try{ 
+        let user
+        let res = await axios.get(`user/${id}`)
+        user = res.data
+        this.user_name = "Usuario: " + user.username
+
+      } catch (e) {
+        console.log(e)
+      }
+    },
+    searchUserFlow(){
+      for(let i = 0; i< this.flow.previous.length; i++){
+        if(this.flow.previous[i] == this.valArea){
+          this.user_id_previous = this.flow.previous_user[i]
+          this.getUser(this.user_id_previous) 
+        }
+      }      
+    },
+
   }
 }
 </script>

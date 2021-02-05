@@ -10,8 +10,9 @@
           v-model="filters.traySelected"
           active-class="primary white--text"
           mandatory
-          v-if="!track" v-show="affiliate_id==0"
-        ><!--filtros superiores-->
+          v-if="!track"
+        ><!--filtros superiores
+        v-if="!track" v-show="affiliate_id==0"-->
           <v-btn
             v-for="tray in trays"
             :key="tray.name"
@@ -120,7 +121,7 @@
       </v-list>
     </v-tooltip>
     <v-card-text>
-      <v-row v-if="!track" v-show="affiliate_id==0">
+      <v-row v-if="!track">
         <v-toolbar flat>
           <v-col :cols="singleRol ? 12 : 10">
               <v-tabs
@@ -131,8 +132,9 @@
                 active-class="secondary"
               >
                 <v-tab v-for="(procedureType, index) in $store.getters.modalityLoan" :key="procedureType.id">
+                   <!--:content="procedureTypesCount.hasOwnProperty(index) ? procedureTypesCount[index].toString() : '-'"-->
                   <v-badge
-                    :content="procedureTypesCount.hasOwnProperty(index) ? procedureTypesCount[index].toString() : '-'"
+                   :content="procedureTypesCount.hasOwnProperty(index) ? procedureTypesCount[index].toString() : '-'"
                     :color="procedureTypeClass(index)"
                     right
                     top
@@ -201,6 +203,12 @@ export default {
           display_name: 'RECIBIDOS',
           count: 0,
           color: 'info'
+        },
+        {
+          name: 'my_received',
+          display_name: 'DEVUELTOS',
+          count: 0,
+          color: 'warning'
         }, {
           name: 'validated',
           display_name: 'VALIDADOS',
@@ -225,8 +233,8 @@ export default {
       totalLoans: 0,
       loading: true,
       procedureModalities: [],
-      affiliate_id: this.$route.params.id > 0 ? this.$route.params.id : 0,
-      affiliate: [],
+      //affiliate_id: this.$route.params.id > 0 ? this.$route.params.id : 0,
+      //affiliate: [],
       resultado:[]
     }
   },
@@ -274,9 +282,9 @@ export default {
     this.bus.$on('emitRefreshLoans', val => {
       this.updateLoanList();
     })
-    if(this.$route.params.id > 0){ //TODO revisar si se utiliza el filtro de afiliado para listar los prestamos del afiliado
+    /*if(this.$route.params.id > 0){ //TODO revisar si se utiliza el filtro de afiliado para listar los prestamos del afiliado
       this.getAffiliate(this.$route.params.id)
-    }
+    }*/
   },
   watch: {
     search: _.debounce(function () {
@@ -358,19 +366,29 @@ export default {
         procedure_type_id: procedureType,
         role_id: this.filters.roleSelected
       }
+      if(this.filters.traySelected != 'received'){
+        filters = {
+          procedure_type_id: procedureType,
+          role_id: this.filters.roleSelected,
+          user_id: this.$store.getters.id
+        }
+      }
       switch (this.filters.traySelected) {
         case 'received':
+          filters.validated = false
+          break
+        case 'my_received':
           filters.validated = false
           break
         case 'validated':
           filters.validated = true
           break
       }
-      if(this.affiliate_id > 0){
+      /*if(this.affiliate_id > 0){
         filters = {
           affiliate_id: this.affiliate_id
         }
-      }
+      }*/
       this.params = filters
       this.updateLoanList()
     },
@@ -381,11 +399,9 @@ export default {
         }
         this.loading = true
         let res
-        if(this.affiliate_id > 0){
+        /*if(this.affiliate_id > 0){
           res = await axios.get(`loan`, {
-            params: {
-           
-              
+            params: {              
               page: this.options.page,
               per_page: this.options.itemsPerPage,
               sortBy: this.options.sortBy,
@@ -394,7 +410,7 @@ export default {
             }
           })
         }
-        else if(this.track){
+        if(this.track){
           res = await axios.get(`loan`, {
             params: {
               page: this.options.page,
@@ -405,7 +421,7 @@ export default {
             }
           })
         }
-        else{
+        else{*/
           res = await axios.get(`loan`, {
             params: {...{
               page: this.options.page,
@@ -415,7 +431,7 @@ export default {
               search: this.search
             }, ...this.params}
           })
-        }
+        //}
         this.loans = res.data.data
         this.totalLoans = res.data.total
         delete res.data['data']
@@ -454,7 +470,7 @@ export default {
         let res = await axios.get(`statistic`, {
           params: {
             module: 'prestamos',
-            filter: 'procedure_type_loans'
+            filter: 'user_loans'
           }
         })
         this.resultado = res.data.data_loans
@@ -477,16 +493,16 @@ export default {
           to: { name: "flowIndex" }
         }
       ]
-        if(this.affiliate_id > 0){
+        /*if(this.affiliate_id > 0){
           breadcrumbs.push({
           text: this.$options.filters.fullName(this.affiliate, true),
           to: { name: "affiliateAdd", params: { id: this.affiliate_id } }
         })
-      }
+      }*/
 
       this.$store.commit("setBreadcrumbs", breadcrumbs)
     },
-    async getAffiliate(id) {
+    /*async getAffiliate(id) {
       try {
         this.loading = true
         let res = await axios.get(`affiliate/${id}`)
@@ -496,7 +512,7 @@ export default {
       } finally {
         this.loading = false
       }
-    },
+    },*/
   }
 }
 </script>
