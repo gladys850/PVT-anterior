@@ -16,7 +16,7 @@
               small
               color="success"
               class="darken-2 ml-4"
-              @click="validation()"
+              @click="bus.$emit('openDialog', { edit: false, accion: 'validar' })"
             >
               <v-icon dark>mdi-file-check</v-icon>
             </v-btn>

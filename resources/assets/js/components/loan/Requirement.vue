@@ -298,7 +298,8 @@ export default {
               guarantors: this.guarantors,
               data_loan:this.data_loan_parent,
               documents: this.ids_items.concat(this.itemsOpc.concat(this.radios.filter(Boolean))),
-              notes: this.otherDocuments
+              notes: this.otherDocuments,
+              user_id: this.$store.getters.id
             });             
             if(res.status==201 || res.status == 200){
               this.status_click = false        
