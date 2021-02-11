@@ -81,7 +81,8 @@ class LoanPayment extends Model
         $interest = [
             'penal' => 0,
             'accumulated' => 0,
-            'current' => 0
+            'current' => 0,
+            'accumulated_amount' => 0
         ];
         if ($loan->balance == 0) return (object)$interest;
         $estimated_date = CarbonImmutable::parse($estimated_date ?? CarbonImmutable::now()->toDateString());
@@ -105,7 +106,11 @@ class LoanPayment extends Model
         } else {
             $interest['current'] = $estimated_date->day;
         }
-        if ($diff_days > $interest['current']) $interest['accumulated'] = $diff_days - $interest['current'];
+        if ($diff_days > $interest['current']){
+            $interest['accumulated'] = $diff_days - $interest['current'];
+            if($interest['accumulated'] > 0)
+                $interest['accumulated_amount'] = self::interest_by_days($interest['accumulated'], $loan->interest->annual_interest, $loan->balance);
+        }
         $interest['accumulated'] += $latest_quota->accumulated_remaining;
         if ($interest['accumulated'] >= 90) {
             $interest['penal'] = $interest['accumulated'];
@@ -149,6 +154,7 @@ class LoanPayment extends Model
         $estimated_date = Carbon::now()->endOfMonth();
         if (!$latest_quota || $first) {
             $payment_date = $loan->disbursement_date ? $loan->disbursement_date : $loan->request_date;
+            //$payment_date = $loan->disbursement_date;
             $payment_date = CarbonImmutable::parse($payment_date);
             if ($estimated_date->lessThan($payment_date) || $first) $estimated_date = $payment_date->endOfMonth();
             if ($payment_date->day >= LoanGlobalParameter::latest()->first()->offset_interest_day && $estimated_date->diffInMonths($payment_date) == 0) {
@@ -190,5 +196,9 @@ class LoanPayment extends Model
         $payment->paid_by = $paid_by;
         $payment->amortization_type_id = $payment_type->id;
         $loan_payment = $loan->payments()->create($payment->toArray());
+    }
+
+    public static function interest_by_days($days, $annual_interest, $balance){
+            return (($annual_interest/100)/360)*$days*$balance;
     }
 }

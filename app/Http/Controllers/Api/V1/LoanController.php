@@ -876,7 +876,7 @@ class LoanController extends Controller
             "previous" => $previous,
             "previous_user" => $previous_user,
             "next" => $next,
-            "next_user" => $next
+            "next_user" => $next // por implementar si se solicita
         ];
         return $data;
         //return response()->json(RoleSequence::flow($loan->modality->procedure_type->id, $loan->role_id));

@@ -453,7 +453,7 @@ class Util
         ];
     }
 
-    public static function process_by_procedure_type($model, $object, $module){
+    public static function process_by_procedure_type($model, $object, $module){ //aadecuar para amortizaciones
         foreach ($object as $key => $procedure_type) {
             $data[] = [
                 'procedure_type_id' => $procedure_type->id,
@@ -495,7 +495,7 @@ class Util
                 'role_id' => $role->id,
                 'data' => [
                     'received' => $model::whereRoleId($role->id)->whereValidated(false)->whereUserId(null)->count(),
-                    'validated' => $model::whereRoleId($role->id)->whereValidated(true)->count(),
+                    'validated' => $model::whereRoleId($role->id)->whereValidated(true)->whereUserId(Auth::user()->id)->count(),
                     'trashed' => $model::whereRoleId($role->id)->onlyTrashed()->count(),
                     'my_received' => $model::whereRoleId($role->id)->whereValidated(false)->whereUserId(Auth::user()->id)->count()
                 ]
