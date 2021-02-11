@@ -120,25 +120,38 @@
                     <th class="w-15"><div>Amortización</div><div>capital</div></td>
                     <th class="w-15"><div>Pago</div><div>interés</div></td>
                     <th class="w-15"><div>Saldo</div><div>capital</div></th>
+                    <!--<th class="w-15"><div>Interes</div><div>Acumulado</div></th>-->
                 </tr>
             </thead>
             <tbody>
                 @php ($sum_capital = 0)
                 @php ($sum_interest = 0)
                 @php ($sum_estimated_quota = 0)
+                @php ($sw = 0)
                 @foreach ($loan->plan as $quota)
                 <tr>
                     <td class="data-row py-2">{{ $quota->quota }}</td>
                     <td class="data-row py-2">{{ Carbon::parse($quota->date)->format('d/m/y') }}</td>
-                    <td class="data-row py-2">{{ Util::money_format($quota->estimated_quota) }}</td>
-                    <td class="data-row py-2">{{ $quota->days }}</td>
+                    @if($sw == 0)
+                        <td class="data-row py-2">{{ Util::money_format($quota->estimated_quota + $quota->interest_accumulated) }}</td>
+                        <td class="data-row py-2">{{ $quota->days + $quota->accumulated }}</td>
+                    @else
+                        <td class="data-row py-2">{{ Util::money_format($quota->estimated_quota) }}</td>
+                        <td class="data-row py-2">{{ $quota->days }}</td>
+                    @endif
                     <td class="data-row py-2">{{ Util::money_format($quota->capital) }}</td>
+                    @if($sw == 0 )
+                        <td class="data-row py-2">{{ Util::money_format($quota->interest  + $quota->interest_accumulated) }}</td>
+                    @else
                     <td class="data-row py-2">{{ Util::money_format($quota->interest) }}</td>
+                    @endif
                     <td class="data-row py-2">{{ Util::money_format($quota->next_balance) }}</td>
+                    <!--<td class="data-row py-2">{{ $quota->interest_accumulated }}</td>-->
                 </tr>
                 @php ($sum_estimated_quota += $quota->estimated_quota)
                 @php ($sum_capital += $quota->capital)
                 @php ($sum_interest += $quota->interest)
+                @php ($sw = 1)
                 @endforeach
                 <tr>
                     <td colspan="2" class="data-row py-2 font-semibold leading-tight text-xs">TOTALES</td>

@@ -341,6 +341,7 @@ class Loan extends Model
         $daily_interest = $this->interest->daily_current_interest;
         $balance = $this->amount_approved;
         $estimated_quota = $this->estimated_quota;
+        $loan_term = $this->loan_term;
         $i = 0;
         while ($balance > 0) {
             if (count($plan) == 0) {
@@ -361,14 +362,22 @@ class Loan extends Model
             $next_balance = Util::round($next_balance);
             $balance = Util::round($balance - $next_balance);
             $total = $next_balance + $next_interest;
+            if($next_payment->quota == $loan_term){
+                $next_balance = $next_balance + $balance;
+                $estimated_quota = $estimated_quota + $balance;
+                $total = $total + $balance;
+                $balance = 0;
+            }
             array_push($plan, (object)[
                 'quota' => $next_payment->quota,
                 'date' => $next_payment->date,
                 'days' => $interest->current,
+                'interest_accumulated' => $interest->accumulated_amount,
                 'estimated_quota' => ($estimated_quota >= $total) ? $total : $estimated_quota,
                 'capital' => $next_balance,
                 'interest' => $next_interest,
-                'next_balance' => $balance
+                'next_balance' => $balance,
+                'accumulated' => $interest->accumulated
             ]);
             $i++;
         }
