@@ -179,7 +179,7 @@
                     right
                     absolute
                     v-on="on"
-                    style="margin-right: -9pxmargin-top: 38px;"
+                    style="margin-right: -9px; margin-top: 38px;"
                     @click="imprimir($route.params.id)"
                   >
                     <v-icon>mdi-printer</v-icon>

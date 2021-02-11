@@ -8,7 +8,7 @@
     :options="options"
     :server-items-length="totalLoans"
     :footer-props="{ itemsPerPageOptions: [8, 15, 30] }"
-    :item-class="itemRowBackground"
+    
     multi-sort
     :show-select="tray == 'validated'"
     @update:options="updateOptions"
@@ -208,13 +208,6 @@ export default {
         class: ['normal', 'white--text'],
         align: 'center',
         sortable: false
-      }, 
-      {
-        text: 'Creado por',
-        value: 'user.username',
-        class: ['normal', 'white--text'],
-        align: 'center',
-        sortable: true
       },{
         text: 'Acciones',
         value: 'actions',
