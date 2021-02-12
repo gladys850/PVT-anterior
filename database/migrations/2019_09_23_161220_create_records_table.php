@@ -16,13 +16,11 @@ class CreateRecordsTable extends Migration
         Schema::create('records', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('role_id')->nullable();
             $table->unsignedBigInteger('record_type_id');
             $table->morphs('recordable');
             $table->text('action');
             $table->timestamps();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('role_id')->references('id')->on('roles')->onDelete('cascade');
             $table->foreign('record_type_id')->references('id')->on('record_types')->onDelete('cascade');
         });
     }
