@@ -65,6 +65,23 @@
         </template>
         <span>Ver trámite</span>
       </v-tooltip>
+
+        <v-tooltip bottom v-if="$store.getters.userRoles.includes('PRE-aprobacion-direccion') || $store.getters.userRoles.includes('PRE-revision-direccion')">
+          <template v-slot:activator="{ on }" v-if="item.user_id != null">
+            <v-btn
+              icon
+              small
+              v-on="on"
+              color="error"
+            
+              @click.stop="freeLoan(item.id, item.code)"
+            >
+              <v-icon>mdi-lock-open-variant</v-icon>
+            </v-btn>
+          </template>
+          <span>Liberar usuario del trámite</span>
+        </v-tooltip>
+
       <v-menu
         offset-y
         close-on-content-click
@@ -344,7 +361,27 @@ export default {
         }
         this.printDocs=docs
         console.log(this.printDocs)
+      },
+      
+    async freeLoan(id, code) {
+      try {     
+          //this.loading = true;
+            let res = await axios.patch(`loan/${id}`, {
+              user_id: null,
+              validated: false
+            });
+            console.log(res)
+            //this.sheet = false;
+            this.bus.$emit('emitRefreshLoans');
+            this.toastr.success("El trámite "+ code +" fue liberado" ) 
+     
+      } catch (e) {
+        console.log(e)
+        this.toastr.error("Ocurrió un error en la liberación del trámite...")
       }
+    }
+
+
     } 
   }
 

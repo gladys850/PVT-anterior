@@ -11,8 +11,8 @@
           active-class="primary white--text"
           mandatory
           v-if="!track"
-        ><!--filtros superiores
-        v-if="!track" v-show="affiliate_id==0"-->
+          ><!--filtros superiores
+          v-if="!track" v-show="affiliate_id==0"-->
           <v-btn
             v-for="tray in trays"
             :key="tray.name"
