@@ -42,6 +42,8 @@ class CreateLoanPaymentsTable extends Migration
             $table->foreign('amortization_type_id')->references('id')->on('amortization_types');
             $table->boolean('validated')->default(false);
             $table->text('description')->nullable(); // descripcion del pago
+            $table->unsignedBigInteger('user_id')->nullable();  // id usuario
+            $table->foreign('user_id')->references('id')->on('users');
             $table->timestamps();
             $table->softDeletes();
         });

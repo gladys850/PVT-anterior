@@ -460,7 +460,8 @@ class Util
                 'total' => [
                     'received' => 0,
                     'validated' => 0,
-                    'trashed' => 0
+                    'trashed' => 0,
+                    'my_received' => 0
                 ]
             ];
             foreach ($module->roles()->whereNotNull('sequence_number')->orderBy('sequence_number')->orderBy('display_name')->get() as $subkey => $role) {
@@ -470,13 +471,16 @@ class Util
                 $values = [
                     $model::whereRoleId($role->id)->whereHas('modality', function($q) use ($procedure_type) {
                         $q->whereProcedureTypeId($procedure_type->id);
-                    })->whereValidated(false)->count(), //received
+                    })->whereValidated(false)->whereUserId(Auth::user()->id)->count(), //received
                     $model::whereRoleId($role->id)->whereHas('modality', function($q) use ($procedure_type) {
                         $q->whereProcedureTypeId($procedure_type->id);
-                    })->whereValidated(true)->count(), //validated
+                    })->whereValidated(true)->whereUserId(Auth::user()->id)->count(), //validated
                     $model::whereRoleId($role->id)->whereHas('modality', function($q) use ($procedure_type) {
                         $q->whereProcedureTypeId($procedure_type->id);
-                    })->onlyTrashed()->count(), //trashed
+                    })->onlyTrashed()->whereUserId(Auth::user()->id)->count(), //trashed
+                    $model::whereRoleId($role->id)->whereHas('modality', function($q) use ($procedure_type) {
+                        $q->whereProcedureTypeId($procedure_type->id);
+                    })->whereValidated(false)->whereUserId(Auth::user()->id)->count(), //my_received
                 ];
                 $i = 0;
                 foreach ($data[$key]['total'] as $total_key => $v) {
