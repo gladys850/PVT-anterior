@@ -99,7 +99,7 @@ class LoanPayment extends Model
         }
         $payment_date = CarbonImmutable::parse($payment_date);
         if ($estimated_date->lessThan($payment_date)) return (object)$interest;
-        $diff_days = $estimated_date->diffInDays($payment_date) + 1;
+        $diff_days = $estimated_date->diffInDays($payment_date);
         if ($estimated_date->diffInMonths($payment_date) == 0) {
             $interest['current'] = $diff_days;
             $interest['accumulated'] = 0;
