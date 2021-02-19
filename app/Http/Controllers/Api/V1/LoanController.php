@@ -715,7 +715,7 @@ class LoanController extends Controller
             $lenders[] = self::verify_spouse_disbursable($lender);
         }
         foreach ($loan->lenders as $lender) {
-            $lend=$lend.'*'.' ' . $lender->first_name .' '. $lender->second_name .' '. $lender->last_name.' ';
+            $lend=$lend.'*'.' ' . $lender->first_name .' '. $lender->second_name .' '. $lender->last_name.' '. $lender->mothers_last_name;
         }
         
         $loan_affiliates= $loan->loan_affiliates[0]->first_name;
@@ -773,9 +773,10 @@ class LoanController extends Controller
             'signers' => $persons,
             'is_dead'=> $is_dead
         ];
+        $information_loan= $this->get_information_loan($loan);
         $file_name = implode('_', ['solicitud', 'prestamo', $loan->code]) . '.pdf';
         $view = view()->make('loan.forms.request_form')->with($data)->render();
-        if ($standalone) return Util::pdf_to_base64([$view], $file_name, 'legal', $request->copies ?? 1);
+        if ($standalone) return Util::pdf_to_base64([$view], $file_name,$information_loan, 'legal', $request->copies ?? 1);
         return $view;
     }
 
@@ -812,9 +813,10 @@ class LoanController extends Controller
             'lenders' => collect($lenders),
             'is_dead'=> $is_dead
         ];
+        $information_loan= $this->get_information_loan($loan);
         $file_name = implode('_', ['plan', $procedure_modality->shortened, $loan->code]) . '.pdf';
         $view = view()->make('loan.payments.payment_plan')->with($data)->render();
-        if ($standalone) return Util::pdf_to_base64([$view], $file_name, 'legal', $request->copies ?? 1);
+        if ($standalone) return Util::pdf_to_base64([$view], $file_name, $information_loan, 'legal', $request->copies ?? 1);
         return $view;
     }
 
@@ -847,9 +849,10 @@ class LoanController extends Controller
            'loan' => $loan,
            'lenders' => collect($lenders),        
        ];
+       $information_loan= $this->get_information_loan($loan);
        $file_name =implode('_', ['calificación', $procedure_modality->shortened, $loan->code]) . '.pdf'; 
        $view = view()->make('loan.forms.qualification_form')->with($data)->render();
-       if ($standalone) return  Util::pdf_to_base64([$view], $file_name, 'legal', $request->copies ?? 1);  
+       if ($standalone) return  Util::pdf_to_base64([$view], $file_name, $information_loan, 'legal', $request->copies ?? 1);  
        return $view; 
    }
 
@@ -949,11 +952,12 @@ class LoanController extends Controller
             //$payment->validated = true;
             $loan_payment = $loan->payments()->create($payment->toArray());
             //generar PDF
+            $information_loan= $this->get_information_loan($loan);
             $file_name = implode('_', ['pagos', $loan->modality->shortened, $loan->code]) . '.pdf';
             $loanpayment = new LoanPaymentController;
             $payment->attachment = Util::pdf_to_base64([
                 $loanpayment->print_loan_payment(new Request([]), $loan_payment, false)
-            ], $file_name, 'legal', $request->copies ?? 1);
+            ], $file_name,$information_loan, 'legal', $request->copies ?? 1);
             return $payment;
         }else{
             abort(403, 'El préstamo ya fue liquidado');
@@ -1129,10 +1133,11 @@ class LoanController extends Controller
                 'to' => $to_role
             ]
         ];
+        $information_derivation='Fecha: '.Str::slug(Carbon::now()->isoFormat('LLL'), ' ').'  enviado a  '.$from_role->display_name;
         $file_name = implode('_', ['derivacion', 'prestamos', Str::slug(Carbon::now()->isoFormat('LLL'), '_')]) . '.pdf';
         $view = view()->make('flow.bulk_flow_procedures')->with($data)->render();
         return response()->json([
-            'attachment' => Util::pdf_to_base64([$view], $file_name, 'letter', $request->copies ?? 1, false),
+            'attachment' => Util::pdf_to_base64([$view], $file_name,$information_derivation, 'letter', $request->copies ?? 1, false),
             'derived' => $derived
         ]);
     }
@@ -1184,9 +1189,10 @@ class LoanController extends Controller
             'loan' => $loan,
             'lenders' => collect($lenders)
         ];
+        $information_loan= $this->get_information_loan($loan);
         $file_name = implode('_', ['kardex', $procedure_modality->shortened, $loan->code]) . '.pdf';
         $view = view()->make('loan.payments.payment_kardex')->with($data)->render();
-        if ($standalone) return Util::pdf_to_base64([$view], $file_name, 'legal', $request->copies ?? 1);
+        if ($standalone) return Util::pdf_to_base64([$view], $file_name, $information_loan, 'legal', $request->copies ?? 1);
         return $view;
     }
 

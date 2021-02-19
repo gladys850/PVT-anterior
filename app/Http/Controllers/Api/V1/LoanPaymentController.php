@@ -283,10 +283,27 @@ class LoanPaymentController extends Controller
             'signers' => $persons,
             'is_dead'=> $is_dead
         ];
+        $information_loan = $this->get_information_loan($loan);
         $file_name = implode('_', ['pagos', $procedure_modality->shortened, $loan->code]) . '.pdf';
         $view = view()->make('loan.payments.payment_loan')->with($data)->render();
-        if ($standalone) return Util::pdf_to_base64([$view], $file_name, 'legal', $request->copies ?? 1);
+        if ($standalone) return Util::pdf_to_base64([$view], $file_name, $information_loan, 'legal', $request->copies ?? 1);
         return $view;
+    }
+
+    public function get_information_loan(Loan $loan)
+    {
+        $lend='';
+        foreach ($loan->lenders as $lender) {
+            $lenders[] = LoanController::verify_spouse_disbursable($lender);
+        }
+        foreach ($loan->lenders as $lender) {
+            $lend=$lend.'*'.' ' . $lender->first_name .' '. $lender->second_name .' '. $lender->last_name.' '. $lender->mothers_last_name;
+        }
+        
+        $loan_affiliates= $loan->loan_affiliates[0]->first_name;
+        $file_name =implode(' ', ['Información:',$loan->code,$loan->modality->name,$lend]); 
+    
+        return $file_name;
     }
 
     /**
