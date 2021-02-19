@@ -10,7 +10,7 @@
     "php": "^7.2.5",
     "adldap2/adldap2": "^10.2",
     "barryvdh/laravel-snappy": "^0.4.7",
-    "doctrine/dbal": "^3.0",
+    "doctrine/dbal": "^2.10.2",
     "fico7489/laravel-pivot": "^3.0",
     "fideloper/proxy": "^4.3",
     "fruitcake/laravel-cors": "^1.0",
@@ -22,6 +22,7 @@
     "milon/barcode": "^7.0",
     "rap2hpoutre/laravel-log-viewer": "^1.4",
     "santigarcor/laratrust": "^5.2",
+    "simplesoftwareio/simple-qrcode": "^4.1",
     "tymon/jwt-auth": "^2",
     "waavi/sanitizer": "^1.0"
   },

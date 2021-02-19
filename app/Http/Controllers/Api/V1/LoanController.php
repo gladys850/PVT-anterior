@@ -700,11 +700,28 @@ class LoanController extends Controller
 				$view_type = 'hypothecary';
             	break;
         }
+        $information_loan= $this->get_information_loan($loan);
         if($loan->parent_loan_id != null && $loan->parent_reason == "REPROGRAMACIÓN" || $loan->parent_loan_id ==null && $loan->parent_reason == "REPROGRAMACIÓN")
         $view_type = 'reprogramming';
 		$view = view()->make('loan.contracts.' . $view_type)->with($data)->render();
-        if ($standalone) return Util::pdf_to_base64contract([$view], $file_name, 'legal', $request->copies ?? 1);
+        if ($standalone) return Util::pdf_to_base64contract([$view], $file_name,$information_loan,'legal', $request->copies ?? 1);
         return $view;
+    }
+    
+    public function get_information_loan(Loan $loan)
+    {
+        $lend='';
+        foreach ($loan->lenders as $lender) {
+            $lenders[] = self::verify_spouse_disbursable($lender);
+        }
+        foreach ($loan->lenders as $lender) {
+            $lend=$lend.'*'.' ' . $lender->first_name .' '. $lender->second_name .' '. $lender->last_name.' ';
+        }
+        
+        $loan_affiliates= $loan->loan_affiliates[0]->first_name;
+        $file_name =implode(' ', ['Información:',$loan->code,$loan->modality->name,$lend]); 
+    
+        return $file_name;
     }
 
     /**

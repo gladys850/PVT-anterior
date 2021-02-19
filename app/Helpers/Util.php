@@ -362,10 +362,10 @@ class Util
         ];
     }
 
-
-    public static function pdf_to_base64contract($views, $file_name, $size = 'letter', $copies = 1, $portrait = true)
+    
+    public static function pdf_to_base64contract($views, $file_name,$informationqr, $size = 'letter', $copies = 1, $portrait = true)
     {
-        $footerHtml = view()->make('partials.footer')->with(array('paginator' => true, 'print_date' => true, 'date' => Carbon::now()->ISOFormat('L H:m')))->render();
+        $footerHtml = view()->make('partials.footer')->with(array('paginator' => true, 'print_date' => true, 'date' => Carbon::now()->ISOFormat('L H:m'),'informationqr'=>$informationqr))->render();
         $options = [
             'copies' => $copies ?? 1,
             'footer-html' => $footerHtml,

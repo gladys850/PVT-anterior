@@ -174,6 +174,7 @@ return [
         Mpociot\ApiDoc\ApiDocGeneratorServiceProvider::class,
         // Excel
         Maatwebsite\Excel\ExcelServiceProvider::class,
+        SimpleSoftwareIO\QrCode\QrCodeServiceProvider::class,
     ],
 
     /*
@@ -241,5 +242,6 @@ return [
         'Sanitizer' => Waavi\Sanitizer\Laravel\Facade::class,
          // Excel
         'Excel' => Maatwebsite\Excel\Facades\Excel::class,
+        'QrCode' => SimpleSoftwareIO\QrCode\Facades\QrCode::class,
     ],
 ];
