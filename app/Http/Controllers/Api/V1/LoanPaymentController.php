@@ -52,6 +52,7 @@ class LoanPaymentController extends Controller
     * @queryParam role_id integer Ver préstamos del rol, si es 0 se muestra la lista completa. Example: 73
     * @queryParam state_id integer ID del estado del registro de pago. Example 6
     * @queryParam loan_id integer ID del tramite de préstamo. Example 1
+    * @queryParam user_id integer ID del usuario de préstamo. Example 1
     * @queryParam validated Booleano para filtrar trámites válidados. Example: 1
     * @queryParam procedure_type_id ID para filtrar trámites por tipo de trámite. Example: 30
     * @queryParam trashed Booleano para obtener solo eliminados. Example: 1
@@ -105,6 +106,19 @@ class LoanPaymentController extends Controller
             $relations['loan'] = [
                 'loan_id' => $request->loan_id
             ];
+        }
+        if ($request->has('user_id')) {
+            $relations['user'] = [
+                'user_id' => $request->user_id
+            ];
+        }
+        else{
+            if($request->validated){
+                $filters['validated'] = $request->validated;
+                $relations['user'] = [
+                    'user_id' => null
+                ];
+            }
         }
         $data = Util::search_sort(new LoanPayment(), $request, $filters, $relations);
         $data->getCollection()->transform(function ($loanPayment) {

@@ -36,14 +36,14 @@
                 <td class="data-row py-5" colspan="{{ $loan->parent_loan ? 1 : 3 }}">{{ $loan->modality->name }}</td>
             </tr>
             <tr class="bg-grey-darker text-xxs text-white">
-                <td>Monto solicitado</td>
+                <td>Monto Desembolsado</td>
                 <td>Plazo</td>
                 <td>Tipo de Desembolso</td>
-                <td>Fecha de Desembolso</td>
+                <!--<td>Fecha de Desembolso</td>-->
 
             </tr>
             <tr>
-                <td class="data-row py-5">{{ Util::money_format($loan->amount_requested) }} <span class="capitalize">Bs.</span></td>
+                <td class="data-row py-5">{{ Util::money_format($loan->amount_approved) }} <span class="capitalize">Bs.</span></td>
                 <td class="data-row py-5">{{ $loan->loan_term }} <span class="capitalize">Meses</span></td>
                 <td class="data-row py-5">
                     @if($loan->payment_type->name=='Deposito Bancario')
@@ -53,7 +53,17 @@
                         {{ $loan->payment_type->name}}
                     @endif
                 </td>
-                <td class="data-row py-5">{{ Carbon::parse($loan->disbursement_date)->format('d/m/y') }}</td>
+                <!--<td class="data-row py-5">{{ Carbon::parse($loan->disbursement_date)->format('d/m/y') }}</td>-->
+            </tr>
+            <tr class="bg-grey-darker text-xxs text-white">
+                <td>Tasa Anual (%)</td>
+                <td>Cuota Fija mensual</td>
+                <td>Fecha de Desembolso</td>
+            </tr>
+            <tr>
+                <td>{{ $loan->interest->annual_interest}}</td>
+                <td>{{ $loan->estimated_quota }}</td>
+                <td>{{ Carbon::parse($loan->disbursement_date)->format('d/m/y') }}</td>
             </tr>
         </table>
     </div>
@@ -142,6 +152,7 @@
                     <td class="data-row py-2">{{ Util::money_format($quota->capital) }}</td>
                     @if($sw == 0 )
                         <td class="data-row py-2">{{ Util::money_format($quota->interest  + $quota->interest_accumulated) }}</td>
+                        @php ($sum_interest += $quota->interest_accumulated)
                     @else
                     <td class="data-row py-2">{{ Util::money_format($quota->interest) }}</td>
                     @endif
@@ -163,6 +174,10 @@
                 </tr>
             </tbody>
         </table>
+    </div>
+    <div class="block">
+    ESTE CRONOGRAMA SE ELABORA BAJO EL SUPUESTO DEL CUMPLIMIENTO DEL PAGO DE LAS CUOTAS EN FECHAS INDICADAS. CUALQUIER ALTERACIÓN EN LOS PAGOS O EN LAS CONDICIONES DEL CRÉDITO DEJE SIN EFECTO ESTE DOCUMENTO.
+    SI TUVIERA ALGUNA CONSULTA SÍRVASE APERSONARSE A NUESTRAS OFICINAS
     </div>
 </body>
 </html>
