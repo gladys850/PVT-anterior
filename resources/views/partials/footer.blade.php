@@ -66,8 +66,17 @@
         @endif
         </div>
         <div class="child" align="right" style="border:0;">
-            <img src="data:image/png;base64, {{ DNS2D::getBarcodePNG(bcrypt($date . ' ' . gethostname() . ' ' . env('APP_URL')), 'PDF417') }}" alt="BARCODE!!!" style="height: 20px; width: 125px;" />
+        @if (isset($informationqr))
+            @if ($informationqr)
+            <div class="title m-b-md">
+            {!!QrCode::size(30)->generate(bcrypt($informationqr)) !!}
+            </div>
+            @endif
+        @endif
         </div>
+       <!-- <div class="child" align="right" style="border:0;">
+            <img src="data:image/png;base64, {{ DNS2D::getBarcodePNG(bcrypt($date . ' ' . gethostname() . ' ' . env('APP_URL')), 'PDF417') }}" alt="BARCODE!!!" style="height: 20px; width: 125px;" />
+        </div>-->
     </div>
 </div>
 </body>

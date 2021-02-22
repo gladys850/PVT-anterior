@@ -13,6 +13,7 @@ use DB;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Api\V1\LoanController;
 use App\Affiliate;
+use App\LoanPayment;
 
 /** @group Tesoreria
 * Datos de los registros de cobros
@@ -129,9 +130,29 @@ class VoucherController extends Controller
             'voucher' => $voucher,
             'lenders' => collect($lenders)
         ];
+        $information= $this->get_information_loan($voucher);
         $file_name = implode('_', ['voucher', $voucher->code]) . '.pdf';
         $view = view()->make('loan.payments.payment_voucher')->with($data)->render();
-        if ($standalone) return Util::pdf_to_base64([$view], $file_name, 'letter', $request->copies ?? 1);
+        if ($standalone) return Util::pdf_to_base64([$view], $file_name, $information, 'letter', $request->copies ?? 1);
         return $view;
+    }
+
+    public function get_information_loan(Voucher $voucher)
+    {
+        $file_name='';
+        if($voucher->payable_type == 'loan_payments'){
+            $loan = LoanPayment::findOrFail($voucher->payable_id)->loan;
+            $lend='';
+            foreach ($loan->lenders as $lender) {
+                $lenders[] = LoanController::verify_spouse_disbursable($lender);
+            }
+            foreach ($loan->lenders as $lender) {
+                $lend=$lend.'*'.' ' . $lender->first_name .' '. $lender->second_name .' '. $lender->last_name.' '. $lender->mothers_last_name;
+            }
+            
+            $loan_affiliates= $loan->loan_affiliates[0]->first_name;
+            $file_name =implode(' ', ['Información:',$loan->code,$loan->modality->name,$lend]);
+        }
+        return $file_name;
     }
 }
