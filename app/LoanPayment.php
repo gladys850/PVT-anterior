@@ -36,7 +36,8 @@ class LoanPayment extends Model
         'voucher',
         'paid_by',
         'affiliate_id',
-        'amortization_type_id'
+        'amortization_type_id',
+        'user_id'
 
     ];
 
@@ -184,7 +185,7 @@ class LoanPayment extends Model
         return $this->belongsTo(Affiliate::class);
     }
 
-    public static function registry_payment(Loan $loan, $estimated_date, $description, $procedure_modality, $voucher, $paid_by, $payment_type, $percentage_quota)
+    public static function registry_payment(Loan $loan, $estimated_date, $description, $procedure_modality, $voucher, $paid_by, $payment_type, $percentage_quota, $user_id)
     {
         $payment = $loan->next_payment($estimated_date, $percentage_quota, null); //$percentage_quota
         $payment->description = $description;
@@ -195,10 +196,15 @@ class LoanPayment extends Model
         $payment->voucher = $voucher;
         $payment->paid_by = $paid_by;
         $payment->amortization_type_id = $payment_type->id;
+        $payment->user_id = $user_id;
         $loan_payment = $loan->payments()->create($payment->toArray());
     }
 
     public static function interest_by_days($days, $annual_interest, $balance){
             return (($annual_interest/100)/360)*$days*$balance;
+    }
+
+    public function user(){
+        return $this->hasOne(User::class,'id','id');
     }
 }

@@ -547,4 +547,19 @@ class Util
         }
         return $data;
     }
+
+    public static function amortizations_by_user($model, $object, $module){
+        foreach ($module->roles()->whereNotNull('sequence_number')->orderBy('sequence_number')->orderBy('display_name')->get() as $role) {
+            $data[] = [
+                'role_id' => $role->id,
+                'data' => [
+                    'received' => $model::whereRoleId($role->id)->whereValidated(false)->whereUserId(null)->count(),
+                    'validated' => $model::whereRoleId($role->id)->whereValidated(true)->whereUserId(Auth::user()->id)->count(),
+                    'trashed' => $model::whereRoleId($role->id)->onlyTrashed()->count(),
+                    'my_received' => $model::whereRoleId($role->id)->whereValidated(false)->whereUserId(Auth::user()->id)->count()
+                ]
+            ];
+        }
+        return $data;
+    }
 }

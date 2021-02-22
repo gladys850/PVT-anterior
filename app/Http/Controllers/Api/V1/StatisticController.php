@@ -106,4 +106,9 @@ class StatisticController extends Controller
         $procedure_loans = $module->procedure_types()->where('name', 'LIKE', '%Préstamo%')->orderBy('name')->get();
         return Util::loans_by_user(new Loan(), $procedure_loans, $module);
     }
+
+    public function amortizations_by_user(Module $module){
+        $procedure_amortizations = $module->procedure_types()->where('name', 'LIKE', '%Amortización%')->orderBy('name')->get();
+        return Util::amortizations_by_user(new LoanPayment(), $procedure_amortizations, $module);
+    }
 }
