@@ -76,11 +76,11 @@
         @foreach ($lenders as $lender)
         <table class="table-info w-100 text-center uppercase my-20">
             <tr class="bg-grey-darker text-xxs text-white">
-                <td class="w-70">Solicitante</td>
+                <td class="w-60">Solicitante</td>
                 <td class="w-15">CI</td>
-                <td class="w-15">Estado</td>
+                <td class="w-10">Estado</td>
                 @if($plural)
-                <td class="w-15">Cuota</td>
+                <td class="w-15">Cuota ({{$lender->pivot->payment_percentage}}%)</td>
                 @endif
             </tr>
             <tr>
