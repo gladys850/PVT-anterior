@@ -315,7 +315,11 @@ class Loan extends Model
             // Calcular amortización de capital
             //if ($total_interests > 0) {
                 if (($quota->balance + $total_interests) > $amount) {
-                    $quota->capital_payment = Util::round($amount - $total_interests);
+                    if($quota->quota_number==1){
+                        $quota->capital_payment = Util::round($amount + $quota->accumulated_payment - $total_interests);
+                    }else{
+                        $quota->capital_payment = Util::round($amount - $total_interests);
+                    }
                 } else {
                     $quota->capital_payment = $quota->balance;
                 }
