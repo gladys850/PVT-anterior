@@ -111,14 +111,14 @@ export default {
               ids: this.idLoans,
               role_id: this.selectedRoleId
             });
-            //////HACER DESDE BACK
+            /*////HACER DESDE BACK
             for(let i = 0; i< this.idLoans.length; i++){
                let res1 = await axios.patch(`loan/${this.idLoans[i]}`, {
                 user_id: null
                 })
               console.log(res1)
             }
-            /////////
+            ////////*/
             this.sheet = false;
             this.bus.$emit('emitRefreshLoans');
             this.toastr.success("El trámite fue derivado." ) 
@@ -128,14 +128,14 @@ export default {
               ids: this.idLoans,
               role_id: parseInt(this.$store.getters.roles.filter(o => this.flow.next.includes(o.id)).map(o => o.id)),
             });  
-            //////HACER DESDE BACK
+            /*////HACER DESDE BACK
             for(let i = 0; i< this.idLoans.length; i++){
                let res1 = await axios.patch(`loan/${this.idLoans[i]}`, {
                 user_id: null
                 })
               console.log(res1)
             }
-            /////////
+            ////////*/
             this.sheet = false;
             this.bus.$emit('emitRefreshLoans');
             this.toastr.success("El trámite fue derivado." ) 

@@ -30,7 +30,7 @@
           </v-btn>
         </v-btn-toggle>
         
-        <template v-if="$store.getters.permissions.includes('show-deleted-loan') ">
+        <template v-if="$store.getters.permissions.includes('show-deleted-payment') ">
           <v-tooltip
             top
             v-if="track"
@@ -447,7 +447,7 @@ export default {
         let res = await axios.get(`statistic`, {
           params: {
             module: 'prestamos',
-            filter: 'role_amortizations'
+            filter: 'user_amortizations'
           }
         })
         res = res.data.find(o => o.role_id == this.filters.roleSelected)
