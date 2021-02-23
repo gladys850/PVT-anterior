@@ -61,7 +61,7 @@
                 <td class="w-15">Fecha de Cálculo</td>
                 <td class="w-15">Fecha de pago</td>
                 <td >Intereses Penales Pendientes</td>
-                <td >Intereses Penales Pendientes</td>
+                <td >Intereses Corrientes Pendientes</td>
             </tr>
             <tr>
                 <td class="data-row py-5">{{ $loan_payment->quota_number }}</td>
