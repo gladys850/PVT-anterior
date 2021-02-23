@@ -76,9 +76,12 @@
         @foreach ($lenders as $lender)
         <table class="table-info w-100 text-center uppercase my-20">
             <tr class="bg-grey-darker text-xxs text-white">
-                <td class="w-70">Solicitante</td>
+                <td class="w-60">Solicitante</td>
                 <td class="w-15">CI</td>
-                <td class="w-15">Estado</td>
+                <td class="w-10">Estado</td>
+                @if($plural)
+                <td class="w-15">Cuota ({{$lender->pivot->payment_percentage}}%)</td>
+                @endif
             </tr>
             <tr>
                 <td class="data-row py-5">{{ $lender->title }} {{ $lender->full_name }}</td>
@@ -87,6 +90,9 @@
                 <td class="data-row py-5">{{ $lender->affiliate_state->affiliate_state_type->name }}</td>
                 @else
                 <td class="data-row py-5">no corresponde</td>
+                @endif
+                @if($plural)
+                <td class="data-row py-5">{{ round(($loan->estimated_quota*$lender->pivot->payment_percentage)/100,2)}}</td>
                 @endif
             </tr>
         </table>
