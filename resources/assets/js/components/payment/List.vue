@@ -12,10 +12,10 @@
     :show-select="tray == 'validated'"
     @update:options="updateOptions"
   >
-    <template v-slot:header.data-table-select="{ on, props }">
+    <template v-slot:[`header.data-table-select`]="{ on, props }">
       <v-simple-checkbox color="info" class="grey lighten-3" v-bind="props" v-on="on"></v-simple-checkbox>
     </template>
-    <template v-slot:item.data-table-select="{ isSelected, select }">
+    <template v-slot:[`item.data-table-select`]="{ isSelected, select }">
       <v-simple-checkbox color="success" :value="isSelected" @input="select($event)"></v-simple-checkbox>
     </template>
 
@@ -27,27 +27,27 @@
         <span>{{ searchProcedureModality(item, 'name') }}</span>
       </v-tooltip>
     </template>-->
-    <template v-slot:item.affiliate="{ item }">
+    <template v-slot:[`item.affiliate`]="{ item }">
       {{ $options.filters.fullName(item.affiliate, true) }}
     </template>
- 
-    <template v-slot:item.estimated_date="{ item }">
+
+    <template v-slot:[`item.role_id`]="{ item }">
+      {{ $store.getters.roles.find(o => o.id == item.role_id).display_name }}
+    </template>
+
+    <template v-slot:[`item.estimated_date`]="{ item }">
       {{ item.estimated_date | date }}
     </template>
 
-    <template v-slot:item.estimated_quota="{ item }">
+    <template v-slot:[`item.estimated_quota`]="{ item }">
       {{ item.estimated_quota | moneyString }}
     </template>
 
-    <template v-slot:item.estimated_quota="{ item }">
-      {{ item.estimated_quota | moneyString }}
-    </template>
-
-    <template v-slot:item.capital_payment="{ item }">
+    <template v-slot:[`item.capital_payment`]="{ item }">
       {{ item.capital_payment | moneyString }}
     </template>
 
-      <template v-slot:item.actions="{ item }">
+      <template v-slot:[`item.actions`]="{ item }">
         <v-tooltip bottom v-if="$store.getters.userRoles.includes('PRE-cobranzas')">
           <template v-slot:activator="{ on }">
             <v-btn
@@ -161,7 +161,14 @@ export default {
   },
   data: () => ({
     selectedLoans: [],
-  headers: [
+    headers: [
+      {
+        text: 'Nro recibo',
+        value: 'code',
+        class: ['normal', 'white--text'],
+        align: 'center',
+        sortable: true
+      },
       {
         text: 'Préstamo',
         value: 'loan.code',
@@ -177,12 +184,6 @@ export default {
         sortable: true
       },
       {
-        text: 'Nro recibo',
-        value: 'code',
-        class: ['normal', 'white--text'],
-        align: 'center',
-        sortable: true
-      },{
         text: 'Fecha de pago',
         value: 'estimated_date',
         class: ['normal', 'white--text'],
