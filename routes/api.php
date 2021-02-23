@@ -194,6 +194,7 @@ Route::group([
             'middleware' => 'permission:delete-payment-loan'
         ], function () {
             Route::apiResource('loan_payment', 'Api\V1\LoanPaymentController')->only('destroy');
+            Route::patch('bulk_destroy', 'Api\V1\LoanPaymentController@bulk_destroy');
         });
         //Registro de pago por tesoreria
         Route::group([
