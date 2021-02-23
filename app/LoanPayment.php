@@ -204,7 +204,8 @@ class LoanPayment extends Model
             return (($annual_interest/100)/360)*$days*$balance;
     }
 
-    public function user(){
-        return $this->hasOne(User::class,'id','id');
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 }
