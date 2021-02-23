@@ -29,6 +29,32 @@
             </v-badge>
           </v-btn>
         </v-btn-toggle>
+        
+        <template v-if="$store.getters.permissions.includes('show-deleted-loan') ">
+          <v-tooltip
+            top
+            v-if="track"
+          >
+            <template v-slot:activator="{ on }">
+              <v-btn
+                v-on="on"
+                icon
+                outlined
+                small
+                :color="trackNull ? 'brown' : 'error'"
+                class="darken-2 ml-4"
+                @click="nulledLoans()"
+              >
+                <v-icon>
+                  {{ trackNull ? 'mdi-swap-horizontal' : 'mdi-file-cancel' }}
+                </v-icon>
+              </v-btn>
+            </template>
+            <span v-if="trackNull">Seguimiento de trámites</span>
+            <span v-else>Trámites anulados</span>
+          </v-tooltip>
+        </template>
+
         <v-divider
           class="mx-2"
           inset
@@ -202,11 +228,16 @@ export default {
           count: 0,
           color: 'info'
         }, {
+          name: 'my_received',
+          display_name: 'DEVUELTOS',
+          count: 0,
+          color: 'warning'
+        }, {
           name: 'validated',
           display_name: 'VALIDADOS',
           count: 0,
           color: 'success'
-        }
+        },
         /*{
           name: 'trashed',
           display_name: 'ANULADOS',
@@ -360,8 +391,18 @@ export default {
         procedure_type_id: procedureType,
         role_id: this.filters.roleSelected
       }
+      if(this.filters.traySelected != 'received'){
+        filters = {
+          procedure_type_id: procedureType,
+          role_id: this.filters.roleSelected,
+          user_id: this.$store.getters.id
+        }
+      }
       switch (this.filters.traySelected) {
         case 'received':
+          filters.validated = false
+          break
+        case 'my_received':
           filters.validated = false
           break
         case 'validated':
@@ -439,6 +480,20 @@ export default {
         })
       } catch (e) {
         console.log(e)
+      }
+    },
+    nulledLoans(){
+      this.trackNull = !this.trackNull
+      let filters
+      if(this.trackNull == true){
+        filters = {
+          trashed: 1
+        }      
+        this.params = filters
+        this.getLoans()
+      }else{
+        this.params = filters
+        this.getLoans()
       }
     }
   }

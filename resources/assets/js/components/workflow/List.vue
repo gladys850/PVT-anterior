@@ -13,22 +13,22 @@
     :show-select="tray == 'validated'"
     @update:options="updateOptions"
   >
-    <template v-slot:header.data-table-select="{ on, props }">
+    <template v-slot:[`header.data-table-select`]="{ on, props }">
       <v-simple-checkbox color="info" class="grey lighten-3" v-bind="props" v-on="on"></v-simple-checkbox>
     </template>
-    <template v-slot:item.data-table-select="{ isSelected, select }">
+    <template v-slot:[`item.data-table-select`]="{ isSelected, select }">
       <v-simple-checkbox color="success" :value="isSelected" @input="select($event)"></v-simple-checkbox>
     </template>
-    <template v-slot:item.lenders[0].identity_card="{ item }">
+    <template v-slot:[`item.lenders[0].identity_card`]="{ item }">
       {{ item.lenders[0].identity_card }}
     </template>
-    <template v-slot:item.lenders="{ item }">
+    <template v-slot:[`item.lenders`]="{ item }">
       {{ $options.filters.fullName(item.lenders[0], true) }}
     </template>
-    <template v-slot:item.role_id="{ item }">
+    <template v-slot:[`item.role_id`]="{ item }">
       {{ $store.getters.roles.find(o => o.id == item.role_id).display_name }}
     </template>
-    <template v-slot:item.procedure_modality_id="{ item }">
+    <template v-slot:[`item.procedure_modality_id`]="{ item }">
       <v-tooltip top>
         <template v-slot:activator="{ on }">
           <span v-on="on">{{ searchProcedureModality(item, 'shortened') }}</span>
@@ -36,22 +36,22 @@
         <span>{{ searchProcedureModality(item, 'name') }}</span>
       </v-tooltip>
     </template>
-    <template v-slot:item.request_date="{ item }">
+    <template v-slot:[`item.request_date`]="{ item }">
       {{ item.request_date | date }}
     </template>
-    <template v-slot:item.amount_requested="{ item }">
+    <template v-slot:[`item.amount_requested`]="{ item }">
       {{ item.amount_requested | money }}
     </template>
-    <template v-slot:item.balance="{ item }">
+    <template v-slot:[`item.balance`]="{ item }">
       {{ item.balance | money }}
     </template>
-    <template v-slot:item.estimated_quota="{ item }">
+    <template v-slot:[`item.estimated_quota`]="{ item }">
       {{ item.estimated_quota | money }}
     </template>
-    <template v-slot:item.user="{ item }">
+    <template v-slot:[`item.user`]="{ item }">
       {{ item.user }}
     </template>
-    <template v-slot:item.actions="{ item }">
+    <template v-slot:[`item.actions`]="{ item }">
       <v-tooltip bottom>
         <template v-slot:activator="{ on }">
           <v-btn
