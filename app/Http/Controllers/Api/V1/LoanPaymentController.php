@@ -255,6 +255,31 @@ class LoanPaymentController extends Controller
     }
 
     /**
+    * Eliminar en lote
+    * Elimina trámites en un lote mediante sus IDs, aquellos tramites que se encuentre con estato pendiente de pago
+    * @bodyParam ids array required Lista de IDs de los trámites a dereliminar. Example: [1,2,3]
+    * @authenticated
+    * @responseFile responses/loan_payment/bulk_destroy.200.json
+    */
+    
+    public function bulk_destroy(Request $request)
+    {
+        $request->validate([
+            'ids' => 'required|array|min:1|exists:loan_payments,id'
+        ]);
+
+        $paymentsDestroy = collect();
+        $PendientePago = LoanState::whereName('Pendiente de Pago')->first()->id;
+        $loanPaymentse =  LoanPayment::whereIn('id',$request->ids)->where('state_id', $PendientePago);
+        $loanPayments = $loanPaymentse->get();
+        foreach ($loanPayments as $loanPayment) {
+                $loanPayment->delete();
+                $paymentsDestroy->push($loanPayment);
+        }
+        return $paymentsDestroy;
+    }
+
+    /**
     * Impresión del Registro de Pago de Préstamo
     * Devuelve un pdf del Pago acorde a un ID de registro de pago
     * @urlParam loan_payment required ID del pago. Example: 1
