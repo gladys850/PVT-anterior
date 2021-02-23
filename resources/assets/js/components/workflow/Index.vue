@@ -30,6 +30,32 @@
             </v-badge>
           </v-btn>
         </v-btn-toggle>
+
+        <template v-if="$store.getters.permissions.includes('show-deleted-loan') ">
+          <v-tooltip
+            top
+            v-if="track"
+          >
+            <template v-slot:activator="{ on }">
+              <v-btn
+                v-on="on"
+                icon
+                outlined
+                small
+                :color="trackNull ? 'brown' : 'error'"
+                class="darken-2 ml-4"
+                @click="nulledLoans()"
+              >
+                <v-icon>
+                  {{ trackNull ? 'mdi-swap-horizontal' : 'mdi-file-cancel' }}
+                </v-icon>
+              </v-btn>
+            </template>
+            <span v-if="trackNull">Seguimiento de trámites</span>
+            <span v-else>Trámites anulados</span>
+          </v-tooltip>
+        </template>
+
         <v-divider
           class="mx-2"
           inset
@@ -203,8 +229,7 @@ export default {
           display_name: 'RECIBIDOS',
           count: 0,
           color: 'info'
-        },
-        {
+        },{
           name: 'my_received',
           display_name: 'DEVUELTOS',
           count: 0,
@@ -235,7 +260,8 @@ export default {
       procedureModalities: [],
       //affiliate_id: this.$route.params.id > 0 ? this.$route.params.id : 0,
       //affiliate: [],
-      resultado:[]
+      //resultado:[]
+      trackNull: false
     }
   },
   computed: {
@@ -473,7 +499,7 @@ export default {
             filter: 'user_loans'
           }
         })
-        this.resultado = res.data.data_loans
+        //this.resultado = res.data.data_loans
         res.data.forEach((procedure, index) => {
           let role = procedure.data.find(o => o.role_id == this.filters.roleSelected)
           if (role) {
@@ -502,6 +528,20 @@ export default {
 
       this.$store.commit("setBreadcrumbs", breadcrumbs)
     },
+    nulledLoans(){
+      this.trackNull = !this.trackNull
+      let filters
+      if(this.trackNull == true){
+        filters = {
+          trashed: 1
+        }      
+        this.params = filters
+        this.getLoans()
+      }else{
+        this.params = filters
+        this.getLoans()
+      }
+    }
     /*async getAffiliate(id) {
       try {
         this.loading = true
