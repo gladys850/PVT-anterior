@@ -471,16 +471,16 @@ class Util
                 $values = [
                     $model::whereRoleId($role->id)->whereHas('modality', function($q) use ($procedure_type) {
                         $q->whereProcedureTypeId($procedure_type->id);
-                    })->whereValidated(false)->whereUserId(Auth::user()->id)->count(), //received
+                    })->whereValidated(false)->count(), //received
                     $model::whereRoleId($role->id)->whereHas('modality', function($q) use ($procedure_type) {
                         $q->whereProcedureTypeId($procedure_type->id);
                     })->whereValidated(true)->whereUserId(Auth::user()->id)->count(), //validated
                     $model::whereRoleId($role->id)->whereHas('modality', function($q) use ($procedure_type) {
                         $q->whereProcedureTypeId($procedure_type->id);
-                    })->onlyTrashed()->whereUserId(Auth::user()->id)->count(), //trashed
+                    })->onlyTrashed()->count(), //trashed
                     $model::whereRoleId($role->id)->whereHas('modality', function($q) use ($procedure_type) {
                         $q->whereProcedureTypeId($procedure_type->id);
-                    })->whereValidated(false)->whereUserId(Auth::user()->id)->count(), //my_received
+                    })->whereValidated(false)->count(), //my_received
                 ];
                 $i = 0;
                 foreach ($data[$key]['total'] as $total_key => $v) {

@@ -115,7 +115,7 @@ class LoanPaymentController extends Controller
         else{
             if($request->validated){
                 $filters['validated'] = $request->validated;
-                $relations['user'] = [
+                $relations['users'] = [
                     'user_id' => null
                 ];
             }
