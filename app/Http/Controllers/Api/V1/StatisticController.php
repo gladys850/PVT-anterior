@@ -40,7 +40,7 @@ class StatisticController extends Controller
                     'display_name' => 'Número de trámites por usuario',
                     'method' => 'loans_by_user'
                 ],
-                'user_amortization' => [
+                'user_amortizations' => [
                     'display_name' => 'Número de amortizaciones por usuario',
                     'method' => 'amortizations_by_user'
                 ],
