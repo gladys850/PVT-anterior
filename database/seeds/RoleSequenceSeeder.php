@@ -25,7 +25,7 @@ class RoleSequenceSeeder extends Seeder
                 ['PRE-aprobacion-direccion'],
                 ['PRE-aprobacion-legal'],
                 ['PRE-tesoreria'],
-                ['PRE-cobranzas']
+                ['PRE-cobranzas'],   
             ]
         ];
         $this->create($sequences);
@@ -34,10 +34,10 @@ class RoleSequenceSeeder extends Seeder
         $sequences = [
             'Amortización Manual' => [
                 ['PRE-cobranzas'],
-                ['PRE-tesoreria']
+                ['PRE-tesoreria-cobranza']
             ]
         ];
-        $this->create($sequences);
+        $this->create($sequences);    
     }
 
     public function create($sequences){
@@ -54,7 +54,7 @@ class RoleSequenceSeeder extends Seeder
                                 RoleSequence::firstOrCreate([
                                     'procedure_type_id' => $procedure->id,
                                     'role_id' => $prev->id,
-                                    'next_role_id' => $curr->id
+                                  'next_role_id' => $curr->id
                                 ]);
                             }
                         }
