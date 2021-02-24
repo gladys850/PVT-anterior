@@ -1088,6 +1088,10 @@ class LoanController extends Controller
     */
     public function bulk_update_role(LoansForm $request)
     {
+        if(!$request->user_id) 
+            $user_id = null;
+        else
+            $user_id = $request->user_id;
         $sequence = null;
         $from_role = null;
         $to_role = $request->role_id;
@@ -1109,7 +1113,7 @@ class LoanController extends Controller
             $item['validated'] = false;
             Util::save_record($item, $flow_message['type'], $flow_message['message']);
         });
-        $loans->update(array_merge($request->only('role_id'), ['validated' => false]));
+        $loans->update(array_merge($request->only('role_id'), ['validated' => false], ['user_id' => $user_id]));
         $derived->transform(function ($loan) {
             return self::append_data($loan, false);
         });

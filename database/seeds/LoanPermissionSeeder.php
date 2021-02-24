@@ -76,6 +76,9 @@ class LoanPermissionSeeder extends Seeder
             ],  [
                 'name' => 'print-payment-voucher',
                 'display_name' => 'Imprimir registro de pago de tesorería'
+            ], [
+                'name' => 'show-deleted-payment',
+                'display_name' => 'Ver trámites anulados de cobros'
             ]
         ];
         foreach ($permissions as $permission) {
