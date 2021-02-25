@@ -226,7 +226,7 @@ class LoanPaymentController extends Controller
                 $payment->description = $request->input('description', null);
                 $payment->voucher_number = $request->input('voucher_number', null);
                 $voucher = $loanPayment->voucher_treasury()->create($payment->toArray());
-                $loanPayment->update(['state_id' => $Pagado]);
+                $loanPayment->update(['state_id' => $Pagado,'user_id' => $payment->user_id]);
                 DB::commit();
             } catch (\Exception $e) {
                 DB::rollback();
