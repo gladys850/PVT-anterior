@@ -183,7 +183,8 @@ export default {
             amortization_type_id:this.data_payment.pago,
             affiliate_id:this.data_payment.affiliate_id_paid_by,
             paid_by:this.data_payment.affiliate_id,
-            procedure_modality_id:this.data_payment.procedure_modality_id
+            procedure_modality_id:this.data_payment.procedure_modality_id,
+            user_id: this.$store.getters.id
           })
             printJS({
             printable: res.data.attachment.content,

@@ -30,17 +30,18 @@
           <v-card-title>Derivar {{ " ("+selectedLoans.length +") "}} trámites</v-card-title>
           <v-divider></v-divider>
           <v-card-text style="height: 300px;">
-            <div >
-            <v-select v-if="$store.getters.roles.filter(o => flow.next.includes(o.id)).length > 1"
-              v-model="selectedRoleId"
-              :items="$store.getters.roles.filter(o => flow.next.includes(o.id))"
-              label="Seleccione el área para derivar"
-              class="pt-3 my-0"
-              item-text="display_name"
-              item-value="id"
-              dense
-            ></v-select>
-            <div v-else><h3>Área para derivar: {{String($store.getters.roles.filter(o => flow.next.includes(o.id)).map(o => o.display_name))}}</h3></div>           
+            <div>
+              <v-select v-if="$store.getters.roles.filter(o => flow.next.includes(o.id)).length > 1"
+                v-model="selectedRoleId"
+                :items="$store.getters.roles.filter(o => flow.next.includes(o.id))"
+                label="Seleccione el área para derivar"
+                class="pt-3 my-0"
+                item-text="display_name"
+                item-value="id"
+                dense
+              ></v-select>
+              <div v-else-if="$store.getters.roles.filter(o => flow.next.includes(o.id)).length == 1"><h3>Área para derivar: {{String($store.getters.roles.filter(o => flow.next.includes(o.id)).map(o => o.display_name))}}</h3></div>
+              <div v-else><h3 class="red">No se tiene un área para derivar.</h3></div>           
             </div>
 
             <div class="blue--text">Los siguientes trámites serán derivados: </div>     
@@ -49,7 +50,9 @@
           <v-divider></v-divider>
           <v-card-actions>
             <v-btn color="error" text @click="sheet = false">Cerrar</v-btn>
-            <v-btn color="success" text @click="derivationLoans()">Derivar</v-btn>
+            <template v-if="$store.getters.roles.filter(o => flow.next.includes(o.id)).length >= 1">
+              <v-btn color="success" text @click="derivationLoans()">Derivar</v-btn>
+            </template>
           </v-card-actions>
         </v-card>
       </v-dialog>
@@ -122,12 +125,12 @@ export default {
             this.bus.$emit('emitRefreshLoans');
             this.toastr.success("El trámite fue derivado." ) 
         }
-            /*printJS({
+            printJS({
             printable: res.data.attachment.content,
             type: res.data.attachment.type,
             documentTitle: res.data.attachment.file_name,
             base64: true
-        })  */
+        })  
      
       } catch (e) {
         console.log(e)

@@ -227,12 +227,14 @@ export default {
           display_name: 'RECIBIDOS',
           count: 0,
           color: 'info'
-        }, {
+        },
+        /* {
           name: 'my_received',
           display_name: 'DEVUELTOS',
           count: 0,
           color: 'warning'
-        }, {
+        },*/
+        {
           name: 'validated',
           display_name: 'VALIDADOS',
           count: 0,
@@ -402,9 +404,9 @@ export default {
         case 'received':
           filters.validated = false
           break
-        case 'my_received':
+        /*case 'my_received':
           filters.validated = false
-          break
+          break*/
         case 'validated':
           filters.validated = true
           break
