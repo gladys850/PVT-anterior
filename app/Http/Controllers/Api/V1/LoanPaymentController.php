@@ -113,14 +113,14 @@ class LoanPaymentController extends Controller
                 'user_id' => $request->user_id
             ];
         }
-        else{
+        /*else{ // considerar para devoluciones
             if($request->validated){
-                $filters['validated'] = $request->validated;
+                $filters['validated'] = $request->boolean('validated');
                 $relations['users'] = [
                     'user_id' => null
                 ];
             }
-        }
+        }*/
         $data = Util::search_sort(new LoanPayment(), $request, $filters, $relations);
         $data->getCollection()->transform(function ($loanPayment) {
             return self::append_data($loanPayment, true);
