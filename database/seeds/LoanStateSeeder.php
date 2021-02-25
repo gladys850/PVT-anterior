@@ -20,6 +20,7 @@ class LoanStateSeeder extends Seeder
             ['name' => 'Liquidado', 'description' => 'Pago de la deuda en su totalidad' ],
             ['name' => 'Pendiente de Pago', 'description' => 'Registro de pago pendiente' ],
             ['name' => 'Pagado', 'description' => 'Registro de pago finalizado' ],
+            ['name' => 'Pendiente de ajuste', 'description' => 'Registro de Pendiente de ajuste' ],
         ];
         foreach ($states as $state) {
             LoanState::firstOrCreate($state);
