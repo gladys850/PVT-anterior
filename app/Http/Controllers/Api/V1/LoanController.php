@@ -950,7 +950,6 @@ class LoanController extends Controller
             $payment->amortization_type_id = $request->input('amortization_type_id');
             $payment->affiliate_id = $request->input('affiliate_id');
             $payment->paid_by = $request->input('paid_by');
-            $payment->user_id = auth()->id();
             if($request->has('user_id')){
                 $payment->user_id = $request->user_id;
             }else{
