@@ -240,8 +240,8 @@ class LoanPaymentController extends Controller
     /**
     * Derivar en lote
     * Deriva o devuelve trámites en un lote mediante sus IDs
-    * @bodyParam ids array required Lista de IDs de los trámites a derivar. Example: [1,2]
-    * @bodyParam role_id integer required ID del rol al cual derivar o devolver. Example: 89
+    * @bodyParam ids array required Lista de IDs de los trámites a derivar. Example: [28,29]
+    * @bodyParam role_id integer required ID del rol al cual derivar o devolver. Example: 91
     * @authenticated
     * @responseFile responses/loan_payment/bullk_update_role.200.json
     */
