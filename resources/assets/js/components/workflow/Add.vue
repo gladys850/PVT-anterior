@@ -1,66 +1,68 @@
 <template>
   <v-card flat>
     <v-card-title>
-      <v-toolbar dense color="tertiary" style="z-index: 1">
+      <v-toolbar dense style="z-index: 1" color='tertiary'>
         <v-toolbar-title>
-          <Breadcrumbs />
+          <Breadcrumbs />{{validate.valid_disbursement}} {{$store.getters.userRoles.includes('disbursement-loan') }} {{$store.getters.userRoles.includes('disbursement-loan') && validate.valid_disbursement }}
         </v-toolbar-title>
         <v-spacer></v-spacer>
-        <v-tooltip top>
-          <template v-slot:activator="{ on }">
-            <v-btn
-              v-show="!loan.validated"
-              v-on="on"
-              icon
-              outlined
-              small
-              color="success"
-              class="darken-2 ml-4"
-              @click="bus.$emit('openDialog', { edit: false, accion: 'validar' })"
-            >
-              <v-icon dark>mdi-file-check</v-icon>
-            </v-btn>
-          </template>
-          <span>Validar trámite</span>
-        </v-tooltip>
-        <v-tooltip top>
-          <template v-slot:activator="{ on }">
-            <v-btn
-              v-show="!loan.validated"
-              v-on="on"
-              icon
-              outlined
-              small
-              color="orange"
-              class="ml-4"
-              @click="bus.$emit('openDialog', { edit: false, accion: 'devolver'})"
-            >
-              <v-icon>mdi-file-undo</v-icon>
-            </v-btn>
-          </template>
-          <span>Devolver trámite</span>
-        </v-tooltip>
-        <v-tooltip top>
-          <template v-slot:activator="{ on }">
-            <v-btn
-              top
-              v-if="$store.getters.permissions.includes('delete-loan')"
-              v-on="on"
-              icon
-              outlined
-              small
-              color="error"
-              class="darken-2 ml-4"
-              @click="
-                bus.$emit('openDialog', { edit: false, accion: 'anular' })
-              "
-            >
-              <v-icon>mdi-file-cancel</v-icon>
-            </v-btn>
-          </template>
-          <span>Anular trámite</span>
-        </v-tooltip>
-
+        <template v-if="$route.params.workTray == 'received' || $route.params.workTray == 'my_received' || $route.params.workTray == 'validated'">
+          <v-tooltip top>
+            <template v-slot:activator="{ on }">
+              <v-btn
+                v-show="!loan.validated"
+                v-on="on"
+                icon
+                outlined
+                small
+                color="success"
+                class="darken-2 ml-4"
+                @click="validation()"
+              >
+                <v-icon dark>mdi-file-check</v-icon>
+              </v-btn>
+            </template>
+            <span>Validar trámite</span>
+          </v-tooltip>
+          <v-tooltip top>
+            <template v-slot:activator="{ on }">
+              <v-btn
+                v-show="!loan.validated"
+                v-on="on"
+                icon
+                outlined
+                small
+                color="orange"
+                class="ml-4"
+                @click="bus.$emit('openDialog', { edit: false, accion: 'devolver'})"
+              >
+                <v-icon>mdi-file-undo</v-icon>
+              </v-btn>
+            </template>
+            <span>Devolver trámite</span>
+          </v-tooltip>
+          <v-tooltip top>
+            <template v-slot:activator="{ on }">
+              <v-btn
+                top
+                v-if="$store.getters.permissions.includes('delete-loan')"
+                v-on="on"
+                icon
+                outlined
+                small
+                color="error"
+                class="darken-2 ml-4"
+                @click="
+                  bus.$emit('openDialog', { edit: false, accion: 'anular' })
+                "
+              >
+                <v-icon>mdi-file-cancel</v-icon>
+              </v-btn>
+            </template>
+            <span>Anular trámite</span>
+          </v-tooltip>
+        </template>
+        <template v-else><h6 class="caption"><v-icon x-small color="blue">mdi-folder-information</v-icon> {{loan.role_id}} <br><v-icon x-small color="red">mdi-file-account</v-icon> {{loan.user_id}}</h6></template>
         <!--<v-divider
             class="mx-2"
             inset
@@ -538,15 +540,17 @@ export default {
       }
     },
     validation(){
-      if(this.$store.getters.userRoles.includes('PRE-tesoreria') && this.validate.valid_disbursement==false){
-         this.toastr.error('Faltan registar campos en Desembolso. Registre la fecha, tipo y nro de documento.')
-        }else{
-          if(this.$store.getters.userRoles.includes('PRE-jefatura') || this.$store.getters.userRoles.includes('PRE-aprobacion-direccion') || this.$store.getters.userRoles.includes('PRE-tesoreria')){
-            this.bus.$emit('openDialog', { edit: false, accion: 'validar' })
-          }else{
-            this.bus.$emit('openDialog', { edit: false, accion: 'validar' })
-          }
-        }
+      if(this.$store.getters.permissions.includes('disbursement-loan') && this.validate.valid_disbursement==true){
+         //this.bus.$emit('openDialog', { edit: false, accion: 'validar' })
+         alert("entro")
+      }
+      else if((this.$store.getters.permissions.includes('disbursement-loan') && this.validate.valid_disbursement) == false){
+         //this.bus.$emit('openDialog', { edit: false, accion: 'validar' })
+         alert("entro 2")
+      }
+      else{
+        this.toastr.error('Faltan registar campos en Desembolso. Registre la fecha, tipo y nro de documento.')
+      }
 
     }
   }

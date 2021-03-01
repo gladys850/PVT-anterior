@@ -8,7 +8,7 @@
     :options="options"
     :server-items-length="totalLoans"
     :footer-props="{ itemsPerPageOptions: [8, 15, 30] }"
-    
+    :item-class="itemRowBackground"
     multi-sort
     :show-select="tray == 'validated'"
     @update:options="updateOptions"
@@ -60,7 +60,7 @@
             small
             v-on="on"
             color="warning"
-            :to="{ name: 'flowAdd', params: { id: item.id}}"
+            :to="{ name: 'flowAdd', params: { id: item.id, workTray: tray}}"
           ><v-icon>mdi-eye</v-icon>
           </v-btn>
         </template>
@@ -96,6 +96,7 @@
             v-on="on"
           ><v-icon>mdi-printer</v-icon>
           </v-btn>
+          {{tray}}
         </template>
         <v-list dense class="py-0">
           <v-list-item
@@ -253,7 +254,13 @@ export default {
   },
   methods: {
     itemRowBackground: function (item) {
-      return item.observed === true ? 'style-1' : 'style-2'
+      if(item.validated === true && item.user_id != null){
+        return 'style-1'
+      }else if(item.validated === false && item.user_id != null){
+        return 'style-2'
+      }else{
+        return 'style-3'
+      }
     },
     searchProcedureModality(item, attribute = null) {
       let procedureModality = this.procedureModalities.find(o => o.id == item.procedure_modality_id)
@@ -388,6 +395,9 @@ th.text-start {
   background-color: #757575;
 }
 .style-1 {
-  background-color: rgb(245, 241, 202)
+  background-color: #8BC34A
+}
+.style-2 {
+  background-color: yellow
 }
 </style>

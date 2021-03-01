@@ -261,7 +261,7 @@ export default {
       //affiliate_id: this.$route.params.id > 0 ? this.$route.params.id : 0,
       //affiliate: [],
       //resultado:[]
-      trackNull: false
+      trackNull: null
     }
   },
   computed: {

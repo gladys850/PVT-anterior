@@ -3,7 +3,7 @@
     <ValidationObserver ref="observer">
       <v-form>
         <!--v-card-->
-        <div v-if="$store.getters.permissions.includes('disbursement-loan')">
+        <div >
           <v-tooltip top>
             <template v-slot:activator="{ on }">
               <v-btn
@@ -27,7 +27,7 @@
             </div>
           </v-tooltip>
         </div>
-        <v-tooltip top v-if="$store.getters.userRoles.includes('PRE-tesoreria')">
+        <v-tooltip top v-if="$store.getters.permissions.includes('disbursement-loan')">
           <template v-slot:activator="{ on }">
             <v-btn
               fab
