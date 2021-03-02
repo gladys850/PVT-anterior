@@ -2,54 +2,56 @@
   <v-container fluid >
     <v-toolbar-title  class="pb-2">DOCUMENTOS PRESENTADOS</v-toolbar-title>
     <v-form>
-        <div v-if="$store.getters.userRoles.includes('PRE-revision-legal')">
+      <template v-if="$route.params.workTray == 'received' || $route.params.workTray == 'my_received' || $route.params.workTray == 'validated'">
+        <div v-if="$store.getters.permissions.includes('validate-submitted-documents')">
+            <v-tooltip top>
+              <template v-slot:activator="{ on }">
+                <v-btn
+                  fab
+                  dark
+                  x-small
+                  :color="'error'"
+                  top
+                  right
+                  absolute
+                  v-on="on"
+                  style="margin-right: 45px;"
+                  @click.stop="resetForm()"
+                  v-show="editable"
+                >
+                  <v-icon>mdi-close</v-icon>
+                </v-btn>
+              </template>
+              <div>
+                <span>Cancelar</span>
+              </div>
+            </v-tooltip>
+
           <v-tooltip top>
             <template v-slot:activator="{ on }">
               <v-btn
                 fab
                 dark
                 x-small
-                :color="'error'"
+                :color="editable ? 'danger' : 'success'"
                 top
                 right
                 absolute
                 v-on="on"
-                style="margin-right: 45px;"
-                @click.stop="resetForm()"
-                v-show="editable"
+                style="margin-right: -9px;"
+                @click.stop="validarDoc()"
               >
-                <v-icon>mdi-close</v-icon>
+                <v-icon v-if="editable">mdi-check</v-icon>
+                <v-icon v-else>mdi-check-bold</v-icon>
               </v-btn>
             </template>
             <div>
-              <span>Cancelar</span>
-            </div>
+              <span v-if="editable">Guardar</span>
+              <span v-else>Validar documentos</span>
+          </div>
           </v-tooltip>
-        
-        <v-tooltip top>
-          <template v-slot:activator="{ on }">
-            <v-btn
-              fab
-              dark
-              x-small
-              :color="editable ? 'danger' : 'success'"
-              top
-              right
-              absolute
-              v-on="on"
-              style="margin-right: -9px;"
-              @click.stop="validarDoc()"
-            >
-              <v-icon v-if="editable">mdi-check</v-icon>
-              <v-icon v-else>mdi-check-bold</v-icon>
-            </v-btn>
-          </template>
-          <div>
-            <span v-if="editable">Guardar</span>
-            <span v-else>Validar documentos</span>
         </div>
-        </v-tooltip>
-      </div>
+      </template>>
       <v-toolbar-title>REQUERIDOS</v-toolbar-title>
        <v-progress-linear></v-progress-linear>
       <!--<v-card>-->
@@ -77,7 +79,7 @@
                               <v-col cols="3" class="py-0 my-0">
                                 <div
                                   class="py-0"
-                                  v-if="$store.getters.userRoles.includes('PRE-revision-legal')"
+                                  v-if="$store.getters.permissions.includes('validate-submitted-documents')"
                                 >
                                   <v-checkbox
                                     class="py-0"
@@ -93,7 +95,7 @@
                           </v-list>
                         </v-col>
                       </v-row>
-                      <v-row v-if="$store.getters.userRoles.includes('PRE-revision-legal')">
+                      <v-row v-if="$store.getters.permissions.includes('validate-submitted-documents')">
                         <v-col cols="12" class="ma-0 py-0 px-10">
                           <v-text-field
                             dense
@@ -155,7 +157,7 @@
                               <v-col cols="3" class="py-0 my-0">
                                 <div
                                   class="py-0"
-                                  v-if="$store.getters.userRoles.includes('PRE-revision-legal')"
+                                  v-if="$store.getters.permissions.includes('validate-submitted-documents')"
                                 >
                                   <v-checkbox
                                     class="py-0"
@@ -171,7 +173,7 @@
                           </v-list>
                         </v-col>
                       </v-row>
-                      <v-row v-if="$store.getters.userRoles.includes('PRE-revision-legal')">
+                      <v-row v-if="$store.getters.permissions.includes('validate-submitted-documents')">
                         <v-col cols="12" class="ma-0 py-0 pl-10 pr-2">
                           <v-text-field
                             dense

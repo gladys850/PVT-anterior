@@ -67,7 +67,7 @@
         <span>Ver trámite</span>
       </v-tooltip>
 
-      <v-tooltip bottom v-if="$store.getters.userRoles.includes('PRE-aprobacion-direccion') || $store.getters.userRoles.includes('PRE-revision-direccion')">
+      <v-tooltip bottom v-if="$store.getters.permissions.includes('release-loan-user')">
         <template v-slot:activator="{ on }" v-if="item.user_id != null">
           <v-btn
             icon
@@ -96,7 +96,6 @@
             v-on="on"
           ><v-icon>mdi-printer</v-icon>
           </v-btn>
-          {{tray}}
         </template>
         <v-list dense class="py-0">
           <v-list-item

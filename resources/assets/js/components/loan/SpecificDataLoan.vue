@@ -210,10 +210,10 @@ export default {
       type: Object,
       required: true
     },
-    validate:{
+    /*validate:{
       type: Object,
       required: false
-    }
+    }*/
   },
    data: () => ({
     editable: false,
@@ -318,11 +318,11 @@ export default {
           })
             this.toastr.success('Se registró correctamente.')
             this.editable = false
-             if((this.loan.disbursement_date != '' && this.loan.number_payment_type != '') && (this.loan.disbursement_date != null && this.loan.number_payment_type != null)){
+            /* if((this.loan.disbursement_date != '' && this.loan.number_payment_type != '') && (this.loan.disbursement_date != null && this.loan.number_payment_type != null)){
                this.validate.valid_disbursement = true
              }else{
                this.validate.valid_disbursement = false
-             }
+             }*/
         }
       } catch (e) {
         console.log(e)
