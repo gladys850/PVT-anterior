@@ -51,7 +51,7 @@
           </div>
           </v-tooltip>
         </div>
-      </template>>
+      </template>
       <v-toolbar-title>REQUERIDOS</v-toolbar-title>
        <v-progress-linear></v-progress-linear>
       <!--<v-card>-->

@@ -5,28 +5,29 @@
         <v-toolbar-title>KARDEX</v-toolbar-title>
       </v-col>
     </template>
-    <v-tooltip top v-if="$store.getters.userRoles.includes('PRE-cobranzas')">
-      <template v-slot:activator="{ on }">
-        <v-btn
-          fab
-          dark
-          x-small
-          :color="'success'"
-          top
-          right
-          absolute
-          v-on="on"
-          style="margin-right: -9px;"
-          :to="{ name: 'paymentAdd',  params: { hash: 'new'},  query: { loan_id: $route.params.id}}"
-        >
-          <v-icon>mdi-plus</v-icon>
-        </v-btn>
-      </template>
-      <div>
-        <span>Nuevo registro de cobro</span>
-      </div>
-    </v-tooltip>
-
+    <template v-if="$route.params.workTray == 'received' || $route.params.workTray == 'my_received' || $route.params.workTray == 'validated'">
+      <v-tooltip top v-if="$store.getters.userRoles.includes('PRE-cobranzas')">
+        <template v-slot:activator="{ on }">
+          <v-btn
+            fab
+            dark
+            x-small
+            :color="'success'"
+            top
+            right
+            absolute
+            v-on="on"
+            style="margin-right: -9px;"
+            :to="{ name: 'paymentAdd',  params: { hash: 'new'},  query: { loan_id: $route.params.id}}"
+          >
+            <v-icon>mdi-plus</v-icon>
+          </v-btn>
+        </template>
+        <div>
+          <span>Nuevo registro de cobro</span>
+        </div>
+      </v-tooltip>
+    </template>
     <v-data-table
       :headers="headers"
       :items="payments"
