@@ -16,6 +16,7 @@ use App\AffiliateState;
 use App\AffiliateStateType;
 use App\Spouse;
 use App\Contribution;
+use App\AidContribution;
 use App\Unit;
 use App\Loan;
 use App\LoanGlobalParameter;
@@ -369,6 +370,8 @@ class AffiliateController extends Controller
     * Devuelve el listado de las boletas de pago de un afiliado, si se envía el ID de ciudad además devuelve un booleano para identificar si la petición contiene las últimas boletas y la diferencia de meses que se utilizó para la operación
     * @urlParam affiliate required ID de afiliado. Example: 1
     * @queryParam city_id ID de la ciudad de solicitud. Example: 4
+    * @queryParam choose_diff_month Valor booleano para escoger(true) o no(false) la dirferencia en meses. Example: [1]
+    * @queryParam number_diff_month Valor numerico que determina el numero de meses hacia a tras a considerar. Example: 3
     * @queryParam sortBy Vector de ordenamiento. Example: [month_year]
     * @queryParam sortDesc Vector de orden descendente(true) o ascendente(false). Example: [1]
     * @queryParam per_page Número de datos por página. Example: 3
@@ -378,20 +381,46 @@ class AffiliateController extends Controller
     */
     public function get_contributions(Request $request, Affiliate $affiliate)
     {
+        $request->validate([
+            'choose_diff_month' => 'boolean',
+            'number_diff_month'=>'integer'
+        ]);
+
+        if($request->has('choose_diff_month'))
+            $choose_diff_month = $request->choose_diff_month;
+        else 
+            $choose_diff_month =false;
+            
+            if($request->has('number_diff_month'))
+            $number_diff_month = intval($request->number_diff_month);
+        else 
+            $number_diff_month = 1;
+
+        $state_affiliate = $affiliate->affiliate_state->affiliate_state_type->name;
         $filters = [
             'affiliate_id' => $affiliate->id
         ];
+
         if(count($affiliate->contributions)>1){
-            $contributions = Util::search_sort(new Contribution(), $request, $filters);
+            if ($state_affiliate=='Activo'){
+                $contributions = Util::search_sort(new Contribution(), $request, $filters);
+            }else{
+                $contributions = Util::search_sort(new AidContribution(), $request, $filters);
+            }
+            //$contributions = Util::search_sort(new Contribution(), $request, $filters);
             if ($request->has('city_id')) {
                 $is_latest = false;
                 $city = City::findOrFail($request->city_id);
                 $offset_day = LoanGlobalParameter::latest()->first()->offset_ballot_day;
                 $now = CarbonImmutable::now();
-                if ($now->day <= $offset_day || $city->name != 'LA PAZ') {
-                    $before_month = 2;
-                } else {
-                    $before_month = 1;
+                if($choose_diff_month == true && $request->has('number_diff_month')){
+                    $before_month=$number_diff_month;
+                }else{
+                    if ($now->day <= $offset_day || $city->name == 'LA PAZ') {
+                        $before_month = 2;
+                    } else {
+                        $before_month = 1;
+                    }
                 }
                 $current_ticket = CarbonImmutable::parse($contributions[0]->month_year);
                 if ($now->startOfMonth()->diffInMonths($current_ticket->startOfMonth()) <= $before_month) {
@@ -411,7 +440,8 @@ class AffiliateController extends Controller
                 }
                 $contributions = collect([
                     'valid' => $is_latest,
-                    'diff_months' => $before_month
+                    'diff_months' => $before_month,
+                    'state_affiliate'=>$state_affiliate
                 ])->merge($contributions);
             }
             return $contributions;
