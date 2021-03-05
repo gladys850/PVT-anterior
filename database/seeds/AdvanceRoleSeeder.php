@@ -29,7 +29,8 @@ class AdvanceRoleSeeder extends Seeder
         $sequence_permissions = ['update-affiliate-secondary', 'show-affiliate', 'show-loan', 'update-address', 'update-loan'];
         $leadership_permissions = ['show-all-loan', 'update-loan', 'delete-loan', 'show-setting', 'show-deleted-loan'];
         $executive_permissions = ['update-setting'];
-        $pay_permissions_treasury = ['print-payment-plan', 'print-payment-kardex-loan', 'show-loan', 'update-payment', 'show-payment','create-payment', 'show-payment-loan', 'disbursement-loan', 'delete-payment', 'print-payment-voucher', 'update-payment-loan', 'update-loan'];
+        $pay_permissions_treasury = ['update-payment','create-payment','show-payment','show-payment-loan','delete-payment', 'print-payment-voucher', 'update-payment-loan'];
+        $treasury_permissions = ['print-payment-plan', 'print-payment-kardex-loan', 'show-loan','disbursement-loan','delete-payment', 'update-loan'];
         $recovery_permissions = ['show-all-loan', 'show-loan', 'show-affiliate', 'print-payment-plan', 'print-payment-kardex-loan', 'show-payment-loan', 'create-payment-loan', 'update-payment-loan', 'delete-payment-loan', 'print-payment-loan' ];
         $receipt_roles = ['Regional Santa Cruz', 'Regional Cochabamba', 'Regional Oruro', 'Regional Potosí', 'Regional Sucre', 'Regional Tarija', 'Regional Trinidad', 'Regional Cobija', 'Recepción'];
         $sequence_roles = [
@@ -68,9 +69,14 @@ class AdvanceRoleSeeder extends Seeder
                 'name' => 'Cobranzas',
                 'action' => 'Liquidado',
                 'sequence' => 9
+            ],
+            [
+                'name' => 'Tesorería Cobros',
+                'action' => 'Pago Confirmado',
+                'sequence' => 10
             ]
         ];
-
+      
         if ($module) {
             foreach ($receipt_roles as $role) {
                 $role = Role::firstOrCreate([
@@ -97,9 +103,12 @@ class AdvanceRoleSeeder extends Seeder
                     $role->syncPermissions(array_merge($sequence_permissions, $leadership_permissions));
                 } elseif (in_array($role['display_name'], ['Aprobación Dirección', 'Revisión Dirección'])) {
                     $role->syncPermissions(array_merge($sequence_permissions, $leadership_permissions, $executive_permissions));
-                } elseif (in_array($role['display_name'], ['Tesorería'])) {
+                } elseif (in_array($role['display_name'], ['Tesorería Cobros'])) {
                     $role->syncPermissions(array_merge($pay_permissions_treasury));
-                }else {
+                }elseif (in_array($role['display_name'], ['Tesorería'])) {
+                    $role->syncPermissions(array_merge($treasury_permissions));
+                }
+                else {
                     $role->syncPermissions($sequence_permissions);
                 }
             }

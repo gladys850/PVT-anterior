@@ -931,6 +931,7 @@ class LoanController extends Controller
     * @bodyParam affiliate_id integer required ID del afiliado. Example: 57950
     * @bodyParam paid_by enum required Pago realizado por Titular(T) o Garante(G). Example: T
     * @bodyParam procedure_modality_id integer required ID de la modalidad de amortización. Example: 53
+    * @bodyParam user_id integer required ID del usuario. Example: 95
     * @authenticated
     * @responseFile responses/loan/set_payment.200.json
     */
@@ -950,7 +951,12 @@ class LoanController extends Controller
             $payment->amortization_type_id = $request->input('amortization_type_id');
             $payment->affiliate_id = $request->input('affiliate_id');
             $payment->paid_by = $request->input('paid_by');
-            //return $payment;
+            if($request->has('user_id')){
+                $payment->user_id = $request->user_id;
+            }else{
+                $payment->user_id = auth()->id();
+            }
+            //$payment->user_id = $request->user_id;
             //$payment->validated = true;
             $loan_payment = $loan->payments()->create($payment->toArray());
             //generar PDF

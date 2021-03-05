@@ -8,7 +8,7 @@
     :options="options"
     :server-items-length="totalLoans"
     :footer-props="{ itemsPerPageOptions: [8, 15, 30] }"
-    
+    :item-class="itemRowBackground"
     multi-sort
     :show-select="tray == 'validated'"
     @update:options="updateOptions"
@@ -51,6 +51,7 @@
     <template v-slot:[`item.user`]="{ item }">
       {{ item.user }}
     </template>
+    
     <template v-slot:[`item.actions`]="{ item }">
       <v-tooltip bottom>
         <template v-slot:activator="{ on }">
@@ -59,28 +60,28 @@
             small
             v-on="on"
             color="warning"
-            :to="{ name: 'flowAdd', params: { id: item.id }}"
+            :to="{ name: 'flowAdd', params: { id: item.id, workTray: tray}}"
           ><v-icon>mdi-eye</v-icon>
           </v-btn>
         </template>
         <span>Ver trámite</span>
       </v-tooltip>
 
-        <v-tooltip bottom v-if="$store.getters.userRoles.includes('PRE-aprobacion-direccion') || $store.getters.userRoles.includes('PRE-revision-direccion')">
-          <template v-slot:activator="{ on }" v-if="item.user_id != null">
-            <v-btn
-              icon
-              small
-              v-on="on"
-              color="error"
-            
-              @click.stop="freeLoan(item.id, item.code)"
-            >
-              <v-icon>mdi-lock-open-variant</v-icon>
-            </v-btn>
-          </template>
-          <span>Liberar usuario del trámite</span>
-        </v-tooltip>
+      <v-tooltip bottom v-if="$store.getters.permissions.includes('release-loan-user')">
+        <template v-slot:activator="{ on }" v-if="item.user_id != null">
+          <v-btn
+            icon
+            small
+            v-on="on"
+            color="error"
+          
+            @click.stop="freeLoan(item.id, item.code)"
+          >
+            <v-icon>mdi-lock-open-variant</v-icon>
+          </v-btn>
+        </template>
+        <span>Liberar usuario del trámite</span>
+      </v-tooltip>
 
       <v-menu
         offset-y
@@ -117,8 +118,6 @@
           </v-list-item>
         </v-list>
       </v-menu>
-     <template>
-     </template> 
     </template>
   </v-data-table>
 </template>
@@ -175,15 +174,13 @@ export default {
         class: ['normal', 'white--text'],
         align: 'center',
         sortable: true
-      },
-      {
+      }, {
         text: 'CI',
         value: 'lenders[0].identity_card',
         class: ['normal', 'white--text'],
         align: 'center',
         sortable: true
-      },
-      {
+      }, {
         text: 'Nombre',
         value: 'lenders',
         class: ['normal', 'white--text'],
@@ -256,7 +253,13 @@ export default {
   },
   methods: {
     itemRowBackground: function (item) {
-      return item.observed === true ? 'style-1' : 'style-2'
+      if(item.validated === true && item.user_id != null){
+        return 'style-1'
+      }else if(item.validated === false && item.user_id != null){
+        return 'style-2'
+      }else{
+        return 'style-3'
+      }
     },
     searchProcedureModality(item, attribute = null) {
       let procedureModality = this.procedureModalities.find(o => o.id == item.procedure_modality_id)
@@ -391,6 +394,9 @@ th.text-start {
   background-color: #757575;
 }
 .style-1 {
-  background-color: rgb(245, 241, 202)
+  background-color: #8BC34A
+}
+.style-2 {
+  background-color: yellow
 }
 </style>

@@ -79,6 +79,12 @@ class LoanPermissionSeeder extends Seeder
             ], [
                 'name' => 'show-deleted-payment',
                 'display_name' => 'Ver trámites anulados de cobros'
+            ], [
+                'name' => 'validate-submitted-documents',
+                'display_name' => 'Validar documentos presentados'
+            ], [
+                'name' => 'release-loan-user',
+                'display_name' => 'Liberar usuario de préstamo'
             ]
         ];
         foreach ($permissions as $permission) {

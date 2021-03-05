@@ -3,7 +3,7 @@
     <ValidationObserver ref="observer">
       <v-form>
         <!--v-card-->
-        <div v-if="$store.getters.permissions.includes('disbursement-loan')">
+        <div v-if="$route.params.workTray == 'received' || $route.params.workTray == 'my_received' || $route.params.workTray == 'validated'">
           <v-tooltip top>
             <template v-slot:activator="{ on }">
               <v-btn
@@ -26,30 +26,31 @@
               <span>Cancelar</span>
             </div>
           </v-tooltip>
+        
+          <v-tooltip top v-if="$store.getters.permissions.includes('disbursement-loan')">
+            <template v-slot:activator="{ on }">
+              <v-btn
+                fab
+                dark
+                x-small
+                :color="editable ? 'danger' : 'success'"
+                top
+                right
+                absolute
+                v-on="on"
+                style="margin-right: -9px;"
+                @click.stop="editLoan()"
+              >
+                <v-icon v-if="editable">mdi-check</v-icon>
+                <v-icon v-else>mdi-pencil</v-icon>
+              </v-btn>
+            </template>
+            <div>
+              <span v-if="editable">Guardar</span> 
+              <span v-else>Editar</span>
+            </div>
+          </v-tooltip>
         </div>
-        <v-tooltip top v-if="$store.getters.userRoles.includes('PRE-tesoreria')">
-          <template v-slot:activator="{ on }">
-            <v-btn
-              fab
-              dark
-              x-small
-              :color="editable ? 'danger' : 'success'"
-              top
-              right
-              absolute
-              v-on="on"
-              style="margin-right: -9px;"
-              @click.stop="editLoan()"
-            >
-              <v-icon v-if="editable">mdi-check</v-icon>
-              <v-icon v-else>mdi-pencil</v-icon>
-            </v-btn>
-          </template>
-          <div>
-            <span v-if="editable">Guardar</span> 
-            <span v-else>Editar</span>
-        </div>
-        </v-tooltip>
         <v-row justify="center">
             <v-col cols="12">
               <v-container class="py-0">
@@ -210,10 +211,10 @@ export default {
       type: Object,
       required: true
     },
-    validate:{
+    /*validate:{
       type: Object,
       required: false
-    }
+    }*/
   },
    data: () => ({
     editable: false,
@@ -318,11 +319,11 @@ export default {
           })
             this.toastr.success('Se registró correctamente.')
             this.editable = false
-             if((this.loan.disbursement_date != '' && this.loan.number_payment_type != '') && (this.loan.disbursement_date != null && this.loan.number_payment_type != null)){
+            /* if((this.loan.disbursement_date != '' && this.loan.number_payment_type != '') && (this.loan.disbursement_date != null && this.loan.number_payment_type != null)){
                this.validate.valid_disbursement = true
              }else{
                this.validate.valid_disbursement = false
-             }
+             }*/
         }
       } catch (e) {
         console.log(e)

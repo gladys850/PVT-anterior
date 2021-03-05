@@ -16,6 +16,7 @@ use App\LoanGlobalParameter;
 use App\Http\Requests\LoanPaymentsForm;
 use App\Http\Requests\VoucherForm;
 use App\Events\LoanFlowEvent;
+use App\Events\LoanPaymentFlowEvent;
 use App\RoleSequence;
 use Carbon;
 use DB;
@@ -112,14 +113,14 @@ class LoanPaymentController extends Controller
                 'user_id' => $request->user_id
             ];
         }
-        else{
+        /*else{ // considerar para devoluciones
             if($request->validated){
-                $filters['validated'] = $request->validated;
+                $filters['validated'] = $request->boolean('validated');
                 $relations['users'] = [
                     'user_id' => null
                 ];
             }
-        }
+        }*/
         $data = Util::search_sort(new LoanPayment(), $request, $filters, $relations);
         $data->getCollection()->transform(function ($loanPayment) {
             return self::append_data($loanPayment, true);
@@ -225,7 +226,7 @@ class LoanPaymentController extends Controller
                 $payment->description = $request->input('description', null);
                 $payment->voucher_number = $request->input('voucher_number', null);
                 $voucher = $loanPayment->voucher_treasury()->create($payment->toArray());
-                $loanPayment->update(['state_id' => $Pagado]);
+                $loanPayment->update(['state_id' => $Pagado,'user_id' => $payment->user_id]);
                 DB::commit();
             } catch (\Exception $e) {
                 DB::rollback();
@@ -239,19 +240,98 @@ class LoanPaymentController extends Controller
     /**
     * Derivar en lote
     * Deriva o devuelve trámites en un lote mediante sus IDs
-    * @bodyParam ids array required Lista de IDs de los trámites a derivar. Example: [1,2]
-    * @bodyParam role_id integer required ID del rol al cual derivar o devolver. Example: 89
+    * @bodyParam ids array required Lista de IDs de los trámites a derivar. Example: [28,29]
+    * @bodyParam role_id integer required ID del rol al cual derivar o devolver. Example: 91
     * @authenticated
     * @responseFile responses/loan_payment/bullk_update_role.200.json
     */
     public function bulk_update_role( LoanPaymentsForm $request)
     {
+        if(!$request->user_id) 
+            $user_id = null;
+        else
+            $user_id = $request->user_id;
+        $sequence = null;
+        $from_role = null;
+        $to_role = $request->role_id;
+
         $PendientePago = LoanState::whereName('Pendiente de Pago')->first()->id;
+
         $to_role = $request->role_id;
         $loanPayment =  LoanPayment::whereIn('id',$request->ids)->where('role_id', '!=', $request->role_id)->where('state_id', $PendientePago)->orderBy('code');
         $derived = $loanPayment->get();
-        $derived = Util::derivation($request, $to_role, $derived, $loanPayment);
-        return $derived;
+        $to_role = Role::find($to_role);
+        
+       
+        //
+        if (count(array_unique($loanPayment->pluck('role_id')->toArray()))) $from_role = $derived->first()->role_id;
+        if ($from_role) {
+            $from_role = Role::find($from_role);
+            $flow_message = $this->flow_message($derived->first()->modality->procedure_type->id, $from_role, $to_role);
+        }
+        $derived->map(function ($item, $key) use ($from_role, $to_role, $flow_message) {
+            if (!$from_role) {
+                $item['from_role_id'] = $item['role_id'];
+                $from_role = Role::find($item['role_id']);
+                $flow_message = $this->flow_message($item->modality->procedure_type->id, $from_role, $to_role);
+            }
+            $item['role_id'] = $to_role->id;
+            $item['validated'] = false;
+            Util::save_record($item, $flow_message['type'], $flow_message['message']);
+        });
+        //
+
+        $loanPayment->update(array_merge($request->only('role_id'), ['validated' => false], ['user_id' => $user_id]));
+        
+        $derived->transform(function ($loanPaymen) {
+            return self::append_data($loanPaymen, true);
+        });
+
+        event(new LoanPaymentFlowEvent($derived));
+
+        // PDF template
+        $data = [
+            'type' => 'loan_payment',
+            'header' => [
+                'direction' => 'DIRECCIÓN DE ESTRATEGIAS SOCIALES E INVERSIONES',
+                'unity' => 'Área de ' . $from_role->display_name,
+                'table' => [
+                    ['Fecha', Carbon::now()->isoFormat('L')],
+                    ['Hora', Carbon::now()->format('H:i')],
+                    ['Usuario', Auth::user()->username]
+                ]
+            ],
+            'title' => ($flow_message['type'] == 'derivacion' ? 'DERIVACIÓN' : 'DEVOLUCIÓN') . ' DE TRÁMITES - MODALIDAD ' . $derived->first()->modality->procedure_type->second_name,
+            'procedures' => $derived,
+            'roles' => [
+                'from' => $from_role,
+                'to' => $to_role
+            ]
+        ];
+        $information_derivation='Fecha: '.Str::slug(Carbon::now()->isoFormat('LLL'), ' ').'  enviado a  '.$from_role->display_name;
+        $file_name = implode('_', ['derivacion', 'Cobros', Str::slug(Carbon::now()->isoFormat('LLL'), '_')]) . '.pdf';
+        $view = view()->make('flow.bulk_flow_procedures')->with($data)->render();
+        return response()->json([
+            'attachment' => Util::pdf_to_base64([$view], $file_name,$information_derivation, 'letter', $request->copies ?? 1, false),
+            'derived' => $derived
+        ]);
+    }
+
+    private function flow_message($procedure_type_id, $from_role, $to_role)
+    {
+        $sequence = RoleSequence::flow($procedure_type_id, $from_role->id);
+        if (in_array($to_role->id, $sequence->next->all())) {
+            $message = 'derivó';
+            $type = 'derivacion';
+        } else {
+            $message = 'devolvió';
+            $type = 'devolucion';
+        }
+        $message .= ' de ' . $from_role->display_name . ' a ' . $to_role->display_name;
+        return [
+            'message' => $message,
+            'type' => $type
+        ];
     }
 
     /**

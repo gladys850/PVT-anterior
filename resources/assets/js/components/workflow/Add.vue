@@ -1,66 +1,71 @@
 <template>
   <v-card flat>
     <v-card-title>
-      <v-toolbar dense color="tertiary" style="z-index: 1">
+      <v-toolbar dense style="z-index: 1" color='tertiary'>
         <v-toolbar-title>
           <Breadcrumbs />
         </v-toolbar-title>
         <v-spacer></v-spacer>
-        <v-tooltip top>
-          <template v-slot:activator="{ on }">
-            <v-btn
-              v-show="!loan.validated"
-              v-on="on"
-              icon
-              outlined
-              small
-              color="success"
-              class="darken-2 ml-4"
-              @click="bus.$emit('openDialog', { edit: false, accion: 'validar' })"
-            >
-              <v-icon dark>mdi-file-check</v-icon>
-            </v-btn>
-          </template>
-          <span>Validar trámite</span>
-        </v-tooltip>
-        <v-tooltip top>
-          <template v-slot:activator="{ on }">
-            <v-btn
-              v-show="!loan.validated"
-              v-on="on"
-              icon
-              outlined
-              small
-              color="orange"
-              class="ml-4"
-              @click="bus.$emit('openDialog', { edit: false, accion: 'devolver'})"
-            >
-              <v-icon>mdi-file-undo</v-icon>
-            </v-btn>
-          </template>
-          <span>Devolver trámite</span>
-        </v-tooltip>
-        <v-tooltip top>
-          <template v-slot:activator="{ on }">
-            <v-btn
-              top
-              v-if="$store.getters.permissions.includes('delete-loan')"
-              v-on="on"
-              icon
-              outlined
-              small
-              color="error"
-              class="darken-2 ml-4"
-              @click="
-                bus.$emit('openDialog', { edit: false, accion: 'anular' })
-              "
-            >
-              <v-icon>mdi-file-cancel</v-icon>
-            </v-btn>
-          </template>
-          <span>Anular trámite</span>
-        </v-tooltip>
-
+        <template v-if="$route.params.workTray == 'received' || $route.params.workTray == 'my_received' || $route.params.workTray == 'validated'">
+          <v-tooltip top>
+            <template v-slot:activator="{ on }">
+              <v-btn
+                v-show="!loan.validated"
+                v-on="on"
+                icon
+                outlined
+                small
+                color="success"
+                class="darken-2 ml-4"
+                @click="validation()"
+              >
+                <v-icon dark>mdi-file-check</v-icon>
+              </v-btn>
+            </template>
+            <span>Validar trámite</span>
+          </v-tooltip>
+          <v-tooltip top>
+            <template v-slot:activator="{ on }">
+              <v-btn
+                v-show="!loan.validated"
+                v-on="on"
+                icon
+                outlined
+                small
+                color="orange"
+                class="ml-4"
+                @click="bus.$emit('openDialog', { edit: false, accion: 'devolver'})"
+              >
+                <v-icon>mdi-file-undo</v-icon>
+              </v-btn>
+            </template>
+            <span>Devolver trámite</span>
+          </v-tooltip>
+          <v-tooltip top>
+            <template v-slot:activator="{ on }">
+              <v-btn
+                top
+                v-if="$store.getters.permissions.includes('delete-loan')"
+                v-on="on"
+                icon
+                outlined
+                small
+                color="error"
+                class="darken-2 ml-4"
+                @click="
+                  bus.$emit('openDialog', { edit: false, accion: 'anular' })
+                "
+              >
+                <v-icon>mdi-file-cancel</v-icon>
+              </v-btn>
+            </template>
+            <span>Anular trámite</span>
+          </v-tooltip>
+        </template>
+        <template v-else><h6 class="caption">
+          <v-icon x-small color="orange">mdi-folder-information</v-icon> {{role_name}} <br>
+          <v-icon x-small color="blue">mdi-file-account</v-icon> {{user_name}}</h6>
+        </template>
         <!--<v-divider
             class="mx-2"
             inset
@@ -218,7 +223,7 @@
                 :loan.sync="loan"
                 :loan_properties="loan_properties"
                 :procedure_types="procedure_types"
-                :validate.sync="validate"
+                
               >
                 <template v-slot:title>
                   <v-col cols="12" class="py-0">
@@ -356,7 +361,9 @@ export default {
     tab: "tab-1",
     validate: {
       valid_disbursement: false
-    }
+    },
+    role_name: null,
+    user_name: null
   }),
   watch: {
     search: _.debounce(function() {
@@ -437,6 +444,8 @@ export default {
           this.getSpouse(this.affiliate.id)
         }
         this.setBreadcrumbs()
+        this.role(this.loan.role_id)
+        this.user(this.loan.user_id)
         console.log(this.loan)
       } catch (e) {
         console.log(e)
@@ -537,16 +546,43 @@ export default {
         console.log(e)
       }
     },
+    async role(role_id){
+      try {
+        let res = await axios.get(`role/${role_id}`)
+        this.role_name = res.data.display_name
+        console.log(this.role_name)
+      } catch (e) {
+        console.log(e)
+      }
+    },
+    async user(user_id){
+      try {
+        let res = await axios.get(`user/${user_id}`)
+        this.user_name = res.data.username
+        console.log(this.user_name)
+      } catch (e) {
+        console.log(e)
+      }
+    },
     validation(){
-      if(this.$store.getters.userRoles.includes('PRE-tesoreria') && this.validate.valid_disbursement==false){
-         this.toastr.error('Faltan registar campos en Desembolso. Registre la fecha, tipo y nro de documento.')
-        }else{
-          if(this.$store.getters.userRoles.includes('PRE-jefatura') || this.$store.getters.userRoles.includes('PRE-aprobacion-direccion') || this.$store.getters.userRoles.includes('PRE-tesoreria')){
-            this.bus.$emit('openDialog', { edit: false, accion: 'validar' })
-          }else{
-            this.bus.$emit('openDialog', { edit: false, accion: 'validar' })
-          }
-        }
+      //VALIDACION DESEMBOLSO
+      if((this.loan.disbursement_date != '' && this.loan.number_payment_type != '') && (this.loan.disbursement_date != null && this.loan.number_payment_type != null)){
+        this.validate.valid_disbursement = true
+      }else{
+        this.validate.valid_disbursement = false
+      }
+      /////
+      if(this.$store.getters.permissions.includes('disbursement-loan') == true && this.validate.valid_disbursement == true){
+         this.bus.$emit('openDialog', { edit: false, accion: 'validar' })
+         //alert("entro")
+      }
+      else if(this.$store.getters.permissions.includes('disbursement-loan') == false){
+         this.bus.$emit('openDialog', { edit: false, accion: 'validar' })
+         //alert("entro 2")
+      }
+      else{
+        this.toastr.error('Faltan registar campos en Desembolso. Registre la fecha, tipo y nro de documento.')
+      }
 
     }
   }
