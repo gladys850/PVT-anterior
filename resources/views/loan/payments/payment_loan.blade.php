@@ -84,12 +84,12 @@
             </tr>
             <tr class="">
                 <td class="w-25">Intereses por</td>
-                <td class="w-10">{{ $estimated_days['current'] }} dias a {{ $loan->interest->annual_interest}} anual</td>
+                <td class="w-10">0 dias a {{ $loan->interest->annual_interest}} anual</td>
                 <td class="w-10 text-right">{{ Util::money_format($loan_payment->interest_payment) }}</td>             
             </tr>
             <tr class="">
                 <td class="w-30">Intereses Penales por</td>
-                <td class="w-10">{{ $estimated_days['penal'] }} dias a  {{ $loan->interest->penal_interest}} % anual</td>
+                <td class="w-10">0 dias a  {{ $loan->interest->penal_interest}} % anual</td>
                 <td class="w-10 text-right">{{ Util::money_format($loan_payment->penal_payment) }}</td>            </tr>
             <tr class="">
                 <td class="w-30">Intereses Corrientes Pendientes</td>
