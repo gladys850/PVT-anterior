@@ -21,12 +21,13 @@ class LoanPayment extends Model
         'estimated_date',
         'quota_number',
         'estimated_quota',
+        'penal_remaining',
         'penal_payment',
-        'accumulated_payment',
+        'interests_remaining',
         'interest_payment',
         'capital_payment',
-        'penal_remaining',
-        'accumulated_remaining',
+        'interest_accumulated',
+        'penal_accumulated',
         'code',
         'procedure_modality_id',
         'state_id',
@@ -210,5 +211,45 @@ class LoanPayment extends Model
 
     public function users(){
         return $this->hasOne(User::class,'id','id');
+    }
+
+    public static function days_interest2(Loan $loan, $estimated_date = null){
+        $interest = [
+            'penal' => 0,
+            'current' => 0,
+            'penal_accumulated' => 0,
+            'interest_accumulated' => 0,
+        ];
+        if($loan->balance = 0) return $interest;
+        $estimated_date = CarbonImmutable::parse($estimated_date ?? CarbonImmutable::now()->toDateString());
+        $latest_quota = $loan->payments()->first();
+        if (!$latest_quota) {
+            $payment_date = $loan->disbursement_date;
+            /*$latest_quota = (object)[
+                'penal_remaining' => 0,
+                'accumulated_remaining' => 0
+            ];*/
+            if (!$payment_date) return (object)$interest;
+        } else {
+            $payment_date = Carbon::parse($latest_quota->estimated_date)->toDateString();
+            /*$interest['penal_remaining'] = $latest_quota->penal_remaining;
+            $interest['accumulated_remaining'] = $latest_quota->accumulated_remaining;*/
+            $interest['penal_accumulated'] = $latest_quota->penal_remaining;
+            $interest['interest_accumulated'] = $latest_quota->accumulated_remaining;
+            /*$latest_quota = (object)[
+                'penal_remaining' => $latest_quota->penal_remaining,
+                'accumulated_remaining' => $latest_quota->accumulated_remaining,
+            ];*/
+        }
+        //return $latest_quota;
+        $payment_date = CarbonImmutable::parse($payment_date);
+        if ($estimated_date->lessThan($payment_date)) {
+            return (object)$interest;}
+        $diff_days = $estimated_date->diffInDays($payment_date);//correcto
+        $interest['current'] = $diff_days;
+        if ($interest['current'] > 31) {
+            $interest['penal'] = $interest['current']-31;
+        }
+        return (object)$interest;
     }
 }

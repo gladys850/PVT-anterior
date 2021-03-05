@@ -24,12 +24,13 @@ class CreateLoanPaymentsTable extends Migration
             $table->unsignedSmallInteger('quota_number'); // numero de cuota, cuando sea necesario se repite
             // de las siguientes 5 columnas se obtendra el total pagado
             $table->float('estimated_quota',10,2); // cuota estimada
+            $table->float('penal_remaining',10,2)->default(0); // interés penal previo
             $table->float('penal_payment',10,2)->default(0); //pago penal
-            $table->float('accumulated_payment',10,2)->default(0); //pago interés acumulado
+            $table->float('interest_remaining',10,2)->default(0); // interés acumulado previo
             $table->float('interest_payment',10,2)->default(0); // pago de interes corriente
             $table->float('capital_payment',10,2)->default(0); // pago de capital
-            $table->float('penal_remaining',10,2)->default(0); // interés penal previo
-            $table->float('accumulated_remaining',10,2)->default(0); // interés acumulado previo
+            $table->float('interest_accumulated',10,2)->default(0); // pago de interes corriente
+            $table->float('penal_accumulated',10,2)->default(0); // pago de interes corriente*/
             $table->unsignedBigInteger('state_id')->nullable(false); //id estado del tramite
             $table->text('voucher')->nullable(); // Comprobante del pago
             $table->enum('paid_by', ['T', 'G']);// Pago realizado por Titular o Garante
