@@ -56,6 +56,9 @@
                 @case('loan')
                     @php ($total_cols = $hasSender ? 8 : 9)
                     @break
+                @case('loan_payment')
+                    @php ($total_cols = $hasSender ? 8 : 9)
+                    @break
                 @default
                     @php ($total_cols = 1)
             @endswitch
