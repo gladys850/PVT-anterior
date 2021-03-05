@@ -261,6 +261,124 @@ class Loan extends Model
         return Util::round($monthly_interest * $this->amount_approved / (1 - 1 / pow((1 + $monthly_interest), $this->loan_term)));
     }
 
+    public function next_payment2($estimated_date = null, $amount = null, $liquidate = null)
+    {
+            $total_interests = 0;
+            if ($liquidate) {
+                $amount = $this->balance;
+            } else {
+                if (!$amount) $amount = $this->estimated_quota;
+            }
+            $quota = new LoanPayment();
+            $next_payment = LoanPayment::quota_date($this);
+            if (!$estimated_date) {
+                $quota->estimated_date = $next_payment->date;
+            } else {
+                $quota->estimated_date = Carbon::parse($estimated_date)->toDateString();
+            }
+            $quota->quota_number = $this->balance > 0 ? $next_payment->quota : null;
+            $interest = $this->interest;
+            $quota->estimated_days = LoanPayment::days_interest2($this, $quota->estimated_date);
+            $quota->paid_days = clone($quota->estimated_days);
+            $quota->balance = $this->balance;
+            $quota->penal_remaining = $quota->paid_days->penal_accumulated;
+            $quota->penal_payment  = 0;
+            $quota->interest_remaining = $quota->paid_days->interest_accumulated;
+            $quota->capital_payment = $total_interests = $quota->interest_payment = 0;
+            $quota->penal_accumulated = $quota->interest_accumulated = 0;
+            $total_amount = Util::round($amount);
+            // Calcular intereses
+
+        // Interes acumulado penal
+
+        if($quota->penal_remaining > 0){
+            if($amount >= $quota->penal_remaining){
+                $amount = $amount - $quota->penal_remaining;
+                $quota->penal_remaining = 0;
+            }
+            else{
+                $quota->penal_remaining = $amount;
+                $amount = 0;
+            }
+        }
+        else{
+            $quota->penal_remaining = 0;
+        }
+        $total_interests += $quota->penal_remaining;
+
+        // Interés penal 
+
+        $quota->penal_payment = Util::round($quota->balance * $interest->daily_penal_interest * $quota->paid_days->penal);
+        if($quota->penal_payment > 0){
+            if($amount >= $quota->penal_payment){
+                $amount = $amount - $quota->penal_payment;
+            }
+            else{
+                $quota->penal_accumulated = Util::round($quota->penal_remaining + ($quota->penal_payment - $amount));
+                //$quota->penal_remaining = $quota->penal_remaining + ($quota->penal_payment - $amount);
+                $quota->penal_payment = $amount;
+                $amount = 0;
+            }
+        }else{
+            $quota->penal_payment = 0;
+        }
+        $total_interests += $quota->penal_payment;
+
+        // Interes acumulado corriente
+        if($quota->interest_remaining > 0){
+            if($amount >= $quota->interest_remaining){
+                $amount = $amount - $quota->interest_remaining;
+                $quota->interest_remaining = 0;
+            }
+            else{
+                $quota->interest_remaining = $amount;
+                $amount = 0;
+            }
+        }
+        else{
+            $quota->interest_remaining = 0;
+        }
+        $total_interests += $quota->interest_remaining;
+
+
+        // Interés corriente
+            
+        $quota->interest_payment = Util::round($quota->balance * $interest->daily_current_interest * $quota->paid_days->current);
+        if($amount >= $quota->interest_payment){
+                $amount = $amount - $quota->interest_payment;
+        }
+        else{
+            $quota->interest_accumulated = Util::round($quota->interests_remaining + ($quota->interest_payment - $amount));
+            $quota->interest_payment = Util::round($amount);
+            $amount = 0;
+        }
+
+        $total_interests += $quota->interest_payment;
+
+        // Calcular amortización de capital
+        //return $amount;
+        if($liquidate)
+        {
+            $quota->capital_payment = $quota->balance;
+        }
+        else{
+            $quota->capital_payment = Util::round($amount);
+        }
+             
+        // Calcular monto total de la cuota
+
+        if ($quota->balance == $quota->capital_payment) {
+            $quota->next_balance = 0;
+        } else {
+            $quota->next_balance = Util::round($this->balance - $quota->capital_payment);
+        }
+        $quota->estimated_quota = Util::round($quota->capital_payment + $total_interests);
+        $quota->next_balance = $quota->balance - $quota->capital_payment;
+        /*$quota->penal_accumulated_payment = $quota->paid_days->accumulated_remaining + $quota->accumulated_remaining;
+        $quota->current_accumulated_payment = $quota->paid_days->penal_remaining + $quota->penal_remaining;*/
+        return $quota;
+    }
+
     public function next_payment($estimated_date = null, $amount = null, $liquidate = false)
     {
         do {
