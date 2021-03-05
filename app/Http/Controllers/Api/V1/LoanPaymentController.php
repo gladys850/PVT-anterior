@@ -367,7 +367,7 @@ class LoanPaymentController extends Controller
     * @authenticated
     * @responseFile responses/loan_payment/print_loan_payment.200.json
     */
-    public function print_loan_payment(Request $request, LoanPayment $loan_payment, $standalone = true)
+    public function print_loan_payment(Request $request, LoanPayment $loan_payment, $standalone = true, $estimated_days = null)
     {
         $loan = LoanPayment::findOrFail($loan_payment->id)->loan;
         $procedure_modality = $loan->modality;
@@ -375,6 +375,22 @@ class LoanPaymentController extends Controller
         foreach ($loan->lenders as $lender) {
             $lenders[] = LoanController::verify_spouse_disbursable($lender)->disbursable;
             if($lender->dead) $is_dead = true;
+        }
+
+        if($estimated_days == null){
+            if(count($loan->payments) == 1){
+                $estimated_days['current'] = CarbonImmutable::parse($loan->disbursement_date)->diffindays(CarbonImmutable::parse($loan->payments->first()->estimated_date));
+                if($estimated_days['current'] > 31)
+                    $estimated_days['penal'] = $estimated_days['current'] - 31;
+                else
+                    $estimated_days['penal'] = 0;
+            }else{
+                $estimated_days['current'] = CarbonImmutable::parse($loan->payments->where('quota_number', ($loan->payments->last()->first()->quota_number)-1))->diffindays(CarbonImmutable::parse($loan->payments->last()->first()->estimated_date));
+                if($estimated_days['current'] > 31)
+                    $estimated_days['penal'] = $estimated_days['current'] - 31;
+                else
+                    $estimated_days['penal'] = 0;
+            }
         }
         $persons = collect([]);
         foreach ($lenders as $lender) {
@@ -400,7 +416,8 @@ class LoanPaymentController extends Controller
             'lenders' => collect($lenders),
             'loan_payment' => $loan_payment,
             'signers' => $persons,
-            'is_dead'=> $is_dead
+            'is_dead'=> $is_dead,
+            'estimated_days' => $estimated_days
         ];
         $information_loan = $this->get_information_loan($loan);
         $file_name = implode('_', ['pagos', $procedure_modality->shortened, $loan->code]) . '.pdf';

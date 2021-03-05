@@ -64,7 +64,7 @@
         </template>
         <template v-else><h6 class="caption">
           <v-icon x-small color="orange">mdi-folder-information</v-icon> {{role_name}} <br>
-          <v-icon x-small color="blue">mdi-file-account</v-icon> {{user_name}}</h6>
+          <v-icon x-small color="blue" v-if="user_name != null">mdi-file-account</v-icon> {{user_name}}</h6>
         </template>
         <!--<v-divider
             class="mx-2"
