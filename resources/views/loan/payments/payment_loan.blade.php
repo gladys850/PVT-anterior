@@ -84,7 +84,7 @@
             </tr>
             <tr class="">
                 <td class="w-25">Intereses por</td>
-                <td class="w-10">44 dias a 13.2% anual</td>
+                <td class="w-10">{{ $estimated_days['current'] }} dias a 13.2% anual</td>
                 <td class="w-10 text-right">{{ Util::money_format($loan_payment->interest_payment) }}</td>             
             </tr>
             <tr class="">
