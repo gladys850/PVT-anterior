@@ -59,7 +59,7 @@
                 <td class="w-15">Saldo Anterior</td>
                 <td class="w-15">Saldo Actual</td>
                 <td class="w-15">Fecha de Cálculo</td>
-                <td class="w-15">Fecha de pago</td>
+                <td class="w-15">Fecha de Registro</td>
                 <td >Intereses Penales Pendientes</td>
                 <td >Intereses Corrientes Pendientes</td>
             </tr>
@@ -68,9 +68,9 @@
                 <td class="data-row py-5">{{ $loan->balance }}</td>
                 <td class="data-row w-10">completar</td>
                 <td class="data-row py-5">{{ Carbon::parse($loan_payment->estimated_date)->format('d/m/y') }}</td>
-                <td class="data-row py-5">28/02/21</td>
-                <td>0</td>
-                <td>0</td>
+                <td class="data-row py-5">{{ Carbon::parse($loan_payment->created_at)->format('d/m/y') }}</td>
+                <td>{{ Util::money_format($loan_payment->interest_accumulated) }}</td>
+                <td>{{ Util::money_format($loan_payment->penal_accumulated) }}</td>
             </tr>
     </div>
     <div class="block">
@@ -84,16 +84,16 @@
             </tr>
             <tr class="">
                 <td class="w-25">Intereses por</td>
-                <td class="w-10">{{ $estimated_days['current'] }} dias a 13.2% anual</td>
+                <td class="w-10">{{ $estimated_days['current'] }} dias a {{ $loan->interest->annual_interest}} anual</td>
                 <td class="w-10 text-right">{{ Util::money_format($loan_payment->interest_payment) }}</td>             
             </tr>
             <tr class="">
                 <td class="w-30">Intereses Penales por</td>
-                <td class="w-10">13 dias a 6% anual</td>
+                <td class="w-10">{{ $estimated_days['penal'] }} dias a  {{ $loan->interest->penal_interest}} % anual</td>
                 <td class="w-10 text-right">{{ Util::money_format($loan_payment->penal_payment) }}</td>            </tr>
             <tr class="">
                 <td class="w-30">Intereses Corrientes Pendientes</td>
-                <td colspan="2" class="w-50 text-right">37.20</td>
+                <td colspan="2" class="w-50 text-right">0</td>
             </tr>
             <tr class="">
                 <td class="w-30">Intereses Penales Pendientes</td>
