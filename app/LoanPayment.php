@@ -234,8 +234,8 @@ class LoanPayment extends Model
             $payment_date = Carbon::parse($latest_quota->estimated_date)->toDateString();
             /*$interest['penal_remaining'] = $latest_quota->penal_remaining;
             $interest['accumulated_remaining'] = $latest_quota->accumulated_remaining;*/
-            $interest['penal_accumulated'] = $latest_quota->penal_remaining;
-            $interest['interest_accumulated'] = $latest_quota->accumulated_remaining;
+            $interest['penal_accumulated'] = $latest_quota->penal_accumulated;
+            $interest['interest_accumulated'] = $latest_quota->interest_accumulated;
             /*$latest_quota = (object)[
                 'penal_remaining' => $latest_quota->penal_remaining,
                 'accumulated_remaining' => $latest_quota->accumulated_remaining,
