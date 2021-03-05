@@ -34,6 +34,7 @@ use App\Events\LoanFlowEvent;
 use Carbon;
 use App\Helpers\Util;
 use App\Http\Controllers\Api\V1\LoanPaymentController;
+use Carbon\CarbonImmutable;
 
 /** @group Préstamos
 * Datos de los trámites de préstamos y sus relaciones
@@ -914,7 +915,7 @@ class LoanController extends Controller
     */
     public function get_next_payment(LoanPaymentForm $request, Loan $loan)
     {
-        return $loan->next_payment($request->input('estimated_date', null), $request->input('estimated_quota', null), $request->input('liquidate', false));
+        return $loan->next_payment2($request->input('estimated_date', null), $request->input('estimated_quota', null), $request->input('liquidate', false));
     }
 
     /** @group Cobranzas
@@ -937,7 +938,7 @@ class LoanController extends Controller
     public function set_payment(LoanPaymentForm $request, Loan $loan)
     {
         if($loan->balance!=0){
-            $payment = $loan->next_payment($request->input('estimated_date', null), $request->input('estimated_quota', null), $request->input('liquidate', false));
+            $payment = $loan->next_payment2($request->input('estimated_date', null), $request->input('estimated_quota', null), $request->input('liquidate', false));
             $payment->description = $request->input('description', null);
             $payment->state_id = LoanState::whereName('Pendiente de Pago')->first()->id;
             $payment->role_id = Role::whereName('PRE-cobranzas')->first()->id;
@@ -1245,5 +1246,19 @@ class LoanController extends Controller
             $message['defaulted'] = false;
         }
         return $message;
+    }
+
+    public function prueba(request $request){
+        $estimated_date = "2021/03/03";
+        $estimated_date = CarbonImmutable::parse($estimated_date);
+        return $estimated_date->diffInDays("2021/03/07");
+        return CarbonImmutable::parse($request->date);
+        $previus_month  = Carbon::now()->subMonth()->endOfMonth()->format('Y-m-d');
+        return $previus_month;
+        $date = Carbon::now();
+        $estimated_date = CarbonImmutable::parse($request->diff_date);
+        $diff = $estimated_date->diffInMonths($previus_month);//correcto
+        return $diff;
+        //return $date->format('d');
     }
 }
