@@ -18,26 +18,26 @@ class LoanPayment extends Model
     use SoftDeletes;
     public $fillable = [
         'loan_id',
+        'code',
+        'procedure_modality_id',
         'estimated_date',
         'quota_number',
         'estimated_quota',
         'penal_remaining',
         'penal_payment',
-        'interests_remaining',
+        'interest_remaining',
         'interest_payment',
         'capital_payment',
         'interest_accumulated',
         'penal_accumulated',
-        'code',
-        'procedure_modality_id',
         'state_id',
-        'role_id',
-        'description',
-        'validated',
         'voucher',
         'paid_by',
+        'role_id',
         'affiliate_id',
         'amortization_type_id',
+        'validated',
+        'description',
         'user_id'
 
     ];
@@ -142,7 +142,7 @@ class LoanPayment extends Model
                 $merged->pay_date = $payment->pay_date;
                 $merged->estimated_date = $payment->estimated_date;
                 $merged->penal_remaining = $payment->penal_remaining;
-                $merged->accumulated_remaining = $payment->accumulated_remaining;
+                $merged->interest_remaining = $payment->interest_remaining;
             }
         }
         unset($merged->affiliate_id, $merged->payment_type, $merged->voucher_number, $merged->receipt_number, $merged->description, $merged->created_at, $merged->updated_at);
@@ -225,21 +225,11 @@ class LoanPayment extends Model
         $latest_quota = $loan->payments()->first();
         if (!$latest_quota) {
             $payment_date = $loan->disbursement_date;
-            /*$latest_quota = (object)[
-                'penal_remaining' => 0,
-                'accumulated_remaining' => 0
-            ];*/
             if (!$payment_date) return (object)$interest;
         } else {
             $payment_date = Carbon::parse($latest_quota->estimated_date)->toDateString();
-            /*$interest['penal_remaining'] = $latest_quota->penal_remaining;
-            $interest['accumulated_remaining'] = $latest_quota->accumulated_remaining;*/
             $interest['penal_accumulated'] = $latest_quota->penal_accumulated;
             $interest['interest_accumulated'] = $latest_quota->interest_accumulated;
-            /*$latest_quota = (object)[
-                'penal_remaining' => $latest_quota->penal_remaining,
-                'accumulated_remaining' => $latest_quota->accumulated_remaining,
-            ];*/
         }
         //return $latest_quota;
         $payment_date = CarbonImmutable::parse($payment_date);
