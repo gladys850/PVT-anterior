@@ -105,7 +105,7 @@
                         {{ $loan->payment_type->name}}
                     @endif
                 </td>
-                <td class="data-row py-5 m-b-10 text-xs" >{{Carbon::parse($loan->disbursement_date)->format('d/m/y')}}aaaaa</td>
+                <td class="data-row py-5 m-b-10 text-xs" >{{Carbon::parse($loan->disbursement_date)->format('d/m/y')}}</td>
                 <td class="data-row py-5 m-b-10 text-xs">{{ Util::money_format($loan->amount_requested) }} <span class="capitalize">Bs.</span></td>
                 @if($loan->payments->first() != null)
                 <td class="data-row py-5 m-b-10 text-xs">{{ $loan->payments->first()->interest_accumulated}}</td>
