@@ -401,11 +401,14 @@ class AffiliateController extends Controller
             'affiliate_id' => $affiliate->id
         ];
 
+        $table_contribution=null;
         if(count($affiliate->contributions)>1){
             if ($state_affiliate=='Activo'){
                 $contributions = Util::search_sort(new Contribution(), $request, $filters);
+                $table_contribution='contributions';
             }else{
                 $contributions = Util::search_sort(new AidContribution(), $request, $filters);
+                $table_contribution ='aid_contributions';
             }
             //$contributions = Util::search_sort(new Contribution(), $request, $filters);
             if ($request->has('city_id')) {
@@ -437,11 +440,13 @@ class AffiliateController extends Controller
                     }
                 } else {
                     $is_latest = false;
+                    $table_contribution=null;
                 }
                 $contributions = collect([
                     'valid' => $is_latest,
                     'diff_months' => $before_month,
-                    'state_affiliate'=>$state_affiliate
+                    'state_affiliate'=>$state_affiliate,
+                    'name_table_contribution'=>$table_contribution
                 ])->merge($contributions);
             }
             return $contributions;
