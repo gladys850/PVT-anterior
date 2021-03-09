@@ -320,7 +320,7 @@ export default {
       if (this.$store.getters.permissions.includes("print-payment-loan")) {
         docs.push({ id: 5, title: "Registro de cobro", icon: "mdi-file-check-outline" });
       }
-      if (this.$store.getters.permissions.includes("print-payment-voucher") && this.$store.getters.userRoles.includes('PRE-tesoreria')) {
+      if (this.$store.getters.permissions.includes("print-payment-voucher")) {
         docs.push({ id: 6, title: "Registro de pago", icon: "mdi-cash-multiple" });
       } else {
         console.log("Se ha producido un error durante la generación de la impresión");
