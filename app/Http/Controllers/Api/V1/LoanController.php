@@ -1194,6 +1194,8 @@ class LoanController extends Controller
                 'table' => [
                     ['Tipo', $loan->modality->procedure_type->second_name],
                     ['Modalidad', $loan->modality->shortened],
+                    ['Fecha', Carbon::now()->format('d/m/Y')],
+                    ['Hora', Carbon::now()->format('h:m:s a')],
                     ['Usuario', Auth::user()->username]
                 ]
             ],
@@ -1246,19 +1248,5 @@ class LoanController extends Controller
             $message['defaulted'] = false;
         }
         return $message;
-    }
-
-    public function prueba(request $request){
-        $estimated_date = "2021/03/03";
-        $estimated_date = CarbonImmutable::parse($estimated_date);
-        return $estimated_date->diffInDays("2021/03/07");
-        return CarbonImmutable::parse($request->date);
-        $previus_month  = Carbon::now()->subMonth()->endOfMonth()->format('Y-m-d');
-        return $previus_month;
-        $date = Carbon::now();
-        $estimated_date = CarbonImmutable::parse($request->diff_date);
-        $diff = $estimated_date->diffInMonths($previus_month);//correcto
-        return $diff;
-        //return $date->format('d');
     }
 }
