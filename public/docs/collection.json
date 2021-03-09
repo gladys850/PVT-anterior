@@ -215,6 +215,118 @@
 			"protocolProfileBehavior": {}
 		},
 		{
+			"name": "Ajuste a Contribuciones",
+			"item": [
+				{
+					"name": "Lista de Ajuste a Contribuciones",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/{{endpoint}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}"
+							]
+						},
+						"description": "index"
+					},
+					"response": []
+				},
+				{
+					"name": "Nueva Ajuste a Contribuciones",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"city_identity_card_id\": 5,\n    \"identity_card\": \"165134-1L\",\n    \"last_name\": \"PINTO\",\n    \"mothers_last_name\": \"ROJAS\",\n    \"first_name\": \"JUAN\",\n    \"second_name\": \"ROBERTO\",\n    \"phone_number\": 2254101,\n    \"cell_phone_number\": 76543210\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/{{endpoint}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}"
+							]
+						},
+						"description": "store"
+					},
+					"response": []
+				},
+			
+				{
+					"name": "Actualizar Ajuste a Contribuciones",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"last_name\": \"PINTOSO\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/{{endpoint}}/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}",
+								"1"
+							]
+						},
+						"description": "update"
+					},
+					"response": []
+				},
+				{
+					"name": "Eliminar una Ajuste a Contribuciones",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/{{endpoint}}/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"{{endpoint}}",
+								"1"
+							]
+						},
+						"description": "destroy"
+					},
+					"response": []
+				}
+			],
+			"description": "loan_contribution_adjust",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "8df01aa1-4ad1-4cc5-8e89-2c49134a7301",
+						"type": "text/javascript",
+						"exec": [
+							"pm.environment.set('endpoint', 'loan_contribution_adjust');"
+						]
+					}
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
 			"name": "Afiliados",
 			"item": [
 				{

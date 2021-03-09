@@ -11,6 +11,7 @@ Route::group([
     Route::post('command_senasir_save_payment', 'Api\V1\LoanPaymentController@command_senasir_save_payment');
     //Route::get('senasir_save_payment', 'Api\V1\LoanPaymentController@senasir_save_payment');
     Route::get('loans_delay', 'Api\V1\LoanPaymentController@loans_delay');
+    Route::apiResource('loan_contribution_adjust', 'Api\V1\LoanContributionAdjustController')->only('index','store', 'update', 'destroy');
     //sismu
 
     //
