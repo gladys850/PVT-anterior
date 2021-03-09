@@ -437,7 +437,7 @@ export default {
         this.options.page = res.data.current_page
         this.options.itemsPerPage = parseInt(res.data.per_page)
         this.options.totalItems = res.data.total
-        //this.setBreadcrumbs()
+        this.setBreadcrumbs()
       } catch (e) {
         console.log(e)
       } finally {
@@ -497,7 +497,23 @@ export default {
         this.params = filters
         this.getLoans()
       }
-    }
+    },
+    setBreadcrumbs() {
+      let breadcrumbs = [
+        {
+          text: "Cobros",
+          to: { name: "loanPaymentIndex" }
+        }
+      ]
+        /*if(this.affiliate_id > 0){
+          breadcrumbs.push({
+          text: this.$options.filters.fullName(this.affiliate, true),
+          to: { name: "affiliateAdd", params: { id: this.affiliate_id } }
+        })
+      }*/
+
+      this.$store.commit("setBreadcrumbs", breadcrumbs)
+    },
   }
 }
 </script>

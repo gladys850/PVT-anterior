@@ -170,13 +170,14 @@
                             :readonly="editable || ver"
                           ></v-text-field>
                         </v-col>
-                        <v-col cols="1" class="ma-0 pb-0" v-show="!isNew" >
+                        <v-col cols="1" class="ma-0 pb-0" v-show="!isNew" v-if="!$store.getters.userRoles.includes('PRE-tesoreria-cobros')" >
                            <label  >TIPO DE COBRO:</label>
                         </v-col>
-                        <v-col cols="2" class="ma-0 pb-0" v-show="isNew">
+                        <v-col cols="1" v-if="$store.getters.userRoles.includes('PRE-tesoreria-cobros')"></v-col>
+                        <v-col cols="2" class="ma-0 pb-0" v-show="isNew" >
                           <label >TIPO DE COBRO:</label>
                         </v-col>
-                        <v-col cols="2" class="ma-0 pb-0">
+                        <v-col cols="2" class="ma-0 pb-0" v-if="!$store.getters.userRoles.includes('PRE-tesoreria-cobros')" >
                           <v-select
                              class="caption"
                             style="font-size: 10px;"
