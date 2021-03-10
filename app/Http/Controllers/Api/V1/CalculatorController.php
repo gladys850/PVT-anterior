@@ -359,8 +359,8 @@ class CalculatorController extends Controller
         $ms = $request->amount_requested;
         $plm = $request->months_term;
         $ticm = $procedure_modality->current_interest->monthly_current_interest;
-        $ce = $this->quota_calculator($procedure_modality, $plm, $ms);
-        $liquid_qualification_calculated=0;
+        $ce = round($this->quota_calculator($procedure_modality, $plm, $ms),2);
+        $liquid_qualification_calculated = 0;
         foreach($lc as $obj){
         $liquid_qualification_calculated = $liquid_qualification_calculated + $obj["liquid_qualification_calculated"];
         }
@@ -371,7 +371,8 @@ class CalculatorController extends Controller
             $ms = $amount_maximum_suggested;
         }
         $maximum_suggested_valid = false;
-        if($procedure_modality->procedure_type->interval->minimum_amount<=$amount_maximum_suggested && $amount_maximum_suggested<=$procedure_modality->procedure_type->interval->maximum_amount) $maximum_suggested_valid = true;
+        if($procedure_modality->procedure_type->interval->minimum_amount <= $ms && $ms <= $procedure_modality->procedure_type->interval->maximum_amount)
+            $maximum_suggested_valid = true;
         /** end m */
         $ie = ($ce/$liquid_qualification_calculated)*100;
         if($ie<=$debt_index){
@@ -381,24 +382,26 @@ class CalculatorController extends Controller
         }
         //$ams = $this->maximum_amount($procedure_modality,$plm,$liquid_qualification_calculated);
         $cosigners=array();
-        foreach($lc as $obj2){
-            $plc = (int)$obj2["liquid_qualification_calculated"];
-            $plc = round(($plc/$liquid_qualification_calculated)*100);
-            $ce_c = round(($ce*$plc)/100,2);
-            /** m */
-            $livelihood_amount = 0; $valuate_affiliate = false;
-            $livelihood_amount = $obj2['liquid_qualification_calculated'] - $ce_c; // liquido para calificacion menos la cuota estimada debe ser menor igual al monto de subsistencia
-            if($livelihood_amount>$loan_global_parameter->livelihood_amount) $valuate_affiliate = true;  // validar Indice de endeudamiento y monto de subsistencia
+        $top_debt_index = $liquid_qualification_calculated * ($debt_index / 100);
+        $percentage_change = round((1 - ($ce / $top_debt_index)),4);
+        foreach($lc as $liquid_calculated){
+            $estimated_quota = round((($liquid_calculated["liquid_qualification_calculated"]*$debt_index /100) * $percentage_change),2);
+            $estimated_quota = round((($liquid_calculated["liquid_qualification_calculated"]*$debt_index /100)),2) - $estimated_quota;
+            $livelihood_amount = 0; 
+            $valuate_affiliate = false;
+            $livelihood_amount = $liquid_calculated['liquid_qualification_calculated'] - $estimated_quota; // liquido para calificacion menos la cuota estimada debe ser menor igual al monto de subsistencia
+            if($livelihood_amount>$loan_global_parameter->livelihood_amount) 
+                $valuate_affiliate = true;  // validar Indice de endeudamiento y monto de subsistencia
 
             /** end m */
             $cosigner=array(
-                "affiliate_id" => $obj2["affiliate_id"],
-                "quota_calculated_estimated" => $ce_c,
-                'payment_percentage'=>$plc,
-                'liquid_qualification_calculated' => $obj2["liquid_qualification_calculated"],
+                "affiliate_id" => $liquid_calculated["affiliate_id"],
+                "quota_calculated_estimated" => $estimated_quota,
+                'payment_percentage'=> round($estimated_quota / $ce * 100),
+                'liquid_qualification_calculated' => $liquid_calculated["liquid_qualification_calculated"],
                 'is_valid' => $valuate_affiliate // validar si supera al monto de subsistencia
-        );
-        array_push($cosigners,$cosigner);
+            );
+            array_push($cosigners,$cosigner);
         }
         foreach($cosigners as $cos)
         {
