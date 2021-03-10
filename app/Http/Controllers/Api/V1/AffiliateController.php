@@ -397,20 +397,16 @@ class AffiliateController extends Controller
             $number_diff_month = 1;
 
         $state_affiliate = $affiliate->affiliate_state->affiliate_state_type->name;
-        //return $affiliate->affiliate_state->name;
         $filters = [
             'affiliate_id' => $affiliate->id
         ];
 
-        //$table_contribution=null;
-       // $before_month=0;
        $verify=false;
        if ($state_affiliate == 'Activo' &&  $affiliate->affiliate_state->name !=  'Comisión' ){
             $contributions = Util::search_sort(new Contribution(), $request, $filters);
             $table_contribution='contributions';
             $verify=true;
         }else{
-           
             if ($state_affiliate == 'Pasivo' &&  $affiliate->affiliate_state->name !=  'Comisión'){
             $contributions = Util::search_sort(new AidContribution(), $request, $filters);
             $table_contribution ='aid_contributions';
@@ -455,14 +451,13 @@ class AffiliateController extends Controller
                     'valid' => $is_latest,
                     'diff_months' => $before_month,
                     'state_affiliate'=>$state_affiliate,
-                    'name_table_contribution'=>$table_contribution,
+                    'name_table_contribution'=>$table_contribution
                 ])->merge($contributions);
             }
             return $contributions;
         }else{
             $contributions = collect([
                 'valid' => $verify,
-                //'diff_months' => $before_month,
                 'state_affiliate'=>$affiliate->affiliate_state->name,
                 'name_table_contribution'=>null
             ]);
