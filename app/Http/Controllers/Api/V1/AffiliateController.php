@@ -401,16 +401,22 @@ class AffiliateController extends Controller
             'affiliate_id' => $affiliate->id
         ];
 
-        $table_contribution=null;
-        if(count($affiliate->contributions)>1){
-            if ($state_affiliate=='Activo'){
-                $contributions = Util::search_sort(new Contribution(), $request, $filters);
-                $table_contribution='contributions';
+       $verify=false;
+       if ($state_affiliate == 'Activo' &&  $affiliate->affiliate_state->name !=  'Comisión' ){
+            $contributions = Util::search_sort(new Contribution(), $request, $filters);
+            $table_contribution='contributions';
+            $verify=true;
+        }else{
+            if ($state_affiliate == 'Pasivo'){
+            $contributions = Util::search_sort(new AidContribution(), $request, $filters);
+            $table_contribution ='aid_contributions';
+            $verify=true;
             }else{
-                $contributions = Util::search_sort(new AidContribution(), $request, $filters);
-                $table_contribution ='aid_contributions';
+                if ($affiliate->affiliate_state->name ==  'Comisión')
+                    $verify=false;
             }
-            //$contributions = Util::search_sort(new Contribution(), $request, $filters);
+        }
+        if($verify == true){
             if ($request->has('city_id')) {
                 $is_latest = false;
                 $city = City::findOrFail($request->city_id);
@@ -440,7 +446,6 @@ class AffiliateController extends Controller
                     }
                 } else {
                     $is_latest = false;
-                    $table_contribution=null;
                 }
                 $contributions = collect([
                     'valid' => $is_latest,
@@ -451,7 +456,12 @@ class AffiliateController extends Controller
             }
             return $contributions;
         }else{
-            return [];
+            $contributions = collect([
+                'valid' => $verify,
+                'state_affiliate'=>$affiliate->affiliate_state->name,
+                'name_table_contribution'=>null
+            ]);
+            return $contributions;
         }
     }
 
