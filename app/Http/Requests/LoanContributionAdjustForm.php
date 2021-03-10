@@ -24,12 +24,12 @@ class LoanContributionAdjustForm extends FormRequest
     public function rules()
     {
         $rules = [
-            'user_id' =>['integer'],
+            'user_id' =>['integer:exists:users.id'],
             'type_affiliate'=>['string','in:headline,guarantor,cosigner'],
             'description'=>['string','alpha_spaces','min:3'],
             'period_date'=>['date_format:"Y-m-d"'],
-            'loan_id'=>['nullable'],
-            'affiliate_id'=>['integer'],
+            'loan_id'=>['nullable,exists:loans.id'],
+            'affiliate_id'=>['integer,exists:affiliates.id'],
             'adjustable_id'=>['integer'],
             'adjustable_type' => ['string'],
             'amount' =>['integer'],
