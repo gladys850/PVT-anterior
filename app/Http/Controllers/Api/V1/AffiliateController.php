@@ -407,7 +407,7 @@ class AffiliateController extends Controller
             $table_contribution='contributions';
             $verify=true;
         }else{
-            if ($state_affiliate == 'Pasivo' &&  $affiliate->affiliate_state->name !=  'Comisión'){
+            if ($state_affiliate == 'Pasivo'){
             $contributions = Util::search_sort(new AidContribution(), $request, $filters);
             $table_contribution ='aid_contributions';
             $verify=true;
