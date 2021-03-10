@@ -17,8 +17,8 @@ class CreateLoanContributionAdjustsTable extends Migration
             $table->bigIncrements('id');
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->unsignedBigInteger('loan_id');
-            $table->foreign('loan_id')->references('id')->on('loans')->onDelete('cascade')->nullable();
+            $table->unsignedBigInteger('loan_id')->nullable();
+            $table->foreign('loan_id')->references('id')->on('loans')->onDelete('cascade');
             $table->unsignedBigInteger('affiliate_id')->unsigned();
             $table->foreign('affiliate_id')->references('id')->on('affiliates');
             $table->morphs('adjustable'); 
