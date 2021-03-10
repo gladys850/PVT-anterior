@@ -27,4 +27,9 @@ class AidContribution extends Model
     {
         return $this->belongsTo(Affiliate::class);
     }
+      //relacion de la tabla polimorfica ajuste de contribuciones
+    public function loan_contribution_adjusts()
+    {
+        return $this->morphMany(LoanContrubutionAdjust::class,'adjustable');
+    }
 }

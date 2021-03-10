@@ -182,7 +182,11 @@ class Loan extends Model
     {
         return $this->hasMany(LoanPayment::class)->orderBy('quota_number', 'desc')->orderBy('created_at');
     }
-
+    //relacion uno a muchos
+    public function loan_contribution_adjusts()
+    {
+        return $this->hasMany(LoanContributionAdjust::class);
+    }
     public function interest()
     {
         return $this->belongsTo(LoanInterest::class, 'interest_id', 'id');
