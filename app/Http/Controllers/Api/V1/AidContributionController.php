@@ -73,8 +73,6 @@ class AidContributionController extends Controller
         $aid_contribution->mortuary_aid = $request->input('mortuary_aid', 0);//op
         $aid_contribution->valid = $request->input('valid', true);//op
 
-        $information = [ 'affiliate_id'=> $request->affiliate_id,'month_year' => $request->month_year];
-
         return AidContribution::create($aid_contribution->toArray());
     }
 
