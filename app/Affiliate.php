@@ -337,25 +337,27 @@ class Affiliate extends Model
     }
 
     public function test_guarantor($modality){
-      $guarantor = false;
+      $guarantor= self::verify_guarantor($this);
+      if($guarantor===true){
       if($modality){
           $modality = ProcedureModality::findOrFail($modality); //evaluando categoria acorde a la modalidad
           if($modality->loan_modality_parameter->min_guarantor_category <= $this->category->percentage && $this->category->percentage <= $modality->loan_modality_parameter->max_guarantor_category) $guarantor = true;
       }else{
           $loan_modality_parameter = LoanModalityParameter::get();
           if( $loan_modality_parameter->min('min_guarantor_category')<= $this->category->percentage && $this->category->percentage <= $loan_modality_parameter->max('max_guarantor_category')) $guarantor = true; //evaluando categoria sin tomar en cuenta la modalidad
-      }
+      }  
       if($guarantor){
           $loan_global_parameter = LoanGlobalParameter::latest()->first();
           if($this->affiliate_state->affiliate_state_type->name == 'Activo'){
               if($loan_global_parameter->max_guarantor_active <= count($this->active_guarantees())) $guarantor = false;
-          }
-          if($this->affiliate_state->affiliate_state_type->name == 'Pasivo'){
-              if($loan_global_parameter->max_guarantor_passive <= count($this->active_guarantees())) $guarantor = false;
+          } 
+          if($this->affiliate_state->affiliate_state_type->name == 'Pasivo'){          
+            if($loan_global_parameter->max_guarantor_passive <= count($this->active_guarantees())) $guarantor = false;
           }
           if($this->affiliate_state->affiliate_state_type->name != 'Activo' && $this->affiliate_state->affiliate_state_type->name != 'Pasivo') $guarantor = false; // en otro caso no corresponde ya que seria Disponibilidad A o C
-          if($this->defaulted_lender || $this->defaulted_guarantor) $guarantor = false;
+          if($this->defaulted_lender || $this->defaulted_guarantor) $guarantor = false;      
       }
+    }
       return response()->json([
           'affiliate' => AffiliateController::append_data($this, true),
           'guarantor' => $guarantor,
@@ -365,13 +367,38 @@ class Affiliate extends Model
       ]);
   }
 
-  public static function verify_information(Affiliate $affiliate)
-  {
-      $needed_keys = ['city_identity_card', 'affiliate_state', 'city_birth', 'category', 'address'];
+    public static function verify_information(Affiliate $affiliate)
+    {
+      $needed_keys = ['city_identity_card', 'affiliate_state', 'city_birth', 'category', 'address','pension_entity'];
       $information = true;
       foreach ($needed_keys as $key) {
           if (!$affiliate[$key]) $information = false;//abort(409, 'Debe actualizar los datos personales de los garantes');
       }
       return $information;
-  }
+    }
+    //veriifca si garante no es fallecido, ademas verificas que garante= SENASIR en caso pasivo
+    public static function verify_guarantor(Affiliate $affiliate)
+    {    $guarantor=false;
+         if($affiliate->affiliate_state->name == 'Fallecido')
+         {
+         $guarantor=false; 
+         }
+         else{        
+           if($affiliate->affiliate_state->affiliate_state_type->name == 'Pasivo'){ 
+              if($affiliate->pension_entity){
+                    if($affiliate->pension_entity->name == 'SENASIR')
+                    {
+                      $guarantor=true;
+                    } 
+                    else{
+                      $guarantor=false;
+                    }  
+              }
+            } 
+            else{ 
+              $guarantor=true;  
+            }  
+          }              
+         return $guarantor;     
+    }  
 }
