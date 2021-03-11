@@ -451,15 +451,39 @@ class AffiliateController extends Controller
                     'valid' => $is_latest,
                     'diff_months' => $before_month,
                     'state_affiliate'=>$state_affiliate,
-                    'name_table_contribution'=>$table_contribution
+                    'name_table_contribution'=>$table_contribution,
+                    'current_date'=>$now->toDateTimeString(),
+                    'offset_day'=>$offset_day,
                 ])->merge($contributions);
             }
             return $contributions;
         }else{
+            $offset_day = LoanGlobalParameter::latest()->first()->offset_ballot_day;
+            $now = CarbonImmutable::now();
+            $before_month=0;
+            
+            if ($request->has('city_id')) {
+                $city = City::findOrFail($request->city_id);
+                if($choose_diff_month == true && $request->has('number_diff_month')){
+                    $before_month=$number_diff_month;
+                }else{
+                    if ($now->day <= $offset_day || $city->name == 'LA PAZ') {
+                        $before_month = 2;
+                    } else {
+                        $before_month = 1;
+                    }
+                }
+            }
+            $current_ticket = $now->subMonths($before_month);
+            $now->startOfMonth()->diffInMonths($current_ticket->startOfMonth());
             $contributions = collect([
                 'valid' => $verify,
+                'diff_months' => $before_month,
                 'state_affiliate'=>$affiliate->affiliate_state->name,
-                'name_table_contribution'=>null
+                'name_table_contribution'=>null,
+                'current_date'=>$now->toDateTimeString(),
+                'offset_day'=>$offset_day,
+                'current_tiket'=> $current_ticket->toDateTimeString()
             ]);
             return $contributions;
         }
