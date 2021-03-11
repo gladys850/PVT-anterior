@@ -116,6 +116,8 @@ class LoanForm extends FormRequest
             'disbursable_type' => ['string', 'in:affiliates,spouses'],
             'number_payment_type' => ['nullable', 'integer', 'min:6'],
             'disbursement_date' => ['nullable', 'date_format:"Y-m-d"'],
+            'num_budget_certification' => ['string','nullable'],
+            'num_accounting_voucher' => ['string','nullable'],
             'parent_loan_id' => ['integer', 'nullable', 'exists:loans,id'],
             'parent_reason'=> ['string', 'nullable',$refinanciamiento? 'required':'nullable', 'in:REFINANCIAMIENTO,REPROGRAMACIÓN'],
             'state_id' => ['exists:loan_states,id'],
