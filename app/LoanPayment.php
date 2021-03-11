@@ -88,19 +88,22 @@ class LoanPayment extends Model
         ];
         if ($loan->balance == 0) return (object)$interest;
         $estimated_date = CarbonImmutable::parse($estimated_date ?? CarbonImmutable::now()->toDateString());
-        $latest_quota = $loan->payments()->first();
-        if (!$latest_quota) {
+        //$latest_quota = $loan->payments()->first();
+
+        //comentado para volver plan de pagos estatico
+        //if (!$latest_quota) {
             $payment_date = $loan->disbursement_date;
             $latest_quota = (object)[
                 'penal_remaining' => 0,
                 'accumulated_remaining' => 0
             ];
             if (!$payment_date) return (object)$interest;
-        } else {
-            $payment_date = Carbon::parse($latest_quota->estimated_date)->addDay()->toDateString();
-        }
+        /*} else {
+            $payment_date = Carbon::parse($latest_quota->estimated_date)->toDateString();
+        }*/
         $payment_date = CarbonImmutable::parse($payment_date);
-        if ($estimated_date->lessThan($payment_date)) return (object)$interest;
+        if ($estimated_date->lessThan($payment_date)) 
+            return (object)$interest;
         $diff_days = $estimated_date->diffInDays($payment_date);
         if ($estimated_date->diffInMonths($payment_date) == 0) {
             $interest['current'] = $diff_days;
@@ -111,7 +114,7 @@ class LoanPayment extends Model
         if ($diff_days > $interest['current']){
             $interest['accumulated'] = $diff_days - $interest['current'];
             if($interest['accumulated'] > 0)
-                $interest['accumulated_amount'] = self::interest_by_days($interest['accumulated'], $loan->interest->annual_interest, $loan->balance);
+                $interest['accumulated_amount'] = self::interest_by_days($interest['accumulated'], $loan->interest->annual_interest, $loan->amount_approved); //$loan->balance caso dinamico
         }
         $interest['accumulated'] += $latest_quota->accumulated_remaining;
         if ($interest['accumulated'] >= 90) {
