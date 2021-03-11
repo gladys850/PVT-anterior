@@ -42,14 +42,14 @@ class LoanContributionAdjustController extends Controller
     * Nueva ajuste a Contribución
     * Inserta nueva ajuste de Contribución
     * @bodyParam loan_id integer ID de prestamo. Example: 5
-    * @bodyParam affiliate_id rquired integer ID de afiliado. Example: 5
-    * @bodyParam adjustable_id rquired integer ID del registro de la tabla contribution,aid_contribution. Example: 1
-    * @bodyParam adjustable_type rquired string registro del modelo de la tabla contribution,aid_contribution . Example: contribution
-    * @bodyParam type_affiliate rquired enum tipificación del afiliado como (lender,guarantor,cosigner)
+    * @bodyParam affiliate_id  integer rquiredID de afiliado. Example: 5
+    * @bodyParam adjustable_id  integer rquired ID del registro de la tabla contribution,aid_contribution. Example: 1
+    * @bodyParam adjustable_type  string rquired registro del modelo de la tabla contribution,aid_contribution . Example: contribution
+    * @bodyParam type_affiliate  enum  rquired tipificación del afiliado como (lender,guarantor,cosigner)
     * @bodyParam amount numeric de ajuste para el liquido Example: 10000.50
-    * @bodyParam type_adjust rquired  enum (adjust,liquid)
-    * @bodyParam period_date rquired fecha Periodo a la que corresponde la boleta Example: 20-06-10. 
-    * @bodyParam description rquired string Descripcion del por que se realizo el ajuste del liquido. Example: 
+    * @bodyParam type_adjust enum rquired   (adjust,liquid)
+    * @bodyParam period_date fecha rquired  Periodo a la que corresponde la boleta Example: 20-06-10. 
+    * @bodyParam description string rquired  Descripcion del por que se realizo el ajuste del liquido. Example: 
     * @authenticated
     * @responseFile responses/loan_contribution_adjust/store.200.json
     */
