@@ -15,7 +15,7 @@ class CreateLoanContributionAdjustsTable extends Migration
     {  //tabla donde se almacena ajuste contribución del préstamo
         Schema::create('loan_contribution_adjusts', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->unsignedBigInteger('user_id')->nullable();
+            $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->unsignedBigInteger('loan_id')->nullable();
             $table->foreign('loan_id')->references('id')->on('loans')->onDelete('cascade');
