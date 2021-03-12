@@ -1,8 +1,10 @@
 {
-    "valid": false,
-    "diff_months": 1,
+    "valid": true,
+    "diff_months": 2,
     "state_affiliate": "Activo",
-    "name_table_contribution": null,
+    "name_table_contribution": "contributions",
+    "current_date": "2021-03-11 12:32:00",
+    "offset_day": 7,
     "current_page": 1,
     "data": [
         {

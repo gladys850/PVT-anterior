@@ -244,6 +244,10 @@ class Affiliate extends Model
     {
       return $this->hasMany(Contribution::class);
     }
+    public function aid_contributions()
+    {
+      return $this->hasMany(AidContribution::class);
+    }
 
     public function observations()
     {

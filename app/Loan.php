@@ -173,7 +173,7 @@ class Loan extends Model
 
     public function getDefaultedAttribute()
     {
-        return LoanPayment::days_interest($this)->penal > 0 ? true : false;
+        return LoanPayment::days_interest2($this)->penal > 0 ? true : false;
     }
     public function getdelay()
     {

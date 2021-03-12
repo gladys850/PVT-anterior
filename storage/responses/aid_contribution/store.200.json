@@ -1,0 +1,17 @@
+{
+    "user_id": 70,
+    "affiliate_id": 10528,
+    "month_year": "2020-02-01",
+    "rent": 1255.5,
+    "dignity_rent": 200,
+    "type": "PLANILLA",
+    "quotable": 1055.5,
+    "interest": 0,
+    "total": 0,
+    "affiliate_contribution": false,
+    "mortuary_aid": 0,
+    "valid": false,
+    "updated_at": "2021-03-09T19:17:56.000000Z",
+    "created_at": "2021-03-09T19:17:56.000000Z",
+    "id": 591284
+}

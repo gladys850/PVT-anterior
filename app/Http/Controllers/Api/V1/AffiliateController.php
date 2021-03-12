@@ -401,16 +401,22 @@ class AffiliateController extends Controller
             'affiliate_id' => $affiliate->id
         ];
 
-        $table_contribution=null;
-        if(count($affiliate->contributions)>1){
-            if ($state_affiliate=='Activo'){
-                $contributions = Util::search_sort(new Contribution(), $request, $filters);
-                $table_contribution='contributions';
+       $verify=false;
+       if ($state_affiliate == 'Activo' &&  $affiliate->affiliate_state->name !=  'Comisión' ){
+            $contributions = Util::search_sort(new Contribution(), $request, $filters);
+            $table_contribution='contributions';
+            $verify=true;
+        }else{
+            if ($state_affiliate == 'Pasivo'){
+            $contributions = Util::search_sort(new AidContribution(), $request, $filters);
+            $table_contribution ='aid_contributions';
+            $verify=true;
             }else{
-                $contributions = Util::search_sort(new AidContribution(), $request, $filters);
-                $table_contribution ='aid_contributions';
+                if ($affiliate->affiliate_state->name ==  'Comisión')
+                    $verify=false;
             }
-            //$contributions = Util::search_sort(new Contribution(), $request, $filters);
+        }
+        if($verify == true){
             if ($request->has('city_id')) {
                 $is_latest = false;
                 $city = City::findOrFail($request->city_id);
@@ -440,18 +446,46 @@ class AffiliateController extends Controller
                     }
                 } else {
                     $is_latest = false;
-                    $table_contribution=null;
                 }
                 $contributions = collect([
                     'valid' => $is_latest,
                     'diff_months' => $before_month,
                     'state_affiliate'=>$state_affiliate,
-                    'name_table_contribution'=>$table_contribution
+                    'name_table_contribution'=>$table_contribution,
+                    'current_date'=>$now->toDateTimeString(),
+                    'offset_day'=>$offset_day,
                 ])->merge($contributions);
             }
             return $contributions;
         }else{
-            return [];
+            $offset_day = LoanGlobalParameter::latest()->first()->offset_ballot_day;
+            $now = CarbonImmutable::now();
+            $before_month=0;
+            
+            if ($request->has('city_id')) {
+                $city = City::findOrFail($request->city_id);
+                if($choose_diff_month == true && $request->has('number_diff_month')){
+                    $before_month=$number_diff_month;
+                }else{
+                    if ($now->day <= $offset_day || $city->name == 'LA PAZ') {
+                        $before_month = 2;
+                    } else {
+                        $before_month = 1;
+                    }
+                }
+            }
+            $current_ticket = $now->subMonths($before_month);
+            $now->startOfMonth()->diffInMonths($current_ticket->startOfMonth());
+            $contributions = collect([
+                'valid' => $verify,
+                'diff_months' => $before_month,
+                'state_affiliate'=>$affiliate->affiliate_state->name,
+                'name_table_contribution'=>null,
+                'current_date'=>$now->toDateTimeString(),
+                'offset_day'=>$offset_day,
+                'current_tiket'=> $current_ticket->toDateTimeString()
+            ]);
+            return $contributions;
         }
     }
 
