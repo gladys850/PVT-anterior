@@ -58,9 +58,9 @@ class LoanContributionAdjustController extends Controller
     */
     public function store(LoanContributionAdjustForm $request)
     {   
-        $a=$request->all();
-        $a['user_id']=Auth::id();
-        return LoanContributionAdjust::create($a);
+        $request=$request->all();
+        $request['user_id']=Auth::id();
+        return LoanContributionAdjust::create($request);
     }
      /**
     * Actualizar ajuste a Contribución
