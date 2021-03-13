@@ -32,7 +32,8 @@ class LoanContributionAdjustForm extends FormRequest
             'adjustable_id'=>['integer'],
             'adjustable_type' => ['string'],
             'amount' =>['numeric'],
-            'type_adjust'=>['string','in:adjust,liquid'],        
+            'type_adjust'=>['string','in:adjust,liquid'],
+            'user_id' => ['nullable', 'integer', 'exists:users,id'],        
         ];
         switch ($this->method()) {
             case 'POST': {
