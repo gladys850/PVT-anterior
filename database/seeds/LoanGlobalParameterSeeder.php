@@ -22,7 +22,8 @@ class LoanGlobalParameterSeeder extends Seeder
             'max_guarantor_passive' =>2,
             'date_delete_payment'=>2,
             'max_loans_active' => 2,
-            'max_loans_process' => 1
+            'max_loans_process' => 1,
+            'grace_period' => 3
             ]
         ];
         foreach ($global_parameters as $global_parameter) {
