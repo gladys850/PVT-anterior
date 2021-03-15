@@ -401,7 +401,9 @@ class AffiliateController extends Controller
             'affiliate_id' => $affiliate->id
         ];
 
+       $table_contribution=null;
        $verify=false;
+       $is_latest=false;
        if ($state_affiliate == 'Activo' &&  $affiliate->affiliate_state->name !=  'Comisión' ){
             $contributions = Util::search_sort(new Contribution(), $request, $filters);
             $table_contribution='contributions';
@@ -412,11 +414,15 @@ class AffiliateController extends Controller
             $table_contribution ='aid_contributions';
             $verify=true;
             }else{
-                if ($affiliate->affiliate_state->name ==  'Comisión')
+                if ($affiliate->affiliate_state->name ==  'Comisión'){
+                    $table_contribution=null;
                     $verify=false;
+                    $is_latest=false;
+                    $state_affiliate=$affiliate->affiliate_state->name;
+                }
             }
         }
-        if($verify == true){
+        if($verify == true && count($affiliate->$table_contribution)>0){
             if ($request->has('city_id')) {
                 $is_latest = false;
                 $city = City::findOrFail($request->city_id);
@@ -478,10 +484,10 @@ class AffiliateController extends Controller
             $current_ticket = $now->subMonths($before_month);
             $now->startOfMonth()->diffInMonths($current_ticket->startOfMonth());
             $contributions = collect([
-                'valid' => $verify,
+                'valid' => $is_latest,
                 'diff_months' => $before_month,
-                'state_affiliate'=>$affiliate->affiliate_state->name,
-                'name_table_contribution'=>null,
+                'state_affiliate'=>$state_affiliate,
+                'name_table_contribution'=>$table_contribution,
                 'current_date'=>$now->toDateTimeString(),
                 'offset_day'=>$offset_day,
                 'current_tiket'=> $current_ticket->toDateTimeString(),
