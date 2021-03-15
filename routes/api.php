@@ -68,8 +68,8 @@ Route::group([
         Route::apiResource('voucher_type', 'Api\V1\VoucherTypeController')->only('index', 'show');
         Route::apiResource('financial_entity', 'Api\V1\FinancialEntityController')->only('index', 'show');
         Route::post('evaluate_garantor', 'Api\V1\CalculatorController@evaluate_guarantor');
-        Route::apiResource('aid_contritution', 'Api\V1\AidContributionController')->only('index', 'show', 'store', 'update', 'destroy');
-        Route::post('aid_contritution/updateOrCreate', 'Api\V1\AidContributionController@updateOrCreate');
+        Route::apiResource('aid_contribution', 'Api\V1\AidContributionController')->only('index', 'show', 'store', 'update', 'destroy');
+        Route::post('aid_contribution/updateOrCreate', 'Api\V1\AidContributionController@updateOrCreate');
 
         // Afiliado
         Route::group([
