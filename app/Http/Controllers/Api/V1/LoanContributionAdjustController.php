@@ -8,6 +8,7 @@ use App\Helpers\Util;
 use App\User;
 use App\LoanContributionAdjust;
 use App\Http\Requests\LoanContributionAdjustForm;
+use Illuminate\Support\Facades\Auth;
 use App\Events\FingerprintSavedEvent;
 /** @group Ajuste a las Contribución
 * Datos del registro de del ajuste a las contrubicion de un préstamos
@@ -56,8 +57,10 @@ class LoanContributionAdjustController extends Controller
     * @responseFile responses/loan_contribution_adjust/store.200.json
     */
     public function store(LoanContributionAdjustForm $request)
-    {
-        return LoanContributionAdjust::create($request->all());
+    {   
+        $request=$request->all();
+        $request['user_id']=Auth::id();
+        return LoanContributionAdjust::create($request);
     }
      /**
     * Actualizar ajuste a Contribución
