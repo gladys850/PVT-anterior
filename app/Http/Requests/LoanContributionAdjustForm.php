@@ -32,11 +32,12 @@ class LoanContributionAdjustForm extends FormRequest
             'adjustable_id'=>['integer'],
             'adjustable_type' => ['string'],
             'amount' =>['numeric'],
-            'type_adjust'=>['string','in:adjust,liquid'],        
+            'type_adjust'=>['string','in:adjust,liquid'],
+            'user_id' => ['nullable', 'integer', 'exists:users,id'],        
         ];
         switch ($this->method()) {
             case 'POST': {
-                foreach (array_slice($rules, 0, 4 ) as $key => $rule) {
+                foreach (array_slice($rules, 0, 3) as $key => $rule) {
                     array_push($rules[$key], 'required');
                 }
             }
