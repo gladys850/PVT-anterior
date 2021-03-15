@@ -382,16 +382,15 @@ class AffiliateController extends Controller
     public function get_contributions(Request $request, Affiliate $affiliate)
     {
         $request->validate([
-            'choose_diff_month' => 'boolean',
             'number_diff_month'=>'integer'
         ]);
 
         if($request->has('choose_diff_month'))
-            $choose_diff_month = $request->choose_diff_month;
+            $choose_diff_month = $request->boolean('choose_diff_month');
         else 
             $choose_diff_month =false;
             
-            if($request->has('number_diff_month'))
+        if($request->has('number_diff_month'))
             $number_diff_month = intval($request->number_diff_month);
         else 
             $number_diff_month = 1;
