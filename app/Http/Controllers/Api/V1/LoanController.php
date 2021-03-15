@@ -339,7 +339,7 @@ class LoanController extends Controller
     * @bodyParam lenders[1].liquid_qualification_calculated numeric ID del afiliado. Example: 2000
     * @bodyParam lenders[1].contributionable_ids array  Ids de las contribuciones asocidas al prestamo por afiliado. Example: [1,2,3]
     * @bodyParam lenders[1].contributionable_type enum Nombre de la tabla de contribuciones . Example: contributions
-    * @bodyParam lenders[1].loan_contributions_adjust_ids array required Ids de los ajustes de la(s) contribución(s). Example: [3]
+    * @bodyParam lenders[1].loan_contributions_adjust_ids array Ids de los ajustes de la(s) contribución(s). Example: [3]
     * @bodyParam guarantors array Lista de afiliados Garante(es) del préstamo.
     * @bodyParam guarantors[0].affiliate_id integer ID del afiliado. Example: 51925
     * @bodyParam guarantors[0].payment_percentage integer ID del afiliado. Example: 50
@@ -349,7 +349,7 @@ class LoanController extends Controller
     * @bodyParam guarantors[0].liquid_qualification_calculated numeric ID del afiliado. Example: 2000
     * @bodyParam guarantors[0].contributionable_ids array  Ids de las contribuciones asocidas al prestamo por afiliado. Example: [1,2,3]
     * @bodyParam guarantors[0].contributionable_type enum Nombre de la tabla de contribuciones . Example: contributions
-    * @bodyParam guarantors[0].loan_contributions_adjust_ids array required  Ids de los ajustes de la(s) contribución(s). Example: []
+    * @bodyParam guarantors[0].loan_contributions_adjust_ids array Ids de los ajustes de la(s) contribución(s). Example: []
     * @authenticated
     * @responseFile responses/loan/update.200.json
     */
