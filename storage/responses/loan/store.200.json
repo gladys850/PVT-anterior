@@ -95,7 +95,9 @@
                 "bonus_calculated": "300",
                 "quota_previous": "100",
                 "indebtedness_calculated": "34",
-                "liquid_qualification_calculated": "2000"
+                "liquid_qualification_calculated": "2000",
+                "contributionable_ids": "[4,5,6]",
+                "contributionable_type": "contributions"
             }
         }
     ],
@@ -153,7 +155,9 @@
                 "bonus_calculated": "300",
                 "quota_previous": "0",
                 "indebtedness_calculated": "34",
-                "liquid_qualification_calculated": "2000"
+                "liquid_qualification_calculated": "2000",
+                "contributionable_ids": "[5,6,7]",
+                "contributionable_type": "loan_contribution_adjusts"
             },
             "degree": {
                 "id": 23,

@@ -8,7 +8,7 @@
             "affiliate_id": 1,
             "adjustable_type": "aid_contribution",
             "adjustable_id": 1,
-            "type_affiliate": "headline",
+            "type_affiliate": "lender",
             "amount": "2000",
             "type_adjust": "adjust",
             "period_date": "2010-06-20",

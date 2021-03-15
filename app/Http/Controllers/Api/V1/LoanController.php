@@ -25,6 +25,9 @@ use App\LoanPayment;
 use App\Voucher;
 use App\Sismu;
 use App\Record;
+use App\Contribution;
+use App\AidContribution;
+use App\LoanContributionAdjust;
 use App\Http\Requests\LoansForm;
 use App\Http\Requests\LoanForm;
 use App\Http\Requests\LoanPaymentForm;
@@ -59,6 +62,7 @@ class LoanController extends Controller
         //$loan->user = $loan->records_user;
         $loan->city = $loan->city;
         $loan->observations = $loan->observations->last();
+        //$loan->loan_contribution = $loan->loan_contribution_adjusts;
         return $loan;
     }
 
@@ -188,6 +192,9 @@ class LoanController extends Controller
     * @bodyParam lenders[0].quota_previous numeric required ID del afiliado. Example: 514.6
     * @bodyParam lenders[0].indebtedness_calculated numeric required ID del afiliado. Example: 34
     * @bodyParam lenders[0].liquid_qualification_calculated numeric required ID del afiliado. Example: 2000
+    * @bodyParam lenders[0].contributionable_ids array required  Ids de las contribuciones asocidas al prestamo por afiliado. Example: [1,2,3]
+    * @bodyParam lenders[0].contributionable_type enum required  Nombre de la tabla de contribuciones . Example: contributions
+    * @bodyParam lenders[0].loan_contributions_adjust_ids array required Ids de los ajustes de la(s) contribución(s). Example: [1,2]
     * @bodyParam lenders[1].affiliate_id integer required ID del afiliado. Example: 22773
     * @bodyParam lenders[1].payment_percentage integer required ID del afiliado. Example: 50
     * @bodyParam lenders[1].payable_liquid_calculated numeric required ID del afiliado. Example: 2000
@@ -195,6 +202,9 @@ class LoanController extends Controller
     * @bodyParam lenders[1].quota_previous numeric required ID del afiliado. Example: 514.6
     * @bodyParam lenders[1].indebtedness_calculated numeric required ID del afiliado. Example: 34
     * @bodyParam lenders[1].liquid_qualification_calculated numeric required ID del afiliado. Example: 2000
+    * @bodyParam lenders[1].contributionable_ids array required Ids de las contribuciones asocidas al prestamo por afiliado. Example: [1,2,3]
+    * @bodyParam lenders[1].contributionable_type enum required Nombre de la tabla de contribuciones . Example: contributions
+    * @bodyParam lenders[1].loan_contributions_adjust_ids array required Ids de los ajustes de la(s) contribución(s). Example: [3]
     * @bodyParam guarantors array Lista de afiliados Garante(es) del préstamo.
     * @bodyParam guarantors[0].affiliate_id integer required ID del afiliado. Example: 51925
     * @bodyParam guarantors[0].payment_percentage integer required ID del afiliado. Example: 50
@@ -202,6 +212,9 @@ class LoanController extends Controller
     * @bodyParam guarantors[0].bonus_calculated integer required ID del afiliado. Example: 300
     * @bodyParam guarantors[0].indebtedness_calculated numeric required ID del afiliado. Example: 34
     * @bodyParam guarantors[0].liquid_qualification_calculated numeric required ID del afiliado. Example: 2000
+    * @bodyParam guarantors[0].contributionable_ids array required Ids de las contribuciones asocidas al prestamo por afiliado. Example: [1,2,3]
+    * @bodyParam guarantors[0].contributionable_type enum required  Nombre de la tabla de contribuciones. Example: contributions
+    * @bodyParam guarantors[0].loan_contributions_adjust_ids array required  Ids de los ajustes de la(s) contribución(s). Example: []
     * @bodyParam data_loan array Datos Sismu.
     * @bodyParam data_loan[0].code string required Codigo del prestamo en el Sismu. Example: PRESTAMO123
     * @bodyParam data_loan[0].amount_approved numeric required Monto aprovado del prestamo del Sismu. Example: 5000.50
@@ -314,6 +327,9 @@ class LoanController extends Controller
     * @bodyParam lenders[0].quota_previous numeric ID del afiliado. Example: 514.6
     * @bodyParam lenders[0].indebtedness_calculated numeric ID del afiliado. Example: 34
     * @bodyParam lenders[0].liquid_qualification_calculated numeric ID del afiliado. Example: 2000
+    * @bodyParam lenders[0].contributionable_ids array  Ids de las contribuciones asocidas al prestamo por afiliado. Example: [1,2,3]
+    * @bodyParam lenders[0].contributionable_type enum Nombre de la tabla de contribuciones . Example: contributions
+    * @bodyParam lenders[0].loan_contributions_adjust_ids array Ids de los ajustes de la(s) contribución(s). Example: [1,2]
     * @bodyParam lenders[1].affiliate_id integer ID del afiliado. Example: 22773
     * @bodyParam lenders[1].payment_percentage integer ID del afiliado. Example: 50
     * @bodyParam lenders[1].payable_liquid_calculated numeric ID del afiliado. Example: 2000
@@ -321,6 +337,9 @@ class LoanController extends Controller
     * @bodyParam lenders[1].quota_previous numeric ID del afiliado. Example: 514.6
     * @bodyParam lenders[1].indebtedness_calculated numeric ID del afiliado. Example: 34
     * @bodyParam lenders[1].liquid_qualification_calculated numeric ID del afiliado. Example: 2000
+    * @bodyParam lenders[1].contributionable_ids array  Ids de las contribuciones asocidas al prestamo por afiliado. Example: [1,2,3]
+    * @bodyParam lenders[1].contributionable_type enum Nombre de la tabla de contribuciones . Example: contributions
+    * @bodyParam lenders[1].loan_contributions_adjust_ids array required Ids de los ajustes de la(s) contribución(s). Example: [3]
     * @bodyParam guarantors array Lista de afiliados Garante(es) del préstamo.
     * @bodyParam guarantors[0].affiliate_id integer ID del afiliado. Example: 51925
     * @bodyParam guarantors[0].payment_percentage integer ID del afiliado. Example: 50
@@ -328,6 +347,9 @@ class LoanController extends Controller
     * @bodyParam guarantors[0].bonus_calculated integer ID del afiliado. Example: 300
     * @bodyParam guarantors[0].indebtedness_calculated numeric ID del afiliado. Example: 34
     * @bodyParam guarantors[0].liquid_qualification_calculated numeric ID del afiliado. Example: 2000
+    * @bodyParam guarantors[0].contributionable_ids array  Ids de las contribuciones asocidas al prestamo por afiliado. Example: [1,2,3]
+    * @bodyParam guarantors[0].contributionable_type enum Nombre de la tabla de contribuciones . Example: contributions
+    * @bodyParam guarantors[0].loan_contributions_adjust_ids array required  Ids de los ajustes de la(s) contribución(s). Example: []
     * @authenticated
     * @responseFile responses/loan/update.200.json
     */
@@ -476,10 +498,19 @@ class LoanController extends Controller
                     'quota_previous' => $quota_previous,
                     'indebtedness_calculated' => $indebtedness,
                     'liquid_qualification_calculated' => $affiliate['liquid_qualification_calculated'],
-                    'guarantor' => false
+                    'guarantor' => false,
+                    'contributionable_type' => $affiliate['contributionable_type'],
+                    'contributionable_ids' => json_encode($affiliate['contributionable_ids'])
                 ];
+
+                $idsajust=$affiliate['loan_contributions_adjust_ids'];
+                foreach ($idsajust as $adjustid){
+                    $ajuste=LoanContributionAdjust::find($adjustid);
+                    $ajuste->loan_id=$loan->id;
+                    $ajuste->update();
+                }
                 $a++;
-            }
+            }           
             if($request->guarantors){
                 foreach ($request->guarantors as $affiliate) {
                     $affiliates[$a] = [
@@ -490,8 +521,17 @@ class LoanController extends Controller
                         'quota_previous' => $previous,
                         'indebtedness_calculated' => $affiliate['indebtedness_calculated'],
                         'liquid_qualification_calculated' => $affiliate['liquid_qualification_calculated'],
-                        'guarantor' => true
+                        'guarantor' => true,
+                        'contributionable_type'=>$affiliate['contributionable_type'],
+                        'contributionable_ids'=>json_encode($affiliate['contributionable_ids'])
                     ];
+                    $idsajust=$affiliate['loan_contributions_adjust_ids'];
+                    foreach ($idsajust as $adjustid){
+                        $ajuste=LoanContributionAdjust::find($adjustid);
+                        $ajuste->loan_id=$loan->id;
+                        $ajuste->update();
+                    }
+                    
                     $a++;
                 }
             }

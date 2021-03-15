@@ -454,6 +454,7 @@ class AffiliateController extends Controller
                     'name_table_contribution'=>$table_contribution,
                     'current_date'=>$now->toDateTimeString(),
                     'offset_day'=>$offset_day,
+                    'affiliate_id'=>$affiliate->id
                 ])->merge($contributions);
             }
             return $contributions;
@@ -483,7 +484,8 @@ class AffiliateController extends Controller
                 'name_table_contribution'=>null,
                 'current_date'=>$now->toDateTimeString(),
                 'offset_day'=>$offset_day,
-                'current_tiket'=> $current_ticket->toDateTimeString()
+                'current_tiket'=> $current_ticket->toDateTimeString(),
+                'affiliate_id'=>$affiliate->id
             ]);
             return $contributions;
         }
