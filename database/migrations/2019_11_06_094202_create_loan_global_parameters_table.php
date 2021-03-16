@@ -25,6 +25,7 @@ class CreateLoanGlobalParametersTable extends Migration
             $table->unsignedTinyInteger('date_delete_payment'); // Días pasados para la eliminación del payment
             $table->unsignedTinyInteger('max_loans_active'); // Maximo de préstamos vigentes
             $table->unsignedTinyInteger('max_loans_process'); // Maximo de préstamos en proceso
+            $table->unsignedTinyInteger('grace_period'); // periodo de gracia para cobro de penalidad
 
             $table->timestamps();
         });

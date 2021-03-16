@@ -224,7 +224,7 @@ class LoanPayment extends Model
             'interest_accumulated' => 0,
         ];
         if($loan->balance = 0) return $interest;
-        $estimated_date = CarbonImmutable::parse($estimated_date ?? CarbonImmutable::now()->toDateString());
+            $estimated_date = CarbonImmutable::parse($estimated_date ?? CarbonImmutable::now()->toDateString());
         $latest_quota = $loan->payments()->first();
         if (!$latest_quota) {
             $payment_date = $loan->disbursement_date;

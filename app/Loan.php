@@ -6,6 +6,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Fico7489\Laravel\Pivot\Traits\PivotEventTrait;
+use Carbon\CarbonImmutable;
+use App\LoanGlobalParameter;
 use Carbon;
 use Util;
 
@@ -151,6 +153,11 @@ class Loan extends Model
         return $this->belongsToMany(Affiliate::class, 'loan_affiliates');
     }
 
+    public function loan_affiliates_ballot()
+    {
+        return $this->belongsToMany(Affiliate::class, 'loan_affiliates')->withPivot('contributionable_ids','contributionable_type');
+    }
+
     public function personal_references()
     {
         return $this->loan_persons()->withPivot('cosigner')->whereCosigner(false);
@@ -269,11 +276,14 @@ class Loan extends Model
 
     public function next_payment2($estimated_date = null, $amount = null, $liquidate = null)
     {
+        $grace_period = LoanGlobalParameter::latest()->first()->grace_period;
             $total_interests = 0;
+            $partial_amount = 0;
             if ($liquidate) {
-                $amount = $this->balance;
+                $amount = Util::round($this->balance);
             } else {
-                if (!$amount) $amount = $this->estimated_quota;
+                if (!$amount) 
+                    $amount = Util::round($this->estimated_quota);
             }
             $quota = new LoanPayment();
             $next_payment = LoanPayment::quota_date($this);
@@ -293,6 +303,20 @@ class Loan extends Model
             $quota->capital_payment = $total_interests = $quota->interest_payment = 0;
             $quota->penal_accumulated = $quota->interest_accumulated = 0;
             $total_amount = Util::round($amount);
+
+            //calculo en caso de primera cuota
+
+            $date_ini = CarbonImmutable::parse($this->disbursement_date);
+            $date_compare = CarbonImmutable::parse($date_ini->addMonth()->endOfMonth())->format('Y-m-d');
+            if($date_compare == $quota->estimated_date){
+                $date_fin = CarbonImmutable::parse($date_ini->endOfMonth());
+                $rest_days_of_month = $date_fin->diffInDays($date_ini);
+                $partial_amount = ($quota->balance * $interest->daily_current_interest * $rest_days_of_month);
+                $quota->paid_days->penal = 0;
+                $quota->estimated_days->penal = 0;
+                $amount = $amount + $partial_amount;
+            }
+            
             // Calcular intereses
 
         // Interes acumulado penal
@@ -314,21 +338,24 @@ class Loan extends Model
 
         // Interés penal 
 
-        $quota->penal_payment = Util::round($quota->balance * $interest->daily_penal_interest * $quota->paid_days->penal);
-        if($quota->penal_payment > 0){
-            if($amount >= $quota->penal_payment){
-                $amount = $amount - $quota->penal_payment;
+        if($quota->estimated_days->penal >= $grace_period){
+            $quota->penal_payment = Util::round($quota->balance * $interest->daily_penal_interest * $quota->paid_days->penal);
+
+            if($quota->penal_payment >= 0){
+                if($amount >= $quota->penal_payment){
+                    $amount = $amount - $quota->penal_payment;
+                }
+                else{
+                    $quota->penal_accumulated = Util::round($quota->penal_remaining + ($quota->penal_payment - $amount));
+                    //$quota->penal_remaining = $quota->penal_remaining + ($quota->penal_payment - $amount);
+                    $quota->penal_payment = $amount;
+                    $amount = 0;
+                }
+            }else{
+                $quota->penal_payment = 0;
             }
-            else{
-                $quota->penal_accumulated = Util::round($quota->penal_remaining + ($quota->penal_payment - $amount));
-                //$quota->penal_remaining = $quota->penal_remaining + ($quota->penal_payment - $amount);
-                $quota->penal_payment = $amount;
-                $amount = 0;
-            }
-        }else{
-            $quota->penal_payment = 0;
+            $total_interests += $quota->penal_payment;
         }
-        $total_interests += $quota->penal_payment;
 
         // Interes acumulado corriente
         
@@ -386,6 +413,10 @@ class Loan extends Model
         $quota->penal_accumulated = Util::round($quota->penal_accumulated + ($quota->estimated_days->penal_accumulated - $quota->penal_remaining));
         $quota->interest_accumulated = Util::round($quota->interest_accumulated + ($quota->estimated_days->interest_accumulated - $quota->interest_remaining));
 
+        //redondeos
+
+        $quota->interest_remaining = Util::round($quota->interest_remaining);
+        $quota->penal_remaining = Util::round($quota->penal_remaining);
         return $quota;
     }
 
