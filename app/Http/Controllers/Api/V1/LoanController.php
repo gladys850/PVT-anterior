@@ -1291,4 +1291,40 @@ class LoanController extends Controller
         }
         return $message;
     }
+    public function show_ballot_loan( $id){
+     $loan=Loan::find($id);
+     if($loan){
+        if($loan->loan_affiliates_ballot[0]){
+            $ballots=json_decode($loan->loan_affiliates_ballot[0]->pivot->contributionable_ids);
+            if($loan->loan_affiliates_ballot[0]->pivot->contributionable_type=="contributions"){ 
+            $a=0;
+                foreach($ballots as $is_ballot_id){                    
+                $ballot[$a]=Contribution::find($is_ballot_id);  
+                $adjusts[$a]=LoanContributionAdjust::where('adjustable_id', $is_ballot_id)->get();   
+                $a++;  
+                }     
+            }
+            if($loan->loan_affiliates_ballot[0]->pivot->contributionable_type=="aid_contributions"){
+                $a=0;
+            foreach($ballots as $is_ballot_id){                    
+                $ballot[$a]=AidContribution::find($is_ballot_id); 
+                $adjusts[$a]=LoanContributionAdjust::where('adjustable_id', $is_ballot_id)->get();     
+                $a++;
+            }          
+            }
+            if($loan->loan_affiliates_ballot[0]->pivot->contributionable_type=="loan_contribution_adjusts"){
+                $a=0;
+            foreach($ballots as $is_ballot_id){                    
+                $ballot[$a]=LoanContributionAdjust::find($is_ballot_id); 
+                $adjusts[$a]=LoanContributionAdjust::where('adjustable_id', $is_ballot_id)->get();      
+                $a++;
+            }
+            }    
+        }
+     }    
+        return response()->json([
+            'is_ballots'=>$ballot,
+            'adjusts'=>$adjusts,
+        ]);
+    }
 }
