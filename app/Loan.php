@@ -152,6 +152,11 @@ class Loan extends Model
         return $this->belongsToMany(Affiliate::class, 'loan_affiliates');
     }
 
+    public function loan_affiliates_ballot()
+    {
+        return $this->belongsToMany(Affiliate::class, 'loan_affiliates')->withPivot('contributionable_ids','contributionable_type');
+    }
+
     public function personal_references()
     {
         return $this->loan_persons()->withPivot('cosigner')->whereCosigner(false);
