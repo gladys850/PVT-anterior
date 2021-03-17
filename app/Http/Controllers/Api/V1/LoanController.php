@@ -1373,7 +1373,8 @@ class LoanController extends Controller
       'ballot' => $ballot,   
       'adjusts' => $adjusts 
     ];
-    return $data;      
+    return $data;
+	}
     //Destruir todo el préstamo
     public function destroyAll(Loan $loan)
     {
