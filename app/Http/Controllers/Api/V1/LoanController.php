@@ -262,7 +262,7 @@ class LoanController extends Controller
             }
         }
         //rehacer préstamo
-        if($request->has('remake_loan_id')){
+        if($request->has('remake_loan_id')&& $request->remake_loan_id != null){
             $remake_loan = Loan::find($request->remake_loan_id);
             $loan->code=$remake_loan->code;
             $loan->update();
