@@ -89,7 +89,7 @@ class CalculatorController extends Controller
             $east_bonus_average = $contributions->avg('east_bonus');
             $dignity_rent_bonus_average = $contributions->avg('dignity_rent_bonus');
 
-            $total_bonuses = $position_bonus_average+$border_bonus_average+$border_bonus_average+$public_security_bonus_average+$east_bonus_average+$dignity_rent_bonus_average;
+            $total_bonuses = $position_bonus_average+$border_bonus_average+$public_security_bonus_average+$east_bonus_average+$dignity_rent_bonus_average;
             //$contribution_first = $contributions->first();// se obtiene los bonos de la ultima boleta
             //$total_bonuses = $contribution_first['seniority_bonus']+$contribution_first['border_bonus']+$contribution_first['public_security_bonus']+$contribution_first['east_bonus'];
             //$total_bonuses = $contribution_first['position_bonus']+$contribution_first['border_bonus']+$contribution_first['public_security_bonus']+$contribution_first['east_bonus'];
