@@ -50,6 +50,6 @@ class LoanObserver
     */
     public function forceDeleted(Loan $object)
     {
-        Util::save_record($object, 'datos-de-un-tramite', 'rehizó el préstamo: ' . $object->code);
+        Util::save_record($object, 'datos-de-un-tramite', 'rehízo el préstamo: ' . $object->code);
     }
 }
