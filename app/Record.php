@@ -47,6 +47,8 @@ class Record extends Model
                     break;
                 case 'App\Voucher':
                     $action .= $this->recordable->id;
+                case 'App\AidContribution':
+                    $action .= $this->recordable->id;
                 break;
             }
         }
