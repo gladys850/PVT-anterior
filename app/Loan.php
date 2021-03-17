@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Fico7489\Laravel\Pivot\Traits\PivotEventTrait;
 use Carbon\CarbonImmutable;
+use App\LoanGlobalParameter;
 use Carbon;
 use Util;
 
@@ -275,6 +276,7 @@ class Loan extends Model
 
     public function next_payment2($estimated_date = null, $amount = null, $liquidate = null)
     {
+        $grace_period = LoanGlobalParameter::latest()->first()->grace_period;
             $total_interests = 0;
             $partial_amount = 0;
             if ($liquidate) {
@@ -336,22 +338,24 @@ class Loan extends Model
 
         // Interés penal 
 
+        if($quota->estimated_days->penal >= $grace_period){
             $quota->penal_payment = Util::round($quota->balance * $interest->daily_penal_interest * $quota->paid_days->penal);
 
-        if($quota->penal_payment > 0){
-            if($amount >= $quota->penal_payment){
-                $amount = $amount - $quota->penal_payment;
+            if($quota->penal_payment >= 0){
+                if($amount >= $quota->penal_payment){
+                    $amount = $amount - $quota->penal_payment;
+                }
+                else{
+                    $quota->penal_accumulated = Util::round($quota->penal_remaining + ($quota->penal_payment - $amount));
+                    //$quota->penal_remaining = $quota->penal_remaining + ($quota->penal_payment - $amount);
+                    $quota->penal_payment = $amount;
+                    $amount = 0;
+                }
+            }else{
+                $quota->penal_payment = 0;
             }
-            else{
-                $quota->penal_accumulated = Util::round($quota->penal_remaining + ($quota->penal_payment - $amount));
-                //$quota->penal_remaining = $quota->penal_remaining + ($quota->penal_payment - $amount);
-                $quota->penal_payment = $amount;
-                $amount = 0;
-            }
-        }else{
-            $quota->penal_payment = 0;
+            $total_interests += $quota->penal_payment;
         }
-        $total_interests += $quota->penal_payment;
 
         // Interes acumulado corriente
         
