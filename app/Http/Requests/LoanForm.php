@@ -53,6 +53,11 @@ class LoanForm extends FormRequest
                 'financial_entity_id' => null,
             ]);
         }
+        if($this->remake_loan_id == 0 && $this->has('remake_loan_id')){
+            $this->merge([
+                'remake_loan_id' => null,
+            ]);
+        }
     }
 
     public function rules():array
