@@ -11,7 +11,7 @@ Route::group([
     Route::post('command_senasir_save_payment', 'Api\V1\LoanPaymentController@command_senasir_save_payment');
     //Route::get('senasir_save_payment', 'Api\V1\LoanPaymentController@senasir_save_payment');
     Route::get('loans_delay', 'Api\V1\LoanPaymentController@loans_delay');
-    Route::apiResource('loan_contribution_adjust', 'Api\V1\LoanContributionAdjustController')->only('index','store', 'update', 'destroy');
+    Route::apiResource('loan_contribution_adjust', 'Api\V1\LoanContributionAdjustController')->only('index','show','store', 'update', 'destroy');
     //sismu
 
     //
@@ -144,6 +144,7 @@ Route::group([
             Route::get('loan/{loan}/print/contract', 'Api\V1\LoanController@print_contract');
             Route::get('loan/{loan}/print/kardex','Api\V1\LoanController@print_kardex');      
             Route::get('loan/{loan}/print/qualification', 'Api\V1\LoanController@print_qualification');
+            Route::apiResource('loan_contribution_adjust', 'Api\V1\LoanContributionAdjustController')->only('index','show','store', 'update', 'destroy');
             //Route::get('loan/{loan}/loan_affiliates', 'Api\V1\LoanController@get_loan_affiliates');
             Route::apiResource('loan_property', 'Api\V1\LoanPropertyController')->only('index', 'store', 'show', 'destroy', 'update');
             Route::post('loan/{loan}/validate_re_loan', 'Api\V1\LoanController@validate_re_loan');
