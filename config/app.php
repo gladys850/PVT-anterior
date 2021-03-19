@@ -148,6 +148,7 @@ return [
         App\Providers\LoanPaymentModelServiceProvider::class,
         App\Providers\VoucherModelServiceProvider::class,
         App\Providers\AidContributionServiceProvider::class,
+        App\Providers\LoanContributionAdjustModelServiceProvider::class,
 
         /*
         * Application Service Providers...

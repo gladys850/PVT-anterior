@@ -20,7 +20,7 @@ class LoanContributionAdjust extends Model
         'type_adjust',
         'period_date',
         'description'
-    ];
+    ]; 
     public function Loan()
     {
         return $this->belongsTo(Loan::class);
@@ -29,5 +29,9 @@ class LoanContributionAdjust extends Model
     {
         return $this->morphTo();
     }
-  
+    // add records
+    public function records()
+    {
+        return $this->morphMany(Record::class, 'recordable');
+    }
 }
