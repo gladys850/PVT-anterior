@@ -1,10 +1,10 @@
 [
     {
-        "affiliate_id": 37973,
-        "payable_liquid_calculated": 3333.33,
-        "bonus_calculated": 200,
-        "liquid_qualification_calculated": 595.43,
-        "quota_previous": 0,
+        "affiliate_id": 9389,
+        "payable_liquid_calculated": 2166.67,
+        "bonus_calculated": 1217.47,
+        "liquid_qualification_calculated": 1449.2,
+        "quota_previous": 500,
         "livelihood_amount": true
     }, {}
 ]

@@ -11,6 +11,7 @@ return [
     'loan_destinies' => 'Destino de Préstamo',
     'procedure_types' => 'Tipo de trámite',
     'loan_payments' => 'Pago de préstamo',
+    'aid_contributions' => 'Contribuciones sector Pasivo',
     // User
     'first_name' => 'Primer Nombre',
     'last_name' => 'Apellido Paterno',

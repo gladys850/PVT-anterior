@@ -41,4 +41,15 @@ class LoanObserver
     {
         Util::save_record($object, 'datos-de-un-tramite', Util::relation_action($object, $relationName, $pivotIds, $pivotIdsAttributes, 'modificó'));
     }
+
+    /**
+     * Handle the aid contribution "force deleted" event.
+     *
+     * @param  \App\Loan  $Loan
+     * @return void
+    */
+    public function forceDeleted(Loan $object)
+    {
+        Util::save_record($object, 'datos-de-un-tramite', 'rehízo el préstamo: ' . $object->code);
+    }
 }
