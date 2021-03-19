@@ -530,7 +530,7 @@ export default {
         //Para el ajuste
         if(this.contributions[i].adjustment_amount > 0){ //aqui se debe colocar la edicion del ajuste, hacer condicional
           //guardar el ajuste
-          let res = await axios.post(`loan_contribution_adjust`, {
+          let res = await axios.post(`loan_contribution_adjust/updateOrCreate`, {
             affiliate_id: this.$route.query.affiliate_id,
             adjustable_id: this.affiliate_contribution.state_affiliate != 'Comisión' ? this.contributions[i].contributionable_id : this.$route.query.affiliate_id,
             adjustable_type: this.affiliate_contribution.state_affiliate != 'Comisión' ? this.affiliate_contribution.name_table_contribution : 'affiliate',
