@@ -25,7 +25,7 @@ class LoanContributionAdjustForm extends FormRequest
     {
         $rules = [
             'type_affiliate'=>['string','in:lender,guarantor,cosigner'],
-            'description'=>['string','alpha_spaces','min:3'],
+            'description'=>['string','min:3'],
             'period_date'=>['date_format:"Y-m-d"'],
             'loan_id'=>['integer','nullable','exists:loans,id'],
             'affiliate_id'=>['integer','exists:affiliates,id'],
