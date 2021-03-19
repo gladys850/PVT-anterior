@@ -17,16 +17,17 @@
                           INTERVALO DE LOS MONTOS
                         </v-col>
                         <v-col cols="12" :md="window_size" class="py-0 text-center">
-                          INTERVALO DEL PLAZO EN MESES
+                          INTERVALO DEL PLAZO EN MESES 
                         </v-col>
                         <v-col cols="12" :md="window_size" class="py-0 text-center" v-if="see_field">
                           VALOR NETO REALIZADO (VNR)
                         </v-col>
+                        <!--{{contribution}}-->
                         <v-col cols="12" :md="window_size" class="py-0">
                           <v-select
                             dense
                             v-model="loanTypeSelected.id"
-                            :Onchange="Onchange()"
+                            @change="Onchange()"
                             :items="modalities"
                             item-text="name"
                             item-value="id"
@@ -58,128 +59,247 @@
                 </v-row>
               </v-container>
               <v-container cols="12" md="12">
-                <v-row>
-                  <v-col cols="12" md="2">
-                    BOLETAS DE PAGO
-                  </v-col>
-                  <v-col cols="12" md="10" style="margin-top:-20px">
+                <v-row class="py-0">
+                  <!--<v-col cols="12" md="12" style="margin-top: -20px">
                     <v-checkbox
-                    v-model="enabled"
-                    hide-details
-                    label="Habilitar Edicion"
-                  ></v-checkbox>
-                  </v-col>
-                  <v-col cols="12" md="4" class="py-0"  >
-                    <ValidationProvider v-slot="{ errors }" name="1ra Boleta de pago"   :rules="'required|min_value:'+livelihood_amount"  mode="aggressive"> <b style="text-align:center"></b>
+                      v-model="enabled"
+                      hide-details
+                      label="Habilitar Edicion"
+                    ></v-checkbox>
+                  </v-col>  -->                
+                  <v-col cols="12" md="2" >
                     <v-text-field
-                      :error-messages="errors"
                       dense
-                      v-model="payable_liquid[0]"
-                      :label = "period[0]"
-                      :disabled="!enabled"
-                      :outlined="editar"
-                    ></v-text-field>             
-                    </ValidationProvider>
-                  </v-col>
-                  <v-col cols="12" md="4" class="py-0" v-if="visible">
-                    <ValidationProvider v-slot="{ errors }" name="2da Boleta de pago" :rules="'min_value:'+livelihood_amount"  mode="aggressive">
-                    <v-text-field
-                    :error-messages="errors"
-                      dense
-                      v-model="payable_liquid[1]"
-                      :label= "period[1]"
-                      :disabled="!enabled"
-                      :outlined="editar"
-                  ></v-text-field>
-                  </ValidationProvider>
-                  </v-col>
-                  <v-col cols="12" md="4" class="py-0" v-if="visible">
-                    <ValidationProvider v-slot="{ errors }" name="3ra Boleta de pago" :rules="'min_value:'+livelihood_amount"  mode="aggressive">
-                    <v-text-field
-                    :error-messages="errors"
-                      dense
-                      v-model="payable_liquid[2]"
-                      :label= "period[2]"
-                      :disabled="!enabled"
-                      :outlined="editar"
-                     ></v-text-field>
-                     </ValidationProvider>
-                  </v-col>
-                  <v-col cols="12" class="py-0" >
-                    BONOS
-                  </v-col>
-                  <v-col cols="12" md="3" >
-                    <ValidationProvider v-slot="{ errors }" name="Bono Frontera" :rules="'max_value:'+payable_liquid[0]"  mode="aggressive">
-                    <v-text-field
-                    :error-messages="errors"
-                      dense
-                      v-model="bonos[0]"
-                      label="Bono Frontera"
-                      :disabled="!enabled"
-                      :outlined="editar"
-                     ></v-text-field>
-                     </ValidationProvider>
-                  </v-col>
-                  <v-col cols="12" md="3">
-                    <ValidationProvider v-slot="{ errors }" name="Bono Oriente" :rules="'max_value:'+payable_liquid[0]"  mode="aggressive">
-                    <v-text-field
-                    :error-messages="errors"
-                      dense
-                      v-model="bonos[1]"
-                      label="Bono Oriente"
-                      :disabled="!enabled"
-                      :outlined="editar"
-                     ></v-text-field>
-                     </ValidationProvider>
-                  </v-col>
-                  <v-col cols="12" md="3" >
-                    <ValidationProvider v-slot="{ errors }" name="Bono Cargo" :rules="'max_value:'+payable_liquid[0]"  mode="aggressive">
-                    <v-text-field
-                    :error-messages="errors"
-                      dense
-                      v-model="bonos[2]"
-                      label="Bono Cargo"
-                      :disabled="!enabled"
-                      :outlined="editar"
+                      v-model="number_diff_month"
+                      label="NÚmero de meses"                    
+                      color="info"
+                      append-icon="mdi-plus-box"
+                      prepend-icon="mdi-minus-box"
+                      @click:append="appendIconCallback"
+                      @click:prepend="prependIconCallback"
+                      readonly
                     ></v-text-field>
-                    </ValidationProvider>
+                  </v-col>           
+                </v-row>
+                <!--boleta 1--->
+
+                <v-row v-for="(contrib,i) in contribution" :key="i">
+                  <template v-if="i < modalidad.quantity_ballots">
+                  <v-col cols="12" md="6" class="py-0">
+                    <v-row>
+                      <v-col cols="12" md="12"> BOLETAS DE PAGO {{contribution[i].period}} {{contribution[i].month}}</v-col>
+                      <v-col cols="12" md="3" class="py-0" v-if="lender_contribution.state_affiliate != 'Comisión'">
+                        <ValidationProvider
+                          v-slot="{ errors }"
+                          name="Boleta de pago"
+                          :rules="'required|min_value:' + livelihood_amount"
+                          mode="aggressive"
+                        >
+                          <b style="text-align: center"></b>
+                          <v-text-field
+                            :error-messages="errors"
+                            dense
+                            v-model="contribution[i].payable_liquid"
+                            label="Liquido pagable"
+                            :disabled="!enabled"
+                            :outlined="editar"
+                          ></v-text-field>
+                        </ValidationProvider>
+                      </v-col>
+                      <!--<v-col cols="12" md="1" class="py-0">
+                        <span>
+                          <v-tooltip top>
+                            <template v-slot:activator="{ on }">
+                              <v-btn
+                                icon
+                                dark
+                                small
+                                color="success"
+                                bottom
+                                right
+                                v-on="on"
+                                @click="saveAdjustment(i)"
+                              >
+                                <v-icon>mdi-calculator</v-icon>
+                              </v-btn>
+                            </template>
+                            <span>Ajuste</span>
+                          </v-tooltip>
+                        </span>                        
+                      </v-col>-->
+                      <v-col cols="12" md="2" class="py-0" >
+                        <ValidationProvider
+                          v-slot="{ errors }"
+                          name="Monto ajuste"
+                          :rules="''"
+                          mode="aggressive"
+                        >
+                          <b style="text-align: center"></b>
+                          <v-text-field
+                            :error-messages="errors"
+                            dense
+                            v-model="contribution[i].adjustment_amount"
+                            :label= "lender_contribution.state_affiliate == 'Comisión' ? 'Liquido pagable' :  'Monto ajuste'"
+                            outlined
+                          ></v-text-field>
+                        </ValidationProvider>
+                      </v-col>
+                      <template v-if="lender_contribution.state_affiliate != 'Comisión'">
+                        <v-col cols="12" md="2" class="py-0" >
+                          <b style="text-align: center">= {{(parseFloat(contribution[i].adjustment_amount) + parseFloat(contribution[i].payable_liquid)).toFixed(2)}}</b>
+                        </v-col>
+                        <v-col cols="12" md="5" class="py-0">
+                          <ValidationProvider
+                            v-slot="{ errors }"
+                            name="Descripción"
+                            :rules="''"
+                            mode="aggressive"
+                          >
+                            <b style="text-align: center"></b>
+                            <textarea
+                              :error-messages="errors"
+                              dense
+                              v-model="contribution[i].adjustment_description"
+                              label="Descripción ajuste"
+                              outlined
+                              style="width:100%;border: 1px solid #888;"
+                            ></textarea>
+                          </ValidationProvider>
+                        </v-col>
+                      </template>
+                    </v-row>
                   </v-col>
-                  <v-col cols="12" md="3">
-                    <ValidationProvider v-slot="{ errors }" name="Bono Seguridad Ciudadana" :rules="'max_value:'+payable_liquid[0]" mode="aggressive">
-                    <v-text-field
-                    :error-messages="errors"
-                      dense
-                      v-model="bonos[3]"
-                      label="Bono Seguridad Ciudadana"
-                      :disabled="!enabled"
-                      :outlined="editar"
-                     ></v-text-field>
-                     </ValidationProvider>
-                  </v-col>
-                  <template v-if="type_sismu">
-                  <v-col cols="12" class="py-0">
-                    DATOS SISMU
-                  </v-col>
-                  <v-col cols="12" md="3" >
-                    <ValidationProvider v-slot="{ errors }" name="cuota" :rules="'min_value:1'"  mode="aggressive">
-                    <v-text-field
-                      :error-messages="errors"
-                      dense
-                      v-model="data_sismu.quota_sismu"
-                      outlined
-                      label="Cuota"
-                     ></v-text-field>
-                     </ValidationProvider>
-                  </v-col>
-                  <v-col cols="12" md="3" class="ma-0 pa-0" v-if="this.loanTypeSelected.id==11 || this.loanTypeSelected.id==12">
-                      <v-checkbox
-                        v-model="data_sismu.cpop_sismu"
-                        label="Afiliado CPOP"
-                      ></v-checkbox>
+
+                  <v-col cols="12" md="6" class="py-0">
+                    <v-row class="py-0">
+                      <v-col cols="12" md="12" v-if="lender_contribution.state_affiliate != 'Comisión'"> BONOS </v-col>
+                      <template v-if="lender_contribution.state_affiliate == 'Activo'">
+                        <v-col cols="12" md="3" class="py-0">
+                          <ValidationProvider
+                            v-slot="{ errors }"
+                            name="Bono Frontera"
+                            :rules="'max_value:' + payable_liquid[i]"
+                            mode="aggressive"
+                          >
+                            <v-text-field
+                              :error-messages="errors"
+                              dense
+                              v-model="contribution[i].border_bonus"
+                              label="Bono Frontera"
+                              :disabled="!enabled"
+                              :outlined="editar"
+                            ></v-text-field>
+                          </ValidationProvider>
+                        </v-col>
+                        <v-col cols="12" md="3" class="py-0">
+                          <ValidationProvider
+                            v-slot="{ errors }"
+                            name="Bono Oriente"
+                            :rules="'max_value:' + payable_liquid[i]"
+                            mode="aggressive"
+                          >
+                            <v-text-field
+                              :error-messages="errors"
+                              dense
+                              v-model="contribution[i].east_bonus"
+                              label="Bono Oriente"
+                              :disabled="!enabled"
+                              :outlined="editar"
+                            ></v-text-field>
+                          </ValidationProvider>
+                        </v-col>
+                        <v-col cols="12" md="3" class="py-0">
+                          <ValidationProvider
+                            v-slot="{ errors }"
+                            name="Bono Cargo"
+                            :rules="'max_value:' + payable_liquid[i]"
+                            mode="aggressive"
+                          >
+                            <v-text-field
+                              :error-messages="errors"
+                              dense
+                              v-model="contribution[i].position_bonus"
+                              label="Bono Cargo"
+                              :disabled="!enabled"
+                              :outlined="editar"
+                            ></v-text-field>
+                          </ValidationProvider>
+                        </v-col>
+                        <v-col cols="12" md="3" class="py-0">
+                          <ValidationProvider
+                            v-slot="{ errors }"
+                            name="Bono Seguridad Ciudadana"
+                            :rules="'max_value:' + payable_liquid[i]"
+                            mode="aggressive"
+                          >
+                            <v-text-field
+                              :error-messages="errors"
+                              dense
+                              v-model="contribution[i].public_security_bonus"
+                              label="Bono Seguridad Ciudadana"
+                              :disabled="!enabled"
+                              :outlined="editar"
+                            ></v-text-field>
+                          </ValidationProvider>
+                        </v-col>
+                     </template> 
+                      <v-col cols="12" md="3" class="py-0" v-if="lender_contribution.state_affiliate == 'Pasivo'">
+                        <ValidationProvider
+                          v-slot="{ errors }"
+                          name="Renta dignidad"
+                          :rules="'max_value:' + payable_liquid[i]"
+                          mode="aggressive"
+                        >
+                          <v-text-field
+                            :error-messages="errors"
+                            dense
+                            v-model="contribution[i].dignity_rent"
+                            label="Renta dignidad"
+                            :disabled="!enabled"
+                            :outlined="editar"
+                          ></v-text-field>
+                        </ValidationProvider>
+                      </v-col>
+                    </v-row>
                   </v-col>
                   </template>
                 </v-row>
+
+                <template v-if="type_sismu">
+                  <v-col cols="12" class="py-0"> DATOS SISMU </v-col>
+                  <v-col cols="12" md="3">
+                    <ValidationProvider
+                      v-slot="{ errors }"
+                      name="cuota"
+                      :rules="'min_value:1'"
+                      mode="aggressive"
+                    >
+                      <v-text-field
+                        :error-messages="errors"
+                        dense
+                        v-model="data_sismu.quota_sismu"
+                        outlined
+                        label="Cuota"
+                      ></v-text-field>
+                    </ValidationProvider>
+                  </v-col>
+                  <v-col
+                    cols="12"
+                    md="3"
+                    class="ma-0 pa-0"
+                    v-if="
+                      this.loanTypeSelected.id == 11 ||
+                      this.loanTypeSelected.id == 12
+                    "
+                  >
+                    <v-checkbox
+                      v-model="data_sismu.cpop_sismu"
+                      label="Afiliado CPOP"
+                    ></v-checkbox>
+                  </v-col>
+                </template>
               </v-container>
+              <!--<Adjustment :bus="bus"/>-->
               <BallotsHipotecary
                 v-show="hipotecario"
                 :contrib_codebtor="contrib_codebtor"
@@ -190,15 +310,17 @@
             </v-card>
           </v-col>
         </v-row>
+       
       </v-form>
   </v-flex>
 </template>
 <script>
 import BallotsHipotecary from '@/components/loan/BallotsHipotecary'
+//import Adjustment from "@/components/loan/Adjustment"
 export default {
   name: "ballots",
   data: () => ({
-    includeFiles: true,
+    bus: new Vue(),
     enabled: false,
     editar:true,
     monto:null,
@@ -208,7 +330,45 @@ export default {
     visible:false,
     hipotecario:false,
     window_size:4,
-    see_field:false
+    see_field:false,
+    loan_modality: {},
+    data_ballots: [],
+    contribution: [],
+     /*contribution: [{},{},{}
+     {
+        payable_liquid: null,
+        adjustment: null,
+        position_bonus: null,
+        border_bonus: 0,
+        public_security_bonus: null,
+        east_bonus: null,
+        dignity_rent: null,
+        period: null
+      }, {
+        payable_liquid: null,
+        adjustment: null,
+        position_bonus: null,
+        border_bonus: 0,
+        public_security_bonus: null,
+        east_bonus: null,
+        dignity_rent: null,
+        period: null
+      },{
+        payable_liquid: null,
+        adjustment: null,
+        position_bonus: null,
+        border_bonus: 0,
+        public_security_bonus: null,
+        east_bonus: null,
+        dignity_rent: null,
+        period: null
+      }],
+    affiliate_contribution: [],
+    contribution_passive: {},*/
+    choose_diff_month: false,
+    number_diff_month: 1,
+    lender_contribution: {}
+
   }),
    props: {
     modalidad: {
@@ -264,16 +424,31 @@ export default {
       required: true
     },
     livelihood_amount:{
-    type: Number,
-    required:true,
-    default:0
-  }
+      type: Number,
+      required:true,
+      default:0
+    },
+    affiliate_contribution:{
+      type: Object,
+      required: true
+    },
+    contribution_passive:{
+      type: Object,
+      required: true
+    }
   },
     components: {
-    BallotsHipotecary
+    BallotsHipotecary,
+    //Adjustment
   },
   mounted() {
     this.getLoanIntervals()
+  },
+  watch: {
+    /*loanTypeSelected(newVal, oldVal){
+      if(newVal!= oldVal)
+        this.Onchange()
+    }*/
   },
   computed: {
     isNew() {
@@ -297,8 +472,21 @@ export default {
     }
   },
   methods:
- {//muestra los intervalos de acuerdo a una modalidad
-    Onchange(){
+ {
+    //Intervalos de Plazo y Meses de una modalidad
+    async getLoanIntervals() {
+      try {
+        let res = await axios.get(`loan_interval`)
+        this.interval = res.data
+        console.log(this.interval)
+       }catch (e) {
+        console.log(e)
+      }
+    },
+   //muestra los intervalos de acuerdo a una modalidad
+    async Onchange(){
+      this.choose_diff_month = false
+      this.number_diff_month = 1
       for (let i = 0; i< this.interval.length; i++) {
         if(this.loanTypeSelected.id==this.interval[i].procedure_type_id){
           if(this.loanTypeSelected.id==12){
@@ -324,16 +512,7 @@ export default {
         }*/
       }
     },
-    clearForm() //FIXME ver si la funcion sera necesaria
-    {
-      this.payable_liquid[0]=0
-      this.payable_liquid[1]=0
-      this.payable_liquid[2]=0
-      this.bonos[0]=0
-      this.bonos[1]=0
-      this.bonos[2]=0
-      this.bonos[3]=0
-    },
+
     //Obtiene los parametros de la modalidad
     async getLoanModality(id) {
       try {
@@ -346,26 +525,27 @@ export default {
           this.loan_detail.not_exist_modality = true
           this.toastr.error("El afiliado no puede ser evaluado en esta modalidad")
         }else{
-          let loan_modality = resp.data
-          this.modalidad.id = loan_modality.id
-          this.modalidad.procedure_type_id = loan_modality.procedure_type_id
-          this.modalidad.name = loan_modality.name
-          this.modalidad.quantity_ballots = loan_modality.loan_modality_parameter.quantity_ballots
-          this.modalidad.guarantors = loan_modality.loan_modality_parameter.guarantors
-          this.modalidad.min_guarantor_category = loan_modality.loan_modality_parameter.min_guarantor_category
-          this.modalidad.max_guarantor_category = loan_modality.loan_modality_parameter.max_guarantor_category
-          this.modalidad.personal_reference = loan_modality.loan_modality_parameter.personal_reference
-          this.modalidad.max_cosigner = loan_modality.loan_modality_parameter.max_cosigner
-          this.modalidad.max_lenders = loan_modality.loan_modality_parameter.max_lenders
+          this.loan_modality = resp.data
+          this.modalidad.id = this.loan_modality.id
+          this.modalidad.procedure_type_id = this.loan_modality.procedure_type_id
+          this.modalidad.name = this.loan_modality.name
+          this.modalidad.quantity_ballots = this.loan_modality.loan_modality_parameter.quantity_ballots
+          this.modalidad.guarantors = this.loan_modality.loan_modality_parameter.guarantors
+          this.modalidad.min_guarantor_category = this.loan_modality.loan_modality_parameter.min_guarantor_category
+          this.modalidad.max_guarantor_category = this.loan_modality.loan_modality_parameter.max_guarantor_category
+          this.modalidad.personal_reference = this.loan_modality.loan_modality_parameter.personal_reference
+          this.modalidad.max_cosigner = this.loan_modality.loan_modality_parameter.max_cosigner
+          this.modalidad.max_lenders = this.loan_modality.loan_modality_parameter.max_lenders
 
-          this.loan_detail.min_guarantor_category= loan_modality.loan_modality_parameter.min_guarantor_category
-          this.loan_detail.max_guarantor_category= loan_modality.loan_modality_parameter.max_guarantor_category
-          if(loan_modality.loan_modality_parameter.quantity_ballots>1){
+          this.loan_detail.min_guarantor_category = this.loan_modality.loan_modality_parameter.min_guarantor_category
+          this.loan_detail.max_guarantor_category = this.loan_modality.loan_modality_parameter.max_guarantor_category
+          if(this.loan_modality.loan_modality_parameter.quantity_ballots > 1){
             this.visible = true
           }else{
             this.visible = false
           }
           this.getBallots(id)
+          this.generateContributions()
         }
       }catch (e) {
         console.log(e)
@@ -373,64 +553,109 @@ export default {
         this.loading = false
       }
     },
-    //Intervalos de Plazo y Meses de una modalidad
-    async getLoanIntervals() {
-      try {
-        let res = await axios.get(`loan_interval`)
-        this.interval = res.data
-       }catch (e) {
-        console.log(e)
-      }finally {
-        this.loading = false
-      }
-    },
+
     //Metodo para sacar boleta de un afiliado
   async getBallots(id) {
     try {
-      let data_ballots=[]
+      this.data_ballots=[]
       let res = await axios.get(`affiliate/${id}/contribution`, {
-        params:{
-          city_id: this.$store.getters.cityId,
-          sortBy: ['month_year'],
-          sortDesc: [1],
-          per_page: this.modalidad.quantity_ballots,
-          page: 1,
-        }
-      })
-      //console.log("-------")
-      //console.log(this.modalidad.quantity_ballots)
-      data_ballots = res.data.data
-      //console.log(data_ballots)
+         params:{
+           city_id: this.$store.getters.cityId,
+           choose_diff_month: this.choose_diff_month,
+           number_diff_month: this.number_diff_month,
+           sortBy: ['month_year'],
+           sortDesc: [1],
+           per_page: this.modalidad.quantity_ballots,
+           page: 1,
+         }
+        })
+      this.lender_contribution = res.data
+      this.affiliate_contribution.valid = this.lender_contribution.valid
+      this.affiliate_contribution.state_affiliate = this.lender_contribution.state_affiliate
+      this.affiliate_contribution.name_table_contribution = this.lender_contribution.name_table_contribution
+      this.data_ballots = res.data.data
+      console.log(this.affiliate_contribution)
       this.fecha= new Date();
-      if(res.data.valid && this.enabled==false){
-        this.editar=false
-         //Carga los datos en los campos para ser visualizados en la interfaz
-        for (let i = 0; i < data_ballots.length; i++) {//colocar 1
-        this.period[i] = this.$moment(data_ballots[i].month_year).subtract(1,'months').format('MMMM')
-       // console.log(this.period[i]);
-          this.payable_liquid[i] = data_ballots[i].payable_liquid
-          if(i==0){//solo se llena los bonos de la ultima boleta de pago
-            this.bonos[0] = data_ballots[0].border_bonus
-            this.bonos[1] = data_ballots[0].east_bonus
-            this.bonos[2] = data_ballots[0].position_bonus
-            this.bonos[3] = data_ballots[0].public_security_bonus
-          }
+
+      for (let i = 0; i < this.modalidad.quantity_ballots; i++) {//colocar 1
+        if(this.lender_contribution.valid && this.lender_contribution.state_affiliate =='Activo'){
+          this.enabled = false
+          this.editar=false
+           //Carga los datos en los campos para ser visualizados en la interfaz
+         // console.log(this.period[i]);
+            /*this.payable_liquid[i] = data_ballots[i].payable_liquid
+            if(i==0){//solo se llena los bonos de la ultima boleta de pago
+              this.bonos[0] = data_ballots[0].border_bonus
+              this.bonos[1] = data_ballots[0].east_bonus
+              this.bonos[2] = data_ballots[0].position_bonus
+              this.bonos[3] = data_ballots[0].public_security_bonus
+            }*/
+            this.contribution[i].contributionable_id = this.data_ballots[i].id
+            this.contribution[i].payable_liquid = this.data_ballots[i].payable_liquid
+            this.contribution[i].border_bonus = this.data_ballots[i].border_bonus
+            this.contribution[i].east_bonus = this.data_ballots[i].east_bonus
+            this.contribution[i].position_bonus = this.data_ballots[i].position_bonus
+            this.contribution[i].public_security_bonus = this.data_ballots[i].public_security_bonus
+            this.contribution[i].period = this.$moment(this.data_ballots[i].month_year).format('YYYY-MM-DD')
+            this.contribution[i].month = this.$moment(this.data_ballots[i].month_year).subtract(i+1,'months').format('MMMM')
+          
+        } else if(!this.lender_contribution.valid && this.lender_contribution.state_affiliate =='Activo'){
+            this.enabled = false
+            this.editar=false
+            /*this.enabled=true
+            this.editar=true
+            this.contribution[0].period = this.$moment(this.fecha).subtract(1,'months').format('MMMM')
+            this.contribution[1].period = this.$moment(this.fecha).subtract(2,'months').format('MMMM')
+            this.contribution[2].period = this.$moment(this.fecha).subtract(3,'months').format('MMMM')
+            console.log("No se tienen boletas del ultimo mes")
+            this.contribution[0].payable_liquid=0
+            this.contribution[1].payable_liquid=this.payable_liquid[1]
+            this.contribution[2].payable_liquid=this.payable_liquid[2]
+            this.bonos[0]= this.bonos[0]
+            this.bonos[1]= this.bonos[1]
+            this.bonos[2]= this.bonos[2]
+            this.bonos[3]= this.bonos[3]
+            //this.clearForm()//TODO ver si es necesario, ya que sin la funcion igual se carga los datos declarados por defecto de las variables
+            */
+            this.contribution[i].contributionable_id = 0
+            this.contribution[i].payable_liquid = 0
+            this.contribution[i].border_bonus = 0
+            this.contribution[i].east_bonus = 0
+            this.contribution[i].position_bonus = 0
+            this.contribution[i].public_security_bonus = 0
+            this.contribution[i].period = this.$moment(this.fecha).format('YYYY-MM-DD')
+            this.contribution[i].month = this.$moment(this.fecha).subtract(i+1,'months').format('MMMM')
+        } else if(this.lender_contribution.valid && this.lender_contribution.state_affiliate =='Pasivo'){
+            this.enabled = true
+            if(this.data_ballots[i].rent > 0 && this.data_ballots[i].dignity_rent > 0){
+              this.editar = false
+            }else {
+              this.editar = false
+            }
+            this.contribution[i].contributionable_id = this.data_ballots[i].id
+            this.contribution[i].payable_liquid = this.data_ballots[i].rent
+            this.contribution[i].dignity_rent = this.data_ballots[i].dignity_rent
+            this.contribution[i].period = this.$moment(this.data_ballots[i].month_year).format('YYYY-MM-DD')
+            this.contribution[i].month = this.$moment(this.data_ballots[i].month_year).subtract(i+1,'months').format('MMMM')
         }
-      } else{
-          this.enabled=true
-          this.editar=true
-          this.period[0] = this.$moment(this.fecha).subtract(1,'months').format('MMMM')
-          this.period[1] = this.$moment(this.fecha).subtract(2,'months').format('MMMM')
-          this.period[2] = this.$moment(this.fecha).subtract(3,'months').format('MMMM')
-          console.log("No se tienen boletas del ultimo mes")
-          this.payable_liquid[0]=this.payable_liquid[0]
-          this.payable_liquid[1]=this.payable_liquid[1]
-          this.payable_liquid[2]=this.payable_liquid[2]
-          this.bonos[0]= this.bonos[0]
-          this.bonos[1]= this.bonos[1]
-          this.bonos[2]= this.bonos[2]
-          this.bonos[3]= this.bonos[3]
-          //this.clearForm()//TODO ver si es necesario, ya que sin la funcion igual se carga los datos declarados por defecto de las variables
+        else if(!this.lender_contribution.valid && this.lender_contribution.state_affiliate =='Pasivo'){
+            this.enabled = true
+            this.contribution[i].contributionable_id = 0
+            this.contribution[i].payable_liquid = this.contribution[i].payable_liquid
+            this.contribution[i].dignity_rent = 0
+            this.contribution[i].period = this.$moment(this.fecha).format('YYYY-MM-DD')
+            this.contribution[i].month = this.$moment(this.fecha).subtract(i+1,'months').format('MMMM')
+        }
+        else if(!this.lender_contribution.valid && this.lender_contribution.state_affiliate =='Comisión'){
+            this.enabled = true
+            this.contribution[i].contributionable_id = 0
+            this.contribution[i].payable_liquid = 0
+            this.contribution[i].period = this.$moment(this.lender_contribution.current_tiket).format('YYYY-MM-DD')
+            this.contribution[i].month = this.$moment(this.lender_contribution.current_tiket).subtract(i+1,'months').format('MMMM')
+        }
+        
+        else {
+          this.toastr.error("Ocurrio caso especial")}
       }
     } catch (e) {
       console.log(e)
@@ -438,6 +663,161 @@ export default {
       this.loading = false
     }
   },
+  generateContributions () {
+    this.contribution = []
+    for (let i = 0; i < this.modalidad.quantity_ballots; i++) {
+      this.contribution.push({
+        contributionable_id: null,
+        payable_liquid: 0,
+        position_bonus: 0,
+        border_bonus: 0,
+        public_security_bonus: 0,
+        east_bonus: 0,
+        dignity_rent: 0,
+        period: null,
+        adjustment_amount: 0,
+        adjustment_description: null,
+        loan_contributions_adjust_id: null,
+      })
+    }
+  },
+  getContributions() {
+    return this.contribution
+  },
+  appendIconCallback () {
+      if(this.number_diff_month < 10){
+      this.number_diff_month++
+      this.choose_diff_month = true
+      this.getBallots(this.$route.query.affiliate_id)
+    }
+  },
+  prependIconCallback () {
+
+      if(this.number_diff_month > 1){
+      this.number_diff_month--
+      this.choose_diff_month = true
+      this.getBallots(this.$route.query.affiliate_id)
+    }
+  },
+  /*async saveAdjustment(i){
+    try {
+      //Verificar si el afiliado es pasivo para introducir su contribución
+      if(this.affiliate_contribution.state_affiliate == 'Pasivo'){  
+      let res = await axios.post(`aid_contribution/updateOrCreate`,{
+        affiliate_id: this.$route.query.affiliate_id,
+        month_year: this.contribution[i].period,
+        rent: this.contribution[i].payable_liquid,
+        dignity_rent: this.contribution[i].dignity_rent,
+      })
+      this.contribution_passive = this.lender_contribution  
+        this.contribution[i].contributionable_id = this.contribution_passive.id
+        alert(this.contribution_passive.id)
+      }
+      //guardar el ajuste
+        let res = await axios.post(`loan_contribution_adjust`, {
+        affiliate_id: this.$route.query.affiliate_id,
+        adjustable_id: this.affiliate_contribution.state_affiliate != 'Comisión' ? this.contribution[i].contributionable_id : this.$route.query.affiliate_id,
+        adjustable_type: this.affiliate_contribution.state_affiliate != 'Comisión' ? this.affiliate_contribution.name_table_contribution : 'affiliate',
+        type_affiliate: 'lender',
+        amount: this.contribution[i].adjustment_amount,
+        type_adjust: this.affiliate_contribution.state_affiliate != 'Comisión' ? 'adjust' : 'liquid',
+        period_date: this.$moment(this.fecha).format('YYYY-MM-DD'),
+        description: this.contribution[i].adjustment_description
+      })
+      let ajuste = res.data
+      console.log(ajuste)
+    } catch (e) {
+      console.log(e)
+    }
+  },*/
+   /*async saveAdjustment() {
+    try {
+        let res = await axios.post(`loan_contribution_adjust`, {
+        affiliate_id: this.$route.query.affiliate_id,
+        adjustable_id: this.affiliate_contribution.state_affiliate != 'Comisión' ? this.contribution[i].contributionable_id : this.$route.query.affiliate_id,
+        adjustable_type: this.affiliate_contribution.state_affiliate != 'Comisión' ? this.affiliate_contribution.name_table_contribution : 'affiliate',
+        type_affiliate: 'lender',
+        amount: this.contribution[i].adjustment_amount,
+        type_adjust: this.affiliate_contribution.state_affiliate != 'Comisión' ? 'adjust' : 'liquid',
+        period_date: '2021-03-15',
+        description: this.contribution[i].adjustment_description
+      })
+      let ajuste = res.data
+    } catch (e) {
+     console.log(e)   
+    }
+    },
+ async dialogAdjustment(i){
+    try {
+      //Verificar si el afiliado es pasivo para introducir su contribución
+      if(this.affiliate_contribution.state_affiliate == 'Pasivo'){  
+      let res = await axios.post(`aid_contribution/updateOrCreate`,{
+        affiliate_id: this.$route.query.affiliate_id,
+        month_year: "2021-02-01",
+        rent: this.contribution[i].payable_liquid,
+        dignity_rent: this.contribution[i].dignity_rent,
+      })
+      this.contribution_passive = res.data  
+        this.contribution[i].contributionable_id = this.contribution_passive.id
+        alert(this.contribution_passive.id)
+      }
+      //Envio de informacion al Dailog
+      this.bus.$emit('openDialog', {
+        accion: 'new',
+        affiliate_id: this.$route.query.affiliate_id,
+        adjustable_id: this.affiliate_contribution.state_affiliate != 'Comisión' ? this.contribution[i].contributionable_id : this.$route.query.affiliate_id,
+        adjustable_type: this.affiliate_contribution.state_affiliate != 'Comisión' ? this.affiliate_contribution.name_table_contribution : 'affiliate',
+        type_affiliate: 'lender',
+        type_adjust: this.affiliate_contribution.state_affiliate != 'Comisión' ? 'adjust' : 'liquid',
+        period_date: '2021-03-15'
+      })
+    } catch (e) {
+      console.log(e)
+    }
+  },*/
+
  }
 };
 </script>
+<style scoped>
+/*.v-list-item__title {
+  font-weight: 400 !important;
+}
+.v-input {
+  font-size: 14px !important;
+}
+.v-input .v-label {
+  font-size: 14px !important;
+}
+.v-text-field {
+  padding: 0 !important;
+  /*line-height: 1em !important;
+  background: royalblue;
+}
+ .v-textarea input {
+  padding: 4px 0 2px 0 !important;
+  line-height: 1em !important;
+} 
+.v-input__slot {
+  margin-bottom: 4px !important;
+}
+.v-input--hide-details {
+  margin-bottom: 0 !important;
+}
+.v-input__slot {
+  margin-bottom: 4px !important;
+}
+.v-text-field {
+  min-height: 36px !important;
+  /*background-color: orange;
+  width: 10em;
+  height: 0.5em;
+}
+.v-input .v-input__control {
+  min-height: 36px !important;
+}
+.v-select-list .v-list__tile {
+  font-size: 12px !important;
+  height: 36px !important;
+}*/
+</style>
