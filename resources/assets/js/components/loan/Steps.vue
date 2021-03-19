@@ -416,6 +416,12 @@ export default {
       else {
         if(n==1)
         {
+          console.log('este es lenders')
+             console.log(this.lenders)
+            // console.log(this.contributionable_type)
+             //console.log(this.loan_contributions_adjust_ids)
+             //console.log(this.contributionable_ids)
+ 
           //this.liquidCalificated()
           //this.getLoanDestiny()
         }
@@ -730,9 +736,10 @@ export default {
 
                 this.lenders[i].payment_percentage=this.calculator_result.affiliates[i].payment_percentage
                 this.lenders[i].indebtedness_calculated=this.calculator_result.affiliates[i].indebtedness_calculated
+                this.lenders[i].contributionable_type=this.contributionable_type
+                this.lenders[i].loan_contributions_adjust_ids=this.loan_contributions_adjust_ids
+                this.lenders[i].contributionable_ids=this.loan_contributions_adjust_ids
               }
-              console.log('estos son los lenders')
-              console.log(this.lenders)
 
               this.loan_detail.minimum_term=this.intervalos.minimum_term
               this.loan_detail.maximum_term=this.intervalos.maximum_term
@@ -775,6 +782,9 @@ export default {
               this.lenders=res.data
               this.lenders[0].payment_percentage=this.calculator_result.affiliates[0].payment_percentage
               this.lenders[0].indebtedness_calculated=this.calculator_result.affiliates[0].indebtedness_calculated
+              this.lenders[0].contributionable_type=this.contributionable_type
+              this.lenders[0].loan_contributions_adjust_ids=this.loan_contributions_adjust_ids
+              this.lenders[0].contributionable_ids=this.loan_contributions_adjust_ids
 
               this.loan_detail.minimum_term=this.intervalos.minimum_term
               this.loan_detail.maximum_term=this.intervalos.maximum_term
@@ -798,7 +808,7 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
         console.log(e)
       } finally {
         this.loading = false
-        console.log('entro por verdadero')
+        //console.log('entro por verdadero')
       }
     },
     /*//TAB 3 bien inmueble
@@ -867,7 +877,7 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
           let res3 = await axios.get(`loan_property/${this.data_loan.property_id}`)
           this.loan_detail.net_realizable_value = res3.data.net_realizable_value
         }
-        console.log(this.data_loan)
+        //console.log(this.data_loan)
       } catch (e) {
         console.log(e)
       } finally {
@@ -900,7 +910,7 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
         this.contributions = this.$refs.ballotsComponent.getContributions()
       }
       this.saveAdjustment()
-      console.log(this.contributions)
+     // console.log(this.contributions)
       this.liquidCalificated()
       this.nextStep(1)
       /*console.log("ESTADO"+ this.loan_detail.not_exist_modality)
