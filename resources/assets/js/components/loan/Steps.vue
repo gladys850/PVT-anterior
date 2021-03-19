@@ -48,6 +48,7 @@
         <v-stepper-content :key="`${1}-content`" :step="1">
           <v-card color="grey lighten-1">
             <Ballots
+              ref="ballotsComponent"
               :modalities.sync="modalities"
               :bonos.sync="bonos"
               :payable_liquid="payable_liquid"
@@ -62,6 +63,8 @@
               :loanTypeSelected.sync="loanTypeSelected"
               :data_sismu.sync ="data_sismu"
               :livelihood_amount.sync="livelihood_amount"
+              :affiliate_contribution="affiliate_contribution"
+              :contribution_passive="contribution_passive"
             />
             <v-container class="py-0">
               <v-row>
@@ -74,7 +77,6 @@
                   </v-btn>
                 </v-col>
               </v-row>
-              <!--{this.contributions1_aux }}-->
             </v-container>
           </v-card>
         </v-stepper-content>
@@ -321,9 +323,49 @@ export default {
       livelihood_amount:true
     },
     livelihood_amount: 0,
-    valor1: false,
-    valor2: false,
-    valor3: false
+    contributions: [],
+    /*contributions: [{
+        contributionable_id: null,
+        payable_liquid: 0,
+        adjustment_amount: 0,
+        adjustment_description: null,
+        position_bonus: 0,
+        border_bonus: 0,
+        public_security_bonus: 0,
+        east_bonus: 0,
+        dignity_rent: 0,
+        period: null,
+      }, {
+        contributionable_id: null,
+        payable_liquid: 0,
+        adjustment_amount: 0,
+        adjustment_description: null,
+        position_bonus: 0,
+        border_bonus: 0,
+        public_security_bonus: 0,
+        east_bonus: 0,
+        dignity_rent: 0,
+        period: null
+      },{
+        contributionable_id: null,
+        payable_liquid: 0,
+        adjustment_amount: 0,
+        adjustment_description: null,
+        position_bonus: 0,
+        border_bonus: 0,
+        public_security_bonus: 0,
+        east_bonus: 0,
+        dignity_rent: 0,
+        period: null
+      }],*/
+    affiliate_contribution: {},
+    contribution_passive: {},
+    fecha: new Date(),
+    ///variables step1
+    
+    contributionable_type: null,
+    loan_contributions_adjust_ids: [],
+    contributionable_ids: []
   }),
   computed: {
     isNew() {
@@ -418,78 +460,7 @@ export default {
       }
 
     },
-    /*async personal()
-    {
-      try{
-        if (this.modalidad.personal_reference) {
-          this.reference = []
-          if (this.editedIndexPerRef == -1){
-            let res = await axios.post(`personal_reference`, {
-              city_identity_card_id:this.personal_reference.city_identity_card_id,
-              identity_card:this.personal_reference.identity_card,
-              last_name:this.personal_reference.last_name,
-              mothers_last_name:this.personal_reference.mothers_last_name,
-              first_name:this.personal_reference.first_name,
-              second_name:this.personal_reference.second_name,
-              phone_number:this.personal_reference.phone_number,
-              cell_phone_number:this.personal_reference.cell_phone_number
-            })
-            this.editedIndexPerRef = res.data.id
-            this.reference.push(res.data.id)
-          }else{
-            let res = await axios.patch(`personal_reference/${this.editedIndexPerRef}`,
-            {
-              city_identity_card_id:this.personal_reference.city_identity_card_id,
-              identity_card:this.personal_reference.identity_card,
-              last_name:this.personal_reference.last_name,
-              mothers_last_name:this.personal_reference.mothers_last_name,
-              first_name:this.personal_reference.first_name,
-              second_name:this.personal_reference.second_name,
-              phone_number:this.personal_reference.phone_number,
-              cell_phone_number:this.personal_reference.cell_phone_number
-            })
-            this.reference.push(res.data.id)
-          }
-        }
-      } catch (e) {
-        console.log(e)
-      } finally {
-        this.loading = false
-        console.log('entro por verdader'+this.modalidad.personal_reference)
-      }
-    },*/
-    /*async savePersonalReference() {
-      try {
-        let ids_codebtor=[]
-        for (let i = 0; i < this.personal_codebtor.length; i++) {
-          let res = await axios.post(`personal_reference`, {
-            city_identity_card_id: this.personal_codebtor[i].city_identity_card_id,
-            identity_card: this.personal_codebtor[i].identity_card,
-            last_name: this.personal_codebtor[i].last_name,
-            mothers_last_name: this.personal_codebtor[i].mothers_last_name,
-            first_name: this.personal_codebtor[i].first_name,
-            second_name: this.personal_codebtor[i].second_name,
-            phone_number: this.personal_codebtor[i].phone_number,
-            cell_phone_number: this.personal_codebtor[i].cell_phone_number,
-            address: this.personal_codebtor[i].address,
-            civil_status: this.personal_codebtor[i].civil_status,
-            gender: this.personal_codebtor[i].gender,
-            cosigner: true,
-            city_birth_id: this.personal_codebtor[i].city_birth_id
-          })
-          ids_codebtor.push(res.data.id)
-          console.log(this.personal_codebtor.length)
-          console.log(ids_codebtor)
-        }
-        this.cosigners = ids_codebtor
-        console.log(this.cosigners)
-      } catch (e) {
-        this.dialog = false
-        console.log(e)
-      } finally {
-        this.loading = false
-      }
-    },*/
+
     async getProcedureType(){
       try {
         let resp = await axios.get(`module`,{
@@ -520,8 +491,73 @@ export default {
         this.loading = false
       }
     },
+    ///ajuste
+    async saveAdjustment(){
+
+      try {      
+      this.loan_contributions_adjust_ids = []
+      this.contributionable_ids = []
+      
+      this.contributions.forEach(async (item, i) => {
+        //Verificar si el afiliado es pasivo para introducir su contribución
+        if(this.affiliate_contribution.state_affiliate == 'Pasivo'){  
+          let res = await axios.post(`aid_contribution/updateOrCreate`,{
+            affiliate_id: this.$route.query.affiliate_id,
+            month_year: this.contributions[i].period,
+            rent: this.contributions[i].payable_liquid,
+            dignity_rent: this.contributions[i].dignity_rent,
+          })
+          this.contribution_passive = res.data  
+            this.contributions[i].contributionable_id = this.contribution_passive.id
+            if (this.contributionable_ids.indexOf(this.contributions[i].contributionable_id) === -1) {
+              this.this.contributionable_ids.push(this.contributions[i].contributionable_id)
+            }
+            this.contributionable_type = 'aid_contributions'
+            //alert(this.contributionable_ids)
+        }
+        
+        else if(this.affiliate_contribution.state_affiliate == 'Activo') {
+            if (this.contributionable_ids.indexOf(this.contributions[i].contributionable_id) === -1) {
+            this.contributionable_ids.push(this.contributions[i].contributionable_id)
+          }
+          this.contributionable_type = 'contributions'
+          //alert(this.contributionable_ids)
+        } 
+        
+        else if(this.affiliate_contribution.state_affiliate == 'Comisión') {
+          this.contributionable_type = 'loan_contribution_adjusts'
+        }
+        //Para el ajuste
+        if(this.contributions[i].adjustment_amount > 0){ //aqui se debe colocar la edicion del ajuste, hacer condicional
+          //guardar el ajuste
+          let res = await axios.post(`loan_contribution_adjust`, {
+            affiliate_id: this.$route.query.affiliate_id,
+            adjustable_id: this.affiliate_contribution.state_affiliate != 'Comisión' ? this.contributions[i].contributionable_id : this.$route.query.affiliate_id,
+            adjustable_type: this.affiliate_contribution.state_affiliate != 'Comisión' ? this.affiliate_contribution.name_table_contribution : 'affiliate',
+            type_affiliate: 'lender',
+            amount: this.contributions[i].adjustment_amount,
+            type_adjust: this.affiliate_contribution.state_affiliate != 'Comisión' ? 'adjust' : 'liquid',
+            period_date: this.$moment(this.fecha).format('YYYY-MM-DD'),
+            description: this.contributions[i].adjustment_description
+          })
+          this.contributions[i].loan_contributions_adjust_id = res.data.id
+          console.log(this.contributions[i].loan_contributions_adjust_id)
+          if (this.loan_contributions_adjust_ids.indexOf(this.contributions[i].loan_contributions_adjust_id) === -1) {
+            this.loan_contributions_adjust_ids.push(this.contributions[i].loan_contributions_adjust_id)
+          }
+          //alert(this.loan_contributions_adjust_ids)
+
+        }else{
+          console.log('no tiene ajuste')
+        }
+        
+      })
+    }  catch (e) {
+      console.log(e)
+    }
+  },
      //TAB1 formatContributions datos obtenidos de los campos liquido y bonos, adecuandolo a formato para guardado y obtener liquido para calificación
-    formatContributions() {
+    /*formatContributions() {
       let nuevoArray = []
       let nuevoArrayCodebtor = []
       if(this.modalidad.quantity_ballots > 1 ){
@@ -597,6 +633,57 @@ export default {
       }
       }
       this.contributions1_aux = nuevoArray.concat(nuevoArrayCodebtor)
+    },*/
+
+      //TAB1 formatContributions datos obtenidos de los campos liquido y bonos, adecuandolo a formato para guardado y obtener liquido para calificación
+    formatContributions() {
+      let nuevoArray = []
+      let nuevoArrayCodebtor = []
+      let array_contributions =[]
+ 
+      this.contributions.forEach(async (item, i) => {         
+      array_contributions.push({
+          payable_liquid: this.contributions[i].payable_liquid  + this.contributions[i].adjustment_amount,
+          position_bonus: this.contributions[i].position_bonus,
+          border_bonus: this.contributions[i].border_bonus,
+          public_security_bonus: this.contributions[i].public_security_bonus,
+          east_bonus:this.contributions[i].east_bonus,
+          dignity_rent_bonus: this.contributions[i].dignity_rent
+        })      
+      })
+
+        nuevoArray[0] = {
+            affiliate_id:this.$route.query.affiliate_id,
+            sismu: this.data_sismu.type_sismu,
+            quota_sismu: this.data_sismu.quota_sismu,
+            parent_loan_id: this.parent_loan_id,
+            contributions: array_contributions
+
+        }
+        console.log("NUEVO ARRAY")
+        console.log(nuevoArray)
+
+      /*for (let i = 0; i < this.contrib_codebtor.length; i++) {
+        nuevoArrayCodebtor[i] = {
+          affiliate_id: this.contrib_codebtor[i].id_affiliate,
+          sismu: this.data_sismu.type_sismu,
+          quota_sismu: this.data_sismu.quota_sismu,
+          parent_loan_id: this.parent_loan_id,
+          contributions: [
+            {
+            payable_liquid: this.contrib_codebtor[i].payable_liquid,
+            border_bonus: this.contrib_codebtor[i].border_bonus,
+            east_bonus: this.contrib_codebtor[i].east_bonus,
+            position_bonus: this.contrib_codebtor[i].position_bonus,
+            public_security_bonus: this.contrib_codebtor[i].public_security_bonus
+            }
+          ]
+        };
+        console.log("NUEVO ARRAY")
+        console.log(nuevoArray)
+      }*/
+      
+      this.contributions1_aux = nuevoArray
     },
     //TAB1 Obtener liquido para calificación
     async liquidCalificated(){
@@ -808,7 +895,15 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
       }
     },
     validateStepsOne(){
-      console.log("ESTADO"+ this.loan_detail.not_exist_modality)
+      this.contributions = []
+      if(this.$refs.ballotsComponent) {
+        this.contributions = this.$refs.ballotsComponent.getContributions()
+      }
+      this.saveAdjustment()
+      console.log(this.contributions)
+      this.liquidCalificated()
+      this.nextStep(1)
+      /*console.log("ESTADO"+ this.loan_detail.not_exist_modality)
       if(this.loanTypeSelected.id > 0){
         if(this.loan_detail.not_exist_modality==false){
           if(this.payable_liquid[0] >= this.livelihood_amount){
@@ -911,7 +1006,7 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
         }
       }else{
         this.toastr.error("Seleccione una modalidad")
-      }
+      }*/
     },
     validateStepsTwo()
     {
@@ -1082,4 +1177,4 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
     }*/
   }
 }
-</script>
+</script>|
