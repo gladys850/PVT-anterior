@@ -23,7 +23,9 @@ class LoanGlobalParameterSeeder extends Seeder
             'date_delete_payment'=>2,
             'max_loans_active' => 2,
             'max_loans_process' => 1,
-            'grace_period' => 3
+            'grace_period' => 3,
+            'consecutive_manual_payment' => 3,
+            'max_months_go_back' => 10
             ]
         ];
         foreach ($global_parameters as $global_parameter) {

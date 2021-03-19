@@ -11,7 +11,7 @@ class Address extends Model
 
     protected $table = "addresses";
     public $guarded =  [];
-    protected $fillable = ['city_address_id', 'zone', 'street', 'number_address', 'latitude', 'longitude'];
+    protected $fillable = ['city_address_id', 'zone', 'street', 'number_address', 'latitude', 'longitude','description'];
 
     protected $attributes = array(
         'city_address_id' => null,

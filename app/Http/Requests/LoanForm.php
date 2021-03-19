@@ -169,6 +169,7 @@ class LoanForm extends FormRequest
         return[
             'parent_loan_id.required' => 'El campo ID del préstamo Padre es requerido.',
             'parent_reason.required' => 'El campo parent_reason es requerido.',
+            'remake_loan_id.exists' => 'No existe el Id del préstamo a rehacer'
         ];
     }
 }
