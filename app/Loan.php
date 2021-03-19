@@ -274,6 +274,7 @@ class Loan extends Model
         $grace_period = LoanGlobalParameter::latest()->first()->grace_period;
             $total_interests = 0;
             $partial_amount = 0;
+            $total_amount = Util::round($amount);
             if ($liquidate) {
                 $amount = Util::round($this->balance);
             } else {
@@ -297,22 +298,22 @@ class Loan extends Model
             $quota->interest_remaining = $quota->paid_days->interest_accumulated;
             $quota->capital_payment = $total_interests = $quota->interest_payment = 0;
             $quota->penal_accumulated = $quota->interest_accumulated = 0;
-            $total_amount = Util::round($amount);
+            //$total_amount = Util::round($amount);
 
             //calculo en caso de primera cuota
 
             $date_ini = CarbonImmutable::parse($this->disbursement_date);
             $date_compare = CarbonImmutable::parse($date_ini->addMonth()->endOfMonth())->format('Y-m-d');
-            if($date_compare == $quota->estimated_date){
+            if($date_compare >= $quota->estimated_date){
                 $date_fin = CarbonImmutable::parse($date_ini->endOfMonth());
                 $rest_days_of_month = $date_fin->diffInDays($date_ini);
                 $partial_amount = ($quota->balance * $interest->daily_current_interest * $rest_days_of_month);
                 $quota->paid_days->penal = 0;
                 $quota->estimated_days->penal = 0;
                 $amount = $amount + $partial_amount;
-            }
-            
-            // Calcular intereses
+            }//return $amount;
+
+        // Calcular intereses
 
         // Interes acumulado penal
 
@@ -353,6 +354,7 @@ class Loan extends Model
         }
 
         // Interes acumulado corriente
+        //return $total_amount;
         
         if($quota->interest_remaining > 0){
             if($amount >= $quota->interest_remaining){
@@ -391,7 +393,11 @@ class Loan extends Model
             $quota->capital_payment = $quota->balance;
         }
         else{
-            $quota->capital_payment = Util::round($amount);
+            if($amount >= $this->balance){
+                $quota->capital_payment = Util::round($this->balance);
+            }
+            else
+                $quota->capital_payment = Util::round($amount);
         }
              
         // Calcular monto total de la cuota
@@ -403,6 +409,8 @@ class Loan extends Model
         }
         $quota->estimated_quota = Util::round($quota->capital_payment + $total_interests);
         $quota->next_balance = $quota->balance - $quota->capital_payment;
+
+
         //calculo de los nuevos montos restantes
 
         $quota->penal_accumulated = Util::round($quota->penal_accumulated + ($quota->estimated_days->penal_accumulated - $quota->penal_remaining));
@@ -412,6 +420,20 @@ class Loan extends Model
 
         $quota->interest_remaining = Util::round($quota->interest_remaining);
         $quota->penal_remaining = Util::round($quota->penal_remaining);
+        //$quota->excesive_payment = Util::round($total_amount - ($quota->estimated_quota));
+
+
+        //validacion pago excesivo
+        
+        if($total_amount == 0)
+            $quota->excesive_payment = 0;
+        else
+            $quota->excesive_payment = Util::round($total_amount - $quota->estimated_quota);
+
+        //$total_amount = $quota->penal_accumulated + $quota->interest_accumulated + $loan->balance + $quota->interest_remaining + $quota->penal_remaining;
+
+        //
+
         return $quota;
     }
 
