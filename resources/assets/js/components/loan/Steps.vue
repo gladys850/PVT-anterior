@@ -538,7 +538,7 @@ export default {
             amount: this.contributions[i].adjustment_amount,
             type_adjust: this.affiliate_contribution.state_affiliate != 'Comisión' ? 'adjust' : 'liquid',
             period_date: this.$moment(this.fecha).format('YYYY-MM-DD'),
-            description: this.contributions[i].adjustment_description
+            description: this.affiliate_contribution.state_affiliate != 'Comisión' ? this.contributions[i].adjustment_description : 'Liquido pagable por Comisión'
           })
           this.contributions[i].loan_contributions_adjust_id = res.data.id
           console.log(this.contributions[i].loan_contributions_adjust_id)
