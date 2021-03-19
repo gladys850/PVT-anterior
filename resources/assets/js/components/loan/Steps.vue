@@ -513,7 +513,7 @@ export default {
               this.this.contributionable_ids.push(this.contributions[i].contributionable_id)
             }
             this.contributionable_type = 'aid_contributions'
-            alert(this.contributionable_ids)
+            //alert(this.contributionable_ids)
         }
         
         else if(this.affiliate_contribution.state_affiliate == 'Activo') {
@@ -521,7 +521,7 @@ export default {
             this.contributionable_ids.push(this.contributions[i].contributionable_id)
           }
           this.contributionable_type = 'contributions'
-          alert(this.contributionable_ids)
+          //alert(this.contributionable_ids)
         } 
         
         else if(this.affiliate_contribution.state_affiliate == 'Comisión') {
@@ -545,7 +545,7 @@ export default {
           if (this.loan_contributions_adjust_ids.indexOf(this.contributions[i].loan_contributions_adjust_id) === -1) {
             this.loan_contributions_adjust_ids.push(this.contributions[i].loan_contributions_adjust_id)
           }
-          alert(this.loan_contributions_adjust_ids)
+          //alert(this.loan_contributions_adjust_ids)
 
         }else{
           console.log('no tiene ajuste')
