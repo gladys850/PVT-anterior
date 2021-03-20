@@ -16,6 +16,7 @@ class AddGeolocationToAddressesTable extends Migration
         Schema::table('addresses', function (Blueprint $table) {
             $table->float('latitude', 16, 14)->nullable();
             $table->float('longitude', 17, 14)->nullable();
+            $table->string('description')->nullable();
         });
     }
 

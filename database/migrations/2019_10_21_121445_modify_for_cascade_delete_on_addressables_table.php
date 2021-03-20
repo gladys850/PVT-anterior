@@ -14,6 +14,7 @@ class ModifyForCascadeDeleteOnAddressablesTable extends Migration
     public function up()
     {
         Schema::table('addressables', function (Blueprint $table) {
+            $table->boolean('validated')->default(false);//
             $table->dropForeign(['address_id']);
             $table->foreign('address_id')->references('id')->on('addresses')->onUpdate('cascade')->onDelete('cascade');
          });
