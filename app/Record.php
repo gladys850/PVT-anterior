@@ -47,9 +47,14 @@ class Record extends Model
                     break;
                 case 'App\Voucher':
                     $action .= $this->recordable->id;
+                    break;
                 case 'App\AidContribution':
                     $action .= $this->recordable->id;
-                break;
+                    break;
+                case 'App\LoanContributionAdjust':
+                    $action .= $this->recordable->id;
+                    break;
+
             }
         }
         unset($this['record_type'], $this['user'], $this['recordable']);
