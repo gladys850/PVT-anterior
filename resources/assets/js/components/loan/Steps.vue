@@ -315,7 +315,9 @@ export default {
     data_loan: {},
     amount_requested:0,
     edit_refi_repro: false,
-    loanTypeSelected: {},
+    loanTypeSelected: {
+      id: 0
+    },
     data_sismu:{
       type_sismu: false,
       quota_sismu: 0,
@@ -365,7 +367,8 @@ export default {
     
     contributionable_type: null,
     loan_contributions_adjust_ids: [],
-    contributionable_ids: []
+    contributionable_ids: [],
+    modalidad_refi_repro_remake: 0
   }),
   computed: {
     isNew() {
@@ -382,13 +385,21 @@ export default {
         this.data_sismu.type_sismu = true
       }
       return this.data_sismu.type_sismu
-    }
+    },
+    remake() {
+      return this.$route.params.hash == 'remake'
+    },
   },
   watch: {
     steps (val) {
       if (this.e1 > val) {
         this.e1 = val
       }
+    },
+    'loanTypeSelected.id': function(newVal, oldVal){
+      if(newVal!= oldVal)
+      this.loanTypeSelected.id = this.modalidad_refi_repro_remake
+      //alert ('steps' + this.loanTypeSelected.id)
     },
   },
   beforeMount(){
@@ -460,7 +471,7 @@ export default {
     async addDataLoan()
     {
       console.log('entro a añadir loan')
-      if(!this.isNew){
+      if(!this.isNew || !this.remake){
         this.data_loan_parent.push(this.data_loan_parent_aux);
         console.log(this.data_loan_parent)
       }
@@ -870,8 +881,8 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
         this.data_loan_parent_aux.estimated_quota= res.data.estimated_quota
 
         let res2 = await axios.get(`procedure_modality/${this.data_loan.procedure_modality_id}`)
-        let mod_refi_repro=res2.data.procedure_type_id
-        this.loanTypeSelected.id = res2.data.procedure_type_id
+        this.modalidad_refi_repro_remake = res2.data.procedure_type_id
+        this.loanTypeSelected.id =this.modalidad_refi_repro_remake
         this.edit_refi_repro = true
         if(this.data_loan.property_id != null){
           let res3 = await axios.get(`loan_property/${this.data_loan.property_id}`)
@@ -1030,7 +1041,7 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
           this.toastr.error("No puede quedarse con un liquido menor al monto de subsistencia.")
         }
         else{
-           if(!this.isNew){
+           if(!this.isNew && !this.remake){
             if(this.data_loan_parent_aux.code==null)
             {
               this.toastr.error("Tiene que llenar el Codigo del Prestamo Padre.")

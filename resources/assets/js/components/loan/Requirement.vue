@@ -228,7 +228,7 @@ export default {
   },
   computed: {
     parent_reason(){
-      if(this.$route.params.hash == 'new'){
+      if(this.$route.params.hash == 'new' || this.$route.params.hash == 'remake'){
         return null
       } else if(this.$route.params.hash == 'refinancing'){
         return 'REFINANCIAMIENTO'
@@ -237,7 +237,7 @@ export default {
       }
     },
     parent_loan_id(){
-      if(this.$route.query.type_sismu || this.$route.params.hash == 'new'){
+      if(this.$route.query.type_sismu || this.$route.params.hash == 'new' || this.$route.params.hash == 'remake'){
         return 0
       }else{
         return this.$route.query.loan_id
@@ -299,7 +299,8 @@ export default {
               data_loan:this.data_loan_parent,
               documents: this.ids_items.concat(this.itemsOpc.concat(this.radios.filter(Boolean))),
               notes: this.otherDocuments,
-              user_id: this.$store.getters.id
+              user_id: this.$store.getters.id,
+              remake_loan_id: this.$route.params.hash == 'remake' ? this.$route.query.loan_id : 0
             });             
             if(res.status==201 || res.status == 200){
               this.status_click = false        
