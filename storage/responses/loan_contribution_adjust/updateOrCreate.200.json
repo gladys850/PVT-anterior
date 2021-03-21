@@ -1,0 +1,15 @@
+{
+    "affiliate_id": 1,
+    "adjustable_id": 12345,
+    "loan_id":1,
+    "adjustable_type": "ajusts",
+    "type_affiliate": "guarantor",
+    "amount": "600",
+    "type_adjust": "liquid",
+    "period_date": "2020-06-12",
+    "description": "Liquido Pagable Comision",
+    "user_id": 95,
+    "updated_at": "2021-03-19T19:07:33.000000Z",
+    "created_at": "2021-03-19T19:07:33.000000Z"
+ 
+}

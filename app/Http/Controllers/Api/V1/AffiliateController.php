@@ -382,16 +382,15 @@ class AffiliateController extends Controller
     public function get_contributions(Request $request, Affiliate $affiliate)
     {
         $request->validate([
-            'choose_diff_month' => 'boolean',
             'number_diff_month'=>'integer'
         ]);
 
         if($request->has('choose_diff_month'))
-            $choose_diff_month = $request->choose_diff_month;
+            $choose_diff_month = $request->boolean('choose_diff_month');
         else 
             $choose_diff_month =false;
             
-            if($request->has('number_diff_month'))
+        if($request->has('number_diff_month'))
             $number_diff_month = intval($request->number_diff_month);
         else 
             $number_diff_month = 1;
@@ -432,12 +431,13 @@ class AffiliateController extends Controller
                     $before_month=$number_diff_month;
                 }else{
                     if ($now->day <= $offset_day || $city->name == 'LA PAZ') {
-                        $before_month = 2;
-                    } else {
                         $before_month = 1;
+                    } else {
+                        $before_month = 2;
                     }
                 }
                 $current_ticket = CarbonImmutable::parse($contributions[0]->month_year);
+                $current_ticket_true = $now->startOfMonth()->subMonths($before_month);
                 if ($now->startOfMonth()->diffInMonths($current_ticket->startOfMonth()) <= $before_month) {
                     foreach ($contributions as $i => $ticket) {
                         $is_latest = true;
@@ -460,6 +460,7 @@ class AffiliateController extends Controller
                     'name_table_contribution'=>$table_contribution,
                     'current_date'=>$now->toDateTimeString(),
                     'offset_day'=>$offset_day,
+                    'current_tiket'=> $current_ticket_true->toDateTimeString(),
                     'affiliate_id'=>$affiliate->id
                 ])->merge($contributions);
             }
@@ -475,13 +476,13 @@ class AffiliateController extends Controller
                     $before_month=$number_diff_month;
                 }else{
                     if ($now->day <= $offset_day || $city->name == 'LA PAZ') {
-                        $before_month = 2;
-                    } else {
                         $before_month = 1;
+                    } else {
+                        $before_month = 2;
                     }
                 }
             }
-            $current_ticket = $now->subMonths($before_month);
+            $current_ticket = $now->startOfMonth()->subMonths($before_month);
             $now->startOfMonth()->diffInMonths($current_ticket->startOfMonth());
             $contributions = collect([
                 'valid' => $is_latest,

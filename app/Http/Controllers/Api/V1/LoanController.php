@@ -184,6 +184,7 @@ class LoanController extends Controller
     * @bodyParam personal_references array Lista de IDs de personas de referencia del préstamo. Example: [1]
     * @bodyParam cosigners array Lista de IDs de codeudores no afiliados a la muserpol. Example: [2,3]
     * @bodyParam user_id integer ID del usuario. Example: 1.
+    * @bodyParam remake_loan_id integer ID del prestamo que se esta rehaciendo. Example: 1
     * @bodyParam lenders array required Lista de afiliados Titular(es) del préstamo.
     * @bodyParam lenders[0].affiliate_id integer required ID del afiliado. Example: 47461
     * @bodyParam lenders[0].payment_percentage integer required ID del afiliado. Example: 50
@@ -260,6 +261,14 @@ class LoanController extends Controller
                 ]);
             }
         }
+        //rehacer préstamo
+        if($request->has('remake_loan_id')&& $request->remake_loan_id != null){
+            $remake_loan = Loan::find($request->remake_loan_id);
+            $loan->code=$remake_loan->code;
+            $loan->update();
+            $this->destroyAll($remake_loan);
+            $this->happenRecordLoan($remake_loan,$loan->id);
+        }
 
         // Generar PDFs
         $file_name = implode('_', ['solicitud', 'prestamo', $loan->code]) . '.pdf';
@@ -319,6 +328,7 @@ class LoanController extends Controller
     * @bodyParam personal_references array Lista de personas de referencia del préstamo. Example: [1]
     * @bodyParam cosigners array Lista de codeudores no afiliados a la muserpol. Example: [2,3]
     * @bodyParam user_id integer ID del usuario. Example: 1.
+    * @bodyParam remake_loan_id integer ID del prestamo que se esta rehaciendo. Example: 1
     * @bodyParam lenders array Lista de afiliados Titular(es) del préstamo.
     * @bodyParam lenders[0].affiliate_id integer ID del afiliado.Example: 47461
     * @bodyParam lenders[0].payment_percentage integer ID del afiliado. Example: 50
@@ -339,7 +349,7 @@ class LoanController extends Controller
     * @bodyParam lenders[1].liquid_qualification_calculated numeric ID del afiliado. Example: 2000
     * @bodyParam lenders[1].contributionable_ids array  Ids de las contribuciones asocidas al prestamo por afiliado. Example: [1,2,3]
     * @bodyParam lenders[1].contributionable_type enum Nombre de la tabla de contribuciones . Example: contributions
-    * @bodyParam lenders[1].loan_contributions_adjust_ids array required Ids de los ajustes de la(s) contribución(s). Example: [3]
+    * @bodyParam lenders[1].loan_contributions_adjust_ids array Ids de los ajustes de la(s) contribución(s). Example: [3]
     * @bodyParam guarantors array Lista de afiliados Garante(es) del préstamo.
     * @bodyParam guarantors[0].affiliate_id integer ID del afiliado. Example: 51925
     * @bodyParam guarantors[0].payment_percentage integer ID del afiliado. Example: 50
@@ -349,7 +359,7 @@ class LoanController extends Controller
     * @bodyParam guarantors[0].liquid_qualification_calculated numeric ID del afiliado. Example: 2000
     * @bodyParam guarantors[0].contributionable_ids array  Ids de las contribuciones asocidas al prestamo por afiliado. Example: [1,2,3]
     * @bodyParam guarantors[0].contributionable_type enum Nombre de la tabla de contribuciones . Example: contributions
-    * @bodyParam guarantors[0].loan_contributions_adjust_ids array required  Ids de los ajustes de la(s) contribución(s). Example: []
+    * @bodyParam guarantors[0].loan_contributions_adjust_ids array Ids de los ajustes de la(s) contribución(s). Example: []
     * @authenticated
     * @responseFile responses/loan/update.200.json
     */
@@ -502,8 +512,11 @@ class LoanController extends Controller
                     'contributionable_type' => $affiliate['contributionable_type'],
                     'contributionable_ids' => json_encode($affiliate['contributionable_ids'])
                 ];
-
-                $idsajust=$affiliate['loan_contributions_adjust_ids'];
+                if(array_key_exists('loan_contributions_adjust_ids', $affiliate)){
+                    $idsajust=$affiliate['loan_contributions_adjust_ids'];
+                }else{
+                    $idsajust=[];
+                }
                 foreach ($idsajust as $adjustid){
                     $ajuste=LoanContributionAdjust::find($adjustid);
                     $ajuste->loan_id=$loan->id;
@@ -525,7 +538,11 @@ class LoanController extends Controller
                         'contributionable_type'=>$affiliate['contributionable_type'],
                         'contributionable_ids'=>json_encode($affiliate['contributionable_ids'])
                     ];
-                    $idsajust=$affiliate['loan_contributions_adjust_ids'];
+                    if(array_key_exists('loan_contributions_adjust_ids', $affiliate)){
+                        $idsajust=$affiliate['loan_contributions_adjust_ids'];
+                    }else{
+                        $idsajust=[];
+                    }
                     foreach ($idsajust as $adjustid){
                         $ajuste=LoanContributionAdjust::find($adjustid);
                         $ajuste->loan_id=$loan->id;
@@ -875,11 +892,36 @@ class LoanController extends Controller
   
     public function print_qualification(Request $request, Loan $loan, $standalone = true){
         $procedure_modality = $loan->modality;
+        $parent_reason=$loan->parent_reason;
+        $parent_loan_id=$loan->parent_loan_id;
+        $estimated=LoanPayment::where('loan_id',$parent_loan_id)->get();
+        $estimated=$estimated->last(); 
+    if($parent_loan_id==null && $parent_reason==null){
+        $Loan_type_title=" ";      
+    }
+    if($parent_loan_id==null && !$parent_reason==null){
+        if($procedure_modality->name=="REFINANCIAMIENTO"){
+           $Loan_type_title="SISMU"." ".$loan->parent_reason;
+        }else{
+            $Loan_type_title="SISMU"." ".$loan->parent_reason;
+        }
+    }
+    if(!$parent_loan_id==null && !$parent_reason==null){
+        if($procedure_modality->name=="REFINANCIAMIENTO"){
+             $Loan_type_title="REFINANCIAMIENTO";
+        }else{
+             $Loan_type_title="REPROGRAMACIÓN";
+        }
+    }
         $lenders = [];
+     
         foreach ($loan->lenders as $lender) {
-            $lenders[] = self::verify_spouse_disbursable($lender);
-        }  
-       $data = [
+            $lenders[] = self::verify_spouse_disbursable($lender);         
+        }
+        $ballots = collect();
+        $ballots->push($this->show_ballot_loan($loan));
+        $ballots = (object)$ballots->first();
+        $data = [
            'header' => [
                'direction' => 'DIRECCIÓN DE ESTRATEGIAS SOCIALES E INVERSIONES',
                'unity' => 'UNIDAD DE INVERSIÓN EN PRÉSTAMOS',
@@ -890,7 +932,11 @@ class LoanController extends Controller
                ]
            ],
            'loan' => $loan,
-           'lenders' => collect($lenders),        
+           'lenders' => collect($lenders), 
+           'Loan_type_title'=>$Loan_type_title, 
+           'ballots'=>$ballots->ballot,
+           'adjusts'=>$ballots->adjusts,
+           'estimated'=>$estimated
        ];
        $information_loan= $this->get_information_loan($loan);
        $file_name =implode('_', ['calificación', $procedure_modality->shortened, $loan->code]) . '.pdf'; 
@@ -1291,4 +1337,79 @@ class LoanController extends Controller
         }
         return $message;
     }
+    public function show_ballot_loan($loan){
+    $loan=Loan::find($loan->id);
+     if($loan){
+        if($loan->loan_affiliates_ballot->first()){
+            $ballots=json_decode($loan->loan_affiliates_ballot->first()->pivot->contributionable_ids);
+            $ballot = array();
+            $adjusts = array();
+            if($loan->loan_affiliates_ballot->first()->pivot->contributionable_type=="contributions"){ 
+                foreach($ballots as $is_ballot_id){
+                    if(Contribution::find($is_ballot_id))
+                        array_push($ballot, Contribution::find($is_ballot_id));
+                    if(LoanContributionAdjust::where('adjustable_id', $is_ballot_id)->first())
+                        array_push($adjusts, LoanContributionAdjust::where('adjustable_id', $is_ballot_id)->first());
+                }
+            }
+            if($loan->loan_affiliates_ballot->first()->pivot->contributionable_type=="aid_contributions"){
+                foreach($ballots as $is_ballot_id){
+                    if(AidContribution::find($is_ballot_id))
+                        array_push($ballot, AidContribution::find($is_ballot_id));
+                    if(LoanContributionAdjust::where('adjustable_id', $is_ballot_id)->get())
+                        array_push($adjusts, LoanContributionAdjust::where('adjustable_id', $is_ballot_id)->get());
+                }
+            }
+            if($loan->loan_affiliates_ballot->first()->pivot->contributionable_type=="loan_contribution_adjusts"){
+                $contribution_ballot=LoanContributionAdjust::where('loan_id',$loan->id)->where('type_adjust','liquid')->get();
+                $contribution_adjust=LoanContributionAdjust::where('loan_id',$loan->id)->where('type_adjust','adjust')->get();
+                foreach( $contribution_ballot as $contar){                 
+                    array_push($ballot,$contar->$contribution_ballot);
+                }
+                foreach( $contribution_adjust as $contar){
+                    array_push($adjusts,$contar->$contribution_adjust);
+                }             
+            }    
+        }
+     }    
+   $data = [
+      'ballot' => $ballot,   
+      'adjusts' => $adjusts 
+    ];
+    return $data;
+	}
+    //Destruir todo el préstamo
+    public function destroyAll(Loan $loan)
+    {
+       if($loan->payments){
+            if($loan->data_loan) $loan->data_loan->forceDelete();
+
+            if($loan->loan_contribution_adjusts) $loan->loan_contribution_adjusts()->forceDelete();
+
+            if($loan->lenders) $loan->lenders()->detach();
+
+            if($loan->loan_persons) $loan->loan_persons()->detach();
+            
+            if($loan->submitted_documents) $loan->submitted_documents()->detach();
+
+            $loan->forceDelete();
+
+       }else{
+        abort(403, 'No se puede reahacer el préstamo existen registros de cobros');
+       } 
+    return $loan;
+    }
+
+    //actualizar el record de todo el prestamo anterior al actual
+    public function happenRecordLoan(Loan $loan,$id_new_loan)
+    {
+      $records_remake_loan=$loan->records;
+        foreach($records_remake_loan as $record_remake_loan ){ 
+            $record_remake_loan->recordable_id = $id_new_loan; 
+            $record_remake_loan->update();            
+        }
+        return $id_new_loan;
+
+    }
+
 }

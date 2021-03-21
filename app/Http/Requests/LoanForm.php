@@ -53,6 +53,11 @@ class LoanForm extends FormRequest
                 'financial_entity_id' => null,
             ]);
         }
+        if($this->remake_loan_id == 0 && $this->has('remake_loan_id')){
+            $this->merge([
+                'remake_loan_id' => null,
+            ]);
+        }
     }
 
     public function rules():array
@@ -95,8 +100,9 @@ class LoanForm extends FormRequest
             'lenders.*.quota_previous' => ['numeric', $quota_previous? 'required':'nullable'],
             'lenders.*.indebtedness_calculated' => ['nullable', 'numeric'],
             'lenders.*.liquid_qualification_calculated' => ['required', 'numeric'],
-            'lenders.*.contributionable_ids' => ['nullable', 'array'],
-            'lenders.*.contributionable_type'  => ['string','nullable','in:contributions,aid_contributions,loan_contribution_adjusts'],
+            'lenders.*.contributionable_ids' => ['array'],
+            'lenders.*.contributionable_type'  => ['string','required','in:contributions,aid_contributions,loan_contribution_adjusts'],
+            'lenders.*.loan_contributions_adjust_ids'  => ['array','nullable','exists:loan_contribution_adjusts,id'],
             'property_id' => ['nullable', $hypothecary? 'required':'nullable','exists:loan_properties,id'],
             'guarantors' => ['array',new LoanParameterGuarantor($procedure_modality)],
             'guarantors.*.affiliate_id' => ['required', 'integer', 'exists:affiliates,id'],
@@ -106,8 +112,9 @@ class LoanForm extends FormRequest
             'guarantors.*.quota_previous' => ['numeric'],
             'guarantors.*.indebtedness_calculated' => ['required', 'numeric'],
             'guarantors.*.liquid_qualification_calculated' => ['required', 'numeric'],
-            'guarantors.*.contributionable_ids' => ['nullable', 'array'],
-            'guarantors.*.contributionable_type' => ['string','nullable','in:contributions,aid_contributions,loan_contribution_adjusts'],
+            'guarantors.*.contributionable_ids' => ['array'],
+            'guarantors.*.contributionable_type' => ['string','required','in:contributions,aid_contributions,loan_contribution_adjusts'],
+            'guarantors.*.loan_contributions_adjust_ids'  => ['array','nullable','exists:loan_contribution_adjusts,id'],
             'data_loan' =>['array', $sismu? 'required':'nullable'],
             'data_loan.*.code'=>['required','string'],
             'data_loan.*.amount_approved'=>['required','numeric'],
@@ -129,7 +136,8 @@ class LoanForm extends FormRequest
             'notes' => ['array'],
             'validated' => ['boolean'],
             'financial_entity_id' => ['nullable', 'integer', 'exists:financial_entities,id'],
-            'user_id' => ['nullable', 'integer', 'exists:users,id']
+            'user_id' => ['nullable', 'integer', 'exists:users,id'],
+            'remake_loan_id'=>['integer', 'nullable', 'exists:loans,id']
         ];
         switch ($this->method()) {
             case 'POST': {
@@ -161,6 +169,7 @@ class LoanForm extends FormRequest
         return[
             'parent_loan_id.required' => 'El campo ID del préstamo Padre es requerido.',
             'parent_reason.required' => 'El campo parent_reason es requerido.',
+            'remake_loan_id.exists' => 'No existe el Id del préstamo a rehacer'
         ];
     }
 }

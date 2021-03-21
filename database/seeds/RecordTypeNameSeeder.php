@@ -16,6 +16,8 @@ class RecordTypeNameSeeder extends Seeder
         //Nuevos registros
         $record_types = [
             ['display_name' => 'Datos de un pago', 'description' => 'Datos de un pago' ],
+            ['display_name' => 'Contribuciones', 'description' => 'Datos de contribuciones' ],
+            ['display_name' => 'Ajuste Contribuciones', 'description' => 'Datos de ajuste a contribution' ],
         ];
         foreach ($record_types as $record_type)
         {

@@ -25,18 +25,19 @@ class LoanContributionAdjustForm extends FormRequest
     {
         $rules = [
             'type_affiliate'=>['string','in:lender,guarantor,cosigner'],
-            'description'=>['string','alpha_spaces','min:3'],
+            'description'=>['string','min:3'],
             'period_date'=>['date_format:"Y-m-d"'],
             'loan_id'=>['integer','nullable','exists:loans,id'],
             'affiliate_id'=>['integer','exists:affiliates,id'],
             'adjustable_id'=>['integer'],
             'adjustable_type' => ['string'],
             'amount' =>['numeric'],
-            'type_adjust'=>['string','in:adjust,liquid'],        
+            'type_adjust'=>['string','in:adjust,liquid'],
+            'user_id' => ['nullable', 'integer', 'exists:users,id'],        
         ];
         switch ($this->method()) {
             case 'POST': {
-                foreach (array_slice($rules, 0, 4 ) as $key => $rule) {
+                foreach (array_slice($rules, 0, 3) as $key => $rule) {
                     array_push($rules[$key], 'required');
                 }
             }

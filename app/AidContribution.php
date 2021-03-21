@@ -37,4 +37,10 @@ class AidContribution extends Model
     public function user(){
         return $this->hasOne(User::class,'id','id');
     }
+
+      // add records
+      public function records()
+      {
+        return $this->morphMany(Record::class, 'recordable');
+      }
 }
