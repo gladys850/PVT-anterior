@@ -892,8 +892,10 @@ class LoanController extends Controller
   
     public function print_qualification(Request $request, Loan $loan, $standalone = true){
         $procedure_modality = $loan->modality;
-        $parent_loan_id=$loan->parent_loan_id;
         $parent_reason=$loan->parent_reason;
+        $parent_loan_id=$loan->parent_loan_id;
+        $estimated=LoanPayment::where('loan_id',$parent_loan_id)->get();
+        $estimated=$estimated->last(); 
     if($parent_loan_id==null && $parent_reason==null){
         $Loan_type_title=" ";      
     }
@@ -912,7 +914,7 @@ class LoanController extends Controller
         }
     }
         $lenders = [];
-      
+     
         foreach ($loan->lenders as $lender) {
             $lenders[] = self::verify_spouse_disbursable($lender);         
         }
@@ -933,7 +935,8 @@ class LoanController extends Controller
            'lenders' => collect($lenders), 
            'Loan_type_title'=>$Loan_type_title, 
            'ballots'=>$ballots->ballot,
-           'adjusts'=>$ballots->adjusts
+           'adjusts'=>$ballots->adjusts,
+           'estimated'=>$estimated
        ];
        $information_loan= $this->get_information_loan($loan);
        $file_name =implode('_', ['calificación', $procedure_modality->shortened, $loan->code]) . '.pdf'; 
@@ -1364,7 +1367,7 @@ class LoanController extends Controller
                     array_push($ballot,$contar->$contribution_ballot);
                 }
                 foreach( $contribution_adjust as $contar){
-                    array_push($adjusts,$contar->$contar->$contribution_adjust);
+                    array_push($adjusts,$contar->$contribution_adjust);
                 }             
             }    
         }
