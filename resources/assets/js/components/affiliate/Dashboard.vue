@@ -39,6 +39,27 @@
                         <span>Ver préstamo</span>
                       </v-tooltip>            
                     </span>
+                    <span v-if="item.state_id != 3">
+                      <v-tooltip
+                        left              
+                      >
+                        <template v-slot:activator="{ on }">
+                          <v-btn
+                            icon
+                            dark
+                            small
+                            color="error"
+                            bottom
+                            right                        
+                            v-on="on" 
+                            @click.stop="validateRemakeLoan(affiliate.id, item.id)"
+                          >
+                            <v-icon>mdi-redo-variant</v-icon>
+                          </v-btn>
+                        </template>
+                        <span>Rehacer préstamo</span>
+                      </v-tooltip>            
+                    </span>
                     
                     <span>
                     <v-tooltip
@@ -472,6 +493,9 @@ export default {
       } catch (e) {
         console.log(e)
       }
+    },
+    async validateRemakeLoan(a_id, l_id){
+      this.$router.push({ name: 'loanAdd', params: { hash: 'remake'}, query: {affiliate_id: a_id, loan_id: l_id}})
     },
     async verifyLoans(id){
       try {

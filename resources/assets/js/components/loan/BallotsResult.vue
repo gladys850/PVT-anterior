@@ -205,7 +205,7 @@ export default {
         return true
       }
       else{
-         if(this.$route.query.loan_id)
+         if(this.$route.query.loan_id && this.$route.params.hash != 'remake')
           {
             return true
           }else{
