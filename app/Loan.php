@@ -852,6 +852,43 @@ class Loan extends Model
         }
     }
 
+    //verificar pagos manuales consecutivos
+   public function verify_payment_consecutive()
+   {
+     $loan_global_parameter  = $loan_global_parameter = LoanGlobalParameter::latest()->first();
+     $number_payment_consecutive = $loan_global_parameter->consecutive_manual_payment;//3
+     $modality_id=ProcedureModality::whereShortened("AM")->first()->id;
+    
+     $payments=$this->payments->where('procedure_modality_id','=',$modality_id)->sortBy('estimated_date');
+    
+     $consecutive=1;
+     $verify=false;
+
+     if(count($payments)>=$number_payment_consecutive){
+        foreach($payments as $i => $payment){
+            // $j=$i+1;
+             foreach($payments as $j => $paymentd){
+              $stimated_date=CarbonImmutable::parse($payments[$i]->estimated_date);
+              $stimated_date_compare=CarbonImmutable::parse($payments[$j++]->estimated_date);
+              //return $payments[$j++]->estimated_date;
+              if($stimated_date->startOfMonth()->diffInMonths($stimated_date_compare->startOfMonth()) == $consecutive){
+               $consecutive++;
+              }else{
+               $consecutive=1;
+              }
+           }
+           if($consecutive >= $number_payment_consecutive){
+               $verify=true;
+               break;
+           }
+           $consecutive=1;
+         }
+     }else{
+        $verify=false;
+     }
+      //return $consecutive;
+       return $verify;
+   }
     public function get_sismu(){
         return Sismu::find($this->id);
     }
