@@ -481,7 +481,7 @@ class LoanController extends Controller
             if(substr($loan->parent_loan->code, -3) != substr($loan->parent_reason,0,3))
                 $loan->code = Loan::find($loan->parent_loan_id)->code." - ".substr($loan->parent_reason,0,3);
             else
-                $loan->code = $loan_parent_loan->code;
+                $loan->code = $loan->parent_loan->code;
         }
 
         $loan->save();
