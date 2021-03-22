@@ -6,24 +6,24 @@
             <v-card>
               <ValidationObserver ref="observer" >
               <v-container fluid >
-                <v-row justify="center" class="py-0">
-                  <v-col cols="12" class="py-0" >
-                    <v-container class="py-0">
+                <v-row justify="center" class="py-0 my-0">
+                  <v-col cols="12" class="py-0 -my-0" >
+                    <v-container class="py-0 my-0">
                       <v-row>
-                        <v-col cols="12" :md="window_size" class="py-0 text-center">
+                        <v-col cols="12" :md="window_size" class="py-0 my-0 text-center">
                           MODALIDAD DEL PRÉSTAMO <!--{{loanTypeSelected.id}}-->
                         </v-col>
-                        <v-col cols="12" :md="window_size" class="py-0 text-center">
+                        <v-col cols="12" :md="window_size" class="py-0 my-0 text-center">
                           INTERVALO DE LOS MONTOS
                         </v-col>
-                        <v-col cols="12" :md="window_size" class="py-0 text-center">
+                        <v-col cols="12" :md="window_size" class="py-0 my-0 text-center">
                           INTERVALO DEL PLAZO EN MESES 
                         </v-col>
-                        <v-col cols="12" :md="window_size" class="py-0 text-center" v-if="see_field">
+                        <v-col cols="12" :md="window_size" class="py-0 my-0 text-center" v-if="see_field">
                           VALOR NETO REALIZADO (VNR)
                         </v-col>
                         <!--{{contribution}}-->
-                        <v-col cols="12" :md="window_size" class="py-0">
+                        <v-col cols="12" :md="window_size" class="py-0 my-0">
                           <v-select
                             dense
                             v-model="loanTypeSelected.id"
@@ -35,13 +35,13 @@
                             :disabled="edit_refi_repro"
                           ></v-select>
                         </v-col>
-                        <v-col cols="12" :md="window_size" class="py-0 text-center">
+                        <v-col cols="12" :md="window_size" class="py-0 my-0 text-center">
                           {{monto}}
                         </v-col>
-                        <v-col cols="12" :md="window_size" class="py-0 text-center" >
+                        <v-col cols="12" :md="window_size" class="py-0 my-0 text-center" >
                           {{plazo}}
                         </v-col>
-                        <v-col cols="12" :md="window_size" class="py-0" v-if="see_field">
+                        <v-col cols="12" :md="window_size" class="py-0 my-0" v-if="see_field">
                           <ValidationProvider v-slot="{ errors }" name="VNR" :rules="'required|min_value:'+intervalos.minimun_amoun"  mode="aggressive">
                           <v-text-field
                             :error-messages="errors"
@@ -58,8 +58,8 @@
                   </v-col>
                 </v-row>
               </v-container>
-              <v-container cols="12" md="12">
-                <v-row class="py-0">
+              <v-container cols="12" md="12" class="py-0 my-0">
+                <v-row class="py-0 my-0">
                   <!--<v-col cols="12" md="12" style="margin-top: -20px">
                     <v-checkbox
                       v-model="enabled"
@@ -67,11 +67,11 @@
                       label="Habilitar Edicion"
                     ></v-checkbox>
                   </v-col>  -->                
-                  <v-col cols="12" md="2" >
+                  <v-col cols="12" md="2" class="py-0 my-0">
                     <v-text-field
                       dense
                       v-model="number_diff_month"
-                      label="NÚmero de meses"                    
+                      label="Número de meses"                    
                       color="info"
                       append-icon="mdi-plus-box"
                       prepend-icon="mdi-minus-box"
@@ -83,12 +83,12 @@
                 </v-row>
                 <!--boleta 1--->
 
-                <v-row v-for="(contrib,i) in contribution" :key="i">
-                  <template v-if="i < modalidad.quantity_ballots">
-                  <v-col cols="12" md="6" class="py-0">
+                <v-row v-for="(contrib,i) in contribution" :key="i" class="py-0 my-0">
+               
+                  <v-col cols="12" md="7" class="py-0 my-0">
                     <v-row>
-                      <v-col cols="12" md="12"> BOLETAS DE PAGO {{contribution[i].period}} {{contribution[i].month}}</v-col>
-                      <v-col cols="12" md="3" class="py-0" v-if="lender_contribution.state_affiliate != 'Comisión'">
+                      <v-col cols="12" md="12" class="py-0 my-0 uppercase"> BOLETAS DE PAGO {{contribution[i].period}} <b>{{contribution[i].month}}</b></v-col>
+                      <v-col cols="12" md="3" class="py-0 my-0" v-if="lender_contribution.state_affiliate != 'Comisión'">
                         <ValidationProvider
                           v-slot="{ errors }"
                           name="Boleta de pago"
@@ -127,7 +127,7 @@
                           </v-tooltip>
                         </span>                        
                       </v-col>-->
-                      <v-col cols="12" md="2" class="py-0" >
+                      <v-col cols="12" class="py-0 my-0"  :md="lender_contribution.state_affiliate == 'Comisión' ? 4 : 2">
                         <ValidationProvider
                           v-slot="{ errors }"
                           name="Monto ajuste"
@@ -145,10 +145,10 @@
                         </ValidationProvider>
                       </v-col>
                       <template v-if="lender_contribution.state_affiliate != 'Comisión'">
-                        <v-col cols="12" md="2" class="py-0" >
+                        <v-col cols="12" md="2" class="py-0 my-0" >
                           <b style="text-align: center">= {{(parseFloat(contribution[i].adjustment_amount) + parseFloat(contribution[i].payable_liquid)).toFixed(2)}}</b>
                         </v-col>
-                        <v-col cols="12" md="5" class="py-0">
+                        <v-col cols="12" md="5" class="py-0 my-0">
                           <ValidationProvider
                             v-slot="{ errors }"
                             name="Descripción"
@@ -156,29 +156,29 @@
                             mode="aggressive"
                           >
                             <b style="text-align: center"></b>
-                            <textarea
+                            <v-textarea
                               :error-messages="errors"
                               dense
                               v-model="contribution[i].adjustment_description"
                               label="Descripción ajuste"
                               outlined
-                              style="width:100%;border: 1px solid #888;"
-                            ></textarea>
+                              rows="1"                              
+                            ></v-textarea>
                           </ValidationProvider>
                         </v-col>
                       </template>
                     </v-row>
                   </v-col>
 
-                  <v-col cols="12" md="6" class="py-0">
-                    <v-row class="py-0">
-                      <v-col cols="12" md="12" v-if="lender_contribution.state_affiliate != 'Comisión'"> BONOS </v-col>
+                  <v-col cols="12" md="5" class="py-0 my-0">
+                    <v-row class="py-0 my-0">
+                      <v-col cols="12" md="12" class="py-0 my-0" v-if="lender_contribution.state_affiliate != 'Comisión'"> BONOS </v-col>
                       <template v-if="lender_contribution.state_affiliate == 'Activo'">
-                        <v-col cols="12" md="3" class="py-0">
+                        <v-col cols="12" md="3" class="py-0 my-0">
                           <ValidationProvider
                             v-slot="{ errors }"
                             name="Bono Frontera"
-                            :rules="'max_value:' + payable_liquid[i]"
+                            :rules="''"
                             mode="aggressive"
                           >
                             <v-text-field
@@ -191,11 +191,11 @@
                             ></v-text-field>
                           </ValidationProvider>
                         </v-col>
-                        <v-col cols="12" md="3" class="py-0">
+                        <v-col cols="12" md="3" class="py-0 my-0">
                           <ValidationProvider
                             v-slot="{ errors }"
                             name="Bono Oriente"
-                            :rules="'max_value:' + payable_liquid[i]"
+                             :rules="''"
                             mode="aggressive"
                           >
                             <v-text-field
@@ -208,11 +208,11 @@
                             ></v-text-field>
                           </ValidationProvider>
                         </v-col>
-                        <v-col cols="12" md="3" class="py-0">
+                        <v-col cols="12" md="3" class="py-0 my-0">
                           <ValidationProvider
                             v-slot="{ errors }"
                             name="Bono Cargo"
-                            :rules="'max_value:' + payable_liquid[i]"
+                            :rules="''"
                             mode="aggressive"
                           >
                             <v-text-field
@@ -225,11 +225,11 @@
                             ></v-text-field>
                           </ValidationProvider>
                         </v-col>
-                        <v-col cols="12" md="3" class="py-0">
+                        <v-col cols="12" md="3" class="py-0 my-0">
                           <ValidationProvider
                             v-slot="{ errors }"
                             name="Bono Seguridad Ciudadana"
-                            :rules="'max_value:' + payable_liquid[i]"
+                             :rules="''"
                             mode="aggressive"
                           >
                             <v-text-field
@@ -243,11 +243,11 @@
                           </ValidationProvider>
                         </v-col>
                      </template> 
-                      <v-col cols="12" md="3" class="py-0" v-if="lender_contribution.state_affiliate == 'Pasivo'">
+                      <v-col cols="12" :md="lender_contribution.state_affiliate == 'Pasivo' ? 4 : 3" class="py-0 my-0" v-if="lender_contribution.state_affiliate == 'Pasivo'">
                         <ValidationProvider
                           v-slot="{ errors }"
                           name="Renta dignidad"
-                          :rules="'max_value:' + payable_liquid[i]"
+                          :rules="''"
                           mode="aggressive"
                         >
                           <v-text-field
@@ -262,12 +262,12 @@
                       </v-col>
                     </v-row>
                   </v-col>
-                  </template>
+        
                 </v-row>
 
                 <template v-if="type_sismu">
-                  <v-col cols="12" class="py-0"> DATOS SISMU </v-col>
-                  <v-col cols="12" md="3">
+                  <v-col cols="12" class="py-0 my-0"> DATOS SISMU </v-col>
+                  <v-col cols="12" md="3" class="py0 my-0">
                     <ValidationProvider
                       v-slot="{ errors }"
                       name="cuota"
@@ -286,7 +286,7 @@
                   <v-col
                     cols="12"
                     md="3"
-                    class="ma-0 pa-0"
+                    class="py-0 my-0"
                     v-if="
                       this.loanTypeSelected.id == 11 ||
                       this.loanTypeSelected.id == 12
@@ -305,7 +305,8 @@
                 :contrib_codebtor="contrib_codebtor"
                 :modalidad.sync="modalidad"
                 :affiliate.sync="affiliate"
-                :data_loan.sync="data_loan"/>
+                :data_loan.sync="data_loan"
+                :livelihood_amount="livelihood_amount"/>
              </ValidationObserver>
             </v-card>
           </v-col>
@@ -602,14 +603,14 @@ export default {
               this.bonos[2] = data_ballots[0].position_bonus
               this.bonos[3] = data_ballots[0].public_security_bonus
             }*/
-            this.contribution[i].contributionable_id = this.data_ballots[i].id != null
+            this.contribution[i].contributionable_id = this.data_ballots[i].id
             this.contribution[i].payable_liquid = this.data_ballots[i].payable_liquid != null ? this.data_ballots[i].payable_liquid : 0
             this.contribution[i].border_bonus = this.data_ballots[i].border_bonus != null ? this.data_ballots[i].border_bonus : 0
             this.contribution[i].east_bonus = this.data_ballots[i].east_bonus != null ? this.data_ballots[i].east_bonus : 0
             this.contribution[i].position_bonus = this.data_ballots[i].position_bonus != null ? this.data_ballots[i].position_bonus : 0
             this.contribution[i].public_security_bonus = this.data_ballots[i].public_security_bonus != null ? this.data_ballots[i].public_security_bonus : 0
             this.contribution[i].period = this.$moment(this.data_ballots[i].month_year).format('YYYY-MM-DD')
-            this.contribution[i].month = this.$moment(this.data_ballots[i].month_year).subtract(i+1,'months').format('MMMM')
+            this.contribution[i].month = this.$moment(this.data_ballots[i].month_year).format('MMMM')
           
         } else if(!this.lender_contribution.valid && this.lender_contribution.state_affiliate =='Activo'){
             this.enabled = false
@@ -635,8 +636,8 @@ export default {
             this.contribution[i].east_bonus = 0
             this.contribution[i].position_bonus = 0
             this.contribution[i].public_security_bonus = 0
-            this.contribution[i].period = this.$moment(this.fecha).format('YYYY-MM-DD')
-            this.contribution[i].month = this.$moment(this.fecha).subtract(i+1,'months').format('MMMM')
+            this.contribution[i].period = this.$moment(this.lender_contribution.current_tiket).subtract(i,'months').format('YYYY-MM-DD')
+            this.contribution[i].month = this.$moment(this.lender_contribution.current_tiket).subtract(i,'months').format('MMMM')
         } else if(this.lender_contribution.valid && this.lender_contribution.state_affiliate =='Pasivo'){
             this.enabled = true
             if(this.data_ballots[i].rent > 0 && this.data_ballots[i].dignity_rent > 0){
@@ -648,22 +649,22 @@ export default {
             this.contribution[i].payable_liquid = this.data_ballots[i].rent != null ? this.data_ballots[i].rent : 0
             this.contribution[i].dignity_rent = this.data_ballots[i].dignity_rent != null ? this.data_ballots[i].dignity_rent : 0
             this.contribution[i].period = this.$moment(this.data_ballots[i].month_year).format('YYYY-MM-DD')
-            this.contribution[i].month = this.$moment(this.data_ballots[i].month_year).subtract(i+1,'months').format('MMMM')
+            this.contribution[i].month = this.$moment(this.data_ballots[i].month_year).format('MMMM')
         }
         else if(!this.lender_contribution.valid && this.lender_contribution.state_affiliate =='Pasivo'){
             this.enabled = true
             this.contribution[i].contributionable_id = 0
             this.contribution[i].payable_liquid = this.contribution[i].payable_liquid
             this.contribution[i].dignity_rent = 0
-            this.contribution[i].period = this.$moment(this.fecha).format('YYYY-MM-DD')
-            this.contribution[i].month = this.$moment(this.fecha).subtract(i+1,'months').format('MMMM')
+            this.contribution[i].period = this.$moment(this.lender_contribution.current_tiket).subtract(i,'months').format('YYYY-MM-DD')
+            this.contribution[i].month = this.$moment(this.lender_contribution.current_tiket).subtract(i,'months').format('MMMM')
         }
         else if(!this.lender_contribution.valid && this.lender_contribution.state_affiliate =='Comisión'){
             this.enabled = true
             this.contribution[i].contributionable_id = 0
             this.contribution[i].payable_liquid = 0
-            this.contribution[i].period = this.$moment(this.lender_contribution.current_tiket).format('YYYY-MM-DD')
-            this.contribution[i].month = this.$moment(this.lender_contribution.current_tiket).subtract(i+1,'months').format('MMMM')
+            this.contribution[i].period = this.$moment(this.lender_contribution.current_tiket).subtract(i,'months').format('YYYY-MM-DD')
+            this.contribution[i].month = this.$moment(this.lender_contribution.current_tiket).subtract(i,'months').format('MMMM')
         }
         
         else {
@@ -792,6 +793,9 @@ export default {
 };
 </script>
 <style scoped>
+.v-textarea--outlined >>> fieldset {
+  border-color: rgba(192, 0, 250, 0.986);
+}
 /*.v-list-item__title {
   font-weight: 400 !important;
 }
