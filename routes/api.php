@@ -91,7 +91,7 @@ Route::group([
             Route::get('affiliate_existence','Api\V1\AffiliateController@get_existence');
             Route::get('affiliate/{affiliate}/maximum_loans','Api\V1\AffiliateController@evaluate_maximum_loans');
             Route::get('affiliate_record', 'Api\V1\AffiliateController@affiliate_record');
-
+            Route::get('affiliate/{affiliate}/spouse','Api\V1\AffiliateController@verify_affiliate_spouse');
 
         });
         Route::group([
