@@ -999,8 +999,8 @@ class LoanController extends Controller
     * @responseFile responses/loan/get_next_payment.200.json
     */
     public function get_next_payment(LoanPaymentForm $request, Loan $loan)
-    {
-        return $loan->next_payment2($request->input('estimated_date', null), $request->input('estimated_quota', null), $request->input('liquidate', false));
+    { 
+        return $loan->next_payment2($request->input('estimated_date', null), $request->input('estimated_quota', null), $request->input('liquidate', false), $request->input('paid_by', "T"));
     }
 
     /** @group Cobranzas
