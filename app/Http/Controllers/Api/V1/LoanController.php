@@ -896,9 +896,7 @@ class LoanController extends Controller
         $parent_loan_id=$loan->parent_loan_id;
         $estimated=LoanPayment::where('loan_id',$parent_loan_id)->get();
         $estimated=$estimated->last(); 
-    if($parent_loan_id==null && $parent_reason==null){
         $Loan_type_title=" ";      
-    }
     if($parent_loan_id==null && !$parent_reason==null){
         if($procedure_modality->name=="REFINANCIAMIENTO"){
            $Loan_type_title="SISMU"." ".$loan->parent_reason;
@@ -913,13 +911,12 @@ class LoanController extends Controller
              $Loan_type_title="REPROGRAMACIÓN";
         }
     }
-        $lenders = [];
-     
+        $lenders = [];     
         foreach ($loan->lenders as $lender) {
             $lenders[] = self::verify_spouse_disbursable($lender);         
         }
         $ballots = collect();
-        $ballots->push($this->show_ballot_loan($loan));
+        $ballots->push($this->show_ballot_loan($loan->id));
         $ballots = (object)$ballots->first();
         $data = [
            'header' => [
@@ -1337,8 +1334,8 @@ class LoanController extends Controller
         }
         return $message;
     }
-    public function show_ballot_loan($loan){
-    $loan=Loan::find($loan->id);
+    public function show_ballot_loan($loan_id){
+    $loan=Loan::find($loan_id);
      if($loan){
         if($loan->loan_affiliates_ballot->first()){
             $ballots=json_decode($loan->loan_affiliates_ballot->first()->pivot->contributionable_ids);
@@ -1356,19 +1353,20 @@ class LoanController extends Controller
                 foreach($ballots as $is_ballot_id){
                     if(AidContribution::find($is_ballot_id))
                         array_push($ballot, AidContribution::find($is_ballot_id));
-                    if(LoanContributionAdjust::where('adjustable_id', $is_ballot_id)->get())
-                        array_push($adjusts, LoanContributionAdjust::where('adjustable_id', $is_ballot_id)->get());
+                    if(LoanContributionAdjust::where('adjustable_id', $is_ballot_id)->first())
+                        array_push($adjusts, LoanContributionAdjust::where('adjustable_id', $is_ballot_id)->first());
                 }
             }
             if($loan->loan_affiliates_ballot->first()->pivot->contributionable_type=="loan_contribution_adjusts"){
-                $contribution_ballot=LoanContributionAdjust::where('loan_id',$loan->id)->where('type_adjust','liquid')->get();
-                $contribution_adjust=LoanContributionAdjust::where('loan_id',$loan->id)->where('type_adjust','adjust')->get();
-                foreach( $contribution_ballot as $contar){                 
-                    array_push($ballot,$contar->$contribution_ballot);
+                $liquid_ids= LoanContributionAdjust::where('loan_id',$loan->id)->where('type_adjust',"liquid")->get()->pluck('id');
+                $adjust_ids= LoanContributionAdjust::where('loan_id',$loan->id)->where('type_adjust',"adjust")->get()->pluck('id');
+                foreach($liquid_ids as $liquid_id){  
+                    array_push($ballot, LoanContributionAdjust::find($liquid_id));
+               }
+               foreach($adjust_ids as $adjust_id){  
+                    array_push($adjusts, LoanContributionAdjust::find($adjust_id));
                 }
-                foreach( $contribution_adjust as $contar){
-                    array_push($adjusts,$contar->$contribution_adjust);
-                }             
+               
             }    
         }
      }    
