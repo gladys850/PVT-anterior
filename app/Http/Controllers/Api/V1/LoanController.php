@@ -1348,6 +1348,13 @@ class LoanController extends Controller
         else{
             $message['defaulted'] = false;
         }
+        //pagos consecutivo
+        if ($loan->verify_payment_consecutive()){
+            $message['manual_payments'] = true;
+        }
+        else{
+            $message['manual_payments'] = false;
+        }
         return $message;
     }
     public function show_ballot_loan($loan_id){
