@@ -26,7 +26,6 @@
               <span>Cancelar</span>
             </div>
           </v-tooltip>
-        
           <v-tooltip top v-if="$store.getters.permissions.includes('disbursement-loan')">
             <template v-slot:activator="{ on }">
               <v-btn
@@ -46,146 +45,483 @@
               </v-btn>
             </template>
             <div>
-              <span v-if="editable">Guardar</span> 
+              <span v-if="editable">Guardar</span>
               <span v-else>Editar</span>
             </div>
           </v-tooltip>
         </div>
-        <v-row justify="center">
-            <v-col cols="12">
+        <v-row justify="center" class="py-0">
+            <v-col cols="12" class="py-0">
               <v-container class="py-0">
-                <v-row>
-                  <slot name="title"></slot>
-                  <br />
-                  <v-col cols="12" md="4" color="orange">
-                    <v-layout row wrap>
-                      <v-flex xs12 class="px-2">
-                        <fieldset class="pa-3" max-width="100%">
-                          <v-toolbar-title><b>PRÉSTAMO</b></v-toolbar-title>
-                         <v-progress-linear></v-progress-linear>
-                        
-                          <br>
-                          <p><b>PLAZO EN MESES:</b>{{' '+loan.loan_term}}</p>
-                          <p><b>MONTO SOLICITADO:</b>{{' '+loan.amount_approved}} Bs.</p>
-                          <p><b>PROMEDIO LIQUIDO PAGABLE</b>{{' '+loan.lenders[0].pivot.payable_liquid_calculated}} Bs.</p>
-                          <p><b>TOTAL BONOS:</b>{{' '+loan.lenders[0].pivot.bonus_calculated}}</p>
-                          <p><b>LIQUIDO PARA CALIFICACION:</b>{{' '+loan.liquid_qualification_calculated}} Bs.</p>
-                          <p><b>CALCULO DE CUOTA:</b>{{' '+loan.estimated_quota}} Bs.</p>
-                          <p><b>INDICE DE ENDEUDAMIENTO:</b>{{' '+loan.indebtedness_calculated}} Bs.</p>
-                          <div v-for="procedure_type in procedure_types" :key="procedure_type.id">
-                          <div v-if="procedure_type.name === 'Préstamo hipotecario'">
-                          <v-progress-linear></v-progress-linear><br>
-                           <p style="color:teal"><b>CODEUDOR</b></p>
-                          <div v-for="(lenders,i) in loan.lenders" :key="i">
-                          <div  v-if="(lenders,i)>0">
-                          <p><b>PROMEDIO LIQUIDO PAGABLE:</b>{{' '+lenders.pivot.payable_liquid_calculated}}</p>
-                          <p><b>TOTAL BONOS:</b>{{' '+lenders.pivot.bonus_calculated}}</p>
-                          </div>
-                          </div>
-                          </div>
-                          </div>
-                        </fieldset>
-                      </v-flex>
-                    </v-layout>
-                  </v-col>
-                  <v-col cols="12" md="4">
-                    <v-card-text class="py-0">
-                      <v-layout row wrap >
-                        <v-flex xs12 class="px-2" >
-                          <fieldset class="pa-3" max-width="100%">
-                            <v-toolbar-title><b>GARANTIA</b></v-toolbar-title>
-                              <v-progress-linear></v-progress-linear>
-                              <div v-for="procedure_type in procedure_types" :key="procedure_type.id" >
-                              <ul style="list-style: none" class="pa-0" v-if="procedure_type.name == 'Préstamo a largo plazo' || procedure_type.name == 'Préstamo a corto plazo'">
-                              <li v-for="guarantor in loan.guarantors" :key="guarantor.id">
-                                <br>
-                                <p><b>CÉDULA DE IDENTIDAD:</b> {{guarantor.identity_card +" "+ identityCardExt(guarantor.city_identity_card_id) }}</p>
-                                <p><b>NOMBRE:</b> {{$options.filters.fullName(guarantor, true)}}</p>
-                                <p><b>TELEFONO:</b> {{guarantor.cell_phone_number}}</p>
-                                <p><b>PORCENTAJE DE PAGO:</b> {{guarantor.pivot.payment_percentage}} %</p>
-                              </li>
-                               <p v-if="loan.guarantors.length==0">NO TIENE GARANTES</p>
-                            </ul>
-                            <ul style="list-style: none" class="pa-0" v-if="procedure_type.name == 'Préstamo hipotecario'">                                
-                                <br>
-                                <p><b>CIUDAD: </b>{{ loan_properties.land_lot_number }}</p>
-                                <p><b>UBICACION: </b>{{ loan_properties.location}} </p>
-                                <p><b>NUMERO DE LOTE: </b>{{ loan_properties.land_lot_number }} </p>
-                                <p><b>SUPERFICIE: </b>{{ loan_properties.surface }} - {{ loan_properties.measurement }}</p>
-                                <p><b>CODIGO CATASTRAL: </b>{{ loan_properties.cadastral_code}}</p>
-                                <p><b>NRO MATRICULA: </b>{{ loan_properties.registration_number}}</p>
-                                <p><b>NRO FOLIO REAL: </b>{{ loan_properties.real_folio_number}} </p>
-                                <p><b>VNR: </b>{{ loan_properties.net_realizable_value}} </p>
-
-                            </ul>
-                            <ul style="list-style: none" class="pa-0" v-if="procedure_type.name == 'Préstamo Anticipo'">
-                              <p> NO TIENE GARANTES</p>
-                            </ul>
-                            </div>
-                            <br>
-
-                          </fieldset>
-                        </v-flex>
-                      </v-layout>
-                    </v-card-text>
-                  </v-col>
-                  <v-col cols="12" md="4" >
-                    <v-card-text class="py-0">
-                      <v-layout row wrap>
-                        <v-flex xs12 class="px-2">
-                          <fieldset class="pa-3" mix-width="100%">
-                            <v-toolbar-title><b>DESEMBOLSO</b></v-toolbar-title>
-                              <v-progress-linear></v-progress-linear>
-                            <br>
-                              <p><b>ENTIDAD FINANCIERA:</b>{{' '+cuenta}}</p>
-                              <p><b>NUMERO DE CUENTA:</b>{{' '+loan.lenders[0].account_number}}</p>
-                              <p><b>CUENTA SIGEP:</b> {{' '+loan.lenders[0].sigep_status}}</p>
-                            <v-progress-linear></v-progress-linear>
-                            <br>
-                            <v-text-field
-                              dense
-                              v-model="loan.disbursement_date"
-                              label="FECHA DE DESEMBOLSO"
-                              hint="Día/Mes/Año"
-                              type="date"
-                              :outlined="editable"
-                              :readonly="!editable"
-                            ></v-text-field>
-                            <v-select
-                              dense
-                              :outlined="editable"
-                              :readonly="!editable"
-                              :items="payment_types"
-                              item-text="name"
-                              item-value="id"
-                              label="TIPO"
-                              v-model="loan.payment_type_id"
-                             ></v-select>
-                            
-                            <div v-if="loan.payment_type_id=='1'">
-                            <v-text-field
-                              :outlined="editable"
-                              :readonly="!editable"
-                              :label="'NRO DE DEPOSITO'"
-                              @click="desembolso()"
-                              v-model="loan.number_payment_type"
+                <v-row class="py-0">
+                  <v-col cols="12" class="py-0">
+                    <v-tabs dark active-class="secondary">
+                      <v-tab>DATOS DEL PRESTAMO</v-tab>
+                        <v-tab-item>
+                          <v-card flat tile class="py-0">
+                            <v-card-text class="py-0">
+                              <v-col cols="12" md="12" color="orange">
+                                <v-row>
+                                  <v-col cols="12" md="12">
+                                    <p style="color:teal"><b>TITULAR</b></p>
+                                  </v-col>
+                                  <v-col cols="12" md="4">
+                                    <p><b>PLAZO EN MESES:</b>{{' '+loan.loan_term}}</p>
+                                  </v-col>
+                                  <v-col cols="12" md="4">
+                                    <p><b>MONTO SOLICITADO:</b>{{' '+loan.amount_approved}} Bs.</p>
+                                  </v-col>
+                                  <v-col cols="12" md="4">
+                                    <p><b>PROMEDIO LIQUIDO PAGABLE</b>{{' '+loan.lenders[0].pivot.payable_liquid_calculated}} Bs.</p>
+                                  </v-col>
+                                  <v-col cols="12" md="2">
+                                    <p><b>TOTAL BONOS:</b>{{' '+loan.lenders[0].pivot.bonus_calculated}}</p>
+                                  </v-col>
+                                  <v-col cols="12" md="4">
+                                    <p><b>LIQUIDO PARA CALIFICACION:</b>{{' '+loan.liquid_qualification_calculated}} Bs.</p>
+                                  </v-col>
+                                  <v-col cols="12" md="3">
+                                    <p><b>CALCULO DE CUOTA:</b>{{' '+loan.estimated_quota}} Bs.</p>
+                                  </v-col>
+                                  <v-col cols="12" md="3">
+                                    <p><b>INDICE DE ENDEUDAMIENTO:</b>{{' '+loan.indebtedness_calculated}} Bs.</p>
+                                  </v-col>
+                                  <v-col cols="12" md="12">
+                                    <div v-for="procedure_type in procedure_types" :key="procedure_type.id">
+                                      <div v-if="procedure_type.name === 'Préstamo hipotecario'">
+                                        <v-progress-linear></v-progress-linear><br>
+                                          <p style="color:teal"><b>CODEUDOR</b></p>
+                                          <div v-for="(lenders,i) in loan.lenders" :key="i">
+                                            <div  v-if="(lenders,i)>0">
+                                              <p><b>PROMEDIO LIQUIDO PAGABLE:</b>{{' '+lenders.pivot.payable_liquid_calculated}}</p>
+                                              <p><b>TOTAL BONOS:</b>{{' '+lenders.pivot.bonus_calculated}}</p>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </v-col>
+                              </v-row>
+                            </v-col>
+                          </v-card-text>
+                        </v-card>
+                      </v-tab-item>
+                    <v-tab>GARANTIA</v-tab>
+                      <v-tab-item >
+                        <v-card flat tile>
+                          <v-card-text class="pa-0 py-0">
+                            <v-col cols="12" class="mb-0 py-0">
+                              <v-col cols="12" md="12" class="mb-0 py-0">
+                                <v-card-text class="pa-0 mb-0">
+                                  <div v-for="procedure_type in procedure_types" :key="procedure_type.id" class="pa-0 py-0" >
+                                    <ul style="list-style: none" class="pa-0" v-if="procedure_type.name == 'Préstamo a largo plazo' || procedure_type.name == 'Préstamo a corto plazo'">
+                                      <li v-for="guarantor in loan.guarantors" :key="guarantor.id">
+                                        <v-col cols="12" md="12" class="pa-0">
+                                          <v-row class="pa-0">
+                                            <v-progress-linear></v-progress-linear><br>
+                                            <v-col cols="12" md="12" class="py-0">
+                                              <p style="color:teal"><b>GARANTE </b></p>
+                                            </v-col>
+                                            <v-col cols="12" md="3">
+                                              <p><b>NOMBRE:</b> {{$options.filters.fullName(guarantor, true)}}</p>
+                                            </v-col>
+                                            <v-col cols="12" md="3">
+                                              <p><b>CÉDULA DE IDENTIDAD:</b> {{guarantor.identity_card +" "+ identityCardExt(guarantor.city_identity_card_id) }}</p>
+                                            </v-col>
+                                            <v-col cols="12" md="3">
+                                              <p><b>TELEFONO:</b> {{guarantor.cell_phone_number}}</p>
+                                            </v-col>
+                                            <v-col cols="12" md="3">
+                                              <p><b>PORCENTAJE DE PAGO:</b> {{guarantor.pivot.payment_percentage}} %</p>
+                                            </v-col>
+                                          </v-row>
+                                        </v-col>
+                                      </li>
+                                      <p v-if="loan.guarantors.length==0" style="color:teal"><b> NO TIENE GARANTES </b></p>
+                                    </ul>
+                                    <v-col cols="12" md="12" v-if="procedure_type.name == 'Préstamo hipotecario'">
+                                      <v-row>
+                                        <v-col cols="12" md="4">
+                                          <v-text-field
+                                            :outlined="editable"
+                                            :readonly="!editable"
+                                            :label="'CIUDAD'"
+                                            dense
+                                            v-model="loan_properties.land_lot_number"
+                                        ></v-text-field>
+                                      </v-col>
+                                      <v-col cols="12" md="4">
+                                        <v-text-field
+                                          :outlined="editable"
+                                          :readonly="!editable"
+                                          :label="'UBICACION'"
+                                          dense
+                                          v-model="loan_properties.location"
+                                        ></v-text-field>
+                                      </v-col>
+                                      <v-col cols="12" md="4">
+                                        <v-text-field
+                                          :outlined="editable"
+                                          :readonly="!editable"
+                                          :label="'NUMERO DE LOTE'"
+                                          dense
+                                          v-model="loan_properties.land_lot_number"
+                                        ></v-text-field>
+                                      </v-col>
+                                      <v-col cols="12" md="1">
+                                        <v-text-field
+                                          :outlined="editable"
+                                          :readonly="!editable"
+                                          :label="'SUPERFICIE'"
+                                          dense
+                                          v-model="loan_properties.surface"
+                                        ></v-text-field>
+                                      </v-col>
+                                      <v-col cols="12" md="3">
+                                        <v-text-field
+                                          :outlined="editable"
+                                          :readonly="!editable"
+                                          dense
+                                          v-model="loan_properties.measurement "
+                                        ></v-text-field>
+                                      </v-col>
+                                      <v-col cols="12" md="4">
+                                        <v-text-field
+                                          :outlined="editable"
+                                          :readonly="!editable"
+                                          :label="'CODIGO CATASTRAL'"
+                                          dense
+                                          v-model="loan_properties.cadastral_code"
+                                        ></v-text-field>
+                                      </v-col>
+                                      <v-col cols="12" md="4">
+                                        <v-text-field
+                                          :outlined="editable"
+                                          :readonly="!editable"
+                                          :label="'NRO MATRICULA'"
+                                          dense
+                                          v-model="loan_properties.registration_number"
+                                        ></v-text-field>
+                                      </v-col>
+                                      <v-col cols="12" md="4">
+                                        <v-text-field
+                                          :outlined="editable"
+                                          :readonly="!editable"
+                                          :label="'NRO FOLIO REAL'"
+                                          dense
+                                          v-model="loan_properties.real_folio_number"
+                                        ></v-text-field>
+                                      </v-col>
+                                      <v-col cols="12" md="4">
+                                        <p><b>VNR: </b>{{ loan_properties.net_realizable_value}} </p>
+                                      </v-col>
+                                    </v-row>
+                                  </v-col>
+                                  <ul style="list-style: none" class="pa-0" v-if="procedure_type.name == 'Préstamo Anticipo'">
+                                    <p style="color:teal"> <b>NO TIENE GARANTES</b></p>
+                                  </ul>
+                                </div>
+                              </v-card-text>
+                            </v-col>
+                          </v-col>
+                          </v-card-text>
+                        </v-card>
+                      </v-tab-item>
+                      <v-tab>DATOS PERSONA DE REFERENCIA</v-tab>
+                        <v-tab-item >
+                          <v-card flat tile>
+                            <v-card-text>
+                              <ul style="list-style: none" class="pa-0" >
+                                <li v-for="personal_references in loan.personal_references" :key="personal_references.id">
+                                  <v-col cols="12" md="12" class="pa-0">
+                                    <p style="color:teal"><b>PERSONA DE REFERENCIA </b></p>
+                                    <v-row class="pa-0">
+                                      <v-progress-linear></v-progress-linear><br>
+                                          <v-col cols="12" md="3">
+                                    <v-text-field
+                                      :outlined="editable"
+                                      :readonly="!editable"
+                                      :label="'PRIMER NOMBRE'"
+                                      dense
+                                      v-model="personal_references.first_name"
+                                    ></v-text-field>
+                                  </v-col>
+                                  <v-col cols="12" md="3">
+                                    <v-text-field
+                                      :outlined="editable"
+                                      :readonly="!editable"
+                                      :label="'SEGUNDO NOMBRE'"
+                                      dense
+                                      v-model="personal_references.second_name"
+                                    ></v-text-field>
+                                  </v-col>
+                                  <v-col cols="12" md="3">
+                                    <v-text-field
+                                      :outlined="editable"
+                                      :readonly="!editable"
+                                      :label="'PRIMER APELLIDO'"
+                                      dense
+                                      v-model="personal_references.last_name"
+                                    ></v-text-field>
+                                  </v-col>
+                                  <v-col cols="12" md="3">
+                                    <v-text-field
+                                      :outlined="editable"
+                                      :readonly="!editable"
+                                      :label="'SEGUNDO APELLIDO'"
+                                      dense
+                                      v-model="personal_references.mothers_last_name"
+                                    ></v-text-field>
+                                  </v-col>
+                                  <v-col cols="12" md="3">
+                                    <v-text-field
+                                      :outlined="editable"
+                                      :readonly="!editable"
+                                      :label="'TELEFONO'"
+                                      dense
+                                      v-model="personal_references.phone_number"
+                                    ></v-text-field>
+                                  </v-col>
+                                  <v-col cols="12" md="3">
+                                    <v-text-field
+                                      :outlined="editable"
+                                      :readonly="!editable"
+                                      :label="'CELULAR'"
+                                      dense
+                                      v-model="personal_references.cell_phone_number"
+                                    ></v-text-field>
+                                  </v-col>
+                                  <v-col cols="12" md="6">
+                                    <v-text-field
+                                      :outlined="editable"
+                                      :readonly="!editable"
+                                      :label="'DIRECCION'"
+                                      dense
+                                      v-model="personal_references.address"
+                                    ></v-text-field>
+                                  </v-col>
+                                          </v-row>
+                                        </v-col>
+                                      </li>
+                                  <p v-if="loan.personal_references.length==0" style="color:teal"> <b>NO TIENE CODEUDORES</b></p>
+                                    </ul>
                               
-                            ></v-text-field>
-                             </div>
-                              <div v-if="loan.payment_type_id!='1'">
-                            <v-text-field
-                              :outlined="editable"
-                              :readonly="!editable"
-                                @click="desembolso()"
-                              :label="loan.payment_type_id=='2'? 'NRO DE CHEQUE':loan.payment_type_id=='3'?'NRO DE RECIBO':'OTRO'"
-                              v-model="loan.number_payment_type"
-                            ></v-text-field>
-                             </div>
-                          </fieldset>
-                        </v-flex>
-                      </v-layout>
-                    </v-card-text>
-                  </v-col>
+                            
+                            
+                            </v-card-text>
+                          </v-card>
+                        </v-tab-item>
+                        <v-tab>DATOS CODEUDOR</v-tab>
+                          <v-tab-item >
+                            <v-card flat tile>
+                              <v-card-text>
+                                <v-col cols="12" class="mb-0">
+                                  <ul style="list-style: none" class="pa-0" >
+                                      <li v-for="cosigners in loan.cosigners" :key="cosigners.id">
+                                        <v-col cols="12" md="12" class="pa-0">
+                                          <v-row class="pa-0">
+                                            <v-progress-linear></v-progress-linear><br>
+                                            <v-col cols="12" md="3">
+                                      <v-text-field
+                                        :outlined="editable"
+                                        :readonly="!editable"
+                                        :label="'PRIMER NOMBRE'"
+                                        dense
+                                        v-model="loan.cosigners.first_name"
+                                      ></v-text-field>
+                                    </v-col>
+                                    <v-col cols="12" md="3">
+                                      <v-text-field
+                                        :outlined="editable"
+                                        :readonly="!editable"
+                                        :label="'SEGUNDO NOMBRE'"
+                                        dense
+                                        v-model="loan.cosigners.second_name"
+                                      ></v-text-field>
+                                    </v-col>
+                                    <v-col cols="12" md="3">
+                                      <v-text-field
+                                        :outlined="editable"
+                                        :readonly="!editable"
+                                        :label="'PRIMER APELLIDO'"
+                                        dense
+                                        v-model="loan.cosigners.last_name"
+                                      ></v-text-field>
+                                    </v-col>
+                                    <v-col cols="12" md="3">
+                                      <v-text-field
+                                        :outlined="editable"
+                                        :readonly="!editable"
+                                        :label="'SEGUNDO APELLIDO'"
+                                        dense
+                                        v-model="loan.cosigners.mothers_last_name"
+                                      ></v-text-field>
+                                    </v-col>
+                                    <v-col cols="12" md="3">
+                                      <v-text-field
+                                        :outlined="editable"
+                                        :readonly="!editable"
+                                        :label="'TELEFONO'"
+                                        dense
+                                        v-model="loan.cosigners.phone_number"
+                                      ></v-text-field>
+                                    </v-col>
+                                    <v-col cols="12" md="3">
+                                      <v-text-field
+                                        :outlined="editable"
+                                        :readonly="!editable"
+                                        :label="'CELULAR'"
+                                        dense
+                                        v-model="loan.cosigners.cell_phone_number"
+                                      ></v-text-field>
+                                    </v-col>
+                                    <v-col cols="12" md="6">
+                                      <v-text-field
+                                        :outlined="editable"
+                                        :readonly="!editable"
+                                        :label="'DIRECCION'"
+                                        dense
+                                        v-model="loan.cosigners.address"
+                                      ></v-text-field>
+                                    </v-col>
+                                          </v-row>
+                                        </v-col>
+                                      </li>
+                                      <p v-if="loan.cosigners.length==0" style="color:teal"> <b>NO TIENE CODEUDORES</b></p>
+                                    </ul>
+                                  <!--v-row>
+                                    <v-col cols="12" md="3">
+                                      <v-text-field
+                                        :outlined="editable"
+                                        :readonly="!editable"
+                                        :label="'PRIMER NOMBRE'"
+                                        dense
+                                        v-model="loan.cosigners[0].first_name"
+                                      ></v-text-field>
+                                    </v-col>
+                                    <v-col cols="12" md="3">
+                                      <v-text-field
+                                        :outlined="editable"
+                                        :readonly="!editable"
+                                        :label="'SEGUNDO NOMBRE'"
+                                        dense
+                                        v-model="loan.cosigners[0].second_name"
+                                      ></v-text-field>
+                                    </v-col>
+                                    <v-col cols="12" md="3">
+                                      <v-text-field
+                                        :outlined="editable"
+                                        :readonly="!editable"
+                                        :label="'PRIMER APELLIDO'"
+                                        dense
+                                        v-model="loan.cosigners[0].last_name"
+                                      ></v-text-field>
+                                    </v-col>
+                                    <v-col cols="12" md="3">
+                                      <v-text-field
+                                        :outlined="editable"
+                                        :readonly="!editable"
+                                        :label="'SEGUNDO APELLIDO'"
+                                        dense
+                                        v-model="loan.cosigners[0].mothers_last_name"
+                                      ></v-text-field>
+                                    </v-col>
+                                    <v-col cols="12" md="3">
+                                      <v-text-field
+                                        :outlined="editable"
+                                        :readonly="!editable"
+                                        :label="'TELEFONO'"
+                                        dense
+                                        v-model="loan.cosigners[0].phone_number"
+                                      ></v-text-field>
+                                    </v-col>
+                                    <v-col cols="12" md="3">
+                                      <v-text-field
+                                        :outlined="editable"
+                                        :readonly="!editable"
+                                        :label="'CELULAR'"
+                                        dense
+                                        v-model="loan.cosigners[0].cell_phone_number"
+                                      ></v-text-field>
+                                    </v-col>
+                                    <v-col cols="12" md="6">
+                                      <v-text-field
+                                        :outlined="editable"
+                                        :readonly="!editable"
+                                        :label="'DIRECCION'"
+                                        dense
+                                        v-model="loan.cosigners[0].address"
+                                      ></v-text-field>
+                                    </v-col>
+                                  </!--v-row-->
+                                </v-col>
+                              </v-card-text>
+                            </v-card>
+                          </v-tab-item>
+                          <v-tab>DESEMBOLSO</v-tab>
+                            <v-tab-item >
+                              <v-card flat tile>
+                                <v-card-text>
+                                  <v-col cols="12" class="mb-0">
+                                    <v-row>
+                                      <v-col cols="12" md="4">
+                                        <p><b>ENTIDAD FINANCIERA:</b>{{' '+cuenta}}</p>
+                                      </v-col>
+                                      <v-col cols="12" md="4">
+                                        <p><b>NUMERO DE CUENTA:</b>{{' '+loan.lenders[0].account_number}}</p>
+                                      </v-col>
+                                      <v-col cols="12" md="4">
+                                        <p><b>CUENTA SIGEP:</b> {{' '+loan.lenders[0].sigep_status}}</p>
+                                      </v-col>
+                                      <v-col cols="12" md="4">
+                                        <v-text-field
+                                          dense
+                                          v-model="loan.disbursement_date"
+                                          label="FECHA DE DESEMBOLSO"
+                                          hint="Día/Mes/Año"
+                                          type="date"
+                                          :outlined="editable"
+                                          :readonly="!editable"
+                                        ></v-text-field>
+                                      </v-col>
+                                      <v-col cols="12" md="4">
+                                        <v-select
+                                          dense
+                                          :outlined="editable"
+                                          :readonly="!editable"
+                                          :items="payment_types"
+                                          item-text="name"
+                                          item-value="id"
+                                          label="TIPO"
+                                          v-model="loan.payment_type_id"
+                                        ></v-select>
+                                      </v-col>
+                                      <v-col cols="12" md="4"  class="py-0">
+                                        <div v-if="loan.payment_type_id=='1'"  class="py-0">
+                                          <v-text-field
+                                            :outlined="editable"
+                                            :readonly="!editable"
+                                            :label="'NRO DE DEPOSITO'"
+                                            @click="desembolso()"
+                                            v-model="loan.number_payment_type"
+                                          ></v-text-field>
+                                        </div>
+                                        <div v-if="loan.payment_type_id!='1'">
+                                          <v-text-field
+                                            :outlined="editable"
+                                            :readonly="!editable"
+                                              @click="desembolso()"
+                                            :label="loan.payment_type_id=='2'? 'NRO DE CHEQUE':loan.payment_type_id=='3'?'NRO DE RECIBO':'OTRO'"
+                                            v-model="loan.number_payment_type"
+                                          ></v-text-field>
+                                        </div>
+                                      </v-col>
+                                    </v-row>
+                                  </v-col>
+                                </v-card-text>
+                              </v-card>
+                            </v-tab-item>
+                          </v-tabs>
+                        </v-col>
                 </v-row>
               </v-container>
             </v-col>
