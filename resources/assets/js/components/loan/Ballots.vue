@@ -11,7 +11,7 @@
                     <v-container class="py-0">
                       <v-row>
                         <v-col cols="12" :md="window_size" class="py-0 text-center">
-                          MODALIDAD DEL PRÉSTAMO
+                          MODALIDAD DEL PRÉSTAMO <!--{{loanTypeSelected.id}}-->
                         </v-col>
                         <v-col cols="12" :md="window_size" class="py-0 text-center">
                           INTERVALO DE LOS MONTOS
@@ -445,10 +445,11 @@ export default {
     this.getLoanIntervals()
   },
   watch: {
-    /*loanTypeSelected(newVal, oldVal){
+    'loanTypeSelected.id': function(newVal, oldVal){
       if(newVal!= oldVal)
         this.Onchange()
-    }*/
+        //alert ('ballot' + this.loanTypeSelected.id)
+    }
   },
   computed: {
     isNew() {
@@ -459,6 +460,13 @@ export default {
     },
     reprogramming() {
       if(this.$route.params.hash == 'reprogramming'){
+        return true
+      }else{
+        return false
+      }
+    },
+    remake() {
+      if(this.$route.params.hash == 'remake'){
         return true
       }else{
         return false
@@ -479,6 +487,9 @@ export default {
         let res = await axios.get(`loan_interval`)
         this.interval = res.data
         console.log(this.interval)
+        if(this.reprogramming){
+          this.Onchange()
+        }
        }catch (e) {
         console.log(e)
       }
@@ -519,7 +530,7 @@ export default {
         let resp = await axios.post(`affiliate/${id}/loan_modality?procedure_type_id=${this.loanTypeSelected.id}`,{
           type_sismu: this.data_sismu.type_sismu,
           cpop_sismu: this.data_sismu.cpop_sismu,
-          reprogramming: this.reprogramming
+          reprogramming: this.reprogramming || this.remake
         })
         if(resp.data ==''){
           this.loan_detail.not_exist_modality = true
@@ -549,6 +560,7 @@ export default {
         }
       }catch (e) {
         console.log(e)
+        this.toastr.error(e.type)
       }finally {
         this.loading = false
       }
