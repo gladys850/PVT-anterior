@@ -12,9 +12,11 @@
         @php ($lender = $lenders[0]->disbursable)
 </div>
 @php ($n = 1)
+
 <div class="block">
-        <div class="font-semibold leading-tight text-left m-b-10 text-base">{{ $n++ }}. DATOS DEL TRÁMITE</div>
+        <div class="font-semibold leading-tight text-left m-b-10 text-base">{{ $n++ }}. DATOS DEL TRÁMITE {{$Loan_type_title}}</div>
     </div>
+
 <div class="block">
         <table class="table-info w-100 text-center uppercase my-20">
             <tr class="bg-grey-darker text-sm-1 text-white">
@@ -53,13 +55,90 @@
             </tr>
         </table>
     </div>
+    @if($Loan_type_title=="REFINANCIAMIENTO")
+    <table class="table-info w-100 text-center uppercase my-20">
+            <tr class="bg-grey-darker text-sm-1 text-white">
+                <td colspan="2" >REFINANCIAMIENTO DE PRÉSTAMO</td>
+            </tr>
+            <tr  class="w-100">
+            <td class="w-50 text-left px-10">FECHA DE SALDO DEUDOR </td>
+            <td class="w-50 text-left px-10">{{$estimated->estimated_date}}
+            </td>
+            </tr>
+            <tr  class="w-100">
+            <td class="w-50 text-left px-10">SALDO DEUDOR EN Bs. </td>
+            <td class="w-50 text-left px-10">{{$estimated->estimated_quota}}</td>
+            </tr>
+            <tr  class="w-100">
+            <td class="w-50 text-left px-10">MONTO REFINANCIAMIENTO (CHEQUE) EN Bs.</td>
+            <td class="w-50 text-left px-10">{{ $loan->amount_approved-$estimated->estimated_quota }}</td>
+            </tr>
+            <tr  class="w-100">
+            <td class="w-50 text-left px-10">TOTAL NUEVO MONTO DE PRÉSTAMO</td>
+            <td class="w-50 text-left px-10">{{ $loan->amount_approved }}</td>
+            </tr> 
+        </table>
+        @endif
     <div class="block">
         <div class="font-semibold leading-tight text-left m-b-10 text-base">{{ $n++ }}. DATOS DE BOLETA</div>
     </div>
 <div class="block">
         <table class="table-info w-100 text-center uppercase my-20">
             <tr class="bg-grey-darker text-sm-1 text-white">
-                <td colspan="2" >INGRESOS</td>
+                <td colspan="7" >INGRESOS</td>
+            </tr>
+            @if($loan->loan_affiliates_ballot->first()->pivot->contributionable_type=="contributions")
+            <tr>
+            <td class="bg-grey-darker text-sm-1 text-white">Bono Frontera</td>
+            <td class="bg-grey-darker text-sm-1 text-white">Bono Cargo</td>
+            <td class="bg-grey-darker text-sm-1 text-white">Bono Oriente</td>
+            <td class="bg-grey-darker text-sm-1 text-white">Bono Seguridad Ciudadana</td>
+            <td class="bg-grey-darker text-sm-1 text-white">Liquido</td>
+            <td class="bg-grey-darker text-sm-1 text-white">Monto de Ajsute</td>
+            <td class="bg-grey-darker text-sm-1 text-white">Periodo</td>
+            </tr>
+         
+            @foreach($ballots as $bollet)
+            @php ($mount_adjust=0)
+           <tr>
+           <td> {{$bollet->border_bonus}}</td>
+           <td> {{$bollet->position_bonus}}</td>
+           <td> {{$bollet->east_bonus}}</td>
+           <td> {{$bollet->public_security_bonus}}</td>
+           <td> {{$bollet->payable_liquid}}</td>
+           @foreach($adjusts as $adjust)
+           @if($bollet->id == $adjust->adjustable_id)
+            @php($mount_adjust=$adjust->amount)
+            @endif
+           @endforeach
+           <td>{{$mount_adjust}}</td>
+           <td>{{Carbon::parse($bollet->month_year)->format('d/m/y')}}</td>          
+           </tr >
+            @endforeach
+            @endif
+       @if($loan->loan_affiliates_ballot->first()->pivot->contributionable_type=="aid_contributions"){
+         @foreach($ballots as $bollet)
+         <tr>
+         <td> {{$bollet->dignity_rent}}</td>
+         <td> {{$bollet->rent}}</td>
+         <td>{{Carbon::parse($bollet->month_year)->format('d/m/y')}}</td>          
+         </tr >
+          @endforeach
+        @endif
+        @if($loan->loan_affiliates_ballot->first()->pivot->contributionable_type=="loan_contribution_adjusts")
+          @foreach($ballots as $bollet)
+         
+         <tr>
+         <td>{{$bollet->amount}}</td>
+         <td>{{$bollet->amount}}</td>
+         <td>{{Carbon::parse($bollet->period_date)->format('d/m/y')}}</td>          
+         </tr >
+          @endforeach
+        @endif
+            </table>
+            <table class="table-info w-100 text-center uppercase my-20"> 
+            <tr class="bg-grey-darker text-sm-1 text-white">
+            <td colspan="2" class="w-100">PROMEDIO DE LA BOLETA</td>
             </tr>
             <tr >
             <td class="w-50 text-left px-10">LÍQUIDO PAGABLE</td>

@@ -315,7 +315,9 @@ export default {
     data_loan: {},
     amount_requested:0,
     edit_refi_repro: false,
-    loanTypeSelected: {},
+    loanTypeSelected: {
+      id: 0
+    },
     data_sismu:{
       type_sismu: false,
       quota_sismu: 0,
@@ -365,7 +367,8 @@ export default {
     
     contributionable_type: null,
     loan_contributions_adjust_ids: [],
-    contributionable_ids: []
+    contributionable_ids: [],
+    modalidad_refi_repro_remake: 0
   }),
   computed: {
     isNew() {
@@ -382,13 +385,21 @@ export default {
         this.data_sismu.type_sismu = true
       }
       return this.data_sismu.type_sismu
-    }
+    },
+    remake() {
+      return this.$route.params.hash == 'remake'
+    },
   },
   watch: {
     steps (val) {
       if (this.e1 > val) {
         this.e1 = val
       }
+    },
+    'loanTypeSelected.id': function(newVal, oldVal){
+      if(newVal!= oldVal)
+      this.loanTypeSelected.id = this.modalidad_refi_repro_remake
+      //alert ('steps' + this.loanTypeSelected.id)
     },
   },
   beforeMount(){
@@ -416,6 +427,12 @@ export default {
       else {
         if(n==1)
         {
+          console.log('este es lenders')
+             console.log(this.lenders)
+            // console.log(this.contributionable_type)
+             //console.log(this.loan_contributions_adjust_ids)
+             //console.log(this.contributionable_ids)
+ 
           //this.liquidCalificated()
           //this.getLoanDestiny()
         }
@@ -454,7 +471,7 @@ export default {
     async addDataLoan()
     {
       console.log('entro a añadir loan')
-      if(!this.isNew){
+      if(!this.isNew || !this.remake){
         this.data_loan_parent.push(this.data_loan_parent_aux);
         console.log(this.data_loan_parent)
       }
@@ -530,7 +547,7 @@ export default {
         //Para el ajuste
         if(this.contributions[i].adjustment_amount > 0){ //aqui se debe colocar la edicion del ajuste, hacer condicional
           //guardar el ajuste
-          let res = await axios.post(`loan_contribution_adjust`, {
+          let res = await axios.post(`loan_contribution_adjust/updateOrCreate`, {
             affiliate_id: this.$route.query.affiliate_id,
             adjustable_id: this.affiliate_contribution.state_affiliate != 'Comisión' ? this.contributions[i].contributionable_id : this.$route.query.affiliate_id,
             adjustable_type: this.affiliate_contribution.state_affiliate != 'Comisión' ? this.affiliate_contribution.name_table_contribution : 'affiliate',
@@ -730,9 +747,10 @@ export default {
 
                 this.lenders[i].payment_percentage=this.calculator_result.affiliates[i].payment_percentage
                 this.lenders[i].indebtedness_calculated=this.calculator_result.affiliates[i].indebtedness_calculated
+                this.lenders[i].contributionable_type=this.contributionable_type
+                this.lenders[i].loan_contributions_adjust_ids=this.loan_contributions_adjust_ids
+                this.lenders[i].contributionable_ids=this.loan_contributions_adjust_ids
               }
-              console.log('estos son los lenders')
-              console.log(this.lenders)
 
               this.loan_detail.minimum_term=this.intervalos.minimum_term
               this.loan_detail.maximum_term=this.intervalos.maximum_term
@@ -775,6 +793,9 @@ export default {
               this.lenders=res.data
               this.lenders[0].payment_percentage=this.calculator_result.affiliates[0].payment_percentage
               this.lenders[0].indebtedness_calculated=this.calculator_result.affiliates[0].indebtedness_calculated
+              this.lenders[0].contributionable_type=this.contributionable_type
+              this.lenders[0].loan_contributions_adjust_ids=this.loan_contributions_adjust_ids
+              this.lenders[0].contributionable_ids=this.loan_contributions_adjust_ids
 
               this.loan_detail.minimum_term=this.intervalos.minimum_term
               this.loan_detail.maximum_term=this.intervalos.maximum_term
@@ -798,7 +819,7 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
         console.log(e)
       } finally {
         this.loading = false
-        console.log('entro por verdadero')
+        //console.log('entro por verdadero')
       }
     },
     /*//TAB 3 bien inmueble
@@ -860,14 +881,14 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
         this.data_loan_parent_aux.estimated_quota= res.data.estimated_quota
 
         let res2 = await axios.get(`procedure_modality/${this.data_loan.procedure_modality_id}`)
-        let mod_refi_repro=res2.data.procedure_type_id
-        this.loanTypeSelected.id = res2.data.procedure_type_id
+        this.modalidad_refi_repro_remake = res2.data.procedure_type_id
+        this.loanTypeSelected.id =this.modalidad_refi_repro_remake
         this.edit_refi_repro = true
         if(this.data_loan.property_id != null){
           let res3 = await axios.get(`loan_property/${this.data_loan.property_id}`)
           this.loan_detail.net_realizable_value = res3.data.net_realizable_value
         }
-        console.log(this.data_loan)
+        //console.log(this.data_loan)
       } catch (e) {
         console.log(e)
       } finally {
@@ -900,7 +921,7 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
         this.contributions = this.$refs.ballotsComponent.getContributions()
       }
       this.saveAdjustment()
-      console.log(this.contributions)
+     // console.log(this.contributions)
       this.liquidCalificated()
       this.nextStep(1)
       /*console.log("ESTADO"+ this.loan_detail.not_exist_modality)
@@ -1020,7 +1041,7 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
           this.toastr.error("No puede quedarse con un liquido menor al monto de subsistencia.")
         }
         else{
-           if(!this.isNew){
+           if(!this.isNew && !this.remake){
             if(this.data_loan_parent_aux.code==null)
             {
               this.toastr.error("Tiene que llenar el Codigo del Prestamo Padre.")

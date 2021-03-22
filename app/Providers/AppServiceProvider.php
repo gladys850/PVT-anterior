@@ -39,7 +39,8 @@ class AppServiceProvider extends ServiceProvider
             'procedure_types' => 'App\ProcedureType',
             'loan_payments' => 'App\LoanPayment',
             'vouchers' => 'App\Voucher',
-            'aid_contributions' => 'App\AidContribution'
+            'aid_contributions' => 'App\AidContribution',
+            'loan_contribution_adjusts'=>'App\LoanContributionAdjust'    
         ]);
     }
 

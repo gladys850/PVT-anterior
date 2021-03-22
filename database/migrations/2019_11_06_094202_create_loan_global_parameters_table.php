@@ -26,6 +26,8 @@ class CreateLoanGlobalParametersTable extends Migration
             $table->unsignedTinyInteger('max_loans_active'); // Maximo de préstamos vigentes
             $table->unsignedTinyInteger('max_loans_process'); // Maximo de préstamos en proceso
             $table->unsignedTinyInteger('grace_period'); // periodo de gracia para cobro de penalidad
+            $table->unsignedTinyInteger('consecutive_manual_payment'); // cantidad de pagos manuales consecutivos para alerta 
+            $table->unsignedTinyInteger('max_months_go_back'); // maximo de meses atras de boletas 
 
             $table->timestamps();
         });
