@@ -91,7 +91,7 @@
                 <td class="w-15">Plazo</td>
                 <td class="w-15">Tipo de Desembolso</td>
                 <td class="w-15" >Fecha de Desembolso</td>
-                <td>Monto Desembolsado</td>  
+                <td>Monto Desembolsado</td>
                 <td>Intereses Corrientes Pendientes</td> 
                 <td >Intereses Penales Pendientes</td>       
             </tr>
@@ -106,7 +106,11 @@
                     @endif
                 </td>
                 <td class="data-row py-5 m-b-10 text-xs" >{{Carbon::parse($loan->disbursement_date)->format('d/m/y')}}</td>
-                <td class="data-row py-5 m-b-10 text-xs">{{ Util::money_format($loan->amount_requested) }} <span class="capitalize">Bs.</span></td>
+                @if($loan->parent_loan && $loan->parent_reason == "REPROGRAMACIÓN")
+                <td class="data-row py-5 m-b-10 text-xs">{{ Util::money_format($loan->parent_loan->amount_approved) }} <span class="capitalize">Bs.</span></td>
+                @else
+                <td class="data-row py-5 m-b-10 text-xs">{{ Util::money_format($loan->amount_approved) }} <span class="capitalize">Bs.</span></td>
+                @endif
                 @if($loan->payments->first() != null)
                 <td class="data-row py-5 m-b-10 text-xs">{{ $loan->payments->first()->interest_accumulated}}</td>
                 <td class="data-row py-5 m-b-10 text-xs">{{ $loan->payments->first()->penal_accumulated}}</td>
@@ -117,7 +121,6 @@
             </tr>
         </table>
     </div>
-
 
     <div class="block">
         <div class="font-semibold leading-tight text-left m-b-10 text-xs">{{ $n++ }}. KARDEX DE PAGOS (EXPRESADO EN BOLIVIANOS)</div>
@@ -149,8 +152,52 @@
                 @php ($sum_penal_remaining = 0)
                 @php ($sum_estimated_quota = 0)
                 @php ($res_saldo_capital = 0)
-                @php ($capital = $loan->amount_requested)
                 @php ($sum_capital_payment = 0)
+                
+                @if($loan->parent_loan_id != null)
+                @php ($capital = $loan->parent_loan->amount_approved)
+                @foreach ($loan->parent_loan->payments->sortBy('quota_number') as $parent_loan_payment)
+                @php ($res_saldo_capital = $capital-$parent_loan_payment->capital_payment)
+                <tr>
+                    <td class="w-5">{{ $parent_loan_payment->quota_number }}</td>
+                    <td class="w-10">{{ Carbon::parse($parent_loan_payment->estimated_date)->format('d/m/y') }}</td>
+                    <td class="w-10">{{ Carbon::parse($parent_loan_payment->pay_date)->format('d/m/y') }}</td>
+                    <td class="w-10 text-right">{{ Util::money_format($parent_loan_payment->capital_payment) }}</td> {{-- capital --}}
+                    <td class="w-10 text-right">{{ Util::money_format($parent_loan_payment->interest_payment) }}</td>{{-- interes corriente --}}
+                    <td class="w-10 text-right">{{ Util::money_format($parent_loan_payment->penal_payment) }}</td>{{-- interes penal --}}
+                    <td class="w-10 text-right">{{ Util::money_format($parent_loan_payment->interest_remaining) }}</td>{{-- Dias acumulados --}}
+                    <td class="w-10 text-right">{{ Util::money_format($parent_loan_payment->penal_remaining) }}</td>{{-- dias verificar --}}
+                    <td class="w-10 text-right">{{ Util::money_format($parent_loan_payment->estimated_quota) }}</td> {{-- total pagado--}}
+                    <td class="w-10 text-right">{{ Util::money_format($res_saldo_capital) }}</td>
+                    <td class="w-10 text-right">{{ $parent_loan_payment->voucher }}</td>
+                    <td class="w-10">{{ $parent_loan_payment->amortization_type->name }}</td>
+                </tr>
+                @php ($sum_estimated_quota += $parent_loan_payment->estimated_quota)
+                @php ($sum_capital_payment += $parent_loan_payment->capital_payment)
+                @php ($sum_interest_payment += $parent_loan_payment->interest_payment)
+                @php ($sum_penal_payment += $parent_loan_payment->penal_payment)
+                @php ($sum_interest_remaining += $parent_loan_payment->interest_remaining )
+                @php ($sum_penal_remaining += $parent_loan_payment->penal_remaining)    
+                @endforeach
+                @endif
+                <thead>
+                <tr class="bg-grey-darker text-xxs text-white">
+                    <th class="w-5">Nº</th>
+                    <th class="w-8"><div>Fecha de</div><div>cálculo</div></td>
+                    <th class="w-8"><div>Fecha de</div><div>Cobro</div></td>
+                    <th class="w-8"><div>Amortización</div><div>capital</div></td>
+                    <th class="w-8"><div>Interés</div><div>corriente</div></td>
+                    <th class="w-8"><div>Interes</div><div>Penal</div></td>
+                    <th class="w-8"><div>Interes Corriente</div><div>Pendiente</div></td>
+                    <th class="w-8"><div>Interés Penal</div><div>Pendiente</div></td>
+                    <th class="w-8"><div>Total Pagado</div></th>
+                    <th class="w-8"><div>Saldo</div><div>Capital</div> </th>
+                    <th class="w-8"><div>Cpte</div> </th>        
+                    <th class="w-8"><div>Obs</div> </th>        
+                </tr>
+            </thead>
+                @php ($res_saldo_capital = 0)
+                @php ($capital = $loan->amount_approved)
                 @foreach ($loan->payments->sortBy('quota_number') as $payment)
                 @php ($res_saldo_capital = $capital-$payment->capital_payment)
                 <tr>

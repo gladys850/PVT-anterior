@@ -274,7 +274,7 @@ class Loan extends Model
         return Util::round($monthly_interest * $this->amount_approved / (1 - 1 / pow((1 + $monthly_interest), $this->loan_term)));
     }
 
-    public function next_payment2($estimated_date = null, $amount = null, $liquidate = null)
+    public function next_payment2($estimated_date = null, $amount = null, $liquidate = null, $paid_by = null)
     {
         $grace_period = LoanGlobalParameter::latest()->first()->grace_period;
             $total_interests = 0;
@@ -283,8 +283,10 @@ class Loan extends Model
             if ($liquidate) {
                 $amount = Util::round($this->balance);
             } else {
-                if (!$amount) 
+                if (!$amount){
                     $amount = Util::round($this->estimated_quota);
+                    
+                }
             }
             $quota = new LoanPayment();
             $next_payment = LoanPayment::quota_date($this);
@@ -413,7 +415,7 @@ class Loan extends Model
             $quota->next_balance = Util::round($this->balance - $quota->capital_payment);
         }
         $quota->estimated_quota = Util::round($quota->capital_payment + $total_interests);
-        $quota->next_balance = $quota->balance - $quota->capital_payment;
+        $quota->next_balance = Util::round($quota->balance - $quota->capital_payment);
 
 
         //calculo de los nuevos montos restantes

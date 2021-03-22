@@ -475,6 +475,15 @@ class LoanController extends Controller
             $loan = new Loan(array_merge($request->all(), (array)self::verify_spouse_disbursable($disbursable), ['amount_approved' => $request->amount_requested]));
         }
 
+        //heredar el codigo del prestamo padre
+        if($loan->parent_loan_id)
+        {
+            if(substr($loan->parent_loan->code, -3) != substr($loan->parent_reason,0,3))
+                $loan->code = Loan::find($loan->parent_loan_id)->code." - ".substr($loan->parent_reason,0,3);
+            else
+                $loan->code = $loan->parent_loan->code;
+        }
+
         $loan->save();
 
         if($request->has('data_loan') && $request->parent_loan_id == null && $request->parent_reason != null && !$request->has('id')){
@@ -999,8 +1008,8 @@ class LoanController extends Controller
     * @responseFile responses/loan/get_next_payment.200.json
     */
     public function get_next_payment(LoanPaymentForm $request, Loan $loan)
-    {
-        return $loan->next_payment2($request->input('estimated_date', null), $request->input('estimated_quota', null), $request->input('liquidate', false));
+    { 
+        return $loan->next_payment2($request->input('estimated_date', null), $request->input('estimated_quota', null), $request->input('liquidate', false), $request->input('paid_by', "T"));
     }
 
     /** @group Cobranzas
