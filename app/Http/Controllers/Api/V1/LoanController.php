@@ -475,6 +475,15 @@ class LoanController extends Controller
             $loan = new Loan(array_merge($request->all(), (array)self::verify_spouse_disbursable($disbursable), ['amount_approved' => $request->amount_requested]));
         }
 
+        //heredar el codigo del prestamo padre
+        if($loan->parent_loan_id)
+        {
+            if(substr($loan->parent_loan->code, -3) != substr($loan->parent_reason,0,3))
+                $loan->code = Loan::find($loan->parent_loan_id)->code." - ".substr($loan->parent_reason,0,3);
+            else
+                $loan->code = $loan_parent_loan->code;
+        }
+
         $loan->save();
 
         if($request->has('data_loan') && $request->parent_loan_id == null && $request->parent_reason != null && !$request->has('id')){
