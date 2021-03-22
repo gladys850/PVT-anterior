@@ -858,8 +858,10 @@ class Loan extends Model
      $loan_global_parameter  = $loan_global_parameter = LoanGlobalParameter::latest()->first();
      $number_payment_consecutive = $loan_global_parameter->consecutive_manual_payment;//3
      $modality_id=ProcedureModality::whereShortened("AM")->first()->id;
+
+     $Pagado = LoanState::whereName('Pagado')->first()->id;
     
-     $payments=$this->payments->where('procedure_modality_id','=',$modality_id)->sortBy('estimated_date');
+     $payments=$this->payments->where('procedure_modality_id','=',$modality_id)->where('state_id','=',$Pagado)->sortBy('estimated_date');
     
      $consecutive=1;
      $verify=false;
@@ -886,8 +888,7 @@ class Loan extends Model
      }else{
         $verify=false;
      }
-      //return $consecutive;
-       return $verify;
+    return $verify;
    }
     public function get_sismu(){
         return Sismu::find($this->id);
