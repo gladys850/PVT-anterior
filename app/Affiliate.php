@@ -222,12 +222,13 @@ class Affiliate extends Model
       //address
     public function addresses()
     {
-      return $this->morphToMany(Address::class, 'addressable')->withTimestamps()->latest('updated_at');
+      return $this->morphToMany(Address::class, 'addressable')->withPivot('validated')->withTimestamps()->latest('updated_at');
     }
 
     public function getAddressAttribute()
     {
-        return $this->addresses()->latest()->first();
+        //return $this->addresses()->latest()->first();
+        return $this->addresses()->withPivot('validated')->whereValidated(true)->first();
     }
 
     //spouses

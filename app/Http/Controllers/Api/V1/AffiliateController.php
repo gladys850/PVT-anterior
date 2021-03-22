@@ -354,14 +354,25 @@ class AffiliateController extends Controller
     * Actualiza el listado de direcciones de un afiliado
     * @urlParam affiliate required ID de afiliado. Example: 12
     * @queryParam addresses required Lista de IDs de direcciones. Example: [12,17]
+    * @queryParam addresses_valid Id de la dirección valida para los contratos si no se envia obtiene el ultimo actualizado o creado. Example: 12
     * @authenticated
     * @responseFile responses/affiliate/update_addresses.200.json
     */
     public function update_addresses(Request $request, Affiliate $affiliate) {
         $request->validate([
             'addresses' => 'required|array|min:1',
-            'addresses.*' => 'exists:addresses,id'
+            'addresses.*' => 'exists:addresses,id',
+            'addresses_valid'=>'exists:addresses,id'
         ]);
+
+        if($request->has('addresses_valid')){
+            $affiliate->addresses()->sync($request->addresses);
+            $affiliate->addresses()->sync([$request->addresses_valid => ['validated' => true]]);
+        }
+        else{
+            $affiliate->addresses()->sync($request->addresses);
+            $affiliate->addresses()->sync([$affiliate->addresses->first()->id => ['validated' => true]]);
+        }
         return $affiliate->addresses()->sync($request->addresses);
     }
 
