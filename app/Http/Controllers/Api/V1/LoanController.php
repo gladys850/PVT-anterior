@@ -264,8 +264,8 @@ class LoanController extends Controller
         //rehacer préstamo
         if($request->has('remake_loan_id')&& $request->remake_loan_id != null){
             $remake_loan = Loan::find($request->remake_loan_id);
-            $loan->code=$remake_loan->code;
-            $loan->update();
+            //$loan->code=$remake_loan->code;
+            //$loan->update();
             $this->destroyAll($remake_loan);
             $this->happenRecordLoan($remake_loan,$loan->id);
         }
@@ -482,6 +482,13 @@ class LoanController extends Controller
                 $loan->code = Loan::find($loan->parent_loan_id)->code." - ".substr($loan->parent_reason,0,3);
             else
                 $loan->code = $loan->parent_loan->code;
+        }
+
+        //rehacer obtener cod 
+        if($request->has('remake_loan_id')&& $request->remake_loan_id != null)
+        {
+            $remake_loan = Loan::find($request->remake_loan_id);
+            $loan->code = $remake_loan->code;
         }
 
         $loan->save();
