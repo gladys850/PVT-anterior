@@ -218,20 +218,12 @@
                 </div>
               </v-tooltip>
             </v-card-title>
-            <v-card-text class="pl-10">
+            <v-card-text class="pa-0">
               <SpecificDataLoan
                 :loan.sync="loan"
                 :loan_properties="loan_properties"
                 :procedure_types="procedure_types"
-                
               >
-                <template v-slot:title>
-                  <v-col cols="12" class="py-0">
-                    <v-toolbar-title>
-                      <b>DATOS ESPECIFICOS DEL PRÉSTAMO</b>
-                    </v-toolbar-title>
-                  </v-col>
-                </template>
               </SpecificDataLoan>
             </v-card-text>
           </v-card>

@@ -429,6 +429,7 @@
     contributionable:[],
     data_ballots_state_affiliate:null,
     loan_contributions_adjust_ids:[],
+    periodo:null,
 
 
     cantidad_boletas:1,
@@ -535,7 +536,7 @@ ver()
                 ]
               })
               this.evaluate_garantor= res.data
-              this.loan_detail.simulador=fals
+              this.loan_detail.simulador=false
             }else{
               this.toastr.error("Tiene que ingresar la descripcion del ajuste.")
             }
@@ -622,10 +623,11 @@ ver()
           this.data_ballots=res.data.data
           this.data_ballots_name=res.data.name_table_contribution
           this.data_ballots_state_affiliate=res.data.state_affiliate
+          this.periodo=this.$moment(res.data.current_tiket).format('YYYY-MM-DD')
           this.valido=res.data.valid
           if(res.data.name_table_contribution=='contributions')
           {
-            this.toastr.error("afiliado que pertenece a contribution")
+           // this.toastr.error("afiliado que pertenece a contribution")
             if(res.data.valid)
             {
               this.editar=false
@@ -655,6 +657,7 @@ ver()
               this.contribusion=false
               this.retroceder_meses=false
               this.comision=false
+              this.show_ajuste=true
 
             if(res.data.valid)
             {
@@ -692,7 +695,7 @@ ver()
             //this.payable_liquid[0] = this.data_ballots[0].rent,
             //this.bonos[0] = this.data_ballots[0].dignity_rent,
 
-            this.toastr.error("afiliado que pertenece a aid contribution")
+            //this.toastr.error("afiliado que pertenece a aid contribution")
             }
             else{
               if(res.data.name_table_contribution==null)
@@ -701,10 +704,10 @@ ver()
                 this.contribusion=false
                 this.pasivo=false
                 this.show_ajuste=false
-                this.periodo=res.data.current_date
+                //this.periodo=res.data.current_date
                 //this.periodo=this.periodo.getMonth()
                 this.retroceder_meses=false
-                this.toastr.error("afiliado que esta de comision")
+               // this.toastr.error("afiliado que esta de comision")
               }
 
             }
@@ -741,7 +744,7 @@ ver()
             type_affiliate:'guarantor',
             amount: this.payable_liquid[0],
             type_adjust: 'liquid',
-            period_date: '2020-06-12',
+            period_date: this.periodo,
             description: 'Liquido Pagable Comision',
           })
         this.guarantor_objeto.contributionable_ids=this.contributionable
@@ -752,7 +755,7 @@ ver()
         if(this.data_ballots_state_affiliate=='Pasivo'){
           let res_aid_contribution = await axios.post(`aid_contribution/updateOrCreate`, {
               affiliate_id: this.affiliate_garantor.affiliate.id,
-              month_year: "2021-02-18",
+              month_year: this.periodo,
               rent: this.payable_liquid[0],
               dignity_rent: this.bonos[0],
           })
@@ -768,7 +771,7 @@ ver()
               type_affiliate:'guarantor',
               amount: this.monto_ajustable,
               type_adjust: 'adjust',
-              period_date: '2020-06-12',
+              period_date: this.periodo,
               description: this.monto_ajustable_descripcion,
             })
             this.loan_contributions_adjust_ids.push(res_adjust_pasivo.data.id)
@@ -790,7 +793,7 @@ ver()
               type_affiliate:'guarantor',
               amount: this.monto_ajustable,
               type_adjust: 'adjust',
-              period_date: '2020-06-12',
+              period_date: this.periodo,
               description: this.monto_ajustable_descripcion,
             })
             this.loan_contributions_adjust_ids.push(res_adjust_activo.data.id)
@@ -799,145 +802,6 @@ ver()
             this.guarantor_objeto.loan_contributions_adjust_ids=this.loan_contributions_adjust_ids
           }
         }
-
-/*
-      if(this.monto_ajustable>0 ){
-        if(this.monto_ajustable_descripcion!=null){
-
-          this.guarantor_ci=null
-          this.show_data=false
-          this.garante_boletas.affiliate_id=this.affiliate_garantor.affiliate.id
-          this.garante_boletas.liquid_qualification_calculated=this.evaluate_garantor.liquid_qualification_calculated
-          this.guarantor_objeto.affiliate_id=this.affiliate_garantor.affiliate.id
-          this.guarantor_objeto.bonus_calculated=this.evaluate_garantor.bonus_calculated
-          this.guarantor_objeto.payable_liquid_calculated=this.evaluate_garantor.payable_liquid_calculated
-
-          let res = await axios.post(`loan_contribution_adjust`, {
-          affiliate_id: this.affiliate_garantor.affiliate.id,
-          adjustable_id:this.data_ballots[0].id,
-          adjustable_type: this.data_ballots_name,
-          type_affiliate:'guarantor',
-          amount: this.monto_ajustable,
-          type_adjust: 'adjust',
-          period_date: '2020-06-12',
-          description: this.monto_ajustable_descripcion,
-        })
-
-        if(this.data_ballots_state_affiliate='Pasivo'){
-          if(!this.valido)
-          {
-             let res = await axios.post(`aid_contribution`, {
-                affiliate_id: this.affiliate_garantor.affiliate.id,
-                month_year: "2020-02-01",
-                rent: this.payable_liquid[0],
-                dignity_rent: this.bonos[0],
-            })
-             this.contributionable.push(res.data.id)
-          }
-        }
-
-        this.loan_contributions_adjust_ids.push(res.data.id)
-        this.contributionable.push(this.data_ballots[0].id)
-        this.guarantor_objeto.contributionable_type=this.data_ballots_name
-        this.guarantor_objeto.contributionable_ids=this.contributionable
-        this.guarantor_objeto.loan_contributions_adjust_ids=this.loan_contributions_adjust_ids
-
-        if(this.garantes_detalle.length >= 1)
-        {
-          if(this.garantes_detalle[0]==this.affiliate_garantor.affiliate.full_name)
-          {
-            this.toastr.error("No puede añadir 2 veces al mismo garante.")
-          }
-          else{
-            this.garantes_detalle.push(this.affiliate_garantor.affiliate.full_name);
-            this.garantes_simulador.push(this.garante_boletas);
-            this.guarantors.push(this.guarantor_objeto);
-            this.garante_boletas={}
-            this.guarantor_objeto={}
-            this.loan_contributions_adjust_ids=[]
-            this.contributionable=[]
-          }
-        }else{
-          this.garantes_detalle.push(this.affiliate_garantor.affiliate.full_name);
-          this.garantes_simulador.push(this.garante_boletas);
-          this.guarantors.push(this.guarantor_objeto);
-          this.garante_boletas={}
-          this.guarantor_objeto={}
-           this.loan_contributions_adjust_ids=[]
-            this.contributionable=[]
-        }
-          this.clear()
-          console.log(this.guarantors)
-          }else{
-            this.toastr.error("Debe ingresar una descripcion del ajuste")
-          }
-      }else{
-        this.guarantor_ci=null
-        this.show_data=false
-        this.garante_boletas.affiliate_id=this.affiliate_garantor.affiliate.id
-        this.garante_boletas.liquid_qualification_calculated=this.evaluate_garantor.liquid_qualification_calculated
-        this.guarantor_objeto.affiliate_id=this.affiliate_garantor.affiliate.id
-        this.guarantor_objeto.bonus_calculated=this.evaluate_garantor.bonus_calculated
-        this.guarantor_objeto.payable_liquid_calculated=this.evaluate_garantor.payable_liquid_calculated
-
-
-      if(this.data_ballots_name==null)
-      {
-          let res = await axios.post(`loan_contribution_adjust`, {
-            affiliate_id: this.affiliate_garantor.affiliate.id,
-            adjustable_id:this.affiliate_garantor.affiliate.id,
-            adjustable_type: 'afilliate',
-            type_affiliate:'guarantor',
-            amount: this.payable_liquid[0],
-            type_adjust: 'liquid',
-            period_date: '2020-06-12',
-            description: 'Liquido Pagable Comision',
-          })
-        this.guarantor_objeto.contributionable_type='affiliate'
-        this.contributionable.push(this.affiliate_garantor.affiliate.id)
-          this.loan_contributions_adjust_ids.push(res.data.id)
-      }
-        this.guarantor_objeto.contributionable_ids=this.contributionable
-        this.guarantor_objeto.loan_contributions_adjust_ids=this.loan_contributions_adjust_ids
-
-        if(this.data_ballots_state_affiliate='Pasivo'){
-          let res = await axios.post(`aid_contribution`, {
-            affiliate_id: this.affiliate_garantor.affiliate.id,
-            month_year: "2020-02-01",
-            rent: this.payable_liquid[0],
-            dignity_rent: this.bonos[0],
-          })
-           this.contributionable.push(res.data.id)
-        }
-
-      if(this.garantes_detalle.length >= 1)
-      {
-        if(this.garantes_detalle[0]==this.affiliate_garantor.affiliate.full_name)
-        {
-          this.toastr.error("No puede añadir 2 veces al mismo garante.")
-        }
-        else{
-          this.garantes_detalle.push(this.affiliate_garantor.affiliate.full_name);
-          this.garantes_simulador.push(this.garante_boletas);
-          this.guarantors.push(this.guarantor_objeto);
-          this.garante_boletas={}
-          this.guarantor_objeto={}
-           this.loan_contributions_adjust_ids=[]
-            this.contributionable=[]
-          }
-        }
-        else{
-          this.garantes_detalle.push(this.affiliate_garantor.affiliate.full_name);
-          this.garantes_simulador.push(this.garante_boletas);
-          this.guarantors.push(this.guarantor_objeto);
-          this.garante_boletas={}
-          this.guarantor_objeto={}
-           this.loan_contributions_adjust_ids=[]
-            this.contributionable=[]
-
-        }
-          this.clear()
-          console.log(this.guarantors)*/
       }
         this.garantes_detalle.push(this.affiliate_garantor.affiliate.full_name);
         this.garantes_simulador.push(this.garante_boletas);
@@ -950,7 +814,7 @@ ver()
         console.log(this.guarantors)
     },
     async retrocederContribusiones(){
-        this.toastr.error("se retroceden boletas.")
+      //  this.toastr.error("se retroceden boletas.")
           let res = await axios.get(`affiliate/${this.affiliate_garantor.affiliate.id}/contribution`, {
           params:{
             city_id: this.$store.getters.cityId,
