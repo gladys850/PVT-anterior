@@ -76,7 +76,7 @@
                     Siguiente
                   </v-btn>
                 </v-col>
-                  {{contrib_codebtor}}
+                  <!--{{contrib_codebtor}}-->
               </v-row>
             </v-container>
           </v-card>

@@ -37,7 +37,7 @@ hipoteca
                
               </v-col>
               <v-col>
-                {{contrib_codebtor}}
+                <!--{{contrib_codebtor}}-->
                 <v-data-table
                   dense
                   :headers="headers1"
@@ -64,233 +64,233 @@ hipoteca
                                 <h3>NOMBRE: {{editedItem.full_name}} </h3>
                               </v-col>
                             </v-row>
-                <v-row class="py-0 my-0">
-                  <!--<v-col cols="12" md="12" style="margin-top: -20px">
-                    <v-checkbox
-                      v-model="enabled"
-                      hide-details
-                      label="Habilitar Edicion"
-                    ></v-checkbox>
-                  </v-col>  -->                
-                  <v-col cols="12" md="2" class="py-0 my-0">
-                    <v-text-field
-                      dense
-                      v-model="number_diff_month"
-                      label="Número de meses"                    
-                      color="info"
-                      append-icon="mdi-plus-box"
-                      prepend-icon="mdi-minus-box"
-                      @click:append="appendIconCallback"
-                      @click:prepend="prependIconCallback"
-                      readonly
-                    ></v-text-field>
-                  </v-col>           
-                </v-row>
-                <!--boleta 1--->
-
-                <v-row v-for="(contrib,i) in editedItem.contribution" :key="i" class="py-0 my-0">
-               
-                  <v-col cols="12" md="7" class="py-0 my-0">
-                    <v-row>
-                      <v-col cols="12" md="12" class="py-0 my-0 uppercase"> BOLETAS DE PAGO {{editedItem.contribution[i].period}} <b>{{editedItem.contribution[i].month}}</b></v-col>
-                      <v-col cols="12" md="3" class="py-0 my-0" v-if="lender_contribution.state_affiliate != 'Comisión'">
-                        <ValidationProvider
-                          v-slot="{ errors }"
-                          name="Boleta de pago"
-                          :rules="'required|min_value:' + livelihood_amount"
-                          mode="aggressive"
-                        >
-                          <b style="text-align: center"></b>
-                          <v-text-field
-                            :error-messages="errors"
-                            dense
-                            v-model="editedItem.contribution[i].payable_liquid"
-                            label="Liquido pagable"
-                            :disabled="!enabled"
-                            :outlined="editar"
-                          ></v-text-field>
-                        </ValidationProvider>
-                      </v-col>
-                      <!--<v-col cols="12" md="1" class="py-0">
-                        <span>
-                          <v-tooltip top>
-                            <template v-slot:activator="{ on }">
-                              <v-btn
-                                icon
-                                dark
-                                small
-                                color="success"
-                                bottom
-                                right
-                                v-on="on"
-                                @click="saveAdjustment(i)"
-                              >
-                                <v-icon>mdi-calculator</v-icon>
-                              </v-btn>
-                            </template>
-                            <span>Ajuste</span>
-                          </v-tooltip>
-                        </span>                        
-                      </v-col>-->
-                      <v-col cols="12" class="py-0 my-0"  :md="lender_contribution.state_affiliate == 'Comisión' ? 4 : 2">
-                        <ValidationProvider
-                          v-slot="{ errors }"
-                          name="Monto ajuste"
-                          :rules="''"
-                          mode="aggressive"
-                        >
-                          <b style="text-align: center"></b>
-                          <v-text-field
-                            :error-messages="errors"
-                            dense
-                            v-model="editedItem.contribution[i].adjustment_amount"
-                            :label= "lender_contribution.state_affiliate == 'Comisión' ? 'Liquido pagable' :  'Monto ajuste'"
-                            outlined
-                          ></v-text-field>
-                        </ValidationProvider>
-                      </v-col>
-                      <template v-if="lender_contribution.state_affiliate != 'Comisión'">
-                        <v-col cols="12" md="2" class="py-0 my-0" >
-                          <b style="text-align: center">= {{(parseFloat(editedItem.contribution[i].adjustment_amount) + parseFloat(editedItem.contribution[i].payable_liquid)).toFixed(2)}}</b>
-                        </v-col>
-                        <v-col cols="12" md="5" class="py-0 my-0">
-                          <ValidationProvider
-                            v-slot="{ errors }"
-                            name="Descripción"
-                            :rules="''"
-                            mode="aggressive"
-                          >
-                            <b style="text-align: center"></b>
-                            <v-textarea
-                              :error-messages="errors"
-                              dense
-                              v-model="editedItem.contribution[i].adjustment_description"
-                              label="Descripción ajuste"
-                              outlined
-                              rows="1"                              
-                            ></v-textarea>
-                          </ValidationProvider>
-                        </v-col>
-                      </template>
-                    </v-row>
-                  </v-col>
-
-                  <v-col cols="12" md="5" class="py-0 my-0">
                     <v-row class="py-0 my-0">
-                      <v-col cols="12" md="12" class="py-0 my-0" v-if="lender_contribution.state_affiliate != 'Comisión'"> BONOS </v-col>
-                      <template v-if="lender_contribution.state_affiliate == 'Activo'">
-                        <v-col cols="12" md="3" class="py-0 my-0">
-                          <ValidationProvider
-                            v-slot="{ errors }"
-                            name="Bono Frontera"
-                            :rules="''"
-                            mode="aggressive"
-                          >
-                            <v-text-field
-                              :error-messages="errors"
-                              dense
-                              v-model="editedItem.contribution[i].border_bonus"
-                              label="Bono Frontera"
-                              :disabled="!enabled"
-                              :outlined="editar"
-                            ></v-text-field>
-                          </ValidationProvider>
-                        </v-col>
-                        <v-col cols="12" md="3" class="py-0 my-0">
-                          <ValidationProvider
-                            v-slot="{ errors }"
-                            name="Bono Oriente"
-                             :rules="''"
-                            mode="aggressive"
-                          >
-                            <v-text-field
-                              :error-messages="errors"
-                              dense
-                              v-model="editedItem.contribution[i].east_bonus"
-                              label="Bono Oriente"
-                              :disabled="!enabled"
-                              :outlined="editar"
-                            ></v-text-field>
-                          </ValidationProvider>
-                        </v-col>
-                        <v-col cols="12" md="3" class="py-0 my-0">
-                          <ValidationProvider
-                            v-slot="{ errors }"
-                            name="Bono Cargo"
-                            :rules="''"
-                            mode="aggressive"
-                          >
-                            <v-text-field
-                              :error-messages="errors"
-                              dense
-                              v-model="editedItem.contribution[i].position_bonus"
-                              label="Bono Cargo"
-                              :disabled="!enabled"
-                              :outlined="editar"
-                            ></v-text-field>
-                          </ValidationProvider>
-                        </v-col>
-                        <v-col cols="12" md="3" class="py-0 my-0">
-                          <ValidationProvider
-                            v-slot="{ errors }"
-                            name="Bono Seguridad Ciudadana"
-                             :rules="''"
-                            mode="aggressive"
-                          >
-                            <v-text-field
-                              :error-messages="errors"
-                              dense
-                              v-model="editedItem.contribution[i].public_security_bonus"
-                              label="Bono Seguridad Ciudadana"
-                              :disabled="!enabled"
-                              :outlined="editar"
-                            ></v-text-field>
-                          </ValidationProvider>
-                        </v-col>
-                     </template> 
-                      <v-col cols="12" :md="lender_contribution.state_affiliate == 'Pasivo' ? 4 : 3" class="py-0 my-0" v-if="lender_contribution.state_affiliate == 'Pasivo'">
-                        <ValidationProvider
-                          v-slot="{ errors }"
-                          name="Renta dignidad"
-                          :rules="''"
-                          mode="aggressive"
-                        >
-                          <v-text-field
-                            :error-messages="errors"
-                            dense
-                            v-model="editedItem.contribution[i].dignity_rent"
-                            label="Renta dignidad"
-                            :disabled="!enabled"
-                            :outlined="editar"
-                          ></v-text-field>
-                        </ValidationProvider>
-                      </v-col>
+                      <!--<v-col cols="12" md="12" style="margin-top: -20px">
+                        <v-checkbox
+                          v-model="enabled"
+                          hide-details
+                          label="Habilitar Edicion"
+                        ></v-checkbox>
+                      </v-col>  -->                
+                      <v-col cols="12" md="2" class="py-0 my-0">
+                        <v-text-field
+                          dense
+                          v-model="number_diff_month"
+                          label="Número de meses"                    
+                          color="info"
+                          append-icon="mdi-plus-box"
+                          prepend-icon="mdi-minus-box"
+                          @click:append="appendIconCallback"
+                          @click:prepend="prependIconCallback"
+                          readonly
+                        ></v-text-field>
+                      </v-col>           
                     </v-row>
+                    <!--boleta 1--->
+
+                    <v-row v-for="(contrib,i) in editedItem.contribution" :key="i" class="py-0 my-0">
+                    
+                      <v-col cols="12" md="7" class="py-0 my-0">
+                        <v-row>
+                          <v-col cols="12" md="12" class="py-0 my-0 uppercase"> BOLETAS DE PAGO {{editedItem.contribution[i].period}} <b>{{editedItem.contribution[i].month}}</b></v-col>
+                          <v-col cols="12" md="3" class="py-0 my-0" v-if="lender_contribution.state_affiliate != 'Comisión'">
+                            <ValidationProvider
+                              v-slot="{ errors }"
+                              name="Boleta de pago"
+                              :rules="'required|min_value:' + livelihood_amount"
+                              mode="aggressive"
+                            >
+                              <b style="text-align: center"></b>
+                              <v-text-field
+                                :error-messages="errors"
+                                dense
+                                v-model="editedItem.contribution[i].payable_liquid"
+                                label="Liquido pagable"
+                                :disabled="!enabled"
+                                :outlined="editar"
+                              ></v-text-field>
+                            </ValidationProvider>
+                          </v-col>
+                          <!--<v-col cols="12" md="1" class="py-0">
+                            <span>
+                              <v-tooltip top>
+                                <template v-slot:activator="{ on }">
+                                  <v-btn
+                                    icon
+                                    dark
+                                    small
+                                    color="success"
+                                    bottom
+                                    right
+                                    v-on="on"
+                                    @click="saveAdjustment(i)"
+                                  >
+                                    <v-icon>mdi-calculator</v-icon>
+                                  </v-btn>
+                                </template>
+                                <span>Ajuste</span>
+                              </v-tooltip>
+                            </span>                        
+                          </v-col>-->
+                          <v-col cols="12" class="py-0 my-0"  :md="lender_contribution.state_affiliate == 'Comisión' ? 4 : 2">
+                            <ValidationProvider
+                              v-slot="{ errors }"
+                              name="Monto ajuste"
+                              :rules="''"
+                              mode="aggressive"
+                            >
+                              <b style="text-align: center"></b>
+                              <v-text-field
+                                :error-messages="errors"
+                                dense
+                                v-model="editedItem.contribution[i].adjustment_amount"
+                                :label= "lender_contribution.state_affiliate == 'Comisión' ? 'Liquido pagable' :  'Monto ajuste'"
+                                outlined
+                              ></v-text-field>
+                            </ValidationProvider>
+                          </v-col>
+                          <template v-if="lender_contribution.state_affiliate != 'Comisión'">
+                            <v-col cols="12" md="2" class="py-0 my-0" >
+                              <b style="text-align: center">= {{(parseFloat(editedItem.contribution[i].adjustment_amount) + parseFloat(editedItem.contribution[i].payable_liquid)).toFixed(2)}}</b>
+                            </v-col>
+                            <v-col cols="12" md="5" class="py-0 my-0">
+                              <ValidationProvider
+                                v-slot="{ errors }"
+                                name="Descripción"
+                                :rules="''"
+                                mode="aggressive"
+                              >
+                                <b style="text-align: center"></b>
+                                <v-textarea
+                                  :error-messages="errors"
+                                  dense
+                                  v-model="editedItem.contribution[i].adjustment_description"
+                                  label="Descripción ajuste"
+                                  outlined
+                                  rows="1"                              
+                                ></v-textarea>
+                              </ValidationProvider>
+                            </v-col>
+                          </template>
+                        </v-row>
+                      </v-col>
+
+                      <v-col cols="12" md="5" class="py-0 my-0">
+                        <v-row class="py-0 my-0">
+                          <v-col cols="12" md="12" class="py-0 my-0" v-if="lender_contribution.state_affiliate != 'Comisión'"> BONOS </v-col>
+                          <template v-if="lender_contribution.state_affiliate == 'Activo'">
+                            <v-col cols="12" md="3" class="py-0 my-0">
+                              <ValidationProvider
+                                v-slot="{ errors }"
+                                name="Bono Frontera"
+                                :rules="''"
+                                mode="aggressive"
+                              >
+                                <v-text-field
+                                  :error-messages="errors"
+                                  dense
+                                  v-model="editedItem.contribution[i].border_bonus"
+                                  label="Bono Frontera"
+                                  :disabled="!enabled"
+                                  :outlined="editar"
+                                ></v-text-field>
+                              </ValidationProvider>
+                            </v-col>
+                            <v-col cols="12" md="3" class="py-0 my-0">
+                              <ValidationProvider
+                                v-slot="{ errors }"
+                                name="Bono Oriente"
+                                 :rules="''"
+                                mode="aggressive"
+                              >
+                                <v-text-field
+                                  :error-messages="errors"
+                                  dense
+                                  v-model="editedItem.contribution[i].east_bonus"
+                                  label="Bono Oriente"
+                                  :disabled="!enabled"
+                                  :outlined="editar"
+                                ></v-text-field>
+                              </ValidationProvider>
+                            </v-col>
+                            <v-col cols="12" md="3" class="py-0 my-0">
+                              <ValidationProvider
+                                v-slot="{ errors }"
+                                name="Bono Cargo"
+                                :rules="''"
+                                mode="aggressive"
+                              >
+                                <v-text-field
+                                  :error-messages="errors"
+                                  dense
+                                  v-model="editedItem.contribution[i].position_bonus"
+                                  label="Bono Cargo"
+                                  :disabled="!enabled"
+                                  :outlined="editar"
+                                ></v-text-field>
+                              </ValidationProvider>
+                            </v-col>
+                            <v-col cols="12" md="3" class="py-0 my-0">
+                              <ValidationProvider
+                                v-slot="{ errors }"
+                                name="Bono Seguridad Ciudadana"
+                                 :rules="''"
+                                mode="aggressive"
+                              >
+                                <v-text-field
+                                  :error-messages="errors"
+                                  dense
+                                  v-model="editedItem.contribution[i].public_security_bonus"
+                                  label="Bono Seguridad Ciudadana"
+                                  :disabled="!enabled"
+                                  :outlined="editar"
+                                ></v-text-field>
+                              </ValidationProvider>
+                            </v-col>
+                         </template> 
+                          <v-col cols="12" :md="lender_contribution.state_affiliate == 'Pasivo' ? 4 : 3" class="py-0 my-0" v-if="lender_contribution.state_affiliate == 'Pasivo'">
+                            <ValidationProvider
+                              v-slot="{ errors }"
+                              name="Renta dignidad"
+                              :rules="''"
+                              mode="aggressive"
+                            >
+                              <v-text-field
+                                :error-messages="errors"
+                                dense
+                                v-model="editedItem.contribution[i].dignity_rent"
+                                label="Renta dignidad"
+                                :disabled="!enabled"
+                                :outlined="editar"
+                              ></v-text-field>
+                            </ValidationProvider>
+                          </v-col>
+                        </v-row>
+                      </v-col>
+
+                    </v-row>
+                              </v-container>
+                            </v-card-text>
+                            <v-divider></v-divider>
+                            <v-card-actions class="ma-0 pb-0">
+                            <v-spacer></v-spacer>
+                              <v-btn color="error" dense text @click.stop="close()">Cerrar</v-btn>
+                              <v-btn color="success" dense text @click="save">Guardar</v-btn>
+                            </v-card-actions>
+                          </v-card>
+                        </v-dialog>
+                      </template>
+                      <template v-slot:[`item.actions`]="{ item }">
+                        <v-icon small class="mr-2" color="blue" @click="editItem(item)">mdi-pencil</v-icon>
+                        <v-icon small color="error" @click="deleteItem(item)">X</v-icon>
+                      </template>
+                      <template v-slot:no-data>
+                        <!--<v-btn color="primary" @click=" initialize">Reset</v-btn>-->
+                      </template>
+                    </v-data-table>
                   </v-col>
-        
                 </v-row>
-                          </v-container>
-                        </v-card-text>
-                        <v-divider></v-divider>
-                        <v-card-actions class="ma-0 pb-0">
-                        <v-spacer></v-spacer>
-                          <v-btn color="error" dense text @click.stop="close()">Cerrar</v-btn>
-                          <v-btn color="success" dense text @click="save">Guardar</v-btn>
-                        </v-card-actions>
-                      </v-card>
-                    </v-dialog>
-                  </template>
-                  <template v-slot:[`item.actions`]="{ item }">
-                    <v-icon small class="mr-2" color="blue" @click="editItem(item)">mdi-pencil</v-icon>
-                    <v-icon small color="error" @click="deleteItem(item)">X</v-icon>
-                  </template>
-                  <template v-slot:no-data>
-                    <!--<v-btn color="primary" @click=" initialize">Reset</v-btn>-->
-                  </template>
-                </v-data-table>
-              </v-col>
-            </v-row>
-          </v-container>
+              </v-container>
         </v-col>
       </v-row>
     </v-form>
@@ -346,27 +346,27 @@ export default {
         value: "full_name"
       },
       {
-        text: "Liquido Pagable",
+        text: "Liquido Pagable Promedio",
         class: ["normal", "white--text"],
         value: "p_payable_liquid"
       },
       {
-        text: "Bono Frontera",
+        text: "Bono Frontera Promedio",
         class: ["normal", "white--text"],
         value: "p_border_bonus"
       },
       {
-        text: "Bono Oriente",
+        text: "Bono Oriente Promedio",
         class: ["normal", "white--text"],
         value: "p_east_bonus"
       },
       {
-        text: "Bono Cargo",
+        text: "Bono Cargo Promedio",
         class: ["normal", "white--text"],
         value: "p_position_bonus"
       },
       {
-        text: "Bono Seguridad Ciudadana",
+        text: "Bono Seguridad Ciudadana Promedio",
         class: ["normal", "white--text"],
         value: "p_public_security_bonus"
       },
@@ -474,7 +474,13 @@ export default {
             this.editedItem.contribution[i].position_bonus = this.data_ballots[i].position_bonus != null ? this.data_ballots[i].position_bonus : 0
             this.editedItem.contribution[i].public_security_bonus = this.data_ballots[i].public_security_bonus != null ? this.data_ballots[i].public_security_bonus : 0
             this.editedItem.contribution[i].period = this.$moment(this.data_ballots[i].month_year).format('YYYY-MM-DD')
-            this.editedItem.contribution[i].month = this.$moment(this.data_ballots[i].month_year).subtract(1,'months').format('MMMM')
+            this.editedItem.contribution[i].month = this.$moment(this.data_ballots[i].month_year).format('MMMM')
+            //Promedios
+            this.editedItem.p_payable_liquid = this.editedItem.p_payable_liquid + parseFloat(this.data_ballots[i].payable_liquid != null ? this.data_ballots[i].payable_liquid : 0)
+            this.editedItem.p_border_bonus = this.editedItem.p_border_bonus + parseFloat(this.data_ballots[i].border_bonus != null ? this.data_ballots[i].border_bonus : 0)
+            this.editedItem.p_east_bonus = this.editedItem.p_east_bonus +  parseFloat(this.data_ballots[i].east_bonus != null ? this.data_ballots[i].east_bonus : 0)
+            this.editedItem.p_position_bonus = this.editedItem.p_position_bonus + parseFloat(this.data_ballots[i].position_bonus != null ? this.data_ballots[i].position_bonus : 0)
+            this.editedItem.p_public_security_bonus = this.editedItem.p_public_security_bonus +  parseFloat(this.data_ballots[i].public_security_bonus != null ? this.data_ballots[i].public_security_bonus : 0)
           
         } else if(!this.lender_contribution.valid && this.lender_contribution.state_affiliate =='Activo'){
             this.enabled = false
@@ -487,7 +493,7 @@ export default {
             this.editedItem.contribution[i].position_bonus = 0
             this.editedItem.contribution[i].public_security_bonus = 0
             this.editedItem.contribution[i].period = this.$moment(this.lender_contribution.current_tiket).subtract(i,'months').format('YYYY-MM-DD')
-            this.editedItem.contribution[i].month = this.$moment(this.lender_contribution.current_tiket).subtract(i+1,'months').format('MMMM')
+            this.editedItem.contribution[i].month = this.$moment(this.lender_contribution.current_tiket).subtract(i,'months').format('MMMM')
         } else{
           this.toastr.error("el afiliado no es activo")
         }   
@@ -498,7 +504,11 @@ export default {
           this.editedItem.contribution[i].position_bonus = data_ballots[i].position_bonus
           this.editedItem.contribution[i].public_security_bonus = data_ballots[i].public_security_bonus*/
         }
-                        
+        this.editedItem.p_payable_liquid = (this.editedItem.p_payable_liquid / this.modalidad.quantity_ballots).toFixed(2)
+        this.editedItem.p_border_bonus = (this.editedItem.p_border_bonus / this.modalidad.quantity_ballots).toFixed(2)
+        this.editedItem.p_east_bonus = (this.editedItem.p_east_bonus / this.modalidad.quantity_ballots).toFixed(2)
+        this.editedItem.p_position_bonus = (this.editedItem.p_position_bonus / this.modalidad.quantity_ballots).toFixed(2)
+        this.editedItem.p_public_security_bonus = (this.editedItem.p_public_security_bonus / this.modalidad.quantity_ballots).toFixed(2)
       
       }
       } catch (e) {
