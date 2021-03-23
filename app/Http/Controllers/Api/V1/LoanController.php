@@ -125,16 +125,12 @@ class LoanController extends Controller
             ];
         }
         if ($request->has('user_id')) {
-            $relations['user'] = [
-                'user_id' => $request->user_id
-            ];
+            $filters['user_id'] = $request->user_id;
         }
         else{
             if($request->validated){
                 $filters['validated'] = $request->validated;
-                $relations['user'] = [
-                    'user_id' => null
-                ];
+                $filters['user_id'] = null;
             }
         }
         $data = Util::search_sort(new Loan(), $request, $filters, $relations);
