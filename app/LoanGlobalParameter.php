@@ -13,6 +13,6 @@ class LoanGlobalParameter extends Model
         'offset_ballot_day',
         'offset_interest_day',
         'livelihood_amount',
-        'max_days_interest'
+        'day_current_interest',
     ];
 }

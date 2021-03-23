@@ -46,7 +46,7 @@ class LoanGlobalParameterController extends Controller
     * @urlParam loan_global_parameter required ID de Parámetros Globales de Préstamo. Example: 1
     * @bodyParam offset_day integer required fecha de corte. Example: 8
     * @bodyParam livelihood_amount integer required monto de subsistencia. Example: 500
-    * @bodyParam max_days_interest integer required maximo dias de interes. Example: 31    
+    * @bodyParam day_current_interest integer required Dias de intewres corriente de un mes. Example: 31    
     * @authenticated
     * @responseFile responses/loan_global_parameter/update.200.json
     */
