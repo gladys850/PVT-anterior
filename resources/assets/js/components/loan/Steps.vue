@@ -76,6 +76,7 @@
                     Siguiente
                   </v-btn>
                 </v-col>
+                  {{contrib_codebtor}}
               </v-row>
             </v-container>
           </v-card>
@@ -396,11 +397,11 @@ export default {
         this.e1 = val
       }
     },
-    'loanTypeSelected.id': function(newVal, oldVal){
+    /*'loanTypeSelected.id': function(newVal, oldVal){
       if(newVal!= oldVal)
       this.loanTypeSelected.id = this.modalidad_refi_repro_remake
       //alert ('steps' + this.loanTypeSelected.id)
-    },
+    },*/
   },
   beforeMount(){
     this.getProcedureType()
@@ -550,7 +551,7 @@ export default {
           let res = await axios.post(`loan_contribution_adjust/updateOrCreate`, {
             affiliate_id: this.$route.query.affiliate_id,
             adjustable_id: this.affiliate_contribution.state_affiliate != 'Comisión' ? this.contributions[i].contributionable_id : this.$route.query.affiliate_id,
-            adjustable_type: this.affiliate_contribution.state_affiliate != 'Comisión' ? this.affiliate_contribution.name_table_contribution : 'affiliate',
+            adjustable_type: this.affiliate_contribution.state_affiliate != 'Comisión' ? this.affiliate_contribution.name_table_contribution : 'affiliates',
             type_affiliate: 'lender',
             amount: this.contributions[i].adjustment_amount,
             type_adjust: this.affiliate_contribution.state_affiliate != 'Comisión' ? 'adjust' : 'liquid',
