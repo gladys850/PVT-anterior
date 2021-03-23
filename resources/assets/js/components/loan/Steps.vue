@@ -528,7 +528,7 @@ export default {
           this.contribution_passive = res.data  
             this.contributions[i].contributionable_id = this.contribution_passive.id
             if (this.contributionable_ids.indexOf(this.contributions[i].contributionable_id) === -1) {
-              this.this.contributionable_ids.push(this.contributions[i].contributionable_id)
+              this.contributionable_ids.push(this.contributions[i].contributionable_id)
             }
             this.contributionable_type = 'aid_contributions'
             //alert(this.contributionable_ids)
@@ -681,7 +681,7 @@ export default {
         console.log("NUEVO ARRAY")
         console.log(nuevoArray)
 
-      /*for (let i = 0; i < this.contrib_codebtor.length; i++) {
+      for (let i = 0; i < this.contrib_codebtor.length; i++) {
         nuevoArrayCodebtor[i] = {
           affiliate_id: this.contrib_codebtor[i].id_affiliate,
           sismu: this.data_sismu.type_sismu,
@@ -689,19 +689,34 @@ export default {
           parent_loan_id: this.parent_loan_id,
           contributions: [
             {
-            payable_liquid: this.contrib_codebtor[i].payable_liquid,
-            border_bonus: this.contrib_codebtor[i].border_bonus,
-            east_bonus: this.contrib_codebtor[i].east_bonus,
-            position_bonus: this.contrib_codebtor[i].position_bonus,
-            public_security_bonus: this.contrib_codebtor[i].public_security_bonus
+            payable_liquid: this.contrib_codebtor[i].contribution[0].payable_liquid,
+            border_bonus: this.contrib_codebtor[i].contribution[0].border_bonus,
+            east_bonus: this.contrib_codebtor[i].contribution[0].east_bonus,
+            position_bonus: this.contrib_codebtor[i].contribution[0].position_bonus,
+            public_security_bonus: this.contrib_codebtor[i].contribution[0].public_security_bonus
+            },
+            {
+            payable_liquid: this.contrib_codebtor[i].contribution[1].payable_liquid,
+            border_bonus: this.contrib_codebtor[i].contribution[1].border_bonus,
+            east_bonus: this.contrib_codebtor[i].contribution[1].east_bonus,
+            position_bonus: this.contrib_codebtor[i].contribution[1].position_bonus,
+            public_security_bonus: this.contrib_codebtor[i].contribution[1].public_security_bonus
+            },
+            {
+            payable_liquid: this.contrib_codebtor[i].contribution[2].payable_liquid,
+            border_bonus: this.contrib_codebtor[i].contribution[2].border_bonus,
+            east_bonus: this.contrib_codebtor[i].contribution[2].east_bonus,
+            position_bonus: this.contrib_codebtor[i].contribution[2].position_bonus,
+            public_security_bonus: this.contrib_codebtor[i].contribution[2].public_security_bonus
             }
           ]
         };
         console.log("NUEVO ARRAY")
         console.log(nuevoArray)
-      }*/
+      }
       
-      this.contributions1_aux = nuevoArray
+      this.contributions1_aux = nuevoArray.concat(nuevoArrayCodebtor)
+    
     },
     //TAB1 Obtener liquido para calificación
     async liquidCalificated(){
@@ -711,7 +726,7 @@ export default {
         this.liquid_calificated =res.data
 
          if(this.modalidad.procedure_type_id==12)
-            {
+          {
               if(this.loan_detail.net_realizable_value<=this.intervalos.maximun_amoun)
               {
                 this.amount_requested=this.loan_detail.net_realizable_value
@@ -740,17 +755,23 @@ export default {
 
               this.lenders=res.data
 
-          for(let i = 0; i < this.lenders.length; i++ ){
-            //Armar el nombre de los lenders
-            let res4 = await axios.get(`affiliate/${this.lenders[i].affiliate_id}`)
-            this.lenders_aux[i] =res4.data.full_name
-
-
+              for(let i = 0; i < this.lenders.length; i++ ){
+                //Armar el nombre de los lenders
+                let res4 = await axios.get(`affiliate/${this.lenders[i].affiliate_id}`)
+                this.lenders_aux[i] =res4.data.full_name
+                //obtener las contribuciones para hipotecario de contrib_codebtor, i=0 es lender de ballots
                 this.lenders[i].payment_percentage=this.calculator_result.affiliates[i].payment_percentage
                 this.lenders[i].indebtedness_calculated=this.calculator_result.affiliates[i].indebtedness_calculated
-                this.lenders[i].contributionable_type=this.contributionable_type
+                if(i == 0){
+                this.lenders[i].contributionable_type= this.contributionable_type
                 this.lenders[i].loan_contributions_adjust_ids=this.loan_contributions_adjust_ids
-                this.lenders[i].contributionable_ids=this.loan_contributions_adjust_ids
+                this.lenders[i].contributionable_ids=this.contributionable_ids
+                }else{
+                this.lenders[i].contributionable_type= this.contrib_codebtor[i-1].contributionable_type
+                this.lenders[i].loan_contributions_adjust_ids=this.contrib_codebtor[i-1].loan_contributions_adjust_ids
+                this.lenders[i].contributionable_ids=this.contrib_codebtor[i-1].contributionable_ids
+                }
+
               }
 
               this.loan_detail.minimum_term=this.intervalos.minimum_term
@@ -796,7 +817,7 @@ export default {
               this.lenders[0].indebtedness_calculated=this.calculator_result.affiliates[0].indebtedness_calculated
               this.lenders[0].contributionable_type=this.contributionable_type
               this.lenders[0].loan_contributions_adjust_ids=this.loan_contributions_adjust_ids
-              this.lenders[0].contributionable_ids=this.loan_contributions_adjust_ids
+              this.lenders[0].contributionable_ids=this.contributionable_ids
 
               this.loan_detail.minimum_term=this.intervalos.minimum_term
               this.loan_detail.maximum_term=this.intervalos.maximum_term
@@ -918,23 +939,91 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
     },
     validateStepsOne(){
       this.contributions = []
+
+      let continuar = false
       if(this.$refs.ballotsComponent) {
         this.contributions = this.$refs.ballotsComponent.getContributions()
       }
-      this.saveAdjustment()
-     // console.log(this.contributions)
-      this.liquidCalificated()
-      this.nextStep(1)
-      /*console.log("ESTADO"+ this.loan_detail.not_exist_modality)
+      //this.saveAdjustment()
+      //this.liquidCalificated()
+      //this.nextStep(1)
+      //console.log("ESTADO"+ this.loan_detail.not_exist_modality)
       if(this.loanTypeSelected.id > 0){
         if(this.loan_detail.not_exist_modality==false){
-          if(this.payable_liquid[0] >= this.livelihood_amount){
-           if(this.modalidad.procedure_type_id==10){
-            if((parseFloat(this.bonos[0])+ parseFloat(this.bonos[1])+ parseFloat(this.bonos[2])+ parseFloat(this.bonos[3])) < (parseFloat(this.payable_liquid[0]) + parseFloat(this.payable_liquid[0]) + parseFloat(this.payable_liquid[0]) ) ){
-              if(parseFloat(this.payable_liquid[0]) > 0 && parseFloat(this.payable_liquid[1]) > 0 && parseFloat(this.payable_liquid[2]) > 0 ){
+
+          for(let i = 0; i< this.contributions.length; i++){
+            if((parseFloat(this.contributions[i].payable_liquid) + parseFloat(this.contributions[i].adjustment_amount)) >= this.livelihood_amount){
+              continuar = true
+              if(( (continuar == true) && parseFloat(this.contributions[i].position_bonus)+ 
+              parseFloat(this.contributions[i].border_bonus)+ 
+              parseFloat(this.contributions[i].public_security_bonus)+ 
+              parseFloat(this.contributions[i].east_bonus)) < 
+              (parseFloat(this.contributions[i].payable_liquid) + 
+              parseFloat(this.contributions[i].adjustment_amount))){
+                continuar = true
+              }else{
+                continuar = false
+                this.toastr.error(this.contributions[i].month.toUpperCase()  + " La sumatoria de bonos debe ser menor al Liquido pagable")
+                break;
+              }
+
+            }else{
+              continuar = false
+              this.toastr.error(this.contributions[i].month.toUpperCase()  +" El 'Liquido Pagable' + 'Monto Ajuste' debe ser mayor ó igual al Monto de subsistencia que son "+this.livelihood_amount+" Bs.")
+              break;
+            }
+          }
+            if(continuar == true && !this.type_sismu){
+              if(this.modalidad.procedure_type_id==12){
+                if(this.loan_detail.net_realizable_value >= this.intervalos.minimun_amoun){
+                   this.saveAdjustment()
+                  this.liquidCalificated()
+                  //this.getLoanDestiny()
+                  this.nextStep(1)
+                }else{
+                  this.toastr.error("El valor VNR debe ser mayor al monto minimo "+this.intervalos.minimun_amoun+ " correspondiente a la modalidad")
+                }
+              }else{
+                   this.saveAdjustment()
+                  this.liquidCalificated()
+                  //this.getLoanDestiny()
+                  this.nextStep(1)
+              }
+            }else if(continuar == true && this.type_sismu){
+              if(this.modalidad.procedure_type_id==12){
+                if(this.loan_detail.net_realizable_value >= this.intervalos.minimun_amoun){
+                  if(this.data_sismu.quota_sismu > 0){
+                     this.saveAdjustment()
+                    this.liquidCalificated()
+                    //this.getLoanDestiny()
+                    this.nextStep(1)
+                  }else{
+                    this.toastr.error("Introduzca la CUOTA del SISMU")
+                  }
+                }else{
+                  this.toastr.error("El valor VNR debe ser mayor al monto minimo "+this.intervalos.minimun_amoun+ " correspondiente a la modalidad")
+                }
+              }else{
+                  if(this.data_sismu.quota_sismu > 0){
+                     this.saveAdjustment()
+                    this.liquidCalificated()
+                    //this.getLoanDestiny()
+                    this.data_loan_parent_aux.estimated_quota= this.data_sismu.quota_sismu
+                    this.nextStep(1)
+                  }else{
+                    this.toastr.error("Introduzca la CUOTA del SISMU")
+                  }
+              }
+            }
+
+          //if((sum_payable_liquid + sum_adjustment_amount) >= this.livelihood_amount){
+           /*if(this.modalidad.procedure_type_id==10){
+            if((parseFloat(this.contributions[0].position_bonus)+ parseFloat(this.contributions[0].border_bonus)+ parseFloat(this.contributions[0].public_security_bonus)+ parseFloat(this.contributions[0].east_bonus)) < (parseFloat(this.contributions[0].payable_liquid) + parseFloat(this.contributions[1].payable_liquid) + parseFloat(this.contributions[3].payable_liquid) ) ){
+              if(parseFloat(this.contributions[0].payable_liquid) > 0 && parseFloat(this.payable_liquid[1]) > 0 && parseFloat(this.payable_liquid[2]) > 0 ){
                 if(!this.type_sismu){
                   if(this.modalidad.procedure_type_id==12){
                     if(this.loan_detail.net_realizable_value >= this.intervalos.minimun_amoun){
+                       this.saveAdjustment()
                       this.liquidCalificated()
                       //this.getLoanDestiny()
                       this.nextStep(1)
@@ -942,6 +1031,7 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
                       this.toastr.error("El valor VNR debe ser mayor al monto minimo "+this.intervalos.minimun_amoun+ " correspondiente a la modalidad")
                     }
                   }else{
+                       this.saveAdjustment()
                       this.liquidCalificated()
                       //this.getLoanDestiny()
                       this.nextStep(1)
@@ -950,6 +1040,7 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
                   if(this.modalidad.procedure_type_id==12){
                     if(this.loan_detail.net_realizable_value >= this.intervalos.minimun_amoun){
                       if(this.data_sismu.quota_sismu > 0){
+                         this.saveAdjustment()
                         this.liquidCalificated()
                         //this.getLoanDestiny()
                         this.nextStep(1)
@@ -961,6 +1052,7 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
                     }
                   }else{
                       if(this.data_sismu.quota_sismu > 0){
+                         this.saveAdjustment()
                         this.liquidCalificated()
                         //this.getLoanDestiny()
                         this.data_loan_parent_aux.estimated_quota= this.data_sismu.quota_sismu
@@ -976,59 +1068,25 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
             }else{
             this.toastr.error("La sumatoria de bonos debe ser menor al Liquido pagable")
             }
-          }else{
-          if((parseFloat(this.bonos[0])+ parseFloat(this.bonos[1])+ parseFloat(this.bonos[2])+ parseFloat(this.bonos[3])) < parseFloat(this.payable_liquid[0])){
-            if(!this.type_sismu){
-              if(this.modalidad.procedure_type_id==12){
-                if(this.loan_detail.net_realizable_value >= this.intervalos.minimun_amoun){
-                  this.liquidCalificated()
-                  //this.getLoanDestiny()
-                  this.nextStep(1)
-                }else{
-                  this.toastr.error("El valor VNR debe ser mayor al monto minimo "+this.intervalos.minimun_amoun+ " correspondiente a la modalidad")
-                }
-              }else{
-                  this.liquidCalificated()
-                  //this.getLoanDestiny()
-                  this.nextStep(1)
-              }
-            }else if(this.type_sismu){
-              if(this.modalidad.procedure_type_id==12){
-                if(this.loan_detail.net_realizable_value >= this.intervalos.minimun_amoun){
-                  if(this.data_sismu.quota_sismu > 0){
-                    this.liquidCalificated()
-                    //this.getLoanDestiny()
-                    this.nextStep(1)
-                  }else{
-                    this.toastr.error("Introduzca la CUOTA del SISMU")
-                  }
-                }else{
-                  this.toastr.error("El valor VNR debe ser mayor al monto minimo "+this.intervalos.minimun_amoun+ " correspondiente a la modalidad")
-                }
-              }else{
-                  if(this.data_sismu.quota_sismu > 0){
-                    this.liquidCalificated()
-                    //this.getLoanDestiny()
-                    this.data_loan_parent_aux.estimated_quota= this.data_sismu.quota_sismu
-                    this.nextStep(1)
-                  }else{
-                    this.toastr.error("Introduzca la CUOTA del SISMU")
-                  }
-              }
-            }
-            }else{
-            this.toastr.error("La sumatoria de bonos debe ser menor al Liquido pagable")
-          }
-          }
-        }else{
-          this.toastr.error("El Liquido Pagable debe ser mayor ó igual al Monto de subsistencia que son "+this.livelihood_amount+" Bs.")
-        }
+          }else{*/
+
+         // if((parseFloat(this.contributions[0].position_bonus)+ parseFloat(this.contributions[0].border_bonus)+ parseFloat(this.contributions[0].public_security_bonus)+ parseFloat(this.contributions[0].east_bonus)) < (parseFloat(this.contributions[0].payable_liquid) + parseFloat(this.contributions[0].adjustment_amount))){
+
+            //}else{
+            //this.toastr.error("La sumatoria de bonos debe ser menor al Liquido pagable")
+          //}
+          //}
+          //}else{
+          //this.toastr.error("El 'Liquido Pagable' + 'Monto Ajuste' debe ser mayor ó igual al Monto de subsistencia que son "+this.livelihood_amount+" Bs.")
+         // }
+
+
         }else{
           this.toastr.error("El afiliado no puede ser evaluado en esta modalidad")
         }
       }else{
         this.toastr.error("Seleccione una modalidad")
-      }*/
+      }
     },
     validateStepsTwo()
     {
