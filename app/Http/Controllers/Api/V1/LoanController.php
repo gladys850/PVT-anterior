@@ -1007,16 +1007,18 @@ class LoanController extends Controller
     /** @group Cobranzas
     * Cálculo de siguiente pago
     * Devuelve el número de cuota, días calculados, días de interés que alcanza a pagar con la cuota, días restantes por pagar, montos de interés, capital y saldo a capital.
-    * @urlParam loan required ID del préstamo. Example: 2
+    * @urlParam loan required ID del préstamo. Example: 41426
+    * @bodyParam affiliate_id integer required id del afiliado. Example: 2020-04-15
     * @bodyParam estimated_date date Fecha para el cálculo del interés. Example: 2020-04-15
     * @bodyParam estimated_quota float Monto para el cálculo. Example: 650
-    * @bodyParam liquidate boolean Booleano para hacer el cálculo con el monto máximo que liquidará el préstamo. Example: false
+    * @bodyParam liquidate boolean required Booleano para hacer el cálculo con el monto máximo que liquidará el préstamo. Example: false
+    * @bodyParam paid_by enum required Pago realizado por Titular(T) o Garante(G). Example: T
     * @authenticated
     * @responseFile responses/loan/get_next_payment.200.json
     */
     public function get_next_payment(LoanPaymentForm $request, Loan $loan)
-    { 
-        return $loan->next_payment2($request->input('estimated_date', null), $request->input('estimated_quota', null), $request->input('liquidate', false), $request->input('paid_by', "T"));
+    {
+        return $loan->next_payment2($request->input('estimated_date', null), $request->input('estimated_quota', null), $request->input('liquidate', false), $request->input('paid_by', "T"), $request->input('affiliate_id'));
     }
 
     /** @group Cobranzas
