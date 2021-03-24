@@ -342,6 +342,23 @@ class Loan extends Model
         }
         $total_interests += $quota->penal_remaining;
 
+        // Interes acumulado corriente
+        
+        if($quota->interest_remaining > 0){
+            if($amount >= $quota->interest_remaining){
+                $amount = $amount - $quota->interest_remaining;
+                //$quota->interest_remaining = 0;
+            }
+            else{
+                $quota->interest_remaining = $amount;
+                $amount = 0;
+            }
+        }
+        else{
+            $quota->interest_remaining = 0;
+        }
+        $total_interests += $quota->interest_remaining;
+
         // Interés penal 
 
         if($quota->estimated_days->penal >= $grace_period){
@@ -362,24 +379,6 @@ class Loan extends Model
             }
             $total_interests += $quota->penal_payment;
         }
-
-        // Interes acumulado corriente
-        //return $total_amount;
-        
-        if($quota->interest_remaining > 0){
-            if($amount >= $quota->interest_remaining){
-                $amount = $amount - $quota->interest_remaining;
-                //$quota->interest_remaining = 0;
-            }
-            else{
-                $quota->interest_remaining = $amount;
-                $amount = 0;
-            }
-        }
-        else{
-            $quota->interest_remaining = 0;
-        }
-        $total_interests += $quota->interest_remaining;
 
 
         // Interés corriente

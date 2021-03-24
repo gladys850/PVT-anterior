@@ -1333,7 +1333,8 @@ class LoanController extends Controller
                 $message['percentage'] = true;
             }
         }
-        if (count($loan->getPlanAttribute())>3){
+        if($loan->balance >= ($loan->estimated_quota*3)){
+        //if (count($loan->getPlanAttribute())>3){
             $message['paids'] = true;
         }
         else{
