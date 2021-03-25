@@ -494,10 +494,19 @@ export default {
         let res = await axios.get(`module/${this.modulo}/modality_loan`)
         this.modalities = res.data
         //Verifica si es refinaciamiento o reprogramación para no mostrar Anticipo
-        if(this.refinancing || this.reprogramming){
+        if(this.refinancing){
           let modalities_aux=[]
           for(let i = 0; i < this.modalities.length; i++ ){
             if(this.modalities[i].name != "Préstamo Anticipo"){
+              modalities_aux.push(this.modalities[i])
+            }
+          }
+          this.modalities = modalities_aux
+        }
+        else if(this.reprogramming){
+          let modalities_aux=[]
+          for(let i = 0; i < this.modalities.length; i++ ){
+            if(this.modalities[i].name != "Préstamo Anticipo" && this.modalities[i].name != 'Préstamo a corto plazo' ){
               modalities_aux.push(this.modalities[i])
             }
           }
@@ -661,7 +670,7 @@ export default {
  
       this.contributions.forEach(async (item, i) => {         
       array_contributions.push({
-          payable_liquid: this.contributions[i].payable_liquid  + this.contributions[i].adjustment_amount,
+          payable_liquid: parseFloat(this.contributions[i].payable_liquid)  + parseFloat(this.contributions[i].adjustment_amount),
           position_bonus: this.contributions[i].position_bonus,
           border_bonus: this.contributions[i].border_bonus,
           public_security_bonus: this.contributions[i].public_security_bonus,
