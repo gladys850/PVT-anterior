@@ -383,8 +383,9 @@ class LoanPaymentController extends Controller
         if($estimated_days == null){
             $num_quota=$loan_payment->quota_number;
             if($num_quota == 1){
-                $disbursement_date=$loan->disbursement_date;
-                $disbursement_date=CarbonImmutable::parse($disbursement_date);
+                $estimated_days['previous_balance']=$loan->amount_approved;
+                $estimated_days['current_balance']=$estimated_days['previous_balance']-$loan_payment->capital_payment; 
+                $disbursement_date=CarbonImmutable::parse($loan->disbursement_date);
                 $estimated_date=$loan->payments->first()->estimated_date;
                 $estimated_date=CarbonImmutable::parse($estimated_date);
                 $estimated_days['current'] = $disbursement_date->diffInDays($estimated_date);
@@ -392,7 +393,10 @@ class LoanPaymentController extends Controller
                     $estimated_days['penal'] = $estimated_days['current'] - $global_parameter->days_current_interest;
                 else
                     $estimated_days['penal'] = 0;
-            }else{         
+            }else{               
+                $capital_paid = LoanPayment::where('loan_id',$loan->id)->where('quota_number','<',$num_quota)->sum('capital_payment');
+                $estimated_days['previous_balance']=$loan->amount_approved-$capital_paid;
+                $estimated_days['current_balance']=$estimated_days['previous_balance']-$loan_payment->capital_payment;              
                 $reg_payment=$loan->payments->where('quota_number', ($num_quota-1));
                 $reg_payment=CarbonImmutable::parse($reg_payment->first()->estimated_date);
                 $estimated_days['current'] = $reg_payment->diffInDays(CarbonImmutable::parse($loan->payments->first()->estimated_date));
@@ -401,7 +405,7 @@ class LoanPaymentController extends Controller
                 else
                 $estimated_days['penal'] = 0;
             }
-            }
+        }
         $persons = collect([]);
         foreach ($lenders as $lender){ 
             $persons->push([
