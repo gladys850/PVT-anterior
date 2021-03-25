@@ -20,6 +20,7 @@ class AddressController extends Controller
     * @bodyParam number_address integer Número de casa. Example: 45
     * @bodyParam latitude float Latitud de acuerdo a OpenStreet Maps. Example: -16.495244595604056
     * @bodyParam longitude float Longitud de acuerdo a OpenStreet Maps. Example: -68.13450627055796
+    * @bodyParam description string Los prestamos se añade en este campo toda la direccion. Example: Avenida heroes del Mar nro 100
     * @authenticated
     * @responseFile responses/address/store.200.json
     */
@@ -38,6 +39,7 @@ class AddressController extends Controller
     * @bodyParam number_address integer Número de casa. Example: 45
     * @bodyParam latitude float Latitud de acuerdo a OpenStreet Maps. Example: -16.495244595604056
     * @bodyParam longitude float Longitud de acuerdo a OpenStreet Maps. Example: -68.13450627055796
+    * @bodyParam description string Los prestamos se añade en este campo toda la direccion. Example: Avenida heroes del Mar nro 100
     * @authenticated
     * @responseFile responses/address/update.200.json
     */
