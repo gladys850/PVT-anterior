@@ -406,7 +406,7 @@ class CalculatorController extends Controller
             /** end m */
             $cosigner=array(
                 "affiliate_id" => $liquid_calculated["affiliate_id"],
-                "quota_calculated_estimated" => $estimated_quota,
+                "quota_calculated_estimated" => Util::round($estimated_quota),
                 'payment_percentage'=> round($estimated_quota / $ce * 100),
                 'liquid_qualification_calculated' => $liquid_calculated["liquid_qualification_calculated"],
                 'is_valid' => $valuate_affiliate // validar si supera al monto de subsistencia
@@ -428,8 +428,8 @@ class CalculatorController extends Controller
     //colocado de la cabecera al array
     private function header($ce,$ie,$ms,$plm,$evaluate,$liquid_qualification_calculated,$amount_maximum_suggested,$maximum_suggested_valid,$cosigners){
         $response=array(
-            "quota_calculated_estimated_total"=>round($ce,2),
-            "indebtedness_calculated_total"=>round($ie,2),
+            "quota_calculated_estimated_total"=>Util::round($ce),
+            "indebtedness_calculated_total"=>Util::round($ie),
             "amount_requested"=>$ms,
             "months_term"=>$plm,
             "is_valid"=>$evaluate,

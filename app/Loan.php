@@ -274,7 +274,7 @@ class Loan extends Model
         return Util::round($monthly_interest * $this->amount_approved / (1 - 1 / pow((1 + $monthly_interest), $this->loan_term)));
     }
 
-    public function next_payment2($estimated_date = null, $amount = null, $liquidate = null, $paid_by = null)
+    public function next_payment2($estimated_date = null, $amount = null, $liquidate = null, $paid_by = null, $affiliate_id)
     {
         $grace_period = LoanGlobalParameter::latest()->first()->grace_period;
             $total_interests = 0;
@@ -285,7 +285,10 @@ class Loan extends Model
             } else {
                 if (!$amount){
                     $amount = Util::round($this->estimated_quota);
-                    
+                    if($paid_by == "T")
+                        $amount = $amount*($this->lenders->where('id',$affiliate_id)->first()->pivot->payment_percentage)/100;
+                    else
+                        $amount = $amount*($this->guarantors->where('id',$affiliate_id)->first()->pivot->payment_percentage)/100;
                 }
             }
             $quota = new LoanPayment();
@@ -339,6 +342,23 @@ class Loan extends Model
         }
         $total_interests += $quota->penal_remaining;
 
+        // Interes acumulado corriente
+        
+        if($quota->interest_remaining > 0){
+            if($amount >= $quota->interest_remaining){
+                $amount = $amount - $quota->interest_remaining;
+                //$quota->interest_remaining = 0;
+            }
+            else{
+                $quota->interest_remaining = $amount;
+                $amount = 0;
+            }
+        }
+        else{
+            $quota->interest_remaining = 0;
+        }
+        $total_interests += $quota->interest_remaining;
+
         // Interés penal 
 
         if($quota->estimated_days->penal >= $grace_period){
@@ -359,24 +379,6 @@ class Loan extends Model
             }
             $total_interests += $quota->penal_payment;
         }
-
-        // Interes acumulado corriente
-        //return $total_amount;
-        
-        if($quota->interest_remaining > 0){
-            if($amount >= $quota->interest_remaining){
-                $amount = $amount - $quota->interest_remaining;
-                //$quota->interest_remaining = 0;
-            }
-            else{
-                $quota->interest_remaining = $amount;
-                $amount = 0;
-            }
-        }
-        else{
-            $quota->interest_remaining = 0;
-        }
-        $total_interests += $quota->interest_remaining;
 
 
         // Interés corriente
