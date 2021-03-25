@@ -260,12 +260,24 @@ class LoanController extends Controller
         //rehacer préstamo
         if($request->has('remake_loan_id')&& $request->remake_loan_id != null){
             $remake_loan = Loan::find($request->remake_loan_id);
-            //$loan->code=$remake_loan->code;
-            //$loan->update();
             $this->destroyAll($remake_loan);
             $this->happenRecordLoan($remake_loan,$loan->id);
+            Util::save_record($loan, 'datos-de-un-tramite', Util::concat_action($loan,'rehízo préstamo: '.$loan->code));
         }
 
+        //Etiqueta Sismu 
+        $user = User::whereUsername('admin')->first();
+        $sismu_tag = Tag::whereSlug('sismu')->first();
+        if(empty($loan->parent_loan_id)){
+            if($loan->parent_reason == 'REFINANCIAMIENTO' || $loan->parent_reason == 'REPROGRAMACIÓN'){
+                $loan ->tags()->detach($sismu_tag);
+                $loan ->tags()->attach([$sismu_tag->id => [
+                    'user_id' => $user->id,
+                    'date' => Carbon::now()
+                ]]);
+                Util::save_record($loan, 'datos-de-un-tramite', Util::concat_action($loan,'etiquetado: Préstamo proveniente del Sismu'));
+            } 
+        }
         // Generar PDFs
         $file_name = implode('_', ['solicitud', 'prestamo', $loan->code]) . '.pdf';
         if(Auth::user()->can('print-contract-loan')){
@@ -376,13 +388,7 @@ class LoanController extends Controller
                             'user_id' => $user->id,
                             'date' => Carbon::now()
                         ]]);
-                        foreach ($parent_loan->lenders as $lender) {
-                            $lender->records()->create([
-                                'user_id' => $user->id,
-                                'record_type_id' => RecordType::whereName('etiquetas')->first()->id,
-                                'action' => 'etiquetó  el prestamo como refinanciado'
-                            ]);
-                        }
+                    Util::save_record($parent_loan, 'datos-de-un-tramite', Util::concat_action($parent_loan,'etiquetado: Préstamo refinanciado'));
                 } 
                 if($loan->parent_reason == 'REPROGRAMACIÓN'){
                         $parent_loan ->tags()->detach($reprogramming_tag);
@@ -390,15 +396,8 @@ class LoanController extends Controller
                             'user_id' => $user->id,
                             'date' => Carbon::now()
                         ]]);
-                        foreach ($parent_loan->lenders as $lender) {
-                            $lender->records()->create([
-                                'user_id' => $user->id,
-                                'record_type_id' => RecordType::whereName('etiquetas')->first()->id,
-                                'action' => 'etiquetó  el prestamo como reprogramado'
-                            ]);
-                        }
+                    Util::save_record($parent_loan, 'datos-de-un-tramite', Util::concat_action($parent_loan,'etiquetado: Préstamo reprogramado'));
                 }
-           
         }
         $saved = $this->save_loan($request, $loan);
         return $saved->loan;
@@ -1334,7 +1333,7 @@ class LoanController extends Controller
             }
         }
         if($loan->balance >= ($loan->estimated_quota*3)){
-        //if (count($loan->getPlanAttribute())>3){
+            //if (count($loan->getPlanAttribute())>3){
             $message['paids'] = true;
         }
         else{
@@ -1412,7 +1411,13 @@ class LoanController extends Controller
             
             if($loan->submitted_documents) $loan->submitted_documents()->detach();
 
-            $loan->forceDelete();
+            //$loan->forceDelete();
+            $options=[$loan->id];
+            $loan = Loan::withoutEvents(function() use($options){
+                $loan = Loan::findOrFail($options[0])->forceDelete();
+                return $loan;
+            }
+        );
 
        }else{
         abort(403, 'No se puede reahacer el préstamo existen registros de cobros');

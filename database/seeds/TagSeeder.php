@@ -26,6 +26,9 @@ class TagSeeder extends Seeder
             ],[
                 'name' => 'Préstamo reprogramado',
                 'shortened' => 'Reprogramación',
+            ],[
+                'name' => 'Préstamo Sismu',
+                'shortened' => 'Sismu',
             ]
         ];
 
