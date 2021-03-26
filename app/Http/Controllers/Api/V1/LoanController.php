@@ -861,34 +861,38 @@ class LoanController extends Controller
     */
     public function print_plan(Request $request, Loan $loan, $standalone = true)
     {
-        $procedure_modality = $loan->modality;
-        $lenders = [];
-        $is_dead = false;
-        foreach ($loan->lenders as $lender) {
-            array_push($lenders, self::verify_spouse_disbursable($lender)->disbursable);
-            //$lenders[] = self::verify_spouse_disbursable($lender)->disbursable;
-            if($lender->dead) $is_dead = true;
+        if($loan->disbursement_date){
+            $procedure_modality = $loan->modality;
+            $lenders = [];
+            $is_dead = false;
+            foreach ($loan->lenders as $lender) {
+                array_push($lenders, self::verify_spouse_disbursable($lender)->disbursable);
+                //$lenders[] = self::verify_spouse_disbursable($lender)->disbursable;
+                if($lender->dead) $is_dead = true;
+            }
+            $data = [
+                'header' => [
+                    'direction' => 'DIRECCIÓN DE ESTRATEGIAS SOCIALES E INVERSIONES',
+                    'unity' => 'UNIDAD DE INVERSIÓN EN PRÉSTAMOS',
+                    'table' => [
+                        ['Tipo', $loan->modality->procedure_type->second_name],
+                        ['Modalidad', $loan->modality->shortened],
+                        ['Usuario', Auth::user()->username],
+                    ]
+                ],
+                'title' => 'PLAN DE PAGOS',
+                'loan' => $loan,
+                'lenders' => collect($lenders),
+                'is_dead'=> $is_dead
+            ];
+            $information_loan= $this->get_information_loan($loan);
+            $file_name = implode('_', ['plan', $procedure_modality->shortened, $loan->code]) . '.pdf';
+            $view = view()->make('loan.payments.payment_plan')->with($data)->render();
+            if ($standalone) return Util::pdf_to_base64([$view], $file_name, $information_loan, 'legal', $request->copies ?? 1);
+            return $view;
+        }else{
+            return "Prestamo no desembolsado";
         }
-        $data = [
-            'header' => [
-                'direction' => 'DIRECCIÓN DE ESTRATEGIAS SOCIALES E INVERSIONES',
-                'unity' => 'UNIDAD DE INVERSIÓN EN PRÉSTAMOS',
-                'table' => [
-                    ['Tipo', $loan->modality->procedure_type->second_name],
-                    ['Modalidad', $loan->modality->shortened],
-                    ['Usuario', Auth::user()->username],
-                ]
-            ],
-            'title' => 'PLAN DE PAGOS',
-            'loan' => $loan,
-            'lenders' => collect($lenders),
-            'is_dead'=> $is_dead
-        ];
-        $information_loan= $this->get_information_loan($loan);
-        $file_name = implode('_', ['plan', $procedure_modality->shortened, $loan->code]) . '.pdf';
-        $view = view()->make('loan.payments.payment_plan')->with($data)->render();
-        if ($standalone) return Util::pdf_to_base64([$view], $file_name, $information_loan, 'legal', $request->copies ?? 1);
-        return $view;
     }
 
     /**
@@ -1036,7 +1040,7 @@ class LoanController extends Controller
     public function set_payment(LoanPaymentForm $request, Loan $loan)
     {
         if($loan->balance!=0){
-            $payment = $loan->next_payment2($request->input('estimated_date', null), $request->input('estimated_quota', null), $request->input('liquidate', false));
+            $payment = $loan->next_payment2($request->input('estimated_date', null), $request->input('estimated_quota', null), $request->input('liquidate', false), $request->input('paid_by'), $request->input('affiliate_id'));
             $payment->description = $request->input('description', null);
             $payment->state_id = LoanState::whereName('Pendiente de Pago')->first()->id;
             $payment->role_id = Role::whereName('PRE-cobranzas')->first()->id;
@@ -1280,32 +1284,36 @@ class LoanController extends Controller
 
     public function print_kardex(Request $request, Loan $loan, $standalone = true)
     {
-        $procedure_modality = $loan->modality;
-        $lenders = [];
-        foreach ($loan->lenders as $lender) {
-            $lenders[] = self::verify_spouse_disbursable($lender)->disbursable;
+        if($loan->disbursement_date){
+            $procedure_modality = $loan->modality;
+            $lenders = [];
+            foreach ($loan->lenders as $lender) {
+                $lenders[] = self::verify_spouse_disbursable($lender)->disbursable;
+            }
+            $data = [
+                'header' => [
+                    'direction' => 'DIRECCIÓN DE ESTRATEGIAS SOCIALES E INVERSIONES',
+                    'unity' => 'UNIDAD DE INVERSIÓN EN PRÉSTAMOS',
+                    'table' => [
+                        ['Tipo', $loan->modality->procedure_type->second_name],
+                        ['Modalidad', $loan->modality->shortened],
+                        ['Fecha', Carbon::now()->format('d/m/Y')],
+                        ['Hora', Carbon::now()->format('h:m:s a')],
+                        ['Usuario', Auth::user()->username]
+                    ]
+                ],
+                'title' => 'KARDEX DE PAGOS',
+                'loan' => $loan,
+                'lenders' => collect($lenders)
+            ];
+            $information_loan= $this->get_information_loan($loan);
+            $file_name = implode('_', ['kardex', $procedure_modality->shortened, $loan->code]) . '.pdf';
+            $view = view()->make('loan.payments.payment_kardex')->with($data)->render();
+            if ($standalone) return Util::pdf_to_base64([$view], $file_name, $information_loan, 'legal', $request->copies ?? 1);
+            return $view;
+        }else{
+            return "prestamo no desembolsado";
         }
-        $data = [
-            'header' => [
-                'direction' => 'DIRECCIÓN DE ESTRATEGIAS SOCIALES E INVERSIONES',
-                'unity' => 'UNIDAD DE INVERSIÓN EN PRÉSTAMOS',
-                'table' => [
-                    ['Tipo', $loan->modality->procedure_type->second_name],
-                    ['Modalidad', $loan->modality->shortened],
-                    ['Fecha', Carbon::now()->format('d/m/Y')],
-                    ['Hora', Carbon::now()->format('h:m:s a')],
-                    ['Usuario', Auth::user()->username]
-                ]
-            ],
-            'title' => 'KARDEX DE PAGOS',
-            'loan' => $loan,
-            'lenders' => collect($lenders)
-        ];
-        $information_loan= $this->get_information_loan($loan);
-        $file_name = implode('_', ['kardex', $procedure_modality->shortened, $loan->code]) . '.pdf';
-        $view = view()->make('loan.payments.payment_kardex')->with($data)->render();
-        if ($standalone) return Util::pdf_to_base64([$view], $file_name, $information_loan, 'legal', $request->copies ?? 1);
-        return $view;
     }
 
     /**
@@ -1436,5 +1444,9 @@ class LoanController extends Controller
         return $id_new_loan;
 
     }
+    
+    //limpiar datos sin relacion
+    public function clear_data_base(){
 
+    }
 }
