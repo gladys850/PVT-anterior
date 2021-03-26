@@ -87,7 +87,7 @@
 
                     <v-tooltip
                     left   
-                    v-if="item.procedure_modality_id <= 41"            
+                    v-if="item.procedure_modality_id >= 41"            
                     >
                       <template v-slot:activator="{ on }">
                         <v-btn
