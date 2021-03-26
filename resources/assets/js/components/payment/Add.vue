@@ -45,8 +45,8 @@
              <v-col  cols="2" v-show="!ver">
               {{'CUOTA:'+this.loan.estimated_quota}}
             </v-col>
-              <v-col  cols="4" v-show="ver" class='mb-0 pb-0'>
-                              <span>
+            <v-col  cols="4" v-show="ver" class='mb-0 pb-0'>
+                <span>
                 <v-tooltip
                 left          
                 >
