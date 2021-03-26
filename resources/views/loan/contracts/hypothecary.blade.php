@@ -31,7 +31,7 @@ if(($modality->name == 'Refinanciamiento de Préstamo con garantía hipotecaria 
             @php ($lender = $lenders[0]->disbursable)
             @php ($male_female = Util::male_female($lender->gender))
             <li><span>
-                <b> {{ $lender->full_name }}, </b> con C.I. {{ $lender->identity_card_ext }}, {{ $lender->civil_status_gender }}, mayor de edad, hábil por derecho, natural de {{ $lender->city_birth->name }}, vecin{{ $male_female }} de {{ $lender->city_identity_card->name }} y con domicilio especial en {{ $lender->address->full_address }}, en adelante denominad{{ $male_female }} DEUDOR{{ $lender->gender == 'M' ? '' : 'A' }} .
+                <b> {{ $lender->full_name }}, </b> con C.I. {{ $lender->identity_card_ext}}, {{ $lender->civil_status_gender }}, mayor de edad, hábil por derecho, natural de {{ $lender->city_birth->name }}, vecin{{ $male_female }} de {{ $lender->address->cityName() }} y con domicilio especial en {{ $lender->address->full_address }}, en adelante denominad{{ $male_female }} DEUDOR{{ $lender->gender == 'M' ? '' : 'A' }} .
             </span>
             </li>
             @endif
@@ -43,24 +43,24 @@ if(($modality->name == 'Refinanciamiento de Préstamo con garantía hipotecaria 
                 @if($loan->disbursable->id == $lenders[0]->disbursable->id)
                 <li>
                     <span>
-                        <b>{{ $lender_one->full_name }}, </b> con C.I. {{ $lender_one->identity_card_ext }}, {{ $lender_one->civil_status_gender }}, mayor de edad, hábil por derecho, natural de {{ $lender_one->city_birth->name }}, vecin{{ $male_female_one }} de {{ $lender_one->city_identity_card->name }} y con domicilio especial en {{ $lender_one->address->full_address }}, en adelante denominad{{ $male_female_one }} DEUDOR{{ $lender_one->gender == 'M' ? '' : 'A' }}.
+                        <b>{{ $lender_one->full_name }}, </b> con C.I. {{ $lender_one->identity_card_ext }}, {{ $lender_one->civil_status_gender }}, mayor de edad, hábil por derecho, natural de {{ $lender_one->city_birth->name }}, vecin{{ $male_female_one }} de {{ $lender_one->address->cityName() }} y con domicilio especial en {{ $lender_one->address->full_address }}, en adelante denominad{{ $male_female_one }} DEUDOR{{ $lender_one->gender == 'M' ? '' : 'A' }}.
                     </span>
                 </li>
                 <li>
                 <span>
-                    <b>{{ $lender_two->full_name }}, </b> con C.I. {{ $lender_one->identity_card_ext }}, {{ $lender_one->civil_status_gender }}, mayor de edad, hábil por derecho, natural de {{ $lender_two->city_birth->name }}, vecin{{ $male_female_two }} de {{ $lender_two->city_identity_card->name }} y con domicilio especial en {{ $lender_two->address->full_address }}, en adelante denominad{{ $male_female_two }} CODEUDOR{{ $lender_two->gender == 'M' ? '' : 'A' }}.
+                    <b>{{ $lender_two->full_name }}, </b> con C.I. {{ $lender_one->identity_card_ext }}, {{ $lender_one->civil_status_gender }}, mayor de edad, hábil por derecho, natural de {{ $lender_two->city_birth->name }}, vecin{{ $male_female_two }} de {{ $lender_two->address->cityName() }} y con domicilio especial en {{ $lender_two->address->full_address }}, en adelante denominad{{ $male_female_two }} CODEUDOR{{ $lender_two->gender == 'M' ? '' : 'A' }}.
                 </span>
                 </li>
                 @endif
                 @if($loan->disbursable->id == $lenders[1]->disbursable->id)
                 <li>
                     <span>
-                        <b>{{ $lender_two->full_name }}, </b> con C.I. {{ $lender_two->identity_card_ext }}, {{ $lender_two->civil_status_gender }}, mayor de edad, hábil por derecho, natural de {{ $lender_two->city_birth->name }}, vecin{{ $male_female_two }} de {{ $lender_two->city_identity_card->name }} y con domicilio especial en {{ $lender_two->address->full_address }}, en adelante denominad{{ $male_female_two }} DEUDOR{{ $lender_two->gender == 'M' ? '' : 'A' }}.
+                        <b>{{ $lender_two->full_name }}, </b> con C.I. {{ $lender_two->identity_card_ext }}, {{ $lender_two->civil_status_gender }}, mayor de edad, hábil por derecho, natural de {{ $lender_two->city_birth->name }}, vecin{{ $male_female_two }} de {{ $lender_two->address->cityName() }} y con domicilio especial en {{ $lender_two->address->full_address }}, en adelante denominad{{ $male_female_two }} DEUDOR{{ $lender_two->gender == 'M' ? '' : 'A' }}.
                     </span>
                 </li>
                 <li>
                     <span>
-                        <b>{{ $lender_one->full_name }}, </b> con C.I. {{ $lender_one->identity_card_ext }}, {{ $lender_one->civil_status_gender }}, mayor de edad, hábil por derecho, natural de {{ $lender_one->city_birth->name }}, vecin{{ $male_female_one }} de {{ $lender_one->city_identity_card->name }} y con domicilio especial en {{ $lender_one->address->full_address }}, en adelante denominad{{ $male_female_one }} CODEUDOR{{ $lender_one->gender == 'M' ? '' : 'A' }}.
+                        <b>{{ $lender_one->full_name }}, </b> con C.I. {{ $lender_one->identity_card_ext }}, {{ $lender_one->civil_status_gender }}, mayor de edad, hábil por derecho, natural de {{ $lender_one->city_birth->name }}, vecin{{ $male_female_one }} de {{ $lender_one->address->cityName() }} y con domicilio especial en {{ $lender_one->address->full_address }}, en adelante denominad{{ $male_female_one }} CODEUDOR{{ $lender_one->gender == 'M' ? '' : 'A' }}.
                     </span>
                 </li>
                 @endif
@@ -70,7 +70,7 @@ if(($modality->name == 'Refinanciamiento de Préstamo con garantía hipotecaria 
             @php ($male_female_cosigner = Util::male_female($cosigner->gender))
             <li>
                 <span>
-                    <b>{{ $cosigner->full_name }}</b> con C.I. {{ $cosigner->identity_card_ext}}, {{ $cosigner->civil_status_gender }},  mayor de edad, hábil por derecho, natural de XXXX vecin{{ $male_female_cosigner }} de {{ $cosigner->city_identity_card->name }} y con domicilio especial en {{ $cosigner->address }}, en adelante denominad{{ $male_female_cosigner }} CODEUDOR{{ $cosigner->gender == 'M' ? '' : 'A' }}.
+                    <b>{{ $cosigner->full_name }}</b> con C.I. {{ $cosigner->identity_card_ext}}, {{ $cosigner->civil_status_gender }},  mayor de edad, hábil por derecho, natural de XXXX vecin{{ $male_female_cosigner }} de {{ $cosigner->address->cityName() }} y con domicilio especial en {{ $cosigner->address }}, en adelante denominad{{ $male_female_cosigner }} CODEUDOR{{ $cosigner->gender == 'M' ? '' : 'A' }}.
                 </span>
             </li>
             @endforeach
@@ -391,7 +391,7 @@ if(($modality->name == 'Refinanciamiento de Préstamo con garantía hipotecaria 
             @php ($lender = $lenders[0]->disbursable)
             @php ($male_female = Util::male_female($lender->gender))
             <li><span>
-                <b> {{ $lender->full_name }}, </b> con C.I. {{ $lender->identity_card_ext }}, {{ $lender->civil_status_gender }}, mayor de edad, hábil por derecho, natural de {{ $lender->city_birth->name }}, vecin{{ $male_female }} de {{ $lender->city_identity_card->name }} y con domicilio especial en {{ $lender->address->full_address }}, en adelante denominad{{ $male_female }} DEUDOR{{ $lender->gender == 'M' ? '' : 'A' }} .
+                <b> {{ $lender->full_name }}, </b> con C.I. {{ $lender->identity_card_ext }}, {{ $lender->civil_status_gender }}, mayor de edad, hábil por derecho, natural de {{ $lender->city_birth->name }}, vecin{{ $male_female }} de {{ $lender->address->cityName() }} y con domicilio especial en {{ $lender->address->full_address }}, en adelante denominad{{ $male_female }} DEUDOR{{ $lender->gender == 'M' ? '' : 'A' }} .
             </span>
             </li>
             @endif
@@ -403,24 +403,24 @@ if(($modality->name == 'Refinanciamiento de Préstamo con garantía hipotecaria 
                 @if($loan->disbursable->id == $lenders[0]->disbursable->id)
                 <li>
                     <span>
-                        <b>{{ $lender_one->full_name }}, </b> con C.I. {{ $lender_one->identity_card_ext }}, {{ $lender_one->civil_status_gender }}, mayor de edad, hábil por derecho, natural de {{ $lender_one->city_birth->name }}, vecin{{ $male_female_one }} de {{ $lender_one->city_identity_card->name }} y con domicilio especial en {{ $lender_one->address->full_address }}, en adelante denominad{{ $male_female_one }} DEUDOR{{ $lender_one->gender == 'M' ? '' : 'A' }}.
+                        <b>{{ $lender_one->full_name }}, </b> con C.I. {{ $lender_one->identity_card_ext }}, {{ $lender_one->civil_status_gender }}, mayor de edad, hábil por derecho, natural de {{ $lender_one->city_birth->name }}, vecin{{ $male_female_one }} de {{ $lender_one->address->cityName() }} y con domicilio especial en {{ $lender_one->address->full_address }}, en adelante denominad{{ $male_female_one }} DEUDOR{{ $lender_one->gender == 'M' ? '' : 'A' }}.
                     </span>
                 </li>
                 <li>
                 <span>
-                    <b>{{ $lender_two->full_name }}, </b> con C.I. {{ $lender_one->identity_card_ext }}, {{ $lender_one->civil_status_gender }}, mayor de edad, hábil por derecho, natural de {{ $lender_two->city_birth->name }}, vecin{{ $male_female_two }} de {{ $lender_two->city_identity_card->name }} y con domicilio especial en {{ $lender_two->address->full_address }}, en adelante denominad{{ $male_female_two }} CODEUDOR{{ $lender_two->gender == 'M' ? '' : 'A' }}.
+                    <b>{{ $lender_two->full_name }}, </b> con C.I. {{ $lender_one->identity_card_ext }}, {{ $lender_one->civil_status_gender }}, mayor de edad, hábil por derecho, natural de {{ $lender_two->city_birth->name }}, vecin{{ $male_female_two }} de {{ $lender_two->address->cityName() }} y con domicilio especial en {{ $lender_two->address->full_address }}, en adelante denominad{{ $male_female_two }} CODEUDOR{{ $lender_two->gender == 'M' ? '' : 'A' }}.
                 </span>
                 </li>
                 @endif
                 @if($loan->disbursable->id == $lenders[1]->disbursable->id)
                 <li>
                     <span>
-                        <b>{{ $lender_two->full_name }}, </b> con C.I. {{ $lender_two->identity_card_ext }}, {{ $lender_two->civil_status_gender }}, mayor de edad, hábil por derecho, natural de {{ $lender_two->city_birth->name }}, vecin{{ $male_female_two }} de {{ $lender_two->city_identity_card->name }} y con domicilio especial en {{ $lender_two->address->full_address }}, en adelante denominad{{ $male_female_two }} DEUDOR{{ $lender_two->gender == 'M' ? '' : 'A' }}.
+                        <b>{{ $lender_two->full_name }}, </b> con C.I. {{ $lender_two->identity_card_ext }}, {{ $lender_two->civil_status_gender }}, mayor de edad, hábil por derecho, natural de {{ $lender_two->city_birth->name }}, vecin{{ $male_female_two }} de {{ $lender_two->address->cityName() }} y con domicilio especial en {{ $lender_two->address->full_address }}, en adelante denominad{{ $male_female_two }} DEUDOR{{ $lender_two->gender == 'M' ? '' : 'A' }}.
                     </span>
                 </li>
                 <li>
                     <span>
-                        <b>{{ $lender_one->full_name }}, </b> con C.I. {{ $lender_one->identity_card_ext }}, {{ $lender_one->civil_status_gender }}, mayor de edad, hábil por derecho, natural de {{ $lender_one->city_birth->name }}, vecin{{ $male_female_one }} de {{ $lender_one->city_identity_card->name }} y con domicilio especial en {{ $lender_one->address->full_address }}, en adelante denominad{{ $male_female_one }} CODEUDOR{{ $lender_one->gender == 'M' ? '' : 'A' }}.
+                        <b>{{ $lender_one->full_name }}, </b> con C.I. {{ $lender_one->identity_card_ext }}, {{ $lender_one->civil_status_gender }}, mayor de edad, hábil por derecho, natural de {{ $lender_one->city_birth->name }}, vecin{{ $male_female_one }} de {{ $lender_one->address->cityName() }} y con domicilio especial en {{ $lender_one->address->full_address }}, en adelante denominad{{ $male_female_one }} CODEUDOR{{ $lender_one->gender == 'M' ? '' : 'A' }}.
                     </span>
                 </li>
                 @endif
@@ -430,7 +430,7 @@ if(($modality->name == 'Refinanciamiento de Préstamo con garantía hipotecaria 
             @php ($male_female_cosigner = Util::male_female($cosigner->gender))
             <li>
                 <span>
-                    <b>{{ $cosigner->full_name }}</b> con C.I. {{ $cosigner->identity_card_ext}}, {{ $cosigner->civil_status_gender }},  mayor de edad, hábil por derecho, natural de XXXX vecin{{ $male_female_cosigner }} de {{ $cosigner->city_identity_card->name }} y con domicilio especial en {{ $cosigner->address }}, en adelante denominad{{ $male_female_cosigner }} CODEUDOR{{ $cosigner->gender == 'M' ? '' : 'A' }}.
+                    <b>{{ $cosigner->full_name }}</b> con C.I. {{ $cosigner->identity_card_ext}}, {{ $cosigner->civil_status_gender }},  mayor de edad, hábil por derecho, natural de XXXX vecin{{ $male_female_cosigner }} de {{ $cosigner->address->cityName() }} y con domicilio especial en {{ $cosigner->address }}, en adelante denominad{{ $male_female_cosigner }} CODEUDOR{{ $cosigner->gender == 'M' ? '' : 'A' }}.
                 </span>
             </li>
             @endforeach
