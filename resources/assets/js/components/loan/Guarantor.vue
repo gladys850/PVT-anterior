@@ -633,6 +633,9 @@ ver()
               this.editar=false
               this.contribusion=true
               this.comision=false
+              this.pasivo=false
+              this.retroceder_meses=true
+              this.show_ajuste=true
               this.payable_liquid[0] = this.data_ballots[0].payable_liquid,
               this.bonos[0] = this.data_ballots[0].border_bonus,
               this.bonos[1] = this.data_ballots[0].east_bonus,
@@ -643,6 +646,7 @@ ver()
               this.contribusion=true
               this.comision=false
               this.show_ajuste=true
+              this.pasivo=false
               this.retroceder_meses=true
               this.payable_liquid[0] = this.payable_liquid[0]
               this.bonos[0] = this.bonos[0]
