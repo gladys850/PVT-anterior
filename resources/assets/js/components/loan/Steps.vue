@@ -970,8 +970,10 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
               (parseFloat(this.contributions[i].payable_liquid) + 
               parseFloat(this.contributions[i].adjustment_amount))){
                 continuar = true
-                if((continuar == true) && !(this.contributions[i].adjustment_amount > 0 && 
-                  (this.contributions[i].adjustment_description == null || this.contributions[i].adjustment_description == ''))){
+                if((continuar == true) && 
+                !(this.contributions[i].adjustment_amount > 0 && 
+                (this.contributions[i].adjustment_description == null || this.contributions[i].adjustment_description == '') && 
+                (this.affiliate_contribution.state_affiliate == 'Pasivo' || this.affiliate_contribution.state_affiliate == 'Activo'))){
                     continuar = true
                 }else{
                     continuar = false
