@@ -28,7 +28,9 @@ class CreateLoanGlobalParametersTable extends Migration
             $table->unsignedTinyInteger('days_current_interest'); // Dias de interes corriente del mes  
             $table->unsignedTinyInteger('grace_period'); // periodo de gracia para cobro de penalidad
             $table->unsignedTinyInteger('consecutive_manual_payment'); // cantidad de pagos manuales consecutivos para alerta 
-            $table->unsignedTinyInteger('max_months_go_back'); // maximo de meses atras de boletas 
+            $table->unsignedTinyInteger('max_months_go_back'); // maximo de meses atras de boletas
+            $table->unsignedTinyInteger('min_percentage_paid'); // min de porcentage de pago a capital para Refi
+            $table->unsignedTinyInteger('min_remaining_installments'); // min de cuotas restantes para refi
 
             $table->timestamps();
         });

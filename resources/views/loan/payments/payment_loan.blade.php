@@ -65,12 +65,12 @@
             </tr>
             <tr>
                 <td class="data-row py-5">{{ $loan_payment->quota_number }}</td>
-                <td class="data-row py-5">{{ $loan->balance }}</td> 
-                <td class="data-row w-10">{{ $loan->balance - $loan_payment->capital_payment }}</td>
+                <td class="data-row py-5">{{ Util::money_format($estimated_days['previous_balance']) }}</td> 
+                <td class="data-row w-10">{{ Util::money_format($estimated_days['current_balance']) }}</td>
                 <td class="data-row py-5">{{ Carbon::parse($loan_payment->estimated_date)->format('d/m/y') }}</td>
                 <td class="data-row py-5">{{ Carbon::parse($loan_payment->created_at)->format('d/m/y') }}</td>
-                <td>{{ Util::money_format($loan->payments->first()->penal_accumulated)}}</td>
-                <td>{{ Util::money_format($loan->payments->first()->interest_accumulated)}}</td>
+                <td>{{ Util::money_format($loan->payments->first()->penal_accumulated) }}</td>
+                <td>{{ Util::money_format($loan->payments->first()->interest_accumulated) }}</td>
             </tr>
     </div>
     <div class="block">

@@ -26,7 +26,9 @@ class LoanGlobalParameterSeeder extends Seeder
             'days_current_interest' => 31,
             'grace_period' => 3,
             'consecutive_manual_payment' => 3,
-            'max_months_go_back' => 10
+            'max_months_go_back' => 10,
+            'min_percentage_paid' => 25,
+            'min_remaining_installments' => 3
             ]
         ];
         foreach ($global_parameters as $global_parameter) {

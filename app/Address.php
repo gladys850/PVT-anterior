@@ -18,6 +18,7 @@ class Address extends Model
         'zone' => null,
         'street' => null,
         'number_address' => null,
+        'description' => null
     );
 
     public function getFullAddressAttribute($value)
@@ -27,7 +28,7 @@ class Address extends Model
         } else {
             $number = 'Nº ' . $this->number_address;
         }
-        return Util::trim_spaces(implode(' ', [$this->zone, $this->street, $number]));
+        return Util::trim_spaces(implode(' ', [$this->description]));
     }
 
     public function getLatitudeAttribute($value)
