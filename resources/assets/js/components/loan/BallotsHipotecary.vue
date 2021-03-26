@@ -1,5 +1,3 @@
-hipoteca
-
 <template>
   <v-flex xs12 class="px-3">
     <div class="text-center">BOLETAS DE PAGO DEL CODEUDOR AFILIADO</div>
@@ -537,16 +535,15 @@ export default {
       })
     },
 
-    save() {
+    async save() {
+      console.log(this.contrib_codebtor)
+      await this.saveAdjustment()      
       if (this.editedIndex > -1) {
         Object.assign(this.contrib_codebtor[this.editedIndex], this.editedItem)
       } else {
         this.contrib_codebtor.push(this.editedItem)
-      }
-      console.log(this.contrib_codebtor)
-      this.saveAdjustment()
-      this.close()
-      
+      }         
+      this.close()      
     },
 
     async searchCodebtor() {
@@ -627,13 +624,13 @@ export default {
 
       ///ajuste
   async saveAdjustment(){
-        this.editedItem.contributionable_ids = []
-        this.editedItem.loan_contributions_adjust_ids = []
+    this.editedItem.contributionable_ids = []
+    this.editedItem.loan_contributions_adjust_ids = []
  
-      try {
+    try {
 
-       let loan_contributions_adjust_ids = []
-       let loan_contributions_adjust_id = 0
+      let loan_contributions_adjust_ids = []
+      let loan_contributions_adjust_id = 0
       
       this.editedItem.contribution.forEach(async (item, i) => { //introducir su contribución        
         if(this.affiliate_contribution.state_affiliate == 'Activo') {
@@ -656,21 +653,20 @@ export default {
             period_date: this.$moment(this.fecha).format('YYYY-MM-DD'),
             description: this.editedItem.contribution[i].adjustment_description
           })
+
           loan_contributions_adjust_id  = res.data.id
          
           if ( loan_contributions_adjust_ids.indexOf( loan_contributions_adjust_id) === -1) {
               loan_contributions_adjust_ids.push( loan_contributions_adjust_id)
           }
-          console.log(loan_contributions_adjust_ids)
-           this.editedItem.loan_contributions_adjust_ids = loan_contributions_adjust_ids
+
         }else{
           console.log('no tiene ajuste')
-        }        
+        }    
       })
-     
+        this.editedItem.loan_contributions_adjust_ids = loan_contributions_adjust_ids   
      //debugger
       //alert(this.editedItem.loan_contributions_adjust_ids)
-
     }  catch (e) {
       console.log(e)
     }

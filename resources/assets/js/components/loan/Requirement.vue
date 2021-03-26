@@ -260,7 +260,7 @@ export default {
         for(let i = 0; i < this.items.length; i++ ){
           for(let j = 0; j < 1; j++ ){
            this.ids_items.push(this.items[i][j].id)
-            console.log(this.ids_items )
+            //console.log(this.ids_items )
           }
         }
          console.log(this.id_items )
