@@ -26,7 +26,7 @@ if(($modality->name == 'Refinanciamiento de Préstamo a largo Plazo para el sect
         @php ($lender = $lenders[0]->disbursable)
         @php ($male_female = Util::male_female($lender->gender))
         <span>
-            DEUDOR{{ $lender->gender == 'M' ? '' : 'A' }} {{ $lender->full_name }}, con C.I. {{ $lender->identity_card_ext }}, {{ $lender->civil_status_gender }}, mayor de edad, hábil por derecho, natural de {{ $lender->city_birth->name }}, vecin{{ $male_female }} de {{ $lender->city_identity_card->name }} y con domicilio especial en {{ $lender->address->full_address }}, en adelante denominad{{ $male_female }} PRESTATARIO.
+            DEUDOR{{ $lender->gender == 'M' ? '' : 'A' }} {{ $lender->full_name }}, con C.I. {{ $lender->identity_card_ext }}, {{ $lender->civil_status_gender }}, mayor de edad, hábil por derecho, natural de {{ $lender->city_birth->name }}, vecin{{ $male_female }} de {{ $lender->address->cityName() }} y con domicilio especial en {{ $lender->address->full_address }}, en adelante denominad{{ $male_female }} PRESTATARIO.
         </span>
         @endif
     </div>
@@ -121,7 +121,7 @@ if(($modality->name == 'Refinanciamiento de Préstamo a largo Plazo para el sect
 
             ?>
             <span>
-            {{ $guarantor->gender == 'M' ? 'el Sr.' : 'la Sra' }} {{ $guarantor->full_name }}, con C.I. {{ $guarantor->identity_card_ext }}, {{ $guarantor->civil_status_gender }}, mayor de edad, hábil por derecho, natural de {{ $guarantor->city_birth->name }}, vecin{{ $male_female_guarantor }} de {{ $guarantor->city_identity_card->name }} y con domicilio especial en {{ $guarantor->address->full_address }} {{ $concat_guarantor }} ,
+            {{ $guarantor->gender == 'M' ? 'el Sr.' : 'la Sra' }} {{ $guarantor->full_name }}, con C.I. {{ $guarantor->identity_card_ext }}, {{ $guarantor->civil_status_gender }}, mayor de edad, hábil por derecho, natural de {{ $guarantor->city_birth->name }}, vecin{{ $male_female_guarantor }} de {{ $guarantor->address->cityName() }} y con domicilio especial en {{ $guarantor->address->full_address }} {{ $concat_guarantor }} ,
             </span>
         <?php } ?>
         quienes en amparo del Artículo 64 y 65 del Reglamento de Préstamos de la MUSERPOL garantizaran el cumplimiento de la obligación en caso que el PRESTATARIO incumpliera con el pago de sus obligaciones o se constituyera en mora al incumplimiento de una o más cuotas de amortización, autorizan el descuento mensual de sus haberes en su calidad de garantes bajo las mismas condiciones en las que se procedería a descontar al PRESTATARIO, hasta cubrir el pago total de la obligación pendiente de cumplimiento. Excluyendo a MUSERPOL de toda responsabilidad o reclamo posterior, sin perjuicio de que estos puedan iniciar las acciones legales correspondientes en contra del PRESTATARIO.
@@ -249,7 +249,7 @@ if(($modality->name == 'Refinanciamiento de Préstamo a largo Plazo para el sect
         @php ($lender = $lenders[0]->disbursable)
         @php ($male_female = Util::male_female($lender->gender))
         <span>
-            DEUDOR{{ $lender->gender == 'M' ? '' : 'A' }} {{ $lender->full_name }}, con C.I. {{ $lender->identity_card_ext }}, {{ $lender->civil_status_gender }}, mayor de edad, hábil por derecho, natural de {{ $lender->city_birth->name }}, vecin{{ $male_female }} de {{ $lender->city_identity_card->name }} y con domicilio especial en {{ $lender->address->full_address }}, en adelante denominad{{ $male_female }} PRESTATARIO.
+            DEUDOR{{ $lender->gender == 'M' ? '' : 'A' }} {{ $lender->full_name }}, con C.I. {{ $lender->identity_card_ext }}, {{ $lender->civil_status_gender }}, mayor de edad, hábil por derecho, natural de {{ $lender->city_birth->name }}, vecin{{ $male_female }} de {{ $lender->address->cityName() }} y con domicilio especial en {{ $lender->address->full_address }}, en adelante denominad{{ $male_female }} PRESTATARIO.
         </span>
         @endif
     </div>
@@ -323,7 +323,7 @@ if(($modality->name == 'Refinanciamiento de Préstamo a largo Plazo para el sect
 
             ?>
             <span>
-            {{ $guarantor->gender == 'M' ? 'el Sr.' : 'la Sra' }} {{ $guarantor->full_name }}, con C.I. {{ $guarantor->identity_card_ext }}, {{ $guarantor->civil_status_gender }}, mayor de edad, hábil por derecho, natural de {{ $guarantor->city_birth->name }}, vecin{{ $male_female_guarantor }} de {{ $guarantor->city_identity_card->name }} y con domicilio especial en {{ $guarantor->address->full_address }} {{ $concat_guarantor }} ,
+            {{ $guarantor->gender == 'M' ? 'el Sr.' : 'la Sra' }} {{ $guarantor->full_name }}, con C.I. {{ $guarantor->identity_card_ext }}, {{ $guarantor->civil_status_gender }}, mayor de edad, hábil por derecho, natural de {{ $guarantor->city_birth->name }}, vecin{{ $male_female_guarantor }} de {{ $guarantor->address->cityName() }} y con domicilio especial en {{ $guarantor->address->full_address }} {{ $concat_guarantor }} ,
             </span>
         <?php } ?>
         quienes en amparo del Artículo 64 y 65 del Reglamento de Préstamos de la MUSERPOL garantizaran el cumplimiento de la obligación en caso que el PRESTATARIO incumpliera con el pago de sus obligaciones o se constituyera en mora al incumplimiento de una o más cuotas de amortización, autorizan el descuento mensual de sus haberes en su calidad de garantes bajo las mismas condiciones en las que se procedería a descontar al PRESTATARIO, hasta cubrir el pago total de la obligación pendiente de cumplimiento. Excluyendo a MUSERPOL de toda responsabilidad o reclamo posterior, sin perjuicio de que estos puedan iniciar las acciones legales correspondientes en contra del PRESTATARIO.
