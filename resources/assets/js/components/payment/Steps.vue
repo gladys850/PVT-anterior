@@ -6,7 +6,7 @@
           <v-stepper-step
             :key="`${1}-step`"
             :complete="e1 > 1"
-            :step="1">Modalidad
+            :step="1">Modalidad {{loan_payment}}
           </v-stepper-step>
           <v-divider v-if="1 !== steps" :key="1" ></v-divider>
           <v-stepper-step
@@ -268,6 +268,7 @@ console.log(this.loan_payment)
        if(this.data_payment.amortization==1)
         {
           let res = await axios.patch(`loan/${this.$route.query.loan_id}/payment`,{
+            affiliate_id: this.data_payment.affiliate_id_paid_by,
             estimated_date:this.data_payment.payment_date,
             estimated_quota:this.data_payment.pago_total,
             liquidate:false,
@@ -275,7 +276,9 @@ console.log(this.loan_payment)
            this.payment = res.data
         }
         else{
+          
             let res = await axios.patch(`loan/${this.$route.query.loan_id}/payment`,{
+            affiliate_id: this.data_payment.affiliate_id_paid_by,
             estimated_date:this.data_payment.payment_date,
             estimated_quota:this.data_payment.pago_total,
             liquidate:true,

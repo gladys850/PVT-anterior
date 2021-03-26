@@ -970,13 +970,14 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
               (parseFloat(this.contributions[i].payable_liquid) + 
               parseFloat(this.contributions[i].adjustment_amount))){
                 continuar = true
-                /*if((continuar == true) && this.contributions[i].adjustment_amount == 0 && 
-                  (this.contributions[i].adjustment_description == null || this.contributions[i].adjustment_description == '')){
+                if((continuar == true) && !(this.contributions[i].adjustment_amount > 0 && 
+                  (this.contributions[i].adjustment_description == null || this.contributions[i].adjustment_description == ''))){
                     continuar = true
-                  }else{
+                }else{
                     continuar = false
                     this.toastr.error('Existe un ajuste en el mes de '+this.contributions[i].month.toUpperCase()+ " ingrese descripción del ajuste")
-                }*/
+                    break;
+                }
               }else{
                 continuar = false
                 this.toastr.error(this.contributions[i].month.toUpperCase()  + " La sumatoria de bonos debe ser menor al Liquido pagable")
