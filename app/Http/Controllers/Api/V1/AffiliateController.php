@@ -1057,7 +1057,7 @@ class AffiliateController extends Controller
     */
 
     public function verify_affiliate_spouse(Affiliate $affiliate){
-        if(count(Spouse::where('identity_card', '=', $affiliate->identity_card)->get())>0){
+        if(count(Spouse::where('identity_card', '=', $affiliate->identity_card)->get())>0 && Spouse::where('identity_card', '=', $affiliate->identity_card)->first()->affiliate->dead){
             return $message=[
                 'message' => 'Affiliado tambien es viudo(a)',
                 'verify' => true

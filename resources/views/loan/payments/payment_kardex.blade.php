@@ -128,6 +128,16 @@
 
     <div class="block">
         <table class="table-info w-100 text-center uppercase my-20">
+                @php ($sum_capital_payment = 0)
+                @php ($sum_interest_payment = 0)
+                @php ($sum_penal_payment = 0)
+                @php ($sum_interest_remaining = 0)
+                @php ($sum_penal_remaining = 0)
+                @php ($sum_estimated_quota = 0)
+                @php ($res_saldo_capital = 0)
+                @php ($sum_capital_payment = 0)
+                
+                @if($loan->parent_loan_id != null)
             <thead>
                 <tr class="bg-grey-darker text-xxs text-white">
                     <th class="w-5">Nº</th>
@@ -145,16 +155,6 @@
                 </tr>
             </thead>
             <tbody>
-                @php ($sum_capital_payment = 0)
-                @php ($sum_interest_payment = 0)
-                @php ($sum_penal_payment = 0)
-                @php ($sum_interest_remaining = 0)
-                @php ($sum_penal_remaining = 0)
-                @php ($sum_estimated_quota = 0)
-                @php ($res_saldo_capital = 0)
-                @php ($sum_capital_payment = 0)
-                
-                @if($loan->parent_loan_id != null)
                 @php ($capital = $loan->parent_loan->amount_approved)
                 @foreach ($loan->parent_loan->payments->sortBy('quota_number') as $parent_loan_payment)
                 @php ($res_saldo_capital = $capital-$parent_loan_payment->capital_payment)
