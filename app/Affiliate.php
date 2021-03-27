@@ -275,6 +275,11 @@ class Affiliate extends Model
     {
         return $this->verify_balance($this->guarantees);
     }
+    //
+    public function affiliate_fullName()
+    {
+        return $this->first_name.' '.$this->second_name.' '.$this->last_name.' '.$this->mothers_last_name;
+    }
 
     private function verify_balance($loans)
     {
