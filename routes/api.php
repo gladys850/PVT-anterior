@@ -70,6 +70,7 @@ Route::group([
         Route::post('evaluate_garantor', 'Api\V1\CalculatorController@evaluate_guarantor');
         Route::apiResource('aid_contribution', 'Api\V1\AidContributionController')->only('index', 'show', 'store', 'update', 'destroy');
         Route::post('aid_contribution/updateOrCreate', 'Api\V1\AidContributionController@updateOrCreate');
+        Route::post('search_loan','Api\V1\AffiliateController@search_loan');
 
         // Afiliado
         Route::group([
