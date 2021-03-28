@@ -13,22 +13,22 @@ class LoanDestinyProcedureTypeSeeder extends Seeder
      */
     public function run()
     {    
-        $sequences = [
+        $destinies = [
             'Préstamo Anticipo' => [
                 ['LIBRE DISPONIBILIDAD'],
                 ['SALUD'],           
             ],
-        ];$this->create($sequences);
+        ];$this->create($destinies);
 
-        $sequences = [   
+        $destinies = [   
             'Préstamo a corto plazo' => [
                 ['CONSUMO'],
                 ['SALUD'],  
             ],
         ];
-        $this->create($sequences);
+        $this->create($destinies);
 
-        $sequences = [    
+        $destinies = [    
             'Préstamo a largo plazo' => [
                 ['AMPLIACIÓN DE VIVIENDA'],
                 ['REFACCIÓN DE VIVIENDA'],
@@ -40,23 +40,23 @@ class LoanDestinyProcedureTypeSeeder extends Seeder
                 ['SALUD'],                    
             ],
         ];
-        $this->create($sequences);
+        $this->create($destinies);
 
-        $sequences = [ 
+        $destinies = [ 
             'Préstamo hipotecario' => [
                 ['INVERSIÓN'],
                 ['REFACCIÓN Y REMODELACIÓN DE VIVIENDA'],     
             ]
         ];
-        $this->create($sequences);      
+        $this->create($destinies);      
     }
     
-    public function create($sequences){
-        foreach ($sequences as $procedure_type => $sequence) {
+    public function create($destinies){
+        foreach ($destinies as $procedure_type => $destiny) {
             $procedure = ProcedureType::whereName($procedure_type)->first();      
-            foreach($sequence as $current ){
-                $curr []= LoanDestiny::whereName($current)->first()->id;       
-                $procedure->loan_destinies()->sync($curr);        
+            foreach($destiny as $loan_destiny ){
+                $dest []= LoanDestiny::whereName($loan_destiny)->first()->id;       
+                $procedure->loan_destinies()->sync($dest);        
             }   
         }
     }
