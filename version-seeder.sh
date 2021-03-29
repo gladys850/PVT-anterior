@@ -28,6 +28,9 @@ php artisan db:seed --class=VoucherTypeSeeder
 php artisan db:seed --class=TagSeeder
 php artisan db:seed --class=AmortizationTypeSeeder
 php artisan db:seed --class=LoanDestinySeeder
+php artisan db:seed --class=LoanDestinyProcedureTypeSeeder
+
+
 
 
 

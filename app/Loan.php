@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Fico7489\Laravel\Pivot\Traits\PivotEventTrait;
 use Carbon\CarbonImmutable;
 use App\LoanGlobalParameter;
+use App\Rules\LoanIntervalTerm;
 use Carbon;
 use Util;
 
@@ -897,5 +898,61 @@ class Loan extends Model
     }
     public function user(){
         return $this->hasOne(User::class,'id','id');
+    }
+
+    //obtener mod 
+    public static function get_modality_search($modality_name, $affiliate){
+        $modality = null;
+        if ($affiliate->affiliate_state){
+            $affiliate_state = $affiliate->affiliate_state->name;
+            $affiliate_state_type = $affiliate->affiliate_state->affiliate_state_type->name;
+        switch($modality_name){
+            case 'Préstamo Anticipo':
+                if($affiliate_state_type == "Activo")
+                {
+                    $modality=ProcedureModality::whereShortened("ANT-SA")->first();
+                }
+                else{
+                    if($affiliate_state_type == "Pasivo"){
+                        $modality=ProcedureModality::whereShortened("ANT-SP")->first();
+                    }
+                }
+            break;
+            case 'Préstamo a corto plazo':
+                if($affiliate_state_type == "Activo"){
+                   
+                    if($affiliate_state == "Servicio" || $affiliate_state == "Comisión" )
+                    {
+                        $modality=ProcedureModality::whereShortened("PCP-SA")->first(); //corto plazo activo
+                    }else{
+                        $modality=ProcedureModality::whereShortened("PCP-DLA")->first(); // corto plazo activo letra A, no le corresponde refinanciamiento segun Art 76 del reglamento
+                    }                  
+                }
+                break;
+            case 'Préstamo a largo plazo':
+                if($affiliate_state_type == "Activo")
+                {
+                    if($affiliate_state !== "Disponibilidad" ) //cpop no pueden estar en disponibilidad letra A o C
+                    {
+                         $modality=ProcedureModality::whereShortened("PLP-GP-SAYADM")->first(); //Largo plazo activo  y adm con garantia personal
+                    }
+                }
+                break;
+            case 'Préstamo hipotecario':
+                if($affiliate_state_type == "Activo")
+                {
+                    $modality=ProcedureModality::whereShortened("PLP-GH-SA")->first(); //hipotecario Sector Activo
+                }
+            break;
+            }
+        }
+        if ($modality) {
+            $modality->loan_modality_parameter;
+            return $modality;
+        }else{
+            $modality=[];
+            return $modality;
+        }
+
     }
 }
