@@ -50,9 +50,6 @@
             <Ballots
               ref="ballotsComponent"
               :modalities.sync="modalities"
-              :bonos.sync="bonos"
-              :payable_liquid="payable_liquid"
-              :period="period"
               :intervalos.sync="intervalos"
               :modalidad.sync="modalidad"
               :affiliate.sync="affiliate"
@@ -62,9 +59,8 @@
               :edit_refi_repro.sync="edit_refi_repro"
               :loanTypeSelected.sync="loanTypeSelected"
               :data_sismu.sync ="data_sismu"
-              :livelihood_amount.sync="livelihood_amount"
               :affiliate_contribution="affiliate_contribution"
-              :contribution_passive="contribution_passive"
+              :global_parameters ="global_parameters"
             />
             <v-container class="py-0">
               <v-row>
@@ -287,7 +283,6 @@ export default {
     },
     data_loan:{},
     calculator_result:{},
-    //procedure_type:9,
     steps: 6,
     modalities: [],
     guarantors: [],
@@ -296,21 +291,15 @@ export default {
     data_loan_parent_aux:{},
     data_loan_parent:[],
     modalidad:{},
-    //reference:[],
     intervalos:{},
-    payable_liquid:[0,0,0],
-    bonos:[0,0,0,0],
-    period:[],
-    //personal_reference:{},
+    //payable_liquid:[0,0,0],
+    //bonos:[0,0,0,0],
+    //period:[],
     personal_codebtor:[],
-    //cosigners:[],
     contrib_codebtor: [],
-    contributions1_aux: [],
+    contributions_aux: [],
     liquid_calificated:[],
-    //editedIndexProperty: -1,
-    //editedIndexPerRef: -1,
     loan_property: {},
-    //cosigners:[],
     destino:[],
     //Variables reprogramacion y refinanciamiento
     data_loan: {},
@@ -327,49 +316,14 @@ export default {
     },
     livelihood_amount: 0,
     contributions: [],
-    /*contributions: [{
-        contributionable_id: null,
-        payable_liquid: 0,
-        adjustment_amount: 0,
-        adjustment_description: null,
-        position_bonus: 0,
-        border_bonus: 0,
-        public_security_bonus: 0,
-        east_bonus: 0,
-        dignity_rent: 0,
-        period: null,
-      }, {
-        contributionable_id: null,
-        payable_liquid: 0,
-        adjustment_amount: 0,
-        adjustment_description: null,
-        position_bonus: 0,
-        border_bonus: 0,
-        public_security_bonus: 0,
-        east_bonus: 0,
-        dignity_rent: 0,
-        period: null
-      },{
-        contributionable_id: null,
-        payable_liquid: 0,
-        adjustment_amount: 0,
-        adjustment_description: null,
-        position_bonus: 0,
-        border_bonus: 0,
-        public_security_bonus: 0,
-        east_bonus: 0,
-        dignity_rent: 0,
-        period: null
-      }],*/
     affiliate_contribution: {},
-    contribution_passive: {},
     fecha: new Date(),
-    ///variables step1
-    
+    ///variables step1    
     contributionable_type: null,
     loan_contributions_adjust_ids: [],
     contributionable_ids: [],
-    modalidad_refi_repro_remake: 0
+    modalidad_refi_repro_remake: 0,
+    global_parameters: {}
   }),
   computed: {
     isNew() {
@@ -429,7 +383,7 @@ export default {
         if(n==1)
         {
           console.log('este es lenders')
-             console.log(this.lenders)
+          console.log(this.lenders)
             // console.log(this.contributionable_type)
              //console.log(this.loan_contributions_adjust_ids)
              //console.log(this.contributionable_ids)
@@ -466,9 +420,11 @@ export default {
         this.e1 = n + 1
       }
     },
+
     beforeStep (n) {
       this.e1 = n -1
     },
+
     async addDataLoan()
     {
       console.log('entro a añadir loan')
@@ -476,7 +432,6 @@ export default {
         this.data_loan_parent.push(this.data_loan_parent_aux);
         console.log(this.data_loan_parent)
       }
-
     },
 
     async getProcedureType(){
@@ -518,9 +473,8 @@ export default {
         this.loading = false
       }
     },
-    ///ajuste
+    //Ajuste del Titular
     async saveAdjustment(){
-
       try {      
       this.loan_contributions_adjust_ids = []
       this.contributionable_ids = []
@@ -534,26 +488,25 @@ export default {
             rent: this.contributions[i].payable_liquid,
             dignity_rent: this.contributions[i].dignity_rent,
           })
-          this.contribution_passive = res.data  
-            this.contributions[i].contributionable_id = this.contribution_passive.id
+          let contribution_passive = res.data  
+            this.contributions[i].contributionable_id = contribution_passive.id
             if (this.contributionable_ids.indexOf(this.contributions[i].contributionable_id) === -1) {
               this.contributionable_ids.push(this.contributions[i].contributionable_id)
             }
             this.contributionable_type = 'aid_contributions'
-            //alert(this.contributionable_ids)
         }
         
         else if(this.affiliate_contribution.state_affiliate == 'Activo') {
-            if (this.contributionable_ids.indexOf(this.contributions[i].contributionable_id) === -1) {
+          if (this.contributionable_ids.indexOf(this.contributions[i].contributionable_id) === -1) {
             this.contributionable_ids.push(this.contributions[i].contributionable_id)
           }
           this.contributionable_type = 'contributions'
-          //alert(this.contributionable_ids)
         } 
         
         else if(this.affiliate_contribution.state_affiliate == 'Comisión') {
           this.contributionable_type = 'loan_contribution_adjusts'
         }
+
         //Para el ajuste
         if(this.contributions[i].adjustment_amount > 0){ //aqui se debe colocar la edicion del ajuste, hacer condicional
           //guardar el ajuste
@@ -572,104 +525,25 @@ export default {
           if (this.loan_contributions_adjust_ids.indexOf(this.contributions[i].loan_contributions_adjust_id) === -1) {
             this.loan_contributions_adjust_ids.push(this.contributions[i].loan_contributions_adjust_id)
           }
-          //alert(this.loan_contributions_adjust_ids)
 
         }else{
-          console.log('no tiene ajuste')
-        }
-        
+          console.log('No tiene ajuste')
+        }        
       })
-    }  catch (e) {
-      console.log(e)
-    }
-  },
-     //TAB1 formatContributions datos obtenidos de los campos liquido y bonos, adecuandolo a formato para guardado y obtener liquido para calificación
-    /*formatContributions() {
-      let nuevoArray = []
-      let nuevoArrayCodebtor = []
-      if(this.modalidad.quantity_ballots > 1 ){
-        nuevoArray[0] = {
-            affiliate_id:this.$route.query.affiliate_id,
-            sismu: this.data_sismu.type_sismu,
-            quota_sismu: this.data_sismu.quota_sismu,
-            parent_loan_id: this.parent_loan_id,
-            contributions: [
-            {
-              payable_liquid: this.payable_liquid[0],
-              position_bonus:  this.bonos[2],
-              border_bonus: this.bonos[0],
-              public_security_bonus: this.bonos[3],
-              east_bonus:this.bonos[1],
-              period: this.period[0]
-            },
-            {
-              payable_liquid: this.payable_liquid[1],
-              position_bonus: 0,
-              border_bonus: 0,
-              public_security_bonus: 0,
-              east_bonus:0,
-              period: this.period[0],
-            },
-            {
-              payable_liquid: this.payable_liquid[2],
-              position_bonus: 0,
-              border_bonus:0,
-              period:0,
-              public_security_bonus: 0,
-              east_bonus:0,
-              period: this.period[0]
-            }
-          ]
-        }
-        console.log("NUEVO ARRAY")
-        console.log(nuevoArray)
-      }else{
-        nuevoArray[0] = {
-            affiliate_id:this.$route.query.affiliate_id,
-            sismu: this.data_sismu.type_sismu,
-            quota_sismu: this.data_sismu.quota_sismu,
-            parent_loan_id: this.parent_loan_id,
-            contributions: [
-            {
-              payable_liquid: this.payable_liquid[0],
-              position_bonus:  this.bonos[2],
-              border_bonus: this.bonos[0],
-              public_security_bonus: this.bonos[3],
-              east_bonus:this.bonos[1]
-            }
-          ]
-        }
-      for (let i = 0; i < this.contrib_codebtor.length; i++) {
-        nuevoArrayCodebtor[i] = {
-          affiliate_id: this.contrib_codebtor[i].id_affiliate,
-          sismu: this.data_sismu.type_sismu,
-          quota_sismu: this.data_sismu.quota_sismu,
-          parent_loan_id: this.parent_loan_id,
-          contributions: [
-            {
-            payable_liquid: this.contrib_codebtor[i].payable_liquid,
-            border_bonus: this.contrib_codebtor[i].border_bonus,
-            east_bonus: this.contrib_codebtor[i].east_bonus,
-            position_bonus: this.contrib_codebtor[i].position_bonus,
-            public_security_bonus: this.contrib_codebtor[i].public_security_bonus
-            }
-          ]
-        };
-        console.log("NUEVO ARRAY")
-        console.log(nuevoArray)
+      } 
+      catch (e){
+        console.log(e)
       }
-      }
-      this.contributions1_aux = nuevoArray.concat(nuevoArrayCodebtor)
-    },*/
+    },
 
-      //TAB1 formatContributions datos obtenidos de los campos liquido y bonos, adecuandolo a formato para guardado y obtener liquido para calificación
+   //TAB1 formatContributions datos obtenidos de los campos liquido y bonos, adecuandolo a formato para guardado y obtener liquido para calificación
     formatContributions() {
-      let nuevoArray = []
-      let nuevoArrayCodebtor = []
-      let array_contributions =[]
- 
-      this.contributions.forEach(async (item, i) => {         
-      array_contributions.push({
+      let array_lender = []
+      let array_codebtors = []
+      let contributions_lender =[]
+      //Armar contribuciones del titular
+      for (let i = 0; i < this.contributions.length; i++) {        
+        contributions_lender.push({
           payable_liquid: parseFloat(this.contributions[i].payable_liquid)  + parseFloat(this.contributions[i].adjustment_amount),
           position_bonus: this.contributions[i].position_bonus,
           border_bonus: this.contributions[i].border_bonus,
@@ -677,62 +551,47 @@ export default {
           east_bonus:this.contributions[i].east_bonus,
           dignity_rent_bonus: this.contributions[i].dignity_rent
         })      
-      })
-
-        nuevoArray[0] = {
-            affiliate_id:this.$route.query.affiliate_id,
-            sismu: this.data_sismu.type_sismu,
-            quota_sismu: this.data_sismu.quota_sismu,
-            parent_loan_id: this.parent_loan_id,
-            contributions: array_contributions
-
-        }
-        console.log("NUEVO ARRAY")
-        console.log(nuevoArray)
-
+      }
+      array_lender[0] = {
+        affiliate_id:this.$route.query.affiliate_id,
+        sismu: this.data_sismu.type_sismu,
+        quota_sismu: this.data_sismu.quota_sismu,
+        parent_loan_id: this.parent_loan_id,
+        contributions: contributions_lender
+      }
+      //Armar contribuciones del codeudor afiliado
       for (let i = 0; i < this.contrib_codebtor.length; i++) {
-        nuevoArrayCodebtor[i] = {
+        let contributions_codebtor=[]
+        for (let j = 0; j < this.contrib_codebtor[i].contribution.length; j++) {
+          contributions_codebtor.push({
+            payable_liquid: parseFloat(this.contrib_codebtor[i].contribution[j].payable_liquid) + parseFloat(this.contrib_codebtor[i].contribution[j].adjustment_amount),
+            border_bonus: this.contrib_codebtor[i].contribution[j].border_bonus,
+            east_bonus: this.contrib_codebtor[i].contribution[j].east_bonus,
+            position_bonus: this.contrib_codebtor[i].contribution[j].position_bonus,
+            public_security_bonus: this.contrib_codebtor[i].contribution[j].public_security_bonus
+          })
+        }
+        array_codebtors[i] = {
           affiliate_id: this.contrib_codebtor[i].id_affiliate,
           sismu: this.data_sismu.type_sismu,
           quota_sismu: this.data_sismu.quota_sismu,
           parent_loan_id: this.parent_loan_id,
-          contributions: [
-            {
-            payable_liquid: this.contrib_codebtor[i].contribution[0].payable_liquid,
-            border_bonus: this.contrib_codebtor[i].contribution[0].border_bonus,
-            east_bonus: this.contrib_codebtor[i].contribution[0].east_bonus,
-            position_bonus: this.contrib_codebtor[i].contribution[0].position_bonus,
-            public_security_bonus: this.contrib_codebtor[i].contribution[0].public_security_bonus
-            },
-            {
-            payable_liquid: this.contrib_codebtor[i].contribution[1].payable_liquid,
-            border_bonus: this.contrib_codebtor[i].contribution[1].border_bonus,
-            east_bonus: this.contrib_codebtor[i].contribution[1].east_bonus,
-            position_bonus: this.contrib_codebtor[i].contribution[1].position_bonus,
-            public_security_bonus: this.contrib_codebtor[i].contribution[1].public_security_bonus
-            },
-            {
-            payable_liquid: this.contrib_codebtor[i].contribution[2].payable_liquid,
-            border_bonus: this.contrib_codebtor[i].contribution[2].border_bonus,
-            east_bonus: this.contrib_codebtor[i].contribution[2].east_bonus,
-            position_bonus: this.contrib_codebtor[i].contribution[2].position_bonus,
-            public_security_bonus: this.contrib_codebtor[i].contribution[2].public_security_bonus
-            }
-          ]
-        };
-        console.log("NUEVO ARRAY")
-        console.log(nuevoArray)
+          contributions: contributions_codebtor
+        }
       }
-      
-      this.contributions1_aux = nuevoArray.concat(nuevoArrayCodebtor)
-    
+      //concatenar array del titular y codeudores
+      this.contributions_aux = array_lender.concat(array_codebtors)    
     },
+
     //TAB1 Obtener liquido para calificación
     async liquidCalificated(){
       this.formatContributions()
       try {
-        let res = await axios.post(`liquid_calificated`,{liquid_calification:this.contributions1_aux})
-        this.liquid_calificated =res.data
+        let res = await axios.post(`liquid_calificated`,{
+          liquid_calification: this.contributions_aux
+        })
+
+        this.liquid_calificated = res.data
 
          if(this.modalidad.procedure_type_id==12)
           {
@@ -853,53 +712,6 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
         //console.log('entro por verdadero')
       }
     },
-    /*//TAB 3 bien inmueble
-    async saveLoanProperty() {
-      try {
-        if (this.editedIndexProperty == -1) {
-          let res = await axios.post("loan_property", {
-            land_lot_number: this.loan_property.land_lot_number,
-            neighborhood_unit: this.loan_property.neighborhood_unit,
-            location: this.loan_property.location,
-            surface: this.loan_property.surface,
-            measurement: this.loan_property.measurement,
-            cadastral_code: this.loan_property.cadastral_code,
-            limit: this.loan_property.limit,
-            public_deed_number: this.loan_property.public_deed_number,
-            lawyer: this.loan_property.lawyer,
-            registration_number: this.loan_property.registration_number,
-            real_folio_number: this.loan_property.real_folio_number,
-            public_deed_date: this.loan_property.public_deed_date,
-            net_realizable_value: this.loan_detail.net_realizable_value,
-            real_city_id: this.loan_property.real_city_id
-          });
-          this.loan_property = res.data
-          this.editedIndexProperty = this.loan_property.id
-        } else {
-           let res = await axios.patch(`loan_property/${this.editedIndexProperty}`,
-           {
-              land_lot_number: this.loan_property.land_lot_number,
-              neighborhood_unit: this.loan_property.neighborhood_unit,
-              location: this.loan_property.location,
-              surface: this.loan_property.surface,
-              measurement: this.loan_property.measurement,
-              cadastral_code: this.loan_property.cadastral_code,
-              limit: this.loan_property.limit,
-              public_deed_number: this.loan_property.public_deed_number,
-              lawyer: this.loan_property.lawyer,
-              registration_number: this.loan_property.registration_number,
-              real_folio_number: this.loan_property.real_folio_number,
-              public_deed_date: this.loan_property.public_deed_date,
-              net_realizable_value: this.loan_detail.net_realizable_value,
-              real_city_id: this.loan_property.real_city_id
-            }
-          );
-          this.loan_property = res.data
-        }
-      } catch (e) {
-        console.log(e)
-      }
-    },*/
     async getLoan(id) {
       try {
         this.loading = true
@@ -926,52 +738,44 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
         this.loading = false
       }
     },
-    /*async getLoanDestiny() {
-      try {
-        this.loading = true
-        let res = await axios.get(`procedure_type/${this.intervalos.procedure_type_id}/loan_destiny`)
-        this.destino = res.data
-        console.log(this.destino+'estos son los destinos');
-      } catch (e) {
-        console.log(e)
-      } finally {
-        this.loading = false
-      }
-    },*/
+
     async getGlobalParameters(){
       try {
         let res = await axios.get(`loan_global_parameter`)
-        this.livelihood_amount = res.data.data[0].livelihood_amount
+        this.global_parameters = res.data.data[0]
+        //console.log(this.global_parameters)
+        this.livelihood_amount = this.global_parameters.livelihood_amount
       } catch (e) {
         console.log(e)
       }
     },
+
     validateStepsOne(){
       this.contributions = []
-
       let continuar = false
+      //llama al a funcion getContributions del componente Ballots
       if(this.$refs.ballotsComponent) {
         this.contributions = this.$refs.ballotsComponent.getContributions()
       }
       //this.saveAdjustment()
       //this.liquidCalificated()
-      //this.nextStep(1)
-      //console.log("ESTADO"+ this.loan_detail.not_exist_modality)
       if(this.loanTypeSelected.id > 0){
         if(this.loan_detail.not_exist_modality==false){
-
-          for(let i = 0; i< this.contributions.length; i++){
-            if((parseFloat(this.contributions[i].payable_liquid) + parseFloat(this.contributions[i].adjustment_amount)) >= this.livelihood_amount){
+          //validaciones de todas las contribuciones
+          for(let i = 0; i < this.contributions.length; i++){
+            if((parseFloat(this.contributions[i].payable_liquid) + parseFloat(this.contributions[i].adjustment_amount)) >= this.global_parameters.livelihood_amount){
               continuar = true
-              if(( (continuar == true) && parseFloat(this.contributions[i].position_bonus)+ 
+              if( continuar == true && (parseFloat(this.contributions[i].position_bonus)+ 
               parseFloat(this.contributions[i].border_bonus)+ 
               parseFloat(this.contributions[i].public_security_bonus)+ 
               parseFloat(this.contributions[i].east_bonus)) < 
               (parseFloat(this.contributions[i].payable_liquid) + 
               parseFloat(this.contributions[i].adjustment_amount))){
                 continuar = true
-                if((continuar == true) && !(this.contributions[i].adjustment_amount > 0 && 
-                  (this.contributions[i].adjustment_description == null || this.contributions[i].adjustment_description == ''))){
+                if(continuar == true && 
+                !(this.contributions[i].adjustment_amount > 0 && 
+                (this.contributions[i].adjustment_description == null || this.contributions[i].adjustment_description == '') && 
+                (this.affiliate_contribution.state_affiliate == 'Pasivo' || this.affiliate_contribution.state_affiliate == 'Activo'))){
                     continuar = true
                 }else{
                     continuar = false
@@ -986,118 +790,49 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
 
             }else{
               continuar = false
-              this.toastr.error(this.contributions[i].month.toUpperCase()  +" El 'Liquido Pagable' + 'Monto Ajuste' debe ser mayor ó igual al Monto de subsistencia que son "+this.livelihood_amount+" Bs.")
+              this.toastr.error(this.contributions[i].month.toUpperCase()  +" El 'Liquido Pagable' + 'Monto Ajuste' debe ser mayor ó igual al Monto de subsistencia que son "+this.global_parameters.livelihood_amount+" Bs.")
               break;
             }
           }
-            if(continuar == true && !this.type_sismu){
-              if(this.modalidad.procedure_type_id==12){
-                if(this.loan_detail.net_realizable_value >= this.intervalos.minimun_amoun){
-                   this.saveAdjustment()
-                  this.liquidCalificated()
-                  //this.getLoanDestiny()
-                  this.nextStep(1)
-                }else{
-                  this.toastr.error("El valor VNR debe ser mayor al monto minimo "+this.intervalos.minimun_amoun+ " correspondiente a la modalidad")
-                }
+          //validar otros casos
+          if(continuar == true && !this.type_sismu){
+            if(this.modalidad.procedure_type_id==12){
+              if(this.loan_detail.net_realizable_value >= this.intervalos.minimun_amoun){
+                 this.saveAdjustment()
+                this.liquidCalificated()
+                this.nextStep(1)
               }else{
-                   this.saveAdjustment()
-                  this.liquidCalificated()
-                  //this.getLoanDestiny()
-                  this.nextStep(1)
-              }
-            }else if(continuar == true && this.type_sismu){
-              if(this.modalidad.procedure_type_id==12){
-                if(this.loan_detail.net_realizable_value >= this.intervalos.minimun_amoun){
-                  if(this.data_sismu.quota_sismu > 0){
-                     this.saveAdjustment()
-                    this.liquidCalificated()
-                    //this.getLoanDestiny()
-                    this.nextStep(1)
-                  }else{
-                    this.toastr.error("Introduzca la CUOTA del SISMU")
-                  }
-                }else{
-                  this.toastr.error("El valor VNR debe ser mayor al monto minimo "+this.intervalos.minimun_amoun+ " correspondiente a la modalidad")
-                }
-              }else{
-                  if(this.data_sismu.quota_sismu > 0){
-                     this.saveAdjustment()
-                    this.liquidCalificated()
-                    //this.getLoanDestiny()
-                    this.data_loan_parent_aux.estimated_quota= this.data_sismu.quota_sismu
-                    this.nextStep(1)
-                  }else{
-                    this.toastr.error("Introduzca la CUOTA del SISMU")
-                  }
-              }
-            }
-
-          //if((sum_payable_liquid + sum_adjustment_amount) >= this.livelihood_amount){
-           /*if(this.modalidad.procedure_type_id==10){
-            if((parseFloat(this.contributions[0].position_bonus)+ parseFloat(this.contributions[0].border_bonus)+ parseFloat(this.contributions[0].public_security_bonus)+ parseFloat(this.contributions[0].east_bonus)) < (parseFloat(this.contributions[0].payable_liquid) + parseFloat(this.contributions[1].payable_liquid) + parseFloat(this.contributions[3].payable_liquid) ) ){
-              if(parseFloat(this.contributions[0].payable_liquid) > 0 && parseFloat(this.payable_liquid[1]) > 0 && parseFloat(this.payable_liquid[2]) > 0 ){
-                if(!this.type_sismu){
-                  if(this.modalidad.procedure_type_id==12){
-                    if(this.loan_detail.net_realizable_value >= this.intervalos.minimun_amoun){
-                       this.saveAdjustment()
-                      this.liquidCalificated()
-                      //this.getLoanDestiny()
-                      this.nextStep(1)
-                    }else{
-                      this.toastr.error("El valor VNR debe ser mayor al monto minimo "+this.intervalos.minimun_amoun+ " correspondiente a la modalidad")
-                    }
-                  }else{
-                       this.saveAdjustment()
-                      this.liquidCalificated()
-                      //this.getLoanDestiny()
-                      this.nextStep(1)
-                  }
-                }else if(this.type_sismu){
-                  if(this.modalidad.procedure_type_id==12){
-                    if(this.loan_detail.net_realizable_value >= this.intervalos.minimun_amoun){
-                      if(this.data_sismu.quota_sismu > 0){
-                         this.saveAdjustment()
-                        this.liquidCalificated()
-                        //this.getLoanDestiny()
-                        this.nextStep(1)
-                      }else{
-                        this.toastr.error("Introduzca la CUOTA del SISMU")
-                      }
-                    }else{
-                      this.toastr.error("El valor VNR debe ser mayor al monto minimo "+this.intervalos.minimun_amoun+ " correspondiente a la modalidad")
-                    }
-                  }else{
-                      if(this.data_sismu.quota_sismu > 0){
-                         this.saveAdjustment()
-                        this.liquidCalificated()
-                        //this.getLoanDestiny()
-                        this.data_loan_parent_aux.estimated_quota= this.data_sismu.quota_sismu
-                        this.nextStep(1)
-                      }else{
-                        this.toastr.error("Introduzca la CUOTA del SISMU")
-                      }
-                  }
-                }
-              }else{
-                this.toastr.error("Debe registrar el monto en todas las boletas.")
+                this.toastr.error("El valor VNR debe ser mayor al monto minimo "+this.intervalos.minimun_amoun+ " correspondiente a la modalidad")
               }
             }else{
-            this.toastr.error("La sumatoria de bonos debe ser menor al Liquido pagable")
+                 this.saveAdjustment()
+                this.liquidCalificated()
+                this.nextStep(1)
             }
-          }else{*/
-
-         // if((parseFloat(this.contributions[0].position_bonus)+ parseFloat(this.contributions[0].border_bonus)+ parseFloat(this.contributions[0].public_security_bonus)+ parseFloat(this.contributions[0].east_bonus)) < (parseFloat(this.contributions[0].payable_liquid) + parseFloat(this.contributions[0].adjustment_amount))){
-
-            //}else{
-            //this.toastr.error("La sumatoria de bonos debe ser menor al Liquido pagable")
-          //}
-          //}
-          //}else{
-          //this.toastr.error("El 'Liquido Pagable' + 'Monto Ajuste' debe ser mayor ó igual al Monto de subsistencia que son "+this.livelihood_amount+" Bs.")
-         // }
-
-
+          }else if(continuar == true && this.type_sismu){
+            if(this.modalidad.procedure_type_id==12){
+              if(this.loan_detail.net_realizable_value >= this.intervalos.minimun_amoun){
+                if(this.data_sismu.quota_sismu > 0){
+                   this.saveAdjustment()
+                  this.liquidCalificated()
+                  this.nextStep(1)
+                }else{
+                  this.toastr.error("Introduzca la CUOTA del SISMU")
+                }
+              }else{
+                this.toastr.error("El valor VNR debe ser mayor al monto minimo "+this.intervalos.minimun_amoun+ " correspondiente a la modalidad")
+              }
+            }else{
+                if(this.data_sismu.quota_sismu > 0){
+                   this.saveAdjustment()
+                  this.liquidCalificated()
+                  this.data_loan_parent_aux.estimated_quota= this.data_sismu.quota_sismu
+                  this.nextStep(1)
+                }else{
+                  this.toastr.error("Introduzca la CUOTA del SISMU")
+                }
+            }
+          }
         }else{
           this.toastr.error("El afiliado no puede ser evaluado en esta modalidad")
         }
@@ -1105,6 +840,7 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
         this.toastr.error("Seleccione una modalidad")
       }
     },
+
     validateStepsTwo()
     {
       if(!this.loan_detail.maximum_suggested_valid){
@@ -1190,24 +926,9 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
         }
       }
     },
+
     validateStepsthree()
     {
-      /*if(this.modalidad.procedure_type_id==12)
-      {
-        this.$refs.HipotecaryData.validateHipotecaryData()
-        this.bus.$on('validHipotecaryData', (val3) => {
-          console.log("VAL"+val3)
-          this.valor3 = val3
-          console.log("VALOR3"+val3)
-        })
-        if(this.valor3 == true){
-          this.saveLoanProperty()
-          this.nextStep(3)
-        }else{
-          console.log("no pasa")
-        }
-      }
-      else{*/
         if(this.modalidad.guarantors > 0)
         {
           if(this.modalidad.guarantors==this.guarantors.length)
@@ -1227,51 +948,6 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
         }
       //}
     },
-    /*validateStepsFive(){
-      this.$refs.FormInformation.validateDestiny()
-      this.bus.$on('validDestiny', (val1) => {
-      console.log("VAL"+val1)
-      this.valor1 = val1
-      console.log("VALOR1"+this.valor1)
-      })
-
-      if(this.valor1 == true){
-         //////
-        if(this.modalidad.personal_reference){
-          this.$refs.FormInformation.validatePerRef()
-          this.bus.$on('validPerRef', (val2) => {
-          console.log("VAL2"+val2)
-          this.valor2 = val2
-          console.log("VALOR2"+this.valor2)
-          })
-          if(this.valor2==true){
-              this.savePersonalReference()
-              this.personal()
-              this.nextStep(5)
-          }else{
-              console.log("no pasa")
-          }
-        }else{
-              this.savePersonalReference()
-              this.personal()
-              this.nextStep(5)
-        }
-         /////
-      }else{
-          console.log("no pasa")
-      }
-
-
-      /*this.$refs.FormInformation.validatePerRef()
-      this.bus.$on('validPerRef', (val) => {
-      console.log("VAL"+val)
-      if(val){
-          this.nextStep(5)
-      }else{
-          console.log("no pasa")
-      }
-      })
-    }*/
   }
 }
 </script>|
