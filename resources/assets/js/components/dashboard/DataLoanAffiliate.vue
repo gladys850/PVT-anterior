@@ -57,134 +57,150 @@
                     </v-col>
                      <v-progress-linear></v-progress-linear>
                     <v-col cols="12" md="6" >
-                        Nombre: {{loans.name}}
+                        Nombre: {{loans.affiliate}}
                     </v-col>
                     <v-col cols="12" md="6" >
-                        C.I.: {{loans.ci}}
+                        C.I.: {{loans.affiliate_identity_card}}
                     </v-col>
                     <v-col cols="12" md="6" >
-                        Estado:
-                    </v-col>
-                    <v-col cols="12" md="6" >
-                        Categoria:
+                     Estado: {{loans.state_affiliate}}
                     </v-col>
                   </v-row>
                 </v-card-text>
               </v-card>
             </v-col>
-               <v-col cols="12" md="4" v-show="ver">
-              <v-card>
-                <v-card-text>
+            <v-col  cols="12" md="12" v-show="evaluacion">
+              <v-row>
+                <v-col cols="12" md="4">
+                  <v-card>
+                    <v-card-text>
+                      <v-row>
+                        <v-col   class="text-center" cols="12" md="12">
+                          <h3 class="aling-text--center" style="color:teal">
+                          {{loans.modalities[0].name_procedure_modality }}
+                          </h3>
+                        </v-col>
+                        <v-progress-linear></v-progress-linear>
+                        <v-col cols="12" md="8" >
+                            Monto Maximo:
+                        </v-col>
+                        <v-col cols="12" md="4" >
+                            {{ loans.modalities[0].amount_max +" Bs."}}
+                        </v-col>
+                        <v-col cols="12" md="8" >
+                            Plazo Maximo:
+                        </v-col>
+                        <v-col cols="12" md="4" >
+                            {{ loans.modalities[0].modality_affiliate.procedure_type.interval.maximum_term +" meses"}}
+                        </v-col>
+                        <v-col cols="12" md="8" >
+                            Liquido para Calificacion:
+                        </v-col>
+                        <v-col cols="12" md="4" >
+                            {{ loans.modalities[0].liquid_calification +" Bs."}}
+                        </v-col>
+                        <v-col cols="12" md="8" >
+                            Interes:
+                        </v-col>
+                        <v-col cols="12" md="4" >
+                            {{ loans.modalities[0].interest.annual_interest/12 +" %"}}
+                        </v-col>
+                      </v-row>
+                    </v-card-text>
+                  </v-card>
+                </v-col>
+                <v-col cols="12" md="4">
+                  <v-card>
+                    <v-card-text>
+                      <v-row>
+                      <v-col   class="text-center" cols="12" md="12">
+                        <h3 class=" aling-text--center" style="color:teal">
+                        {{loans.modalities[1].name_procedure_modality}}
+                        </h3>
+                      </v-col>
+                      <v-progress-linear></v-progress-linear>
+                        <v-col cols="12" md="8" >
+                            Monto Maximo:
+                        </v-col>
+                        <v-col cols="12" md="4" >
+                            {{ loans.modalities[1].amount_max +" Bs."}}
+                        </v-col>
+                        <v-col cols="12" md="8" >
+                            Plazo Maximo:
+                        </v-col>
+                        <v-col cols="12" md="4" >
+                            {{ loans.modalities[1].modality_affiliate.procedure_type.interval.maximum_term +" meses"}}
+                        </v-col>
+                        <v-col cols="12" md="8" >
+                            Liquido para Calificacion:
+                        </v-col>
+                        <v-col cols="12" md="4" >
+                            {{ loans.modalities[1].liquid_calification +" Bs."}}
+                        </v-col>
+                        <v-col cols="12" md="8" >
+                            Interes:
+                        </v-col>
+                        <v-col cols="12" md="4" >
+                            {{ loans.modalities[1].interest.annual_interest/12 +" %"}}
+                        </v-col>
+                      </v-row>
+                    </v-card-text>
+                  </v-card>
+                </v-col>
+                <v-col cols="12" md="4">
+                  <v-card>
+                    <v-card-text>
+                    <v-row>
+                      <v-col   class="text-center" cols="12" md="12">
+                        <h3 class=" aling-text--center" style="color:teal">
+                        {{loans.modalities[2].name_procedure_modality}}
+                        </h3>
+                      </v-col>
+                      <v-progress-linear></v-progress-linear>
+                        <v-col cols="12" md="8" >
+                            Monto Maximo:
+                        </v-col>
+                        <v-col cols="12" md="4" >
+                            {{ loans.modalities[2].amount_max +" Bs."}}
+                        </v-col>
+                        <v-col cols="12" md="8" >
+                            Plazo Maximo:
+                        </v-col>
+                        <v-col cols="12" md="4" >
+                            {{ loans.modalities[2].modality_affiliate.procedure_type.interval.maximum_term +" meses"}}
+                        </v-col>
+                        <v-col cols="12" md="8" >
+                            Liquido para Calificacion:
+                        </v-col>
+                        <v-col cols="12" md="4" >
+                            {{ loans.modalities[2].liquid_calification +" Bs."}}
+                        </v-col>
+                        <v-col cols="12" md="8" >
+                            Interes:
+                        </v-col>
+                        <v-col cols="12" md="4" >
+                            {{ loans.modalities[2].interest.annual_interest/12 +" %"}}
+                        </v-col>
+                    </v-row>
+                    </v-card-text>
+                  </v-card>
+                </v-col>
+              </v-row>
+            </v-col>
+            <v-col v-show="ver">
+               <v-col cols="12" md="12" v-show="!evaluacion">
+                <v-card>
+                  <v-card-text>
                   <v-row>
                     <v-col   class="text-center" cols="12" md="12">
-                      <h3 class="aling-text--center" style="color:teal">
-                      ANTICIPO
-                      </h3>
-                    </v-col>
-                     <v-progress-linear></v-progress-linear>
-                    <v-col cols="12" md="8" >
-                        Liquido para Calificacion:
-                    </v-col>
-                    <v-col cols="12" md="4" >
-                        {{ loans.ci }}
-                    </v-col>
-                    <v-col cols="12" md="8" >
-                        Interes:
-                    </v-col>
-                    <v-col cols="12" md="4" >
-                        {{ loans.ci }}
-                    </v-col>
-                    <v-col cols="12" md="8" >
-                        Monto Maximo:
-                    </v-col>
-                    <v-col cols="12" md="4" >
-                        {{ loans.ci }}
-                    </v-col>
-                    <v-col cols="12" md="8" >
-                        Plazo Maximo:
-                    </v-col>
-                    <v-col cols="12" md="4" >
-                        {{ loans.ci }}
+                      <!--h3 class=" aling-text--center" style="color:teal">
+                      {{loans.message.accomplished}}
+                      </!--h3-->
                     </v-col>
                   </v-row>
-                </v-card-text>
-              </v-card>
-            </v-col>
-             <v-col cols="12" md="4" v-show="ver">
-              <v-card>
-                <v-card-text>
-                  <v-row>
-                  <v-col   class="text-center" cols="12" md="12">
-                    <h3 class=" aling-text--center" style="color:teal">
-                     CORTO PLAZO
-                    </h3>
-                  </v-col>
-                   <v-progress-linear></v-progress-linear>
-                   <v-col cols="12" md="8" >
-                      Liquido para Calificacion:
-                  </v-col>
-                  <v-col cols="12" md="4" >
-                      {{ loans.ci }}
-                  </v-col>
-                   <v-col cols="12" md="8" >
-                      Interes:
-                  </v-col>
-                  <v-col cols="12" md="4" >
-                      {{ loans.ci }}
-                  </v-col>
-                  <v-col cols="12" md="8" >
-                      Monto Maximo:
-                  </v-col>
-                  <v-col cols="12" md="4" >
-                      {{ loans.ci }}
-                  </v-col>
-                   <v-col cols="12" md="8" >
-                      Plazo Maximo:
-                  </v-col>
-                  <v-col cols="12" md="4" >
-                      {{ loans.ci }}
-                  </v-col>
-                  </v-row>
-                </v-card-text>
-              </v-card>
-            </v-col>
-             <v-col cols="12" md="4" v-show="ver">
-              <v-card>
-                <v-card-text>
-                <v-row>
-                  <v-col   class="text-center" cols="12" md="12">
-                    <h3 class=" aling-text--center" style="color:teal">
-                     LARGO PLAZO
-                    </h3>
-                  </v-col>
-                   <v-progress-linear></v-progress-linear>
-                   <v-col cols="12" md="8" >
-                      Liquido para Calificacion:
-                  </v-col>
-                  <v-col cols="12" md="4" >
-                      {{ loans.ci }}
-                  </v-col>
-                   <v-col cols="12" md="8" >
-                      Interes:
-                  </v-col>
-                  <v-col cols="12" md="4" >
-                      {{ loans.ci }}
-                  </v-col>
-                  <v-col cols="12" md="8" >
-                      Monto Maximo:
-                  </v-col>
-                  <v-col cols="12" md="4" >
-                      {{ loans.ci }}
-                  </v-col>
-                   <v-col cols="12" md="8" >
-                      Plazo Maximo:
-                  </v-col>
-                  <v-col cols="12" md="4" >
-                      {{ loans.ci }}
-                  </v-col>
-                </v-row>
-                </v-card-text>
-              </v-card>
+                  </v-card-text>
+                </v-card>
+              </v-col>
             </v-col>
           </v-row>
         </v-card>
@@ -197,20 +213,67 @@
 export default {
   name: "dashboard-index",
   data: () => ({
+    affiliate_ci:null,
+    loading: false,
+    largo_plazo:{},
+    corto_plazo:{},
+    anticipo:{},
+    cont:0,
     loans: {
-      name:'Mario',
-      ci:'8566'
+      modalities:[
+        {
+          name_procedure_modality:{},
+          interest:{},
+          modality_affiliate:{
+            procedure_type:{
+              interval:{}
+            }
+          }
+        },
+        {
+          name_procedure_modality:{},
+          interest:{},
+          modality_affiliate:{
+            procedure_type:{
+              interval:{}
+            }
+          }
+        },
+        {
+          name_procedure_modality:{},
+          interest:{},
+          modality_affiliate:{
+            procedure_type:{
+              interval:{}
+            }
+          }
+        }
+      ],
+      message:{
+        accomplished:null
+      },
+      state_affiliate:{
+        name:null,
+  
+      }
+   
     },
     ver: false,
+    evaluacion:false
   }),
 
   methods: {
     async getCalculator() {
       try {
-        this.loading = true;
-         this.ver= true,
-         this.toastr.error("Entro al metodo")
-        
+        this.loading = false;
+         this.ver= true
+          this.toastr.error("Entro al metodoooo")
+          let res = await axios.post(`search_loan`, {
+            identity_card : this.affiliate_ci });
+            this.loans=res.data
+            this.cont=this.loans.modalities.length
+            this.evaluacion=res.data.evaluate
+              this.$forceUpdate()
       } catch (e) {
         console.log(e);
       } finally {
