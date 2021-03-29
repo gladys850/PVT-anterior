@@ -267,7 +267,6 @@ export default {
       try {
         this.loading = false;
          this.ver= true
-          this.toastr.error("Entro al metodoooo")
           let res = await axios.post(`search_loan`, {
             identity_card : this.affiliate_ci });
             this.loans=res.data
