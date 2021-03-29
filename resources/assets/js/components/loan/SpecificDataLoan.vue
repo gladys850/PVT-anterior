@@ -52,7 +52,7 @@
         </div>
         <v-row justify="center" >
             <v-col cols="12" class="py-0 px-0">
-              <v-container class="py-0  ">
+              <v-container fluid class="py-0 px-6  ">
                 <v-row class="py-0">
                   <v-col cols="12" class="py-0">
                     <v-tabs dark active-class="secondary">
