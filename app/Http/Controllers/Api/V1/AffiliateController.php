@@ -1087,9 +1087,10 @@ class AffiliateController extends Controller
        $message = array();
        $ci=$request->identity_card;
        $affiliate = Affiliate::whereIdentity_card($ci)->first();
-       //$state_affiliate=$affiliate->affiliate_state->affiliate_state_type->name;
+       $state_affiliate=$affiliate->affiliate_state->affiliate_state_type->name;
        $state_affiliate_sub=$affiliate->affiliate_state->name;
        $evaluate=false;
+       $state_affiliate_concat=$state_affiliate.' - '.$affiliate->affiliate_state->name;//agregooo
        $before_month=2;
        $modalities_all= collect();
  
@@ -1170,7 +1171,8 @@ class AffiliateController extends Controller
         "evaluate"=>$evaluate,
         "affiliate" => $affiliate->affiliate_fullName(),
         "affiliate_identity_card"=>$affiliate->getIdentityCardExtAttribute(),
-        "state_affiliate" => $affiliate->affiliate_state,
+        //"state_affiliate" => $affiliate->affiliate_state,
+        "state_affiliate" =>$state_affiliate_concat,
         "modalities" => $modalities_all,
         "message"=>$message
         );
