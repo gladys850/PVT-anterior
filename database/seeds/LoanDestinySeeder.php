@@ -13,45 +13,45 @@ class LoanDestinySeeder extends Seeder
     {
         $destinity = [
             [
-                'name' => 'Libre disponibilidad',
+                'name' => 'LIBRE DISPONIBILIDAD',
                 'description' => 'Libre disponibilidad'
             ],  [
-                'name' => 'Salud',
+                'name' => 'SALUD',
                 'description' => 'Salud'
             ], [
-                'name' => 'Consumo',
+                'name' => 'CONSUMO',
                 'description' => 'Consumo'
             ], [
-                'name' => 'Ampliación de vivienda',
+                'name' => 'AMPLIACIÓN DE VIVIENDA',
                 'description' => 'Ampliación de vivienda'
             ],[
-                'name' => 'Refacción de vivienda',
+                'name' => 'REFACCIÓN DE VIVIENDA',
                 'description' => 'Refacción de vivienda'
             ],[
-                'name' => 'Remodelación de vivienda',
+                'name' => 'REMODELACIÓN DE VIVIENDA',
                 'description' => 'Remodelación de vivienda'
             ],[
-                'name' => 'Otros vivienda',
+                'name' => 'OTROS VIVIENDA',
                 'description' => 'Otros vivienda'
             ],[
-                'name' => 'Comercio',
+                'name' => 'COMERCIO',
                 'description' => 'Comercio'
             ],[
-                'name' => 'Compra de automóvil',
+                'name' => 'COMPRA DE AUTOMÓVIL',
                 'description' => 'Compra de automóvil'
             ],[
-                'name' => 'Servicio de infraestructura',
+                'name' => 'SERVICIO DE INFRAESTRUCTURA',
                 'description' => 'Servicio de infraestructura'
             ],[
-                'name' => 'Inversión',
+                'name' => 'INVERSIÓN',
                 'description' => 'Inversión'
             ],[
-                'name' => 'Refacción y remodelación de vivienda',
+                'name' => 'REFACCIÓN Y REMODELACIÓN DE VIVIENDA',
                 'description' => 'Refacción y remodelación de vivienda'
             ] 
         ];
         foreach ($destinity as $destinity) {
-            $new_modality=  LoanDestiny::firstOrCreate($destinity);
+           LoanDestiny::firstOrCreate($destinity);
         }
     }
 }
