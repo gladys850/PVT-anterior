@@ -53,27 +53,27 @@ class AdvanceRoleSeeder extends Seeder
             ], [
                 'name' => 'Revisión Dirección',
                 'action' => 'Aprobado',
-                'sequence' => 3
+                'sequence' => 6
             ], [
                 'name' => 'Aprobación Legal',
                 'action' => 'Aprobado',
-                'sequence' => 6
+                'sequence' => 7
             ], [
                 'name' => 'Tesorería',
                 'action' => 'Desembolsado',
-                'sequence' => 7
+                'sequence' => 8
             ]
         ];
         $recovery_roles = [
             [
                 'name' => 'Cobranzas',
                 'action' => 'Liquidado',
-                'sequence' => 9
+                'sequence' => 10
             ],
             [
                 'name' => 'Tesorería Cobros',
                 'action' => 'Pago Confirmado',
-                'sequence' => 10
+                'sequence' => 11
             ]
         ];
       
@@ -105,7 +105,7 @@ class AdvanceRoleSeeder extends Seeder
                     $role->syncPermissions(array_merge($sequence_permissions, $leadership_permissions, $executive_permissions));
                 } elseif (in_array($role['display_name'], ['Tesorería Cobros'])) {
                     $role->syncPermissions(array_merge($pay_permissions_treasury));
-                }elseif (in_array($role['display_name'], ['Tesorería'])) {
+                } elseif (in_array($role['display_name'], ['Tesorería'])) {
                     $role->syncPermissions(array_merge($treasury_permissions));
                 }
                 else {

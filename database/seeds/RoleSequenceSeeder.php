@@ -29,12 +29,59 @@ class RoleSequenceSeeder extends Seeder
             ]
         ];
         $this->create($sequences);
-        //Flujo de Registro de Pago
+        //Flujo de Préstamo a corto plazo
+        $sequences = [
+            'Préstamo a corto plazo' => [
+                ['PRE-regional-santa-cruz', 'PRE-regional-cochabamba', 'PRE-regional-oruro', 'PRE-regional-potosi', 'PRE-regional-sucre', 'PRE-regional-tarija', 'PRE-regional-trinidad', 'PRE-regional-cobija'],
+                ['PRE-recepcion'],
+                ['PRE-calificacion'],
+                ['PRE-revision-legal'],
+                ['PRE-jefatura'],
+                ['PRE-aprobacion-direccion'],
+                ['PRE-aprobacion-legal'],
+                ['PRE-tesoreria'],
+                ['PRE-cobranzas'],    
+            ]
+        ];
+        $this->create($sequences);
+         //Flujo de Préstamo a largo plazo
+        $sequences = [
+            'Préstamo a largo plazo' => [
+                ['PRE-regional-santa-cruz', 'PRE-regional-cochabamba', 'PRE-regional-oruro', 'PRE-regional-potosi', 'PRE-regional-sucre', 'PRE-regional-tarija', 'PRE-regional-trinidad', 'PRE-regional-cobija'],
+                ['PRE-recepcion'],
+                ['PRE-calificacion'],
+                ['PRE-revision-legal'],
+                ['PRE-jefatura'],
+                ['PRE-revision-direccion'],
+                ['PRE-aprobacion-legal'],
+                ['PRE-aprobacion-direccion'],
+                ['PRE-tesoreria'],
+                ['PRE-cobranzas'], 
+            ]
+        ];
+        $this->create($sequences);
+        //Flujo de Préstamo hipotecario
+        $sequences = [
+            'Préstamo hipotecario' => [
+                ['PRE-regional-santa-cruz', 'PRE-regional-cochabamba', 'PRE-regional-oruro', 'PRE-regional-potosi', 'PRE-regional-sucre', 'PRE-regional-tarija', 'PRE-regional-trinidad', 'PRE-regional-cobija'],
+                ['PRE-recepcion'],
+                ['PRE-calificacion'],
+                ['PRE-revision-legal'],
+                ['PRE-jefatura'],
+                ['PRE-revision-direccion'],
+                ['PRE-aprobacion-legal'],
+                ['PRE-aprobacion-direccion'],
+                ['PRE-tesoreria'],
+                ['PRE-cobranzas'],   
+            ]
+        ];
+        $this->create($sequences);
+        //Fujo de Registro de Pago
         RoleSequence::flushEventListeners();
         $sequences = [
             'Amortización Manual' => [
                 ['PRE-cobranzas'],
-                ['PRE-tesoreria-cobranza']
+                ['PRE-tesoreria-cobros']
             ]
         ];
         $this->create($sequences);    
@@ -54,7 +101,7 @@ class RoleSequenceSeeder extends Seeder
                                 RoleSequence::firstOrCreate([
                                     'procedure_type_id' => $procedure->id,
                                     'role_id' => $prev->id,
-                                  'next_role_id' => $curr->id
+                                    'next_role_id' => $curr->id
                                 ]);
                             }
                         }

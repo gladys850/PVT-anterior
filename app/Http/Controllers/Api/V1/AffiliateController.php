@@ -1075,21 +1075,22 @@ class AffiliateController extends Controller
     /**
     * Buscar affiliado para prestamos
     * Devuelve las modalidades de prestamos para el afiliado, con sus montos maximos.
-    * @bodyParam ci string required Carnet de identidad. Example:492562
+    * @bodyParam identity_card string required Carnet de identidad. Example:492562
     * @authenticated
     * @responseFile responses/affiliate/affiliate_evaluate_loans.200.json
     */
     public function search_loan(Request $request){
       // return $request;
        $request->validate([
-           'identity_card' => 'required|string'
+           'identity_card' => 'required|string|exists:affiliates,identity_card'
        ]);
        $message = array();
        $ci=$request->identity_card;
        $affiliate = Affiliate::whereIdentity_card($ci)->first();
-       //$state_affiliate=$affiliate->affiliate_state->affiliate_state_type->name;
+       $state_affiliate=$affiliate->affiliate_state->affiliate_state_type->name;
        $state_affiliate_sub=$affiliate->affiliate_state->name;
        $evaluate=false;
+       $state_affiliate_concat=$state_affiliate.' - '.$affiliate->affiliate_state->name;//agregooo
        $before_month=2;
        $modalities_all= collect();
  
@@ -1131,9 +1132,11 @@ class AffiliateController extends Controller
                         $avg_east_bonus=$contri->avg('east_bonus');
     
                         $liquid_calification=$avg_payable_liquid-$avg_position_bonus-$avg_border_bonus-$avg_public_security_bonus-$avg_east_bonus;//liquido para califica
+                        $liquid_calification = Util::round($liquid_calification);
                         $amount_max = $this->maximum_amount($affiliate_modality, $interval_modality->maximum_term,$liquid_calification);
                     
                         $quota_calculator=$this->quota_calculator($affiliate_modality,$interval_modality->maximum_term,$amount_max);
+                        $quota_calculator= Util::round($quota_calculator);
                         //$modalities_all->push($affiliate_modality,$amount_max,$quota_calculator);  
                         $interest=$affiliate_modality->current_interest;
                    }
@@ -1168,7 +1171,8 @@ class AffiliateController extends Controller
         "evaluate"=>$evaluate,
         "affiliate" => $affiliate->affiliate_fullName(),
         "affiliate_identity_card"=>$affiliate->getIdentityCardExtAttribute(),
-        "state_affiliate" => $affiliate->affiliate_state,
+        //"state_affiliate" => $affiliate->affiliate_state,
+        "state_affiliate" =>$state_affiliate_concat,
         "modalities" => $modalities_all,
         "message"=>$message
         );
