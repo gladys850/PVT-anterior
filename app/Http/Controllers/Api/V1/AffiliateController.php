@@ -440,9 +440,10 @@ class AffiliateController extends Controller
                 $now = CarbonImmutable::now();
                 if($choose_diff_month == true && $request->has('number_diff_month')){
                     $before_month=$number_diff_month;
+                    $before_month=$before_month;
                 }else{
                     if ($now->day <= $offset_day || $city->name == 'LA PAZ') {
-                        $before_month = 1;
+                        $before_month = 1;//
                     } else {
                         $before_month = 2;
                     }
@@ -1044,5 +1045,29 @@ class AffiliateController extends Controller
                     or Padron.padCedulaIdentidad = '$ci'";
         $loans = DB::connection('sqlsrv')->select($query);
         return $loans;
+    }
+
+    /**
+    * Alerta afiliado(a) viudo(a)
+    * verificacion si tambien es viuda
+    * Devuelve si el/la afiliado(a) tambien es viudo(a)
+    * @urlParam affiliate required ID de afiliado. Example: 45120
+    * @authenticated
+    * @responseFile responses/affiliate/verify_affiliate_spouse.200.json
+    */
+
+    public function verify_affiliate_spouse(Affiliate $affiliate){
+        if(count(Spouse::where('identity_card', '=', $affiliate->identity_card)->get())>0){
+            return $message=[
+                'message' => 'Affiliado tambien es viudo(a)',
+                'verify' => true
+            ];
+        }
+        else{
+            return $message=[
+                'message' => 'Es solo afiliado',
+                'verify' => false
+            ];
+        }
     }
 }

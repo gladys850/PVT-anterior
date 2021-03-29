@@ -1,5 +1,6 @@
 {
     "percentage": true,
     "paids": true,
-    "defaulted": true
+    "defaulted": true,
+    "manual_payments": true
 }

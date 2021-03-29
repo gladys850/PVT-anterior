@@ -264,8 +264,8 @@ class LoanController extends Controller
         //rehacer préstamo
         if($request->has('remake_loan_id')&& $request->remake_loan_id != null){
             $remake_loan = Loan::find($request->remake_loan_id);
-            $loan->code=$remake_loan->code;
-            $loan->update();
+            //$loan->code=$remake_loan->code;
+            //$loan->update();
             $this->destroyAll($remake_loan);
             $this->happenRecordLoan($remake_loan,$loan->id);
         }
@@ -473,6 +473,22 @@ class LoanController extends Controller
             }
         } else {
             $loan = new Loan(array_merge($request->all(), (array)self::verify_spouse_disbursable($disbursable), ['amount_approved' => $request->amount_requested]));
+        }
+
+        //heredar el codigo del prestamo padre
+        if($loan->parent_loan_id)
+        {
+            if(substr($loan->parent_loan->code, -3) != substr($loan->parent_reason,0,3))
+                $loan->code = Loan::find($loan->parent_loan_id)->code." - ".substr($loan->parent_reason,0,3);
+            else
+                $loan->code = $loan->parent_loan->code;
+        }
+
+        //rehacer obtener cod 
+        if($request->has('remake_loan_id')&& $request->remake_loan_id != null)
+        {
+            $remake_loan = Loan::find($request->remake_loan_id);
+            $loan->code = $remake_loan->code;
         }
 
         $loan->save();
@@ -999,8 +1015,8 @@ class LoanController extends Controller
     * @responseFile responses/loan/get_next_payment.200.json
     */
     public function get_next_payment(LoanPaymentForm $request, Loan $loan)
-    {
-        return $loan->next_payment2($request->input('estimated_date', null), $request->input('estimated_quota', null), $request->input('liquidate', false));
+    { 
+        return $loan->next_payment2($request->input('estimated_date', null), $request->input('estimated_quota', null), $request->input('liquidate', false), $request->input('paid_by', "T"));
     }
 
     /** @group Cobranzas
@@ -1331,6 +1347,13 @@ class LoanController extends Controller
         }
         else{
             $message['defaulted'] = false;
+        }
+        //pagos consecutivo
+        if ($loan->verify_payment_consecutive()){
+            $message['manual_payments'] = true;
+        }
+        else{
+            $message['manual_payments'] = false;
         }
         return $message;
     }
