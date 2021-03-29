@@ -494,10 +494,19 @@ export default {
         let res = await axios.get(`module/${this.modulo}/modality_loan`)
         this.modalities = res.data
         //Verifica si es refinaciamiento o reprogramación para no mostrar Anticipo
-        if(this.refinancing || this.reprogramming){
+        if(this.refinancing){
           let modalities_aux=[]
           for(let i = 0; i < this.modalities.length; i++ ){
             if(this.modalities[i].name != "Préstamo Anticipo"){
+              modalities_aux.push(this.modalities[i])
+            }
+          }
+          this.modalities = modalities_aux
+        }
+        else if(this.reprogramming){
+          let modalities_aux=[]
+          for(let i = 0; i < this.modalities.length; i++ ){
+            if(this.modalities[i].name != "Préstamo Anticipo" && this.modalities[i].name != 'Préstamo a corto plazo' ){
               modalities_aux.push(this.modalities[i])
             }
           }
@@ -661,7 +670,7 @@ export default {
  
       this.contributions.forEach(async (item, i) => {         
       array_contributions.push({
-          payable_liquid: this.contributions[i].payable_liquid  + this.contributions[i].adjustment_amount,
+          payable_liquid: parseFloat(this.contributions[i].payable_liquid)  + parseFloat(this.contributions[i].adjustment_amount),
           position_bonus: this.contributions[i].position_bonus,
           border_bonus: this.contributions[i].border_bonus,
           public_security_bonus: this.contributions[i].public_security_bonus,
@@ -961,6 +970,16 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
               (parseFloat(this.contributions[i].payable_liquid) + 
               parseFloat(this.contributions[i].adjustment_amount))){
                 continuar = true
+                if((continuar == true) && 
+                !(this.contributions[i].adjustment_amount > 0 && 
+                (this.contributions[i].adjustment_description == null || this.contributions[i].adjustment_description == '') && 
+                (this.affiliate_contribution.state_affiliate == 'Pasivo' || this.affiliate_contribution.state_affiliate == 'Activo'))){
+                    continuar = true
+                }else{
+                    continuar = false
+                    this.toastr.error('Existe un ajuste en el mes de '+this.contributions[i].month.toUpperCase()+ " ingrese descripción del ajuste")
+                    break;
+                }
               }else{
                 continuar = false
                 this.toastr.error(this.contributions[i].month.toUpperCase()  + " La sumatoria de bonos debe ser menor al Liquido pagable")

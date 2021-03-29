@@ -90,12 +90,13 @@
         @if($loan->loan_affiliates_ballot->first()->pivot->contributionable_type=="contributions")
             <tr>
                 <td class="bg-grey-darker text-sm-1 text-white">Periodo</td>
+                <td class="bg-grey-darker text-sm-1 text-white">Liquido</td>
+                <td class="bg-grey-darker text-sm-1 text-white">Monto de Ajuste</td>
                 <td class="bg-grey-darker text-sm-1 text-white">Bono Frontera</td>
                 <td class="bg-grey-darker text-sm-1 text-white">Bono Cargo</td>
                 <td class="bg-grey-darker text-sm-1 text-white">Bono Oriente</td>
                 <td class="bg-grey-darker text-sm-1 text-white">Bono Seguridad Ciudadana</td>
-                <td class="bg-grey-darker text-sm-1 text-white">Liquido</td>
-                <td class="bg-grey-darker text-sm-1 text-white">Monto de Ajuste</td>
+                
            </tr>        
             @php ($sum_border_bonus = 0)
             @php ($sum_position_bonus = 0)
@@ -103,22 +104,26 @@
             @php ($sum_public_security_bonus = 0)
             @php ($sum_payable_liquid = 0)
             @php ($sum_mount_adjust= 0)
+            @php ($num_reg = 0)
             @foreach($ballots as $ballot)
-            @php ($mount_adjust=0)
+            @php ($mount_adjust = 0)
+         
            <tr>
                 <td>{{Carbon::parse($ballot->month_year)->format('d/m/y')}}</td>
-                <td> {{Util::money_format($ballot->border_bonus)}}</td>
-                <td> {{Util::money_format($ballot->position_bonus)}}</td>
-                <td> {{Util::money_format($ballot->east_bonus)}}</td>
-                <td> {{Util::money_format($ballot->public_security_bonus)}}</td>
                 <td> {{Util::money_format($ballot->payable_liquid)}}</td>
                     @foreach($adjusts as $adjust)
                     @if($ballot->id == $adjust->adjustable_id)
                     @php($mount_adjust=$adjust->amount)
                     @endif
                     @endforeach
-                <td>{{Util::money_format($mount_adjust)}}</td>           
+                <td> {{Util::money_format($mount_adjust)}}</td>  
+                <td> {{Util::money_format($ballot->border_bonus)}}</td>
+                <td> {{Util::money_format($ballot->position_bonus)}}</td>
+                <td> {{Util::money_format($ballot->east_bonus)}}</td>
+                <td> {{Util::money_format($ballot->public_security_bonus)}}</td>
+                        
            </tr >
+           @php ($num_reg = $num_reg + 1)
            @php ($sum_border_bonus += $ballot->border_bonus)
            @php ($sum_position_bonus += $ballot->position_bonus)
            @php ($sum_east_bonus += $ballot->east_bonus)
@@ -127,47 +132,51 @@
            @php ($sum_mount_adjust += $mount_adjust)         
             @endforeach
            <tr>
-                <td>Total</td>
-                <td> {{Util::money_format($sum_border_bonus)}}</td>
-                <td> {{Util::money_format($sum_position_bonus)}}</td>
-                <td> {{Util::money_format($sum_east_bonus)}}</td>
-                <td> {{Util::money_format($sum_public_security_bonus)}}</td>
-                <td> {{Util::money_format($sum_payable_liquid)}}</td>
-                <td> {{Util::money_format($sum_mount_adjust)}}</td>
+                <td>Total Promedio</td>
+                <td> {{Util::money_format($sum_payable_liquid/$num_reg)}}</td>
+                <td> {{Util::money_format($sum_mount_adjust/$num_reg)}}</td>
+                <td> {{Util::money_format($sum_border_bonus/$num_reg)}}</td>
+                <td> {{Util::money_format($sum_position_bonus/$num_reg)}}</td>
+                <td> {{Util::money_format($sum_east_bonus/$num_reg)}}</td>
+                <td> {{Util::money_format($sum_public_security_bonus/$num_reg)}}</td>
+              
            </tr>
         @endif
        @if($loan->loan_affiliates_ballot->first()->pivot->contributionable_type=="aid_contributions")
             <tr>
                 <td class="bg-grey-darker text-sm-1 text-white">Periodo</td>
-                <td class="bg-grey-darker text-sm-1 text-white">Bono Renta Dignidad</td>
                 <td class="bg-grey-darker text-sm-1 text-white">Liquido</td>
                 <td class="bg-grey-darker text-sm-1 text-white">Monto de Ajuste</td>
+                <td class="bg-grey-darker text-sm-1 text-white">Bono Renta Dignidad</td>
+              
            </tr>
             @php ($sum_dignity_rent = 0)
             @php ($sum_rent = 0)
             @php ($sum_mount_adjust_aid = 0)
+            @php ($num_reg = 0)
             @foreach($ballots as $ballot)
             @php ($mount_adjust_aid = 0)
             <tr>
                 <td>{{Carbon::parse($ballot->month_year)->format('d/m/y')}}</td> 
-                <td> {{Util::money_format($ballot->dignity_rent)}}</td>
                 <td> {{Util::money_format($ballot->rent)}}</td> 
                 @foreach($adjusts as $adjust)
                     @if($ballot->id == $adjust->adjustable_id)
                     @php($mount_adjust_aid=$adjust->amount)
                     @endif
                     @endforeach
-                <td>{{Util::money_format($mount_adjust_aid)}}</td>      
+                <td>{{Util::money_format($mount_adjust_aid)}}</td>  
+                <td> {{Util::money_format($ballot->dignity_rent)}}</td>                 
             </tr >  
+           @php ($num_reg = $num_reg + 1)
            @php ($sum_dignity_rent += $ballot->dignity_rent)
            @php ($sum_rent += $ballot->$ballot->rent)
            @php ($sum_mount_adjust_aid += $mount_adjust_aid)      
           @endforeach
             <tr>
-                <td>Total</td>
-                <td> {{Util::money_format($sum_dignity_rent)}}</td>
-                <td> {{Util::money_format($sum_rent)}}</td>
-                <td> {{Util::money_format($sum_mount_adjust_aid)}}</td>
+                <td>Total Promedio</td>
+                <td> {{Util::money_format($sum_rent/$num_reg)}}</td>
+                <td> {{Util::money_format($sum_mount_adjust_aid/$num_reg)}}</td>
+                <td> {{Util::money_format($sum_dignity_rent/$num_reg)}}</td>             
              </tr>
         @endif
         @if($loan->loan_affiliates_ballot->first()->pivot->contributionable_type=="loan_contribution_adjusts")
@@ -178,6 +187,7 @@
            </tr>
            @php ($sum_liquid_amount = 0)
            @php ($sum_mount_adjust = 0)
+           @php ($num_reg = 0)
            @foreach($ballots as $ballot)
            @php ($mount_adjust= 0)         
            <tr>
@@ -190,13 +200,14 @@
                     @endforeach
                 <td>{{Util::money_format($mount_adjust)}}</td>            
             </tr >
+           @php ($num_reg = $num_reg + 1)
            @php ($sum_liquid_amount += $ballot->amount)
            @php ($sum_mount_adjust += $mount_adjust)    
            @endforeach
             <tr>
-                <td>Total</td>
-                <td> {{Util::money_format($sum_liquid_amount)}}</td> 
-                <td> {{Util::money_format($sum_mount_adjust)}}</td>            
+                <td>Total Promedio</td>
+                <td> {{Util::money_format($sum_liquid_amount/$num_reg)}}</td> 
+                <td> {{Util::money_format($sum_mount_adjust/$num_reg)}}</td>            
              </tr>
         @endif
             </table>
@@ -205,14 +216,11 @@
             <td colspan="2" class="w-100">PROMEDIO DE LA BOLETA</td>
             </tr>
             <tr >
-            <td class="w-50 text-left px-10">LÍQUIDO PAGABLE</td>
+            <td class="w-50 text-left px-10">TOTAL PROMEDIO LÍQUIDO PAGABLE</td>
             <td class="w-50 text-left">{{ $lender->pivot->payable_liquid_calculated}} </td>
             </tr>
-            <tr class="bg-grey-darker text-sm-1 text-white">
-                <td colspan="2" class="w-100">EGRESOS</td>
-            </tr>
             <tr >
-            <td class="w-50 text-left px-10">TOTAL EGRESOS</td>
+            <td class="w-50 text-left px-10">TOTAL PROMEDIO BONOS</td>
             <td class="w-50 text-left px-10">{{ $lender->pivot->bonus_calculated}}</td>
             </tr>
             <tr >

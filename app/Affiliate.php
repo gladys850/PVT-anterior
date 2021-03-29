@@ -80,7 +80,9 @@ class Affiliate extends Model
     public function getIdentityCardExtAttribute()
     {
         $data = $this->identity_card;
-        if ($this->city_identity_card) $data .= ' ' . $this->city_identity_card->first_shortened;
+        if ($this->city_identity_card && $this->city_identity_card != 'NINGUNO'){
+          $data .= ' ' . $this->city_identity_card->first_shortened;
+        } 
         return $data;
     }
 
@@ -272,6 +274,11 @@ class Affiliate extends Model
     public function active_guarantees()
     {
         return $this->verify_balance($this->guarantees);
+    }
+    //
+    public function affiliate_fullName()
+    {
+        return $this->first_name.' '.$this->second_name.' '.$this->last_name.' '.$this->mothers_last_name;
     }
 
     private function verify_balance($loans)

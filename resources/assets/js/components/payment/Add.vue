@@ -13,6 +13,27 @@
         <div>
           <v-row>
             <v-col  cols="5" v-show="!ver">
+              <span>
+                <v-tooltip
+                left          
+                >
+                <template v-slot:activator="{ on }">
+                  <v-btn
+                    icon
+                    dark
+                    small
+                    color="success"
+                    bottom
+                    right                        
+                    v-on="on"
+                    :to="{ name: 'affiliateAdd', params: { id: loan.lenders[0].id}}"
+                  >
+                  <v-icon>mdi-arrow-left-bold-outline</v-icon>
+                  </v-btn>
+                </template>
+                <span>Regresar</span>
+                </v-tooltip>            
+              </span>
               {{"TITULAR: "+$options.filters.fullName(this.loan.lenders[0], true)}}
             </v-col>
             <v-col  cols="3" v-show="!ver">
@@ -24,7 +45,28 @@
              <v-col  cols="2" v-show="!ver">
               {{'CUOTA:'+this.loan.estimated_quota}}
             </v-col>
-              <v-col  cols="4" v-show="ver" class='mb-0 pb-0'>
+            <v-col  cols="4" v-show="ver" class='mb-0 pb-0'>
+                <span>
+                <v-tooltip
+                left          
+                >
+                <template v-slot:activator="{ on }">
+                  <v-btn
+                    icon
+                    dark
+                    small
+                    color="success"
+                    bottom
+                    right                        
+                    v-on="on"
+                    :to="{ name: 'affiliateAdd', params: { id: loan.lenders[0].id}}"
+                  >
+                  <v-icon>mdi-arrow-left-bold-outline</v-icon>
+                  </v-btn>
+                </template>
+                <span>Regresar</span>
+                </v-tooltip>            
+              </span>
              {{"TITULAR: "+$options.filters.fullName(this.loan.lenders[0], true)}}
             </v-col>
               <v-col  cols="4" v-show="ver" class='mb-0 pb-0'>

@@ -12,6 +12,13 @@ class CityGeolocationSeeder extends Seeder
      */
     public function run()
     {
+        DB::table('cities')->insert([
+            'name' => 'NINGUNO',
+            'first_shortened'=>'',
+            'second_shortened'=>'',
+            'third_shortened'=>'',
+        ]);
+
         $cities = City::get();
         foreach ($cities as $city) {
             switch ($city->name) {

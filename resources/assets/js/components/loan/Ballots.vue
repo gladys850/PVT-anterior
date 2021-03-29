@@ -87,7 +87,7 @@
                
                   <v-col cols="12" md="7" class="py-0 my-0">
                     <v-row>
-                      <v-col cols="12" md="12" class="py-0 my-0 uppercase"> BOLETAS DE PAGO {{contribution[i].period}} <b>{{contribution[i].month}}</b></v-col>
+                      <v-col cols="12" md="12" class="py-0 my-0 pb-1 uppercase"> BOLETAS DE PAGO <b>{{contribution[i].month}}</b></v-col>
                       <v-col cols="12" md="3" class="py-0 my-0" v-if="lender_contribution.state_affiliate != 'Comisión'">
                         <ValidationProvider
                           v-slot="{ errors }"

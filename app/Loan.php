@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Fico7489\Laravel\Pivot\Traits\PivotEventTrait;
 use Carbon\CarbonImmutable;
 use App\LoanGlobalParameter;
+use App\Rules\LoanIntervalTerm;
 use Carbon;
 use Util;
 
@@ -274,7 +275,7 @@ class Loan extends Model
         return Util::round($monthly_interest * $this->amount_approved / (1 - 1 / pow((1 + $monthly_interest), $this->loan_term)));
     }
 
-    public function next_payment2($estimated_date = null, $amount = null, $liquidate = null, $paid_by = null)
+    public function next_payment2($estimated_date = null, $amount = null, $liquidate = null, $paid_by = null, $affiliate_id)
     {
         $grace_period = LoanGlobalParameter::latest()->first()->grace_period;
             $total_interests = 0;
@@ -285,7 +286,10 @@ class Loan extends Model
             } else {
                 if (!$amount){
                     $amount = Util::round($this->estimated_quota);
-                    
+                    if($paid_by == "T")
+                        $amount = $amount*($this->lenders->where('id',$affiliate_id)->first()->pivot->payment_percentage)/100;
+                    else
+                        $amount = $amount*($this->guarantors->where('id',$affiliate_id)->first()->pivot->payment_percentage)/100;
                 }
             }
             $quota = new LoanPayment();
@@ -311,7 +315,7 @@ class Loan extends Model
 
             $date_ini = CarbonImmutable::parse($this->disbursement_date);
             $date_compare = CarbonImmutable::parse($date_ini->addMonth()->endOfMonth())->format('Y-m-d');
-            if($date_compare >= $quota->estimated_date){
+            if($date_compare >= $quota->estimated_date && $date_ini->format('d') > LoanGlobalParameter::latest()->first()->offset_interest_day){
                 $date_fin = CarbonImmutable::parse($date_ini->endOfMonth());
                 $rest_days_of_month = $date_fin->diffInDays($date_ini);
                 $partial_amount = ($quota->balance * $interest->daily_current_interest * $rest_days_of_month);
@@ -339,6 +343,23 @@ class Loan extends Model
         }
         $total_interests += $quota->penal_remaining;
 
+        // Interes acumulado corriente
+        
+        if($quota->interest_remaining > 0){
+            if($amount >= $quota->interest_remaining){
+                $amount = $amount - $quota->interest_remaining;
+                //$quota->interest_remaining = 0;
+            }
+            else{
+                $quota->interest_remaining = $amount;
+                $amount = 0;
+            }
+        }
+        else{
+            $quota->interest_remaining = 0;
+        }
+        $total_interests += $quota->interest_remaining;
+
         // Interés penal 
 
         if($quota->estimated_days->penal >= $grace_period){
@@ -359,24 +380,6 @@ class Loan extends Model
             }
             $total_interests += $quota->penal_payment;
         }
-
-        // Interes acumulado corriente
-        //return $total_amount;
-        
-        if($quota->interest_remaining > 0){
-            if($amount >= $quota->interest_remaining){
-                $amount = $amount - $quota->interest_remaining;
-                //$quota->interest_remaining = 0;
-            }
-            else{
-                $quota->interest_remaining = $amount;
-                $amount = 0;
-            }
-        }
-        else{
-            $quota->interest_remaining = 0;
-        }
-        $total_interests += $quota->interest_remaining;
 
 
         // Interés corriente
@@ -895,5 +898,61 @@ class Loan extends Model
     }
     public function user(){
         return $this->hasOne(User::class,'id','id');
+    }
+
+    //obtener mod 
+    public static function get_modality_search($modality_name, $affiliate){
+        $modality = null;
+        if ($affiliate->affiliate_state){
+            $affiliate_state = $affiliate->affiliate_state->name;
+            $affiliate_state_type = $affiliate->affiliate_state->affiliate_state_type->name;
+        switch($modality_name){
+            case 'Préstamo Anticipo':
+                if($affiliate_state_type == "Activo")
+                {
+                    $modality=ProcedureModality::whereShortened("ANT-SA")->first();
+                }
+                else{
+                    if($affiliate_state_type == "Pasivo"){
+                        $modality=ProcedureModality::whereShortened("ANT-SP")->first();
+                    }
+                }
+            break;
+            case 'Préstamo a corto plazo':
+                if($affiliate_state_type == "Activo"){
+                   
+                    if($affiliate_state == "Servicio" || $affiliate_state == "Comisión" )
+                    {
+                        $modality=ProcedureModality::whereShortened("PCP-SA")->first(); //corto plazo activo
+                    }else{
+                        $modality=ProcedureModality::whereShortened("PCP-DLA")->first(); // corto plazo activo letra A, no le corresponde refinanciamiento segun Art 76 del reglamento
+                    }                  
+                }
+                break;
+            case 'Préstamo a largo plazo':
+                if($affiliate_state_type == "Activo")
+                {
+                    if($affiliate_state !== "Disponibilidad" ) //cpop no pueden estar en disponibilidad letra A o C
+                    {
+                         $modality=ProcedureModality::whereShortened("PLP-GP-SAYADM")->first(); //Largo plazo activo  y adm con garantia personal
+                    }
+                }
+                break;
+            case 'Préstamo hipotecario':
+                if($affiliate_state_type == "Activo")
+                {
+                    $modality=ProcedureModality::whereShortened("PLP-GH-SA")->first(); //hipotecario Sector Activo
+                }
+            break;
+            }
+        }
+        if ($modality) {
+            $modality->loan_modality_parameter;
+            return $modality;
+        }else{
+            $modality=[];
+            return $modality;
+        }
+
     }
 }

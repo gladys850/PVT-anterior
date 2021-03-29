@@ -367,33 +367,47 @@ class LoanPaymentController extends Controller
     * @authenticated
     * @responseFile responses/loan_payment/print_loan_payment.200.json
     */
-    public function print_loan_payment(Request $request, LoanPayment $loan_payment, $standalone = true, $estimated_days = null)
-    {
+    public function print_loan_payment(Request $request, LoanPayment $loan_payment, $standalone = true)
+    { 
         $loan = LoanPayment::findOrFail($loan_payment->id)->loan;
         $procedure_modality = $loan->modality;
-        $lenders = []; $is_dead = false;
+        $lenders = []; 
+        $is_dead = false;
+        $estimated_days=null;
         foreach ($loan->lenders as $lender) {
             $lenders[] = LoanController::verify_spouse_disbursable($lender)->disbursable;
             if($lender->dead) $is_dead = true;
         }
-
+        $global_parameter=LoanGlobalParameter::latest()->first();
+        $max_current=$global_parameter->grace_period+$global_parameter->days_current_interest;
         if($estimated_days == null){
-            if(count($loan->payments) == 1){
-                $estimated_days['current'] = CarbonImmutable::parse($loan->disbursement_date)->diffindays(CarbonImmutable::parse($loan->payments->first()->estimated_date));
-                if($estimated_days['current'] > 31)
-                    $estimated_days['penal'] = $estimated_days['current'] - 31;
+            $num_quota=$loan_payment->quota_number;
+            if($num_quota == 1){
+                $estimated_days['previous_balance']=$loan->amount_approved;
+                $estimated_days['current_balance']=$estimated_days['previous_balance']-$loan_payment->capital_payment; 
+                $disbursement_date=CarbonImmutable::parse($loan->disbursement_date);
+                $estimated_date=$loan->payments->first()->estimated_date;
+                $estimated_date=CarbonImmutable::parse($estimated_date);
+                $estimated_days['current'] = $disbursement_date->diffInDays($estimated_date);
+                if($estimated_days['current'] > $max_current)
+                    $estimated_days['penal'] = $estimated_days['current'] - $global_parameter->days_current_interest;
                 else
                     $estimated_days['penal'] = 0;
-            }else{
-                $estimated_days['current'] = CarbonImmutable::parse($loan->payments->where('quota_number', ($loan->payments->last()->first()->quota_number)-1))->diffindays(CarbonImmutable::parse($loan->payments->last()->first()->estimated_date));
-                if($estimated_days['current'] > 31)
-                    $estimated_days['penal'] = $estimated_days['current'] - 31;
+            }else{               
+                $capital_paid = LoanPayment::where('loan_id',$loan->id)->where('quota_number','<',$num_quota)->sum('capital_payment');
+                $estimated_days['previous_balance']=$loan->amount_approved-$capital_paid;
+                $estimated_days['current_balance']=$estimated_days['previous_balance']-$loan_payment->capital_payment;              
+                $reg_payment=$loan->payments->where('quota_number', ($num_quota-1));
+                $reg_payment=CarbonImmutable::parse($reg_payment->first()->estimated_date);
+                $estimated_days['current'] = $reg_payment->diffInDays(CarbonImmutable::parse($loan->payments->first()->estimated_date));
+                if($estimated_days['current'] > $max_current)
+                $estimated_days['penal'] = $estimated_days['current'] - $global_parameter->days_current_interest;
                 else
-                    $estimated_days['penal'] = 0;
+                $estimated_days['penal'] = 0;
             }
         }
         $persons = collect([]);
-        foreach ($lenders as $lender) {
+        foreach ($lenders as $lender){ 
             $persons->push([
                 'id' => $lender->id,
                 'full_name' => implode(' ', [$lender->title, $lender->full_name]),

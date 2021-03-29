@@ -125,16 +125,12 @@ class LoanController extends Controller
             ];
         }
         if ($request->has('user_id')) {
-            $relations['user'] = [
-                'user_id' => $request->user_id
-            ];
+            $filters['user_id'] = $request->user_id;
         }
         else{
             if($request->validated){
                 $filters['validated'] = $request->validated;
-                $relations['user'] = [
-                    'user_id' => null
-                ];
+                $filters['user_id'] = null;
             }
         }
         $data = Util::search_sort(new Loan(), $request, $filters, $relations);
@@ -264,12 +260,24 @@ class LoanController extends Controller
         //rehacer préstamo
         if($request->has('remake_loan_id')&& $request->remake_loan_id != null){
             $remake_loan = Loan::find($request->remake_loan_id);
-            //$loan->code=$remake_loan->code;
-            //$loan->update();
             $this->destroyAll($remake_loan);
             $this->happenRecordLoan($remake_loan,$loan->id);
+            Util::save_record($loan, 'datos-de-un-tramite', Util::concat_action($loan,'rehízo préstamo: '.$loan->code));
         }
 
+        //Etiqueta Sismu 
+        $user = User::whereUsername('admin')->first();
+        $sismu_tag = Tag::whereSlug('sismu')->first();
+        if(empty($loan->parent_loan_id)){
+            if($loan->parent_reason == 'REFINANCIAMIENTO' || $loan->parent_reason == 'REPROGRAMACIÓN'){
+                $loan ->tags()->detach($sismu_tag);
+                $loan ->tags()->attach([$sismu_tag->id => [
+                    'user_id' => $user->id,
+                    'date' => Carbon::now()
+                ]]);
+                Util::save_record($loan, 'datos-de-un-tramite', Util::concat_action($loan,'etiquetado: Préstamo proveniente del Sismu'));
+            } 
+        }
         // Generar PDFs
         $file_name = implode('_', ['solicitud', 'prestamo', $loan->code]) . '.pdf';
         if(Auth::user()->can('print-contract-loan')){
@@ -380,13 +388,7 @@ class LoanController extends Controller
                             'user_id' => $user->id,
                             'date' => Carbon::now()
                         ]]);
-                        foreach ($parent_loan->lenders as $lender) {
-                            $lender->records()->create([
-                                'user_id' => $user->id,
-                                'record_type_id' => RecordType::whereName('etiquetas')->first()->id,
-                                'action' => 'etiquetó  el prestamo como refinanciado'
-                            ]);
-                        }
+                    Util::save_record($parent_loan, 'datos-de-un-tramite', Util::concat_action($parent_loan,'etiquetado: Préstamo refinanciado'));
                 } 
                 if($loan->parent_reason == 'REPROGRAMACIÓN'){
                         $parent_loan ->tags()->detach($reprogramming_tag);
@@ -394,15 +396,8 @@ class LoanController extends Controller
                             'user_id' => $user->id,
                             'date' => Carbon::now()
                         ]]);
-                        foreach ($parent_loan->lenders as $lender) {
-                            $lender->records()->create([
-                                'user_id' => $user->id,
-                                'record_type_id' => RecordType::whereName('etiquetas')->first()->id,
-                                'action' => 'etiquetó  el prestamo como reprogramado'
-                            ]);
-                        }
+                    Util::save_record($parent_loan, 'datos-de-un-tramite', Util::concat_action($parent_loan,'etiquetado: Préstamo reprogramado'));
                 }
-           
         }
         $saved = $this->save_loan($request, $loan);
         return $saved->loan;
@@ -866,34 +861,38 @@ class LoanController extends Controller
     */
     public function print_plan(Request $request, Loan $loan, $standalone = true)
     {
-        $procedure_modality = $loan->modality;
-        $lenders = [];
-        $is_dead = false;
-        foreach ($loan->lenders as $lender) {
-            array_push($lenders, self::verify_spouse_disbursable($lender)->disbursable);
-            //$lenders[] = self::verify_spouse_disbursable($lender)->disbursable;
-            if($lender->dead) $is_dead = true;
+        if($loan->disbursement_date){
+            $procedure_modality = $loan->modality;
+            $lenders = [];
+            $is_dead = false;
+            foreach ($loan->lenders as $lender) {
+                array_push($lenders, self::verify_spouse_disbursable($lender)->disbursable);
+                //$lenders[] = self::verify_spouse_disbursable($lender)->disbursable;
+                if($lender->dead) $is_dead = true;
+            }
+            $data = [
+                'header' => [
+                    'direction' => 'DIRECCIÓN DE ESTRATEGIAS SOCIALES E INVERSIONES',
+                    'unity' => 'UNIDAD DE INVERSIÓN EN PRÉSTAMOS',
+                    'table' => [
+                        ['Tipo', $loan->modality->procedure_type->second_name],
+                        ['Modalidad', $loan->modality->shortened],
+                        ['Usuario', Auth::user()->username],
+                    ]
+                ],
+                'title' => 'PLAN DE PAGOS',
+                'loan' => $loan,
+                'lenders' => collect($lenders),
+                'is_dead'=> $is_dead
+            ];
+            $information_loan= $this->get_information_loan($loan);
+            $file_name = implode('_', ['plan', $procedure_modality->shortened, $loan->code]) . '.pdf';
+            $view = view()->make('loan.payments.payment_plan')->with($data)->render();
+            if ($standalone) return Util::pdf_to_base64([$view], $file_name, $information_loan, 'legal', $request->copies ?? 1);
+            return $view;
+        }else{
+            return "Prestamo no desembolsado";
         }
-        $data = [
-            'header' => [
-                'direction' => 'DIRECCIÓN DE ESTRATEGIAS SOCIALES E INVERSIONES',
-                'unity' => 'UNIDAD DE INVERSIÓN EN PRÉSTAMOS',
-                'table' => [
-                    ['Tipo', $loan->modality->procedure_type->second_name],
-                    ['Modalidad', $loan->modality->shortened],
-                    ['Usuario', Auth::user()->username],
-                ]
-            ],
-            'title' => 'PLAN DE PAGOS',
-            'loan' => $loan,
-            'lenders' => collect($lenders),
-            'is_dead'=> $is_dead
-        ];
-        $information_loan= $this->get_information_loan($loan);
-        $file_name = implode('_', ['plan', $procedure_modality->shortened, $loan->code]) . '.pdf';
-        $view = view()->make('loan.payments.payment_plan')->with($data)->render();
-        if ($standalone) return Util::pdf_to_base64([$view], $file_name, $information_loan, 'legal', $request->copies ?? 1);
-        return $view;
     }
 
     /**
@@ -1007,16 +1006,18 @@ class LoanController extends Controller
     /** @group Cobranzas
     * Cálculo de siguiente pago
     * Devuelve el número de cuota, días calculados, días de interés que alcanza a pagar con la cuota, días restantes por pagar, montos de interés, capital y saldo a capital.
-    * @urlParam loan required ID del préstamo. Example: 2
+    * @urlParam loan required ID del préstamo. Example: 41426
+    * @bodyParam affiliate_id integer required id del afiliado. Example: 2020-04-15
     * @bodyParam estimated_date date Fecha para el cálculo del interés. Example: 2020-04-15
     * @bodyParam estimated_quota float Monto para el cálculo. Example: 650
-    * @bodyParam liquidate boolean Booleano para hacer el cálculo con el monto máximo que liquidará el préstamo. Example: false
+    * @bodyParam liquidate boolean required Booleano para hacer el cálculo con el monto máximo que liquidará el préstamo. Example: false
+    * @bodyParam paid_by enum required Pago realizado por Titular(T) o Garante(G). Example: T
     * @authenticated
     * @responseFile responses/loan/get_next_payment.200.json
     */
     public function get_next_payment(LoanPaymentForm $request, Loan $loan)
-    { 
-        return $loan->next_payment2($request->input('estimated_date', null), $request->input('estimated_quota', null), $request->input('liquidate', false), $request->input('paid_by', "T"));
+    {
+        return $loan->next_payment2($request->input('estimated_date', null), $request->input('estimated_quota', null), $request->input('liquidate', false), $request->input('paid_by', "T"), $request->input('affiliate_id'));
     }
 
     /** @group Cobranzas
@@ -1039,7 +1040,7 @@ class LoanController extends Controller
     public function set_payment(LoanPaymentForm $request, Loan $loan)
     {
         if($loan->balance!=0){
-            $payment = $loan->next_payment2($request->input('estimated_date', null), $request->input('estimated_quota', null), $request->input('liquidate', false));
+            $payment = $loan->next_payment2($request->input('estimated_date', null), $request->input('estimated_quota', null), $request->input('liquidate', false), $request->input('paid_by'), $request->input('affiliate_id'));
             $payment->description = $request->input('description', null);
             $payment->state_id = LoanState::whereName('Pendiente de Pago')->first()->id;
             $payment->role_id = Role::whereName('PRE-cobranzas')->first()->id;
@@ -1065,7 +1066,7 @@ class LoanController extends Controller
             $file_name = implode('_', ['pagos', $loan->modality->shortened, $loan->code]) . '.pdf';
             $loanpayment = new LoanPaymentController;
             $payment->attachment = Util::pdf_to_base64([
-                $loanpayment->print_loan_payment(new Request([]), $loan_payment, false, $payment->estimated_days)
+                $loanpayment->print_loan_payment(new Request([]), $loan_payment, false)
             ], $file_name,$information_loan, 'legal', $request->copies ?? 1);
             return $payment;
         }else{
@@ -1283,32 +1284,36 @@ class LoanController extends Controller
 
     public function print_kardex(Request $request, Loan $loan, $standalone = true)
     {
-        $procedure_modality = $loan->modality;
-        $lenders = [];
-        foreach ($loan->lenders as $lender) {
-            $lenders[] = self::verify_spouse_disbursable($lender)->disbursable;
+        if($loan->disbursement_date){
+            $procedure_modality = $loan->modality;
+            $lenders = [];
+            foreach ($loan->lenders as $lender) {
+                $lenders[] = self::verify_spouse_disbursable($lender)->disbursable;
+            }
+            $data = [
+                'header' => [
+                    'direction' => 'DIRECCIÓN DE ESTRATEGIAS SOCIALES E INVERSIONES',
+                    'unity' => 'UNIDAD DE INVERSIÓN EN PRÉSTAMOS',
+                    'table' => [
+                        ['Tipo', $loan->modality->procedure_type->second_name],
+                        ['Modalidad', $loan->modality->shortened],
+                        ['Fecha', Carbon::now()->format('d/m/Y')],
+                        ['Hora', Carbon::now()->format('h:m:s a')],
+                        ['Usuario', Auth::user()->username]
+                    ]
+                ],
+                'title' => 'KARDEX DE PAGOS',
+                'loan' => $loan,
+                'lenders' => collect($lenders)
+            ];
+            $information_loan= $this->get_information_loan($loan);
+            $file_name = implode('_', ['kardex', $procedure_modality->shortened, $loan->code]) . '.pdf';
+            $view = view()->make('loan.payments.payment_kardex')->with($data)->render();
+            if ($standalone) return Util::pdf_to_base64([$view], $file_name, $information_loan, 'legal', $request->copies ?? 1);
+            return $view;
+        }else{
+            return "prestamo no desembolsado";
         }
-        $data = [
-            'header' => [
-                'direction' => 'DIRECCIÓN DE ESTRATEGIAS SOCIALES E INVERSIONES',
-                'unity' => 'UNIDAD DE INVERSIÓN EN PRÉSTAMOS',
-                'table' => [
-                    ['Tipo', $loan->modality->procedure_type->second_name],
-                    ['Modalidad', $loan->modality->shortened],
-                    ['Fecha', Carbon::now()->format('d/m/Y')],
-                    ['Hora', Carbon::now()->format('h:m:s a')],
-                    ['Usuario', Auth::user()->username]
-                ]
-            ],
-            'title' => 'KARDEX DE PAGOS',
-            'loan' => $loan,
-            'lenders' => collect($lenders)
-        ];
-        $information_loan= $this->get_information_loan($loan);
-        $file_name = implode('_', ['kardex', $procedure_modality->shortened, $loan->code]) . '.pdf';
-        $view = view()->make('loan.payments.payment_kardex')->with($data)->render();
-        if ($standalone) return Util::pdf_to_base64([$view], $file_name, $information_loan, 'legal', $request->copies ?? 1);
-        return $view;
     }
 
     /**
@@ -1335,7 +1340,8 @@ class LoanController extends Controller
                 $message['percentage'] = true;
             }
         }
-        if (count($loan->getPlanAttribute())>3){
+        if($loan->balance >= ($loan->estimated_quota*3)){
+            //if (count($loan->getPlanAttribute())>3){
             $message['paids'] = true;
         }
         else{
@@ -1413,7 +1419,13 @@ class LoanController extends Controller
             
             if($loan->submitted_documents) $loan->submitted_documents()->detach();
 
-            $loan->forceDelete();
+            //$loan->forceDelete();
+            $options=[$loan->id];
+            $loan = Loan::withoutEvents(function() use($options){
+                $loan = Loan::findOrFail($options[0])->forceDelete();
+                return $loan;
+            }
+        );
 
        }else{
         abort(403, 'No se puede reahacer el préstamo existen registros de cobros');
@@ -1432,5 +1444,9 @@ class LoanController extends Controller
         return $id_new_loan;
 
     }
+    
+    //limpiar datos sin relacion
+    public function clear_data_base(){
 
+    }
 }
