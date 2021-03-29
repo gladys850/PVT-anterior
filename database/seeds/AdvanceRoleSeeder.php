@@ -47,18 +47,18 @@ class AdvanceRoleSeeder extends Seeder
                 'action' => 'Aprobado',
                 'sequence' => 4
             ], [
-                'name' => 'Revisión Dirección',
-                'action' => 'Aprobado',
-                'sequence' => 5
-            ],  [
-                'name' => 'Aprobación Legal',
-                'action' => 'Aprobado',
-                'sequence' => 6
-            ],  [
                 'name' => 'Aprobación Dirección',
                 'action' => 'Aprobado',
+                'sequence' => 5
+            ], [
+                'name' => 'Revisión Dirección',
+                'action' => 'Aprobado',
+                'sequence' => 6
+            ], [
+                'name' => 'Aprobación Legal',
+                'action' => 'Aprobado',
                 'sequence' => 7
-            ],  [
+            ], [
                 'name' => 'Tesorería',
                 'action' => 'Desembolsado',
                 'sequence' => 8
@@ -73,7 +73,7 @@ class AdvanceRoleSeeder extends Seeder
             [
                 'name' => 'Tesorería Cobros',
                 'action' => 'Pago Confirmado',
-                'sequence' => 111
+                'sequence' => 11
             ]
         ];
       
