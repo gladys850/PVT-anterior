@@ -197,18 +197,10 @@ export default {
       required: true,
       default: 0
     },
-    /*reference: {
-      type: Array,
-      required: true
-    },*/
     bus: {
       type: Object,
       required: true
     },
-    /*cosigners: {
-      type: Array,
-      required: true
-    },*/
     loan_property_id: {
       type: Number,
       required: true,
