@@ -70,7 +70,7 @@ if(($modality->name == 'Refinanciamiento de Préstamo con garantía hipotecaria 
             @php ($male_female_cosigner = Util::male_female($cosigner->gender))
             <li>
                 <span>
-                    <b>{{ $cosigner->full_name }}</b> con C.I. {{ $cosigner->identity_card_ext}}, {{ $cosigner->civil_status_gender }},  mayor de edad, hábil por derecho, natural de XXXX vecin{{ $male_female_cosigner }} de {{ $cosigner->address->cityName() }} y con domicilio especial en {{ $cosigner->address }}, en adelante denominad{{ $male_female_cosigner }} CODEUDOR{{ $cosigner->gender == 'M' ? '' : 'A' }}.
+                    <b>{{ $cosigner->full_name }}</b> con C.I. {{ $cosigner->identity_card_ext}}, {{ $cosigner->civil_status_gender }},  mayor de edad, hábil por derecho, natural de XXXX vecin{{ $male_female_cosigner }} de {{ $cosigner->address }} y con domicilio especial en {{ $cosigner->address }}, en adelante denominad{{ $male_female_cosigner }} CODEUDOR{{ $cosigner->gender == 'M' ? '' : 'A' }}.
                 </span>
             </li>
             @endforeach
@@ -430,7 +430,7 @@ if(($modality->name == 'Refinanciamiento de Préstamo con garantía hipotecaria 
             @php ($male_female_cosigner = Util::male_female($cosigner->gender))
             <li>
                 <span>
-                    <b>{{ $cosigner->full_name }}</b> con C.I. {{ $cosigner->identity_card_ext}}, {{ $cosigner->civil_status_gender }},  mayor de edad, hábil por derecho, natural de XXXX vecin{{ $male_female_cosigner }} de {{ $cosigner->address->cityName() }} y con domicilio especial en {{ $cosigner->address }}, en adelante denominad{{ $male_female_cosigner }} CODEUDOR{{ $cosigner->gender == 'M' ? '' : 'A' }}.
+                    <b>{{ $cosigner->full_name }}</b> con C.I. {{ $cosigner->identity_card_ext}}, {{ $cosigner->civil_status_gender }},  mayor de edad, hábil por derecho, natural de XXXX vecin{{ $male_female_cosigner }} de {{ $cosigner->address }} y con domicilio especial en {{ $cosigner->address }}, en adelante denominad{{ $male_female_cosigner }} CODEUDOR{{ $cosigner->gender == 'M' ? '' : 'A' }}.
                 </span>
             </li>
             @endforeach

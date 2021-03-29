@@ -1075,7 +1075,7 @@ class AffiliateController extends Controller
     /**
     * Buscar affiliado para prestamos
     * Devuelve las modalidades de prestamos para el afiliado, con sus montos maximos.
-    * @bodyParam ci string required Carnet de identidad. Example:492562
+    * @bodyParam identity_card string required Carnet de identidad. Example:492562
     * @authenticated
     * @responseFile responses/affiliate/affiliate_evaluate_loans.200.json
     */
@@ -1131,9 +1131,11 @@ class AffiliateController extends Controller
                         $avg_east_bonus=$contri->avg('east_bonus');
     
                         $liquid_calification=$avg_payable_liquid-$avg_position_bonus-$avg_border_bonus-$avg_public_security_bonus-$avg_east_bonus;//liquido para califica
+                        $liquid_calification = Util::round($liquid_calification);
                         $amount_max = $this->maximum_amount($affiliate_modality, $interval_modality->maximum_term,$liquid_calification);
                     
                         $quota_calculator=$this->quota_calculator($affiliate_modality,$interval_modality->maximum_term,$amount_max);
+                        $quota_calculator= Util::round($quota_calculator);
                         //$modalities_all->push($affiliate_modality,$amount_max,$quota_calculator);  
                         $interest=$affiliate_modality->current_interest;
                    }
