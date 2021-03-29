@@ -95,7 +95,7 @@
                             <ValidationProvider
                               v-slot="{ errors }"
                               name="Boleta de pago"
-                              :rules="'required|min_value:' + livelihood_amount"
+                              :rules="'required|min_value:' + global_parameters.livelihood_amount"
                               mode="aggressive"
                             >
                               <b style="text-align: center"></b>
@@ -310,10 +310,9 @@ export default {
       type: Object,
       required: true
     },
-        livelihood_amount:{
-      type: Number,
-      required:true,
-      default:0
+    global_parameters:{
+      type: Object,
+      required:true
     },
   },
   data: () => ({
@@ -672,7 +671,7 @@ export default {
     }
   },
     appendIconCallback () {
-      if(this.number_diff_month < 10){
+      if(this.number_diff_month < this.global_parameters.max_months_go_back){
       this.number_diff_month++
       this.choose_diff_month = true
       this.getBallots(this.affiliate_codebtor.affiliate.id)
