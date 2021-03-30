@@ -1074,6 +1074,7 @@ class LoanController extends Controller
             abort(403, 'El préstamo ya fue liquidado');
         }
     }
+
     /** @group Cobranzas
     * Lista de pagos
     * Devuelve el listado de los pagos ordenados por cuota de manera descendente
@@ -1390,42 +1391,42 @@ class LoanController extends Controller
                                     if(($affiliate->affiliate_state->affiliate_state_type->name != 'Pasivo' && $affiliate->pension_entity_id ==  null) || ($affiliate->affiliate_state->affiliate_state_type->name == 'Pasivo' && $affiliate->pension_entity_id !=  null )){
                                         if($loan_process < $loan_global_parameter->max_loans_process ){
                                             if($loan_disbursement < $loan_global_parameter->max_loans_active){
-                                                $message['validate']=true;
+                                                $message['validate'] = true;
                                             }else{
-                                                    abort(403, 'El afiliado no puede tener más de ' .$loan_global_parameter->max_loans_active. ' préstamos desembolsados. Actualemnte ya tiene '. $loan_disbursement .' préstamos desembolsados.');
+                                                $message['validate'] ='El afiliado no puede tener más de ' .$loan_global_parameter->max_loans_active. ' préstamos desembolsados. Actualemnte ya tiene '. $loan_disbursement .' préstamos desembolsados.';
                                                  } 
                                         }else{
-                                            abort(403, 'El afiliado no puede tener más de '.$loan_global_parameter->max_loans_process.' trámite en proceso. Actualmente ya tiene '.$loan_process.' préstamos en proceso.');
+                                            $message['validate'] = 'El afiliado no puede tener más de '.$loan_global_parameter->max_loans_process.' trámite en proceso. Actualmente ya tiene '.$loan_process.' préstamos en proceso.';
                                             }
                                     }else{
-                                    abort(403, 'El afiliado no tiene registrado su ente Gestor.');
+                                        $message['validate'] = 'El afiliado no tiene registrado su ente Gestor.';
                                 }
                                 }else{
-                                abort(403, 'El afiliado no tiene registrado su fecha de nacimiento ó ciudad de nacimiento.');
+                                    $message['validate'] = 'El afiliado no tiene registrado su fecha de nacimiento ó ciudad de nacimiento.';
                                 }
                             }
                            else{
-                            abort(403, 'El afiliado no tiene registrado la entidad financiera');
+                            $message['validate'] = 'El afiliado no tiene registrado la entidad financiera';
                             } 
                         }
                         else{
-                            abort(403, 'El afiliado no tiene registrado su estado civil.');
+                        $message['validate'] = 'El afiliado no tiene registrado su estado civil.';
                         }
                     }
                     else{
-                        abort(403, 'El afiliado no tiene registrado su CI ó ciudad de expedición del CI.');
+                        $message['validate'] = 'El afiliado no tiene registrado su CI ó ciudad de expedición del CI.';
                     }      
                 }
                 else{ 
-                    abort(403, 'El afiliado no puede acceder a un préstamo por estar fallecido ó estar fallecido y no tener registrado a un(a) conyugue.');
+                    $message['validate'] = 'El afiliado no puede acceder a un préstamo por estar fallecido ó estar fallecido y no tener registrado a un(a) conyugue.';
                 }
             }
            else{   
-                abort(403, 'El afiliado no puede acceder a un préstamo por estar dado de baja ó no tener registrado su estado.');
+            $message['validate'] = 'El afiliado no puede acceder a un préstamo por estar dado de baja ó no tener registrado su estado.';
             }
         }
         else{   
-            abort(403, 'El afiliado no puede acceder a un préstamo por estar dado de baja ó no tener registrado su estado.');
+            $message['validate'] = 'El afiliado no puede acceder a un préstamo por estar dado de baja ó no tener registrado su estado.';
         } 
         return $message;
     }

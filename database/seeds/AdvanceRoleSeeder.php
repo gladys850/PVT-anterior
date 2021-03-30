@@ -41,19 +41,19 @@ class AdvanceRoleSeeder extends Seeder
             ], [
                 'name' => 'Revisión Legal',
                 'action' => 'Revisado',
-                'sequence' => 3
+                'sequence' => 4
             ], [
                 'name' => 'Jefatura',
                 'action' => 'Aprobado',
-                'sequence' => 4
+                'sequence' => 3
             ], [
                 'name' => 'Aprobación Dirección',
                 'action' => 'Aprobado',
-                'sequence' => 5
+                'sequence' => 6
             ], [
                 'name' => 'Revisión Dirección',
                 'action' => 'Aprobado',
-                'sequence' => 6
+                'sequence' => 5
             ], [
                 'name' => 'Aprobación Legal',
                 'action' => 'Aprobado',
