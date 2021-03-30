@@ -1364,6 +1364,15 @@ class LoanController extends Controller
         }
         return $message;
     }
+
+    /**
+    * Evaluacion de Afiliado
+    * Devuelve mensaje de error 403
+    * @urlParam affiliate_id required id del afiliado a evaluar. Example: 52540
+    * @bodyParam affiliate_id integer required la evaluacion del afiliado en caso de que este aprobado devuelve true caso contrario devuelve error 403
+    * @authenticated
+    * @responseFile responses/loan/affiliate_evaluate.200.json
+    */
     public function validate_affiliate($affiliate_id){
      
          $message['validate'] = false;
