@@ -28,6 +28,7 @@ use App\Record;
 use App\Contribution;
 use App\AidContribution;
 use App\LoanContributionAdjust;
+use App\LoanGlobalParameter;
 use App\Http\Requests\LoansForm;
 use App\Http\Requests\LoanForm;
 use App\Http\Requests\LoanPaymentForm;
@@ -1361,6 +1362,71 @@ class LoanController extends Controller
         else{
             $message['manual_payments'] = false;
         }
+        return $message;
+    }
+
+    /**
+    * Evaluacion de Afiliado
+    * Devuelve mensaje de error 403
+    * @urlParam affiliate_id required id del afiliado a evaluar. Example: 52540
+    * @bodyParam affiliate_id integer required la evaluacion del afiliado en caso de que este aprobado devuelve true caso contrario devuelve error 403
+    * @authenticated
+    * @responseFile responses/loan/affiliate_evaluate.200.json
+    */
+    public function validate_affiliate($affiliate_id){
+     
+         $message['validate'] = false;
+        $affiliate = Affiliate::findOrFail($affiliate_id);
+        $loan_global_parameter = LoanGlobalParameter::latest()->first();
+        $loan_disbursement = count($affiliate->disbursement_loans);
+        $loan_process = count($affiliate->process_loans);
+        if ($affiliate->affiliate_state){
+            if($affiliate->affiliate_state->affiliate_state_type->name != "Baja" && $affiliate->affiliate_state->affiliate_state_type->name != ""){
+                if((count($affiliate->spouses) === 0 && $affiliate->affiliate_state->name != 'Fallecido') || (count($affiliate->spouses) !== 0 && $affiliate->affiliate_state->name  == 'Fallecido')) {
+                    if($affiliate->identity_card != null && $affiliate->city_identity_card_id != null){
+                        if($affiliate->civil_status != null){
+                            if($affiliate->financial_entity_id != null && $affiliate->account_number != null && $affiliate->sigep_status != null){
+                                if($affiliate->birth_date != null && $affiliate->city_birth_id != null){
+                                    if(($affiliate->affiliate_state->affiliate_state_type->name != 'Pasivo' && $affiliate->pension_entity_id ==  null) || ($affiliate->affiliate_state->affiliate_state_type->name == 'Pasivo' && $affiliate->pension_entity_id !=  null )){
+                                        if($loan_process < $loan_global_parameter->max_loans_process ){
+                                            if($loan_disbursement < $loan_global_parameter->max_loans_active){
+                                                $message['validate']=true;
+                                            }else{
+                                                    abort(403, 'El afiliado no puede tener más de ' .$loan_global_parameter->max_loans_active. ' préstamos desembolsados. Actualemnte ya tiene '. $loan_disbursement .' préstamos desembolsados.');
+                                                 } 
+                                        }else{
+                                            abort(403, 'El afiliado no puede tener más de '.$loan_global_parameter->max_loans_process.' trámite en proceso. Actualmente ya tiene '.$loan_process.' préstamos en proceso.');
+                                            }
+                                    }else{
+                                    abort(403, 'El afiliado no tiene registrado su ente Gestor.');
+                                }
+                                }else{
+                                abort(403, 'El afiliado no tiene registrado su fecha de nacimiento ó ciudad de nacimiento.');
+                                }
+                            }
+                           else{
+                            abort(403, 'El afiliado no tiene registrado la entidad financiera');
+                            } 
+                        }
+                        else{
+                            abort(403, 'El afiliado no tiene registrado su estado civil.');
+                        }
+                    }
+                    else{
+                        abort(403, 'El afiliado no tiene registrado su CI ó ciudad de expedición del CI.');
+                    }      
+                }
+                else{ 
+                    abort(403, 'El afiliado no puede acceder a un préstamo por estar fallecido ó estar fallecido y no tener registrado a un(a) conyugue.');
+                }
+            }
+           else{   
+                abort(403, 'El afiliado no puede acceder a un préstamo por estar dado de baja ó no tener registrado su estado.');
+            }
+        }
+        else{   
+            abort(403, 'El afiliado no puede acceder a un préstamo por estar dado de baja ó no tener registrado su estado.');
+        } 
         return $message;
     }
     public function show_ballot_loan($loan_id){
