@@ -515,10 +515,8 @@ export default {
       let res
       try {
         res = await axios.post(`loan/${id}/validate_affiliate`)
-        this.validate_affiliate = res.data.validate
-  
+        this.validate_affiliate = res.data.validate  
         if(this.validate_affiliate == true){
-          console.log("ENNTROOOOOOO")
           if(type_procedure == "is_new"){
             this.$router.push({ name: 'loanAdd',  params: { hash: 'new'},  query: { affiliate_id: id}})
           } if(type_procedure == "is_refinancing"){
@@ -526,6 +524,8 @@ export default {
           } if(type_procedure == "is_reprogramming"){
             this.$router.push({ name: 'loanAdd', params: { hash: 'reprogramming'}, query: { affiliate_id: id, type_sismu: true}})
           } 
+        }else{
+          this.toastr.error(this.validate_affiliate)
         }
       } catch (e) {
         console.log(e)
