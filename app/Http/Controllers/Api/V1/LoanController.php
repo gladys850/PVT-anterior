@@ -1047,7 +1047,7 @@ class LoanController extends Controller
             $payment->role_id = Role::whereName('PRE-cobranzas')->first()->id;
             if($request->has('procedure_modality_id')){
                 $modality = ProcedureModality::findOrFail($request->procedure_modality_id)->procedure_type;
-                if($modality->name == "Amortización Manual") $payment->validated = true;
+                if($modality->name == "Amortización Directa") $payment->validated = true;
             }
             $payment->procedure_modality_id = $request->input('procedure_modality_id');
             $payment->voucher = $request->input('voucher', null);
