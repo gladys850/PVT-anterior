@@ -12,7 +12,7 @@ class CityGeolocationSeeder extends Seeder
      */
     public function run()
     {
-        DB::table('cities')->insert([
+        city::firstOrCreate([
             'name' => 'NINGUNO',
             'first_shortened'=>'',
             'second_shortened'=>'',
