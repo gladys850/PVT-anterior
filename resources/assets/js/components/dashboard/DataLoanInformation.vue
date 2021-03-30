@@ -3,7 +3,7 @@
     <v-card-text>
       <v-container class="py-0">
         <v-card color="grey lighten-1" class="ma-0 pa-3">
-          <v-row>
+          <!--v-row>
             <v-col cols="12" md="4">
               <v-card>
                 <v-container class="py-0">
@@ -45,7 +45,7 @@
                   </v-row>
                 </v-container>
               </v-card>
-            </v-col>
+            </!--v-col>
 
             <v-col cols="12" md="8">
               <v-card>
@@ -137,7 +137,7 @@
                 </v-row>
               </v-card>
             </v-col>
-          </v-row>
+          </v-row-->
           <template>
             <template v-if="ver && exist_affiliate && loans.loans.length > 0">
               <h3 class="pa-1 text-center">PRESTAMOS SOLICITADOS</h3>
@@ -364,7 +364,21 @@
 
 <script>
 export default {
-  name: "dashboard-index",
+  name: "data-loan-information",
+   props: {
+    loans: {
+      type: Object,
+      required: true
+    },
+    exist_affiliate: {
+      type: Boolean,
+      required: true
+    },
+    ver: {
+      type: Boolean,
+      required: true
+    },
+  },
   data: () => ({
     headers_loans: [
       {
@@ -513,24 +527,24 @@ export default {
         width: "10%",
       },
     ],
-    loans: {},
-    affiliate_ci: null,
-    affiliate: {},
-    exist_affiliate: false,
-    ver: false,
-    loading: false,
-    degree_name: null,
-    category_name: null,
-    unit_name: null,
-    state_name_status: null,
+    //loans: {},
+    //affiliate_ci: null,
+    //affiliate: {},
+    //exist_affiliate: false,
+    //ver: false,
+    //loading: false,
+    //degree_name: null,
+    //category_name: null,
+    //unit_name: null,
+    //state_name_status: null,
   }),
-  watch: {
+  /*watch: {
     affiliate_ci() {
       this.ver = false;
     },
-  },
+  },*/
   methods: {
-    async getLoansHistory() {
+    /*async getLoansHistory() {
       try {
         this.loading = true;
         let message = [];
@@ -557,14 +571,14 @@ export default {
       } finally {
         this.loading = false;
       }
-    },
+    },*/
     routeSismu(id) {
       window.open(
         "http://sismu.muserpol.gob.bo/musepol/akardex.aspx?" + id,
         "_blank"
       );
     },
-    async getAffiliate(id) {
+    /*async getAffiliate(id) {
       try {
         this.loading = true;
         let res = await axios.get(`affiliate/${id}`);
@@ -579,7 +593,7 @@ export default {
         this.loading = false;
       }
     },
-    async getDegree_name(id) {
+    /*async getDegree_name(id) {
       try {
         this.loading = true;
         let res = await axios.get(`degree/${id}`);
@@ -589,8 +603,8 @@ export default {
       } finally {
         this.loading = false;
       }
-    },
-    async getCategory_name(id) {
+    },*/
+    /*async getCategory_name(id) {
       try {
         this.loading = true;
         let res = await axios.get(`category/${id}`);
@@ -600,8 +614,8 @@ export default {
       } finally {
         this.loading = false;
       }
-    },
-    async getUnit_name(id) {
+    },*/
+    /*async getUnit_name(id) {
       try {
         this.loading = true;
         let res = await axios.get(`unit/${id}`);
@@ -611,8 +625,8 @@ export default {
       } finally {
         this.loading = false;
       }
-    },
-    async getState_name(id) {
+    },*/
+    /*async getState_name(id) {
       try {
         this.loading = true;
         let res = await axios.get(`affiliate/${id}/state`);
@@ -624,7 +638,7 @@ export default {
       } finally {
         this.loading = false;
       }
-    },
+    },*/
     itemRowBackground: function (item) {
       return item.state === false ? "style-1" : "style-2";
     },

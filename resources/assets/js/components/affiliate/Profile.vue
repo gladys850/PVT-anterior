@@ -301,6 +301,7 @@
                     </v-col>
                       <v-col cols="12" md="6">
                     <v-toolbar-title>DOMICILIO</v-toolbar-title>
+                    {{addresses}}
                   </v-col>
                   <v-col cols="12" md="3">
                     <v-tooltip top v-if="editable && permission.secondary">
@@ -330,7 +331,7 @@
                   <template v-slot:item="props">
                   <tr >
                     <td>{{ cities.find(o => o.id == props.item.city_address_id).name }}</td>
-                      <td>{{ props.item.zone }}</td>
+                      <td>{{ props.item.description }}</td>
                       <!--<td>{{ props.item.street }}</td>
                       <td>{{ props.item.number_address }}</td>-->
                       <td v-show="editable && permission.secondary">
@@ -340,6 +341,13 @@
                         <!--<v-btn text icon color="error" @click.stop="bus.$emit('openRemoveDialog', `address/${props.item.id}`)">
                           <v-icon>mdi-delete</v-icon>
                         </v-btn>--> 
+                      </td>
+                      <td>
+                        <v-radio-group v-model="props.item.pivot">
+                          <v-radio
+:value="props.item.pivot.validated"
+                          ></v-radio>
+                        </v-radio-group>
                       </td>
                       <td v-show="!editable">
                         <v-btn v-if="props.item.latitude && props.item.longitude" text icon color="info" @click.stop="bus.$emit('openDialog', {...props.item, ...{edit: false}})">
@@ -462,8 +470,8 @@ export default {
       ],
       headers: [
             { text: 'Ciudad', align: 'left', value: 'city_address_id' },
-            { text: 'Zona', align: 'left', value: 'zone' },
-            //{ text: 'Calle', align: 'left', value: 'street' },
+            { text: 'Zona', align: 'left', value: 'description' },
+            { text: 'Validacion', align: 'left', value: '' },
             //{ text: 'Nro', align: 'left', value: 'number_address' },
             { text: 'Acciones', align: 'center' }
           ],
