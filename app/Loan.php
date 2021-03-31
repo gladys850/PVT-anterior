@@ -860,7 +860,7 @@ class Loan extends Model
    {
      $loan_global_parameter  = $loan_global_parameter = LoanGlobalParameter::latest()->first();
      $number_payment_consecutive = $loan_global_parameter->consecutive_manual_payment;//3
-     $modality_id=ProcedureModality::whereShortened("AM")->first()->id;
+     $modality_id=ProcedureModality::whereShortened("ADR")->first()->id;
 
      $Pagado = LoanState::whereName('Pagado')->first()->id;
     
