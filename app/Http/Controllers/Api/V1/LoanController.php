@@ -1527,8 +1527,12 @@ class LoanController extends Controller
     * @responseFile responses/loan/get_procedure_relation.200.json
     */
     public function procedure_brother(Request $request){
-        $loan = Loan::find($request->id_loan);
+        $request->validate([
+            'id_loan' => 'required|exists:loans,id'
+        ]);
+        $loan = Loan::findOrFail($request->id_loan);
         $procedure=$loan->modality->procedure_type;
+        $procedure_ref=[];
     
         if($procedure->name=='Préstamo a corto plazo' || $procedure->name=='Refinanciamiento Préstamo a corto plazo'){
             $procedure_ref = ProcedureType::where('name','=','Refinanciamiento Préstamo a corto plazo')->first();
