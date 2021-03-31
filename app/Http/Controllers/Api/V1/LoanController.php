@@ -1517,11 +1517,4 @@ class LoanController extends Controller
     public function clear_data_base(){
 
     }
-    //obtener
-    public function procedure_parent($id){
-        $loan=Loan::find($id);
-        return 1;
-
-    }
-
 }
