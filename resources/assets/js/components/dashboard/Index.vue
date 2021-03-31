@@ -28,7 +28,7 @@
                         single-line
                         hide-details
                         clearable
-                       
+                       :loading="loading"
                        v-on:keyup.enter="getLoansHistory()"
                       ></v-text-field>
                     </v-col>
@@ -346,7 +346,7 @@ loans1:{
             this.cont=this.loans1.modalities.length
             for (let i = 0; i < this.loans1.modalities.length; i++)
              {
-               if(this.loans1.modalities[i].modality_affiliate.procedure_type_id==9)
+               if(this.loans1.modalities[i].name_procedure_modality == 'Préstamo Anticipo')
                {
                   this.anticipo.name=this.loans1.modalities[i].name_procedure_modality
                   this.anticipo.amount_max=this.loans1.modalities[i].amount_max
@@ -354,7 +354,7 @@ loans1:{
                   this.anticipo.liquid_calification=this.loans1.modalities[i].liquid_calification
                   this.anticipo.annual_interest=this.loans1.modalities[i].interest.annual_interest
                }
-               if(this.loans1.modalities[i].modality_affiliate.procedure_type_id==10)
+               if(this.loans1.modalities[i].name_procedure_modality == 'Préstamo a corto plazo')
                {
                   this.corto_plazo.name=this.loans1.modalities[i].name_procedure_modality
                   this.corto_plazo.amount_max=this.loans1.modalities[i].amount_max
@@ -362,7 +362,7 @@ loans1:{
                   this.corto_plazo.liquid_calification=this.loans1.modalities[i].liquid_calification
                   this.corto_plazo.annual_interest=this.loans1.modalities[i].interest.annual_interest
                }
-               if(this.loans1.modalities[i].modality_affiliate.procedure_type_id==11)
+               if(this.loans1.modalities[i].name_procedure_modality == 'Préstamo a largo plazo')
                {
                   this.largo_plazo.name=this.loans1.modalities[i].name_procedure_modality
                   this.largo_plazo.amount_max=this.loans1.modalities[i].amount_max
