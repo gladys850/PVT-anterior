@@ -28,7 +28,7 @@ class Address extends Model
         } else {
             $number = 'Nº ' . $this->number_address;
         }
-        return Util::trim_spaces(implode(' ', [$this->zone]));
+        return Util::trim_spaces(implode(' ', [$this->description]));
     }
 
     public function getLatitudeAttribute($value)
