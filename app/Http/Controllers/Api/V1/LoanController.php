@@ -1530,13 +1530,13 @@ class LoanController extends Controller
         $loan = Loan::find($request->id_loan);
         $procedure=$loan->modality->procedure_type;
     
-        if($procedure->name=='Préstamo a corto plazo'){
+        if($procedure->name=='Préstamo a corto plazo' || $procedure->name=='Refinanciamiento Préstamo a corto plazo'){
             $procedure_ref = ProcedureType::where('name','=','Refinanciamiento Préstamo a corto plazo')->first();
         }else{
-            if($procedure->name=='Préstamo a largo plazo'){
+            if($procedure->name=='Préstamo a largo plazo' || $procedure->name=='Refinanciamiento Préstamo a largo plazo'){
                 $procedure_ref = ProcedureType::where('name','=','Refinanciamiento Préstamo a largo plazo')->first();
             }else{
-                if($procedure->name=='Préstamo hipotecario'){
+                if($procedure->name=='Préstamo hipotecario' || $procedure->name=='Refinancimiento Préstamo hipotecario'){
                     $procedure_ref = ProcedureType::where('name','=','Refinancimiento Préstamo hipotecario')->first();
                 }
             }
