@@ -82,6 +82,12 @@
                         </v-col>
                         <v-progress-linear></v-progress-linear>
                         <v-col cols="12" md="8" >
+                            Liquido para Calificacion:
+                        </v-col>
+                        <v-col cols="12" md="4" >
+                            {{ anticipo.liquid_calification +" Bs."}}
+                        </v-col>
+                        <v-col cols="12" md="8" >
                             Monto Maximo:
                         </v-col>
                         <v-col cols="12" md="4" >
@@ -94,16 +100,10 @@
                             {{ anticipo.maximum_term +" meses"}}
                         </v-col>
                         <v-col cols="12" md="8" >
-                            Liquido para Calificacion:
-                        </v-col>
-                        <v-col cols="12" md="4" >
-                            {{ anticipo.liquid_calification +" Bs."}}
-                        </v-col>
-                        <v-col cols="12" md="8" >
                             Interes:
                         </v-col>
                         <v-col cols="12" md="4" >
-                            {{ anticipo.annual_interest/12 +" %"}}
+                            {{ (anticipo.annual_interest/12).toFixed(2) +" %"}}
                         </v-col>
                       </v-row>
                     </v-card-text>
@@ -120,6 +120,12 @@
                       </v-col>
                       <v-progress-linear></v-progress-linear>
                         <v-col cols="12" md="8" >
+                            Liquido para Calificacion:
+                        </v-col>
+                        <v-col cols="12" md="4" >
+                            {{ corto_plazo.liquid_calification +" Bs."}}
+                        </v-col>
+                        <v-col cols="12" md="8" >
                             Monto Maximo:
                         </v-col>
                         <v-col cols="12" md="4" >
@@ -132,16 +138,10 @@
                             {{ corto_plazo.maximum_term +" meses"}}
                         </v-col>
                         <v-col cols="12" md="8" >
-                            Liquido para Calificacion:
-                        </v-col>
-                        <v-col cols="12" md="4" >
-                            {{ corto_plazo.liquid_calification +" Bs."}}
-                        </v-col>
-                        <v-col cols="12" md="8" >
                             Interes:
                         </v-col>
                         <v-col cols="12" md="4" >
-                            {{ corto_plazo.annual_interest/12 +" %"}}
+                            {{ (corto_plazo.annual_interest/12).toFixed(2)  +" %"}}
                         </v-col>
                       </v-row>
                     </v-card-text>
@@ -158,6 +158,12 @@
                       </v-col>
                       <v-progress-linear></v-progress-linear>
                         <v-col cols="12" md="8" >
+                            Liquido para Calificacion:
+                        </v-col>
+                        <v-col cols="12" md="4" >
+                            {{ largo_plazo.liquid_calification +" Bs."}}
+                        </v-col>
+                        <v-col cols="12" md="8" >
                             Monto Maximo:
                         </v-col>
                         <v-col cols="12" md="4" >
@@ -170,16 +176,10 @@
                             {{ largo_plazo.maximum_term +" meses"}}
                         </v-col>
                         <v-col cols="12" md="8" >
-                            Liquido para Calificacion:
-                        </v-col>
-                        <v-col cols="12" md="4" >
-                            {{ largo_plazo.liquid_calification +" Bs."}}
-                        </v-col>
-                        <v-col cols="12" md="8" >
                             Interes:
                         </v-col>
                         <v-col cols="12" md="4" >
-                            {{largo_plazo.annual_interest/12 +" %"}}
+                            {{(largo_plazo.annual_interest/12).toFixed(2)  +" %"}}
                         </v-col>
                     </v-row>
                     </v-card-text>

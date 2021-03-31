@@ -6,7 +6,7 @@
       </v-toolbar>
     </v-card-title>
       <v-card-text>
-  <v-container fluid class="py-0 px-0">
+  <v-container  class="py-0 px-0">
     <ValidationObserver ref="observer">
       <v-form>
         <!--v-card-->
@@ -28,8 +28,8 @@
                         single-line
                         hide-details
                         clearable
-                        :loading="loading"
-                        @keyup.enter="getLoansHistory()"
+                       
+                       v-on:keyup.enter="getLoansHistory()"
                       ></v-text-field>
                     </v-col>
                     <v-col cols="12" md="2">
@@ -76,10 +76,37 @@
                     </h3>
                   </v-col>
                   <template v-if="ver && exist_affiliate">
-                    <v-col cols="12" md="12" class="ma-0 pb-0 text-center">
+                    <v-col cols="12" md="2" class="ma-0 pb-0 text-left">
+                      
+                    </v-col>
+                    <v-col cols="12" md="6" class="ma-0 pb-0 text-center">
                       <h2 style="color:teal">
                         {{ $options.filters.fullName(loans, true) }}
                       </h2></v-col>
+                      <v-col cols="12" md="4" class="ma-0 py-0 text-left">
+             
+                      <v-tooltip
+                        left              
+                      >
+                        <template v-slot:activator="{ on }">
+                          <v-btn
+                            icon
+                            dark
+                            x-large
+                            color="warning"
+                            bottom
+                            right                        
+                            v-on="on" 
+                            :to="{ name: 'affiliateAdd', params: { id: affiliate.id, workTray: 'received' }}" 
+                          >
+                            <v-icon>mdi-eye</v-icon>
+                          </v-btn>
+                        </template>
+                        <span>Ver datos del afiliado</span>
+                      </v-tooltip>            
+                  
+                    </v-col>
+
                     <v-progress-linear></v-progress-linear>
                     <v-col cols="12" md="6" class="ma-0 pb-0">
                       C.I: {{ loans.identity_card }}</v-col
@@ -143,8 +170,8 @@
               </v-card>
             </v-col>
 
-            <v-col cols="12" class="py-0 px-0">
-              <v-container class="py-0  ">
+            <v-col cols="12" class="py-0 px-0 ">
+              <v-container fluid class="py-0 px-0 ">
                 <v-row class="py-0" v-if="ver && exist_affiliate">
                   <v-col cols="12" class="py-0">
                     <v-tabs dark active-class="secondary">
