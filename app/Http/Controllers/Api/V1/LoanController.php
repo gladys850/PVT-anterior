@@ -63,6 +63,7 @@ class LoanController extends Controller
         //$loan->user = $loan->records_user;
         $loan->city = $loan->city;
         $loan->observations = $loan->observations->last();
+        $loan->modality=$loan->modality;
         //$loan->loan_contribution = $loan->loan_contribution_adjusts;
         return $loan;
     }
@@ -1516,4 +1517,11 @@ class LoanController extends Controller
     public function clear_data_base(){
 
     }
+    //obtener
+    public function procedure_parent($id){
+        $loan=Loan::find($id);
+        return 1;
+
+    }
+
 }
