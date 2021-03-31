@@ -63,6 +63,7 @@ class LoanController extends Controller
         //$loan->user = $loan->records_user;
         $loan->city = $loan->city;
         $loan->observations = $loan->observations->last();
+        $loan->modality=$loan->modality;
         //$loan->loan_contribution = $loan->loan_contribution_adjusts;
         return $loan;
     }

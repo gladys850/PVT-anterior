@@ -515,7 +515,7 @@ class AffiliateController extends Controller
     /** @group Préstamos
     * Préstamos por afiliado
     * Devuelve la lista de préstamos o garantías del afiliado
-    * @urlParam affiliate required ID de afiliado. Example: 12
+    * @urlParam affiliate required ID de afiliado. Example: 59210
     * @queryParam guarantor required Préstamos para el afiliado como garante(1) o como titular(0). Example: 1
     * @queryParam state ID de state_id para filtrar por estado de préstamos. Example: 3
     * @authenticated
