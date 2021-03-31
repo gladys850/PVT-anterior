@@ -1522,7 +1522,7 @@ class LoanController extends Controller
     /**
     * Obtener relacion de procedure hermano 
     * Obtiene la relacion entre procedures, ejemplo en el caso de Refinanciamiento
-    * @bodyParam id_loan integer required Devuelve el objeto del procedure Example: 1
+    * @bodyParam id_loan integer required Devuelve el objeto del procedure, en el caso de acticipo devuelve un array vacio Example: 1
     * @authenticated
     * @responseFile responses/loan/get_procedure_relation.200.json
     */
