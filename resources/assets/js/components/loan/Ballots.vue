@@ -472,6 +472,7 @@ export default {
           this.loan_modality = resp.data
           this.modalidad.id = this.loan_modality.id
           this.modalidad.procedure_type_id = this.loan_modality.procedure_type_id
+          this.modalidad.procedure_type_name = this.loan_modality.procedure_type.name
           this.modalidad.name = this.loan_modality.name
           this.modalidad.quantity_ballots = this.loan_modality.loan_modality_parameter.quantity_ballots
           this.modalidad.guarantors = this.loan_modality.loan_modality_parameter.guarantors
@@ -480,7 +481,6 @@ export default {
           this.modalidad.personal_reference = this.loan_modality.loan_modality_parameter.personal_reference
           this.modalidad.max_cosigner = this.loan_modality.loan_modality_parameter.max_cosigner
           this.modalidad.max_lenders = this.loan_modality.loan_modality_parameter.max_lenders
-
           this.loan_detail.min_guarantor_category = this.loan_modality.loan_modality_parameter.min_guarantor_category
           this.loan_detail.max_guarantor_category = this.loan_modality.loan_modality_parameter.max_guarantor_category
           if(this.loan_modality.loan_modality_parameter.quantity_ballots > 1){
