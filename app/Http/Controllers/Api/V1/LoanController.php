@@ -25,6 +25,7 @@ use App\LoanPayment;
 use App\Voucher;
 use App\Sismu;
 use App\Record;
+use App\ProcedureType;
 use App\Contribution;
 use App\AidContribution;
 use App\LoanContributionAdjust;
@@ -63,7 +64,8 @@ class LoanController extends Controller
         //$loan->user = $loan->records_user;
         $loan->city = $loan->city;
         $loan->observations = $loan->observations->last();
-        $loan->modality=$loan->modality;
+        $loan->modality=$loan->modality->procedure_type;
+       // $loan->procedure=$loan->modality;
         //$loan->loan_contribution = $loan->loan_contribution_adjusts;
         return $loan;
     }
@@ -1516,5 +1518,29 @@ class LoanController extends Controller
     //limpiar datos sin relacion
     public function clear_data_base(){
 
+    }
+    /**
+    * Obtener relacion de procedure hermano 
+    * Obtiene la relacion entre procedures, ejemplo en el caso de Refinanciamiento
+    * @bodyParam id_loan integer required Devuelve el objeto del procedure Example: 1
+    * @authenticated
+    * @responseFile responses/loan/get_procedure_relation.200.json
+    */
+    public function procedure_brother(Request $request){
+        $loan = Loan::find($request->id_loan);
+        $procedure=$loan->modality->procedure_type;
+    
+        if($procedure->name=='Préstamo a corto plazo'){
+            $procedure_ref = ProcedureType::where('name','=','Refinanciamiento Préstamo a corto plazo')->first();
+        }else{
+            if($procedure->name=='Préstamo a largo plazo'){
+                $procedure_ref = ProcedureType::where('name','=','Refinanciamiento Préstamo a largo plazo')->first();
+            }else{
+                if($procedure->name=='Préstamo hipotecario'){
+                    $procedure_ref = ProcedureType::where('name','=','Refinancimiento Préstamo hipotecario')->first();
+                }
+            }
+        }
+        return  $procedure_ref;
     }
 }
