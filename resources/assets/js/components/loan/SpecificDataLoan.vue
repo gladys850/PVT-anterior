@@ -597,6 +597,28 @@
                                           ></v-text-field>
                                         </div>
                                       </v-col>
+                                      <v-col cols="12" md="4">
+                                        <div class="py-0">
+                                          <v-text-field
+                                            dense
+                                            :outlined="editable"
+                                            :readonly="!editable"
+                                            :label="'CÓDIGO DE CERTIFICACIÓN PRESUPUESTARIA'"
+                                             v-model="loan.num_budget_certification"
+                                          ></v-text-field>
+                                        </div>
+                                      </v-col>
+                                       <v-col cols="12" md="4">
+                                        <div class="py-0">
+                                          <v-text-field
+                                            dense
+                                            :outlined="editable"
+                                            :readonly="!editable"
+                                            :label="'CÓDIGO DE COMPROBANTE CONTABLE'"
+                                             v-model="loan.num_accounting_voucher"
+                                          ></v-text-field>
+                                        </div>
+                                      </v-col>
                                     </v-row>
                                   </v-col>
                                 </v-card-text>
@@ -849,7 +871,9 @@ export default {
             let res = await axios.patch(`loan/${this.loan.id}`, {
             disbursement_date:this.loan.disbursement_date,
             payment_type_id: this.loan.payment_type_id,
-            number_payment_type: this.loan.number_payment_type
+            number_payment_type: this.loan.number_payment_type,
+            num_budget_certification: this.loan.num_budget_certification,
+            num_accounting_voucher: this.loan.num_accounting_voucher
           })
             this.toastr.success('Se registró correctamente.')
             this.editable = false
