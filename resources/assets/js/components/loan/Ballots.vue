@@ -17,7 +17,7 @@
                           INTERVALO DE LOS MONTOS 
                         </v-col>
                         <v-col cols="12" :md="window_size" class="py-0 my-0 text-center">
-                          INTERVALO DEL PLAZO EN MESES 
+                          INTERVALO DEL PLAZO EN MESES
                         </v-col>
                         <v-col cols="12" :md="window_size" class="py-0 my-0 text-center" v-if="see_field">
                           VALOR NETO REALIZADO (VNR)
@@ -259,8 +259,8 @@
                     md="3"
                     class="py-0 my-0"
                     v-if="
-                      this.loanTypeSelected.id == 11 ||
-                      this.loanTypeSelected.id == 12
+                      this.modalitySelected.name == 'Refinancimiento Préstamo hipotecario' ||
+                      this.modalitySelected.name == 'Refinanciamiento Préstamo a largo plazo'
                     "
                   >
                     <v-checkbox
@@ -411,6 +411,11 @@ export default {
         return true
       }
       return false
+    },
+    //Realiza una validación para verificar si existe o no el objeto, en caso de no existir manda un objeto vacio sin generar erroes
+    modalitySelected() {
+      let modality = this.$store.getters.modalityLoan.find(item => item.id == this.loanTypeSelected.id)
+      return modality || {} 
     }
   },
   methods: {
@@ -433,7 +438,8 @@ export default {
       this.number_diff_month = 1
       for (let i = 0; i< this.interval.length; i++) {
         if(this.loanTypeSelected.id==this.interval[i].procedure_type_id){
-          if(this.loanTypeSelected.id==12){
+          //if($store.getters.modalityLoan.find(item => item.id == loanTypeSelected.id).name == 12){
+          if(this.modalitySelected.name == 'Préstamo hipotecario'){
             this.hipotecario=true
             this.window_size=3
             this.see_field=true
@@ -450,6 +456,7 @@ export default {
           this.intervalos.minimun_amoun=this.interval[i].minimum_amount
           this.intervalos.minimum_term= this.interval[i].minimum_term
           this.intervalos.procedure_type_id= this.loanTypeSelected.id
+
           this.getLoanModality(this.$route.query.affiliate_id)
         } /*else{
         console.log('NO ES IGUAL A MODALIDAD INTERVALS'+this.interval[i].procedure_type_id +"=="+this.loanTypeSelected.id )
@@ -481,6 +488,7 @@ export default {
           this.modalidad.personal_reference = this.loan_modality.loan_modality_parameter.personal_reference
           this.modalidad.max_cosigner = this.loan_modality.loan_modality_parameter.max_cosigner
           this.modalidad.max_lenders = this.loan_modality.loan_modality_parameter.max_lenders
+
           this.loan_detail.min_guarantor_category = this.loan_modality.loan_modality_parameter.min_guarantor_category
           this.loan_detail.max_guarantor_category = this.loan_modality.loan_modality_parameter.max_guarantor_category
           if(this.loan_modality.loan_modality_parameter.quantity_ballots > 1){

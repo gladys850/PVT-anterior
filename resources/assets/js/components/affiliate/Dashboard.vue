@@ -64,7 +64,7 @@
                     <span>
                     <v-tooltip
                     left  
-                    v-if="item.procedure_modality_id != 32 && item.procedure_modality_id != 33"            
+                    v-if="item.modality.procedure_type.name != 'Préstamo Anticipo'"         
                     >
                     <template v-slot:activator="{ on }">
                       <v-btn
@@ -87,7 +87,7 @@
 
                     <v-tooltip
                     left   
-                    v-if="item.procedure_modality_id >= 41"            
+                    v-if="item.modality.procedure_type.name == 'Préstamo a largo plazo' || item.modality.procedure_type.name == 'Préstamo hipotecario'"            
                     >
                       <template v-slot:activator="{ on }">
                         <v-btn
