@@ -726,7 +726,7 @@ class LoanStructureSeeder extends Seeder
            ]
           ],
           'refinanciamiento hipotecario' => [
-            'type' => ['module_id' => $module->id,'name'=>'Refinancimiento Préstamo hipotecario','second_name'=>'R. Hipotecario'],
+            'type' => ['module_id' => $module->id,'name'=>'Refinanciamiento Préstamo hipotecario','second_name'=>'R. Hipotecario'],
             'limits' => ['maximum_amount' => 700000,'minimum_amount' => 25001,'maximum_term' => 240,'minimum_term' => 25],
             'modalities' => [
               //REFINANCIAMIENTO DE PRÉSTAMOS A LARGO PLAZO GARANTÍA HIPOTECARIA PARA EL SECTOR ACTIVO //Eliminar en caso de que no proceda
