@@ -1255,7 +1255,7 @@ class LoanController extends Controller
                     ['Usuario', Auth::user()->username]
                 ]
             ],
-            'title' => ($flow_message['type'] == 'derivacion' ? 'DERIVACIÓN' : 'DEVOLUCIÓN') . ' DE TRÁMITES - MODALIDAD ' . $derived->first()->modality->procedure_type->second_name,
+            'title' => ($flow_message['type'] == 'derivacion' ? 'DERIVACIÓN' : 'DEVOLUCIÓN') . ' DE TRÁMITES - MODALIDAD ' . $derived->first()->modality->second_name,
             'procedures' => $derived,
             'roles' => [
                 'from' => $from_role,
