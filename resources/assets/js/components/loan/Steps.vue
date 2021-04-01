@@ -467,7 +467,7 @@ export default {
           for(let i = 0; i < this.modalities.length; i++ ){
             if(this.modalities[i].name == "Refinanciamiento Préstamo a corto plazo" || 
               this.modalities[i].name == "Refinanciamiento Préstamo a largo plazo" ||
-              this.modalities[i].name == "Refinancimiento Préstamo hipotecario"){
+              this.modalities[i].name == "Refinanciamiento Préstamo hipotecario"){
               modalities_aux.push(this.modalities[i])
             }
           }

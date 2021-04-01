@@ -259,7 +259,7 @@
                     md="3"
                     class="py-0 my-0"
                     v-if="
-                      this.modalitySelected.name == 'Refinancimiento Préstamo hipotecario' ||
+                      this.modalitySelected.name == 'Refinanciamiento Préstamo hipotecario' ||
                       this.modalitySelected.name == 'Refinanciamiento Préstamo a largo plazo'
                     "
                   >
