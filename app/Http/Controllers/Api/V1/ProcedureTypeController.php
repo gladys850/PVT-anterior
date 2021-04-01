@@ -94,13 +94,14 @@ class ProcedureTypeController extends Controller
     * @bodyParam workflow array required Listado de secuencias de derivación.
     * @bodyParam workflow[*].role_id integer required Área desde la cual se derivará. Example: 81
     * @bodyParam workflow[*].next_role_id integer required Área a la cual se derivará. Example: 73
+    * @bodyParam workflow[*].sequence_number_flow integer required Secuencia que seguira la tabla . Example: 2
     * @authenticated
     * @responseFile responses/procedure_type/get_flow.200.json
     */
     public function set_flow(RoleSequenceForm $request, ProcedureType $procedure_type)
-    {
+    {  
         $request = collect($request->workflow)->map(function($item) use ($procedure_type) {
-            if (Role::find($item['role_id'])->sequence_number >= Role::find($item['next_role_id'])->sequence_number) abort(409, 'El rol destino ser superior al de origen');
+       // if (Role::find($item['role_id'])->sequence_number >= Role::find($item['next_role_id'])->sequence_number) abort(409, 'El rol destino ser superior al de origen');
             $item['procedure_type_id'] = $procedure_type->id;
             return $item;
         })->values()->toArray();
