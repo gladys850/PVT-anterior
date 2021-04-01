@@ -82,7 +82,7 @@
             <h3 class="text-uppercase text-center">{{modalidad.name}}</h3>
             <v-card class="ma-3">
               <BallotsResult ref="BallotsResult"
-                v-show="modalidad.procedure_type_name !='Préstamo hipotecario'"
+                v-show="modalidad.procedure_type_name != 'Préstamo hipotecario'"
                 :data_sismu.sync="data_sismu"
                 :calculator_result.sync="calculator_result"
                 :loan_detail.sync="loan_detail"
@@ -95,7 +95,7 @@
                 </template>
               </BallotsResult>
               <BallotsResultHipotecary
-                v-show="modalidad.procedure_type_name=='Préstamo hipotecario'"
+                v-show="modalidad.procedure_type_name == 'Préstamo hipotecario'"
                 :data_sismu.sync="data_sismu"
                 :calculator_result.sync="calculator_result"
                 :loan_detail.sync="loan_detail"
@@ -133,7 +133,7 @@
               :bus="bus"
             />
             <Guarantor
-            v-show="modalidad.procedure_type_name!='Préstamo hipotecario'"
+            v-show="modalidad.procedure_type_name != 'Préstamo hipotecario'"
             :modalidad_guarantors.sync="modalidad.guarantors"
             :modalidad.sync="modalidad"
             :loan_detail.sync="loan_detail"
@@ -399,6 +399,13 @@ export default {
           this.$refs.BallotsResult.simuladores()
         }
         if(n==3){
+          /*if(this.modalidad.procedure_type_name!='Préstamo hipotecario'){
+            //this.saveLoanProperty()
+            //console.log('Es hipotecario')
+          }
+          else{
+            //console.log("No es hipotecario")
+          }*/
         }
         if(n==4)
         {
@@ -442,10 +449,25 @@ export default {
         let res = await axios.get(`module/${this.modulo}/modality_loan`)
         this.modalities = res.data
         //Verifica si es refinaciamiento o reprogramación para no mostrar Anticipo
-        if(this.refinancing){
+        if(this.isNew){
           let modalities_aux=[]
           for(let i = 0; i < this.modalities.length; i++ ){
-            if(this.modalities[i].name != "Préstamo Anticipo"){
+            if(this.modalities[i].name == "Préstamo Anticipo" || 
+              this.modalities[i].name == "Préstamo a corto plazo" ||
+              this.modalities[i].name == "Préstamo a largo plazo" ||
+              this.modalities[i].name == "Préstamo hipotecario" ){
+              modalities_aux.push(this.modalities[i])
+            }
+          }
+          this.modalities = modalities_aux
+          
+        }
+        else if(this.refinancing){
+          let modalities_aux=[]
+          for(let i = 0; i < this.modalities.length; i++ ){
+            if(this.modalities[i].name == "Refinanciamiento Préstamo a corto plazo" || 
+              this.modalities[i].name == "Refinanciamiento Préstamo a largo plazo" ||
+              this.modalities[i].name == "Refinancimiento Préstamo hipotecario"){
               modalities_aux.push(this.modalities[i])
             }
           }
@@ -454,11 +476,15 @@ export default {
         else if(this.reprogramming){
           let modalities_aux=[]
           for(let i = 0; i < this.modalities.length; i++ ){
-            if(this.modalities[i].name != "Préstamo Anticipo" && this.modalities[i].name != 'Préstamo a corto plazo' ){
+            if(this.modalities[i].name != "Préstamo Anticipo" &&
+              this.modalities[i].name != 'Préstamo a corto plazo' && 
+              this.modalities[i].name != 'Refinanciamiento Préstamo a corto plazo' ){
               modalities_aux.push(this.modalities[i])
             }
           }
           this.modalities = modalities_aux
+        }else{
+          this.toastr.error('Ocurrio un error al obtener la modadlidad')
         }
       } catch (e) {
         console.log(e)
@@ -586,7 +612,7 @@ export default {
 
         this.liquid_calificated = res.data
 
-         if(this.modalidad.procedure_type_id==12)
+         if(this.modalidad.procedure_type_name != 'Préstamo hipotecario')
           {
               if(this.loan_detail.net_realizable_value<=this.intervalos.maximun_amoun)
               {
@@ -715,9 +741,17 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
         this.data_loan_parent_aux.loan_term= res.data.loan_term
         this.data_loan_parent_aux.balance= res.data.balance
         this.data_loan_parent_aux.estimated_quota= res.data.estimated_quota
-
-        let res2 = await axios.get(`procedure_modality/${this.data_loan.procedure_modality_id}`)
-        this.modalidad_refi_repro_remake = res2.data.procedure_type_id
+        /*let res2 = await axios.get(`procedure_modality/${this.data_loan.procedure_modality_id}`)
+        this.modalidad_refi_repro_remake = res2.data.procedure_type_id*/
+        if(this.refinancing){
+          let res3 = await axios.post(`procedure_brother`,{
+            id_loan: id
+          })
+          this.modalidad_refi_repro_remake = res3.data.id
+        }else{
+          this.modalidad_refi_repro_remake = this.data_loan.modality.procedure_type_id
+        }
+        console.log('wwwwwwwww' + this.modalidad_refi_repro_remake)
         this.loanTypeSelected.id =this.modalidad_refi_repro_remake
         this.edit_refi_repro = true
         if(this.data_loan.property_id != null){
@@ -789,7 +823,7 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
           }
           //validar otros casos
           if(continuar == true && !this.type_sismu){
-            if(this.modalidad.procedure_type_id==12){
+            if(this.modalidad.procedure_type_name == 'Préstamo hipotecario'){
               if(this.loan_detail.net_realizable_value >= this.intervalos.minimun_amoun){
                  this.saveAdjustment()
                 this.liquidCalificated()
@@ -803,7 +837,7 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
                 this.nextStep(1)
             }
           }else if(continuar == true && this.type_sismu){
-            if(this.modalidad.procedure_type_id==12){
+            if(this.modalidad.procedure_type_name == 'Préstamo hipotecario'){
               if(this.loan_detail.net_realizable_value >= this.intervalos.minimun_amoun){
                 if(this.data_sismu.quota_sismu > 0){
                    this.saveAdjustment()
