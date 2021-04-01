@@ -9,7 +9,7 @@ class RoleSequence extends Model
     protected $primaryKey = null;
     public $incrementing = false;
     public $timestamps = false;
-    protected $fillable = ['procedure_type_id', 'role_id', 'next_role_id'];
+    protected $fillable = ['procedure_type_id', 'role_id', 'next_role_id','sequence_number_flow'];
 
     public function records()
     {
@@ -33,9 +33,9 @@ class RoleSequence extends Model
 
     public static function workflow($procedure_type_id)
     {
-        return RoleSequence::whereProcedureTypeId($procedure_type_id)->leftJoin('roles as current', 'current.id', '=', 'role_sequences.role_id')->leftJoin('roles as next', 'next.id', '=', 'role_sequences.next_role_id')->orderBy('current.sequence_number')->orderBy('current.name')->select('role_sequences.role_id', 'role_sequences.next_role_id')->get();
+        return RoleSequence::whereProcedureTypeId($procedure_type_id)->leftJoin('roles as current', 'current.id', '=', 'role_sequences.role_id')->leftJoin('roles as next', 'next.id', '=', 'role_sequences.next_role_id')->orderBy('role_sequences.sequence_number_flow')->orderBy('current.name')->select('role_sequences.role_id', 'role_sequences.next_role_id','role_sequences.sequence_number_flow')->get();
     }
-
+    //saca en poso anterior
     public static function previous_steps($procedure_type_id, $role_id)
     {
         return RoleSequence::whereProcedureTypeId($procedure_type_id)->whereNextRoleId($role_id)->pluck('role_id');
@@ -71,7 +71,8 @@ class RoleSequence extends Model
     {
         $roles = self::build_previous_tree($procedure_type_id, $current_role_id);
         $roles = self::get_keys($roles);
-        return Role::whereIn('id', $roles)->orderBy('sequence_number', 'desc')->orderBy('name')->pluck('id');
+       //return Role::whereIn('id', $roles)->orderBy('sequence_number', 'desc')->orderBy('name')->pluck('id');
+        return Role::whereIn('id', $roles)->join('role_sequences as role_seq','role_seq.role_id','=','roles.id')->orderBy('role_seq.sequence_number_flow')->orderBy('roles.display_name')->pluck('roles.id');
     }
 
     public static function flow($procedure_type_id, $current_role_id)

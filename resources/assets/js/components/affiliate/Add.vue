@@ -51,7 +51,7 @@
             <span v-else>Editar</span>
           </div>
         </v-tooltip>
-      </v-toolbar>
+      </v-toolbar>      
     </v-card-title>
     <v-card-text>
       <v-tabs
@@ -172,6 +172,7 @@
                 :addresses.sync="addresses"
                 :editable.sync="editable"
                 :permission="permission"
+                :id_street.sync="id_street"
               />
             </v-card-text>
           </v-card>
@@ -300,7 +301,9 @@ export default {
     editable: false,
     reload: false,
     tab: 'tab-1',
-    has_registered_spouse: false
+    has_registered_spouse: false,
+    bus: new Vue(),
+    id_street: 0
   }),
   computed: {
     isNew() {
@@ -358,15 +361,16 @@ export default {
             this.editable = false
             //Actualizar dirección,  obteniendo respuesta POST afiliado nuevo (res.data.id)
             await axios.patch(`affiliate/${res.data.id}/address`, {
-            addresses: this.addresses.map(o => o.id)
+              addresses: this.addresses.map(o => o.id)
             })
           } else {
             // Edit affiliate
             await axios.patch(`affiliate/${this.affiliate.id}`, this.affiliate)
             await axios.patch(`affiliate/${this.affiliate.id}/address`, {
-              addresses: this.addresses.map(o => o.id)
+              addresses: this.addresses.map(o => o.id),
+              addresses_valid: this.id_street
             })
-            this.toastr.success("Se Actualizó los datos del afiliado")
+            this.toastr.success("Se Actualizó los datos del afiliado"+this.id_street[0])
             //Preguntar si afiliado esta fallecido 
             if(this.affiliate.affiliate_state_id == 4){
               if(this.spouse.id){
@@ -442,6 +446,9 @@ export default {
         this.loading = true
         let res = await axios.get(`affiliate/${id}/address`)
         this.addresses = res.data
+        // Seteando el valor del address
+        let address = this.addresses.find(item => item.pivot.validated)
+        this.id_street = address.id
       } catch (e) {
         console.log(e)
       } finally {

@@ -3,57 +3,118 @@
     "data": [
         {
             "id": 1,
-            "code": "PMTO1",
-            "disbursable_id": 1,
+            "code": "PTMO000001-2021",
+            "disbursable_id": 59210,
             "disbursable_type": "affiliates",
-            "procedure_modality_id": 32,
-            "disbursement_date": "2018-11-23",
-            "parent_loan_id": 0,
+            "procedure_modality_id": 34,
+            "disbursement_date": "2020-03-01",
+            "num_budget_certification": "3435345",
+            "num_accounting_voucher": "77777",
+            "parent_loan_id": null,
             "parent_reason": null,
-            "request_date": "2018-11-23",
-            "amount_requested": 2000,
-            "city_id": 1,
-            "interest_id": 1,
+            "request_date": "2021-03-31T04:00:00.000000Z",
+            "amount_requested": 25000,
+            "city_id": 4,
+            "interest_id": 3,
             "state_id": 3,
-            "amount_approved": 2000,
-            "loan_term": 2,
-            "payment_type_id": 1,
-            "created_at": null,
-            "updated_at": null,
-            "balance": 2000,
-            "estimated_quota": 1045.22,
-            "defaulted": true,
+            "amount_approved": 25000,
+            "indebtedness_calculated": "42.66",
+            "liquid_qualification_calculated": "2498.03",
+            "loan_term": 30,
+            "payment_type_id": 2,
+            "number_payment_type": 8888,
+            "destiny_id": 2,
+            "financial_entity_id": null,
+            "role_id": 90,
+            "property_id": null,
+            "validated": false,
+            "user_id": null,
+            "created_at": "2021-03-31T16:02:06.000000Z",
+            "updated_at": "2021-03-31T18:32:49.000000Z",
+            "deleted_at": null,
+            "balance": 14544.45,
+            "estimated_quota": 1065.74,
+            "defaulted": false,
+            "observed": false,
             "lenders": [
                 {
-                    "id": 3,
+                    "id": 59210,
                     "pivot": {
                         "loan_id": 1,
-                        "affiliate_id": 3,
-                        "payment_percentage": 100
+                        "affiliate_id": 59210,
+                        "payment_percentage": 100,
+                        "payable_liquid_calculated": "2498.03",
+                        "bonus_calculated": "0",
+                        "quota_previous": "0",
+                        "indebtedness_calculated": "42.66",
+                        "liquid_qualification_calculated": "2498.03",
+                        "contributionable_ids": "[8838099,8784805,8740522]",
+                        "contributionable_type": "contributions"
                     }
-                }, {}
+                }
             ],
-            "guarantors": [
+            "guarantors": [],
+            "personal_references": [
                 {
-                    "id": 7,
+                    "id": 1,
+                    "city_identity_card_id": null,
+                    "city_birth_id": null,
+                    "identity_card": null,
+                    "last_name": "GDFGDFG",
+                    "mothers_last_name": null,
+                    "first_name": "DGDFGD",
+                    "second_name": "FGDFGDF",
+                    "surname_husband": null,
+                    "civil_status": null,
+                    "gender": null,
+                    "phone_number": "45646546",
+                    "cell_phone_number": "3453453",
+                    "address": "bcvbcvb",
+                    "created_at": "2021-03-31T16:02:02.000000Z",
+                    "updated_at": "2021-03-31T16:02:02.000000Z",
                     "pivot": {
                         "loan_id": 1,
-                        "affiliate_id": 7,
-                        "payment_percentage": 100
+                        "personal_reference_id": 1,
+                        "cosigner": false
                     }
-                }, {}
+                }
             ],
-            "state": {
-                "id": 3
+            "cosigners": [],
+            "data_loan": null,
+            "city": {
+                "id": 4,
+                "name": "LA PAZ",
+                "first_shortened": "LP",
+                "second_shortened": "LPZ",
+                "third_shortened": "LPZ",
+                "to_bank": "LP",
+                "latitude": -16.495323179002,
+                "longitude": -68.134251236916
+            },
+            "observations": [],
+            "modality": {
+                "id": 34,
+                "procedure_type_id": 10,
+                "name": "Corto plazo sector activo",
+                "shortened": "PCP-SA",
+                "is_valid": true,
+                "procedure_type": {
+                    "id": 10,
+                    "module_id": 6,
+                    "name": "Préstamo a corto plazo",
+                    "created_at": "2021-03-31T15:50:31.000000Z",
+                    "updated_at": "2021-03-31T15:50:31.000000Z",
+                    "second_name": "Corto plazo"
+                }
             }
         }
     ],
-    "first_page_url": "http://127.0.0.1/api/v1/affiliate/5/loan?page=1",
+    "first_page_url": "http://127.0.0.1/api/v1/affiliate/59210/loan?page=1",
     "from": 1,
     "last_page": 1,
-    "last_page_url": "http://127.0.0.1/api/v1/affiliate/5/loan?page=1",
+    "last_page_url": "http://127.0.0.1/api/v1/affiliate/59210/loan?page=1",
     "next_page_url": null,
-    "path": "http://127.0.0.1/api/v1/affiliate/5/loan",
+    "path": "http://127.0.0.1/api/v1/affiliate/59210/loan",
     "per_page": 10,
     "prev_page_url": null,
     "to": 1,

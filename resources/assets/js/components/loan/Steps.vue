@@ -3,40 +3,40 @@
     <v-stepper v-model="e1" >
       <v-stepper-header class=" !pa-0 ml-0" >
         <template>
-         <v-stepper-step editable
-            :key="`${1}-step`"
+         <v-stepper-step 
+            :key="`${1}-step`" 
             :complete="e1 > 1"
             :step="1">Modalidad
           </v-stepper-step >
           <v-divider v-if="1 !== steps" :key="1" ></v-divider>
-          <v-stepper-step editable
+          <v-stepper-step 
             :key="`${2}-step`"
-            :complete="e1 > 2"
+            :complete="e1 > 2" 
             :step="2">Calculo
           </v-stepper-step>
           <v-divider v-if="2 !== steps" :key="2" ></v-divider>
-          <v-stepper-step editable
+          <v-stepper-step 
             :key="`${3}-step`"
-            :complete="e1 > 3"
+            :complete="e1 > 3" 
             :step="3">Garantía
           </v-stepper-step>
           <v-divider v-if="3 !== steps" :key="3" ></v-divider>
-          <v-stepper-step editable
-            :key="`${4}-step`"
+          <v-stepper-step 
+            :key="`${4}-step`" 
             :complete="e1 > 4"
             :step="4"
             >Afiliado
           </v-stepper-step>
           <v-divider v-if="4 !== steps" :key="4" ></v-divider>
-          <v-stepper-step editable
-            :key="`${5}-step`"
+          <v-stepper-step 
+            :key="`${5}-step`" 
             :complete="e1 > 5"
             :step="5"
            >Formulario
           </v-stepper-step>
           <v-divider v-if="5 !== steps" :key="5" ></v-divider>
-          <v-stepper-step editable
-            :key="`${6}-step`"
+          <v-stepper-step 
+            :key="`${6}-step`" 
             :complete="e1 > 6"
             :step="6"
             >Requisitos
@@ -82,7 +82,7 @@
             <h3 class="text-uppercase text-center">{{modalidad.name}}</h3>
             <v-card class="ma-3">
               <BallotsResult ref="BallotsResult"
-                v-show="modalidad.procedure_type_id!=12"
+                v-show="modalidad.procedure_type_name != 'Préstamo hipotecario'"
                 :data_sismu.sync="data_sismu"
                 :calculator_result.sync="calculator_result"
                 :loan_detail.sync="loan_detail"
@@ -95,7 +95,7 @@
                 </template>
               </BallotsResult>
               <BallotsResultHipotecary
-                v-show="modalidad.procedure_type_id==12"
+                v-show="modalidad.procedure_type_name == 'Préstamo hipotecario'"
                 :data_sismu.sync="data_sismu"
                 :calculator_result.sync="calculator_result"
                 :loan_detail.sync="loan_detail"
@@ -127,20 +127,20 @@
           <v-card color="grey lighten-1">
             <h3 class="text-uppercase text-center">{{modalidad.name}}</h3>
             <HipotecaryData ref="HipotecaryData"
-              v-show="modalidad.procedure_type_id==12"
+              v-show="modalidad.procedure_type_name=='Préstamo hipotecario'"
               :loan_detail.sync="loan_detail"
               :loan_property="loan_property"
               :bus="bus"
             />
             <Guarantor
-            v-show="modalidad.procedure_type_id!=12"
+            v-show="modalidad.procedure_type_name != 'Préstamo hipotecario'"
             :modalidad_guarantors.sync="modalidad.guarantors"
             :modalidad.sync="modalidad"
             :loan_detail.sync="loan_detail"
             :guarantors.sync="guarantors"
             :affiliate.sync="affiliate"
             :modalidad_id.sync="modalidad.id"/>
-          <v-container class="py-0" v-show="modalidad.procedure_type_id!=12 ">
+          <v-container class="py-0" v-show="modalidad.procedure_type_name!='Préstamo hipotecario' ">
             <v-row>
             <v-spacer></v-spacer><v-spacer></v-spacer> <v-spacer></v-spacer>
               <v-col class="py-0">
@@ -399,13 +399,13 @@ export default {
           this.$refs.BallotsResult.simuladores()
         }
         if(n==3){
-          if(this.modalidad.procedure_type_id==12){
+          /*if(this.modalidad.procedure_type_name!='Préstamo hipotecario'){
             //this.saveLoanProperty()
             //console.log('Es hipotecario')
           }
           else{
             //console.log("No es hipotecario")
-          }
+          }*/
         }
         if(n==4)
         {
@@ -449,10 +449,25 @@ export default {
         let res = await axios.get(`module/${this.modulo}/modality_loan`)
         this.modalities = res.data
         //Verifica si es refinaciamiento o reprogramación para no mostrar Anticipo
-        if(this.refinancing){
+        if(this.isNew){
           let modalities_aux=[]
           for(let i = 0; i < this.modalities.length; i++ ){
-            if(this.modalities[i].name != "Préstamo Anticipo"){
+            if(this.modalities[i].name == "Préstamo Anticipo" || 
+              this.modalities[i].name == "Préstamo a corto plazo" ||
+              this.modalities[i].name == "Préstamo a largo plazo" ||
+              this.modalities[i].name == "Préstamo hipotecario" ){
+              modalities_aux.push(this.modalities[i])
+            }
+          }
+          this.modalities = modalities_aux
+          
+        }
+        else if(this.refinancing){
+          let modalities_aux=[]
+          for(let i = 0; i < this.modalities.length; i++ ){
+            if(this.modalities[i].name == "Refinanciamiento Préstamo a corto plazo" || 
+              this.modalities[i].name == "Refinanciamiento Préstamo a largo plazo" ||
+              this.modalities[i].name == "Refinancimiento Préstamo hipotecario"){
               modalities_aux.push(this.modalities[i])
             }
           }
@@ -461,11 +476,15 @@ export default {
         else if(this.reprogramming){
           let modalities_aux=[]
           for(let i = 0; i < this.modalities.length; i++ ){
-            if(this.modalities[i].name != "Préstamo Anticipo" && this.modalities[i].name != 'Préstamo a corto plazo' ){
+            if(this.modalities[i].name != "Préstamo Anticipo" &&
+              this.modalities[i].name != 'Préstamo a corto plazo' && 
+              this.modalities[i].name != 'Refinanciamiento Préstamo a corto plazo' ){
               modalities_aux.push(this.modalities[i])
             }
           }
           this.modalities = modalities_aux
+        }else{
+          this.toastr.error('Ocurrio un error al obtener la modadlidad')
         }
       } catch (e) {
         console.log(e)
@@ -593,7 +612,7 @@ export default {
 
         this.liquid_calificated = res.data
 
-         if(this.modalidad.procedure_type_id==12)
+         if(this.modalidad.procedure_type_name == 'Préstamo hipotecario')
           {
               if(this.loan_detail.net_realizable_value<=this.intervalos.maximun_amoun)
               {
@@ -722,9 +741,17 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
         this.data_loan_parent_aux.loan_term= res.data.loan_term
         this.data_loan_parent_aux.balance= res.data.balance
         this.data_loan_parent_aux.estimated_quota= res.data.estimated_quota
-
-        let res2 = await axios.get(`procedure_modality/${this.data_loan.procedure_modality_id}`)
-        this.modalidad_refi_repro_remake = res2.data.procedure_type_id
+        /*let res2 = await axios.get(`procedure_modality/${this.data_loan.procedure_modality_id}`)
+        this.modalidad_refi_repro_remake = res2.data.procedure_type_id*/
+        if(this.refinancing){
+          let res3 = await axios.post(`procedure_brother`,{
+            id_loan: id
+          })
+          this.modalidad_refi_repro_remake = res3.data.id
+        }else{
+          this.modalidad_refi_repro_remake = this.data_loan.modality.procedure_type_id
+        }
+        console.log('wwwwwwwww' + this.modalidad_refi_repro_remake)
         this.loanTypeSelected.id =this.modalidad_refi_repro_remake
         this.edit_refi_repro = true
         if(this.data_loan.property_id != null){
@@ -796,7 +823,7 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
           }
           //validar otros casos
           if(continuar == true && !this.type_sismu){
-            if(this.modalidad.procedure_type_id==12){
+            if(this.modalidad.procedure_type_name == 'Préstamo hipotecario'){
               if(this.loan_detail.net_realizable_value >= this.intervalos.minimun_amoun){
                  this.saveAdjustment()
                 this.liquidCalificated()
@@ -810,7 +837,7 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
                 this.nextStep(1)
             }
           }else if(continuar == true && this.type_sismu){
-            if(this.modalidad.procedure_type_id==12){
+            if(this.modalidad.procedure_type_name == 'Préstamo hipotecario'){
               if(this.loan_detail.net_realizable_value >= this.intervalos.minimun_amoun){
                 if(this.data_sismu.quota_sismu > 0){
                    this.saveAdjustment()
@@ -905,7 +932,7 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
                 }
               }
             }else{
-              if(this.modalidad.procedure_type_id==12){
+              if(this.modalidad.procedure_type_name=='Préstamo hipotecario'){
                  if(parseFloat(this.calculator_result.amount_requested) > parseFloat(this.loan_detail.net_realizable_value) )
                 {
                   this.toastr.error("El Monto Solicitado no puede ser mayor al Monto del Inmueble")

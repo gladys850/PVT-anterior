@@ -444,10 +444,12 @@ class AffiliateController extends Controller
                     $before_month=$number_diff_month;
                     $before_month=$before_month;
                 }else{
-                    if ($now->day <= $offset_day || $city->name == 'LA PAZ') {
-                        $before_month = 1;//
-                    } else {
-                        $before_month = 2;
+                    if($now->day <= $offset_day ){
+                        if ($city->name == 'LA PAZ') $before_month = 2;//
+                        else $before_month = 3;
+                    }else{
+                        if ($city->name == 'LA PAZ') $before_month = 1;//
+                        else $before_month = 2;
                     }
                 }
                 $current_ticket = CarbonImmutable::parse($contributions[0]->month_year);
@@ -489,10 +491,12 @@ class AffiliateController extends Controller
                 if($choose_diff_month == true && $request->has('number_diff_month')){
                     $before_month=$number_diff_month;
                 }else{
-                    if ($now->day <= $offset_day || $city->name == 'LA PAZ') {
-                        $before_month = 1;
-                    } else {
-                        $before_month = 2;
+                    if($now->day <= $offset_day ){
+                        if ($city->name == 'LA PAZ') $before_month = 2;
+                        else $before_month = 3;
+                    }else{
+                        if ($city->name == 'LA PAZ') $before_month = 1;
+                        else $before_month = 2;
                     }
                 }
             }
@@ -515,7 +519,7 @@ class AffiliateController extends Controller
     /** @group Préstamos
     * Préstamos por afiliado
     * Devuelve la lista de préstamos o garantías del afiliado
-    * @urlParam affiliate required ID de afiliado. Example: 12
+    * @urlParam affiliate required ID de afiliado. Example: 59210
     * @queryParam guarantor required Préstamos para el afiliado como garante(1) o como titular(0). Example: 1
     * @queryParam state ID de state_id para filtrar por estado de préstamos. Example: 3
     * @authenticated
@@ -1102,10 +1106,13 @@ class AffiliateController extends Controller
                $current_ticket = CarbonImmutable::parse($contributions[0]->month_year);
                $current_ticket_true = $now->startOfMonth()->subMonths($before_month);
                if ($now->startOfMonth()->diffInMonths($current_ticket->startOfMonth()) <= 1000){
-
-                $i = 9;
-                while ($i <= 11) {
-                    $modality = ProcedureType::findOrFail($i);
+                $modality_ida= ProcedureType::where('name','=','Préstamo Anticipo')->first()->id;
+                $modality_idb = ProcedureType::where('name','=','Préstamo a corto plazo')->first()->id;
+                $modality_idc = ProcedureType::where('name','=','Préstamo a largo plazo')->first()->id;
+                $ids_modalities=[$modality_ida,$modality_idb,$modality_idc];
+                $i= 0;
+                while ($i < count($ids_modalities)) {
+                    $modality = ProcedureType::findOrFail($ids_modalities[$i]);
                    $affiliate_modality= Loan::get_modality_search($modality->name, $affiliate);
                    //return $affiliate_modality;
                    //return $affiliate_modality;/////
@@ -1165,7 +1172,7 @@ class AffiliateController extends Controller
            }
        }else{
            $evaluate=false;
-           $message['accomplished'] = 'Realizar evaluación de préstamos perzonalizada por estar el afiliado en estado: '.''.$state_affiliate_sub;
+           $message['accomplished'] = 'Se debe realizar la evaluación de préstamos de forma perzonalizada por encontrarse el afiliado en estado: '.''.$state_affiliate_sub;
        }
        $data = array(  //data 
         "evaluate"=>$evaluate,

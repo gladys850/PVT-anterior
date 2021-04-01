@@ -26,7 +26,8 @@ class RoleSequenceForm extends FormRequest
         return [
             'workflow' => 'required|array',
             'workflow.*.role_id' => 'required|exists:roles,id',
-            'workflow.*.next_role_id' => 'required|exists:roles,id'
+            'workflow.*.next_role_id' => 'required|exists:roles,id',
+            'workflow.*.sequence_number_flow'=>'required'
         ];
     }
 }

@@ -592,6 +592,7 @@ class Loan extends Model
                 }
             break;
             case 'Préstamo a corto plazo':
+            case 'Refinanciamiento Préstamo a corto plazo':
                 if($affiliate_state_type == "Activo"){
                     
                     if( $affiliate_state !== "Disponibilidad" && $type_sismu && !$cpop_sismu) $modality = ProcedureModality::whereShortened("PCP-R-SA")->first();//Refinanciamiento corto plazo activo SISMU
@@ -694,6 +695,7 @@ class Loan extends Model
                 }
                 break;
             case 'Préstamo a largo plazo':
+            case 'Refinanciamiento Préstamo a largo plazo':
                 if($affiliate_state_type == "Activo")
                 {
                     if($affiliate_state !== "Disponibilidad" ) //cpop no pueden estar en disponibilidad letra A o C
@@ -797,6 +799,7 @@ class Loan extends Model
                 }
                 break;
             case 'Préstamo hipotecario':
+            case 'Refinancimiento Préstamo hipotecario':
                 if($affiliate_state_type == "Activo")
                 {
                     if($type_sismu && $cpop_sismu) $modality=ProcedureModality::whereShortened("PLP-R-GH-CPOP")->first(); // Refinanciamiento hipotecario CPOP
@@ -849,6 +852,7 @@ class Loan extends Model
         }
         if ($modality) {
             $modality->loan_modality_parameter;
+            $modality->procedure_type;
             return response()->json($modality);
         }else{
             return response()->json();
@@ -860,7 +864,7 @@ class Loan extends Model
    {
      $loan_global_parameter  = $loan_global_parameter = LoanGlobalParameter::latest()->first();
      $number_payment_consecutive = $loan_global_parameter->consecutive_manual_payment;//3
-     $modality_id=ProcedureModality::whereShortened("AM")->first()->id;
+     $modality_id=ProcedureModality::whereShortened("ADR")->first()->id;
 
      $Pagado = LoanState::whereName('Pagado')->first()->id;
     

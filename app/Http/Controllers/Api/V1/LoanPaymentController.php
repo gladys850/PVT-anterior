@@ -74,7 +74,7 @@ class LoanPaymentController extends Controller
             } else {
                 $role = Auth::user()->roles()->whereHas('module', function($query) {
                     return $query->whereName('prestamos');
-                })->orderBy('sequence_number')->orderBy('name')->first();
+                })->orderBy('name')->first();
                 if ($role) {
                     $request->role_id = $role->id;
                 } else {

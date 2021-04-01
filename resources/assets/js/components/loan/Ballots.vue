@@ -17,7 +17,7 @@
                           INTERVALO DE LOS MONTOS 
                         </v-col>
                         <v-col cols="12" :md="window_size" class="py-0 my-0 text-center">
-                          INTERVALO DEL PLAZO EN MESES 
+                          INTERVALO DEL PLAZO EN MESES
                         </v-col>
                         <v-col cols="12" :md="window_size" class="py-0 my-0 text-center" v-if="see_field">
                           VALOR NETO REALIZADO (VNR)
@@ -259,8 +259,8 @@
                     md="3"
                     class="py-0 my-0"
                     v-if="
-                      this.loanTypeSelected.id == 11 ||
-                      this.loanTypeSelected.id == 12
+                      this.modalitySelected.name == 'Refinancimiento Préstamo hipotecario' ||
+                      this.modalitySelected.name == 'Refinanciamiento Préstamo a largo plazo'
                     "
                   >
                     <v-checkbox
@@ -306,8 +306,8 @@ export default {
     contribution: [],
     choose_diff_month: false,
     number_diff_month: 1,
-    lender_contribution: {}
-
+    lender_contribution: {},
+    modality_loan: []
   }),
    props: {
     modalidad: {
@@ -377,6 +377,7 @@ export default {
   },
   mounted() {
     this.getLoanIntervals()
+    this.getModalityLoan()
   },
   watch: {
     'loanTypeSelected.id': function(newVal, oldVal){
@@ -411,6 +412,11 @@ export default {
         return true
       }
       return false
+    },
+    //Realiza una validación para verificar si existe o no el objeto, en caso de no existir manda un objeto vacio sin generar erroes
+    modalitySelected() {
+      let modality = (this.modality_loan.find(item => item.id == this.loanTypeSelected.id))
+      return modality || {} 
     }
   },
   methods: {
@@ -427,13 +433,23 @@ export default {
         console.log(e)
       }
     },
+    async getModalityLoan() {
+      try {
+        let res = await axios.get(`module/6/modality_loan`)
+        this.modality_loan = res.data
+        console.log(this.modality_loan)
+       }catch (e) {
+        console.log(e)
+      }
+    },
    //muestra los intervalos de acuerdo a una modalidad
     async Onchange(){
       this.choose_diff_month = false
       this.number_diff_month = 1
       for (let i = 0; i< this.interval.length; i++) {
         if(this.loanTypeSelected.id==this.interval[i].procedure_type_id){
-          if(this.loanTypeSelected.id==12){
+          //if($store.getters.modalityLoan.find(item => item.id == loanTypeSelected.id).name == 12){
+          if(this.modalitySelected.name == 'Préstamo hipotecario'){
             this.hipotecario=true
             this.window_size=3
             this.see_field=true
@@ -450,6 +466,7 @@ export default {
           this.intervalos.minimun_amoun=this.interval[i].minimum_amount
           this.intervalos.minimum_term= this.interval[i].minimum_term
           this.intervalos.procedure_type_id= this.loanTypeSelected.id
+
           this.getLoanModality(this.$route.query.affiliate_id)
         } /*else{
         console.log('NO ES IGUAL A MODALIDAD INTERVALS'+this.interval[i].procedure_type_id +"=="+this.loanTypeSelected.id )
@@ -463,7 +480,7 @@ export default {
         let resp = await axios.post(`affiliate/${id}/loan_modality?procedure_type_id=${this.loanTypeSelected.id}`,{
           type_sismu: this.data_sismu.type_sismu,
           cpop_sismu: this.data_sismu.cpop_sismu,
-          reprogramming: this.reprogramming || this.remake
+          //reprogramming: this.reprogramming || this.remake
         })
         if(resp.data ==''){
           this.loan_detail.not_exist_modality = true
@@ -472,6 +489,7 @@ export default {
           this.loan_modality = resp.data
           this.modalidad.id = this.loan_modality.id
           this.modalidad.procedure_type_id = this.loan_modality.procedure_type_id
+          this.modalidad.procedure_type_name = this.loan_modality.procedure_type.name
           this.modalidad.name = this.loan_modality.name
           this.modalidad.quantity_ballots = this.loan_modality.loan_modality_parameter.quantity_ballots
           this.modalidad.guarantors = this.loan_modality.loan_modality_parameter.guarantors
@@ -483,11 +501,11 @@ export default {
 
           this.loan_detail.min_guarantor_category = this.loan_modality.loan_modality_parameter.min_guarantor_category
           this.loan_detail.max_guarantor_category = this.loan_modality.loan_modality_parameter.max_guarantor_category
-          if(this.loan_modality.loan_modality_parameter.quantity_ballots > 1){
+          /*if(this.loan_modality.loan_modality_parameter.quantity_ballots > 1){
             this.visible = true
           }else{
             this.visible = false
-          }
+          }*/
           this.getBallots(id)
           this.generateContributions()
         }

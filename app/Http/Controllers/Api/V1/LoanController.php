@@ -25,6 +25,7 @@ use App\LoanPayment;
 use App\Voucher;
 use App\Sismu;
 use App\Record;
+use App\ProcedureType;
 use App\Contribution;
 use App\AidContribution;
 use App\LoanContributionAdjust;
@@ -63,6 +64,8 @@ class LoanController extends Controller
         //$loan->user = $loan->records_user;
         $loan->city = $loan->city;
         $loan->observations = $loan->observations->last();
+        $loan->modality=$loan->modality->procedure_type;
+       // $loan->procedure=$loan->modality;
         //$loan->loan_contribution = $loan->loan_contribution_adjusts;
         return $loan;
     }
@@ -93,7 +96,7 @@ class LoanController extends Controller
             } else {
                 $role = Auth::user()->roles()->whereHas('module', function($query) {
                     return $query->whereName('prestamos');
-                })->orderBy('sequence_number')->orderBy('name')->first();
+                })->orderBy('name')->first();
                 if ($role) {
                     $request->role_id = $role->id;
                 } else {
@@ -224,14 +227,13 @@ class LoanController extends Controller
     */
     public function store(LoanForm $request)
     {
-        //return $request;
         $roles = Auth::user()->roles()->whereHas('module', function($query) {
             return $query->whereName('prestamos');
         })->pluck('id');
         $procedure_modality = ProcedureModality::findOrFail($request->procedure_modality_id);
         $request->merge([
             'role_id' => $procedure_modality->procedure_type->workflow->pluck('role_id')->intersect($roles)->first()
-        ]);
+        ]);        
         if (!$request->role_id) abort(403, 'Debe crear un flujo de trabajo');
         // Guardar préstamo
         $saved = $this->save_loan($request);
@@ -1515,5 +1517,33 @@ class LoanController extends Controller
     //limpiar datos sin relacion
     public function clear_data_base(){
 
+    }
+    /**
+    * Obtener relacion de procedure hermano 
+    * Obtiene la relacion entre procedures, ejemplo en el caso de Refinanciamiento
+    * @bodyParam id_loan integer required Devuelve el objeto del procedure, en el caso de acticipo devuelve un array vacio Example: 1
+    * @authenticated
+    * @responseFile responses/loan/get_procedure_relation.200.json
+    */
+    public function procedure_brother(Request $request){
+        $request->validate([
+            'id_loan' => 'required|exists:loans,id'
+        ]);
+        $loan = Loan::findOrFail($request->id_loan);
+        $procedure=$loan->modality->procedure_type;
+        $procedure_ref=[];
+    
+        if($procedure->name=='Préstamo a corto plazo' || $procedure->name=='Refinanciamiento Préstamo a corto plazo'){
+            $procedure_ref = ProcedureType::where('name','=','Refinanciamiento Préstamo a corto plazo')->first();
+        }else{
+            if($procedure->name=='Préstamo a largo plazo' || $procedure->name=='Refinanciamiento Préstamo a largo plazo'){
+                $procedure_ref = ProcedureType::where('name','=','Refinanciamiento Préstamo a largo plazo')->first();
+            }else{
+                if($procedure->name=='Préstamo hipotecario' || $procedure->name=='Refinancimiento Préstamo hipotecario'){
+                    $procedure_ref = ProcedureType::where('name','=','Refinancimiento Préstamo hipotecario')->first();
+                }
+            }
+        }
+        return  $procedure_ref;
     }
 }
