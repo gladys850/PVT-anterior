@@ -112,7 +112,15 @@
                   :key="index"
                   :class="(!sequence.role_id || !sequence.next_role_id) ? 'empty' : ''"
                 >
-                  <td class="text-center">{{ index + 1 }}</td>
+                  <td class="text-center">
+                    <v-text-field
+                      class="pt-5 text-center"
+                      v-model= sequence.sequence_number_flow
+                      :readonly="!$store.getters.permissions.includes('update-setting')"
+                      outlined
+                      dense
+                    ></v-text-field>
+                  </td>
                   <td>
                     <v-select
                       :readonly="!$store.getters.permissions.includes('update-setting')"
@@ -229,6 +237,7 @@ export default {
     addSequence() {
       if (!this.emptySequence) {
         this.workflow.push({
+          sequence_number_flow:null,
           role_id:null,
           next_role_id:null
         })
