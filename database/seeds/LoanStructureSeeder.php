@@ -679,6 +679,7 @@ class LoanStructureSeeder extends Seeder
             'parameters' => [
             'debt_index' => 80,
             'quantity_ballots' => 3,
+            'min_lender_category'=> 0.35,
             'guarantors' => 0,
             'personal_reference' => true,
             'max_lenders' => 2,
@@ -716,6 +717,7 @@ class LoanStructureSeeder extends Seeder
             'parameters' => [
               'debt_index' => 80,
               'quantity_ballots' => 3,
+              'min_lender_category'=> 0.35,
               'guarantors' => 0,
               'personal_reference' => true,
               'max_lenders' => 2,
@@ -774,6 +776,7 @@ class LoanStructureSeeder extends Seeder
             'parameters' => [
             'debt_index' => 80,
             'quantity_ballots' => 3,
+            'min_lender_category'=> 0.35,
             'guarantors' => 0,
             'personal_reference' => true,
             'max_lenders' => 2,
@@ -810,6 +813,7 @@ class LoanStructureSeeder extends Seeder
           'parameters' => [
             'debt_index' => 80,
             'quantity_ballots' => 3,
+            'min_lender_category'=> 0.35,
             'guarantors' => 0,
             'personal_reference' => true,
             'max_lenders' => 2,
