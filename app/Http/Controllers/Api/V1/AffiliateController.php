@@ -1034,8 +1034,8 @@ class AffiliateController extends Controller
                     join Padron ON Padron.IdPadron = PrestamosLevel1.IdPadronGar
                     join Producto ON Prestamos.PrdCod = Producto.PrdCod
                     join EstadoPrestamo ON Prestamos.PresEstPtmo = EstadoPrestamo.PresEstPtmo
-                    where Padron.padMatricula like '%$ci%'
-                    or Padron.padCedulaIdentidad like '%$ci%'
+                    where Padron.padMatricula like '$ci%'
+                    or Padron.padCedulaIdentidad like '$ci%'
             EXCEPT 
                     SELECT Prestamos.IdPrestamo, Prestamos.PresNumero, Prestamos.PresCuotaMensual, Prestamos.PresMeses, EstadoPrestamo.PresEstDsc, Prestamos.PresMntDesembolso, Prestamos.PresSaldoAct, Producto.PrdDsc, trim(Padron.PadCedulaIdentidad) as PadCedulaIdentidad, trim(Padron.PadMatricula) as PadMatricula, trim(Padron.PadMatriculaTit) as PadMatriculaTit
                     FROM Prestamos
@@ -1200,4 +1200,80 @@ class AffiliateController extends Controller
         return ((($interest_rate)/(1-(1/pow((1+$interest_rate),$months_term))))*$amount_requested);
     }
 
+    public function demo($ci){
+        $id_overdue = 2;
+        $in_process_id = 16;
+        $user = User::first();
+        $date = Carbon::now();
+        $date = $date->subMonth()->endOfMonth()->format('Ymd');
+    
+        //$loans = DB::connection('sqlsrv')->select("SELECT dbo.Prestamos.IdPrestamo, dbo.Prestamos.PresNumero, dbo.Padron.IdPadron, DATEDIFF(month, Amortizacion.AmrFecPag, '" . $date . "') as Overdue from dbo.Prestamos join dbo.Padron on Prestamos.IdPadron = Padron.IdPadron join dbo.Producto on Prestamos.PrdCod = Producto.PrdCod join dbo.Amortizacion on (Prestamos.IdPrestamo = Amortizacion.IdPrestamo and Amortizacion.AmrNroPag = (select max(AmrNroPag) from Amortizacion where Amortizacion.IdPrestamo = Prestamos.IdPrestamo and Amortizacion.AMRSTS <>'X' )) where Prestamos.PresEstPtmo = 'V' and dbo.Prestamos.PresSaldoAct > 0 and Amortizacion.AmrFecPag <  cast('" . $date . "' as datetime) and DATEDIFF(month, Amortizacion.AmrFecPag, '" . $date . "') >= 2;");
+        $loans = DB::connection('sqlsrv')->select("SELECT dbo.Prestamos.IdPrestamo, dbo.Prestamos.PresNumero, dbo.Padron.IdPadron, DATEDIFF(month, Amortizacion.AmrFecPag, '" . $date . "') as Overdue from dbo.Prestamos join dbo.Padron on Prestamos.IdPadron = Padron.IdPadron join dbo.Producto on Prestamos.PrdCod = Producto.PrdCod join dbo.Amortizacion on (Prestamos.IdPrestamo = Amortizacion.IdPrestamo and Amortizacion.AmrNroPag = (select max(AmrNroPag) from Amortizacion where Amortizacion.IdPrestamo = Prestamos.IdPrestamo and Amortizacion.AMRSTS <>'X' )) where Prestamos.PresEstPtmo = 'V' and dbo.Prestamos.PresSaldoAct > 0 and Amortizacion.AmrFecPag <  cast('" . $date . "' as datetime) and dbo.Padron.PadCedulaIdentidad = '$ci';");
+    
+        $count = 0;
+        $eco_count = 0;
+        $message = [];
+    
+        foreach ($loans as $loan) {
+          $padron = DB::connection('sqlsrv')->table('Padron')->where('IdPadron', $loan->IdPadron)->first();
+    
+          if (!$padron) {
+            array_push($message, ' ID de padrón: ' . $loan->IdPadron . ' inexistente');
+          }
+    
+          $loan->affiliate = true;
+          $loan->PadSpouseCedulaIdentidad = null;
+    
+          if (trim($padron->PadMatriculaTit) != '' and $padron->PadMatriculaTit != null and trim($padron->PadMatriculaTit) != '0' and strlen(trim($padron->PadMatriculaTit)) > 4) {
+            $loan->affiliate = false;
+            $loan->PadSpouseCedulaIdentidad = $padron->PadCedulaIdentidad;
+            $padron_holder = DB::connection('sqlsrv')->table('Padron')->where('PadMatricula', $padron->PadMatriculaTit)->first();
+            if ($padron_holder) {
+              $padron = $padron_holder;
+            } else {
+              array_push($message, ' Matrícula de padrón: ' . $padron->PadMatriculaTit . ' inexistente');
+            }
+          }
+    
+          $loan->PadCedulaIdentidad = utf8_encode(trim($padron->PadCedulaIdentidad));
+          $loan->PadMatricula = utf8_encode(trim($padron->PadMatricula));
+          $loan->PadName = implode(' ', [utf8_encode(trim($padron->PadPaterno)), utf8_encode(trim($padron->PadMaterno)), utf8_encode(trim($padron->PadNombres))]);
+    
+          $affiliate = Affiliate::where('identity_card', $loan->PadCedulaIdentidad)->first();
+          if (!$affiliate and !$loan->affiliate) {
+            $spouse = Spouse::where('identity_card', $loan->PadSpouseCedulaIdentidad)->first();
+            if ($spouse) {
+              $affiliate = $spouse->affiliate;
+            }
+          }
+          if (!$affiliate) {
+            array_push($message, ' Afiliado con CI: ' . $loan->PadCedulaIdentidad . ' inexistente');
+            $affiliates = Affiliate::where('identity_card', 'like', $loan->PadCedulaIdentidad . '%')->get();
+            $affiliates->merge(Spouse::where('identity_card', 'like', $loan->PadCedulaIdentidad . '%')->get());
+            if ($affiliates->count() > 0) {
+              $names = [];
+              $db_name = "platform";
+              foreach ($affiliates as $option) {
+                $names[] = [
+                  $db_name,
+                  $option->id,
+                  $option->identity_card,
+                  implode(' ', [$option->last_name ?? '', $option->mothers_last_name ?? '', $option->first_name ?? '', $option->second_name ?? ''])
+                ];
+              }
+              array_push($message, ' Posibles opciones para el CI: ' . $loan->PadCedulaIdentidad );
+              $id = array();
+              foreach ($names as $name) {
+                array_push($message, $loan->PadCedulaIdentidad . ' ' . $loan->PadName . ' => ' . $name[2] . ' ' . $name[3] . ' - id: ' . $name[1]);
+                array_push($id, $name[1]);
+              }
+              $message['id'] = $id;
+            }
+            //break;return $names;
+          }
+          //$observation = ObservationType::find($id_overdue);
+        }
+        //return sizeof($message);
+        return $message;
+        }
 }

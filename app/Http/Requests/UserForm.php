@@ -29,12 +29,12 @@ class UserForm extends FormRequest
     public function rules()
     {
         $rules = [
-            'first_name' => 'alpha_spaces|min:3',
-            'last_name' => 'alpha_spaces|min:3',
-            'username' => 'alpha_num|min:3|unique:users,username',
-            'password' => 'string|min:5',
-            'position' => 'string',
-            'active' => 'boolean'
+            'cn' => 'alpha_spaces|min:3',
+            'givenname' => 'alpha_spaces|min:3',
+            'uid' => 'alpha_num|min:3|unique:users,username',
+            //'password' => 'string|min:5',
+            'title' => 'string',
+            //'active' => 'boolean'
         ];
         switch ($this->method()) {
             case 'POST': {
