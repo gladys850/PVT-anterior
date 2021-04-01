@@ -93,7 +93,7 @@ class LoanController extends Controller
             } else {
                 $role = Auth::user()->roles()->whereHas('module', function($query) {
                     return $query->whereName('prestamos');
-                })->orderBy('sequence_number')->orderBy('name')->first();
+                })->orderBy('name')->first();
                 if ($role) {
                     $request->role_id = $role->id;
                 } else {
@@ -224,14 +224,13 @@ class LoanController extends Controller
     */
     public function store(LoanForm $request)
     {
-        //return $request;
         $roles = Auth::user()->roles()->whereHas('module', function($query) {
             return $query->whereName('prestamos');
         })->pluck('id');
         $procedure_modality = ProcedureModality::findOrFail($request->procedure_modality_id);
         $request->merge([
             'role_id' => $procedure_modality->procedure_type->workflow->pluck('role_id')->intersect($roles)->first()
-        ]);
+        ]);        
         if (!$request->role_id) abort(403, 'Debe crear un flujo de trabajo');
         // Guardar préstamo
         $saved = $this->save_loan($request);
