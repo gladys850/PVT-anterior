@@ -4,39 +4,39 @@
       <v-stepper-header class=" !pa-0 ml-0" >
         <template>
          <v-stepper-step 
-            :key="`${1}-step`"
+            :key="`${1}-step`" 
             :complete="e1 > 1"
             :step="1">Modalidad
           </v-stepper-step >
           <v-divider v-if="1 !== steps" :key="1" ></v-divider>
           <v-stepper-step 
             :key="`${2}-step`"
-            :complete="e1 > 2"
+            :complete="e1 > 2" 
             :step="2">Calculo
           </v-stepper-step>
           <v-divider v-if="2 !== steps" :key="2" ></v-divider>
           <v-stepper-step 
             :key="`${3}-step`"
-            :complete="e1 > 3"
+            :complete="e1 > 3" 
             :step="3">Garantía
           </v-stepper-step>
           <v-divider v-if="3 !== steps" :key="3" ></v-divider>
           <v-stepper-step 
-            :key="`${4}-step`"
+            :key="`${4}-step`" 
             :complete="e1 > 4"
             :step="4"
             >Afiliado
           </v-stepper-step>
           <v-divider v-if="4 !== steps" :key="4" ></v-divider>
           <v-stepper-step 
-            :key="`${5}-step`"
+            :key="`${5}-step`" 
             :complete="e1 > 5"
             :step="5"
            >Formulario
           </v-stepper-step>
           <v-divider v-if="5 !== steps" :key="5" ></v-divider>
           <v-stepper-step 
-            :key="`${6}-step`"
+            :key="`${6}-step`" 
             :complete="e1 > 6"
             :step="6"
             >Requisitos
@@ -612,7 +612,7 @@ export default {
 
         this.liquid_calificated = res.data
 
-         if(this.modalidad.procedure_type_name != 'Préstamo hipotecario')
+         if(this.modalidad.procedure_type_name == 'Préstamo hipotecario')
           {
               if(this.loan_detail.net_realizable_value<=this.intervalos.maximun_amoun)
               {

@@ -306,8 +306,8 @@ export default {
     contribution: [],
     choose_diff_month: false,
     number_diff_month: 1,
-    lender_contribution: {}
-
+    lender_contribution: {},
+    modality_loan: []
   }),
    props: {
     modalidad: {
@@ -377,6 +377,7 @@ export default {
   },
   mounted() {
     this.getLoanIntervals()
+    this.getModalityLoan()
   },
   watch: {
     'loanTypeSelected.id': function(newVal, oldVal){
@@ -414,7 +415,7 @@ export default {
     },
     //Realiza una validación para verificar si existe o no el objeto, en caso de no existir manda un objeto vacio sin generar erroes
     modalitySelected() {
-      let modality = this.$store.getters.modalityLoan.find(item => item.id == this.loanTypeSelected.id)
+      let modality = (this.modality_loan.find(item => item.id == this.loanTypeSelected.id))
       return modality || {} 
     }
   },
@@ -428,6 +429,15 @@ export default {
         if(this.reprogramming){
           this.Onchange()
         }
+       }catch (e) {
+        console.log(e)
+      }
+    },
+    async getModalityLoan() {
+      try {
+        let res = await axios.get(`module/6/modality_loan`)
+        this.modality_loan = res.data
+        console.log(this.modality_loan)
        }catch (e) {
         console.log(e)
       }
@@ -470,7 +480,7 @@ export default {
         let resp = await axios.post(`affiliate/${id}/loan_modality?procedure_type_id=${this.loanTypeSelected.id}`,{
           type_sismu: this.data_sismu.type_sismu,
           cpop_sismu: this.data_sismu.cpop_sismu,
-          reprogramming: this.reprogramming || this.remake
+          //reprogramming: this.reprogramming || this.remake
         })
         if(resp.data ==''){
           this.loan_detail.not_exist_modality = true
@@ -491,11 +501,11 @@ export default {
 
           this.loan_detail.min_guarantor_category = this.loan_modality.loan_modality_parameter.min_guarantor_category
           this.loan_detail.max_guarantor_category = this.loan_modality.loan_modality_parameter.max_guarantor_category
-          if(this.loan_modality.loan_modality_parameter.quantity_ballots > 1){
+          /*if(this.loan_modality.loan_modality_parameter.quantity_ballots > 1){
             this.visible = true
           }else{
             this.visible = false
-          }
+          }*/
           this.getBallots(id)
           this.generateContributions()
         }
