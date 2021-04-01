@@ -21,6 +21,7 @@
             "indebtedness_calculated": "42.66",
             "liquid_qualification_calculated": "2498.03",
             "loan_term": 30,
+            "guarantor_amortizing": false,
             "payment_type_id": 2,
             "number_payment_type": 8888,
             "destiny_id": 2,
