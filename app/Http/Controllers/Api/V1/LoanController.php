@@ -767,10 +767,19 @@ class LoanController extends Controller
             case 'Préstamo a corto plazo':
 				$view_type = 'short';
             	break;
+            case 'Refinanciamiento Préstamo a corto plazo':
+				$view_type = 'short';
+            	break;
             case 'Préstamo a largo plazo':
 				$view_type = 'long';
             	break;
+            case 'Refinanciamiento Préstamo a largo plazo':
+				$view_type = 'long';
+            	break;
             case 'Préstamo hipotecario':
+				$view_type = 'hypothecary';
+            	break;
+            case 'Refinanciamiento Préstamo hipotecario':
 				$view_type = 'hypothecary';
             	break;
         }
