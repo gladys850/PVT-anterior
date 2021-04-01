@@ -82,7 +82,7 @@
             <h3 class="text-uppercase text-center">{{modalidad.name}}</h3>
             <v-card class="ma-3">
               <BallotsResult ref="BallotsResult"
-                v-show="modalidad.procedure_type_id!=12"
+                v-show="modalidad.procedure_type_name !='Préstamo hipotecario'"
                 :data_sismu.sync="data_sismu"
                 :calculator_result.sync="calculator_result"
                 :loan_detail.sync="loan_detail"
@@ -95,7 +95,7 @@
                 </template>
               </BallotsResult>
               <BallotsResultHipotecary
-                v-show="modalidad.procedure_type_id==12"
+                v-show="modalidad.procedure_type_name=='Préstamo hipotecario'"
                 :data_sismu.sync="data_sismu"
                 :calculator_result.sync="calculator_result"
                 :loan_detail.sync="loan_detail"
@@ -127,20 +127,20 @@
           <v-card color="grey lighten-1">
             <h3 class="text-uppercase text-center">{{modalidad.name}}</h3>
             <HipotecaryData ref="HipotecaryData"
-              v-show="modalidad.procedure_type_id==12"
+              v-show="modalidad.procedure_type_name=='Préstamo hipotecario'"
               :loan_detail.sync="loan_detail"
               :loan_property="loan_property"
               :bus="bus"
             />
             <Guarantor
-            v-show="modalidad.procedure_type_id!=12"
+            v-show="modalidad.procedure_type_name!='Préstamo hipotecario'"
             :modalidad_guarantors.sync="modalidad.guarantors"
             :modalidad.sync="modalidad"
             :loan_detail.sync="loan_detail"
             :guarantors.sync="guarantors"
             :affiliate.sync="affiliate"
             :modalidad_id.sync="modalidad.id"/>
-          <v-container class="py-0" v-show="modalidad.procedure_type_id!=12 ">
+          <v-container class="py-0" v-show="modalidad.procedure_type_name!='Préstamo hipotecario' ">
             <v-row>
             <v-spacer></v-spacer><v-spacer></v-spacer> <v-spacer></v-spacer>
               <v-col class="py-0">
@@ -399,13 +399,6 @@ export default {
           this.$refs.BallotsResult.simuladores()
         }
         if(n==3){
-          if(this.modalidad.procedure_type_id==12){
-            //this.saveLoanProperty()
-            //console.log('Es hipotecario')
-          }
-          else{
-            //console.log("No es hipotecario")
-          }
         }
         if(n==4)
         {
@@ -905,7 +898,7 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
                 }
               }
             }else{
-              if(this.modalidad.procedure_type_id==12){
+              if(this.modalidad.procedure_type_name=='Préstamo hipotecario'){
                  if(parseFloat(this.calculator_result.amount_requested) > parseFloat(this.loan_detail.net_realizable_value) )
                 {
                   this.toastr.error("El Monto Solicitado no puede ser mayor al Monto del Inmueble")
