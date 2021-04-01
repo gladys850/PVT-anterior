@@ -25,7 +25,7 @@ Route::group([
     Route::group([
         'middleware' => 'auth'
     ], function () {
-        Route::apiResource('user', 'Api\V1\UserController')->only('index', 'show');
+        Route::apiResource('user', 'Api\V1\UserController');//->only('index', 'show', 'update');
         if (!env("LDAP_AUTHENTICATION")) Route::apiResource('user', 'Api\V1\UserController')->only('update');
         Route::get('user/{user}/role', 'Api\V1\UserController@get_roles');
         Route::apiResource('auth', 'Api\V1\AuthController')->only('index');

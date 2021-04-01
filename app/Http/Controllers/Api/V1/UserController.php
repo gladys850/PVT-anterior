@@ -56,11 +56,23 @@ class UserController extends Controller
     {
         if (env("LDAP_AUTHENTICATION")) {
             $ldap = new Ldap();
-            if (is_null($ldap->get_entry($request->username, 'uid'))) {
+            if (is_null($ldap->get_entry($request->uid, 'uid'))) {
                 abort(404);
             }
         }
-        return User::create($request->all());
+        $user = new User;
+        //$user->city_id = 1;
+        $user->first_name = $request->givenname;
+        $user->last_name = $request->sn;
+        $user->username = $request->uid;
+        $user->password = Hash::make($user->uid);
+        $user->position = $request->title;
+        //$user->is_commission = false;
+        //$user->phone = 54654;
+        $user->active = true;
+        $user->save();
+        return $user;
+        //return User::create($user->toArray());
     }
 
     /**
@@ -184,7 +196,6 @@ class UserController extends Controller
     */
     public function unregistered_users()
     {
-        return 'ok';
         $ldap = new Ldap();
         $unregistered_users = collect($ldap->get_entries())->pluck('uid')->diff(User::get()->pluck('username')->all());
         $items = [];
