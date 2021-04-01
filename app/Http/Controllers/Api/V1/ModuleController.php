@@ -54,7 +54,7 @@ class ModuleController extends Controller
     */
     public function get_roles(Module $module)
     {
-        return $module->roles()->whereNotNull('sequence_number')->get();
+        return $module->roles()->get();
     }
 
     /**
