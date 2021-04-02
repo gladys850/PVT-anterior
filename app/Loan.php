@@ -692,14 +692,16 @@ class Loan extends Model
              case 'Préstamo hipotecario':
                 if($affiliate_state_type == "Activo")
                 {
-                    if($type_sismu && $cpop_sismu) $modality=ProcedureModality::whereShortened("PLP-GH-CPOP")->first(); // Prestamo hipotecario CPOP
-                    if($type_sismu && !$cpop_sismu) $modality=ProcedureModality::whereShortened("PLP-GH-SA")->first(); // Prestamo hipotecario Sector Activo
+                    if($affiliate_state_type !== "Comisión"){
+                        if($type_sismu && $cpop_sismu) $modality=ProcedureModality::whereShortened("PLP-GH-CPOP")->first(); // Prestamo hipotecario CPOP
+                        if($type_sismu && !$cpop_sismu) $modality=ProcedureModality::whereShortened("PLP-GH-SA")->first(); // Prestamo hipotecario Sector Activo
 
-                    if(!$cpop_sismu || !$type_sismu){
-                        if($affiliate->cpop){
-                            $modality=ProcedureModality::whereShortened("PLP-GH-CPOP")->first(); //hipotecario CPOP 
-                        }else{
-                            $modality=ProcedureModality::whereShortened("PLP-GH-SA")->first(); //hipotecario Sector Activo
+                        if(!$cpop_sismu || !$type_sismu){
+                            if($affiliate->cpop){
+                                $modality=ProcedureModality::whereShortened("PLP-GH-CPOP")->first(); //hipotecario CPOP 
+                            }else{
+                                $modality=ProcedureModality::whereShortened("PLP-GH-SA")->first(); //hipotecario Sector Activo
+                            }
                         }
                     }
                 }
@@ -707,16 +709,18 @@ class Loan extends Model
              case 'Refinanciamiento Préstamo hipotecario':
                 if($affiliate_state_type == "Activo")
                 {
-                    if($type_sismu && $cpop_sismu) $modality=ProcedureModality::whereShortened("PLP-R-GH-CPOP")->first(); // Refinanciamiento hipotecario CPOP
-                    if($type_sismu && !$cpop_sismu) $modality=ProcedureModality::whereShortened("PLP-R-GH-SA")->first(); // Refinanciamiento hipotecario Sector Activo
+                    if($affiliate_state_type !== "Comisión"){
+                        if($type_sismu && $cpop_sismu) $modality=ProcedureModality::whereShortened("PLP-R-GH-CPOP")->first(); // Refinanciamiento hipotecario CPOP
+                        if($type_sismu && !$cpop_sismu) $modality=ProcedureModality::whereShortened("PLP-R-GH-SA")->first(); // Refinanciamiento hipotecario Sector Activo
                     
-                    if(!$cpop_sismu || !$type_sismu){
-                        if($affiliate->cpop){
-                            $modality=ProcedureModality::whereShortened("PLP-R-GH-CPOP")->first(); // Refinanciamiento hipotecario CPOP
-                        }else{
-                            $modality=ProcedureModality::whereShortened("PLP-R-GH-SA")->first(); // Refinanciamiento hipotecario Sector Activo
+                        if(!$cpop_sismu || !$type_sismu){
+                            if($affiliate->cpop){
+                                $modality=ProcedureModality::whereShortened("PLP-R-GH-CPOP")->first(); // Refinanciamiento hipotecario CPOP
+                            }else{
+                                $modality=ProcedureModality::whereShortened("PLP-R-GH-SA")->first(); // Refinanciamiento hipotecario Sector Activo
+                            }
                         }
-                    }
+                    }                    
                 }
                break;
             }
