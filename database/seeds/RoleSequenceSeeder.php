@@ -28,34 +28,62 @@ class RoleSequenceSeeder extends Seeder
             ]
         ];
         $this->create($sequences);
-        //Flujo de Préstamo a corto plazo
+        //Flujo de Préstamo a corto plazo Refinanciamiento
         $sequences = [
+            'Refinanciamiento Préstamo a corto plazo' => [
+                ['PRE-regional-santa-cruz', 'PRE-regional-cochabamba', 'PRE-regional-oruro', 'PRE-regional-potosi', 'PRE-regional-sucre', 'PRE-regional-tarija', 'PRE-regional-trinidad', 'PRE-regional-cobija'],
+                ['PRE-recepcion'],
+                ['PRE-calificacion'],
+                ['PRE-cobranzas-corte'], 
+                ['PRE-aprobacion-direccion'],
+                ['PRE-revision-legal'],
+                ['PRE-tesoreria'],
+                ['PRE-cobranzas'],     
+            ]
+        ];
+        $this->create($sequences);
+    //Flujo de Préstamo a corto plazo 
+      $sequences = [
             'Préstamo a corto plazo' => [
                 ['PRE-regional-santa-cruz', 'PRE-regional-cochabamba', 'PRE-regional-oruro', 'PRE-regional-potosi', 'PRE-regional-sucre', 'PRE-regional-tarija', 'PRE-regional-trinidad', 'PRE-regional-cobija'],
                 ['PRE-recepcion'],
                 ['PRE-calificacion'],
                 ['PRE-jefatura'],
-                ['PRE-revision-direccion'],
-                ['PRE-aprobacion-legal'],
+                ['PRE-aprobacion-direccion'],
+                ['PRE-revision-legal'],
                 ['PRE-tesoreria'],
                 ['PRE-cobranzas'],    
             ]
         ];
         $this->create($sequences);
          //Flujo de Préstamo a largo plazo
-        $sequences = [
+         $sequences = [
             'Préstamo a largo plazo' => [
                 ['PRE-regional-santa-cruz', 'PRE-regional-cochabamba', 'PRE-regional-oruro', 'PRE-regional-potosi', 'PRE-regional-sucre', 'PRE-regional-tarija', 'PRE-regional-trinidad', 'PRE-regional-cobija'],
                 ['PRE-recepcion'],
                 ['PRE-calificacion'],
                 ['PRE-jefatura'],
                 ['PRE-revision-direccion'],
-                ['PRE-aprobacion-legal'],
+                ['PRE-revision-legal'],
                 ['PRE-tesoreria'],
                 ['PRE-cobranzas'], 
             ]
         ];
         $this->create($sequences);
+            //Flujo de Préstamo a largo plazo Refinanciamiento
+            $sequences = [
+                'Refinanciamiento Préstamo a largo plazo' => [
+                    ['PRE-regional-santa-cruz', 'PRE-regional-cochabamba', 'PRE-regional-oruro', 'PRE-regional-potosi', 'PRE-regional-sucre', 'PRE-regional-tarija', 'PRE-regional-trinidad', 'PRE-regional-cobija'],
+                    ['PRE-recepcion'],
+                    ['PRE-calificacion'],
+                    ['PRE-cobranzas-corte'], 
+                    ['PRE-aprobacion-direccion'],
+                    ['PRE-revision-legal'],
+                    ['PRE-tesoreria'],
+                    ['PRE-cobranzas'], 
+                ]
+            ];
+            $this->create($sequences);
         //Flujo de Préstamo hipotecario
         $sequences = [
             'Préstamo hipotecario' => [
@@ -63,7 +91,25 @@ class RoleSequenceSeeder extends Seeder
                 ['PRE-recepcion'],
                 ['PRE-calificacion'],
                 ['PRE-jefatura'],
+                ['PRE-revision-legal'],
                 ['PRE-revision-direccion'],
+                ['PRE-aprobacion-direccion'],
+                ['PRE-aprobacion-legal'],
+                ['PRE-tesoreria'],
+                ['PRE-cobranzas'],   
+            ]
+        ];
+        $this->create($sequences);
+        //Flujo de Préstamo hipotecario refinanciamiento
+        $sequences = [
+            'Refinanciamiento Préstamo hipotecario' => [
+                ['PRE-regional-santa-cruz', 'PRE-regional-cochabamba', 'PRE-regional-oruro', 'PRE-regional-potosi', 'PRE-regional-sucre', 'PRE-regional-tarija', 'PRE-regional-trinidad', 'PRE-regional-cobija'],
+                ['PRE-recepcion'],
+                ['PRE-calificacion'],
+                ['PRE-jefatura'],
+                ['PRE-revision-legal'],
+                ['PRE-revision-direccion'],
+                ['PRE-aprobacion-direccion'],
                 ['PRE-aprobacion-legal'],
                 ['PRE-tesoreria'],
                 ['PRE-cobranzas'],   
@@ -78,7 +124,7 @@ class RoleSequenceSeeder extends Seeder
                 ['PRE-tesoreria-cobros']
             ]
         ];
-        $this->create($sequences);    
+        $this->create($sequences); 
     }
 
     public function create($sequences){
@@ -95,7 +141,8 @@ class RoleSequenceSeeder extends Seeder
                                 RoleSequence::firstOrCreate([
                                     'procedure_type_id' => $procedure->id,
                                     'role_id' => $prev->id,
-                                    'next_role_id' => $curr->id
+                                    'next_role_id' => $curr->id,
+                                    'sequence_number_flow'=>$i
                                 ]);
                             }
                         }
