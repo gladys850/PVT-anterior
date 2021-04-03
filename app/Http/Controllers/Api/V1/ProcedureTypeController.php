@@ -106,14 +106,17 @@ class ProcedureTypeController extends Controller
             return $item;
         })->values()->toArray();
         foreach ($request as $key => $sequence) {
-            foreach ($request as $i => $compare) {
+            foreach ($request as $i => $compare) {           
                 if ($key != $i) {
-                    if ($sequence['role_id'] == $compare['role_id'] && $sequence['next_role_id'] == $compare['next_role_id']) abort(409, 'No se pueden guardar secuencias duplicadas');
-                }
+                    if ($sequence['role_id'] == $compare['role_id'] && $sequence['next_role_id'] == $compare['next_role_id']) abort(409, 'No se pueden guardar secuencias de origen a destino duplicadas');
+                    if ($sequence['role_id'] == $compare['role_id'] ) abort(409, 'No se pueden guardar origen duplicado');
+                }        
             }
         }
         RoleSequence::whereProcedureTypeId($procedure_type->id)->delete();
         foreach ($request as $sequence) {
+            
+       
             RoleSequence::create($sequence);
         }
         return $procedure_type->workflow;
