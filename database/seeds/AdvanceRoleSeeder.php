@@ -37,43 +37,37 @@ class AdvanceRoleSeeder extends Seeder
             [
                 'name' => 'Calificación',
                 'action' => 'Calificado',
-                'sequence' => 2
             ], [
                 'name' => 'Revisión Legal',
                 'action' => 'Revisado',
-                'sequence' => 4
             ], [
                 'name' => 'Jefatura',
                 'action' => 'Aprobado',
-                'sequence' => 3
             ], [
                 'name' => 'Aprobación Dirección',
                 'action' => 'Aprobado',
-                'sequence' => 6
             ], [
                 'name' => 'Revisión Dirección',
                 'action' => 'Aprobado',
-                'sequence' => 5
             ], [
                 'name' => 'Aprobación Legal',
                 'action' => 'Aprobado',
-                'sequence' => 7
             ], [
                 'name' => 'Tesorería',
                 'action' => 'Desembolsado',
-                'sequence' => 8
+            ], [
+                'name' => 'Cobranzas Corte',
+                'action' => 'Pendiente de Pago',
             ]
-        ];
-        $recovery_roles = [
+        ];    $recovery_roles = [
+    
             [
                 'name' => 'Cobranzas',
                 'action' => 'Liquidado',
-                'sequence' => 10
             ],
             [
                 'name' => 'Tesorería Cobros',
                 'action' => 'Pago Confirmado',
-                'sequence' => 11
             ]
         ];
       
@@ -85,7 +79,6 @@ class AdvanceRoleSeeder extends Seeder
                     'display_name' => $role,
                     'action' => 'Recepcionado',
                     'module_id' => $module->id,
-                    'sequence_number' => $role == 'Recepción' ? 1 : 0
                 ]);
                 $role->syncPermissions($receipt_permissions);
             }
@@ -97,7 +90,6 @@ class AdvanceRoleSeeder extends Seeder
                     'display_name' => $role['name'],
                     'action' => $role['action'],
                     'module_id' => $module->id,
-                    'sequence_number' => $role['sequence']
                 ]);
                 if (in_array($role['display_name'], ['Jefatura'])) {
                     $role->syncPermissions(array_merge($sequence_permissions, $leadership_permissions));
@@ -107,7 +99,9 @@ class AdvanceRoleSeeder extends Seeder
                     $role->syncPermissions(array_merge($pay_permissions_treasury));
                 } elseif (in_array($role['display_name'], ['Tesorería'])) {
                     $role->syncPermissions(array_merge($treasury_permissions));
-                }
+                } elseif (in_array($role['display_name'], ['Cobranzas Corte'])) {
+                    $role->syncPermissions(array_merge($treasury_permissions));
+                } 
                 else {
                     $role->syncPermissions($sequence_permissions);
                 }
@@ -120,7 +114,6 @@ class AdvanceRoleSeeder extends Seeder
                     'display_name' => $role['name'],
                     'action' => $role['action'],
                     'module_id' => $module->id,
-                    'sequence_number' => $role['sequence']
                 ]);
                 $role->syncPermissions(array_merge($recovery_permissions));
             }
