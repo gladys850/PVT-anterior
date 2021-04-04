@@ -157,6 +157,11 @@ export default {
     procedureModalities: {
       type: Array,
       required: true
+    },
+    procedureTypeSelected:{
+      type:Number,
+      required: true,
+      default: 0
     }
   },
   data: () => ({
@@ -236,6 +241,10 @@ export default {
         printDocs: []
   }),
   watch: {
+    procedureTypeSelected(newVal, oldVal) {
+      if(newVal != oldVal)
+        this.selectedLoans = []
+    },
     selectedLoans(val) {
       this.bus.$emit('selectLoans', this.selectedLoans)
       if (val.length) {

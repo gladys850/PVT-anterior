@@ -190,6 +190,7 @@
         <v-col cols="12">
           <List :bus="bus" 
           :tray="filters.traySelected" 
+          :procedureTypeSelected="this.filters.procedureTypeSelected"
           :procedureModalities="procedureModalities" 
           :options.sync="options" 
           :loans="loans" 
@@ -321,6 +322,7 @@ export default {
       handler(val) {
         if (val.traySelected != null && val.procedureTypeSelected != null && val.roleSelected != null) {
           let procedureType = this.$store.getters.modalityLoan[this.filters.procedureTypeSelected]
+          //this.filters.procedureTypeSelected es el orden de procedure
           if (procedureType) this.setFilters(procedureType.id)
         }
       }
@@ -344,6 +346,7 @@ export default {
         this.getLoans()
       } else {
         this.filters.procedureTypeSelected = this.$store.getters.modalityLoan[0]
+         alert('track'+ this.filters.procedureTypeSelected)
         this.filters.roleSelected = this.roles[0].id
         this.clearNotification()
       }
