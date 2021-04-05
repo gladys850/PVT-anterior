@@ -483,6 +483,8 @@ export default {
             }
           }
           this.modalities = modalities_aux
+        }else if(this.remake){
+          this.modalities
         }else{
           this.toastr.error('Ocurrio un error al obtener la modadlidad')
         }
