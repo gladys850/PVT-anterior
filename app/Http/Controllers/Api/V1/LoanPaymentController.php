@@ -735,50 +735,5 @@ class LoanPaymentController extends Controller
        $export = new ArchivoPrimarioExport($data);
        return Excel::download($export, $File.'.xlsx'); 
     }
-
-    /**
-    * Registrar trámites de pagos de garantes en lote activos y pasivos
-	* @bodyParam estimated_date date Fecha para el cálculo del interés. Example: 2020-12-31
-    * @bodyParam description string Texto de descripción. Example: Por descuento automatico
-    * @bodyParam voucher string Comprobante de pago A-12/20 o CONT-123. Example: A-12/20
-    * @authenticated
-    * @responseFile responses/loan_payment/guarantors_command_senasir_save_payment.200.json
-    */
-    public function guarantors_command_senasir_save_payment(Request $request)
-    {
-        $estimated_date = $request->estimated_date? Carbon::parse($request->estimated_date) : Carbon::now()->endOfMonth();
-        $loans = Loan::get();
-        $payment_type = AmortizationType::get();
-        $payment_type_desc = $payment_type->where('name', 'LIKE', 'Descuento automático')->first();
-        $description = $request->description? $request->description : 'Por descuento automatico';
-        $procedure_modality = ProcedureModality::whereName('AA Regular')->first();
-        $voucher = $request->voucher? $request->voucher : "AUTOMATICO";
-        $paid_by = "G"; $loans_quantity = 0;
-        foreach($loans as $loan){
-            if($loan->balance != 0){
-                foreach($loan->guarantors as $guarantor){
-                    $percentage = $guarantor->pivot->payment_percentage;
-                    $percentage_quota = ($percentage)*($loan->estimated_quota)/100;
-                    if($guarantor->affiliate_state->name == 'Servicio' || $guarantor->affiliate_state->name == 'Disponibilidad' || $guarantor->affiliate_state->name == 'Jubilado' || $guarantor->affiliate_state->name == 'Jubilado Invalidez'){
-                        $disbursement_date = CarbonImmutable::parse($loan->disbursement_date);
-                        if($disbursement_date->lessThan($estimated_date)){
-                            if($disbursement_date->year == $estimated_date->year && $disbursement_date->month == $estimated_date->month){
-                                if($disbursement_date->day<LoanGlobalParameter::latest()->first()->offset_interest_day){
-                                    LoanPayment::registry_payment($loan, $estimated_date, $description, $procedure_modality, $voucher, $paid_by, $payment_type_desc, $percentage_quota);
-                                    $loans_quantity++;
-                                }
-                            }else{
-                                LoanPayment::registry_payment($loan, $estimated_date, $description, $procedure_modality, $voucher, $paid_by, $payment_type_desc, $percentage_quota);
-                                $loans_quantity++;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        return response()->json([
-            'loans_quantity' => $loans_quantity
-        ]);
-    }
 }
     
