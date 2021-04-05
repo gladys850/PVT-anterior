@@ -1560,6 +1560,6 @@ class LoanController extends Controller
                 }
             }
         }
-        return  $procedure_ref->second_name;
+        return  $procedure_ref;
     }
 }
