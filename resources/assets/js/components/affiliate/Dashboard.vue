@@ -13,11 +13,12 @@
                     <!--{{item.procedure_modality_id}}-->
                     <strong>Cód.:</strong>
                     {{ item.code }} |
-                    <strong>Desembolsado:</strong>
-                    {{ item.amount_approved}}
-                    <strong>Saldo capital:
-                    {{ item.balance  }}
-                    </strong>
+                    <strong>Desembolso:</strong>
+                    {{ item.amount_approved}} |
+                    <strong>S.Capital:</strong>
+                    {{ item.balance  }} |
+                    <strong>Mod.:</strong>
+                    {{ item.modality.procedure_type.second_name  }}
                     <span>
                       <v-tooltip
                         left              
@@ -61,7 +62,7 @@
                       </v-tooltip>            
                     </span>
                     
-                    <span>
+                    <span v-if="item.state_id == 3">
                     <v-tooltip
                     left  
                     v-if="item.modality.procedure_type.name != 'Préstamo Anticipo'"         
@@ -83,8 +84,8 @@
                     <span>Refinanciamiento</span>
                     </v-tooltip>            
                     </span>
-                    <span>
 
+                    <span v-if="item.state_id == 3">
                     <v-tooltip
                     left   
                     v-if="item.modality.procedure_type.name == 'Préstamo a largo plazo' || item.modality.procedure_type.name == 'Préstamo hipotecario'"            
@@ -529,7 +530,7 @@ export default {
         }
       } catch (e) {
         console.log(e)
-        this.toastr.error(e.type)
+        //this.toastr.error(e.type)
       }
     },
 
