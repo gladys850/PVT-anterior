@@ -66,9 +66,9 @@ class LoanController extends Controller
         $loan->observations = $loan->observations->last();
         $loan->modality=$loan->modality->procedure_type;
         $loan->tags = $loan->tags;
-        if ($loan->parent_loan_id) {
-            $loan->parent_loan = Loan::find($loan->parent_loan_id);
-        }
+        
+        $loan->parent_loan = $loan->parent_loan;
+        
         //$loan->procedure=$loan->modality;
         //$loan->loan_contribution = $loan->loan_contribution_adjusts;
         return $loan;
