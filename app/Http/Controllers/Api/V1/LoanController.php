@@ -65,7 +65,8 @@ class LoanController extends Controller
         $loan->city = $loan->city;
         $loan->observations = $loan->observations->last();
         $loan->modality=$loan->modality->procedure_type;
-       // $loan->procedure=$loan->modality;
+        $loan->tags = $loan->tags;
+        //$loan->procedure=$loan->modality;
         //$loan->loan_contribution = $loan->loan_contribution_adjusts;
         return $loan;
     }
@@ -1498,7 +1499,8 @@ class LoanController extends Controller
             if($loan->loan_persons) $loan->loan_persons()->detach();
             
             if($loan->submitted_documents) $loan->submitted_documents()->detach();
-
+            
+            if($loan->tags) $loan->tags()->detach();
             //$loan->forceDelete();
             $options=[$loan->id];
             $loan = Loan::withoutEvents(function() use($options){

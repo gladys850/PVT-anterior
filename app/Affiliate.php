@@ -8,6 +8,7 @@ use Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Laratrust\Traits\LaratrustUserTrait;
 use Illuminate\Support\Facades\Storage;
+use Carbon\CarbonImmutable;
 use Util;
 
 class Affiliate extends Model
@@ -413,4 +414,28 @@ class Affiliate extends Model
           }              
          return $guarantor;     
     }  
+    
+   //verificar si se tiene boletas del affiliado
+    public function contributions_exist()
+    {
+      if($this->affiliate_state == null) abort(403, 'Debe actualizar el estado del afiliado');
+      $state_affiliate = $this->affiliate_state->affiliate_state_type->name;
+      $contributions = null;
+      $before_month=1;
+      $responce=false;
+      $now = CarbonImmutable::now();
+      if($state_affiliate == 'Activo') $table_contribution ='contributions';
+      if($state_affiliate == 'Pasivo') $table_contribution ='aid_contributions';
+
+      if(count($this->$table_contribution)>0){
+        $contributions=$this->$table_contribution->sortByDesc('month_year',SORT_NATURAL);
+        $contributions=$contributions->values()->first();
+        $current_ticket = CarbonImmutable::parse($contributions->month_year);
+        $current_ticket_true = $now->startOfMonth()->subMonths($before_month);
+        if($now->startOfMonth()->diffInMonths($current_ticket->startOfMonth()) == $before_month){
+          $responce = true;
+        }
+      }
+     return  $responce;
+   }
 }
