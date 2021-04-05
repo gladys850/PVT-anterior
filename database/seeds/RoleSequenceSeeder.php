@@ -132,6 +132,7 @@ class RoleSequenceSeeder extends Seeder
             $procedure = ProcedureType::whereName($procedure_type)->first();
             foreach ($sequence as $i => $current) {
                 if ($i > 0) {
+                    $j=$i;
                     foreach ($current as $next_role) {
                         $previous = $sequence[$i-1];
                         $curr = Role::whereName($next_role)->first();
@@ -142,7 +143,7 @@ class RoleSequenceSeeder extends Seeder
                                     'procedure_type_id' => $procedure->id,
                                     'role_id' => $prev->id,
                                     'next_role_id' => $curr->id,
-                                    'sequence_number_flow'=>$i
+                                    'sequence_number_flow'=>$j
                                 ]);
                             }
                         }
