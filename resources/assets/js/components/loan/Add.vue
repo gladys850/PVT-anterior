@@ -42,6 +42,7 @@
           </v-row>
           <Steps
             :affiliate.sync="affiliate"
+            :affiliate_data.sync="affiliate_data"
             :addresses.sync="addresses"/>
         </div>
       </v-container>
@@ -68,7 +69,8 @@ export default {
       cell_phone_number:null
     },
     degree_name: null,
-    category_name: null
+    category_name: null,
+    affiliate_data:{}
   }),
   computed: {
     isNew() {
@@ -93,6 +95,7 @@ export default {
         this.loading = true
         let res = await axios.get(`affiliate/${id}`)
         this.affiliate = res.data
+        this.affiliate_data.cpop_affiliate=this.affiliate.cpop
         this.getCategory_name(res.data.category_id)
         this.getDegree_name(res.data.degree_id)
         this.setBreadcrumbs()
