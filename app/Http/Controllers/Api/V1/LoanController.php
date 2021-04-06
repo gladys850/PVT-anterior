@@ -66,10 +66,10 @@ class LoanController extends Controller
         $loan->observations = $loan->observations->last();
         $loan->modality=$loan->modality->procedure_type;
         $loan->tags = $loan->tags;
-        
-        $loan->parent_loan->balance = $loan->parent_loan->balance;
-        $loan->parent_loan->estimated_quota = $loan->parent_loan->estimated_quota;
-        
+        if($loan->parent_loan){
+            $loan->parent_loan->balance = $loan->parent_loan->balance;
+            $loan->parent_loan->estimated_quota = $loan->parent_loan->estimated_quota;
+        }
         //$loan->procedure=$loan->modality;
         //$loan->loan_contribution = $loan->loan_contribution_adjusts;
         return $loan;
