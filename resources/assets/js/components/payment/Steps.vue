@@ -191,7 +191,9 @@ export default {
             type: res.data.attachment.type,
             base64: true
           })
-          this.$router.push('/loanPayment')
+          //this.$router.push('/loanPayment')
+          //this.$router.push(`/workflow/${this.$route.query.loan_id}?redirectTab=${6}`)
+          this.$router.push({path:`/workflow/${this.$route.query.loan_id}?redirectTab=${6}`})
           this.payment = res.data
         }
         else{
@@ -206,7 +208,9 @@ export default {
             base64: true
           })
             this.payment = res.data
-            this.$router.push('/loanPayment')
+            //this.$router.push('/loanPayment')
+            //this.$router.push(`/workflow/${this.$route.query.loan_id}?redirectTab=${6}`,{ workTray: 'received'  })
+            this.$router.push({path:`/workflow/${this.$route.query.loan_id}?redirectTab=${6}`})
            }
       }catch (e) {
         console.log(e)
