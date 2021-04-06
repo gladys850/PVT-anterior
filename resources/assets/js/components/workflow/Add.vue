@@ -389,6 +389,13 @@ export default {
     }
   },
   mounted() {
+    // si existe el query de redireccion de tab, se setea el valor
+    if(this.$route.query.redirectTab) {
+      this.tab = 'tab-'+this.$route.query.redirectTab
+    }
+    /*if(this.$route.params.workTray){
+      this.workTray = 'received'
+    }*/
     this.getloan(this.$route.params.id)
     this.getSpouse(this.$route.params.id)
     this.getObservation(this.$route.params.id)
