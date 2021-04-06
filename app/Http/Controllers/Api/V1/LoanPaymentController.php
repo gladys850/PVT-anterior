@@ -553,25 +553,49 @@ class LoanPaymentController extends Controller
         $payment_type = AmortizationType::get();
         $payment_type_desc = $payment_type->where('name', 'LIKE', 'Descuento automático')->first();
         $description = $request->description? $request->description : 'Por descuento automatico';
-        $procedure_modality = ProcedureModality::whereName('Amortización Automática')->first();
+        $procedure_modality = ProcedureModality::whereName('AA Regular')->first();
         $voucher = $request->voucher? $request->voucher : "AUTOMATICO";
-        $paid_by = "T"; $loans_quantity = 0;
+        //$paid_by = "T";
+        $loans_quantity = 0;
         foreach($loans as $loan){
             if($loan->balance != 0){
-                foreach($loan->lenders as $lender){
-                    $percentage = $lender->pivot->payment_percentage;
-                    $percentage_quota = ($percentage)*($loan->next_payment()->estimated_quota)/100;
-                    if($lender->affiliate_state->name == 'Servicio' || $lender->affiliate_state->name == 'Disponibilidad' || $lender->affiliate_state->name == 'Jubilado' || $lender->affiliate_state->name == 'Jubilado Invalidez'){
-                        $disbursement_date = CarbonImmutable::parse($loan->disbursement_date);
-                        if($disbursement_date->lessThan($estimated_date)){
-                            if($disbursement_date->year == $estimated_date->year && $disbursement_date->month == $estimated_date->month){
-                                if($disbursement_date->day<LoanGlobalParameter::latest()->first()->offset_interest_day){
-                                    LoanPayment::registry_payment($loan, $estimated_date, $description, $procedure_modality, $voucher, $paid_by, $payment_type_desc, $percentage_quota);
+                if($loan->guarantor_amortizing == true){$paid_by = "G";
+                    foreach($loan->guarantors as $guarantor){
+                        $percentage = $guarantor->pivot->payment_percentage;
+                        $percentage_quota = ($percentage)*($loan->estimated_quota)/100;
+                        //if($guarantor->affiliate_state->name == 'Servicio' || $guarantor->affiliate_state->name == 'Disponibilidad' || $guarantor->affiliate_state->name == 'Jubilado' || $guarantor->affiliate_state->name == 'Jubilado Invalidez'){
+                        if($guarantor->contributions_exist()){
+                            $disbursement_date = CarbonImmutable::parse($loan->disbursement_date);
+                            if($disbursement_date->lessThan($estimated_date)){
+                                if($disbursement_date->year == $estimated_date->year && $disbursement_date->month == $estimated_date->month){
+                                    if($disbursement_date->day<LoanGlobalParameter::latest()->first()->offset_interest_day){
+                                        LoanPayment::registry_payment($loan, $estimated_date, $description, $procedure_modality, $voucher, $paid_by, $payment_type_desc, $percentage_quota, $guarantor->id);
+                                        $loans_quantity++;
+                                    }
+                                }else{
+                                    LoanPayment::registry_payment($loan, $estimated_date, $description, $procedure_modality, $voucher, $paid_by, $payment_type_desc, $percentage_quota, $guarantor->id);
                                     $loans_quantity++;
                                 }
-                            }else{
-                                LoanPayment::registry_payment($loan, $estimated_date, $description, $procedure_modality, $voucher, $paid_by, $payment_type_desc, $percentage_quota);
-                                $loans_quantity++;
+                            }
+                        }
+                    }
+                }else{
+                    foreach($loan->lenders as $lender){$paid_by = "T";
+                        $percentage = $lender->pivot->payment_percentage;
+                        $percentage_quota = ($percentage)*($loan->estimated_quota)/100;
+                        //if($lender->affiliate_state->name == 'Servicio' || $lender->affiliate_state->name == 'Disponibilidad' || $lender->affiliate_state->name == 'Jubilado' || $lender->affiliate_state->name == 'Jubilado Invalidez'){
+                        if($lender->contributions_exist()){
+                            $disbursement_date = CarbonImmutable::parse($loan->disbursement_date);
+                            if($disbursement_date->lessThan($estimated_date)){
+                                if($disbursement_date->year == $estimated_date->year && $disbursement_date->month == $estimated_date->month){
+                                    if($disbursement_date->day<LoanGlobalParameter::latest()->first()->offset_interest_day){
+                                        LoanPayment::registry_payment($loan, $estimated_date, $description, $procedure_modality, $voucher, $paid_by, $payment_type_desc, $percentage_quota, $lender->id);
+                                        $loans_quantity++;
+                                    }
+                                }else{
+                                    LoanPayment::registry_payment($loan, $estimated_date, $description, $procedure_modality, $voucher, $paid_by, $payment_type_desc, $percentage_quota, $lender->id);
+                                    $loans_quantity++;
+                                }
                             }
                         }
                     }
