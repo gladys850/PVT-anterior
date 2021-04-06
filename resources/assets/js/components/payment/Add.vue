@@ -85,7 +85,8 @@
               {{'CUOTA ESTIMADA MENSUAL :'+this.loan_payment.estimated_quota}}
             </v-col>
           </v-row>
-          <Steps/>
+          <Steps
+          :loan.sync="loan"/>
         </div>
       </v-container>
     </template>
