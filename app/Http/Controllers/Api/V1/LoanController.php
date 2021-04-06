@@ -481,13 +481,13 @@ class LoanController extends Controller
         }
 
         //heredar el codigo del prestamo padre
-        if($loan->parent_loan_id)
+        /*if($loan->parent_loan_id)
         {
             if(substr($loan->parent_loan->code, -3) != substr($loan->parent_reason,0,3))
                 $loan->code = Loan::find($loan->parent_loan_id)->code." - ".substr($loan->parent_reason,0,3);
             else
                 $loan->code = $loan->parent_loan->code;
-        }
+        }*/
 
         //rehacer obtener cod 
         if($request->has('remake_loan_id')&& $request->remake_loan_id != null)

@@ -70,9 +70,17 @@ class Loan extends Model
             }
         }
         if (!$this->code) {
-            $latest_loan = DB::table('loans')->orderBy('created_at', 'desc')->limit(1)->first();
-            if (!$latest_loan) $latest_loan = (object)['id' => 0];
-            $this->code = implode(['PTMO', str_pad($latest_loan->id + 1, 6, '0', STR_PAD_LEFT), '-', Carbon::now()->year]);
+            if($this->parent_reason == 'REPROGRAMACIÓN' && $this->parent_loan)
+            {
+                    if(substr($this->parent_loan->code, -3) != substr($this->parent_reason,0,3))
+                        $this->code = Loan::find($this->parent_loan_id)->code." - ".substr($this->parent_reason,0,3);
+                    else
+                        $this->code = $this->parent_loan->code;
+            }else{
+                $latest_loan = DB::table('loans')->orderBy('created_at', 'desc')->limit(1)->first();
+                if (!$latest_loan) $latest_loan = (object)['id' => 0];
+                $this->code = implode(['PTMO', str_pad($latest_loan->id + 1, 6, '0', STR_PAD_LEFT), '-', Carbon::now()->year]);
+            }
         }
     }
 
