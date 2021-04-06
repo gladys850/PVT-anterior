@@ -30,7 +30,7 @@ class LoanPaymentForm extends FormRequest
      */
     public function rules()
     {
-        $latest_payment = $this->loan->last_payment;
+        $latest_payment = $this->loan->last_payment_validated;
         if ($latest_payment) {
             $date = $latest_payment->estimated_date;
         } else {
@@ -38,7 +38,7 @@ class LoanPaymentForm extends FormRequest
         } 
         $rules = [
             'procedure_modality_id' => ['integer', 'exists:procedure_modalities,id'],
-            'affiliate_id' => ['integer', 'exists:affiliates,id'],
+            'affiliate_id' => ['required','integer', 'exists:affiliates,id'],
             'amortization_type_id' => ['integer', 'exists:amortization_types,id'],
             'paid_by' => ['string', 'in:T,G'],
             'voucher' => ['nullable','string','min:3'],

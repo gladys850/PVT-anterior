@@ -244,7 +244,7 @@ class Loan extends Model
     {
         $balance = $this->amount_approved;
         if ($this->payments()->count() > 0) {
-            $balance -= $this->payments()->sum('capital_payment');
+            $balance -= $this->payments()->where('validated', true)->sum('capital_payment');
         }
         return Util::round($balance);
     }
@@ -252,6 +252,11 @@ class Loan extends Model
     public function getLastPaymentAttribute()
     {
         return $this->payments()->latest()->first();
+    }
+
+    public function getLastPaymentValidatedAttribute()
+    {
+        return $this->payments()->where('state_id', 6)->orWhere('state_id',7)->latest()->first();
     }
 
     public function getObservedAttribute()
@@ -284,7 +289,7 @@ class Loan extends Model
         return Util::round($monthly_interest * $this->amount_approved / (1 - 1 / pow((1 + $monthly_interest), $this->loan_term)));
     }
 
-    public function next_payment2($estimated_date = null, $amount = null, $liquidate = null, $paid_by = null, $affiliate_id = null)
+    public function next_payment2($estimated_date = null, $amount = null, $liquidate, $paid_by = null, $affiliate_id)
     {
         $grace_period = LoanGlobalParameter::latest()->first()->grace_period;
             $total_interests = 0;

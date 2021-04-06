@@ -1036,7 +1036,7 @@ class LoanController extends Controller
     */
     public function get_next_payment(LoanPaymentForm $request, Loan $loan)
     {
-        return $loan->next_payment2($request->input('estimated_date', null), $request->input('estimated_quota', null), $request->input('liquidate', false), $request->input('paid_by', "T"), $request->input('affiliate_id'));
+        return $loan->next_payment2($request->input('estimated_date', null), $request->input('estimated_quota', null), $request->input('liquidate', false), $request->input('paid_by'), $request->input('affiliate_id'));
     }
 
     /** @group Cobranzas
@@ -1059,7 +1059,7 @@ class LoanController extends Controller
     public function set_payment(LoanPaymentForm $request, Loan $loan)
     {
         if($loan->balance!=0){
-            $payment = $loan->next_payment2($request->input('estimated_date', null), $request->input('estimated_quota', null), $request->input('liquidate', false), $request->input('paid_by'), $request->input('affiliate_id'));
+            $payment = $loan->next_payment2($request->input('estimated_date', null), $request->input('estimated_quota', null), $request->input('liquidate'), $request->input('paid_by'), $request->input('affiliate_id'));
             $payment->description = $request->input('description', null);
             $payment->state_id = LoanState::whereName('Pendiente de Pago')->first()->id;
             $payment->role_id = Role::whereName('PRE-cobranzas')->first()->id;
