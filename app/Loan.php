@@ -70,9 +70,17 @@ class Loan extends Model
             }
         }
         if (!$this->code) {
-            $latest_loan = DB::table('loans')->orderBy('created_at', 'desc')->limit(1)->first();
-            if (!$latest_loan) $latest_loan = (object)['id' => 0];
-            $this->code = implode(['PTMO', str_pad($latest_loan->id + 1, 6, '0', STR_PAD_LEFT), '-', Carbon::now()->year]);
+            if($this->parent_reason == 'REPROGRAMACIÓN' && $this->parent_loan)
+            {
+                    if(substr($this->parent_loan->code, -3) != substr($this->parent_reason,0,3))
+                        $this->code = Loan::find($this->parent_loan_id)->code." - ".substr($this->parent_reason,0,3);
+                    else
+                        $this->code = $this->parent_loan->code;
+            }else{
+                $latest_loan = DB::table('loans')->orderBy('created_at', 'desc')->limit(1)->first();
+                if (!$latest_loan) $latest_loan = (object)['id' => 0];
+                $this->code = implode(['PTMO', str_pad($latest_loan->id + 1, 6, '0', STR_PAD_LEFT), '-', Carbon::now()->year]);
+            }
         }
     }
 
@@ -276,7 +284,7 @@ class Loan extends Model
         return Util::round($monthly_interest * $this->amount_approved / (1 - 1 / pow((1 + $monthly_interest), $this->loan_term)));
     }
 
-    public function next_payment2($estimated_date = null, $amount = null, $liquidate = null, $paid_by = null, $affiliate_id)
+    public function next_payment2($estimated_date = null, $amount = null, $liquidate = null, $paid_by = null, $affiliate_id = null)
     {
         $grace_period = LoanGlobalParameter::latest()->first()->grace_period;
             $total_interests = 0;
@@ -655,12 +663,12 @@ class Loan extends Model
                 }
                 if($affiliate_state_type == "Pasivo")
                 {
-                    if($cpop_sismu  && $type_sismu) $modality=ProcedureModality::whereShortened("PLP-SP-CPOP")->first(); // reprogramacion largo plazo pasivo con 1 garante sismu
+                   // if($cpop_sismu  && $type_sismu) $modality=ProcedureModality::whereShortened("PLP-SP-CPOP")->first(); // reprogramacion largo plazo pasivo con 1 garante sismu
                     if(!$cpop_sismu  && $type_sismu) $modality=ProcedureModality::whereShortened("PLP-GP-SP")->first(); // reprogramacion largo plazo pasivo con 1 garante sismu
                 
                     if(!$cpop_sismu || !$type_sismu){
                         if($cpop_affiliate){
-                            $modality=ProcedureModality::whereShortened("PLP-CPOP")->first();
+                            //$modality=ProcedureModality::whereShortened("PLP-CPOP")->first();
                     }else{
                             $modality=ProcedureModality::whereShortened("PLP-GP-SAYADM")->first(); //Largo plazo activo  y adm con garantia personal
                     }
@@ -687,12 +695,12 @@ class Loan extends Model
                 else{
                     if($affiliate_state_type == "Pasivo"){
                     
-                        if($cpop_sismu && $type_sismu) $modality=ProcedureModality::whereShortened("PLP-R-SP-CPOP")->first(); // Refi largo plazo pasivo 1 solo garante
+                       // if($cpop_sismu && $type_sismu) $modality=ProcedureModality::whereShortened("PLP-R-SP-CPOP")->first(); // Refi largo plazo pasivo 1 solo garante
                         if(!$cpop_sismu && $type_sismu) $modality=ProcedureModality::whereShortened("PLP-R-GP-SP")->first(); // Refi largo plazo pasivo 2 garantes
                     
                         if(!$cpop_sismu || !$type_sismu){
                             if($cpop_affiliate){
-                                $modality=ProcedureModality::whereShortened("PLP-R-SP-CPOP")->first(); // Refi largo plazo pasivo 1 garante
+                               // $modality=ProcedureModality::whereShortened("PLP-R-SP-CPOP")->first(); // Refi largo plazo pasivo 1 garante
                             }else{
                                 $modality=ProcedureModality::whereShortened("PLP-R-GP-SP")->first(); // Refi largo plazo pasivo 2 garantes
                             }

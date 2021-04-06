@@ -213,24 +213,25 @@ export default {
       let roles
       if (type == 'role_id') {
         roles = this.roles
-        let usedRoles = this.workflow.filter(o => o.next_role_id == sequence.next_role_id).map(o => o['role_id'])
+        //Se quito la restriccion del combo para añadir una derivacion
+       /* let usedRoles = this.workflow.filter(o => o.next_role_id == sequence.next_role_id).map(o => o['role_id'])
         if (sequence.role_id) usedRoles = usedRoles.filter(o => o != sequence.role_id)
         if (sequence.next_role_id) {
-          roles = roles.filter(o => o.id != sequence.next_role_id && o.sequence_number < this.roles.find(o => o.id == sequence.next_role_id).sequence_number)
+          roles = roles.filter(o => o.id != sequence.next_role_id && o.sequence_number_flow < this.roles.find(o => o.id == sequence.next_role_id).sequence_number_flow)
         }
-        roles = roles.filter(o => usedRoles.indexOf(o.id) == -1)
+        roles = roles.filter(o => usedRoles.indexOf(o.id) == -1)*/
       } else if (type == 'next_role_id') {
         roles = this.roles
-        let usedRoles = this.workflow.filter(o => o.role_id == sequence.role_id).map(o => o['next_role_id'])
+      /*  let usedRoles = this.workflow.filter(o => o.role_id == sequence.role_id).map(o => o['next_role_id'])
         if (sequence.next_role_id) {
           usedRoles = usedRoles.filter(o => o != sequence.next_role_id)
         } else {
           roles = this.roles
         }
         if (sequence.role_id) {
-          roles = roles.filter(o => o.id != sequence.role_id && o.sequence_number > this.roles.find(o => o.id == sequence.role_id).sequence_number)
+          roles = roles.filter(o => o.id != sequence.role_id && o.sequence_number_flow > this.roles.find(o => o.id == sequence.role_id).sequence_number_flow)
         }
-        roles = roles.filter(o => usedRoles.indexOf(o.id) == -1)
+        roles = roles.filter(o => usedRoles.indexOf(o.id) == -1)*/
       }
       return roles
     },
