@@ -53,6 +53,7 @@
                             dense
                             class="caption"
                             style="font-size: 10px;"
+                            @change="OnchangeAmortization()"
                             v-model="data_payment.procedure_modality_id"
                             :outlined="!editable"
                             :readonly="editable"
@@ -62,10 +63,10 @@
                             persistent-hint
                           ></v-select>
                         </v-col>
-                        <v-col cols="1" class="ma-0 pb-0" v-show="isNew">
+                        <!--v-col cols="1" class="ma-0 pb-0" v-show="isNew">
                           <label class="caption">Pago:</label>
-                          </v-col>
-                        <v-col cols="2" class="ma-0 pb-0" v-show="isNew">
+                          </!--v-col>
+                        <v-col-- cols="2" class="ma-0 pb-0" v-show="isNew">
                           <v-select
                             dense
                             class="caption"
@@ -78,7 +79,7 @@
                             item-value="id"
                             persistent-hint
                           ></v-select>
-                        </v-col>
+                        </v-col-->
                           <v-col cols="1" class="ma-0 pb-0" >
                           <label class="caption">Pago del :</label>
                         </v-col>
@@ -95,6 +96,7 @@
                             item-text="name"
                             item-value="id"
                             persistent-hint
+                            :disabled="ver"
                           ></v-select>
                         </v-col>
                         <v-col cols="3" class="ma-0 pb-0" v-show="garante_show">
@@ -104,6 +106,7 @@
                                  <br>
                                </li>
                             </ul>
+                              <!--h3 class="red--text" v-show="garantes.guarantors.length == 0"> *El prestamo no tiene garantes</!--h3-->
                         </v-col>
                          <v-col cols="1" class="my-0 pb-0" v-show="garante_show">
                             <ul style="list-style: none" class="pa-0 my-0" >
@@ -126,58 +129,46 @@
                           <v-text-field
                             dense
                             v-model="data_payment.voucher"
-                            :outlined="isNew"
-                            :readonly="!isNew"
+                            :outlined="isNew  || editable"
+                            :readonly="!isNew || !editable"
+                            :disabled="ver"
                           ></v-text-field>
                         </v-col>
                         <v-col cols="2" class="ma-0 pb-0">
-                          <label class="caption"> Fecha de Calculo:</label>
+                          <label > Fecha de Calculo:</label>
                         </v-col>
                         <v-col cols="2">
-                          <v-menu
-                            v-model="dates.paymentDate.show"
-                            :close-on-content-click="false"
-                            transition="scale-transition"
-                            offset-y
-                            max-width="290px"
-                            min-width="290px"
-                            :disabled="editable || ver"
-                          >
-                            <template v-slot:activator="{ on }">
-                              <v-text-field
-                                style="font-size: 15px;"
-                                dense
-                                :outlined="isNew"
-                                :readonly="editable || ver"
-                                v-model="dates.paymentDate.formatted"
-                                hint="Día/Mes/Año"
-                                persistent-hint
-                                append-icon="mdi-calendar"
-                                v-on="on"
-                              ></v-text-field>
-                            </template>
-                            <v-date-picker v-model="data_payment.payment_date" no-title @input="dates.paymentDate.show = false"></v-date-picker>
-                          </v-menu>
+                          <v-text-field
+                            dense
+                            v-model="data_payment.payment_date"
+                            hint="Día/Mes/Año"
+                            class="purple-input"
+                            type="date"
+                            :clearable="editable"
+                            :outlined="isNew"
+                            :readonly="!isNew"
+                            :disabled="ver"
+                          ></v-text-field>
                         </v-col>
-                        <v-col cols="2" class="ma-0 pb-0" v-show="view">
+                        <v-col cols="2" class="ma-0 pb-0" v-show="view" v-if="regular">
                           <label>TOTAL PAGADO:</label>
                         </v-col>
-                        <v-col cols="2" class="ma-0 pb-0" v-show="view">
+                        <v-col cols="2" class="ma-0 pb-0" v-show="view" v-if="regular">
                           <v-text-field
                             dense
                             v-model="data_payment.pago_total"
-                            :outlined="isNew"
-                            :readonly="editable || ver"
+                            :outlined="isNew || $store.getters.userRoles.includes('PRE-cobranzas')"
+                            :readonly="!isNew "
+                            :disabled="ver"
                           ></v-text-field>
                         </v-col>
-                        <v-col cols="1" class="ma-0 pb-0" v-show="!isNew" v-if="!$store.getters.userRoles.includes('PRE-tesoreria-cobros')" >
+                        <v-col cols="2" class="ma-0 pb-0" v-show="!isNew" >
                            <label  >TIPO DE COBRO:</label>
                         </v-col>
-                        <v-col cols="1" v-if="$store.getters.userRoles.includes('PRE-tesoreria-cobros')"></v-col>
-                        <v-col cols="2" class="ma-0 pb-0" v-show="isNew" >
+                        <v-col cols="2" class="ma-0 pb-0" v-show="isNew">
                           <label >TIPO DE COBRO:</label>
                         </v-col>
-                        <v-col cols="2" class="ma-0 pb-0" v-if="!$store.getters.userRoles.includes('PRE-tesoreria-cobros')" >
+                        <v-col cols="2" class="ma-0 pb-0">
                           <v-select
                              class="caption"
                             style="font-size: 10px;"
@@ -189,12 +180,13 @@
                             item-text="name"
                             item-value="id"
                             persistent-hint
+                            :disabled="ver"
                           ></v-select>
                         </v-col>
-                        <v-col cols="2" class="ma-0 pb-0" v-show="editable">
+                        <v-col cols="2" class="ma-0 pb-0" v-show="editable" v-if="$store.getters.userRoles.includes('PRE-tesoreria')">
                           <label >TIPO DE PAGO:</label>
                         </v-col>
-                        <v-col cols="2" class="ma-0 pb-0" v-show="editable">
+                        <v-col cols="2" class="ma-0 pb-0" v-show="editable" v-if="$store.getters.userRoles.includes('PRE-tesoreria')">
                           <v-select
                             class="caption"
                             style="font-size: 10px;"
@@ -208,10 +200,10 @@
                             persistent-hint
                           ></v-select>
                         </v-col>
-                        <v-col cols="2" class="ma-0 pb-0" v-show="editable">
+                        <v-col cols="3" class="ma-0 pb-0" v-show="editable">
                           <label  >NRO DE COMPROBANTE:</label>
                         </v-col>
-                        <v-col cols="3" v-show="editable" >
+                        <v-col cols="5" v-show="editable" >
                           <v-text-field
                             v-model="data_payment.comprobante"
                             :outlined="editable"
@@ -264,6 +256,7 @@ export default {
     loanTypeSelectedTwo:null,
     loanTypeSelectedThree:null,
     tipo_tramite: [],
+    regular:false,
     garantes:{
       lenders:[]
     },
@@ -337,6 +330,25 @@ export default {
     }
   },
   methods: {
+
+      OnchangeAmortization(){
+        this.data_payment.pago_total=null
+         for (let i = 0; i<  this.tipo_de_amortizacion.length; i++) {
+            if(this.data_payment.procedure_modality_id == this.tipo_de_amortizacion[i].id){
+              if(this.tipo_de_amortizacion[i].name == 'AD Regular' || this.tipo_de_amortizacion[i].name == 'AA Regular' )
+              {
+                this.regular=false
+              }else{
+                this.regular=true
+              }
+              this.data_payment.procedure_modality_name = this.tipo_de_amortizacion[i].name
+            }
+         }
+   // this.toastr.error(this.data_payment.procedure_modality_id)
+
+
+
+      },
       OnchangeAffiliate(){
       if(this.data_payment.affiliate_id=="G")
       {
@@ -412,9 +424,6 @@ export default {
         }
       }
       }
-    },
-    OnchangeAmortization(){
-      this.data_payment.procedure_modality_id=this.loanTypeSelectedOne
     },
     Onchange(){
       if(this.loanTypeSelected!=null)

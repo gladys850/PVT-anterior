@@ -668,12 +668,12 @@ class Loan extends Model
                 }
                 if($affiliate_state_type == "Pasivo")
                 {
-                    if($cpop_sismu  && $type_sismu) $modality=ProcedureModality::whereShortened("PLP-SP-CPOP")->first(); // reprogramacion largo plazo pasivo con 1 garante sismu
+                   // if($cpop_sismu  && $type_sismu) $modality=ProcedureModality::whereShortened("PLP-SP-CPOP")->first(); // reprogramacion largo plazo pasivo con 1 garante sismu
                     if(!$cpop_sismu  && $type_sismu) $modality=ProcedureModality::whereShortened("PLP-GP-SP")->first(); // reprogramacion largo plazo pasivo con 1 garante sismu
                 
                     if(!$cpop_sismu || !$type_sismu){
                         if($cpop_affiliate){
-                            $modality=ProcedureModality::whereShortened("PLP-CPOP")->first();
+                            //$modality=ProcedureModality::whereShortened("PLP-CPOP")->first();
                     }else{
                             $modality=ProcedureModality::whereShortened("PLP-GP-SAYADM")->first(); //Largo plazo activo  y adm con garantia personal
                     }
@@ -700,12 +700,12 @@ class Loan extends Model
                 else{
                     if($affiliate_state_type == "Pasivo"){
                     
-                        if($cpop_sismu && $type_sismu) $modality=ProcedureModality::whereShortened("PLP-R-SP-CPOP")->first(); // Refi largo plazo pasivo 1 solo garante
+                       // if($cpop_sismu && $type_sismu) $modality=ProcedureModality::whereShortened("PLP-R-SP-CPOP")->first(); // Refi largo plazo pasivo 1 solo garante
                         if(!$cpop_sismu && $type_sismu) $modality=ProcedureModality::whereShortened("PLP-R-GP-SP")->first(); // Refi largo plazo pasivo 2 garantes
                     
                         if(!$cpop_sismu || !$type_sismu){
                             if($cpop_affiliate){
-                                $modality=ProcedureModality::whereShortened("PLP-R-SP-CPOP")->first(); // Refi largo plazo pasivo 1 garante
+                               // $modality=ProcedureModality::whereShortened("PLP-R-SP-CPOP")->first(); // Refi largo plazo pasivo 1 garante
                             }else{
                                 $modality=ProcedureModality::whereShortened("PLP-R-GP-SP")->first(); // Refi largo plazo pasivo 2 garantes
                             }

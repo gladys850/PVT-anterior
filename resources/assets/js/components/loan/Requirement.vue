@@ -206,6 +206,10 @@ export default {
       required: true,
       default: 0
     },
+     data_loan_parent_aux: {
+      type: Object,
+      required: true
+    },
   },
   watch: {
     modalidad_id () {
@@ -280,8 +284,8 @@ export default {
               destiny_id: this.loan_detail.destiny_id,
               liquid_qualification_calculated:this.loan_detail.liquid_qualification_calculated,
               indebtedness_calculated:this.loan_detail.indebtedness_calculated,
-              parent_loan_id: this.parent_loan_id,
-              parent_reason: this.parent_reason,
+              parent_loan_id: this.$route.params.hash == 'remake' ? this.data_loan_parent_aux.parent_loan_id : this.parent_loan_id,
+              parent_reason: this.$route.params.hash == 'remake' ? this.data_loan_parent_aux.parent_reason: this.parent_reason,
               property_id: this.loan_detail.loan_property_id,
               personal_references: this.loan_detail.reference,
               cosigners:this.loan_detail.cosigners,

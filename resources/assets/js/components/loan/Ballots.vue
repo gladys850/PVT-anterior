@@ -235,10 +235,9 @@
                     </v-row>
                   </v-col>        
                 </v-row>
-
-                <template v-if="type_sismu">
-                  <v-col cols="12" class="py-0 my-0"> DATOS SISMU </v-col>
-                  <v-col cols="12" md="3" class="py0 my-0">
+                <template >
+                  <v-col cols="12" class="py-0 my-0" v-if="type_sismu"> DATOS SISMU </v-col>
+                  <v-col cols="12" md="3" class="py0 my-0" v-if="type_sismu">
                     <ValidationProvider
                       v-slot="{ errors }"
                       name="cuota"
@@ -259,12 +258,26 @@
                     md="3"
                     class="py-0 my-0"
                     v-if="
-                      this.modalitySelected.name == 'Refinanciamiento Préstamo hipotecario' ||
-                      this.modalitySelected.name == 'Refinanciamiento Préstamo a largo plazo'
+                      modalitySelected.name == 'Refinanciamiento Préstamo hipotecario' ||
+                      modalitySelected.name == 'Refinanciamiento Préstamo a largo plazo'
                     "
                   >
                     <v-checkbox
                       v-model="data_sismu.cpop_sismu"
+                      label="Afiliado CPOP"
+                    ></v-checkbox>
+                  </v-col>
+                    <v-col
+                    cols="12"
+                    md="3"
+                    class="py-0 my-0"
+                    v-if="
+                      modalitySelected.name == 'Préstamo a largo plazo' ||
+                      modalitySelected.name == 'Préstamo hipotecario'
+                    "
+                  >
+                    <v-checkbox
+                      v-model="affiliate_data.cpop_affiliate"
                       label="Afiliado CPOP"
                     ></v-checkbox>
                   </v-col>
@@ -311,6 +324,10 @@ export default {
   }),
    props: {
     modalidad: {
+      type: Object,
+      required: true
+    },
+      affiliate_data: {
       type: Object,
       required: true
     },
@@ -480,6 +497,7 @@ export default {
         let resp = await axios.post(`affiliate/${id}/loan_modality?procedure_type_id=${this.loanTypeSelected.id}`,{
           type_sismu: this.data_sismu.type_sismu,
           cpop_sismu: this.data_sismu.cpop_sismu,
+          cpop_affiliate: this.affiliate_data.cpop_affiliate,
           //reprogramming: this.reprogramming || this.remake
         })
         if(resp.data ==''){
