@@ -191,7 +191,10 @@ export default {
             type: res.data.attachment.type,
             base64: true
           })
-          this.$router.push('/loanPayment')
+          //this.$router.push('/loanPayment')
+          //this.$router.push({path:`/workflow/${this.$route.query.loan_id}?redirectTab=${6}`})
+          this.$router.push({ name: 'flowAdd',  params: { id: this.$route.query.loan_id, workTray: 'received'}, query:{ redirectTab: 6 } })
+          
           this.payment = res.data
         }
         else{
@@ -206,7 +209,9 @@ export default {
             base64: true
           })
             this.payment = res.data
-            this.$router.push('/loanPayment')
+            //this.$router.push('/loanPayment')
+            //this.$router.push({path:`/workflow/${this.$route.query.loan_id}?redirectTab=${6}`})
+             this.$router.push({ name: 'flowAdd',  params: { id: this.$route.query.loan_id, workTray: 'received'}, query:{ redirectTab: 6 } })
            }
       }catch (e) {
         console.log(e)
