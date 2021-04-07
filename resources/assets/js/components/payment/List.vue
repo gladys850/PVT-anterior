@@ -100,7 +100,7 @@
               small
               v-on="on"
               color="error"
-            
+              v-if="item.state_id==5"
               @click.stop="bus.$emit('openRemoveDialog', `loan_payment/${item.id}`)"
             >
               <v-icon>mdi-file-cancel-outline</v-icon>

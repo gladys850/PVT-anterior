@@ -113,6 +113,21 @@
           </template>
           <span>Ver registro de cobro</span>
         </v-tooltip>
+        
+        <v-tooltip bottom v-if="$store.getters.permissions.includes('update-payment-loan')">
+          <template v-slot:activator="{ on }">
+            <v-btn
+              icon
+              small
+              v-on="on"
+              color="success"
+              :to="{ name: 'paymentAdd',  params: { hash: 'edit'},  query: { loan_payment: item.id}}"
+            >
+              <v-icon>mdi-file-document-edit-outline</v-icon>
+            </v-btn>
+          </template>
+          <span>Editar pago</span>
+        </v-tooltip>
 
         <!--<v-tooltip bottom>
           <template v-slot:activator="{ on }">
@@ -130,7 +145,7 @@
           <span>Editar amortización</span>
         </v-tooltip>-->
 
-        <v-tooltip bottom v-if="$store.getters.permissions.includes('delete-payment-loan') && $store.getters.userRoles.includes('PRE-cobranzas')">
+        <v-tooltip bottom v-if="$store.getters.permissions.includes('delete-payment-loan')">
           <template v-slot:activator="{ on }">
             <v-btn
               icon
