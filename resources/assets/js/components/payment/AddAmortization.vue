@@ -146,7 +146,7 @@
                             :clearable="editable"
                             :outlined="isNew"
                             :readonly="!isNew"
-                            :disabled="ver"
+                            :disabled="ver || editable"
                           ></v-text-field>
                         </v-col>
                         <v-col cols="2" class="ma-0 pb-0" v-show="view" v-if="regular">
@@ -182,10 +182,10 @@
                             :disabled="ver"
                           ></v-select>
                         </v-col>
-                        <v-col cols="2" class="ma-0 pb-0" v-show="editable" v-if="$store.getters.userRoles.includes('PRE-tesoreria')">
+                        <v-col cols="2" class="ma-0 pb-0" v-show="editable" v-if="$store.getters.userRoles.includes('PRE-tesoreria-cobros')">
                           <label >TIPO DE PAGO:</label>
                         </v-col>
-                        <v-col cols="2" class="ma-0 pb-0" v-show="editable" v-if="$store.getters.userRoles.includes('PRE-tesoreria')">
+                        <v-col cols="2" class="ma-0 pb-0" v-show="editable" v-if="$store.getters.userRoles.includes('PRE-tesoreria-cobros')">
                           <v-select
                             class="caption"
                             style="font-size: 10px;"
@@ -199,10 +199,10 @@
                             persistent-hint
                           ></v-select>
                         </v-col>
-                        <v-col cols="3" class="ma-0 pb-0" v-show="editable">
+                        <v-col cols="2" class="ma-0 pb-0" v-show="editable" v-if="$store.getters.userRoles.includes('PRE-tesoreria-cobros')">
                           <label  >NRO DE COMPROBANTE:</label>
                         </v-col>
-                        <v-col cols="5" v-show="editable" >
+                        <v-col cols="2" v-show="editable" v-if="$store.getters.userRoles.includes('PRE-tesoreria-cobros')" >
                           <v-text-field
                             v-model="data_payment.comprobante"
                             :outlined="editable"
@@ -210,7 +210,7 @@
                             dense
                           ></v-text-field>
                         </v-col>
-                        <v-col cols="7" class="ma-0 pb-0" >
+                        <v-col cols="12" class="ma-0 pb-0" >
                           <v-text-field
                             v-show="editable" v-if="!ver"
                             v-model="data_payment.glosa"
@@ -220,15 +220,13 @@
                             label="Glosa"
                           ></v-text-field>
                         </v-col>
-                        <v-col cols="1">
-                        </v-col>
-                        <v-col cols="8">
+                         <v-col cols="8">
                         </v-col>
                         <v-col cols="4" class="ma-0 py-0">
                           <v-checkbox class="ma-0 py-0"
                             :outlined="isNew"
                             :readonly="!isNew"
-                            :disabled="ver"
+                            :disabled="ver || editable"
                             v-model="data_payment.refinanciamiento"
                             label="Pendiente por Refinanciamiento"
                           ></v-checkbox>

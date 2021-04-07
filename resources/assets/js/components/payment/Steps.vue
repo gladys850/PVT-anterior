@@ -306,13 +306,12 @@ console.log(this.loan_payment)
           {
             if(!this.$store.getters.userRoles.includes('PRE-tesoreria'))
             {
-             // this.toastr.error("tesoreriaaaaaaa")
-              //this.savePaymentTreasury()
-           //   this.toastr.error("cobranzasssssss")
-              this.Calcular(this.data_payment.loan_id)
-               this.nextStep(1)
+                this.savePaymentTreasury()
+           //   this.toastr.error("tesoreriasss")
+              //this.Calcular(this.data_payment.loan_id)
+               //this.nextStep(1)
               //this.validatedPayment()
-          }
+            }
           }
           else{
             if(this.data_payment.procedure_id)
