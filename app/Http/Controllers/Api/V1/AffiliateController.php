@@ -444,10 +444,12 @@ class AffiliateController extends Controller
                     $before_month=$number_diff_month;
                     $before_month=$before_month;
                 }else{
-                    if ($now->day <= $offset_day || $city->name == 'LA PAZ') {
-                        $before_month = 1;//
-                    } else {
-                        $before_month = 2;
+                    if($now->day <= $offset_day ){
+                        if ($city->name == 'LA PAZ') $before_month = 2;//
+                        else $before_month = 3;
+                    }else{
+                        if ($city->name == 'LA PAZ') $before_month = 1;//
+                        else $before_month = 2;
                     }
                 }
                 $current_ticket = CarbonImmutable::parse($contributions[0]->month_year);
@@ -489,10 +491,12 @@ class AffiliateController extends Controller
                 if($choose_diff_month == true && $request->has('number_diff_month')){
                     $before_month=$number_diff_month;
                 }else{
-                    if ($now->day <= $offset_day || $city->name == 'LA PAZ') {
-                        $before_month = 1;
-                    } else {
-                        $before_month = 2;
+                    if($now->day <= $offset_day ){
+                        if ($city->name == 'LA PAZ') $before_month = 2;
+                        else $before_month = 3;
+                    }else{
+                        if ($city->name == 'LA PAZ') $before_month = 1;
+                        else $before_month = 2;
                     }
                 }
             }
