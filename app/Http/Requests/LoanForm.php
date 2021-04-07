@@ -86,7 +86,6 @@ class LoanForm extends FormRequest
             'amount_requested' => ['integer', 'min:200', 'max:700000', new LoanIntervalAmount($procedure_modality)],
             'city_id' => ['integer', 'exists:cities,id'],
             'loan_term' => ['integer', 'min:1', 'max:240', new LoanIntervalTerm($procedure_modality)],
-            'guarantor_amortizing' => ['boolean'],
             'payment_type_id' => ['integer', 'exists:payment_types,id'],
             'destiny_id' => ['integer', 'exists:loan_destinies,id', new LoanDestiny($procedure_modality)],
             'documents' => ['array', 'min:1', new ProcedureRequirements($procedure_modality)],
@@ -136,6 +135,7 @@ class LoanForm extends FormRequest
             'amount_approved' => ['integer', 'min:200', 'max:700000', new LoanIntervalAmount($procedure_modality)],
             'notes' => ['array'],
             'validated' => ['boolean'],
+            'guarantor_amortizing' => ['boolean'],
             'financial_entity_id' => ['nullable', 'integer', 'exists:financial_entities,id'],
             'user_id' => ['nullable', 'integer', 'exists:users,id'],
             'remake_loan_id'=>['integer', 'nullable', 'exists:loans,id']
