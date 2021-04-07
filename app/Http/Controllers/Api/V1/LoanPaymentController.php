@@ -162,6 +162,7 @@ class LoanPaymentController extends Controller
     */
     public function update(Request $request, LoanPayment $loanPayment)
     {
+        $Pagado = LoanState::whereName('Pagado')->first()->id;
         $request->validate([
             'description' => 'nullable|string|min:2',
             'validated' => 'boolean',
@@ -174,6 +175,7 @@ class LoanPaymentController extends Controller
         if (Auth::user()->can('update-payment-loan')) {
             $update = $request->only('description', 'validated','procedure_modality_id','amortization_type_id','affiliate_id','voucher','paid_by');
         }
+        $loanPayment->state_id=$Pagado;
         $loanPayment->fill($update);
         $loanPayment->save();
         return  $loanPayment;
