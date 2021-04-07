@@ -561,7 +561,7 @@ class Util
             $data[] = [
                 'role_id' => $role->id,
                 'data' => [
-                    'received' => $model::whereRoleId($role->id)->whereValidated(false)->whereUserId(null)->count(),
+                    'received' => $model::whereRoleId($role->id)->whereValidated(false)->count(),
                     'validated' => $model::whereRoleId($role->id)->whereValidated(true)->whereUserId(Auth::user()->id)->count(),
                     'trashed' => $model::whereRoleId($role->id)->onlyTrashed()->count(),
                     'my_received' => $model::whereRoleId($role->id)->whereValidated(false)->whereUserId(Auth::user()->id)->count()
