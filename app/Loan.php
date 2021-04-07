@@ -244,7 +244,7 @@ class Loan extends Model
     {
         $balance = $this->amount_approved;
         if ($this->payments()->count() > 0) {
-            $balance -= $this->payments()->sum('capital_payment');
+            $balance -= $this->payments()->where('validated', true)->sum('capital_payment');
         }
         return Util::round($balance);
     }
@@ -252,6 +252,11 @@ class Loan extends Model
     public function getLastPaymentAttribute()
     {
         return $this->payments()->latest()->first();
+    }
+
+    public function getLastPaymentValidatedAttribute()
+    {
+        return $this->payments()->where('state_id', 6)->orWhere('state_id',7)->latest()->first();
     }
 
     public function getObservedAttribute()
@@ -284,13 +289,30 @@ class Loan extends Model
         return Util::round($monthly_interest * $this->amount_approved / (1 - 1 / pow((1 + $monthly_interest), $this->loan_term)));
     }
 
-    public function next_payment2($estimated_date = null, $amount = null, $liquidate = null, $paid_by = null, $affiliate_id = null)
+    public function next_payment2($affiliate_id, $estimated_date = null, $paid_by, $procedure_modality_id, $estimated_quota)
     {
         $grace_period = LoanGlobalParameter::latest()->first()->grace_period;
             $total_interests = 0;
             $partial_amount = 0;
-            $total_amount = Util::round($amount);
-            if ($liquidate) {
+            $total_amount = Util::round($estimated_quota);$amount = 0;
+            $liquidate = false;
+            switch($procedure_modality_id){
+                case 54:{
+                    $amount = Util::round($this->estimated_quota);
+                    break;
+                }
+                case 56:{
+                    $amount = Util::round($this->balance);
+                    $liquidate = true;
+                    break;
+                }
+                default:
+                {
+                    $amount = Util::round($estimated_quota);
+                    break;
+                }
+            }
+            /*if ($liquidate) {
                 $amount = Util::round($this->balance);
             } else {
                 if (!$amount){
@@ -300,7 +322,7 @@ class Loan extends Model
                     else
                         $amount = $amount*($this->guarantors->where('id',$affiliate_id)->first()->pivot->payment_percentage)/100;
                 }
-            }
+            }*/
             $quota = new LoanPayment();
             $next_payment = LoanPayment::quota_date($this);
             if (!$estimated_date) {
