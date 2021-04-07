@@ -301,7 +301,21 @@ class Loan extends Model
                     $amount = Util::round($this->estimated_quota);
                     break;
                 }
+                case 61:{
+                    $amount = Util::round($this->estimated_quota);
+                    break;
+                }
                 case 56:{
+                    $amount = Util::round($this->balance);
+                    $liquidate = true;
+                    break;
+                }
+                case 58:{
+                    $amount = Util::round($this->balance);
+                    $liquidate = true;
+                    break;
+                }
+                case 60:{
                     $amount = Util::round($this->balance);
                     $liquidate = true;
                     break;
