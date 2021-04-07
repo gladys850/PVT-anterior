@@ -672,6 +672,7 @@ class LoanPaymentController extends Controller
                                     $loanPayment->voucher = $request->voucher_payment;
                                 }
                                 $loanPayment->validated = true;
+                                $loanPayment->user_id = auth()->id();
                                 $loanPayment->update();
                                 $payment_automatic->push($loanPayment);
                             }
