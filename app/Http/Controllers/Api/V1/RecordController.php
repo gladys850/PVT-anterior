@@ -15,7 +15,7 @@ class RecordController extends Controller
     * Registros de actividad
     * Devuelve el listado con los datos paginados
     * @queryParam user_id Filtro por id de usuario. Example: 122
-    * @queryParam loan_id Filtro required por id de préstamo. Example: 2
+    * @queryParam loan_id Filtro por id de préstamo. Example: 2
     * @queryParam search Parámetro de búsqueda. Example: Datos Personales
     * @queryParam sortBy Vector de ordenamiento. Example: [created_at]
     * @queryParam sortDesc Vector de orden descendente(true) o ascendente(false). Example: [false]
