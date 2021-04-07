@@ -1031,12 +1031,13 @@ class LoanController extends Controller
     * @bodyParam paid_by enum required Pago realizado por Titular(T) o Garante(G). Example: T
     * @bodyParam procedure_modality integer required id de la modalidad. Example: 54
     * @bodyParam estimated_quota float Monto para el cálculo. Example: 650
+    * @bodyParam adjust refinanciamiento con antecedente(1) o sin antecedente(0). Example: 1
     * @authenticated
     * @responseFile responses/loan/get_next_payment.200.json
     */
     public function get_next_payment(LoanPaymentForm $request, Loan $loan)
     {
-        return $loan->next_payment2($request->input('affiliate_id'),$request->input('estimated_date', null), $request->input('paid_by'), $request->input('procedure_modality_id'), $request->input('estimated_quota', null));
+        return $loan->next_payment2($request->input('affiliate_id'),$request->input('estimated_date', null), $request->input('paid_by'), $request->input('procedure_modality_id'), $request->input('estimated_quota', null), $request->input('adjust', false));
     }
 
     /** @group Cobranzas
@@ -1045,7 +1046,6 @@ class LoanController extends Controller
     * @urlParam loan required ID del préstamo. Example: 2
 	* @bodyParam estimated_date date Fecha para el cálculo del interés. Example: 2020-04-30
 	* @bodyParam estimated_quota float Monto para el cálculo de los días de interés pagados. Example: 600
-    * @bodyParam liquidate boolean Booleano para hacer el cálculo con el monto máximo que liquidará el préstamo. Example: false
     * @bodyParam description string Texto de descripción. Example: Penalizacion regularizada
     * @bodyParam voucher string Comprobante de pago GAR-ABV o D-10/20 o CONT-123. Example: CONT-123
     * @bodyParam amortization_type_id integer required ID del tipo de pago. Example: 1
@@ -1053,13 +1053,14 @@ class LoanController extends Controller
     * @bodyParam paid_by enum required Pago realizado por Titular(T) o Garante(G). Example: T
     * @bodyParam procedure_modality_id integer required ID de la modalidad de amortización. Example: 53
     * @bodyParam user_id integer required ID del usuario. Example: 95
+    * @bodyParam state boolean refinanciamiento con antecedente(1) o sin antecedente(0). Example: 1
     * @authenticated
     * @responseFile responses/loan/set_payment.200.json
     */
     public function set_payment(LoanPaymentForm $request, Loan $loan)
     {
         if($loan->balance!=0){
-            $payment = $loan->next_payment2($request->input('estimated_date', null), $request->input('estimated_quota', null), $request->input('liquidate'), $request->input('paid_by'), $request->input('affiliate_id'));
+            $payment = $loan->next_payment2($request->input('affiliate_id'), $request->input('estimated_date', null), $request->input('paid_by'), $request->input('procedure_modality_id'), $request->input('estimated_quota', null), $request->input('adjust'));
             $payment->description = $request->input('description', null);
             $payment->state_id = LoanState::whereName('Pendiente de Pago')->first()->id;
             $payment->role_id = Role::whereName('PRE-cobranzas')->first()->id;
