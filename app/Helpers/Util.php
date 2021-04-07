@@ -555,7 +555,7 @@ class Util
 
     public static function amortizations_by_user($model, $object, $module){
        // foreach ($module->roles()->whereNotNull('sequence_number')->orderBy('sequence_number')->orderBy('display_name')->get() as $role) {
-        foreach ($module->roles()->join('role_sequences as role_seq','role_seq.role_id','=','roles.id')->orderBy('role_seq.sequence_number_flow')->orderBy('roles.display_name')->get() as $role) {
+        foreach ($module->roles()->get() as $role) {
             $data[] = [
                 'role_id' => $role->id,
                 'data' => [
