@@ -29,7 +29,7 @@
                             v-model="loanTypeSelected.id"
                             @change="Onchange()"
                             :items="modalities"
-                            item-text="name"
+                            item-text="second_name"
                             item-value="id"
                             required
                             :disabled="edit_refi_repro"
@@ -267,7 +267,7 @@
                       label="Afiliado CPOP"
                     ></v-checkbox>
                   </v-col>
-                    <v-col
+                  <v-col
                     cols="12"
                     md="3"
                     class="py-0 my-0"
@@ -327,7 +327,7 @@ export default {
       type: Object,
       required: true
     },
-      affiliate_data: {
+    affiliate_data: {
       type: Object,
       required: true
     },

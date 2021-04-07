@@ -206,7 +206,7 @@ export default {
       required: true,
       default: 0
     },
-     data_loan_parent_aux: {
+    data_loan_parent_aux: {
       type: Object,
       required: true
     },
@@ -224,19 +224,30 @@ export default {
   },
   computed: {
     parent_reason(){
-      if(this.$route.params.hash == 'new' || this.$route.params.hash == 'remake'){
+      if(this.$route.params.hash == 'new'){
         return null
       } else if(this.$route.params.hash == 'refinancing'){
         return 'REFINANCIAMIENTO'
       }else if(this.$route.params.hash == 'reprogramming'){
         return 'REPROGRAMACIÓN'
+      }else if(this.$route.params.hash == 'remake' && this.data_loan_parent_aux.parent_reason == 'REFINANCIAMIENTO'){
+        return 'REFINANCIAMIENTO'
+      }else if(this.$route.params.hash == 'remake' && this.data_loan_parent_aux.parent_reason == 'REPROGRAMACIÓN'){
+        return 'REPROGRAMACIÓN'
+      }else if(this.$route.params.hash == 'remake' && this.data_loan_parent_aux.parent_reason == null){
+        return null
       }
     },
     parent_loan_id(){
-      if(this.$route.query.type_sismu || this.$route.params.hash == 'new' || this.$route.params.hash == 'remake'){
+      if(this.$route.query.type_sismu || this.$route.params.hash == 'new'){
+        return 0
+      }
+      else if( this.$route.params.hash == 'remake' && this.data_loan_parent_aux.parent_loan_id != null){//es PVT refi repro
+        return this.data_loan_parent_aux.parent_loan_id
+      }else if( this.$route.params.hash == 'remake' && this.data_loan_parent_aux.parent_loan_id == null){//es PVT no es refi ni repro
         return 0
       }else{
-        return this.$route.query.loan_id
+        return this.$route.query.loan_id //PVT si es refi repro nuevo
       }
     }
   },
@@ -284,8 +295,8 @@ export default {
               destiny_id: this.loan_detail.destiny_id,
               liquid_qualification_calculated:this.loan_detail.liquid_qualification_calculated,
               indebtedness_calculated:this.loan_detail.indebtedness_calculated,
-              parent_loan_id: this.$route.params.hash == 'remake' ? this.data_loan_parent_aux.parent_loan_id : this.parent_loan_id,
-              parent_reason: this.$route.params.hash == 'remake' ? this.data_loan_parent_aux.parent_reason: this.parent_reason,
+              parent_loan_id: this.parent_loan_id,
+              parent_reason: this.parent_reason,
               property_id: this.loan_detail.loan_property_id,
               personal_references: this.loan_detail.reference,
               cosigners:this.loan_detail.cosigners,
