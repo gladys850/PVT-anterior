@@ -114,7 +114,7 @@
                                   <v-radio-group  v-model="radios" class="py-0 my-0">
                               <v-radio
                               color="info"
-                               :click="prueba()"
+                               :click="generateGuarantorCode()"
                               :value="guarantor.id"
                               class="py-0  my-0"
                             ></v-radio>
@@ -156,7 +156,7 @@
                           <v-text-field
                             dense
                             v-model="data_payment.pago_total"
-                            :outlined="isNew || $store.getters.userRoles.includes('PRE-cobranzas')"
+                            :outlined="isNew || $store.getters.permissions.includes('create-payment') "
                             :readonly="!isNew "
                             :disabled="ver"
                           ></v-text-field>
@@ -182,10 +182,10 @@
                             :disabled="ver"
                           ></v-select>
                         </v-col>
-                        <v-col cols="2" class="ma-0 pb-0" v-show="editable" v-if="$store.getters.userRoles.includes('PRE-tesoreria-cobros')">
+                        <v-col cols="2" class="ma-0 pb-0" v-show="editable" v-if="$store.getters.permissions.includes('create-payment')">
                           <label >TIPO DE PAGO:</label>
                         </v-col>
-                        <v-col cols="2" class="ma-0 pb-0" v-show="editable" v-if="$store.getters.userRoles.includes('PRE-tesoreria-cobros')">
+                        <v-col cols="2" class="ma-0 pb-0" v-show="editable" v-if="$store.getters.permissions.includes('create-payment')">
                           <v-select
                             class="caption"
                             style="font-size: 10px;"
@@ -199,10 +199,10 @@
                             persistent-hint
                           ></v-select>
                         </v-col>
-                        <v-col cols="2" class="ma-0 pb-0" v-show="editable" v-if="$store.getters.userRoles.includes('PRE-tesoreria-cobros')">
+                        <v-col cols="2" class="ma-0 pb-0" v-show="editable" v-if="$store.getters.permissions.includes('create-payment')">
                           <label  >NRO DE COMPROBANTE:</label>
                         </v-col>
-                        <v-col cols="2" v-show="editable" v-if="$store.getters.userRoles.includes('PRE-tesoreria-cobros')" >
+                        <v-col cols="2" v-show="editable" v-if="$store.getters.permissions.includes('create-payment')" >
                           <v-text-field
                             v-model="data_payment.comprobante"
                             :outlined="editable"
@@ -357,10 +357,6 @@ export default {
               this.data_payment.procedure_modality_name = this.tipo_de_amortizacion[i].name
             }
          }
-   // this.toastr.error(this.data_payment.procedure_modality_id)
-
-
-
       },
       OnchangeAffiliate(){
       if(this.data_payment.affiliate_id=="G")
@@ -373,13 +369,12 @@ export default {
         {
           this.data_payment.voucher=null
         }
-       // this.data_payment.voucher=null
          for (let i = 0; i<  this.garantes.lenders.length; i++) {
             this.data_payment.affiliate_id_paid_by=this.garantes.lenders[0].id
          }
-        console.log("garante"+ this.data_payment.affiliate_id_paid_by)}
+        }
     },
-    prueba()
+    generateGuarantorCode()
     {
       if(this.data_payment.affiliate_id=='G')
       {
@@ -443,11 +438,7 @@ export default {
       {
         this.data_payment.procedure_id=this.loanTypeSelected
         this.getTypeAmortization(this.loanTypeSelected)
-            console.log("verdadero"+this.loanTypeSelected)
-      }
-      else{
-        console.log("falso"+this.loanTypeSelected)
-      }
+       }
     },
     async getTypeProcedure() {
       try {
@@ -529,7 +520,6 @@ export default {
         this.loading = true
         let res = await axios.get(`loan/${id}`)
         this.garantes=res.data
-        console.log('entro al get loan')
       } catch (e) {
         console.log(e)
       } finally {
