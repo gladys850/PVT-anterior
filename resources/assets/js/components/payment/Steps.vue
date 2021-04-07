@@ -192,18 +192,16 @@ export default {
     //Metodo para crear el Pago
     async savePayment(){
       try {
-        if(this.data_payment.amortization==1)
-        {
-          let res = await axios.post(`loan/${this.$route.query.loan_id}/payment`,{
+            let res = await axios.post(`loan/${this.$route.query.loan_id}/payment`,{
             estimated_date:this.data_payment.payment_date,
             estimated_quota:this.data_payment.pago_total,
-            liquidate:false,
             voucher:this.data_payment.voucher,
             amortization_type_id:this.data_payment.pago,
             affiliate_id:this.data_payment.affiliate_id_paid_by,
-            paid_by:this.data_payment.paid_by,
+            paid_by:this.data_payment.affiliate_id,
             procedure_modality_id:this.data_payment.procedure_modality_id,
-            user_id: this.$store.getters.id
+            user_id: this.$store.getters.id,
+            state: this.data_payment.refinanciamiento
           })
             printJS({
             printable: res.data.attachment.content,
@@ -213,30 +211,7 @@ export default {
           //this.$router.push('/loanPayment')
           //this.$router.push({path:`/workflow/${this.$route.query.loan_id}?redirectTab=${6}`})
           this.$router.push({ name: 'flowAdd',  params: { id: this.$route.query.loan_id, workTray: 'received'}, query:{ redirectTab: 6 } })
-          
           this.payment = res.data
-        }
-        else{
-            let res = await axios.post(`loan/${this.$route.query.loan_id}/payment`,{
-            estimated_date:this.data_payment.payment_date,
-            estimated_quota:this.data_payment.pago_total,
-            liquidate:true,
-            voucher:this.data_payment.voucher,
-            amortization_type_id:this.data_payment.pago,
-            affiliate_id:this.data_payment.affiliate_id_paid_by,
-            paid_by:this.data_payment.affiliate_id,
-            procedure_modality_id:this.data_payment.procedure_modality_id
-          })
-             printJS({
-            printable: res.data.attachment.content,
-            type: res.data.attachment.type,
-            base64: true
-          })
-            this.payment = res.data
-            //this.$router.push('/loanPayment')
-            //this.$router.push({path:`/workflow/${this.$route.query.loan_id}?redirectTab=${6}`})
-             this.$router.push({ name: 'flowAdd',  params: { id: this.$route.query.loan_id, workTray: 'received'}, query:{ redirectTab: 6 } })
-           }
       }catch (e) {
         console.log(e)
       }finally {
@@ -293,7 +268,7 @@ console.log(this.loan_payment)
             affiliate_id:this.data_payment.affiliate_id_paid_by,
             estimated_date:this.data_payment.payment_date,
             estimated_quota:this.data_payment.pago_total,
-            liquidate:false,
+            procedure_modality_id:this.data_payment.procedure_modality_id,
           })
             this.payment = res.data
             this.data_payment.pago_total=this.payment.estimated_quota
@@ -379,13 +354,8 @@ console.log(this.loan_payment)
                           this.toastr.error('Debe introducir el total pagado')
                         }
                       }else{
-                        if(this.data_payment.pago_total)
-                        {
                           this.Calcular(this.$route.query.loan_id)
                           this.nextStep(1)
-                        }else{
-                          this.toastr.error('Debe introducir el total pagado')
-                        }
                       }
                     }
                   }

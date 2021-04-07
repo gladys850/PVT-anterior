@@ -130,7 +130,6 @@
                             dense
                             v-model="data_payment.voucher"
                             :outlined="isNew  || editable"
-                            :readonly="!isNew || !editable"
                             :disabled="ver"
                           ></v-text-field>
                         </v-col>
@@ -221,7 +220,18 @@
                             label="Glosa"
                           ></v-text-field>
                         </v-col>
-                           <v-col cols="1">
+                        <v-col cols="1">
+                        </v-col>
+                        <v-col cols="8">
+                        </v-col>
+                        <v-col cols="4" class="ma-0 py-0">
+                          <v-checkbox class="ma-0 py-0"
+                            :outlined="isNew"
+                            :readonly="!isNew"
+                            :disabled="ver"
+                            v-model="data_payment.refinanciamiento"
+                            label="Pendiente por Refinanciamiento"
+                          ></v-checkbox>
                         </v-col>
                       </v-row>
                     </template>
@@ -339,7 +349,12 @@ export default {
               {
                 this.regular=false
               }else{
-                this.regular=true
+                if(this.tipo_de_amortizacion[i].name == 'AD Total' || this.tipo_de_amortizacion[i].name == 'ACE Total' || this.tipo_de_amortizacion[i].name == 'AFR Total'){
+                  this.regular=false
+                }
+                else{
+                  this.regular=true
+                }
               }
               this.data_payment.procedure_modality_name = this.tipo_de_amortizacion[i].name
             }
