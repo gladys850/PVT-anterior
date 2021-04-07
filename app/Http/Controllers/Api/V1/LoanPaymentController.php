@@ -570,11 +570,11 @@ class LoanPaymentController extends Controller
                             if($disbursement_date->lessThan($estimated_date)){
                                 if($disbursement_date->year == $estimated_date->year && $disbursement_date->month == $estimated_date->month){
                                     if($disbursement_date->day<LoanGlobalParameter::latest()->first()->offset_interest_day){
-                                        LoanPayment::registry_payment($loan, $estimated_date, $description, $procedure_modality, $voucher, $paid_by, $payment_type_desc, $percentage_quota, $guarantor->id);
+                                        LoanPayment::registry_payment($loan, $estimated_date, $description, $procedure_modality->id, $voucher, $paid_by, $payment_type_desc, $percentage_quota, $guarantor->id);
                                         $loans_quantity++;
                                     }
                                 }else{
-                                    LoanPayment::registry_payment($loan, $estimated_date, $description, $procedure_modality, $voucher, $paid_by, $payment_type_desc, $percentage_quota, $guarantor->id);
+                                    LoanPayment::registry_payment($loan, $estimated_date, $description, $procedure_modality->id, $voucher, $paid_by, $payment_type_desc, $percentage_quota, $guarantor->id);
                                     $loans_quantity++;
                                 }
                             }
@@ -590,11 +590,11 @@ class LoanPaymentController extends Controller
                             if($disbursement_date->lessThan($estimated_date)){
                                 if($disbursement_date->year == $estimated_date->year && $disbursement_date->month == $estimated_date->month){
                                     if($disbursement_date->day<LoanGlobalParameter::latest()->first()->offset_interest_day){
-                                        LoanPayment::registry_payment($loan, $estimated_date, $description, $procedure_modality, $voucher, $paid_by, $payment_type_desc, $percentage_quota, $lender->id);
+                                        LoanPayment::registry_payment($loan, $estimated_date, $description, $procedure_modality->id, $voucher, $paid_by, $payment_type_desc, $percentage_quota, $lender->id);
                                         $loans_quantity++;
                                     }
                                 }else{
-                                    LoanPayment::registry_payment($loan, $estimated_date, $description, $procedure_modality, $voucher, $paid_by, $payment_type_desc, $percentage_quota, $lender->id);
+                                    LoanPayment::registry_payment($loan, $estimated_date, $description, $procedure_modality->id, $voucher, $paid_by, $payment_type_desc, $percentage_quota, $lender->id);
                                     $loans_quantity++;
                                 }
                             }

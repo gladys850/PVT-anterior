@@ -44,7 +44,8 @@ class LoanPaymentForm extends FormRequest
             'voucher' => ['nullable','string','min:3'],
             'estimated_date' => 'nullable|date_format:Y-m-d|after_or_equal:'.$date,
             'estimated_quota' => 'nullable|numeric|min:1',
-            'user_id' => ['nullable', 'integer', 'exists:users,id']
+            'user_id' => ['nullable', 'integer', 'exists:users,id'],
+            'adjust' => ['boolean']
         ];
         switch ($this->method()) {
             case 'POST': {
