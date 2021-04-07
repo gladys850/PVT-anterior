@@ -634,7 +634,7 @@ class LoanPaymentController extends Controller
         $array = Excel::toArray(new LoanPaymentImport, $file);
         $pendientePago = LoanState::whereName('Pendiente de Pago')->first()->id;
         $pagado = LoanState::whereName('Pagado')->first()->id;
-        $procedure_modality = ProcedureModality::whereName('Amortización Automática')->first();
+        $procedure_modality = ProcedureModality::whereName('AA Regular')->first();
         $estimated_date_importation = $request->estimated_date? Carbon::parse($request->estimated_date) : Carbon::now()->endOfMonth();
         
             for($i=1;$i<count($array[0]);$i++){   
