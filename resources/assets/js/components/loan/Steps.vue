@@ -90,7 +90,7 @@
                 :data_loan_parent_aux.sync="data_loan_parent_aux"
                 :modalidad.sync="modalidad"
                 :modalidad_id.sync="modalidad.id"
-                :liquid_calificated="liquid_calificated" 
+                :liquid_calificated="liquid_calificated"
                 >
                 <template v-slot:title>
                   <v-col cols="12" class="py-0">Resultado para el Préstamo</v-col>
@@ -227,8 +227,8 @@
             :modalidad_id.sync="modalidad.id"
             :guarantors.sync="guarantors"
             :loan_property_id.sync ="loan_property.id"
-            :data_loan_parent_aux.sync="data_loan_parent_aux"
-            :data_loan_parent.sync="data_loan_parent"/>
+            :data_loan_parent.sync="data_loan_parent"
+            :data_loan_parent_aux.sync="data_loan_parent_aux"/>
         </v-card>
       </v-stepper-content>
     </v-stepper-items>
@@ -380,7 +380,7 @@ export default {
     if(!this.isNew && !this.type_sismu){
       this.getLoan(this.$route.query.loan_id)
     }else{
-      if(this.remake)
+    if(this.remake)
       {
         this.getLoan(this.$route.query.loan_id)
       }
@@ -395,7 +395,6 @@ export default {
       else {
         if(n==1)
         {
-          //this.$refs.Ballots.getLoanModality()
           console.log('este es lenders')
           console.log(this.lenders)
             // console.log(this.contributionable_type)
@@ -442,16 +441,20 @@ export default {
     async addDataLoan()
     {
       console.log('entro a añadir loan')
-      if(!this.isNew || !this.remake){
-        this.data_loan_parent_sismu.code =this.data_loan_parent_aux.code
-        this.data_loan_parent_sismu.amount_approved =this.data_loan_parent_aux.amount_approved
-        this.data_loan_parent_sismu.loan_term =this.data_loan_parent_aux.loan_term
-        this.data_loan_parent_sismu.balance =this.data_loan_parent_aux.balance
-        this.data_loan_parent_sismu.estimated_quota =this.data_loan_parent_aux.estimated_quota
-
-        this.data_loan_parent.push(this.data_loan_parent_sismu);
-        console.log(this.data_loan_parent)
-      }
+      if(!this.isNew){ //Si es nuevo y rehacer de nuevo
+        //this.data_loan_parent.push(this.data_loan_parent_aux);
+          this.data_loan_parent.push({
+            code: this.data_loan_parent_aux.code,
+            amount_approved: this.data_loan_parent_aux.amount_approved,
+            loan_term: this.data_loan_parent_aux.loan_term,
+            balance: this.data_loan_parent_aux.balance,
+            estimated_quota: this.data_loan_parent_aux.estimated_quota,
+          });
+          console.log('modalidad no considerada')
+          this.data_loan_parent.push(this.data_loan_parent_aux);
+        }
+       console.log(this.data_loan_parent)
+      
     },
 
     async getProcedureType(){
@@ -753,36 +756,43 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
         //console.log('entro por verdadero')
       }
     },
-    async getLoan(id) {
+    async getLoan(id) {  
       try {
         this.loading = true
         let res = await axios.get(`loan/${id}`)
         this.data_loan = res.data
-        this.data_loan_parent_aux.code= res.data.code
-        this.data_loan_parent_aux.amount_approved= res.data.amount_approved
-        this.data_loan_parent_aux.loan_term= res.data.loan_term
-        this.data_loan_parent_aux.balance= res.data.balance
-        this.data_loan_parent_aux.estimated_quota= res.data.estimated_quota
-        /******************************************************************** */
 
-        if(this.remake && this.data_loan.parent_reason )
-        {
-          if(res.data.parent_loan_id){
-            this.data_loan_parent_aux.parent_loan_id=res.data.parent_loan_id
-          }
-          else{
-            this.data_loan_aux.code=res.data.data_loan.code
-            this.data_loan_aux.amount_approved=res.data.data_loan.amount_approved
-            this.data_loan_aux.loan_term=res.data.data_loan.loan_term
-            this.data_loan_aux.balance=res.data.data_loan.balance
-            this.data_loan_aux.estimated_quota=res.data.data_loan.estimated_quota
+         this.data_loan_parent_aux.parent_loan_id = res.data.parent_loan_id
+         this.data_loan_parent_aux.parent_reason = res.data.parent_reason
 
-            this.data_loan_parent.push( this.data_loan_aux)
-          }
-          this.data_loan_parent_aux.parent_reason=res.data.parent_reason
+         //this.data_loan_parent_aux.parent_loan = res.data.parent_loan
+         //this.data_loan_parent_aux.data_loan = res.data.data_loan 
 
+        if(this.refinancing || this.reprogramming){
+          this.data_loan_parent_aux.code= res.data.code
+          this.data_loan_parent_aux.amount_approved= res.data.amount_approved
+          this.data_loan_parent_aux.loan_term= res.data.loan_term
+          this.data_loan_parent_aux.balance= res.data.balance
+          this.data_loan_parent_aux.estimated_quota= res.data.estimated_quota         
+
+        } else if(this.remake && res.data.parent_loan != null && res.data.data_loan == null){
+          this.data_loan_parent_aux.code = res.data.parent_loan.code
+          this.data_loan_parent_aux.amount_approved = res.data.parent_loan.amount_approved
+          this.data_loan_parent_aux.loan_term = res.data.parent_loan.loan_term
+          this.data_loan_parent_aux.balance = res.data.parent_loan.balance
+          this.data_loan_parent_aux.estimated_quota = res.data.parent_loan.estimated_quota
+
+        } else if(this.remake && res.data.parent_loan == null && res.data.data_loan != null){
+          this.data_loan_parent_aux.code = res.data.data_loan.code
+          this.data_loan_parent_aux.amount_approved = res.data.data_loan.amount_approved
+          this.data_loan_parent_aux.loan_term = res.data.data_loan.loan_term
+          this.data_loan_parent_aux.balance = res.data.data_loan.balance
+          this.data_loan_parent_aux.estimated_quota = res.data.data_loan.estimated_quota
+        }else{
+         
+          console.log('No tiene data_loan')
         }
-      /*let res2 = await axios.get(`procedure_modality/${this.data_loan.procedure_modality_id}`)
+        /*let res2 = await axios.get(`procedure_modality/${this.data_loan.procedure_modality_id}`)
         this.modalidad_refi_repro_remake = res2.data.procedure_type_id*/
         if(this.refinancing){
           let res3 = await axios.post(`procedure_brother`,{
@@ -824,7 +834,6 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
       this.contributions = this.$refs.ballotsComponent.getLoanModality(this.$route.query.affiliate_id)
       if(this.$refs.ballotsComponent) {
         this.contributions = this.$refs.ballotsComponent.getContributions()
-     //   this.contributions = this.$refs.ballotsComponent.getLoanModality(this.$route.query.affiliate_id)
       }
       //this.saveAdjustment()
       //this.liquidCalificated()
@@ -921,8 +930,8 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
         {
           this.toastr.error("No puede quedarse con un liquido menor al monto de subsistencia.")
         }
-        else{
-           if(!this.isNew && !this.remake){
+        else{ 
+           if(!(this.isNew || (this.remake && this.data_loan.parent_reason == null))){
             if(this.data_loan_parent_aux.code==null)
             {
               this.toastr.error("Tiene que llenar el Codigo del Prestamo Padre.")
