@@ -37,7 +37,7 @@ class LoanPaymentForm extends FormRequest
             $date = $this->loan->disbursement_date;
         } 
         $rules = [
-            'procedure_modality_id' => ['integer', 'exists:procedure_modalities,id'],
+            'procedure_modality_id' => ['required','integer', 'exists:procedure_modalities,id'],
             'affiliate_id' => ['required','integer', 'exists:affiliates,id'],
             'amortization_type_id' => ['integer', 'exists:amortization_types,id'],
             'paid_by' => ['string', 'in:T,G'],
@@ -52,7 +52,7 @@ class LoanPaymentForm extends FormRequest
                     array_push($rules[$key], 'required');
                 }
                 return array_merge($rules, [
-                    'liquidate' => 'nullable|boolean',
+                    //'liquidate' => 'nullable|boolean',
                     'description' => 'nullable|string|min:2',
                 ]);
             }

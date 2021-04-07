@@ -1,24 +1,28 @@
 {
-    "code": "PAY000008-2020",
-    "estimated_date": "2020-12-31",
-    "quota_number": 5,
+    "code": "PAY000005-2021",
+    "estimated_date": "2021-02-28",
+    "quota_number": 2,
     "estimated_days": {
         "penal": 0,
-        "accumulated": 0,
-        "current": 31
+        "current": 39,
+        "penal_accumulated": 0,
+        "interest_accumulated": 0
     },
     "paid_days": {
         "penal": 0,
-        "accumulated": 0,
-        "current": 31
+        "current": 39,
+        "penal_accumulated": 0,
+        "interest_accumulated": 0
     },
-    "balance": 22962.76,
-    "capital_payment": 675.69,
-    "interest_payment": 390.05,
-    "accumulated_payment": 0,
-    "penal_payment": 0,
-    "estimated_quota": 1065.74,
-    "next_balance": 22287.07,
+    "balance": 25000,
     "penal_remaining": 0,
-    "accumulated_remaining": 0
+    "penal_payment": 0,
+    "interest_remaining": 0,
+    "interest_payment": 452.78,
+    "capital_payment": 0,
+    "interest_accumulated": 88.89,
+    "penal_accumulated": 0,
+    "next_balance": 25000,
+    "estimated_quota": 452.78,
+    "excesive_payment": -152.78
 }
