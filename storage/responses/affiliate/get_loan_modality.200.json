@@ -13,6 +13,8 @@
         "max_lenders": 1,
         "min_guarantor_category": "0.35",
         "max_guarantor_category": "1",
+        "min_lender_category": null,
+        "max_lender_category": null,
         "max_cosigner": 0,
         "personal_reference": true
     },

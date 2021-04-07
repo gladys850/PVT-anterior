@@ -18,6 +18,8 @@ class LoanModalityParameter extends Model
         'guarantors',
         'min_guarantor_category',
         'max_guarantor_category',
+        'min_lender_category',
+        'max_lender_category',
         'personal_reference'
     ];
 
