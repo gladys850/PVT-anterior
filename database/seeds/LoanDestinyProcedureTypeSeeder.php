@@ -28,8 +28,30 @@ class LoanDestinyProcedureTypeSeeder extends Seeder
         ];
         $this->create($destinies);
 
+        $destinies = [   
+            'Refinanciamiento Préstamo a corto plazo' => [
+                ['CONSUMO'],
+                ['SALUD'],  
+            ],
+        ];
+        $this->create($destinies);
+
         $destinies = [    
             'Préstamo a largo plazo' => [
+                ['AMPLIACIÓN DE VIVIENDA'],
+                ['REFACCIÓN DE VIVIENDA'],
+                ['REMODELACIÓN DE VIVIENDA'],  
+                ['OTROS VIVIENDA'], 
+                ['COMERCIO'], 
+                ['COMPRA DE AUTOMÓVIL'], 
+                ['SERVICIO DE INFRAESTRUCTURA'],
+                ['SALUD'],                    
+            ],
+        ];
+        $this->create($destinies);
+
+        $destinies = [    
+            'Refinanciamiento Préstamo a largo plazo' => [
                 ['AMPLIACIÓN DE VIVIENDA'],
                 ['REFACCIÓN DE VIVIENDA'],
                 ['REMODELACIÓN DE VIVIENDA'],  
@@ -48,7 +70,15 @@ class LoanDestinyProcedureTypeSeeder extends Seeder
                 ['REFACCIÓN Y REMODELACIÓN DE VIVIENDA'],     
             ]
         ];
-        $this->create($destinies);      
+        $this->create($destinies);    
+        
+        $destinies = [ 
+            'Refinanciamiento Préstamo hipotecario' => [
+                ['INVERSIÓN'],
+                ['REFACCIÓN Y REMODELACIÓN DE VIVIENDA'],     
+            ]
+        ];
+        $this->create($destinies);   
     }
     
     public function create($destinies){

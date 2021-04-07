@@ -1550,8 +1550,8 @@ class LoanController extends Controller
             if($procedure->name=='Préstamo a largo plazo' || $procedure->name=='Refinanciamiento Préstamo a largo plazo'){
                 $procedure_ref = ProcedureType::where('name','=','Refinanciamiento Préstamo a largo plazo')->first();
             }else{
-                if($procedure->name=='Préstamo hipotecario' || $procedure->name=='Refinancimiento Préstamo hipotecario'){
-                    $procedure_ref = ProcedureType::where('name','=','Refinancimiento Préstamo hipotecario')->first();
+                if($procedure->name=='Préstamo hipotecario' || $procedure->name=='Refinanciamiento Préstamo hipotecario'){
+                    $procedure_ref = ProcedureType::where('name','=','Refinanciamiento Préstamo hipotecario')->first();
                 }
             }
         }

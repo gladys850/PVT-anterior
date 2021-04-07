@@ -704,7 +704,7 @@ class Loan extends Model
                     }
                 }
              break;
-             case 'Refinancimiento Préstamo hipotecario':
+             case 'Refinanciamiento Préstamo hipotecario':
                 if($affiliate_state_type == "Activo")
                 {
                     if($type_sismu && $cpop_sismu) $modality=ProcedureModality::whereShortened("PLP-R-GH-CPOP")->first(); // Refinanciamiento hipotecario CPOP
