@@ -172,6 +172,21 @@ export default {
         this.loading = false
       }
     },
+    //Validar Pago
+      async validatePayment() {
+      try {
+            let res1 = await axios.patch(`loan_payment/${this.$route.query.loan_payment}`,{
+            validated:this.data_payment.validated,
+            description:this.data_payment.glosa
+          })
+          this.toastr.success('Se valido correctamente')
+            this.$router.push('/loanPayment')
+      }catch (e) {
+        console.log(e)
+      }finally {
+        this.loading = false
+      }
+    },
     //Metodo para crear el Pago
     async savePayment(){
       try {
@@ -213,6 +228,8 @@ export default {
         this.data_payment.voucher=this.loan_payment.voucher
         this.data_payment.pago  =this.loan_payment.amortization_type_id
         this.data_payment.loan_id  =this.loan_payment.loan_id
+        this.data_payment.validated =this.loan_payment.validated
+        this.data_payment.glosa =this.loan_payment.description
         this.data_payment.amortization=2
 
       } catch (e) {
@@ -283,6 +300,11 @@ export default {
             if(this.$store.getters.permissions.includes('create-payment'))
             {
                 this.savePaymentTreasury()
+            }else{
+             if(this.$store.getters.permissions.includes('update-payment-loan'))
+             {
+               this.validatePayment()
+             }
             }
           }
           else{
