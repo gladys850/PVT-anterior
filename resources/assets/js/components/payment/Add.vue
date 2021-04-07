@@ -24,7 +24,7 @@
                     bottom
                     right
                     v-on="on"
-                    :to="{ name: 'affiliateAdd', params: { id: loan.lenders[0].id}}"
+                    :to="{ name: 'flowAdd', params: { id: $route.query.loan_id,  workTray: 'received'}, query:{ redirectTab: 6 } }"
                   >
                   <v-icon>mdi-arrow-left-bold-outline</v-icon>
                   </v-btn>
