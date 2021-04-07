@@ -37,6 +37,7 @@ class CreateLoansTable extends Migration
             $table->float('indebtedness_calculated',5,2); //indice de endeudamiento calculado
             $table->float('liquid_qualification_calculated',10,2); //liquido para calificación calculado
             $table->unsignedSmallInteger('loan_term'); // plazo del prestamo en meses
+            $table->boolean('guarantor_amortizing')->default(false);// para  verificar la amortizacion si es garante
             $table->unsignedBigInteger('payment_type_id'); // id tipo de desembolso
             $table->foreign('payment_type_id')->references('id')->on('payment_types');
             $table->unsignedBigInteger('number_payment_type')->nullable(); // numero de cheque o numero cuenta del titular para el desembolso
