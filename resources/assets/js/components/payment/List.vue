@@ -63,7 +63,7 @@
           <span>Ver registro de cobro</span>
         </v-tooltip>
 
-        <v-tooltip bottom v-if="$store.getters.permissions.includes('update-payment-loan')">
+        <v-tooltip bottom v-if="$store.getters.permissions.includes('create-payment-loan')">
           <template v-slot:activator="{ on }">
             <v-btn
               icon

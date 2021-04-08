@@ -220,7 +220,7 @@
                             label="Glosa"
                           ></v-text-field>
                         </v-col>
-                         <v-col cols="5" class="ma-0 pb-0" v-show="$store.getters.permissions.includes('update-payment-loan')">
+                         <v-col cols="5" class="ma-0 pb-0" v-show="$store.getters.permissions.includes('create-payment-loan')">
                           <v-text-field
                             v-show="editable" v-if="!ver"
                             v-model="data_payment.glosa"
@@ -230,7 +230,7 @@
                             label="Glosa"
                           ></v-text-field>
                         </v-col>
-                         <v-col cols="3" class="ma-0 py-0" v-show="$store.getters.permissions.includes('update-payment-loan')">
+                         <v-col cols="3" class="ma-0 py-0" v-show="$store.getters.permissions.includes('create-payment-loan')" v-if="editable">
                           <v-checkbox class="ma-0 py-3"
                             :outlined="editable"
                             :readonly="!editable"
@@ -239,9 +239,9 @@
                             label="Validar Pago"
                           ></v-checkbox>
                         </v-col>
-                         <v-col cols="8">
+                         <v-col cols="8" v-if="$store.getters.permissions.includes('create-payment-loan')">
                         </v-col>
-                        <v-col cols="4" class="ma-0 py-0">
+                        <v-col cols="4" class="ma-0 py-0" v-if="$store.getters.permissions.includes('create-payment-loan')">
                           <v-checkbox class="ma-0 py-0"
                             :outlined="isNew"
                             :readonly="!isNew"
@@ -250,7 +250,7 @@
                             label="Pendiente por Refinanciamiento"
                           ></v-checkbox>
                         </v-col>
-                          <v-col cols="8" v-show="$store.getters.permissions.includes('update-payment-loan')">
+                          <v-col cols="8" v-show="$store.getters.permissions.includes('create-payment-loan')">
                         </v-col>
                       </v-row>
                     </template>
