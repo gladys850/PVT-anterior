@@ -45,6 +45,7 @@ class LoanPaymentController extends Controller
         $loanPayment->loan = $loanPayment->loan;
         $loanPayment->affiliate = $loanPayment->affiliate;
         if ($with_state) $loanPayment->state = $loanPayment->state;
+        $loanPayment->modality->procedure_type = $loanPayment->modality->procedure_type;
         return $loanPayment;
     }
     /**
