@@ -227,6 +227,7 @@ Route::group([
             'middleware' => 'permission:delete-payment'
         ], function () {
             Route::apiResource('voucher', 'Api\V1\VoucherController')->only('destroy');
+            Route::patch('voucher/{voucher_id}/delete','Api\V1\VoucherController@delete_voucher_payment');              
         });
         // Dirección
         Route::group([
