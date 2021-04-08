@@ -1,9 +1,9 @@
 <template>
-  <v-row>
-    <v-col cols="12" md="12">
-      <v-toolbar-title
+  <v-container fluid>
+      <v-toolbar-title class="pb-2 ma-0 pa-0"
         >KARDEX
         <v-card-title
+          class="pb-2 ma-0 pa-0"
           v-if="
             $store.getters.permissions.includes('print-payment-kardex-loan')
           "
@@ -28,7 +28,6 @@
               <span>Imprimir Kardex</span>
             </div>
           </v-tooltip>
-          <!--FORMULARIO PARA CALIFICACION-->
         </v-card-title>
       </v-toolbar-title>
 
@@ -57,7 +56,28 @@
           <span>Nuevo registro de cobro</span>
         </div>
       </v-tooltip>
-
+      <v-card class="ma-0 pa-0 pb-2">
+        <v-row class="ma-0 pa-0">
+          <v-col md="4" class="ma-0 pa-0">
+            <strong>Deudor:</strong> {{ $options.filters.fullName(affiliate, true) }}<br />
+            <strong>CI:</strong> {{ affiliate.identity_card }}<br />
+            <strong>Matrícula</strong> {{ affiliate.registration }}<br />
+            <strong>Cuotas:</strong> {{ payments.length }}<br />
+          </v-col>
+          <v-col md="4" class="ma-0 pa-0">
+            <strong> desembolso:</strong> {{ payments[0].loan.disbursement_date | date }}
+            <br />
+            <strong>Nro de comprobante contable:</strong>{{ payments[0].num_accounting_voucher}}<br />
+            <strong>Tasa anual:</strong> FALTA<br />
+            <strong>Cuota fija mensual:</strong> FALTA <br />
+          </v-col>
+          <v-col md="4" class="ma-0 pa-0">
+            <strong>Monto desembolsado:</strong> {{ payments[0].loan.amount_approved | moneyString }}<br />
+            <strong>Intereses Corrientes Pendientes:</strong> {{ payments[payments.length - 1].interest_accumulated | moneyString}}<br />
+            <strong>Intereses Penales Pendientes:</strong> {{ payments[payments.length - 1].penal_accumulated | moneyString }}
+          </v-col>
+        </v-row>
+      </v-card>
       <v-data-table
         dense
         :headers="headers"
@@ -65,9 +85,9 @@
         :loading="loading"
         :options.sync="options"
         :server-items-length="totalPayments"
-        :footer-props="{ itemsPerPageOptions: [8, 15, 30] }"
+        :footer-props="{ itemsPerPageOptions: [10, 50, 100] }"
       >
-        <template v-slot:[`header.data-table-select`]="{ on, props }">
+        <!--<template v-slot:[`header.data-table-select`]="{ on, props }">
           <v-simple-checkbox
             color="info"
             class="grey lighten-3"
@@ -87,7 +107,7 @@
             $store.getters.roles.find((o) => o.id == item.role_id).display_name
           }}
         </template>
-        <!--<template v-slot:item.procedure_modality_id="{ item }">
+       <template v-slot:item.procedure_modality_id="{ item }">
       <v-tooltip top>
         <template v-slot:activator="{ on }">
           <span v-on="on">{{ searchProcedureModality(item, 'shortened') }}</span>
@@ -95,7 +115,6 @@
         <span>{{ searchProcedureModality(item, 'name') }}</span>
       </v-tooltip>
     </template>-->
-
         <template v-slot:[`item.estimated_date`]="{ item }">
           {{ item.estimated_date | date }}
         </template>
@@ -108,6 +127,10 @@
 
         <template v-slot:[`item.amortization_type_id`]="{ item }">
           {{ searchAmortizationType(item.amortization_type_id) }}
+        </template>
+
+        <template v-slot:[`item.balance`]="{ item }">
+          {{ item.estimated_quota | moneyString }}
         </template>
 
         <template v-slot:[`item.state_id`]="{ item }">
@@ -144,6 +167,7 @@
                 small
                 v-on="on"
                 color="success"
+                v-if="item.state.name == 'Pendiente de Pago'"
                 :to="{
                   name: 'paymentAdd',
                   params: { hash: 'edit' },
@@ -182,7 +206,7 @@
                 small
                 v-on="on"
                 color="error"
-                v-if="item.state_id == 5"
+                v-if="item.state.name != 'Pagado'"
                 @click.stop="
                   bus.$emit('openRemoveDialog', `loan_payment/${item.id}`)
                 "
@@ -223,16 +247,21 @@
         </template>
       </v-data-table>
       <RemoveItem :bus="bus" />
-    </v-col>
-  </v-row>
-</template>
 
+  </v-container>
+</template>
 <script>
 import RemoveItem from "@/components/shared/RemoveItem";
 export default {
   name: "Kardex-list",
   components: {
     RemoveItem,
+  },
+  props: {
+    affiliate: {
+      type: Object,
+      required: true,
+    },
   },
 
   data: () => ({
@@ -242,13 +271,17 @@ export default {
     options: {
       page: 1,
       itemsPerPage: 8,
-      sortBy: ["first_name"],
+      sortBy: ["quota_number"],
       sortDesc: [false],
     },
+
     payments: [],
     //selectedPayment: 0,
     totalPayments: 0,
     paymentState: 0,
+    printDocs: [],
+    amortization_type: [],
+    i: 0,
     /*headers: [
       {
         text: "Nro recibo",
@@ -316,6 +349,22 @@ export default {
     ],*/
     headers: [
       {
+        text: "Nro Cuota",
+        value: "quota_number",
+        class: ["normal", "white--text"],
+        align: "center",
+        sortable: true,
+        width: "5%",
+      },,
+      {
+        text: "Código",
+        value: "code",
+        class: ["normal", "white--text"],
+        align: "center",
+        sortable: true,
+        width: "5%",
+      },
+      {
         text: "Fecha de cálculo",
         value: "estimated_date",
         class: ["normal", "white--text"],
@@ -337,7 +386,7 @@ export default {
         class: ["normal", "white--text"],
         align: "center",
         sortable: false,
-        width: "10%",
+        width: "5%",
       },
       {
         text: "Interes corriente",
@@ -345,7 +394,7 @@ export default {
         class: ["normal", "white--text"],
         align: "center",
         sortable: false,
-        width: "10%",
+        width: "5%",
       },
       {
         text: "Interes penal",
@@ -377,7 +426,7 @@ export default {
         class: ["normal", "white--text"],
         align: "center",
         sortable: false,
-        width: "10%",
+        width: "5%",
       },
       {
         text: "Saldo capital",
@@ -385,15 +434,15 @@ export default {
         class: ["normal", "white--text"],
         align: "center",
         sortable: false,
-        width: "10%",
+        width: "5%",
       },
       {
         text: "Comprobante",
-        value: "code",
+        value: "voucher",
         class: ["normal", "white--text"],
         align: "center",
         sortable: true,
-        width: "10%",
+        width: "5%",
       },
       {
         text: "Obs.",
@@ -401,7 +450,7 @@ export default {
         class: ["normal", "white--text"],
         align: "center",
         sortable: false,
-        width: "10%",
+        width: "5%",
       },
       {
         text: "Estado",
@@ -417,12 +466,12 @@ export default {
         class: ["normal", "white--text"],
         align: "center",
         sortable: false,
-        width: "10%",
+        width: "15%",
       },
     ],
-    printDocs: [],
-    amortization_type: [],
+
   }),
+
   watch: {
     options: function (newVal, oldVal) {
       if (
@@ -471,6 +520,7 @@ export default {
           },
         });
         this.payments = res.data.data;
+        console.log(this.payments);
         this.totalPayments = res.data.total;
         delete res.data["data"];
         this.options.page = res.data.current_page;
@@ -482,7 +532,7 @@ export default {
         this.loading = false;
       }
     },
-    async deletePayment(id) {
+    /*async deletePayment(id) {
       try {
         this.loading = true;
         let res = await axios.delete(`loan_payment/${id}`);
@@ -497,7 +547,7 @@ export default {
       } finally {
         this.loading = false;
       }
-    },
+    },*/
     async imprimir(id, item) {
       try {
         let res;
@@ -562,6 +612,14 @@ export default {
         console.log(e);
       }
     },
+
   },
 };
 </script>
+<style scoped>
+.theme--light.v-datatable.v-datatable-tr.v-datatable-td {
+    position: fixed;
+    bottom: 0;
+   padding: 0px;
+}
+</style>

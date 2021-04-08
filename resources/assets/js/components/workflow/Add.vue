@@ -269,8 +269,10 @@
 
         <v-tab-item :value="'tab-6'">
           <v-card flat tile>
-            <v-card-text class="pa-0 pl-3 pr-0 py-0">
-              <Kardex :bus="bus" />
+            <v-card-text class="pa-0 pl-3 pr-10 py-0">
+              <Kardex 
+              :bus="bus"
+              :affiliate.sync="affiliate" />
             </v-card-text>
           </v-card>
         </v-tab-item>
@@ -332,7 +334,8 @@ export default {
       service_years: null,
       service_months: null,
       date_derelict: null,
-      unit_name: null
+      unit_name: null,
+      registration: null
     },
     bonos: [0, 0, 0, 0],
     payable_liquid: [0, 0, 0],
