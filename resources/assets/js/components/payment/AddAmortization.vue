@@ -12,19 +12,11 @@
                     <ValidationObserver ref="observer">
                     <v-form>
                       <center>
-                       <v-toolbar-title>AMORTIZACIONES </v-toolbar-title>
+                       <v-toolbar-title>AMORTIZACIONES</v-toolbar-title>
                       </center>
                       <v-progress-linear></v-progress-linear>
                       <template>
                       <v-row>
-                        <v-col cols="7" class="ma-0 pb-0" v-show="!isNew">
-                        </v-col>
-                        <v-col cols="2" class="ma-0 pb-0" v-show="!isNew">
-                          <label class="caption"><strong> CODIGO DE PAGO:</strong></label>
-                        </v-col>
-                        <v-col cols="3" class="ma-0 pb-0" v-show="!isNew">
-                          <label class="caption"><strong>{{data_payment.code}}</strong></label>
-                        </v-col>
                         <v-col cols="2" class="ma-0  pr-1">
                           <label class="caption">Tipo de Tramite: </label>
                         </v-col>
@@ -37,7 +29,7 @@
                             class="caption"
                             style="font-size: 10px;"
                             @change="Onchange()"
-                            v-model="loanTypeSelected"
+                            v-model="data_payment.procedure_id"
                             :outlined="!editable"
                             :readonly="editable"
                             :items="tipo_tramite"
@@ -96,7 +88,7 @@
                             item-text="name"
                             item-value="id"
                             persistent-hint
-                            :disabled="ver"
+                            :disabled="ver || editable"
                           ></v-select>
                         </v-col>
                         <v-col cols="3" class="ma-0 pb-0" v-show="garante_show">
@@ -179,7 +171,7 @@
                             item-text="name"
                             item-value="id"
                             persistent-hint
-                            :disabled="ver"
+                            :disabled="ver || editable"
                           ></v-select>
                         </v-col>
                         <v-col cols="2" class="ma-0 pb-0" v-show="editable" v-if="$store.getters.permissions.includes('create-payment')">
@@ -212,17 +204,7 @@
                         </v-col>
                         <v-col cols="12" class="ma-0 pb-0" v-show="$store.getters.permissions.includes('create-payment')">
                           <v-text-field
-                            v-show="editable" v-if="!ver"
-                            v-model="data_payment.glosa"
-                            :outlined="isNew || editable"
-                            :readonly="!isNew || !editable"
-                            dense
-                            label="Glosa"
-                          ></v-text-field>
-                        </v-col>
-                         <v-col cols="5" class="ma-0 pb-0" v-show="$store.getters.permissions.includes('create-payment-loan')">
-                          <v-text-field
-                            v-show="editable" v-if="!ver"
+                            v-if="!ver"
                             v-model="data_payment.glosa"
                             :outlined="editable"
                             :readonly="!editable"
@@ -230,7 +212,17 @@
                             label="Glosa"
                           ></v-text-field>
                         </v-col>
-                         <v-col cols="3" class="ma-0 py-0" v-show="$store.getters.permissions.includes('create-payment-loan')" v-if="editable">
+                         <v-col cols="5" class="ma-0 pb-0" v-show="$store.getters.permissions.includes('create-payment-loan')">
+                          <v-text-field
+                            v-show="isNew || editable" v-if="!ver"
+                            v-model="data_payment.glosa"
+                            :outlined=" isNew || editable "
+                            :readonly="ver"
+                            dense
+                            label="Glosa"
+                          ></v-text-field>
+                        </v-col>
+                         <v-col cols="3" class="ma-0 py-0" v-show="$store.getters.permissions.includes('create-payment-loan') && this.data_payment.validar" v-if="editable">
                           <v-checkbox class="ma-0 py-3"
                             :outlined="editable"
                             :readonly="!editable"
@@ -239,10 +231,12 @@
                             label="Validar Pago"
                           ></v-checkbox>
                         </v-col>
-                         <v-col cols="8" v-if="$store.getters.permissions.includes('create-payment-loan')">
+                         <v-col cols="8" v-if="$store.getters.permissions.includes('create-payment-loan')"
+                          v-show="!isNew"
+                          :disabled="ver || editable">
                         </v-col>
                         <v-col cols="4" class="ma-0 py-0" v-if="$store.getters.permissions.includes('create-payment-loan')">
-                          <v-checkbox class="ma-0 py-0"
+                          <v-checkbox class="ma-0 py-3"
                             :outlined="isNew"
                             :readonly="!isNew"
                             :disabled="ver || editable"
@@ -280,7 +274,6 @@ export default {
     loan: {},
     radios:[],
     garante_show: false,
-    loanTypeSelected:null,
     loanTypeSelectedOne:null,
     loanTypeSelectedTwo:null,
     loanTypeSelectedThree:null,
@@ -455,11 +448,10 @@ export default {
       }
     },
     Onchange(){
-      if(this.loanTypeSelected!=null)
+      if(this.data_payment.procedure_id!=null)
       {
-        this.data_payment.procedure_id=this.loanTypeSelected
-        this.getTypeAmortization(this.loanTypeSelected)
-       }
+         this.getTypeAmortization(this.data_payment.procedure_id)
+      }
     },
     async getTypeProcedure() {
       try {

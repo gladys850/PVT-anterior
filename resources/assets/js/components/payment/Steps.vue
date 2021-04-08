@@ -102,6 +102,7 @@ export default {
       payment_date:new Date().toISOString().substr(0, 10),
       pago_total: null,
     },
+    validar:false,
   }),
   computed: {
     isNew() {
@@ -187,6 +188,20 @@ export default {
         this.loading = false
       }
     },
+    //Editar pago
+     async editPayment() {
+      try {
+            let res1 = await axios.patch(`loan_payment/${this.$route.query.loan_payment}`,{
+              description:this.data_payment.glosa
+          })
+          this.toastr.success('Se edito correctamente')
+            this.$router.push('/loanPayment')
+      }catch (e) {
+        console.log(e)
+      }finally {
+        this.loading = false
+      }
+    },
     //Metodo para crear el Pago
     async savePayment(){
       try {
@@ -230,8 +245,21 @@ export default {
         this.data_payment.loan_id  =this.loan_payment.loan_id
         this.data_payment.validated =this.loan_payment.validated
         this.data_payment.glosa =this.loan_payment.description
+        this.data_payment.procedure_modality_name =this.loan_payment.modality.procedure_type.name
+        this.data_payment.procedure_id= this.loan_payment.procedure_modality_id
         this.data_payment.amortization=2
-
+        if(this.data_payment.procedure_modality_name == 'Amortización Complemento Económico' ||
+            this.data_payment.procedure_modality_name == 'Amortización Fondo de Retiro' ||
+            this.data_payment.procedure_modality_name == 'Amortización por Ajuste' ||
+            this.data_payment.procedure_modality_name == 'Amortización Automática')
+          {
+            this.data_payment.validar =true
+          }else{
+            if(this.data_payment.procedure_modality_name == 'Amortización Directa')
+            {
+              this.data_payment.validar =false
+            }
+          }
       } catch (e) {
         console.log(e)
       } finally {
@@ -296,15 +324,21 @@ export default {
     async validatedStepOne() {
       try {
            if(!this.isNew)
-          {
-            if(this.$store.getters.permissions.includes('create-payment'))
+          { this.toastr.error("Entro por verdadero")
+            if(this.data_payment.procedure_modality_name == 'Amortización Complemento Económico' ||
+              this.data_payment.procedure_modality_name == 'Amortización Fondo de Retiro' ||
+              this.data_payment.procedure_modality_name == 'Amortización por Ajuste' ||
+              this.data_payment.procedure_modality_name == 'Amortización Automática')
             {
-                this.savePaymentTreasury()
+                   this.toastr.error("modalidades")
+              this.validatePayment()
             }else{
-             if(this.$store.getters.permissions.includes('update-payment-loan'))
-             {
-               this.validatePayment()
-             }
+              if(this.data_payment.procedure_modality_name == 'Amortización Directa' && this.$store.getters.permissions.includes('create-payment') )
+              {
+                this.savePaymentTreasury()
+              }else{
+                this.editPayment()
+              }
             }
           }
           else{
