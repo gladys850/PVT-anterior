@@ -12,7 +12,7 @@
       <v-container>
         <div>
           <v-row>
-            <v-col  cols="5" v-show="!ver">
+            <v-col cols="5" v-show="!ver">
               <span>
                 <v-tooltip left >
                 <template v-slot:activator="{ on }">

@@ -12,7 +12,7 @@
                     <ValidationObserver ref="observer">
                     <v-form>
                       <center>
-                       <v-toolbar-title>AMORTIZACIONES</v-toolbar-title>
+                       <v-toolbar-title>AMORTIZACIONES </v-toolbar-title>
                       </center>
                       <v-progress-linear></v-progress-linear>
                       <template>
