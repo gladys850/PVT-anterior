@@ -84,6 +84,7 @@
               icon
               small
               v-on="on"
+              v-if="item.state.name!='Pagado'"
               color="light-blue accent-4"
               :to="{ name: 'paymentAdd',  params: { hash: 'edit'},  query: { loan_payment: item.id}}"
             >
