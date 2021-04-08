@@ -214,8 +214,8 @@
                           <v-text-field
                             v-show="editable" v-if="!ver"
                             v-model="data_payment.glosa"
-                            :outlined="editable"
-                            :readonly="!editable"
+                            :outlined="isNew || editable"
+                            :readonly="!isNew || !editable"
                             dense
                             label="Glosa"
                           ></v-text-field>
