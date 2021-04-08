@@ -185,7 +185,7 @@ Route::group([
             Route::get('loan_payment/{loan_payment}/state', 'Api\V1\LoanPaymentController@get_state');
             Route::patch('loan_payment/{id}/reactivate','Api\V1\LoanPaymentController@reactivate');
             Route::get('loan_payment/{loan_payment}/flow','Api\V1\LoanPaymentController@get_flow');
-
+            Route::get('kardex_loan_payment','Api\V1\LoanPaymentController@indexKardex');
         });
         Route::group([
             'middleware' => 'permission:create-payment-loan'

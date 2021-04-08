@@ -129,6 +129,42 @@ class LoanPaymentController extends Controller
         return $data;
     }
 
+
+    /**
+    * Kardex de pagos
+    * Devuelve el kardex de pagos con los datos paginados
+    * @queryParam loan_id integer required ID del tramite de préstamo. Example 1
+    * @queryParam search Parámetro de búsqueda. Example: PAY000016
+    * @queryParam per_page Número de datos por página. Example: 8
+    * @queryParam page Número de página. Example: 1
+    * @authenticated
+    * @responseFile responses/loan_payment/indexKardex.200.json
+     */
+    public function indexKardex(Request $request){
+        $loan = Loan::find($request->loan_id);
+        $balance = $loan->amount_approved;
+        $loan['estimated_quota'] = $loan->estimated_quota;
+        $loan['interest'] = $loan->interest;
+        if(!$request->has('search')){
+            $loan_payments = LoanPayment::where('loan_id', $request->loan_id)->WhereIn('state_id', [6,7])->orWhere('loan_id', $request->loan_id)->where('procedure_modality_id', 61)->orderby('quota_number')->paginate(5);
+            foreach($loan_payments as $payment){
+                $payment->balance = $balance - $payment->capital_payment;
+                $payment->loan = $loan;
+            }
+        }
+        else{
+            $loan_payments = LoanPayment::where('loan_id', $request->loan_id)->WhereIn('state_id', [6,7])->where('code', 'ilike','%'.$request->search.'%')->orWhere('loan_id', $request->loan_id)->where('procedure_modality_id', 61)->where('code', 'ilike','%'.$request->search.'%')->orderby('quota_number')->paginate(7);
+            foreach($loan_payments as $payment){
+                $payment->balance = 0;
+                $payment->loan = $loan;
+            }
+        }
+        /*$loan->estimated_quota = $loan->estimated_quota;
+        $loan->interest = $loan->interest;
+        $loan->payments = $loan_payments;*/
+        return $loan_payments;
+    }
+
     /**
     * Detalle de Registro de pago
     * Devuelve el detalle de un registro de pago mediante su ID
