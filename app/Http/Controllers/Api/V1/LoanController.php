@@ -25,9 +25,11 @@ use App\LoanPayment;
 use App\Voucher;
 use App\Sismu;
 use App\Record;
+use App\ProcedureType;
 use App\Contribution;
 use App\AidContribution;
 use App\LoanContributionAdjust;
+use App\LoanGlobalParameter;
 use App\Http\Requests\LoansForm;
 use App\Http\Requests\LoanForm;
 use App\Http\Requests\LoanPaymentForm;
@@ -62,6 +64,13 @@ class LoanController extends Controller
         //$loan->user = $loan->records_user;
         $loan->city = $loan->city;
         $loan->observations = $loan->observations->last();
+        $loan->modality=$loan->modality->procedure_type;
+        $loan->tags = $loan->tags;
+        if($loan->parent_loan){
+            $loan->parent_loan->balance = $loan->parent_loan->balance;
+            $loan->parent_loan->estimated_quota = $loan->parent_loan->estimated_quota;
+        }
+        //$loan->procedure=$loan->modality;
         //$loan->loan_contribution = $loan->loan_contribution_adjusts;
         return $loan;
     }
@@ -92,7 +101,7 @@ class LoanController extends Controller
             } else {
                 $role = Auth::user()->roles()->whereHas('module', function($query) {
                     return $query->whereName('prestamos');
-                })->orderBy('sequence_number')->orderBy('name')->first();
+                })->orderBy('name')->first();
                 if ($role) {
                     $request->role_id = $role->id;
                 } else {
@@ -166,6 +175,7 @@ class LoanController extends Controller
     * @bodyParam amount_requested integer required monto solicitado. Example: 26000
     * @bodyParam city_id integer required ID de la ciudad. Example: 4
     * @bodyParam loan_term integer required plazo. Example: 40
+    * @bodyParam guarantor_amortizing boolean true si es de amortizacion garante. Example: false
     * @bodyParam payment_type_id integer required Tipo de desembolso. Example: 1
     * @bodyParam financial_entity_id integer ID de entidad financiera. Example: 1
     * @bodyParam number_payment_type integer Número de cuenta o Número de cheque para el de desembolso. Example: 10000541214
@@ -223,14 +233,13 @@ class LoanController extends Controller
     */
     public function store(LoanForm $request)
     {
-        //return $request;
         $roles = Auth::user()->roles()->whereHas('module', function($query) {
             return $query->whereName('prestamos');
         })->pluck('id');
         $procedure_modality = ProcedureModality::findOrFail($request->procedure_modality_id);
         $request->merge([
             'role_id' => $procedure_modality->procedure_type->workflow->pluck('role_id')->intersect($roles)->first()
-        ]);
+        ]);        
         if (!$request->role_id) abort(403, 'Debe crear un flujo de trabajo');
         // Guardar préstamo
         $saved = $this->save_loan($request);
@@ -319,6 +328,7 @@ class LoanController extends Controller
     * @bodyParam amount_requested integer monto solicitado. Example: 2000
     * @bodyParam city_id integer ID de la ciudad. Example: 6
     * @bodyParam loan_term integer plazo. Example: 2
+    * @bodyParam guarantor_amortizing boolean true si es de amortizacion garante. Example: false
     * @bodyParam payment_type_id integer Tipo de desembolso. Example: 1
     * @bodyParam liquid_qualification_calculated numeric Total de bono calculado. Example: 2000
     * @bodyParam indebtedness_calculated numeric Indice de endeudamiento. Example: 52.26
@@ -471,13 +481,13 @@ class LoanController extends Controller
         }
 
         //heredar el codigo del prestamo padre
-        if($loan->parent_loan_id)
+        /*if($loan->parent_loan_id)
         {
             if(substr($loan->parent_loan->code, -3) != substr($loan->parent_reason,0,3))
                 $loan->code = Loan::find($loan->parent_loan_id)->code." - ".substr($loan->parent_reason,0,3);
             else
                 $loan->code = $loan->parent_loan->code;
-        }
+        }*/
 
         //rehacer obtener cod 
         if($request->has('remake_loan_id')&& $request->remake_loan_id != null)
@@ -764,10 +774,19 @@ class LoanController extends Controller
             case 'Préstamo a corto plazo':
 				$view_type = 'short';
             	break;
+            case 'Refinanciamiento Préstamo a corto plazo':
+				$view_type = 'short';
+            	break;
             case 'Préstamo a largo plazo':
 				$view_type = 'long';
             	break;
+            case 'Refinanciamiento Préstamo a largo plazo':
+				$view_type = 'long';
+            	break;
             case 'Préstamo hipotecario':
+				$view_type = 'hypothecary';
+            	break;
+            case 'Refinanciamiento Préstamo hipotecario':
 				$view_type = 'hypothecary';
             	break;
         }
@@ -1008,16 +1027,17 @@ class LoanController extends Controller
     * Devuelve el número de cuota, días calculados, días de interés que alcanza a pagar con la cuota, días restantes por pagar, montos de interés, capital y saldo a capital.
     * @urlParam loan required ID del préstamo. Example: 41426
     * @bodyParam affiliate_id integer required id del afiliado. Example: 2020-04-15
-    * @bodyParam estimated_date date Fecha para el cálculo del interés. Example: 2020-04-15
-    * @bodyParam estimated_quota float Monto para el cálculo. Example: 650
-    * @bodyParam liquidate boolean required Booleano para hacer el cálculo con el monto máximo que liquidará el préstamo. Example: false
+    * @bodyParam estimated_date date required Fecha para el cálculo del interés. Example: 2020-04-15
     * @bodyParam paid_by enum required Pago realizado por Titular(T) o Garante(G). Example: T
+    * @bodyParam procedure_modality integer required id de la modalidad. Example: 54
+    * @bodyParam estimated_quota float Monto para el cálculo. Example: 650
+    * @bodyParam adjust refinanciamiento con antecedente(1) o sin antecedente(0). Example: 1
     * @authenticated
     * @responseFile responses/loan/get_next_payment.200.json
     */
     public function get_next_payment(LoanPaymentForm $request, Loan $loan)
     {
-        return $loan->next_payment2($request->input('estimated_date', null), $request->input('estimated_quota', null), $request->input('liquidate', false), $request->input('paid_by', "T"), $request->input('affiliate_id'));
+        return $loan->next_payment2($request->input('affiliate_id'),$request->input('estimated_date', null), $request->input('paid_by'), $request->input('procedure_modality_id'), $request->input('estimated_quota', null), $request->input('adjust', false));
     }
 
     /** @group Cobranzas
@@ -1026,7 +1046,6 @@ class LoanController extends Controller
     * @urlParam loan required ID del préstamo. Example: 2
 	* @bodyParam estimated_date date Fecha para el cálculo del interés. Example: 2020-04-30
 	* @bodyParam estimated_quota float Monto para el cálculo de los días de interés pagados. Example: 600
-    * @bodyParam liquidate boolean Booleano para hacer el cálculo con el monto máximo que liquidará el préstamo. Example: false
     * @bodyParam description string Texto de descripción. Example: Penalizacion regularizada
     * @bodyParam voucher string Comprobante de pago GAR-ABV o D-10/20 o CONT-123. Example: CONT-123
     * @bodyParam amortization_type_id integer required ID del tipo de pago. Example: 1
@@ -1034,19 +1053,20 @@ class LoanController extends Controller
     * @bodyParam paid_by enum required Pago realizado por Titular(T) o Garante(G). Example: T
     * @bodyParam procedure_modality_id integer required ID de la modalidad de amortización. Example: 53
     * @bodyParam user_id integer required ID del usuario. Example: 95
+    * @bodyParam state boolean refinanciamiento con antecedente(1) o sin antecedente(0). Example: 1
     * @authenticated
     * @responseFile responses/loan/set_payment.200.json
     */
     public function set_payment(LoanPaymentForm $request, Loan $loan)
     {
         if($loan->balance!=0){
-            $payment = $loan->next_payment2($request->input('estimated_date', null), $request->input('estimated_quota', null), $request->input('liquidate', false), $request->input('paid_by'), $request->input('affiliate_id'));
+            $payment = $loan->next_payment2($request->input('affiliate_id'), $request->input('estimated_date', null), $request->input('paid_by'), $request->input('procedure_modality_id'), $request->input('estimated_quota', null), $request->input('adjust'));
             $payment->description = $request->input('description', null);
             $payment->state_id = LoanState::whereName('Pendiente de Pago')->first()->id;
             $payment->role_id = Role::whereName('PRE-cobranzas')->first()->id;
             if($request->has('procedure_modality_id')){
                 $modality = ProcedureModality::findOrFail($request->procedure_modality_id)->procedure_type;
-                if($modality->name == "Amortización Manual") $payment->validated = true;
+                if($modality->name == "Amortización Directa") $payment->validated = true;
             }
             $payment->procedure_modality_id = $request->input('procedure_modality_id');
             $payment->voucher = $request->input('voucher', null);
@@ -1073,6 +1093,7 @@ class LoanController extends Controller
             abort(403, 'El préstamo ya fue liquidado');
         }
     }
+
     /** @group Cobranzas
     * Lista de pagos
     * Devuelve el listado de los pagos ordenados por cuota de manera descendente
@@ -1240,7 +1261,7 @@ class LoanController extends Controller
                     ['Usuario', Auth::user()->username]
                 ]
             ],
-            'title' => ($flow_message['type'] == 'derivacion' ? 'DERIVACIÓN' : 'DEVOLUCIÓN') . ' DE TRÁMITES - MODALIDAD ' . $derived->first()->modality->procedure_type->second_name,
+            'title' => ($flow_message['type'] == 'derivacion' ? 'DERIVACIÓN' : 'DEVOLUCIÓN') . ' DE TRÁMITES - MODALIDAD ' . $derived->first()->modality->second_name,
             'procedures' => $derived,
             'roles' => [
                 'from' => $from_role,
@@ -1363,6 +1384,71 @@ class LoanController extends Controller
         }
         return $message;
     }
+
+    /**
+    * Evaluacion de Afiliado
+    * Devuelve mensaje de error 403
+    * @urlParam affiliate_id required id del afiliado a evaluar. Example: 52540
+    * @bodyParam affiliate_id integer required la evaluacion del afiliado en caso de que este aprobado devuelve true caso contrario devuelve error 403
+    * @authenticated
+    * @responseFile responses/loan/affiliate_evaluate.200.json
+    */
+    public function validate_affiliate($affiliate_id){
+     
+         $message['validate'] = false;
+        $affiliate = Affiliate::findOrFail($affiliate_id);
+        $loan_global_parameter = LoanGlobalParameter::latest()->first();
+        $loan_disbursement = count($affiliate->disbursement_loans);
+        $loan_process = count($affiliate->process_loans);
+        if ($affiliate->affiliate_state){
+            if($affiliate->affiliate_state->affiliate_state_type->name != "Baja" && $affiliate->affiliate_state->affiliate_state_type->name != ""){
+                if((count($affiliate->spouses) === 0 && $affiliate->affiliate_state->name != 'Fallecido') || (count($affiliate->spouses) !== 0 && $affiliate->affiliate_state->name  == 'Fallecido')) {
+                    if($affiliate->identity_card != null && $affiliate->city_identity_card_id != null){
+                        if($affiliate->civil_status != null){
+                            if($affiliate->financial_entity_id != null && $affiliate->account_number != null && $affiliate->sigep_status != null){
+                                if($affiliate->birth_date != null && $affiliate->city_birth_id != null){
+                                    if(($affiliate->affiliate_state->affiliate_state_type->name != 'Pasivo' && $affiliate->pension_entity_id ==  null) || ($affiliate->affiliate_state->affiliate_state_type->name == 'Pasivo' && $affiliate->pension_entity_id !=  null )){
+                                        if($loan_process < $loan_global_parameter->max_loans_process ){
+                                            if($loan_disbursement < $loan_global_parameter->max_loans_active){
+                                                $message['validate'] = true;
+                                            }else{
+                                                $message['validate'] ='El afiliado no puede tener más de ' .$loan_global_parameter->max_loans_active. ' préstamos desembolsados. Actualemnte ya tiene '. $loan_disbursement .' préstamos desembolsados.';
+                                                 } 
+                                        }else{
+                                            $message['validate'] = 'El afiliado no puede tener más de '.$loan_global_parameter->max_loans_process.' trámite en proceso. Actualmente ya tiene '.$loan_process.' préstamos en proceso.';
+                                            }
+                                    }else{
+                                        $message['validate'] = 'El afiliado no tiene registrado su ente Gestor.';
+                                }
+                                }else{
+                                    $message['validate'] = 'El afiliado no tiene registrado su fecha de nacimiento ó ciudad de nacimiento.';
+                                }
+                            }
+                           else{
+                            $message['validate'] = 'El afiliado no tiene registrado la entidad financiera';
+                            } 
+                        }
+                        else{
+                        $message['validate'] = 'El afiliado no tiene registrado su estado civil.';
+                        }
+                    }
+                    else{
+                        $message['validate'] = 'El afiliado no tiene registrado su CI ó ciudad de expedición del CI.';
+                    }      
+                }
+                else{ 
+                    $message['validate'] = 'El afiliado no puede acceder a un préstamo por estar fallecido ó estar fallecido y no tener registrado a un(a) conyugue.';
+                }
+            }
+           else{   
+            $message['validate'] = 'El afiliado no puede acceder a un préstamo por estar dado de baja ó no tener registrado su estado.';
+            }
+        }
+        else{   
+            $message['validate'] = 'El afiliado no puede acceder a un préstamo por estar dado de baja ó no tener registrado su estado.';
+        } 
+        return $message;
+    }
     public function show_ballot_loan($loan_id){
     $loan=Loan::find($loan_id);
      if($loan){
@@ -1418,7 +1504,8 @@ class LoanController extends Controller
             if($loan->loan_persons) $loan->loan_persons()->detach();
             
             if($loan->submitted_documents) $loan->submitted_documents()->detach();
-
+            
+            if($loan->tags) $loan->tags()->detach();
             //$loan->forceDelete();
             $options=[$loan->id];
             $loan = Loan::withoutEvents(function() use($options){
@@ -1448,5 +1535,33 @@ class LoanController extends Controller
     //limpiar datos sin relacion
     public function clear_data_base(){
 
+    }
+    /**
+    * Obtener relacion de procedure hermano 
+    * Obtiene la relacion entre procedures, ejemplo en el caso de Refinanciamiento
+    * @bodyParam id_loan integer required Devuelve el objeto del procedure, en el caso de acticipo devuelve un array vacio Example: 1
+    * @authenticated
+    * @responseFile responses/loan/get_procedure_relation.200.json
+    */
+    public function procedure_brother(Request $request){
+        $request->validate([
+            'id_loan' => 'required|exists:loans,id'
+        ]);
+        $loan = Loan::findOrFail($request->id_loan);
+        $procedure=$loan->modality->procedure_type;
+        $procedure_ref=[];
+    
+        if($procedure->name=='Préstamo a corto plazo' || $procedure->name=='Refinanciamiento Préstamo a corto plazo'){
+            $procedure_ref = ProcedureType::where('name','=','Refinanciamiento Préstamo a corto plazo')->first();
+        }else{
+            if($procedure->name=='Préstamo a largo plazo' || $procedure->name=='Refinanciamiento Préstamo a largo plazo'){
+                $procedure_ref = ProcedureType::where('name','=','Refinanciamiento Préstamo a largo plazo')->first();
+            }else{
+                if($procedure->name=='Préstamo hipotecario' || $procedure->name=='Refinanciamiento Préstamo hipotecario'){
+                    $procedure_ref = ProcedureType::where('name','=','Refinanciamiento Préstamo hipotecario')->first();
+                }
+            }
+        }
+        return  $procedure_ref;
     }
 }

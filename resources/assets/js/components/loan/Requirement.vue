@@ -197,22 +197,18 @@ export default {
       required: true,
       default: 0
     },
-    /*reference: {
-      type: Array,
-      required: true
-    },*/
     bus: {
       type: Object,
       required: true
     },
-    /*cosigners: {
-      type: Array,
-      required: true
-    },*/
     loan_property_id: {
       type: Number,
       required: true,
       default: 0
+    },
+    data_loan_parent_aux: {
+      type: Object,
+      required: true
     },
   },
   watch: {
@@ -228,19 +224,30 @@ export default {
   },
   computed: {
     parent_reason(){
-      if(this.$route.params.hash == 'new' || this.$route.params.hash == 'remake'){
+      if(this.$route.params.hash == 'new'){
         return null
       } else if(this.$route.params.hash == 'refinancing'){
         return 'REFINANCIAMIENTO'
       }else if(this.$route.params.hash == 'reprogramming'){
         return 'REPROGRAMACIÓN'
+      }else if(this.$route.params.hash == 'remake' && this.data_loan_parent_aux.parent_reason == 'REFINANCIAMIENTO'){
+        return 'REFINANCIAMIENTO'
+      }else if(this.$route.params.hash == 'remake' && this.data_loan_parent_aux.parent_reason == 'REPROGRAMACIÓN'){
+        return 'REPROGRAMACIÓN'
+      }else if(this.$route.params.hash == 'remake' && this.data_loan_parent_aux.parent_reason == null){
+        return null
       }
     },
     parent_loan_id(){
-      if(this.$route.query.type_sismu || this.$route.params.hash == 'new' || this.$route.params.hash == 'remake'){
+      if(this.$route.query.type_sismu || this.$route.params.hash == 'new'){
+        return 0
+      }
+      else if( this.$route.params.hash == 'remake' && this.data_loan_parent_aux.parent_loan_id != null){//es PVT refi repro
+        return this.data_loan_parent_aux.parent_loan_id
+      }else if( this.$route.params.hash == 'remake' && this.data_loan_parent_aux.parent_loan_id == null){//es PVT no es refi ni repro
         return 0
       }else{
-        return this.$route.query.loan_id
+        return this.$route.query.loan_id //PVT si es refi repro nuevo
       }
     }
   },

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Helpers;
+namespace App\Helpers; 
 
 use Carbon;
 use Config;
@@ -272,7 +272,7 @@ class Util
             if ($record_type) {
                 $role = Auth::user()->roles()->whereHas('module', function($query) {
                     return $query->whereName('prestamos');
-                })->orderBy('sequence_number')->orderBy('name')->first();
+                })->orderBy('name')->first();
                 $record = $object->records()->make([
                     'action' => $action
                 ]);
@@ -464,7 +464,9 @@ class Util
                     'my_received' => 0
                 ]
             ];
-            foreach ($module->roles()->whereNotNull('sequence_number')->orderBy('sequence_number')->orderBy('display_name')->get() as $subkey => $role) {
+            $user_roles = Auth::user()->roles()->where('module_id','=',$module->id)->get();
+           // foreach ($module->roles()->whereNotNull('sequence_number')->orderBy('sequence_number')->orderBy('display_name')->get() as $subkey => $role) {
+            foreach ( $user_roles as $subkey => $role) {
                 $data[$key]['data'][$subkey] = [
                     'role_id' => $role->id
                 ];
@@ -494,7 +496,9 @@ class Util
     }
 
     public static function process_by_role($model, $module){
-        foreach ($module->roles()->whereNotNull('sequence_number')->orderBy('sequence_number')->orderBy('display_name')->get() as $role) {
+        $user_roles = Auth::user()->roles()->where('module_id','=',$module->id)->get();
+       // foreach ($module->roles()->whereNotNull('sequence_number')->orderBy('sequence_number')->orderBy('display_name')->get() as $role) {
+        foreach ($user_roles as $role) {
             $data[] = [
                 'role_id' => $role->id,
                 'data' => [
@@ -519,7 +523,9 @@ class Util
                     'my_received' => 0
                 ]
             ];
-            foreach ($module->roles()->whereNotNull('sequence_number')->orderBy('sequence_number')->orderBy('display_name')->get() as $subkey => $role) {
+            $user_roles = Auth::user()->roles()->where('module_id','=',$module->id)->get();
+            //foreach ($module->roles()->whereNotNull('sequence_number')->orderBy('sequence_number')->orderBy('display_name')->get() as $subkey => $role) {
+            foreach ($user_roles as $subkey => $role) {
                 $data[$key]['data'][$subkey] = [
                     'role_id' => $role->id
                 ];
@@ -549,11 +555,13 @@ class Util
     }
 
     public static function amortizations_by_user($model, $object, $module){
-        foreach ($module->roles()->whereNotNull('sequence_number')->orderBy('sequence_number')->orderBy('display_name')->get() as $role) {
+        $user_roles = Auth::user()->roles()->where('module_id','=',$module->id)->get();
+       // foreach ($module->roles()->whereNotNull('sequence_number')->orderBy('sequence_number')->orderBy('display_name')->get() as $role) {
+        foreach ($user_roles as $role) {
             $data[] = [
                 'role_id' => $role->id,
                 'data' => [
-                    'received' => $model::whereRoleId($role->id)->whereValidated(false)->whereUserId(null)->count(),
+                    'received' => $model::whereRoleId($role->id)->whereValidated(false)->count(),
                     'validated' => $model::whereRoleId($role->id)->whereValidated(true)->whereUserId(Auth::user()->id)->count(),
                     'trashed' => $model::whereRoleId($role->id)->onlyTrashed()->count(),
                     'my_received' => $model::whereRoleId($role->id)->whereValidated(false)->whereUserId(Auth::user()->id)->count()

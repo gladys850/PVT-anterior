@@ -20,6 +20,7 @@ class CreateRoleSequencesTable extends Migration
             $table->foreign('role_id')->references('id')->on('roles');
             $table->unsignedBigInteger('next_role_id'); // id rol siguiente
             $table->foreign('next_role_id')->references('id')->on('roles');
+            $table->unsignedTinyInteger('sequence_number_flow')->nullable(); //Campò donde se almacena la secuenciaque sigue un tramite
         });
     }
 

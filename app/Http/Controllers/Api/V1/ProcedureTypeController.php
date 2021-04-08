@@ -94,21 +94,23 @@ class ProcedureTypeController extends Controller
     * @bodyParam workflow array required Listado de secuencias de derivación.
     * @bodyParam workflow[*].role_id integer required Área desde la cual se derivará. Example: 81
     * @bodyParam workflow[*].next_role_id integer required Área a la cual se derivará. Example: 73
+    * @bodyParam workflow[*].sequence_number_flow integer required Secuencia que seguira la tabla . Example: 2
     * @authenticated
     * @responseFile responses/procedure_type/get_flow.200.json
     */
     public function set_flow(RoleSequenceForm $request, ProcedureType $procedure_type)
-    {
+    {  
         $request = collect($request->workflow)->map(function($item) use ($procedure_type) {
-            if (Role::find($item['role_id'])->sequence_number >= Role::find($item['next_role_id'])->sequence_number) abort(409, 'El rol destino ser superior al de origen');
+       // if (Role::find($item['role_id'])->sequence_number >= Role::find($item['next_role_id'])->sequence_number) abort(409, 'El rol destino ser superior al de origen');
             $item['procedure_type_id'] = $procedure_type->id;
             return $item;
         })->values()->toArray();
         foreach ($request as $key => $sequence) {
-            foreach ($request as $i => $compare) {
+            foreach ($request as $i => $compare) {           
                 if ($key != $i) {
-                    if ($sequence['role_id'] == $compare['role_id'] && $sequence['next_role_id'] == $compare['next_role_id']) abort(409, 'No se pueden guardar secuencias duplicadas');
-                }
+                    if ($sequence['role_id'] == $compare['role_id'] && $sequence['next_role_id'] == $compare['next_role_id']) abort(409, 'No se pueden guardar secuencias de origen a destino duplicadas');
+                    //if ($sequence['role_id'] == $compare['role_id'] ) abort(409, 'No se pueden guardar origen duplicado');
+                }        
             }
         }
         RoleSequence::whereProcedureTypeId($procedure_type->id)->delete();

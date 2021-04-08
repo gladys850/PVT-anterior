@@ -1,15 +1,17 @@
 <template>
-  <v-card flat>
+<v-card flat>
     <v-card-title>
       <v-toolbar dense color="tertiary">
-        <v-toolbar-title>Información de Préstamos</v-toolbar-title>
+        <v-toolbar-title>Préstamos</v-toolbar-title>
       </v-toolbar>
     </v-card-title>
-    <v-card-text>
-      <v-container class="py-0">
-        <v-card color="grey lighten-1" class="ma-0 pa-3">
-          <v-row>
-            <v-col cols="12" md="4">
+      <v-card-text>
+  <v-container  class="py-0 px-0">
+    <ValidationObserver ref="observer">
+      <v-form>
+        <!--v-card-->
+        <v-row justify="center" >
+          <v-col cols="12" md="4">
               <v-card>
                 <v-container class="py-0">
                   <v-row>
@@ -26,8 +28,8 @@
                         single-line
                         hide-details
                         clearable
-                        :loading="loading"
-                        @keyup.enter="getLoansHistory()"
+                       :loading="loading"
+                       v-on:keyup.enter="getLoansHistory()"
                       ></v-text-field>
                     </v-col>
                     <v-col cols="12" md="2">
@@ -51,8 +53,7 @@
                 </v-container>
               </v-card>
             </v-col>
-
-            <v-col cols="12" md="8">
+              <v-col cols="12" md="8">
               <v-card>
                 <v-row class="ma-0 pb-0 text-uppercase">
                   <v-col
@@ -75,11 +76,38 @@
                     </h3>
                   </v-col>
                   <template v-if="ver && exist_affiliate">
-                    <v-col cols="12" md="12" class="ma-0 pb-0 text-center">
-                      <h2>
+                    <v-col cols="12" md="2" class="ma-0 pb-0 text-left">
+                      
+                    </v-col>
+                    <v-col cols="12" md="6" class="ma-0 pb-0 text-center">
+                      <h2 style="color:teal">
                         {{ $options.filters.fullName(loans, true) }}
-                      </h2></v-col
-                    >
+                      </h2></v-col>
+                      <v-col cols="12" md="4" class="ma-0 py-0 text-left">
+             
+                      <v-tooltip
+                        left              
+                      >
+                        <template v-slot:activator="{ on }">
+                          <v-btn
+                            icon
+                            dark
+                            x-large
+                            color="warning"
+                            bottom
+                            right                        
+                            v-on="on" 
+                            :to="{ name: 'affiliateAdd', params: { id: affiliate.id, workTray: 'received' }}" 
+                          >
+                            <v-icon>mdi-eye</v-icon>
+                          </v-btn>
+                        </template>
+                        <span>Ver datos del afiliado</span>
+                      </v-tooltip>            
+                  
+                    </v-col>
+
+                    <v-progress-linear></v-progress-linear>
                     <v-col cols="12" md="6" class="ma-0 pb-0">
                       C.I: {{ loans.identity_card }}</v-col
                     >
@@ -91,8 +119,7 @@
                         CATEGORÍA: {{ category_name }}
                       </v-col>
                       <v-col cols="12" md="6" class="ma-0 pb-0">
-                        ESTADO: {{ state_name_status }}</v-col
-                      >
+                        ESTADO: {{ state_name_status }}</v-col>
                       <v-col cols="12" md="6" class="ma-0 pb-0">
                         GRADO: {{ degree_name }}
                       </v-col>
@@ -142,401 +169,147 @@
                 </v-row>
               </v-card>
             </v-col>
+
+            <v-col cols="12" class="py-0 px-0 ">
+              <v-container fluid class="py-0 px-0 ">
+                <v-row class="py-0" v-if="ver && exist_affiliate">
+                  <v-col cols="12" class="py-0">
+                    <v-tabs dark active-class="secondary">
+                      <v-tab>Información de Préstamos</v-tab>
+                        <v-tab-item>
+                          <DataLoanInformation
+                            :loans.sync="loans"
+                            :exist_affiliate.sync="exist_affiliate"
+                            :ver.sync="ver"/>
+                        </v-tab-item>
+                      <v-tab>CALCULADORA</v-tab>
+                        <v-tab-item >
+                          <DataLoanAffiliate
+                            :loans1.sync="loans1"
+                            :largo_plazo.sync="largo_plazo"
+                            :corto_plazo.sync="corto_plazo"
+                            :anticipo.sync="anticipo"
+                            :ver.sync="ver"
+                            :evaluacion.sync="evaluacion"/>
+                      </v-tab-item>
+                    </v-tabs>
+                  </v-col>
+                </v-row>
+              </v-container>
+            </v-col>
           </v-row>
-          <template>
-            <template v-if="ver && exist_affiliate && loans.loans.length > 0">
-              <h3 class="pa-1 text-center">PRESTAMOS SOLICITADOS</h3>
-              <v-row>
-                <v-col cols="12" md="12" class="py-0">
-                  <v-card>
-                    <v-data-table
-                      class="text-uppercase"
-                      dense
-                      :headers="headers_loans"
-                      :items="loans.loans"
-                      :items-per-page="4"
-                      hide-default-footer
-                    >
-                      <template v-slot:[`item.shortened`]="{ item }">
-                        <v-tooltip top>
-                          <template v-slot:activator="{ on }">
-                            <span v-on="on">{{ item.shortened }}</span>
-                          </template>
-                          <span> {{ item.modality }}</span>
-                        </v-tooltip>
-                      </template>
-
-                      <template v-slot:[`item.request_date`]="{ item }">
-                        {{ item.request_date | date }}
-                      </template>
-                      <template v-slot:[`item.disbursement_date`]="{ item }">
-                        {{ item.disbursement_date | date }}
-                      </template>
-                      <template v-slot:[`item.amount`]="{ item }">
-                        {{ item.amount | moneyString }}
-                      </template>
-                      <template v-slot:[`item.estimated_quota`]="{ item }">
-                        {{ item.estimated_quota | moneyString }}
-                      </template>
-                      <template v-slot:[`item.balance`]="{ item }">
-                        {{ item.balance | moneyString }}
-                      </template>
-
-                      <template v-slot:[`item.actions`]="{ item }">
-                        <v-tooltip top>
-                          <template v-slot:activator="{ on }">
-                            <v-btn
-                              v-if="item.origin == 'PVT'"
-                              icon
-                              small
-                              v-on="on"
-                              color="warning"
-                              :to="{
-                                name: 'flowAdd',
-                                params: { id: item.id },
-                              }"
-                              target="_blank"
-                              ><v-icon>mdi-eye</v-icon>
-                            </v-btn>
-                            <v-btn
-                              v-else
-                              icon
-                              small
-                              v-on="on"
-                              color="warning"
-                              @click.stop="routeSismu(item.id)"
-                              ><v-icon>mdi-eye</v-icon>
-                            </v-btn>
-                          </template>
-                          <span>Ver información</span>
-                        </v-tooltip>
-                      </template>
-                    </v-data-table>
-                  </v-card>
-                </v-col>
-              </v-row>
-            </template>
-            <template
-              v-if="ver && exist_affiliate && loans.guarantees.length > 0"
-            >
-              <h3 class="pa-1 text-center">PRESTAMOS GARANTIZADOS</h3>
-              <v-row>
-                <v-col cols="12" md="12" class="py-0">
-                  <v-card>
-                    <v-data-table
-                      class="text-uppercase"
-                      dense
-                      :headers="headers_loans"
-                      :items="loans.guarantees"
-                      :items-per-page="4"
-                      hide-default-footer
-                    >
-                      <template v-slot:[`item.shortened`]="{ item }">
-                        <v-tooltip top>
-                          <template v-slot:activator="{ on }">
-                            <span v-on="on">{{ item.shortened }}</span>
-                          </template>
-                          <span> {{ item.modality }}</span>
-                        </v-tooltip>
-                      </template>
-
-                      <template v-slot:[`item.request_date`]="{ item }">
-                        {{ item.request_date | date }}
-                      </template>
-                      <template v-slot:[`item.disbursement_date`]="{ item }">
-                        {{ item.disbursement_date | date }}
-                      </template>
-                      <template v-slot:[`item.amount`]="{ item }">
-                        {{ item.amount | moneyString }}
-                      </template>
-                      <template v-slot:[`item.estimated_quota`]="{ item }">
-                        {{ item.estimated_quota | moneyString }}
-                      </template>
-                      <template v-slot:[`item.balance`]="{ item }">
-                        {{ item.balance | moneyString }}
-                      </template>
-
-                      <template v-slot:[`item.actions`]="{ item }">
-                        <v-tooltip top>
-                          <template v-slot:activator="{ on }">
-                            <v-btn
-                              v-if="item.origin == 'PVT'"
-                              icon
-                              small
-                              v-on="on"
-                              color="warning"
-                              :to="{
-                                name: 'flowAdd',
-                                params: { id: item.id },
-                              }"
-                              ><v-icon>mdi-eye</v-icon>
-                            </v-btn>
-                            <v-btn
-                              v-else
-                              icon
-                              small
-                              v-on="on"
-                              color="warning"
-                              @click.stop="routeSismu(item.id)"
-                              ><v-icon>mdi-eye</v-icon>
-                            </v-btn>
-                          </template>
-                          <span>Ver información</span>
-                        </v-tooltip>
-                      </template>
-                    </v-data-table>
-                  </v-card>
-                </v-col>
-              </v-row>
-            </template>
-
-            <template v-if="ver && loans.observables.length > 0">
-              <h3 class="pa-1 text-center">PRÉSTAMOS COINCIDENTES</h3>
-              <v-row>
-                <v-col cols="12" md="12" class="py-0">
-                  <v-card>
-                    <v-data-table
-                      class="text-uppercase"
-                      dense
-                      :headers="headers_observables"
-                      :items="loans.observables"
-                      :items-per-page="10"
-                    >
-                      <template v-slot:[`item.PrdDsc`]="{ item }">
-                        <v-tooltip top>
-                          <template v-slot:activator="{ on }">
-                            <span v-on="on">{{ item.PrdDsc }}</span>
-                          </template>
-                          <span> {{ item.PrdDsc }}</span>
-                        </v-tooltip>
-                      </template>
-
-                      <template v-slot:[`item.request_date`]="{ item }">
-                        {{ item.request_date | date }}
-                      </template>
-                      <template v-slot:[`item.disbursement_date`]="{ item }">
-                        {{ item.disbursement_date | date }}
-                      </template>
-                      <template v-slot:[`item.PresMntDesembolso`]="{ item }">
-                        {{ item.PresMntDesembolso | moneyString }}
-                      </template>
-                      <template v-slot:[`item.PresCuotaMensual`]="{ item }">
-                        {{ item.PresCuotaMensual | moneyString }}
-                      </template>
-                      <template v-slot:[`item.PresSaldoAct`]="{ item }">
-                        {{ item.PresSaldoAct | moneyString }}
-                      </template>
-
-                      <template v-slot:[`item.actions`]="{ item }">
-                        <v-tooltip top>
-                          <template v-slot:activator="{ on }">
-                            <v-btn
-                              v-if="item.origin == 'PVT'"
-                              icon
-                              small
-                              v-on="on"
-                              color="warning"
-                              :to="{
-                                name: 'flowAdd',
-                                params: { id: item.id },
-                              }"
-                              ><v-icon>mdi-eye</v-icon>
-                            </v-btn>
-                            <v-btn
-                              v-else
-                              icon
-                              small
-                              v-on="on"
-                              color="warning"
-                              @click.stop="routeSismu(item.IdPrestamo)"
-                              ><v-icon>mdi-eye</v-icon>
-                            </v-btn>
-                          </template>
-                          <span>Ver información</span>
-                        </v-tooltip>
-                      </template>
-                    </v-data-table>
-                  </v-card>
-                </v-col>
-              </v-row>
-            </template>
-          </template>
-        </v-card>
-      </v-container>
+        <!--/v-card-->
+      </v-form>
+    </ValidationObserver>
+  </v-container>
     </v-card-text>
   </v-card>
 </template>
-
 <script>
-export default {
-  name: "dashboard-index",
-  data: () => ({
-    headers_loans: [
-      {
-        text: "Código",
-        class: ["normal", "white--text"],
-        align: "left",
-        value: "code",
-        width: "15%",
-      },
-      {
-        text: "Modalidad",
-        class: ["normal", "white--text"],
-        align: "left",
-        value: "shortened",
-        width: "5%",
-      },
-      {
-        text: "Fecha Solicitud",
-        class: ["normal", "white--text"],
-        align: "left",
-        value: "request_date",
-        width: "10%",
-      },
-      {
-        text: "Fecha Desembolso",
-        class: ["normal", "white--text"],
-        align: "left",
-        value: "disbursement_date",
-        width: "10%",
-      },
-      {
-        text: "Monto solicitado",
-        class: ["normal", "white--text"],
-        align: "left",
-        value: "amount",
-        width: "10%",
-      },
+import DataLoanInformation from '@/components/dashboard/DataLoanInformation'
+import DataLoanAffiliate from '@/components/dashboard/DataLoanAffiliate'
 
-      {
-        text: "Plazo",
-        class: ["normal", "white--text"],
-        align: "left",
-        value: "loan_term",
-        width: "10%",
-      },
-      {
-        text: "Cuota",
-        class: ["normal", "white--text"],
-        align: "left",
-        value: "estimated_quota",
-        width: "10%",
-      },
-      {
-        text: "Saldo",
-        class: ["normal", "white--text"],
-        align: "left",
-        value: "balance",
-        width: "10%",
-      },
-      {
-        text: "Tipo Trámite",
-        class: ["normal", "white--text"],
-        align: "left",
-        value: "origin",
-        width: "10%",
-      },
-      {
-        text: "Estado",
-        class: ["normal", "white--text"],
-        align: "left",
-        value: "state",
-        width: "15%",
-      },
-      {
-        text: "Acciones",
-        value: "actions",
-        class: ["normal", "white--text"],
-        align: "center",
-        sortable: false,
-        width: "5%",
-      },
+export default {
+  name: "index",
+  components: {
+    DataLoanInformation,
+    DataLoanAffiliate
+  },
+
+   data: () => ({
+     civil_statuses: [
+      { name: "Soltero", value: "S" },
+      { name: "Casado", value: "C" },
+      { name: "Viudo", value: "V" },
+      { name: "Divorciado", value: "D" }
     ],
-    headers_observables: [
-      {
-        text: "CI",
-        class: ["normal", "white--text"],
-        align: "left",
-        value: "PadCedulaIdentidad",
-        width: "15%",
-      },
-      {
-        text: "Código",
-        class: ["normal", "white--text"],
-        align: "left",
-        value: "PresNumero",
-        width: "15%",
-      },
-      {
-        text: "Modalidad",
-        class: ["normal", "white--text"],
-        align: "left",
-        value: "PrdDsc",
-        width: "20%",
-      },
-      {
-        text: "Monto solicitado",
-        class: ["normal", "white--text"],
-        align: "left",
-        value: "PresMntDesembolso",
-        width: "10%",
-      },
-      {
-        text: "Plazo",
-        class: ["normal", "white--text"],
-        align: "left",
-        value: "PresMeses",
-        width: "10%",
-      },
-      {
-        text: "Cuota",
-        class: ["normal", "white--text"],
-        align: "left",
-        value: "PresCuotaMensual",
-        width: "10%",
-      },
-      {
-        text: "Saldo",
-        class: ["normal", "white--text"],
-        align: "left",
-        value: "PresSaldoAct",
-        width: "10%",
-      },
-      {
-        text: "Estado",
-        class: ["normal", "white--text"],
-        align: "left",
-        value: "PresEstDsc",
-        width: "15%",
-      },
-      {
-        text: "Acciones",
-        value: "actions",
-        class: ["normal", "white--text"],
-        align: "center",
-        sortable: false,
-        width: "10%",
-      },
+    items_measurement: [
+      { name: "Metros cuadrados", value: "METROS CUADRADOS" },
+      { name: "Hectáreas", value: "HECTÁREAS" }
     ],
-    loans: {},
-    affiliate_ci: null,
-    affiliate: {},
-    exist_affiliate: false,
-    ver: false,
-    loading: false,
-    degree_name: null,
+    genders: [
+      {
+        name: "Femenino",
+        value: "F"
+      },
+      {
+        name: "Masculino",
+        value: "M"
+      }
+    ],
+
+loans:{},
+affiliate_ci:null,
+loading:false,
+ver:false,
+affiliate: {},
+  degree_name: null,
     category_name: null,
     unit_name: null,
     state_name_status: null,
+     exist_affiliate: false,
+
+loans1:{
+   message:{
+        accomplished:null
+      },
+      state_affiliate:{
+        name:null,
+}},
+       largo_plazo:{},
+    corto_plazo:{},
+    anticipo:{},
+    evaluacion:false,
+
+
+
+      dialog: false,
+      dialog1: false,
+      editedIndex: -1,
+      editedItem: {},
+      defaultItem: {},
+      editedItem1: {},
+      defaultItem1: {},
+      headers: [
+        {
+          text: 'PRIMER NOMBRE',
+          align: 'start',
+          sortable: false,
+          value: 'first_name',
+        },
+        { text: 'SEGUNDO NOMBRE',  value: 'second_name' },
+        { text: 'PRIMER APELLIDO ', value: 'last_name' },
+        { text: 'SEGUNDO APELLIDO ', value: 'mothers_last_name' },
+        { text: 'TELEFONO', value: 'phone_number' },
+        { text: 'CELULAR', value: 'cell_phone_number' },
+        { text: 'DIRECCION ', value: 'address' },
+        {
+      text: "Actions",
+      value: "actions",
+      sortable: false
+    }
+      ],
+
+    editable1: false,
+    editable: false,
+    reload: false,
+    payment_types:[],
+    city: [],
+    entity: [],
+    entities:null,
   }),
+
   watch: {
     affiliate_ci() {
       this.ver = false;
     },
   },
-  methods: {
-    async getLoansHistory() {
+ 
+  methods:{
+
+   async getLoansHistory() {
       try {
+        this.getCalculator();
         this.loading = true;
         let message = [];
         let res = await axios.get(`affiliate_record`, {
@@ -563,11 +336,50 @@ export default {
         this.loading = false;
       }
     },
-    routeSismu(id) {
-      window.open(
-        "http://sismu.muserpol.gob.bo/musepol/akardex.aspx?" + id,
-        "_blank"
-      );
+    async getCalculator() {
+      try {
+        this.loading = false;
+         this.ver= true
+          let res = await axios.post(`search_loan`, {
+            identity_card : this.affiliate_ci });
+            this.loans1=res.data
+            this.cont=this.loans1.modalities.length
+            for (let i = 0; i < this.loans1.modalities.length; i++)
+             {
+               if(this.loans1.modalities[i].name_procedure_modality == 'Préstamo Anticipo')
+               {
+                  this.anticipo.name=this.loans1.modalities[i].name_procedure_modality
+                  this.anticipo.amount_max=this.loans1.modalities[i].amount_max
+                  this.anticipo.maximum_term=this.loans1.modalities[i].modality_affiliate.procedure_type.interval.maximum_term
+                  this.anticipo.liquid_calification=this.loans1.modalities[i].liquid_calification
+                  this.anticipo.annual_interest=this.loans1.modalities[i].interest.annual_interest
+               }
+               if(this.loans1.modalities[i].name_procedure_modality == 'Préstamo a corto plazo')
+               {
+                  this.corto_plazo.name=this.loans1.modalities[i].name_procedure_modality
+                  this.corto_plazo.amount_max=this.loans1.modalities[i].amount_max
+                  this.corto_plazo.maximum_term=this.loans1.modalities[i].modality_affiliate.procedure_type.interval.maximum_term
+                  this.corto_plazo.liquid_calification=this.loans1.modalities[i].liquid_calification
+                  this.corto_plazo.annual_interest=this.loans1.modalities[i].interest.annual_interest
+               }
+               if(this.loans1.modalities[i].name_procedure_modality == 'Préstamo a largo plazo')
+               {
+                  this.largo_plazo.name=this.loans1.modalities[i].name_procedure_modality
+                  this.largo_plazo.amount_max=this.loans1.modalities[i].amount_max
+                  this.largo_plazo.maximum_term=this.loans1.modalities[i].modality_affiliate.procedure_type.interval.maximum_term
+                  this.largo_plazo.liquid_calification=this.loans1.modalities[i].liquid_calification
+                  this.largo_plazo.annual_interest=this.loans1.modalities[i].interest.annual_interest
+               }
+
+             }
+            
+            this.evaluacion=res.data.evaluate
+              this.$forceUpdate()
+      } catch (e) {
+        console.log(e);
+      } finally {
+        this.loading = false;
+      }
     },
     async getAffiliate(id) {
       try {
@@ -584,7 +396,7 @@ export default {
         this.loading = false;
       }
     },
-    async getDegree_name(id) {
+      async getDegree_name(id) {
       try {
         this.loading = true;
         let res = await axios.get(`degree/${id}`);
@@ -630,14 +442,8 @@ export default {
         this.loading = false;
       }
     },
-    itemRowBackground: function (item) {
-      return item.state === false ? "style-1" : "style-2";
-    },
-  },
-};
-</script>
-<style>
-.style-1 {
-  background-color: rgb(82, 87, 43);
+
+
+  }
 }
-</style>
+</script>

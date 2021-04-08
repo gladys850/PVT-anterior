@@ -6,7 +6,7 @@
           <v-stepper-step
             :key="`${1}-step`"
             :complete="e1 > 1"
-            :step="1">Modalidad {{loan_payment}}
+            :step="1">Modalidad
           </v-stepper-step>
           <v-divider v-if="1 !== steps" :key="1" ></v-divider>
           <v-stepper-step
@@ -79,6 +79,12 @@ import AddPayment from '@/components/payment/AddPayment'
 
 export default {
   name: "payment-steps",
+  props: {
+    loan: {
+      type: Object,
+      required: true
+    }
+  },
   components: {
     AddAmortization,
     AddPayment
@@ -93,8 +99,8 @@ export default {
       }
     },
     data_payment:{
-      payment_date:null,
-      pago_total: null
+      payment_date:new Date().toISOString().substr(0, 10),
+      pago_total: null,
     },
   }),
   computed: {
@@ -129,10 +135,7 @@ export default {
     atras(){
        try {
         this.loading = true
-     //   let res = await axios.get(`loan_payment/${this.$route.query.loan_payment}`)
-     //  this.loan_payment = res.data
-     //   this.$router.push('/workflow/'+this.loan_payment.loan_id)
-       this.$router.push('/loanPayment')
+        this.$router.push('/loanPayment')
       } catch (e) {
         console.log(e)
       } finally {
@@ -153,8 +156,7 @@ export default {
     //Metodo para el creado del voucher
       async savePaymentTreasury() {
       try {
-          console.log('entro a grabar tesoreria')
-               let res1 = await axios.patch(`loan_payment/${this.$route.query.loan_payment}`,{
+            let res1 = await axios.patch(`loan_payment/${this.$route.query.loan_payment}`,{
             validated:true
           })
           let res = await axios.post(`loan_payment/${this.$route.query.loan_payment}/voucher`,{
@@ -170,44 +172,42 @@ export default {
         this.loading = false
       }
     },
+    //Validar Pago
+      async validatePayment() {
+      try {
+            let res1 = await axios.patch(`loan_payment/${this.$route.query.loan_payment}`,{
+            validated:this.data_payment.validated,
+            description:this.data_payment.glosa
+          })
+          this.toastr.success('Se valido correctamente')
+            this.$router.push('/loanPayment')
+      }catch (e) {
+        console.log(e)
+      }finally {
+        this.loading = false
+      }
+    },
     //Metodo para crear el Pago
     async savePayment(){
       try {
-        if(this.data_payment.amortization==1)
-        {
-          let res = await axios.post(`loan/${this.$route.query.loan_id}/payment`,{
+            let res = await axios.post(`loan/${this.$route.query.loan_id}/payment`,{
             estimated_date:this.data_payment.payment_date,
             estimated_quota:this.data_payment.pago_total,
-            liquidate:false,
             voucher:this.data_payment.voucher,
             amortization_type_id:this.data_payment.pago,
             affiliate_id:this.data_payment.affiliate_id_paid_by,
             paid_by:this.data_payment.affiliate_id,
             procedure_modality_id:this.data_payment.procedure_modality_id,
-            user_id: this.$store.getters.id
+            user_id: this.$store.getters.id,
+            state: this.data_payment.refinanciamiento
           })
             printJS({
             printable: res.data.attachment.content,
             type: res.data.attachment.type,
-            base64: true
+            base64: true 
           })
-          this.$router.push('/loanPayment')
+          this.$router.push({ name: 'flowAdd',  params: { id: this.$route.query.loan_id, workTray: 'received'}, query:{ redirectTab: 6 } })
           this.payment = res.data
-        }
-        else{
-            let res = await axios.post(`loan/${this.$route.query.loan_id}/payment`,{
-            estimated_date:this.data_payment.payment_date,
-            estimated_quota:this.data_payment.pago_total,
-            liquidate:true
-          })
-             printJS({
-            printable: res.data.attachment.content,
-            type: res.data.attachment.type,
-            base64: true
-          })
-            this.payment = res.data
-            this.$router.push('/loanPayment')
-           }
       }catch (e) {
         console.log(e)
       }finally {
@@ -221,14 +221,16 @@ export default {
         this.loading = true
         let res = await axios.get(`loan_payment/${id}`)
         this.loan_payment = res.data
-console.log('este es el loan')
-console.log(this.loan_payment)
         this.data_payment.code=this.loan_payment.code
         this.data_payment.payment_date= this.loan_payment.estimated_date
         this.data_payment.pago_total=this.loan_payment.estimated_quota
         this.data_payment.affiliate_id =this.loan_payment.paid_by
         this.data_payment.voucher=this.loan_payment.voucher
         this.data_payment.pago  =this.loan_payment.amortization_type_id
+        this.data_payment.loan_id  =this.loan_payment.loan_id
+        this.data_payment.validated =this.loan_payment.validated
+        this.data_payment.glosa =this.loan_payment.description
+        this.data_payment.amortization=2
 
       } catch (e) {
         console.log(e)
@@ -241,21 +243,14 @@ console.log(this.loan_payment)
       try {
         this.loading = true
         let res = await axios.patch(`loan_payment/${id}`,{
-
-
-
-
         })
         this.loan_payment = res.data
-
-
         this.data_payment.code=this.loan_payment.code
         this.data_payment.payment_date= this.loan_payment.estimated_date
         this.data_payment.pago_total=this.loan_payment.estimated_quota
         this.data_payment.affiliate_id =this.loan_payment.paid_by
         this.data_payment.voucher=this.loan_payment.voucher
         this.data_payment.pago  =this.loan_payment.amortization_type_id
-
       } catch (e) {
         console.log(e)
       } finally {
@@ -263,28 +258,16 @@ console.log(this.loan_payment)
       }
     },*/
     //Metodo calculo de siguiente cuota
-    async Calcular() {
+    async Calcular(id) {
       try {
-       if(this.data_payment.amortization==1)
-        {
-          let res = await axios.patch(`loan/${this.$route.query.loan_id}/payment`,{
-            affiliate_id: this.data_payment.affiliate_id_paid_by,
+          let res = await axios.patch(`loan/${id}/payment`,{
+            affiliate_id:this.data_payment.affiliate_id_paid_by,
             estimated_date:this.data_payment.payment_date,
             estimated_quota:this.data_payment.pago_total,
-            liquidate:false,
+            procedure_modality_id:this.data_payment.procedure_modality_id,
           })
-           this.payment = res.data
-        }
-        else{
-          
-            let res = await axios.patch(`loan/${this.$route.query.loan_id}/payment`,{
-            affiliate_id: this.data_payment.affiliate_id_paid_by,
-            estimated_date:this.data_payment.payment_date,
-            estimated_quota:this.data_payment.pago_total,
-            liquidate:true,
-          })
-           this.payment = res.data
-        }
+            this.payment = res.data
+            this.data_payment.pago_total=this.payment.estimated_quota
       }catch (e) {
         console.log(e)
       }finally {
@@ -301,10 +284,7 @@ console.log(this.loan_payment)
           else{
             if(this.editar)
             {
-              this.toastr.error("entro por editar")
-              //this.savePayment()
-            }else{
-              this.toastr.error("entro por editar")
+              this.toastr.error("No tiene los permisos")
             }
           }
       }catch (e) {
@@ -317,13 +297,74 @@ console.log(this.loan_payment)
       try {
            if(!this.isNew)
           {
-            this.savePaymentTreasury()
-            //this.toastr.error("Paso a tesoreria")
+            if(this.$store.getters.permissions.includes('create-payment'))
+            {
+                this.savePaymentTreasury()
+            }else{
+             if(this.$store.getters.permissions.includes('update-payment-loan'))
+             {
+               this.validatePayment()
+             }
+            }
           }
           else{
-           // this.toastr.error("Esta en cobranzas")
-            this.Calcular()
-            this.nextStep(1)
+            if(this.data_payment.procedure_id)
+            {
+              if(this.data_payment.procedure_modality_id)
+              {
+                if(this.data_payment.affiliate_id)
+                {
+                  if(this.data_payment.pago)
+                  {
+                    if( this.data_payment.procedure_modality_name == 'AD Parcial' || this.data_payment.procedure_modality_name == 'ACE Parcial' || this.data_payment.procedure_modality_name == 'AA Parcial' || this.data_payment.procedure_modality_name == 'AFR Parcial')
+                    {
+                       if(this.data_payment.pago_total)
+                        {
+                          if(this.data_payment.pago_total < this.loan.estimated_quota)
+                            {
+                              this.Calcular(this.$route.query.loan_id)
+                              this.nextStep(1)
+                            }else{
+                              this.toastr.error('Un pago parcial no puede ser mayor a la cuota')
+                            }
+                        }else{
+                          this.toastr.error('Debe introducir el total pagado')
+                        }
+                    }
+                    else{
+                      if(this.data_payment.procedure_modality_name == 'AD Adelantado' || this.data_payment.procedure_modality_name == 'AA Adelantado' || this.data_payment.procedure_modality_name == 'AAJ Adelantado')
+                      {
+                        if(this.data_payment.pago_total)
+                        {
+                          if(this.data_payment.pago_total > this.loan.estimated_quota)
+                          {
+                            this.Calcular(this.$route.query.loan_id)
+                            this.nextStep(1)
+                          }else{
+                            this.toastr.error('Un pago adelantado no puede ser menor a la cuota')
+                          }
+                        }else{
+                          this.toastr.error('Debe introducir el total pagado')
+                        }
+                      }else{
+                          this.Calcular(this.$route.query.loan_id)
+                          this.nextStep(1)
+                      }
+                    }
+                  }
+                  else{
+                    this.toastr.error('Debe seleccionar el tipo de cobro')
+                  }
+                }else{
+                  this.toastr.error('Debe seleccionar quien realiza el pago')
+                }
+              }else{
+                this.toastr.error('Debe seleccionar el tipo de amortizacion')
+              }
+            }
+            else{
+              this.toastr.error('Debe seleccionar el tipo de tramite')
+            }
           }
       }catch (e) {
         console.log(e)

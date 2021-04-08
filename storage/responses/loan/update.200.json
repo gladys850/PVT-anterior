@@ -18,6 +18,7 @@
     "indebtedness_calculated": 52.26,
     "liquid_qualification_calculated": 2000,
     "loan_term": 2,
+    "guarantor_amortizing":false,
     "payment_type_id": 1,
     "personal_reference_id": null,
     "number_payment_type": 586621345,

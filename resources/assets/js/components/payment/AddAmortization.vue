@@ -12,7 +12,7 @@
                     <ValidationObserver ref="observer">
                     <v-form>
                       <center>
-                       <v-toolbar-title>AMORTIZACIONES</v-toolbar-title>
+                       <v-toolbar-title>AMORTIZACIONES </v-toolbar-title>
                       </center>
                       <v-progress-linear></v-progress-linear>
                       <template>
@@ -53,6 +53,7 @@
                             dense
                             class="caption"
                             style="font-size: 10px;"
+                            @change="OnchangeAmortization()"
                             v-model="data_payment.procedure_modality_id"
                             :outlined="!editable"
                             :readonly="editable"
@@ -62,10 +63,10 @@
                             persistent-hint
                           ></v-select>
                         </v-col>
-                        <v-col cols="1" class="ma-0 pb-0" v-show="isNew">
+                        <!--v-col cols="1" class="ma-0 pb-0" v-show="isNew">
                           <label class="caption">Pago:</label>
-                          </v-col>
-                        <v-col cols="2" class="ma-0 pb-0" v-show="isNew">
+                          </!--v-col>
+                        <v-col-- cols="2" class="ma-0 pb-0" v-show="isNew">
                           <v-select
                             dense
                             class="caption"
@@ -78,7 +79,7 @@
                             item-value="id"
                             persistent-hint
                           ></v-select>
-                        </v-col>
+                        </v-col-->
                           <v-col cols="1" class="ma-0 pb-0" >
                           <label class="caption">Pago del :</label>
                         </v-col>
@@ -95,6 +96,7 @@
                             item-text="name"
                             item-value="id"
                             persistent-hint
+                            :disabled="ver"
                           ></v-select>
                         </v-col>
                         <v-col cols="3" class="ma-0 pb-0" v-show="garante_show">
@@ -104,6 +106,7 @@
                                  <br>
                                </li>
                             </ul>
+                              <!--h3 class="red--text" v-show="garantes.guarantors.length == 0"> *El prestamo no tiene garantes</!--h3-->
                         </v-col>
                          <v-col cols="1" class="my-0 pb-0" v-show="garante_show">
                             <ul style="list-style: none" class="pa-0 my-0" >
@@ -111,7 +114,7 @@
                                   <v-radio-group  v-model="radios" class="py-0 my-0">
                               <v-radio
                               color="info"
-                               :click="prueba()"
+                               :click="generateGuarantorCode()"
                               :value="guarantor.id"
                               class="py-0  my-0"
                             ></v-radio>
@@ -126,58 +129,45 @@
                           <v-text-field
                             dense
                             v-model="data_payment.voucher"
-                            :outlined="isNew"
-                            :readonly="!isNew"
+                            :outlined="isNew  || editable"
+                            :disabled="ver"
                           ></v-text-field>
                         </v-col>
                         <v-col cols="2" class="ma-0 pb-0">
-                          <label class="caption"> Fecha de Calculo:</label>
+                          <label > Fecha de Calculo:</label>
                         </v-col>
                         <v-col cols="2">
-                          <v-menu
-                            v-model="dates.paymentDate.show"
-                            :close-on-content-click="false"
-                            transition="scale-transition"
-                            offset-y
-                            max-width="290px"
-                            min-width="290px"
-                            :disabled="editable || ver"
-                          >
-                            <template v-slot:activator="{ on }">
-                              <v-text-field
-                                style="font-size: 15px;"
-                                dense
-                                :outlined="isNew"
-                                :readonly="editable || ver"
-                                v-model="dates.paymentDate.formatted"
-                                hint="Día/Mes/Año"
-                                persistent-hint
-                                append-icon="mdi-calendar"
-                                v-on="on"
-                              ></v-text-field>
-                            </template>
-                            <v-date-picker v-model="data_payment.payment_date" no-title @input="dates.paymentDate.show = false"></v-date-picker>
-                          </v-menu>
+                          <v-text-field
+                            dense
+                            v-model="data_payment.payment_date"
+                            hint="Día/Mes/Año"
+                            class="purple-input"
+                            type="date"
+                            :clearable="editable"
+                            :outlined="isNew"
+                            :readonly="!isNew"
+                            :disabled="ver || editable"
+                          ></v-text-field>
                         </v-col>
-                        <v-col cols="2" class="ma-0 pb-0" v-show="view">
+                        <v-col cols="2" class="ma-0 pb-0" v-show="view" v-if="regular">
                           <label>TOTAL PAGADO:</label>
                         </v-col>
-                        <v-col cols="2" class="ma-0 pb-0" v-show="view">
+                        <v-col cols="2" class="ma-0 pb-0" v-show="view" v-if="regular">
                           <v-text-field
                             dense
                             v-model="data_payment.pago_total"
-                            :outlined="isNew"
-                            :readonly="editable || ver"
+                            :outlined="isNew || $store.getters.permissions.includes('create-payment') "
+                            :readonly="!isNew "
+                            :disabled="ver"
                           ></v-text-field>
                         </v-col>
-                        <v-col cols="1" class="ma-0 pb-0" v-show="!isNew" v-if="!$store.getters.userRoles.includes('PRE-tesoreria-cobros')" >
+                        <v-col cols="2" class="ma-0 pb-0" v-show="!isNew" >
                            <label  >TIPO DE COBRO:</label>
                         </v-col>
-                        <v-col cols="1" v-if="$store.getters.userRoles.includes('PRE-tesoreria-cobros')"></v-col>
-                        <v-col cols="2" class="ma-0 pb-0" v-show="isNew" >
+                        <v-col cols="2" class="ma-0 pb-0" v-show="isNew">
                           <label >TIPO DE COBRO:</label>
                         </v-col>
-                        <v-col cols="2" class="ma-0 pb-0" v-if="!$store.getters.userRoles.includes('PRE-tesoreria-cobros')" >
+                        <v-col cols="2" class="ma-0 pb-0">
                           <v-select
                              class="caption"
                             style="font-size: 10px;"
@@ -189,12 +179,13 @@
                             item-text="name"
                             item-value="id"
                             persistent-hint
+                            :disabled="ver"
                           ></v-select>
                         </v-col>
-                        <v-col cols="2" class="ma-0 pb-0" v-show="editable">
+                        <v-col cols="2" class="ma-0 pb-0" v-show="editable" v-if="$store.getters.permissions.includes('create-payment')">
                           <label >TIPO DE PAGO:</label>
                         </v-col>
-                        <v-col cols="2" class="ma-0 pb-0" v-show="editable">
+                        <v-col cols="2" class="ma-0 pb-0" v-show="editable" v-if="$store.getters.permissions.includes('create-payment')">
                           <v-select
                             class="caption"
                             style="font-size: 10px;"
@@ -208,10 +199,10 @@
                             persistent-hint
                           ></v-select>
                         </v-col>
-                        <v-col cols="2" class="ma-0 pb-0" v-show="editable">
+                        <v-col cols="2" class="ma-0 pb-0" v-show="editable" v-if="$store.getters.permissions.includes('create-payment')">
                           <label  >NRO DE COMPROBANTE:</label>
                         </v-col>
-                        <v-col cols="3" v-show="editable" >
+                        <v-col cols="2" v-show="editable" v-if="$store.getters.permissions.includes('create-payment')" >
                           <v-text-field
                             v-model="data_payment.comprobante"
                             :outlined="editable"
@@ -219,7 +210,7 @@
                             dense
                           ></v-text-field>
                         </v-col>
-                        <v-col cols="7" class="ma-0 pb-0" >
+                        <v-col cols="12" class="ma-0 pb-0" v-show="$store.getters.permissions.includes('create-payment')">
                           <v-text-field
                             v-show="editable" v-if="!ver"
                             v-model="data_payment.glosa"
@@ -229,7 +220,37 @@
                             label="Glosa"
                           ></v-text-field>
                         </v-col>
-                           <v-col cols="1">
+                         <v-col cols="5" class="ma-0 pb-0" v-show="$store.getters.permissions.includes('update-payment-loan')">
+                          <v-text-field
+                            v-show="editable" v-if="!ver"
+                            v-model="data_payment.glosa"
+                            :outlined="editable"
+                            :readonly="!editable"
+                            dense
+                            label="Glosa"
+                          ></v-text-field>
+                        </v-col>
+                         <v-col cols="3" class="ma-0 py-0" v-show="$store.getters.permissions.includes('update-payment-loan')">
+                          <v-checkbox class="ma-0 py-3"
+                            :outlined="editable"
+                            :readonly="!editable"
+                            :disabled="ver "
+                            v-model="data_payment.validated"
+                            label="Validar Pago"
+                          ></v-checkbox>
+                        </v-col>
+                         <v-col cols="8">
+                        </v-col>
+                        <v-col cols="4" class="ma-0 py-0">
+                          <v-checkbox class="ma-0 py-0"
+                            :outlined="isNew"
+                            :readonly="!isNew"
+                            :disabled="ver || editable"
+                            v-model="data_payment.refinanciamiento"
+                            label="Pendiente por Refinanciamiento"
+                          ></v-checkbox>
+                        </v-col>
+                          <v-col cols="8" v-show="$store.getters.permissions.includes('update-payment-loan')">
                         </v-col>
                       </v-row>
                     </template>
@@ -264,6 +285,7 @@ export default {
     loanTypeSelectedTwo:null,
     loanTypeSelectedThree:null,
     tipo_tramite: [],
+    regular:false,
     garantes:{
       lenders:[]
     },
@@ -337,6 +359,26 @@ export default {
     }
   },
   methods: {
+
+      OnchangeAmortization(){
+        this.data_payment.pago_total=null
+         for (let i = 0; i<  this.tipo_de_amortizacion.length; i++) {
+            if(this.data_payment.procedure_modality_id == this.tipo_de_amortizacion[i].id){
+              if(this.tipo_de_amortizacion[i].name == 'AD Regular' || this.tipo_de_amortizacion[i].name == 'AA Regular' )
+              {
+                this.regular=false
+              }else{
+                if(this.tipo_de_amortizacion[i].name == 'AD Total' || this.tipo_de_amortizacion[i].name == 'ACE Total' || this.tipo_de_amortizacion[i].name == 'AFR Total'){
+                  this.regular=false
+                }
+                else{
+                  this.regular=true
+                }
+              }
+              this.data_payment.procedure_modality_name = this.tipo_de_amortizacion[i].name
+            }
+         }
+      },
       OnchangeAffiliate(){
       if(this.data_payment.affiliate_id=="G")
       {
@@ -348,13 +390,12 @@ export default {
         {
           this.data_payment.voucher=null
         }
-       // this.data_payment.voucher=null
          for (let i = 0; i<  this.garantes.lenders.length; i++) {
             this.data_payment.affiliate_id_paid_by=this.garantes.lenders[0].id
          }
-        console.log("garante"+ this.data_payment.affiliate_id_paid_by)}
+        }
     },
-    prueba()
+    generateGuarantorCode()
     {
       if(this.data_payment.affiliate_id=='G')
       {
@@ -413,19 +454,12 @@ export default {
       }
       }
     },
-    OnchangeAmortization(){
-      this.data_payment.procedure_modality_id=this.loanTypeSelectedOne
-    },
     Onchange(){
       if(this.loanTypeSelected!=null)
       {
         this.data_payment.procedure_id=this.loanTypeSelected
         this.getTypeAmortization(this.loanTypeSelected)
-            console.log("verdadero"+this.loanTypeSelected)
-      }
-      else{
-        console.log("falso"+this.loanTypeSelected)
-      }
+       }
     },
     async getTypeProcedure() {
       try {
@@ -507,7 +541,6 @@ export default {
         this.loading = true
         let res = await axios.get(`loan/${id}`)
         this.garantes=res.data
-        console.log('entro al get loan')
       } catch (e) {
         console.log(e)
       } finally {

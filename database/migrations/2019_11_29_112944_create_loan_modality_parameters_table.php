@@ -22,6 +22,8 @@ class CreateLoanModalityParametersTable extends Migration
             $table->unsignedTinyInteger('max_lenders');// maxima cantidad de titulares
             $table->float('min_guarantor_category',3,2)->nullable(); //categoria mínima de garante
             $table->float('max_guarantor_category',3,2)->nullable(); //categoria máxima de garante
+            $table->float('min_lender_category',3,2)->nullable(); //categoria mínima de lender
+            $table->float('max_lender_category',3,2)->nullable(); //categoria máxima de lender
             $table->integer('max_cosigner')->default(0);// maxima cantidad de codeudores
             $table->boolean('personal_reference')->default(false);//cantidad de referencia de personas
         });

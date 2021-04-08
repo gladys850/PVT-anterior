@@ -330,9 +330,17 @@
                   <template v-slot:item="props">
                   <tr >
                     <td>{{ cities.find(o => o.id == props.item.city_address_id).name }}</td>
-                      <td>{{ props.item.zone }}</td>
+                      <td>{{ props.item.description }}</td>
                       <!--<td>{{ props.item.street }}</td>
                       <td>{{ props.item.number_address }}</td>-->
+                      <td>
+                        <v-radio-group :value="id_street" @change="(v) => {$emit('update:id_street', v)}">
+                          <v-radio
+                            :value="props.item.id"
+                            :disabled="!editable || !permission.secondary"
+                          ></v-radio>
+                        </v-radio-group>
+                      </td>
                       <td v-show="editable && permission.secondary">
                         <v-btn text icon color="warning" @click.stop="bus.$emit('openDialog', {...props.item, ...{edit: true}})">
                           <v-icon>mdi-pencil</v-icon>
@@ -433,6 +441,11 @@ export default {
     permission: {
       type: Object,
       required: true
+    },
+    id_street:{
+      type: Number,
+      required: true,
+      default:0
     }
   },
   components: {
@@ -462,8 +475,8 @@ export default {
       ],
       headers: [
             { text: 'Ciudad', align: 'left', value: 'city_address_id' },
-            { text: 'Zona', align: 'left', value: 'zone' },
-            //{ text: 'Calle', align: 'left', value: 'street' },
+            { text: 'Zona', align: 'left', value: 'description' },
+            { text: 'Activo', align: 'left', value: '' },
             //{ text: 'Nro', align: 'left', value: 'number_address' },
             { text: 'Acciones', align: 'center' }
           ],

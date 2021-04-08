@@ -63,6 +63,21 @@
           <span>Ver registro de cobro</span>
         </v-tooltip>
 
+        <v-tooltip bottom v-if="$store.getters.permissions.includes('update-payment-loan')">
+          <template v-slot:activator="{ on }">
+            <v-btn
+              icon
+              small
+              v-on="on"
+              color="success"
+              :to="{ name: 'paymentAdd',  params: { hash: 'edit'},  query: { loan_payment: item.id}}"
+            >
+              <v-icon>mdi-file-document-edit-outline</v-icon>
+            </v-btn>
+          </template>
+          <span>Editar pago</span>
+        </v-tooltip>
+
         <v-tooltip bottom v-if="$store.getters.permissions.includes('create-payment')">
           <template v-slot:activator="{ on }">
             <v-btn
@@ -85,7 +100,7 @@
               small
               v-on="on"
               color="error"
-            
+              v-if="item.state_id==5"
               @click.stop="bus.$emit('openRemoveDialog', `loan_payment/${item.id}`)"
             >
               <v-icon>mdi-file-cancel-outline</v-icon>
@@ -157,6 +172,11 @@ export default {
     procedureModalities: {
       type: Array,
       required: true
+    },
+    procedureTypeSelected:{
+      type:Number,
+      required: true,
+      default: 0
     }
   },
   data: () => ({
@@ -236,6 +256,10 @@ export default {
         printDocs: []
   }),
   watch: {
+    procedureTypeSelected(newVal, oldVal) {
+      if(newVal != oldVal)
+        this.selectedLoans = []
+    },
     selectedLoans(val) {
       this.bus.$emit('selectLoans', this.selectedLoans)
       if (val.length) {

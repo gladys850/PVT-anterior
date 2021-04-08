@@ -202,6 +202,13 @@ class LoanStructureSeeder extends Seeder
               ],
               'interest' => ['annual_interest' => 20,'penal_interest' => 6]
             ],
+            ]
+          ],
+          'refinanciamiento corto' => [
+            // REFINANCIMIENTO CORTO PLAZO
+            'type' => ['module_id' => $module->id,'name'=>'Refinanciamiento Préstamo a corto plazo','second_name'=>'R. Corto plazo'],
+            'limits' => ['maximum_amount' => 25000,'minimum_amount' => 2001,'maximum_term' => 30,'minimum_term' => 3],
+            'modalities' => [
               // REFINANCIAMIENTO ACTIVO
               ['name'=>'Refinanciamiento de Préstamo a corto plazo para el sector Activo','shortened'=>'PCP-R-SA','requirements'=>[
                 ['name' => 'Cédula de Identidad  del(la) Titular (Original y Fotocopia).','number'=>1],
@@ -458,6 +465,12 @@ class LoanStructureSeeder extends Seeder
               ],
               'interest' => ['annual_interest' => 13.2,'penal_interest' => 6]
             ],
+            ]
+          ],
+          'refinanciamiento largo' => [
+            'type' => ['module_id' => $module->id,'name'=>'Refinanciamiento Préstamo a largo plazo','second_name'=>'R. Largo plazo'],
+            'limits' => ['maximum_amount' => 150000,'minimum_amount' => 2001,'maximum_term' => 96,'minimum_term' => 25],
+            'modalities' => [
               // REFINANCIANCIAMIENTO SECTOR ACTIVO CON UN SOLO GARANTE ---> En este caso el garante solo puede ser activo
               ['name'=>'Refinanciamiento de Préstamo a largo Plazo para el sector activo - CPOP','shortened'=>'PLP-R-SA-CPOP','requirements'=>[
                 ['name' => 'Cédula de Identidad  del(la) Titular (Original y Fotocopia).','number'=>1],
@@ -666,6 +679,7 @@ class LoanStructureSeeder extends Seeder
             'parameters' => [
             'debt_index' => 80,
             'quantity_ballots' => 3,
+            'min_lender_category'=> 0.35,
             'guarantors' => 0,
             'personal_reference' => true,
             'max_lenders' => 2,
@@ -703,6 +717,7 @@ class LoanStructureSeeder extends Seeder
             'parameters' => [
               'debt_index' => 80,
               'quantity_ballots' => 3,
+              'min_lender_category'=> 0.35,
               'guarantors' => 0,
               'personal_reference' => true,
               'max_lenders' => 2,
@@ -710,6 +725,12 @@ class LoanStructureSeeder extends Seeder
             ],
             'interest' => ['annual_interest' => 9,'penal_interest' => 6]
             ],
+           ]
+          ],
+          'refinanciamiento hipotecario' => [
+            'type' => ['module_id' => $module->id,'name'=>'Refinanciamiento Préstamo hipotecario','second_name'=>'R. Hipotecario'],
+            'limits' => ['maximum_amount' => 700000,'minimum_amount' => 25001,'maximum_term' => 240,'minimum_term' => 25],
+            'modalities' => [
               //REFINANCIAMIENTO DE PRÉSTAMOS A LARGO PLAZO GARANTÍA HIPOTECARIA PARA EL SECTOR ACTIVO //Eliminar en caso de que no proceda
               ['name'=>'Refinanciamiento de Préstamo con garantía hipotecaria de bien inmueble para el sector activo','shortened'=>'PLP-R-GH-SA','requirements'=>[
               ['name' => 'Cedula de Identidad  del(la) Titular (Original y Fotocopia).','number'=>1],
@@ -755,6 +776,7 @@ class LoanStructureSeeder extends Seeder
             'parameters' => [
             'debt_index' => 80,
             'quantity_ballots' => 3,
+            'min_lender_category'=> 0.35,
             'guarantors' => 0,
             'personal_reference' => true,
             'max_lenders' => 2,
@@ -791,6 +813,7 @@ class LoanStructureSeeder extends Seeder
           'parameters' => [
             'debt_index' => 80,
             'quantity_ballots' => 3,
+            'min_lender_category'=> 0.35,
             'guarantors' => 0,
             'personal_reference' => true,
             'max_lenders' => 2,

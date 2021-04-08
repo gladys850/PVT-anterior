@@ -1,10 +1,10 @@
 <template>
   <v-flex xs12 class="px-3">
-      <v-form>
-        <v-row justify="center">
-          <v-col cols="12"  >
-            <v-card>
-              <ValidationObserver ref="observer" >
+    <v-form>
+      <v-row justify="center">
+        <v-col cols="12">
+          <v-card>
+            <ValidationObserver ref="observer" >
               <v-container fluid >
                 <v-row justify="center" class="py-0 my-0">
                   <v-col cols="12" class="py-0 -my-0" >
@@ -14,10 +14,10 @@
                           MODALIDAD DEL PRÉSTAMO <!--{{loanTypeSelected.id}}-->
                         </v-col>
                         <v-col cols="12" :md="window_size" class="py-0 my-0 text-center">
-                          INTERVALO DE LOS MONTOS
+                          INTERVALO DE LOS MONTOS 
                         </v-col>
                         <v-col cols="12" :md="window_size" class="py-0 my-0 text-center">
-                          INTERVALO DEL PLAZO EN MESES 
+                          INTERVALO DEL PLAZO EN MESES
                         </v-col>
                         <v-col cols="12" :md="window_size" class="py-0 my-0 text-center" v-if="see_field">
                           VALOR NETO REALIZADO (VNR)
@@ -29,7 +29,7 @@
                             v-model="loanTypeSelected.id"
                             @change="Onchange()"
                             :items="modalities"
-                            item-text="name"
+                            item-text="second_name"
                             item-value="id"
                             required
                             :disabled="edit_refi_repro"
@@ -59,14 +59,7 @@
                 </v-row>
               </v-container>
               <v-container cols="12" md="12" class="py-0 my-0">
-                <v-row class="py-0 my-0">
-                  <!--<v-col cols="12" md="12" style="margin-top: -20px">
-                    <v-checkbox
-                      v-model="enabled"
-                      hide-details
-                      label="Habilitar Edicion"
-                    ></v-checkbox>
-                  </v-col>  -->                
+                <v-row class="py-0 my-0">              
                   <v-col cols="12" md="2" class="py-0 my-0">
                     <v-text-field
                       dense
@@ -82,9 +75,7 @@
                   </v-col>           
                 </v-row>
                 <!--boleta 1--->
-
-                <v-row v-for="(contrib,i) in contribution" :key="i" class="py-0 my-0">
-               
+                <v-row v-for="(contrib,i) in contribution" :key="i" class="py-0 my-0">               
                   <v-col cols="12" md="7" class="py-0 my-0">
                     <v-row>
                       <v-col cols="12" md="12" class="py-0 my-0 pb-1 uppercase"> BOLETAS DE PAGO <b>{{contribution[i].month}}</b></v-col>
@@ -92,7 +83,7 @@
                         <ValidationProvider
                           v-slot="{ errors }"
                           name="Boleta de pago"
-                          :rules="'required|min_value:' + livelihood_amount"
+                          :rules="'required|min_value:' + global_parameters.livelihood_amount"
                           mode="aggressive"
                         >
                           <b style="text-align: center"></b>
@@ -106,27 +97,6 @@
                           ></v-text-field>
                         </ValidationProvider>
                       </v-col>
-                      <!--<v-col cols="12" md="1" class="py-0">
-                        <span>
-                          <v-tooltip top>
-                            <template v-slot:activator="{ on }">
-                              <v-btn
-                                icon
-                                dark
-                                small
-                                color="success"
-                                bottom
-                                right
-                                v-on="on"
-                                @click="saveAdjustment(i)"
-                              >
-                                <v-icon>mdi-calculator</v-icon>
-                              </v-btn>
-                            </template>
-                            <span>Ajuste</span>
-                          </v-tooltip>
-                        </span>                        
-                      </v-col>-->
                       <v-col cols="12" class="py-0 my-0"  :md="lender_contribution.state_affiliate == 'Comisión' ? 4 : 2">
                         <ValidationProvider
                           v-slot="{ errors }"
@@ -140,7 +110,8 @@
                             dense
                             v-model="contribution[i].adjustment_amount"
                             :label= "lender_contribution.state_affiliate == 'Comisión' ? 'Liquido pagable' :  'Monto ajuste'"
-                            outlined
+                            :outlined = "!(contribution[i].payable_liquid == 0 && lender_contribution.state_affiliate != 'Comisión')? true : false"
+                            :disabled = "!(contribution[i].payable_liquid == 0 && lender_contribution.state_affiliate != 'Comisión')? false : true"
                           ></v-text-field>
                         </ValidationProvider>
                       </v-col>
@@ -161,7 +132,8 @@
                               dense
                               v-model="contribution[i].adjustment_description"
                               label="Descripción ajuste"
-                              outlined
+                            :outlined = "!(contribution[i].payable_liquid == 0 && lender_contribution.state_affiliate != 'Comisión')? true : false"
+                            :disabled = "!(contribution[i].payable_liquid == 0 && lender_contribution.state_affiliate != 'Comisión')? false : true"
                               rows="1"                              
                             ></v-textarea>
                           </ValidationProvider>
@@ -261,13 +233,11 @@
                         </ValidationProvider>
                       </v-col>
                     </v-row>
-                  </v-col>
-        
+                  </v-col>        
                 </v-row>
-
-                <template v-if="type_sismu">
-                  <v-col cols="12" class="py-0 my-0"> DATOS SISMU </v-col>
-                  <v-col cols="12" md="3" class="py0 my-0">
+                <template >
+                  <v-col cols="12" class="py-0 my-0" v-if="type_sismu"> DATOS SISMU </v-col>
+                  <v-col cols="12" md="3" class="py0 my-0" v-if="type_sismu">
                     <ValidationProvider
                       v-slot="{ errors }"
                       name="cuota"
@@ -288,8 +258,8 @@
                     md="3"
                     class="py-0 my-0"
                     v-if="
-                      this.loanTypeSelected.id == 11 ||
-                      this.loanTypeSelected.id == 12
+                      modalitySelected.name == 'Refinanciamiento Préstamo hipotecario' ||
+                      modalitySelected.name == 'Refinanciamiento Préstamo a largo plazo'
                     "
                   >
                     <v-checkbox
@@ -297,27 +267,39 @@
                       label="Afiliado CPOP"
                     ></v-checkbox>
                   </v-col>
+                  <v-col
+                    cols="12"
+                    md="3"
+                    class="py-0 my-0"
+                    v-if="
+                      modalitySelected.name == 'Préstamo a largo plazo' ||
+                      modalitySelected.name == 'Préstamo hipotecario'
+                    "
+                  >
+                    <v-checkbox
+                      v-model="affiliate_data.cpop_affiliate"
+                      label="Afiliado CPOP"
+                    ></v-checkbox>
+                  </v-col>
                 </template>
               </v-container>
-              <!--<Adjustment :bus="bus"/>-->
               <BallotsHipotecary
                 v-show="hipotecario"
                 :contrib_codebtor="contrib_codebtor"
                 :modalidad.sync="modalidad"
                 :affiliate.sync="affiliate"
                 :data_loan.sync="data_loan"
-                :livelihood_amount="livelihood_amount"/>
+                :global_parameters="global_parameters"/>
              </ValidationObserver>
-            </v-card>
-          </v-col>
-        </v-row>
-       
-      </v-form>
+          </v-card>
+        </v-col>
+      </v-row>       
+    </v-form>
   </v-flex>
 </template>
 <script>
 import BallotsHipotecary from '@/components/loan/BallotsHipotecary'
-//import Adjustment from "@/components/loan/Adjustment"
+
 export default {
   name: "ballots",
   data: () => ({
@@ -335,48 +317,21 @@ export default {
     loan_modality: {},
     data_ballots: [],
     contribution: [],
-     /*contribution: [{},{},{}
-     {
-        payable_liquid: null,
-        adjustment: null,
-        position_bonus: null,
-        border_bonus: 0,
-        public_security_bonus: null,
-        east_bonus: null,
-        dignity_rent: null,
-        period: null
-      }, {
-        payable_liquid: null,
-        adjustment: null,
-        position_bonus: null,
-        border_bonus: 0,
-        public_security_bonus: null,
-        east_bonus: null,
-        dignity_rent: null,
-        period: null
-      },{
-        payable_liquid: null,
-        adjustment: null,
-        position_bonus: null,
-        border_bonus: 0,
-        public_security_bonus: null,
-        east_bonus: null,
-        dignity_rent: null,
-        period: null
-      }],
-    affiliate_contribution: [],
-    contribution_passive: {},*/
     choose_diff_month: false,
     number_diff_month: 1,
-    lender_contribution: {}
-
+    lender_contribution: {},
+    modality_loan: []
   }),
    props: {
     modalidad: {
       type: Object,
       required: true
     },
-    bonos: {
+    affiliate_data: {
+      type: Object,
+      required: true
+    },
+    /*bonos: {
       type: Array,
       required: true
     },
@@ -387,7 +342,7 @@ export default {
     payable_liquid: {
       type: Array,
       required: true
-    },
+    },*/
     modalities: {
       type: Array,
       required: true
@@ -424,26 +379,22 @@ export default {
       type: Object,
       required: true
     },
-    livelihood_amount:{
-      type: Number,
-      required:true,
-      default:0
+    global_parameters:{
+      type: Object,
+      required:true
     },
     affiliate_contribution:{
       type: Object,
       required: true
     },
-    contribution_passive:{
-      type: Object,
-      required: true
-    }
+    
   },
-    components: {
+  components: {
     BallotsHipotecary,
-    //Adjustment
   },
   mounted() {
     this.getLoanIntervals()
+    this.getModalityLoan()
   },
   watch: {
     'loanTypeSelected.id': function(newVal, oldVal){
@@ -478,10 +429,14 @@ export default {
         return true
       }
       return false
+    },
+    //Realiza una validación para verificar si existe o no el objeto, en caso de no existir manda un objeto vacio sin generar erroes
+    modalitySelected() {
+      let modality = (this.modality_loan.find(item => item.id == this.loanTypeSelected.id))
+      return modality || {} 
     }
   },
-  methods:
- {
+  methods: {
     //Intervalos de Plazo y Meses de una modalidad
     async getLoanIntervals() {
       try {
@@ -495,13 +450,23 @@ export default {
         console.log(e)
       }
     },
+    async getModalityLoan() {
+      try {
+        let res = await axios.get(`module/6/modality_loan`)
+        this.modality_loan = res.data
+        console.log(this.modality_loan)
+       }catch (e) {
+        console.log(e)
+      }
+    },
    //muestra los intervalos de acuerdo a una modalidad
     async Onchange(){
       this.choose_diff_month = false
       this.number_diff_month = 1
       for (let i = 0; i< this.interval.length; i++) {
         if(this.loanTypeSelected.id==this.interval[i].procedure_type_id){
-          if(this.loanTypeSelected.id==12){
+          //if($store.getters.modalityLoan.find(item => item.id == loanTypeSelected.id).name == 12){
+          if(this.modalitySelected.name == 'Préstamo hipotecario'){
             this.hipotecario=true
             this.window_size=3
             this.see_field=true
@@ -518,6 +483,7 @@ export default {
           this.intervalos.minimun_amoun=this.interval[i].minimum_amount
           this.intervalos.minimum_term= this.interval[i].minimum_term
           this.intervalos.procedure_type_id= this.loanTypeSelected.id
+
           this.getLoanModality(this.$route.query.affiliate_id)
         } /*else{
         console.log('NO ES IGUAL A MODALIDAD INTERVALS'+this.interval[i].procedure_type_id +"=="+this.loanTypeSelected.id )
@@ -531,7 +497,8 @@ export default {
         let resp = await axios.post(`affiliate/${id}/loan_modality?procedure_type_id=${this.loanTypeSelected.id}`,{
           type_sismu: this.data_sismu.type_sismu,
           cpop_sismu: this.data_sismu.cpop_sismu,
-          reprogramming: this.reprogramming || this.remake
+          cpop_affiliate: this.affiliate_data.cpop_affiliate,
+          //reprogramming: this.reprogramming || this.remake
         })
         if(resp.data ==''){
           this.loan_detail.not_exist_modality = true
@@ -540,6 +507,7 @@ export default {
           this.loan_modality = resp.data
           this.modalidad.id = this.loan_modality.id
           this.modalidad.procedure_type_id = this.loan_modality.procedure_type_id
+          this.modalidad.procedure_type_name = this.loan_modality.procedure_type.name
           this.modalidad.name = this.loan_modality.name
           this.modalidad.quantity_ballots = this.loan_modality.loan_modality_parameter.quantity_ballots
           this.modalidad.guarantors = this.loan_modality.loan_modality_parameter.guarantors
@@ -551,11 +519,11 @@ export default {
 
           this.loan_detail.min_guarantor_category = this.loan_modality.loan_modality_parameter.min_guarantor_category
           this.loan_detail.max_guarantor_category = this.loan_modality.loan_modality_parameter.max_guarantor_category
-          if(this.loan_modality.loan_modality_parameter.quantity_ballots > 1){
+          /*if(this.loan_modality.loan_modality_parameter.quantity_ballots > 1){
             this.visible = true
           }else{
             this.visible = false
-          }
+          }*/
           this.getBallots(id)
           this.generateContributions()
         }
@@ -568,272 +536,120 @@ export default {
     },
 
     //Metodo para sacar boleta de un afiliado
-  async getBallots(id) {
-    try {
-      this.data_ballots=[]
-      let res = await axios.get(`affiliate/${id}/contribution`, {
-         params:{
-           city_id: this.$store.getters.cityId,
-           choose_diff_month: this.choose_diff_month,
-           number_diff_month: this.number_diff_month,
-           sortBy: ['month_year'],
-           sortDesc: [1],
-           per_page: this.modalidad.quantity_ballots,
-           page: 1,
-         }
-        })
-      this.lender_contribution = res.data
-      this.affiliate_contribution.valid = this.lender_contribution.valid
-      this.affiliate_contribution.state_affiliate = this.lender_contribution.state_affiliate
-      this.affiliate_contribution.name_table_contribution = this.lender_contribution.name_table_contribution
-      this.data_ballots = res.data.data
-      console.log(this.affiliate_contribution)
-      this.fecha= new Date();
+    async getBallots(id) {
+      try {
+        this.data_ballots=[]
+        let res = await axios.get(`affiliate/${id}/contribution`, {
+           params:{
+             city_id: this.$store.getters.cityId,
+             choose_diff_month: this.choose_diff_month,
+             number_diff_month: this.number_diff_month,
+             sortBy: ['month_year'],
+             sortDesc: [1],
+             per_page: this.modalidad.quantity_ballots,
+             page: 1,
+           }
+          })
+        this.lender_contribution = res.data
+        this.affiliate_contribution.valid = this.lender_contribution.valid
+        this.affiliate_contribution.state_affiliate = this.lender_contribution.state_affiliate
+        this.affiliate_contribution.name_table_contribution = this.lender_contribution.name_table_contribution
+        this.data_ballots = res.data.data
+        this.fecha= new Date();
 
-      for (let i = 0; i < this.modalidad.quantity_ballots; i++) {//colocar 1
-        if(this.lender_contribution.valid && this.lender_contribution.state_affiliate =='Activo'){
-          this.enabled = false
-          this.editar=false
-           //Carga los datos en los campos para ser visualizados en la interfaz
-         // console.log(this.period[i]);
-            /*this.payable_liquid[i] = data_ballots[i].payable_liquid
-            if(i==0){//solo se llena los bonos de la ultima boleta de pago
-              this.bonos[0] = data_ballots[0].border_bonus
-              this.bonos[1] = data_ballots[0].east_bonus
-              this.bonos[2] = data_ballots[0].position_bonus
-              this.bonos[3] = data_ballots[0].public_security_bonus
-            }*/
-            this.contribution[i].contributionable_id = this.data_ballots[i].id
-            this.contribution[i].payable_liquid = this.data_ballots[i].payable_liquid != null ? this.data_ballots[i].payable_liquid : 0
-            this.contribution[i].border_bonus = this.data_ballots[i].border_bonus != null ? this.data_ballots[i].border_bonus : 0
-            this.contribution[i].east_bonus = this.data_ballots[i].east_bonus != null ? this.data_ballots[i].east_bonus : 0
-            this.contribution[i].position_bonus = this.data_ballots[i].position_bonus != null ? this.data_ballots[i].position_bonus : 0
-            this.contribution[i].public_security_bonus = this.data_ballots[i].public_security_bonus != null ? this.data_ballots[i].public_security_bonus : 0
-            this.contribution[i].period = this.$moment(this.data_ballots[i].month_year).format('YYYY-MM-DD')
-            this.contribution[i].month = this.$moment(this.data_ballots[i].month_year).format('MMMM')
-          
-        } else if(!this.lender_contribution.valid && this.lender_contribution.state_affiliate =='Activo'){
+        for (let i = 0; i < this.modalidad.quantity_ballots; i++) {//colocar 1
+          if(this.lender_contribution.valid && this.lender_contribution.state_affiliate =='Activo'){
             this.enabled = false
             this.editar=false
-            /*this.enabled=true
-            this.editar=true
-            this.contribution[0].period = this.$moment(this.fecha).subtract(1,'months').format('MMMM')
-            this.contribution[1].period = this.$moment(this.fecha).subtract(2,'months').format('MMMM')
-            this.contribution[2].period = this.$moment(this.fecha).subtract(3,'months').format('MMMM')
-            console.log("No se tienen boletas del ultimo mes")
-            this.contribution[0].payable_liquid=0
-            this.contribution[1].payable_liquid=this.payable_liquid[1]
-            this.contribution[2].payable_liquid=this.payable_liquid[2]
-            this.bonos[0]= this.bonos[0]
-            this.bonos[1]= this.bonos[1]
-            this.bonos[2]= this.bonos[2]
-            this.bonos[3]= this.bonos[3]
-            //this.clearForm()//TODO ver si es necesario, ya que sin la funcion igual se carga los datos declarados por defecto de las variables
-            */
-            this.contribution[i].contributionable_id = 0
-            this.contribution[i].payable_liquid = 0
-            this.contribution[i].border_bonus = 0
-            this.contribution[i].east_bonus = 0
-            this.contribution[i].position_bonus = 0
-            this.contribution[i].public_security_bonus = 0
-            this.contribution[i].period = this.$moment(this.lender_contribution.current_tiket).subtract(i,'months').format('YYYY-MM-DD')
-            this.contribution[i].month = this.$moment(this.lender_contribution.current_tiket).subtract(i,'months').format('MMMM')
-        } else if(this.lender_contribution.valid && this.lender_contribution.state_affiliate =='Pasivo'){
-            this.enabled = true
-            if(this.data_ballots[i].rent > 0 && this.data_ballots[i].dignity_rent > 0){
-              this.editar = false
-            }else {
-              this.editar = false
-            }
-            this.contribution[i].contributionable_id = this.data_ballots[i].id
-            this.contribution[i].payable_liquid = this.data_ballots[i].rent != null ? this.data_ballots[i].rent : 0
-            this.contribution[i].dignity_rent = this.data_ballots[i].dignity_rent != null ? this.data_ballots[i].dignity_rent : 0
-            this.contribution[i].period = this.$moment(this.data_ballots[i].month_year).format('YYYY-MM-DD')
-            this.contribution[i].month = this.$moment(this.data_ballots[i].month_year).format('MMMM')
-        }
-        else if(!this.lender_contribution.valid && this.lender_contribution.state_affiliate =='Pasivo'){
-            this.enabled = true
-            this.contribution[i].contributionable_id = 0
-            this.contribution[i].payable_liquid = this.contribution[i].payable_liquid
-            this.contribution[i].dignity_rent = 0
-            this.contribution[i].period = this.$moment(this.lender_contribution.current_tiket).subtract(i,'months').format('YYYY-MM-DD')
-            this.contribution[i].month = this.$moment(this.lender_contribution.current_tiket).subtract(i,'months').format('MMMM')
-        }
-        else if(!this.lender_contribution.valid && this.lender_contribution.state_affiliate =='Comisión'){
-            this.enabled = true
-            this.contribution[i].contributionable_id = 0
-            this.contribution[i].payable_liquid = 0
-            this.contribution[i].period = this.$moment(this.lender_contribution.current_tiket).subtract(i,'months').format('YYYY-MM-DD')
-            this.contribution[i].month = this.$moment(this.lender_contribution.current_tiket).subtract(i,'months').format('MMMM')
-        }
-        
-        else {
-          this.toastr.error("Ocurrio caso especial")}
-      }
-    } catch (e) {
-      console.log(e)
-    } finally {
-      this.loading = false
-    }
-  },
-  generateContributions () {
-    this.contribution = []
-    for (let i = 0; i < this.modalidad.quantity_ballots; i++) {
-      this.contribution.push({
-        contributionable_id: null,
-        payable_liquid: 0,
-        position_bonus: 0,
-        border_bonus: 0,
-        public_security_bonus: 0,
-        east_bonus: 0,
-        dignity_rent: 0,
-        period: null,
-        adjustment_amount: 0,
-        adjustment_description: null,
-        loan_contributions_adjust_id: null,
-      })
-    }
-  },
-  getContributions() {
-    return this.contribution
-  },
-  appendIconCallback () {
-      if(this.number_diff_month < 10){
-      this.number_diff_month++
-      this.choose_diff_month = true
-      this.getBallots(this.$route.query.affiliate_id)
-    }
-  },
-  prependIconCallback () {
+             //Carga los datos en los campos para ser visualizados en la interfaz
+              this.contribution[i].contributionable_id = this.data_ballots[i].id
+              this.contribution[i].payable_liquid = this.data_ballots[i].payable_liquid != null ? this.data_ballots[i].payable_liquid : 0
+              this.contribution[i].border_bonus = this.data_ballots[i].border_bonus != null ? this.data_ballots[i].border_bonus : 0
+              this.contribution[i].east_bonus = this.data_ballots[i].east_bonus != null ? this.data_ballots[i].east_bonus : 0
+              this.contribution[i].position_bonus = this.data_ballots[i].position_bonus != null ? this.data_ballots[i].position_bonus : 0
+              this.contribution[i].public_security_bonus = this.data_ballots[i].public_security_bonus != null ? this.data_ballots[i].public_security_bonus : 0
+              this.contribution[i].period = this.$moment(this.data_ballots[i].month_year).format('YYYY-MM-DD')
+              this.contribution[i].month = this.$moment(this.data_ballots[i].month_year).format('MMMM')
 
-      if(this.number_diff_month > 1){
-      this.number_diff_month--
-      this.choose_diff_month = true
-      this.getBallots(this.$route.query.affiliate_id)
-    }
-  },
-  /*async saveAdjustment(i){
-    try {
-      //Verificar si el afiliado es pasivo para introducir su contribución
-      if(this.affiliate_contribution.state_affiliate == 'Pasivo'){  
-      let res = await axios.post(`aid_contribution/updateOrCreate`,{
-        affiliate_id: this.$route.query.affiliate_id,
-        month_year: this.contribution[i].period,
-        rent: this.contribution[i].payable_liquid,
-        dignity_rent: this.contribution[i].dignity_rent,
-      })
-      this.contribution_passive = this.lender_contribution  
-        this.contribution[i].contributionable_id = this.contribution_passive.id
-        alert(this.contribution_passive.id)
+          } else if(!this.lender_contribution.valid && this.lender_contribution.state_affiliate =='Activo'){
+              this.enabled = false
+              this.editar=false
+              this.contribution[i].contributionable_id = 0
+              this.contribution[i].payable_liquid = 0
+              this.contribution[i].border_bonus = 0
+              this.contribution[i].east_bonus = 0
+              this.contribution[i].position_bonus = 0
+              this.contribution[i].public_security_bonus = 0
+              this.contribution[i].period = this.$moment(this.lender_contribution.current_tiket).subtract(i,'months').format('YYYY-MM-DD')
+              this.contribution[i].month = this.$moment(this.lender_contribution.current_tiket).subtract(i,'months').format('MMMM')
+          } else if(this.lender_contribution.valid && this.lender_contribution.state_affiliate =='Pasivo'){
+              this.enabled = true
+              this.editar = true
+              this.contribution[i].contributionable_id = this.data_ballots[i].id
+              this.contribution[i].payable_liquid = this.data_ballots[i].rent != null ? this.data_ballots[i].rent : 0
+              this.contribution[i].dignity_rent = this.data_ballots[i].dignity_rent != null ? this.data_ballots[i].dignity_rent : 0
+              this.contribution[i].period = this.$moment(this.data_ballots[i].month_year).format('YYYY-MM-DD')
+              this.contribution[i].month = this.$moment(this.data_ballots[i].month_year).format('MMMM')
+          }
+          else if(!this.lender_contribution.valid && this.lender_contribution.state_affiliate =='Pasivo'){
+              this.enabled = true
+              this.editar  = true
+              this.contribution[i].contributionable_id = 0
+              this.contribution[i].payable_liquid = 0
+              this.contribution[i].dignity_rent = 0
+              this.contribution[i].period = this.$moment(this.lender_contribution.current_tiket).subtract(i,'months').format('YYYY-MM-DD')
+              this.contribution[i].month = this.$moment(this.lender_contribution.current_tiket).subtract(i,'months').format('MMMM')
+          }
+          else if(!this.lender_contribution.valid && this.lender_contribution.state_affiliate =='Comisión'){
+              this.contribution[i].contributionable_id = 0
+              this.contribution[i].payable_liquid = 0
+              this.contribution[i].period = this.$moment(this.lender_contribution.current_tiket).subtract(i,'months').format('YYYY-MM-DD')
+              this.contribution[i].month = this.$moment(this.lender_contribution.current_tiket).subtract(i,'months').format('MMMM')
+          }
+          else {
+            this.toastr.error("Ocurrio caso especial de afiliado que no fue considerado.")}
+        }
+      } catch (e) {
+        console.log(e)
+      } finally {
+        this.loading = false
       }
-      //guardar el ajuste
-        let res = await axios.post(`loan_contribution_adjust`, {
-        affiliate_id: this.$route.query.affiliate_id,
-        adjustable_id: this.affiliate_contribution.state_affiliate != 'Comisión' ? this.contribution[i].contributionable_id : this.$route.query.affiliate_id,
-        adjustable_type: this.affiliate_contribution.state_affiliate != 'Comisión' ? this.affiliate_contribution.name_table_contribution : 'affiliate',
-        type_affiliate: 'lender',
-        amount: this.contribution[i].adjustment_amount,
-        type_adjust: this.affiliate_contribution.state_affiliate != 'Comisión' ? 'adjust' : 'liquid',
-        period_date: this.$moment(this.fecha).format('YYYY-MM-DD'),
-        description: this.contribution[i].adjustment_description
-      })
-      let ajuste = res.data
-      console.log(ajuste)
-    } catch (e) {
-      console.log(e)
-    }
-  },*/
-   /*async saveAdjustment() {
-    try {
-        let res = await axios.post(`loan_contribution_adjust`, {
-        affiliate_id: this.$route.query.affiliate_id,
-        adjustable_id: this.affiliate_contribution.state_affiliate != 'Comisión' ? this.contribution[i].contributionable_id : this.$route.query.affiliate_id,
-        adjustable_type: this.affiliate_contribution.state_affiliate != 'Comisión' ? this.affiliate_contribution.name_table_contribution : 'affiliate',
-        type_affiliate: 'lender',
-        amount: this.contribution[i].adjustment_amount,
-        type_adjust: this.affiliate_contribution.state_affiliate != 'Comisión' ? 'adjust' : 'liquid',
-        period_date: '2021-03-15',
-        description: this.contribution[i].adjustment_description
-      })
-      let ajuste = res.data
-    } catch (e) {
-     console.log(e)   
-    }
     },
- async dialogAdjustment(i){
-    try {
-      //Verificar si el afiliado es pasivo para introducir su contribución
-      if(this.affiliate_contribution.state_affiliate == 'Pasivo'){  
-      let res = await axios.post(`aid_contribution/updateOrCreate`,{
-        affiliate_id: this.$route.query.affiliate_id,
-        month_year: "2021-02-01",
-        rent: this.contribution[i].payable_liquid,
-        dignity_rent: this.contribution[i].dignity_rent,
-      })
-      this.contribution_passive = res.data  
-        this.contribution[i].contributionable_id = this.contribution_passive.id
-        alert(this.contribution_passive.id)
+    generateContributions () {
+      this.contribution = []
+      for (let i = 0; i < this.modalidad.quantity_ballots; i++) {
+        this.contribution.push({
+          contributionable_id: null,
+          payable_liquid: 0,
+          position_bonus: 0,
+          border_bonus: 0,
+          public_security_bonus: 0,
+          east_bonus: 0,
+          dignity_rent: 0,
+          period: null,
+          adjustment_amount: 0,
+          adjustment_description: null,
+          loan_contributions_adjust_id: null,
+        })
       }
-      //Envio de informacion al Dailog
-      this.bus.$emit('openDialog', {
-        accion: 'new',
-        affiliate_id: this.$route.query.affiliate_id,
-        adjustable_id: this.affiliate_contribution.state_affiliate != 'Comisión' ? this.contribution[i].contributionable_id : this.$route.query.affiliate_id,
-        adjustable_type: this.affiliate_contribution.state_affiliate != 'Comisión' ? this.affiliate_contribution.name_table_contribution : 'affiliate',
-        type_affiliate: 'lender',
-        type_adjust: this.affiliate_contribution.state_affiliate != 'Comisión' ? 'adjust' : 'liquid',
-        period_date: '2021-03-15'
-      })
-    } catch (e) {
-      console.log(e)
-    }
-  },*/
-
- }
-};
+    },
+    getContributions() {
+      return this.contribution
+    },
+    appendIconCallback () {
+      if(this.number_diff_month < this.global_parameters.max_months_go_back){
+        this.number_diff_month++
+        this.choose_diff_month = true
+        this.getBallots(this.$route.query.affiliate_id)
+      }
+    },
+    prependIconCallback () {
+      if(this.number_diff_month > 1){
+        this.number_diff_month--
+        this.choose_diff_month = true
+        this.getBallots(this.$route.query.affiliate_id)
+      }
+    },
+  }  
+}  
 </script>
-<style scoped>
-.v-textarea--outlined >>> fieldset {
-  border-color: rgba(192, 0, 250, 0.986);
-}
-/*.v-list-item__title {
-  font-weight: 400 !important;
-}
-.v-input {
-  font-size: 14px !important;
-}
-.v-input .v-label {
-  font-size: 14px !important;
-}
-.v-text-field {
-  padding: 0 !important;
-  /*line-height: 1em !important;
-  background: royalblue;
-}
- .v-textarea input {
-  padding: 4px 0 2px 0 !important;
-  line-height: 1em !important;
-} 
-.v-input__slot {
-  margin-bottom: 4px !important;
-}
-.v-input--hide-details {
-  margin-bottom: 0 !important;
-}
-.v-input__slot {
-  margin-bottom: 4px !important;
-}
-.v-text-field {
-  min-height: 36px !important;
-  /*background-color: orange;
-  width: 10em;
-  height: 0.5em;
-}
-.v-input .v-input__control {
-  min-height: 36px !important;
-}
-.v-select-list .v-list__tile {
-  font-size: 12px !important;
-  height: 36px !important;
-}*/
-</style>

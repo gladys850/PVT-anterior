@@ -444,10 +444,12 @@ class AffiliateController extends Controller
                     $before_month=$number_diff_month;
                     $before_month=$before_month;
                 }else{
-                    if ($now->day <= $offset_day || $city->name == 'LA PAZ') {
-                        $before_month = 1;//
-                    } else {
-                        $before_month = 2;
+                    if($now->day <= $offset_day ){
+                        if ($city->name == 'LA PAZ') $before_month = 2;//
+                        else $before_month = 3;
+                    }else{
+                        if ($city->name == 'LA PAZ') $before_month = 1;//
+                        else $before_month = 2;
                     }
                 }
                 $current_ticket = CarbonImmutable::parse($contributions[0]->month_year);
@@ -489,10 +491,12 @@ class AffiliateController extends Controller
                 if($choose_diff_month == true && $request->has('number_diff_month')){
                     $before_month=$number_diff_month;
                 }else{
-                    if ($now->day <= $offset_day || $city->name == 'LA PAZ') {
-                        $before_month = 1;
-                    } else {
-                        $before_month = 2;
+                    if($now->day <= $offset_day ){
+                        if ($city->name == 'LA PAZ') $before_month = 2;
+                        else $before_month = 3;
+                    }else{
+                        if ($city->name == 'LA PAZ') $before_month = 1;
+                        else $before_month = 2;
                     }
                 }
             }
@@ -515,7 +519,7 @@ class AffiliateController extends Controller
     /** @group Préstamos
     * Préstamos por afiliado
     * Devuelve la lista de préstamos o garantías del afiliado
-    * @urlParam affiliate required ID de afiliado. Example: 12
+    * @urlParam affiliate required ID de afiliado. Example: 59210
     * @queryParam guarantor required Préstamos para el afiliado como garante(1) o como titular(0). Example: 1
     * @queryParam state ID de state_id para filtrar por estado de préstamos. Example: 3
     * @authenticated
@@ -556,30 +560,30 @@ class AffiliateController extends Controller
         return $affiliate->affiliate_state;
     }
 
-    /** @group Préstamos
-    * Modalidad por afiliado
-    * Devuelve la modalidad de trámite evaluando al afiliado y el tipo de trámite
-    * @urlParam affiliate required ID de afiliado. Example: 5
-    * @queryParam procedure_type_id required ID de tipo de trámite. Example: 11
-    * @bodyParam type_sismu boolean Tipo sismu. Example: true
-    * @bodyParam cpop_sismu boolean El afiliado es cpop del sismu. Example: true
-    * @bodyParam reprogramming boolean El Tramite es reprogramación. Example: true
-    * @authenticated
-    * @responseFile responses/affiliate/get_loan_modality.200.json
-    */
+   /** @group Préstamos
+   * Modalidad por afiliado
+   * Devuelve la modalidad de trámite evaluando al afiliado y el tipo de trámite
+   * @urlParam affiliate required ID de afiliado. Example: 5
+   * @queryParam procedure_type_id required ID de tipo de trámite. Example: 11
+   * @bodyParam type_sismu boolean Tipo sismu. Example: true
+   * @bodyParam cpop_sismu boolean El afiliado es cpop del sismu. Example: true
+   * @bodyParam cpop_affiliate boolean Para cambiar el affiliado a cpop. Example: false
+   * @authenticated
+   * @responseFile responses/affiliate/get_loan_modality.200.json
+   */
     public function get_loan_modality(Request $request, Affiliate $affiliate) {
         $request->validate([
             'procedure_type_id' => 'required|integer|exists:procedure_types,id',
             'type_sismu' => 'boolean',
             'cpop_sismu' => 'boolean',
-            'reprogramming' => 'boolean'
+            'cpop_affiliate' => 'boolean'
         ]);
         if(!$affiliate->affiliate_state) abort(403, 'Debe actualizar el estado del afiliado');
         $modality = ProcedureType::findOrFail($request->procedure_type_id);
         $type_sismu = $request->input('type_sismu',false);
         $cpop_sismu = $request->input('cpop_sismu',false);
-        $reprogramming = $request->input('reprogramming',false);
-        $affiliate_modality= Loan::get_modality($modality->name, $affiliate, $type_sismu, $cpop_sismu, $reprogramming);
+        $cpop_affiliate = $request->input('cpop_affiliate',false);
+        $affiliate_modality= Loan::get_modality($modality, $affiliate, $type_sismu, $cpop_sismu, $cpop_affiliate);
         return $affiliate_modality;
     }
 
@@ -1034,8 +1038,8 @@ class AffiliateController extends Controller
                     join Padron ON Padron.IdPadron = PrestamosLevel1.IdPadronGar
                     join Producto ON Prestamos.PrdCod = Producto.PrdCod
                     join EstadoPrestamo ON Prestamos.PresEstPtmo = EstadoPrestamo.PresEstPtmo
-                    where Padron.padMatricula like '%$ci%'
-                    or Padron.padCedulaIdentidad like '%$ci%'
+                    where Padron.padMatricula like '$ci%'
+                    or Padron.padCedulaIdentidad like '$ci%'
             EXCEPT 
                     SELECT Prestamos.IdPrestamo, Prestamos.PresNumero, Prestamos.PresCuotaMensual, Prestamos.PresMeses, EstadoPrestamo.PresEstDsc, Prestamos.PresMntDesembolso, Prestamos.PresSaldoAct, Producto.PrdDsc, trim(Padron.PadCedulaIdentidad) as PadCedulaIdentidad, trim(Padron.PadMatricula) as PadMatricula, trim(Padron.PadMatriculaTit) as PadMatriculaTit
                     FROM Prestamos
@@ -1075,21 +1079,22 @@ class AffiliateController extends Controller
     /**
     * Buscar affiliado para prestamos
     * Devuelve las modalidades de prestamos para el afiliado, con sus montos maximos.
-    * @bodyParam ci string required Carnet de identidad. Example:492562
+    * @bodyParam identity_card string required Carnet de identidad. Example:492562
     * @authenticated
     * @responseFile responses/affiliate/affiliate_evaluate_loans.200.json
     */
     public function search_loan(Request $request){
       // return $request;
        $request->validate([
-           'identity_card' => 'required|string'
+           'identity_card' => 'required|string|exists:affiliates,identity_card'
        ]);
        $message = array();
        $ci=$request->identity_card;
        $affiliate = Affiliate::whereIdentity_card($ci)->first();
-       //$state_affiliate=$affiliate->affiliate_state->affiliate_state_type->name;
+       $state_affiliate=$affiliate->affiliate_state->affiliate_state_type->name;
        $state_affiliate_sub=$affiliate->affiliate_state->name;
        $evaluate=false;
+       $state_affiliate_concat=$state_affiliate.' - '.$affiliate->affiliate_state->name;//agregooo
        $before_month=2;
        $modalities_all= collect();
  
@@ -1101,10 +1106,13 @@ class AffiliateController extends Controller
                $current_ticket = CarbonImmutable::parse($contributions[0]->month_year);
                $current_ticket_true = $now->startOfMonth()->subMonths($before_month);
                if ($now->startOfMonth()->diffInMonths($current_ticket->startOfMonth()) <= 1000){
-
-                $i = 9;
-                while ($i <= 11) {
-                    $modality = ProcedureType::findOrFail($i);
+                $modality_ida= ProcedureType::where('name','=','Préstamo Anticipo')->first()->id;
+                $modality_idb = ProcedureType::where('name','=','Préstamo a corto plazo')->first()->id;
+                $modality_idc = ProcedureType::where('name','=','Préstamo a largo plazo')->first()->id;
+                $ids_modalities=[$modality_ida,$modality_idb,$modality_idc];
+                $i= 0;
+                while ($i < count($ids_modalities)) {
+                    $modality = ProcedureType::findOrFail($ids_modalities[$i]);
                    $affiliate_modality= Loan::get_modality_search($modality->name, $affiliate);
                    //return $affiliate_modality;
                    //return $affiliate_modality;/////
@@ -1131,9 +1139,11 @@ class AffiliateController extends Controller
                         $avg_east_bonus=$contri->avg('east_bonus');
     
                         $liquid_calification=$avg_payable_liquid-$avg_position_bonus-$avg_border_bonus-$avg_public_security_bonus-$avg_east_bonus;//liquido para califica
+                        $liquid_calification = Util::round($liquid_calification);
                         $amount_max = $this->maximum_amount($affiliate_modality, $interval_modality->maximum_term,$liquid_calification);
                     
                         $quota_calculator=$this->quota_calculator($affiliate_modality,$interval_modality->maximum_term,$amount_max);
+                        $quota_calculator= Util::round($quota_calculator);
                         //$modalities_all->push($affiliate_modality,$amount_max,$quota_calculator);  
                         $interest=$affiliate_modality->current_interest;
                    }
@@ -1162,13 +1172,14 @@ class AffiliateController extends Controller
            }
        }else{
            $evaluate=false;
-           $message['accomplished'] = 'Realizar evaluación de préstamos perzonalizada por estar el afiliado en estado: '.''.$state_affiliate_sub;
+           $message['accomplished'] = 'Se debe realizar la evaluación de préstamos de forma perzonalizada por encontrarse el afiliado en estado: '.''.$state_affiliate_sub;
        }
        $data = array(  //data 
         "evaluate"=>$evaluate,
         "affiliate" => $affiliate->affiliate_fullName(),
         "affiliate_identity_card"=>$affiliate->getIdentityCardExtAttribute(),
-        "state_affiliate" => $affiliate->affiliate_state,
+        //"state_affiliate" => $affiliate->affiliate_state,
+        "state_affiliate" =>$state_affiliate_concat,
         "modalities" => $modalities_all,
         "message"=>$message
         );
@@ -1196,4 +1207,80 @@ class AffiliateController extends Controller
         return ((($interest_rate)/(1-(1/pow((1+$interest_rate),$months_term))))*$amount_requested);
     }
 
+    public function demo($ci){
+        $id_overdue = 2;
+        $in_process_id = 16;
+        $user = User::first();
+        $date = Carbon::now();
+        $date = $date->subMonth()->endOfMonth()->format('Ymd');
+    
+        //$loans = DB::connection('sqlsrv')->select("SELECT dbo.Prestamos.IdPrestamo, dbo.Prestamos.PresNumero, dbo.Padron.IdPadron, DATEDIFF(month, Amortizacion.AmrFecPag, '" . $date . "') as Overdue from dbo.Prestamos join dbo.Padron on Prestamos.IdPadron = Padron.IdPadron join dbo.Producto on Prestamos.PrdCod = Producto.PrdCod join dbo.Amortizacion on (Prestamos.IdPrestamo = Amortizacion.IdPrestamo and Amortizacion.AmrNroPag = (select max(AmrNroPag) from Amortizacion where Amortizacion.IdPrestamo = Prestamos.IdPrestamo and Amortizacion.AMRSTS <>'X' )) where Prestamos.PresEstPtmo = 'V' and dbo.Prestamos.PresSaldoAct > 0 and Amortizacion.AmrFecPag <  cast('" . $date . "' as datetime) and DATEDIFF(month, Amortizacion.AmrFecPag, '" . $date . "') >= 2;");
+        $loans = DB::connection('sqlsrv')->select("SELECT dbo.Prestamos.IdPrestamo, dbo.Prestamos.PresNumero, dbo.Padron.IdPadron, DATEDIFF(month, Amortizacion.AmrFecPag, '" . $date . "') as Overdue from dbo.Prestamos join dbo.Padron on Prestamos.IdPadron = Padron.IdPadron join dbo.Producto on Prestamos.PrdCod = Producto.PrdCod join dbo.Amortizacion on (Prestamos.IdPrestamo = Amortizacion.IdPrestamo and Amortizacion.AmrNroPag = (select max(AmrNroPag) from Amortizacion where Amortizacion.IdPrestamo = Prestamos.IdPrestamo and Amortizacion.AMRSTS <>'X' )) where Prestamos.PresEstPtmo = 'V' and dbo.Prestamos.PresSaldoAct > 0 and Amortizacion.AmrFecPag <  cast('" . $date . "' as datetime) and dbo.Padron.PadCedulaIdentidad = '$ci';");
+    
+        $count = 0;
+        $eco_count = 0;
+        $message = [];
+    
+        foreach ($loans as $loan) {
+          $padron = DB::connection('sqlsrv')->table('Padron')->where('IdPadron', $loan->IdPadron)->first();
+    
+          if (!$padron) {
+            array_push($message, ' ID de padrón: ' . $loan->IdPadron . ' inexistente');
+          }
+    
+          $loan->affiliate = true;
+          $loan->PadSpouseCedulaIdentidad = null;
+    
+          if (trim($padron->PadMatriculaTit) != '' and $padron->PadMatriculaTit != null and trim($padron->PadMatriculaTit) != '0' and strlen(trim($padron->PadMatriculaTit)) > 4) {
+            $loan->affiliate = false;
+            $loan->PadSpouseCedulaIdentidad = $padron->PadCedulaIdentidad;
+            $padron_holder = DB::connection('sqlsrv')->table('Padron')->where('PadMatricula', $padron->PadMatriculaTit)->first();
+            if ($padron_holder) {
+              $padron = $padron_holder;
+            } else {
+              array_push($message, ' Matrícula de padrón: ' . $padron->PadMatriculaTit . ' inexistente');
+            }
+          }
+    
+          $loan->PadCedulaIdentidad = utf8_encode(trim($padron->PadCedulaIdentidad));
+          $loan->PadMatricula = utf8_encode(trim($padron->PadMatricula));
+          $loan->PadName = implode(' ', [utf8_encode(trim($padron->PadPaterno)), utf8_encode(trim($padron->PadMaterno)), utf8_encode(trim($padron->PadNombres))]);
+    
+          $affiliate = Affiliate::where('identity_card', $loan->PadCedulaIdentidad)->first();
+          if (!$affiliate and !$loan->affiliate) {
+            $spouse = Spouse::where('identity_card', $loan->PadSpouseCedulaIdentidad)->first();
+            if ($spouse) {
+              $affiliate = $spouse->affiliate;
+            }
+          }
+          if (!$affiliate) {
+            array_push($message, ' Afiliado con CI: ' . $loan->PadCedulaIdentidad . ' inexistente');
+            $affiliates = Affiliate::where('identity_card', 'like', $loan->PadCedulaIdentidad . '%')->get();
+            $affiliates->merge(Spouse::where('identity_card', 'like', $loan->PadCedulaIdentidad . '%')->get());
+            if ($affiliates->count() > 0) {
+              $names = [];
+              $db_name = "platform";
+              foreach ($affiliates as $option) {
+                $names[] = [
+                  $db_name,
+                  $option->id,
+                  $option->identity_card,
+                  implode(' ', [$option->last_name ?? '', $option->mothers_last_name ?? '', $option->first_name ?? '', $option->second_name ?? ''])
+                ];
+              }
+              array_push($message, ' Posibles opciones para el CI: ' . $loan->PadCedulaIdentidad );
+              $id = array();
+              foreach ($names as $name) {
+                array_push($message, $loan->PadCedulaIdentidad . ' ' . $loan->PadName . ' => ' . $name[2] . ' ' . $name[3] . ' - id: ' . $name[1]);
+                array_push($id, $name[1]);
+              }
+              $message['id'] = $id;
+            }
+            //break;return $names;
+          }
+          //$observation = ObservationType::find($id_overdue);
+        }
+        //return sizeof($message);
+        return $message;
+        }
 }

@@ -68,6 +68,7 @@ class LoanPayment extends Model
         return $this->belongsTo(AmortizationType::class);
     }
 
+    
     public function voucher_treasury()
     {
         return $this->morphOne(Voucher::class, 'payable')->latest('updated_at');
@@ -155,7 +156,7 @@ class LoanPayment extends Model
     public static function quota_date(Loan $loan, $first = false)
     {
         $quota = 1;
-        $latest_quota = $loan->last_payment;
+        $latest_quota = $loan->last_payment_validated;
         $estimated_date = Carbon::now()->endOfMonth();
         if (!$latest_quota || $first) {
             $payment_date = $loan->disbursement_date ? $loan->disbursement_date : $loan->request_date;
@@ -189,14 +190,15 @@ class LoanPayment extends Model
         return $this->belongsTo(Affiliate::class);
     }
 
-    public static function registry_payment(Loan $loan, $estimated_date, $description, $procedure_modality, $voucher, $paid_by, $payment_type, $percentage_quota)
+    public static function registry_payment(Loan $loan, $estimated_date, $description, $procedure_modality, $voucher, $paid_by, $payment_type, $percentage_quota, $affiliate_id)
     {
-        $payment = $loan->next_payment($estimated_date, $percentage_quota, null); //$percentage_quota
+        $payment = $loan->next_payment2($affiliate_id, $estimated_date, $paid_by, $procedure_modality, $percentage_quota); //$percentage_quota
         $payment->description = $description;
         $payment->state_id = LoanState::whereName('Pendiente de Pago')->first()->id;
         $payment->role_id = Role::whereName('PRE-cobranzas')->first()->id;
-        $payment->procedure_modality_id = $procedure_modality->id;
-        $payment->affiliate_id = $loan->disbursable->id;
+        $payment->procedure_modality_id = $procedure_modality;
+        //$payment->affiliate_id = $loan->disbursable->id;
+        $payment->affiliate_id = $affiliate_id;
         $payment->voucher = $voucher;
         $payment->paid_by = $paid_by;
         $payment->amortization_type_id = $payment_type->id;
@@ -225,7 +227,8 @@ class LoanPayment extends Model
         ];
         if($loan->balance = 0) return $interest;
             $estimated_date = CarbonImmutable::parse($estimated_date ?? CarbonImmutable::now()->toDateString());
-        $latest_quota = $loan->payments()->first();
+        //$latest_quota = $loan->payments()->first();
+        $latest_quota = $loan->last_payment_validated;
         if (!$latest_quota) {
             $payment_date = $loan->disbursement_date;
             if (!$payment_date) return (object)$interest;

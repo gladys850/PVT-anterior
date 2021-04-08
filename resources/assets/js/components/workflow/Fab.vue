@@ -53,7 +53,14 @@
              <v-spacer></v-spacer>
             <v-btn color="error" text @click="sheet = false">Cerrar</v-btn>
             <template v-if="$store.getters.roles.filter(o => flow.next.includes(o.id)).length >= 1">
-              <v-btn color="success" text @click="derivationLoans()">Derivar</v-btn>
+              <v-btn 
+                color="success" 
+                text 
+                @click="derivationLoans()"
+                :disabled="this.status_click"
+                :loading="this.status_click"
+                >Derivar
+              </v-btn>
             </template>
           </v-card-actions>
         </v-card>
@@ -80,7 +87,8 @@ export default {
         next: []
       },
       selectedRoleId: null,
-      idLoans: []
+      idLoans: [],
+      status_click: false
     }
   },
   watch: {
@@ -109,7 +117,8 @@ export default {
       this.idLoans = this.selectedLoans.map(o => o.id)
       try {
         if(this.$store.getters.roles.filter(o => this.flow.next.includes(o.id)).length > 1){
-          this.loading = true;
+          //this.loading = true;
+          this.status_click = true
             res = await axios.patch(`loans`, {
               ids: this.idLoans,
               role_id: this.selectedRoleId
@@ -126,7 +135,8 @@ export default {
             this.bus.$emit('emitRefreshLoans');
             this.toastr.success("El trámite fue derivado." ) 
         }else{
-            this.loading = true;
+            //this.loading = true;
+             this.status_click = true
             res = await axios.patch(`loans`, {
               ids: this.idLoans,
               role_id: parseInt(this.$store.getters.roles.filter(o => this.flow.next.includes(o.id)).map(o => o.id)),
@@ -143,15 +153,21 @@ export default {
             this.bus.$emit('emitRefreshLoans');
             this.toastr.success("El trámite fue derivado." ) 
         }
-            printJS({
-            printable: res.data.attachment.content,
-            type: res.data.attachment.type,
-            documentTitle: res.data.attachment.file_name,
-            base64: true
-        })  
+
+        printJS({
+          printable: res.data.attachment.content,
+          type: res.data.attachment.type,
+          documentTitle: res.data.attachment.file_name,
+          base64: true
+        })
+
+        if(res.status==201 || res.status == 200){
+          this.status_click = false        
+        }
      
       } catch (e) {
         console.log(e)
+        this.status_click = false
         this.toastr.error("Ocurrió un error en la derivación...")
       }
     }

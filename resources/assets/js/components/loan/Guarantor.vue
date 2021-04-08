@@ -1,6 +1,6 @@
 <template>
   <v-container fluid >
-    <v-row justify="center"  v-show="modalidad.procedure_type_id!=12">
+    <v-row justify="center"  v-show="modalidad.procedure_type_name!= 'Préstamo hipotecario'">
          <v-col cols="12" class="py-0" v-if="modalidad_guarantors == 0">
           <v-card>
             <v-container class="py-0">
@@ -739,7 +739,11 @@ ver()
       this.guarantor_objeto.bonus_calculated=this.evaluate_garantor.bonus_calculated
       this.guarantor_objeto.payable_liquid_calculated=this.evaluate_garantor.payable_liquid_calculated
 
-      if(this.data_ballots_name==null)
+      if(this.guarantors.length>0){
+        if(this.garante_boletas.affiliate_id == this.guarantors[0].affiliate_id){
+          this.toastr.error("Este afiliado ya se encuentra registrado.")
+        }else{
+          if(this.data_ballots_name==null)
       {
           let res = await axios.post(`loan_contribution_adjust`, {
             affiliate_id: this.affiliate_garantor.affiliate.id,
@@ -810,6 +814,88 @@ ver()
         this.garantes_detalle.push(this.affiliate_garantor.affiliate.full_name);
         this.garantes_simulador.push(this.garante_boletas);
         this.guarantors.push(this.guarantor_objeto);
+
+        }
+      }else{
+        if(this.data_ballots_name==null)
+      {
+          let res = await axios.post(`loan_contribution_adjust`, {
+            affiliate_id: this.affiliate_garantor.affiliate.id,
+            adjustable_id:this.affiliate_garantor.affiliate.id,
+            adjustable_type: 'afilliates',
+            type_affiliate:'guarantor',
+            amount: this.payable_liquid[0],
+            type_adjust: 'liquid',
+            period_date: this.periodo,
+            description: 'Liquido Pagable Comision',
+          })
+        this.guarantor_objeto.contributionable_ids=this.contributionable
+        this.guarantor_objeto.contributionable_type='loan_contribution_adjusts'
+        this.loan_contributions_adjust_ids.push(res.data.id)
+        this.guarantor_objeto.loan_contributions_adjust_ids=this.loan_contributions_adjust_ids
+      }else{
+        if(this.data_ballots_state_affiliate=='Pasivo'){
+          let res_aid_contribution = await axios.post(`aid_contribution/updateOrCreate`, {
+              affiliate_id: this.affiliate_garantor.affiliate.id,
+              month_year: this.periodo,
+              rent: this.payable_liquid[0],
+              dignity_rent: this.bonos[0],
+          })
+          this.contributionable.push(res_aid_contribution.data.id)
+          this.guarantor_objeto.contributionable_ids=this.contributionable
+          this.guarantor_objeto.contributionable_type=this.data_ballots_name
+
+          if(this.monto_ajustable>0){
+            let res_adjust_pasivo= await axios.post(`loan_contribution_adjust`, {
+              affiliate_id: this.affiliate_garantor.affiliate.id,
+              adjustable_id:res_aid_contribution.data.id,
+              adjustable_type: this.data_ballots_name,
+              type_affiliate:'guarantor',
+              amount: this.monto_ajustable,
+              type_adjust: 'adjust',
+              period_date: this.periodo,
+              description: this.monto_ajustable_descripcion,
+            })
+            this.loan_contributions_adjust_ids.push(res_adjust_pasivo.data.id)
+            this.guarantor_objeto.loan_contributions_adjust_ids=this.loan_contributions_adjust_ids
+          }else{
+            this.guarantor_objeto.loan_contributions_adjust_ids=this.loan_contributions_adjust_ids
+          }
+        }else{
+
+          this.contributionable.push(this.data_ballots[0].id)
+          this.guarantor_objeto.contributionable_ids=this.contributionable
+          this.guarantor_objeto.contributionable_type=this.data_ballots_name
+
+          if(this.monto_ajustable>0){
+            let res_adjust_activo = await axios.post(`loan_contribution_adjust`, {
+              affiliate_id: this.affiliate_garantor.affiliate.id,
+              adjustable_id:this.data_ballots[0].id,
+              adjustable_type: this.data_ballots_name,
+              type_affiliate:'guarantor',
+              amount: this.monto_ajustable,
+              type_adjust: 'adjust',
+              period_date: this.periodo,
+              description: this.monto_ajustable_descripcion,
+            })
+            this.loan_contributions_adjust_ids.push(res_adjust_activo.data.id)
+            this.guarantor_objeto.loan_contributions_adjust_ids=this.loan_contributions_adjust_ids
+          }else{
+            this.guarantor_objeto.loan_contributions_adjust_ids=this.loan_contributions_adjust_ids
+          }
+        }
+      }
+        this.garantes_detalle.push(this.affiliate_garantor.affiliate.full_name);
+        this.garantes_simulador.push(this.garante_boletas);
+        this.guarantors.push(this.guarantor_objeto);
+      }
+      
+
+
+
+
+
+
         this.garante_boletas={}
         this.guarantor_objeto={}
         this.loan_contributions_adjust_ids=[]

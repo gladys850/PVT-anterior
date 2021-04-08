@@ -81,7 +81,7 @@
                         <template v-slot:item="items">
                           <tr>
                             <td>{{items.item.created_at|datetime}}</td>
-                            <td>{{items.item.update_at|datetime}}</td>
+                            <td>{{items.item.updated_at|datetime}}</td>
                             <td>{{items.item.action}}</td>
                           </tr>
                         </template>

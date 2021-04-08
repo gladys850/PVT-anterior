@@ -13,8 +13,18 @@
         "max_lenders": 1,
         "min_guarantor_category": "0.35",
         "max_guarantor_category": "1",
+        "min_lender_category": null,
+        "max_lender_category": null,
         "max_cosigner": 0,
         "personal_reference": true
+    },
+    "procedure_type": {
+        "id": 11,
+        "module_id": 6,
+        "name": "Préstamo Largo plazo",
+        "created_at": "2021-03-31T15:50:31.000000Z",
+        "updated_at": "2021-03-31T15:50:31.000000Z",
+        "second_name": "largo plazo"
     }
 }
 

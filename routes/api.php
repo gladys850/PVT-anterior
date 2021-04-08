@@ -25,7 +25,7 @@ Route::group([
     Route::group([
         'middleware' => 'auth'
     ], function () {
-        Route::apiResource('user', 'Api\V1\UserController')->only('index', 'show');
+        Route::apiResource('user', 'Api\V1\UserController');//->only('index', 'show', 'update');
         if (!env("LDAP_AUTHENTICATION")) Route::apiResource('user', 'Api\V1\UserController')->only('update');
         Route::get('user/{user}/role', 'Api\V1\UserController@get_roles');
         Route::apiResource('auth', 'Api\V1\AuthController')->only('index');
@@ -64,6 +64,7 @@ Route::group([
         Route::patch('loans', 'Api\V1\LoanController@bulk_update_role');
         Route::patch('loan_payments', 'Api\V1\LoanPaymentController@bulk_update_role');
         Route::apiResource('record', 'Api\V1\RecordController')->only('index');
+        Route::get('record_payment', 'Api\V1\RecordController@record_loan_payment');
         Route::apiResource('statistic', 'Api\V1\StatisticController')->only('index', 'show');
         Route::apiResource('voucher_type', 'Api\V1\VoucherTypeController')->only('index', 'show');
         Route::apiResource('financial_entity', 'Api\V1\FinancialEntityController')->only('index', 'show');
@@ -150,8 +151,10 @@ Route::group([
             //Route::get('loan/{loan}/loan_affiliates', 'Api\V1\LoanController@get_loan_affiliates');
             Route::apiResource('loan_property', 'Api\V1\LoanPropertyController')->only('index', 'store', 'show', 'destroy', 'update');
             Route::post('loan/{loan}/validate_re_loan', 'Api\V1\LoanController@validate_re_loan');
+            Route::post('loan/{affiliate_id}/validate_affiliate', 'Api\V1\LoanController@validate_affiliate');
             //Route::get('calculate_percentage', 'Api\V1\LoanController@calculate_percentage');
             Route::get('my_loans', 'Api\V1\LoanController@my_loans');
+            Route::post('procedure_brother', 'Api\V1\LoanController@procedure_brother');
         });
         Route::group([
             'middleware' => 'permission:create-loan'
