@@ -425,14 +425,13 @@ class LoanPaymentController extends Controller
         $procedure_modality = $loan->modality;
         $lenders = []; 
         $is_dead = false;
-        $estimated_days=null;
         foreach ($loan->lenders as $lender) {
             $lenders[] = LoanController::verify_spouse_disbursable($lender)->disbursable;
             if($lender->dead) $is_dead = true;
         }
         $global_parameter=LoanGlobalParameter::latest()->first();
         $max_current=$global_parameter->grace_period+$global_parameter->days_current_interest;
-        if($estimated_days == null){
+
             $num_quota=$loan_payment->quota_number;
             if($num_quota == 1){
                 $estimated_days['previous_balance']=$loan->amount_approved;
@@ -458,7 +457,6 @@ class LoanPaymentController extends Controller
                 else
                 $estimated_days['penal'] = 0;
             }
-        }
         $persons = collect([]);
         foreach ($lenders as $lender){ 
             $persons->push([
