@@ -142,8 +142,6 @@ class LoanPaymentController extends Controller
      */
     public function indexKardex(Request $request){
         $loan = Loan::find($request->loan_id);
-        $state=$loan->state_id;
-        $state=LoanState::findOrFail($state);
         $balance = $loan->amount_approved;
         $loan['estimated_quota'] = $loan->estimated_quota;
         $loan['interest'] = $loan->interest;
@@ -153,7 +151,7 @@ class LoanPaymentController extends Controller
             foreach($loan_payments as $payment){
                 $payment->balance = $balance - $payment->capital_payment;
                 $payment->loan = $loan;
-                $payment->state = $state;
+                $payment->state = LoanState::findOrFail($payment->state_id);
 
             }
         }
@@ -162,7 +160,8 @@ class LoanPaymentController extends Controller
             foreach($loan_payments as $payment){
                 $payment->balance = 0;
                 $payment->loan = $loan;
-                $payment->state = $state;
+                $payment->state = LoanState::findOrFail($payment->state_id);
+               
               
             }
         }
