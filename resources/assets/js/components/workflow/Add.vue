@@ -7,6 +7,7 @@
         </v-toolbar-title>
         <v-spacer></v-spacer>
         <template v-if="$route.params.workTray == 'received' || $route.params.workTray == 'my_received' || $route.params.workTray == 'validated'">
+          <template v-if="!$store.getters.userRoles.includes('PRE-cobranzas')">
           <v-tooltip top>
             <template v-slot:activator="{ on }">
               <v-btn
@@ -61,6 +62,7 @@
             </template>
             <span>Anular trámite</span>
           </v-tooltip>
+          </template>
         </template>
         <template v-else><h6 class="caption">
           <strong>Ubicación trámite:</strong> <br />
