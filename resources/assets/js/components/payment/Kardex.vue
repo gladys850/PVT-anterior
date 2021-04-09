@@ -133,9 +133,7 @@
           {{ searchAmortizationType(item.amortization_type_id) }}
         </template>
 
-        <template v-slot:[`item.balance`]="{  }">
- 
-        </template>
+
 
         <template v-slot:[`item.state.name`]="{ item }">
           {{ item.state.name }}
@@ -440,14 +438,14 @@ export default {
         sortable: false,
         width: "5%",
       },
-      {
+      /*{
         text: "Saldo capital",
         value: "balance",
         class: ["normal", "white--text"],
         align: "center",
         sortable: false,
         width: "5%",
-      },
+      },*/
       {
         text: "Comprobante",
         value: "voucher",
