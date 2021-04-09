@@ -27,11 +27,7 @@
       </v-tooltip>
 
       <v-tooltip
-        v-if="
-          $route.params.workTray == 'received' ||
-          $route.params.workTray == 'my_received' ||
-          $route.params.workTray == 'validated'
-        "
+        v-if="true"
       >
         <template v-slot:activator="{ on }">
           <v-btn
