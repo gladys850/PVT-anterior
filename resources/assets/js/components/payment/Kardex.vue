@@ -1,37 +1,38 @@
 <template>
   <v-container fluid>
-      <v-toolbar-title class="pb-2 ma-0 pa-0"
-        >KARDEX
-        <v-card-title
-          class="pb-2 ma-0 pa-0"
-          v-if="
-            $store.getters.permissions.includes('print-payment-kardex-loan')
-          "
-        >
-          <v-tooltip top>
-            <template v-slot:activator="{ on }">
-              <v-btn
-                fab
-                x-small
-                color="dark"
-                top
-                left
-                absolute
-                v-on="on"
-                style="margin-left: 150px; margin-top: 20px"
-                @click="imprimirK($route.params.id)"
-              >
-                <v-icon>mdi-printer</v-icon>
-              </v-btn>
-            </template>
-            <div>
-              <span>Imprimir Kardex</span>
-            </div>
-          </v-tooltip>
-        </v-card-title>
-      </v-toolbar-title>
+    <v-toolbar-title class="pb-2 ma-0 pa-0">KARDEX </v-toolbar-title>  
+    <template v-if="loan.disbursement_date != null ">
+      <v-tooltip
+        top
+        v-if="$store.getters.permissions.includes('print-payment-kardex-loan')"
+      >
+        <template v-slot:activator="{ on }">
+          <v-btn
+            fab
+            x-small
+            color="dark"
+            top
+            left
+            absolute
+            v-on="on"
+            style="margin-left: 150px; margin-top: 20px"
+            @click="imprimirK($route.params.id)"
+          >
+            <v-icon>mdi-printer</v-icon>
+          </v-btn>
+        </template>
+        <div>
+          <span>Imprimir Kardex</span>
+        </div>
+      </v-tooltip>
 
-      <v-tooltip top v-if="$store.getters.userRoles.includes('PRE-cobranzas')">
+      <v-tooltip
+        v-if="
+          $route.params.workTray == 'received' ||
+          $route.params.workTray == 'my_received' ||
+          $route.params.workTray == 'validated'
+        "
+      >
         <template v-slot:activator="{ on }">
           <v-btn
             fab
@@ -59,22 +60,29 @@
       <v-card class="ma-0 pa-0 pb-2">
         <v-row class="ma-0 pa-0">
           <v-col md="4" class="ma-0 pa-0">
-            <strong>Deudor:</strong> {{ $options.filters.fullName(affiliate, true) }}<br />
+            <strong>Deudor:</strong>
+            {{ $options.filters.fullName(affiliate, true) }}<br />
             <strong>CI:</strong> {{ affiliate.identity_card }}<br />
             <strong>Matrícula</strong> {{ affiliate.registration }}<br />
-            <strong>Cuotas:</strong> {{ payments.length }}<br />
+            <strong>Cuotas:</strong> {{ payments.length ? payments.length : '' }}<br />
           </v-col>
           <v-col md="4" class="ma-0 pa-0">
-            <strong> desembolso:</strong> {{ payments[0].loan.disbursement_date | date }}
+            <strong> Desembolso:</strong>
+            {{ loan.disbursement_date | date }}
             <br />
-            <strong>Nro de comprobante contable:</strong>{{ payments[0].num_accounting_voucher}}<br />
-            <strong>Tasa anual:</strong> FALTA<br />
-            <strong>Cuota fija mensual:</strong> FALTA <br />
+            <strong>Nro de comprobante contable:</strong
+            >{{ loan.num_accounting_voucher }}<br />
+            <strong>Tasa anual:</strong> {{payments[0] ? payments[0].loan.interest.annual_interest : ''}}<br />
+            <strong>Cuota fija mensual:</strong> {{payments[0] ? payments[0].loan.estimated_quota : ''}} <br />
           </v-col>
           <v-col md="4" class="ma-0 pa-0">
-            <strong>Monto desembolsado:</strong> {{ payments[0].loan.amount_approved | moneyString }}<br />
-            <strong>Intereses Corrientes Pendientes:</strong> {{ payments[payments.length - 1].interest_accumulated | moneyString}}<br />
-            <strong>Intereses Penales Pendientes:</strong> {{ payments[payments.length - 1].penal_accumulated | moneyString }}
+            <strong>Monto desembolsado:</strong>
+            {{ (loan.amount_approved) | moneyString }}<br />
+            <strong>Intereses Corrientes Pendientes:</strong>
+            {{ (payments[payments.length - 1] ? payments[payments.length - 1].interest_accumulated : 0) | moneyString
+            }}<br />
+            <strong>Intereses Penales Pendientes:</strong>
+            {{ payments[payments.length - 1] ? payments[payments.length - 1].penal_accumulated : 0 | moneyString }}
           </v-col>
         </v-row>
       </v-card>
@@ -114,7 +122,7 @@
         </template>
         <span>{{ searchProcedureModality(item, 'name') }}</span>
       </v-tooltip>
-    </template>-->
+      </template>-->
         <template v-slot:[`item.estimated_date`]="{ item }">
           {{ item.estimated_date | date }}
         </template>
@@ -130,11 +138,11 @@
         </template>
 
         <template v-slot:[`item.balance`]="{ item }">
-          {{ item.estimated_quota | moneyString }}
+          {{ item.balance | moneyString }}
         </template>
 
-        <template v-slot:[`item.state_id`]="{ item }">
-          {{ item.name }}
+        <template v-slot:[`item.state.name`]="{ item }">
+          {{ item.state.name }}
         </template>
 
         <template v-slot:[`item.actions`]="{ item }">
@@ -167,7 +175,7 @@
                 small
                 v-on="on"
                 color="success"
-                v-if="item.state.name == 'Pendiente de Pago'"
+                v-if="item.state.name == 'Pendiente de ajuste'"
                 :to="{
                   name: 'paymentAdd',
                   params: { hash: 'edit' },
@@ -247,7 +255,10 @@
         </template>
       </v-data-table>
       <RemoveItem :bus="bus" />
-
+    </template>
+    <template v-else>
+      <h3>NO SE CUENTA AÚN CON EL KARDEX</h3>
+    </template>
   </v-container>
 </template>
 <script>
@@ -259,6 +270,10 @@ export default {
   },
   props: {
     affiliate: {
+      type: Object,
+      required: true,
+    },
+    loan: {
       type: Object,
       required: true,
     },
@@ -355,7 +370,8 @@ export default {
         align: "center",
         sortable: true,
         width: "5%",
-      },,
+      },
+      ,
       {
         text: "Código",
         value: "code",
@@ -469,7 +485,6 @@ export default {
         width: "15%",
       },
     ],
-
   }),
 
   watch: {
@@ -509,14 +524,14 @@ export default {
     async getPayments() {
       try {
         this.loading = true;
-        let res = await axios.get(`loan_payment`, {
+        let res = await axios.get(`kardex_loan_payment`, {
           params: {
             loan_id: this.$route.params.id,
             page: this.options.page,
             per_page: this.options.itemsPerPage,
-            sortBy: this.options.sortBy,
-            sortDesc: this.options.sortDesc,
-            search: this.search,
+            //sortBy: this.options.sortBy,
+            //sortDesc: this.options.sortDesc,
+            //search: this.search, TODO  para el filtro mandar search y quitar la columna de balance
           },
         });
         this.payments = res.data.data;
@@ -612,14 +627,13 @@ export default {
         console.log(e);
       }
     },
-
   },
 };
 </script>
 <style scoped>
 .theme--light.v-datatable.v-datatable-tr.v-datatable-td {
-    position: fixed;
-    bottom: 0;
-   padding: 0px;
+  position: fixed;
+  bottom: 0;
+  padding: 0px;
 }
 </style>

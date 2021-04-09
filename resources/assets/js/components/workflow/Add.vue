@@ -6,7 +6,7 @@
           <Breadcrumbs />
         </v-toolbar-title>
         <v-spacer></v-spacer>
-        <template v-if="$route.params.workTray == 'received' || $route.params.workTray == 'my_received' || $route.params.workTray == 'validated' || $route.params.workTray == 'all'">
+        <template v-if="$route.params.workTray == 'received' || $route.params.workTray == 'my_received' || $route.params.workTray == 'validated'">
           <v-tooltip top>
             <template v-slot:activator="{ on }">
               <v-btn
@@ -63,7 +63,8 @@
           </v-tooltip>
         </template>
         <template v-else><h6 class="caption">
-          <v-icon x-small color="orange">mdi-folder-information</v-icon> {{role_name}} <br>
+          <strong>Ubicación trámite:</strong> <br />
+          <v-icon x-small color="orange">mdi-folder-information</v-icon>{{role_name}} <br>
           <v-icon x-small color="blue" v-if="user_name != null">mdi-file-account</v-icon> {{user_name}}</h6>
         </template>
         <!--<v-divider
@@ -271,6 +272,7 @@
           <v-card flat tile>
             <v-card-text class="pa-0 pl-3 pr-10 py-0">
               <Kardex 
+              :loan.sync="loan"
               :bus="bus"
               :affiliate.sync="affiliate" />
             </v-card-text>
