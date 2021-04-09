@@ -324,13 +324,12 @@ export default {
     async validatedStepOne() {
       try {
            if(!this.isNew)
-          { this.toastr.error("Entro por verdadero")
+          {
             if(this.data_payment.procedure_modality_name == 'Amortización Complemento Económico' ||
               this.data_payment.procedure_modality_name == 'Amortización Fondo de Retiro' ||
               this.data_payment.procedure_modality_name == 'Amortización por Ajuste' ||
               this.data_payment.procedure_modality_name == 'Amortización Automática')
             {
-                   this.toastr.error("modalidades")
               this.validatePayment()
             }else{
               if(this.data_payment.procedure_modality_name == 'Amortización Directa' && this.$store.getters.permissions.includes('create-payment') )
