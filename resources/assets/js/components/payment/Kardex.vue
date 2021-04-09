@@ -93,7 +93,7 @@
         :loading="loading"
         :options.sync="options"
         :server-items-length="totalPayments"
-        :footer-props="{ itemsPerPageOptions: [10, 50, 100] }"
+        :footer-props="{ itemsPerPageOptions: [5] }"
       >
         <!--<template v-slot:[`header.data-table-select`]="{ on, props }">
           <v-simple-checkbox
@@ -137,8 +137,8 @@
           {{ searchAmortizationType(item.amortization_type_id) }}
         </template>
 
-        <template v-slot:[`item.balance`]="{ item }">
-          {{ item.balance | moneyString }}
+        <template v-slot:[`item.balance`]="{  }">
+ 
         </template>
 
         <template v-slot:[`item.state.name`]="{ item }">
