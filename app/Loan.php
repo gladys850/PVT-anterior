@@ -203,7 +203,7 @@ class Loan extends Model
     }
     public function paymentsKardex()
     {
-        return $this->hasMany(LoanPayment::class)->where('state_id', 6)->orWhere('state_id',7)->orderBy('quota_number', 'desc')->orderBy('created_at');
+        return $this->hasMany(LoanPayment::class)->whereIn('state_id', [6,7])->orderBy('quota_number', 'desc')->orderBy('created_at');
     }
     //relacion uno a muchos
     public function loan_contribution_adjusts()
@@ -248,7 +248,7 @@ class Loan extends Model
     {
         $balance = $this->amount_approved;
         if ($this->payments()->count() > 0) {
-            $balance -= $this->payments()->where('state_id', 6)->orWhere('state_id',7)->sum('capital_payment');
+            $balance -= $this->payments()->whereIn('state_id', [6,7])->sum('capital_payment');
         }
         return Util::round($balance);
     }
