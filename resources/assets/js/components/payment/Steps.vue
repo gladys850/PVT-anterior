@@ -123,14 +123,14 @@ export default {
     },
   },
   mounted() {
-    if(this.$route.params.hash == 'edit')
+  /*  if(this.$route.params.hash == 'edit')
     {
       this.getLoanPayment(this.$route.query.loan_payment)
     }
      if(this.$route.params.hash == 'view')
     {
       this.getLoanPayment(this.$route.query.loan_payment)
-    }
+    }*/
   },
   methods: {
     atras(){
@@ -214,7 +214,8 @@ export default {
             paid_by:this.data_payment.affiliate_id,
             procedure_modality_id:this.data_payment.procedure_modality_id,
             user_id: this.$store.getters.id,
-            state: this.data_payment.refinanciamiento
+            state: this.data_payment.refinanciamiento,
+            description:this.data_payment.glosa
           })
             printJS({
             printable: res.data.attachment.content,
