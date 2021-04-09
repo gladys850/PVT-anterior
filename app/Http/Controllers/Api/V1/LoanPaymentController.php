@@ -142,14 +142,19 @@ class LoanPaymentController extends Controller
      */
     public function indexKardex(Request $request){
         $loan = Loan::find($request->loan_id);
+        $state=$loan->state_id;
+        $state=LoanState::findOrFail($state);
         $balance = $loan->amount_approved;
         $loan['estimated_quota'] = $loan->estimated_quota;
         $loan['interest'] = $loan->interest;
+
         if(!$request->has('search')){
             $loan_payments = LoanPayment::where('loan_id', $request->loan_id)->WhereIn('state_id', [6,7])->orWhere('loan_id', $request->loan_id)->where('procedure_modality_id', 61)->orderby('quota_number')->paginate(5);
             foreach($loan_payments as $payment){
                 $payment->balance = $balance - $payment->capital_payment;
                 $payment->loan = $loan;
+                $payment->state = $state;
+
             }
         }
         else{
@@ -157,6 +162,8 @@ class LoanPaymentController extends Controller
             foreach($loan_payments as $payment){
                 $payment->balance = 0;
                 $payment->loan = $loan;
+                $payment->state = $state;
+              
             }
         }
         /*$loan->estimated_quota = $loan->estimated_quota;
