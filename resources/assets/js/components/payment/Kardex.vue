@@ -175,7 +175,7 @@
                 small
                 v-on="on"
                 color="success"
-                v-if="item.state.name == 'Pendiente de ajuste'"
+                v-if="item.state.name == 'Pendiente de ajuste' || item.state.name == 'Pendiente de Pago'"
                 :to="{
                   name: 'paymentAdd',
                   params: { hash: 'edit' },
