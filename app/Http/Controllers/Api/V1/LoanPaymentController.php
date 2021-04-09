@@ -236,11 +236,15 @@ class LoanPaymentController extends Controller
     public function destroy(LoanPayment $loanPayment)
     {
         $PendientePago = LoanState::whereName('Pendiente de Pago')->first()->id;
-        if ($loanPayment->state_id != $PendientePago){
-            abort(403, 'El registro a eliminar no está pendiente de pago');
-        }else{
+        $PendienteAjuste = LoanState::whereName('Pendiente de ajuste')->first()->id;
+        if ($loanPayment->state_id == $PendientePago || $loanPayment->state_id == $PendienteAjuste){
+            $state = LoanState::whereName('Anulado')->first();
+            $loanPayment->state()->associate($state);
+            $loanPayment->save();
             $loanPayment->delete();
-            return $loanPayment;
+            return $loanPayment;  
+        }else{
+            abort(403, 'El registro a eliminar no está en estado Pendiente');
         }
     }
 
