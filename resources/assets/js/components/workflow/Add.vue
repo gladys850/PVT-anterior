@@ -500,7 +500,9 @@ export default {
         this.loading = true
         let res = await axios.get(`loan/${id}/observation`)
         this.observations = res.data
+        
         for (this.i = 0; this.i < this.observations.length; this.i++) {
+           console.log("ww"+this.observations[this.i].user_id)
           let res1 = await axios.get(`user/${this.observations[this.i].user_id}`
           )
           this.observations[this.i].user_name = res1.data.username
