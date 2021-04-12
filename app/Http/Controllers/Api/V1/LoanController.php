@@ -1408,7 +1408,7 @@ class LoanController extends Controller
                 if((count($affiliate->spouses) === 0 && $affiliate->affiliate_state->name != 'Fallecido') || (count($affiliate->spouses) !== 0 && $affiliate->affiliate_state->name  == 'Fallecido')) {
                     if($affiliate->identity_card != null && $affiliate->city_identity_card_id != null){
                         if($affiliate->civil_status != null){
-                            if($affiliate->financial_entity_id != null && $affiliate->account_number != null && $affiliate->sigep_status != null){
+                            //if($affiliate->financial_entity_id != null && $affiliate->account_number != null && $affiliate->sigep_status != null){
                                 if($affiliate->birth_date != null && $affiliate->city_birth_id != null){
                                     if(($affiliate->affiliate_state->affiliate_state_type->name != 'Pasivo' && $affiliate->pension_entity_id ==  null) || ($affiliate->affiliate_state->affiliate_state_type->name == 'Pasivo' && $affiliate->pension_entity_id !=  null )){
                                         if($loan_process < $loan_global_parameter->max_loans_process ){
@@ -1426,10 +1426,10 @@ class LoanController extends Controller
                                 }else{
                                     $message['validate'] = 'El afiliado no tiene registrado su fecha de nacimiento ó ciudad de nacimiento.';
                                 }
-                            }
+                            /*}
                            else{
                             $message['validate'] = 'El afiliado no tiene registrado la entidad financiera';
-                            } 
+                            }*/ 
                         }
                         else{
                         $message['validate'] = 'El afiliado no tiene registrado su estado civil.';
