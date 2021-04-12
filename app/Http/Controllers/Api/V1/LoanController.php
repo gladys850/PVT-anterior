@@ -70,6 +70,7 @@ class LoanController extends Controller
             $loan->parent_loan->balance = $loan->parent_loan->balance;
             $loan->parent_loan->estimated_quota = $loan->parent_loan->estimated_quota;
         }
+        $loan->intereses=$loan->interest;
         //$loan->procedure=$loan->modality;
         //$loan->loan_contribution = $loan->loan_contribution_adjusts;
         return $loan;
