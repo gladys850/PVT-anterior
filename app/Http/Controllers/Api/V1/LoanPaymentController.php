@@ -149,11 +149,12 @@ class LoanPaymentController extends Controller
         if(!$request->has('search')){
             $loan_payments = LoanPayment::where('loan_id', $request->loan_id)->WhereIn('state_id', [6,7])->orWhere('loan_id', $request->loan_id)->where('procedure_modality_id', 61)->orderby('quota_number')->paginate(5);
             foreach($loan_payments as $payment){
-                $payment->balance = $balance - $payment->capital_payment;
+                $balance = $balance - $payment->capital_payment;
                 $payment->loan = $loan;
                 $payment->state = LoanState::findOrFail($payment->state_id);
 
             }
+            //$loan->balance->$balance;
         }
         else{
             $loan_payments = LoanPayment::where('loan_id', $request->loan_id)->WhereIn('state_id', [6,7])->where('code', 'ilike','%'.$request->search.'%')->orWhere('loan_id', $request->loan_id)->where('procedure_modality_id', 61)->where('code', 'ilike','%'.$request->search.'%')->orderby('quota_number')->paginate(7);
