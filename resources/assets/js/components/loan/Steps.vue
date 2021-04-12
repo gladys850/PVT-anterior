@@ -173,7 +173,7 @@
               @click="beforeStep(4)">Atras</v-btn>
               <v-btn right
               color="primary"
-              @click="nextStep(4)">
+              @click="validateStepsFour()">
               Siguiente
               </v-btn>
             </v-col>
@@ -1023,6 +1023,16 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
           }
         }else{
           this.nextStep(3)
+        }
+      //}
+    },
+        validateStepsFour()
+    {
+        if(this.affiliate.city_identity_card_id == null)
+        {
+          this.toastr.error("Por favor registre la ciudad de expedición del CI.")
+        }else{
+          this.nextStep(4)
         }
       //}
     },
