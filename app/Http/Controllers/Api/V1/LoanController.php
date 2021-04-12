@@ -1410,7 +1410,7 @@ class LoanController extends Controller
                         if($affiliate->civil_status != null){
                             if($affiliate->financial_entity_id != null && $affiliate->account_number != null && $affiliate->sigep_status != null){
                                 if($affiliate->birth_date != null && $affiliate->city_birth_id != null){
-                                    if(($affiliate->affiliate_state->affiliate_state_type->name != 'Pasivo' && $affiliate->pension_entity_id ==  null) || ($affiliate->affiliate_state->affiliate_state_type->name == 'Pasivo' && $affiliate->pension_entity_id !=  null )){
+                                    if($affiliate->affiliate_state->affiliate_state_type->name != 'Pasivo'){
                                         if($loan_process < $loan_global_parameter->max_loans_process ){
                                             if($loan_disbursement < $loan_global_parameter->max_loans_active){
                                                 $message['validate'] = true;
@@ -1420,9 +1420,19 @@ class LoanController extends Controller
                                         }else{
                                             $message['validate'] = 'El afiliado no puede tener más de '.$loan_global_parameter->max_loans_process.' trámite en proceso. Actualmente ya tiene '.$loan_process.' préstamos en proceso.';
                                             }
-                                    }else{
-                                        $message['validate'] = 'El afiliado no tiene registrado su ente Gestor.';
-                                }
+                                    }elseif($affiliate->pension_entity_id ==  null){
+                                            $message['validate'] = 'El afiliado no tiene registrado su ente Gestor.';
+                                            }else{
+                                                if($loan_process < $loan_global_parameter->max_loans_process ){
+                                                    if($loan_disbursement < $loan_global_parameter->max_loans_active){
+                                                         $message['validate'] = true;
+                                                        }else{
+                                                    $message['validate'] ='El afiliado no puede tener más de ' .$loan_global_parameter->max_loans_active. ' préstamos desembolsados. Actualemnte ya tiene '. $loan_disbursement .' préstamos desembolsados.';
+                                                    } 
+                                                }else{
+                                                    $message['validate'] = 'El afiliado no puede tener más de '.$loan_global_parameter->max_loans_process.' trámite en proceso. Actualmente ya tiene '.$loan_process.' préstamos en proceso.';
+                                                }  
+                                            }
                                 }else{
                                     $message['validate'] = 'El afiliado no tiene registrado su fecha de nacimiento ó ciudad de nacimiento.';
                                 }
