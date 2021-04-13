@@ -52,6 +52,11 @@ class AffiliateController extends Controller
         $affiliate->defaulted_lender = $affiliate->defaulted_lender;
         $affiliate->defaulted_guarantor = $affiliate->defaulted_guarantor;
         $affiliate->cpop = $affiliate->cpop;
+        if($affiliate->spouse){
+            $affiliate->spouse = $affiliate->spouse;
+            }else
+            {$affiliate->spouse = [];
+            }
         if ($with_category) $affiliate->category = $affiliate->category;
         return $affiliate;
     }
@@ -602,17 +607,49 @@ class AffiliateController extends Controller
     * @responseFile responses/affiliate/test_guarantor.200.json
     */
     public function test_guarantor(Request $request){
+        $message['validate'] = false;
         $request->validate([
             'identity_card' => 'required|string',
+            'type_guarantor_spouse' => 'required|boolean',
             'procedure_modality_id' => 'integer|exists:procedure_modalities,id'
         ]);
-        $affiliate = Affiliate::whereIdentity_card($request->identity_card)->first();
+        if($request->type_guarantor_spouse == true){
+        
+            $spouse = Spouse::whereIdentity_card($request->identity_card)->first();
+            if(isset($spouse)){
+                $affiliate_id = $spouse->affiliate_id;
+                $affiliate = Affiliate::where('id', $affiliate_id)->first();
+                //$perseption = $this.verify_affiliate_spouse($request->identity_card);
+                //return $perseption;
+                if(isset($affiliate)){
+                    // return $affiliate->affiliate_state->name;
+                    if($affiliate->affiliate_state != null){
+                        if($affiliate->affiliate_state->name == "Fallecido") {
+                                return $affiliate->test_guarantor($request->procedure_modality_id);
+                                //return $message;return }
+                                }else{
+                            $message['validate'] = "Debe actualizar el estado del afiliado";
+                            }
+                        }else{
+                    
+                            $message['validate'] = "Debe actualizar el estado del afiliado";
+                            }
+                }else{
+                    $message['validate'] = "No se encontraron resultados del afiliado titular";
+                } 
+            }else{
+                $message['validate'] = "No se encontraron datos";
+            }  
+        }else{
+            $affiliate = Affiliate::whereIdentity_card($request->identity_card)->first();
         if(isset($affiliate)){
-            if(!$affiliate->affiliate_state) abort(403, 'Debe actualizar el estado del afiliado');
+            if(!$affiliate->affiliate_state) $message['validate'] = 'Debe actualizar el estado del afiliado';
             return $affiliate->test_guarantor($request->procedure_modality_id);
         }else{
-            return abort(403,"No se encontraron resultados");
+            $message['validate'] ="No se encontraron resultados";
         }
+       }
+       return $message;
     }
 
     /** @group Observaciones de Afiliado
