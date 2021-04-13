@@ -121,7 +121,7 @@ class Affiliate extends Model
 
     public function getDeadAttribute()
     {
-        return ($this->date_death != null || $this->reason_death != null || $this->death_certificate_number != null);
+        return ($this->date_death != null || $this->reason_death != null || $this->death_certificate_number != null || $this->affiliate_state->name == "Fallecido");
     }
 
     public function getDefaultedLenderAttribute()

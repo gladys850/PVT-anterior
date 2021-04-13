@@ -767,158 +767,68 @@ class AffiliateController extends Controller
     }
 
     /**
-    * Historial de Tramites
-    * Devuelve el Historio de tramites de un afiliado.
-    * @queryParam ci string required Carnet de identidad. Example:1700723
+    * Historial de afiliados
+    * Devuelve el afiliado y/o esposa.
+    * @queryParam ci string required Carnet de identidad o matricula. Example:1700723
     * @authenticated
     * @responseFile responses/affiliate/affiliate_record.200.json
     */
     public function affiliate_record(Request $request)
     {
         if($request->ci){
-            $data_affiliate = $this->verify_affiliate($request->ci);
-            $observation = false;
-            $message = array();
-            if(!$data_affiliate['tit_pvt'] && !$data_affiliate['spouse_pvt'] && !$data_affiliate['tit_sismu'] && !$data_affiliate['spouse_sismu']){
-                array_push($message, "afiliado-inexistente");
-                $observation = true;
+            //
+            $affiliate = null;
+            $spouse = null;
+            if(Affiliate::where('identity_card', $request->ci)->orWhere('registration', $request->ci)->first()){
+                $affiliate = Affiliate::where('identity_card', $request->ci)->orWhere('registration', $request->ci)->first();
+                $affiliate->origin = "Affiliate";
+                if(Affiliate::where('identity_card', $request->ci)->orWhere('registration', $request->ci)->first()->spouse){
+                    $spouse = Affiliate::where('identity_card', $request->ci)->orWhere('registration', $request->ci)->first()->spouse;
+                    $spouse->origin = "spouse";
+                }
+            }
+            if(Spouse::where('identity_card', $request->ci)->orWhere('registration', $request->ci)->first()){
+                if(!$affiliate){
+                    $spouse = Spouse::where('identity_card', $request->ci)->orWhere('registration', $request->ci)->first();
+                    $spouse->origin = "spouse";
+                    $affiliate = $spouse->affiliate;
+                    $affiliate->origin = "affiliate";
+                }
+                else{
+                    $spouse = Spouse::where('identity_card', $request->ci)->orWhere('registration', $request->ci)->first()->affiliate;
+                    $spouse->origin = "affiliate";
+                }
+            }
+            if($affiliate || $spouse){
+                $data = [
+                    "affiliate" => $affiliate,
+                    "spouse" => $spouse,
+                ];
             }
             else{
-                $message = $data_affiliate['message'];
-                if($message)
-                    $observation = true;
+                $data = [
+                    "observables" => $this->observables($request->ci)
+                ];
             }
-            if(sizeof($this->get_observables($request->ci))>0){
-                array_push($message, 'existen '.sizeof($this->get_observables($request->ci)).' coincidencias, revisar');
-                $observation = true;
-            }
-            $data = array(
-                "id" => $data_affiliate['id'],
-                "last_name" => $data_affiliate['last_name'],
-                "mothers_last_name" => $data_affiliate['mother_last_name'],
-                "fullname" => $data_affiliate['full_name'],
-                "identity_card" => $data_affiliate['identity_card'],
-                "registration" => $data_affiliate['registration'],
-                "observation" => $observation,
-                "message" => $message,
-                "tit_pvt" => $data_affiliate['tit_pvt'],
-                "spouse_pvt" => $data_affiliate['spouse_pvt'],
-                "tit_sismu" => $data_affiliate['tit_sismu'],
-                "spouse_sismu" => $data_affiliate['spouse_sismu'],
-                "loans" => $this->get_mixed_loans($request->ci),
-                "guarantees" => $this->get_mixed_guarantees($request->ci),
-                "observables" => $this->get_observables($request->ci),
-            );
             return $data;
         }
     }
 
-    public function verify_affiliate($ci){
-        $tit_pvt = false;
-        $spouse_pvt = false;
-        $tit_sismu = false;
-        $spouse_sismu = false;
-        $id = "";
-        $last_name = "";
-        $mothers_last_name = "";
-        $surname_husband = "";
-        $full_name = "";
-        $identity_card = "";
-        $registration = "";
-        $observation = false;
-        $message = array();
-        $affiliate = Affiliate::whereIdentity_card($ci)->first();
-        if($affiliate)
-            $tit_pvt = true;
-        else{
-            $affiliate = Affiliate::whereRegistration($ci)->first();
-            if($affiliate)
-                $tit_pvt = true;
-        }
-        if($tit_pvt){
-            $id = $affiliate->id;
-            $last_name = $affiliate->last_name;
-            $mothers_last_name = $affiliate->mothers_last_name;
-            $surname_husband = $affiliate->surname_husband;
-            $full_name = $affiliate->first_name.' '.$affiliate->second_name;
-            $identity_card = $affiliate->identity_card;
-            $registration = $affiliate->registration;
-        }
-        else{
-            $affiliate = Spouse::whereIdentity_card($ci)->first();
-            if($affiliate)
-                $spouse_pvt = true;
-            else{
-                $affiliate = Spouse::whereRegistration($ci)->first();
-                if($affiliate)
-                    $spouse_pvt = true;
-            }
-            if($spouse_pvt){
-                $id = $affiliate->id;
-                $last_name = $affiliate->last_name;
-                $mothers_last_name = $affiliate->mothers_last_name;
-                $surname_husband = $affiliate->surname_husband;
-                $full_name = $affiliate->first_name.' '.$affiliate->second_name;
-                $identity_card = $affiliate->identity_card;
-                $registration = $affiliate->registration;
-            }
-        }
-
-        $sismu = "SELECT Padron.IdPadron, trim(Padron.PadPaterno) as PadPaterno, trim(Padron.PadMaterno) as PadMaterno, trim(Padron.PadApellidoCasada) as PadApellidoCasada, trim(Padron.PadNombres) as PadNombres, trim(Padron.PadCedulaIdentidad) as PadCedulaIdentidad, trim(Padron.PadMatricula) as PadMatricula
-                    from Padron 
-                    where trim(Padron.PadCedulaIdentidad) = '$ci'
-                    OR trim(Padron.PadMatricula) = '$ci'";
-        $affiliate = DB::connection('sqlsrv')->select($sismu);
-        if(sizeof($affiliate)>=2)
-                array_push($message, "mas de un registro en SISMU");
-        if($affiliate){
-            if(!$tit_pvt)
-                $id = $affiliate[0]->IdPadron;
-            $last_name = $affiliate[0]->PadPaterno;
-            $mothers_last_name = $affiliate[0]->PadMaterno;
-            $surname_husband = $affiliate[0]->PadApellidoCasada;
-            $full_name = $affiliate[0]->PadNombres;
-            $identity_card = $affiliate[0]->PadCedulaIdentidad;
-            $registration = $affiliate[0]->PadMatricula;
-            $tit_sismu = true;
-        }
-        else{
-            $sismu = "SELECT Padron.IdPadron, trim(Padron.PadPaterno) as PadPaterno, trim(Padron.PadMaterno) as PadMaterno, trim(Padron.PadApellidoCasada) as PadApellidoCasada, trim(Padron.PadNombres) as PadNombres, trim(Padron.PadCedulaIdentidad) as PadCedulaIdentidad, trim(Padron.PadMatricula) as PadMatricula
-                    from Padron 
-                    where trim(Padron.PadMatriculaTit) = '$ci'
-                    AND trim(Padron.PadCedulaIdentidad) <> '$ci'
-                    AND trim(Padron.PadMatricula) <> '$ci'";
-            $affiliate = DB::connection('sqlsrv')->select($sismu);
-            if(sizeof($affiliate)>=2)
-                array_push($message, "mas de un registro en SISMU");
-            if($affiliate){
-                if(!$spouse_pvt)
-                    $id = $affiliate[0]->IdPadron;
-                $last_name = $affiliate[0]->PadPaterno;
-                $mothers_last_name = $affiliate[0]->PadMaterno;
-                $surname_husband = $affiliate[0]->PadApellidoCasada;
-                $full_name = $affiliate[0]->PadNombres;
-                $identity_card = $affiliate[0]->PadCedulaIdentidad;
-                $registration = $affiliate[0]->PadMatricula;
-                $spouse_sismu = true;
-            }
-        }
-        return array(
-            "id" => $id,
-            "last_name" => $last_name,
-            "mother_last_name" => $mothers_last_name,
-            "surname_husband" => $surname_husband,
-            "full_name" => $full_name,
-            "identity_card" => $identity_card,
-            "registration" => $registration,
-            "tit_pvt" => $tit_pvt,
-            "spouse_pvt" => $spouse_pvt,
-            "tit_sismu" => $tit_sismu,
-            "spouse_sismu" => $spouse_sismu,
-            "message" => $message,
-        );
+    /**
+    * Historial de Tramites
+    * Devuelve el Historio de tramites de un afiliado.
+    * @queryParam Affiliate_id integer required id de afiliado. Example:1
+    * @authenticated
+    * @responseFile responses/affiliate/affiliate_history.200.json
+    */
+    public function loans_guarantees(Affiliate $affiliate){
+        $data = [
+            "loans" => $this->get_mixed_loans($affiliate->identity_card),
+            "guarantees" => $this->get_mixed_guarantees($affiliate->identity_card),
+        ];
+        return $data;
     }
-    
+
     public function get_mixed_loans($ci){
         $affiliate = Affiliate::whereIdentity_card($ci)->first();
         $data = array();
@@ -1028,6 +938,19 @@ class AffiliateController extends Controller
             );
             array_push($data, $data_prestamos);
         }
+        return $data;
+    }
+
+    public function observables($ci)
+    {
+        $query = "SELECT * from Padron where Padron.PadCedulaIdentidad = '$ci' or Padron.PadMatricula = '$ci'";
+        $query2 = "SELECT * from Padron where Padron.PadCedulaIdentidad like '$ci%' or Padron.PadMatricula like '$ci%'";
+        $loans = DB::connection('sqlsrv')->select($query);
+        $loans2 = DB::connection('sqlsrv')->select($query2);
+        $data = [
+            "exactos" => $loans,
+            "aproximaciones" => $loans2
+        ];
         return $data;
     }
 
@@ -1282,5 +1205,22 @@ class AffiliateController extends Controller
         }
         //return sizeof($message);
         return $message;
+    }
+
+    public function prueba(){
+        $query = "SELECT * from Padron";
+        $loan_sismu = DB::connection('sqlsrv')->select($query);
+        $contador = 0;
+        $array = array();
+        foreach($loan_sismu as $sismu)
+        {
+            if(!Affiliate::where('identity_card', trim($sismu->PadCedulaIdentidad))->orWhere('registration', trim($sismu->PadCedulaIdentidad))->first()){
+                if(!Spouse::where('identity_card', trim($sismu->PadCedulaIdentidad))->orWhere('registration', trim($sismu->PadCedulaIdentidad))->first()){
+                    //return $simu->PadCedulaIdentidad;
+                    $contador++;
+                }
+            }
         }
+        return $contador;
+    }
 }
