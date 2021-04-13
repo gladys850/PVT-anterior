@@ -605,7 +605,7 @@ class LoanPaymentController extends Controller
         $payment_type = AmortizationType::get();
         $payment_type_desc = $payment_type->where('name', 'LIKE', 'Descuento automático')->first();
         $description = $request->description? $request->description : 'Por descuento automatico';
-        $procedure_modality = ProcedureModality::whereName('AA Regular')->first();
+        $procedure_modality = ProcedureModality::whereName('A.AUT. Cuota pactada')->first();
         $voucher = $request->voucher? $request->voucher : "AUTOMATICO";
         //$paid_by = "T";
         $loans_quantity = 0;
@@ -685,7 +685,7 @@ class LoanPaymentController extends Controller
         $array = Excel::toArray(new LoanPaymentImport, $file);
         $pendientePago = LoanState::whereName('Pendiente de Pago')->first()->id;
         $pagado = LoanState::whereName('Pagado')->first()->id;
-        $procedure_modality = ProcedureModality::whereName('AA Regular')->first();
+        $procedure_modality = ProcedureModality::whereName('A.AUT. Cuota pactada')->first();
         $estimated_date_importation = $request->estimated_date? Carbon::parse($request->estimated_date) : Carbon::now()->endOfMonth();
         
             for($i=1;$i<count($array[0]);$i++){   

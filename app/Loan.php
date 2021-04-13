@@ -301,25 +301,25 @@ class Loan extends Model
             $total_amount = Util::round($estimated_quota);$amount = 0;
             $liquidate = false;
             switch($procedure_modality_id){
-                case 54:{
+                case 53:{
                     $amount = Util::round($this->estimated_quota);
-                    break;
-                }
-                case 61:{
-                    $amount = Util::round($this->estimated_quota);
-                    break;
-                }
-                case 56:{
-                    $amount = Util::round($this->balance);
-                    $liquidate = true;
-                    break;
-                }
-                case 58:{
-                    $amount = Util::round($this->balance);
-                    $liquidate = true;
                     break;
                 }
                 case 60:{
+                    $amount = Util::round($this->estimated_quota);
+                    break;
+                }
+                case 54:{
+                    $amount = Util::round($this->balance);
+                    $liquidate = true;
+                    break;
+                }
+                case 57:{
+                    $amount = Util::round($this->balance);
+                    $liquidate = true;
+                    break;
+                }
+                case 59:{
                     $amount = Util::round($this->balance);
                     $liquidate = true;
                     break;
@@ -799,7 +799,7 @@ class Loan extends Model
    {
      $loan_global_parameter  = $loan_global_parameter = LoanGlobalParameter::latest()->first();
      $number_payment_consecutive = $loan_global_parameter->consecutive_manual_payment;//3
-     $modality_id=ProcedureModality::whereShortened("ADR")->first()->id;
+     $modality_id=ProcedureModality::whereShortened("AD-Cuota-pactada")->first()->id;
 
      $Pagado = LoanState::whereName('Pagado')->first()->id;
     
