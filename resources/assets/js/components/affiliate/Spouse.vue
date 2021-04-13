@@ -1,10 +1,9 @@
 <template>
   <v-container fluid >
     <ValidationObserver ref="observer">
-    <v-form>
-      <v-row justify="center" >
-        <v-col cols="12" md="11" class="v-card-profile">
-        
+      <v-form>
+        <v-row justify="center" >
+          <v-col cols="12" md="6" class="v-card-profile">        
                 <v-row>
                   <v-col cols="12">
                     <v-toolbar-title>INFORMACION CONYUGE</v-toolbar-title>
@@ -17,8 +16,9 @@
                       v-model="spouse.first_name"
                       class="purple-input"
                       label="Primer Nombre"
-                      :readonly="(state_id != 4)"
-                      :outlined="state_id == 4"
+                      :readonly="!editable || !permission.secondary"
+                      :outlined="editable && permission.secondary"
+                      :disabled="editable && !permission.secondary || state_id != 4"
                       ></v-text-field>
                       </ValidationProvider>
                     </v-col>
@@ -27,8 +27,9 @@
                       dense
                       v-model="spouse.second_name"
                       label="Segundo Nombre"
-                      :readonly="(state_id != 4)"
-                      :outlined="state_id == 4"
+                      :readonly="!editable || !permission.secondary"
+                      :outlined="editable && permission.secondary"
+                      :disabled="editable && !permission.secondary || state_id != 4"
                       ></v-text-field>
                     </v-col>
                     <v-col cols="12" md="4" >
@@ -39,8 +40,9 @@
                       v-model="spouse.last_name"
                       label="Primer Apellido"
                       class="purple-input"
-                      :readonly="(state_id != 4)"
-                      :outlined="state_id == 4"
+                        :readonly="(!editable || !permission.secondary)"
+                        :outlined="editable && permission.secondary"
+                        :disabled="editable && !permission.secondary || state_id != 4"
                       ></v-text-field>
                       </ValidationProvider>
                     </v-col>
@@ -52,8 +54,9 @@
                       v-model="spouse.mothers_last_name"
                       label="Segundo Apellido"
                       class="purple-input"
-                      :readonly="(state_id != 4)"
-                      :outlined="state_id == 4"
+                        :readonly="!editable || !permission.secondary"
+                        :outlined="editable && permission.secondary4"
+                        :disabled="editable && !permission.secondary || state_id != 4"
                       ></v-text-field>
                       </ValidationProvider>
                     </v-col>
@@ -65,12 +68,13 @@
                       v-model="spouse.surname_husband"
                       label="Apellido Casada"
                       class="purple-input"
-                      :readonly="(state_id != 4)"
-                      :outlined="state_id == 4"
+                        :readonly="!editable || !permission.secondary"
+                        :outlined="editable && permission.secondary"
+                        :disabled="editable && !permission.secondary || state_id != 4"
                       ></v-text-field>
                       </ValidationProvider>
                     </v-col>
-                    <v-col cols="12" md="4" >
+                    <v-col cols="12" md="6" >
                       <ValidationProvider v-slot="{ errors }" vid="identity_card" name="cédula identidad" rules="required|min:1|max:50">
                       <v-text-field
                         :error-messages="errors"
@@ -78,12 +82,13 @@
                         v-model="spouse.identity_card"
                         class="purple-input"
                         label="Cedula de Identidad"
-                      :readonly="(state_id != 4)"
-                      :outlined="state_id == 4"
+                        :readonly="!editable || !permission.secondary"
+                        :outlined="editable && permission.secondary"
+                        :disabled="editable && !permission.secondary || state_id != 4"
                       ></v-text-field>
                       </ValidationProvider>
                     </v-col>
-                    <v-col cols="12" md="4" >
+                    <v-col cols="12" md="6" >
                       <v-select
                         dense
                         :items="cities"
@@ -92,42 +97,28 @@
                         :loading="loading"
                         label="Ciudad de Expedición"
                         v-model="spouse.city_identity_card_id"
-                        :readonly="(state_id != 4)"
-                        :outlined="state_id == 4"
+                        :readonly="!editable || !permission.secondary"
+                        :outlined="editable && permission.secondary"
+                        :disabled="editable && !permission.secondary || state_id != 4"
                       ></v-select>
                     </v-col>
-                      <v-col cols="12" md="4" v-if="spouse.is_duedate_undefined==false">
-                      <v-menu
-                        v-model="dates.dueDate.show"
-                        :close-on-content-click="false"
-                        transition="scale-transition"
-                        offset-y
-                        max-width="290px"
-                        min-width="290px"
-                        :disabled="!editable || !permission.secondary"
-                      >
-                        <template v-slot:activator="{ on }">
+                    <v-col cols="12" md="4" v-if="spouse.is_duedate_undefined==false">
                           <v-text-field
                             dense
-                            v-model="dates.dueDate.formatted"
+                            v-model="dates.due_date"
                             label="Fecha Vencimiento CI"
                             hint="Día/Mes/Año"
-                            persistent-hint
-                            append-icon="mdi-calendar"
-                            :clearable="editable"
-                            v-on="on"
-                            :readonly="(state_id != 4)"
-                            :outlined="state_id == 4"
+                            :readonly="!editable || !permission.secondary"
+                            :outlined="editable && permission.secondary"
+                            :disabled="editable && !permission.secondary || state_id != 4"
+                            type="date"
                           ></v-text-field>
-                        </template>
-                        <v-date-picker v-model="spouse.due_date" no-title @input="dates.dueDate.show = false"></v-date-picker>
-                      </v-menu>
                     </v-col>
                     <v-col cols="12" md="3">
                       <v-checkbox
                         v-model="spouse.is_duedate_undefined"
                         :readonly="!editable || !permission.secondary"
-                        :outlined="editable && permission.secondary"
+                        :disabled="editable && !permission.secondary || state_id != 4"
                         :label="`Indefinido`"
                       ></v-checkbox>
                     </v-col>
@@ -141,24 +132,26 @@
                         label="Estado Civil"
                         name="estado_civil"
                         v-model="spouse.civil_status"
-                        :readonly="state_id != 4"
-                        :outlined="state_id == 4"
+                        :readonly="!editable || !permission.secondary"
+                        :outlined="editable && permission.secondary"
+                        :disabled="editable && !permission.secondary || state_id != 4"
                       ></v-select>
                     </v-col>
-                    <v-col cols="12" md="4">
+                    <v-col cols="12" md="6">
                       <v-text-field
                         dense
                         v-model="spouse.birth_date"
                         name="spouse_birth_date"
                         label="Fecha Nacimiento"
                         hint="Día/Mes/Año"
-                        :readonly="state_id != 4"
-                        :outlined="state_id == 4"
+                        :readonly="!editable || !permission.secondary"
+                        :outlined="editable && permission.secondary"
+                        :disabled="editable && !permission.secondary || state_id != 4"
                         type="date"
                       ></v-text-field>
                     </v-col>
 
-                    <v-col cols="12" md="4" >
+                    <v-col cols="12" md="6" >
                       <v-select
                         dense
                         :loading="loading"
@@ -168,35 +161,33 @@
                         name="nacimiento"
                         label="Lugar de Nacimiento"
                         v-model="spouse.city_birth_id"
-                        :readonly="(state_id != 4)"
-                        :outlined="state_id == 4"
+                        :readonly="!editable || !permission.secondary"
+                        :outlined="editable && permission.secondary"
+                        :disabled="editable && !permission.secondary || state_id != 4"
                       ></v-select>
                     </v-col>
-                    <v-col cols="12" md="4">
+                </v-row>           
+             </v-col>
+            <v-col cols="12" md="6" class="v-card-profile">        
+                <v-row>
+                  <v-col cols="12">
+                    <v-toolbar-title>INFORMACION DECESO</v-toolbar-title>
+                  </v-col>
+                    <v-col cols="12" md="6">
                       <v-text-field
                         dense
                         v-model="spouse.date_death"
                         label="Fecha Fallecimiento"
                         hint="Día/Mes/Año"
                         class="purple-input"
-                        :readonly="state_id != 4"
-                        :outlined="state_id == 4"
+                        :readonly="!editable || !permission.secondary"
+                        :outlined="editable && permission.secondary"
+                        :disabled="editable && !permission.secondary || state_id != 4"
                         type="date"
                         :onclick="Death()"
                       ></v-text-field>
                     </v-col>
-
-                    <v-col cols="12" md="4" v-if="!visible">
-                      <v-text-field
-                        dense
-                        v-model="spouse.reason_death"
-                        label="Causa del Fallecimiento"
-                        class="purple-input"
-                        :readonly="state_id != 4"
-                        :outlined="state_id == 4"
-                      ></v-text-field>
-                    </v-col>
-                    <v-col cols="12" md="4" v-if="!visible">
+                    <v-col cols="12" md="6" v-if="!visible">
                       <ValidationProvider v-slot="{ errors }" vid="death_certificate_number" name="cert. de defunción" rules="min:1|max:20">
                       <v-text-field
                       :error-messages="errors"
@@ -204,14 +195,25 @@
                       v-model="spouse.death_certificate_number"
                       label="Cert. de Defunción"
                       class="purple-input"
-                      :readonly="state_id != 4"
-                      :outlined="state_id == 4"
+                        :readonly="!editable || !permission.secondary"
+                        :outlined="editable && permission.secondary"
+                        :disabled="editable && !permission.secondary || state_id != 4"
                       ></v-text-field>
                       </ValidationProvider>
                     </v-col>
-                </v-row>
-           
-        </v-col>
+                    <v-col cols="12" md="12" v-if="!visible">
+                      <v-text-field
+                        dense
+                        v-model="spouse.reason_death"
+                        label="Causa del Fallecimiento"
+                        class="purple-input"
+                        :readonly="!editable || !permission.secondary"
+                        :outlined="editable && permission.secondary"
+                        :disabled="editable && !permission.secondary || state_id != 4"
+                      ></v-text-field>
+                    </v-col>
+                </v-row>           
+          </v-col>
         <!-- ESTA INFORMACION SE UTILIZARA EN OTRO MODULO-->
         <!--<v-col cols="12" md="4" class="v-card-profile" >
         <v-col cols="12">
@@ -402,7 +404,7 @@ export default {
   },
   
   Death(){
-      if(this.spouse.birth_date == null){
+      if(this.spouse.date_death == null){
           this.visible = true
         }else{
           this.visible = false

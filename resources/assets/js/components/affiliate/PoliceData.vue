@@ -28,8 +28,8 @@
             </v-col>
             <v-col cols="12" md="8" v-if="!visible">
              <span class="red--text" v-show="has_registered_spouse">* Se tiene registrado datos del conyugue, cambie el estado del afiliado. <br></span>
-             <span class="red--text" v-show="(affiliate.death_certificate_number !=null || affiliate.date_death != null  || affiliate.reason_death != null) &&
-                  (affiliate.death_certificate_number !='' || affiliate.date_death !=''  || affiliate.reason_death !='')">
+            <span class="red--text" v-show="((affiliate.death_certificate_number !=null && (affiliate.death_certificate_number).trim() !='') || 
+             (affiliate.date_death != null &&  (affiliate.date_death).trim() != '') || (affiliate.reason_death != null && (affiliate.reason_death).trim() != ''))">
                    ** Se tiene registrado datos de fallecimiento del afiliado, cambie el estado del afiliado a Fallecido.</span>  
             </v-col>
              <v-col cols="12" md="4" v-if="visible">
@@ -65,7 +65,7 @@
                  :disabled="editable && !permission.secondary"
                ></v-text-field>
              </v-col>
-            <v-col cols="12" md="4" v-if="affiliate.is_duedate_undefined==false">
+            <v-col cols="12" md="4">
               <v-text-field
                 dense
                 v-model="affiliate.date_entry"
@@ -276,9 +276,10 @@ export default {
   },
     mounted() {
     if (this.affiliate.id) {
-      this.formatDate('dateEntry', this.affiliate.date_entry)
-      this.formatDate('dateDerelict', this.affiliate.date_derelict)
-      this.formatDate('dateDeath', this.affiliate.date_death)   }
+      //this.formatDate('dateEntry', this.affiliate.date_entry)
+      //this.formatDate('dateDerelict', this.affiliate.date_derelict)
+      //this.formatDate('dateDeath', this.affiliate.date_death)   
+    }
   },
   watch: {
     'affiliate.date_entry': function(date) {
