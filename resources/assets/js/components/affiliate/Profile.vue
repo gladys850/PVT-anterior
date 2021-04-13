@@ -251,172 +251,196 @@
                 </v-row>
               </v-container>
         </v-col>
-          <v-col cols="12" md="5" >
-                <v-container class="py-0">
-                  <v-row>
-                    <v-col cols="12">
-                      <v-toolbar-title>TELÉFONOS</v-toolbar-title>
-                    </v-col>
-                    <v-col cols="12" md="4" >
-                     <ValidationProvider v-slot="{ errors }" name="celular1" rules="min:1|max:12">
-                      <v-text-field
-                        :error-messages="errors" 
-                        dense
-                        v-model="cel[0]"
-                        label="Celular1"
-                        :readonly="!editable || !permission.secondary"
-                        :outlined="editable && permission.secondary"
-                        :disabled="editable && !permission.secondary"
-                        @change="updateCelular()"
-                      ></v-text-field>
-                      </ValidationProvider> 
-                    </v-col>
-                    <v-col cols="12" md="4" >
-                      <ValidationProvider v-slot="{ errors }" name="celular2" rules="min:1|max:12">
-                      <v-text-field
-                        :error-messages="errors"
-                        dense
-                        v-model="cel[1]"
-                        label="Celular2"
-                        :readonly="!editable || !permission.secondary"
-                        :outlined="editable && permission.secondary"
-                        :disabled="editable && !permission.secondary"
-                        @change="updateCelular()"
-                      ></v-text-field>
-                      </ValidationProvider> 
-                    </v-col>
-                    
-                    <v-col cols="12" md="4" >
-                      <ValidationProvider v-slot="{ errors }" name="telefono" rules="min:1|max:12">
-                      <v-text-field
-                        :error-messages="errors"
-                        dense
-                        v-model="affiliate.phone_number"
-                        label="Fijo"
-                        :readonly="!editable || !permission.secondary"
-                        :outlined="editable && permission.secondary"
-                        :disabled="editable && !permission.secondary"
-                      ></v-text-field>
-                      </ValidationProvider>
-                    </v-col>
-                      <v-col cols="12" md="6">
-                    <v-toolbar-title>DOMICILIO</v-toolbar-title>
-                  </v-col>
-                  <v-col cols="12" md="3">
-                    <v-tooltip top v-if="editable && permission.secondary">
-                      <template v-slot:activator="{ on }">
-                        <v-btn
-                          fab
-                          dark
-                          x-small
-                          v-on="on"
-                          color="info"
-                          @click.stop="bus.$emit('openDialog', { edit: true })"
-                        >
-                          <v-icon>mdi-plus</v-icon>
-                        </v-btn>
-                      </template>
-                      <span>Añadir Dirección</span>
-                    </v-tooltip>
-                  </v-col>
-                  <v-col cols="12">
-                  <v-data-table
-                      :headers="headers"
-                      :items="addresses"
-                      hide-default-footer
-                      class="elevation-1"
-                      v-if="cities.length > 0"
-                  >
-                  <template v-slot:item="props">
-                  <tr >
-                    <td>{{ cities.find(o => o.id == props.item.city_address_id).name }}</td>
-                      <td>{{ props.item.description }}</td>
-                      <!--<td>{{ props.item.street }}</td>
-                      <td>{{ props.item.number_address }}</td>-->
-                      <td>
-                        <v-radio-group :value="id_street" @change="(v) => {$emit('update:id_street', v)}">
-                          <v-radio
-                            :value="props.item.id"
-                            :disabled="!editable || !permission.secondary"
-                          ></v-radio>
-                        </v-radio-group>
-                      </td>
-                      <td v-show="editable && permission.secondary">
-                        <v-btn text icon color="warning" @click.stop="bus.$emit('openDialog', {...props.item, ...{edit: true}})">
-                          <v-icon>mdi-pencil</v-icon>
-                        </v-btn>
-                        <!--<v-btn text icon color="error" @click.stop="bus.$emit('openRemoveDialog', `address/${props.item.id}`)">
-                          <v-icon>mdi-delete</v-icon>
-                        </v-btn>--> 
-                      </td>
-                      <td v-show="!editable">
-                        <v-btn v-if="props.item.latitude && props.item.longitude" text icon color="info" @click.stop="bus.$emit('openDialog', {...props.item, ...{edit: false}})">
-                          <v-icon>mdi-google-maps</v-icon>
-                        </v-btn>
-                      </td>
-                    </tr>
-                  </template>
-                  </v-data-table>
-                  </v-col>
-
-                    <v-col cols="12">
-                      <v-toolbar-title>DATOS FINANCIEROS </v-toolbar-title>
-                    </v-col>
-                    <v-col cols="12" md="6" >
-                      <ValidationProvider v-slot="{ errors }" vid="financial_entity_id" name="Entidad Financiera" rules="required|integer|min:1">
-                      <v-select
-                        :error-messages="errors"
-                        dense
-                        :loading="loading"
-                        :items="entity"
-                        item-text="name"
-                        item-value="id"
-                        label="Entidad Financiera"
-                        v-model="affiliate.financial_entity_id"
-                        :readonly="!editable || !permission.secondary"
-                        :outlined="editable && permission.secondary"
-                        :disabled="editable && !permission.secondary"
-                      ></v-select>
-                      </ValidationProvider>
-                    </v-col>
-                    <v-col cols="12" md="6" >
-                      <ValidationProvider v-slot="{ errors }" name="Numero de Cuenta" rules="required|min:1|max:20">
-                      <v-text-field
-                        :error-messages="errors"
-                        dense
-                        v-model="affiliate.account_number"
-                        label="Numero de Cuenta"
-                        :readonly="!editable || !permission.secondary"
-                        :outlined="editable && permission.secondary"
-                        :disabled="editable && !permission.secondary"
-                      ></v-text-field>
-                      </ValidationProvider>
-                    </v-col>
-                    <v-col cols="12" md="6" >
-                      <ValidationProvider v-slot="{ errors }" name="Cuenta de Segip" rules="required|min:1|max:20">
-                       <v-select
-                        :error-messages="errors"
-                        dense
-                        :items="sigep_status"
-                        item-text="name"
-                        item-value="id"
-                        :loading="loading"
-                        label="Estado del Sigep"
-                        v-model="affiliate.sigep_status"
-                        :readonly="!editable || !permission.secondary"
-                        :outlined="editable && permission.secondary"
-                        :disabled="editable && !permission.secondary"
-                      ></v-select>
-                      </ValidationProvider>
-                    </v-col>
-                </v-row>
-              </v-container>
+        <v-col cols="12" md="6" class="v-card-profile" >
+              <v-row justify="center">
+              <v-col cols="12">
+                <v-toolbar-title>INFORMACIÓN POLICIAL</v-toolbar-title>
+              </v-col>
+            <v-col cols="12" md="6" >
+              <ValidationProvider v-slot="{ errors }" vid="affiliate_state_id" name="Estado" rules="required">
+              <v-select
+                :error-messages="errors"
+                dense
+                :loading="loading"
+                :items="affiliateState"
+                item-text="name"
+                item-value="id"
+                label="Estado"
+                v-model="affiliate.affiliate_state_id"
+                :Onchange="Onchange()"
+  
+                :readonly="!editable || !permission.secondary"
+                :outlined="editable && permission.secondary"
+              ></v-select>
+              </ValidationProvider>
+            </v-col>
+            <v-col cols="12" md="6" v-if="!visible">
+             <span class="red--text" v-show="has_registered_spouse">* Se tiene registrado datos del conyugue, cambie el estado del afiliado. <br></span>
+            <span class="red--text" v-show="((affiliate.death_certificate_number !=null && (affiliate.death_certificate_number).trim() !='') || 
+             (affiliate.date_death != null &&  (affiliate.date_death).trim() != '') || (affiliate.reason_death != null && (affiliate.reason_death).trim() != ''))">
+                   ** Se tiene registrado datos de fallecimiento del afiliado, cambie el estado del afiliado a Fallecido.</span>  
+            </v-col>
+             <v-col cols="12" md="6" v-if="visible">
+              <v-text-field
+                dense
+                v-model="affiliate.date_death"
+                  label="Fecha Fallecimiento"
+                  hint="Día/Mes/Año"
+                  class="purple-input"
+                  type="date"
+                  :readonly="!editable || !permission.secondary"
+                  :outlined="editable && permission.secondary"
+                :disabled="editable && !permission.secondary"
+              ></v-text-field>
+              </v-col>
+             <v-col cols="12" md="6" v-if="visible">
+               <v-text-field
+                 dense
+                 v-model="affiliate.death_certificate_number"
+                 label="N° de Certificado de Defunción"
+                 :readonly="!editable || !permission.secondary"
+                 :outlined="editable && permission.secondary"
+                 :disabled="editable && !permission.secondary"
+               ></v-text-field>
+             </v-col>
+              <v-col cols="12" md="6" v-if="visible">
+               <v-text-field
+                 dense
+                 v-model="affiliate.reason_death"
+                 label="Causa Fallecimiento"
+                 :readonly="!editable || !permission.secondary"
+                 :outlined="editable && permission.secondary"
+                 :disabled="editable && !permission.secondary"
+               ></v-text-field>
+             </v-col>
+            <v-col cols="12" md="6">
+              <v-text-field
+                dense
+                v-model="affiliate.date_entry"
+                label="Fecha Ingreso a la Institución Policial"
+                hint="Día/Mes/Año"
+                class="purple-input"
+                type="date"
+                :clearable="editable"
+                :readonly="!editable || !permission.secondary"
+                :outlined="editable && permission.secondary"
+                :disabled="editable && !permission.secondary"
+              ></v-text-field>
+            </v-col>
+            <v-col cols="12" md="6" >
+            <ValidationProvider v-slot="{ errors }" vid="degree_id" name="Grado" rules="required">
+            <v-select
+                dense
+                :error-messages="errors"
+                :loading="loading"
+                :items="degree"
+                item-text="name"
+                item-value="id"
+                label="Grado"
+                name="Grado"
+                v-model="affiliate.degree_id"
+                :readonly="!editable || !permission.primary"
+                :outlined="editable && permission.primary"
+                :disabled="editable && !permission.primary"
+            ></v-select>
+            </ValidationProvider>
+            </v-col>
+            <v-col cols="12" md="6" >
+              <ValidationProvider v-slot="{ errors }" vid="category_id" name="Categoria" rules="required">
+              <v-select
+                dense
+                :error-messages="errors"
+                :loading="loading"
+                :items="category"
+                item-text="name"
+                item-value="id"
+                label="Categoria"
+                name="categoria"
+                v-model="affiliate.category_id"
+                :readonly="!editable || !permission.primary"
+                :outlined="editable && permission.primary"
+                :disabled="editable && !permission.primary"
+              ></v-select>
+              </ValidationProvider>
+            </v-col>
+            <v-col cols="12" md="6" >
+              <ValidationProvider v-slot="{ errors }" vid="unit_id" name="Unidad" rules="required">
+              <v-select
+                :error-messages="errors"
+                dense
+                :loading="loading"
+                :items="unit"
+                item-text="name"
+                item-value="id"
+                label="Unidad"
+                v-model="affiliate.unit_id"
+                persistent-hint
+                :readonly="!editable || !permission.secondary"
+                :outlined="editable && permission.secondary"
+              ></v-select>
+              </ValidationProvider>
+            </v-col>
+            <!--<v-col cols="12" md="3">
+              <ValidationProvider v-slot="{ errors }" vid="service_years" name="Años de Servicio" rules="numeric|min_value:0|max_value:100">
+              <v-text-field
+                dense
+                :error-messages="errors"
+                v-model="affiliate.service_years"
+                label="Años de Servicio"
+                :readonly="!editable || !permission.primary"
+                :outlined="editable && permission.primary"
+                :disabled="editable && !permission.primary"
+              ></v-text-field>
+              </ValidationProvider>
+            </v-col>
+            <v-col cols="12" md="3" >
+              <ValidationProvider v-slot="{ errors }" vid="service_months" name="Meses de Servicio" rules="numeric|min_value:0|max_value:11">
+              <v-text-field
+                dense
+                :error-messages="errors"
+                v-model="affiliate.service_months"
+                label="Meses de Servicio"
+                :readonly="!editable || !permission.primary"
+                :outlined="editable && permission.primary"
+                :disabled="editable && !permission.primary"
+              ></v-text-field>
+               </ValidationProvider>
+            </v-col>--> 
+            <v-col cols="12"  md="6" >
+              <ValidationProvider v-slot="{ errors }" vid="pension_entity_id" name="Ente Gestor" :rules="(affiliate.affiliate_state_id >= 4 && affiliate.affiliate_state_id <= 6)? 'required':''">
+              <v-select
+                dense
+                :error-messages="errors"
+                :loading="loading"
+                :items="pension_entity"
+                item-text="name"
+                item-value="id"
+                label="Ente Gestor"
+                name="Grado"
+                v-model="affiliate.pension_entity_id"
+                :readonly="!editable || !permission.secondary"
+                :outlined="editable && permission.secondary"
+            ></v-select>
+            </ValidationProvider>
+            </v-col>
+             <v-col cols="12" md="6">
+              <v-text-field
+                dense
+                v-model="affiliate.date_derelict"
+                label="Fecha Desvinculacion"
+                hint="Día/Mes/Año"
+                class="purple-input"
+                type="date"
+                :readonly="!editable || !permission.secondary"
+                :outlined="editable && permission.secondary"
+                :disabled="editable && !permission.secondary"
+              ></v-text-field>
+            </v-col>
+          </v-row>
         </v-col>
       </v-row>
     </v-form>
     </ValidationObserver>
-      <AddStreet :bus="bus" :cities="cities"/>
-      <RemoveItem :bus="bus"/>
   </v-container>
 </template>
 <script>
@@ -428,10 +452,6 @@ export default {
   props: {
     affiliate: {
       type: Object,
-      required: true
-    },
-    addresses: {
-      type: Array,
       required: true
     },
       editable: {
@@ -446,6 +466,10 @@ export default {
       type: Number,
       required: true,
       default:0
+    },
+    has_registered_spouse: {
+      type: Boolean,
+      required: true
     }
   },
   components: {
@@ -458,21 +482,6 @@ export default {
       dialog: false,
       cel:[null,null],
       cities: [],
-      entity: [],
-      sigep_status: [
-        { name:"ACTIVO",
-          value:"ACTIVO"
-        },
-        { name:"ELABORADO",
-          value:"ELABORADO"
-        },
-        { name:"SIN REGISTRO",
-          value:"SIN REGISTRO"
-        },
-        { name:"VALIDADO",
-          value:"VALIDADO"
-        }
-      ],
       headers: [
             { text: 'Ciudad', align: 'left', value: 'city_address_id' },
             { text: 'Zona', align: 'left', value: 'description' },
@@ -506,7 +515,7 @@ export default {
       ],
       city: [],
       cityTypeSelected: null,
-      dates: {
+      /*dates: {
         dueDate: {
           formatted: null,
           picker: false
@@ -518,43 +527,75 @@ export default {
         /*dateDeath: {
           formatted: null,
           picker: false
-        }*/
-      },
-      bus: new Vue()
+        }
+      },*/
+      bus: new Vue(),
+      affiliateState: [],
+      category: [],
+      degree: [],
+      pension_entity: [],
+      unit: [],
+      visible: false
     }
   },
   beforeMount() {
     this.getCities()
-    this.getEntity()
+
+    this.getCategory();
+    this.getDegree();
+    this.getPensionEntity();
+    this.getAffiliateState();
+    this.getUnit();
+    this.getCalculateCategory;
   },
   mounted() {
-    if (this.affiliate.id) {
-      //this.formatDate('dueDate', this.affiliate.due_date)
-      //this.formatDate('birthDate', this.affiliate.birth_date)
-      //this.formatDate('dateDeath', this.affiliate.date_death)
-      this.getCelular()
-    }
-      this.bus.$on('saveAddress', (address) => {
-        if (address.id) {
-          let index = this.addresses.findIndex(o=> o.id == address.id)
-          if (index == -1) {
-            this.addresses.unshift(address)
-          } else {
-            this.addresses[index] = address
-          }
-        }
-    })
+
   },
   watch: {
     'affiliate.due_date': function(date) {
       this.formatDate('dueDate', date)
     },
+    'affiliate.date_entry': function(date) {
+      this.formatDate('dateEntry',date)
+    },
+    'affiliate.date_derelict': function(date) {
+      this.formatDate('dateDerelict',date)
+    },
+    'affiliate.date_death': function(date) {
+      this.formatDate('dateDeath', date)
+    }
     /*'affiliate.birth_date': function(date) {
       this.formatDate('birthDate', date)
     }
     'affiliate.date_death': function(date) {
       this.formatDate('dateDeath', date)
     }*/
+  },
+    computed: {
+    getCalculateCategory(){
+    let years = this.affiliate.service_years;
+    let months = this.affiliate.service_months;
+    if(this.affiliate.service_years==null ||this.affiliate.service_months ==null )
+    {
+      return this.affiliate.category_id
+    }
+    else{
+      if (years < 0 || years >100  ) {
+          return "error";
+        }
+        else{
+          if (months > 0) {
+          years++;
+        }
+        let categoria = this.category.find(c =>{
+          return c.from <= years && c.to >= years
+        })
+        if(!!categoria){
+          this.affiliate.category_id = categoria.id
+        }
+        }
+    }
+  }
   },
   methods: {
     close() {
@@ -568,18 +609,7 @@ export default {
         this.dates[key].formatted = null
       }
     },
-    async getEntity() {
-    try {
-      this.loading = true
-      let res = await axios.get(`financial_entity`)
-      this.entity = res.data
-    } catch (e) {
-      this.dialog = false
-      console.log(e)
-    }finally {
-        this.loading = false
-      }
-  },
+
     async getCities() {
     try {
       this.loading = true
@@ -600,31 +630,85 @@ export default {
         this.cel[1]= part[1]
       }
     },
-    updateCelular(){
-      let count = 0
-      let val = 0
-      if(this.cel[0]){
-        if(this.cel[0].trim() !== ''){
-          this.cel[0]=this.cel[0].trim()
-          count++
-          val = 0
+
+    async getCategory() {
+    try {
+      this.loading = true
+      let res = await axios.get(`category`);
+      this.category = res.data;
+    } catch (e) {
+      this.dialog = false;
+      console.log(e);
+    }finally {
+        this.loading = false
+      }
+  },
+    async getAffiliateState() {
+    try {
+      this.loading = true
+      let res = await axios.get(`affiliate_state`);
+      this.affiliateState = res.data;
+    } catch (e) {
+      this.dialog = false;
+      console.log(e);
+    }finally {
+        this.loading = false
+      }
+  },
+    async getDegree() {
+    try {
+      this.loading = true
+      let res = await axios.get(`degree`);
+      this.degree = res.data;
+    } catch (e) {
+      this.dialog = false;
+      console.log(e);
+    }finally {
+        this.loading = false
+      }
+  },
+    async getPensionEntity() {
+      try {
+      this.loading = true
+      let res = await axios.get(`pension_entity`);
+      this.pension_entity = res.data;
+    } catch (e) {
+      this.dialog = false
+      console.log(e);
+    }finally {
+        this.loading = false
+      }
+    },
+    Onchange(){
+      /*for(let i=0; i< this.affiliateState.length; i++){
+        if(this.affiliate.affiliate_state_id == this.affiliateState[i].id){
+          if(this.affiliateState[i].name == 'Fallecido'){
+              this.visible =true
+            }else{
+              this.visible =false
+          }
         }
+        this.estado.id=this.affiliate.affiliate_state_id
+      }*/
+      if(this.affiliate.affiliate_state_id  == 4){
+          this.visible = true
+        }else{
+          this.visible = false
       }
-      if(this.cel[1]){
-        if(this.cel[1].trim() !== ''){
-          this.cel[1]=this.cel[1].trim()
-          count++
-          val = 1
-        }
+      console.log(this.affiliate.affiliate_state_id)
+    },
+    async getUnit() {
+    try {
+      this.loading = true
+      let res = await axios.get(`unit`);
+      this.unit = res.data;
+    } catch (e) {
+      this.dialog = false;
+      console.log(e);
+    }finally {
+        this.loading = false
       }
-      if(count == 0){
-        this.affiliate.cell_phone_number=null
-      } else if(count == 1){
-        this.affiliate.cell_phone_number=this.cel[val]
-      } else {
-        this.affiliate.cell_phone_number=this.cel.join(',')
-      }
-    }
+  },
   }
   }
 </script>
