@@ -362,20 +362,26 @@ class AffiliateController extends Controller
     */
     public function update_addresses(Request $request, Affiliate $affiliate) {
         $request->validate([
-            'addresses' => 'required|array|min:1',
+            'addresses' => 'array',
             'addresses.*' => 'exists:addresses,id',
-            'addresses_valid'=>'exists:addresses,id'
+            'addresses_valid'=>'nullable|integer'
+            //'addresses_valid'=>'nullable|integer|exists:addresses,id'
         ]);
 
-        if($request->has('addresses_valid')){
-            $affiliate->addresses()->sync($request->addresses);
-            $affiliate->addresses()->sync([$request->addresses_valid => ['validated' => true]]);
+        if($request->addresses !=[]){
+            if($request->has('addresses_valid') && $request->addresses_valid != 0){
+                $affiliate->addresses()->sync($request->addresses);
+                $affiliate->addresses()->sync([$request->addresses_valid => ['validated' => true]]);
+                return $affiliate->addresses()->sync($request->addresses);
+            }
+            else{
+                $affiliate->addresses()->sync($request->addresses);
+                $affiliate->addresses()->sync([$affiliate->addresses->first()->id => ['validated' => true]]);
+                return $affiliate->addresses()->sync($request->addresses);
+            }
+        }else{
+            return "No hay direcciones por añadir";
         }
-        else{
-            $affiliate->addresses()->sync($request->addresses);
-            $affiliate->addresses()->sync([$affiliate->addresses->first()->id => ['validated' => true]]);
-        }
-        return $affiliate->addresses()->sync($request->addresses);
     }
 
     /**
