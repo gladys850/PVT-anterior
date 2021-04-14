@@ -856,10 +856,13 @@ class AffiliateController extends Controller
                 $data = [
                     "affiliate" => $affiliate,
                     "spouse" => $spouse,
+                    "observables" => null
                 ];
             }
             else{
                 $data = [
+                    "affiliate" => null,
+                    "spouse" => null,
                     "observables" => $this->observables($request->ci)
                 ];
             }
