@@ -375,7 +375,6 @@ export default {
   methods: {
     resetForm() {
       this.getAffiliate(this.$route.params.id)
-      this.getAddress(this.$route.params.id)
 
       this.editable = false
       this.reload = true
@@ -472,6 +471,7 @@ export default {
         let res = await axios.get(`affiliate/${id}`)
         this.affiliate = res.data
         this.setBreadcrumbs()
+        this.getAddress(id)
         //if (this.affiliate.dead) {
           this.getSpouse(this.affiliate.id)
         //}
