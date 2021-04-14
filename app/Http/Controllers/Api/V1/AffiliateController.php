@@ -649,8 +649,11 @@ class AffiliateController extends Controller
                         $message['validate'] = "Debe registrar el estado del afiliado";
                     }
                }else{
-                if(!$affiliate->affiliate_state) $message['validate'] = "Debe actualizar el estado del afiliado";
-                return $affiliate->test_guarantor($request->procedure_modality_id); 
+                   if($affiliate->affiliate_state != null){
+                    return $affiliate->test_guarantor($request->procedure_modality_id);
+                    }else{
+                        $message['validate'] = "Debe registrar el estado del afiliado";
+                    }     
                }
             }else{
                 $message['validate'] = "No se encontraron resultados";  
