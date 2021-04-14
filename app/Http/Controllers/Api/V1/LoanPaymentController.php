@@ -601,17 +601,17 @@ class LoanPaymentController extends Controller
     public function command_senasir_save_payment(Request $request)
     {
         $estimated_date = $request->estimated_date? Carbon::parse($request->estimated_date) : Carbon::now()->endOfMonth();
-        $loans = Loan::get();
+        $loans = Loan::get(); 
         $payment_type = AmortizationType::get();
         $payment_type_desc = $payment_type->where('name', 'LIKE', 'Descuento automático')->first();
         $description = $request->description? $request->description : 'Por descuento automatico';
         $procedure_modality = ProcedureModality::whereName('A.AUT. Cuota pactada')->first();
         $voucher = $request->voucher? $request->voucher : "AUTOMATICO";
-        //$paid_by = "T";
         $loans_quantity = 0;
         foreach($loans as $loan){
             if($loan->balance != 0){
-                if($loan->guarantor_amortizing == true){$paid_by = "G";
+                if($loan->guarantor_amortizing == true){
+                    $paid_by = "G";
                     foreach($loan->guarantors as $guarantor){
                         $percentage = $guarantor->pivot->payment_percentage;
                         $percentage_quota = ($percentage)*($loan->estimated_quota)/100;
