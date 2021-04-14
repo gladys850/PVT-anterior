@@ -1030,7 +1030,7 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
     {
         if(this.affiliate.city_identity_card_id != null){
           if(this.addresses.length != 0){
-            this.nextStep(3)
+            this.nextStep(4)
           }else{
             this.toastr.error("No se encuentra registrada ninguna dirección. Por favor registre la dirección del afiliado.")
           }
