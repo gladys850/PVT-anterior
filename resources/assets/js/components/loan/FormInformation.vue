@@ -141,24 +141,6 @@
                       </div>
                     </v-tooltip>
                   </v-col>
-                  <!--<v-col cols="12" md="4" class="py-0" v-show="visible">
-                    <ValidationProvider
-                      v-slot="{ errors }"
-                      name="Cuenta de Segip"
-                      rules="required|min:1|max:20"
-                    >
-                      <v-select
-                        :error-messages="errors"
-                        dense
-                        :items="sigep_status"
-                        item-text="name"
-                        item-value="id"
-                        label="Estado del Sigep"
-                        v-model="affiliate.sigep_status"
-                      ></v-select>
-                    </ValidationProvider>
-                  </v-col>-->
-     
                   <v-col cols="12" md="6" v-show="espacio"></v-col>
                   <v-col cols="12" md="2" class="py-1">
                     <label>Destino del Préstamo:</label>
@@ -402,12 +384,6 @@ export default {
     reference: [],
     cosigners:[],
     editable: false,
-    sigep_status: [
-      { name: "ACTIVO", value: "ACTIVO" },
-      { name: "ELABORADO", value: "ELABORADO" },
-      { name: "SIN REGISTRO", value: "SIN REGISTRO" },
-      { name: "VALIDADO", value: "VALIDADO" },
-    ],
   }),
   watch: {
     modalidad_id(newVal, oldVal){
@@ -517,19 +493,17 @@ export default {
         this.loading = false
       }
     },
-    async getEntityAffiliate() {
+    /*async getEntityAffiliate() {
       try {
         this.loading = true
         let res = await axios.get(`financial_entity/${this.affiliate.financial_entity_id}`)
         this.entity = res.data.name
-        //console.log("XXXXXXXXXXXXXXXXX")
-        //console.log(this.entity)
       } catch (e) {
         console.log(e)
       }finally {
           this.loading = false
         }
-    },
+    },*/
     async getEntity() {
       try {
         this.loading = true;
@@ -643,33 +617,6 @@ export default {
       this.affiliate.financial_entity_id = null
       this.affiliate.account_number= null
     },
-    /*async validateDestiny() {
-      try {
-        this.val_destiny = await this.$refs.observerDestiny.validate();
-        if (this.val_destiny ) {
-          this.val_destiny == true
-        } else {
-          this.val_destiny == false
-        }
-        console.log(" val_destiny " + this.val_destiny);
-      } catch (e) {
-        this.$refs.observerPerRef.setErrors(e);
-      }
-    },
-    async validatePerRef() {
-      try {
-        this.val_per_ref = await this.$refs.observerDestiny.validate();
-        if (this.val_per_ref ) {
-          this.val_per_ref == true
-          this.personal()
-        } else {
-          this.val_per_ref == false
-        }
-        console.log(" val_per_ref " + this.val_per_ref);
-      } catch (e) {
-        this.$refs.observerPerRef.setErrors(e);
-      }
-    },*/
      async validateStepsFive(){
 
       try {
