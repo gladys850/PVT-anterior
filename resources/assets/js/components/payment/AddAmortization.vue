@@ -235,7 +235,7 @@
                           :disabled="ver || editable">
                         </v-col>
                         <!--v-col cols="4" class="ma-0 py-0" v-if="$store.getters.permissions.includes('create-payment-loan')"-->
-                        <v-col cols="4" class="ma-0 py-0" v-show="false">
+                        <v-col cols="4" class="ma-0 py-0" >
                           <v-checkbox class="ma-0 py-3"
                             :outlined="isNew"
                             :readonly="!isNew"
