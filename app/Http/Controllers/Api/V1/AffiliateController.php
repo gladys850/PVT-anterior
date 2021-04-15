@@ -45,7 +45,7 @@ class AffiliateController extends Controller
     {
         $affiliate->full_name = $affiliate->full_name;
         $affiliate->civil_status_gender = $affiliate->civil_status_gender;
-        if($affiliate->affilaite_state !=null) $affiliate->dead = $affiliate->dead;
+        if($affiliate->affiliate_state !=null) $affiliate->dead = $affiliate->dead;
         $affiliate->identity_card_ext = $affiliate->identity_card_ext;
         $affiliate->picture_saved = $affiliate->picture_saved;
         $affiliate->fingerprint_saved = $affiliate->fingerprint_saved;
@@ -58,6 +58,7 @@ class AffiliateController extends Controller
             {$affiliate->spouse = [];
             }
         if ($with_category) $affiliate->category = $affiliate->category;
+        if($affiliate->affiliate_state !=null) $affiliate->affiliate_state;
         return $affiliate;
     }
 
@@ -76,7 +77,7 @@ class AffiliateController extends Controller
     {
         $data = Util::search_sort(new Affiliate(), $request);
         $data->getCollection()->transform(function ($affiliate) {
-            return self::append_data($affiliate, false);
+            return self::append_data($affiliate, true);
         });
         return $data;
     }
