@@ -426,9 +426,8 @@ class LoanPaymentController extends Controller
     public function print_loan_payment(Request $request, LoanPayment $loan_payment, $standalone = true)
     { 
         $loan = LoanPayment::findOrFail($loan_payment->id)->loan;
-        $paid_by_affiliate_id = $loan_payment->affiliate_id;
-        $affiliate = Affiliate::findOrFail($paid_by_affiliate_id);
-        $spouse =  Spouse::where('affiliate_id',$paid_by_affiliate_id)->latest()->first();
+        $affiliate = $loan_payment->affiliate;
+        $spouse = $affiliate->spouse;
         if(isset($spouse)){
             $affiliate = $spouse;
             }
@@ -469,7 +468,6 @@ class LoanPaymentController extends Controller
             }
         $persons = collect([]);
             $persons->push([
-                'id' => $lender->id,
                 'full_name' => implode(' ', [$affiliate->title, $affiliate->full_name]),
                 'identity_card' => $affiliate->identity_card_ext,
                 'position' => 'PAGADO POR'." ".$a = $loan_payment->paid_by == "T" ? "TITULAR":"GARANTE"
@@ -489,7 +487,6 @@ class LoanPaymentController extends Controller
             'lenders' => collect($lenders),
             'loan_payment' => $loan_payment,
             'signers' => $persons,
-            'spouse'=> $spouse,
             'is_dead'=> $is_dead,
             'estimated_days' => $estimated_days
         ]; 

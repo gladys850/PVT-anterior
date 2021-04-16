@@ -47,18 +47,6 @@
                 <td class="data-row py-5">{{ $lender->registration }}</td>      
             </tr>
             @endforeach
-            @if($spouse)
-            <tr class="bg-grey-darker text-xxs text-white">
-                <td colspan="2">DATOS DEL CÓNYUGE</td>
-                <td>CI</td>
-                <td>Matricula</td>
-            </tr>
-            <tr> 
-                <td colspan="2">{{$spouse->title}} {{$spouse->full_name}} </td>
-                <td> {{$spouse->identity_card_ext}}</td>
-                <td>{{$spouse->resistration}}</td>
-                </tr>
-            @endif
         </table>
     </div>
         <div class="block">
@@ -134,7 +122,7 @@
                     <td width="50%">
                         @include('partials.signature_box', $person)
                     </td>
-                    @if ($signers->count() % 2 == 1 && $signers->last()['id'] == $person['id'])
+                    @if ($signers->count() % 2 == 1 )
                     <td width="50%">
                         @php($user = Auth::user())
                         @include('partials.signature_box', [
