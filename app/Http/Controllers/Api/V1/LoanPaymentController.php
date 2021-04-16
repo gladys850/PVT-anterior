@@ -493,8 +493,8 @@ class LoanPaymentController extends Controller
             'is_dead'=> $is_dead,
             'estimated_days' => $estimated_days
         ]; 
-        $information_loan = $this->get_information_loan($loan);$hola="hola";
-        $file_name = $hola ;
+        $information_loan = $this->get_information_loan($loan);
+        $file_name = implode('_', ['pagos', $procedure_modality->shortened, $loan->code]) . '.pdf';
         $view = view()->make('loan.payments.payment_loan')->with($data)->render();
         if ($standalone) return Util::pdf_to_base64([$view], $file_name, $information_loan, 'legal', $request->copies ?? 1);
         return $view;
