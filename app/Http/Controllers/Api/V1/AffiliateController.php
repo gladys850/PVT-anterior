@@ -839,7 +839,7 @@ class AffiliateController extends Controller
                 $affiliate->state = $affiliate->affiliate_state;
                 $affiliate->degree = $affiliate->degree;
                 $affiliate->unit = $affiliate->unit;
-                $affiliate->origin = "Affiliate";
+                $affiliate->origin = "affiliate";
                 if(Affiliate::where('identity_card', $request->ci)->orWhere('registration', $request->ci)->first()->spouse){
                     $spouse = Affiliate::where('identity_card', $request->ci)->orWhere('registration', $request->ci)->first()->spouse;
                     $spouse->origin = "spouse";

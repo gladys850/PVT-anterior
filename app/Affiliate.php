@@ -272,6 +272,10 @@ class Affiliate extends Model
     {
         return $this->verify_balance($this->loans);
     }
+    public function current_loans()
+    {
+      return $this->belongsToMany(Loan::class, 'loan_affiliates')->withPivot(['payment_percentage'])->whereGuarantor(false)->where('state_id', 3)->orderBy('loans.created_at', 'desc');
+    }
     public function active_guarantees()
     {
         return $this->verify_balance($this->guarantees);
