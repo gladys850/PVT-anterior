@@ -408,7 +408,7 @@ class Affiliate extends Model
           if($affiliate->affiliate_state->name == 'Fallecido'){ 
             if($affiliate->pension_entity){
             if($affiliate->pension_entity->name == 'SENASIR'){
-              $spouse = Spouse::where($affiliate->affiliate_id)->first();
+              $spouse = $affiliate->spouse;
               if(isset($spouse)){ 
                     $guarantor = true;
                   } else{
