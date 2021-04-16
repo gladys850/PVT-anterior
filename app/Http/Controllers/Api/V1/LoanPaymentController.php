@@ -12,6 +12,7 @@ use App\LoanPayment;
 use App\Voucher;
 use App\LoanState;
 use App\Affiliate;
+use App\Spouse;
 use App\LoanGlobalParameter;
 use App\Http\Requests\LoanPaymentsForm;
 use App\Http\Requests\VoucherForm;
@@ -425,6 +426,12 @@ class LoanPaymentController extends Controller
     public function print_loan_payment(Request $request, LoanPayment $loan_payment, $standalone = true)
     { 
         $loan = LoanPayment::findOrFail($loan_payment->id)->loan;
+        $paid_by_affiliate_id = $loan_payment->affiliate_id;
+        $affiliate = Affiliate::findOrFail($paid_by_affiliate_id);
+        $spouse =  Spouse::where('affiliate_id',$paid_by_affiliate_id)->latest()->first();
+        if(isset($spouse)){
+            $affiliate = $spouse;
+            }
         $procedure_modality = $loan->modality;
         $lenders = []; 
         $is_dead = false;
@@ -461,14 +468,12 @@ class LoanPaymentController extends Controller
                 $estimated_days['penal'] = 0;
             }
         $persons = collect([]);
-        foreach ($lenders as $lender){ 
             $persons->push([
                 'id' => $lender->id,
-                'full_name' => implode(' ', [$lender->title, $lender->full_name]),
-                'identity_card' => $lender->identity_card_ext,
-                'position' => 'SOLICITANTE'
-            ]);
-        }
+                'full_name' => implode(' ', [$affiliate->title, $affiliate->full_name]),
+                'identity_card' => $affiliate->identity_card_ext,
+                'position' => 'PAGADO POR'." ".$a = $loan_payment->paid_by == "T" ? "TITULAR":"GARANTE"
+            ]);   
         $data = [
             'header' => [
                 'direction' => 'DIRECCIÓN DE ESTRATEGIAS SOCIALES E INVERSIONES',
@@ -484,11 +489,12 @@ class LoanPaymentController extends Controller
             'lenders' => collect($lenders),
             'loan_payment' => $loan_payment,
             'signers' => $persons,
+            'spouse'=> $spouse,
             'is_dead'=> $is_dead,
             'estimated_days' => $estimated_days
-        ];
-        $information_loan = $this->get_information_loan($loan);
-        $file_name = implode('_', ['pagos', $procedure_modality->shortened, $loan->code]) . '.pdf';
+        ]; 
+        $information_loan = $this->get_information_loan($loan);$hola="hola";
+        $file_name = $hola ;
         $view = view()->make('loan.payments.payment_loan')->with($data)->render();
         if ($standalone) return Util::pdf_to_base64([$view], $file_name, $information_loan, 'legal', $request->copies ?? 1);
         return $view;

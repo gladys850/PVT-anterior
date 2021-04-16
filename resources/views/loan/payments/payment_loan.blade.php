@@ -47,6 +47,18 @@
                 <td class="data-row py-5">{{ $lender->registration }}</td>      
             </tr>
             @endforeach
+            @if($spouse)
+            <tr class="bg-grey-darker text-xxs text-white">
+                <td colspan="2">DATOS DEL CÓNYUGE</td>
+                <td>CI</td>
+                <td>Matricula</td>
+            </tr>
+            <tr> 
+                <td colspan="2">{{$spouse->title}} {{$spouse->full_name}} </td>
+                <td> {{$spouse->identity_card_ext}}</td>
+                <td>{{$spouse->resistration}}</td>
+                </tr>
+            @endif
         </table>
     </div>
         <div class="block">
@@ -83,30 +95,30 @@
                 <td class="w-10 text-right">{{ Util::money_format($loan_payment->capital_payment) }}</td>
             </tr>
             <tr class="">
-                <td class="w-25">Intereses por</td>
+                <td class="w-10">Intereses por</td>
                 <td class="w-10">{{ $estimated_days['current']}} dias a {{ $loan->interest->annual_interest}} % anual</td>
                 <td class="w-10 text-right">{{ Util::money_format($loan_payment->interest_payment) }}</td>             
             </tr>
             <tr class="">
-                <td class="w-30">Intereses Penales por</td>
+                <td class="w-20">Intereses Penales por</td>
                 <td class="w-10">{{ $estimated_days['penal']}} dias a  {{ $loan->interest->penal_interest}} % anual</td>
                 <td class="w-10 text-right">{{ Util::money_format($loan_payment->penal_payment) }}</td>            </tr>
             <tr class="">
-                <td class="w-30">Intereses Corrientes Pendientes</td>
-                <td colspan="2" class="w-50 text-right">{{ Util::money_format($loan_payment->interest_remaining) }}</td>
+                <td colspan="2" class="w-30">Intereses Corrientes Pendientes</td>
+                <td colspan="3" class="w-50 text-right">{{ Util::money_format($loan_payment->interest_remaining) }}</td>
             </tr>
             <tr class="">
-                <td class="w-30">Intereses Penales Pendientes</td>
+                <td colspan="2" class="w-30">Intereses Penales Pendientes</td>
                 <td colspan="2" class="w-30 text-right">{{ Util::money_format($loan_payment->penal_remaining) }}</td>                        
                 </tr>
             <tr class="font-semibold leading-tight">
-                <td class="text-left p-10"><div>Total a Pagar:</div><div>Son:(<span class="uppercase font-semibold leading-tight  m-b-10 text-xs">{{ Util::money_format($loan_payment->estimated_quota, true) }} Bolivianos</span> )</div>
+                <td colspan="2" class="text-left p-10"><div>Total a Pagar:</div><div>Son:(<span class="uppercase font-semibold leading-tight  m-b-10 text-xs">{{ Util::money_format($loan_payment->estimated_quota, true) }} Bolivianos</span> )</div>
                 </td>
                 <td colspan="2" class="text-right">{{ Util::money_format($loan_payment->estimated_quota) }}</td>
             </tr>
             @if($loan_payment->description)
             <tr>
-                <td  class="text-left p-10"><span class="font-semibold">Observaciones</span> <br>
+                <td colspan="3" class="text-left p-10"><span class="font-semibold">Observaciones</span> <br>
                     {{$loan_payment->description}}
                 </td>
             </tr>
