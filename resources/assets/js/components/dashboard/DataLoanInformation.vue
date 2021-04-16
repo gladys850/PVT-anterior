@@ -138,9 +138,12 @@
               </v-card>
             </v-col>
           </v-row-->
-          <template>
-            <template v-if="ver && exist_affiliate && loans.loans.length > 0">
-              <h3 class="pa-1 text-center">PRESTAMOS SOLICITADOS</h3>
+        <template>
+          <!--TITULAR--->
+
+          <template v-if="loans_lender != null">
+            <template v-if="ver && loans_lender.loans.length > 0">
+              <h3 class="pa-1 text-center">PRÉSTAMOS SOLICITADOS POR EL TITULAR</h3>
               <v-row>
                 <v-col cols="12" md="12" class="py-0">
                   <v-card>
@@ -148,7 +151,7 @@
                       class="text-uppercase"
                       dense
                       :headers="headers_loans"
-                      :items="loans.loans"
+                      :items="loans_lender.loans"
                       :items-per-page="4"
                       hide-default-footer
                     >
@@ -211,10 +214,9 @@
                 </v-col>
               </v-row>
             </template>
-            <template
-              v-if="ver && exist_affiliate && loans.guarantees.length > 0"
+            <template v-if="ver && loans_lender.guarantees.length > 0"
             >
-              <h3 class="pa-1 text-center">PRESTAMOS GARANTIZADOS</h3>
+              <h3 class="pa-1 text-center">PRESTAMOS GARANTIZADOS POR EL TITULAR</h3>
               <v-row>
                 <v-col cols="12" md="12" class="py-0">
                   <v-card>
@@ -222,7 +224,7 @@
                       class="text-uppercase"
                       dense
                       :headers="headers_loans"
-                      :items="loans.guarantees"
+                      :items="loans_lender.guarantees"
                       :items-per-page="4"
                       hide-default-footer
                     >
@@ -284,8 +286,157 @@
                 </v-col>
               </v-row>
             </template>
+          </template>
+            <!--CONYUGUE-->
+          <template v-if="loans_spouse != null">
+            <template v-if="ver && loans_spouse.loans.length > 0">
+              <h3 class="pa-1 text-center ">PRÉSTAMOS SOLICITADOS POR CONYUGUE</h3>
+              <v-row>
+                <v-col cols="12" md="12" class="py-0">
+                  <v-card>
+                    <v-data-table
+                      class="text-uppercase"
+                      dense
+                      :headers="headers_loans"
+                      :items="loans_spouse.loans"
+                      :items-per-page="4"
+                      hide-default-footer
+                    >
+                      <template v-slot:[`item.shortened`]="{ item }">
+                        <v-tooltip top>
+                          <template v-slot:activator="{ on }">
+                            <span v-on="on">{{ item.shortened }}</span>
+                          </template>
+                          <span> {{ item.modality }}</span>
+                        </v-tooltip>
+                      </template>
 
-            <template v-if="ver && loans.observables.length > 0">
+                      <template v-slot:[`item.request_date`]="{ item }">
+                        {{ item.request_date | date }}
+                      </template>
+                      <template v-slot:[`item.disbursement_date`]="{ item }">
+                        {{ item.disbursement_date | date }}
+                      </template>
+                      <template v-slot:[`item.amount`]="{ item }">
+                        {{ item.amount | moneyString }}
+                      </template>
+                      <template v-slot:[`item.estimated_quota`]="{ item }">
+                        {{ item.estimated_quota | moneyString }}
+                      </template>
+                      <template v-slot:[`item.balance`]="{ item }">
+                        {{ item.balance | moneyString }}
+                      </template>
+
+                      <template v-slot:[`item.actions`]="{ item }">
+                        <v-tooltip top>
+                          <template v-slot:activator="{ on }">
+                            <v-btn
+                              v-if="item.origin == 'PVT'"
+                              icon
+                              small
+                              v-on="on"
+                              color="warning"
+                              :to="{
+                                name: 'flowAdd',
+                                params: { id: item.id },
+                              }"
+                              target="_blank"
+                              ><v-icon>mdi-eye</v-icon>
+                            </v-btn>
+                            <v-btn
+                              v-else
+                              icon
+                              small
+                              v-on="on"
+                              color="warning"
+                              @click.stop="routeSismu(item.id)"
+                              ><v-icon>mdi-eye</v-icon>
+                            </v-btn>
+                          </template>
+                          <span>Ver información</span>
+                        </v-tooltip>
+                      </template>
+                    </v-data-table>
+                  </v-card>
+                </v-col>
+              </v-row>
+            </template>
+            <template v-if="ver && loans_lender.guarantees.length > 0"
+            >
+              <h3 class="pa-1 text-center">PRESTAMOS GARANTIZADOS POR CONYUGUE</h3>
+              <v-row>
+                <v-col cols="12" md="12" class="py-0">
+                  <v-card>
+                    <v-data-table
+                      class="text-uppercase"
+                      dense
+                      :headers="headers_loans"
+                      :items="loans_spouse.guarantees"
+                      :items-per-page="4"
+                      hide-default-footer
+                    >
+                      <template v-slot:[`item.shortened`]="{ item }">
+                        <v-tooltip top>
+                          <template v-slot:activator="{ on }">
+                            <span v-on="on">{{ item.shortened }}</span>
+                          </template>
+                          <span> {{ item.modality }}</span>
+                        </v-tooltip>
+                      </template>
+
+                      <template v-slot:[`item.request_date`]="{ item }">
+                        {{ item.request_date | date }}
+                      </template>
+                      <template v-slot:[`item.disbursement_date`]="{ item }">
+                        {{ item.disbursement_date | date }}
+                      </template>
+                      <template v-slot:[`item.amount`]="{ item }">
+                        {{ item.amount | moneyString }}
+                      </template>
+                      <template v-slot:[`item.estimated_quota`]="{ item }">
+                        {{ item.estimated_quota | moneyString }}
+                      </template>
+                      <template v-slot:[`item.balance`]="{ item }">
+                        {{ item.balance | moneyString }}
+                      </template>
+
+                      <template v-slot:[`item.actions`]="{ item }">
+                        <v-tooltip top>
+                          <template v-slot:activator="{ on }">
+                            <v-btn
+                              v-if="item.origin == 'PVT'"
+                              icon
+                              small
+                              v-on="on"
+                              color="warning"
+                              :to="{
+                                name: 'flowAdd',
+                                params: { id: item.id },
+                              }"
+                              ><v-icon>mdi-eye</v-icon>
+                            </v-btn>
+                            <v-btn
+                              v-else
+                              icon
+                              small
+                              v-on="on"
+                              color="warning"
+                              @click.stop="routeSismu(item.id)"
+                              ><v-icon>mdi-eye</v-icon>
+                            </v-btn>
+                          </template>
+                          <span>Ver información</span>
+                        </v-tooltip>
+                      </template>
+                    </v-data-table>
+                  </v-card>
+                </v-col>
+              </v-row>
+            </template>
+          </template> 
+
+
+            <!--<template v-if="ver && loans_lender.observables.length > 0">
               <h3 class="pa-1 text-center">PRÉSTAMOS COINCIDENTES</h3>
               <v-row>
                 <v-col cols="12" md="12" class="py-0">
@@ -294,7 +445,7 @@
                       class="text-uppercase"
                       dense
                       :headers="headers_observables"
-                      :items="loans.observables"
+                      :items="loans_lender.observables"
                       :items-per-page="10"
                     >
                       <template v-slot:[`item.PrdDsc`]="{ item }">
@@ -354,7 +505,7 @@
                   </v-card>
                 </v-col>
               </v-row>
-            </template>
+            </template>-->
           </template>
         </v-card>
       </v-container>
@@ -366,14 +517,15 @@
 export default {
   name: "data-loan-information",
    props: {
-    loans: {
+    loans_lender: {
       type: Object,
       required: true
     },
-    exist_affiliate: {
-      type: Boolean,
+    loans_spouse: {
+      type: Object,
       required: true
     },
+
     ver: {
       type: Boolean,
       required: true
