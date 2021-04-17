@@ -106,7 +106,7 @@
                             {{ anticipo.quota_calculated +" Bs."}}
                         </v-col>
                         <v-col cols="12" md="8" >
-                            Interes:
+                            Interes Mensual:
                         </v-col>
                         <v-col cols="12" md="4" >
                             {{ (anticipo.annual_interest/12).toFixed(2) +" %"}}
@@ -150,7 +150,7 @@
                             {{ corto_plazo.quota_calculated +" Bs."}}
                         </v-col>
                         <v-col cols="12" md="8" >
-                            Interes:
+                            Interes Mensual:
                         </v-col>
                         <v-col cols="12" md="4" >
                             {{ (corto_plazo.annual_interest/12).toFixed(2)  +" %"}}

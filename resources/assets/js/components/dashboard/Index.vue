@@ -105,11 +105,11 @@
 
                       <v-col cols="12"  md="8" class="font-weight-black caption ma-0 py-0"
                       >
-                        NRO DE PRÉSTAMOS SOLICITADOS: {{loans_lender.loans.length}}
+                        NRO DE PRÉSTAMOS SOLICITADOS: {{loans_lender.loans ? loans_lender.loans.length : 0}}
                       </v-col>
                       <v-col cols="12" md="8"  class="font-weight-black caption ma-0 pt-0 pb-1"
                       >
-                        NRO DE PRÉSTAMOS GARANTIZADOS: {{loans_lender.guarantees.length}}
+                        NRO DE PRÉSTAMOS GARANTIZADOS: {{loans_lender.guarantees ? loans_lender.guarantees.length : 0}}
                       </v-col>
                     </template>
                   </v-row>
