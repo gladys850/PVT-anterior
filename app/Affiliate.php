@@ -10,6 +10,7 @@ use Laratrust\Traits\LaratrustUserTrait;
 use Illuminate\Support\Facades\Storage;
 use Carbon\CarbonImmutable;
 use Util;
+use App\LoanState;
 
 class Affiliate extends Model
 {
@@ -274,7 +275,9 @@ class Affiliate extends Model
     }
     public function current_loans()
     {
-      return $this->belongsToMany(Loan::class, 'loan_affiliates')->withPivot(['payment_percentage'])->whereGuarantor(false)->where('state_id', 3)->orderBy('loans.created_at', 'desc');
+      $loan_state = LoanState::whereName('Desembolsado')->first();
+      //return Loan::where('disbursable_id', $this->id)->where('disbursable_type', 'spouses')->where('state_id', $loan_state->id)->get();
+      return $this->belongsToMany(Loan::class, 'loan_affiliates')->withPivot(['payment_percentage'])->whereGuarantor(false)->where('state_id', $loan_state->id)->orderBy('loans.created_at', 'desc');
     }
     public function active_guarantees()
     {
