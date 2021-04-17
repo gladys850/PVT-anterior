@@ -1092,7 +1092,7 @@ class AffiliateController extends Controller
     public function search_loan(Request $request){
       // return $request;
        $request->validate([
-           'identity_card' => 'required|string|exists:affiliates,identity_card'
+           'identity_card' => 'required|string'
        ]);
        $message = array();
        $ci=$request->identity_card;
