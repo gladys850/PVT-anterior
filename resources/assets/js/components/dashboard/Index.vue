@@ -132,6 +132,7 @@
                               right
                               v-on="on"
                               :to="{name: 'affiliateAdd', params: { id: history_spouse.id, workTray: 'received'}}"
+                              target="_blank"
                             >
                               <v-icon>mdi-eye</v-icon>
                             </v-btn>
@@ -155,10 +156,10 @@
                       </v-col>
 
                       <v-col cols="12"  md="8" class="font-weight-black caption ma-0 py-0">
-                        NRO DE PRÉSTAMOS SOLICITADOS: {{loans_spouse.loans.length}}
+                        NRO DE PRÉSTAMOS SOLICITADOS: {{loans_spouse.loans ? loans_spouse.loans.length : 0}}
                       </v-col>
                       <v-col cols="12" md="8"  class="font-weight-black caption ma-0 pt-0 pb-1">
-                        NRO DE PRÉSTAMOS GARANTIZADOS: {{loans_spouse.guarantees.length}}
+                        NRO DE PRÉSTAMOS GARANTIZADOS: {{loans_spouse.guarantees ? loans_spouse.guarantees.length : 0}}
                       </v-col>
                     </template>
 
@@ -185,10 +186,10 @@
                       </v-col>
 
                       <v-col cols="12"  md="8" class="font-weight-black caption ma-0 py-0">
-                        NRO DE PRÉSTAMOS SOLICITADOS: {{loans_spouse.loans.length}}
+                        NRO DE PRÉSTAMOS SOLICITADOS: {{loans_spouse.loans ? loans_spouse.loans.length: 0}}
                       </v-col>
                       <v-col cols="12" md="8"  class="font-weight-black caption ma-0 pt-0 pb-1">
-                        NRO DE PRÉSTAMOS GARANTIZADOS: {{loans_spouse.guarantees.length}}
+                        NRO DE PRÉSTAMOS GARANTIZADOS: {{loans_spouse.guarantees ? loans_spouse.guarantees.length : 0}}
                       </v-col>
                     </template>
                   </v-row>
@@ -450,6 +451,7 @@ export default {
 
     async validar() {
       if (await this.$refs.observer.validate()) {
+         
         this.getHistoryAffiliate()
 
       }

@@ -3,144 +3,10 @@
     <v-card-text>
       <v-container class="py-0">
         <v-card color="grey lighten-1" class="ma-0 pa-3">
-          <!--v-row>
-            <v-col cols="12" md="4">
-              <v-card>
-                <v-container class="py-0">
-                  <v-row>
-                    <v-col cols="12" md="4"></v-col>
-                    <v-col cols="12" md="6"> Afiliado </v-col>
-                    <v-col cols="12" md="2"></v-col>
-                    <v-col cols="12" md="1"></v-col>
-                    <v-col cols="12" md="8">
-                      <v-text-field
-                        dense
-                        label="CI ó Matrícula"
-                        v-model="affiliate_ci"
-                        class="py-0"
-                        single-line
-                        hide-details
-                        clearable
-                        :loading="loading"
-                        @keyup.enter="getLoansHistory()"
-                      ></v-text-field>
-                    </v-col>
-                    <v-col cols="12" md="2">
-                      <v-tooltip top>
-                        <template v-slot:activator="{ on }">
-                          <v-btn
-                            fab
-                            dark
-                            x-small
-                            v-on="on"
-                            color="info"
-                            @click.stop="getLoansHistory()"
-                          >
-                            <v-icon>mdi-magnify</v-icon>
-                          </v-btn>
-                        </template>
-                        <span>Buscar afiliado</span>
-                      </v-tooltip>
-                    </v-col>
-                  </v-row>
-                </v-container>
-              </v-card>
-            </!--v-col>
 
-            <v-col cols="12" md="8">
-              <v-card>
-                <v-row class="ma-0 pb-0 text-uppercase">
-                  <v-col
-                    class="text-center"
-                    cols="12"
-                    md="8"
-                    v-show="!exist_affiliate"
-                    v-if="ver"
-                  >
-                    <h3 class="error--text aling-text--center">
-                      <ul style="list-style: none" class="pa-0">
-                        <li
-                          v-for="(message, index) in loans.message"
-                          :key="index"
-                          class="pb-2"
-                        >
-                          {{ message }}
-                        </li>
-                      </ul>
-                    </h3>
-                  </v-col>
-                  <template v-if="ver && exist_affiliate">
-                    <v-col cols="12" md="12" class="ma-0 pb-0 text-center">
-                      <h2>
-                        {{ $options.filters.fullName(loans, true) }}
-                      </h2></v-col
-                    >
-                    <v-col cols="12" md="6" class="ma-0 pb-0">
-                      C.I: {{ loans.identity_card }}</v-col
-                    >
-                    <v-col cols="12" md="6" class="ma-0 pb-0">
-                      MATRÍCULA: {{ loans.registration }}
-                    </v-col>
-                    <template v-if="loans.tit_pvt">
-                      <v-col cols="12" md="6" class="ma-0 pb-0">
-                        CATEGORÍA: {{ category_name }}
-                      </v-col>
-                      <v-col cols="12" md="6" class="ma-0 pb-0">
-                        ESTADO: {{ state_name_status }}</v-col
-                      >
-                      <v-col cols="12" md="6" class="ma-0 pb-0">
-                        GRADO: {{ degree_name }}
-                      </v-col>
-                      <v-col cols="12" md="6" class="ma-0 pb-2">
-                        UNIDAD: {{ unit_name }}
-                      </v-col>
-                    </template>
-                    <template v-if="loans.spouse_pvt || loans.spouse_sismu">
-                      <v-col cols="12" md="6" class="ma-0 pb-2">
-                        CONYUGUE
-                      </v-col>
-                    </template>
-
-                    <v-col
-                      cols="12"
-                      md="8"
-                      class="font-weight-black caption ma-0 py-0"
-                    >
-                      NRO DE PRÉSTAMOS SOLICITADOS:
-                      {{ loans.loans.length }}
-                    </v-col>
-                    <v-col
-                      cols="12"
-                      md="8"
-                      class="font-weight-black caption ma-0 pt-0 pb-1"
-                    >
-                      NRO DE PRÉSTAMOS GARANTIZADOS:
-                      {{ loans.guarantees.length }}
-                    </v-col>
-                    <v-col
-                      cols="12"
-                      md="8"
-                      class="font-weight-black caption ma-0 pt-0 pb-1 red--text"
-                      v-if="loans.observables.length > 0"
-                    >
-                      <ul style="list-style: none" class="pa-0">
-                        <li
-                          v-for="(message, index) in loans.message"
-                          :key="index"
-                          class="pb-2"
-                        >
-                          {{ message }}
-                        </li>
-                      </ul>
-                    </v-col>
-                  </template>
-                </v-row>
-              </v-card>
-            </v-col>
-          </v-row-->
-        <template>
+       
           <!--TITULAR--->
-          <template v-if="loans_lender != null">
+          <template v-if="Object.entries(loans_lender).length !== 0">
             <template v-if="ver && loans_lender.loans.length > 0">
               <h3 class="pa-1 text-center">PRÉSTAMOS SOLICITADOS POR EL TITULAR</h3>
               <v-row>
@@ -284,9 +150,9 @@
                 </v-col>
               </v-row>
             </template>
-
+          </template>
             <!--CONYUGUE-->
-          <template v-if="Object.entries(loans_spouse).length !== 0">
+            <template v-if="Object.entries(loans_spouse).length !== 0">
             <template v-if="loans_spouse.loans.length > 0 && ver">
               <h3 class="pa-1 text-center ">PRÉSTAMOS SOLICITADOS POR CONYUGUE</h3>
               <v-row>
@@ -432,82 +298,8 @@
               </v-row>
             </template>
 
-          </template> 
-
-
-
-
-            <!--<template v-if="ver && loans_lender.observables.length > 0">
-              <h3 class="pa-1 text-center">PRÉSTAMOS COINCIDENTES</h3>
-              <v-row>
-                <v-col cols="12" md="12" class="py-0">
-                  <v-card>
-                    <v-data-table
-                      class="text-uppercase"
-                      dense
-                      :headers="headers_observables"
-                      :items="loans_lender.observables"
-                      :items-per-page="10"
-                    >
-                      <template v-slot:[`item.PrdDsc`]="{ item }">
-                        <v-tooltip top>
-                          <template v-slot:activator="{ on }">
-                            <span v-on="on">{{ item.PrdDsc }}</span>
-                          </template>
-                          <span> {{ item.PrdDsc }}</span>
-                        </v-tooltip>
-                      </template>
-
-                      <template v-slot:[`item.request_date`]="{ item }">
-                        {{ item.request_date | date }}
-                      </template>
-                      <template v-slot:[`item.disbursement_date`]="{ item }">
-                        {{ item.disbursement_date | date }}
-                      </template>
-                      <template v-slot:[`item.PresMntDesembolso`]="{ item }">
-                        {{ item.PresMntDesembolso | moneyString }}
-                      </template>
-                      <template v-slot:[`item.PresCuotaMensual`]="{ item }">
-                        {{ item.PresCuotaMensual | moneyString }}
-                      </template>
-                      <template v-slot:[`item.PresSaldoAct`]="{ item }">
-                        {{ item.PresSaldoAct | moneyString }}
-                      </template>
-
-                      <template v-slot:[`item.actions`]="{ item }">
-                        <v-tooltip top>
-                          <template v-slot:activator="{ on }">
-                            <v-btn
-                              v-if="item.origin == 'PVT'"
-                              icon
-                              small
-                              v-on="on"
-                              color="warning"
-                              :to="{
-                                name: 'flowAdd',
-                                params: { id: item.id },
-                              }"
-                              ><v-icon>mdi-eye</v-icon>
-                            </v-btn>
-                            <v-btn
-                              v-else
-                              icon
-                              small
-                              v-on="on"
-                              color="warning"
-                              @click.stop="routeSismu(item.IdPrestamo)"
-                              ><v-icon>mdi-eye</v-icon>
-                            </v-btn>
-                          </template>
-                          <span>Ver información</span>
-                        </v-tooltip>
-                      </template>
-                    </v-data-table>
-                  </v-card>
-                </v-col>
-              </v-row>
-            </template>-->
-          </template>
+            </template> 
+          
         </v-card>
       </v-container>
     </v-card-text>
