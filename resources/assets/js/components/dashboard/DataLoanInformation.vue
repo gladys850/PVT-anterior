@@ -140,7 +140,6 @@
           </v-row-->
         <template>
           <!--TITULAR--->
-
           <template v-if="loans_lender != null">
             <template v-if="ver && loans_lender.loans.length > 0">
               <h3 class="pa-1 text-center">PRÉSTAMOS SOLICITADOS POR EL TITULAR</h3>
@@ -214,8 +213,7 @@
                 </v-col>
               </v-row>
             </template>
-            <template v-if="ver && loans_lender.guarantees.length > 0"
-            >
+            <template v-if="ver && loans_lender.guarantees.length > 0">
               <h3 class="pa-1 text-center">PRESTAMOS GARANTIZADOS POR EL TITULAR</h3>
               <v-row>
                 <v-col cols="12" md="12" class="py-0">
@@ -286,10 +284,10 @@
                 </v-col>
               </v-row>
             </template>
-          </template>
+
             <!--CONYUGUE-->
-          <template v-if="loans_spouse != null">
-            <template v-if="ver && loans_spouse.loans.length > 0">
+          <template v-if="Object.entries(loans_spouse).length !== 0">
+            <template v-if="loans_spouse.loans.length > 0 && ver">
               <h3 class="pa-1 text-center ">PRÉSTAMOS SOLICITADOS POR CONYUGUE</h3>
               <v-row>
                 <v-col cols="12" md="12" class="py-0">
@@ -361,8 +359,8 @@
                 </v-col>
               </v-row>
             </template>
-            <template v-if="ver && loans_lender.guarantees.length > 0"
-            >
+            
+            <template v-if="loans_spouse.guarantees.length > 0 && ver ">
               <h3 class="pa-1 text-center">PRESTAMOS GARANTIZADOS POR CONYUGUE</h3>
               <v-row>
                 <v-col cols="12" md="12" class="py-0">
@@ -433,7 +431,10 @@
                 </v-col>
               </v-row>
             </template>
+
           </template> 
+
+
 
 
             <!--<template v-if="ver && loans_lender.observables.length > 0">

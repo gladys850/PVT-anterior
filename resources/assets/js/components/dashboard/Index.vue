@@ -13,14 +13,19 @@
             <v-row justify="center">
               <v-col cols="12" md="4">
                 <v-card>
-                  <v-container class="py-0">
+                  <v-container class="py-0 pb-2">
                     <v-row>
                       <v-col cols="12" md="4"></v-col>
                       <v-col cols="12" md="6"> Afiliado </v-col>
                       <v-col cols="12" md="2"></v-col>
                       <v-col cols="12" md="1"></v-col>
                       <v-col cols="12" md="8">
+                        <ValidationProvider v-slot="{ errors }" 
+                        vid="affiliate_ci" 
+                        name="CI ó Matrícula" 
+                        rules="required|min:3|max:20">
                         <v-text-field
+                        :error-messages="errors"
                           dense
                           label="CI ó Matrícula"
                           v-model="affiliate_ci"
@@ -29,8 +34,9 @@
                           hide-details
                           clearable
                           :loading="loading"
-                          v-on:keyup.enter="getHistoryAffiliate()"
+                          v-on:keyup.enter="validar()"
                         ></v-text-field>
+                        </ValidationProvider>
                       </v-col>
                       <v-col cols="12" md="2">
                         <v-tooltip top>
@@ -41,7 +47,7 @@
                               x-small
                               v-on="on"
                               color="info"
-                              @click.stop="getHistoryAffiliate()"
+                              @click.stop="validar()"
                             >
                               <v-icon>mdi-magnify</v-icon>
                             </v-btn>
@@ -55,14 +61,6 @@
               </v-col>
               <v-col cols="12" md="8">
                 <v-card>
-                  <v-row class="ma-0 pb-0 text-uppercase">
-                    <!--observables-->
-                    <v-col class="text-center" cols="12" md="12" v-if="history_observables != null && ver">
-                      <h3 class="error--text aling-text-center">
-                        NO EXISTE UNA COINCIDENCIA EXACTA CON EL AFILIADO
-                      </h3>
-                    </v-col>
-                  </v-row>
                   <!--affiliados-->
                   <v-row v-if="history_affiliate != null && ver">
                     <template>
@@ -81,6 +79,7 @@
                               right
                               v-on="on"
                               :to="{name: 'affiliateAdd', params: { id: history_affiliate.id, workTray: 'received'}}"
+                              target="_blank"
                             >
                               <v-icon>mdi-eye</v-icon>
                             </v-btn>
@@ -193,12 +192,20 @@
                       </v-col>
                     </template>
                   </v-row>
+                    <!--observables-->
+                  <v-row class="ma-0 pb-0 text-uppercase" v-if="history_observables != null && ver">
+                    <v-col class="text-center" cols="12" md="12">
+                      <h3 class="error--text aling-text-center">
+                        NO EXISTE UNA COINCIDENCIA EXACTA <br> CON EL AFILIADO
+                      </h3>
+                    </v-col>
+                  </v-row>
                   
                 </v-card>
               </v-col>
               <!--TABLA DE OBSERVABLES-->
             <template v-if="history_observables != null && ver">
-              <h3 class="pa-1 text-center">COINCIDENCIAS CON BASE DE DATOS ANTIGUA</h3>
+              <h2 class="pa-1 text-center">COINCIDENCIAS CON BASE DE DATOS ANTIGUA</h2>
               <v-row>
                 <v-col cols="12" md="12" class="py-0">
                   <h3 class="pa-1 text-center">EXACTOS</h3>
@@ -255,7 +262,7 @@
                             :loans_spouse.sync="loans_spouse"
                             :ver.sync="ver"/>
                         </v-tab-item>
-                      <v-tab>CALCULADORA</v-tab>
+                      <v-tab>EVALUACIÓN PREVIA</v-tab>
                         <v-tab-item >
                           <DataLoanAffiliate
                             :loans1.sync="loans1"
@@ -431,13 +438,26 @@ export default {
   watch: {
     affiliate_ci() {
       this.ver = false;
+      this.history_affiliate = {},
+      this.history_spouse = {},
+      this.history_observables = {},
+      this.loans_lender= {},
+      this.loans_spouse= {}
     },
   },
 
   methods: {
+
+    async validar() {
+      if (await this.$refs.observer.validate()) {
+        this.getHistoryAffiliate()
+
+      }
+  },
     //obtener los afiliados u observables
     async getHistoryAffiliate() {
-      //this.getCalculator();
+       
+      this.getCalculator();
       try {
         this.loading = true;
         let res = await axios.get(`affiliate_record`, {
@@ -449,48 +469,49 @@ export default {
         this.history_spouse = res.data.spouse;
         this.history_observables = res.data.observables;
         
-        if (this.history_observables == null) {  
-          if (this.history_affiliate != null){
-            if (this.history_affiliate.origin == "affiliate") {
-              this.ver = true; 
-              let res2 = await axios.post(`affiliate_loans_guarantees`, {     
-                  affiliate_id: this.history_affiliate.id,
-                  type: true
-              });
-              this.loans_lender = res2.data
-            } 
-         
-          }
-          if (this.history_spouse != null){
-            if (this.history_spouse.origin == "affiliate") {
-              this.ver = true; 
-              let res3 = await axios.post(`affiliate_loans_guarantees`, {        
-                  affiliate_id: this.history_spouse.id,
-                  type: false      
-              });             
-              this.loans_spouse = res3.data
-            } 
-
-            if(this.history_spouse.origin == "spouse") {         
-              this.ver = true;      
-              let res3 = await axios.post(`affiliate_loans_guarantees`, {
-                  affiliate_id: this.history_spouse.id,
-                  type: false
-              });
-              this.loans_spouse = res3.data
-
-            } 
+        
+          if (this.history_affiliate != null){   
+            
+            let res2 = await axios.post(`affiliate_loans_guarantees`, { 
+                affiliate_id: this.history_affiliate.id,
+                type: true
+            });
+            this.loans_lender = res2.data
+            this.ver = true
           
-          }       
-        } else {        
-          this.ver = true;
-          console.log("mostrar observables");
-        }
+            if (this.history_spouse != null){
+              if (this.history_spouse.origin == "affiliate") {
+                
+                let res3 = await axios.post(`affiliate_loans_guarantees`, {        
+                    affiliate_id: this.history_spouse.id,
+                    type: false      
+                });            
+                this.loans_spouse = res3.data
+                this.ver = true
+                console.log("Afiliada conyugue")
+              } 
+              else if(this.history_spouse.origin == "spouse") {         
+                   
+                let res3 = await axios.post(`affiliate_loans_guarantees`, {
+                    affiliate_id: this.history_spouse.id,
+                    type: false
+                });
+                this.loans_spouse = res3.data
+                this.ver = true
+                console.log("conyugue")
+              } else{
+                console.log("No tiene conyugue")
+              }
+            }  
+          }
+     
+        
       } catch (e) {
-        console.log(e);
+        this.$refs.observer.setErrors(e)
       } finally {
-        this.loading = false;
+        this.loading = false
       }
+    
     },
 
     async getLoansHistory() {
@@ -533,58 +554,29 @@ export default {
         this.cont = this.loans1.modalities.length;
         for (let i = 0; i < this.loans1.modalities.length; i++) {
           if (
-            this.loans1.modalities[i].name_procedure_modality ==
-            "Préstamo Anticipo"
-          ) {
-            this.anticipo.name = this.loans1.modalities[
-              i
-            ].name_procedure_modality;
+            this.loans1.modalities[i].name_procedure_modality == "Préstamo Anticipo") {
+            this.anticipo.name = this.loans1.modalities[i].name_procedure_modality;
             this.anticipo.amount_max = this.loans1.modalities[i].amount_max;
-            this.anticipo.maximum_term = this.loans1.modalities[
-              i
-            ].modality_affiliate.procedure_type.interval.maximum_term;
-            this.anticipo.liquid_calification = this.loans1.modalities[
-              i
-            ].liquid_calification;
-            this.anticipo.annual_interest = this.loans1.modalities[
-              i
-            ].interest.annual_interest;
+            this.anticipo.maximum_term = this.loans1.modalities[i].modality_affiliate.procedure_type.interval.maximum_term;
+            this.anticipo.liquid_calification = this.loans1.modalities[i].liquid_calification;
+            this.anticipo.annual_interest = this.loans1.modalities[i].interest.annual_interest;
+            this.anticipo.quota_calculated = this.loans1.modalities[i].quota_calculated;
           }
-          if (
-            this.loans1.modalities[i].name_procedure_modality ==
-            "Préstamo a corto plazo"
-          ) {
-            this.corto_plazo.name = this.loans1.modalities[
-              i
-            ].name_procedure_modality;
+          if (this.loans1.modalities[i].name_procedure_modality == "Préstamo a corto plazo") {
+            this.corto_plazo.name = this.loans1.modalities[i].name_procedure_modality;
             this.corto_plazo.amount_max = this.loans1.modalities[i].amount_max;
-            this.corto_plazo.maximum_term = this.loans1.modalities[
-              i
-            ].modality_affiliate.procedure_type.interval.maximum_term;
-            this.corto_plazo.liquid_calification = this.loans1.modalities[
-              i
-            ].liquid_calification;
-            this.corto_plazo.annual_interest = this.loans1.modalities[
-              i
-            ].interest.annual_interest;
+            this.corto_plazo.maximum_term = this.loans1.modalities[i].modality_affiliate.procedure_type.interval.maximum_term;
+            this.corto_plazo.liquid_calification = this.loans1.modalities[i].liquid_calification;
+            this.corto_plazo.annual_interest = this.loans1.modalities[i].interest.annual_interest;
+            this.corto_plazo.quota_calculated = this.loans1.modalities[i].quota_calculated;
           }
-          if (
-            this.loans1.modalities[i].name_procedure_modality ==
-            "Préstamo a largo plazo"
-          ) {
-            this.largo_plazo.name = this.loans1.modalities[
-              i
-            ].name_procedure_modality;
+          if (this.loans1.modalities[i].name_procedure_modality == "Préstamo a largo plazo") {
+            this.largo_plazo.name = this.loans1.modalities[i].name_procedure_modality;
             this.largo_plazo.amount_max = this.loans1.modalities[i].amount_max;
-            this.largo_plazo.maximum_term = this.loans1.modalities[
-              i
-            ].modality_affiliate.procedure_type.interval.maximum_term;
-            this.largo_plazo.liquid_calification = this.loans1.modalities[
-              i
-            ].liquid_calification;
-            this.largo_plazo.annual_interest = this.loans1.modalities[
-              i
-            ].interest.annual_interest;
+            this.largo_plazo.maximum_term = this.loans1.modalities[i].modality_affiliate.procedure_type.interval.maximum_term;
+            this.largo_plazo.liquid_calification = this.loans1.modalities[i].liquid_calification;
+            this.largo_plazo.annual_interest = this.loans1.modalities[i].interest.annual_interest;
+            this.largo_plazo.quota_calculated = this.loans1.modalities[i].quota_calculated;
           }
         }
 
