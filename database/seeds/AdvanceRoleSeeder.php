@@ -29,7 +29,8 @@ class AdvanceRoleSeeder extends Seeder
         $sequence_permissions = ['update-affiliate-secondary', 'show-affiliate', 'show-loan', 'update-address', 'update-loan'];
         $leadership_permissions = ['show-all-loan', 'update-loan', 'delete-loan', 'show-setting', 'show-deleted-loan'];
         $executive_permissions = ['update-setting'];
-        $pay_permissions_treasury = ['update-payment','create-payment','show-payment','show-payment-loan','delete-payment', 'print-payment-voucher', 'update-payment-loan'];
+        $pay_permissions_treasury = ['show-loan','print-payment-kardex-loan','print-payment-loan','delete-loan','update-payment','create-payment','show-payment','show-payment-loan','delete-payment', 'print-payment-voucher', 'update-payment-loan'];
+        $loan_collection = ['show-loan','print-payment-kardex-loan','print-payment-loan','delete-loan','update-payment','create-payment','show-payment','show-payment-loan','delete-payment', 'print-payment-voucher', 'update-payment-loan'];
         $treasury_permissions = ['print-payment-plan', 'print-payment-kardex-loan', 'show-loan','disbursement-loan','delete-payment', 'update-loan'];
         $recovery_permissions = ['show-all-loan', 'show-loan', 'show-affiliate', 'print-payment-plan', 'print-payment-kardex-loan', 'show-payment-loan', 'create-payment-loan', 'update-payment-loan', 'delete-payment-loan', 'print-payment-loan' ];
         $receipt_roles = ['Regional Santa Cruz', 'Regional Cochabamba', 'Regional Oruro', 'Regional Potosí', 'Regional Sucre', 'Regional Tarija', 'Regional Trinidad', 'Regional Cobija', 'Recepción'];
@@ -53,12 +54,21 @@ class AdvanceRoleSeeder extends Seeder
                 'name' => 'Aprobación Legal',
                 'action' => 'Aprobado',
             ], [
+                'name' => 'Aprobación Calificación',
+                'action' => 'Aprobado',
+            ], [
+                'name' => ' Presupuesto',
+                'action' => 'Aprobado',
+            ], [
+                'name' => 'Contabilidad',
+                'action' => 'Aprobado',
+            ],  [
                 'name' => 'Tesorería',
                 'action' => 'Desembolsado',
             ], [
                 'name' => 'Cobranzas Corte',
                 'action' => 'Pendiente de Pago',
-            ]
+            ],
         ];    $recovery_roles = [
     
             [
@@ -100,8 +110,10 @@ class AdvanceRoleSeeder extends Seeder
                 } elseif (in_array($role['display_name'], ['Tesorería'])) {
                     $role->syncPermissions(array_merge($treasury_permissions));
                 } elseif (in_array($role['display_name'], ['Cobranzas Corte'])) {
-                    $role->syncPermissions(array_merge($treasury_permissions));
-                } 
+                    $role->syncPermissions(array_merge($loan_collection));
+                } elseif (in_array($role['display_name'], ['Cobranzas'])) {
+                    $role->syncPermissions(array_merge($loan_collection));
+                }
                 else {
                     $role->syncPermissions($sequence_permissions);
                 }
