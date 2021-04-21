@@ -143,7 +143,7 @@ class CalculatorController extends Controller
                 $amount_requested = $amount_maximum_suggested;
             }
             $maximum_suggested_valid = false;
-            if($modality->procedure_type->interval->minimum_amount<=$amount_maximum_suggested && $amount_maximum_suggested<=$modality->procedure_type->interval->maximum_amount) $maximum_suggested_valid = true;
+            if($modality->loan_modality_parameter->minimum_amount<=$amount_maximum_suggested && $amount_maximum_suggested<=$modality->loan_modality_parameter->maximum_amount_modality) $maximum_suggested_valid = true;
             $indebtedness_calculated_total=round((($quota_calculated_total/$liquid_qualification_calculated_lender)*100),2);
             $evaluate = false;
             if ($indebtedness_calculated_total<=$debt_index) $evaluate=true;
@@ -198,7 +198,7 @@ class CalculatorController extends Controller
                         $amount_requested = $amount_maximum_suggested;
                     }
                     $maximum_suggested_valid = false;
-                    if($modality->procedure_type->interval->minimum_amount<=$amount_maximum_suggested && $amount_maximum_suggested<=$modality->procedure_type->interval->maximum_amount) $maximum_suggested_valid = true;
+                    if($modality->loan_modality_parameter->minimum_amount_modality<=$amount_maximum_suggested && $amount_maximum_suggested<=$modality->loan_modality_parameter->maximum_amount_modality) $maximum_suggested_valid = true;
                     $indebtedness_calculated = $quota_calculated/$liquid['liquid_qualification_calculated']*100;
                     $livelihood_amount = 0; $valuate = false;
                     $livelihood_amount = $liquid['liquid_qualification_calculated'] - $quota_calculated; // liquido para calificacion menos la cuota estimada debe ser menor igual al monto de subsistencia
@@ -239,11 +239,11 @@ class CalculatorController extends Controller
     // monto maximo
     private function maximum_amount($procedure_modality,$months_term,$liquid_qualification_calculated){
         $interest_rate = $procedure_modality->current_interest->monthly_current_interest;
-        $loan_interval = $procedure_modality->procedure_type->interval;
+        $loan_interval = $procedure_modality->loan_modality_parameter;
         $debt_index = $procedure_modality->loan_modality_parameter->decimal_index;
         $maximum_qualified_amount = intval((1-(1/pow((1+$interest_rate),$months_term)))*($debt_index*$liquid_qualification_calculated)/$interest_rate);
-        if ($maximum_qualified_amount > ($loan_interval->maximum_amount)){
-            $maximum_qualified_amount = $loan_interval->maximum_amount;
+        if ($maximum_qualified_amount > ($loan_interval->maximum_amount_modality)){
+            $maximum_qualified_amount = $loan_interval->maximum_amount_modality;
         } else {
             $maximum_qualified_amount = $maximum_qualified_amount;
         }
@@ -348,11 +348,11 @@ class CalculatorController extends Controller
     // monto maximo
     private function maximum_amount_borrar($procedure_modality,$months_term,$liquid_qualification_calculated){
         $interest_rate = $procedure_modality->current_interest->monthly_current_interest;
-        $loan_interval = $procedure_modality->procedure_type->interval;
+        $loan_interval = $procedure_modality->loan_modality_parameter;
         $debt_index = $procedure_modality->loan_modality_parameter->decimal_index;
         $maximum_qualified_amount = intval((1-(1/pow((1+$interest_rate),$months_term)))*($debt_index*$liquid_qualification_calculated)/$interest_rate);
-        if ($maximum_qualified_amount > ($loan_interval->maximum_amount)){
-            $maximum_qualified_amount = $loan_interval->maximum_amount;
+        if ($maximum_qualified_amount > ($loan_interval->maximum_amount_modality)){
+            $maximum_qualified_amount = $loan_interval->maximum_amount_modality;
         } else {
             $maximum_qualified_amount = $maximum_qualified_amount;
         }
@@ -381,7 +381,7 @@ class CalculatorController extends Controller
             $ms = $amount_maximum_suggested;
         }
         $maximum_suggested_valid = false;
-        if($procedure_modality->procedure_type->interval->minimum_amount <= $ms && $ms <= $procedure_modality->procedure_type->interval->maximum_amount)
+        if($procedure_modality->loan_modality_parameter->minimum_amount <= $ms && $ms <= $procedure_modality->loan_modality_parameter->maximum_amount_modality)
             $maximum_suggested_valid = true;
         /** end m */
         $ie = ($ce/$liquid_qualification_calculated)*100;
