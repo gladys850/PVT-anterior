@@ -284,7 +284,7 @@
                 </template>
               </v-container>
               <BallotsHipotecary
-                v-show="hipotecario"
+                v-show="hipotecario && (loan_detail.not_exist_modality == false)"
                 :contrib_codebtor="contrib_codebtor"
                 :modalidad.sync="modalidad"
                 :affiliate.sync="affiliate"
