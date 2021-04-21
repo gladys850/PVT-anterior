@@ -12,7 +12,7 @@ Route::group([
     //Route::get('senasir_save_payment', 'Api\V1\LoanPaymentController@senasir_save_payment');
     Route::get('loans_delay', 'Api\V1\LoanPaymentController@loans_delay');
     //sismu
-    //Route::get('prueba', 'Api\V1\AffiliateController@prueba');
+    //Route::get('prueba', 'Api\V1\AffiliateController@get_mixed_guarantees');
 
     //
     //Route::get('depuracion', 'Api\V1\AffiliateController@eliminacion');
@@ -29,6 +29,7 @@ Route::group([
         Route::apiResource('user', 'Api\V1\UserController');//->only('index', 'show', 'update');
         if (!env("LDAP_AUTHENTICATION")) Route::apiResource('user', 'Api\V1\UserController')->only('update');
         Route::get('user/{user}/role', 'Api\V1\UserController@get_roles');
+        Route::get('user_role/{module_id}/permission', 'Api\V1\UserController@role_permision');
         Route::apiResource('auth', 'Api\V1\AuthController')->only('index');
         Route::patch('auth', 'Api\V1\AuthController@refresh');
         Route::delete('auth', 'Api\V1\AuthController@logout');
