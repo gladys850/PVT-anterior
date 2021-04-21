@@ -357,7 +357,7 @@ class Affiliate extends Model
       return $cpop;
     }
 
-    public function test_guarantor($modality){
+    public function test_guarantor($modality, $sw){
       $guarantor= self::verify_guarantor($this);
       if($guarantor===true){
       if($modality){
@@ -385,8 +385,8 @@ class Affiliate extends Model
           'guarantor' => $guarantor,
           'active_guarantees_quantity' => count($this->active_guarantees()),
           'guarantor_information' => self::verify_information($this),
-          'double_perception'=>self::verify_double_perception($this)
-
+          'double_perception'=> $sw ? self::verify_double_perception($this->spouse->identity_card) : false,
+          'id' => $sw ? Affiliate::where('identity_card', $this->spouse->identity_card)->first()->id : null
       ]);
   }
 
@@ -399,11 +399,11 @@ class Affiliate extends Model
       }
       return $information;
     }
-    public static function verify_double_perception(Affiliate $affiliate){
-      if(count(Spouse::where('identity_card', '=', $affiliate->identity_card)->get())>0 && Spouse::where('identity_card', '=', $affiliate->identity_card)->first()->affiliate->dead){
+    public static function verify_double_perception($ci){
+      if(Spouse::where('identity_card', $ci)->first() && Spouse::where('identity_card', '=', $ci)->first()->affiliate->dead){
         $double_perception= true;
       } else{
-      $double_perception = false;}
+        $double_perception = false;}
       return $double_perception;
     }
     //veriifca si garante no es fallecido, ademas verificas que garante= SENASIR en caso pasivo
