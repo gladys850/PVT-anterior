@@ -605,7 +605,6 @@ class AffiliateController extends Controller
     * Verificar garante
     * Devuelve si un afiliado puede garantizar acorde a su categoria, estado y cantidad garantias de préstamos.
     * @bodyParam identity_card required Número de carnet de identidad del afiliado. Example: 1379734
-    * @bodyParam type_guarantor_spouse required boolean determina la busqueda de titular false y spouse en true. Example: true
     * @bodyParam procedure_modality_id ID de la modalidad de trámite. Example: 32
     * @authenticated
     * @responseFile responses/affiliate/test_guarantor.200.json
@@ -614,54 +613,35 @@ class AffiliateController extends Controller
         $message['validate'] = false;
         $request->validate([
             'identity_card' => 'required|string',
-            'type_guarantor_spouse' => 'required|boolean',
             'procedure_modality_id' => 'integer|exists:procedure_modalities,id'
         ]);
-        if($request->type_guarantor_spouse == true){
-            $spouse = Spouse::whereIdentity_card($request->identity_card)->first();
-            if(isset($spouse)){
-                $affiliate = Affiliate::where('id',$spouse->affiliate_id)->first();
-                if(isset($affiliate)){
-                    if($affiliate->affiliate_state != null){
-                        if($affiliate->affiliate_state->name == "Fallecido") {
-                                return $affiliate->test_guarantor($request->procedure_modality_id);
-                           }else{
-                            $message['validate'] = "Debe actualizar el estado del afiliado";
-                            }
-                    }else{
-                          $message['validate'] = "Debe registrar el estado del afiliado";
-                    }
-                }else{
-                    $message['validate'] = "No se encontraron resultados del afiliado titular";
-                } 
-            }else{
-                $message['validate'] = "No se encontraron resultados";
-            }  
-        }else{
-            $affiliate = Affiliate::whereIdentity_card($request->identity_card)->first();
-            if(isset($affiliate)){
-               $spouse = Spouse::where('affiliate_id',$affiliate->id)->first();
-               if(isset($spouse)){
-                    if($affiliate->affiliate_state != null){
-                        if($affiliate->affiliate_state->name == "Fallecido") {
-                                return $affiliate->test_guarantor($request->procedure_modality_id);
-                        }else{
-                            $message['validate'] = "Debe actualizar el estado del afiliado";
-                            }
-                    }else{
-                        $message['validate'] = "Debe registrar el estado del afiliado";
-                    }
-               }else{
-                   if($affiliate->affiliate_state != null){
-                    return $affiliate->test_guarantor($request->procedure_modality_id);
-                    }else{
-                        $message['validate'] = "Debe registrar el estado del afiliado";
-                    }     
-               }
-            }else{
-                $message['validate'] = "No se encontraron resultados";  
-            } 
-       }
+        $spouse = null;
+        $affiliate = null;
+        $sw = false;
+        if(Affiliate::where('identity_card', $request->identity_card)->orWhere('registration', $request->identity_card)->first()){//caso de que el afiliado exista
+            $affiliate = Affiliate::where('identity_card', $request->identity_card)->orWhere('registration', $request->identity_card)->first();
+        }
+        if(Spouse::where('identity_card', $request->identity_card)->orWhere('registration', $request->identity_card)->first()){//caso de que sea viuda
+            $spouse = Spouse::where('identity_card', $request->identity_card)->orWhere('registration', $request->identity_card)->first();
+            if($affiliate)
+                $sw = true;
+            $affiliate = $spouse->affiliate;
+        }
+        if($affiliate){
+            if($affiliate->affiliate_state == null){
+                return $message['validate'] = "Debe actualizar el estado del afiliado";
+            }
+            else{
+                if($spouse && $affiliate->affiliate_state->name != "Fallecido"){
+                    $message['validate'] = "debe registrar el estado del afiliado";
+                }
+                else{
+                    return $affiliate->test_guarantor($request->procedure_modality_id, $sw);
+                }
+            }
+        }
+        else
+            $message['validate'] = "No se encontraron coincidencias";
        return $message;
     }
 
