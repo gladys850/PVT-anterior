@@ -501,9 +501,11 @@ export default {
           //reprogramming: this.reprogramming || this.remake
         })
         if(resp.data ==''){
+         
           this.loan_detail.not_exist_modality = true
           this.toastr.error("El afiliado no puede ser evaluado en esta modalidad")
         }else{
+          this.loan_detail.not_exist_modality = false
           this.loan_modality = resp.data
           this.modalidad.id = this.loan_modality.id
           this.modalidad.procedure_type_id = this.loan_modality.procedure_type_id
@@ -582,14 +584,24 @@ export default {
               this.contribution[i].public_security_bonus = 0
               this.contribution[i].period = this.$moment(this.lender_contribution.current_tiket).subtract(i,'months').format('YYYY-MM-DD')
               this.contribution[i].month = this.$moment(this.lender_contribution.current_tiket).subtract(i,'months').format('MMMM')
+              
           } else if(this.lender_contribution.valid && this.lender_contribution.state_affiliate =='Pasivo'){
               this.enabled = true
               this.editar = true
-              this.contribution[i].contributionable_id = this.data_ballots[i].id
-              this.contribution[i].payable_liquid = this.data_ballots[i].rent != null ? this.data_ballots[i].rent : 0
-              this.contribution[i].dignity_rent = this.data_ballots[i].dignity_rent != null ? this.data_ballots[i].dignity_rent : 0
-              this.contribution[i].period = this.$moment(this.data_ballots[i].month_year).format('YYYY-MM-DD')
-              this.contribution[i].month = this.$moment(this.data_ballots[i].month_year).format('MMMM')
+              if(this.data_ballots[i]){
+                this.contribution[i].contributionable_id = this.data_ballots[i].id
+                this.contribution[i].payable_liquid = this.data_ballots[i].rent != null ? this.data_ballots[i].rent : 0
+                this.contribution[i].dignity_rent = this.data_ballots[i].dignity_rent != null ? this.data_ballots[i].dignity_rent : 0
+                this.contribution[i].period = this.$moment(this.data_ballots[i].month_year).format('YYYY-MM-DD')
+                this.contribution[i].month = this.$moment(this.data_ballots[i].month_year).format('MMMM')
+              }else{
+                this.contribution[i].contributionable_id = 0
+                this.contribution[i].payable_liquid = 0
+                this.contribution[i].dignity_rent = 0
+                this.contribution[i].period = this.$moment(this.lender_contribution.current_tiket).subtract(i,'months').format('YYYY-MM-DD')
+                this.contribution[i].month = this.$moment(this.lender_contribution.current_tiket).subtract(i,'months').format('MMMM')
+                }
+
           }
           else if(!this.lender_contribution.valid && this.lender_contribution.state_affiliate =='Pasivo'){
               this.enabled = true
