@@ -222,8 +222,8 @@ class CalculatorController extends Controller
         }
         return $response;
     }
-    // funcion para sacar la cuota estimada con la calculadora
-    private function quota_calculator($procedure_modality, $months_term, $amount_requested){
+    // funcion para sacar la cuota estimada con la calculadora---
+    public static function quota_calculator($procedure_modality, $months_term, $amount_requested){
         $interest_rate = $procedure_modality->current_interest->monthly_current_interest;
         return ((($interest_rate)/(1-(1/pow((1+$interest_rate),$months_term))))*$amount_requested);
     }
@@ -236,8 +236,8 @@ class CalculatorController extends Controller
         $liquid_qualification_calculated = $payable_liquid_average - $total_bonuses - $sum_quota_guarantor + $parent_quota;
         return $liquid_qualification_calculated;
     }
-    // monto maximo
-    private function maximum_amount($procedure_modality,$months_term,$liquid_qualification_calculated){
+    // monto maximo---
+    public static function maximum_amount($procedure_modality,$months_term,$liquid_qualification_calculated){
         $interest_rate = $procedure_modality->current_interest->monthly_current_interest;
         $loan_interval = $procedure_modality->loan_modality_parameter;
         $debt_index = $procedure_modality->loan_modality_parameter->decimal_index;
