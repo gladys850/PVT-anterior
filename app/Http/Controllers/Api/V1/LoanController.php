@@ -336,7 +336,6 @@ class LoanController extends Controller
     * @bodyParam liquid_qualification_calculated numeric Total de bono calculado. Example: 2000
     * @bodyParam indebtedness_calculated numeric Indice de endeudamiento. Example: 52.26
     * @bodyParam disbursement_date date Fecha de desembolso. Example: 2020-02-01
-    * @bodyParam num_budget_certification string  certificacion presupuestaria. Example: 107
     * @bodyParam num_accounting_voucher string numero de comprobante contable.Example: 107
     * @bodyParam parent_loan_id integer ID de Préstamo Padre. Example: 1
     * @bodyParam parent_reason enum (REFINANCIAMIENTO, REPROGRAMACIÓN) Tipo de trámite hijo. Example: REFINANCIAMIENTO
