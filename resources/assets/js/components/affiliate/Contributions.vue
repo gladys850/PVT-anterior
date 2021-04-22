@@ -13,35 +13,12 @@
     <template v-slot:[`item.category_id`]="{ item }">
       {{ searchCategory(item.category_id) }}
     </template>
-    <template v-slot:[`item.unit_id`]="{ item }">
+        <template v-slot:[`item.unit_id`]="{ item }">
       {{ searchUnit(item.unit_id) }}
     </template>
-
-    <!-- <template v-slot:item="props">
-    <tr>
-      <td class="text-xs-left">{{ props.item | fullName(byFirstName = true) }} </td>
-      <td class="text-xs-left">{{ props.item.identity_card }}</td>
-       <td class="text-xs-left">{{ searchState(props.item.affiliate_state_id) }}</td>
-      <td class="text-xs-left">{{ searchCategory(props.item.category_id) }}</td>
-     
-      <td>
-        <v-icon class="mr-1" :color="props.item.picture_saved ? 'success' : 'error'">mdi-camera</v-icon>
-        <v-icon class="ml-1" :color="props.item.fingerprint_saved ? 'success' : 'error'">mdi-fingerprint</v-icon>
-      </td>
-    
-      <td >
-        <v-btn
-          fab
-          dark
-          x-small
-          :to="{ name: 'affiliateAdd', params: { id: props.item.id }}"
-          color="warning"
-        >
-        <v-icon>mdi-eye</v-icon>
-        </v-btn>
-      </td>
-      </tr>
-    </template> -->
+    <template v-slot:[`item.month_year`]="{ item }">
+      {{ $moment(item.month_year).format('MM-YYYY') }}
+    </template>
   </v-data-table>
 </template>
 
@@ -83,14 +60,8 @@ export default {
         sortable: false,
       },
       {
-        text: "Mes",
+        text: "Período",
         value: "month_year",
-        class: ["normal", "white--text"],
-        sortable: false,
-      },
-      {
-        text: "Liquido pagable",
-        value: "payable_liquid",
         class: ["normal", "white--text"],
         sortable: false,
       },
@@ -115,6 +86,12 @@ export default {
       {
         text: "Bono Seguridad Ciudadana",
         value: "public_security_bonus",
+        class: ["normal", "white--text"],
+        sortable: false,
+      },
+      {
+        text: "Liquido pagable",
+        value: "payable_liquid",
         class: ["normal", "white--text"],
         sortable: false,
       },
