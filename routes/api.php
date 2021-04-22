@@ -13,8 +13,7 @@ Route::group([
     Route::get('loans_delay', 'Api\V1\LoanPaymentController@loans_delay');
     //sismu
     //Route::get('prueba', 'Api\V1\AffiliateController@get_mixed_guarantees');
-
-    //
+    Route::patch('edit_loan/{loan_id}/qualification', 'Api\V1\LoanController@edit_amounts_loan_term');
     //Route::get('depuracion', 'Api\V1\AffiliateController@eliminacion');
     Route::get('ballot/{loan_id}', 'Api\V1\LoanController@show_ballot_loan');
 
@@ -196,6 +195,7 @@ Route::group([
             Route::patch('loan/{loan}/payment','Api\V1\LoanController@get_next_payment');
             Route::post('loan/{loan}/payment','Api\V1\LoanController@set_payment');
             Route::post('loan_payment/importation_command_senasir', 'Api\V1\LoanPaymentController@importation_command_senasir');//importacion de pagos
+            Route::post('loan_payment/importation_pending_command_senasir', 'Api\V1\LoanPaymentController@importation_pending_command_senasir');//importacion de pendientes de pagos
         });
         Route::group([
             'middleware' => 'permission:update-payment-loan'
