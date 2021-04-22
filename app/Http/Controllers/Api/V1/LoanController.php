@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\Api\V1;
-
+use App\Http\Controllers\Api\V1\CalculatorController;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -1621,4 +1621,35 @@ class LoanController extends Controller
         $prestamos = DB::connection('sqlsrv')->select($query);
         return $prestamos;
     }
+    /** 
+   * Editar Monto y Plazo del Prestamo
+   * Edita monto y plazo del prestam
+   * @urlParam loan_id required ID del Prestamo. Example: 5
+   * @bodyParam amount_approved numeric required Monto aprovado del prestamo. Example: 2000
+   * @bodyParam loan_term integer required Plazo del prestamo. Example: 25
+   * @authenticated
+   * @responseFile responses/loan/edit_amounts_loan_term.200.json
+   */
+
+    public function edit_amounts_loan_term(Request $request, $loan_id){
+     $request->validate([
+        'amount_approved' => 'required',
+        'loan_term' => 'required'
+    ]);
+    $loan=Loan::findOrFail($loan_id);
+    $procedure_modality = ProcedureModality::findOrFail($loan->procedure_modality_id);
+    $amount_approved = $loan->amount_approved;
+    $loan_term = $loan->loan_term;
+    if($request->amount_approved <= $amount_approved){ 
+        if($request->loan_term <= $loan_term){  
+            $loan->amount_approved = $request->amount_approved;
+            $loan->loan_term = $request->loan_term;
+            $loan->save();      
+        $quota_estimated = CalculatorController::quota_calculator($procedure_modality,$request->loan_term,$request->amount_approved);
+        }
+   
+    }
+    return self::append_data($loan, true);
+    }
+
 }

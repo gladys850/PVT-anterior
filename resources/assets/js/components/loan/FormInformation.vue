@@ -384,10 +384,13 @@ export default {
     reference: [],
     cosigners:[],
     editable: false,
+    aux: {}
   }),
   watch: {
     modalidad_id(newVal, oldVal){
       this.getLoanDestiny()
+      this.aux.financial_entity_id = this.affiliate.financial_entity_id
+      this.aux.number_payment_type = this.affiliate.account_number
     },
     modalidad_personal_reference() {
       if (this.modalidad_personal_reference == false) {
@@ -601,6 +604,8 @@ export default {
             account_number: this.affiliate.account_number,
             sigep_status: (this.affiliate.financial_entity_id != null && this.affiliate.account_number != null) ? 'ACTIVO' : null
           })
+          this.aux.financial_entity_id = this.affiliate.financial_entity_id
+          this.aux.number_payment_type = this.affiliate.account_number
           this.toastr.success("Registro guardado correctamente")
           this.editable = false
         }
@@ -612,6 +617,9 @@ export default {
     },
     resetForm() {
       this.editable = false
+      this.affiliate.financial_entity_id = this.aux.financial_entity_id
+      this.affiliate.account_number = this.aux.number_payment_type
+
     },
     clear(){
       this.affiliate.financial_entity_id = null
@@ -620,25 +628,30 @@ export default {
      async validateStepsFive(){
 
       try {
-        this.val_destiny = await this.$refs.observerDestiny.validate();
-        if (this.val_destiny ) {
-          if(this.modalidad_personal_reference){
-            this.val_per_ref = await this.$refs.observerPerRef.validate();
-            if(this.val_per_ref){
-                this.savePersonalReference()
-                this.savePCosigner() 
-                this.nextStepBus(5)
+        if(!this.editable){
+          this.val_destiny = await this.$refs.observerDestiny.validate();
+          if (this.val_destiny ) {
+            if(this.modalidad_personal_reference){
+              this.val_per_ref = await this.$refs.observerPerRef.validate();
+              if(this.val_per_ref){
+                  this.savePersonalReference()
+                  this.savePCosigner() 
+                  this.nextStepBus(5)
+              }else{
+                  console.log("no pasa")
+              }
             }else{
-                console.log("no pasa")
+              this.savePersonalReference()
+              this.savePCosigner() 
+              this.nextStepBus(5)
             }
           }else{
-            this.savePersonalReference()
-            this.savePCosigner() 
-            this.nextStepBus(5)
+            console.log("no pasa")
           }
         }else{
-          console.log("no pasa")
+          this.toastr.error("Por favor guarde los datos de la entidad financiera.")
         }
+
     
       }catch (e) {
         this.$refs.observerDestiny.setErrors(e);

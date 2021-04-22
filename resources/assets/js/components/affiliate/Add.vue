@@ -51,7 +51,7 @@
             <span v-else>Editar</span>
           </div>
         </v-tooltip>
-      </v-toolbar>      
+      </v-toolbar>
     </v-card-title>
     <v-card-text>
       <v-tabs
@@ -133,8 +133,25 @@
           :href="`#tab-5`"
         >
         <v-tooltip bottom>
+        <template v-slot:activator="{ on, attrs}">
+          <v-icon
+          v-if="icons"
+          v-bind="attrs"
+          v-on="on">
+          mdi-account-cash
+          </v-icon>
+        </template>
+        <span><b>CONTRIBUCIONES</b></span>
+        </v-tooltip>
+        </v-tab>
+
+        <v-tab
+          v-show="!isNew"
+          :href="`#tab-6`"
+        >
+        <v-tooltip bottom>
         <template v-slot:activator="{ on, attrs }">
-          <v-icon 
+          <v-icon
           v-if="icons"
           v-bind="attrs"
           v-on="on"
@@ -142,14 +159,7 @@
           </v-icon>
           </template>
         <span><b>INFORMACION DEL BIOMETRICO</b></span>
-      </v-tooltip>
-        </v-tab>
-
-        <v-tab
-          v-show="!isNew"
-          :href="`#tab-6`"
-        >
-          <v-icon v-if="icons">mdi-file</v-icon>
+        </v-tooltip>
         </v-tab>
 
         <v-tab-item
@@ -228,8 +238,26 @@
             </v-card-text>
           </v-card>
         </v-tab-item>
+
         <v-tab-item
           :value="'tab-5'"
+        >
+          <v-card flat tile >
+          <v-card-text>
+            <Contributions
+              :affiliate.sync="affiliate"
+            />
+            <!-- <Document
+              :permission="permission"
+              :affiliate.sync="affiliate"
+              :editable.sync="editable"
+            /> -->
+            </v-card-text>
+          </v-card>
+        </v-tab-item>
+
+        <v-tab-item
+          :value="'tab-6'"
         >
           <v-card flat tile >
           <v-card-text>
@@ -240,23 +268,9 @@
             /></v-card-text>
           </v-card>
         </v-tab-item>
-        <v-tab-item
-          :value="'tab-6'"
-        >
-          <v-card flat tile >
-          <v-card-text>
-            <Document
-              :permission="permission"
-              :affiliate.sync="affiliate"
-              :editable.sync="editable"
-            /></v-card-text>
-          </v-card>
-        </v-tab-item>
+
       </v-tabs>
     </v-card-text>
-    <!--<div>{{Object.entries(this.spouse).length === 0}}</div>
-    {{this.spouse}}<br/>
-    {{this.spouse.id}}-->
   </v-card>
 </template>
 <script>
@@ -265,9 +279,10 @@ import Profile from '@/components/affiliate/Profile'
 //import PoliceData from '@/components/affiliate/PoliceData'
 import Spouse from '@/components/affiliate/Spouse'
 import Fingerprint from '@/components/affiliate/Fingerprint'
-import Document from '@/components/affiliate/Document'
+//import Document from '@/components/affiliate/Document'
 import Dashboard from '@/components/affiliate/Dashboard'
 import AdditionalInformation from '@/components/affiliate/AdditionalInformation'
+import Contributions from '@/components/affiliate/Contributions'
 
 export default {
   name: "affiliate-index",
@@ -277,9 +292,10 @@ export default {
     //PoliceData,
     Spouse,
     Fingerprint,
-    Document,
+    //Document,
     Dashboard,
-    AdditionalInformation
+    AdditionalInformation,
+    Contributions
   },
   data: () => ({
     addresses:[],
@@ -301,25 +317,25 @@ export default {
       affiliate_state_id: null
     },
     spouse: {
-    affiliate_id: null,
-    first_name: null,
-    second_name:null,
-    last_name: null,
-    mothers_last_name:null,
-    identity_card:null,
-    birth_date:null,
-    date_death:null,
-    reason_death:null,
-    phone_number:null,
-    cell_phone_number:null,
-    city_identity_card_id:null,
-    death_certificate_number:null,
-    city_birth_id:null,
-    civil_status:null,
-    official:null,
-    book:null,
-    departure:null,
-    marriage_date:null
+      affiliate_id: null,
+      first_name: null,
+      second_name:null,
+      last_name: null,
+      mothers_last_name:null,
+      identity_card:null,
+      birth_date:null,
+      date_death:null,
+      reason_death:null,
+      phone_number:null,
+      cell_phone_number:null,
+      city_identity_card_id:null,
+      death_certificate_number:null,
+      city_birth_id:null,
+      civil_status:null,
+      official:null,
+      book:null,
+      departure:null,
+      marriage_date:null
     },
     icons: true,
     vertical: true,
@@ -422,22 +438,7 @@ export default {
             }
             this.editable = false
           }
-        
-          /*if(this.spouse.id && this.affiliate.affiliate_state_id == 4){
-            alert("1")
-            await axios.patch(`spouse/${this.spouse.id}`, this.spouse)
-          } else if(this.affiliate.affiliate_state_id == 4 && Object.entries(this.spouse).length !== 0){
-            alert("2")
-        
-            this.spouse.affiliate_id = this.affiliate.id
-            await axios.post(`spouse`, this.spouse)
-            
-          } else if(this.affiliate.affiliate_state_id != 4){
-
-          } else {
-            this.toastr.error("Solo puede registrar a la conyugue si el estado del afilaidos es 'Fallecido'")
-          }*/
-        
+                
         }
       } catch (e) {
         console.log(e)
