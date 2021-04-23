@@ -1073,128 +1073,107 @@ class AffiliateController extends Controller
     * @responseFile responses/affiliate/affiliate_evaluate_loans.200.json
     */
     public function search_loan(Request $request){
-      // return $request;
-       $request->validate([
-           'identity_card' => 'required|string|exists:affiliates,identity_card'
-       ]);
-       $message = array();
-       $ci=$request->identity_card;
-       $affiliate = Affiliate::whereIdentity_card($ci)->first();
-       $state_affiliate=$affiliate->affiliate_state->affiliate_state_type->name;
-       $state_affiliate_sub=$affiliate->affiliate_state->name;
-       $evaluate=false;
-       $state_affiliate_concat=$state_affiliate.' - '.$affiliate->affiliate_state->name;//agregooo
-       $before_month=2;
-       $modalities_all= collect();
- 
-       if($state_affiliate_sub=='Servicio'||$state_affiliate_sub=='Disponibilidad'){
-           $now = CarbonImmutable::now();
-           if(count($affiliate->contributions)>0){
-               $contributions=$affiliate->contributions->sortByDesc('month_year',SORT_NATURAL);
-               $contributions=$contributions->values()->all();
-               $current_ticket = CarbonImmutable::parse($contributions[0]->month_year);
-               $current_ticket_true = $now->startOfMonth()->subMonths($before_month);
-               if ($now->startOfMonth()->diffInMonths($current_ticket->startOfMonth()) <= 1000){
-                $modality_ida= ProcedureType::where('name','=','Préstamo Anticipo')->first()->id;
-                $modality_idb = ProcedureType::where('name','=','Préstamo a corto plazo')->first()->id;
-                $modality_idc = ProcedureType::where('name','=','Préstamo a largo plazo')->first()->id;
-                $ids_modalities=[$modality_ida,$modality_idb,$modality_idc];
-                $i= 0;
-                while ($i < count($ids_modalities)) {
-                    $modality = ProcedureType::findOrFail($ids_modalities[$i]);
-                   $affiliate_modality= Loan::get_modality_search($modality->name, $affiliate);
-                   //return $affiliate_modality;
-                   //return $affiliate_modality;/////
-                   $amount_max=0;$liquid_calification=0;$quota_calculator=0; $interest=null;
-                   if($affiliate_modality != []){
-                        $modality_ballots=$affiliate_modality->loan_modality_parameter->quantity_ballots;
-                        $months_term=$affiliate_modality->loan_modality_parameter->months_term;
-                        $interval_modality= $modality->interval;
-                        //cantidad de contributions
-                        $number_ballots=0;
-                        $contri = collect();
-                        $add_payable_liquid=0;$quota_calculator=0;
-                        $position_bonus=$border_bonus=$public_security_bonus=$east_bonus=0;
-                        foreach ($contributions as $cont) {
-                            if($number_ballots!=$modality_ballots){
-                            $contri->push($cont);
-                            $number_ballots++;
-                            }
-                        }
-                        $avg_payable_liquid=$contri->avg('payable_liquid');
-                        $avg_position_bonus=$contri->avg('position_bonus');
-                        $avg_border_bonus=$contri->avg('border_bonus');
-                        $avg_public_security_bonus=$contri->avg('public_security_bonus');
-                        $avg_east_bonus=$contri->avg('east_bonus');
-    
-                        $liquid_calification=$avg_payable_liquid-$avg_position_bonus-$avg_border_bonus-$avg_public_security_bonus-$avg_east_bonus;//liquido para califica
-                        $liquid_calification = Util::round($liquid_calification);
-                        $amount_max = $this->maximum_amount($affiliate_modality, $interval_modality->maximum_term,$liquid_calification);
-                    
-                        $quota_calculator=$this->quota_calculator($affiliate_modality,$interval_modality->maximum_term,$amount_max);
-                        $quota_calculator= Util::round($quota_calculator);
-                        //$modalities_all->push($affiliate_modality,$amount_max,$quota_calculator);  
-                        $interest=$affiliate_modality->current_interest;
-                   }
-                        $data_modalities= array(
-                            "name_procedure_modality"=>$modality->name,
-                            "modality_affiliate"=>$affiliate_modality,
-                            "amount_max" => $amount_max,
-                            "quota_calculated" => $quota_calculator,
-                            "liquid_calification"=>$liquid_calification,
-                            "interest"=>$interest
-                        );
-                   //modalities
-                   $modalities_all->push($data_modalities);
-                   $i++;
-
-                }
-                $evaluate=true;
-                $message['accomplished'] = 'Realizado con éxito';
-               }else{
-                $message['updated_ballots'] = 'No tiene boletas actualizadas';
-                   //abort(403, 'No tiene boletas actualizadas');
-               }
-           }else{
-                $message['no_contributions'] = 'No tiene contribucione';
-                //abort(403, 'No tiene contribuciones');
-           }
-       }else{
-           $evaluate=false;
-           $message['accomplished'] = 'Se debe realizar la evaluación de préstamos de forma perzonalizada por encontrarse el afiliado en estado: '.''.$state_affiliate_sub;
-       }
-       $data = array(  //data 
-        "evaluate"=>$evaluate,
-        "affiliate" => $affiliate->affiliate_fullName(),
-        "affiliate_identity_card"=>$affiliate->getIdentityCardExtAttribute(),
-        //"state_affiliate" => $affiliate->affiliate_state,
-        "state_affiliate" =>$state_affiliate_concat,
-        "modalities" => $modalities_all,
-        "message"=>$message
-        );
-       return $data;
-   }
-
-   //
-   // monto maximo
-   private function maximum_amount($procedure_modality,$months_term,$liquid_qualification_calculated){
-    $interest_rate = $procedure_modality->current_interest->monthly_current_interest;
-    $loan_interval = $procedure_modality->procedure_type->interval;
-    $debt_index = $procedure_modality->loan_modality_parameter->decimal_index;
-    $maximum_qualified_amount = intval((1-(1/pow((1+$interest_rate),$months_term)))*($debt_index*$liquid_qualification_calculated)/$interest_rate);
-    if ($maximum_qualified_amount > ($loan_interval->maximum_amount)){
-        $maximum_qualified_amount = $loan_interval->maximum_amount;
-    } else {
-        $maximum_qualified_amount = $maximum_qualified_amount;
-    }
-    return $maximum_qualified_amount;
-    //return intval(round(floor($maximum_qualified_amount))/100)*100;
-    }
-    // funcion para sacar la cuota estimada con la calculadora
-    private function quota_calculator($procedure_modality, $months_term, $amount_requested){
-        $interest_rate = $procedure_modality->current_interest->monthly_current_interest;
-        return ((($interest_rate)/(1-(1/pow((1+$interest_rate),$months_term))))*$amount_requested);
-    }
+        // return $request;
+         $request->validate([
+             'identity_card' => 'required|string|exists:affiliates,identity_card'
+         ]);
+         $message = array();
+         $ci=$request->identity_card;
+         $affiliate = Affiliate::whereIdentity_card($ci)->first();
+         $state_affiliate=$affiliate->affiliate_state->affiliate_state_type->name;
+         $state_affiliate_sub=$affiliate->affiliate_state->name;
+         $evaluate=false;
+         $state_affiliate_concat=$state_affiliate.' - '.$affiliate->affiliate_state->name;//agregooo
+         $before_month=2;
+         $modalities_all= collect();
+   
+         if($state_affiliate_sub=='Servicio'||$state_affiliate_sub=='Disponibilidad'){
+             $now = CarbonImmutable::now();
+             if(count($affiliate->contributions)>0){
+                 $contributions=$affiliate->contributions->sortByDesc('month_year',SORT_NATURAL);
+                 $contributions=$contributions->values()->all();
+                 $current_ticket = CarbonImmutable::parse($contributions[0]->month_year);
+                 $current_ticket_true = $now->startOfMonth()->subMonths($before_month);
+                 if ($now->startOfMonth()->diffInMonths($current_ticket->startOfMonth()) <= 1000){
+                  $modality_ida= ProcedureType::where('name','=','Préstamo Anticipo')->first()->id;
+                  $modality_idb = ProcedureType::where('name','=','Préstamo a corto plazo')->first()->id;
+                  $modality_idc = ProcedureType::where('name','=','Préstamo a largo plazo')->first()->id;
+                  $ids_modalities=[$modality_ida,$modality_idb,$modality_idc];
+                  $i= 0;
+                  while ($i < count($ids_modalities)) {
+                      $modality = ProcedureType::findOrFail($ids_modalities[$i]);
+                     $affiliate_modality= Loan::get_modality_search($modality->name, $affiliate);
+                     //return $affiliate_modality;
+                     //return $affiliate_modality;/////
+                     $amount_max=0;$liquid_calification=0;$quota_calculator=0; $interest=null;
+                     if($affiliate_modality != []){
+                          $modality_ballots=$affiliate_modality->loan_modality_parameter->quantity_ballots;
+                          $months_term=$affiliate_modality->loan_modality_parameter->months_term;
+                          $interval_modality= $affiliate_modality->loan_modality_parameter;
+                          //cantidad de contributions
+                          $number_ballots=0;
+                          $contri = collect();
+                          $add_payable_liquid=0;$quota_calculator=0;
+                          $position_bonus=$border_bonus=$public_security_bonus=$east_bonus=0;
+                          foreach ($contributions as $cont) {
+                              if($number_ballots!=$modality_ballots){
+                              $contri->push($cont);
+                              $number_ballots++;
+                              }
+                          }
+                          $avg_payable_liquid=$contri->avg('payable_liquid');
+                          $avg_position_bonus=$contri->avg('position_bonus');
+                          $avg_border_bonus=$contri->avg('border_bonus');
+                          $avg_public_security_bonus=$contri->avg('public_security_bonus');
+                          $avg_east_bonus=$contri->avg('east_bonus');
+      
+                          $liquid_calification=$avg_payable_liquid-$avg_position_bonus-$avg_border_bonus-$avg_public_security_bonus-$avg_east_bonus;//liquido para califica
+                          $liquid_calification = Util::round($liquid_calification);
+                          $amount_max = CalculatorController::maximum_amount($affiliate_modality, $interval_modality->maximum_term_modality,$liquid_calification);
+                      
+                          $quota_calculator=CalculatorController::quota_calculator($affiliate_modality,$interval_modality->maximum_term_modality,$amount_max);
+                          $quota_calculator= Util::round($quota_calculator);
+                          //$modalities_all->push($affiliate_modality,$amount_max,$quota_calculator);  
+                          $interest=$affiliate_modality->current_interest;
+                     }
+                          $data_modalities= array(
+                              "name_procedure_modality"=>$modality->name,
+                              "modality_affiliate"=>$affiliate_modality,
+                              "amount_max" => $amount_max,
+                              "quota_calculated" => $quota_calculator,
+                              "liquid_calification"=>$liquid_calification,
+                              "interest"=>$interest
+                          );
+                     //modalities
+                     $modalities_all->push($data_modalities);
+                     $i++;
+  
+                  }
+                  $evaluate=true;
+                  $message['accomplished'] = 'Realizado con éxito';
+                 }else{
+                  $message['updated_ballots'] = 'No tiene boletas actualizadas';
+                     //abort(403, 'No tiene boletas actualizadas');
+                 }
+             }else{
+                  $message['no_contributions'] = 'No tiene contribucione';
+                  //abort(403, 'No tiene contribuciones');
+             }
+         }else{
+             $evaluate=false;
+             $message['accomplished'] = 'Se debe realizar la evaluación de préstamos de forma perzonalizada por encontrarse el afiliado en estado: '.''.$state_affiliate_sub;
+         }
+         $data = array(  //data 
+          "evaluate"=>$evaluate,
+          "affiliate" => $affiliate->affiliate_fullName(),
+          "affiliate_identity_card"=>$affiliate->getIdentityCardExtAttribute(),
+          //"state_affiliate" => $affiliate->affiliate_state,
+          "state_affiliate" =>$state_affiliate_concat,
+          "modalities" => $modalities_all,
+          "message"=>$message
+          );
+         return $data;
+     }
 
     public function demo($ci){
         $id_overdue = 2;

@@ -122,7 +122,7 @@
             </tr>
             <tr>
             @if($loan->paymentsKardex->first() != null)
-                <td class="data-row py-5 m-b-10 text-xs">{{$loan->num_budget_certification}}</td>
+                <td class="data-row py-5 m-b-10 text-xs">{{$loan->num_accounting_voucher}}</td>
                 <td class="data-row py-5 m-b-10 text-xs">{{$loan->num_accounting_voucher}}</td>
                 <td class="w-25">{{ $loan->paymentsKardex->first()->interest_accumulated}}</td>
                 <td colspan="2">{{ $loan->paymentsKardex->first()->penal_accumulated}}</td>

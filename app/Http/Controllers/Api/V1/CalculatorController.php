@@ -143,7 +143,7 @@ class CalculatorController extends Controller
                 $amount_requested = $amount_maximum_suggested;
             }
             $maximum_suggested_valid = false;
-            if($modality->procedure_type->interval->minimum_amount<=$amount_maximum_suggested && $amount_maximum_suggested<=$modality->procedure_type->interval->maximum_amount) $maximum_suggested_valid = true;
+            if($modality->loan_modality_parameter->minimum_amount<=$amount_maximum_suggested && $amount_maximum_suggested<=$modality->loan_modality_parameter->maximum_amount_modality) $maximum_suggested_valid = true;
             $indebtedness_calculated_total=round((($quota_calculated_total/$liquid_qualification_calculated_lender)*100),2);
             $evaluate = false;
             if ($indebtedness_calculated_total<=$debt_index) $evaluate=true;
@@ -198,7 +198,7 @@ class CalculatorController extends Controller
                         $amount_requested = $amount_maximum_suggested;
                     }
                     $maximum_suggested_valid = false;
-                    if($modality->procedure_type->interval->minimum_amount<=$amount_maximum_suggested && $amount_maximum_suggested<=$modality->procedure_type->interval->maximum_amount) $maximum_suggested_valid = true;
+                    if($modality->loan_modality_parameter->minimum_amount_modality<=$amount_maximum_suggested && $amount_maximum_suggested<=$modality->loan_modality_parameter->maximum_amount_modality) $maximum_suggested_valid = true;
                     $indebtedness_calculated = $quota_calculated/$liquid['liquid_qualification_calculated']*100;
                     $livelihood_amount = 0; $valuate = false;
                     $livelihood_amount = $liquid['liquid_qualification_calculated'] - $quota_calculated; // liquido para calificacion menos la cuota estimada debe ser menor igual al monto de subsistencia
@@ -222,8 +222,8 @@ class CalculatorController extends Controller
         }
         return $response;
     }
-    // funcion para sacar la cuota estimada con la calculadora
-    private function quota_calculator($procedure_modality, $months_term, $amount_requested){
+    // funcion para sacar la cuota estimada con la calculadora---
+    public static function quota_calculator($procedure_modality, $months_term, $amount_requested){
         $interest_rate = $procedure_modality->current_interest->monthly_current_interest;
         return ((($interest_rate)/(1-(1/pow((1+$interest_rate),$months_term))))*$amount_requested);
     }
@@ -250,21 +250,21 @@ class CalculatorController extends Controller
         $liquid_qualification_calculated = $payable_liquid_average - $total_bonuses - $sum_quota + $parent_quota;
         return $liquid_qualification_calculated;
     }
-    // monto maximo
-    private function maximum_amount($procedure_modality,$months_term,$liquid_qualification_calculated){
+    // monto maximo---
+    public static function maximum_amount($procedure_modality,$months_term,$liquid_qualification_calculated){
         $interest_rate = $procedure_modality->current_interest->monthly_current_interest;
-        $loan_interval = $procedure_modality->procedure_type->interval;
+        $loan_interval = $procedure_modality->loan_modality_parameter;
         $debt_index = $procedure_modality->loan_modality_parameter->decimal_index;
         $maximum_qualified_amount = intval((1-(1/pow((1+$interest_rate),$months_term)))*($debt_index*$liquid_qualification_calculated)/$interest_rate);
-        if ($maximum_qualified_amount > ($loan_interval->maximum_amount)){
-            $maximum_qualified_amount = $loan_interval->maximum_amount;
+        if ($maximum_qualified_amount > ($loan_interval->maximum_amount_modality)){
+            $maximum_qualified_amount = $loan_interval->maximum_amount_modality;
         } else {
             $maximum_qualified_amount = $maximum_qualified_amount;
         }
         return $maximum_qualified_amount;
         //return intval(round(floor($maximum_qualified_amount))/100)*100;
     }
-   
+
     //division porcentual de las cuotas de los codeudores
     private function loan_percent(request $request){
         $loan_global_parameter = LoanGlobalParameter::latest()->first();
@@ -286,7 +286,7 @@ class CalculatorController extends Controller
             $ms = $amount_maximum_suggested;
         }
         $maximum_suggested_valid = false;
-        if($procedure_modality->procedure_type->interval->minimum_amount <= $ms && $ms <= $procedure_modality->procedure_type->interval->maximum_amount)
+        if($procedure_modality->loan_modality_parameter->minimum_amount <= $ms && $ms <= $procedure_modality->loan_modality_parameter->maximum_amount_modality)
             $maximum_suggested_valid = true;
         /** end m */
         $ie = ($ce/$liquid_qualification_calculated)*100;
