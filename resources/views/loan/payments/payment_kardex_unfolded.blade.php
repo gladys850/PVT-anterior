@@ -241,8 +241,8 @@
                     <td class="w-10 text-right">{{ Util::money_format($sum_capital_payment) }}</td>
                     <td class="w-10 text-right">{{ Util::money_format($sum_interest_payment) }}</td>
                     <td class="w-10 text-right">{{ Util::money_format($sum_penal_payment) }}</td>
-                    <!--<td class="w-10 text-right">{{ Util::money_format($sum_interest_remaining) }}</td>
-                    <td class="w-10 text-right">{{ Util::money_format($sum_penal_remaining) }}</td>-->
+                    <td class="w-10 text-right">{{ Util::money_format($sum_interest_remaining) }}</td>
+                    <td class="w-10 text-right">{{ Util::money_format($sum_penal_remaining) }}</td>
                     <td class="w-10 text-right">{{ Util::money_format($sum_estimated_quota) }}</td>
                     <td class="w-10 text-right">{{ Util::money_format($res_saldo_capital) }}</td>
                     <td colspan="2"></td>
