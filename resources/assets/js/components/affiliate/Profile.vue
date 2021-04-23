@@ -380,6 +380,49 @@
                   ></v-select>
                 </ValidationProvider>
               </v-col>
+              <!--<v-col cols="12" md="3">
+              <ValidationProvider v-slot="{ errors }" vid="service_years" name="Años de Servicio" rules="numeric|min_value:0|max_value:100">
+              <v-text-field
+                dense
+                :error-messages="errors"
+                v-model="affiliate.service_years"
+                label="Años de Servicio"
+                :readonly="!editable || !permission.primary"
+                :outlined="editable && permission.primary"
+                :disabled="editable && !permission.primary"
+              ></v-text-field>
+              </ValidationProvider>
+            </v-col>
+            <v-col cols="12" md="3" >
+              <ValidationProvider v-slot="{ errors }" vid="service_months" name="Meses de Servicio" rules="numeric|min_value:0|max_value:11">
+              <v-text-field
+                dense
+                :error-messages="errors"
+                v-model="affiliate.service_months"
+                label="Meses de Servicio"
+                :readonly="!editable || !permission.primary"
+                :outlined="editable && permission.primary"
+                :disabled="editable && !permission.primary"
+              ></v-text-field>
+               </ValidationProvider>
+            </v-col>-->
+              <v-col cols="12" md="12">
+                <ValidationProvider
+                  v-slot="{ errors }"
+                  vid="unit_police_description"
+                  name="Descripcion de Unidad"
+                >
+                  <v-text-field
+                    :error-messages="errors"
+                    dense
+                    v-model="affiliate.unit_police_description"
+                    label="Descripcion de Unidad"
+                    :readonly="!editable || !permission.secondary"
+                    :outlined="editable && permission.secondary"
+                    :disabled="editable && !permission.secondary"
+                  ></v-text-field>
+                </ValidationProvider>
+              </v-col>
               <v-col cols="12" md="6">
                 <ValidationProvider
                   v-slot="{ errors }"
