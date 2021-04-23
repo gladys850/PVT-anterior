@@ -73,6 +73,8 @@ Route::group([
         Route::apiResource('aid_contribution', 'Api\V1\AidContributionController')->only('index', 'show', 'store', 'update', 'destroy');
         Route::post('aid_contribution/updateOrCreate', 'Api\V1\AidContributionController@updateOrCreate');
         Route::post('search_loan','Api\V1\AffiliateController@search_loan');
+        Route::apiResource('contributions_affiliate', 'Api\V1\ContributionController')->only('index', 'show', 'store', 'update', 'destroy');
+        Route::get('affiliate/{affiliate}/contributions_affiliate', 'Api\V1\ContributionController@get_all_contribution_affiliate');
 
         // Afiliado
         Route::group([
