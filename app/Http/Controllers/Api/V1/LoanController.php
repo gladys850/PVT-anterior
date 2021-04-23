@@ -1335,6 +1335,7 @@ class LoanController extends Controller
     * Impresión del Kardex de Pagos
     * Devuelve un pdf del Kardex de pagos acorde a un ID de préstamo
     * @urlParam loan required ID del préstamo. Example: 1
+    * @queryParam folded boolean tipo de kardex, desplegado o no desplegado. Example: true
     * @queryParam copies Número de copias del documento. Example: 2
     * @authenticated
     * @responseFile responses/loan/print_kardex.200.json
@@ -1366,7 +1367,10 @@ class LoanController extends Controller
             ];
             $information_loan= $this->get_information_loan($loan);
             $file_name = implode('_', ['kardex', $procedure_modality->shortened, $loan->code]) . '.pdf';
-            $view = view()->make('loan.payments.payment_kardex')->with($data)->render();
+            if($request->folded)
+                $view = view()->make('loan.payments.payment_kardex')->with($data)->render();
+            else
+                $view = view()->make('loan.payments.payment_kardex_unfolded')->with($data)->render();
             if ($standalone) return Util::pdf_to_base64([$view], $file_name, $information_loan, 'legal', $request->copies ?? 1);
             return $view;
         }else{
