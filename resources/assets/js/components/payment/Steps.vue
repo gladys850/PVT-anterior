@@ -164,7 +164,7 @@ export default {
             payment_type_id:this.data_payment.tipo_pago,
             voucher_type_id:2,
             voucher_number:this.data_payment.comprobante,
-            description:this.data_payment.glosa
+            description:this.data_payment.glosa_voucher
           })
             this.$router.push('/loanPayment')
       }catch (e) {
