@@ -457,6 +457,9 @@ export default {
         this.loading = true
         let res = await axios.get(`loan/${id}`)
         this.loan = res.data
+        this.loan.amount_approved_before= res.data.amount_approved
+        this.loan.loan_term_before= res.data.loan_term
+
         console.log("este es el loan" + this.loan)
         let res1 = await axios.get(`affiliate/${this.loan.lenders[0].id}`)
         this.affiliate = res1.data
