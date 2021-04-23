@@ -16,7 +16,7 @@
             absolute
             v-on="on"
             style="margin-left: 150px; margin-top: 20px"
-            @click="imprimirK($route.params.id)"
+            @click="imprimirK($route.params.id, true)"
           >
             <v-icon>mdi-printer</v-icon>
           </v-btn>
@@ -27,6 +27,30 @@
       </v-tooltip>
 
       <v-tooltip
+        top
+        v-if="$store.getters.permissions.includes('print-payment-kardex-loan')"
+      >
+        <template v-slot:activator="{ on }">
+          <v-btn
+            fab
+            x-small
+            color="blue lighten-4"
+            top
+            left
+            absolute
+            v-on="on"
+            style="margin-left: 200px; margin-top: 20px"
+            @click="imprimirK($route.params.id, false)"
+          >
+            <v-icon>mdi-printer</v-icon>
+          </v-btn>
+        </template>
+        <div>
+          <span>Imprimir Kardex desplegado</span>
+        </div>
+      </v-tooltip>
+
+      <v-tooltip top
         v-if="true"
       >
         <template v-slot:activator="{ on }">
@@ -590,9 +614,13 @@ export default {
       this.printDocs = docs;
       console.log(this.printDocs);
     },
-    async imprimirK(item) {
+    async imprimirK(item, folded) {
       try {
-        let res = await axios.get(`loan/${item}/print/kardex`);
+        let res = await axios.get(`loan/${item}/print/kardex`,{
+          params:{
+            folded: folded
+          }
+        });
         console.log("kardex " + item);
         printJS({
           printable: res.data.content,
