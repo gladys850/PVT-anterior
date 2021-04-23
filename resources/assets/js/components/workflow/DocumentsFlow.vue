@@ -1,10 +1,13 @@
 <template>
   <v-container fluid >
+    <!--<span>{{ JSON.stringify(permissionSimpleSelected) }}</span>-->
+     <pre>{{ permissionSimpleSelected }}</pre>
+     <pre>{{ rolePermissionSelected.id }}</pre>
     <v-toolbar-title  class="pb-2">DOCUMENTOS PRESENTADOS</v-toolbar-title>
     <v-form>
-      <template v-if="$route.params.workTray == 'received' || $route.params.workTray == 'my_received' || $route.params.workTray == 'validated'">
-        <div v-if="$store.getters.permissions.includes('validate-submitted-documents')">
-            <v-tooltip top>
+      <template top v-if="permissionSimpleSelected.includes('validate-submitted-documents')">
+        <div >
+            <v-tooltip >
               <template v-slot:activator="{ on }">
                 <v-btn
                   fab
@@ -27,7 +30,7 @@
               </div>
             </v-tooltip>
 
-          <v-tooltip top>
+          <v-tooltip top v-if="permissionSimpleSelected.includes('validate-submitted-documents')">
             <template v-slot:activator="{ on }">
               <v-btn
                 fab
@@ -88,7 +91,7 @@
                 right
                 absolute
                 v-on="on"
-                style="margin-right: -9px;"
+                style="margin-right: 0px;"
                 @click.stop="editarDoc()"
               >
                 <v-icon v-if="editar">mdi-check</v-icon>
@@ -349,7 +352,7 @@
                           </v-dialog>
                         </v-toolbar>
                       </template>
-                      <template v-slot:item.actions="{ item }">
+                      <template v-slot:[`item.actions`]="{ item }">
                         <v-icon
                           small
                           class="mr-2"
@@ -414,6 +417,13 @@ export default {
 
 
 computed: {
+      permissionSimpleSelected () {
+        return this.$store.getters.permissionSimpleSelected
+      },
+      rolePermissionSelected () {
+        return this.$store.getters.rolePermissionSelected
+      },
+      
       formTitle () {
         return this.editedIndex === -1 ? 'New Item' : 'Edit Item'
       },
