@@ -1189,7 +1189,7 @@ export default {
         } else {
           console.log('entro al grabar por falso :)')
          //Edit monto y plazo
-            let res = await axios.patch(`loan/${this.loan.id}/qualification`, {
+            let res = await axios.patch(`edit_loan/${this.loan.id}/qualification`, {
             amount_approved: this.loan.amount_approved,
             loan_term: this.loan.loan_term
           })
