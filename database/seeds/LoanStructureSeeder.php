@@ -46,7 +46,7 @@ class LoanStructureSeeder extends Seeder
                     'max_lenders' => 1,
                     'max_cosigner'=>0,
                     'maximum_amount_modality' => 2000,
-                    'minimum_amount_modality' => 200,
+                    'minimum_amount_modality' => 1,
                     'maximum_term_modality' => 2,
                     'minimum_term_modality' => 1
                 ],
@@ -78,7 +78,7 @@ class LoanStructureSeeder extends Seeder
                     'max_lenders' => 1,
                     'max_cosigner'=>0,
                     'maximum_amount_modality' => 2000,
-                    'minimum_amount_modality' => 200,
+                    'minimum_amount_modality' => 1,
                     'maximum_term_modality' => 2,
                     'minimum_term_modality' => 1
                 ],
@@ -116,9 +116,9 @@ class LoanStructureSeeder extends Seeder
                   'max_lenders' => 1,
                   'max_cosigner'=>0,
                   'maximum_amount_modality' => 25000,
-                  'minimum_amount_modality' => 2001,
+                  'minimum_amount_modality' => 1,
                   'maximum_term_modality' => 30,
-                  'minimum_term_modality' => 3
+                  'minimum_term_modality' => 1
               ],
               'interest' => ['annual_interest' => 20,'penal_interest' => 6]
             ],
@@ -152,9 +152,9 @@ class LoanStructureSeeder extends Seeder
                 'max_lenders' => 1,
                 'max_cosigner'=>0,
                 'maximum_amount_modality' => 25000,
-                'minimum_amount_modality' => 2001,
+                'minimum_amount_modality' => 1,
                 'maximum_term_modality' => 30,
-                'minimum_term_modality' => 3
+                'minimum_term_modality' => 1
               ],
               'interest' => ['annual_interest' => 20,'penal_interest' => 6]
             ],
@@ -190,7 +190,7 @@ class LoanStructureSeeder extends Seeder
                 'max_lenders' => 1,
                 'max_cosigner'=>0,
                 'maximum_amount_modality' => 25000,
-                'minimum_amount_modality' => 2001,
+                'minimum_amount_modality' => 1,
                 'maximum_term_modality' => 12,
                 'minimum_term_modality' => 1
               ],
@@ -220,7 +220,7 @@ class LoanStructureSeeder extends Seeder
                 'max_lenders' => 1,
                 'max_cosigner'=>0,
                 'maximum_amount_modality' => 25000,
-                'minimum_amount_modality' => 2001,
+                'minimum_amount_modality' => 1,
                 'maximum_term_modality' => 12,
                 'minimum_term_modality' => 1
               ],
@@ -260,9 +260,9 @@ class LoanStructureSeeder extends Seeder
                 'max_lenders' => 1,
                 'max_cosigner'=>0,
                 'maximum_amount_modality' => 25000,
-                'minimum_amount_modality' => 2001,
+                'minimum_amount_modality' => 1,
                 'maximum_term_modality' => 30,
-                'minimum_term_modality' => 3
+                'minimum_term_modality' => 1
               ],
               'interest' => ['annual_interest' => 20,'penal_interest' => 6]
             ],
@@ -299,7 +299,7 @@ class LoanStructureSeeder extends Seeder
                 'max_lenders' => 1,
                 'max_cosigner'=>0,
                 'maximum_amount_modality' => 25000,
-                'minimum_amount_modality' => 2001,
+                'minimum_amount_modality' => 1,
                 'maximum_term_modality' => 12,
                 'minimum_term_modality' => 1
 
@@ -334,7 +334,7 @@ class LoanStructureSeeder extends Seeder
                   'max_lenders' => 1,
                   'max_cosigner'=>0,
                   'maximum_amount_modality' => 25000,
-                  'minimum_amount_modality' => 2001,
+                  'minimum_amount_modality' => 1,
                   'maximum_term_modality' => 12,
                   'minimum_term_modality' => 1
                 ],
@@ -382,10 +382,10 @@ class LoanStructureSeeder extends Seeder
                 'personal_reference' => true,
                 'max_lenders' => 1,
                 'max_cosigner'=>0,
-                'maximum_amount_modality' => 150000,
-                'minimum_amount_modality' => 2001,
-                'maximum_term_modality' => 95,
-                'minimum_term_modality' => 25
+                'maximum_amount_modality' => 700000,
+                'minimum_amount_modality' => 1,
+                'maximum_term_modality' => 96,
+                'minimum_term_modality' => 1
               ],
               'interest' => ['annual_interest' => 13.2,'penal_interest' => 6]
             ],
@@ -422,8 +422,8 @@ class LoanStructureSeeder extends Seeder
                 'personal_reference' => true,
                 'max_lenders' => 1,
                 'max_cosigner'=>0,
-                'maximum_amount_modality' => 150000,
-                'minimum_amount_modality' => 2001,
+                'maximum_amount_modality' => 700000,
+                'minimum_amount_modality' => 1,
                 'maximum_term_modality' => 24,
                 'minimum_term_modality' => 1
               ],
@@ -465,8 +465,8 @@ class LoanStructureSeeder extends Seeder
                   'personal_reference' => true,
                   'max_lenders' => 1,
                   'max_cosigner'=>0,
-                  'maximum_amount_modality' => 150000,
-                  'minimum_amount_modality' => 2001,
+                  'maximum_amount_modality' => 700000,
+                  'minimum_amount_modality' => 1,
                   'maximum_term_modality' => 24,
                   'minimum_term_modality' => 1
                 ],
@@ -510,10 +510,10 @@ class LoanStructureSeeder extends Seeder
                 'personal_reference' => true,
                 'max_lenders' => 1,
                 'max_cosigner'=>0,
-                'maximum_amount_modality' => 150000,
-                'minimum_amount_modality' => 2001,
+                'maximum_amount_modality' => 700000,
+                'minimum_amount_modality' => 1,
                 'maximum_term_modality' => 96,
-                'minimum_term_modality' => 25
+                'minimum_term_modality' => 1
               ],
               'interest' => ['annual_interest' => 13.2,'penal_interest' => 6]
             ],
@@ -562,10 +562,10 @@ class LoanStructureSeeder extends Seeder
                 'personal_reference' => true,
                 'max_lenders' => 1,
                 'max_cosigner'=>0,
-                'maximum_amount_modality' => 150000,
-                'minimum_amount_modality' => 2001,
+                'maximum_amount_modality' => 700000,
+                'minimum_amount_modality' => 1,
                 'maximum_term_modality' => 96,
-                'minimum_term_modality' => 25
+                'minimum_term_modality' => 1
               ],
               'interest' => ['annual_interest' => 13.2,'penal_interest' => 6]
             ],
@@ -602,8 +602,8 @@ class LoanStructureSeeder extends Seeder
                   'personal_reference' => true,
                   'max_lenders' => 1,
                   'max_cosigner'=>0,
-                  'maximum_amount_modality' => 150000,
-                  'minimum_amount_modality' => 2001,
+                  'maximum_amount_modality' => 700000,
+                  'minimum_amount_modality' => 1,
                   'maximum_term_modality' => 24,
                   'minimum_term_modality' => 1
                 ],
@@ -646,8 +646,8 @@ class LoanStructureSeeder extends Seeder
                 'personal_reference' => true,
                 'max_lenders' => 1,
                 'max_cosigner'=>0,
-                'maximum_amount_modality' => 150000,
-                'minimum_amount_modality' => 2001,
+                'maximum_amount_modality' => 700000,
+                'minimum_amount_modality' => 1,
                 'maximum_term_modality' => 24,
                 'minimum_term_modality' => 1
               ],
@@ -689,10 +689,10 @@ class LoanStructureSeeder extends Seeder
                   'personal_reference' => true,
                   'max_lenders' => 1,
                   'max_cosigner'=>0,
-                  'maximum_amount_modality' => 150000,
-                  'minimum_amount_modality' => 2001,
+                  'maximum_amount_modality' => 700000,
+                  'minimum_amount_modality' => 1,
                   'maximum_term_modality' => 96,
-                  'minimum_term_modality' => 25
+                  'minimum_term_modality' => 1
                 ],
                 'interest' => ['annual_interest' => 13.2,'penal_interest' => 6]
               ]
@@ -753,9 +753,9 @@ class LoanStructureSeeder extends Seeder
             'max_lenders' => 2,
             'max_cosigner'=>2,
             'maximum_amount_modality' => 700000,
-            'minimum_amount_modality' => 25001,
-            'maximum_term_modality' => 240,
-            'minimum_term_modality' => 25
+            'minimum_amount_modality' => 10000,
+            'maximum_term_modality' => 180,
+            'minimum_term_modality' => 1
             ],
             'interest' => ['annual_interest' => 9,'penal_interest' => 6]
             ],
@@ -810,9 +810,9 @@ class LoanStructureSeeder extends Seeder
               'max_lenders' => 2,
               'max_cosigner'=>2,
               'maximum_amount_modality' => 700000,
-              'minimum_amount_modality' => 25001,
-              'maximum_term_modality' => 240,
-              'minimum_term_modality' => 25
+              'minimum_amount_modality' => 100000,
+              'maximum_term_modality' => 180,
+              'minimum_term_modality' => 1
             ],
             'interest' => ['annual_interest' => 9,'penal_interest' => 6]
             ],
@@ -873,9 +873,9 @@ class LoanStructureSeeder extends Seeder
             'max_lenders' => 2,
             'max_cosigner'=>2,
             'maximum_amount_modality' => 700000,
-            'minimum_amount_modality' => 25001,
-            'maximum_term_modality' => 240,
-            'minimum_term_modality' => 25
+            'minimum_amount_modality' => 100000,
+            'maximum_term_modality' => 180,
+            'minimum_term_modality' => 1
             ],
             'interest' => ['annual_interest' => 9,'penal_interest' => 6]
             ],
@@ -930,9 +930,9 @@ class LoanStructureSeeder extends Seeder
             'max_lenders' => 2,
             'max_cosigner'=>2,
             'maximum_amount_modality' => 700000,
-            'minimum_amount_modality' => 25001,
-            'maximum_term_modality' => 240,
-            'minimum_term_modality' => 25
+            'minimum_amount_modality' => 100000,
+            'maximum_term_modality' => 180,
+            'minimum_term_modality' => 1
           ],
           'interest' => ['annual_interest' => 9,'penal_interest' => 6]
           ]
