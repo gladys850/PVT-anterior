@@ -27,7 +27,7 @@ class CreateLoanModalityParametersTable extends Migration
             $table->integer('max_cosigner')->default(0);// maxima cantidad de codeudores
             $table->boolean('personal_reference')->default(false);//cantidad de referencia de personas
             $table->unsignedInteger('maximum_amount_modality')->nullable();//monto maximo de la modalidad
-            $table->unsignedSmallInteger('minimum_amount_modality')->nullable();//monto minimo de la modalidad
+            $table->uunsignedInteger('minimum_amount_modality')->nullable();//monto minimo de la modalidad
             $table->unsignedSmallInteger('maximum_term_modality')->nullable();//plazo maximo en meses de la modalidad
             $table->unsignedTinyInteger('minimum_term_modality')->nullable();//plazo minimo en meses de la modalidad
         });
