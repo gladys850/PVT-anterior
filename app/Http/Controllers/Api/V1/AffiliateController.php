@@ -468,6 +468,20 @@ class AffiliateController extends Controller
                 }
                 $current_ticket = CarbonImmutable::parse($contributions[0]->month_year);
                 $current_ticket_true = $now->startOfMonth()->subMonths($before_month);
+                $current_ticket_true_inter = $now->startOfMonth()->subMonths($before_month+2);
+                $filterAffiliate['affiliate_id'] = $affiliate->id;
+                    if($request->per_page == 3)
+                    $filters['month_year'] = $current_ticket_true_inter->toDateString();
+                    if($request->per_page == 1)
+                    $filters['month_year'] = $current_ticket_true->toDateString();
+               
+               if ($state_affiliate == 'Activo' &&  $affiliate->affiliate_state->name !=  'Comisión' ){
+                       $contributions = Util::search_sort_contribution(new Contribution(), $request, $filters,$filterAffiliate);
+                }else{
+                    if ($state_affiliate == 'Pasivo'){
+                        $contributions = Util::search_sort_contribution(new AidContribution(), $request, $filters,$filterAffiliate);
+                    }
+                }
                 if ($now->startOfMonth()->diffInMonths($current_ticket->startOfMonth()) <= $before_month) {
                     foreach ($contributions as $i => $ticket) {
                         $is_latest = true;
