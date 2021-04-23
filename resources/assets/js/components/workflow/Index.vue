@@ -149,7 +149,7 @@
     <v-card-text>
       <v-row v-if="!track">
         <v-toolbar flat>
-          <v-col :cols="singleRol ? 12 : 10">
+          <v-col :cols="singleRol ? 12 : 12">
               <v-tabs
                 v-model="filters.procedureTypeSelected"
                 dark
@@ -170,9 +170,9 @@
                 </v-tab>
               </v-tabs>
           </v-col>
-          <v-col cols="2" v-show="!singleRol">
+          <v-col cols="2" v-show="false">
             <v-select
-              v-model="filters.roleSelected"
+              :v-model="filters.roleSelected =this.$store.getters.rolePermissionSelected.id"
               :items="roles"
               label="Filtro"
               class="pt-3 my-0"
@@ -186,6 +186,7 @@
       </v-row>
       <!--<v-row>  <v-col>procedureTypes{{$store.getters.procedureTypes}}</v-col>     </v-row>
       <v-row>  <v-col>modalityLoan{{$store.getters.modalityLoan}}</v-col>     </v-row>-->
+      {{this.$store.getters.rolePermissionSelected.id}}
       <v-row>
         <v-col cols="12">
           <List :bus="bus" 
@@ -292,6 +293,7 @@ export default {
     this.filters = self.filters
   },
   beforeMount() {
+    this.$store.getters.rolePermissionSelected.id
     Echo.channel('loan').listen('.flow', (msg) => {
       if (msg.data.role_id == this.filters.roleSelected || this.filters.roleSelected == 0) this.newLoans = msg.data.derived
     })
