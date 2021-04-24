@@ -636,6 +636,28 @@ class LoanController extends Controller
     }
 
     /**
+    * Actualización de sismu
+    * Actualiza los datos del sismu
+    * @urlParam loan required ID del préstamo. Example: 3
+    * @bodyParam data_loan array Datos Sismu.
+    * @bodyParam data_loan[0].code string  Codigo del prestamo en el Sismu. Example: PRESTAMO123
+    * @bodyParam data_loan[0].amount_approved numeric Monto aprovado del prestamo del Sismu. Example: 5000.50
+    * @bodyParam data_loan[0].loan_term integer Plazo del prestamo del Sismu. Example: 25
+    * @bodyParam data_loan[0].balance numeric saldo del prestamo del Sismu. Example: 10000.50
+    * @bodyParam data_loan[0].estimated_quota numeric cuota del prestamo del Sismu. Example: 1000.50
+    * @authenticated
+    * @responseFile responses/loan/update_sismu.200.json
+    */
+    public function update_sismu(Request $request, Loan $loan)
+    {
+        if($request->has('data_loan')){
+            $data_loan = $request->data_loan[0];
+            $loan->data_loan()->update($data_loan);
+        }
+        return $loan->data_loan;
+    }
+
+    /**
     * Desembolso Afiliado
     * Devuelve los datos del o la cónyugue en caso de que hubiera fallecido a quien se hace el desembolso del préstamo
     * @urlParam loan required ID del préstamo. Example: 2
