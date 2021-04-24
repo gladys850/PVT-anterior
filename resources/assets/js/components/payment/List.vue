@@ -76,7 +76,7 @@
               <v-icon>mdi-file-document-edit-outline</v-icon>
             </v-btn>
           </template>
-          <span>Editar pago</span>
+          <span>Validar pago</span>
         </v-tooltip>
 
         <v-tooltip bottom v-if="permissionSimpleSelected.includes('create-payment')">
