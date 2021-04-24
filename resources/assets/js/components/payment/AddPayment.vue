@@ -66,44 +66,46 @@
                                   <label><b style="color:teal">Saldo Actual:</b></label>
                                   <b style="color:teal">{{payment.next_balance | moneyString }}</b>
                                 </v-col>
-                                <v-col cols="3" class="ma-0 py-2">
-                                  <label><b>Pago a Capital:</b></label>
-                                  {{payment.capital_payment | moneyString}}
+                                 <v-col cols="3" class="ma-0 py-2">
+                                  <label><b>Penales de Días:</b></label>
+                                  {{payment.estimated_days.penal +' Total'}}
+                                  {{payment.estimated_days.penal_generated}}
                                 </v-col>
                                 <v-col cols="3" class="ma-0 py-2">
                                   <label><b>Interes Pendiente:</b></label>
                                   {{payment.interest_remaining}}
                                 </v-col>
-                                <v-col cols="3" class="ma-0 py-2">
-                                  <label><b>Interes de Días:</b></label>
-                                  {{payment.estimated_days.current+' Total'}}
+                                 <v-col cols="3" class="ma-0 py-2">
+                                  <label><b>Pago a Capital:</b></label>
+                                  {{payment.capital_payment | moneyString}}
                                 </v-col>
                                 <v-col cols="3" class="ma-0 py-2">
                                   <label><b>Interes Penal Pendiente:</b></label>
                                   {{payment.penal_remaining}}
                                 </v-col>
-                                <v-col cols="3" class="ma-0 py-2">
-                                  <label><b>Penales de Días:</b></label>
-                                  {{payment.estimated_days.penal +' Total'}}
+                                 <v-col cols="3" class="ma-0 py-2">
+                                  <label><b>Interes de Días:</b></label>
+                                  {{payment.estimated_days.current+' Total'}}
+                                  {{payment.estimated_days.current_generated}}
                                 </v-col>
                                 <v-col cols="3" class="ma-0 py-2">
                                   <label><b>Interes Corrientes Pendientes:</b></label>
                                   {{payment.interest_payment}}
                                 </v-col>
                                 <v-col cols="3" class="ma-0 py-2">
-                                  <label><b>Interes Penales Pendientes:</b></label>
-                                  {{payment.penal_payment}}
-                                </v-col>
-                                <v-col cols="3" class="ma-0 py-2">
                                   <label><b>Total Pagado:</b></label>
                                   {{payment.estimated_quota}}
                                 </v-col>
-                                 <v-progress-linear></v-progress-linear>
                                 <v-col cols="3" class="ma-0 py-2">
+                                  <label><b>Interes Penales Pendientes:</b></label>
+                                  {{payment.penal_payment}}
+                                </v-col>
+                                 <v-progress-linear></v-progress-linear>
+                                <v-col cols="4" class="ma-0 py-2">
                                   <label><b>Interes Restante Acumulado:</b></label>
                                   {{payment.interest_accumulated}}
                                 </v-col>
-                                <v-col cols="3" class="ma-0 py-2">
+                                <v-col cols="4" class="ma-0 py-2">
                                   <label><b>Interes Penal Restante Acumulado:</b></label>
                                   {{payment.penal_accumulated}}
                                 </v-col>

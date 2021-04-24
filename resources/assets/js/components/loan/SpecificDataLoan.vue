@@ -3,7 +3,7 @@
     <ValidationObserver ref="observer">
       <v-form>
         <!--v-card-->
-        <div v-if="$route.params.workTray == 'received' || $route.params.workTray == 'my_received' || $route.params.workTray == 'validated'">
+        <div>
           <v-tooltip top>
             <template v-slot:activator="{ on }">
               <v-btn
@@ -26,7 +26,7 @@
               <span>Cancelar</span>
             </div>
           </v-tooltip>
-          <v-tooltip top v-if="$store.getters.permissions.includes('disbursement-loan')">
+          <v-tooltip top v-if="permissionSimpleSelected.includes('disbursement-loan')">
             <template v-slot:activator="{ on }">
               <v-btn
                 fab
@@ -66,7 +66,7 @@
                                     <p style="color:teal"><b>TITULAR</b></p>
                                   </v-col>
                                   <v-col cols="12" md="1" class="py-0" >
-                                <div v-if="$store.getters.permissions.includes('update-loan-calculations')" >
+                                <div v-if="permissionSimpleSelected.includes('update-loan-calculations')" >
                                   <v-tooltip top >
                                     <template v-slot:activator="{ on }">
                                       <v-btn
@@ -194,9 +194,9 @@
                                         :readonly="!edit_delivery_date"
                                       ></v-text-field>
                                     </v-col>
-                                    <v-col cols="12" md="1"  v-if="!$store.getters.permissions.includes('registration-delivery-return-contracts')">
+                                    <v-col cols="12" md="1"  v-if="!permissionSimpleSelected.includes('registration-delivery-return-contracts')">
                                     </v-col>
-                                    <v-col cols="12" md="3"  v-if="$store.getters.permissions.includes('registration-delivery-return-contracts')">
+                                    <v-col cols="12" md="3"  v-if="permissionSimpleSelected.includes('registration-delivery-return-contracts')">
                                       <div>
                                       <v-tooltip top>
                                         <template v-slot:activator="{ on }">
@@ -254,7 +254,7 @@
                                         :readonly="!edit_return_date"
                                       ></v-text-field>
                                     </v-col>
-                                    <v-col cols="12" md="3" v-show="loan.delivery_contract_date != null"  v-if="$store.getters.permissions.includes('registration-delivery-return-contracts')">
+                                    <v-col cols="12" md="3" v-show="loan.delivery_contract_date != null"  v-if="permissionSimpleSelected.includes('registration-delivery-return-contracts')">
                                       <div >
                                       <v-tooltip top>
                                         <template v-slot:activator="{ on }">
@@ -376,7 +376,7 @@
                                           <span>Cancelar</span>
                                         </div>
                                       </v-tooltip>
-                                      <v-tooltip top  v-if="$store.getters.permissions.includes('update-loan')">
+                                      <v-tooltip top  v-if="permissionSimpleSelecteds.includes('update-loan')">
                                         <template v-slot:activator="{ on }">
                                           <v-btn
                                             fab
@@ -587,7 +587,7 @@
                                       </v-card>
                                     </v-dialog>
                                 </template>
-                                <template v-slot:item.actions="{ item }" v-if="$store.getters.permissions.includes('update-loan')">
+                                <template v-slot:[`item.actions`]="{ item }" v-if="permissionSimpleSelected.includes('update-loan')">
                                   <v-icon
                                     small
                                     class="mr-2"
@@ -734,7 +734,7 @@
                                       </v-card>
                                     </v-dialog>
                                 </template>
-                                <template v-slot:item.actions="{ item }" v-if="$store.getters.permissions.includes('update-loan')">
+                                <template v-slot:[`item.actions`]="{ item }" v-if="permissionSimpleSelected.includes('update-loan')">
                                   <v-icon
                                     small
                                     class="mr-2"
@@ -934,6 +934,10 @@ export default {
     this.getEntity()
   },
   computed: {
+      //Metodo para obtener Permisos por rol
+      permissionSimpleSelected () {
+        return this.$store.getters.permissionSimpleSelected
+      },
       cuenta() {
        for (this.i = 0; this.i< this.entity.length; this.i++) {
         if(this.loan.lenders[0].financial_entity_id==this.entity[this.i].id)

@@ -4,7 +4,7 @@
     <template v-if="loan.disbursement_date != null ">
       <v-tooltip
         top
-        v-if="$store.getters.permissions.includes('print-payment-kardex-loan')"
+        v-if="permissionSimpleSelected.includes('print-payment-kardex-loan')"
       >
         <template v-slot:activator="{ on }">
           <v-btn
@@ -28,7 +28,7 @@
 
       <v-tooltip
         top
-        v-if="$store.getters.permissions.includes('print-payment-kardex-loan')"
+        v-if="permissionSimpleSelected.includes('print-payment-kardex-loan')"
       >
         <template v-slot:activator="{ on }">
           <v-btn
@@ -113,7 +113,7 @@
         :loading="loading"
         :options.sync="options"
         :server-items-length="totalPayments"
-        :footer-props="{ itemsPerPageOptions: [5] }"
+        :footer-props="{ itemsPerPageOptions: [10] }"
       >
         <!--<template v-slot:[`header.data-table-select`]="{ on, props }">
           <v-simple-checkbox
@@ -185,7 +185,7 @@
 
           <v-tooltip
             bottom
-            v-if="$store.getters.permissions.includes('update-payment-loan')"
+            v-if="permissionSimpleSelected.includes('update-payment-loan')"
           >
             <template v-slot:activator="{ on }">
               <v-btn
@@ -224,7 +224,7 @@
 
           <v-tooltip
             bottom
-            v-if="$store.getters.permissions.includes('delete-payment-loan')"
+            v-if="permissionSimpleSelected.includes('delete-payment-loan')"
           >
             <template v-slot:activator="{ on }">
               <v-btn
@@ -303,7 +303,7 @@ export default {
     search: "",
     options: {
       page: 1,
-      itemsPerPage: 8,
+      itemsPerPage: 100,
       sortBy: ["quota_number"],
       sortDesc: [false],
     },
@@ -504,7 +504,12 @@ export default {
       },
     ],
   }),
-
+  computed:{
+   //Metodo para obtener Permisos por rol
+    permissionSimpleSelected () {
+      return this.$store.getters.permissionSimpleSelected
+    },
+  },
   watch: {
     options: function (newVal, oldVal) {
       if (
@@ -600,7 +605,7 @@ export default {
     },
     docsLoans() {
       let docs = [];
-      if (this.$store.getters.permissions.includes("print-payment-loan")) {
+      if (this.permissionSimpleSelected.includes("print-payment-loan")) {
         docs.push({
           id: 5,
           title: "Registro de cobro",

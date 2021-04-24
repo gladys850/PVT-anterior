@@ -105,6 +105,10 @@ export default {
     validar:false,
   }),
   computed: {
+    //Metodo para obtener Permisos por rol
+    permissionSimpleSelected () {
+      return this.$store.getters.permissionSimpleSelected
+    },
     isNew() {
       return this.$route.params.hash == 'new'
     },
@@ -333,7 +337,7 @@ export default {
             {
               this.validatePayment()
             }else{
-              if(this.data_payment.procedure_modality_name == 'Amortización Directa' && this.$store.getters.permissions.includes('create-payment') )
+              if(this.data_payment.procedure_modality_name == 'Amortización Directa' && this.permissionSimpleSelected.includes('create-payment') )
               {
                 this.savePaymentTreasury()
               }else{
