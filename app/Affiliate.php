@@ -93,7 +93,7 @@ class Affiliate extends Model
     public function getFullUnitAttribute()
     {
         $data = "";
-        if ($this->unit) $data .= ' ' . $this->unit->district.' - '.$this->unit->name.' ('.$this->unit->shortened.')';
+        if ($this->unit) $data .= ' ' . $this->unit->district.' - '.$this->unit->name.' ('.$this->unit->shortened.')'.' - '.$this->unit_police_description;
         return $data;
     }
 
