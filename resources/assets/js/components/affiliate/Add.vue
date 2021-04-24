@@ -348,6 +348,11 @@ export default {
     id_street: 0
   }),
   computed: {
+    //permisos del selector global por rol
+    permissionSimpleSelected () {
+      return this.$store.getters.permissionSimpleSelected
+    },
+    
     isNew() {
       return this.$route.params.id == 'new'
           },
@@ -359,16 +364,16 @@ export default {
     },
     secondaryPermission() {
       if (this.affiliate.id) {
-        return this.$store.getters.permissions.includes('update-affiliate-secondary')
+        return this.permissionSimpleSelected.includes('update-affiliate-secondary')
       } else {
-        return this.$store.getters.permissions.includes('create-affiliate')
+        return this.permissionSimpleSelected.includes('create-affiliate')
     }
   },
   primaryPermission() {
       if (this.affiliate.id) {
-        return this.$store.getters.permissions.includes('update-affiliate-primary')
+        return this.permissionSimpleSelected.includes('update-affiliate-primary')
       } else {
-        return this.$store.getters.permissions.includes('create-affiliate')
+        return this.permissionSimpleSelected.includes('create-affiliate')
       }
     }
   },
