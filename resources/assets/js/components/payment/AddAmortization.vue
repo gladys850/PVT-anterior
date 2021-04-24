@@ -141,32 +141,29 @@
                             :disabled="ver"
                           ></v-text-field>
                         </v-col>
-                        <v-col cols="4" class="ma-0 pb-0" v-show="$store.getters.permissions.includes('create-payment-loan')">
+                        <v-col cols="4" class="ma-0 pb-0" v-show="$store.getters.permissions.includes('create-payment-loan')" v-if="!isNew">
                            <v-text-field
-                            v-model="data_payment.code"
-                            :outlined="isNew"
-                            :readonly="!isNew"
-                            :disabled="ver || editable"
+                             v-model="data_payment.code"
+                             :readonly="true"
+                            :disabled="true"
                             dense
                             label="Codigo"
                           ></v-text-field>
                         </v-col>
-                        <v-col cols="4" class="ma-0 pb-0" v-show="$store.getters.permissions.includes('create-payment-loan')" >
+                        <v-col cols="4" class="ma-0 pb-0" v-show="$store.getters.permissions.includes('create-payment-loan')" v-if="!isNew" >
                            <v-text-field
-                             v-model="data_payment.estimated_quota"
-                            :outlined="isNew"
-                            :readonly="!isNew"
-                            :disabled="ver || editable"
+                            v-model="data_payment.estimated_quota"
+                            :readonly="true"
+                            :disabled="true"
                             dense
                             label="Nro.Cuota"
                           ></v-text-field>
                         </v-col>
-                           <v-col cols="4" class="ma-0 pb-0" v-show="$store.getters.permissions.includes('create-payment-loan')">
+                           <v-col cols="4" class="ma-0 pb-0" v-show="$store.getters.permissions.includes('create-payment-loan')" v-if="!isNew">
                            <v-text-field
                             v-model="data_payment.estimated_quota"
-                            :outlined="isNew"
-                            :readonly="!isNew"
-                            :disabled="ver || editable"
+                            :disabled="true"
+                            :readonly="true"
                             dense
                             label="Monto Pagado"
                           ></v-text-field>
