@@ -1,8 +1,8 @@
 <template>
   <v-container fluid >
-    <!--<span>{{ JSON.stringify(permissionSimpleSelected) }}</span>-->
+    <!--<span>{{ JSON.stringify(permissionSimpleSelected) }}</span>
      <pre>{{ permissionSimpleSelected }}</pre>
-     <pre>{{ rolePermissionSelected.id }}</pre>
+     <pre>{{ rolePermissionSelected.id }}</pre>-->
     <v-toolbar-title  class="pb-2">DOCUMENTOS PRESENTADOS</v-toolbar-title>
     <v-form>
       <template top v-if="permissionSimpleSelected.includes('validate-submitted-documents')">
@@ -55,7 +55,7 @@
           </v-tooltip>
         </div>
       </template>
-      <template v-if="$store.getters.permissions.includes('update-loan')" >
+      <template v-if="permissionSimpleSelected.includes('update-loan')" >
           <div >
             <v-tooltip top>
               <template v-slot:activator="{ on }">
@@ -132,7 +132,7 @@
                               <v-col cols="3" class="py-0 my-0">
                                 <div
                                   class="py-0"
-                                  v-if="$store.getters.permissions.includes('validate-submitted-documents')"
+                                  v-if="permissionSimpleSelected.includes('validate-submitted-documents')"
                                 >
                                   <!--div class="py-0" -->
                                   <v-checkbox
@@ -149,7 +149,7 @@
                           </v-list>
                         </v-col>
                       </v-row>
-                      <v-row v-if="$store.getters.permissions.includes('validate-submitted-documents')">
+                      <v-row v-if="permissionSimpleSelected.includes('validate-submitted-documents')">
                       <!--v-row -->
                         <v-col cols="12" class="ma-0 py-0 px-10">
                           <v-text-field
@@ -212,7 +212,7 @@
                               <v-col cols="3" class="py-0 my-0">
                                 <div
                                   class="py-0"
-                                  v-if="$store.getters.permissions.includes('validate-submitted-documents')"
+                                  v-if="permissionSimpleSelected.includes('validate-submitted-documents')"
                                 >
                                   <v-checkbox
                                     class="py-0"
@@ -228,7 +228,7 @@
                           </v-list>
                         </v-col>
                       </v-row>
-                      <v-row v-if="$store.getters.permissions.includes('validate-submitted-documents')">
+                      <v-row v-if="permissionSimpleSelected.includes('validate-submitted-documents')">
                         <v-col cols="12" class="ma-0 py-0 pl-10 pr-2">
                           <v-text-field
                             dense
@@ -417,6 +417,7 @@ export default {
 
 
 computed: {
+      //Metodo para obtener Permisos por rol
       permissionSimpleSelected () {
         return this.$store.getters.permissionSimpleSelected
       },

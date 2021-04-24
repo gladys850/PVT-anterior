@@ -403,6 +403,10 @@ export default {
     this.getPaymentTypes();
   },
     computed: {
+    //Metodo para obtener Permisos por rol
+    permissionSimpleSelected () {
+      return this.$store.getters.permissionSimpleSelected
+    },
     permission() {
       return {
         primary: this.primaryPermission,
@@ -411,20 +415,20 @@ export default {
     },
     secondaryPermission() {
       if (this.affiliate.id) {
-        return this.$store.getters.permissions.includes(
+        return this.permissionSimpleSelected.includes(
           "update-affiliate-secondary"
         )
       } else {
-        return this.$store.getters.permissions.includes("create-affiliate")
+        return this.permissionSimpleSelected.includes("create-affiliate")
       }
     },
     primaryPermission() {
       if (this.affiliate.id) {
-        return this.$store.getters.permissions.includes(
+        return this.permissionSimpleSelected.includes(
           "update-affiliate-primary"
         )
       } else {
-        return this.$store.getters.permissions.includes("create-affiliate")
+        return this.permissionSimpleSelected.includes("create-affiliate")
       }
     },
   },

@@ -10,7 +10,7 @@
           v-model="filters.traySelected"
           active-class="primary white--text"
           mandatory
-          v-if="!track" v-show="!$store.getters.userRoles.includes('PRE-cobranzas')"
+          v-if="!track"
           ><!--filtros superiores
           v-if="!track" v-show="affiliate_id==0"-->
           <v-btn
@@ -31,7 +31,7 @@
           </v-btn>
         </v-btn-toggle>
 
-        <template v-if="$store.getters.permissions.includes('show-deleted-loan') ">
+        <template v-if="permissionSimpleSelected.includes('show-deleted-loan') ">
           <v-tooltip
             top
             v-if="track"
@@ -185,8 +185,9 @@
         </v-toolbar>
       </v-row>
       <!--<v-row>  <v-col>procedureTypes{{$store.getters.procedureTypes}}</v-col>     </v-row>
-      <v-row>  <v-col>modalityLoan{{$store.getters.modalityLoan}}</v-col>     </v-row>-->
-      {{this.$store.getters.rolePermissionSelected.id}}
+      <v-row>  <v-col>modalityLoan{{$store.getters.modalityLoan}}</v-col>     </v-row>
+     <pre>{{ permissionSimpleSelected }}</pre>
+     <pre>{{ rolePermissionSelected.id }}</pre>-->
       <v-row>
         <v-col cols="12">
           <List :bus="bus" 
@@ -267,12 +268,20 @@ export default {
     }
   },
   computed: {
+    //permisos del selector global por rol
+      permissionSimpleSelected () {
+        return this.$store.getters.permissionSimpleSelected
+      },
+      rolePermissionSelected () {
+        return this.$store.getters.rolePermissionSelected
+      },
+
     singleRol() {
       return this.roles.length <= 1
     },
     hasTray() {
       if (this.procedureModalities.length) {
-        return this.$store.getters.permissions.includes('update-loan') && this.$store.getters.permissions.includes('show-all-loan')
+        return this.permissionSimpleSelected.includes('update-loan') && this.permissionSimpleSelected.includes('show-all-loan')
       } else {
         return false
       }
@@ -425,7 +434,7 @@ export default {
     },
     async getLoans() {
       try {
-        if (!this.$store.getters.permissions.includes('update-loan') && this.$store.getters.permissions.includes('show-all-loan')) {
+        if (!this.permissionSimpleSelected.includes('update-loan') && this.permissionSimpleSelected.includes('show-all-loan')) {
           this.track = true
         }
         this.loading = true

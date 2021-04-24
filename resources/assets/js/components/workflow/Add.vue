@@ -6,8 +6,8 @@
           <Breadcrumbs />
         </v-toolbar-title>
         <v-spacer></v-spacer>
-        <template v-if="$route.params.workTray == 'received' || $route.params.workTray == 'my_received' || $route.params.workTray == 'validated'">
-          <template v-if="!$store.getters.userRoles.includes('PRE-cobranzas')">
+        <template v-if="$route.query.workTray != 'all'">
+          <template>
           <v-tooltip top>
             <template v-slot:activator="{ on }">
               <v-btn
@@ -46,7 +46,7 @@
             <template v-slot:activator="{ on }">
               <v-btn
                 top
-                v-if="$store.getters.permissions.includes('delete-loan')"
+                v-if="permissionSimpleSelected.includes('delete-loan')"
                 v-on="on"
                 icon
                 outlined
@@ -176,7 +176,7 @@
         </v-tab-item>
         <v-tab-item :value="'tab-2'">
           <v-card flat tile>
-            <v-card-title v-if="$store.getters.permissions.includes('print-payment-plan')">
+            <v-card-title v-if="permissionSimpleSelected.includes('print-payment-plan')">
               <v-tooltip top>
                 <template v-slot:activator="{ on }">
                   <v-btn
@@ -387,6 +387,10 @@ export default {
     }, 1000)
   },
   computed: {
+    //permisos del selector global por rol
+    permissionSimpleSelected () {
+      return this.$store.getters.permissionSimpleSelected
+    },
     permission() {
       return {
         primary: this.primaryPermission,
@@ -395,20 +399,20 @@ export default {
     },
     secondaryPermission() {
       if (this.affiliate.id) {
-        return this.$store.getters.permissions.includes(
+        return this.permissionSimpleSelected.includes(
           "update-affiliate-secondary"
         )
       } else {
-        return this.$store.getters.permissions.includes("create-affiliate")
+        return this.permissionSimpleSelected.includes("create-affiliate")
       }
     },
     primaryPermission() {
       if (this.affiliate.id) {
-        return this.$store.getters.permissions.includes(
+        return this.permissionSimpleSelected.includes(
           "update-affiliate-primary"
         )
       } else {
-        return this.$store.getters.permissions.includes("create-affiliate")
+        return this.permissionSimpleSelected.includes("create-affiliate")
       }
     }
   },
@@ -603,11 +607,11 @@ export default {
         this.validate.valid_disbursement = false
       }
       /////
-      if(this.$store.getters.permissions.includes('disbursement-loan') == true && this.validate.valid_disbursement == true){
+      if(this.permissionSimpleSelected.includes('disbursement-loan') == true && this.validate.valid_disbursement == true){
          this.bus.$emit('openDialog', { edit: false, accion: 'validar' })
          //alert("entro")
       }
-      else if(this.$store.getters.permissions.includes('disbursement-loan') == false){
+      else if(this.permissionSimpleSelected.includes('disbursement-loan') == false){
          this.bus.$emit('openDialog', { edit: false, accion: 'validar' })
          //alert("entro 2")
       }
