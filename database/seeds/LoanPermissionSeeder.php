@@ -100,6 +100,9 @@ class LoanPermissionSeeder extends Seeder
             ],[
                 'name' => 'update-loan-calculations',
                 'display_name' => 'Actualizar los calculos del préstamo'
+            ],[
+                'name' => 'print-qualification-form',
+                'display_name' => 'Imprimir formulario de calificación'
             ]
         ];
         foreach ($permissions as $permission) {
