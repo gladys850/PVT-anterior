@@ -235,12 +235,12 @@ class CalculatorController extends Controller
         $active_guarantees_sismu = $affiliate->active_guarantees_sismu();
         foreach($active_guarantees_sismu as $res)
             $sum_quota+= $res->PresCuotaMensual/$res->quantity_guarantors; // descuento en caso de tener garantias activas del sismu
-        $active_loans = $affiliate->active_loans();
+        /*$active_loans = $affiliate->active_loans();
         foreach($active_loans as $res)
             $sum_quota+= ($res->estimated_quota*$res->pivot->payment_percentage)/100; // descuento en caso de tener prestamos activos
         $active_loans_sismu = $affiliate->active_loans_sismu();
         foreach($active_loans_sismu as $res)
-            $sum_quota+= $res->PresCuotaMensual; // descuento en caso de tener prestamos activas del sismu
+            $sum_quota+= $res->PresCuotaMensual; // descuento en caso de tener prestamos activas del sismu*/
         $process_loans_sismu = $affiliate->process_loans_sismu();
         foreach($process_loans_sismu as $res)
             $sum_quota+= $res->PresCuotaMensual; // descuento en caso de tener prestamos en proceso del sismu
