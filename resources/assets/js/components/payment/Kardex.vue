@@ -113,7 +113,7 @@
         :loading="loading"
         :options.sync="options"
         :server-items-length="totalPayments"
-        :footer-props="{ itemsPerPageOptions: [5] }"
+        :footer-props="{ itemsPerPageOptions: [10] }"
       >
         <!--<template v-slot:[`header.data-table-select`]="{ on, props }">
           <v-simple-checkbox
@@ -303,7 +303,7 @@ export default {
     search: "",
     options: {
       page: 1,
-      itemsPerPage: 8,
+      itemsPerPage: 100,
       sortBy: ["quota_number"],
       sortDesc: [false],
     },

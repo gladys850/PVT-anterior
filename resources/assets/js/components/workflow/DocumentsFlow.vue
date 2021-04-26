@@ -18,7 +18,7 @@
                   right
                   absolute
                   v-on="on"
-                  style="margin-right: 45px;"
+                  style="margin-right: 75px;"
                   @click.stop="resetForm()"
                   v-show="editable"
                 >
@@ -41,7 +41,7 @@
                 right
                 absolute
                 v-on="on"
-                style="margin-right: -9px;"
+                style="margin-right: 35px;"
                 @click.stop="validarDoc()"
               >
                 <v-icon v-if="editable">mdi-check</v-icon>
@@ -86,7 +86,7 @@
                 fab
                 dark
                 x-small
-                :color="editar ? 'danger' : 'success'"
+                :color="editar ? 'danger' : 'blue'"
                 top
                 right
                 absolute
@@ -100,7 +100,7 @@
             </template>
             <div>
               <span v-if="editable">Guardar</span>
-              <span v-else>Validar documentos</span>
+              <span v-else>Editar documentos</span>
           </div>
           </v-tooltip>
         </div>
