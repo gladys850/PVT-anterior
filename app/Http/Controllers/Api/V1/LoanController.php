@@ -952,6 +952,8 @@ class LoanController extends Controller
                     'table' => [
                         ['Tipo', $loan->modality->procedure_type->second_name],
                         ['Modalidad', $loan->modality->shortened],
+                        ['Fecha', Carbon::now()->format('d/m/Y')],
+                        ['Hora', Carbon::now()->format('h:m:s a')],
                         ['Usuario', Auth::user()->username],
                     ]
                 ],

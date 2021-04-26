@@ -92,6 +92,7 @@ Route::group([
             Route::patch('affiliate/{affiliate}/observation','Api\V1\AffiliateController@update_observation');
             Route::delete('affiliate/{affiliate}/observation','Api\V1\AffiliateController@unset_observation');
             Route::post('affiliate_guarantor', 'Api\V1\AffiliateController@test_guarantor');
+            Route::post('affiliate_spouse_guarantor', 'Api\V1\AffiliateController@test_spouse_guarantor');
             Route::get('affiliate_existence','Api\V1\AffiliateController@get_existence');
             Route::get('affiliate/{affiliate}/maximum_loans','Api\V1\AffiliateController@evaluate_maximum_loans');
             Route::get('affiliate_record', 'Api\V1\AffiliateController@affiliate_record');

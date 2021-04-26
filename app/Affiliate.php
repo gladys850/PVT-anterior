@@ -372,13 +372,13 @@ class Affiliate extends Model
           $loan_global_parameter = LoanGlobalParameter::latest()->first();
           if($this->affiliate_state->affiliate_state_type->name == 'Activo'){
               if($loan_global_parameter->max_guarantor_active <= count($this->active_guarantees()) + count($this->active_guarantees_sismu())) $guarantor = false;
-          } 
-          if($this->affiliate_state->affiliate_state_type->name == 'Pasivo'){          
+          }
+          if($this->affiliate_state->affiliate_state_type->name == 'Pasivo'){
             if($loan_global_parameter->max_guarantor_passive <= count($this->active_guarantees()) + count($this->active_guarantees_sismu())) $guarantor = false;
           }
           if($this->affiliate_state->affiliate_state_type->name != 'Activo' && $this->affiliate_state->affiliate_state_type->name != 'Pasivo') $guarantor = false; // en otro caso no corresponde ya que seria Disponibilidad A o C
-          if($this->defaulted_lender || $this->defaulted_guarantor) $guarantor = false; 
-          if($this->affiliate_state->name == 'Comisión') $guarantor = false;    
+          if($this->defaulted_lender || $this->defaulted_guarantor) $guarantor = false;
+          if($this->affiliate_state->name == 'Comisión') $guarantor = false;
       }
     }
       return response()->json([
