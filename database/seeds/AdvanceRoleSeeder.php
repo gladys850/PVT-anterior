@@ -25,7 +25,7 @@ class AdvanceRoleSeeder extends Seeder
             $old_receipt->delete();
         }
         $module = Module::whereName('prestamos')->first();
-        $receipt_permissions = ['update-affiliate-secondary', 'show-affiliate', 'show-all-loan', 'show-loan', 'create-loan', 'create-address', 'update-address', 'delete-address', 'update-loan', 'delete-loan', 'print-contract-loan', 'show-deleted-loan','update-note','delete-note','update-documents-requirements'];
+        $receipt_permissions = ['update-affiliate-secondary', 'show-affiliate', 'show-all-loan', 'show-loan', 'create-loan', 'create-address', 'update-address', 'delete-address', 'update-loan', 'delete-loan', 'print-contract-loan', 'show-deleted-loan','update-note','delete-note','update-documents-requirements','update-loan-calculations'];
         $sequence_permissions = ['update-affiliate-secondary', 'show-affiliate', 'show-loan', 'update-address', 'update-loan'];
         $leadership_permissions = ['show-all-loan', 'update-loan', 'delete-loan', 'show-setting', 'show-deleted-loan'];
         $executive_permissions = ['update-setting'];
@@ -38,7 +38,7 @@ class AdvanceRoleSeeder extends Seeder
         $loan_collection = ['show-all-loan', 'show-loan', 'show-affiliate', 'print-payment-plan', 'print-payment-kardex-loan', 'show-payment-loan', 'create-payment-loan', 'update-payment-loan', 'delete-payment-loan', 'print-payment-loan','update-loan'];
         $receipt_roles = ['Regional Santa Cruz', 'Regional Cochabamba', 'Regional Oruro', 'Regional Potosí', 'Regional Sucre', 'Regional Tarija', 'Regional Trinidad', 'Regional Cobija', 'Recepción'];
         $legal_permissions = ['registration-delivery-return-contracts','update-documents-requirements', 'print-contract-loan'];
-        $calification_permissions = ['update-loan-calculations'];
+        $calification_permissions = ['update-loan-calculations','print-qualification-form'];
         $sequence_roles = [
             [
                 'name' => 'Calificación',
