@@ -16,7 +16,7 @@
                   <v-container class="py-0 pb-2">
                     <v-row>
                       <v-col cols="12" md="4"></v-col>
-                      <v-col cols="12" md="6"> Afiliado {{loading}}</v-col>
+                      <v-col cols="12" md="6"> Afiliado </v-col>
                       <v-col cols="12" md="2"></v-col>
                       <v-col cols="12" md="1"></v-col>
                       <v-col cols="12" md="8">
