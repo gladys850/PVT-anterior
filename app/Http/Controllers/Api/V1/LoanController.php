@@ -71,6 +71,13 @@ class LoanController extends Controller
             $loan->parent_loan->estimated_quota = $loan->parent_loan->estimated_quota;
         }
         $loan->intereses=$loan->interest;
+        if($loan->parent_reason=='REFINANCIAMIENTO'){
+            $loan->balance_parent_loan_refinancing = $loan->balance_parent_refi();
+            $loan->date_cut_refinancing=$loan->date_cut_refinancing();
+        }else{
+            $loan->balance_parent_loan_refinancing = null;
+            $loan->date_cut_refinancing=null;
+        }
         //$loan->procedure=$loan->modality;
         //$loan->loan_contribution = $loan->loan_contribution_adjusts;
         return $loan;
@@ -232,6 +239,7 @@ class LoanController extends Controller
     * @bodyParam data_loan[0].loan_term integer required Plazo del prestamo del Sismu. Example: 25
     * @bodyParam data_loan[0].balance numeric required saldo del prestamo del Sismu. Example: 10000.50
     * @bodyParam data_loan[0].estimated_quota numeric required cuota del prestamo del Sismu. Example: 1000.50
+    * @bodyParam data_loan[0].date_cut_refinancing date Fecha de corte de refinanciamineto Example: 2021-04-07
     * @authenticated
     * @responseFile responses/loan/store.200.json
     */
@@ -292,7 +300,7 @@ class LoanController extends Controller
             } 
         }
         // Generar PDFs
-        $file_name = implode('_', ['solicitud', 'prestamo', $loan->code]) . '.pdf';
+        $file_name = implode('_', ['solicitud', 'prestamo', $loan->code]) . '.pdf';       
         if(Auth::user()->can('print-contract-loan')){
             $loan->attachment = Util::pdf_to_base64([
                 $this->print_form(new Request([]), $loan, false),
@@ -647,6 +655,7 @@ class LoanController extends Controller
     * @bodyParam data_loan[0].loan_term integer Plazo del prestamo del Sismu. Example: 25
     * @bodyParam data_loan[0].balance numeric saldo del prestamo del Sismu. Example: 10000.50
     * @bodyParam data_loan[0].estimated_quota numeric cuota del prestamo del Sismu. Example: 1000.50
+    * @bodyParam data_loan[0].date_cut_refinancing date Fecha de corte de refinanciamineto Example: 2021-04-07
     * @authenticated
     * @responseFile responses/loan/update_sismu.200.json
     */
@@ -1742,6 +1751,33 @@ class LoanController extends Controller
             abort(403, 'El indice de endeudamiento es superior a la modalidad');
             }
         }
+   }
+   /** 
+   * Actualizar monto de desembolso por refinanciamiento del prestamo
+   * Actualizar monto de desembolso por refinanciamiento del prestamo caso del PVT y Sismu con el permiso update-refinancing-balance
+   * @urlParam loan required ID del Prestamo. Example: 8
+   * @authenticated
+   * @responseFile responses/loan/update_refinancing_balance.200.json
+   */
+   public function update_balance_refinancing(Loan $loan){
+    $balance_parent = 0;
+       if($loan->data_loan){
+        $balance_parent=$loan->balance_parent_refi();
+        $loan->refinancing_balance=$loan->amount_approved - $balance_parent;
+        $loan->update();
+       }else{
+           if($loan->parent_loan){
+            $balance_parent = $loan->balance_parent_refi();
+            $loan->refinancing_balance=$loan->amount_approved - $balance_parent;
+            $loan->update();
+           }else
+                abort(409, 'No es un préstamo de tipo refinanciamiento');
+       }
+        $loan_res = collect([
+            'balance_parent_loan_refinancing' => $balance_parent
+        ])->merge($loan);
+
+        return $loan_res;
    }
 
 }
