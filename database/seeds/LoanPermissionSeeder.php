@@ -87,9 +87,9 @@ class LoanPermissionSeeder extends Seeder
                 'display_name' => 'Liberar usuario de préstamo'
             ], [
                 'name' => 'update-accounting-voucher',
-                'display_name' => 'Editar certificación presupuestaria Contable'
+                'display_name' => 'Editar certificación presupuestaria contable'
             ],  [
-                'name' => 'update-refinancing_balance',
+                'name' => 'update-refinancing-balance',
                 'display_name' => 'Actualizar saldo de refinanciamiento'
             ], [
                 'name' => 'registration-delivery-return-contracts',

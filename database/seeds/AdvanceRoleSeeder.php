@@ -30,14 +30,14 @@ class AdvanceRoleSeeder extends Seeder
         $leadership_permissions = ['show-all-loan', 'update-loan', 'delete-loan', 'show-setting', 'show-deleted-loan'];
         $executive_permissions = ['update-setting'];
         $permissions_primary = ['update-affiliate-primary'];
-        $accounting = ['show-all-loan','show-loan','update-loan','update-accounting-loan'];
-        $budget = ['show-all-loan','show-loan','update-loan','update-accounting-loan'];
-        $collection_court = ['show-all-loan','show-loan','update-loan' ];
+        $accounting = ['show-all-loan','show-loan','update-loan','update-accounting-voucher'];
+        $budget = ['show-all-loan','show-loan','update-loan'];
+        $collection_court = ['show-all-loan','show-loan','update-loan','update-refinancing-balance'];
         $pay_permissions_treasury = ['show-affiliate','show-loan','show-all-loan','print-payment-kardex-loan','print-payment-loan','print-payment-plan','delete-payment-loan','update-payment','create-payment','show-payment','show-payment-loan','delete-payment', 'print-payment-voucher', 'update-payment-loan'];
         $treasury_permissions = ['print-payment-plan', 'print-payment-kardex-loan', 'show-loan','disbursement-loan','delete-payment', 'update-loan'];
         $loan_collection = ['show-all-loan', 'show-loan', 'show-affiliate', 'print-payment-plan', 'print-payment-kardex-loan', 'show-payment-loan', 'create-payment-loan', 'update-payment-loan', 'delete-payment-loan', 'print-payment-loan','update-loan'];
         $receipt_roles = ['Regional Santa Cruz', 'Regional Cochabamba', 'Regional Oruro', 'Regional Potosí', 'Regional Sucre', 'Regional Tarija', 'Regional Trinidad', 'Regional Cobija', 'Recepción'];
-        $legal_permissions = ['registration-delivery-return-contracts'];
+        $legal_permissions = ['registration-delivery-return-contracts','update-documents-requirements', 'print-contract-loan'];
         $calification_permissions = ['update-loan-calculations'];
         $sequence_roles = [
             [
