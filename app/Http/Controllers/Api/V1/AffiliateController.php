@@ -21,6 +21,7 @@ use App\Unit;
 use App\Loan;
 use App\LoanGlobalParameter;
 use App\ProcedureType;
+use App\ProcedureModality;
 use App\Http\Requests\AffiliateForm;
 use App\Http\Requests\AffiliateFingerprintForm;
 use App\Http\Requests\ObservationForm;
@@ -646,7 +647,7 @@ class AffiliateController extends Controller
             $modalities = ProcedureModality::where('');
         }
         $modality_names = ProcedureModality::where('name','like', '%pasivo%')->where('name','like', '%largo Plazo%')->orWhere('name','like','%pasivo%')->where('name','like','Largo Plazo%')->count();
-        if($spouse != null && $modality_names > 0 || $spouse == null && $modality = 0 ){
+        if($spouse != null && $modality_names > 0 || $spouse == null){
             if($affiliate){
                 if(!$sw){
                     if($affiliate->affiliate_state == null){
