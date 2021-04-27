@@ -21,6 +21,7 @@ use App\Unit;
 use App\Loan;
 use App\LoanGlobalParameter;
 use App\ProcedureType;
+use App\ProcedureModality;
 use App\Http\Requests\AffiliateForm;
 use App\Http\Requests\AffiliateFingerprintForm;
 use App\Http\Requests\ObservationForm;
@@ -641,22 +642,66 @@ class AffiliateController extends Controller
                 $sw = true;
             $affiliate = $spouse->affiliate;
         }
-        if($affiliate){
-            if($affiliate->affiliate_state == null){
-                return $message['validate'] = "Debe actualizar el estado del afiliado";
-            }
-            else{
-                if($spouse && $affiliate->affiliate_state->name != "Fallecido"){
-                    $message['validate'] = "debe registrar el estado del afiliado";
+        if($spouse != null)
+        {
+            $modalities = ProcedureModality::where('');
+        }
+        $modality_names = ProcedureModality::where('name','like', '%pasivo%')->where('name','like', '%largo Plazo%')->orWhere('name','like','%pasivo%')->where('name','like','Largo Plazo%')->count();
+        if($spouse != null && $modality_names > 0 || $spouse == null){
+            if($affiliate){
+                if(!$sw){
+                    if($affiliate->affiliate_state == null){
+                        return $message['validate'] = "Debe actualizar el estado del afiliado";
+                    }
+                    else{
+                        if($spouse && $affiliate->affiliate_state->name != "Fallecido"){
+                            $message['validate'] = "debe registrar el estado del afiliado";
+                        }
+                        else{
+                            return $affiliate->test_guarantor($request->procedure_modality_id, $sw);
+                        }
+                    }
                 }
-                else{
-                    return $affiliate->test_guarantor($request->procedure_modality_id, $sw);
+                else
+                {
+                    $affiliate->spouse = $affiliate->spouse;
+                    return array([
+                        "double_perception" => $sw,
+                        "affiliate" => $affiliate,
+                        "own_affiliate" => Affiliate::where('identity_card', $request->identity_card)->orWhere('registration', $request->identity_card)->first()
+                    ]);
                 }
             }
+            else
+                $message['validate'] = "No se encontraron coincidencias";
         }
         else
-            $message['validate'] = "No se encontraron coincidencias";
+            $message['validate'] = "No corresponde con la modalidad";
        return $message;
+    }
+
+    /** @group Préstamos
+    * Verificar garante para doble percepcion
+    * Devuelve si un afiliado puede garantizar acorde a su categoria, estado y cantidad garantias de préstamos.
+    * @bodyParam Procedure_modality_id required Número de carnet de identidad del afiliado. Example: 1379734
+    * @bodyParam affiliate_id required Id del afiliado. Example: 57955
+    * @bodyParam type boolean required estado 1 afiliado o 0 false esposa. Example:1
+    * @authenticated
+    * @responseFile responses/affiliate/test_spouse_guarantor.200.json
+    */
+    public function test_spouse_guarantor(request $request){
+        $affiliate = Affiliate::whereId($request->affiliate_id)->first();
+        if($affiliate->affiliate_state == null){
+            return $message['validate'] = "Debe actualizar el estado del afiliado";
+        }
+        else{
+            if($affiliate->affiliate_state->name != "Fallecido"){
+                return $message['validate'] = "debe registrar el estado del afiliado";
+            }
+            else{
+                return $affiliate->test_guarantor($request->procedure_modality_id, $request->type);
+            }
+        }
     }
 
     /** @group Observaciones de Afiliado
@@ -1264,22 +1309,5 @@ class AffiliateController extends Controller
         }
         //return sizeof($message);
         return $message;
-    }
-
-    public function prueba(){
-        $query = "SELECT * from Padron";
-        $loan_sismu = DB::connection('sqlsrv')->select($query);
-        $contador = 0;
-        $array = array();
-        foreach($loan_sismu as $sismu)
-        {
-            if(!Affiliate::where('identity_card', trim($sismu->PadCedulaIdentidad))->orWhere('registration', trim($sismu->PadCedulaIdentidad))->first()){
-                if(!Spouse::where('identity_card', trim($sismu->PadCedulaIdentidad))->orWhere('registration', trim($sismu->PadCedulaIdentidad))->first()){
-                    //return $simu->PadCedulaIdentidad;
-                    $contador++;
-                }
-            }
-        }
-        return $contador;
     }
 }

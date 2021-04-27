@@ -302,10 +302,16 @@ class LoanController extends Controller
         // Generar PDFs
         $file_name = implode('_', ['solicitud', 'prestamo', $loan->code]) . '.pdf';       
         if(Auth::user()->can('print-contract-loan')){
-            $loan->attachment = Util::pdf_to_base64([
-                $this->print_form(new Request([]), $loan, false),
-                $this->print_contract(new Request([]), $loan, false)
-            ], $file_name, 'legal', $request->copies ?? 1);
+            if($loan->modality->loan_modality_parameter->print_contract_platform){
+                $loan->attachment = Util::pdf_to_base64([
+                    $this->print_form(new Request([]), $loan, false),
+                    $this->print_contract(new Request([]), $loan, false)
+                ], $file_name, 'legal', $request->copies ?? 1);
+            }else{
+                $loan->attachment = Util::pdf_to_base64([
+                    $this->print_form(new Request([]), $loan, false),
+                ], $file_name, 'legal', $request->copies ?? 1);
+            }
         }else{
             $loan->attachment = Util::pdf_to_base64([
                 $this->print_form(new Request([]), $loan, false),
@@ -963,6 +969,8 @@ class LoanController extends Controller
                     'table' => [
                         ['Tipo', $loan->modality->procedure_type->second_name],
                         ['Modalidad', $loan->modality->shortened],
+                        ['Fecha', Carbon::now()->format('d/m/Y')],
+                        ['Hora', Carbon::now()->format('h:m:s a')],
                         ['Usuario', Auth::user()->username],
                     ]
                 ],
