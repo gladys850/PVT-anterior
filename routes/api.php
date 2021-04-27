@@ -178,6 +178,11 @@ Route::group([
         ], function () {
             Route::apiResource('loan', 'Api\V1\LoanController')->only('destroy');
         });
+        Route::group([
+            'middleware' => 'permission:update-refinancing-balance'
+        ], function () {
+            Route::patch('loan/{loan}/update_refinancing_balance','Api\V1\LoanController@update_balance_refinancing');
+        });
         // payments
         Route::group([
             'middleware' => 'permission:show-payment-loan|show-all-payment-loan'
