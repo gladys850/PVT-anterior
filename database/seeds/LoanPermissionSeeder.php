@@ -103,6 +103,9 @@ class LoanPermissionSeeder extends Seeder
             ],[
                 'name' => 'print-qualification-form',
                 'display_name' => 'Imprimir formulario de calificación'
+            ],[
+                'name' => 'show-history-loan',
+                'display_name' => 'Ver historial préstamos'
             ]
         ];
         foreach ($permissions as $permission) {
