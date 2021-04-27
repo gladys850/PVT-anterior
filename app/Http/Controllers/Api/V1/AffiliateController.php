@@ -633,6 +633,7 @@ class AffiliateController extends Controller
         $spouse = null;
         $affiliate = null;
         $sw = false;
+        $validation =false;
         if(Affiliate::where('identity_card', $request->identity_card)->orWhere('registration', $request->identity_card)->first()){//caso de que el afiliado exista
             $affiliate = Affiliate::where('identity_card', $request->identity_card)->orWhere('registration', $request->identity_card)->first();
         }
@@ -642,12 +643,11 @@ class AffiliateController extends Controller
                 $sw = true;
             $affiliate = $spouse->affiliate;
         }
-        if($spouse != null)
-        {
-            $modalities = ProcedureModality::where('');
-        }
-        $modality_names = ProcedureModality::where('name','like', '%pasivo%')->where('name','like', '%largo Plazo%')->orWhere('name','like','%pasivo%')->where('name','like','Largo Plazo%')->count();
-        if($spouse != null && $modality_names > 0 || $spouse == null){
+        $modality_names = ProcedureModality::where('name','like', '%pasivo%')->where('name','like', '%largo Plazo%')->orWhere('name','like','%pasivo%')->where('name','like','Largo Plazo%')->get();
+        foreach($modality_names as $modality)
+            if($modality->id == $request->procedure_modality_id || $sw == true)
+                $validation = true;
+        if($spouse != null && $validation || $spouse == null){
             if($affiliate){
                 if(!$sw){
                     if($affiliate->affiliate_state == null){
@@ -665,11 +665,11 @@ class AffiliateController extends Controller
                 else
                 {
                     $affiliate->spouse = $affiliate->spouse;
-                    return array([
+                    return array(
                         "double_perception" => $sw,
                         "affiliate" => $affiliate,
                         "own_affiliate" => Affiliate::where('identity_card', $request->identity_card)->orWhere('registration', $request->identity_card)->first()
-                    ]);
+                    );
                 }
             }
             else
