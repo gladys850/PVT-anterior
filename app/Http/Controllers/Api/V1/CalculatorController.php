@@ -104,7 +104,8 @@ class CalculatorController extends Controller
                 'bonus_calculated' => round($total_bonuses,2),
                 'liquid_qualification_calculated' => round($liquid_qualification_calculated,2),
                 'quota_previous' => round($parent_quota,2),
-                'livelihood_amount' => $livelihood_amount
+                'livelihood_amount' => $livelihood_amount,
+                "quota_sismu" => $affiliate->active_guarantees_sismu()
             ]);
         }
         return $liquid_calificated;
