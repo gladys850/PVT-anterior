@@ -141,7 +141,7 @@
                     <th class="w-15">Fecha</td>
                     <th class="w-15"><div>Días</div><div>Amr</div></td>
                     <th class="w-15"><div>Capital</div></td>
-                    <th class="w-15">Interes</td>
+                    <th class="w-15">Amortización </div><div>Interés</td>
                     <th class="w-15">Penal</td>
                     <th class="w-15"><div>Total a</div><div>Pagar</div></td>
                     <th class="w-15"><div>Saldo</div><div>capital</div></th>

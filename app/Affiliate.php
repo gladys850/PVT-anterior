@@ -386,8 +386,7 @@ class Affiliate extends Model
           'guarantor' => $guarantor,
           'active_guarantees_quantity' => count($this->active_guarantees()),
           'guarantor_information' => self::verify_information($this),
-          'double_perception'=> $sw ? self::verify_double_perception($this->spouse->identity_card) : false,
-          'id' => $sw ? Affiliate::where('identity_card', $this->spouse->identity_card)->first()->id : null,
+          'double_perception'=> false,
           'loans_sismu' => $this->active_loans_sismu(),
           'guarantees_sismu' => $this->active_guarantees_sismu()
       ]);
