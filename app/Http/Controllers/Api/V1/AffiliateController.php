@@ -668,7 +668,13 @@ class AffiliateController extends Controller
                     return array(
                         "double_perception" => $sw,
                         "affiliate" => $affiliate,
-                        "own_affiliate" => Affiliate::where('identity_card', $request->identity_card)->orWhere('registration', $request->identity_card)->first()
+                        "own_affiliate" => Affiliate::where('identity_card', $request->identity_card)->orWhere('registration', $request->identity_card)->first(),
+                        "guarantor" => false,
+                        "active_guarantees_quantity"=> 0,
+                        "guarantor_information"=> false,
+                        "loans_sismu" => 0,
+                        "guarantees_sismu"=> 0
+
                     );
                 }
             }
