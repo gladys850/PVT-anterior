@@ -641,32 +641,41 @@ class AffiliateController extends Controller
                 $sw = true;
             $affiliate = $spouse->affiliate;
         }
-        if($affiliate){
-            if(!$sw){
-                if($affiliate->affiliate_state == null){
-                    return $message['validate'] = "Debe actualizar el estado del afiliado";
-                }
-                else{
-                    if($spouse && $affiliate->affiliate_state->name != "Fallecido"){
-                        $message['validate'] = "debe registrar el estado del afiliado";
+        if($spouse != null)
+        {
+            $modalities = ProcedureModality::where('');
+        }
+        $modality_names = ProcedureModality::where('name','like', '%pasivo%')->where('name','like', '%largo Plazo%')->orWhere('name','like','%pasivo%')->where('name','like','Largo Plazo%')->count();
+        if($spouse != null && $modality_names > 0 || $spouse == null && $modality = 0 ){
+            if($affiliate){
+                if(!$sw){
+                    if($affiliate->affiliate_state == null){
+                        return $message['validate'] = "Debe actualizar el estado del afiliado";
                     }
                     else{
-                        return $affiliate->test_guarantor($request->procedure_modality_id, $sw);
+                        if($spouse && $affiliate->affiliate_state->name != "Fallecido"){
+                            $message['validate'] = "debe registrar el estado del afiliado";
+                        }
+                        else{
+                            return $affiliate->test_guarantor($request->procedure_modality_id, $sw);
+                        }
                     }
+                }
+                else
+                {
+                    $affiliate->spouse = $affiliate->spouse;
+                    return array([
+                        "double_perception" => $sw,
+                        "affiliate" => $affiliate,
+                        "own_affiliate" => Affiliate::where('identity_card', $request->identity_card)->orWhere('registration', $request->identity_card)->first()
+                    ]);
                 }
             }
             else
-            {
-                $affiliate->spouse = $affiliate->spouse;
-                return array([
-                    "double_perception" => $sw,
-                    "affiliate" => $affiliate,
-                    "own_affiliate" => Affiliate::where('identity_card', $request->identity_card)->orWhere('registration', $request->identity_card)->first()
-                ]);
-            }
+                $message['validate'] = "No se encontraron coincidencias";
         }
         else
-            $message['validate'] = "No se encontraron coincidencias";
+            $message['validate'] = "No corresponde con la modalidad";
        return $message;
     }
 
