@@ -1295,17 +1295,23 @@ export default {
         } else {
          //Edit refinancing
             if(this.loan_refinancing.type_sismu==true){
-                 let res = await axios.patch(`loan/${this.loan.id}/sismu`, {
+                 let res1 = await axios.patch(`loan/${this.loan.id}/sismu`, {
                  data_loan:[{
                     date_cut_refinancing: this.loan_refinancing.date_cut_refinancing,
                     balance : this.loan_refinancing.balance
                   }
                  ]
                })
-                let res1 = await axios.patch(`loan/${this.loan.id}/update_refinancing_balance`)
+                let res = await axios.patch(`loan/${this.loan.id}/update_refinancing_balance`)
+                this.loan_refinancing.refinancing_balance= res.data.refinancing_balance
+                this.loan_refinancing.balance_parent_loan_refinancing= res.data.balance_parent_loan_refinancing
+      
             }else{
                this.cobranzas_edit_sismu=false
               let res = await axios.patch(`loan/${this.loan.id}/update_refinancing_balance`)
+              this.loan_refinancing.refinancing_balance= res.data.refinancing_balance
+              this.loan_refinancing.balance_parent_loan_refinancing= res.data.balance_parent_loan_refinancing
+      
             }
             this.toastr.success('Se Actualizó Correctamente.')
             this.cobranzas_edit = false
