@@ -33,6 +33,7 @@ class Loan extends Model
         'disbursable_type',
         'procedure_modality_id',
         'disbursement_date',
+        'disbursement_time',
         //'num_budget_certification',
         'num_accounting_voucher',
         'parent_loan_id',
