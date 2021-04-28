@@ -121,6 +121,15 @@
                               <p>TOTAL BONOS: {{ liquid.bonus_calculated }}</p>
                               <p>LIQUIDO PARA CALIFICACION: {{ liquid.liquid_qualification_calculated}}</p>
                               <p v-show="type_sismu">CUOTA DE REFINANCIAMIENTO SISMU: {{ data_sismu.quota_sismu}}</p>
+                              <p class="red--text caption" v-show="liquid.guarantees.length > 0" >CUOTAS POR GARANTIAS:</p>
+                               <ul style="list-style: none" class="py-0 ps-0 ">
+                                <li v-for="(guarantees,j) in liquid.guarantees" :key="j" >
+                                  <p class="caption" >CODIGO:{{ guarantees.code}}</p>
+                                  <p class="caption" >CUOTA: {{ guarantees.quota }}</p>
+                                  <p class="caption" >SISTEMA: {{ guarantees.origin}}</p>
+                                  <p class="caption" >ESTADO: {{ guarantees.state}}</p>
+                                  </li>
+                                </ul>
                               </li>
                             </ul>
                         </fieldset>
