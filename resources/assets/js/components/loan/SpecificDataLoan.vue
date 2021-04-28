@@ -131,10 +131,10 @@
                                     </div>
                                   </v-col>
                                   <v-progress-linear v-show="loan_refinancing.refinancing"></v-progress-linear>
-                                    <v-col cols="12" md="4" class="pb-0" v-show="loan_refinancing.refinancing">
-                                    <p style="color:teal"><b>DATOS DEL PRESTAMO A REFINANCIAR</b></p>
+                                    <v-col cols="12" md="6" class="pb-0" v-show="loan_refinancing.refinancing">
+                                    <p style="color:teal"><b>DATOS DEL PRESTAMO A REFINANCIAR{{' => '+ loan_refinancing.description}}</b></p>
                                   </v-col>
-                                <v-col cols="12" md="8" class="py-0" v-show="loan_refinancing.refinancing">
+                                <v-col cols="12" md="6" class="py-0" v-show="loan_refinancing.refinancing">
                                 <div  v-if="permissionSimpleSelected.includes('update-refinancing-balance')">
                                   <v-tooltip top >
                                     <template v-slot:activator="{ on }">
