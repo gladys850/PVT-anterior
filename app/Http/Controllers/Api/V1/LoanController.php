@@ -407,11 +407,12 @@ class LoanController extends Controller
         {
             $state_id = LoanState::whereName('Desembolsado')->first()->id;
             $request['state_id'] = $state_id;
-        //si es refinanciamiento o reprogramacion colocar la etiqueta correspondiente al padre del préstamo
-            $user = User::whereUsername('admin')->first();
-            $refinancing_tag = Tag::whereSlug('refinanciamiento')->first();
-            $reprogramming_tag = Tag::whereSlug('reprogramacion')->first();
-            $parent_loan  = Loan::find($loan->parent_loan_id);
+        //si es refinanciamiento o reprogramacion colocar la etiqueta correspondiente al padre del préstamo   
+            if($loan->parent_loan_id != null){
+                $user = User::whereUsername('admin')->first();
+                $refinancing_tag = Tag::whereSlug('refinanciamiento')->first();
+                $reprogramming_tag = Tag::whereSlug('reprogramacion')->first();
+                $parent_loan  = Loan::find($loan->parent_loan_id);
                 if($loan->parent_reason == 'REFINANCIAMIENTO'){
                         $parent_loan ->tags()->detach($refinancing_tag);
                         $parent_loan ->tags()->attach([$refinancing_tag->id => [
@@ -428,6 +429,7 @@ class LoanController extends Controller
                         ]]);
                     Util::save_record($parent_loan, 'datos-de-un-tramite', Util::concat_action($parent_loan,'etiquetado: Préstamo reprogramado'));
                 }
+            }
         }
         $saved = $this->save_loan($request, $loan);
         return $saved->loan;
