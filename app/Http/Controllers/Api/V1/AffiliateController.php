@@ -650,17 +650,8 @@ class AffiliateController extends Controller
         if($spouse != null && $validation || $spouse == null){
             if($affiliate){
                 if(!$sw){
-                    if($affiliate->affiliate_state == null){
-                        return $message['validate'] = "Debe actualizar el estado del afiliado";
-                    }
-                    else{
-                        if($spouse && $affiliate->affiliate_state->name != "Fallecido"){
-                            $message['validate'] = "debe registrar el estado del afiliado";
-                        }
-                        else{
-                            return $affiliate->test_guarantor($request->procedure_modality_id, $sw);
-                        }
-                    }
+                    $request->affiliate_id = $affiliate->id;
+                    return self::test_spouse_guarantor($request);
                 }
                 else
                 {
@@ -697,16 +688,43 @@ class AffiliateController extends Controller
     */
     public function test_spouse_guarantor(request $request){
         $affiliate = Affiliate::whereId($request->affiliate_id)->first();
-        if($affiliate->affiliate_state == null){
-            return $message['validate'] = "Debe actualizar el estado del afiliado";
-        }
-        else{
-            if($affiliate->affiliate_state->name != "Fallecido"){
-                return $message['validate'] = "debe registrar el estado del afiliado";
+        if($affiliate->address){
+            if($affiliate->spouse){
+                if($affiliate->pension_entity->name == "SENASIR"){
+                    if($affiliate->spouse->city_birth && $affiliate->spouse->city_identity_card && $affiliate->spouse->birth_date)
+                    {
+                        if($affiliate->affiliate_state == null){
+                            return $message['validate'] = "Debe actualizar el estado del afiliado";
+                        }
+                        else{
+                            if($affiliate->affiliate_state->name != "Fallecido"){
+                                return $message['validate'] = "debe registrar el estado del afiliado";
+                            }
+                            else{
+                                return $affiliate->test_guarantor($request->procedure_modality_id, $request->type);
+                            }
+                        }
+                    }
+                    else{
+                        return $message['validate'] = "Actualizar datos de la viuda";
+                    }
+                }
+                else{
+                    return $message['validate'] = "No puede ser garante";
+                }
             }
             else{
-                return $affiliate->test_guarantor($request->procedure_modality_id, $request->type);
+                if($affiliate->birth_date && $affiliate->city_identity_card && $affiliate->city_birth)
+                {
+                    return $affiliate->test_guarantor($request->procedure_modality_id, $request->type);
+                }
+                else{
+                    return $message['validate']= "debe actualizar los datos del afiliado";
+                }
             }
+        }
+        else{
+            return $message['validate'] = "debe actualizar la dirección del afiliado";
         }
     }
 
