@@ -414,9 +414,6 @@ export default {
           this.$refs.BallotsResult.simuladores()
         }
         if(n==3){
-          console.log('Este es lenders==>')
-          console.log(this.lenders)
-         /* }
           /*if(this.modalidad.procedure_type_name!='Préstamo hipotecario'){
             //this.saveLoanProperty()
             //console.log('Es hipotecario')
