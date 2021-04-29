@@ -134,7 +134,6 @@ Route::group([
             Route::apiResource('loan', 'Api\V1\LoanController')->only('index');
             Route::apiResource('loan', 'Api\V1\LoanController')->only('show');
             Route::get('loan/{loan}/disbursable', 'Api\V1\LoanController@get_disbursable');
-            Route::apiResource('loan_interval', 'Api\V1\LoanIntervalController')->only('index');
             Route::get('affiliate/{affiliate}/loan','Api\V1\AffiliateController@get_loans');
             Route::get('loan/{loan}/document','Api\V1\LoanController@get_documents');
             Route::get('loan/{loan}/note','Api\V1\LoanController@get_notes');
