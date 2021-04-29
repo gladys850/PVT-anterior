@@ -85,6 +85,7 @@
               <BallotsResult ref="BallotsResult"
                 v-show="modalidad.procedure_type_name != 'Préstamo hipotecario' && modalidad.procedure_type_name != 'Refinanciamiento Préstamo hipotecario'"
                 :data_sismu.sync="data_sismu"
+                :lenders.sync="lenders"
                 :calculator_result.sync="calculator_result"
                 :loan_detail.sync="loan_detail"
                 :data_loan_parent_aux.sync="data_loan_parent_aux"
@@ -413,6 +414,9 @@ export default {
           this.$refs.BallotsResult.simuladores()
         }
         if(n==3){
+          console.log('Este es lenders==>')
+          console.log(this.lenders)
+         /* }
           /*if(this.modalidad.procedure_type_name!='Préstamo hipotecario'){
             //this.saveLoanProperty()
             //console.log('Es hipotecario')
@@ -674,6 +678,7 @@ export default {
                 //obtener las contribuciones para hipotecario de contrib_codebtor, i=0 es lender de ballots
                 this.lenders[i].payment_percentage=this.calculator_result.affiliates[i].payment_percentage
                 this.lenders[i].indebtedness_calculated=this.calculator_result.affiliates[i].indebtedness_calculated
+                this.lenders[i].quota_treat=this.calculator_result.affiliates[i].quota_calculated
                 if(i == 0){
                 this.lenders[i].contributionable_type= this.contributionable_type
                 this.lenders[i].loan_contributions_adjust_ids=this.loan_contributions_adjust_ids
@@ -727,6 +732,7 @@ export default {
               this.lenders=res.data
               this.lenders[0].payment_percentage=this.calculator_result.affiliates[0].payment_percentage
               this.lenders[0].indebtedness_calculated=this.calculator_result.affiliates[0].indebtedness_calculated
+              this.lenders[0].quota_treat=this.calculator_result.affiliates[0].quota_calculated
               this.lenders[0].contributionable_type=this.contributionable_type
               this.lenders[0].loan_contributions_adjust_ids=this.loan_contributions_adjust_ids
               this.lenders[0].contributionable_ids=this.contributionable_ids
