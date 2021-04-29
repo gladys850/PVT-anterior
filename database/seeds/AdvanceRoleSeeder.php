@@ -30,6 +30,7 @@ class AdvanceRoleSeeder extends Seeder
         $leadership_permissions = ['show-all-loan', 'update-loan', 'delete-loan', 'show-setting', 'show-deleted-loan'];
         $executive_permissions = ['update-setting'];
         $permissions_primary = ['update-affiliate-primary'];
+        $file = ['show-all-loan','show-loan','update-loan'];
         $accounting = ['show-all-loan','show-loan','update-loan','update-accounting-voucher'];
         $budget = ['show-all-loan','show-loan','update-loan','update-accounting-voucher'];
         $collection_court = ['show-all-loan','show-loan','update-loan','update-refinancing-balance'];
@@ -73,7 +74,7 @@ class AdvanceRoleSeeder extends Seeder
             ], [
                 'name' => 'Cobranzas Corte',
                 'action' => 'Pendiente de Pago',
-            ],
+            ]
         ];    $recovery_roles = [
     
             [
@@ -83,7 +84,11 @@ class AdvanceRoleSeeder extends Seeder
             [
                 'name' => 'Tesorería Cobros',
                 'action' => 'Pago Confirmado',
-            ]
+            ], [
+                'name' => 'Archivo',
+                'action' => 'archivado',
+            ],
+
         ];
       
         if ($module) {
@@ -122,6 +127,8 @@ class AdvanceRoleSeeder extends Seeder
                     $role->syncPermissions(array_merge($sequence_permissions,$legal_permissions));
                 }elseif (in_array($role['display_name'], ['Calificación'])) {
                     $role->syncPermissions(array_merge($sequence_permissions,$calification_permissions));
+                }elseif (in_array($role['display_name'], ['Archivo'])) {
+                    $role->syncPermissions(array_merge($file));
                 }
                 else {
                     $role->syncPermissions($sequence_permissions);
