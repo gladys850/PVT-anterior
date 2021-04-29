@@ -1,6 +1,6 @@
 <template>
   <v-container fluid >
-    <v-row justify="center"  v-show="modalidad.procedure_type_name!= 'Préstamo hipotecario'">
+    <v-row justify="center"  v-show="modalidad.procedure_type_name!= 'Préstamo Hipotecario'">
          <v-col cols="12" class="py-0" v-if="modalidad_guarantors == 0">
           <v-card>
             <v-container class="py-0">
