@@ -559,6 +559,7 @@ class LoanController extends Controller
                     'payable_liquid_calculated' => $affiliate['payable_liquid_calculated'],
                     'bonus_calculated' => $affiliate['bonus_calculated'],
                     'quota_previous' => $quota_previous,
+                    'quota_treat' => $affiliate['quota_treat'],
                     'indebtedness_calculated' => $indebtedness,
                     'liquid_qualification_calculated' => $affiliate['liquid_qualification_calculated'],
                     'guarantor' => false,
@@ -586,6 +587,7 @@ class LoanController extends Controller
                         'payable_liquid_calculated' => $affiliate['payable_liquid_calculated'],
                         'bonus_calculated' => $affiliate['bonus_calculated'],
                         'quota_previous' => $previous,
+                        'quota_treat' => $affiliate['quota_treat'],
                         'indebtedness_calculated' => $affiliate['indebtedness_calculated'],
                         'liquid_qualification_calculated' => $affiliate['liquid_qualification_calculated'],
                         'guarantor' => true,
@@ -828,22 +830,22 @@ class LoanController extends Controller
             case 'Préstamo Anticipo':
 				$view_type = 'advance';
             	break;
-            case 'Préstamo a corto plazo':
+            case 'Préstamo a Corto Plazo':
 				$view_type = 'short';
             	break;
-            case 'Refinanciamiento Préstamo a corto plazo':
+            case 'Refinanciamiento Préstamo a Corto Plazo':
 				$view_type = 'short';
             	break;
-            case 'Préstamo a largo plazo':
+            case 'Préstamo a Largo Plazo':
 				$view_type = 'long';
             	break;
-            case 'Refinanciamiento Préstamo a largo plazo':
+            case 'Refinanciamiento Préstamo a Largo Plazo':
 				$view_type = 'long';
             	break;
-            case 'Préstamo hipotecario':
+            case 'Préstamo Hipotecario':
 				$view_type = 'hypothecary';
             	break;
-            case 'Refinanciamiento Préstamo hipotecario':
+            case 'Refinanciamiento Préstamo Hipotecario':
 				$view_type = 'hypothecary';
             	break;
         }
@@ -1649,14 +1651,14 @@ class LoanController extends Controller
         $procedure=$loan->modality->procedure_type;
         $procedure_ref=[];
     
-        if($procedure->name=='Préstamo a corto plazo' || $procedure->name=='Refinanciamiento Préstamo a corto plazo'){
-            $procedure_ref = ProcedureType::where('name','=','Refinanciamiento Préstamo a corto plazo')->first();
+        if($procedure->name=='Préstamo a Corto Plazo' || $procedure->name=='Refinanciamiento Préstamo a Corto Plazo'){
+            $procedure_ref = ProcedureType::where('name','=','Refinanciamiento Préstamo a Corto Plazo')->first();
         }else{
-            if($procedure->name=='Préstamo a largo plazo' || $procedure->name=='Refinanciamiento Préstamo a largo plazo'){
-                $procedure_ref = ProcedureType::where('name','=','Refinanciamiento Préstamo a largo plazo')->first();
+            if($procedure->name=='Préstamo a Largo Plazo' || $procedure->name=='Refinanciamiento Préstamo a Largo Plazo'){
+                $procedure_ref = ProcedureType::where('name','=','Refinanciamiento Préstamo a Largo Plazo')->first();
             }else{
-                if($procedure->name=='Préstamo hipotecario' || $procedure->name=='Refinanciamiento Préstamo hipotecario'){
-                    $procedure_ref = ProcedureType::where('name','=','Refinanciamiento Préstamo hipotecario')->first();
+                if($procedure->name=='Préstamo Hipotecario' || $procedure->name=='Refinanciamiento Préstamo Hipotecario'){
+                    $procedure_ref = ProcedureType::where('name','=','Refinanciamiento Préstamo Hipotecario')->first();
                 }
             }
         }

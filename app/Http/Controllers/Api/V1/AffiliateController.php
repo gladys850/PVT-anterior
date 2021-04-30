@@ -202,6 +202,11 @@ class AffiliateController extends Controller
         }
         $affiliate->fill($update);
         $affiliate->save();
+        if($request->has('financial_entity_id')&& $request->financial_entity_id != null || $request->has('account_number') && $request->account_number!= null){
+            $affiliate->update([
+                'sigep_status' => 'ACTIVO'
+            ]);
+         }
         return  $affiliate;
     }
 
@@ -1188,8 +1193,8 @@ class AffiliateController extends Controller
                  $current_ticket_true = $now->startOfMonth()->subMonths($before_month);
                  if ($now->startOfMonth()->diffInMonths($current_ticket->startOfMonth()) <= 1000){
                   $modality_ida= ProcedureType::where('name','=','Préstamo Anticipo')->first()->id;
-                  $modality_idb = ProcedureType::where('name','=','Préstamo a corto plazo')->first()->id;
-                  $modality_idc = ProcedureType::where('name','=','Préstamo a largo plazo')->first()->id;
+                  $modality_idb = ProcedureType::where('name','=','Préstamo a Corto Plazo')->first()->id;
+                  $modality_idc = ProcedureType::where('name','=','Préstamo a Largo Plazo')->first()->id;
                   $ids_modalities=[$modality_ida,$modality_idb,$modality_idc];
                   $i= 0;
                   while ($i < count($ids_modalities)) {
