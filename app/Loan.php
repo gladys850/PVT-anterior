@@ -328,6 +328,8 @@ class Loan extends Model
             } else {
                 $quota->estimated_date = Carbon::parse($estimated_date)->toDateString();
             }
+            $quota->previous_balance = $this->balance;
+            $quota->previous_payment_date = $next_payment->previous_payment_date;
             $quota->quota_number = $this->balance > 0 ? $next_payment->quota : null;
             $interest = $this->interest;
             $quota->estimated_days = LoanPayment::days_interest2($this, $quota->estimated_date);
@@ -676,7 +678,7 @@ class Loan extends Model
                 {
                     if($affiliate_state !== "Disponibilidad" ) // disponibilidad letra A o C no puede acceder a prestamos a largo plazo
                     {
-                        if($cpop_affiliate){
+                        if($cpop_affiliate || $cpop_sismu){
                             $modality=ProcedureModality::whereShortened("LAR-CPOP")->first();
                         }else{
                             $modality=ProcedureModality::whereShortened("LAR-ACT")->first();
@@ -698,7 +700,7 @@ class Loan extends Model
                 {
                     if($affiliate_state !== "Disponibilidad" ) //disponibilidad letra A o C no tiene prestamos
                     {
-                        if($cpop_affiliate){
+                        if($cpop_affiliate || $cpop_sismu){
                             $modality=ProcedureModality::whereShortened("REF-ACT-CPOP")->first(); //refi largo plazo activo  cpop
                         }else{
                             $modality=ProcedureModality::whereShortened("REF-LAR-ACT")->first(); //refi largo plazo activo
@@ -722,7 +724,7 @@ class Loan extends Model
                 {
                     if($affiliate_state_type !== "Comisión"){
                         
-                        if($cpop_affiliate){
+                        if($cpop_affiliate || $cpop_sismu){
                             $modality=ProcedureModality::whereShortened("HIP-ACT-CPOP")->first(); //hipotecario CPOP
                         }else{
                             $modality=ProcedureModality::whereShortened("HIP-ACT")->first(); //hipotecario Sector Activo
@@ -734,7 +736,7 @@ class Loan extends Model
                 if($affiliate_state_type == "Activo")
                 {
                     if($affiliate_state_type !== "Comisión" && $affiliate_state !== "Disponibilidad"){//affiliados con estado en disponibilidad no realizaran refinanciamientos 
-                        if($cpop_affiliate){
+                        if($cpop_affiliate || $cpop_sismu){
                             $modality=ProcedureModality::whereShortened("REF-HIP-ACT-CPOP")->first(); // Refinanciamiento hipotecario CPOP
                         }else{
                             $modality=ProcedureModality::whereShortened("REF-HIP-ACT")->first(); // Refinanciamiento hipotecario Sector Activo
