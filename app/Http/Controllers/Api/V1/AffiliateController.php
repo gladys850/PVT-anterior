@@ -202,6 +202,11 @@ class AffiliateController extends Controller
         }
         $affiliate->fill($update);
         $affiliate->save();
+        if($request->has('financial_entity_id')&& $request->financial_entity_id != null || $request->has('account_number') && $request->account_number!= null){
+            $affiliate->update([
+                'sigep_status' => 'ACTIVO'
+            ]);
+         }
         return  $affiliate;
     }
 
