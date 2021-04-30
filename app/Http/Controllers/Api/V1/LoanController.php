@@ -1811,25 +1811,25 @@ class LoanController extends Controller
    * @queryParam per_page Número de datos por página. Example: 8
    * @queryParam page Número de página. Example: 1
    * @queryParam excel Valor booleano para descargar  el docExcel. Example: true
-   * @bodyParam id_loan Buscar ID del Préstamo. Example: 1
-   * @bodyParam code_loan  Buscar código del Préstamo. Example: PTMO000012-2021
-   * @bodyParam id_affiliate  Buscar por ID del affiliado. Example: 33121
-   * @bodyParam identity_card_affiliate  Buscar por nro de CI del afiliado. Example: 10069775
-   * @bodyParam registration_affiliate  Buscar por Matricula del afiliado. Example: 100697MDF
-   * @bodyParam last_name_affiliate Buscar por primer apellido del afiliado. Example: RIVERA
-   * @bodyParam mothers_last_name_affiliate Buscar por segundo apellido del afiliado. Example: ARTEAG
-   * @bodyParam first_name_affiliate Buscar por primer Nombre del afiliado. Example: ABAD
-   * @bodyParam second_name_affiliate Buscar por segundo Nombre del afiliado. Example: FAUST
-   * @bodyParam surname_husband_affiliate Buscar por Apellido de casada Nombre del afiliado. Example: De LA CRUZ
-   * @bodyParam sub_modality_loan Buscar por sub modalidad del préstamo. Example: Corto plazo sector activo
-   * @bodyParam modality_loan Buscar por Modalidad del prestamo. Example: Préstamo a corto plazo
-   * @bodyParam amount_approved_loan Buscar monto aprobado del afiliado. Example: 25000
-   * @bodyParam state_type_affiliate Buscar por tipo de estado del afiliado. Example: Activo
-   * @bodyParam state_affiliate Buscar por estado del affiliado. Example: Servicio
-   * @bodyParam quota_loan Buscar por la quota del prestamo. Example: 1500
-   * @bodyParam state_loan Buscar por el estado del prestamo. Example: En proceso
-   * @bodyParam guarantor_loan_affiliate Buscar los garantes del préstamo. Example: false
-   * @bodyParam pension_entity_affiliate Buscar por la La pension entidad del afiliado. Example: SENASIR
+   * @queryParam id_loan Buscar ID del Préstamo. Example: 1
+   * @queryParam code_loan  Buscar código del Préstamo. Example: PTMO000012-2021
+   * @queryParam id_affiliate  Buscar por ID del affiliado. Example: 33121
+   * @queryParam identity_card_affiliate  Buscar por nro de CI del afiliado. Example: 10069775
+   * @queryParam registration_affiliate  Buscar por Matricula del afiliado. Example: 100697MDF
+   * @queryParam last_name_affiliate Buscar por primer apellido del afiliado. Example: RIVERA
+   * @queryParam mothers_last_name_affiliate Buscar por segundo apellido del afiliado. Example: ARTEAG
+   * @queryParam first_name_affiliate Buscar por primer Nombre del afiliado. Example: ABAD
+   * @queryParam second_name_affiliate Buscar por segundo Nombre del afiliado. Example: FAUST
+   * @queryParam surname_husband_affiliate Buscar por Apellido de casada Nombre del afiliado. Example: De LA CRUZ
+   * @queryParam sub_modality_loan Buscar por sub modalidad del préstamo. Example: Corto plazo sector activo
+   * @queryParam modality_loan Buscar por Modalidad del prestamo. Example: Préstamo a corto plazo
+   * @queryParam amount_approved_loan Buscar monto aprobado del afiliado. Example: 25000
+   * @queryParam state_type_affiliate Buscar por tipo de estado del afiliado. Example: Activo
+   * @queryParam state_affiliate Buscar por estado del affiliado. Example: Servicio
+   * @queryParam quota_loan Buscar por la quota del prestamo. Example: 1500
+   * @queryParam state_loan Buscar por el estado del prestamo. Example: En proceso
+   * @queryParam guarantor_loan_affiliate Buscar los garantes del préstamo. Example: false
+   * @queryParam pension_entity_affiliate Buscar por la La pension entidad del afiliado. Example: SENASIR
    * @authenticated
    * @responseFile responses/loan/list_loans_generate.200.json
    */
