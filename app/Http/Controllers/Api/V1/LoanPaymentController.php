@@ -434,33 +434,24 @@ class LoanPaymentController extends Controller
         $procedure_modality = $loan->modality;
         $lenders = []; 
         $is_dead = false;
+        $quota_treat = 0;
         foreach ($loan->lenders as $lender) {
             $lenders[] = LoanController::verify_spouse_disbursable($lender)->disbursable;
             if($lender->dead) $is_dead = true;
         }
         $global_parameter=LoanGlobalParameter::latest()->first();
         $max_current=$global_parameter->grace_period+$global_parameter->days_current_interest;
-
-            $num_quota=$loan_payment->quota_number;
+        $num_quota=$loan_payment->quota_number;
             if($num_quota == 1){
-                $estimated_days['previous_balance']=$loan->amount_approved;
-                $estimated_days['current_balance']=$estimated_days['previous_balance']-$loan_payment->capital_payment; 
-                $disbursement_date=CarbonImmutable::parse($loan->disbursement_date);
-                $estimated_date=$loan->payments->first()->estimated_date;
-                $estimated_date=CarbonImmutable::parse($estimated_date);
-                $estimated_days['current'] = $disbursement_date->diffInDays($estimated_date);
+                $disbursement_date = CarbonImmutable::parse($loan->disbursement_date);
+                $estimated_days['current'] = $disbursement_date->diffInDays(CarbonImmutable::parse($loan_payment->estimated_date));
                 if($estimated_days['current'] > $max_current)
                     $estimated_days['penal'] = $estimated_days['current'] - $global_parameter->days_current_interest;
                 else
                     $estimated_days['penal'] = 0;
-            }else{   
-                $anulado = LoanState::whereName('Anulado')->first()->id;       
-                $capital_paid = LoanPayment::where('loan_id',$loan->id)->where('quota_number','<',$num_quota)->where('state_id','!=',$anulado)->sum('capital_payment');
-                $estimated_days['previous_balance'] = $loan->amount_approved-$capital_paid;
-                $estimated_days['current_balance'] = $estimated_days['previous_balance']-$loan_payment->capital_payment;              
-                $reg_payment=$loan->payments->where('quota_number', ($num_quota-1));
-                $reg_payment=CarbonImmutable::parse($reg_payment->first()->estimated_date);
-                $estimated_days['current'] = $reg_payment->diffInDays(CarbonImmutable::parse($loan->payments->first()->estimated_date));
+            }else{                
+                $reg_payment_date = CarbonImmutable::parse($loan_payment->previous_payment_date);
+                $estimated_days['current'] = $reg_payment_date->diffInDays(CarbonImmutable::parse($loan_payment->estimated_date));
                 if($estimated_days['current'] > $max_current)
                 $estimated_days['penal'] = $estimated_days['current'] - $global_parameter->days_current_interest;
                 else
@@ -489,7 +480,8 @@ class LoanPaymentController extends Controller
             'signers' => $persons,
             'is_dead'=> $is_dead,
             'estimated_days' => $estimated_days
-        ]; 
+        ];
+      
         $information_loan = $this->get_information_loan($loan);
         $file_name = implode('_', ['pagos', $procedure_modality->shortened, $loan->code]) . '.pdf';
         $view = view()->make('loan.payments.payment_loan')->with($data)->render();
