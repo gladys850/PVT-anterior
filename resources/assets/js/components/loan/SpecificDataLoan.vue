@@ -807,7 +807,7 @@
                                 <v-card-text>
                                   <v-col cols="12" class="mb-0">
                                     <p style="color:teal"> <b>DATOS DE DESEMBOLSO</b></p>
-                                     <div v-if="permissionSimpleSelected.includes('disbursement-loan') || permissionSimpleSelected.includes('update-num-accounting-voucher')">
+                                     <div v-if="permissionSimpleSelected.includes('disbursement-loan') || permissionSimpleSelected.includes('update-accounting-voucher')">
                                         <v-tooltip top>
                                           <template v-slot:activator="{ on }">
                                             <v-btn
@@ -924,8 +924,8 @@
                                         <div class="py-0">
                                           <v-text-field
                                             dense
-                                            :outlined="permissionSimpleSelected.includes('update-num-accounting-voucher') ? editable : false"
-                                            :readonly="permissionSimpleSelected.includes('update-num-accounting-voucher') ? !editable : true"
+                                            :outlined="permissionSimpleSelected.includes('update-accounting-voucher') ? editable : false"
+                                            :readonly="permissionSimpleSelected.includes('update-accounting-voucher') ? !editable : true"
                                             :label="'CERTIFICACIÓN PRESUPUESTARIA CONTABLE'"
                                              v-model="loan.num_accounting_voucher"
                                           ></v-text-field>
