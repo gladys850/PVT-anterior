@@ -12,13 +12,13 @@
     "params": {}
   }, {
     "href": "flowIndex",
-    "title": "Préstamos",
+    "title": "Bandeja",
     "icon": "mdi-cash-multiple",
     "permission": "show-loan",
     "params": {}
   }, {
     "href": "listLoanGenerate",
-    "title": "Desembolsos",
+    "title": "Préstamos",
     "icon": "mdi-cash",
     "permissions": "show-loan",
     "params": {}
