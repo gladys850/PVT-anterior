@@ -328,6 +328,8 @@ class Loan extends Model
             } else {
                 $quota->estimated_date = Carbon::parse($estimated_date)->toDateString();
             }
+            $quota->previous_balance = $this->balance;
+            $quota->previous_payment_date = $next_payment->previous_payment_date;
             $quota->quota_number = $this->balance > 0 ? $next_payment->quota : null;
             $interest = $this->interest;
             $quota->estimated_days = LoanPayment::days_interest2($this, $quota->estimated_date);
