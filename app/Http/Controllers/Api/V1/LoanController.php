@@ -383,6 +383,7 @@ class LoanController extends Controller
     * @bodyParam lenders[0].contributionable_ids array  Ids de las contribuciones asocidas al prestamo por afiliado. Example: [1,2,3]
     * @bodyParam lenders[0].contributionable_type enum Nombre de la tabla de contribuciones . Example: contributions
     * @bodyParam lenders[0].loan_contributions_adjust_ids array Ids de los ajustes de la(s) contribución(s). Example: [1,2]
+    * @bodyParam lenders[0].quota_treat cuota del titular. Example: 2315.86
     * @bodyParam lenders[1].affiliate_id integer ID del afiliado. Example: 22773
     * @bodyParam lenders[1].payment_percentage integer ID del afiliado. Example: 50
     * @bodyParam lenders[1].payable_liquid_calculated numeric ID del afiliado. Example: 2000
@@ -394,6 +395,7 @@ class LoanController extends Controller
     * @bodyParam lenders[1].contributionable_ids array  Ids de las contribuciones asocidas al prestamo por afiliado. Example: [1,2,3]
     * @bodyParam lenders[1].contributionable_type enum Nombre de la tabla de contribuciones . Example: contributions
     * @bodyParam lenders[1].loan_contributions_adjust_ids array Ids de los ajustes de la(s) contribución(s). Example: [3]
+    * @bodyParam lenders[1].quota_treat cuota del titular. Example: 2315.86
     * @bodyParam guarantors array Lista de afiliados Garante(es) del préstamo.
     * @bodyParam guarantors[0].affiliate_id integer ID del afiliado. Example: 51925
     * @bodyParam guarantors[0].payment_percentage integer ID del afiliado. Example: 50
@@ -405,6 +407,7 @@ class LoanController extends Controller
     * @bodyParam guarantors[0].contributionable_ids array  Ids de las contribuciones asocidas al prestamo por afiliado. Example: [1,2,3]
     * @bodyParam guarantors[0].contributionable_type enum Nombre de la tabla de contribuciones . Example: contributions
     * @bodyParam guarantors[0].loan_contributions_adjust_ids array Ids de los ajustes de la(s) contribución(s). Example: []
+    * @bodyParam guarantors[0].quota_treat cuota del garante. Example: 2315.86
     * @authenticated
     * @responseFile responses/loan/update.200.json
     */
@@ -561,7 +564,7 @@ class LoanController extends Controller
                     'liquid_qualification_calculated' => $affiliate['liquid_qualification_calculated'],
                     'guarantor' => false,
                     'contributionable_type' => $affiliate['contributionable_type'],
-                    'contributionable_ids' => json_encode($affiliate['contributionable_ids'])
+                    'contributionable_ids' => json_encode($affiliate['contributionable_ids']),
                 ];
                 if(array_key_exists('loan_contributions_adjust_ids', $affiliate)){
                     $idsajust=$affiliate['loan_contributions_adjust_ids'];
@@ -588,7 +591,7 @@ class LoanController extends Controller
                         'liquid_qualification_calculated' => $affiliate['liquid_qualification_calculated'],
                         'guarantor' => true,
                         'contributionable_type'=>$affiliate['contributionable_type'],
-                        'contributionable_ids'=>json_encode($affiliate['contributionable_ids'])
+                        'contributionable_ids'=>json_encode($affiliate['contributionable_ids']),
                     ];
                     if(array_key_exists('loan_contributions_adjust_ids', $affiliate)){
                         $idsajust=$affiliate['loan_contributions_adjust_ids'];
@@ -1811,25 +1814,25 @@ class LoanController extends Controller
    * @queryParam per_page Número de datos por página. Example: 8
    * @queryParam page Número de página. Example: 1
    * @queryParam excel Valor booleano para descargar  el docExcel. Example: true
-   * @bodyParam id_loan Buscar ID del Préstamo. Example: 1
-   * @bodyParam code_loan  Buscar código del Préstamo. Example: PTMO000012-2021
-   * @bodyParam id_affiliate  Buscar por ID del affiliado. Example: 33121
-   * @bodyParam identity_card_affiliate  Buscar por nro de CI del afiliado. Example: 10069775
-   * @bodyParam registration_affiliate  Buscar por Matricula del afiliado. Example: 100697MDF
-   * @bodyParam last_name_affiliate Buscar por primer apellido del afiliado. Example: RIVERA
-   * @bodyParam mothers_last_name_affiliate Buscar por segundo apellido del afiliado. Example: ARTEAG
-   * @bodyParam first_name_affiliate Buscar por primer Nombre del afiliado. Example: ABAD
-   * @bodyParam second_name_affiliate Buscar por segundo Nombre del afiliado. Example: FAUST
-   * @bodyParam surname_husband_affiliate Buscar por Apellido de casada Nombre del afiliado. Example: De LA CRUZ
-   * @bodyParam sub_modality_loan Buscar por sub modalidad del préstamo. Example: Corto plazo sector activo
-   * @bodyParam modality_loan Buscar por Modalidad del prestamo. Example: Préstamo a corto plazo
-   * @bodyParam amount_approved_loan Buscar monto aprobado del afiliado. Example: 25000
-   * @bodyParam state_type_affiliate Buscar por tipo de estado del afiliado. Example: Activo
-   * @bodyParam state_affiliate Buscar por estado del affiliado. Example: Servicio
-   * @bodyParam quota_loan Buscar por la quota del prestamo. Example: 1500
-   * @bodyParam state_loan Buscar por el estado del prestamo. Example: En proceso
-   * @bodyParam guarantor_loan_affiliate Buscar los garantes del préstamo. Example: false
-   * @bodyParam pension_entity_affiliate Buscar por la La pension entidad del afiliado. Example: SENASIR
+   * @queryParam id_loan Buscar ID del Préstamo. Example: 1
+   * @queryParam code_loan  Buscar código del Préstamo. Example: PTMO000012-2021
+   * @queryParam id_affiliate  Buscar por ID del affiliado. Example: 33121
+   * @queryParam identity_card_affiliate  Buscar por nro de CI del afiliado. Example: 10069775
+   * @queryParam registration_affiliate  Buscar por Matricula del afiliado. Example: 100697MDF
+   * @queryParam last_name_affiliate Buscar por primer apellido del afiliado. Example: RIVERA
+   * @queryParam mothers_last_name_affiliate Buscar por segundo apellido del afiliado. Example: ARTEAG
+   * @queryParam first_name_affiliate Buscar por primer Nombre del afiliado. Example: ABAD
+   * @queryParam second_name_affiliate Buscar por segundo Nombre del afiliado. Example: FAUST
+   * @queryParam surname_husband_affiliate Buscar por Apellido de casada Nombre del afiliado. Example: De LA CRUZ
+   * @queryParam sub_modality_loan Buscar por sub modalidad del préstamo. Example: Corto plazo sector activo
+   * @queryParam modality_loan Buscar por Modalidad del prestamo. Example: Préstamo a corto plazo
+   * @queryParam amount_approved_loan Buscar monto aprobado del afiliado. Example: 25000
+   * @queryParam state_type_affiliate Buscar por tipo de estado del afiliado. Example: Activo
+   * @queryParam state_affiliate Buscar por estado del affiliado. Example: Servicio
+   * @queryParam quota_loan Buscar por la quota del prestamo. Example: 1500
+   * @queryParam state_loan Buscar por el estado del prestamo. Example: En proceso
+   * @queryParam guarantor_loan_affiliate Buscar los garantes del préstamo. Example: false
+   * @queryParam pension_entity_affiliate Buscar por la La pension entidad del afiliado. Example: SENASIR
    * @authenticated
    * @responseFile responses/loan/list_loans_generate.200.json
    */
@@ -1931,7 +1934,7 @@ class LoanController extends Controller
      }
  
      if ($quota_loan != '') {
-       array_push($conditions, array('loan_affiliates.quota_previous', 'like', "%{$quota_loan}%"));
+       array_push($conditions, array('loan_affiliates.quota_treat', 'like', "%{$quota_loan}%"));
      }
      if ($state_loan != '') {
        array_push($conditions, array('loan_states.name', 'like', "%{$state_loan}%"));
@@ -1969,7 +1972,7 @@ class LoanController extends Controller
            'affiliates.registration as registration_affiliate','affiliates.last_name as last_name_affiliate','affiliates.mothers_last_name as mothers_last_name_affiliate',
            'affiliates.first_name as first_name_affiliate','affiliates.second_name as second_name_affiliate','affiliates.surname_husband as surname_husband_affiliate',
            'procedure_modalities.name as sub_modality_loan','procedure_types.name as modality_loan','loans.amount_approved as amount_approved_loan',
-           'affiliate_state_types.name as state_type_affiliate','affiliate_states.name as state_affiliate','loan_affiliates.quota_previous as quota_loan','loan_states.name as state_loan',
+           'affiliate_state_types.name as state_type_affiliate','affiliate_states.name as state_affiliate','loan_affiliates.quota_treat as quota_loan','loan_states.name as state_loan',
            'loan_affiliates.guarantor as guarantor_loan_affiliate','pension_entities.name as pension_entity_affiliate')
            //->where('affiliates.identity_card','LIKE'.'%'.$request->identity_card.'%')
            ->orderBy('loans.code', $order_loan)
