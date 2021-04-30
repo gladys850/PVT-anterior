@@ -1931,7 +1931,7 @@ class LoanController extends Controller
      }
  
      if ($quota_loan != '') {
-       array_push($conditions, array('loan_affiliates.quota_previous', 'like', "%{$quota_loan}%"));
+       array_push($conditions, array('loan_affiliates.quota_treat', 'like', "%{$quota_loan}%"));
      }
      if ($state_loan != '') {
        array_push($conditions, array('loan_states.name', 'like', "%{$state_loan}%"));
@@ -1969,7 +1969,7 @@ class LoanController extends Controller
            'affiliates.registration as registration_affiliate','affiliates.last_name as last_name_affiliate','affiliates.mothers_last_name as mothers_last_name_affiliate',
            'affiliates.first_name as first_name_affiliate','affiliates.second_name as second_name_affiliate','affiliates.surname_husband as surname_husband_affiliate',
            'procedure_modalities.name as sub_modality_loan','procedure_types.name as modality_loan','loans.amount_approved as amount_approved_loan',
-           'affiliate_state_types.name as state_type_affiliate','affiliate_states.name as state_affiliate','loan_affiliates.quota_previous as quota_loan','loan_states.name as state_loan',
+           'affiliate_state_types.name as state_type_affiliate','affiliate_states.name as state_affiliate','loan_affiliates.quota_treat as quota_loan','loan_states.name as state_loan',
            'loan_affiliates.guarantor as guarantor_loan_affiliate','pension_entities.name as pension_entity_affiliate')
            //->where('affiliates.identity_card','LIKE'.'%'.$request->identity_card.'%')
            ->orderBy('loans.code', $order_loan)
