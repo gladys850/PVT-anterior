@@ -17,6 +17,12 @@
     "permission": "show-loan",
     "params": {}
   }, {
+    "href": "listLoanGenerate",
+    "title": "Desembolsos",
+    "icon": "mdi-cash",
+    "permissions": "show-loan",
+    "params": {}
+  },{
     "title": "Cobros",
     "icon": "mdi-cash-register",
     "permission": "show-payment-loan",
