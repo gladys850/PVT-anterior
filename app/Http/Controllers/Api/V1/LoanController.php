@@ -565,7 +565,6 @@ class LoanController extends Controller
                     'guarantor' => false,
                     'contributionable_type' => $affiliate['contributionable_type'],
                     'contributionable_ids' => json_encode($affiliate['contributionable_ids']),
-                    'quota_treat' => $affiliate['quota_treat']
                 ];
                 if(array_key_exists('loan_contributions_adjust_ids', $affiliate)){
                     $idsajust=$affiliate['loan_contributions_adjust_ids'];
@@ -593,7 +592,6 @@ class LoanController extends Controller
                         'guarantor' => true,
                         'contributionable_type'=>$affiliate['contributionable_type'],
                         'contributionable_ids'=>json_encode($affiliate['contributionable_ids']),
-                        'quota_treat' => $affiliate['quota_treat']
                     ];
                     if(array_key_exists('loan_contributions_adjust_ids', $affiliate)){
                         $idsajust=$affiliate['loan_contributions_adjust_ids'];
