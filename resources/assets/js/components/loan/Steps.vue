@@ -397,30 +397,17 @@ export default {
       else {
         if(n==1)
         {
-          console.log('este es lenders')
-          console.log(this.lenders)
-            // console.log(this.contributionable_type)
-             //console.log(this.loan_contributions_adjust_ids)
-             //console.log(this.contributionable_ids)
- 
-          //this.liquidCalificated()
-          //this.getLoanDestiny()
         }
         if(n==2)
         {
-          //this.addDataLoan()
-          //this.validateStepsTwo()
-
           this.$refs.BallotsResult.simuladores()
         }
         if(n==3){
-          /*if(this.modalidad.procedure_type_name!='Préstamo Hipotecario'){
-            //this.saveLoanProperty()
-            //console.log('Es hipotecario')
-          }
-          else{
-            //console.log("No es hipotecario")
-          }*/
+          console.log('Estos son los lenders')
+          console.log(this.lenders)
+
+          console.log('Calculator')
+          console.log(this.calculator_result)
         }
         if(n==4)
         {
@@ -455,9 +442,7 @@ export default {
           });
         }
        console.log(this.data_loan_parent)
-      
     },
-
     async getProcedureType(){
       try {
         let resp = await axios.get(`module`,{
@@ -476,7 +461,7 @@ export default {
         if(this.isNew){
           let modalities_aux=[]
           for(let i = 0; i < this.modalities.length; i++ ){
-            if(this.modalities[i].name == "Préstamo Anticipo" || 
+            if(this.modalities[i].name == "Préstamo Anticipo" ||
               this.modalities[i].name == "Préstamo a Corto Plazo" ||
               this.modalities[i].name == "Préstamo a Largo Plazo" ||
               this.modalities[i].name == "Préstamo Hipotecario" ){
@@ -484,12 +469,11 @@ export default {
             }
           }
           this.modalities = modalities_aux
-          
         }
         else if(this.refinancing){
           let modalities_aux=[]
           for(let i = 0; i < this.modalities.length; i++ ){
-            if(this.modalities[i].name == "Refinanciamiento Préstamo a Corto Plazo" || 
+            if(this.modalities[i].name == "Refinanciamiento Préstamo a Corto Plazo" ||
               this.modalities[i].name == "Refinanciamiento Préstamo a Largo Plazo" ||
               this.modalities[i].name == "Refinanciamiento Préstamo Hipotecario"){
               modalities_aux.push(this.modalities[i])
@@ -501,7 +485,7 @@ export default {
           let modalities_aux=[]
           for(let i = 0; i < this.modalities.length; i++ ){
             if(this.modalities[i].name != "Préstamo Anticipo" &&
-              this.modalities[i].name != 'Préstamo a Corto Plazo' && 
+              this.modalities[i].name != 'Préstamo a Corto Plazo' &&
               this.modalities[i].name != 'Refinanciamiento Préstamo a Corto Plazo' ){
               modalities_aux.push(this.modalities[i])
             }
@@ -520,34 +504,32 @@ export default {
     },
     //Ajuste del Titular
     async saveAdjustment(){
-      try {      
+      try {
       this.loan_contributions_adjust_ids = []
       this.contributionable_ids = []
-      
+
       this.contributions.forEach(async (item, i) => {
         //Verificar si el afiliado es pasivo para introducir su contribución
-        if(this.affiliate_contribution.state_affiliate == 'Pasivo'){  
+        if(this.affiliate_contribution.state_affiliate == 'Pasivo'){
           let res = await axios.post(`aid_contribution/updateOrCreate`,{
             affiliate_id: this.$route.query.affiliate_id,
             month_year: this.contributions[i].period,
             rent: this.contributions[i].payable_liquid,
             dignity_rent: this.contributions[i].dignity_rent,
           })
-          let contribution_passive = res.data  
+          let contribution_passive = res.data
             this.contributions[i].contributionable_id = contribution_passive.id
             if (this.contributionable_ids.indexOf(this.contributions[i].contributionable_id) === -1) {
               this.contributionable_ids.push(this.contributions[i].contributionable_id)
             }
             this.contributionable_type = 'aid_contributions'
         }
-        
         else if(this.affiliate_contribution.state_affiliate == 'Activo') {
           if (this.contributionable_ids.indexOf(this.contributions[i].contributionable_id) === -1) {
             this.contributionable_ids.push(this.contributions[i].contributionable_id)
           }
           this.contributionable_type = 'contributions'
-        } 
-        
+        }
         else if(this.affiliate_contribution.state_affiliate == 'Comisión') {
           this.contributionable_type = 'loan_contribution_adjusts'
         }
@@ -573,9 +555,9 @@ export default {
 
         }else{
           console.log('No tiene ajuste')
-        }        
+        }
       })
-      } 
+      }
       catch (e){
         console.log(e)
       }
@@ -587,7 +569,7 @@ export default {
       let array_codebtors = []
       let contributions_lender =[]
       //Armar contribuciones del titular
-      for (let i = 0; i < this.contributions.length; i++) {        
+      for (let i = 0; i < this.contributions.length; i++) {
         contributions_lender.push({
           payable_liquid: parseFloat(this.contributions[i].payable_liquid)  + parseFloat(this.contributions[i].adjustment_amount),
           position_bonus: this.contributions[i].position_bonus,
@@ -595,7 +577,7 @@ export default {
           public_security_bonus: this.contributions[i].public_security_bonus,
           east_bonus:this.contributions[i].east_bonus,
           dignity_rent_bonus: this.contributions[i].dignity_rent
-        })      
+        })
       }
       array_lender[0] = {
         affiliate_id:this.$route.query.affiliate_id,
@@ -747,16 +729,10 @@ export default {
               this.loan_detail.is_valid=this.calculator_result.is_valid
               this.loan_detail.quota_calculated_total_lender=this.calculator_result.quota_calculated_estimated_total
           }
-        /* for (this.i = 0; this.i< this.datos_calculadora_hipotecario.length; this.i++) {
-let res5 = await axios.get(`affiliate/${this.datos_calculadora_hipotecario[this.i].affiliate_id}`)
-this.affiliates = res5.data
-this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_name
-}*/
       } catch (e) {
         console.log(e)
       } finally {
         this.loading = false
-        //console.log('entro por verdadero')
       }
     },
     async getLoan(id) {  
@@ -770,15 +746,12 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
          this.data_loan_parent_aux.parent_loan_id = res.data.parent_loan_id
          this.data_loan_parent_aux.parent_reason = res.data.parent_reason
 
-         //this.data_loan_parent_aux.parent_loan = res.data.parent_loan
-         //this.data_loan_parent_aux.data_loan = res.data.data_loan 
-
         if(this.refinancing || this.reprogramming){
           this.data_loan_parent_aux.code= res.data.code
           this.data_loan_parent_aux.amount_approved= res.data.amount_approved
           this.data_loan_parent_aux.loan_term= res.data.loan_term
           this.data_loan_parent_aux.balance= res.data.balance
-          this.data_loan_parent_aux.estimated_quota= res.data.estimated_quota         
+          this.data_loan_parent_aux.estimated_quota= res.data.estimated_quota
 
         } else if(this.remake && res.data.parent_loan != null && res.data.data_loan == null){
           this.data_loan_parent_aux.code = res.data.parent_loan.code
@@ -793,13 +766,8 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
           this.data_loan_parent_aux.loan_term = res.data.data_loan.loan_term
           this.data_loan_parent_aux.balance = res.data.data_loan.balance
           this.data_loan_parent_aux.estimated_quota = res.data.data_loan.estimated_quota
-        }else{
-         
-          console.log('No tiene data_loan')
         }
-        /*let res2 = await axios.get(`procedure_modality/${this.data_loan.procedure_modality_id}`)
-        this.modalidad_refi_repro_remake = res2.data.procedure_type_id*/
-        if(this.refinancing){
+         if(this.refinancing){
           let res3 = await axios.post(`procedure_brother`,{
             id_loan: id
           })
@@ -813,7 +781,6 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
           let res3 = await axios.get(`loan_property/${this.data_loan.property_id}`)
           this.loan_detail.net_realizable_value = res3.data.net_realizable_value
         }
-        //console.log(this.data_loan)
       } catch (e) {
         console.log(e)
       } finally {
@@ -927,15 +894,13 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
     validateStepsTwo()
     {
       if(!this.loan_detail.maximum_suggested_valid){
-      //this.beforeStep(2)
         this.toastr.error("El monto solicitado no pertenece a esta modalidad.")
-       // this.beforeStep(2)
       }else{
         if(!this.loan_detail.is_valid)
         {
           this.toastr.error("No puede quedarse con un liquido menor al monto de subsistencia.")
         }
-        else{ 
+        else{
            if(!(this.isNew || (this.remake && this.data_loan.parent_reason == null))){
             if(this.data_loan_parent_aux.code==null)
             {
@@ -961,7 +926,6 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
                           if(this.data_loan_parent_aux.balance == this.calculator_result.amount_requested)
                           {
                             this.addDataLoan()
-                            //this.liquidCalificated()
                             this.nextStep(2)
                           }else{
                             this.toastr.error("El Monto Solicitado debe ser igual al Saldo.")
@@ -978,7 +942,6 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
                             this.toastr.error("Tiene que llenar la Cuota del Prestamo Padre.")
                           }else{
                             this.addDataLoan()
-                            //this.liquidCalificated()
                             this.nextStep(2)
                           }
                         }
@@ -1012,24 +975,23 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
 
     validateStepsthree()
     {
-        if(this.modalidad.guarantors > 0)
+      if(this.modalidad.guarantors > 0)
+      {
+        if(this.modalidad.guarantors==this.guarantors.length)
         {
-          if(this.modalidad.guarantors==this.guarantors.length)
+          if(this.loan_detail.simulador==true)
           {
-            if(this.loan_detail.simulador==true)
-            {
-              this.nextStep(3)
-            }else{
-               this.toastr.error("Debe calcular la cuota del garante")
-            }
+            this.nextStep(3)
+          }else{
+              this.toastr.error("Debe calcular la cuota del garante")
           }
-          else{
-            this.toastr.error("Le falta añadir garantes.")
-          }
-        }else{
-          this.nextStep(3)
         }
-      //}
+        else{
+          this.toastr.error("Le falta añadir garantes.")
+        }
+      }else{
+        this.nextStep(3)
+      }
     },
          validateStepsFour()
     {
@@ -1042,7 +1004,6 @@ this.datos_calculadora_hipotecario[this.i].affiliate_name=this.affiliates.full_n
         }else{
           this.toastr.error("Por favor registre la ciudad de expedición del CI.")
         }
-      //}
     },
   }
 }
