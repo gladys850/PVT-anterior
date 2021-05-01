@@ -346,6 +346,7 @@ class LoanController extends Controller
     * Actualizar préstamo
     * Actualizar datos principales de préstamo
     * @urlParam loan required ID del préstamo. Example: 1
+    * @bodyParam date_signal boolean true si no se envia fecha  y false da señal de que se enviara fecha en el campo disbursement_dateExample: true
     * @bodyParam procedure_modality_id integer ID de modalidad. Example: 41
     * @bodyParam amount_requested integer monto solicitado. Example: 2000
     * @bodyParam city_id integer ID de la ciudad. Example: 6
@@ -441,6 +442,20 @@ class LoanController extends Controller
                 }
             }
         }
+        if($request->date_signal == true){
+            $loan['disbursement_date'] = Carbon::now();
+            $state_id = LoanState::whereName('Desembolsado')->first()->id;
+            $loan['state_id'] = $state_id;
+            $loan->save();
+            }
+        if($request->date_signal == false && $request->has('disbursement_date') && $request->disbursement_date != NULL){
+            if(Auth::user()->can('change-disbursement-date')) {
+            $loan['disbursement_date'] = $request->disbursement_date;
+            $state_id = LoanState::whereName('Desembolsado')->first()->id;
+            $loan['state_id'] = $state_id;
+            $loan->save();
+            }  else return $message['validate'] = "El usuario no tiene los permisos necesarios para realizar el registro" ;
+        } else return $message['validate'] = "El campo fecha de desembolso es requerido para realizar el registro";
         $saved = $this->save_loan($request, $loan);
         return $saved->loan;
     }
