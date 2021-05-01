@@ -413,9 +413,8 @@ class LoanController extends Controller
     * @responseFile responses/loan/update.200.json
     */
     public function update(LoanForm $request, Loan $loan)
-    {
-        if($request->has('disbursement_date') && $request->disbursement_date != NULL)
-        {
+    {    
+         if($request->date_signal == true || ($request->date_signal == false && $request->has('disbursement_date') && $request->disbursement_date != NULL)){
             $state_id = LoanState::whereName('Desembolsado')->first()->id;
             $request['state_id'] = $state_id;
         //si es refinanciamiento o reprogramacion colocar la etiqueta correspondiente al padre del préstamo   
@@ -447,17 +446,18 @@ class LoanController extends Controller
             $state_id = LoanState::whereName('Desembolsado')->first()->id;
             $loan['state_id'] = $state_id;
             $loan->save();
-            }
-        if($request->date_signal == false && $request->has('disbursement_date') && $request->disbursement_date != NULL){
+        }else{
+        if($request->has('disbursement_date') && $request->disbursement_date != NULL){
             if(Auth::user()->can('change-disbursement-date')) {
             $loan['disbursement_date'] = $request->disbursement_date;
             $state_id = LoanState::whereName('Desembolsado')->first()->id;
             $loan['state_id'] = $state_id;
             $loan->save();
             }  else return $message['validate'] = "El usuario no tiene los permisos necesarios para realizar el registro" ;
-        } else return $message['validate'] = "El campo fecha de desembolso es requerido para realizar el registro";
+        } else return $message['validate'] = "El campo fecha de desembolso es requerido para realizar el registro"; 
+        }   
         $saved = $this->save_loan($request, $loan);
-        return $saved->loan;
+        return $saved->loan;   
     }
 
     /**
