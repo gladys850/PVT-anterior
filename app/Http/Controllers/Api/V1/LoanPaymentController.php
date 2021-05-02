@@ -142,35 +142,47 @@ class LoanPaymentController extends Controller
     * @responseFile responses/loan_payment/indexKardex.200.json
      */
     public function indexKardex(Request $request){
-        $loan = Loan::find($request->loan_id);
-        $balance = $loan->amount_approved;
+        $loan = Loan::whereId($request->loan_id)->first();
+        $loan->balance = $loan->balance;
         $loan['estimated_quota'] = $loan->estimated_quota;
         $loan['interest'] = $loan->interest;
-
-        if(!$request->has('search')){
-            $loan_payments = LoanPayment::where('loan_id', $request->loan_id)->WhereIn('state_id', [6,7])->orWhere('loan_id', $request->loan_id)->where('procedure_modality_id', 61)->orderby('quota_number')->paginate(5);
-            foreach($loan_payments as $payment){
-                $balance = $balance - $payment->capital_payment;
-                $payment->loan = $loan;
-                $payment->state = LoanState::findOrFail($payment->state_id);
-
+        $payments = collect();
+            $loanPayments = LoanPayment::where('loan_id', $request->loan_id)->get();//return $loanPayments;
+            foreach($loanPayments as $loanPayment)
+            {
+                if($loanPayment->procedure_modality_id == 55 && $loanPayment->state_id == 6 || $loanPayment->procedure_modality_id == 56 && $loanPayment->state_id == 6 || $loanPayment->procedure_modality_id == 57 && $loanPayment->state_id == 6)//amortizacion directa
+                {
+                    //$loanPayment->loan = $loan/
+                    $loanPayment->state = LoanState::findOrFail($loanPayment->state_id)->first();
+                    $payments->push($loanPayment);
+                }
+                if($loanPayment->procedure_modality_id == 62 && $loanPayment->state_id == 5 || $loanPayment->procedure_modality_id == 62 && $loanPayment->state_id == 6 || $loanPayment->procedure_modality_id == 63 && $loanPayment->state_id == 5 || $loanPayment->procedure_modality_id == 63 && $loanPayment->state_id == 6)//amortizacion automatica
+                {
+                    //$loanPayment->loan = $loan;
+                    $loanPayment->state = LoanState::findOrFail($loanPayment->state_id)->first();
+                    $payments->push($loanPayment);
+                }
+                if($loanPayment->procedure_modality_id == 64 && $loanPayment->state_id == 6 || $loanPayment->procedure_modality_id == 64 && $loanPayment->state_id == 7)// amortizacion por ajuste
+                {
+                    //$loanPayment->loan = $loan;
+                    $loanPayment->state = LoanState::findOrFail($loanPayment->state_id)->first();
+                    $payments->push($loanPayment);
+                }
+                if($loanPayment->procedure_modality_id == 60 && $loanPayment->state_id == 6 || $loanPayment->procedure_modality_id == 60 && $loanPayment->state_id == 7 || $loanPayment->procedure_modality_id == 61 && $loanPayment->state_id == 6 || $loanPayment->procedure_modality_id == 61 && $loanPayment->state_id == 7)//amortizacion por fondo
+                {
+                    //$loanPayment->loan = $loan;
+                    $loanPayment->state = LoanState::findOrFail($loanPayment->state_id)->first();
+                    $payments->push($loanPayment);
+                }
+                if($loanPayment->procedure_modality_id == 58 && $loanPayment->state_id == 6 || $loanPayment->procedure_modality_id == 58 && $loanPayment->state_id == 6 || $loanPayment->procedure_modality_id == 59 && $loanPayment->state_id == 6 || $loanPayment->procedure_modality_id == 59 && $loanPayment->state_id == 7)//amortizacion por complemento
+                {
+                    //$loanPayment->loan = $loan;
+                    $loanPayment->state = LoanState::findOrFail($loanPayment->state_id);
+                    $payments->push($loanPayment);
+                }
             }
-            //$loan->balance->$balance;
-        }
-        else{
-            $loan_payments = LoanPayment::where('loan_id', $request->loan_id)->WhereIn('state_id', [6,7])->where('code', 'ilike','%'.$request->search.'%')->orWhere('loan_id', $request->loan_id)->where('procedure_modality_id', 61)->where('code', 'ilike','%'.$request->search.'%')->orderby('quota_number')->paginate(7);
-            foreach($loan_payments as $payment){
-                $payment->balance = 0;
-                $payment->loan = $loan;
-                $payment->state = LoanState::findOrFail($payment->state_id);
-               
-              
-            }
-        }
-        /*$loan->estimated_quota = $loan->estimated_quota;
-        $loan->interest = $loan->interest;
-        $loan->payments = $loan_payments;*/
-        return $loan_payments;
+        $loan->payments = $payments;
+        return $loan;
     }
 
     /**
