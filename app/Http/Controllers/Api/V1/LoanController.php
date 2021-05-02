@@ -417,6 +417,15 @@ class LoanController extends Controller
         {
             $state_id = LoanState::whereName('Desembolsado')->first()->id;
             $request['state_id'] = $state_id;
+            $hour = Carbon::now()->hour;
+            $minute = Carbon::now()->minute;
+            $second = Carbon::now()->second;
+            $date = Carbon::parse($request['disbursement_date']);
+            $date->addHours($hour);
+            $date->addMinutes($minute);
+            $date->addSeconds($second);
+            $date = Carbon::parse($date);
+            $request['disbursement_date'] = $date;
         //si es refinanciamiento o reprogramacion colocar la etiqueta correspondiente al padre del préstamo   
             if($loan->parent_loan_id != null){
                 $user = User::whereUsername('admin')->first();
@@ -1114,7 +1123,7 @@ class LoanController extends Controller
     * @bodyParam estimated_quota float Monto para el cálculo. Example: 650
     * @bodyParam adjust refinanciamiento con antecedente(1) o sin antecedente(0). Example: 1
     * @authenticated
-    * @responseFile responses/loan/get_next_payment.200.json
+    * @responseFile responses/loan/get_next_payment.200.json}
     */
     public function get_next_payment(LoanPaymentForm $request, Loan $loan)
     {
