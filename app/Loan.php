@@ -345,8 +345,13 @@ class Loan extends Model
             //calculo en caso de primera cuota
 
             $date_ini = CarbonImmutable::parse($this->disbursement_date);
+            if($date_ini->day < LoanGlobalParameter::latest()->first()->offset_interest_day)
+                $date_pay = $date_ini->endOfMonth()->format('Y-m-d');
+            else
+                $date_pay = $date_ini->addMonth()->endOfMonth()->format('Y-m-d');
             $date_compare = CarbonImmutable::parse($date_ini->addMonth()->endOfMonth())->format('Y-m-d');
-            if($date_compare >= $quota->estimated_date && $date_ini->format('d') > LoanGlobalParameter::latest()->first()->offset_interest_day && ProcedureModality::where('id', $procedure_modality_id)->where('name', ' not like', '%Introducir%')->first()){
+            if(!$this->last_payment_validated && $estimated_date = $date_pay){
+            //if($date_compare >= $quota->estimated_date && $date_ini->format('d') > LoanGlobalParameter::latest()->first()->offset_interest_day && ProcedureModality::where('id', $procedure_modality_id)->where('name', ' not like', '%Introducir%')->first()){
                 $date_fin = CarbonImmutable::parse($date_ini->endOfMonth());
                 $rest_days_of_month = $date_fin->diffInDays($date_ini);
                 $partial_amount = ($quota->balance * $interest->daily_current_interest * $rest_days_of_month);
