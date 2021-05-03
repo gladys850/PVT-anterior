@@ -143,6 +143,15 @@ class Loan extends Model
     {
         return $this->belongsToMany(ProcedureDocument::class, 'loan_submitted_documents', 'loan_id')->withPivot('reception_date', 'comment', 'is_valid');
     }
+    public function documents_modality()
+    {     
+        $ids= $this->submitted_documents->pluck('id');
+        $documents=[];
+        foreach($ids as $id){
+            array_push($documents,ProcedureDocument::where('procedure_documents.id',$id)->leftJoin('procedure_requirements as req','req.procedure_document_id','=','procedure_documents.id')->select('procedure_documents.name','req.number')->first());
+        }  
+          return $documents;
+    }
 
     public function getSubmittedDocumentsListAttribute()
     {
