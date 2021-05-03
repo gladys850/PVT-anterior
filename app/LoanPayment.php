@@ -250,7 +250,7 @@ class LoanPayment extends Model
         $payment_date = CarbonImmutable::parse($payment_date);
         if ($estimated_date->lessThan($payment_date)) {
             return (object)$interest;}
-        $diff_days = $estimated_date->diffInDays($payment_date);//correcto
+        $diff_days = $estimated_date->diffInDays($payment_date)+1;//correcto
         $interest['current'] = $diff_days;
         $interest['current_generated'] = Util::round(self::interest_by_days($diff_days,$loan->interest->annual_interest, $loan->balance));
         if ($interest['current'] > 31) {

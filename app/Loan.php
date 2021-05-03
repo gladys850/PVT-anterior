@@ -268,8 +268,10 @@ class Loan extends Model
     public function getBalanceAttribute()
     {
         $balance = $this->amount_approved;
+        $loan_states = LoanState::where('name', 'Pagado')->orWhere('name', 'Pendiente por confirmar')->get();
         if ($this->payments()->count() > 0) {
-            $balance -= $this->payments()->whereIn('state_id', [6,7])->sum('capital_payment');
+            $balance -= $this->payments()->where('state_id', $loan_states->first()->id)->sum('capital_payment');
+            $balance -= $this->payments()->where('state_id', $loan_states->last()->id)->sum('capital_payment');
         }
         return Util::round($balance);
     }
@@ -281,7 +283,8 @@ class Loan extends Model
 
     public function getLastPaymentValidatedAttribute()
     {
-        return $this->payments()->where('state_id', 6)->orWhere('state_id',7)->latest()->first();
+        $loan_states = LoanState::where('name', 'Pagado')->orWhere('name', 'Pendiente por confirmar')->get();
+        return $this->payments()->where('state_id', $loan_states->first()->id)->orWhere('state_id',$loan_states->last()->id)->latest()->first();
     }
 
     public function getObservedAttribute()
@@ -337,7 +340,7 @@ class Loan extends Model
             } else {
                 $quota->estimated_date = Carbon::parse($estimated_date)->toDateString();
             }
-            $quota->previous_balance = $this->balance;
+            $quota->previous_balance = Util::round($this->balance);
             $quota->previous_payment_date = $next_payment->previous_payment_date;
             $quota->quota_number = $this->balance > 0 ? $next_payment->quota : null;
             $interest = $this->interest;
@@ -354,8 +357,13 @@ class Loan extends Model
             //calculo en caso de primera cuota
 
             $date_ini = CarbonImmutable::parse($this->disbursement_date);
+            if($date_ini->day < LoanGlobalParameter::latest()->first()->offset_interest_day)
+                $date_pay = $date_ini->endOfMonth()->format('Y-m-d');
+            else
+                $date_pay = $date_ini->addMonth()->endOfMonth()->format('Y-m-d');
             $date_compare = CarbonImmutable::parse($date_ini->addMonth()->endOfMonth())->format('Y-m-d');
-            if($date_compare >= $quota->estimated_date && $date_ini->format('d') > LoanGlobalParameter::latest()->first()->offset_interest_day && ProcedureModality::where('id', $procedure_modality_id)->where('name', ' not like', '%Introducir%')->first()){
+            if(!$this->last_payment_validated && $estimated_date = $date_pay){
+            //if($date_compare >= $quota->estimated_date && $date_ini->format('d') > LoanGlobalParameter::latest()->first()->offset_interest_day && ProcedureModality::where('id', $procedure_modality_id)->where('name', ' not like', '%Introducir%')->first()){
                 $date_fin = CarbonImmutable::parse($date_ini->endOfMonth());
                 $rest_days_of_month = $date_fin->diffInDays($date_ini);
                 $partial_amount = ($quota->balance * $interest->daily_current_interest * $rest_days_of_month);
