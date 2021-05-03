@@ -259,8 +259,10 @@ class Loan extends Model
     public function getBalanceAttribute()
     {
         $balance = $this->amount_approved;
+        $loan_states = LoanState::where('name', 'Pagado')->orWhere('name', 'Pendiente por confirmar')->get();
         if ($this->payments()->count() > 0) {
-            $balance -= $this->payments()->whereIn('state_id', [6,7])->sum('capital_payment');
+            $balance -= $this->payments()->where('state_id', $loan_states->first()->id)->sum('capital_payment');
+            $balance -= $this->payments()->where('state_id', $loan_states->last()->id)->sum('capital_payment');
         }
         return Util::round($balance);
     }
@@ -272,7 +274,8 @@ class Loan extends Model
 
     public function getLastPaymentValidatedAttribute()
     {
-        return $this->payments()->where('state_id', 6)->orWhere('state_id',7)->latest()->first();
+        $loan_states = LoanState::where('name', 'Pagado')->orWhere('name', 'Pendiente por confirmar')->get();
+        return $this->payments()->where('state_id', $loan_states->first()->id)->orWhere('state_id',$loan_states->last()->id)->latest()->first();
     }
 
     public function getObservedAttribute()
@@ -328,7 +331,7 @@ class Loan extends Model
             } else {
                 $quota->estimated_date = Carbon::parse($estimated_date)->toDateString();
             }
-            $quota->previous_balance = $this->balance;
+            $quota->previous_balance = Util::round($this->balance);
             $quota->previous_payment_date = $next_payment->previous_payment_date;
             $quota->quota_number = $this->balance > 0 ? $next_payment->quota : null;
             $interest = $this->interest;
