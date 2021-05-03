@@ -426,7 +426,7 @@
                                           <span>Cancelar</span>
                                         </div>
                                       </v-tooltip>
-                                      <v-tooltip top  v-if="permissionSimpleSelecteds.includes('update-loan')">
+                                      <v-tooltip top  v-if="permissionSimpleSelected.includes('update-warranty-hipotecary')">
                                         <template v-slot:activator="{ on }">
                                           <v-btn
                                             fab
@@ -531,6 +531,24 @@
                                       </v-col>
                                       <v-col cols="12" md="4">
                                         <p><b>VNR: </b>{{ loan_properties.net_realizable_value}} </p>
+                                      </v-col>
+                                       <v-col cols="12" md="6">
+                                        <v-text-field
+                                          :outlined="editable1 && permissionSimpleSelected.includes('update-values-commercial-rescue')"
+                                          :readonly="!editable1  && !permissionSimpleSelected.includes('update-values-commercial-rescue')"
+                                          :label="'VALOR COMERCIAL'"
+                                          dense
+                                          v-model="loan_properties.commercial_value"
+                                        ></v-text-field>
+                                      </v-col>
+                                       <v-col cols="12" md="6">
+                                        <v-text-field
+                                          :outlined="editable1 && permissionSimpleSelected.includes('update-values-commercial-rescue')"
+                                          :readonly="!editable1 && !permissionSimpleSelected.includes('update-values-commercial-rescue')"
+                                          :label="'RESCATE HIPOTECARIO'"
+                                          dense
+                                          v-model="loan_properties.rescue_value"
+                                        ></v-text-field>
                                       </v-col>
                                     </v-row>
                                   </v-col>
@@ -638,7 +656,7 @@
                                       </v-card>
                                     </v-dialog>
                                 </template>
-                                <template v-slot:[`item.actions`]="{ item }" v-if="permissionSimpleSelected.includes('update-loan')">
+                                <template v-slot:[`item.actions`]="{ item }" v-if="permissionSimpleSelected.includes('update-reference-cosigner')">
                                   <v-icon
                                     small
                                     class="mr-2"
@@ -786,7 +804,7 @@
                                       </v-card>
                                     </v-dialog>
                                 </template>
-                                <template v-slot:[`item.actions`]="{ item }" v-if="permissionSimpleSelected.includes('update-loan')">
+                                <template v-slot:[`item.actions`]="{ item }" v-if="permissionSimpleSelected.includes('update-reference-cosigner')">
                                   <v-icon
                                     small
                                     class="mr-2"
@@ -863,7 +881,7 @@
                                         <p><b>NUMERO DE CUENTA:</b>{{' '+loan.lenders[0].account_number}}</p>
                                       </v-col>
                                       <v-col cols="12" md="4">
-                                        <p><b>CUENTA SIGEP:</b> {{' '+loan.lenders[0].sigep_status}}</p>{{loan.disbursement_date}}
+                                        <p><b>CUENTA SIGEP:</b> {{' '+loan.lenders[0].sigep_status}}</p>
                                       </v-col>
                                       <v-col cols="12" md="4">
                                         <v-text-field
@@ -872,8 +890,7 @@
                                           label="FECHA DE DESEMBOLSO"
                                           hint="Día/Mes/Año"
                                           type="date"
-                                          :value="loan.disbursement_date"
-                                          :outlined="permissionSimpleSelected.includes('disbursement-loan') ? editable : false"
+                                         :outlined="permissionSimpleSelected.includes('disbursement-loan') ? editable : false"
                                           :readonly="permissionSimpleSelected.includes('disbursement-loan') ? !editable : true"
                                         ></v-text-field>
                                       </v-col>
@@ -1361,6 +1378,8 @@ export default {
             cadastral_code:this.loan_properties.cadastral_code,
             registration_number:this.loan_properties.registration_number,
             real_folio_number:this.loan_properties.real_folio_number,
+            commercial_value :this.loan_properties.commercial_value,
+            rescue_value :this.loan_properties.rescue_value
           })
             this.toastr.success('Se registró correctamente.')
             this.editable1 = false
