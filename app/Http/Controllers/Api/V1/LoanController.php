@@ -450,6 +450,7 @@ class LoanController extends Controller
                 }
             }
         }
+      if(Auth::user()->can('disbursement-loan')) {
         if($request->date_signal == true){
             $loan['disbursement_date'] = Carbon::now();
             $state_id = LoanState::whereName('Desembolsado')->first()->id;
@@ -465,6 +466,7 @@ class LoanController extends Controller
             }  else return $message['validate'] = "El usuario no tiene los permisos necesarios para realizar el registro" ;
         } else return $message['validate'] = "El campo fecha de desembolso es requerido para realizar el registro"; 
         }   
+       } 
         $saved = $this->save_loan($request, $loan);
         return $saved->loan;   
     }
