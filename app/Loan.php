@@ -896,6 +896,9 @@ class Loan extends Model
            }
        }
        return  $date_cut_refinancing;
-
     }
+
+    //Verifica si los pagos realizados fueron regulares y sin mora
+    public function regular_payment()
+    {}
 }
