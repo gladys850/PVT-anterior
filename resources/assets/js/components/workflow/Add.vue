@@ -273,7 +273,7 @@
         <v-tab-item :value="'tab-6'">
           <v-card flat tile>
             <v-card-text class="pa-0 pl-3 pr-10 py-0">
-              <Kardex 
+              <Kardex
               :loan.sync="loan"
               :bus="bus"
               :affiliate.sync="affiliate" />
@@ -449,7 +449,7 @@ export default {
         this.loan = res.data
         this.loan.amount_approved_before= res.data.amount_approved
         this.loan.loan_term_before= res.data.loan_term
-
+        this.loan.disbursement_date=this.$moment(res.data.disbursement_date).format('YYYY-MM-DD')
         if(this.loan.parent_reason=='REFINANCIAMIENTO')
         {
           this.loan_refinancing.refinancing = true
@@ -570,6 +570,12 @@ export default {
     },
     async imprimir(item) {
       try {
+        let res1 = await axios.patch(`loan/${this.loan.id}`, {
+          disbursement_date:new Date().toISOString().substr(0, 10),
+          date_signal:true
+        })
+
+
         let res = await axios.get(`loan/${item}/print/plan`)
         console.log("plan " + item)
         printJS({
