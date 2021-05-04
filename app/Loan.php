@@ -146,11 +146,11 @@ class Loan extends Model
     public function documents_modality()
     {     
         $ids= $this->submitted_documents->pluck('id');
-        $documents=[];
+        $documents=collect();
         foreach($ids as $id){
-            array_push($documents,ProcedureDocument::where('procedure_documents.id',$id)->leftJoin('procedure_requirements as req','req.procedure_document_id','=','procedure_documents.id')->select('procedure_documents.name','req.number')->first());
+           $documents->push(ProcedureDocument::where('procedure_documents.id',$id)->leftJoin('procedure_requirements as req','req.procedure_document_id','=','procedure_documents.id')->select('procedure_documents.name','req.number')->first());
         }  
-          return $documents;
+         return (object)$documents->sortBy('number');
     }
 
     public function getSubmittedDocumentsListAttribute()
