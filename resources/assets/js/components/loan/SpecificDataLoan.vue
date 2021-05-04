@@ -825,7 +825,7 @@
                                 <v-card-text>
                                   <v-col cols="12" class="mb-0">
                                     <p style="color:teal"> <b>DATOS DE DESEMBOLSO</b></p>
-                                     <div v-if="permissionSimpleSelected.includes('disbursement-loan') || permissionSimpleSelected.includes('update-accounting-voucher')">
+                                     <div v-if="permissionSimpleSelected.includes('change-disbursement-date') || permissionSimpleSelected.includes('update-accounting-voucher')">
                                         <v-tooltip top>
                                           <template v-slot:activator="{ on }">
                                             <v-btn
@@ -875,26 +875,19 @@
                                     <v-row>
                                       <v-progress-linear></v-progress-linear><br>
                                       <v-col cols="12" md="4">
+                                        <p><b>TIPO DE DESEMBOLSO:</b> {{loan.payment_type.name}}</p>
+                                      </v-col>
+                                      <v-col cols="12" md="3" v-show="loan.payment_type.name=='Depósito Bancario'">
                                         <p><b>ENTIDAD FINANCIERA:</b>{{' '+cuenta}}</p>
                                       </v-col>
-                                      <v-col cols="12" md="4">
+                                      <v-col cols="12" md="3" v-show="loan.payment_type.name=='Depósito Bancario'">
                                         <p><b>NUMERO DE CUENTA:</b>{{' '+loan.lenders[0].account_number}}</p>
                                       </v-col>
-                                      <v-col cols="12" md="4">
+                                      <v-col cols="12" md="3" v-show="loan.payment_type.name=='Depósito Bancario'">
                                         <p><b>CUENTA SIGEP:</b> {{' '+loan.lenders[0].sigep_status}}</p>
                                       </v-col>
-                                      <v-col cols="12" md="4">
-                                        <v-text-field
-                                          dense
-                                          v-model="loan.disbursement_date"
-                                          label="FECHA DE DESEMBOLSO"
-                                          hint="Día/Mes/Año"
-                                          type="date"
-                                         :outlined="permissionSimpleSelected.includes('disbursement-loan') ? editable : false"
-                                          :readonly="permissionSimpleSelected.includes('disbursement-loan') ? !editable : true"
-                                        ></v-text-field>
-                                      </v-col>
-                                      <v-col cols="12" md="4">
+                                    
+                                      <!--v-col cols="12" md="4">
                                         <v-select
                                           dense
                                           :outlined="permissionSimpleSelected.includes('disbursement-loan') ? editable : false"
@@ -906,8 +899,8 @@
                                           @change="desembolso()"
                                           v-model="loan.payment_type_id"
                                         ></v-select>
-                                      </v-col>
-                                      <v-col cols="12" md="4">
+                                      </!--v-col-->
+                                      <!--v-col cols="12" md="4">
                                         <div v-if="loan.payment_type_id=='1'"  class="py-0">
                                           <v-text-field
                                             dense
@@ -926,7 +919,7 @@
                                             v-model="loan.number_payment_type"
                                           ></v-text-field>
                                         </div>
-                                      </v-col>
+                                      </-v-col-->
                                       <!--<v-col cols="12" md="4">
                                         <div class="py-0">
                                           <v-text-field
@@ -948,6 +941,17 @@
                                              v-model="loan.num_accounting_voucher"
                                           ></v-text-field>
                                         </div>
+                                      </v-col>
+                                         <v-col cols="12" md="4">
+                                        <v-text-field
+                                          dense
+                                          v-model=" loan.disbursement_date"
+                                          label="FECHA DE DESEMBOLSO"
+                                          hint="Día/Mes/Año"
+                                          type="date"
+                                         :outlined="permissionSimpleSelected.includes('change-disbursement-date') ? editable : false"
+                                          :readonly="permissionSimpleSelected.includes('change-disbursement-date') ? !editable : true"
+                                        ></v-text-field>
                                       </v-col>
                                     </v-row>
                                   </v-col>
@@ -1286,9 +1290,10 @@ export default {
           console.log('entro al grabar por falso :)')
           //Edit desembolso
             let res = await axios.patch(`loan/${this.loan.id}`, {
+           // payment_type_id: this.loan.payment_type_id,
+           // number_payment_type: this.loan.number_payment_type,
             disbursement_date:this.loan.disbursement_date,
-            payment_type_id: this.loan.payment_type_id,
-            number_payment_type: this.loan.number_payment_type,
+            date_signal:false,
             num_budget_certification: this.loan.num_budget_certification,
             num_accounting_voucher: this.loan.num_accounting_voucher
           })
