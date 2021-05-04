@@ -80,6 +80,7 @@ class LoanController extends Controller
             $loan->balance_parent_loan_refinancing = null;
             $loan->date_cut_refinancing=null;
         }
+        $loan->payment_type;
         //$loan->procedure=$loan->modality;
         //$loan->loan_contribution = $loan->loan_contribution_adjusts;
         return $loan;
