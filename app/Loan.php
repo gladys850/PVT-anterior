@@ -357,13 +357,16 @@ class Loan extends Model
             //calculo en caso de primera cuota
 
             $date_ini = CarbonImmutable::parse($this->disbursement_date);
-            if($date_ini->day < LoanGlobalParameter::latest()->first()->offset_interest_day)
+            if($date_ini->day >= LoanGlobalParameter::latest()->first()->offset_interest_day)
                 $date_pay = $date_ini->endOfMonth()->format('Y-m-d');
             else
                 $date_pay = $date_ini->addMonth()->endOfMonth()->format('Y-m-d');
             $date_compare = CarbonImmutable::parse($date_ini->addMonth()->endOfMonth())->format('Y-m-d');
             if(!$this->last_payment_validated && $estimated_date = $date_pay){
-            //if($date_compare >= $quota->estimated_date && $date_ini->format('d') > LoanGlobalParameter::latest()->first()->offset_interest_day && ProcedureModality::where('id', $procedure_modality_id)->where('name', ' not like', '%Introducir%')->first()){
+                $quota->paid_days->current +=1;
+                $quota->estimated_days->current +=1;
+                $quota->paid_days->current_generated = Util::round(LoanPayment::interest_by_days($quota->paid_days->current, $this->interest->annual_interest, $this->balance));
+                $quota->estimated_days->current_generated = Util::round(LoanPayment::interest_by_days($quota->paid_days->current, $this->interest->annual_interest, $this->balance));
                 $date_fin = CarbonImmutable::parse($date_ini->endOfMonth());
                 $rest_days_of_month = $date_fin->diffInDays($date_ini);
                 $partial_amount = ($quota->balance * $interest->daily_current_interest * $rest_days_of_month);
@@ -412,7 +415,6 @@ class Loan extends Model
 
         if($quota->estimated_days->penal >= $grace_period){
             $quota->penal_payment = Util::round($quota->balance * $interest->daily_penal_interest * $quota->paid_days->penal);
-
             if($quota->penal_payment >= 0){
                 if($amount >= $quota->penal_payment){
                     $amount = $amount - $quota->penal_payment;
@@ -450,13 +452,24 @@ class Loan extends Model
             $quota->capital_payment = $quota->balance;
         }
         else{
-            if($amount >= $this->balance){
+            if($this->regular_payment() && $this->payments->count()+1 == $this->loan_term){
                 $quota->capital_payment = Util::round($this->balance);
             }
-            else
-                $quota->capital_payment = Util::round($amount);
+            else{
+                if($amount >= $this->balance){
+                    $quota->capital_payment = Util::round($this->balance);
+                }
+                else
+                    $quota->capital_payment = Util::round($amount);
+            }
         }
-             
+                //calculo de la ultima cuota, solo si fue regular en los pagos
+
+        /*if($this->regular_payment() && $this->payments->count()+1 == $this->loan_term){
+            $amount = $this->balance + $quota->estimated_days;
+            $quota->est += $quota->next_balance;
+            $quota->next_balance = 0;
+        }*/
         // Calcular monto total de la cuota
 
         if ($quota->balance == $quota->capital_payment) {
@@ -482,10 +495,10 @@ class Loan extends Model
 
         //validacion pago excesivo
         
-        if($total_amount == 0)
+        /*if($total_amount == 0)
             $quota->excesive_payment = 0;
         else
-            $quota->excesive_payment = Util::round($total_amount - $quota->estimated_quota);
+            $quota->excesive_payment = Util::round($total_amount - $quota->estimated_quota);*/
 
         //$total_amount = $quota->penal_accumulated + $quota->interest_accumulated + $loan->balance + $quota->interest_remaining + $quota->penal_remaining;
 
@@ -900,5 +913,21 @@ class Loan extends Model
 
     //Verifica si los pagos realizados fueron regulares y sin mora
     public function regular_payment()
-    {}
+    {
+        $loan_payments = $this->payments;
+        $quota_number = 1;
+        $sw = false;
+        foreach($loan_payments as $payments){
+            if($quota_number == 1 && $payments->estimated_quota >= $this->estimated_quota)
+                $sw = true;
+            else{
+                if($payments->estimated_quota == $this->estimated_quota)
+                    $sw = true;
+                else
+                    break;
+            }
+            $quota_number++;
+        }
+        return $sw;
+    }
 }
