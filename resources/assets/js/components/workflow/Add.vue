@@ -570,20 +570,32 @@ export default {
     },
     async imprimir(item) {
       try {
-        let res1 = await axios.patch(`loan/${this.loan.id}`, {
-          disbursement_date:new Date().toISOString().substr(0, 10),
-          date_signal:true
-        })
+        if(this.loan.disbursement_date!='Fecha invalida')
+        {
+          let res = await axios.get(`loan/${item}/print/plan`)
+            printJS({
+              printable: res.data.content,
+              type: res.data.type,
+              file_name: res.data.file_name,
+              base64: true
+            })
+        }
+        else{
 
+          let res1 = await axios.patch(`loan/${this.loan.id}`, {
+            disbursement_date:new Date().toISOString().substr(0, 10),
+            date_signal:true
+          })
+          this.loan.disbursement_date= this.$moment(res1.data.disbursement_date).format('YYYY-MM-DD')
+           let res = await axios.get(`loan/${item}/print/plan`)
+          printJS({
+            printable: res.data.content,
+            type: res.data.type,
+            file_name: res.data.file_name,
+            base64: true
+          })
 
-        let res = await axios.get(`loan/${item}/print/plan`)
-        console.log("plan " + item)
-        printJS({
-          printable: res.data.content,
-          type: res.data.type,
-          file_name: res.data.file_name,
-          base64: true
-        })
+        }
       } catch (e) {
         this.toastr.error("Ocurrió un error en la impresión.")
         console.log(e)
