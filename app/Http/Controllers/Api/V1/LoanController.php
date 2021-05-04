@@ -81,6 +81,7 @@ class LoanController extends Controller
             $loan->date_cut_refinancing=null;
         }
         $loan->payment_type;
+        $loan->state;
         //$loan->procedure=$loan->modality;
         //$loan->loan_contribution = $loan->loan_contribution_adjusts;
         return $loan;
@@ -2001,10 +2002,14 @@ class LoanController extends Controller
               ->orderBy('loans.code', $order_loan)
               ->get();
 
+              foreach ($list_loan as $loan) {
+                $padron = Loan::where('id', $loan->id_loan)->first();
+                $loan->balance_loan=$padron->balance;
+              }
               $File="ListadoPrestamos";
               $data=array(
                   array("Id del préstamo", "Codigo", "ID afiliado", "Nro de carnet", "Matrícula", "Primer apellido","Segundo apellido","Primer nombre","Segundo nombre","Apellido casada","Sub modalidad",
-                  "Modalidad","Monto del prestamo", "estado del affiliado","Tipo de estado del affiliado","Cuota del prestamo","Estado del préstamo","Es garante?","Entidad de pensión del afiliado" )
+                  "Modalidad","Monto del prestamo", "estado del affiliado","Tipo de estado del affiliado","Cuota del prestamo","Estado del préstamo","Es garante?","Entidad de pensión del afiliado",'Saldo préstamo' )
               );
               foreach ($list_loan as $row){
                   array_push($data, array(
@@ -2026,7 +2031,8 @@ class LoanController extends Controller
                       $row->quota_loan,
                       $row->state_loan,
                       $row->guarantor_loan_affiliate,
-                      $row->pension_entity_affiliate
+                      $row->pension_entity_affiliate,
+                      $row->balance_loan
                   ));
               }
               $export = new ArchivoPrimarioExport($data);
@@ -2052,6 +2058,12 @@ class LoanController extends Controller
               'loan_affiliates.guarantor as guarantor_loan_affiliate','pension_entities.name as pension_entity_affiliate')
               ->orderBy('loans.code', $order_loan)
               ->paginate($pagination_rows);
+
+              $list_loan->getCollection()->transform(function ($list_loan) {
+                $padron = Loan::find($list_loan->id_loan);
+                $list_loan->balance_loan=$padron->balance;
+                return $list_loan;
+              });
           return $list_loan;
      }
   }
