@@ -173,7 +173,7 @@ class Loan extends Model
 
     public function loan_affiliates()
     {
-        return $this->belongsToMany(Affiliate::class, 'loan_affiliates');
+        return $this->belongsToMany(Affiliate::class, 'loan_affiliates')->withPivot('contributionable_ids','contributionable_type');
     }
 
     public function loan_affiliates_ballot()
@@ -944,4 +944,50 @@ class Loan extends Model
         }
         return $balance;
     }
+    //muestra boletas de afiliado
+    public function ballot_affiliate($affiliate_id){
+        foreach($this->loan_affiliates as $affiliate){  
+            if( $affiliate->id == $affiliate_id){
+            $contributions = $affiliate->pivot->contributionable_ids;
+            $contributions_type = $affiliate->pivot->contributionable_type;
+            $ballots=json_decode($contributions);
+            $ballot = collect();
+            $adjusts = collect();
+                if($contributions_type == "contributions"){ 
+                    foreach($ballots as $is_ballot_id){
+                        if(Contribution::find($is_ballot_id))
+                        $ballot->push(Contribution::find($is_ballot_id));
+                        if(LoanContributionAdjust::where('adjustable_id', $is_ballot_id)->first()){
+                        $adjusts->push(LoanContributionAdjust::where('adjustable_id', $is_ballot_id)->first());
+                        }  
+                    }                  
+                }
+                if($contributions_type == "aid_contributions"){
+                    foreach($ballots as $is_ballot_id){
+                        if(AidContribution::find($is_ballot_id))
+                        $ballot->push(AidContribution::find($is_ballot_id));
+                        if(LoanContributionAdjust::where('adjustable_id', $is_ballot_id)->first())
+                        $adjusts->push(LoanContributionAdjust::where('adjustable_id', $is_ballot_id)->first());
+                    }
+                }
+                if($contributions_type == "loan_contribution_adjusts"){
+                    $liquid_ids= LoanContributionAdjust::where('loan_id',$this->id)->where('type_adjust',"liquid")->get()->pluck('id');
+                    $adjust_ids= LoanContributionAdjust::where('loan_id',$this->id)->where('type_adjust',"adjust")->get()->pluck('id');
+                    foreach($liquid_ids as $liquid_id){  
+                        $ballot->push(LoanContributionAdjust::find($liquid_id));
+                    }
+                foreach($adjust_ids as $adjust_id){  
+                        $adjusts->push( LoanContributionAdjust::find($adjust_id));
+                    }      
+                }
+
+            }      
+        }
+        $data = [
+            'ballot' => $ballot,   
+            'adjusts' => $adjusts 
+        ];
+          return (object)$data; 
+    }
+
 }
