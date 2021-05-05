@@ -147,10 +147,7 @@ class LoanPaymentController extends Controller
         $loan['estimated_quota'] = $loan->estimated_quota;
         $loan['interest'] = $loan->interest;
         $payments = collect();
-            $loanPayments = LoanPayment::where('loan_id', $request->loan_id)->get();//return $loanPayments;
-            $pendiente = LoanState::whereName('Pendiente de Pago')->first()->id;
-            $pagado = LoanState::whereName('Pagado')->first()->id;
-            $ajuste = LoanState::whereName('Pendiente por confirmar')->first()->id;
+            $loanPayments = LoanPayment::where('loan_id', $request->loan_id)->get();
             foreach($loanPayments as $loanPayment)
             {
                 if($loanPayment->modality->name == 'A.D. Cuota pactada' && $loanPayment->state->name == 'Pagado' || $loanPayment->modality->name == 'A.D. Liquidar préstamo' && $loanPayment->state->name == 'Pagado' || $loanPayment->modality->name == 'A.D. Introducir monto' && $loanPayment->state->name == 'Pagado')//amortizacion directa
