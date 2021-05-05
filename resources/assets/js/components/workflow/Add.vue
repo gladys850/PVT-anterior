@@ -583,7 +583,6 @@ export default {
         else{
 
           let res1 = await axios.patch(`loan/${this.loan.id}`, {
-            disbursement_date:new Date().toISOString().substr(0, 10),
             date_signal:true
           })
           this.loan.disbursement_date= this.$moment(res1.data.disbursement_date).format('YYYY-MM-DD')
