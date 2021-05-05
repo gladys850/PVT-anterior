@@ -224,7 +224,7 @@ class Loan extends Model
     }
     public function paymentsKardex()
     {
-        return $this->hasMany(LoanPayment::class)->whereIn('state_id', [6,7])->orderBy('quota_number', 'desc')->orderBy('created_at');
+        return $this->hasMany(LoanPayment::class)->whereIn('state_id', [5,6,7])->orderBy('quota_number', 'desc')->orderBy('created_at');
     }
     //relacion uno a muchos
     public function loan_contribution_adjusts()
@@ -929,5 +929,19 @@ class Loan extends Model
             $quota_number++;
         }
         return $sw;
+    }
+
+    //verificacion de saldo con pagos
+    public function verify_balance()
+    {
+        $payments = $this->payments;
+        $loan_state = LoanState::where('name', 'Pagado')->first();
+        $balance = $this->amount_approved;
+        foreach($payments as $payment)
+        {
+            if($payment->state_id == $loan_state->id)
+                $balance -= $payment->capital_payment;
+        }
+        return $balance;
     }
 }
