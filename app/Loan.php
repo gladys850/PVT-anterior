@@ -722,11 +722,13 @@ class Loan extends Model
                 }
                 if($affiliate_state_type == "Pasivo")
                 {
-                    if($affiliate->pension_entity->name != 'SENASIR')
-                    {
-                        $modality=ProcedureModality::whereShortened("LAR-AFP")->first();// Largo plazo Sector PAsivo
-                    }else{
-                        $modality=ProcedureModality::whereShortened("LAR-SEN")->first();// Largo plazo Sector PAsivo
+                    if((!$cpop_affiliate && !$cpop_sismu)){
+                        if($affiliate->pension_entity->name != 'SENASIR')
+                        {
+                            $modality=ProcedureModality::whereShortened("LAR-AFP")->first();// Largo plazo Sector PAsivo
+                        }else{
+                            $modality=ProcedureModality::whereShortened("LAR-SEN")->first();// Largo plazo Sector PAsivo
+                        }
                     }
                 }
             break;  
@@ -744,12 +746,13 @@ class Loan extends Model
                 }
                 else{
                     if($affiliate_state_type == "Pasivo"){
-
-                        if($affiliate->pension_entity->name != 'SENASIR')
-                        {
-                            $modality=ProcedureModality::whereShortened("REF-LAR-AFP")->first();// ref Largo plazo Sector Pasivo
-                        }else{
-                            $modality=ProcedureModality::whereShortened("REF-LAR-SEN")->first();// ref Largo plazo Sector Pasivo
+                        if((!$cpop_affiliate && !$cpop_sismu)){
+                            if($affiliate->pension_entity->name != 'SENASIR')
+                            {
+                                $modality=ProcedureModality::whereShortened("REF-LAR-AFP")->first();// ref Largo plazo Sector Pasivo
+                            }else{
+                                $modality=ProcedureModality::whereShortened("REF-LAR-SEN")->first();// ref Largo plazo Sector Pasivo
+                            }
                         }
                     }
                 }
