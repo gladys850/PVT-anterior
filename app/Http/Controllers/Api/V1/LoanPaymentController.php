@@ -776,7 +776,7 @@ class LoanPaymentController extends Controller
             ]);
     }
 
-    /**
+     /**
     * Importación de Pagos Comando SENASIR
     * Realiza la importación de pagos.
 	* @bodyParam file file required Archivo de importación. Example: file.xls
@@ -812,7 +812,7 @@ class LoanPaymentController extends Controller
         $concatenandoCi='';
         $loanAll=collect([]);
         $loanPayments = new LoanPayment();
-
+        $amount_more_affiliate=collect([]);
         $amount_Affiliate=0;
         
             for($i=1;$i<count($array[0]);$i++){   
@@ -820,19 +820,17 @@ class LoanPaymentController extends Controller
                 
                 $totalLoanAmount = 0; 
                 $have_payment=false;
-
                 if($request->state){
                     $ci=(int)$array[0][$i][0];
-                    $affiliate = Affiliate::where('identity_card', '=',$ci)->first();                    
+                    $affiliate = Affiliate::where('identity_card', '=',$ci)->first();                 
                 }else{
                     $matricula= $array[0][$i][0];
                     $affiliate = Affiliate::where('registration', '=',$matricula)->first();
                 }
-               
+
                 $loanPayments = LoanPayment::where('affiliate_id',$affiliate->id)->where('state_id','=',$pendientePago)
                                             ->where('procedure_modality_id','=',$procedure_modality_automatic->id)->where('estimated_date','=',$estimated_date_importation)->get();
 
-                
                 foreach ($loanPayments as $loanPayment){
                       $payment_estimated_date=Carbon::parse($loanPayment->estimated_date);
                         $totalLoanAmount = $totalLoanAmount + $loanPayment->estimated_quota;
@@ -977,17 +975,39 @@ class LoanPaymentController extends Controller
                             }
                         }
                     }
+                    //verifica si el monto es mayor a garantias
+                    if($amount_Affiliate>0){
+                        $affiliate_mount = (object)['ci' => $affiliate->identity_card,'matricula' => $affiliate->registration,'monto_excedente' => $amount_Affiliate,'Estado afiliado' => $affiliate->registration];
+                        $amount_more_affiliate->push($affiliate_mount);
+                    }
                     // $payment_no_automatic->push($loanPaymentsLender);
                 }
             }
-            return response()->json([
+
+           /* return response()->json([
                 'payments_automatic' => $payment_automatic,
                 'payments_no_automatic' => $payment_no_automatic,
+                'amount_more_affiliate'=> $amount_more_affiliate
                // 'Contandooo ' =>  $contand,
                 //'$concatenando' =>  $concatenando,
                // 'todosloans' => $loanLender,
                // 'Concatenando'=>$concatenandoCi
-            ]);
+            ]);*/
+
+        $File=$estimated_date_importation."AffiliadosConPagosExcedentes";
+        $data=array(
+            array("CI", "Matrícula", "Monto excedente")
+        );
+    
+        foreach ($amount_more_affiliate as $row){
+            array_push($data, array(
+                $row->ci,
+                $row->matricula,
+                $row->monto_excedente
+            ));
+        }
+        $export = new ArchivoPrimarioExport($data);
+        return Excel::download($export, $File.'.xlsx');
     }
 
     /** @group Reportes préstamos
