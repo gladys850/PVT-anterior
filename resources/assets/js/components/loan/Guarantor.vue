@@ -326,13 +326,13 @@
                   PRESTAMOS QUE ESTA GARANTIZANDO EN EL SISMU:
                 </v-col>
                 <v-col cols="12" md="2" class="font-weight-black caption py-0" >
-                  {{affiliate_garantor.loans_sismu}}
+                  {{affiliate_garantor.loans_sismu.length}}
                 </v-col>
                 <v-col cols="12" md="8" class="text-uppercase py-0 font-weight-light caption" >
                   PRESTAMOS VIGENTES QUE TIENE EL AFILIADO EN EL SISMU:
                 </v-col>
                  <v-col cols="12" md="2" class="font-weight-black caption py-1">
-                 {{affiliate_garantor.guarantees_sismu}}
+                 {{affiliate_garantor.guarantees_sismu.length}}
                 </v-col>
                 <v-col cols="12" class="py-0" v-show="loan.length>0">
                   <v-data-table
@@ -495,6 +495,8 @@
         category:{},
         affiliate_state:{}
       },
+      guarantees_sismu:[],
+      loans_sismu:[]
     },
     affiliate_id:null,
     spouse:{},
