@@ -363,14 +363,14 @@
     </template>
 
           <template v-slot:[`item.actions`]="{ item }" >
-            <v-tooltip bottom v-if="item.state_loan == 'Desembolsado'">
+            <v-tooltip bottom>
               <template v-slot:activator="{ on }">
                 <v-btn
                   icon
                   small
                   v-on="on"
                   color="warning"
-                  :to="{ name: 'flowAdd', params: { id: item.id_loan }}"
+                  :to="{ name: 'flowAdd', params: { id: item.id_loan }, query: { workTray: 'all'}}"
                 ><v-icon>mdi-eye</v-icon>
                 </v-btn>
               </template>
