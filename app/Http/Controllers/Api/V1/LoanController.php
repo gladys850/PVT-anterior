@@ -1573,48 +1573,6 @@ class LoanController extends Controller
         } 
         return $message;
     }
-    public function show_ballot_loan($loan_id){
-    $loan=Loan::find($loan_id);
-     if($loan){
-        if($loan->loan_affiliates_ballot->first()){
-            $ballots=json_decode($loan->loan_affiliates_ballot->first()->pivot->contributionable_ids);
-            $ballot = array();
-            $adjusts = array();
-            if($loan->loan_affiliates_ballot->first()->pivot->contributionable_type=="contributions"){ 
-                foreach($ballots as $is_ballot_id){
-                    if(Contribution::find($is_ballot_id))
-                        array_push($ballot, Contribution::find($is_ballot_id));
-                    if(LoanContributionAdjust::where('adjustable_id', $is_ballot_id)->first())
-                        array_push($adjusts, LoanContributionAdjust::where('adjustable_id', $is_ballot_id)->first());
-                }
-            }
-            if($loan->loan_affiliates_ballot->first()->pivot->contributionable_type=="aid_contributions"){
-                foreach($ballots as $is_ballot_id){
-                    if(AidContribution::find($is_ballot_id))
-                        array_push($ballot, AidContribution::find($is_ballot_id));
-                    if(LoanContributionAdjust::where('adjustable_id', $is_ballot_id)->first())
-                        array_push($adjusts, LoanContributionAdjust::where('adjustable_id', $is_ballot_id)->first());
-                }
-            }
-            if($loan->loan_affiliates_ballot->first()->pivot->contributionable_type=="loan_contribution_adjusts"){
-                $liquid_ids= LoanContributionAdjust::where('loan_id',$loan->id)->where('type_adjust',"liquid")->get()->pluck('id');
-                $adjust_ids= LoanContributionAdjust::where('loan_id',$loan->id)->where('type_adjust',"adjust")->get()->pluck('id');
-                foreach($liquid_ids as $liquid_id){  
-                    array_push($ballot, LoanContributionAdjust::find($liquid_id));
-               }
-               foreach($adjust_ids as $adjust_id){  
-                    array_push($adjusts, LoanContributionAdjust::find($adjust_id));
-                }
-               
-            }    
-        }
-     }    
-   $data = [
-      'ballot' => $ballot,   
-      'adjusts' => $adjusts 
-    ];
-    return $data;
-	}
     //Destruir todo el préstamo
     public function destroyAll(Loan $loan)
     {
