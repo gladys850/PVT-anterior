@@ -289,7 +289,7 @@ class Loan extends Model
     public function getLastPaymentValidatedAttribute()
     {
         $loan_states = LoanState::where('name', 'Pagado')->orWhere('name', 'Pendiente por confirmar')->get();
-        return $this->payments()->where('state_id', $loan_states->first()->id)->orWhere('state_id',$loan_states->last()->id)->latest()->first();
+        return $this->payments()->whereLoanId($this->id)->where('state_id', $loan_states->first()->id)->orWhere('state_id',$loan_states->last()->id)->whereLoanId($this->id)->latest()->first();
     }
 
     public function getObservedAttribute()
@@ -362,12 +362,12 @@ class Loan extends Model
             //calculo en caso de primera cuota
 
             $date_ini = CarbonImmutable::parse($this->disbursement_date);
-            if($date_ini->day >= LoanGlobalParameter::latest()->first()->offset_interest_day)
+            if($date_ini->day <= LoanGlobalParameter::latest()->first()->offset_interest_day)
                 $date_pay = $date_ini->endOfMonth()->format('Y-m-d');
             else
                 $date_pay = $date_ini->addMonth()->endOfMonth()->format('Y-m-d');
-            $date_compare = CarbonImmutable::parse($date_ini->addMonth()->endOfMonth())->format('Y-m-d');
-            if(!$this->last_payment_validated && $estimated_date == $date_pay){
+            //$date_compare = CarbonImmutable::parse($date_ini->addMonth()->endOfMonth())->format('Y-m-d');
+            if(!$this->last_payment_validated && $estimated_date <= $date_pay){
                 $quota->paid_days->current +=1;
                 $quota->estimated_days->current +=1;
                 $quota->paid_days->current_generated = Util::round(LoanPayment::interest_by_days($quota->paid_days->current, $this->interest->annual_interest, $this->balance));
