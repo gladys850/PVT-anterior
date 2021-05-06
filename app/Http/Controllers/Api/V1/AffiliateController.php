@@ -63,6 +63,17 @@ class AffiliateController extends Controller
         return $affiliate;
     }
 
+    public static function append_data_list_affiliate(Affiliate $affiliate, $with_category = false)
+    {
+        $affiliate->full_name = $affiliate->full_name;
+        $affiliate->civil_status_gender = $affiliate->civil_status_gender;
+        if($affiliate->affiliate_state !=null) $affiliate->dead = $affiliate->dead;
+        $affiliate->identity_card_ext = $affiliate->identity_card_ext;
+        if($affiliate->affiliate_state !=null) $affiliate->affiliate_state;
+        if ($with_category) $affiliate->category = $affiliate->category;
+        return $affiliate;
+    }
+
     /**
     * Lista de afiliados
     * Devuelve el listado con los datos paginados
@@ -78,7 +89,7 @@ class AffiliateController extends Controller
     {
         $data = Util::search_sort(new Affiliate(), $request);
         $data->getCollection()->transform(function ($affiliate) {
-            return self::append_data($affiliate, true);
+            return self::append_data_list_affiliate($affiliate, true);
         });
         return $data;
     }
