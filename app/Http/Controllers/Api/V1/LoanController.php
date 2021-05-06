@@ -1817,6 +1817,7 @@ class LoanController extends Controller
    * @queryParam state_loan Buscar por el estado del prestamo. Example: En proceso
    * @queryParam guarantor_loan_affiliate Buscar los garantes del préstamo. Example: false
    * @queryParam pension_entity_affiliate Buscar por la La pension entidad del afiliado. Example: SENASIR
+   * @queryParam disbursement_date_loan Buscar por fecha de desembolso. Example: 2021
    * @authenticated
    * @responseFile responses/loan/list_loans_generate.200.json
    */
@@ -1865,7 +1866,8 @@ class LoanController extends Controller
     $quota_loan = request('quota_loan') ?? '';
     $guarantor_loan_affiliate = request('guarantor_loan_affiliate') ?? '';
     $pension_entity_affiliate = request('pension_entity_affiliate') ?? '';
- 
+
+    $disbursement_date_loan = request('disbursement_date_loan') ?? '';
  
     $amount_approved_loan = request('amount_approved_loan') ?? '';
  
@@ -1933,6 +1935,9 @@ class LoanController extends Controller
       if ($pension_entity_affiliate != '') {
         array_push($conditions, array('pension_entities.name', 'ilike', "%{$pension_entity_affiliate}%"));
       }
+      if ($disbursement_date_loan != '') {
+        array_push($conditions, array('loans.disbursement_date', 'ilike', "%{$disbursement_date_loan}%"));
+      }
  
       if($excel==true){
        
@@ -1953,7 +1958,7 @@ class LoanController extends Controller
                'affiliates.first_name as first_name_affiliate','affiliates.second_name as second_name_affiliate','affiliates.surname_husband as surname_husband_affiliate',
                'procedure_modalities.name as sub_modality_loan','procedure_types.name as modality_loan','loans.amount_approved as amount_approved_loan',
                'affiliate_state_types.name as state_type_affiliate','affiliate_states.name as state_affiliate','loan_affiliates.quota_treat as quota_loan','loan_states.name as state_loan',
-               'loan_affiliates.guarantor as guarantor_loan_affiliate','pension_entities.name as pension_entity_affiliate')
+               'loan_affiliates.guarantor as guarantor_loan_affiliate','pension_entities.name as pension_entity_affiliate','loans.disbursement_date as disbursement_date_loan')
                //->where('affiliates.identity_card','LIKE'.'%'.$request->identity_card.'%')
                ->orderBy('loans.code', $order_loan)
                ->get();
@@ -1965,7 +1970,7 @@ class LoanController extends Controller
                $File="ListadoPrestamos";
                $data=array(
                    array("Id del préstamo", "Codigo", "ID afiliado", "Nro de carnet", "Matrícula", "Primer apellido","Segundo apellido","Primer nombre","Segundo nombre","Apellido casada","Sub modalidad",
-                   "Modalidad","Monto del prestamo", "estado del affiliado","Tipo de estado del affiliado","Cuota del prestamo","Estado del préstamo","Es garante?","Entidad de pensión del afiliado",'Saldo préstamo' )
+                   "Modalidad","Monto del prestamo", "estado del affiliado","Tipo de estado del affiliado","Cuota del prestamo","Estado del préstamo","Es garante?","Entidad de pensión del afiliado",'Saldo préstamo','Fecha desembolso' )
                );
                foreach ($list_loan as $row){
                    array_push($data, array(
@@ -1988,7 +1993,8 @@ class LoanController extends Controller
                        $row->state_loan,
                        $row->guarantor_loan_affiliate,
                        $row->pension_entity_affiliate,
-                       $row->balance_loan
+                       $row->balance_loan,
+                       $row->disbursement_date_loan
                    ));
                }
                $export = new ArchivoPrimarioExport($data);
@@ -2012,7 +2018,7 @@ class LoanController extends Controller
                'affiliates.first_name as first_name_affiliate','affiliates.second_name as second_name_affiliate','affiliates.surname_husband as surname_husband_affiliate',
                'procedure_modalities.name as sub_modality_loan','procedure_types.name as modality_loan','loans.amount_approved as amount_approved_loan',
                'affiliate_state_types.name as state_type_affiliate','affiliate_states.name as state_affiliate','loan_affiliates.quota_treat as quota_loan','loan_states.name as state_loan',
-               'loan_affiliates.guarantor as guarantor_loan_affiliate','pension_entities.name as pension_entity_affiliate')
+               'loan_affiliates.guarantor as guarantor_loan_affiliate','pension_entities.name as pension_entity_affiliate','loans.disbursement_date as disbursement_date_loan')
                ->orderBy('loans.code', $order_loan)
                ->paginate($pagination_rows);
  
