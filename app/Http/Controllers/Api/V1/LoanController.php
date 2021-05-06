@@ -416,7 +416,7 @@ class LoanController extends Controller
     * @responseFile responses/loan/update.200.json
     */
     public function update(LoanForm $request, Loan $loan)
-    {    
+    {    $message = [];
          if($request->date_signal == true || ($request->date_signal == false && $request->has('disbursement_date') && $request->disbursement_date != NULL)){
             $state_id = LoanState::whereName('Desembolsado')->first()->id;
             $request['state_id'] = $state_id;
@@ -539,7 +539,7 @@ class LoanController extends Controller
                     event(new LoanFlowEvent([$loan]));
                 }
             }
-        } else {
+        } else {return $request;
             $loan = new Loan(array_merge($request->all(), (array)self::verify_spouse_disbursable($disbursable), ['amount_approved' => $request->amount_requested]));
         }
 
