@@ -539,7 +539,7 @@ class LoanController extends Controller
                     event(new LoanFlowEvent([$loan]));
                 }
             }
-        } else {return $request;
+        } else {
             $loan = new Loan(array_merge($request->all(), (array)self::verify_spouse_disbursable($disbursable), ['amount_approved' => $request->amount_requested]));
         }
 
