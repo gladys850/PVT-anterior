@@ -289,7 +289,7 @@ class Loan extends Model
     public function getLastPaymentValidatedAttribute()
     {
         $loan_states = LoanState::where('name', 'Pagado')->orWhere('name', 'Pendiente por confirmar')->get();
-        return $this->payments()->where('state_id', $loan_states->first()->id)->orWhere('state_id',$loan_states->last()->id)->latest()->first();
+        return $this->payments()->whereLoanId($this->id)->where('state_id', $loan_states->first()->id)->orWhere('state_id',$loan_states->last()->id)->whereLoanId($this->id)->latest()->first();
     }
 
     public function getObservedAttribute()
