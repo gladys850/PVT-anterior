@@ -156,7 +156,7 @@ class LoanPaymentController extends Controller
                     $loanPayment->modality;
                     $payments->push($loanPayment);
                 }
-                if($loanPayment->modality->name == 'A.AUT. Cuota pactada' && $loanPayment->state->name == 'Pagado' || $loanPayment->modality->name == 'A.AUT. Cuota pactada' && $loanPayment->state->name == 'Pendiente de Pago' || $loanPayment->modality->name == 'A.AUT. Parcial' && $loanPayment->state->name == 'Pendiente de Pago' || $loanPayment->modality->name == 'A.AUT. Parcial' && $loanPayment->state->name == 'Pagado')//amortizacion automatica
+                if($loanPayment->modality->name == 'A.AUT. Cuota pactada' && $loanPayment->state->name == 'Pagado' || $loanPayment->modality->name == 'A.AUT. Cuota pactada' && $loanPayment->state->name == 'Pendiente por confirmar' || $loanPayment->modality->name == 'A.AUT. Cuota pactada' && $loanPayment->state->name == 'Pendiente de Pago' || $loanPayment->modality->name == 'A.AUT. Parcial' && $loanPayment->state->name == 'Pendiente de Pago' || $loanPayment->modality->name == 'A.AUT. Parcial' && $loanPayment->state->name == 'Pagado' || $loanPayment->modality->name == 'A.AUT. Parcial' && $loanPayment->state->name == 'Pendiente por confirmar')//amortizacion automatica
                 {
                     $loanPayment->state = LoanState::whereId($loanPayment->state_id)->first();
                     $loanPayment->modality;
