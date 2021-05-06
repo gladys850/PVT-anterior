@@ -217,12 +217,12 @@ class Loan extends Model
     public function payments_pendings_confirmations()
     {
         $state_id = LoanState::whereName('Pendiente por confirmar')->first()->id;
-        return $this->hasMany(LoanPayment::class)->whereIn('state_id', $state_id)->orderBy('quota_number', 'desc')->orderBy('created_at');
+        return $this->hasMany(LoanPayment::class)->where('state_id', $state_id)->orderBy('quota_number', 'desc')->orderBy('created_at');
     }
     public function payment_pending_confirmation()//pago de pendiente por confirmacion para refin
     {
         $state_id = LoanState::whereName('Pendiente por confirmar')->first()->id;
-        return $this->hasMany(LoanPayment::class)->whereIn('state_id', $state_id)->orderBy('quota_number', 'desc')->orderBy('created_at')->first();
+        return $this->hasMany(LoanPayment::class)->where('state_id', $state_id)->orderBy('quota_number', 'desc')->orderBy('created_at')->first();
     }
     public function paymentsKardex()
     {
