@@ -162,7 +162,7 @@ class LoanPaymentController extends Controller
                     $loanPayment->modality;
                     $payments->push($loanPayment);
                 }
-                if($loanPayment->modality->name == 'A.AJ. Introducir monto' && $loanPayment->state->name == 'Pagado' || $loanPayment->modality->name == 'A.AJ. Introducir monto' && $loanPayment->state->name == 'Pendiente por Confirmar')// amortizacion por ajuste
+                if($loanPayment->modality->name == 'A.AJ. Introducir monto' && $loanPayment->state->name == 'Pagado' || $loanPayment->modality->name == 'A.AJ. Introducir monto' && $loanPayment->state->name == 'Pendiente por Confirmar' || $loanPayment->modality->name == 'A.AJ. Introducir monto' && $loanPayment->state->name == 'Pendiente por confirmar' || $loanPayment->modality->name == 'A.AJ. Liquidar préstamo' && $loanPayment->state->name == 'Pendiente por confirmar')// amortizacion por ajuste
                 {
                     $loanPayment->state = LoanState::whereId($loanPayment->state_id)->first();
                     $loanPayment->modality;
