@@ -193,7 +193,7 @@
                                    <v-col cols="12" md="4" class="py-0">
                                     <p><b>Cuota de Prestamo Padre:</b>{{' '+loan_refinancing.estimated_quota}}</p>
                                   </v-col>
-                                  <v-col cols="12" md="4" class="py-0"  v-show="!cobranzas_edit_sismu">
+                                  <v-col cols="12" md="4" class="py-0"  v-show="!cobranzas_edit_sismu" v-if="loan_refinancing.type_sismu==true">
                                     <p><b>Fecha de Corte :</b>{{' '+loan_refinancing.date_cut_refinancing}}</p>
                                   </v-col>
                                   <v-col cols="12" md="4"  v-show="cobranzas_edit_sismu "  class="py-0">
@@ -1338,6 +1338,8 @@ export default {
               let res = await axios.patch(`loan/${this.loan.id}/update_refinancing_balance`)
               this.loan_refinancing.refinancing_balance= res.data.refinancing_balance
               this.loan_refinancing.balance_parent_loan_refinancing= res.data.balance_parent_loan_refinancing
+            //  this.loan_refinancing.date_cut_refinancing= this.$moment(res.data.request_date).format("YYYY-MM-DD")
+      
       
             }
             this.toastr.success('Se Actualizó Correctamente.')

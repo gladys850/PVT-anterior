@@ -17,12 +17,12 @@
                       <v-progress-linear></v-progress-linear>
                       <template>
                       <v-row>
-                         <v-col cols="9"  v-show="isNew" v-if="permissionSimpleSelected.includes('create-payment-loan')">
+                         <v-col cols="8"  v-show="isNew" v-if="permissionSimpleSelected.includes('create-payment-loan')">
                         </v-col>
                         <!--v-col cols="4" class="ma-0 py-0" v-if="$store.getters.permissions.includes('create-payment-loan')"-->
                         <v-col cols="2" class="ma-0 py-4" v-show="isNew"  v-if="permissionSimpleSelected.includes('create-payment-loan')">
                          <label>
-                           <h3 style="color:teal">Refinanciamiento</h3>
+                           <h3 style="color:teal">Pendiente por Confirmar</h3>
                          </label>
                         </v-col>
                         <v-col cols="1" class="ma-0 py-0" v-show="isNew" v-if="permissionSimpleSelected.includes('create-payment-loan')" >

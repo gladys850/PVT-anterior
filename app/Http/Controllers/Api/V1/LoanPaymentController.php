@@ -300,6 +300,14 @@ class LoanPaymentController extends Controller
                     $loan = Loan::whereId($loanPayment->loan_id);
                     $loan->update(['state_id' => $Pagado]);
                 }
+                if($loanPayment->loan->payments->count() == 1 && $loanPayment->loan->payments->first()->state_id == $Pagado){
+                    $user = User::whereUsername('admin')->first();
+                    $amortizing_tag = Tag::whereSlug('amortizando')->first();
+                    $loanPayment->loan->tags()->attach([$amortizing_tag->id => [
+                        'user_id' => $user->id,
+                        'date' => Carbon::now()
+                    ]]);
+                }
                 DB::commit();
             } catch (\Exception $e) {
                 DB::rollback();
