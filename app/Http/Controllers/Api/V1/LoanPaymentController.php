@@ -629,13 +629,15 @@ class LoanPaymentController extends Controller
         $estimated_date = $request->estimated_date? Carbon::parse($request->estimated_date) : Carbon::now()->endOfMonth();
         $loan_state = LoanState::where('name', 'Desembolsado')->first();
         //return $loan_state->id;
-        $loans = Loan::where('state_id', $loan_state->id)->get();
+        $loans = Loan::where('state_id', $loan_state->id)->whereNotIn('procedure_modality_id', [41,44,48])->get();
         //$loans = Loan::get(); 
         $payment_type = AmortizationType::get();
         $payment_type_desc = $payment_type->where('name', 'LIKE', 'Descuento automático')->first();
         $description = $request->description? $request->description : 'Por descuento automatico';
         $procedure_modality = ProcedureModality::whereName('A.AUT. Cuota pactada')->first();
-        $voucher = $request->voucher? $request->voucher : "AUTOMATICO";
+        $mestimated_date = $estimated_date->month;
+        $yestimated_date = $estimated_date->year;
+        $voucher = $request->voucher? $request->voucher : "AUT".'-'.'0'.$mestimated_date.'/'.$yestimated_date;
         $loans_quantity = 0;
         foreach($loans as $loan){
             if($loan->balance != 0){
@@ -808,6 +810,9 @@ class LoanPaymentController extends Controller
         $procedure_modality_automatic = ProcedureModality::whereName('A.AUT. Cuota pactada')->first();
         $procedure_modality_parcial = ProcedureModality::whereName('A.AUT. Parcial')->first();
         $estimated_date_importation = $request->estimated_date? Carbon::parse($request->estimated_date) : Carbon::now()->endOfMonth();
+        $mestimated_date = $estimated_date_importation->month;
+        $yestimated_date = $estimated_date_importation->year;
+        $voucher_enter= $request->voucher_payment? "AUT".'-'.'0'.$mestimated_date.'/'.$yestimated_date : "AUT".'-'.'0'.$mestimated_date.'/'.$yestimated_date;
         $payment_type = AmortizationType::get();
         $payment_type_desc = $payment_type->where('name', 'LIKE', 'Descuento automático')->first();
         $contand=0;
@@ -843,8 +848,8 @@ class LoanPaymentController extends Controller
                 if ($totalLoanAmount == $array[0][$i][1] && $have_payment){
                     foreach ($loanPayments as $loanPayment){
                         $loanPayment->state_id = $pagado;
-                        if($request->voucher_payment){
-                            $loanPayment->voucher = $request->voucher_payment;
+                        if( $request->voucher_payment ){
+                            $loanPayment->voucher = $voucher_enter;
                         }
                         $loanPayment->validated = true;
                         $loanPayment->user_id = auth()->id();
@@ -891,7 +896,7 @@ class LoanPaymentController extends Controller
                                         $estimated_date=$estimated_date_importation;
                                         $description=$loanPaymentsLender->description;
                                         $procedure_modality=$procedure_modality_parcial;
-                                        //$voucher=$loanPaymentsLender->voucher;
+                                        $voucher_pago=$loanPaymentsLender->voucher;
                                         $paid_by=$loanPaymentsLender->paid_by;
                                     // $percentage = $lender->pivot->payment_percentage;
                                         $percentage_quota = 100;
@@ -900,11 +905,11 @@ class LoanPaymentController extends Controller
                                         $estimated_quota =$amount_Affiliate;
                                         $loanPayment->state_id = $pagado;
                                         if($request->voucher_payment){
-                                            $voucher = $request->voucher_payment;
+                                            $voucher = $voucher_enter;
                                         }else{
-                                            $voucher=$loanPaymentsLender->voucher;
+                                            $voucher=$voucher_pago;
                                         }
-                                       
+
                                         $loanPayment->validated = true;
                                         $state_id = $pagado;
                                         $validated_payment=true;
@@ -956,7 +961,7 @@ class LoanPaymentController extends Controller
                                     $estimated_quota =$amount_Affiliate;
                                     $loanPayment->state_id = $pagado;
                                     if($request->voucher_payment){
-                                        $voucher = $request->voucher_payment;
+                                        $voucher = $voucher_enter;
                                     }else{
                                         $voucher=$loanPaymentsGuarantor->voucher;
                                     }
