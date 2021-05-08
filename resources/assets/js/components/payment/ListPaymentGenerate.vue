@@ -399,29 +399,7 @@
 
 
 
-          <template v-slot:[`header.amortization_type_payment`]="{ header }">
-            {{ header.text }}<br>
-            <v-menu offset-y :close-on-content-click="false">
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn icon v-bind="attrs" v-on="on">
-                  <v-icon small :color="searching.amortization_type_payment !='' ? 'red' : 'black'">
-                    mdi-filter
-                  </v-icon>
-                </v-btn>
-              </template>
-              <div>
-                <v-text-field
-                  dense
-                  v-model="searching.amortization_type_payment"
-                  type="text"
-                  :label="'Buscar ' + header.text"
-                  @keydown.enter="search()"
-                  hide-details
-                  single-line
-                ></v-text-field>
-              </div>
-            </v-menu>
-          </template>
+
 
           <template v-slot:[`header.state_payment`]="{ header }">
             {{ header.text }}<br>
@@ -561,14 +539,14 @@
               </template>
               <span>Ver trámite</span>
             </v-tooltip>
-            <v-tooltip bottom v-if="item.state_loan == 'Desembolsado'">
+            <v-tooltip bottom >
               <template v-slot:activator="{ on }">
                 <v-btn
                   icon
                   small
                   v-on="on"
                   color="teal lighten-3"
-                  :to="{ name: 'flowAdd', params: { id: item.id_loan }, query:{ redirectTab: 6 }}"
+                  :to="{ name: 'flowAdd', params: { id: item.id_loan }, query:{ redirectTab: 6 , workTray: 'all'}}"
                 ><v-icon>mdi-folder-multiple</v-icon>
                 </v-btn>
               </template>
@@ -857,16 +835,14 @@ data () {
       async imprimir(id, item)
     {
       try {
-        let res
-        if(id==1){
-          res = await axios.get(`loan/${item}/print/contract`)
-        }else if(id==2){
-          res = await axios.get(`loan/${item}/print/form`)
-        }else if(id==3) {
-          res = await axios.get(`loan/${item}/print/plan`)
-        }else {
-          res = await axios.get(`loan/${item}/print/kardex`)
-        } 
+        let res;
+        if (id == 5) {
+          res = await axios.get(`loan_payment/${item}/print/loan_payment`);
+        } else if(id == 6){
+          let resv = await axios.get(`loan_payment/${item}/voucher`)
+          let idVoucher = resv.data.id
+          res = await axios.get(`voucher/${idVoucher}/print/voucher`);
+        }
         printJS({
             printable: res.data.content,
             type: res.data.type,
@@ -879,24 +855,17 @@ data () {
       }      
     },
     docsLoans(){
-        let docs =[]
-        if(this.permissionSimpleSelected.includes('print-contract-loan')){
-          docs.push(
-            { id: 1, title: 'Contrato', icon: 'mdi-file-document'},
-            { id: 2, title: 'Solicitud', icon: 'mdi-file'})
-        }
-        if(this.permissionSimpleSelected.includes('print-payment-plan')){
-          docs.push(
-            { id: 3, title: 'Plan de pagos', icon: 'mdi-cash'})
-        }    
-        if(this.permissionSimpleSelected.includes('print-payment-kardex-loan')){
-          docs.push(
-            { id: 4, title: 'Kardex', icon: 'mdi-view-list'})
-        }else{
-          console.log("Se ha producido un error durante la generación de la impresión")
-        }
-        this.printDocs=docs
-        console.log(this.printDocs)
+      let docs = [];
+      if (this.permissionSimpleSelected.includes("print-payment-loan")) {
+        docs.push({ id: 5, title: "Registro de cobro", icon: "mdi-file-check-outline" });
+      }
+      if (this.permissionSimpleSelected.includes("print-payment-voucher")) {
+        docs.push({ id: 6, title: "Registro de pago", icon: "mdi-cash-multiple" });
+      } else {
+        console.log("Se ha producido un error durante la generación de la impresión");
+      }
+      this.printDocs = docs;
+      console.log(this.printDocs);
       },
 
    }
