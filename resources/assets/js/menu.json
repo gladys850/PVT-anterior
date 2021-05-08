@@ -36,7 +36,7 @@
       },
       {
         "href": "listPaymentGenerate",
-        "title": "Préstamos",
+        "title": "Amortizaciones",
         "icon": "mdi-account-cash",
         "permissions": "show-payment-loan",
         "params": {}
