@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Schema;
 use App\Http\Controllers\Controller;
 use App\LoanPayment;
+use App\User;
 use App\Voucher;
 use App\LoanState;
 use App\Affiliate;
