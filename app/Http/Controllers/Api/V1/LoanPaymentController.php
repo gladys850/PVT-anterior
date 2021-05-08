@@ -1059,5 +1059,246 @@ class LoanPaymentController extends Controller
        $export = new ArchivoPrimarioExport($data);
        return Excel::download($export, $File.'.xlsx'); 
     }
+    //reporte 
+    /** 
+   * Listar amortizaciones generando reportes
+   * Lista todos los amortizaciones con opcion a busquedas
+   * @queryParam sortDesc Vector de orden descendente(0) o ascendente(1). Example: 0
+   * @queryParam per_page Número de datos por página. Example: 8
+   * @queryParam page Número de página. Example: 1
+   * @queryParam excel Valor booleano para descargar  el docExcel. Example: true
+   * @queryParam id_loan Buscar ID del Préstamo. Example: 1
+   * @queryParam code_loan  Buscar código del Préstamo. Example: PTMO000012-2021
+   * @queryParam id_affiliate  Buscar por ID del affiliado. Example: 33121
+   * @queryParam identity_card_affiliate  Buscar por nro de CI del afiliado. Example: 10069775
+   * @queryParam registration_affiliate  Buscar por Matricula del afiliado. Example: 100697MDF
+   * @queryParam last_name_affiliate Buscar por primer apellido del afiliado. Example: RIVERA
+   * @queryParam mothers_last_name_affiliate Buscar por segundo apellido del afiliado. Example: ARTEAG
+   * @queryParam first_name_affiliate Buscar por primer Nombre del afiliado. Example: ABAD
+   * @queryParam second_name_affiliate Buscar por segundo Nombre del afiliado. Example: FAUST
+   * @queryParam surname_husband_affiliate Buscar por Apellido de casada Nombre del afiliado. Example: De LA CRUZ
+   * @queryParam sub_modality_loan Buscar por sub modalidad del préstamo. Example: Corto plazo sector activo
+   * @queryParam modality_loan Buscar por Modalidad del prestamo. Example: Préstamo a corto plazo
+   * @queryParam amount_approved_loan Buscar monto aprobado del afiliado. Example: 25000
+   * @queryParam state_type_affiliate Buscar por tipo de estado del afiliado. Example: Activo
+   * @queryParam state_affiliate Buscar por estado del affiliado. Example: Servicio
+   * @queryParam quota_loan Buscar por la quota del prestamo. Example: 1500
+   * @queryParam state_loan Buscar por el estado del prestamo. Example: En proceso
+   * @queryParam guarantor_loan_affiliate Buscar los garantes del préstamo. Example: false
+   * @queryParam pension_entity_affiliate Buscar por la La pension entidad del afiliado. Example: SENASIR
+   * @queryParam disbursement_date_loan Buscar por fecha de desembolso. Example: 2021
+   * @authenticated
+   * @responseFile responses/loan_payment/list_loan_payment_generate.200.json
+   */
+
+  public function list_loan_payments_generate(Request $request){
+    // aumenta el tiempo máximo de ejecución de este script a 150 min:
+    ini_set('max_execution_time', 9000);
+    // aumentar el tamaño de memoria permitido de este script:
+    ini_set('memory_limit', '960M');
+ 
+    if($request->has('excel'))
+         $excel = $request->boolean('excel');
+    else 
+         $excel =false;
+ 
+    $order = request('sortDesc') ?? '';
+    if($order != ''){
+        if($order) $order_loan = 'Asc';
+        if(!$order) $order_loan = 'Desc';
+ 
+    }else{
+     $order_loan = 'Desc';
+    }
+    $pagination_rows = request('per_page') ?? 10;
+    $conditions = [];
+    //filtros
+    $id_loan = request('id_loan') ?? '';
+    $code_loan = request('code_loan') ?? '';
+    $disbursement_date_loan = request('disbursement_date_loan') ?? '';
+
+    $state_type_affiliate = request('state_type_affiliate') ?? '';
+    $state_affiliate = request('state_affiliate') ?? '';
+
+    $id_affiliate = request('id_affiliate') ?? '';
+    $identity_card_affiliate = request('identity_card_affiliate') ?? '';
+    $registration_affiliate = request('registration_affiliate') ?? '';
+ 
+    $last_name_affiliate = request('last_name_affiliate') ?? '';
+    $mothers_last_name_affiliate = request('mothers_last_name_affiliate') ?? '';
+    $first_name_affiliate = request('first_name_affiliate') ?? '';
+    $second_name_affiliate = request('second_name_affiliate') ?? '';
+    $surname_husband_affiliate = request('surname_husband_affiliate') ?? '';
+
+    $pension_entity_affiliate = request('pension_entity_affiliate') ?? '';
+    
+    $code_payment = request('code_payment') ?? '';
+    $estimated_date_payment = request('estimated_date_payment') ?? '';
+    $estimated_quota_payment = request('estimated_quota_payment') ?? '';
+    $voucher_payment = request('voucher_payment') ?? '';
+
+    $sub_modality_payment = request('sub_modality_payment') ?? '';
+    $modality_payment = request('modality_payment') ?? '';
+
+    $state_payment = request('state_payment') ?? '';
+
+    $amortization_type_payment = request('amortization_type_payment') ?? '';
+
+      if ($id_loan != '') {//1
+        array_push($conditions, array('loans.id', 'ilike', "%{$id_loan}%"));
+      }
+ 
+      if ($code_loan != '') {//2
+        array_push($conditions, array('loans.code', 'ilike', "%{$code_loan}%"));
+      }
+
+      if ($disbursement_date_loan != '') {//3
+        array_push($conditions, array('loans.disbursement_date', 'ilike', "%{$disbursement_date_loan}%"));
+      }
+
+      if ($state_type_affiliate != '') {//4
+        array_push($conditions, array('affiliate_state_types.name', 'ilike', "%{$state_type_affiliate}%"));
+      }
+      if ($state_affiliate != '') {//5
+        array_push($conditions, array('affiliate_states.name', 'ilike', "%{$state_affiliate}%"));
+      }
+  
+      if ($id_affiliate != '') {//6
+        array_push($conditions, array('affiliates.id', 'ilike', "%{$id_affiliate}%"));
+      }
+      if ($identity_card_affiliate != '') {//7
+        array_push($conditions, array('affiliates.identity_card', 'ilike', "%{$identity_card_affiliate}%"));
+      }
+      if ($registration_affiliate != '') {//8
+        array_push($conditions, array('affiliates.registration', 'ilike', "%{$registration_affiliate}%"));
+      }
+
+  
+      if ($last_name_affiliate != '') {//9
+        array_push($conditions, array('affiliates.last_name', 'ilike', "%{$last_name_affiliate}%"));
+      }
+      if ($mothers_last_name_affiliate != '') {//10
+        array_push($conditions, array('affiliates.mothers_last_name', 'ilike', "%{$mothers_last_name_affiliate}%"));
+      }
+ 
+      if ($first_name_affiliate != '') {//11
+        array_push($conditions, array('affiliates.first_name', 'ilike', "%{$first_name_affiliate}%"));//
+      }
+      if ($second_name_affiliate != '') {//12
+        array_push($conditions, array('affiliates.second_name', 'ilike', "%{$second_name_affiliate}%"));
+      }
+      if ($surname_husband_affiliate != '') {//13
+        array_push($conditions, array('affiliates.surname_husband', 'ilike', "%{$surname_husband_affiliate}%"));
+      }
+
+      if ($pension_entity_affiliate != '') {//14
+        array_push($conditions, array('pension_entities.name', 'ilike', "%{$pension_entity_affiliate}%"));
+      }
+
+      if ($code_payment != '') {//14
+        array_push($conditions, array('loan_payments.code', 'ilike', "%{$code_payment}%"));
+      }
+
+      if ($estimated_date_payment != '') {//14
+        array_push($conditions, array('loan_payments.estimated_date', 'ilike', "%{$estimated_date_payment}%"));
+      }
+
+      if ($estimated_quota_payment != '') {//14
+        array_push($conditions, array('loan_payments.estimated_quota', 'ilike', "%{$estimated_quota_payment}%"));
+      }
+      if ($voucher_payment != '') {//14
+        array_push($conditions, array('loan_payments.voucher', 'ilike', "%{$voucher_payment}%"));
+      }
+
+      if ($sub_modality_payment != '') {
+        array_push($conditions, array('procedure_modalities.name', 'ilike', "%{$sub_modality_payment}%"));
+      }
+      if ($modality_payment != '') {
+        array_push($conditions, array('procedure_types.name', 'ilike', "%{$modality_payment}%"));
+      }
+      if ($state_payment != '') {
+        array_push($conditions, array('loan_states.name', 'ilike', "%{$state_payment}%"));
+      }
+      if ($amortization_type_payment != '') {
+        array_push($conditions, array('amortization_types.name', 'ilike', "%{$amortization_type_payment}%"));
+      }
+ 
+      if($excel==true){
+       
+        $list_loan = DB::table('loan_payments')
+                ->join('procedure_modalities','loan_payments.procedure_modality_id', '=', 'procedure_modalities.id')
+                ->join('procedure_types','procedure_modalities.procedure_type_id', '=', 'procedure_types.id')
+                ->join('loan_states','loan_payments.state_id', '=', 'loan_states.id')
+                ->join('affiliates','loan_payments.affiliate_id', '=', 'affiliates.id')
+                ->join('affiliate_states','affiliates.affiliate_state_id', '=', 'affiliate_states.id')
+                ->join('affiliate_state_types','affiliate_states.affiliate_state_type_id', '=', 'affiliate_state_types.id')
+                ->leftjoin('pension_entities','affiliates.pension_entity_id', '=', 'pension_entities.id')
+                ->join('loans','loan_payments.loan_id', '=', 'loans.id')
+                ->join('amortization_types','loan_payments.amortization_type_id', '=', 'amortization_types.id')
+                ->whereNull('loan_payments.deleted_at')
+                ->where($conditions)
+                ->select('loans.id as id_loan','loans.code as code_loan','loans.disbursement_date as disbursement_date_loan','affiliate_state_types.name as state_type_affiliate','affiliate_states.name as state_affiliate',
+                'affiliates.id as id_affiliate','affiliates.identity_card as identity_card_affiliate','affiliates.registration as registration_affiliate','affiliates.last_name as last_name_affiliate','affiliates.mothers_last_name as mothers_last_name_affiliate',
+                'affiliates.first_name as first_name_affiliate','affiliates.second_name as second_name_affiliate','affiliates.surname_husband as surname_husband_affiliate','pension_entities.name as pension_entity_affiliate','loan_payments.code as code_payment','loan_payments.estimated_date as estimated_date_payment','loan_payments.estimated_quota as estimated_quota_payment','loan_payments.voucher as voucher_payment',
+                'procedure_modalities.name as sub_modality_payment','procedure_types.name as modality_payment','loan_states.name as state_payment',"amortization_types.name as amortization_type_payment")
+                ->orderBy('loan_payments.code', $order_loan)
+                ->get();
+      
+               $File="ListadoAmortizaciones";
+               $data=array(
+                   array("Id del préstamo", "Codigo préstamo", "Fecha desembolso préstamo","estado del affiliado","Tipo de estado del affiliado","ID afiliado", "Nro de carnet", "Matrícula", "Primer apellido","Segundo apellido","Primer nombre","Segundo nombre","Apellido casada",
+                   "Entidad de pensión del afiliado","Código pago","fecha de pago","Total pagado","Nro comprobante","Modalidad pago","Procedure pago","Estado del pago","Tipo amortización")
+               );
+               foreach ($list_loan as $row){
+                   array_push($data, array(
+                       $row->id_loan,
+                       $row->code_loan,
+                       $row->disbursement_date_loan,
+                       $row->state_type_affiliate,
+                       $row->state_affiliate,
+                       $row->id_affiliate,
+                       $row->identity_card_affiliate,
+                       $row->registration_affiliate,
+                       $row->last_name_affiliate,
+                       $row->mothers_last_name_affiliate,
+                       $row->first_name_affiliate,
+                       $row->second_name_affiliate,
+                       $row->surname_husband_affiliate,
+                       $row->pension_entity_affiliate,
+                       $row->code_payment,
+                       $row->estimated_date_payment,
+                       $row->estimated_quota_payment,
+                       $row->voucher_payment,
+                       $row->sub_modality_payment,
+                       $row->modality_payment,
+                       $row->state_payment,
+                       $row->amortization_type_payment
+                   ));
+               }
+               $export = new ArchivoPrimarioExport($data);
+               return Excel::download($export, $File.'.xlsx');
+      }else{
+      
+        $list_loan = DB::table('loan_payments')
+                ->join('procedure_modalities','loan_payments.procedure_modality_id', '=', 'procedure_modalities.id')
+                ->join('procedure_types','procedure_modalities.procedure_type_id', '=', 'procedure_types.id')
+                ->join('loan_states','loan_payments.state_id', '=', 'loan_states.id')
+                ->join('affiliates','loan_payments.affiliate_id', '=', 'affiliates.id')
+                ->join('affiliate_states','affiliates.affiliate_state_id', '=', 'affiliate_states.id')
+                ->join('affiliate_state_types','affiliate_states.affiliate_state_type_id', '=', 'affiliate_state_types.id')
+                ->leftjoin('pension_entities','affiliates.pension_entity_id', '=', 'pension_entities.id')
+                ->join('loans','loan_payments.loan_id', '=', 'loans.id')
+                ->join('amortization_types','loan_payments.amortization_type_id', '=', 'amortization_types.id')
+                ->whereNull('loan_payments.deleted_at')
+                ->where($conditions)
+                ->select('loans.id as id_loan','loans.code as code_loan','loans.disbursement_date as disbursement_date_loan','affiliate_state_types.name as state_type_affiliate','affiliate_states.name as state_affiliate',
+                'affiliates.id as id_affiliate','affiliates.identity_card as identity_card_affiliate','affiliates.registration as registration_affiliate','affiliates.last_name as last_name_affiliate','affiliates.mothers_last_name as mothers_last_name_affiliate',
+                'affiliates.first_name as first_name_affiliate','affiliates.second_name as second_name_affiliate','affiliates.surname_husband as surname_husband_affiliate','pension_entities.name as pension_entity_affiliate','loan_payments.code as code_payment','loan_payments.estimated_date as estimated_date_payment','loan_payments.estimated_quota as estimated_quota_payment','loan_payments.voucher as voucher_payment',
+                'procedure_modalities.name as sub_modality_payment','procedure_types.name as modality_payment','loan_states.name as state_payment',"amortization_types.name as amortization_type_payment")
+                ->orderBy('loan_payments.code', $order_loan)
+                ->paginate($pagination_rows);
+           return $list_loan;
+      }
+   }
 }
     
