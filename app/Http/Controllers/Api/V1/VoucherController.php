@@ -142,6 +142,8 @@ class VoucherController extends Controller
                 'unity' => 'UNIDAD DE INVERSIÓN EN PRÉSTAMOS',
                 'table' => [
                     ['Código', $voucher->code],
+                    ['Fecha', Carbon::now()->format('d/m/Y')],
+                    ['Hora', Carbon::now()->format('h:m:s a')],
                     ['Usuario', Auth::user()->username]
                 ]
             ],
