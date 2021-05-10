@@ -420,7 +420,7 @@ class LoanController extends Controller
     public function update(LoanForm $request, Loan $loan)
     {    $message = [];
          if($request->date_signal == true || ($request->date_signal == false && $request->has('disbursement_date') && $request->disbursement_date != NULL)){
-            $state_id = LoanState::whereName('Desembolsado')->first()->id;
+            $state_id = LoanState::whereName('Vigente')->first()->id;
             $request['state_id'] = $state_id;
             /*$hour = Carbon::now()->hour;
             $minute = Carbon::now()->minute;
@@ -458,7 +458,7 @@ class LoanController extends Controller
     if(Auth::user()->can('disbursement-loan')) {
         if($request->date_signal == true){
             $loan['disbursement_date'] = Carbon::now();
-            $state_id = LoanState::whereName('Desembolsado')->first()->id;
+            $state_id = LoanState::whereName('Vigente')->first()->id;
             $loan['state_id'] = $state_id;
             $loan->save();
         }else{
@@ -466,7 +466,7 @@ class LoanController extends Controller
                 if($request->has('disbursement_date') && $request->disbursement_date != NULL){
                     if(Auth::user()->can('change-disbursement-date')) {
                     $loan['disbursement_date'] = $request->disbursement_date;
-                    $state_id = LoanState::whereName('Desembolsado')->first()->id;
+                    $state_id = LoanState::whereName('Vigente')->first()->id;
                     $loan['state_id'] = $state_id;
                     $loan->save();
                     }  else return $message['validate'] = "El usuario no tiene los permisos necesarios para realizar el registro" ;
@@ -769,7 +769,7 @@ class LoanController extends Controller
 
         // Switch amortizing loans to defaulted
         $loans = Loan::whereHas('state', function($query) {
-            $query->whereName('Desembolsado');
+            $query->whereName('Vigente');
         })->whereHas('tags', function($q) {
             $q->whereSlug('amortizando');
         })->get();
@@ -793,7 +793,7 @@ class LoanController extends Controller
 
         // Switch defaulted loans to amortizing
         $loans = Loan::whereHas('state', function($query) {
-            $query->whereName('Desembolsado');
+            $query->whereName('Vigente');
         })->whereHas('tags', function($q) {
             $q->whereSlug('mora');
         })->get();

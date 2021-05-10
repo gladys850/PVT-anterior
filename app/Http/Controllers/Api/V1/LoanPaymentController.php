@@ -271,6 +271,8 @@ class LoanPaymentController extends Controller
     * @urlParam loan_payment required ID del registro de pago. Example: 2
     * @bodyParam voucher_type_id integer required ID de tipo de voucher. Example: 1
     * @bodyParam voucher_number integer número de voucher. Example: 12354121
+    * @bodyParam voucher_amount_total number Monto del voucher. Example: 55.58
+    * @bodyParam voucher_payment_date date Fecha de pago. Example: 2021-01-01
     * @bodyParam description string Texto de descripción. Example: Penalizacion regularizada
     * @authenticated
     * @responseFile responses/loan_payment/set_voucher.200.json
@@ -285,12 +287,12 @@ class LoanPaymentController extends Controller
             DB::beginTransaction();
             try {
                 $payment = new Voucher;
-                $payment->user_id = auth()->id();
-                $payment->affiliate_id = $loanPayment->loan->disbursable_id;
-                $payment->voucher_type_id = $request->voucher_type_id;
-                $payment->total = $loanPayment->estimated_quota;
-                $payment->payment_date = $loanPayment->estimated_date;
-                $payment->paid_amount = $loanPayment->estimated_quota;
+                //$payment->user_id = auth()->id();
+                //$payment->affiliate_id = $loanPayment->loan->disbursable_id;
+                $payment->voucher_type_id = $request->input('voucher_type_id');
+                $payment->total = $request->input('voucher_amount_total');
+                $payment->payment_date = $request->input('voucher_payment_date');
+                //$payment->paid_amount = $loanPayment->estimated_quota;
                 //$payment->payment_type_id = $request->payment_type_id;
                 $payment->description = $request->input('description', null);
                 $payment->voucher_number = $request->input('voucher_number', null);
@@ -628,7 +630,7 @@ class LoanPaymentController extends Controller
     public function command_senasir_save_payment(Request $request)
     {
         $estimated_date = $request->estimated_date? Carbon::parse($request->estimated_date) : Carbon::now()->endOfMonth();
-        $loan_state = LoanState::where('name', 'Desembolsado')->first();
+        $loan_state = LoanState::where('name', 'Vigente')->first();
         //return $loan_state->id;
         $loans = Loan::where('state_id', $loan_state->id)->whereNotIn('procedure_modality_id', [41,44,48])->get();
         //$loans = Loan::get(); 
@@ -1027,7 +1029,7 @@ class LoanPaymentController extends Controller
     public function loans_delay(Request $request)
     {
         $loans = Loan::whereHas('state', function($query) {
-            $query->whereName('Desembolsado');
+            $query->whereName('Vigente');
         })->get();
         $delays = collect([]);
         foreach ($loans as $loan) {
