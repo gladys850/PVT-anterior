@@ -22,8 +22,7 @@
             "voucher_payment": "AUT-05/2021",
             "sub_modality_payment": "A.AUT. Cuota pactada",
             "modality_payment": "Amortización Automática",
-            "state_payment": "Pendiente de Pago",
-            "amortization_type_payment": "Descuento automático"
+            "state_payment": "Pendiente de Pago"
         },
         {
             "id_loan": 2,
@@ -46,8 +45,7 @@
             "voucher_payment": "4165454",
             "sub_modality_payment": "A.D. Introducir monto",
             "modality_payment": "Amortización Directa",
-            "state_payment": "Pagado",
-            "amortization_type_payment": "Efectivo"
+            "state_payment": "Pagado"
         }
     ],
     "first_page_url": "http://192.168.2.242/api/v1/list_loan_payments_generate?page=1",
