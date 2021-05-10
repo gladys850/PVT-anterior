@@ -282,7 +282,7 @@ class CalculatorController extends Controller
         $process_guarantees_sismu = $affiliate->process_guarantees_sismu();
         foreach($process_guarantees_sismu as $res)
             $sum_quota+= $res->PresCuotaMensual/$res->quantity_guarantors; // descuento en caso de tener garantias en proceso del sismu
-        $liquid_qualification_calculated = $payable_liquid_average - $total_bonuses - $sum_quota + $parent_quota;
+        $liquid_qualification_calculated = $payable_liquid_average - $total_bonuses /*- $sum_quota*/ + $parent_quota;
         return $liquid_qualification_calculated;
     }
     // monto maximo---
