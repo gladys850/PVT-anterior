@@ -130,7 +130,7 @@ class Affiliate extends Model
     public function getDefaultedLenderAttribute()
     {
         $loans = $this->loans()->whereHas('state', function($q) {
-            $q->where('name', 'Desembolsado');
+            $q->where('name', 'Vigente');
         })->get();
         foreach ($loans as $loan) {
             if ($loan->defaulted) return true;
@@ -141,7 +141,7 @@ class Affiliate extends Model
     public function getDefaultedGuarantorAttribute()
     {
         $loans = $this->guarantees()->whereHas('state', function($q) {
-            $q->where('name', 'Desembolsado');
+            $q->where('name', 'Vigente');
         })->get();
         foreach ($loans as $loan) {
             if ($loan->defaulted) return true;
@@ -152,7 +152,7 @@ class Affiliate extends Model
     public function getDisbursementLoansAttribute()
     {
         $loans = $this->loans()->whereHas('state', function($q) {
-            $q->where('name', 'Desembolsado');
+            $q->where('name', 'Vigente');
         })->get();
         return $loans;
     }
@@ -277,7 +277,7 @@ class Affiliate extends Model
     }
     public function current_loans()
     {
-      $loan_state = LoanState::whereName('Desembolsado')->first();
+      $loan_state = LoanState::whereName('Vigente')->first();
       //return Loan::where('disbursable_id', $this->id)->where('disbursable_type', 'spouses')->where('state_id', $loan_state->id)->get();
       return $this->belongsToMany(Loan::class, 'loan_affiliates')->withPivot(['payment_percentage'])->whereGuarantor(false)->where('state_id', $loan_state->id)->orderBy('loans.created_at', 'desc');
     }
