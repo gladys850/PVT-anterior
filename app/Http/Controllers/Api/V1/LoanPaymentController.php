@@ -270,7 +270,7 @@ class LoanPaymentController extends Controller
     * Insertar registro de pago (loan_payment).
     * @urlParam loan_payment required ID del registro de pago. Example: 2
     * @bodyParam voucher_type_id integer required ID de tipo de voucher. Example: 1
-    * @bodyParam voucher_number integer número de voucher. Example: 12354121
+    * @bodyParam bank_pay_number integer número de voucher bancario. Example: 12354121
     * @bodyParam voucher_amount_total number Monto del voucher. Example: 55.58
     * @bodyParam voucher_payment_date date Fecha de pago. Example: 2021-01-01
     * @bodyParam description string Texto de descripción. Example: Penalizacion regularizada
@@ -295,7 +295,7 @@ class LoanPaymentController extends Controller
                 //$payment->paid_amount = $loanPayment->estimated_quota;
                 //$payment->payment_type_id = $request->payment_type_id;
                 $payment->description = $request->input('description', null);
-                $payment->voucher_number = $request->input('voucher_number', null);
+                $payment->bank_pay_number = $request->input('bank_pay_number', null);
                 $voucher = $loanPayment->voucher_treasury()->create($payment->toArray());
                 $loanPayment->update(['state_id' => $Pagado,'user_id' => $payment->user_id]);
                 if($loanPayment->loan->verify_balance() == 0)
