@@ -759,7 +759,7 @@ data () {
 
     async excel() {
       await axios({
-        url: "/list_loan_generate",
+        url: "/list_loan_payments_generate",
         method: "GET",
         responseType: "blob", // important
         headers: { Accept: "application/vnd.ms-excel" },
