@@ -163,9 +163,9 @@ class LoanPayment extends Model
         $estimated_date = Carbon::now()->endOfMonth();
         if (!$latest_quota || $first) {
             $payment_date = $loan->disbursement_date ? $loan->disbursement_date : $loan->request_date;
-            //$payment_date = $loan->disbursement_date;
-            $payment_date = CarbonImmutable::parse($payment_date);
-            if ($estimated_date->lessThan($payment_date) || $first) $estimated_date = $payment_date->endOfMonth();
+            $payment_date = Carbon::parse($payment_date);
+            if ($estimated_date->lessThan($payment_date) || $first)
+                $estimated_date = $payment_date->endOfMonth();
             if ($payment_date->day >= LoanGlobalParameter::latest()->first()->offset_interest_day && $estimated_date->diffInMonths($payment_date) == 0) {
                 $estimated_date = $payment_date->startOfMonth()->addMonth()->endOfMonth();
             }
