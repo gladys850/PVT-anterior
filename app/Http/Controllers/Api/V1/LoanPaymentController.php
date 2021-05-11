@@ -149,36 +149,12 @@ class LoanPaymentController extends Controller
         $loan['estimated_quota'] = $loan->estimated_quota;
         $loan['interest'] = $loan->interest;
         $payments = collect();
-            $loanPayments = LoanPayment::where('loan_id', $request->loan_id)->get();
+            $loanPayments = LoanPayment::where('loan_id', $request->loan_id)->orderBy('id')->get();
             foreach($loanPayments as $loanPayment)
             {
-                if($loanPayment->modality->name == 'Directo' && $loanPayment->state->name == 'Pagado')//amortizacion directa
+                if($loanPayment->state->name == 'Pagado' || $loanPayment->state->name == 'Pendiente por confirmar')
                 {
                     $loanPayment->state = LoanPaymentState::whereId($loanPayment->state_id)->first();
-                    $loanPayment->modality;
-                    $payments->push($loanPayment);
-                }
-                if($loanPayment->modality->name == 'Descuento Comando General de la Policia Boliviana' && $loanPayment->state->name == 'Pagado' || $loanPayment->modality->name == 'Descuento Comando General de la Policia Boliviana' && $loanPayment->state->name == 'Pendiente por confirmar' || $loanPayment->modality->name == 'Descuento Comando General de la Policia Boliviana' && $loanPayment->state->name == 'Pendiente de Pago' || $loanPayment->modality->name == 'Descuento Servicio Nacional del Sistema de Reparto' && $loanPayment->state->name == 'Pendiente de Pago' || $loanPayment->modality->name == 'Descuento Servicio Nacional del Sistema de Reparto' && $loanPayment->state->name == 'Pagado' || $loanPayment->modality->name == 'Descuento Servicio Nacional del Sistema de Reparto' && $loanPayment->state->name == 'Pendiente por confirmar')//amortizacion automatica
-                {
-                    $loanPayment->state = LoanPaymentState::whereId($loanPayment->state_id)->first();
-                    $loanPayment->modality;
-                    $payments->push($loanPayment);
-                }
-                if($loanPayment->modality->name == 'Descuento Indebido' && $loanPayment->state->name == 'Pagado' || $loanPayment->modality->name == 'Descuento Indebido' && $loanPayment->state->name == 'Pendiente por Confirmar' || $loanPayment->modality->name == 'Descuento Indebido' && $loanPayment->state->name == 'Pendiente por confirmar' || $loanPayment->modality->name == 'Refinanciamiento de Préstamo' && $loanPayment->state->name == 'Pendiente por confirmar')// amortizacion por ajuste
-                {
-                    $loanPayment->state = LoanPaymentState::whereId($loanPayment->state_id)->first();
-                    $loanPayment->modality;
-                    $payments->push($loanPayment);
-                }
-                if($loanPayment->modality->name == 'Fondo de Retiro' && $loanPayment->state->name == 'Pagado' || $loanPayment->modality->name == 'Fondo de Retiro' && $loanPayment->state->name == 'Pendiente por Confirmar' )//amortizacion por fondo
-                {
-                    $loanPayment->state = LoanPaymentState::whereId($loanPayment->state_id)->first();
-                    $loanPayment->modality;
-                    $payments->push($loanPayment);
-                }
-                if($loanPayment->modality->name == 'Complemento Económico' && $loanPayment->state->name == 'Pagado' || $loanPayment->modality->name == 'Complemento Económico' && $loanPayment->state->name == 'Pendiente por Confirmar')//amortizacion por complemento
-                {
-                    $loanPayment->state = LoanPaymentState::whereId($loanPayment->state_id);
                     $loanPayment->modality;
                     $payments->push($loanPayment);
                 }
