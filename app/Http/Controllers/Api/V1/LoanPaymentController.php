@@ -315,10 +315,10 @@ class LoanPaymentController extends Controller
         $from_role = null;
         $to_role = $request->role_id;
 
-        //$PendientePago = LoanState::whereName('Pendiente de Pago')->first()->id;
+        $PendientePago = LoanPaymentState::whereName('Pendiente de Pago')->first()->id;
 
         $to_role = $request->role_id;
-        $loanPayment =  LoanPayment::whereIn('id',$request->ids)->where('role_id', '!=', $request->role_id)->whereIn('state_id', [5,7])->orderBy('code');
+        $loanPayment =  LoanPayment::whereIn('id',$request->ids)->where('role_id', '!=', $request->role_id)->where('state_id',$PendientePago)->orderBy('code');
         $derived = $loanPayment->get();
         $to_role = Role::find($to_role);
         
