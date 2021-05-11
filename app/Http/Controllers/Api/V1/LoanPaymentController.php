@@ -632,12 +632,14 @@ class LoanPaymentController extends Controller
         $estimated_date = $request->estimated_date? Carbon::parse($request->estimated_date) : Carbon::now()->endOfMonth();
         $loan_state = LoanState::where('name', 'Vigente')->first();
         //return $loan_state->id;
-        $loans = Loan::where('state_id', $loan_state->id)->whereNotIn('procedure_modality_id', [41,44,48])->get();
+        $loans = Loan::where('state_id', $loan_state->id)->whereNotIn('procedure_modality_id', [34,41,44,48])->get();
+        
         //$loans = Loan::get(); 
         //$payment_type = AmortizationType::get();
-        $payment_type_desc = $payment_type->where('name', 'LIKE', 'Descuento automático')->first();
+       // $payment_type_desc = $payment_type->where('name', 'LIKE', 'Descuento automático')->first();
         $description = $request->description? $request->description : 'Por descuento automatico';
-        $procedure_modality = ProcedureModality::whereName('A.AUT. Cuota pactada')->first();//revisar
+        $procedure_modality_command = ProcedureModality::whereShortened('DES-COMANDO')->first();//revisar
+        $procedure_modality_senasir = ProcedureModality::whereShortened('DES-SENASIR')->first();//revisar
         $mestimated_date = $estimated_date->month;
         $yestimated_date = $estimated_date->year;
         $voucher = $request->voucher? $request->voucher : "AUT".'-'.'0'.$mestimated_date.'/'.$yestimated_date;
@@ -649,37 +651,43 @@ class LoanPaymentController extends Controller
                     foreach($loan->guarantors as $guarantor){
                         $percentage = $guarantor->pivot->payment_percentage;
                         $percentage_quota = ($percentage)*($loan->estimated_quota)/100;
+                        if($guarantor->affiliate_state->name == 'Servicio' || $guarantor->affiliate_state->name == 'Disponibilidad') $procedure_modality = $procedure_modality_command;
+                        if($guarantor->affiliate_state->name == 'Jubilado' || $guarantor->affiliate_state->name == 'Jubilado Invalidez') $procedure_modality = $procedure_modality_senasir;
                         //if($guarantor->affiliate_state->name == 'Servicio' || $guarantor->affiliate_state->name == 'Disponibilidad' || $guarantor->affiliate_state->name == 'Jubilado' || $guarantor->affiliate_state->name == 'Jubilado Invalidez'){
                         if($guarantor->contributions_exist()){
                             $disbursement_date = CarbonImmutable::parse($loan->disbursement_date);
                             if($disbursement_date->lessThan($estimated_date)){
                                 if($disbursement_date->year == $estimated_date->year && $disbursement_date->month == $estimated_date->month){
                                     if($disbursement_date->day<LoanGlobalParameter::latest()->first()->offset_interest_day){
-                                        LoanPayment::registry_payment($loan, $estimated_date, $description, $procedure_modality->id, $voucher, $paid_by, $payment_type_desc, $percentage_quota, $guarantor->id);
+                                        LoanPayment::registry_payment($loan, $estimated_date, $description, $procedure_modality->id, $voucher, $paid_by, $percentage_quota, $guarantor->id);
                                         $loans_quantity++;
                                     }
                                 }else{
-                                    LoanPayment::registry_payment($loan, $estimated_date, $description, $procedure_modality->id, $voucher, $paid_by, $payment_type_desc, $percentage_quota, $guarantor->id);
+                                    LoanPayment::registry_payment($loan, $estimated_date, $description, $procedure_modality->id, $voucher, $paid_by, $percentage_quota, $guarantor->id);
                                     $loans_quantity++;
                                 }
                             }
                         }
                     }
                 }else{
-                    foreach($loan->lenders as $lender){$paid_by = "T";
+                    foreach($loan->lenders as $lender){ $paid_by = "T";
                         $percentage = $lender->pivot->payment_percentage;
+                        
                         $percentage_quota = ($percentage)*($loan->estimated_quota)/100;
+                        //return $lender->contributions_exist();
                         //if($lender->affiliate_state->name == 'Servicio' || $lender->affiliate_state->name == 'Disponibilidad' || $lender->affiliate_state->name == 'Jubilado' || $lender->affiliate_state->name == 'Jubilado Invalidez'){
+                        if($lender->affiliate_state->name == 'Servicio' || $lender->affiliate_state->name == 'Disponibilidad') $procedure_modality = $procedure_modality_command;
+                        if($lender->affiliate_state->name == 'Jubilado' || $lender->affiliate_state->name == 'Jubilado Invalidez') $procedure_modality = $procedure_modality_senasir;
                         if($lender->contributions_exist()){
                             $disbursement_date = CarbonImmutable::parse($loan->disbursement_date);
                             if($disbursement_date->lessThan($estimated_date)){
                                 if($disbursement_date->year == $estimated_date->year && $disbursement_date->month == $estimated_date->month){
                                     if($disbursement_date->day<LoanGlobalParameter::latest()->first()->offset_interest_day){
-                                        LoanPayment::registry_payment($loan, $estimated_date, $description, $procedure_modality->id, $voucher, $paid_by, $payment_type_desc, $percentage_quota, $lender->id);
+                                        LoanPayment::registry_payment($loan, $estimated_date, $description, $procedure_modality->id, $voucher, $paid_by, $percentage_quota, $lender->id);
                                         $loans_quantity++;
                                     }
                                 }else{
-                                    LoanPayment::registry_payment($loan, $estimated_date, $description, $procedure_modality->id, $voucher, $paid_by, $payment_type_desc, $percentage_quota, $lender->id);
+                                    LoanPayment::registry_payment($loan, $estimated_date, $description, $procedure_modality->id, $voucher, $paid_by, $percentage_quota, $lender->id);
                                     $loans_quantity++;
                                 }
                             }
@@ -918,7 +926,7 @@ class LoanPaymentController extends Controller
                                         $validated_payment=true;
                                        
                                         //$new_loanPayment = $this->registry_payment_import($loan, $estimated_date, $description, $procedure_modality->id, $voucher, $paid_by, $payment_type_desc, $estimated_quota, $lender->id, $state_id,$validated_payment );
-                                        $new_loanPayment = LoanPayment::registry_payment($loan, $estimated_date, $description, $procedure_modality->id, $voucher, $paid_by, $payment_type_desc, $estimated_quota, $lender->id, $state_id,$validated_payment );
+                                        $new_loanPayment = LoanPayment::registry_payment($loan, $estimated_date, $description, $procedure_modality->id, $voucher, $paid_by, $estimated_quota, $lender->id, $state_id,$validated_payment );
 
                                         $new_loanPayment->user_id = auth()->id();
                                         $new_loanPayment->update();
@@ -973,7 +981,7 @@ class LoanPaymentController extends Controller
                                     $state_id = $pagado;
                                     $validated_payment=true;
                                    
-                                    $new_loanPayment = LoanPayment::registry_payment($loan, $estimated_date, $description, $procedure_modality->id, $voucher, $paid_by, $payment_type_desc, $estimated_quota, $lender->id, $state_id,$validated_payment );
+                                    $new_loanPayment = LoanPayment::registry_payment($loan, $estimated_date, $description, $procedure_modality->id, $voucher, $paid_by, $estimated_quota, $lender->id, $state_id,$validated_payment );
 
                                     $new_loanPayment->user_id = auth()->id();
                                     $new_loanPayment->update();
