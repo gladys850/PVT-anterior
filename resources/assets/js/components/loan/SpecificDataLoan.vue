@@ -1198,6 +1198,17 @@ export default {
         this.loan_refinancing.balance= this.loan.balance_parent_loan_refinancing
       }
       this.loan_refinancing.date_cut_refinancing= this.loan.date_cut_refinancing
+
+
+      this.loan.amount_approved = this.loan.amount_approved_aux
+      this.loan.lenders[0].pivot.payable_liquid_calculated = this.loan.payable_liquid_calculated_aux
+      this.loan.liquid_qualification_calculated = this.loan.liquid_qualification_calculated_aux
+      this.loan.loan_term = this.loan.loan_term_aux
+      this.loan.lenders[0].pivot.bonus_calculated = this.loan.bonus_calculated_aux
+      this.loan.indebtedness_calculated = this.loan.indebtedness_calculated_aux
+      this.loan.estimated_quota = this.loan.estimated_quota_aux
+
+
       this.$nextTick(() => {
       this.reload = false
       })
