@@ -263,7 +263,7 @@ class LoanPaymentController extends Controller
             DB::beginTransaction();
             try {
                 $payment = new Voucher;
-                //$payment->user_id = auth()->id();
+                $payment->user_id = auth()->id();
                 //$payment->affiliate_id = $loanPayment->loan->disbursable_id;
                 $payment->voucher_type_id = $request->input('voucher_type_id');
                 $payment->total = $request->input('voucher_amount_total');
@@ -273,7 +273,7 @@ class LoanPaymentController extends Controller
                 $payment->description = $request->input('description', null);
                 $payment->bank_pay_number = $request->input('bank_pay_number', null);
                 $voucher = $loanPayment->voucher_treasury()->create($payment->toArray());
-                $loanPayment->update(['state_id' => $Pagado,'user_id' => $payment->user_id]);
+                $loanPayment->update(['state_id' => $Pagado,'user_id' => $payment->user_id,'validated'=>true]);
                 if($loanPayment->loan->verify_balance() == 0)
                 {
                     $loan = Loan::whereId($loanPayment->loan_id);
