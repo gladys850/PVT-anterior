@@ -218,6 +218,10 @@ class LoanPaymentController extends Controller
         $loanPayment->fill($update);
         $loanPayment->save();
         $loanPayment->update(['user_id' => $user_id]);
+        if($request->validated && $loanPayment->state_id == $Pagado || $request->validated && $request->state_id == $Pagado){
+            $loanPayment->update(['loan_payment_date' => Carbon::now()]);
+            $loanPayment->save();        
+        }
         return  $loanPayment;
     }
 
@@ -274,7 +278,7 @@ class LoanPaymentController extends Controller
                 $payment->description = $request->input('description', null);
                 $payment->bank_pay_number = $request->input('bank_pay_number', null);
                 $voucher = $loanPayment->voucher_treasury()->create($payment->toArray());
-                $loanPayment->update(['state_id' => $Pagado,'user_id' => $payment->user_id,'validated'=>true]);
+                $loanPayment->update(['state_id' => $Pagado,'user_id' => $payment->user_id,'validated'=>true,'loan_payment_date'=>Carbon::now()]);
                 if($loanPayment->loan->verify_balance() == 0)
                 {
                     $loan = Loan::whereId($loanPayment->loan_id);
