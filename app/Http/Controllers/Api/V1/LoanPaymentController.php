@@ -579,98 +579,150 @@ class LoanPaymentController extends Controller
         abort(403, 'No existe el registro de pago');
     }
 
-    public function download(Request $request)
-    {
-        $File="Pagos";
-        $data=array(
-            array("Nro", "Codigo", "Cuota Estimada", "Numero de Cuota", "Pago Penal", "Fecha estimada" )
-        );
-        $pay=LoanPayment::get();
-        foreach ($pay as $row){
-            array_push($data, array(
-                $row->id,
-                $row->loan_id,
-                $row->estimated_quota,
-                $row->quota_number,
-                $row->penal_payment,
-                $row->estimated_date,
-            ));
-        }
-        $export = new ArchivoPrimarioExport($data);
-        return Excel::download($export, $File.'.xlsx');
-    }
 
     /**
-    * Registrar trámites de pagos en lote activos y pasivos
+    * Importar y descargar excel por periodo
+    * genera los pagos del periodo y exporta el escel
 	* @bodyParam estimated_date date Fecha para el cálculo del interés. Example: 2020-12-31
-    * @bodyParam description string Texto de descripción. Example: Por descuento automatico
-    * @bodyParam voucher string Comprobante de pago A-12/20 o CONT-123. Example: A-12/20
     * @authenticated
     * @responseFile responses/loan_payment/command_senasir_save_payment.200.json
     */
-    public function command_senasir_save_payment(Request $request)
+    public function download(Request $request)
     {
-        $estimated_date = $request->estimated_date? Carbon::parse($request->estimated_date) : Carbon::now()->endOfMonth();
+        $period = Carbon::parse($request->estimated_date)->format('M').'-'.Carbon::parse($request->estimated_date)->format('Y');
+        $month = CarbonImmutable::parse($request->estimated_date)->format('M');
+        $year = Carbon::parse($request->estimated_date)->format('Y');
+        $file_name = $month.'-'.$year;
+        $extension = '.xlsx';
+        if(Storage::disk('public')->has($file_name.$extension)){
+            return $file = Storage::disk('public')->download($file_name.$extension);
+            //return $file = Storage::file($file_name.$extension);
+        }
+        else{
+            $this->command_senasir_save_payment($request->estimated_date);
+            $data=array(
+                array("Nro", "Codigo", "Cuota Estimada", "Numero de Cuota", "Pago Penal", "Fecha estimada" )
+            );
+            $pay = LoanPayment::where('estimated_date',$request->estimated_date)->get();
+            foreach ($pay as $row){
+                if($row->loan->state->name == 'Vigente'){
+                    array_push($data, array(
+                        $row->id,
+                        $row->loan_id,
+                        $row->estimated_quota,
+                        $row->quota_number,
+                        $row->penal_payment,
+                        $row->estimated_date,
+                        $row->modality->shortened,
+                    ));
+                }
+            }
+            $export = new ArchivoPrimarioExport($data);
+            Excel::store($export, $file_name.$extension, 'public');
+            return $file = Storage::disk('public')->download($file_name.$extension);
+        }
+        //return Excel::store($export, $File.'.xlsx', 'ftp');
+    }
+
+    /**
+    * Listado de pagos automaticos por periodo
+    * Devuelve Los pagos generados y pagados por un periodo
+    * @bodyParam fecha periodo required fecha del periodo de pagos que se desea visualizar
+    * @authenticated
+    * @responseFile responses/loan_payment/payments_per_period.200.json
+    */
+    public function payments_per_period(Request $request)
+    {
+        $modalities = ProcedureModality::where('shortened', 'DES-COMANDO')->orWhere('shortened', 'DES-SENASIR')->get('id');
+        $id = [];
+        foreach($modalities as $modality)
+            array_push($id, $modality->id);
+        $payments = LoanPayment::whereIn('procedure_modality_id', $id)->where('estimated_date',$request->period)->get();
+        foreach($payments as $payment)
+            $payment->state = $payment->state;
+        return $payments;
+    }
+
+    
+    private function command_senasir_save_payment($estimated_date)
+    {
+        $estimated_date = $estimated_date? Carbon::parse($estimated_date) : Carbon::now()->endOfMonth();
         $loan_state = LoanState::where('name', 'Vigente')->first();
-        //return $loan_state->id;
-        $loans = Loan::where('state_id', $loan_state->id)->whereNotIn('procedure_modality_id', [34,41,44,48])->get();
-        
-        //$loans = Loan::get(); 
-        //$payment_type = AmortizationType::get();
-       // $payment_type_desc = $payment_type->where('name', 'LIKE', 'Descuento automático')->first();
-        $description = $request->description? $request->description : 'Por descuento automatico';
+        $modalities = ProcedureModality::where('name', 'like', '%AFP')->get();
+        $id = [];
+        foreach($modalities as $modality)
+        {
+            array_push($id, $modality->id);
+        }
+        $loans = Loan::where('state_id', $loan_state->id)->whereNotIn('procedure_modality_id', $id)->get();
+        $description = 'Por descuento automatico';
         $procedure_modality_command = ProcedureModality::whereShortened('DES-COMANDO')->first();//revisar
         $procedure_modality_senasir = ProcedureModality::whereShortened('DES-SENASIR')->first();//revisar
         $mestimated_date = $estimated_date->month;
         $yestimated_date = $estimated_date->year;
-        $voucher = $request->voucher? $request->voucher : "AUT".'-'.'0'.$mestimated_date.'/'.$yestimated_date;
+        $voucher = "AUT".'-'.'0'.$mestimated_date.'/'.$yestimated_date;
         $loans_quantity = 0;
+
         foreach($loans as $loan){
+            $date_payment = Carbon::parse($loan->disbursement_date)->endOfMonth()->format('Y-m-d');
+            $disbursement_day = Carbon::parse($loan->disbursement_date)->day;
             if($loan->balance != 0){
-                if($loan->guarantor_amortizing){
-                    $paid_by = "G";
-                    foreach($loan->guarantors as $guarantor){
-                        $percentage = $guarantor->pivot->payment_percentage;
-                        $percentage_quota = ($percentage)*($loan->estimated_quota)/100;
-                        if($guarantor->affiliate_state->name == 'Servicio' || $guarantor->affiliate_state->name == 'Disponibilidad') $procedure_modality = $procedure_modality_command;
-                        if($guarantor->affiliate_state->name == 'Jubilado' || $guarantor->affiliate_state->name == 'Jubilado Invalidez') $procedure_modality = $procedure_modality_senasir;
-                        //if($guarantor->affiliate_state->name == 'Servicio' || $guarantor->affiliate_state->name == 'Disponibilidad' || $guarantor->affiliate_state->name == 'Jubilado' || $guarantor->affiliate_state->name == 'Jubilado Invalidez'){
-                        if($guarantor->contributions_exist()){
-                            $disbursement_date = CarbonImmutable::parse($loan->disbursement_date);
-                            if($disbursement_date->lessThan($estimated_date)){
-                                if($disbursement_date->year == $estimated_date->year && $disbursement_date->month == $estimated_date->month){
-                                    if($disbursement_date->day<LoanGlobalParameter::latest()->first()->offset_interest_day){
-                                        LoanPayment::registry_payment($loan, $estimated_date, $description, $procedure_modality->id, $voucher, $paid_by, $percentage_quota, $guarantor->id);
-                                        $loans_quantity++;
-                                    }
-                                }else{
-                                    LoanPayment::registry_payment($loan, $estimated_date, $description, $procedure_modality->id, $voucher, $paid_by, $percentage_quota, $guarantor->id);
+                if($loan->modality->procedure_type->name == 'Préstamo a Largo Plazo' || $loan->modality->procedure_type->name == 'Préstamo a Corto Plazo'){
+                    if(!$loan->guarantor_amortizing){
+                        foreach($loan->lenders as $lender)
+                        {
+                            $paid_by = "T";
+                            if($lender->affiliate_state->name == 'Servicio' || $lender->affiliate_state->name == 'Disponibilidad') $procedure_modality = $procedure_modality_command;
+                            if($lender->affiliate_state->name == 'Jubilado' && $lender->affiliate_state && $lender->pension_entity->name == 'SENASIR') $procedure_modality = $procedure_modality_senasir;
+                            if($disbursement_day < LoanGlobalParameter::latest()->first()->offset_interest_day && $estimated_date == $date_payment){
+                                LoanPayment::registry_payment($loan, $estimated_date, $description, $procedure_modality->id, $voucher, $paid_by, $lender->pivot->quota_treat, $lender->id);
+                                $loans_quantity++;
+                            }
+                            else{
+                                if($estimated_date > $date_payment)
+                                {
+                                    LoanPayment::registry_payment($loan, $estimated_date, $description, $procedure_modality->id, $voucher, $paid_by, $lender->pivot->quota_treat, $lender->id);
                                     $loans_quantity++;
                                 }
                             }
                         }
                     }
-                }else{
-                    foreach($loan->lenders as $lender){ $paid_by = "T";
-                        $percentage = $lender->pivot->payment_percentage;
-                        
-                        $percentage_quota = ($percentage)*($loan->estimated_quota)/100;
-                        //return $lender->contributions_exist();
-                        //if($lender->affiliate_state->name == 'Servicio' || $lender->affiliate_state->name == 'Disponibilidad' || $lender->affiliate_state->name == 'Jubilado' || $lender->affiliate_state->name == 'Jubilado Invalidez'){
-                        if($lender->affiliate_state->name == 'Servicio' || $lender->affiliate_state->name == 'Disponibilidad') $procedure_modality = $procedure_modality_command;
-                        if($lender->affiliate_state->name == 'Jubilado' || $lender->affiliate_state->name == 'Jubilado Invalidez') $procedure_modality = $procedure_modality_senasir;
-                        if($lender->contributions_exist()){
-                            $disbursement_date = CarbonImmutable::parse($loan->disbursement_date);
-                            if($disbursement_date->lessThan($estimated_date)){
-                                if($disbursement_date->year == $estimated_date->year && $disbursement_date->month == $estimated_date->month){
-                                    if($disbursement_date->day<LoanGlobalParameter::latest()->first()->offset_interest_day){
-                                        LoanPayment::registry_payment($loan, $estimated_date, $description, $procedure_modality->id, $voucher, $paid_by, $percentage_quota, $lender->id);
-                                        $loans_quantity++;
-                                    }
-                                }else{
-                                    LoanPayment::registry_payment($loan, $estimated_date, $description, $procedure_modality->id, $voucher, $paid_by, $percentage_quota, $lender->id);
+                    else
+                    {
+                        foreach($loan->guarantors as $guarantor)
+                        {
+                            $paid_by = "G";
+                            if($guarantor->affiliate_state->name == 'Servicio' || $lender->affiliate_state->name == 'Disponibilidad') $procedure_modality = $procedure_modality_command;
+                            if($guarantor->affiliate_state->name == 'Jubilado' && $lender->affiliate_state && $lender->pension_entity->name == 'SENASIR') $procedure_modality = $procedure_modality_senasir;
+                            if($disbursement_day < LoanGlobalParameter::latest()->first()->offset_interest_day && $estimated_date == $date_payment){
+                                LoanPayment::registry_payment($loan, $estimated_date, $description, $procedure_modality->id, $voucher, $paid_by, $lender->pivot->quota_treat, $lender->id);
+                                $loans_quantity++;
+                            }
+                            else{
+                                if($estimated_date > $date_payment)
+                                {
+                                    LoanPayment::registry_payment($loan, $estimated_date, $description, $procedure_modality->id, $voucher, $paid_by, $lender->pivot->quota_treat, $lender->id);
                                     $loans_quantity++;
                                 }
+                            }
+                        }
+                    }
+                }
+                else{
+                    foreach($loan->lenders as $lender)
+                    {
+                        $paid_by = "T";
+                        if($lender->affiliate_state->name == 'Servicio' || $lender->affiliate_state->name == 'Disponibilidad') $procedure_modality = $procedure_modality_command;
+                        if($lender->affiliate_state->name == 'Jubilado' && $lender->pension_entity && $lender->pension_entity->name == 'SENASIR') $procedure_modality = $procedure_modality_senasir;
+                        if($disbursement_day < LoanGlobalParameter::latest()->first()->offset_interest_day && $estimated_date == $date_payment){
+                            LoanPayment::registry_payment($loan, $estimated_date, $description, $procedure_modality->id, $voucher, $paid_by, $lender->pivot->quota_treat, $lender->id);
+                            $loans_quantity++;
+                        }
+                        else{
+                            if($estimated_date > $date_payment)
+                            {
+                                LoanPayment::registry_payment($loan, $estimated_date, $description, $procedure_modality->id, $voucher, $paid_by, $lender->pivot->quota_treat, $lender->id);
+                                $loans_quantity++;
                             }
                         }
                     }
