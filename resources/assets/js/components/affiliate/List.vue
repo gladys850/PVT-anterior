@@ -11,8 +11,8 @@
     <tr>
       <td class="text-xs-left">{{ props.item | fullName(byFirstName = true) }} </td>
       <td class="text-xs-left">{{ props.item.identity_card }}</td>
-       <td class="text-xs-left">{{ props.item.state.affiliate_state ? props.item.state.affiliate_state.name : ''}}</td>
-      <td class="text-xs-left">{{ props.item.state.category ? props.item.state.category.name : '' }}</td>
+       <td class="text-xs-left">{{ props.item.affiliate_state ? props.item.affiliate_state.name : ''}}</td>
+      <td class="text-xs-left">{{ props.item.category ? props.item.category.name : '' }}</td>
      
       <td>
         <v-icon class="mr-1" :color="props.item.picture_saved ? 'success' : 'error'">mdi-camera</v-icon>

@@ -39,7 +39,7 @@ class ProcedureAmortizationSeeder extends Seeder
                 ],
                 'amortizacion por ajuste' => [
                     'type' => ['module_id' => $module->id,'name'=>'Amortización por Ajuste','second_name'=>'Amort. AJUST'],
-                    'modalities' => [ ['name'=>'Descuento Indebido','shortened'=>'DES-INDEBIDO','requirements'=>[]],
+                    'modalities' => [['name'=>'Ajuste Contable','shortened'=>'AJUSTE-CONT','requirements'=>[]],
                                     ['name'=>'Refinanciamiento de Préstamo','shortened'=>'REFINANCIAMIENTO','requirements'=>[]]
                     ]
                 ],
