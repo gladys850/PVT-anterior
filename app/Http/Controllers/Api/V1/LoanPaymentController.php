@@ -199,7 +199,7 @@ class LoanPaymentController extends Controller
     {
         $payment_procedure_type = $loanPayment->modality->procedure_type->name;
         $Pagado = LoanPaymentState::whereName('Pagado')->first()->id;
-        $pendiente_pago = LoanPaymentState::whereName('Pendiente de Pago')->first()->id;
+        $pendiente_pago = LoanPaymentState::whereName('Pendiente por confirmar')->first()->id;
         $request->validate([
             'description' => 'nullable|string|min:2',
             'validated' => 'boolean',
