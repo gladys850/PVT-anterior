@@ -1,13 +1,18 @@
 <template>
   <section class="px-6">
 		<v-row class="justify-center my-4">
-			<strong class="grey--text text-h5">Prestamos</strong><br>
+			<strong class="grey--text text-h5">Plataforma Virtual de Trámites</strong><br>
 		</v-row>
 		<v-row>
 			<v-col cols="3" v-for="(item, index) in rolesPermissionsItems" :key="index" class="pa-2">
-				<v-card @click="clickRole(item)" style="cursor: pointer;border: thin solid rgba(0, 0, 0, 0.5);" elevation="2">
+				<v-card 
+          shaped 
+          outlined 
+          @click="clickRole(item)" 
+          style="cursor: pointer;border: thin solid rgba(0, 0, 0, 0.5);" 
+          elevation="2">
 					<v-card-text>
-						<v-icon color="error">mdi-account-circle</v-icon>&nbsp;
+						<v-icon color="teal">mdi-account-circle</v-icon>&nbsp;
 						{{ item.display_name }}
 					</v-card-text>
 				</v-card>
@@ -27,11 +32,11 @@ export default {
     this.$store.commit('setRolePermissionSelected', null)
     await this.getRolePermissions()
 		// si es administrador va directo al dashboard
-		if(this.$store.getters.userRoles[0] == 'TE-admin') {
+		/*if(this.$store.getters.userRoles[0] == 'TE-admin') {
 			// this.$store.commit('setRolePermissionSelected', {})
 			this.$router.push("dashboard")
-		}
-    // this.setDefaultValues()
+		}*/
+    //this.setDefaultValues()
   },
   methods: {
     async getRolePermissions() {
@@ -50,15 +55,16 @@ export default {
           item.permissions = item.permissions.map(item => ({display_name: item.display_name, name: item.name }))
         })
         this.rolesPermissionsItems =  aux_rolesPermissionsItems
+        
       } catch (e) {
         console.log(e)
       }
     },
-		// setDefaultValues() {
-    //   if(this.rolesPermissionsItems.length > 0) {
-    //     this.rolePermissionSelected = this.rolesPermissionsItems[0]
-    //   }
-    // },
+		/*setDefaultValues() {
+      if(this.rolesPermissionsItems.length > 0) {
+        this.rolePermissionSelected = this.rolesPermissionsItems[0]
+      }
+    },*/
 		clickRole(item) {
 			this.$store.commit('setRolePermissionSelected', item)
 			this.$router.push("dashboard")
