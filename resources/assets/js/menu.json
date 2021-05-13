@@ -40,7 +40,7 @@
   {
     "href": "ImportExport",
     "title": "Imp./Exp.",
-    "icon": "mdi-file-move",
+    "icon": "mdi-file-import-outline",
     "permission": "show-payment-loan",
     "params": {}
   },
