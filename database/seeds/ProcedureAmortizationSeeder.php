@@ -33,7 +33,7 @@ class ProcedureAmortizationSeeder extends Seeder
                 ],
                 'amortizacion automatica' => [
                     'type' => ['module_id' => $module->id,'name'=>'Amortización Automática','second_name'=>'Amort. AUT'],
-                    'modalities' => [ ['name'=>'Descuento Comando General de la Policia Boliviana','shortened'=>'DES-COMANDO','requirements'=>[]],
+                    'modalities' => [ ['name'=>'Descuento Comando General de la Policía Boliviana','shortened'=>'DES-COMANDO','requirements'=>[]],
                                     ['name'=>'Descuento Servicio Nacional del Sistema de Reparto','shortened'=>'DES-SENASIR','requirements'=>[]],
                     ]
                 ],
