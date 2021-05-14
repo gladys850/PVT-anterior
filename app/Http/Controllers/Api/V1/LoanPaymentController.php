@@ -910,7 +910,7 @@ class LoanPaymentController extends Controller
                 $totalLoanAmount = 0; 
                 $have_payment = false;
                 if($request->state){//comando
-                    $procedure_modality_id = ProcedureModality::whereShortened("DES-COMANDO")->first()->id;;
+                    $procedure_modality_id = ProcedureModality::whereShortened("DES-COMANDO")->first()->id;
                     $ci=(int)$array[0][$i][0];
                     $affiliate = Affiliate::whereIdentityCard($ci)->first(); 
                     $loanPayments = LoanPayment::where('affiliate_id', $affiliate->id)->where('state_id',$pendiente_confirmar_id)
