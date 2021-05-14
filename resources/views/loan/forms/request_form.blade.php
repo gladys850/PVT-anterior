@@ -47,9 +47,9 @@
                 <td class="data-row py-5">{{ Util::money_format($loan->amount_requested) }} <span class="capitalize">Bs.</span></td>
                 <td class="data-row py-5">{{ $loan->loan_term }} <span class="capitalize">Meses</span></td>
                 <td class="data-row py-5">
-                    @if($loan->payment_type->name=='Deposito Bancario')
-                        <div class="font-bold">Cuenta Banco Union</div>
-                        <div>{{ $loan->number_payment_type }}</div>
+                    @if($loan->payment_type->name=='Depósito Bancario')
+                        <div class="font-bold">{{$loan->payment_type->name}}</div>
+                        <div>Nro. de cuenta: {{ $loan->number_payment_type }}</div>
                     @else
                         {{ $loan->payment_type->name}}
                     @endif
