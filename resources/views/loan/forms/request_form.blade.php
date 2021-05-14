@@ -223,6 +223,12 @@
                 @endif
                 </td>
             </tr>
+            <tr class="bg-grey-darker text-sm-1 text-white">
+                <td colspan="2">Domicilio actual</td>
+            </tr>
+            <tr>
+                 <td colspan="2" width="100%">{{ $personal_reference->address ? $personal_reference->address : '' }}</td>
+            </tr>
         </table>
         @endforeach
     </div>
