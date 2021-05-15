@@ -157,10 +157,40 @@ class LoanPaymentController extends Controller
                 if($loanPayment->state->name == 'Pagado' || $loanPayment->state->name == 'Pendiente por confirmar')
                 {
                     $loanPayment->state = LoanPaymentState::whereId($loanPayment->state_id)->first();
+                    $loanPayment->role = Role::whereId($loanPayment->role_id)->first();
+                    $loanPayment->user = User::whereId($loanPayment->user_id)->first();
                     $loanPayment->modality;
                     $payments->push($loanPayment);
                 }
             }
+        $loan->payments = $payments;
+        return $loan;
+    }
+     /**
+    * Historial de pagos
+    * Devuelve el historial de pagos con los datos paginados
+    * @bodyParam loan_id integer required ID del tramite de préstamo. Example 1
+    * @authenticated
+    * @responseFile responses/loan_payment/payment_history.200.json
+     */
+    public function payment_history(Request $request){
+        $request->validate([
+            'loan_id' => 'required',
+        ]);
+        $loan = Loan::whereId($request->loan_id)->first();
+        $loan->balance = $loan->balance;
+        $loan['estimated_quota'] = $loan->estimated_quota;
+        $loan['interest'] = $loan->interest;
+        $payments = collect();
+            $loanPayments = LoanPayment::where('loan_id', $request->loan_id)->orderBy('id')->get();
+            foreach($loanPayments as $loanPayment)
+            {
+                    $loanPayment->state = LoanPaymentState::whereId($loanPayment->state_id)->first();
+                    $loanPayment->role = Role::whereId($loanPayment->role_id)->first();
+                    $loanPayment->user = User::whereId($loanPayment->user_id)->first();
+                    $loanPayment->modality;
+                    $payments->push($loanPayment);
+            }           
         $loan->payments = $payments;
         return $loan;
     }
