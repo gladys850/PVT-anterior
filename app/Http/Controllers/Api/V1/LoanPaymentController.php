@@ -157,10 +157,40 @@ class LoanPaymentController extends Controller
                 if($loanPayment->state->name == 'Pagado' || $loanPayment->state->name == 'Pendiente por confirmar')
                 {
                     $loanPayment->state = LoanPaymentState::whereId($loanPayment->state_id)->first();
+                    $loanPayment->role = Role::whereId($loanPayment->role_id)->first();
+                    $loanPayment->user = User::whereId($loanPayment->user_id)->first();
                     $loanPayment->modality;
                     $payments->push($loanPayment);
                 }
             }
+        $loan->payments = $payments;
+        return $loan;
+    }
+     /**
+    * Historial de pagos
+    * Devuelve el historial de pagos con los datos paginados
+    * @bodyParam loan_id integer required ID del tramite de préstamo. Example 1
+    * @authenticated
+    * @responseFile responses/loan_payment/payment_history.200.json
+     */
+    public function payment_history(Request $request){
+        $request->validate([
+            'loan_id' => 'required',
+        ]);
+        $loan = Loan::whereId($request->loan_id)->first();
+        $loan->balance = $loan->balance;
+        $loan['estimated_quota'] = $loan->estimated_quota;
+        $loan['interest'] = $loan->interest;
+        $payments = collect();
+            $loanPayments = LoanPayment::where('loan_id', $request->loan_id)->orderBy('id')->get();
+            foreach($loanPayments as $loanPayment)
+            {
+                    $loanPayment->state = LoanPaymentState::whereId($loanPayment->state_id)->first();
+                    $loanPayment->role = Role::whereId($loanPayment->role_id)->first();
+                    $loanPayment->user = User::whereId($loanPayment->user_id)->first();
+                    $loanPayment->modality;
+                    $payments->push($loanPayment);
+            }           
         $loan->payments = $payments;
         return $loan;
     }
@@ -245,6 +275,50 @@ class LoanPaymentController extends Controller
         }else{
             abort(403, 'El registro a eliminar no está en estado Pendiente');
         }
+    }
+
+    /**
+    * Anular el Ultimo Registro de Pago
+    * @urlParam loan_payment required ID del pago. Example: 1
+    * @authenticated
+    * @responseFile responses/loan_payment/delete_last_record_payment.200.json
+    */
+    public function delete_last_record_payment(LoanPayment $loanPayment)
+    {       
+        $message['message'] = false;
+        if(isset($loanPayment)){     
+            $last_records = $loanPayment->loan->paymentsKardex->first();    
+            if ($loanPayment->id == $last_records->id){
+                $procedure_modality_id = ProcedureModality::whereName("Directo")->first()->id;
+                if($loanPayment->procedure_modality_id == $procedure_modality_id){ 
+                    $voucher=Voucher::wherePayableId($loanPayment->id)->wherePayableType('loan_payments')->whereDeletedAt(null)->first();
+                    if($voucher == null){
+                        $state = LoanPaymentState::whereName('Anulado')->first();
+                        $loanPayment->state()->associate($state);
+                        $loanPayment->save();
+                        $loanPayment->delete();
+                        return $loanPayment;
+                    } else{
+                        $message['message'] = "El registro no puede ser eliminado por tener un váucher asociado";
+                        $message['deleted'] = false;
+                    }
+                } else{
+                    $state = LoanPaymentState::whereName('Anulado')->first();
+                    $loanPayment->state()->associate($state);
+                    $loanPayment->save();
+                    $loanPayment->delete();
+                    return $loanPayment;
+                }
+            }else{
+                $message['message'] = "El registro no puede ser eliminado por no se el ultimo";
+                $message['deleted'] = false;
+                }
+        }
+        else{       
+            $message['message'] = "No se encontro el registro del Pago";  
+            $message['deleted'] = false;        
+        }
+        return $message;
     }
 
     /** @group Tesoreria
@@ -910,7 +984,7 @@ class LoanPaymentController extends Controller
                 $totalLoanAmount = 0; 
                 $have_payment = false;
                 if($request->state){//comando
-                    $procedure_modality_id = ProcedureModality::whereShortened("DES-COMANDO")->first()->id;;
+                    $procedure_modality_id = ProcedureModality::whereShortened("DES-COMANDO")->first()->id;
                     $ci=(int)$array[0][$i][0];
                     $affiliate = Affiliate::whereIdentityCard($ci)->first(); 
                     $loanPayments = LoanPayment::where('affiliate_id', $affiliate->id)->where('state_id',$pendiente_confirmar_id)
@@ -1096,7 +1170,7 @@ class LoanPaymentController extends Controller
         return Excel::download($export, $File.'.xlsx');
         
 
-    }
+ }
     /** @group Reportes préstamos
     * Préstamos en móra
     * Descarga en xls los prestamos que se encuentran en Móra.
@@ -1228,6 +1302,8 @@ class LoanPaymentController extends Controller
 
     $registration_spouse = request('registration_spouse') ?? '';
     $payment_by = request('payment_by') ?? '';
+
+    $loan_payment_date = request('loan_payment_date') ?? '';
     //$amortization_type_payment = request('amortization_type_payment') ?? '';
 
       if ($id_loan != '') {//1
@@ -1318,6 +1394,9 @@ class LoanPaymentController extends Controller
       if ($payment_by != '') {
         array_push($conditions, array('loan_payments.paid_by', 'ilike', "%{$payment_by}%"));
       }
+      if ($loan_payment_date != '') {
+        array_push($conditions, array('loan_payments.loan_payment_date', 'ilike', "%{$loan_payment_date}%"));
+      }
       
  
       if($excel==true){
@@ -1339,7 +1418,8 @@ class LoanPaymentController extends Controller
                 ->where($conditions)
                 ->select('loans.id as id_loan','loans.code as code_loan','loans.disbursement_date as disbursement_date_loan','affiliate_state_types.name as state_type_affiliate','affiliate_states.name as state_affiliate',
                 'affiliates.id as id_affiliate','affiliates.identity_card as identity_card_affiliate','affiliates.registration as registration_affiliate','affiliates.last_name as last_name_affiliate','affiliates.mothers_last_name as mothers_last_name_affiliate',
-                'affiliates.first_name as first_name_affiliate','affiliates.second_name as second_name_affiliate','affiliates.surname_husband as surname_husband_affiliate','pension_entities.name as pension_entity_affiliate','loan_payments.code as code_payment','loan_payments.estimated_date as estimated_date_payment','loan_payments.estimated_quota as estimated_quota_payment','loan_payments.voucher as voucher_payment',
+                'affiliates.first_name as first_name_affiliate','affiliates.second_name as second_name_affiliate','affiliates.surname_husband as surname_husband_affiliate','pension_entities.name as pension_entity_affiliate','loan_payments.code as code_payment','loan_payments.estimated_date as estimated_date_payment','loan_payments.loan_payment_date as loan_payment_date',
+                'loan_payments.estimated_quota as estimated_quota_payment','loan_payments.voucher as voucher_payment',
                 'procedure_modalities.name as sub_modality_payment','procedure_modalities.shortened as sub_modality_shortened_payment','procedure_types.name as modality_payment','loan_payment_states.name as state_payment','voucher_types.name as name_voucher_type','spouses.registration as registration_spouse',
                 'loan_payments.paid_by as payment_by','loan_payments.capital_payment as capital_payment','loan_payments.interest_payment as interest_payment','loan_payments.penal_payment as penal_payment','loan_payments.interest_remaining as interest_current_pending','loan_payments.penal_remaining as interest_penal_pending','loan_payments.estimated_quota as estimated_quota_payment',
                 'loan_payments.previous_balance as previous_balance',DB::raw("(loan_payments.previous_balance - loan_payments.capital_payment) as current_balance"))
@@ -1350,7 +1430,7 @@ class LoanPaymentController extends Controller
                $data=array(
                    array("Id del préstamo", "Código préstamo", "Fecha desembolso préstamo","estado del afiliado","Tipo de estado del afiliado","ID afiliado", "Nro de carnet", "Matrícula", "Primer apellido","Segundo apellido","Primer nombre","Segundo nombre","Apellido casada",
                    "Entidad de pensión del afiliado","Código pago","fecha de pago","Total pagado","Nro comprobante","Modalidad pago","Modalidad pago nombre","Tipo amortización","Estado del pago","Tipo de voucher","Matrícula esposa",
-                   "Pagado por","Capital pagado","Interés corriente pagado","Interés penal pagado","Interés corriente pendiente","Interés penal pendiente","Total pagado","Saldo anterior","Saldo actual")
+                   "Pagado por","Capital pagado","Interés corriente pagado","Interés penal pagado","Interés corriente pendiente","Interés penal pendiente","Total pagado","Saldo anterior","Saldo actual","fecha y hora de cobro")
                );
                foreach ($list_loan as $row){
                    array_push($data, array(
@@ -1378,7 +1458,7 @@ class LoanPaymentController extends Controller
                        $row->state_payment,
                        $row->name_voucher_type,
                        $row->registration_spouse,$row->payment_by,$row->capital_payment,$row->interest_payment,$row->penal_payment,
-                       $row->interest_current_pending,$row->interest_penal_pending,$row->estimated_quota_payment,$row->previous_balance,$row->current_balance
+                       $row->interest_current_pending,$row->interest_penal_pending,$row->estimated_quota_payment,$row->previous_balance,$row->current_balance,$row->loan_payment_date
 
                    ));
                }
@@ -1404,7 +1484,8 @@ class LoanPaymentController extends Controller
                 ->where($conditions)
                 ->select('loans.id as id_loan','loans.code as code_loan','loans.disbursement_date as disbursement_date_loan','affiliate_state_types.name as state_type_affiliate','affiliate_states.name as state_affiliate',
                 'affiliates.id as id_affiliate','affiliates.identity_card as identity_card_affiliate','affiliates.registration as registration_affiliate','affiliates.last_name as last_name_affiliate','affiliates.mothers_last_name as mothers_last_name_affiliate',
-                'affiliates.first_name as first_name_affiliate','affiliates.second_name as second_name_affiliate','affiliates.surname_husband as surname_husband_affiliate','pension_entities.name as pension_entity_affiliate','loan_payments.code as code_payment','loan_payments.estimated_date as estimated_date_payment','loan_payments.voucher as voucher_payment',
+                'affiliates.first_name as first_name_affiliate','affiliates.second_name as second_name_affiliate','affiliates.surname_husband as surname_husband_affiliate','pension_entities.name as pension_entity_affiliate','loan_payments.code as code_payment','loan_payments.estimated_date as estimated_date_payment','loan_payments.loan_payment_date as loan_payment_date',
+                'loan_payments.voucher as voucher_payment',
                 'procedure_modalities.name as sub_modality_payment','procedure_modalities.shortened as sub_modality_shortened_payment','procedure_types.name as modality_payment','loan_payment_states.name as state_payment','voucher_types.name as name_voucher_type','spouses.registration as registration_spouse',
                 'loan_payments.paid_by as payment_by','loan_payments.capital_payment as capital_payment','loan_payments.interest_payment as interest_payment','loan_payments.penal_payment as penal_payment','loan_payments.interest_remaining as interest_current_pending','loan_payments.penal_remaining as interest_penal_pending','loan_payments.estimated_quota as estimated_quota_payment',
                 'loan_payments.previous_balance as previous_balance',DB::raw("(loan_payments.previous_balance - loan_payments.capital_payment) as current_balance"))

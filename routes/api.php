@@ -10,7 +10,7 @@ Route::group([
     //Route::post('command_senasir_save_payment', 'Api\V1\LoanPaymentController@command_senasir_save_payment');
     //Route::get('senasir_save_payment', 'Api\V1\LoanPaymentController@senasir_save_payment');
     Route::get('loans_delay', 'Api\V1\LoanPaymentController@loans_delay');
-    //Route::get('excel', 'Api\V1\LoanPaymentController@download');
+    //Route::get('excel', 'Api\V1\LoanPaymentController@download');  
     //sismu
     //Route::get('prueba', 'Api\V1\AffiliateController@get_mixed_guarantees');
     Route::patch('edit_loan/{loan}/qualification', 'Api\V1\LoanController@edit_amounts_loan_term');
@@ -196,6 +196,7 @@ Route::group([
             Route::patch('loan_payment/{id}/reactivate','Api\V1\LoanPaymentController@reactivate');
             Route::get('loan_payment/{loan_payment}/flow','Api\V1\LoanPaymentController@get_flow');
             Route::get('kardex_loan_payment','Api\V1\LoanPaymentController@indexKardex');
+            Route::get('history_loan_payment','Api\V1\LoanPaymentController@payment_history');
             Route::post('payments_per_period','Api\V1\LoanPaymentController@payments_per_period');
             Route::post('command_senasir_save_payment', 'Api\V1\LoanPaymentController@download');
         });
@@ -217,6 +218,7 @@ Route::group([
         ], function () {
             Route::apiResource('loan_payment', 'Api\V1\LoanPaymentController')->only('destroy');
             Route::patch('bulk_destroy', 'Api\V1\LoanPaymentController@bulk_destroy');
+            Route::delete('delete_last_payment/{loan_payment}/payment', 'Api\V1\LoanPaymentController@delete_last_record_payment');  
         });
         //Registro de pago por tesoreria
         Route::group([
