@@ -75,7 +75,14 @@ Route::group([
         Route::get('affiliate/{affiliate}/contributions_affiliate', 'Api\V1\ContributionController@get_all_contribution_affiliate');
         Route::get('list_loan_generate', 'Api\V1\LoanController@list_loan_generate');
         Route::get('list_loan_payments_generate', 'Api\V1\LoanPaymentController@list_loan_payments_generate');
-
+        Route::get('list_loan_generate_co', 'Api\V1\LoanReportController@list_loan_generate_co');
+        Route::get('report_amortization_discount_months', 'Api\V1\LoanPaymentReportController@report_amortization_discount_months');//1
+        Route::get('report_amortization_cash_deposit', 'Api\V1\LoanPaymentReportController@report_amortization_cash_deposit');//2
+        Route::get('report_amortization_ajust', 'Api\V1\LoanPaymentReportController@report_amortization_ajust');//3
+        Route::get('report_amortization_pending_confirmation', 'Api\V1\LoanPaymentReportController@report_amortization_pending_confirmation');//4
+        Route::get('report_amortization_fondo_complement', 'Api\V1\LoanPaymentReportController@report_amortization_fondo_complement');//5
+        Route::get('report_loan_vigent', 'Api\V1\LoanReportController@report_loan_vigent');//6
+        
         // Afiliado
         Route::group([
             'middleware' => 'permission:show-affiliate'
