@@ -218,6 +218,7 @@ Route::group([
         ], function () {
             Route::apiResource('loan_payment', 'Api\V1\LoanPaymentController')->only('destroy');
             Route::patch('bulk_destroy', 'Api\V1\LoanPaymentController@bulk_destroy');
+            Route::patch('delete_last_payment/{loan_payment}/payment', 'Api\V1\LoanPaymentController@delete_last_record_payment');  
         });
         //Registro de pago por tesoreria
         Route::group([

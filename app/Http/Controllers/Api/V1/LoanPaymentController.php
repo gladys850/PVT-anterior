@@ -277,6 +277,34 @@ class LoanPaymentController extends Controller
         }
     }
 
+    /**
+    * Anular el Ultimo Registro de Pago
+    * @urlParam loan_payment required ID del pago. Example: 1
+    * @authenticated
+    * @responseFile responses/loan_payment/delete_last_record_payment.200.json
+    */
+    public function delete_last_record_payment(LoanPayment $loanPayment)
+    {   
+       
+        $message['message'] = false;
+        if(isset($loanPayment)){
+        $last_records = $loanPayment->loan->paymentsKardex->first();     
+            if ($loanPayment->id == $last_records->id){
+                $state = LoanPaymentState::whereName('Anulado')->first();
+                $loanPayment->state()->associate($state);
+                $loanPayment->save();
+                $loanPayment->delete();
+                return $loanPayment;  
+                }else{
+                $message['message'] = "El registro no puede ser eliminado por no se el ultimo";
+                }
+        }
+        else{       
+            $message['message'] = "No se encontro el registro del Pago";          
+        }
+        return $message;
+    }
+
     /** @group Tesoreria
     * Registro de cobro de Préstamo
     * Insertar registro de pago (loan_payment).
