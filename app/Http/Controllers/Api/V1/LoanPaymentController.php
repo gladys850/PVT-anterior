@@ -284,23 +284,39 @@ class LoanPaymentController extends Controller
     * @responseFile responses/loan_payment/delete_last_record_payment.200.json
     */
     public function delete_last_record_payment(LoanPayment $loanPayment)
-    {   
-       
+    {       
         $message['message'] = false;
-        if(isset($loanPayment)){
-        $last_records = $loanPayment->loan->paymentsKardex->first();     
+        if(isset($loanPayment)){     
+            $last_records = $loanPayment->loan->paymentsKardex->first();    
             if ($loanPayment->id == $last_records->id){
-                $state = LoanPaymentState::whereName('Anulado')->first();
-                $loanPayment->state()->associate($state);
-                $loanPayment->save();
-                $loanPayment->delete();
-                return $loanPayment;  
-                }else{
+                $procedure_modality_id = ProcedureModality::whereName("Directo")->first()->id;
+                if($loanPayment->procedure_modality_id == $procedure_modality_id){ 
+                    $voucher=Voucher::wherePayableId($loanPayment->id)->wherePayableType('loan_payments')->whereDeletedAt(null)->first();
+                    if($voucher == null){
+                        $state = LoanPaymentState::whereName('Anulado')->first();
+                        $loanPayment->state()->associate($state);
+                        $loanPayment->save();
+                        $loanPayment->delete();
+                        return $loanPayment;
+                    } else{
+                        $message['message'] = "El registro no puede ser eliminado por tener un váucher asociado";
+                        $message['deleted'] = false;
+                    }
+                } else{
+                    $state = LoanPaymentState::whereName('Anulado')->first();
+                    $loanPayment->state()->associate($state);
+                    $loanPayment->save();
+                    $loanPayment->delete();
+                    return $loanPayment;
+                }
+            }else{
                 $message['message'] = "El registro no puede ser eliminado por no se el ultimo";
+                $message['deleted'] = false;
                 }
         }
         else{       
-            $message['message'] = "No se encontro el registro del Pago";          
+            $message['message'] = "No se encontro el registro del Pago";  
+            $message['deleted'] = false;        
         }
         return $message;
     }
@@ -1154,7 +1170,7 @@ class LoanPaymentController extends Controller
         return Excel::download($export, $File.'.xlsx');
         
 
-    }
+ }
     /** @group Reportes préstamos
     * Préstamos en móra
     * Descarga en xls los prestamos que se encuentran en Móra.
