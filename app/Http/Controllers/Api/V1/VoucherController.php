@@ -21,11 +21,18 @@ use App\LoanPayment;
 */
 class VoucherController extends Controller
 {
+    public static function append_data(Voucher $voucher)
+    {
+        $voucher->payable;
+        $voucher->voucher_type = $voucher->voucher_type;
+        
+        return $voucher;
+    }
+
     /**
     * Listado de cobros
     * Devuelve el listado con los datos paginados
-    * @queryParam user_id Filtro por id de usuario. Example: 123
-    * @queryParam loan_payment_id Filtro por id de préstamo. Example: 2
+    * @queryParam loan_payment_id Filtro por id de cobro. Example: 2
     * @queryParam loan_payments Filtro por tipo de cobro. Example: loan_payments
     * @queryParam search Parámetro de búsqueda. Example: TRANS000001-2020
     * @queryParam sortBy Vector de ordenamiento. Example: [created_at]
@@ -38,9 +45,6 @@ class VoucherController extends Controller
     public function index(Request $request)
     {
         $filter = [];
-        if ($request->has('user_id')) {
-            $filter['user_id'] = $request->user_id;
-        }
         if ($request->has('loan_payments')) {
             $filter['payable_type'] = "loan_payments";
         }
@@ -48,7 +52,12 @@ class VoucherController extends Controller
             $filter['payable_id'] = $request->loan_payment_id;
             $filter['payable_type'] = "loan_payments";
         }
-        return Util::search_sort(new Voucher(), $request, $filter);
+       
+        $data = Util::search_sort(new Voucher(), $request, $filter);
+        $data->getCollection()->transform(function ($voucher) {
+            return self::append_data($voucher);
+        });
+        return $data;
     }
     /**
     * Detalle de registro de cobro
