@@ -83,6 +83,7 @@ Route::group([
         Route::get('report_amortization_fondo_complement', 'Api\V1\LoanPaymentReportController@report_amortization_fondo_complement');//5
         Route::get('report_loan_vigent', 'Api\V1\LoanReportController@report_loan_vigent');//6
         Route::get('report_loan_state_cartera', 'Api\V1\LoanReportController@report_loan_state_cartera');//7
+        Route::get('report_loans_mora', 'Api\V1\LoanReportController@report_loans_mora');//8
 
         // Afiliado
         Route::group([
