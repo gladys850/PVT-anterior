@@ -191,9 +191,9 @@ class LoanReportController extends Controller
                foreach ($list_loan as $loan) {
                  $padron = Loan::where('id', $loan->id_loan)->first();
                  $loan->balance_loan=$padron->balance;
-                 $loan->record = $padron->records;
+                 //$loan->record = $padron->records;
                }
-               return $list_loan;
+               //return $list_loan;
                $File="ListadoPrestamosDesembolsados";
                $data=array(
                    array( "NRO DE PRÉSTAMO", "FECHA DE SOLICITUD", "FECHA DESEMBOLSO",
@@ -267,7 +267,7 @@ class LoanReportController extends Controller
                  $loan->balance_loan=$padron->balance;
                  $loan->record = $padron->record;
                }
-               return $list_loan_liq;
+               //return $list_loan_liq;
                $File="ListadoPrestamosVigenteLiquidado";
                $data_liq=array(
                    array( "NRO DE PRÉSTAMO", "FECHA DE SOLICITUD", "FECHA DESEMBOLSO",
