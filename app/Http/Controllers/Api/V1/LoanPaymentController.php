@@ -508,7 +508,7 @@ class LoanPaymentController extends Controller
     * @responseFile responses/loan_payment/print_loan_payment.200.json
     */
     public function print_loan_payment(Request $request, LoanPayment $loan_payment, $standalone = true)
-    { 
+    {  
         $loan = LoanPayment::findOrFail($loan_payment->id)->loan;
         $affiliate = $loan_payment->affiliate;
         $spouse = $affiliate->spouse;
@@ -528,13 +528,13 @@ class LoanPaymentController extends Controller
         $num_quota=$loan_payment->quota_number;
             if($num_quota == 1){
                 $disbursement_date = CarbonImmutable::parse($loan->disbursement_date);
-                $estimated_days['current'] = $disbursement_date->diffInDays(CarbonImmutable::parse($loan_payment->estimated_date))+1;
+                $estimated_days['current'] = $disbursement_date->diffInDays(CarbonImmutable::parse($loan_payment->estimated_date));
                 if($estimated_days['current'] > $max_current)
                     $estimated_days['penal'] = $estimated_days['current'] - $global_parameter->days_current_interest;
                 else
                     $estimated_days['penal'] = 0;
             }else{                
-                $payment_date = Carbon::parse($latest_quota->estimated_date)->toDateString();
+                $reg_payment_date = CarbonImmutable::parse($loan_payment->previous_payment_date);
                 $estimated_days['current'] = $reg_payment_date->diffInDays(CarbonImmutable::parse($loan_payment->estimated_date)->toDateString());
                 if($estimated_days['current'] > $max_current)
                 $estimated_days['penal'] = $estimated_days['current'] - $global_parameter->days_current_interest;
