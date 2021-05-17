@@ -207,7 +207,11 @@ class Loan extends Model
     }
     public function getdelay()
     {
-        return LoanPayment::days_interest($this);
+        return LoanPayment::days_interest2($this);
+    }
+    public function getdelay_parcial()
+    {
+        return LoanPayment::days_interest2($this)->interest_accumulated > 0 ? true : false;
     }
 
     public function payments()
