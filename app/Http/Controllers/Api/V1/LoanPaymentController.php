@@ -182,7 +182,7 @@ class LoanPaymentController extends Controller
         $loan['estimated_quota'] = $loan->estimated_quota;
         $loan['interest'] = $loan->interest;
         $payments = collect();
-            $loanPayments = LoanPayment::where('loan_id', $request->loan_id)->orderBy('id')->get();
+            $loanPayments = LoanPayment::where('loan_id', $request->loan_id)->orderBy('id')->withTrashed()->get();
             foreach($loanPayments as $loanPayment)
             {
                     $loanPayment->state = LoanPaymentState::whereId($loanPayment->state_id)->first();
