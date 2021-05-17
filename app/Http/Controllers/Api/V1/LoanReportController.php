@@ -14,11 +14,13 @@ use App\Affiliate;
 use App\City;
 use App\User;
 use App\Loan;
+use App\LoanState;
 
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\ArchivoPrimarioExport;
 use App\Exports\SheetExportPayment;
 use App\Exports\MultipleSheetExportPayment;
+use App\Exports\MultipleSheetExportPaymentMora;
 use Illuminate\Support\Facades\Storage;
 //use App\Exports\SheetExportPayment;
 
@@ -311,5 +313,147 @@ class LoanReportController extends Controller
                $export = new MultipleSheetExportPayment($data, $data_liq,'PRE-VIGENTE','PRE-LIQUIDADO');
                return Excel::download($export, $File.'.xlsx');
    }
+
+   /** @group Reportes de Prestamos
+   * Reporte de prestamos en mora 
+   * Reporte de prestamos prestamos en mora PARCIAL TOTAL MORA
+   * @authenticated
+   * @responseFile responses/report_loans/loan_desembolsado.200.json
+   */
+
+  public function report_loans_mora(Request $request){
+    $state = LoanState::whereName('Vigente')->first();
+
+    $loans=Loan::where('state_id',$state->id)->get();
+    $loans_mora_total = collect();
+    $loans_mora_parcial = collect();
+    $loans_mora = collect();
+
+    //mora
+    foreach($loans as $loan){
+      if($loan->defaulted && count($loan->payments) > 0){
+        $loan->guarantor = $loan->guarantor;
+        $loan->lenders = $loan->lenders;
+        $loan->personal_references=$loan->personal_references;
+        $loans_mora->push($loan);
+      }
+    }
+
+    //mora total
+    foreach($loans as $loan){
+      if($loan->defaulted && count($loan->payments)== 0){
+        $loan->guarantor = $loan->guarantors;
+        $loan->lenders = $loan->lenders;
+        $loan->personal_references=$loan->personal_references;
+
+        $loans_mora_total->push($loan);
+      }
+    }
+
+    //mora parcial
+    foreach($loans as $loan){
+      if($loan->getdelay_parcial() && !$loan->defaulted ){
+        $loan->guarantor = $loan->guarantors;
+        $loan->lenders = $loan->lenders;
+        $loan->personal_references=$loan->personal_references;
+
+        $loans_mora_parcial->push($loan);
+      }
+    }
+
+    $File="PrestamosMora";
+        $data=array(
+            array("MATRICULA","CI","NOMBRE COMPLETO","NRO DE CEL","NRO DE CEL.2","PTMO","FECHA DESEMBOLSO",
+            "NRO DE CUOTAS","TAZA ANUAL","CUOTA MENSUAL","SALDO","TIPO","PRODUCTO","TIEMPO MORA","NOM. PERSONAL REFERENCE","DIRECCIÓN")
+        );
+        foreach ($loans_mora_total as $row){
+            array_push($data, array(
+               $row->lenders[0]->affiliate_registration_number,
+               $row->lenders[0]->identity_card,
+              // $row->lenders[0],
+               $row->lenders[0]->first_name,
+               $row->lenders[0]->last_name,
+               $row->lenders[0]->phone_number,
+               $row->lenders[0]->cell_phone_number,
+               $row->code,
+               $row->disbursement_date,
+               $row->loan_term,
+               $row->estimated_quota,
+               $row->balance,
+               $row->lenders[0]->affiliate_state->affiliate_state_type->name,
+               $row->modality->procedure_type->second_name,
+
+               $row->getdelay()->penal,
+              // $row->getdelay()->interest_accumulated,
+               
+               $row->personal_references[0]->last_name,
+               $row->personal_references[0]->address,
+            ));
+        }
+        //prestamomora parcial
+        $File="PrestamosMoraParcial";
+        $data_mora_parcial=array(
+            array("MATRICULA","CI","NOMBRE COMPLETO","NRO DE CEL","NRO DE CEL.2","PTMO","FECHA DESEMBOLSO",
+            "NRO DE CUOTAS","TAZA ANUAL","CUOTA MENSUAL","SALDO","TIPO","PRODUCTO","TIEMPO MORA","NOM. PERSONAL REFERENCE","DIRECCIÓN")
+        );
+        foreach ($loans_mora_parcial as $row){
+            array_push($data_mora_parcial, array(
+               $row->lenders[0]->affiliate_registration_number,
+               $row->lenders[0]->identity_card,
+              // $row->lenders[0],
+               $row->lenders[0]->first_name,
+               $row->lenders[0]->last_name,
+               $row->lenders[0]->phone_number,
+               $row->lenders[0]->cell_phone_number,
+               $row->code,
+               $row->disbursement_date,
+               $row->loan_term,
+               $row->estimated_quota,
+               $row->balance,
+               $row->lenders[0]->affiliate_state->affiliate_state_type->name,
+               $row->modality->procedure_type->second_name,
+
+               $row->getdelay()->penal,
+              // $row->getdelay()->interest_accumulated,
+               
+               $row->personal_references[0]->last_name,
+               $row->personal_references[0]->address,
+            ));
+        }
+        //prestamomora 
+        $File="PrestamosMora";
+        $data_mora=array(
+            array("MATRICULA","CI","NOMBRE COMPLETO","NRO DE CEL","NRO DE CEL.2","PTMO","FECHA DESEMBOLSO",
+            "NRO DE CUOTAS","TAZA ANUAL","CUOTA MENSUAL","SALDO","TIPO","PRODUCTO","TIEMPO MORA","NOM. PERSONAL REFERENCE","DIRECCIÓN")
+        );
+        foreach ($loans_mora as $row){
+            array_push($data_mora, array(
+               $row->lenders[0]->affiliate_registration_number,
+               $row->lenders[0]->identity_card,
+              // $row->lenders[0],
+               $row->lenders[0]->first_name,
+               $row->lenders[0]->last_name,
+               $row->lenders[0]->phone_number,
+               $row->lenders[0]->cell_phone_number,
+               $row->code,
+               $row->disbursement_date,
+               $row->loan_term,
+               $row->estimated_quota,
+               $row->balance,
+               $row->lenders[0]->affiliate_state->affiliate_state_type->name,
+               $row->modality->procedure_type->second_name,
+
+               $row->getdelay()->penal,
+              // $row->getdelay()->interest_accumulated,
+               
+               $row->personal_references[0]->last_name,
+               $row->personal_references[0]->address,
+            ));
+        }
+
+        //$export = new MultipleSheetExportPaymentMora($data,$data_mora_parcial,$data_mora,'MORA TOTAL','MORA PARCIAL','MORA');
+        $export = new MultipleSheetExportPaymentMora($data,$data_mora_parcial,$data_mora);
+        return Excel::download($export, $File.'.xlsx');
+  }
 
 }
