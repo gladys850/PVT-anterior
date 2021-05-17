@@ -147,7 +147,7 @@ class AdvanceRoleSeeder extends Seeder
                 if (in_array($role['display_name'], ['Tesorería Cobros'])) {
                     $role->syncPermissions(array_merge($pay_permissions_treasury));
                 } elseif (in_array($role['display_name'], ['Cobranzas'])) {
-                    $role->syncPermissions(array_merge($loan_collection));
+                    $role->syncPermissions(array_merge($loan_collection,$reports_permissions));
                 }
             }
         }
