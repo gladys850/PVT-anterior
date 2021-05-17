@@ -82,7 +82,8 @@ Route::group([
         Route::get('report_amortization_pending_confirmation', 'Api\V1\LoanPaymentReportController@report_amortization_pending_confirmation');//4
         Route::get('report_amortization_fondo_complement', 'Api\V1\LoanPaymentReportController@report_amortization_fondo_complement');//5
         Route::get('report_loan_vigent', 'Api\V1\LoanReportController@report_loan_vigent');//6
-        
+        Route::get('report_loan_state_cartera', 'Api\V1\LoanReportController@report_loan_state_cartera');//7
+
         // Afiliado
         Route::group([
             'middleware' => 'permission:show-affiliate'
@@ -214,6 +215,7 @@ Route::group([
             Route::post('loan/{loan}/payment','Api\V1\LoanController@set_payment');
             Route::post('loan_payment/importation_command_senasir', 'Api\V1\LoanPaymentController@importation_command_senasir');//importacion de pagos
             Route::post('loan_payment/importation_pending_command_senasir', 'Api\V1\LoanPaymentController@importation_pending_command_senasir');//importacion de pendientes de pagos
+            Route::get('loan_information', 'Api\V1\LoanController@loan_information');//reporte de nuevos prestamos desembolsados
         });
         Route::group([
             'middleware' => 'permission:update-payment-loan'
