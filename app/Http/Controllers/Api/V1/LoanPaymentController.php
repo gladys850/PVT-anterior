@@ -833,12 +833,12 @@ class LoanPaymentController extends Controller
                                 $procedure_modality = $procedure_modality_command;
                             if($lender->affiliate_state->name == 'Jubilado' && $lender->affiliate_state && $lender->pension_entity->name == 'SENASIR') 
                                 $procedure_modality = $procedure_modality_senasir;
-                            if($disbursement_day < LoanGlobalParameter::latest()->first()->offset_interest_day && $estimated_date == $date_payment){
+                            if($disbursement_day < LoanGlobalParameter::latest()->first()->offset_interest_day && Carbon::parse($estimated_date)->toDateString() == Carbon::parse($date_payment)->toDateString()){
                                 LoanPayment::registry_payment($loan, $estimated_date, $description, $procedure_modality->id, $voucher, $paid_by, $lender->pivot->quota_treat, $lender->id);
                                 $loans_quantity++;
                             }
                             else{
-                                if($estimated_date > $date_payment)
+                                if(Carbon::parse($estimated_date)->toDateString() > Carbon::parse($date_payment)->toDateString())
                                 {
                                     LoanPayment::registry_payment($loan, $estimated_date, $description, $procedure_modality->id, $voucher, $paid_by, $lender->pivot->quota_treat, $lender->id);
                                     $loans_quantity++;
@@ -853,12 +853,12 @@ class LoanPaymentController extends Controller
                             $paid_by = "G";
                             if($guarantor->affiliate_state->name == 'Servicio' || $lender->affiliate_state->name == 'Disponibilidad') $procedure_modality = $procedure_modality_command;
                             if($guarantor->affiliate_state->name == 'Jubilado' && $lender->affiliate_state && $lender->pension_entity->name == 'SENASIR') $procedure_modality = $procedure_modality_senasir;
-                            if($disbursement_day < LoanGlobalParameter::latest()->first()->offset_interest_day && $estimated_date == $date_payment){
+                            if($disbursement_day < LoanGlobalParameter::latest()->first()->offset_interest_day && Carbon::parse($estimated_date)->toDateString() == Carbon::parse($date_payment)->toDateString()){
                                 LoanPayment::registry_payment($loan, $estimated_date, $description, $procedure_modality->id, $voucher, $paid_by, $lender->pivot->quota_treat, $lender->id);
                                 $loans_quantity++;
                             }
                             else{
-                                if($estimated_date > $date_payment)
+                                if(Carbon::parse($estimated_date)->toDateString() > Carbon::parse($date_payment)->toDateString())
                                 {
                                     LoanPayment::registry_payment($loan, $estimated_date, $description, $procedure_modality->id, $voucher, $paid_by, $lender->pivot->quota_treat, $lender->id);
                                     $loans_quantity++;
@@ -873,12 +873,12 @@ class LoanPaymentController extends Controller
                         $paid_by = "T";
                         if($lender->affiliate_state->name == 'Servicio' || $lender->affiliate_state->name == 'Disponibilidad') $procedure_modality = $procedure_modality_command;
                         if($lender->affiliate_state->name == 'Jubilado' && $lender->pension_entity && $lender->pension_entity->name == 'SENASIR') $procedure_modality = $procedure_modality_senasir;
-                        if($disbursement_day < LoanGlobalParameter::latest()->first()->offset_interest_day && $estimated_date == $date_payment){
+                        if($disbursement_day < LoanGlobalParameter::latest()->first()->offset_interest_day && Carbon::parse($estimated_date)->toDateString() == Carbon::parse($date_payment)->toDateString()){
                             LoanPayment::registry_payment($loan, $estimated_date, $description, $procedure_modality->id, $voucher, $paid_by, $lender->pivot->quota_treat, $lender->id);
                             $loans_quantity++;
                         }
                         else{
-                            if($estimated_date > $date_payment)
+                            if(Carbon::parse($estimated_date)->toDateString() > Carbon::parse($date_payment)->toDateString())
                             {
                                 LoanPayment::registry_payment($loan, $estimated_date, $description, $procedure_modality->id, $voucher, $paid_by, $lender->pivot->quota_treat, $lender->id);
                                 $loans_quantity++;
