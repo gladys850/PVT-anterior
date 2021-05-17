@@ -35,7 +35,7 @@
           v-on="on"
           small>
             <v-icon>
-                mdi-format-clear
+                mdi-broom
             </v-icon>
             
         </v-btn>
@@ -241,31 +241,6 @@
             </v-menu>
           </template>
           
-          <template v-slot:[`header.guarantor_loan_affiliate`]="{ header }">
-            {{ header.text }}<br>
-            <v-menu offset-y :close-on-content-click="false">
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn icon v-bind="attrs" v-on="on">
-                  <v-icon small :color="searching.guarantor_loan_affiliate !='' ? 'red' : 'black' ">
-                    mdi-filter
-                  </v-icon>
-                </v-btn>
-              </template>
-              <div>
-                <v-select
-                  dense
-                  :items="items"
-                  item-text="name"
-                  item-value="value"
-                  v-model="searching.guarantor_loan_affiliate"
-                  :label="'Buscar ' + header.text"
-                  @change="search_loans()"
-                  hide-details
-                  single-line
-                ></v-select>
-              </div>
-            </v-menu>
-          </template>
 
           <template v-slot:[`header.surname_husband_affiliate`]="{ header }">
             {{ header.text }}<br>
@@ -291,7 +266,7 @@
             </v-menu>
           </template>
 
-           <template v-slot:[`header.modality_loan`]="{ header }">
+           <!--<template v-slot:[`header.modality_loan`]="{ header }">
             {{ header.text }}<br>
             <v-menu offset-y :close-on-content-click="false">
               <template v-slot:activator="{ on, attrs }">
@@ -410,6 +385,32 @@
               </div>
             </v-menu>
           </template>
+          
+          <template v-slot:[`header.guarantor_loan_affiliate`]="{ header }">
+            {{ header.text }}<br>
+            <v-menu offset-y :close-on-content-click="false">
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn icon v-bind="attrs" v-on="on">
+                  <v-icon small :color="searching.guarantor_loan_affiliate !='' ? 'red' : 'black' ">
+                    mdi-filter
+                  </v-icon>
+                </v-btn>
+              </template>
+              <div>
+                <v-select
+                  dense
+                  :items="items"
+                  item-text="name"
+                  item-value="value"
+                  v-model="searching.guarantor_loan_affiliate"
+                  :label="'Buscar ' + header.text"
+                  @change="search_loans()"
+                  hide-details
+                  single-line
+                ></v-select>
+              </div>
+            </v-menu>
+          </template>
 
           <template v-slot:[`header.state_loan`]="{ header }">
             {{ header.text }}<br>
@@ -434,7 +435,7 @@
 
               </div>
             </v-menu>
-          </template>
+          </template>-->
 
           <template v-slot:[`item.modality_loan`]="{ item }">
             <v-tooltip top>
@@ -565,12 +566,12 @@ data () {
         { text: 'Ap. Materno',value:'mothers_last_name_affiliate',input:'', menu:false,type:"text",class: ['normal', 'white--text','text-md-center'],width: '5%'},
         { text: 'Ap. Casada',value:'surname_husband_affiliate',input:'', menu:false,type:"text",class: ['normal', 'white--text','text-md-center'],width: '5%'},
         { text: 'Modalidad',value:'modality_loan',input:'', menu:false,type:"text",class: ['normal', 'white--text','text-md-center'],width: '5%'},
-        { text: 'Fecha Desembolso',value:'disbursement_date_loan',input:'', menu:false,type:"text",class: ['normal', 'white--text','text-md-center'],width: '5%'},
+        //{ text: 'Fecha Desembolso',value:'disbursement_date_loan',input:'', menu:false,type:"text",class: ['normal', 'white--text','text-md-center'],width: '5%'},
         { text: 'Monto Desembolsado',value:'amount_approved_loan',input:'', menu:false,type:"text",class: ['normal', 'white--text','text-md-center'],width: '5%'},
         { text: 'Saldo Capital',value:'balance_loan',input:'', menu:false,type:"text",class: ['normal', 'white--text','text-md-center'],width: '5%'},
-        { text: 'Cuota',value:'quota_loan',input:'', menu:false,type:"text",class: ['normal', 'white--text','text-md-center'],width: '5%'},
         { text: 'Sector',value:'state_type_affiliate',input:'', menu:false,type:"text",class: ['normal', 'white--text','text-md-center'],width: '5%'},
-        { text: 'Garante?',value:'guarantor_loan_affiliate',class: ['normal', 'white--text','text-md-center'],width: '5%'},
+        { text: 'Cuota',value:'quota_loan',input:'', menu:false,type:"text",class: ['normal', 'white--text','text-md-center'],width: '5%'},
+        //{ text: 'Garante?',value:'guarantor_loan_affiliate',class: ['normal', 'white--text','text-md-center'],width: '5%'},
         { text: 'Estado',value:'state_loan',input:'', menu:false,type:"text",class: ['normal', 'white--text','text-md-center'],width: '5%'},
         { text: 'Accion',value:'actions',input:'', menu:false,type:"text",class: ['normal', 'white--text','text-md-center'], sortable: false,width: '10%'},
     ],
@@ -639,8 +640,8 @@ data () {
             amount_approved_loan: this.searching.amount_approved_loan,
             state_type_affiliate: this.searching.state_type_affiliate,
             quota_loan: this.searching.quota_loan,
-            state_loan: this.searching.state_loan,
-            guarantor_loan_affiliate: this.searching.guarantor_loan_affiliate,
+            state_loan: 'Vigente',
+            guarantor_loan_affiliate: false,
             excel:false,
             page: this.options.page,
             per_page: this.options.itemsPerPage,
@@ -680,8 +681,8 @@ data () {
           amount_approved_loan: this.searching.amount_approved_loan,
           state_type_affiliate: this.searching.state_type_affiliate,
           quota_loan: this.searching.quota_loan,
-          state_loan: this.searching.state_loan,
-          guarantor_loan_affiliate: this.searching.guarantor_loan_affiliate,
+          state_loan: 'Vigente',
+          guarantor_loan_affiliate: false,
           excel:true
         }
       })
