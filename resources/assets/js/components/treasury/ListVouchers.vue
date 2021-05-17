@@ -45,7 +45,7 @@
           <span>Ver voucher</span>
         </v-tooltip>
 
-        <v-tooltip bottom>
+        <v-tooltip bottom v-if="permissionSimpleSelected.includes('delete-voucher-paid')">
           <template v-slot:activator="{ on }">
             <v-btn
               icon
