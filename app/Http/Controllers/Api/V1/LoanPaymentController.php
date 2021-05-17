@@ -534,8 +534,8 @@ class LoanPaymentController extends Controller
                 else
                     $estimated_days['penal'] = 0;
             }else{                
-                $reg_payment_date = CarbonImmutable::parse($loan_payment->previous_payment_date);
-                $estimated_days['current'] = $reg_payment_date->diffInDays(CarbonImmutable::parse($loan_payment->estimated_date));
+                $payment_date = Carbon::parse($latest_quota->estimated_date)->toDateString();
+                $estimated_days['current'] = $reg_payment_date->diffInDays(CarbonImmutable::parse($loan_payment->estimated_date)->toDateString());
                 if($estimated_days['current'] > $max_current)
                 $estimated_days['penal'] = $estimated_days['current'] - $global_parameter->days_current_interest;
                 else
@@ -555,7 +555,7 @@ class LoanPaymentController extends Controller
                     ['Tipo', $loan->modality->procedure_type->second_name],
                     ['Modalidad', $loan->modality->shortened],
                     ['Fecha', Carbon::now()->format('d/m/Y')],
-                    ['Hora', Carbon::now()->format('h:m:s a')],
+                    ['Hora', Carbon::now()->format('H:i:s')],
                     ['Usuario', Auth::user()->username]
                 ]
             ],
