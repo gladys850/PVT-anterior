@@ -45,6 +45,20 @@
     "params": {}
   },
   {
+    "href": "listVouchers",
+    "title": "Tesoreria",
+    "icon": "mdi-bank",
+    "permission": "show-payment-loan",
+    "params": {}
+  },
+  {
+    "href": "reports",
+    "title": "Reportes",
+    "icon": "mdi-file-table-outline",
+    "permission": "show-payment-loan",
+    "params": {}
+  },
+  {
     "title": "Acceso",
     "icon": "mdi-key",
     "permission": "show-user",
