@@ -98,6 +98,7 @@
         :options.sync="options"
         :footer-props="{ itemsPerPageOptions: [10,50,100] }"
         :search="search"
+        :key="refreshKardexTable"
       >
         
         <template v-slot:[`header.code`]="{ header }">
@@ -212,7 +213,7 @@
                 v-on="on"
                 color="error"
                 v-if="last_payment(item)"
-                @click.stop="bus.$emit('openRemoveDialog', `loan_payment/${item.id}`)"
+                @click.stop="bus.$emit('openRemoveDialog', `delete_last_payment/${item.id}/payment`)"
               >
                 <v-icon>mdi-file-cancel-outline</v-icon>
               </v-btn>
@@ -434,6 +435,7 @@ export default {
         filterable: false,
       },
     ],
+    refreshKardexTable: 0,
   }),
   computed: {
     //Metodo para obtener Permisos por rol
@@ -472,7 +474,7 @@ export default {
         });
         this.payments = res.data.payments;
         console.log(this.payments);
-
+        this.refreshKardexTable++
       } catch (e) {
         console.log(e);
       } finally {
