@@ -287,7 +287,7 @@ class LoanPaymentController extends Controller
     {       
         $message['message'] = false;
         if(isset($loanPayment)){     
-            $last_records = $loanPayment->loan->paymentsKardex->first();    
+            $last_records = $loanPayment->loan->paymentsKardex->sortByDesc('id')->first();    
             if ($loanPayment->id == $last_records->id){
                 $procedure_modality_id = ProcedureModality::whereName("Directo")->first()->id;
                 if($loanPayment->procedure_modality_id == $procedure_modality_id){ 
