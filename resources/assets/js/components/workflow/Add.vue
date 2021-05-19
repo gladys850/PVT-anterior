@@ -264,7 +264,6 @@
                 :editable.sync="editable"
                 :permission="permission"
                 :id_street.sync="id_street"
-                :has_registered_spouse="has_registered_spouse"
               />
             </v-card-text>
           </v-card>
@@ -402,7 +401,8 @@ export default {
 
     },
     role_name: null,
-    user_name: null
+    user_name: null,
+    id_street: 0,
   }),
   watch: {
     search: _.debounce(function() {
@@ -793,6 +793,21 @@ export default {
         }
       }
     }
+    },
+      async getAddress(id) {
+      try {
+        this.loading = true
+        let res = await axios.get(`affiliate/${id}/address`)
+        this.addresses = res.data
+        // Seteando el valor del address
+        let address = this.addresses.find(item => item.pivot.validated)
+        this.id_street = address.id
+      } catch (e) {
+        console.log(e)
+      } finally {
+        this.loading = false
+      }
+    },
   }
-}
+
 </script>

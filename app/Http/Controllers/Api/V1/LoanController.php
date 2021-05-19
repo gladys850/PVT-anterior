@@ -1209,7 +1209,7 @@ class LoanController extends Controller
             $file_name = implode('_', ['pagos', $loan->modality->shortened, $loan->code]) . '.pdf';
             $loanpayment = new LoanPaymentController;
             $payment->attachment = Util::pdf_to_base64([
-                $loanpayment->print_loan_payment(new Request([]), $loan_payment, false)
+                $loanpayment->print_loan_payment(new Request([]), $loan_payment->id, false)
             ], $file_name,$information_loan, 'legal', $request->copies ?? 1);
             return $payment;
         }else{
@@ -2043,5 +2043,33 @@ class LoanController extends Controller
                });
            return $list_loan;
       }
+   }
+
+   public function switch_loans_guarantors()
+   {
+        $loans = Loan::where('state_id', LoanState::where('name', 'Vigente')->first()->id)->get();
+        $c = 0;
+        foreach($loans as $loan)
+        {
+            if($loan->guarantors->count() > 0)
+            {
+                if($loan->last_payment_validated != null)
+                {
+                    if(Carbon::parse($loan->last_payment_validated->estimated_date)->diffInDays(Carbon::now()->format('Y-m-d')) > 60);
+                        $loan->guarantor_amortizing =  true;
+                        $loan->update();
+                        $c++;
+                }
+                else{
+                    if(Carbon::parse($loan->disbursement_date)->diffInDays(Carbon::now()->format('Y-m-d')) > 60);
+                        $loan->guarantor_amortizing =  true;
+                        $loan->update();
+                        $c++;
+                }
+            }
+        }
+        return response()->json([
+            'defaulted' => $c,
+        ]);
    }
 }
