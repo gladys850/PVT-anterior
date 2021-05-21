@@ -1974,6 +1974,7 @@ class LoanController extends Controller
                'affiliate_state_types.name as state_type_affiliate','affiliate_states.name as state_affiliate','loan_affiliates.quota_treat as quota_loan','loan_states.name as state_loan',
                'loan_affiliates.guarantor as guarantor_loan_affiliate','pension_entities.name as pension_entity_affiliate','loans.disbursement_date as disbursement_date_loan')
                //->where('affiliates.identity_card','LIKE'.'%'.$request->identity_card.'%')
+               ->distinct('loans.code')
                ->orderBy('loans.code', $order_loan)
                ->get();
  
@@ -2034,6 +2035,7 @@ class LoanController extends Controller
                'affiliate_state_types.name as state_type_affiliate','affiliate_states.name as state_affiliate','loan_affiliates.quota_treat as quota_loan','loan_states.name as state_loan',
                'loan_affiliates.guarantor as guarantor_loan_affiliate','pension_entities.name as pension_entity_affiliate','loans.disbursement_date as disbursement_date_loan')
                ->orderBy('loans.code', $order_loan)
+               ->distinct('loans.code')
                ->paginate($pagination_rows);
  
                $list_loan->getCollection()->transform(function ($list_loan) {
