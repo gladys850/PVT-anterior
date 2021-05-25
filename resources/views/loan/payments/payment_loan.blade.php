@@ -64,14 +64,14 @@
                 <td class="w-10 text-right">{{ $loan_payment->quota_number }}</td>
             </tr>
             <tr class="">
-                <td class="w-10 font-semibold ">Intereses por {{ $estimated_days['current']}} dias a {{ $loan->interest->annual_interest}} % anual</td>
+                <td class="w-10 font-semibold ">Intereses por {{ $estimated_days['current']}} dias a ({{ $loan->interest->annual_interest}} % anual)</td>
                 <td class="w-10 text-right">{{ Util::money_format($loan_payment->interest_payment) }}</td>
                 <td class="w-40 font-semibold ">Fecha de Cálculo</td> 
                 <td class="text-right w-10">{{ Carbon::parse($loan_payment->estimated_date)->format('d/m/Y') }}</td>  
                 
             </tr>
             <tr class="">
-                <td class="w-40 font-semibold ">Intereses Penales por {{ $estimated_days['penal']}} dias a  {{ $loan->interest->penal_interest}} % anual</td>
+                <td class="w-40 font-semibold ">Intereses Penales por {{ $estimated_days['penal']}} dias a ({{ $loan->interest->penal_interest}} % anual)</td>
                 <td class="leading-tight w-10 text-right">{{ Util::money_format($loan_payment->penal_payment) }}</td>
                 <td class="w-40 font-semibold ">Fecha de Trans.</td>
                 <td class="text-right w-10">{{$loan_payment->loan_payment_date? Carbon::parse($loan_payment->loan_payment_date)->format('d/m/Y'):Carbon::parse($loan_payment->created_at)->format('d/m/Y')}}</td> 
@@ -95,7 +95,10 @@
                 <td class="text-right">{{ Util::money_format($loan_payment->interest_accumulated) }}</td>
             </tr>
             <tr class="">
-                <td colspan="2" class="font-semibold  leading-tight text-right">Son:(<span class="uppercase font-semibold leading-tight  m-b-10 text-xs">{{ Util::money_format($loan_payment->estimated_quota, true) }} Bolivianos</span> )</td>
+            @php ($literal_amount= Util::money_format($loan_payment->estimated_quota, true))
+            @php ($mil = explode(" ",$literal_amount))
+            @php ($mil = $mil[0] == "mil" ? 'un ':" ")
+                <td colspan="2" class="font-semibold  leading-tight text-right">Son:(<span class="uppercase font-semibold leading-tight  m-b-10 text-xs">{{$mil}}{{$literal_amount}} Bolivianos</span> )</td>
                 <td class="w-40 font-semibold">Intereses Penales Pendientes Act.</td>
                 <td class="text-right">{{ Util::money_format($loan_payment->penal_accumulated) }}</td>              
             </tr>       
