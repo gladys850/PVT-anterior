@@ -114,10 +114,10 @@
             <tbody>
             <tr height="300px" class="">                  
                 <td class="font-semibold leading-tight text-center w-50">                  
-                PAGADO POR
+                ELABORADO POR
                 </td>
                 <td class="font-semibold leading-tight text-center w-50">
-                REVISADO POR 
+                PAGADO POR 
                 </td>
             </tr>     
             </tbody>
