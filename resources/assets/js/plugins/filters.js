@@ -26,14 +26,16 @@ Vue.filter('date', value => {
 })
 Vue.filter('money', value => {
 	if(value == 0) return '0.00'
-	else return value.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+	//else return value.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+	else return parseFloat(value).toLocaleString("es-ES", {minimumFractionDigits: 2, maximumFractionDigits: 2})
 })
 Vue.filter('moneyString', value => {
 	value=Number(value)
 	if(value == ''){
 		return 0
 	}else{
-		if (value) return value.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+		//if (value) return value.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+		if(value) return parseFloat(value).toLocaleString("es-ES", {minimumFractionDigits: 2, maximumFractionDigits: 2})
 	}
   })
 Vue.filter('fullName', (value, byFirstName = false) => {
