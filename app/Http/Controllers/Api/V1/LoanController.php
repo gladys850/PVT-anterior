@@ -2045,6 +2045,7 @@ class LoanController extends Controller
       }
    }
 
+   //funcion para el cambio automatico de cobro garante titular
    public function switch_loans_guarantors()
    {
         $loans = Loan::where('state_id', LoanState::where('name', 'Vigente')->first()->id)->get();
@@ -2055,16 +2056,26 @@ class LoanController extends Controller
             {
                 if($loan->last_payment_validated != null)
                 {
-                    if(Carbon::parse($loan->last_payment_validated->estimated_date)->diffInDays(Carbon::now()->format('Y-m-d')) > 60);
-                        $loan->guarantor_amortizing =  true;
-                        $loan->update();
+                    if(Carbon::parse($loan->last_payment_validated->estimated_date)->diffInDays(Carbon::now()->format('Y-m-d')) > 60){
+                        $option = $loan;
+                        $loan = Loan::withoutEvents(function () use ($option) {
+                            $loan = Loan::whereId($option->id)->first();
+                            $loan->guarantor_amortizing =  true;
+                            $loan->update();
+                        });
                         $c++;
+                    }
                 }
                 else{
-                    if(Carbon::parse($loan->disbursement_date)->diffInDays(Carbon::now()->format('Y-m-d')) > 60);
-                        $loan->guarantor_amortizing =  true;
-                        $loan->update();
+                    if(Carbon::parse($loan->disbursement_date)->diffInDays(Carbon::now()->format('Y-m-d')) > 60){
+                        $option = $loan;
+                        $loan = Loan::withoutEvents(function () use ($option){
+                            $loan = Loan::whereId($option->id)->first();
+                            $loan->guarantor_amortizing =  true;
+                            $loan->update();
+                        });
                         $c++;
+                    }
                 }
             }
         }
