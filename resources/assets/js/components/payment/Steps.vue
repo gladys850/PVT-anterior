@@ -71,6 +71,7 @@ export default {
     e1: 1,
     steps: 2,
     payment:{
+      now_date:new Date().toISOString().substr(0, 10),
       estimated_days:{
         penal:null
       }
