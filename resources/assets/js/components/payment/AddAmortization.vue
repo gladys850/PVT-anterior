@@ -299,9 +299,8 @@
                             class="purple-input"
                             type="date"
                             label="Fecha"
-                            :clearable="editable"
-                            :outlined="editable"
-                            :readonly="!editable"
+                            :readonly="true"
+                            :disabled="true"
                           ></v-text-field>
                         </v-col>
                         <v-col cols="4" class="ma-0 pb-0" v-show="permissionSimpleSelected.includes('create-payment')">
