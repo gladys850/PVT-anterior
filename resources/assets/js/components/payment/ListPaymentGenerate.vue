@@ -528,6 +528,10 @@
               </div>
             </v-menu>
           </template>
+          
+          <template v-slot:[`item.disbursement_date_loan`]="{ item }">
+            {{ item.disbursement_date_loan | datetimeshorted}}
+          </template>
 
           <template v-slot:[`item.modality_payment`]="{ item }">
           {{ item.modality_payment }}
