@@ -20,7 +20,7 @@ class LoanGlobalParameterSeeder extends Seeder
             'min_service_years_adm' =>2,
             'max_guarantor_active' =>3,
             'max_guarantor_passive' =>2,
-            'date_delete_payment'=>2,
+            'date_delete_payment'=>1,
             'max_loans_active' => 2,
             'max_loans_process' => 1,
             'days_current_interest' => 31,
