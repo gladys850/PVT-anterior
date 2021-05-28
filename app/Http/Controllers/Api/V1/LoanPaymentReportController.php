@@ -121,7 +121,7 @@ class LoanPaymentReportController extends Controller
                        ));
                    }
                    $export = new ArchivoPrimarioExport($data);
-                   return Excel::download($export, $File.'.csv');
+                   return Excel::download($export, $File.'.xls');
       }
 
   /** @group Reportes de amortizaciones 
@@ -232,7 +232,7 @@ class LoanPaymentReportController extends Controller
                    ));
                }
                $export = new ArchivoPrimarioExport($data);
-               return Excel::download($export, $File.'.csv');
+               return Excel::download($export, $File.'.xls');
   }
 
   /** @group Reportes de amortizaciones 
@@ -343,7 +343,7 @@ class LoanPaymentReportController extends Controller
                  ));
              }
              $export = new ArchivoPrimarioExport($data);
-             return Excel::download($export, $File.'.csv');
+             return Excel::download($export, $File.'.xls');
   }
  /** @group Reportes de amortizaciones 
    * Reporte de amortizaciones por complemento y fondo de retiro  
@@ -536,7 +536,7 @@ class LoanPaymentReportController extends Controller
                }
 
                $export = new MultipleSheetExportPayment($data, $data_fondo,'COM-ECO','FRP');
-               return Excel::download($export, $File.'.xlsx');
+               return Excel::download($export, $File.'.xls');
     }
 
     /** @group Reportes de amortizaciones 
@@ -646,7 +646,7 @@ class LoanPaymentReportController extends Controller
                  ));
              }
              $export = new ArchivoPrimarioExport($data);
-             return Excel::download($export, $File.'.csv');
+             return Excel::download($export, $File.'.xls');
   }
   
 

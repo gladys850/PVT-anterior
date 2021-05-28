@@ -133,7 +133,7 @@ class LoanReportController extends Controller
                    ));
                }
                $export = new ArchivoPrimarioExport($data);
-               return Excel::download($export, $File.'.csv');
+               return Excel::download($export, $File.'.xls');
    }
 
    /** @group Reportes de Prestamos
@@ -319,7 +319,7 @@ class LoanReportController extends Controller
                }
 
                $export = new MultipleSheetExportPayment($data, $data_liq,'PRE-VIGENTE','PRE-LIQUIDADO');
-               return Excel::download($export, $File.'.xlsx');
+               return Excel::download($export, $File.'.xls');
    }
 
    /** @group Reportes de Prestamos
@@ -446,7 +446,7 @@ class LoanReportController extends Controller
 
         //$export = new MultipleSheetExportPaymentMora($data,$data_mora_parcial,$data_mora,'MORA TOTAL','MORA PARCIAL','MORA');
         $export = new MultipleSheetExportPaymentMora($data_mora_total,$data_mora_parcial,$data_mora,'MORA TOTAL','MORA PARCIAL','MORA');
-        return Excel::download($export, $File.'.xlsx');
+        return Excel::download($export, $File.'.xls');
   }
 
   /** @group Reportes de Prestamos
@@ -591,7 +591,7 @@ class LoanReportController extends Controller
              }
          }
          $file_name = $month.'-'.$year;
-         $extension = '.xlsx';
+         $extension = '.xls';
          $export = new FileWithMultipleSheetsReport($command_sheet_later, $command_sheet_before, $senasir_sheet_later, $senasir_sheet_before);
          return Excel::download($export, $file_name.$extension);
     }
@@ -714,7 +714,7 @@ class LoanReportController extends Controller
              }
          }
          $file_name = $month.'-'.$year;
-         $extension = '.xlsx';
+         $extension = '.xls';
          $export = new FileWithMultipleSheetsDefaulted($command_sheet_dafaulted, $senasir_sheet_defaulted);
          return Excel::download($export, $file_name.$extension);
     }
