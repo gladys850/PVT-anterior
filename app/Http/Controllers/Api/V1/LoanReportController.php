@@ -96,7 +96,7 @@ class LoanReportController extends Controller
                $File="ListadoPrestamosDesembolsados";
                $data=array(
                    array( "NRO DE PRÉSTAMO", "FECHA DE SOLICITUD", "FECHA DESEMBOLSO",
-                   "REGIONAL","TIPO","PRODUCTO",
+                   "REGIONAL","TIPO","MODALIDAD","SUB MODALIDAD",
                    "CEDULA DE IDENTIDAD","MATRICULA","MATRICULA CÓNYUGUE",
                    "PRIMER NOMBRE","SEGUNDO NOMBRE","PATERNO","MATERNO","APELLIDO CASADA",
                    "NRO CBTE CONTABLE","SALDO ACTUAL","AMPLIACIÓN","MONTO DESEMBOLSADO","LIQUIDO DESEMBOLSADO",
@@ -110,7 +110,8 @@ class LoanReportController extends Controller
                        $row->disbursement_date_loan,
                        $row->name_city,
                        $row->state_type_affiliate,
-                       $row->modality_loan,
+                       $row->modality_loan,//modalidad
+                       $row->sub_modality_loan,//sub modalidad
                        $row->identity_card_affiliate,
                        $row->registration_affiliate,//matrifcula 
                        $row->registration_spouse, //matricula esposa
@@ -207,7 +208,7 @@ class LoanReportController extends Controller
                $File="ListadoPrestamosDesembolsados";
                $data=array(
                    array( "NRO DE PRÉSTAMO", "FECHA DE SOLICITUD", "FECHA DESEMBOLSO",
-                   "REGIONAL","TIPO","PRODUCTO",
+                   "REGIONAL","TIPO","MODALIDAD","SUB MODALIDAD",
                    "CEDULA DE IDENTIDAD","MATRICULA","MATRICULA CÓNYUGUE",
                    "PRIMER NOMBRE","SEGUNDO NOMBRE","PATERNO","MATERNO","APELLIDO CASADA",
                    "NRO CBTE CONTABLE","SALDO ACTUAL","AMPLIACIÓN","MONTO DESEMBOLSADO","LIQUIDO DESEMBOLSADO",
@@ -221,7 +222,9 @@ class LoanReportController extends Controller
                        $row->disbursement_date_loan,
                        $row->name_city,
                        $row->state_type_affiliate,
-                       $row->modality_loan,
+                       $row->modality, //MOdalidad
+                       $row->sub_modality, //Sub modalidad
+
                        $row->identity_card_affiliate,
                        $row->registration_affiliate,//matrifcula 
                        $row->registration_spouse, //matricula esposa
@@ -281,7 +284,7 @@ class LoanReportController extends Controller
                $File="ListadoPrestamosVigenteLiquidado";
                $data_liq=array(
                    array( "NRO DE PRÉSTAMO", "FECHA DE SOLICITUD", "FECHA DESEMBOLSO",
-                   "REGIONAL","TIPO","PRODUCTO",
+                   "REGIONAL","TIPO","MODALIDAD","SUB MODALIDAD",
                    "CEDULA DE IDENTIDAD","MATRICULA","MATRICULA CÓNYUGUE",
                    "PRIMER NOMBRE","SEGUNDO NOMBRE","PATERNO","MATERNO","APELLIDO CASADA",
                    "NRO CBTE CONTABLE","SALDO ACTUAL","AMPLIACIÓN","MONTO DESEMBOLSADO","LIQUIDO DESEMBOLSADO",
@@ -295,7 +298,9 @@ class LoanReportController extends Controller
                        $row->disbursement_date_loan,
                        $row->name_city,
                        $row->state_type_affiliate,
-                       $row->modality_loan,
+                       $row->modality_loan,//modalidad
+                       $row->sub_modality_loan,//submodalidad
+
                        $row->identity_card_affiliate,
                        $row->registration_affiliate,//matrifcula 
                        $row->registration_spouse, //matricula esposa
