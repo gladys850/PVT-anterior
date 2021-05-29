@@ -40,7 +40,7 @@
                                 </v-col>
                                 <v-col cols="3" class="ma-0 py-2">
                                   <label><b>Fecha de Desembolso:</b></label>
-                                  {{$moment(garantes.disbursement_date).format("DD-MM-YYYY")}}
+                                  {{garantes.disbursement_date | date}}
                                 </v-col>
                                 <v-col cols="3" class="ma-0 py-2">
                                   <label><b>Monto Desembolsado:</b></label>
@@ -74,7 +74,7 @@
                                 </v-col>
                                 <v-col cols="3" class="ma-0 py-2" v-show="isNew" v-if="last_payment">
                                   <label><b style="color:teal">Fecha del ultimo Pago:</b></label>
-                                  <b style="color:teal">{{$moment(garantes.last_payment_validated.estimated_date).format("DD-MM-YYYY") }}</b>
+                                  <b style="color:teal">{{garantes.last_payment_validated.estimated_date | date }}</b>
                                 </v-col>
                                 <v-col cols="3" class="ma-0 py-2" v-show="isNew" v-if="last_payment">
                                   <label><b style="color:teal" >Total Pagado:</b></label>
@@ -568,7 +568,7 @@ export default {
         this.loan_payment = res.data
              this.garantes.lenders=[this.loan_payment.affiliate]
              this.garantes.code=this.loan_payment.loan.code
-             this.garantes.disbursement_date=this.$moment(this.loan_payment.loan.disbursement_date).format("YYYY-MM-DD")
+             this.garantes.disbursement_date=this.$moment(this.loan_payment.loan.disbursement_date).format("DD-MM-YYYY")
              this.garantes.amount_approved=this.loan_payment.loan.amount_approved
              this.garantes.loan_term=this.loan_payment.loan.loan_term
              this.garantes.estimated_quota=0
@@ -726,6 +726,7 @@ export default {
             procedure_modality_id:this.data_payment.procedure_modality_id,
           })
             this.payment = res.data
+            this.payment.now_date= new Date().toISOString().substr(0, 10),
          //   this.data_payment.pago_total=this.payment.estimated_quota
             this.$forceUpdate()
       }catch (e) {
