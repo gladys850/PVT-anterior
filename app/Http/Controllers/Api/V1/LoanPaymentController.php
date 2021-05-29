@@ -684,7 +684,7 @@ class LoanPaymentController extends Controller
         $month = CarbonImmutable::parse($request->estimated_date)->format('M');
         $year = Carbon::parse($request->estimated_date)->format('Y');
         $file_name = $month.'-'.$year;
-        $extension = '.xlsx';
+        $extension = '.xls';
         if(Storage::disk('public')->has($file_name.$extension)){
             return $file = Storage::disk('public')->download($file_name.$extension);
             //return $file = Storage::file($file_name.$extension);
@@ -1274,7 +1274,7 @@ class LoanPaymentController extends Controller
             ));
         }
        $export = new ArchivoPrimarioExport($data);
-       return Excel::download($export, $File.'.xlsx'); 
+       return Excel::download($export, $File.'.xls'); 
     }
    /** 
    * Listar amortizaciones generando reportes
@@ -1526,7 +1526,7 @@ class LoanPaymentController extends Controller
                    ));
                }
                $export = new ArchivoPrimarioExport($data);
-               return Excel::download($export, $File.'.csv');
+               return Excel::download($export, $File.'.xls');
       }else{
       $loan_payments='loan_payments';
         $list_loan = DB::table('loan_payments')
