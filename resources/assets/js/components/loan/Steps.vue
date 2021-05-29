@@ -322,7 +322,6 @@ export default {
     data_sismu:{
       type_sismu: false,
       quota_sismu: 0,
-      cpop_sismu: false,
       livelihood_amount:true
     },
     livelihood_amount: 0,
