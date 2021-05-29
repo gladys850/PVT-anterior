@@ -75,11 +75,12 @@ class LoanPaymentReportController extends Controller
                     foreach ($list_loan as $loan) {
                         $padron = Loan::where('id', $loan->id_loan)->first();
                         $loan->modality=$padron->modality->procedure_type->second_name;
+                        $loan->sub_modality=$padron->modality->shortened;
                       }
           
                    $File="ListadoAmortizaciones";
                    $data=array(
-                       array("NRO DE PRÉSTAMO", "FECHA DE DESEMBOLSO", "TIPO","FECHA DE PAGO","FECHA DE TRANSACCIÓN","PRODUCTO",
+                       array("NRO DE PRÉSTAMO", "FECHA DE DESEMBOLSO", "TIPO","FECHA DE PAGO","FECHA DE TRANSACCIÓN","MODALIDAD","SUB MODALIDAD",
                        "MATRICULA AFILIADO","MATRICULA CÓNYUGUE", "CI", "APELLIDO PATERNO","APELLIDO CASADA","APELLIDO MATERNO",
                        "PRIMER NOMBRE","SEGUNDO NOMBRE","CAPITAL","INTERÉS CORRIENTE","INTERÉS PENAL","INTERÉS CORRIENTE PENDIENTE", 
                        "INTERÉS PENAL PENDIENTE","TOTAL PAGADO","SALDO ANTERIOR", "SALDO ACTUAL","PAGADO POR","TIPO DESCUENTO","CBTE","NRO DE COBRO")
@@ -92,7 +93,8 @@ class LoanPaymentReportController extends Controller
                            
                            $row->estimated_date_payment,//fecha de pago
                            $row->loan_payment_date,//fecha de transacción
-                           $row->modality, //producto
+                           $row->modality, //MOdalidad
+                           $row->sub_modality, //Sub modalidad
 
                            $row->registration_affiliate,//matricula afiliado
                            $row->registration_spouse,//matricula esposa
@@ -185,11 +187,12 @@ class LoanPaymentReportController extends Controller
                 foreach ($list_loan as $loan) {
                     $padron = Loan::where('id', $loan->id_loan)->first();
                     $loan->modality=$padron->modality->procedure_type->second_name;
+                    $loan->sub_modality=$padron->modality->shortened;
                   }
       
                $File="ListadoAmortizaciones";
                $data=array(
-                   array("NRO DE PRÉSTAMO", "FECHA DE DESEMBOLSO", "TIPO","FECHA DE PAGO","FECHA DE TRANSACCIÓN","PRODUCTO",
+                   array("NRO DE PRÉSTAMO", "FECHA DE DESEMBOLSO", "TIPO","FECHA DE PAGO","FECHA DE TRANSACCIÓN","MODALIDAD","SUB MODALIDAD",
                    "MATRICULA AFILIADO","MATRICULA CÓNYUGUE", "CI", "APELLIDO PATERNO","APELLIDO CASADA","APELLIDO MATERNO",
                    "PRIMER NOMBRE","SEGUNDO NOMBRE","CAPITAL","INTERÉS CORRIENTE","INTERÉS PENAL","INTERÉS CORRIENTE PENDIENTE", 
                    "INTERÉS PENAL PENDIENTE","TOTAL PAGADO","SALDO ANTERIOR", "SALDO ACTUAL","PAGADO POR","TIPO DESCUENTO","TIPO DE PAGO","CBTE","CBTE","NRO DE COBRO")
@@ -202,7 +205,8 @@ class LoanPaymentReportController extends Controller
                        
                        $row->estimated_date_payment,//fecha de pago
                        $row->loan_payment_date,//fecha de transacción
-                       $row->modality, //producto
+                       $row->modality, //MOdalidad
+                       $row->sub_modality, //Sub modalidad
 
                        $row->registration_affiliate,//matricula afiliado
                        $row->registration_spouse,//matricula esposa
@@ -296,11 +300,12 @@ class LoanPaymentReportController extends Controller
               foreach ($list_loan as $loan) {
                   $padron = Loan::where('id', $loan->id_loan)->first();
                   $loan->modality=$padron->modality->procedure_type->second_name;
+                  $loan->sub_modality=$padron->modality->shortened;
                 }
     
              $File="ListadoAmortizaciones";
              $data=array(
-                 array("NRO DE PRÉSTAMO", "FECHA DE DESEMBOLSO", "TIPO","FECHA DE PAGO","FECHA DE TRANSACCIÓN","PRODUCTO",
+                 array("NRO DE PRÉSTAMO", "FECHA DE DESEMBOLSO", "TIPO","FECHA DE PAGO","FECHA DE TRANSACCIÓN","MODALIDAD","SUB MODALIDAD",
                  "MATRICULA AFILIADO","MATRICULA CÓNYUGUE", "CI", "APELLIDO PATERNO","APELLIDO CASADA","APELLIDO MATERNO",
                  "PRIMER NOMBRE","SEGUNDO NOMBRE","CAPITAL","INTERÉS CORRIENTE","INTERÉS PENAL","INTERÉS CORRIENTE PENDIENTE", 
                  "INTERÉS PENAL PENDIENTE","TOTAL PAGADO","SALDO ANTERIOR", "SALDO ACTUAL","PAGADO POR","TIPO DESCUENTO","TIPO DE PAGO","CBTE","CBTE","NRO DE COBRO")
@@ -313,7 +318,8 @@ class LoanPaymentReportController extends Controller
                      
                      $row->estimated_date_payment,//fecha de pago
                      $row->loan_payment_date,//fecha de transacción
-                     $row->modality, //producto
+                     $row->modality, //MOdalidad
+                     $row->sub_modality, //Sub modalidad
 
                      $row->registration_affiliate,//matricula afiliado
                      $row->registration_spouse,//matricula esposa
@@ -412,11 +418,12 @@ class LoanPaymentReportController extends Controller
                 foreach ($list_loan as $loan) {
                     $padron = Loan::where('id', $loan->id_loan)->first();
                     $loan->modality=$padron->modality->procedure_type->second_name;
+                    $loan->sub_modality=$padron->modality->shortened;
                   }
       
                $File="ListadoAmortizaciones";
                $data=array(
-                   array("NRO DE PRÉSTAMO", "FECHA DE DESEMBOLSO", "TIPO","FECHA DE PAGO","FECHA DE TRANSACCIÓN","PRODUCTO",
+                   array("NRO DE PRÉSTAMO", "FECHA DE DESEMBOLSO", "TIPO","FECHA DE PAGO","FECHA DE TRANSACCIÓN","MODALIDAD","SUB MODALIDAD",
                    "MATRICULA AFILIADO","MATRICULA CÓNYUGUE", "CI", "APELLIDO PATERNO","APELLIDO CASADA","APELLIDO MATERNO",
                    "PRIMER NOMBRE","SEGUNDO NOMBRE","CAPITAL","INTERÉS CORRIENTE","INTERÉS PENAL","INTERÉS CORRIENTE PENDIENTE", 
                    "INTERÉS PENAL PENDIENTE","TOTAL PAGADO","SALDO ANTERIOR", "SALDO ACTUAL","PAGADO POR","TIPO DESCUENTO","TIPO DE PAGO","CBTE","NRO DE COBRO")
@@ -429,7 +436,8 @@ class LoanPaymentReportController extends Controller
                        
                        $row->estimated_date_payment,//fecha de pago
                        $row->loan_payment_date,//fecha de transacción
-                       $row->modality, //producto
+                       $row->modality, //MOdalidad
+                       $row->sub_modality, //Sub modalidad
   
                        $row->registration_affiliate,//matricula afiliado
                        $row->registration_spouse,//matricula esposa
@@ -488,11 +496,12 @@ class LoanPaymentReportController extends Controller
                 foreach ($list_loan_fondo as $loan) {
                     $padron = Loan::where('id', $loan->id_loan)->first();
                     $loan->modality=$padron->modality->procedure_type->second_name;
+                    $loan->sub_modality=$padron->modality->shortened;
                   }
       
                $File="ListadoAmortizaciones";
                $data_fondo=array(
-                   array("NRO DE PRÉSTAMO", "FECHA DE DESEMBOLSO", "TIPO","FECHA DE PAGO","FECHA DE TRANSACCIÓN","PRODUCTO",
+                   array("NRO DE PRÉSTAMO", "FECHA DE DESEMBOLSO", "TIPO","FECHA DE PAGO","FECHA DE TRANSACCIÓN","MODALIDAD","SUB MODALIDAD",
                    "MATRICULA AFILIADO","MATRICULA CÓNYUGUE", "CI", "APELLIDO PATERNO","APELLIDO CASADA","APELLIDO MATERNO",
                    "PRIMER NOMBRE","SEGUNDO NOMBRE","CAPITAL","INTERÉS CORRIENTE","INTERÉS PENAL","INTERÉS CORRIENTE PENDIENTE", 
                    "INTERÉS PENAL PENDIENTE","TOTAL PAGADO","SALDO ANTERIOR", "SALDO ACTUAL","PAGADO POR","TIPO DESCUENTO","TIPO DE PAGO","CBTE","NRO DE COBRO")
@@ -505,7 +514,8 @@ class LoanPaymentReportController extends Controller
                        
                        $row->estimated_date_payment,//fecha de pago
                        $row->loan_payment_date,//fecha de transacción
-                       $row->modality, //producto
+                       $row->modality, //MOdalidad
+                       $row->sub_modality, //Sub modalidad
   
                        $row->registration_affiliate,//matricula afiliado
                        $row->registration_spouse,//matricula esposa
@@ -597,11 +607,12 @@ class LoanPaymentReportController extends Controller
               foreach ($list_loan as $loan) {
                   $padron = Loan::where('id', $loan->id_loan)->first();
                   $loan->modality=$padron->modality->procedure_type->second_name;
+                  $loan->sub_modality=$padron->modality->shortened;
                 }
     
              $File="ListadoAmortizaciones";
              $data=array(
-                 array("NRO DE PRÉSTAMO", "FECHA DE DESEMBOLSO", "TIPO","FECHA DE PAGO","FECHA DE TRANSACCIÓN","PRODUCTO",
+                 array("NRO DE PRÉSTAMO", "FECHA DE DESEMBOLSO", "TIPO","FECHA DE PAGO","FECHA DE TRANSACCIÓN","MODALIDAD","SUB MODALIDAD",
                  "MATRICULA AFILIADO","MATRICULA CÓNYUGUE", "CI", "APELLIDO PATERNO","APELLIDO CASADA","APELLIDO MATERNO",
                  "PRIMER NOMBRE","SEGUNDO NOMBRE","CAPITAL","INTERÉS CORRIENTE","INTERÉS PENAL","INTERÉS CORRIENTE PENDIENTE", 
                  "INTERÉS PENAL PENDIENTE","TOTAL PAGADO","SALDO ANTERIOR", "SALDO ACTUAL","PAGADO POR","ESTADO DEL COBRO","TIPO DESCUENTO","CBTE","NRO DE COBRO")
@@ -614,7 +625,8 @@ class LoanPaymentReportController extends Controller
                      
                      $row->estimated_date_payment,//fecha de pago
                      $row->loan_payment_date,//fecha de transacción
-                     $row->modality, //producto
+                     $row->modality, //Modalidad
+                     $row->sub_modality, //Sub modalidad
 
                      $row->registration_affiliate,//matricula afiliado
                      $row->registration_spouse,//matricula esposa
