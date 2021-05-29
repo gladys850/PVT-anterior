@@ -9,7 +9,7 @@
             :step="1">Creación Amortización
           </v-stepper-step>
           <v-divider v-if="1 !== steps" :key="1" ></v-divider>
-          
+
          </template>
       </v-stepper-header>
       <v-stepper-items>
@@ -71,7 +71,6 @@ export default {
     e1: 1,
     steps: 2,
     payment:{
-      now_date:new Date().toISOString().substr(0, 10),
       estimated_days:{
         penal:null
       }
