@@ -122,7 +122,7 @@
               </v-menu>
             </template>
 
-            <template v-slot:[`header.registration_spouse`]="{ header }">
+            <!--<template v-slot:[`header.registration_spouse`]="{ header }">
               {{ header.text }}<br />
               <v-menu offset-y :close-on-content-click="false">
                 <template v-slot:activator="{ on, attrs }">
@@ -148,7 +148,7 @@
                   ></v-text-field>
                 </div>
               </v-menu>
-            </template>
+            </template>-->
 
             <template v-slot:[`header.registration_affiliateF`]="{ header }">
               {{ header.text }}<br />
@@ -451,7 +451,7 @@ export default {
         { text: 'Cód. Préstamo', value: 'code_loan',input:'' , menu:false,type:"text",class: ['normal', 'white--text','text-md-center'],width: '5%'},
         { text: 'CI', value: 'identity_card_affiliate',input:'' , menu:false,type:"text",class: ['normal', 'white--text','text-md-center'],width: '5%'},
         { text: 'Matrícula', value: 'registration_affiliate' ,input:'', menu:false,type:"text",class: ['normal', 'white--text','text-md-center'],width: '5%'},
-        { text: 'Matrícula conyugue', value: 'registration_spouse' ,input:'', menu:false,type:"text",class: ['normal', 'white--text','text-md-center'],width: '5%'},
+        //{ text: 'Matrícula conyugue', value: 'registration_spouse' ,input:'', menu:false,type:"text",class: ['normal', 'white--text','text-md-center'],width: '5%'},
         { text: '1er Nombre', value: 'first_name_affiliate',input:'' , menu:false,type:"text",class: ['normal', 'white--text','text-md-center'],width: '5%'},
         { text: '2do Nombre', value: 'second_name_affiliate',input:'' , menu:false,type:"text",class: ['normal', 'white--text','text-md-center'],width: '5%'},
         { text: 'Ap. Paterno', value: 'last_name_affiliate',input:'', menu:false,type:"text",class: ['normal', 'white--text','text-md-center'],width: '5%'},
@@ -508,6 +508,7 @@ export default {
             code_loan: this.searching.code_loan,
             identity_card_affiliate: this.searching.identity_card_affiliate,
             registration_affiliate: this.searching.registration_affiliate,
+            registration_spouse: this.searching.registration_spouse,
             last_name_affiliate: this.searching.last_name_affiliate,
             mothers_last_name_affiliate: this.searching.mothers_last_name_affiliate,
             first_name_affiliate: this.searching.first_name_affiliate,
@@ -549,6 +550,7 @@ export default {
           code_loan: this.searching.code_loan,
           identity_card_affiliate: this.searching.identity_card_affiliate,
           registration_affiliate: this.searching.registration_affiliate,
+          registration_spouse: this.searching.registration_spouse,
           last_name_affiliate: this.searching.last_name_affiliate,
           mothers_last_name_affiliate: this.searching.mothers_last_name_affiliate,
           first_name_affiliate: this.searching.first_name_affiliate,
@@ -582,6 +584,7 @@ export default {
       this.searching.code_loan = "",
       this.searching.identity_card_affiliate = "",
       this.searching.registration_affiliate = "",
+      this.searching.registration_spouse= "",
       this.searching.last_name_affiliate = "",
       this.searching.mothers_last_name_affiliate = "",
       this.searching.first_name_affiliate = "",
