@@ -1039,7 +1039,7 @@ class LoanController extends Controller
                         ['Tipo', $loan->modality->procedure_type->second_name],
                         ['Modalidad', $loan->modality->shortened],
                         ['Fecha', Carbon::now()->format('d/m/Y')],
-                        ['Hora', Carbon::now()->format('h:m:s a')],
+                        ['Hora', Carbon::now()->format('H:i:s')],
                         ['Usuario', Auth::user()->username],
                     ]
                 ],
@@ -1454,7 +1454,7 @@ class LoanController extends Controller
                         ['Tipo', $loan->modality->procedure_type->second_name],
                         ['Modalidad', $loan->modality->shortened],
                         ['Fecha', Carbon::now()->format('d/m/Y')],
-                        ['Hora', Carbon::now()->format('h:m:s a')],
+                        ['Hora', Carbon::now()->format('H:i:s')],
                         ['Usuario', Auth::user()->username]
                     ]
                 ],
