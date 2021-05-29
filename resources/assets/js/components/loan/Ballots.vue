@@ -8,22 +8,12 @@
               <v-container fluid >
                 <v-row justify="center" class="py-0 my-0">
                   <v-col cols="12" class="py-0 -my-0" >
-                    <v-container class="py-0 my-0">
+                    <v-container class="py-0 my-0 teal--text">
                       <v-row>
                         <v-col cols="12" :md="window_size" class="py-0 my-0 text-center">
-                          MODALIDAD DEL PRÉSTAMO <!--{{loanTypeSelected.id}}-->
-                        </v-col>
-                        <v-col cols="12" :md="window_size" class="py-0 my-0 text-center">
-                          INTERVALO DE LOS MONTOS 
-                        </v-col>
-                        <v-col cols="12" :md="window_size" class="py-0 my-0 text-center">
-                          INTERVALO DEL PLAZO EN MESES
-                        </v-col>
-                        <v-col cols="12" :md="window_size" class="py-0 my-0 text-center" v-if="see_field">
-                          VALOR NETO REALIZADO (VNR)
-                        </v-col>
-                        <!--{{contribution}}-->
-                        <v-col cols="12" :md="window_size" class="py-0 my-0">
+                          <strong>MODALIDAD DEL PRÉSTAMO</strong><br><!--{{loanTypeSelected.id}}-->
+                          <v-row>
+                            <v-col cols="12" md="10" class="py-0 -my-0">
                           <v-select
                             dense
                             v-model="loanTypeSelected.id"
@@ -32,16 +22,42 @@
                             item-text="second_name"
                             item-value="id"
                             required
+                            outlined
                             :disabled="edit_refi_repro"
                           ></v-select>
+                            </v-col>
+                          <v-col cols="12" md="2" class="py-0 my-0"
+                          v-if="
+                            modalitySelected.name == 'Préstamo a Largo Plazo' ||
+                            modalitySelected.name == 'Préstamo Hipotecario' ||
+                            modalitySelected.name == 'Refinanciamiento Préstamo Hipotecario' ||
+                            modalitySelected.name == 'Refinanciamiento Préstamo a Largo Plazo'
+                          "
+                        >
+                          <v-checkbox
+                            dense
+                            v-model="affiliate_data.cpop_affiliate"
+                            label="CPOP"
+                            class="py-0 my-0"
+                            color="teal"
+                            @change="Onchange()"
+                          ></v-checkbox>
                         </v-col>
+                          </v-row>
+                        </v-col>
+
                         <v-col cols="12" :md="window_size" class="py-0 my-0 text-center">
+                          <strong>INTERVALO DE MONTOS </strong><br>
                           {{monto}}
                         </v-col>
-                        <v-col cols="12" :md="window_size" class="py-0 my-0 text-center" >
+                        <v-col cols="12" :md="window_size" class="py-0 my-0 text-center">
+                          <strong> PLAZO EN MESES</strong><br>
                           {{plazo}}
                         </v-col>
+                        <!--{{contribution}}-->
+
                         <v-col cols="12" :md="window_size" class="py-0 my-0" v-if="see_field">
+                          <strong> NETO REALIZADO (VNR)</strong><br>
                           <ValidationProvider v-slot="{ errors }" name="VNR" :rules="'required|min_value:'+modalidad.minimun_amoun"  mode="aggressive">
                           <v-text-field
                             :error-messages="errors"
@@ -265,22 +281,10 @@
                     <v-checkbox
                       v-model="data_sismu.cpop_sismu"
                       label="Afiliado CPOP"
+                      @change="Onchange()"
                     ></v-checkbox>
                   </v-col>
-                  <v-col
-                    cols="12"
-                    md="3"
-                    class="py-0 my-0"
-                    v-if="
-                      modalitySelected.name == 'Préstamo a Largo Plazo' ||
-                      modalitySelected.name == 'Préstamo Hipotecario'
-                    "
-                  >
-                    <v-checkbox
-                      v-model="affiliate_data.cpop_affiliate"
-                      label="Afiliado CPOP"
-                    ></v-checkbox>
-                  </v-col>
+
                 </template>
               </v-container>
               <BallotsHipotecary
