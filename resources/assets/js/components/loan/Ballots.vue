@@ -269,22 +269,6 @@
                       ></v-text-field>
                     </ValidationProvider>
                   </v-col>
-                  <v-col
-                    cols="12"
-                    md="3"
-                    class="py-0 my-0"
-                    v-if="
-                      modalitySelected.name == 'Refinanciamiento Préstamo Hipotecario' ||
-                      modalitySelected.name == 'Refinanciamiento Préstamo a Largo Plazo'
-                    "
-                  >
-                    <v-checkbox
-                      v-model="data_sismu.cpop_sismu"
-                      label="Afiliado CPOP"
-                      @change="Onchange()"
-                    ></v-checkbox>
-                  </v-col>
-
                 </template>
               </v-container>
               <BallotsHipotecary
@@ -503,9 +487,9 @@ export default {
       try {
         let resp = await axios.post(`affiliate/${id}/loan_modality?procedure_type_id=${this.loanTypeSelected.id}`,{
           type_sismu: this.data_sismu.type_sismu,
-          cpop_sismu: this.data_sismu.cpop_sismu,
           cpop_affiliate: this.affiliate_data.cpop_affiliate,
           //reprogramming: this.reprogramming || this.remake
+          remake_loan: this.remake
         })
         if(resp.data ==''){
 
