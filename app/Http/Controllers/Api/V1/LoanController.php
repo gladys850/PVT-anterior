@@ -1468,7 +1468,7 @@ class LoanController extends Controller
                 $view = view()->make('loan.payments.payment_kardex')->with($data)->render();
             else
                 $view = view()->make('loan.payments.payment_kardex_unfolded')->with($data)->render();
-            if ($standalone) return Util::pdf_to_base64([$view], $file_name, $information_loan, 'legal', $request->copies ?? 1);
+            if ($standalone) return Util::pdf_to_base64([$view], $file_name, $information_loan, 'legal', $request->copies ?? 1, false);
             return $view;
         }else{
             return "prestamo no desembolsado";
