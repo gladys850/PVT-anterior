@@ -536,7 +536,7 @@ class LoanReportController extends Controller
                              $lender->mothers_last_name,
                              Util::money_format($loan->balance),
                              Util::money_format($loan->estimated_quota),
-                             $lender->pivot->quota_treat,
+                             Util::money_format($lender->pivot->quota_treat),
                              $loan->interest->annual_interest,
                          ));
                      }
@@ -562,7 +562,7 @@ class LoanReportController extends Controller
                                  $lender->mothers_last_name,
                                  Util::money_format($loan->balance),
                                  Util::money_format($loan->estimated_quota),
-                                 $lender->pivot->quota_treat,
+                                 Util::money_format($lender->pivot->quota_treat),
                                  $loan->interest->annual_interest,
                              ));
                          }
@@ -680,7 +680,7 @@ class LoanReportController extends Controller
                          $lender->mothers_last_name,
                          Util::money_format($loan->balance),
                          Util::money_format($loan->estimated_quota),
-                         Util::money_format($guarantor->pivot->quota_treat),
+                         Util::money_format($lender->pivot->quota_treat),
                          $loan->interest->annual_interest,
                      ));
                  }
@@ -727,7 +727,7 @@ class LoanReportController extends Controller
                          $lender->mothers_last_name,
                          Util::money_format($loan->balance),
                          Util::money_format($loan->estimated_quota),
-                         Util::money_format($guarantor->pivot->quota_treat),
+                         Util::money_format($lender->pivot->quota_treat),
                          $loan->interest->annual_interest,
                      ));
                  }
