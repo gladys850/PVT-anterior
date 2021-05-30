@@ -243,15 +243,19 @@ class LoanPaymentController extends Controller
         if (Auth::user()->can('update-payment-loan')) {
             $update = $request->only('description', 'validated','procedure_modality_id','affiliate_id','voucher','paid_by');
         }
-        if($payment_procedure_type != 'Amortización Directa' && $request->validated) $loanPayment->state_id=$Pagado;
-        if($payment_procedure_type != 'Amortización Directa' && !$request->validated) $loanPayment->state_id=$pendiente_pago;
+        if($payment_procedure_type != 'Amortización Directa' && $request->validated) {
+            $loanPayment->state_id=$Pagado;
+        }
+        if($payment_procedure_type != 'Amortización Directa' && !$request->validated){
+            $loanPayment->state_id=$pendiente_pago;
+        }
         $user_id = auth()->id();
         $loanPayment->fill($update);
         $loanPayment->save();
         $loanPayment->update(['user_id' => $user_id]);
         if($request->validated && $loanPayment->state_id == $Pagado || $request->validated && $request->state_id == $Pagado){
             $loanPayment->update(['loan_payment_date' => Carbon::now()]);
-            $loanPayment->save();        
+            $loanPayment->save();
         }
         return  $loanPayment;
     }
@@ -369,11 +373,6 @@ class LoanPaymentController extends Controller
                 $bank_pay_number=$request->input('bank_pay_number', null);
                 $voucher = $loanPayment->voucher_treasury()->create($payment->toArray());
                 $loanPayment->update(['state_id' => $Pagado,'user_id' => $payment->user_id,'validated'=>true,'loan_payment_date'=>Carbon::now(),'voucher'=>$bank_pay_number]);
-                if($loanPayment->loan->verify_balance() == 0)
-                {
-                    $loan = Loan::whereId($loanPayment->loan_id);
-                    $loan->update(['state_id' => $Liquidado]);
-                }
                 if($loanPayment->loan->payments->count() == 1 && $loanPayment->loan->payments->first()->state_id == $Pagado){
                     $user = User::whereUsername('admin')->first();
                     $amortizing_tag = Tag::whereSlug('amortizando')->first();
