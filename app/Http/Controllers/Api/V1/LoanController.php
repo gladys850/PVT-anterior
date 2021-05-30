@@ -2023,7 +2023,7 @@ class LoanController extends Controller
                    ));
                }
                $export = new ArchivoPrimarioExport($data);
-               return Excel::download($export, $File.'.xlsx');
+               return Excel::download($export, $File.'.xls');
       }else{
       
        $list_loan = DB::table('loans')
