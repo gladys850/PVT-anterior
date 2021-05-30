@@ -106,8 +106,10 @@ class LoanReportController extends Controller
                    array_push($data, array(
                       // $row->id_loan,
                        $row->code_loan,//NRO DE PRESTAMO
-                       $row->request_date_loan,
-                       $row->disbursement_date_loan,
+                       //$row->request_date_loan,
+                       Carbon::parse($row->request_date_loan)->format('d/m/Y H:i:s'),
+                       //$row->disbursement_date_loan,
+                       Carbon::parse($row->disbursement_date_loan)->format('d/m/Y H:i:s'),
                        $row->name_city,
                        $row->state_type_affiliate,
                        $row->modality_loan,//modalidad
@@ -123,10 +125,10 @@ class LoanReportController extends Controller
                        $row->surname_husband_affiliate,
 
                        $row->loan_accounting,
-                       $row->balance_loan,
+                       Util::money_format($row->balance_loan),
                        $row->parent_reason_loan,//ampliacion
-                       $row->amount_disbursement,//monto desembolsado
-                       $row->amount_disbursement_liquido,//liquido desembolsado
+                       Util::money_format($row->amount_disbursement),//monto desembolsado
+                       Util::money_format($row->amount_disbursement_liquido),//liquido desembolsado
                        $row->term_loan,//plazo
                        $row->state_loan,//estado del prestamo
 
@@ -218,12 +220,14 @@ class LoanReportController extends Controller
                    array_push($data, array(
                       // $row->id_loan,
                        $row->code_loan,//NRO DE PRESTAMO
-                       $row->request_date_loan,
-                       $row->disbursement_date_loan,
+                       //$row->request_date_loan,
+                       Carbon::parse($row->request_date_loan)->format('d/m/Y H:i:s'),
+                       //$row->disbursement_date_loan,
+                       Carbon::parse($row->disbursement_date_loan)->format('d/m/Y H:i:s'),
                        $row->name_city,
                        $row->state_type_affiliate,
-                       $row->modality, //MOdalidad
-                       $row->sub_modality, //Sub modalidad
+                       $row->modality_loan, //MOdalidad
+                       $row->sub_modality_loan, //Sub modalidad
 
                        $row->identity_card_affiliate,
                        $row->registration_affiliate,//matrifcula 
@@ -236,10 +240,10 @@ class LoanReportController extends Controller
                        $row->surname_husband_affiliate,
 
                        $row->loan_accounting,
-                       $row->balance_loan,
+                       Util::money_format($row->balance_loan),
                        $row->parent_reason_loan,//ampliacion
-                       $row->amount_disbursement,//monto desembolsado
-                       $row->amount_disbursement_liquido,//liquido desembolsado
+                       Util::money_format($row->amount_disbursement),//monto desembolsado
+                       Util::money_format($row->amount_disbursement_liquido),//liquido desembolsado
                        $row->term_loan,//plazo
                        $row->state_loan,//estado del prestamo
 
@@ -294,8 +298,10 @@ class LoanReportController extends Controller
                    array_push($data_liq, array(
                       // $row->id_loan,
                        $row->code_loan,//NRO DE PRESTAMO
-                       $row->request_date_loan,
-                       $row->disbursement_date_loan,
+                       //$row->request_date_loan,
+                       Carbon::parse($row->request_date_loan)->format('d/m/Y H:i:s'),
+                       //$row->disbursement_date_loan,
+                       Carbon::parse($row->disbursement_date_loan)->format('d/m/Y H:i:s'),
                        $row->name_city,
                        $row->state_type_affiliate,
                        $row->modality_loan,//modalidad
@@ -312,10 +318,10 @@ class LoanReportController extends Controller
                        $row->surname_husband_affiliate,
 
                        $row->loan_accounting,
-                       $row->balance_loan,
+                       Util::money_format($row->balance_loan),
                        $row->parent_reason_loan,//ampliacion
-                       $row->amount_disbursement,//monto desembolsado
-                       $row->amount_disbursement_liquido,//liquido desembolsado
+                       Util::money_format($row->amount_disbursement),//monto desembolsado
+                       Util::money_format($row->amount_disbursement_liquido),//liquido desembolsado
                        $row->term_loan,//plazo
                        $row->state_loan,//estado del prestamo
 
@@ -378,15 +384,22 @@ class LoanReportController extends Controller
                 $row->lenders[0]->first_name.' '.$row->lenders[0]->second_name.' ' .$row->lenders[0]->last_name.' '.$row->lenders[0]->mothers_last_name,
                 $row->lenders[0]->cell_phone_number,
                 $row->lenders[0]->phone_number,
+                $row->lenders[0]->city_birth->name,
+                $row->lenders[0]->address->full_address,
                 $row->code,
-                $row->disbursement_date,
+                //$row->disbursement_date,
+                Carbon::parse($row->disbursement_date)->format('d/m/Y H:i:s'),
                 $row->loan_term,
-                $row->estimated_quota,
-                $row->balance,
+                $row->interest->annual_interest,
+                Carbon::parse($row->lastPaymentValidated->estimated_date)->format('d/m/Y H:i:s'),
+                $row->lastPaymentValidated->modality->shortened,
+                Util::money_format($row->estimated_quota),
+                Util::money_format($row->balance),
                 $row->lenders[0]->affiliate_state->affiliate_state_type->name,
                 $row->modality->procedure_type->second_name,
- 
+                $row->modality->shortened,
                 $row->getdelay()->penal,
+                $row = '***'
               // $row->getdelay()->interest_accumulated,
                
                //$row->personal_references ? $row->personal_references[0]->first_name:' ',
@@ -397,7 +410,7 @@ class LoanReportController extends Controller
         $File="PrestamosMoraParcial";
         $data_mora_parcial=array(
             array("MATRICULA","CI","NOMBRE COMPLETO","NRO DE CEL.2","NRO FIJO","CIUDAD","DIRECCIÓN","PTMO","FECHA DESEMBOLSO",
-            "NRO DE CUOTAS","TASA ANUAL","FECHA DEL ÚLTIMO PAGO","TIPO DE PAGO","CUOTA MENSUAL","SALDO ACTUAL","ÉSTADO DEL AFILIADO","MODALIDAD","SUB MODALIDAD","DÍAS MORA","NOM. PERSONAL REFERENCE","DIRECCIÓN")
+            "NRO DE CUOTAS","TASA ANUAL","FECHA DEL ÚLTIMO PAGO","TIPO DE PAGO","CUOTA MENSUAL","SALDO ACTUAL","ÉSTADO DEL AFILIADO","MODALIDAD","SUB MODALIDAD","DÍAS MORA","***","NOM. PERSONAL REFERENCE","DIRECCIÓN")
         );
         foreach ($loans_mora_parcial as $row){
             array_push($data_mora_parcial, array(
@@ -406,14 +419,23 @@ class LoanReportController extends Controller
                 $row->lenders[0]->first_name.' '.$row->lenders[0]->second_name.' ' .$row->lenders[0]->last_name.' '.$row->lenders[0]->mothers_last_name,
                 $row->lenders[0]->cell_phone_number,
                 $row->lenders[0]->phone_number,
+                $row->lenders[0]->city_birth->name,
+                $row->lenders[0]->address->full_address,
                 $row->code,
-                $row->disbursement_date,
+                //$row->disbursement_date,
+                Carbon::parse($row->disbursement_date)->format('d/m/Y H:i:s'),
                 $row->loan_term,
-                $row->estimated_quota,
-                $row->balance,
+                $row->interest->annual_interest,
+                Carbon::parse($row->lastPaymentValidated->estimated_date)->format('d/m/Y H:i:s'),
+                $row->lastPaymentValidated->modality->shortened,
+                Util::money_format($row->estimated_quota),
+                Util::money_format($row->balance),
                 $row->lenders[0]->affiliate_state->affiliate_state_type->name,
                 $row->modality->procedure_type->second_name,
+                $row->modality->shortened,
                 $row->getdelay()->penal,
+                $row = '***'
+
               // $row->getdelay()->interest_accumulated,
                
                // $row->personal_references ? $row->personal_references[0]->first_name:' ',
@@ -428,20 +450,27 @@ class LoanReportController extends Controller
         );
         foreach ($loans_mora as $row){
             array_push($data_mora, array(
-               $row->lenders[0]->affiliate_registration_number,
-               $row->lenders[0]->identity_card,
-              $row->lenders[0]->first_name.' '.$row->lenders[0]->second_name.' ' .$row->lenders[0]->last_name.' '.$row->lenders[0]->mothers_last_name,
-              $row->lenders[0]->cell_phone_number,
-              $row->lenders[0]->phone_number,
-               $row->code,
-               $row->disbursement_date,
-               $row->loan_term,
-               $row->estimated_quota,
-               $row->balance,
-               $row->lenders[0]->affiliate_state->affiliate_state_type->name,
-               $row->modality->procedure_type->second_name,
-
-               $row->getdelay()->penal,
+                $row->lenders[0]->affiliate_registration_number,
+                $row->lenders[0]->identity_card,
+                $row->lenders[0]->first_name.' '.$row->lenders[0]->second_name.' ' .$row->lenders[0]->last_name.' '.$row->lenders[0]->mothers_last_name,
+                $row->lenders[0]->cell_phone_number,
+                $row->lenders[0]->phone_number,
+                $row->lenders[0]->city_birth->name,
+                $row->lenders[0]->address->full_address,
+                $row->code,
+                //$row->disbursement_date,
+                Carbon::parse($row->disbursement_date)->format('d/m/Y H:i:s'),
+                $row->loan_term,
+                $row->interest->annual_interest,
+                Carbon::parse($row->lastPaymentValidated->estimated_date)->format('d/m/Y H:i:s'),
+                $row->lastPaymentValidated->modality->shortened,
+                Util::money_format($row->estimated_quota),
+                Util::money_format($row->balance),
+                $row->lenders[0]->affiliate_state->affiliate_state_type->name,
+                $row->modality->procedure_type->second_name,
+                $row->modality->shortened,
+                $row->getdelay()->penal,
+                $row = '***'
               // $row->personal_references ? $row->personal_references[0]->first_name:' ',
               // $row->getdelay()->interest_accumulated,
                
@@ -493,7 +522,8 @@ class LoanReportController extends Controller
                      {
                          array_push($command_sheet_before, array(
                              $loan->code,
-                             $loan->disbursement_date,
+                             //$loan->disbursement_date,
+                             Carbon::parse($loan->disbursement_date)->format('d/m/Y H:i:s'),
                              $loan->city->name,
                              $lender->affiliate_state->name,
                              $lender->registration,
@@ -504,8 +534,8 @@ class LoanReportController extends Controller
                              $lender->second_name,
                              $lender->last_name,
                              $lender->mothers_last_name,
-                             $loan->balance,
-                             $loan->estimated_quota,
+                             Util::money_format($loan->balance),
+                             Util::money_format($loan->estimated_quota),
                              $lender->pivot->quota_treat,
                              $loan->interest->annual_interest,
                          ));
@@ -518,7 +548,8 @@ class LoanReportController extends Controller
                          {
                              array_push($senasir_sheet_before, array(
                                  $loan->code,
-                                 $loan->disbursement_date,
+                                 //$loan->disbursement_date,
+                                 Carbon::parse($loan->disbursement_date)->format('d/m/Y H:i:s'),
                                  $loan->city->name,
                                  $lender->affiliate_state->name,
                                  $lender->registration,
@@ -529,8 +560,8 @@ class LoanReportController extends Controller
                                  $lender->second_name,
                                  $lender->last_name,
                                  $lender->mothers_last_name,
-                                 $loan->balance,
-                                 $loan->estimated_quota,
+                                 Util::money_format($loan->balance),
+                                 Util::money_format($loan->estimated_quota),
                                  $lender->pivot->quota_treat,
                                  $loan->interest->annual_interest,
                              ));
@@ -549,7 +580,8 @@ class LoanReportController extends Controller
                      {
                          array_push($command_sheet_later, array(
                              $loan->code,
-                             $loan->disbursement_date,
+                            // $loan->disbursement_date,
+                             Carbon::parse($loan->disbursement_date)->format('d/m/Y H:i:s'),
                              $loan->city->name,
                              $lender->affiliate_state->name,
                              $lender->registration,
@@ -560,9 +592,9 @@ class LoanReportController extends Controller
                              $lender->second_name,
                              $lender->last_name,
                              $lender->mothers_last_name,
-                             $loan->balance,
-                             $loan->estimated_quota,
-                             $lender->pivot->quota_treat,
+                             Util::money_format($loan->balance),
+                             Util::money_format($loan->estimated_quota),
+                             Util::money_format($lender->pivot->quota_treat),
                              $loan->interest->annual_interest,
                          ));
                      }
@@ -574,7 +606,8 @@ class LoanReportController extends Controller
                          {
                              array_push($senasir_sheet_later, array(
                                  $loan->code,
-                                 $loan->disbursement_date,
+                                 //$loan->disbursement_date,
+                                 Carbon::parse($loan->disbursement_date)->format('d/m/Y H:i:s'),
                                  $loan->city->name,
                                  $lender->affiliate_state->name,
                                  $lender->registration,
@@ -585,9 +618,9 @@ class LoanReportController extends Controller
                                  $lender->second_name,
                                  $lender->last_name,
                                  $lender->mothers_last_name,
-                                 $loan->balance,
-                                 $loan->estimated_quota,
-                                 $lender->pivot->quota_treat,
+                                 Util::money_format($loan->balance),
+                                 Util::money_format($loan->estimated_quota),
+                                 Util::money_format($lender->pivot->quota_treat),
                                  $loan->interest->annual_interest,
                              ));
                          }
@@ -633,7 +666,8 @@ class LoanReportController extends Controller
                  {
                      array_push($command_sheet_dafaulted, array(
                          $loan->code,
-                         $loan->disbursement_date,
+                         //$loan->disbursement_date,
+                         Carbon::parse($loan->disbursement_date)->format('d/m/Y H:i:s'),
                          $loan->city->name,
                          $lender->affiliate_state->name,
                          $lender->registration,
@@ -644,9 +678,9 @@ class LoanReportController extends Controller
                          $lender->second_name,
                          $lender->last_name,
                          $lender->mothers_last_name,
-                         $loan->balance,
-                         $loan->estimated_quota,
-                         $lender->pivot->quota_treat,
+                         Util::money_format($loan->balance),
+                         Util::money_format($loan->estimated_quota),
+                         Util::money_format($guarantor->pivot->quota_treat),
                          $loan->interest->annual_interest,
                      ));
                  }
@@ -654,7 +688,8 @@ class LoanReportController extends Controller
                  {
                      array_push($command_sheet_dafaulted, array(
                          $loan->code,
-                         $loan->disbursement_date,
+                        // $loan->disbursement_date,
+                         Carbon::parse($loan->disbursement_date)->format('d/m/Y H:i:s'),
                          $loan->city->name,
                          $guarantor->affiliate_state->name,
                          $guarantor->registration,
@@ -665,9 +700,9 @@ class LoanReportController extends Controller
                          $guarantor->second_name,
                          $guarantor->last_name,
                          $guarantor->mothers_last_name,
-                         $loan->balance,
-                         $loan->estimated_quota,
-                         $guarantor->pivot->quota_treat,
+                         Util::money_format($loan->balance),
+                         Util::money_format($loan->estimated_quota),
+                         Util::money_format($guarantor->pivot->quota_treat),
                          $loan->interest->annual_interest,
                      ));
                  }
@@ -678,7 +713,8 @@ class LoanReportController extends Controller
                  {
                      array_push($senasir_sheet_defaulted, array(
                          $loan->code,
-                         $loan->disbursement_date,
+                         //$loan->disbursement_date,
+                         Carbon::parse($loan->disbursement_date)->format('d/m/Y H:i:s'),
                          $loan->city->name,
                          $lender->affiliate_state->name,
                          $lender->registration,
@@ -689,9 +725,9 @@ class LoanReportController extends Controller
                          $lender->second_name,
                          $lender->last_name,
                          $lender->mothers_last_name,
-                         $loan->balance,
-                         $loan->estimated_quota,
-                         $lender->pivot->quota_treat,
+                         Util::money_format($loan->balance),
+                         Util::money_format($loan->estimated_quota),
+                         Util::money_format($guarantor->pivot->quota_treat),
                          $loan->interest->annual_interest,
                      ));
                  }
@@ -699,7 +735,8 @@ class LoanReportController extends Controller
                  {
                      array_push($senasir_sheet_defaulted, array(
                          $loan->code,
-                         $loan->disbursement_date,
+                         //$loan->disbursement_date,
+                         Carbon::parse($loan->disbursement_date)->format('d/m/Y H:i:s'),
                          $loan->city->name,
                          $guarantor->affiliate_state->name,
                          $guarantor->registration,
@@ -710,9 +747,9 @@ class LoanReportController extends Controller
                          $guarantor->second_name,
                          $guarantor->last_name,
                          $guarantor->mothers_last_name,
-                         $loan->balance,
-                         $loan->estimated_quota,
-                         $guarantor->pivot->quota_treat,
+                         Util::money_format($loan->balance),
+                         Util::money_format($loan->estimated_quota),
+                         Util::money_format($guarantor->pivot->quota_treat),
                          $loan->interest->annual_interest,
                      ));
                  }
