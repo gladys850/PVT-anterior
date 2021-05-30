@@ -160,6 +160,7 @@ class LoanPaymentController extends Controller
                     $loanPayment->role = Role::whereId($loanPayment->role_id)->first();
                     $loanPayment->user = User::whereId($loanPayment->user_id)->first();
                     $loanPayment->modality;
+                    $loanPayment->voucher_treasury;
                     $payments->push($loanPayment);
                 }
             }
