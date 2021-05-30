@@ -1230,7 +1230,7 @@ class LoanPaymentController extends Controller
         }
        } 
         $export = new ArchivoPrimarioExport($data);
-        return Excel::download($export, $File.'.xlsx');
+        return Excel::download($export, $File.'.xls');
 
 
     }
