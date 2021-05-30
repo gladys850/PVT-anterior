@@ -536,6 +536,10 @@
             {{ item.estimated_date_payment | date}}
           </template>
 
+          <template v-slot:[`item.estimated_quota_payment`]="{ item }">
+            {{ item.estimated_quota_payment | money}}
+          </template>
+
           <template v-slot:[`item.modality_payment`]="{ item }">
           {{ item.modality_payment }}
           </template>

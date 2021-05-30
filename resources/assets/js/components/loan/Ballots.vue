@@ -133,7 +133,7 @@
                       </v-col>
                       <template v-if="lender_contribution.state_affiliate != 'Comisión'">
                         <v-col cols="12" md="2" class="py-0 my-0" >
-                          <b style="text-align: center">= {{(parseFloat(contribution[i].adjustment_amount) + parseFloat(contribution[i].payable_liquid)).toFixed(2)}}</b>
+                          <b style="text-align: center">= {{(parseFloat(contribution[i].adjustment_amount) + parseFloat(contribution[i].payable_liquid)) | money}}</b>
                         </v-col>
                         <v-col cols="12" md="5" class="py-0 my-0">
                           <ValidationProvider
@@ -500,7 +500,8 @@ export default {
           this.loan_detail.not_exist_modality = false
           this.loan_modality = resp.data
 
-          this.monto= this.loan_modality.loan_modality_parameter.minimum_amount_modality+' - '+this.loan_modality.loan_modality_parameter.maximum_amount_modality
+          this.monto= parseFloat(this.loan_modality.loan_modality_parameter.minimum_amount_modality).toLocaleString("de-DE")+' - '+
+                      parseFloat(this.loan_modality.loan_modality_parameter.maximum_amount_modality).toLocaleString("de-DE")
           this.plazo= this.loan_modality.loan_modality_parameter.minimum_term_modality+' - '+this.loan_modality.loan_modality_parameter.maximum_term_modality
           //intervalos es el monto, plazo y modalidad y id de una modalidad
           this.modalidad.maximun_amoun=this.loan_modality.loan_modality_parameter.maximum_amount_modality
