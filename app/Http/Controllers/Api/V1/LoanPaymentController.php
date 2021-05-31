@@ -190,6 +190,7 @@ class LoanPaymentController extends Controller
                     $loanPayment->role = Role::whereId($loanPayment->role_id)->first();
                     $loanPayment->user = User::whereId($loanPayment->user_id)->first();
                     $loanPayment->modality;
+                    $loanPayment->voucher_treasury;
                     $payments->push($loanPayment);
             }           
         $loan->payments = $payments;
@@ -571,7 +572,7 @@ class LoanPaymentController extends Controller
                     ['Tipo', $loan->modality->procedure_type->second_name],
                     ['Modalidad', $loan->modality->shortened],
                     ['Fecha', Carbon::now()->format('d/m/Y')],
-                    ['Hora', Carbon::now()->format('H:i:s')],
+                    ['Hora', Carbon::now()->format('H:i')],
                     ['Usuario', Auth::user()->username]
                 ]
             ],
