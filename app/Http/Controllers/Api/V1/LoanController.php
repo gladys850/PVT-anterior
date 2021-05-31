@@ -2091,8 +2091,41 @@ class LoanController extends Controller
                 }
             }
         }
-        return response()->json([
-            'defaulted' => $c,
-        ]);
+    return response()->json([
+        'defaulted' => $c,
+    ]);
+   }
+
+   //cronjob para actualizacion de prestamos
+   public function verify_loans()
+   {
+       $loans = Loan::where('state_id', LoanState::whereName('Vigente')->first()->id)->get();
+       $c = 0;
+       foreach( $loans as $loan ){
+           if($loan->verify_balance() == 0)
+           {
+                $option = $loan;
+                $loan = Loan::withoutEvents(function () use ($option){
+                    $loan = Loan::whereId($option->id)->first();
+                    $loan->state_id = LoanState::whereName('Liquidado')->first()->id;
+                    $loan->update();
+                });
+                $c++;
+           }
+       }
+       $loans = Loan::where('state_id', LoanState::whereName('Liquidado')->first()->id)->get();
+       foreach( $loans as $loan ){
+           if($loan->verify_balance() > 0)
+           {
+                $option = $loan;
+                $loan = Loan::withoutEvents(function () use ($option){
+                    $loan = Loan::whereId($option->id)->first();
+                    $loan->state_id = LoanState::whereName('Vigente')->first()->id;
+                    $loan->update();
+                });
+                $c++;
+           }
+       }
+       return $c;
    }
 }
