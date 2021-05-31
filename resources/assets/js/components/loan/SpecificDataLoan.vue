@@ -100,7 +100,7 @@
                                     <p><b>TOTAL BONOS:</b>{{' '+loan.lenders[0].pivot.bonus_calculated | moneyString}}</p>
                                   </v-col>
                                    <v-col cols="12" md="4" class="py-0">
-                                    <p><b>INDICE DE ENDEUDAMIENTO:</b>{{' '+ (loan.indebtedness_calculated/1).toFixed(2)+'%'}} </p>
+                                    <p><b>INDICE DE ENDEUDAMIENTO:</b> {{loan.indebtedness_calculated | percentage}} % </p>
                                   </v-col>
                                   <v-col cols="12" md="4" v-show="calificacion_edit" class="py-0">
                                     <center>
@@ -394,7 +394,7 @@
                                               <p><b>LIQUIDO PARA CALIFICACION CALCULADO:</b> {{guarantor.pivot.liquid_qualification_calculated | moneyString}}</p>
                                             </v-col>
                                             <v-col cols="12" md="3">
-                                              <p><b>INDICE DE ENDEUDAMIENTO CALCULADO:</b> {{ parseInt(guarantor.pivot.indebtedness_calculated).toFixed(2) }} %</p>
+                                              <p><b>INDICE DE ENDEUDAMIENTO CALCULADO:</b> {{ parseInt(guarantor.pivot.indebtedness_calculated) | percentage }} %</p>
                                             </v-col>
                                           </v-row>
                                         </v-col>
