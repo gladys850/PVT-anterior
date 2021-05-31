@@ -138,7 +138,7 @@
                   <ValidationProvider
                     v-slot="{ errors }"
                     name="telefono"
-                    rules="min:1|max:12"
+                    rules="min:1|max:8"
                   >
                     <v-text-field
                       :error-messages="errors"
