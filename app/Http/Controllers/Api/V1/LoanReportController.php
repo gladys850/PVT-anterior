@@ -196,7 +196,7 @@ class LoanReportController extends Controller
                'affiliates.first_name as first_name_affiliate','affiliates.second_name as second_name_affiliate','affiliates.surname_husband as surname_husband_affiliate',
                'procedure_modalities.name as sub_modality_loan','procedure_types.second_name as modality_loan','loans.amount_approved as amount_approved_loan',
                'affiliate_state_types.name as state_type_affiliate','affiliate_states.name as state_affiliate','loan_affiliates.quota_treat as quota_loan','loan_states.name as state_loan',
-               'loan_affiliates.guarantor as guarantor_loan_affiliate','pension_entities.name as pension_entity_affiliate','loans.disbursement_date as disbursement_date_loan',
+               'loan_affiliates.guarantor as guarantor_loan_affiliate','loan_affiliates.indebtedness_calculated as indebtedness_calculated_loan_affiliate','pension_entities.name as pension_entity_affiliate','loans.disbursement_date as disbursement_date_loan',
                'loans.request_date as request_date_loan','cities.name as name_city','spouses.registration as registration_spouse','loans.num_accounting_voucher as loan_accounting',
                'loans.parent_reason as parent_reason_loan','loans.amount_approved as amount_disbursement',DB::raw("(loans.amount_approved - loans.refinancing_balance) as amount_disbursement_liquido"),
                'loans.loan_term as term_loan','loan_destinies.name as name_destinity_loan')
@@ -224,7 +224,7 @@ class LoanReportController extends Controller
                    "PRIMER NOMBRE","SEGUNDO NOMBRE","PATERNO","MATERNO","APELLIDO CASADA",
                    "NRO CBTE CONTABLE","SALDO ACTUAL","MONTO DESEMBOLSADO","LIQUIDO DESEMBOLSADO",
                    "PLAZO","ESTÁDO PRÉSTAMO","DESTINO CREDITO","CAPITAL PAGADO FECHA DE CORTE","SALDO A FECHA DE CORTE",
-                   "MONTO APROBADO","MONTO DESEMBOLSADO DE REFINANCIAMIENTO" ,"MONTO REFINANCIADO","AMPLIACIÓN?")
+                   "MONTO APROBADO","MONTO DESEMBOLSADO DE REFINANCIAMIENTO" ,"MONTO REFINANCIADO","AMPLIACIÓN?","INDICE DE ENDEUDAMIENTO")
                );
                foreach ($list_loan as $row){
                    array_push($data, array(
@@ -266,6 +266,7 @@ class LoanReportController extends Controller
                        $row->refinancing_balance? Util::money_format($row->refinancing_balance):Util::money_format($row->amount_approved),//MONTO DESEMBOLSADO
                        $row->refinancing_balance? Util::money_format($row->payment_amount_ampli->stimated_date):'0',//MONTO REFINANCIADO
                        $row->parent_reason? $row->parent_reason:'no',//SI ES AMPLIACION
+                       Util::money_format($row->indebtedness_calculated_loan_affiliate)//indice de endeudamineto
                       
                    ));
                }
@@ -293,7 +294,7 @@ class LoanReportController extends Controller
                'loan_affiliates.guarantor as guarantor_loan_affiliate','pension_entities.name as pension_entity_affiliate','loans.disbursement_date as disbursement_date_loan',
                'loans.request_date as request_date_loan','cities.name as name_city','spouses.registration as registration_spouse','loans.num_accounting_voucher as loan_accounting',
                'loans.parent_reason as parent_reason_loan','loans.amount_approved as amount_disbursement',DB::raw("(loans.amount_approved - loans.refinancing_balance) as amount_disbursement_liquido"),
-               'loans.loan_term as term_loan','loan_destinies.name as name_destinity_loan')
+               'loans.loan_term as term_loan','loan_destinies.name as name_destinity_loan','loan_affiliates.indebtedness_calculated as indebtedness_calculated_loan_affiliate')
                //->where('affiliates.identity_card','LIKE'.'%'.$request->identity_card.'%')
                ->orderBy('loans.code', $order_loan)
                ->get();
@@ -316,7 +317,7 @@ class LoanReportController extends Controller
                     "PRIMER NOMBRE","SEGUNDO NOMBRE","PATERNO","MATERNO","APELLIDO CASADA",
                     "NRO CBTE CONTABLE","SALDO ACTUAL","MONTO DESEMBOLSADO","LIQUIDO DESEMBOLSADO",
                     "PLAZO","ESTÁDO PRÉSTAMO","DESTINO CREDITO","CAPITAL PAGADO FECHA DE CORTE","SALDO A FECHA DE CORTE",
-                    "MONTO APROBADO","MONTO DESEMBOLSADO DE REFINANCIAMIENTO" ,"MONTO REFINANCIADO","AMPLIACIÓN?")
+                    "MONTO APROBADO","MONTO DESEMBOLSADO DE REFINANCIAMIENTO" ,"MONTO REFINANCIADO","AMPLIACIÓN?","INDICE DE ENDEUDAMIENTO")
                );
                foreach ($list_loan_liq as $row){
                    array_push($data_liq, array(
@@ -358,6 +359,7 @@ class LoanReportController extends Controller
                       $row->refinancing_balance? Util::money_format($row->refinancing_balance):Util::money_format($row->amount_approved),//MONTO DESEMBOLSADO
                       $row->refinancing_balance? Util::money_format($row->payment_amount_ampli->stimated_date):'0',//MONTO REFINANCIADO
                       $row->parent_reason? $row->parent_reason:'no',//SI ES AMPLIACION
+                      Util::money_format($row->indebtedness_calculated_loan_affiliate)//indice de endeudamineto
                    ));
                }
 
