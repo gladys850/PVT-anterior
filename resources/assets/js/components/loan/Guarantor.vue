@@ -362,7 +362,7 @@
                           <p class="py-0 mb-0 caption" v-show="show_data">Liquido Total:{{evaluate_garantor.payable_liquid_calculated +' '}}<br>
                            Total de Bonos:{{evaluate_garantor.bonus_calculated +' '}}<br>
                            Liquido para la Calificacion:{{evaluate_garantor.liquid_qualification_calculated }}</p>
-                          <p class="py-0 mb-0 caption" v-show="show_data">Indice de Endeudamiento: {{evaluate_garantor.indebtnes_calculated+'% '}}<br>{{'Monto Ajustable:'+ monto_ajustable}}<br> {{'Liquido Restante para garantias:'+ evaluate_garantor.liquid_rest}}<br><b>{{evaluate_garantor.is_valid?'Cubre la Cuota ':'No Cubre la Cuota'}}</b></p>
+                          <p class="py-0 mb-0 caption" v-show="show_data">Indice de Endeudamiento: {{evaluate_garantor.indebtnes_calculated | percentage}} % <br>{{'Monto Ajustable:'+ monto_ajustable}}<br> {{'Liquido Restante para garantias:'+ evaluate_garantor.liquid_rest}}<br><b>{{evaluate_garantor.is_valid?'Cubre la Cuota ':'No Cubre la Cuota'}}</b></p>
                           <div class="text-right"  v-show="evaluate_garantor.is_valid">
                             <v-btn
                               v-if="show_data"

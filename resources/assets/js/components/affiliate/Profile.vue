@@ -270,9 +270,9 @@
                     label="Estado"
                     v-model="affiliate.affiliate_state_id"
                     :Onchange="Onchange()"
-                    :readonly="!editable || !permission.secondary"
-                    :outlined="editable && permission.secondary"
-                    :disabled="editable && !permission.secondary"
+                    :readonly="!editable || !permission.primary"
+                    :outlined="editable && permission.primary"
+                    :disabled="editable && !permission.primary"
                   ></v-select>
                 </ValidationProvider>
               </v-col>
@@ -394,9 +394,9 @@
                     label="Unidad"
                     v-model="affiliate.unit_id"
                     persistent-hint
-                    :readonly="!editable || !permission.secondary"
-                    :outlined="editable && permission.secondary"
-                    :disabled="editable && !permission.secondary"
+                    :readonly="!editable || !permission.primary"
+                    :outlined="editable && permission.primary"
+                    :disabled="editable && !permission.primary"
                   ></v-select>
                 </ValidationProvider>
               </v-col>
