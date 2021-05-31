@@ -639,17 +639,17 @@ class Loan extends Model
     }*/
 
     //obtener modalidad teniendo el tipo y el afiliado
-    public static function get_modality($modality, $affiliate, $type_sismu, $cpop_sismu, $cpop_affiliate){
+    public static function get_modality($modality, $affiliate, $type_sismu, $cpop_affiliate,$remake_loan){
         $verify=false;
         $modality_name=$modality->name;
-        /*if(strpos($modality->name, 'Refinanciamiento') === false){//para restringir para no tener prestamos paralelos de la misma sub mod
+        if(strpos($modality->name, 'Refinanciamiento') === false){//para restringir para no tener prestamos paralelos de la misma sub mod
             foreach ($affiliate->active_loans() as $loan) {
                 if($loan->modality->procedure_type->id == $modality->id)
                 $verify=true;
             }
-        }*/
-    
-        //if($verify && !$remake_loan) abort(403, 'El affiliado tiene préstamos activos en la modalidad: '.$modality_name);
+        }
+
+        if($verify && !$remake_loan) abort(403, 'El affiliado tiene préstamos activos en la modalidad: '.$modality_name);
     
         $modality = null;
         if ($affiliate->affiliate_state){
@@ -713,7 +713,7 @@ class Loan extends Model
                 {
                     if($affiliate_state !== "Disponibilidad" ) // disponibilidad letra A o C no puede acceder a prestamos a largo plazo
                     {
-                        if($cpop_affiliate || $cpop_sismu){
+                        if($cpop_affiliate){
                             $modality=ProcedureModality::whereShortened("LAR-CPOP")->first();
                         }else{
                             $modality=ProcedureModality::whereShortened("LAR-ACT")->first();
@@ -722,7 +722,7 @@ class Loan extends Model
                 }
                 if($affiliate_state_type == "Pasivo")
                 {
-                    if((!$cpop_affiliate && !$cpop_sismu)){
+                    if((!$cpop_affiliate)){
                         if($affiliate->pension_entity->name != 'SENASIR')
                         {
                             $modality=ProcedureModality::whereShortened("LAR-AFP")->first();// Largo plazo Sector PAsivo
@@ -737,7 +737,7 @@ class Loan extends Model
                 {
                     if($affiliate_state !== "Disponibilidad" ) //disponibilidad letra A o C no tiene prestamos
                     {
-                        if($cpop_affiliate || $cpop_sismu){
+                        if($cpop_affiliate){
                             $modality=ProcedureModality::whereShortened("REF-ACT-CPOP")->first(); //refi largo plazo activo  cpop
                         }else{
                             $modality=ProcedureModality::whereShortened("REF-LAR-ACT")->first(); //refi largo plazo activo
@@ -746,7 +746,7 @@ class Loan extends Model
                 }
                 else{
                     if($affiliate_state_type == "Pasivo"){
-                        if((!$cpop_affiliate && !$cpop_sismu)){
+                        if((!$cpop_affiliate)){
                             if($affiliate->pension_entity->name != 'SENASIR')
                             {
                                 $modality=ProcedureModality::whereShortened("REF-LAR-AFP")->first();// ref Largo plazo Sector Pasivo
@@ -762,7 +762,7 @@ class Loan extends Model
                 {
                     if($affiliate_state_type !== "Comisión"){
                         
-                        if($cpop_affiliate || $cpop_sismu){
+                        if($cpop_affiliate){
                             $modality=ProcedureModality::whereShortened("HIP-ACT-CPOP")->first(); //hipotecario CPOP
                         }else{
                             $modality=ProcedureModality::whereShortened("HIP-ACT")->first(); //hipotecario Sector Activo
@@ -774,7 +774,7 @@ class Loan extends Model
                 if($affiliate_state_type == "Activo")
                 {
                     if($affiliate_state_type !== "Comisión" && $affiliate_state !== "Disponibilidad"){//affiliados con estado en disponibilidad no realizaran refinanciamientos 
-                        if($cpop_affiliate || $cpop_sismu){
+                        if($cpop_affiliate){
                             $modality=ProcedureModality::whereShortened("REF-HIP-ACT-CPOP")->first(); // Refinanciamiento hipotecario CPOP
                         }else{
                             $modality=ProcedureModality::whereShortened("REF-HIP-ACT")->first(); // Refinanciamiento hipotecario Sector Activo
