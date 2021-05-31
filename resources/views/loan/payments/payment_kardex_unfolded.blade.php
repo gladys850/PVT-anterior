@@ -183,7 +183,7 @@
                     <td class="w-8 text-right">{{ Util::money_format($parent_loan_payment->estimated_quota) }}</td> {{-- total pagado--}}
                     <td class="w-8 text-right">{{ Util::money_format($res_saldo_capital) }}</td>
                     <td class="w-8 text-right">{{ $parent_loan_payment->voucher }}</td>
-                    <td class="w-8 text-right">{{ $parent_loan_payment->voucher_treasury->code }}</td>
+                    <td class="w-8 text-right">{{ $parent_loan_payment->voucher_treasury ? $parent_loan_payment->voucher_treasury->code : '' }}</td>
                     <td class="w-8 text-right">{{ $parent_loan_payment->state->name }}</td>
                     <td class="w-8">{{ $parent_loan_payment->modality->shortened}}</td>
                 </tr>
@@ -229,7 +229,7 @@
                     <td class="w-8 text-right">{{ Util::money_format($payment->estimated_quota) }}</td> {{-- total pagado--}}
                     <td class="w-8 text-right">{{ Util::money_format($res_saldo_capital) }}</td>
                     <td class="w-8 text-right">{{ $payment->voucher }}</td>
-                    <td class="w-8 text-right">{{ $payment->voucher_treasury->code }}</td>
+                    <td class="w-8 text-right">{{ $payment->voucher_treasury ? $payment->voucher_treasury->code : '' }}</td>
                     <td class="w-8 text-right">{{ $payment->state->name }}</td>
                     <td class="w-8">{{ $payment->modality->shortened }}</td>
                 </tr>
