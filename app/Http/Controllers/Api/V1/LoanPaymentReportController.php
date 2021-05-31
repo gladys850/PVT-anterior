@@ -182,7 +182,7 @@ class LoanPaymentReportController extends Controller
                 'loan_payments.estimated_quota as estimated_quota_payment','loan_payments.voucher as voucher_payment',
                 'procedure_modalities.name as sub_modality_payment','procedure_modalities.shortened as sub_modality_shortened_payment','procedure_types.name as modality_payment','loan_payment_states.name as state_payment','voucher_types.name as name_voucher_type','spouses.registration as registration_spouse',
                 'loan_payments.paid_by as payment_by','loan_payments.capital_payment as capital_payment','loan_payments.interest_payment as interest_payment','loan_payments.penal_payment as penal_payment','loan_payments.interest_remaining as interest_current_pending','loan_payments.penal_remaining as interest_penal_pending','loan_payments.estimated_quota as estimated_quota_payment',
-                'loan_payments.previous_balance as previous_balance',DB::raw("(loan_payments.previous_balance - loan_payments.capital_payment) as current_balance"),'loan_payments.id as id_payment')
+                'loan_payments.previous_balance as previous_balance',DB::raw("(loan_payments.previous_balance - loan_payments.capital_payment) as current_balance"),'loan_payments.id as id_payment','vouchers.code as code_voucher')
                 ->orderBy('loan_payments.code', $order_loan)
                 ->get();
 
@@ -197,7 +197,7 @@ class LoanPaymentReportController extends Controller
                    array("NRO DE PRÉSTAMO", "FECHA DE DESEMBOLSO", "TIPO","FECHA DE PAGO","FECHA DE TRANSACCIÓN","MODALIDAD","SUB MODALIDAD",
                    "MATRICULA AFILIADO","MATRICULA CÓNYUGUE", "CI", "APELLIDO PATERNO","APELLIDO CASADA","APELLIDO MATERNO",
                    "PRIMER NOMBRE","SEGUNDO NOMBRE","CAPITAL","INTERÉS CORRIENTE","INTERÉS PENAL","INTERÉS CORRIENTE PENDIENTE", 
-                   "INTERÉS PENAL PENDIENTE","TOTAL PAGADO","SALDO ANTERIOR", "SALDO ACTUAL","PAGADO POR","TIPO DESCUENTO","TIPO DE PAGO","CBTE","NRO DE COBRO")
+                   "INTERÉS PENAL PENDIENTE","TOTAL PAGADO","SALDO ANTERIOR", "SALDO ACTUAL","PAGADO POR","TIPO DE AMORTIZACIÓN","TIPO DE PAGO","CBTE","COD. TRANSACCIÓN","NRO DE COBRO")
                );
                foreach ($list_loan as $row){
                    array_push($data, array(
@@ -230,10 +230,12 @@ class LoanPaymentReportController extends Controller
                        Util::money_format($row->current_balance),//saldo actual 
 
                        $row->payment_by,//pagado por 
-                       $row->sub_modality_shortened_payment,// tipo de descuento 
+                       $row->sub_modality_shortened_payment,// tipo de AMORTIZACION
                        $row->name_voucher_type,//tipo de pago
 
                        $row->voucher_payment, //comprobante
+                       $row->code_voucher,//COD transacción
+
                        $row->code_payment, //Nro de cobro
                    ));
                }
