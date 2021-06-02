@@ -156,6 +156,11 @@ export default {
             voucher_payment_date: this.data_payment.voucher_date,
             description: this.data_payment.glosa_voucher
           })
+          printJS({
+            printable: res.data.attachment.content,
+            type: res.data.attachment.type,
+            base64: true
+          })
             this.$router.push('/loanPayment')
       }catch (e) {
         console.log(e)
