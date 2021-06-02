@@ -386,36 +386,66 @@ class LoanReportController extends Controller
     //mora
     foreach($loans as $loan){
         if($loan->defaulted && count($loan->payments) > 0){
-            $loan->guarantor = $loan->guarantor;
+            if(count($loan->guarantors)>0){
+                $loan->guarantor = $loan->guarantors;
+            }
+            if(count($loan->guarantors)>=2){
+                $loan->guarantor_b = $loan->guarantors;
+            }
             $loan->lenders = $loan->lenders;
-            //$loan->personal_references;
+            if(count($loan->personal_references)>0){
+                $loan->personal_ref = $loan->personal_references;
+            }
+            $loan->separation="*";
             $loans_mora->push($loan);
           }
+         //return $loan->guarantors[1];
+
           if($loan->defaulted && count($loan->payments)== 0){
-            $loan->guarantor = $loan->guarantors;
+            if(count($loan->guarantors)>0){
+                $loan->guarantor = $loan->guarantors;
+            }
+            if(count($loan->guarantors)>=2){
+                $loan->guarantor_b = $loan->guarantors;
+            }
             $loan->lenders = $loan->lenders;
-            //$loan->personal_references;
+            if(count($loan->personal_references)>0){
+                $loan->personal_ref = $loan->personal_references;
+            }
+            $loan->separation="*";
     
             $loans_mora_total->push($loan);
           }
           if($loan->getdelay_parcial() && !$loan->defaulted ){
-            $loan->guarantor = $loan->guarantors;
+            if(count($loan->guarantors)>0){
+                $loan->guarantor = $loan->guarantors;
+            }
+            if(count($loan->guarantors)>=2){
+                $loan->guarantor_b = $loan->guarantors;
+            }
             $loan->lenders = $loan->lenders;
-            //$loan->personal_references;
-    
+            if(count($loan->personal_references)>0){
+                $loan->personal_ref = $loan->personal_references;
+            }
+            $loan->separation="*";
             $loans_mora_parcial->push($loan);
           }
     }
+    //return $loans_mora;
 //prestamomora total
     $File="PrestamosMora";
         $data_mora_total=array(
-            array("MATRICULA","CI","NOMBRE COMPLETO","NRO DE CEL.2","NRO FIJO","CIUDAD","DIRECCIÓN","PTMO","FECHA DESEMBOLSO",
-            "NRO DE CUOTAS","TASA ANUAL","FECHA DEL ÚLTIMO PAGO","TIPO DE PAGO","CUOTA MENSUAL","SALDO ACTUAL","ÉSTADO DEL AFILIADO","MODALIDAD","SUB MODALIDAD","DÍAS MORA","NOM. PERSONAL REFERENCE","DIRECCIÓN")
+            array("MATRICULA","CI","EXP","NOMBRE COMPLETO","NRO DE CEL.2","NRO FIJO","CIUDAD","DIRECCIÓN","PTMO","FECHA DESEMBOLSO",
+            "NRO DE CUOTAS","TASA ANUAL","FECHA DEL ÚLTIMO PAGO","TIPO DE PAGO","CUOTA MENSUAL","SALDO ACTUAL","ÉSTADO DEL AFILIADO","MODALIDAD","SUB MODALIDAD","DÍAS MORA",
+            "*","NOMBRE COMPLETO (Ref. Personal)","NRO DE TEL. FIJO (Ref. Personal)","NRO DE CEL (Ref. Personal)","DIRECCIÓN(Ref. Personal)",
+            "**","MATRICULA","CI","EXP","NOMBRE COMPLETO","NRO DE TEL. FIJO","NRO DE CEL","ESTADO DEL AFILIADO",
+            "***","MATRICULA","CI","EXP","NOMBRE COMPLETO","NRO DE TEL. FIJO","NRO DE CEL","ESTADO DEL AFILIADO")
         );
         foreach ($loans_mora_total as $row){
             array_push($data_mora_total, array(
                 $row->lenders[0]->affiliate_registration_number,
                 $row->lenders[0]->identity_card,
+                $row->lenders[0]->expeditionCard,
                 $row->lenders[0]->first_name.' '.$row->lenders[0]->second_name.' ' .$row->lenders[0]->last_name.' '.$row->lenders[0]->mothers_last_name,
                 $row->lenders[0]->cell_phone_number,
                 $row->lenders[0]->phone_number,
@@ -434,23 +464,46 @@ class LoanReportController extends Controller
                 $row->modality->procedure_type->second_name,
                 $row->modality->shortened,
                 $row->getdelay()->penal,
-                $row = '***'
-              // $row->getdelay()->interest_accumulated,
-               
-               //$row->personal_references ? $row->personal_references[0]->first_name:' ',
-               //$row->personal_references[0]->address,
+                $row->separation,
+                $row->personal_ref ? $row->personal_ref[0]->first_name.' '.$row->personal_ref[0]->second_name.' '.$row->personal_ref[0]->last_name.' '.$row->personal_ref[0]->mothers_last_name.' '.$row->personal_ref[0]->surname_husband:'no tiene registro',
+                $row->personal_ref ? $row->personal_ref[0]->phone_number:'S/R',
+                $row->personal_ref ? $row->personal_ref[0]->cell_phone_number:'S/R',
+                $row->personal_ref ? $row->personal_ref[0]->address:'S/R',
+                $row->separation,
+                $row->guarantor ? $row->guarantor[0]->affiliate_registration_number:'',
+                $row->guarantor ? $row->guarantor[0]->identity_card:'',
+                $row->guarantor_b ? $row->guarantor_b[1]->expeditionCard:'',
+                $row->guarantor ? $row->guarantor[0]->first_name.' '.$row->guarantor[0]->second_name.' ' .$row->guarantor[0]->last_name.' '.$row->guarantor[0]->mothers_last_name:'no tiene garante',
+                $row->guarantor ? $row->guarantor[0]->phone_number:'S/R',
+                $row->guarantor ? $row->guarantor[0]->cell_phone_number:'S/R',
+                $row->guarantor ? $row->guarantor[0]->affiliate_state->affiliate_state_type->name:'',
+                //$row->guarantor ? $row->guarantor[0]->address->full_address:'S/R',
+                $row->separation,
+                $row->guarantor_b ? $row->guarantor_b[1]->affiliate_registration_number:'',
+                $row->guarantor_b ? $row->guarantor_b[1]->identity_card:'',
+                $row->guarantor_b ? $row->guarantor_b[1]->expeditionCard:'',
+                $row->guarantor_b ? $row->guarantor_b[1]->first_name.' '.$row->guarantor_b[1]->second_name.' ' .$row->guarantor_b[1]->last_name.' '.$row->guarantor_b[1]->mothers_last_name:'no tiene garante',
+                $row->guarantor_b ? $row->guarantor_b[1]->phone_number:'S/R',
+                $row->guarantor_b ? $row->guarantor_b[1]->cell_phone_number:'S/R',
+                $row->guarantor ? $row->guarantor[0]->affiliate_state->affiliate_state_type->name:'',
+                //$row->guarantor_b ? $row->guarantor_b[1]->address->full_address:'S/R'
+         
             ));
         }
         //prestamomora parcial
         $File="PrestamosMoraParcial";
         $data_mora_parcial=array(
-            array("MATRICULA","CI","NOMBRE COMPLETO","NRO DE CEL.2","NRO FIJO","CIUDAD","DIRECCIÓN","PTMO","FECHA DESEMBOLSO",
-            "NRO DE CUOTAS","TASA ANUAL","FECHA DEL ÚLTIMO PAGO","TIPO DE PAGO","CUOTA MENSUAL","SALDO ACTUAL","ÉSTADO DEL AFILIADO","MODALIDAD","SUB MODALIDAD","DÍAS MORA","***","NOM. PERSONAL REFERENCE","DIRECCIÓN")
+            array("MATRICULA","CI","EXP","NOMBRE COMPLETO","NRO DE CEL.2","NRO FIJO","CIUDAD","DIRECCIÓN","PTMO","FECHA DESEMBOLSO",
+            "NRO DE CUOTAS","TASA ANUAL","FECHA DEL ÚLTIMO PAGO","TIPO DE PAGO","CUOTA MENSUAL","SALDO ACTUAL","ÉSTADO DEL AFILIADO","MODALIDAD","SUB MODALIDAD","DÍAS MORA",
+            "*","NOMBRE COMPLETO (Ref. Personal)","NRO DE TEL. FIJO (Ref. Personal)","NRO DE CEL (Ref. Personal)","DIRECCIÓN(Ref. Personal)",
+            "**","MATRICULA","CI","EXP","NOMBRE COMPLETO","NRO DE TEL. FIJO","NRO DE CEL","ESTADO DEL AFILIADO",
+            "***","MATRICULA","CI","EXP","NOMBRE COMPLETO","NRO DE TEL. FIJO","NRO DE CEL","ESTADO DEL AFILIADO")
         );
         foreach ($loans_mora_parcial as $row){
             array_push($data_mora_parcial, array(
                 $row->lenders[0]->affiliate_registration_number,
                 $row->lenders[0]->identity_card,
+                $row->lenders[0]->expeditionCard,
                 $row->lenders[0]->first_name.' '.$row->lenders[0]->second_name.' ' .$row->lenders[0]->last_name.' '.$row->lenders[0]->mothers_last_name,
                 $row->lenders[0]->cell_phone_number,
                 $row->lenders[0]->phone_number,
@@ -469,24 +522,46 @@ class LoanReportController extends Controller
                 $row->modality->procedure_type->second_name,
                 $row->modality->shortened,
                 $row->getdelay()->penal,
-                $row = '***'
-
-              // $row->getdelay()->interest_accumulated,
-               
-               // $row->personal_references ? $row->personal_references[0]->first_name:' ',
-              // $row->personal_references[0]->address,
+                $row->separation,
+                $row->personal_ref ? $row->personal_ref[0]->first_name.' '.$row->personal_ref[0]->second_name.' '.$row->personal_ref[0]->last_name.' '.$row->personal_ref[0]->mothers_last_name.' '.$row->personal_ref[0]->surname_husband:'no tiene registro',
+                $row->personal_ref ? $row->personal_ref[0]->phone_number:'S/R',
+                $row->personal_ref ? $row->personal_ref[0]->cell_phone_number:'S/R',
+                $row->personal_ref ? $row->personal_ref[0]->address:'S/R',
+                $row->separation.$row->separation,
+                $row->guarantor ? $row->guarantor[0]->affiliate_registration_number:'',
+                $row->guarantor ? $row->guarantor[0]->identity_card:'',
+                $row->guarantor_b ? $row->guarantor_b[1]->expeditionCard:'',
+                $row->guarantor ? $row->guarantor[0]->first_name.' '.$row->guarantor[0]->second_name.' ' .$row->guarantor[0]->last_name.' '.$row->guarantor[0]->mothers_last_name:'no tiene garante',
+                $row->guarantor ? $row->guarantor[0]->phone_number:'S/R',
+                $row->guarantor ? $row->guarantor[0]->cell_phone_number:'S/R',
+                $row->guarantor ? $row->guarantor[0]->affiliate_state->affiliate_state_type->name:'',
+                //$row->guarantor ? $row->guarantor[0]->address->full_address:'S/R',
+                $row->separation.$row->separation.$row->separation,
+                $row->guarantor_b ? $row->guarantor_b[1]->affiliate_registration_number:'',
+                $row->guarantor_b ? $row->guarantor_b[1]->identity_card:'',
+                $row->guarantor_b ? $row->guarantor_b[1]->expeditionCard:'',
+                $row->guarantor_b ? $row->guarantor_b[1]->first_name.' '.$row->guarantor_b[1]->second_name.' ' .$row->guarantor_b[1]->last_name.' '.$row->guarantor_b[1]->mothers_last_name:'no tiene garante',
+                $row->guarantor_b ? $row->guarantor_b[1]->phone_number:'S/R',
+                $row->guarantor_b ? $row->guarantor_b[1]->cell_phone_number:'S/R',
+                $row->guarantor ? $row->guarantor[0]->affiliate_state->affiliate_state_type->name:'',
+                //$row->guarantor_b ? $row->guarantor_b[1]->address->full_address:'S/R'
+              
             ));
         }
         //prestamomora 
         $File="PrestamosMora";
         $data_mora=array(
-            array("MATRICULA","CI","NOMBRE COMPLETO","NRO DE CEL.2","NRO FIJO","CIUDAD","DIRECCIÓN","PTMO","FECHA DESEMBOLSO",
-            "NRO DE CUOTAS","TASA ANUAL","FECHA DEL ÚLTIMO PAGO","TIPO DE PAGO","CUOTA MENSUAL","SALDO ACTUAL","ÉSTADO DEL AFILIADO","MODALIDAD","SUB MODALIDAD","DÍAS MORA","NOM. PERSONAL REFERENCE","DIRECCIÓN")
+            array("MATRICULA","CI","EXP","NOMBRE COMPLETO","NRO DE CEL.2","NRO FIJO","CIUDAD","DIRECCIÓN","PTMO","FECHA DESEMBOLSO",
+            "NRO DE CUOTAS","TASA ANUAL","FECHA DEL ÚLTIMO PAGO","TIPO DE PAGO","CUOTA MENSUAL","SALDO ACTUAL","ÉSTADO DEL AFILIADO","MODALIDAD","SUB MODALIDAD","DÍAS MORA",
+            "*","NOMBRE COMPLETO (Ref. Personal)","NRO DE TEL. FIJO (Ref. Personal)","NRO DE CEL (Ref. Personal)","DIRECCIÓN(Ref. Personal)",
+            "**","MATRICULA","CI","EXP","NOMBRE COMPLETO","NRO DE TEL. FIJO","NRO DE CEL","ESTADO DEL AFILIADO",
+            "***","MATRICULA","CI","EXP","NOMBRE COMPLETO","NRO DE TEL. FIJO","NRO DE CEL","ESTADO DEL AFILIADO")
         );
         foreach ($loans_mora as $row){
             array_push($data_mora, array(
                 $row->lenders[0]->affiliate_registration_number,
                 $row->lenders[0]->identity_card,
+                $row->lenders[0]->expeditionCard,
                 $row->lenders[0]->first_name.' '.$row->lenders[0]->second_name.' ' .$row->lenders[0]->last_name.' '.$row->lenders[0]->mothers_last_name,
                 $row->lenders[0]->cell_phone_number,
                 $row->lenders[0]->phone_number,
@@ -505,11 +580,29 @@ class LoanReportController extends Controller
                 $row->modality->procedure_type->second_name,
                 $row->modality->shortened,
                 $row->getdelay()->penal,
-                $row = '***'
-              // $row->personal_references ? $row->personal_references[0]->first_name:' ',
-              // $row->getdelay()->interest_accumulated,
-               
-               //$row->personal_references[0]->address,
+                $row->separation,
+                $row->personal_ref ? $row->personal_ref[0]->first_name.' '.$row->personal_ref[0]->second_name.' '.$row->personal_ref[0]->last_name.' '.$row->personal_ref[0]->mothers_last_name.' '.$row->personal_ref[0]->surname_husband:'no tiene registro',
+                $row->personal_ref ? $row->personal_ref[0]->phone_number:'S/R',
+                $row->personal_ref ? $row->personal_ref[0]->cell_phone_number:'S/R',
+                $row->personal_ref ? $row->personal_ref[0]->address:'S/R',
+                $row->separation.$row->separation,
+                $row->guarantor ? $row->guarantor[0]->affiliate_registration_number:'',
+                $row->guarantor ? $row->guarantor[0]->identity_card:'',
+                $row->guarantor_b ? $row->guarantor_b[1]->expeditionCard:'',
+                $row->guarantor ? $row->guarantor[0]->first_name.' '.$row->guarantor[0]->second_name.' ' .$row->guarantor[0]->last_name.' '.$row->guarantor[0]->mothers_last_name:'no tiene garante',
+                $row->guarantor ? $row->guarantor[0]->phone_number:'S/R',
+                $row->guarantor ? $row->guarantor[0]->cell_phone_number:'S/R',
+                $row->guarantor ? $row->guarantor[0]->affiliate_state->affiliate_state_type->name:'',
+                //$row->guarantor ? $row->guarantor[0]->address->full_address:'S/R',
+                $row->separation.$row->separation.$row->separation,
+                $row->guarantor_b ? $row->guarantor_b[1]->affiliate_registration_number:'',
+                $row->guarantor_b ? $row->guarantor_b[1]->identity_card:'',
+                $row->guarantor_b ? $row->guarantor_b[1]->expeditionCard:'',
+                $row->guarantor_b ? $row->guarantor_b[1]->first_name.' '.$row->guarantor_b[1]->second_name.' ' .$row->guarantor_b[1]->last_name.' '.$row->guarantor_b[1]->mothers_last_name:'no tiene garante',
+                $row->guarantor_b ? $row->guarantor_b[1]->phone_number:'S/R',
+                $row->guarantor_b ? $row->guarantor_b[1]->cell_phone_number:'S/R',
+                $row->guarantor ? $row->guarantor[0]->affiliate_state->affiliate_state_type->name:'',
+                //$row->guarantor_b ? $row->guarantor_b[1]->address->full_address:'S/R'
             ));
         }
 
