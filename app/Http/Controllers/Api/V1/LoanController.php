@@ -61,6 +61,16 @@ class LoanController extends Controller
         $loan->observed = $loan->observed;
         $loan->last_payment_validated = $loan->last_payment_validated;
         if ($with_lenders) {
+            foreach($loan->lenders as $lender)
+            {
+                $lender->initials = $lender->initials;
+                $lender->affiliate_state = $lender->affiliate_state;
+            }
+            foreach($loan->guarantors as $guarantor)
+            {
+                $guarantor->initials = $guarantor->initials;
+                $guarantor->affiliate_state = $guarantor->affiliate_state;
+            }
             $loan->lenders = $loan->lenders;
             $loan->guarantors = $loan->guarantors;
         }
