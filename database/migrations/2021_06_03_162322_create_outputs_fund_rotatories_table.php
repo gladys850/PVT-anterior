@@ -18,6 +18,8 @@ class CreateOutputsFundRotatoriesTable extends Migration
             $table->string('code');
             $table->unsignedBigInteger('loan_id')->unsigned();
             $table->foreign('loan_id')->references('id')->on('loans');
+            $table->unsignedBigInteger('fund_rotary_entry_id');  // id usuario
+            $table->foreign('fund_rotary_entry_id')->references('id')->on('fund_rotary_entries');
             $table->text('description')->nullable();
             $table->unsignedBigInteger('user_id');  // id usuario
             $table->foreign('user_id')->references('id')->on('users');
