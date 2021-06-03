@@ -101,7 +101,7 @@
                   <ValidationProvider
                     v-slot="{ errors }"
                     name="celular1"
-                    rules="min:1|max:8"
+                    rules="min:1|max:11"
                   >
                     <v-text-field
                       :error-messages="errors"
@@ -112,6 +112,7 @@
                       :outlined="editable && permission.secondary"
                       :disabled="editable && !permission.secondary"
                       @change="updateCelular()"
+                      v-mask="'(###)-#####'"
                     ></v-text-field>
                   </ValidationProvider>
                 </v-col>
@@ -119,7 +120,7 @@
                   <ValidationProvider
                     v-slot="{ errors }"
                     name="celular2"
-                    rules="min:1|max:8"
+                    rules="min:1|max:11"
                   >
                     <v-text-field
                       :error-messages="errors"
@@ -130,6 +131,7 @@
                       :outlined="editable && permission.secondary"
                       :disabled="editable && !permission.secondary"
                       @change="updateCelular()"
+                      v-mask="'(###)-#####'"
                     ></v-text-field>
                   </ValidationProvider>
                 </v-col>
@@ -138,7 +140,7 @@
                   <ValidationProvider
                     v-slot="{ errors }"
                     name="telefono"
-                    rules="min:1|max:8"
+                    rules="min:1|max:11"
                   >
                     <v-text-field
                       :error-messages="errors"
@@ -148,6 +150,7 @@
                       :readonly="!editable || !permission.secondary"
                       :outlined="editable && permission.secondary"
                       :disabled="editable && !permission.secondary"
+                      v-mask="'(#) ###-###'"
                     ></v-text-field>
                   </ValidationProvider>
                 </v-col>

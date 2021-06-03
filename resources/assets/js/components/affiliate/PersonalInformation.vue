@@ -119,7 +119,7 @@
                     v-slot="{ errors }"
                     vid="celular1"
                     name="celular1"
-                    rules="min:1|max:8 |required"
+                    rules="min:1|max:11|required"
                   >
                     <v-text-field
                       :error-messages="errors"
@@ -130,6 +130,7 @@
                       :readonly="!editable || !permission.secondary"
                       :outlined="editable && permission.secondary"
                       :disabled="editable && !permission.secondary"
+                      v-mask="'(###)-#####'"
                     ></v-text-field>
                   </ValidationProvider>
                 </v-col>
@@ -138,7 +139,7 @@
                     v-slot="{ errors }"
                     vid="celular"
                     name="celular"
-                    rules="min:1|max:8"
+                    rules="min:1|max:11"
                   >
                     <v-text-field
                       class="text-right"
@@ -150,6 +151,7 @@
                       :readonly="!editable || !permission.secondary"
                       :outlined="editable && permission.secondary"
                       :disabled="editable && !permission.secondary"
+                      v-mask="'(###)-#####'"
                     ></v-text-field>
                   </ValidationProvider>
                 </v-col>
@@ -158,7 +160,7 @@
                     v-slot="{ errors }"
                     vid="telefono"
                     name="telefono"
-                    rules="min:1|max:8"
+                    rules="min:1|max:11"
                   >
                     <v-text-field
                       :error-messages="errors"
@@ -168,6 +170,7 @@
                       :readonly="!editable || !permission.secondary"
                       :outlined="editable && permission.secondary"
                       :disabled="editable && !permission.secondary"
+                      v-mask="'(###)-#####'"
                     ></v-text-field>
                   </ValidationProvider>
                 </v-col>
