@@ -19,7 +19,7 @@ class CreateLoanPaymentCategoriesTable extends Migration
             $table->enum('type_register', ['SISTEMA','USUARIO'])->nullable();//tipo de registro por el SISTEMA o usuario 
             $table->string('shortened')->nullable();
             $table->boolean('is_valid')->default(true);// por defecto 
-            $table->unique('name', 'type_register');
+            $table->unique(['name', 'type_register']);
             $table->string('description')->nullable();
             $table->timestamps();
             $table->softDeletes();
