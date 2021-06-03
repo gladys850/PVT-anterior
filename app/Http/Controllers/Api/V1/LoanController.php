@@ -63,12 +63,10 @@ class LoanController extends Controller
         if ($with_lenders) {
             foreach($loan->lenders as $lender)
             {
-                $lender->initials = $lender->initials;
                 $lender->affiliate_state = $lender->affiliate_state;
             }
             foreach($loan->guarantors as $guarantor)
             {
-                $guarantor->initials = $guarantor->initials;
                 $guarantor->affiliate_state = $guarantor->affiliate_state;
             }
             $loan->lenders = $loan->lenders;
@@ -363,7 +361,14 @@ class LoanController extends Controller
         if (Auth::user()->can('show-all-loan') || Auth::user()->can('show-payment-loan') || Auth::user()->roles()->whereHas('module', function($query) {
             return $query->whereName('prestamos');
         })->pluck('id')->contains($loan->role_id)) {
-            return self::append_data($loan, true);
+            $loan = self::append_data($loan, true);
+            foreach($loan->lenders as $lender){
+                $lender->type_initials = "TIT-".$lender->initials;
+            }
+            foreach($loan->guarantors as $guarantor){
+                $guarantor->type_initials = "GAR-".$guarantor->initials;
+            }
+            return $loan;
         } else {
             abort(403);
         }
