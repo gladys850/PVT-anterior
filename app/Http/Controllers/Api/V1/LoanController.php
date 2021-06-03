@@ -1183,6 +1183,7 @@ class LoanController extends Controller
     * @bodyParam paid_by enum required Pago realizado por Titular(T) o Garante(G). Example: T
     * @bodyParam procedure_modality_id integer required ID de la modalidad de amortización. Example: 53
     * @bodyParam user_id integer required ID del usuario. Example: 95
+    * @bodyParam categorie_id integer required ID de la categoria del cobro. Example: 95
     * @bodyParam liquidate boolean liquidacion del prestamo true cuota introducida false
     * @authenticated
     * @responseFile responses/loan/set_payment.200.json
@@ -1205,6 +1206,16 @@ class LoanController extends Controller
             $payment->voucher = $request->input('voucher', null);
             //$payment->amortization_type_id = $request->input('amortization_type_id');
             $payment->affiliate_id = $request->input('affiliate_id');
+
+            $affiliate_id=$request->input('affiliate_id');
+            $affiliate=Affiliate::find($affiliate_id);
+            $affiliate_state=$affiliate->affiliate_state->affiliate_state_type->name;
+            $payment->state_affiliate = strtoupper($affiliate_state);
+
+            $payment->initial_affiliate = $affiliate->initials;//iniciales
+
+            $payment->categorie_id = $request->input('categorie_id');
+
             $payment->paid_by = $request->input('paid_by');
             if($request->has('user_id')){
                 $payment->user_id = $request->user_id;
