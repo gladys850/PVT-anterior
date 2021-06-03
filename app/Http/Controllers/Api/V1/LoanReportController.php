@@ -92,14 +92,17 @@ class LoanReportController extends Controller
                foreach ($list_loan as $loan) {
                  $padron = Loan::where('id', $loan->id_loan)->first();
                  $loan->balance_loan=$padron->balance;
+                 $loan->lender = $padron->lenders;
+                 $loan->refinancing_balance=$padron->refinancing_balance;
+                 $loan->payment_amount_ampli= $padron->payment_pending_confirmation();
                }
                $File="ListadoPrestamosDesembolsados";
                $data=array(
                    array( "NRO DE PRÉSTAMO", "FECHA DE SOLICITUD", "FECHA DESEMBOLSO",
                    "REGIONAL","TIPO","MODALIDAD","SUB MODALIDAD",
-                   "CEDULA DE IDENTIDAD","MATRICULA","MATRICULA CÓNYUGUE",
+                   "CEDULA DE IDENTIDAD","EXP","MATRICULA","MATRICULA CÓNYUGUE",
                    "PRIMER NOMBRE","SEGUNDO NOMBRE","PATERNO","MATERNO","APELLIDO CASADA",
-                   "NRO CBTE CONTABLE","SALDO ACTUAL","AMPLIACIÓN","MONTO DESEMBOLSADO","LIQUIDO DESEMBOLSADO",
+                   "NRO CBTE CONTABLE","SALDO ACTUAL","AMPLIACIÓN","MONTO DESEMBOLSADO","MONTO REFINANCIADO","LIQUIDO DESEMBOLSADO",
                    "PLAZO","ESTÁDO PRÉSTAMO","DESTINO CREDITO" )
                );
                foreach ($list_loan as $row){
@@ -115,6 +118,7 @@ class LoanReportController extends Controller
                        $row->modality_loan,//modalidad
                        $row->sub_modality_loan,//sub modalidad
                        $row->identity_card_affiliate,
+                       $row->lender[0]->expeditionCard,
                        $row->registration_affiliate,//matrifcula 
                        $row->registration_spouse, //matricula esposa
 
@@ -128,6 +132,7 @@ class LoanReportController extends Controller
                        Util::money_format($row->balance_loan),
                        $row->parent_reason_loan,//ampliacion
                        Util::money_format($row->amount_disbursement),//monto desembolsado
+                       $row->refinancing_balance? Util::money_format($row->payment_amount_ampli->stimated_date):'0',//MONTO REFINANCIADO//MONTO REFINANCIADO
                        Util::money_format($row->amount_disbursement_liquido),//liquido desembolsado
                        $row->term_loan,//plazo
                        $row->state_loan,//estado del prestamo
