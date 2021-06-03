@@ -61,6 +61,14 @@ class LoanController extends Controller
         $loan->observed = $loan->observed;
         $loan->last_payment_validated = $loan->last_payment_validated;
         if ($with_lenders) {
+            foreach($loan->lenders as $lender)
+            {
+                $lender->affiliate_state = $lender->affiliate_state;
+            }
+            foreach($loan->guarantors as $guarantor)
+            {
+                $guarantor->affiliate_state = $guarantor->affiliate_state;
+            }
             $loan->lenders = $loan->lenders;
             $loan->guarantors = $loan->guarantors;
         }
@@ -353,7 +361,14 @@ class LoanController extends Controller
         if (Auth::user()->can('show-all-loan') || Auth::user()->can('show-payment-loan') || Auth::user()->roles()->whereHas('module', function($query) {
             return $query->whereName('prestamos');
         })->pluck('id')->contains($loan->role_id)) {
-            return self::append_data($loan, true);
+            $loan = self::append_data($loan, true);
+            foreach($loan->lenders as $lender){
+                $lender->type_initials = "TIT-".$lender->initials;
+            }
+            foreach($loan->guarantors as $guarantor){
+                $guarantor->type_initials = "GAR-".$guarantor->initials;
+            }
+            return $loan;
         } else {
             abort(403);
         }
@@ -572,7 +587,7 @@ class LoanController extends Controller
             $remake_loan = Loan::find($request->remake_loan_id);
             $loan->code = $remake_loan->code;
         }
-
+        $loan->indebtedness_calculated_previus = $request->indebtedness_calculated;
         $loan->save();
 
         if($request->has('data_loan') && $request->parent_loan_id == null && $request->parent_reason != null && !$request->has('id')){
@@ -606,6 +621,7 @@ class LoanController extends Controller
                     'quota_previous' => $quota_previous,
                     'quota_treat' => $affiliate['quota_treat'],
                     'indebtedness_calculated' => $indebtedness,
+                    'indebtedness_calculated_previus' => $indebtedness,
                     'liquid_qualification_calculated' => $affiliate['liquid_qualification_calculated'],
                     'guarantor' => false,
                     'contributionable_type' => $affiliate['contributionable_type'],
@@ -633,6 +649,7 @@ class LoanController extends Controller
                         'quota_previous' => $previous,
                         'quota_treat' => $affiliate['quota_treat'],
                         'indebtedness_calculated' => $affiliate['indebtedness_calculated'],
+                        'indebtedness_calculated_previus' => $affiliate['indebtedness_calculated'],
                         'liquid_qualification_calculated' => $affiliate['liquid_qualification_calculated'],
                         'guarantor' => true,
                         'contributionable_type'=>$affiliate['contributionable_type'],
@@ -1730,6 +1747,7 @@ class LoanController extends Controller
                         'quota_previous' => (float)$lender->pivot->quota_previous,
                         'quota_treat' => Util::round2($quota_estimated_lender),
                         'indebtedness_calculated' => Util::round2($new_indebtedness_lender),
+                        'indebtedness_calculated_previous' =>(float)$lender->pivot->indebtedness_calculated_previous,
                         'liquid_qualification_calculated' => (float)$lender->pivot->liquid_qualification_calculated,
                         'guarantor' => false,
                         'contributionable_type' => $lender->pivot->contributionable_type,
@@ -1758,6 +1776,7 @@ class LoanController extends Controller
                                 'quota_previous' => (float)$guarantor->pivot->quota_previous,
                                 'quota_treat' => Util::round2($quota_estimated_guarantor),
                                 'indebtedness_calculated' => Util::round2($new_indebtedness_calculated_guarantor),
+                                'indebtedness_calculated_previous' =>(float)$guarantor->pivot->indebtedness_calculated_previous,
                                 'liquid_qualification_calculated' => (float)$guarantor->pivot->liquid_qualification_calculated,
                                 'guarantor' => true,
                                 'contributionable_type' => $guarantor->pivot->contributionable_type,
