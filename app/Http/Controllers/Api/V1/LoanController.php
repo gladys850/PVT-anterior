@@ -587,7 +587,7 @@ class LoanController extends Controller
             $remake_loan = Loan::find($request->remake_loan_id);
             $loan->code = $remake_loan->code;
         }
-        $loan->indebtedness_calculated_previus = $request->indebtedness_calculated;
+        $loan->indebtedness_calculated_previous = $request->indebtedness_calculated;
         $loan->save();
 
         if($request->has('data_loan') && $request->parent_loan_id == null && $request->parent_reason != null && !$request->has('id')){
@@ -621,7 +621,7 @@ class LoanController extends Controller
                     'quota_previous' => $quota_previous,
                     'quota_treat' => $affiliate['quota_treat'],
                     'indebtedness_calculated' => $indebtedness,
-                    'indebtedness_calculated_previus' => $indebtedness,
+                    'indebtedness_calculated_previous' => $indebtedness,
                     'liquid_qualification_calculated' => $affiliate['liquid_qualification_calculated'],
                     'guarantor' => false,
                     'contributionable_type' => $affiliate['contributionable_type'],
@@ -649,7 +649,7 @@ class LoanController extends Controller
                         'quota_previous' => $previous,
                         'quota_treat' => $affiliate['quota_treat'],
                         'indebtedness_calculated' => $affiliate['indebtedness_calculated'],
-                        'indebtedness_calculated_previus' => $affiliate['indebtedness_calculated'],
+                        'indebtedness_calculated_previous' => $affiliate['indebtedness_calculated'],
                         'liquid_qualification_calculated' => $affiliate['liquid_qualification_calculated'],
                         'guarantor' => true,
                         'contributionable_type'=>$affiliate['contributionable_type'],

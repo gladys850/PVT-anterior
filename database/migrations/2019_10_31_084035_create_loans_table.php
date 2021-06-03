@@ -34,7 +34,7 @@ class CreateLoansTable extends Migration
             $table->foreign('state_id')->references('id')->on('loan_states'); // estado de prestamo
             $table->float('amount_approved')->nullable(); // monto aprobado
             $table->float('indebtedness_calculated',5,2); //indice de endeudamiento calculado
-            $table->float('indebtedness_calculated_previus',5,2); //indice de endeudamiento calculado anterior
+            $table->float('indebtedness_calculated_previous',5,2); //indice de endeudamiento calculado anterior
             $table->float('liquid_qualification_calculated',10,2); //liquido para calificación calculado
             $table->unsignedSmallInteger('loan_term'); // plazo del prestamo en meses
             $table->float('refinancing_balance',10,2)->default(0); // monto del saldo de refinanciamiento
