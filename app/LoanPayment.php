@@ -41,7 +41,10 @@ class LoanPayment extends Model
         'loan_payment_date',
         'validated',
         'description',
-        'user_id'
+        'user_id',
+        'categorie_id',
+        'initial_affiliate',
+        'state_affiliate'
 
     ];
 
