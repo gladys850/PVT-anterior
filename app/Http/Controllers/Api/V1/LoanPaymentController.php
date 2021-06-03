@@ -383,6 +383,14 @@ class LoanPaymentController extends Controller
                         'date' => Carbon::now()
                     ]]);
                 }
+                $loan=Loan::find($loanPayment->loan_id);
+                 //generar PDF
+                    $information_loan= $this->get_information_loan($loan);
+                    $file_name = implode('_', ['voucher', $voucher->code]) . '.pdf';
+                    $loanpayment = new VoucherController;
+                    $payment->attachment = Util::pdf_to_base64([
+                        $loanpayment->print_voucher(new Request([]), $voucher, false)
+                    ], $file_name,$information_loan, 'legal', $request->copies ?? 1);
                 DB::commit();
             } catch (\Exception $e) {
                 DB::rollback();
