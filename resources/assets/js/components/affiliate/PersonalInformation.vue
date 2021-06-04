@@ -6,7 +6,7 @@
           <v-card>
             <v-row class="ma-0 pa-0">
               <v-col cols="12" md="6">
-                <v-toolbar-title>DOMICILIO</v-toolbar-title>
+                <v-toolbar-title>DOMICILIOS</v-toolbar-title>
               </v-col>
               <v-col cols="12" md="3">
                 <v-tooltip top v-if="editable && permission.secondary">
