@@ -1,0 +1,18 @@
+{
+    "id": 10,
+    "city_identity_card_id": null,
+    "city_birth_id": null,
+    "identity_card": null,
+    "last_name": "SABIOO",
+    "mothers_last_name": "OJAFFF",
+    "first_name": "PEDRO",
+    "second_name": "ROBERTO",
+    "surname_husband": "MARISCAL",
+    "civil_status": null,
+    "gender": null,
+    "phone_number": "22541013",
+    "cell_phone_number": "76543210",
+    "address": null,
+    "created_at": "2020-09-30T14:22:35.000000Z",
+    "updated_at": "2020-09-30T14:42:23.000000Z"
+}

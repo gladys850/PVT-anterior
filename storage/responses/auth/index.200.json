@@ -1,0 +1,14 @@
+{
+    "id": 127,
+    "city_id": 10,
+    "first_name": "Administrador",
+    "last_name": "Administrador",
+    "username": "admin",
+    "created_at": "2019-06-17 15:04:11",
+    "updated_at": "2020-02-04 16:30:54",
+    "remember_token": "Hc3j8...",
+    "position": "Administrador",
+    "is_commission": false,
+    "phone": 65432101,
+    "active": true
+}

@@ -1,0 +1,28 @@
+[
+    {
+        "id": 6,
+        "loan_id": 2,
+        "code": "PAY000006-2020",
+        "procedure_modality_id": 48,
+        "estimated_date": "2020-10-31",
+        "quota_number": 3,
+        "estimated_quota": "1065.74",
+        "penal_payment": "0",
+        "accumulated_payment": "0",
+        "interest_payment": "413.34",
+        "capital_payment": "652.4",
+        "penal_remaining": "0",
+        "accumulated_remaining": "0",
+        "state_id": 6,
+        "role_id": 91,
+        "validated": true,
+        "description": null,
+        "created_at": "2020-08-05T19:02:41.000000Z",
+        "updated_at": "2020-08-06T04:00:01.000000Z",
+        "deleted_at": null,
+        "voucher": "5624",
+        "paid_by": "T",
+        "affiliate_id": 57950,
+        "payment_type_id": 1
+    }
+]

@@ -1,0 +1,12 @@
+[
+    {
+        "id": 7,
+        "module_id": 9,
+        "display_name": "Área de Contabilidad",
+        "action": "Comprobante Realizado",
+        "created_at": "2017-06-01 10:41:03",
+        "updated_at": "2019-10-11 16:45:43",
+        "correlative": null,
+        "name": "AF-area-de-contabilidad"
+    }, {}
+]

@@ -1,0 +1,24 @@
+{
+    "current_page": 1,
+    "data": [
+        {
+            "id": 596,
+            "operation_id": null,
+            "action_id": null,
+            "created_at": "2020-02-13 16:26:58",
+            "updated_at": "2020-02-13 16:26:58",
+            "name": "create-address",
+            "display_name": "Crear dirección"
+        }, {}
+    ],
+    "first_page_url": "http://127.0.0.1/api/v1/permission?page=1",
+    "from": 1,
+    "last_page": 1,
+    "last_page_url": "http://127.0.0.1/api/v1/permission?page=4",
+    "next_page_url": null,
+    "path": "http://127.0.0.1/api/v1/permission",
+    "per_page": "10",
+    "prev_page_url": null,
+    "to": 1,
+    "total": 1
+}

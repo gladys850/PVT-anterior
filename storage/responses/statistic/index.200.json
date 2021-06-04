@@ -1,0 +1,20 @@
+[
+    {
+        "procedure_type_id": 13,
+        "total": {
+            "received": 0,
+            "validated": 13,
+            "trashed": 6
+        },
+        "data": [
+            {
+                "role_id": 90,
+                "data": {
+                    "received": 0,
+                    "validated": 12,
+                    "trashed": 6
+                }
+            }, {}
+        ]
+    }, {}
+]

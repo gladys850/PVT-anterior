@@ -1,0 +1,50 @@
+{
+    "code": "PAY000001-2021",
+    "estimated_date": "2021-06-30",
+    "previous_balance": 25000,
+    "previous_payment_date": "2021-05-01 00:00:00",
+    "quota_number": 1,
+    "estimated_days": {
+        "penal": 29,
+        "current": 60,
+        "penal_generated": 120.83,
+        "current_generated": 833.33,
+        "penal_accumulated": 0,
+        "interest_accumulated": 0
+    },
+    "paid_days": {
+        "penal": 29,
+        "current": 60,
+        "penal_generated": 120.83,
+        "current_generated": 833.33,
+        "penal_accumulated": 0,
+        "interest_accumulated": 0
+    },
+    "balance": 25000,
+    "penal_remaining": 0,
+    "penal_payment": 120.83,
+    "interest_remaining": 0,
+    "interest_payment": 479.17,
+    "capital_payment": 0,
+    "interest_accumulated": 354.16,
+    "penal_accumulated": 0,
+    "next_balance": 25000,
+    "estimated_quota": 600,
+    "description": "Penalizacion regularizada",
+    "state_id": 2,
+    "role_id": 94,
+    "validated": true,
+    "procedure_modality_id": 55,
+    "voucher": "CONT-123",
+    "affiliate_id": 57950,
+    "state_affiliate": "ACTIVO",
+    "initial_affiliate": "ARAV",
+    "categorie_id": 1,
+    "paid_by": "T",
+    "user_id": 70,
+    "attachment": {
+        "content": "JVBER...",
+        "type": "pdf",
+        "file_name": "pagos_PCP-SA_PTMO000001-2020.pdf"
+    }
+}

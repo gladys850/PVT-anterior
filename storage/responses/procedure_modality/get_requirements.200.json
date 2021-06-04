@@ -1,0 +1,31 @@
+{
+    "required": [
+        [
+            {
+                "id": 15,
+                "name": "Certificado de descendencia del titular fallecido en original y actualizado emitido por el SERECI.",
+                "created_at": "2019-04-02 21:57:15",
+                "updated_at": null,
+                "expire_date": null
+            }
+        ],
+        [
+            {
+                "id": 16,
+                "name": "Declaratoria de herederos en original.",
+                "created_at": "2019-04-03 13:18:24",
+                "updated_at": null,
+                "expire_date": null
+            }, {}
+        ]
+    ],
+    "optional": [
+        {
+            "id": 1,
+            "name": "Comprobante de depósito bancario de Bs.- 25,00 por concepto de adquisición de folder y formularios, en la cuenta fiscal de la MUSERPOL.",
+            "created_at": "2019-04-05 20:19:32",
+            "updated_at": null,
+            "expire_date": null
+        }, {}
+    ]
+}

@@ -1,0 +1,14 @@
+[
+    {
+        "user_id": 123,
+        "observation_type_id": 2,
+        "observable_id": 1,
+        "observable_type": "loans",
+        "message": "Subsanable en una semana",
+        "date": "2020-05-07 15:26:37",
+        "enabled": true,
+        "created_at": "2020-05-07T19:26:37.000000Z",
+        "updated_at": "2020-05-07T20:39:03.000000Z",
+        "deleted_at": null
+    }
+]

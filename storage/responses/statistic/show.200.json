@@ -1,0 +1,8 @@
+[
+    {
+        "role": {
+            "display_name": "Número de trámites por área",
+            "method": "loans_by_role"
+        }
+    }, {}
+]

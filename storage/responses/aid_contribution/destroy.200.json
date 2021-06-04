@@ -1,0 +1,17 @@
+{
+    "id": 5,
+    "affiliate_id": 52482,
+    "month_year": "2017-04-01",
+    "type": "PLANILLA",
+    "quotable": "0.00",
+    "rent": "0.00",
+    "dignity_rent": "0.00",
+    "interest": "0.00",
+    "total": "47.10",
+    "created_at": "2018-11-15T21:58:57.000000Z",
+    "updated_at": "2021-03-09T21:49:00.000000Z",
+    "deleted_at": "2021-03-09T21:49:00.000000Z",
+    "affiliate_contribution": true,
+    "mortuary_aid": "47.10",
+    "valid": true
+}

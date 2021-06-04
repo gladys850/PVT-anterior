@@ -1,0 +1,10 @@
+[
+    {
+        "id": 2,
+        "module_id": 6,
+        "name": "Suspendido - Préstamo en mora.",
+        "description": "Amortizable",
+        "type": "AT",
+        "shortened": "Préstamos"
+    }, {}
+]

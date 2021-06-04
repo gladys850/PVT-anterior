@@ -1,0 +1,105 @@
+[
+  {
+    "href": "dashboardIndex",
+    "title": "Inicio",
+    "icon": "mdi-home",
+    "params": {}
+  }, {
+    "href": "affiliateIndex",
+    "title": "Afiliados",
+    "icon": "mdi-account",
+    "permission": "show-affiliate",
+    "params": {}
+  }, {
+    "href": "flowIndex",
+    "title": "Bandeja préstamos",
+    "icon": "mdi-tray-full",
+    "permission": "show-loan",
+    "params": {}
+  }, {
+    "href": "listLoanGenerate",
+    "title": "Préstamos desembolsados",
+    "icon": "mdi-view-list",
+    "permission": "show-list-loans-generated",
+    "params": {}
+  },
+  {
+    "href": "loanPaymentIndex",
+    "title": "Bandeja cobros",
+    "icon": "mdi-tray-minus",
+    "permission": "show-payment-loan",
+    "params": {}
+  },
+  {
+    "href": "listPaymentGenerate",
+    "title": "Reporte amortizaciones",
+    "icon": "mdi-view-list-outline",
+    "permission": "show-list-payments-generated",
+    "params": {}
+  },
+  {
+    "href": "ImportExport",
+    "title": "Imp./Exp.",
+    "icon": "mdi-file-import-outline",
+    "permission": "show-payment-loan",
+    "params": {}
+  },
+  {
+    "href": "listVouchers",
+    "title": "Tesoreria",
+    "icon": "mdi-bank",
+    "permission": "show-list-voucher",
+    "params": {}
+  },
+  {
+    "href": "reports",
+    "title": "Reportes",
+    "icon": "mdi-file-table-outline",
+    "permission": "show-report-payment",
+    "params": {}
+  },
+  {
+    "title": "Acceso",
+    "icon": "mdi-key",
+    "permission": "show-user",
+    "group": [
+      {
+        "href": "userIndex",
+        "title": "Usuarios",
+        "icon": "mdi-account-outline",
+        "permission": "show-user",
+        "role": "TE-admin",
+        "params": {}
+      }, {
+        "href": "roleIndex",
+        "title": "Roles",
+        "icon": "mdi-shield-lock-outline",
+        "permission": "show-role",
+        "params": {}
+      }
+    ]
+  }, {
+    "title": "Ajustes",
+    "icon": "mdi-cog",
+    "permission": "show-setting",
+    "group": [
+      {
+        "href": "procedureTypeLoanDestiny",
+        "title": "Destino de Préstamos",
+        "icon": "mdi-currency-usd-circle",
+        "params": {}
+      }, {
+        "href": "procedureTypeWorkflow",
+        "title": "Flujo de trabajo",
+        "icon": "mdi-chart-timeline-variant",
+        "params": {}
+      }
+    ]
+  }, {
+    "href": "recordIndex",
+    "title": "Actividad",
+    "icon": "mdi-format-list-checkbox",
+    "permission": "show-record",
+    "params": {}
+  }
+]

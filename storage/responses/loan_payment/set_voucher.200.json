@@ -1,0 +1,12 @@
+{
+    "code": "TRANS000004-2020",
+    "user_id": 123,
+    "affiliate_id": 6291,
+    "voucher_type_id": "2",
+    "total": "1065.74",
+    "payment_date": "2020-11-30",
+    "paid_amount": "1065.74",
+    "payment_type_id": "1",
+    "description": "Presento el voucher",
+    "voucher_number": "123"
+}

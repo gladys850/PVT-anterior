@@ -1,0 +1,14 @@
+[
+    {
+        "user_id": 123,
+        "observation_type_id": 2,
+        "observable_id": 5012,
+        "observable_type": "affiliates",
+        "message": "Subsanable en una semana",
+        "date": "2020-05-07 19:52:06",
+        "enabled": false,
+        "created_at": "2020-05-07T23:52:06.000000Z",
+        "updated_at": "2020-05-07T23:52:06.000000Z",
+        "deleted_at": null
+    }, {}
+]

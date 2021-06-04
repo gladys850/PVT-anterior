@@ -1,0 +1,35 @@
+
+{
+    "required": [
+        {
+            "id": 40,
+            "name": "Cédula de Identidad del (la) titular en copia simple.",
+            "created_at": "2019-04-02 21:25:32",
+            "updated_at": null,
+            "expire_date": null,
+            "pivot": {
+                "loan_id": 1,
+                "procedure_document_id": 40,
+                "reception_date": "2020-04-21",
+                "comment": null,
+                "is_valid": false
+            }
+        }, {}
+    ],
+    "optional": [
+        {
+            "id": 276,
+            "name": "Certificado de no adeudo, emitido por la instancia correspondiente.",
+            "created_at": null,
+            "updated_at": null,
+            "expire_date": null,
+            "pivot": {
+                "loan_id": 1,
+                "procedure_document_id": 276,
+                "reception_date": "2020-04-21",
+                "comment": null,
+                "is_valid": false
+            }
+        }, {}
+    ]
+}

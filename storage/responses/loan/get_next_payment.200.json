@@ -1,0 +1,30 @@
+{
+    "code": "PAY000005-2021",
+    "estimated_date": "2021-02-28",
+    "quota_number": 2,
+    "estimated_days": {
+        "penal": 0,
+        "current": 39,
+        "penal_accumulated": 0,
+        "interest_accumulated": 0
+    },
+    "paid_days": {
+        "penal": 0,
+        "current": 39,
+        "penal_accumulated": 0,
+        "interest_accumulated": 0
+    },
+    "balance": 25000,
+    "previous_balance": 2000,
+    "previous_payment_date": "2021-04-30 00:00:00",
+    "penal_remaining": 0,
+    "penal_payment": 0,
+    "interest_remaining": 0,
+    "interest_payment": 452.78,
+    "capital_payment": 0,
+    "interest_accumulated": 88.89,
+    "penal_accumulated": 0,
+    "next_balance": 25000,
+    "estimated_quota": 452.78,
+    "excesive_payment": -152.78
+}

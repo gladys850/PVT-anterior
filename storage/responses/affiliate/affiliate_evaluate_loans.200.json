@@ -1,0 +1,95 @@
+{
+    "evaluate": true,
+    "affiliate": "JOSE  LIMACHI CORANI",
+    "affiliate_identity_card": "492562",
+    "state_affiliate": "Activo - Disponibilidad",
+    "modalities": [
+        {
+            "name_procedure_modality": "Préstamo Anticipo",
+            "modality_affiliate": {
+                "id": 32,
+                "procedure_type_id": 9,
+                "name": "Anticipo sector activo",
+                "shortened": "ANT-SA",
+                "is_valid": true,
+                "loan_modality_parameter": {
+                    "procedure_modality_id": 32,
+                    "debt_index": "90",
+                    "quantity_ballots": 1,
+                    "guarantors": 0,
+                    "max_lenders": 1,
+                    "min_guarantor_category": null,
+                    "max_guarantor_category": null,
+                    "min_lender_category": null,
+                    "max_lender_category": null,
+                    "max_cosigner": 0,
+                    "personal_reference": false,
+                    "maximum_amount_modality": 2000,
+                    "minimum_amount_modality": 200,
+                    "maximum_term_modality": 2,
+                    "minimum_term_modality": 1
+                }
+            },
+            "amount_max": 817,
+            "quota_calculated": 426.97,
+            "liquid_calification": 474.5,
+            "interest": {
+                "id": 1,
+                "procedure_modality_id": 32,
+                "annual_interest": "36.00",
+                "penal_interest": "6.00",
+                "created_at": "2021-04-21T12:43:27.000000Z",
+                "updated_at": "2021-04-21T12:43:27.000000Z"
+            }
+        },
+        {
+            "name_procedure_modality": "Préstamo a corto plazo",
+            "modality_affiliate": {
+                "id": 35,
+                "procedure_type_id": 10,
+                "name": "Corto plazo con disponibilidad de letra",
+                "shortened": "PCP-DLA",
+                "is_valid": true,
+                "loan_modality_parameter": {
+                    "procedure_modality_id": 35,
+                    "debt_index": "50",
+                    "quantity_ballots": 3,
+                    "guarantors": 0,
+                    "max_lenders": 1,
+                    "min_guarantor_category": null,
+                    "max_guarantor_category": null,
+                    "min_lender_category": null,
+                    "max_lender_category": null,
+                    "max_cosigner": 0,
+                    "personal_reference": true,
+                    "maximum_amount_modality": 25000,
+                    "minimum_amount_modality": 2001,
+                    "maximum_term_modality": 30,
+                    "minimum_term_modality": 3
+                }
+            },
+            "amount_max": 5836,
+            "quota_calculated": 248.79,
+            "liquid_calification": 497.63,
+            "interest": {
+                "id": 4,
+                "procedure_modality_id": 35,
+                "annual_interest": "20.00",
+                "penal_interest": "6.00",
+                "created_at": "2021-04-21T12:43:27.000000Z",
+                "updated_at": "2021-04-21T12:43:27.000000Z"
+            }
+        },
+        {
+            "name_procedure_modality": "Préstamo a largo plazo",
+            "modality_affiliate": [],
+            "amount_max": 0,
+            "quota_calculated": 0,
+            "liquid_calification": 0,
+            "interest": null
+        }
+    ],
+    "message": {
+        "accomplished": "Realizado con éxito"
+    }
+}
