@@ -101,7 +101,7 @@
                   <ValidationProvider
                     v-slot="{ errors }"
                     name="celular1"
-                    rules="min:1|max:11"
+                    rules="min:11|max:11"
                   >
                     <v-text-field
                       :error-messages="errors"
@@ -120,7 +120,7 @@
                   <ValidationProvider
                     v-slot="{ errors }"
                     name="celular2"
-                    rules="min:1|max:11"
+                    rules="min:11|max:11"
                   >
                     <v-text-field
                       :error-messages="errors"
@@ -139,8 +139,8 @@
                 <v-col cols="12" md="4">
                   <ValidationProvider
                     v-slot="{ errors }"
-                    name="telefono"
-                    rules="min:1|max:11"
+                    name="teléfono"
+                    rules="min:11|max:11"
                   >
                     <v-text-field
                       :error-messages="errors"

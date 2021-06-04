@@ -119,7 +119,7 @@
                     v-slot="{ errors }"
                     vid="celular1"
                     name="celular1"
-                    rules="min:1|max:11|required"
+                    rules="min:11|max:11|required"
                   >
                     <v-text-field
                       :error-messages="errors"
@@ -138,8 +138,8 @@
                   <ValidationProvider
                     v-slot="{ errors }"
                     vid="celular"
-                    name="celular"
-                    rules="min:1|max:11"
+                    name="celular2"
+                    rules="min:11|max:11"
                   >
                     <v-text-field
                       class="text-right"
@@ -158,9 +158,9 @@
                 <v-col cols="12" class="py-0">
                   <ValidationProvider
                     v-slot="{ errors }"
-                    vid="telefono"
+                    vid="teléfono"
                     name="telefono"
-                    rules="min:1|max:11"
+                    rules="min:11|max:11"
                   >
                     <v-text-field
                       :error-messages="errors"
@@ -170,7 +170,7 @@
                       :readonly="!editable || !permission.secondary"
                       :outlined="editable && permission.secondary"
                       :disabled="editable && !permission.secondary"
-                      v-mask="'(###)-#####'"
+                      v-mask="'(#) ###-###'"
                     ></v-text-field>
                   </ValidationProvider>
                 </v-col>
