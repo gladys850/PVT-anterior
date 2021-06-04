@@ -586,8 +586,9 @@ class LoanController extends Controller
         {
             $remake_loan = Loan::find($request->remake_loan_id);
             $loan->code = $remake_loan->code;
+        }if($request->has('indebtedness_calculated')){
+            $loan->indebtedness_calculated_previous = $request->indebtedness_calculated;
         }
-        $loan->indebtedness_calculated_previous = $request->indebtedness_calculated;
         $loan->save();
 
         if($request->has('data_loan') && $request->parent_loan_id == null && $request->parent_reason != null && !$request->has('id')){
