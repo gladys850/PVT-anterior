@@ -267,7 +267,7 @@
                         :error-messages="errors"
                         v-model="personal_reference.phone_number"
                         dense
-                        label="Telefono"
+                        label="Teléfono"
                         v-mask="'(#) ###-###'"
                       ></v-text-field>
                     </ValidationProvider>
