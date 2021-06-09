@@ -327,7 +327,7 @@ class LoanController extends Controller
             if($loan->modality->loan_modality_parameter->print_contract_platform){
                 $loan->attachment = Util::pdf_to_base64([
                     $this->print_form(new Request([]), $loan, false),
-                    $this->print_contract(new Request([]), $loan, false)
+                    //$this->print_contract(new Request([]), $loan, false)//ya no visualiza el contratos
                 ], $file_name, 'legal', $request->copies ?? 1);
             }else{
                 $loan->attachment = Util::pdf_to_base64([
@@ -866,8 +866,8 @@ class LoanController extends Controller
             $guarantors[] = $guarantor;
         }
         $employees = [
-            ['position' => 'Director General Ejecutivo','name'=>'EDGAR JOSE CORTEZ ALBORNOZ','identity_card'=>'3351371 LP'],
-            ['position' => 'Director de Asuntos Administrativos','name'=>'FRANZ LAZO CHAVEZ','identity_card'=>'3367169 LP']
+            ['position' => 'Director General Ejecutivo','name'=>'CNL. DESP. EDGAR JOSE CORTEZ ALBORNOZ','identity_card'=>'3351371 LP'],
+            ['position' => 'Director de Asuntos Administrativos','name'=>'LIC. FRANZ LAZO CHAVEZ','identity_card'=>'3367169 LP']
         ];
         /*foreach ($employees as $key => $employee) {
             $employees[$key] = Util::request_rrhh_employee($employee['position']);
