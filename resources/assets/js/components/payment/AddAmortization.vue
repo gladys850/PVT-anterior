@@ -108,7 +108,6 @@
                             :disabled="ver || editable"
                           ></v-select>
                         </v-col>
-                        {{data_payment.procedure_id}}
                         <v-col cols="3" class="ma-0 pb-0" v-show="isNew">
                           <v-select
                             dense
