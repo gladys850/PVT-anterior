@@ -719,7 +719,7 @@ export default {
         }
       }else if(this.permissionSimpleSelected.includes('update-accounting-voucher')==true)
       {
-        if((this.loan.num_accounting_voucher != 'Fecha invalida' ) ){
+        if((this.loan.num_accounting_voucher != null ) ){
           this.validate.valid_certificate = true
         }else{
           this.validate.valid_certificate = false
