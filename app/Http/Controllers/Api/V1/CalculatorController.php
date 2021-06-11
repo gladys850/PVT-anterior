@@ -64,7 +64,7 @@ class CalculatorController extends Controller
         foreach($liquid_calification as $liq){
             $affiliate = Affiliate::findOrFail($liq['affiliate_id']);
             $parent_quota = 0;
-            if(array_key_exists('parent_loan_id', $liq)||array_key_exists('sismu', $liq)){  
+            if(array_key_exists('parent_loan_id', $liq)||array_key_exists('sismu', $liq)){
                 if(array_key_exists('parent_loan_id', $liq) && $liq['parent_loan_id'] != null)
                 {
                     $parent_loan = Loan::findOrFail($liq['parent_loan_id']);
@@ -201,7 +201,7 @@ class CalculatorController extends Controller
                 }
                 $livelihood_amount = 0; $valuate_affiliate = false;
                 $livelihood_amount = $liquid['liquid_qualification_calculated'] - $quota_calculated; // liquido para calificacion menos la cuota estimada debe ser menor igual al monto de subsistencia
-                if(($indebtedness_calculated) <= ($modality->loan_modality_parameter->decimal_index)*100 && ($livelihood_amount>$loan_global_parameter->livelihood_amount)) $valuate_affiliate = true; // validar Indice de endeudamiento y monto de subsistencia
+                if(($indebtedness_calculated) <= ($modality->loan_modality_parameter->decimal_index)*100) $valuate_affiliate = true; // validar Indice de endeudamiento y monto de subsistencia
                 $calculated_data->push([
                     'affiliate_id' => $liquid['affiliate_id'],
                     'quota_calculated' => Util::round2($quota_calculated),
@@ -237,7 +237,7 @@ class CalculatorController extends Controller
                     $indebtedness_calculated = $quota_calculated/$liquid['liquid_qualification_calculated']*100;
                     $livelihood_amount = 0; $valuate = false;
                     $livelihood_amount = $liquid['liquid_qualification_calculated'] - $quota_calculated; // liquido para calificacion menos la cuota estimada debe ser menor igual al monto de subsistencia
-                    if(($indebtedness_calculated) <= ($modality->loan_modality_parameter->decimal_index)*100 && ($livelihood_amount>$loan_global_parameter->livelihood_amount)) $valuate = true;  // validar Indice de endeudamiento y monto de subsistencia
+                    if(($indebtedness_calculated) <= ($modality->loan_modality_parameter->decimal_index)*100) $valuate = true;  // validar Indice de endeudamiento y monto de subsistencia
                     $calculated_data->push([
                         'affiliate_id' => $liquid['affiliate_id'],
                         'quota_calculated' => Util::round2($quota_calculated),
@@ -342,10 +342,10 @@ class CalculatorController extends Controller
         foreach($lc as $liquid_calculated){
             $estimated_quota = Util::round((($liquid_calculated["liquid_qualification_calculated"]*$debt_index /100) * $percentage_change));
             $estimated_quota = Util::round((($liquid_calculated["liquid_qualification_calculated"]*$debt_index /100))) - $estimated_quota;
-            $livelihood_amount = 0; 
+            $livelihood_amount = 0;
             $valuate_affiliate = false;
             $livelihood_amount = $liquid_calculated['liquid_qualification_calculated'] - $estimated_quota; // liquido para calificacion menos la cuota estimada debe ser menor igual al monto de subsistencia
-            if($livelihood_amount>$loan_global_parameter->livelihood_amount) 
+            if($livelihood_amount>$loan_global_parameter->livelihood_amount)
                 $valuate_affiliate = true;  // validar Indice de endeudamiento y monto de subsistencia
 
             /** end m */
@@ -417,14 +417,17 @@ class CalculatorController extends Controller
             $liquid_qualification_calculated = $this->liquid_qualification($type, $payable_liquid_average, $total_bonuses, $affiliate);
             $active_guarantees = $affiliate->active_guarantees();$sum_quota = 0;
             foreach($active_guarantees as $res)
-                $sum_quota += ($res->estimated_quota * $res->pivot->payment_percentage)/100; // descuento en caso de tener garantias activas
+            {
+                if($request->remake_evaluation && $res->id != $request->remake_loan_id)
+                    $sum_quota += ($res->estimated_quota * $res->pivot->payment_percentage)/100; // descuento en caso de tener garantias activas
+            }
             $active_guarantees_sismu = $affiliate->active_guarantees_sismu();
             foreach($active_guarantees_sismu as $res)
                 $sum_quota += $res->PresCuotaMensual / $res->quantity_guarantors; // descuento en caso de tener garantias activas del sismu*/
             $liquid_rest = Util::round(($liquid_qualification_calculated * 0.5) - ($quota_calculated + $sum_quota));
             $indebtedness_calculated = ($quota_calculated + $sum_quota)/$liquid_qualification_calculated * 100;
             if($liquid_qualification_calculated < 0)
-            $livelihood_amount = false;
+                $livelihood_amount = false;
             if ($indebtedness_calculated <= $debt_index && $liquid_qualification_calculated > 0)
                 $evaluate = true;
             else

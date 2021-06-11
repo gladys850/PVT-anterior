@@ -1,29 +1,40 @@
 <template>
   <v-container fluid class="ma-0 pa-0">
     <v-row>
-      <v-col cols="6" class="text-center">
+      <v-col cols="12" class="text-center">
         <v-row>
-          <v-col cols="12" class="text-center py-0" style="margin-bottom:10px">
-            <v-card class="py-0" color="#173B0B" dark max-width="100%" max-height="1000"
-            >
+             <v-col cols="6" class="text-center py-0" style="margin-bottom:10px">
+            <v-card class="py-0" color="#173B0B" dark max-width="100%" max-height="500">
               <v-card-text class="headline font-weight-bold">
-                <v-icon large left style="font-size: 100px;">
-                  mdi-shield-account
-                </v-icon>
-                <h6>
-                  <strong><b style="color:white">CI: </b></strong>
-                  {{ affiliate.identity_card }}
-                </h6>
-                <h6>
-                  <strong><b style="color:white">PRESTATARIO: </b></strong>
-                  {{ $options.filters.fullName(affiliate, true) }}
-                </h6>
-                <h6><strong><b style="color:white">GRADO: </b></strong> {{ degree_name }}</h6>
-                <h6><strong><b style="color:white">UNIDAD: </b></strong> {{ unit_name }}</h6>
+                <v-col cols="12" class="py-0">
+                  <v-icon large left style="font-size: 50px;">
+                    mdi-shield-account
+                  </v-icon>
+                  <small><strong><b style="color:white">PRESTATARIO: </b></strong></small>
+                  <small>{{ $options.filters.fullName(affiliate, true) }}</small>
+                </v-col>
+                <v-col cols="12" class="py-0 ">
+                  <small><strong><b style="color:white">CI: </b></strong>
+                  {{ affiliate.identity_card }}</small>
+                </v-col>
               </v-card-text>
             </v-card>
           </v-col>
-
+          <v-col cols="6" class="text-center py-0" style="margin-top:10px">
+            <v-card class="mx-auto" color="#151515" dark max-height="400">
+              <v-card-text class="headline font-weight-bold">
+                <v-icon large left style="font-size: 40px;">
+                 mdi-bank
+                </v-icon>
+                <small><strong><b style="color:white">MODALIDAD:</b></strong>
+                {{ procedure_modality_name | uppercase }}</small><v-spacer></v-spacer>
+                <small><strong><b style="color:white">MONTO SOLICITADO:</b></strong>
+                {{ loan.amount_approved | money}}  Bs</small>
+                   <small><strong><b style="color:white">MESES PLAZO:</b></strong>
+                {{ loan.loan_term }}</small>
+              </v-card-text>
+            </v-card>
+          </v-col>
           <v-col cols="12" class="text-center py-0" style="margin-bottom:10px">
             <div v-if="loan.disbursable_type == 'spouses'">
               <v-card class="py-0" color="#406b32" dark max-width="100%" max-height="1000"
@@ -47,43 +58,6 @@
                 </v-card-text>
               </v-card>
               </div>
-          </v-col>
-        </v-row>
-      </v-col>
-      <v-col cols="6" class="text-center">
-        <v-row>
-          <v-col cols="6" class="text-center py-0">
-            <v-card class="py-0" color="#585858" dark max-height="135">
-              <v-card-text class="headline font-weight-bold">
-                <v-icon large left style="font-size: 50px;">
-                  mdi-currency-usd
-                </v-icon>
-                <h5><strong><b style="color:white">MONTO SOLICITADO:</b></strong></h5>
-                <h5>{{ loan.amount_approved | money}}  Bs </h5>
-              </v-card-text>
-            </v-card>
-          </v-col>
-          <v-col cols="6" class="text-center py-0">
-            <v-card class="mx-auto" color="#424242" dark max-height="135">
-              <v-card-text class="headline font-weight-bold">
-                <v-icon large left style="font-size: 50px;">
-                  mdi-timer-sand
-                </v-icon>
-                <h5><strong><b style="color:white">MESES PLAZO:</b></strong></h5>
-                <h5>{{ loan.loan_term }}</h5>
-              </v-card-text>
-            </v-card>
-          </v-col>
-          <v-col cols="12" class="text-center py-0" style="margin-top:10px">
-            <v-card class="mx-auto" color="#151515" dark max-height="400">
-              <v-card-text class="headline font-weight-bold">
-                <v-icon large left style="font-size: 50px;">
-                 mdi-bank
-                </v-icon>
-                <h5><strong><b style="color:white">MODALIDAD:</b></strong></h5>
-                <h5>{{ procedure_modality_name | uppercase }}</h5>
-              </v-card-text>
-            </v-card>
           </v-col>
         </v-row>
       </v-col>
