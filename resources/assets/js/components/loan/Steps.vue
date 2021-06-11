@@ -12,7 +12,7 @@
           <v-stepper-step
             :key="`${2}-step`"
             :complete="e1 > 2"
-            :step="2">Calculo
+            :step="2">Cálculo
           </v-stepper-step>
           <v-divider v-if="2 !== steps" :key="2" ></v-divider>
           <v-stepper-step
