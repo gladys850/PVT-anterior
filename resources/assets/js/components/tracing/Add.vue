@@ -1,5 +1,18 @@
 <template>
   <v-card flat>
+    <v-card-title>
+      <v-toolbar dense style="z-index: 1" color='tertiary'>
+        <v-toolbar-title>
+          <Breadcrumbs />
+        </v-toolbar-title>
+        <v-spacer></v-spacer>
+        <template><h6 class="caption">
+          <strong>Ubicación trámite:</strong> <br />
+          <v-icon x-small color="orange">mdi-folder-information</v-icon>{{role_name}} <br>
+          <v-icon x-small color="blue" v-if="user_name != null">mdi-file-account</v-icon> {{user_name}}</h6>
+        </template>
+      </v-toolbar>
+    </v-card-title>
     <v-card-text>
       <Dashboard :affiliate.sync="affiliate" :loan.sync="loan" :spouse.sync="spouse" />
       <FormTracing
@@ -13,13 +26,14 @@
   </v-card>
 </template>
 <script>
-
+import Breadcrumbs from "@/components/shared/Breadcrumbs"
 import FormTracing from "@/components/tracing/FormTracing"
 import Dashboard from "@/components/tracing/Dashboard"
 
 export default {
   name: "flow-index",
   components: {
+    Breadcrumbs,
     FormTracing,
     Dashboard,
   },
@@ -77,7 +91,7 @@ export default {
       valid_certificate : false
 
     },
-   
+    role_name: null,
     user_name: null,
     id_street: 0,
   }),
@@ -108,7 +122,19 @@ export default {
         this.reload = false
       })
     },
-  
+      setBreadcrumbs() {
+      let breadcrumbs = [
+        {
+          text: "Seguimiento",
+          to: { name: "listTracing" }
+        }
+      ]
+      breadcrumbs.push({
+        text: this.loan.code,
+        to: { name: "tracingAdd", params: { id: this.loan.id } }
+      })
+      this.$store.commit("setBreadcrumbs", breadcrumbs)
+    },
     async getloan(id) {
       try {
         this.loading = true
@@ -171,9 +197,10 @@ export default {
         if (this.loan.disbursable_type == "spouses") {
           this.getSpouse(this.affiliate.id)
         }
+        this.setBreadcrumbs()
          this.getAddress(this.affiliate.id)
-    
-        
+
+        this.role(this.loan.role_id)
         this.user(this.loan.user_id)
         console.log(this.loan)
       } catch (e) {
@@ -245,6 +272,15 @@ export default {
         console.log(e)
       } finally {
         this.loading = false
+      }
+    },
+    async role(role_id){
+      try {
+        let res = await axios.get(`role/${role_id}`)
+        this.role_name = res.data.display_name
+        console.log(this.role_name)
+      } catch (e) {
+        console.log(e)
       }
     },
 

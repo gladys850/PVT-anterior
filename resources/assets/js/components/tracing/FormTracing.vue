@@ -138,11 +138,12 @@
                                     </v-col>
                                   <v-card flat tile>
                                     <v-card-text>
-                                      <v-col cols="12" class="pb-0">
+                                      <v-col cols="12" class="pa-0">
                                         <v-progress-linear></v-progress-linear>
                                           <p style="color:teal"> <b>DATOS DE DESEMBOLSO</b></p>
-                                        <v-row>
-                                        <v-progress-linear></v-progress-linear><br>
+                                       
+                                        <v-progress-linear></v-progress-linear>
+                                         <v-row>
                                         <v-col cols="12" md="4">
                                           <p><b>TIPO DE DESEMBOLSO:</b> {{loan.payment_type.name}}</p>
                                         </v-col>
@@ -188,7 +189,7 @@
                             </v-col>
                             <v-col cols="12" md="6" color="orange" class="py-0" >
                               <v-progress-linear></v-progress-linear>
-                                <v-col cols="12" md="6" color="orange">
+                                <v-col cols="12" md="12" color="orange">
                                   <v-card-text class="pa-0 mb-0">
                                     <div v-for="procedure_type in procedure_types" :key="procedure_type.id" class="pa-0 py-0" >
                                       <ul style="list-style: none" class="pa-0" v-if="procedure_type.name == 'Préstamo a Largo Plazo' || procedure_type.name == 'Préstamo a Corto Plazo'|| procedure_type.name == 'Refinanciamiento Préstamo a Corto Plazo' || procedure_type.name == 'Refinanciamiento Préstamo a Largo Plazo'">
@@ -336,9 +337,11 @@
                                   <p style="color:teal" v-if="loan.personal_references.length>0"><b>PERSONA DE REFERENCIA </b></p>
                                   <v-progress-linear v-if="loan.personal_references.length>0"></v-progress-linear><br>
                                   <v-data-table
+                                    dense
                                     v-if="loan.personal_references.length>0"
                                     :headers="headers"
                                     :items="loan.personal_references"
+                                    hide-default-footer
                                     >
                                   </v-data-table>
                                   <p v-if="loan.personal_references.length==0" style="color:teal"> <b>NO TIENE PERSONA DE REFERENCIA</b></p>
@@ -355,6 +358,7 @@
                                 v-if="loan.cosigners.length>0"
                                 :headers="headers"
                                 :items="loan.cosigners"
+                                dense
                                 >
                               </v-data-table>
                              <p v-if="loan.cosigners.length==0" > <b>NO TIENE CODEUDORES</b></p>

@@ -91,7 +91,7 @@
             </span>
           </v-tooltip>
         </v-tab>
-        <v-tab :href="`#tab-2`">
+        <v-tab :href="`#tab-2`" v-if="this.$store.getters.rolePermissionSelected.display_name != 'Cobranzas'">
           <v-tooltip bottom>
             <template v-slot:activator="{ on, attrs }">
               <v-icon v-if="icons" v-bind="attrs" v-on="on">mdi-file-eye</v-icon>
