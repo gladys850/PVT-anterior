@@ -453,7 +453,7 @@
                     small
                     v-on="on"
                     color="info"
-                    @click="imprimir('Solicitud', item.id_loan)"
+                    @click="imprimir(1, item.id_loan)"
                     ><v-icon>mdi-file-document</v-icon>
                   </v-btn>
                 </template>
@@ -466,7 +466,7 @@
                     small
                     v-on="on"
                     color="info"
-                    @click="imprimir('Contrato', item.id_loan)"
+                    @click="imprimir(2, item.id_loan)"
                     ><v-icon>mdi-file</v-icon>
                   </v-btn>
                 </template>
@@ -479,7 +479,7 @@
                     small
                     v-on="on"
                     color="info"
-                    @click="imprimir('Plan-Pagos', item.id_loan)"
+                    @click="imprimir(3, item.id_loan)"
                     ><v-icon>mdi-cash</v-icon>
                   </v-btn>
                 </template>
@@ -492,7 +492,7 @@
                     small
                     v-on="on"
                     color="info"
-                    @click="imprimir('Kardex', item.id_loan)"
+                    @click="imprimir(4, item.id_loan)"
                     ><v-icon>mdi-view-list</v-icon>
                   </v-btn>
                 </template>
