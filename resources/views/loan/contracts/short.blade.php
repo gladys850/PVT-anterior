@@ -198,7 +198,7 @@ if(($modality->name == 'Refinanciamiento de Préstamo a Corto Plazo Sector Activ
     </div><br><br>
     <div class="text-center">
         <p class="center">
-        La Paz, {{ Carbon::parse($loan->request_date)->isoFormat('LL') }}
+        La Paz, {{ Carbon::now()->isoFormat('LL') }}
         </p>
     </div>
 
@@ -420,7 +420,7 @@ if(($modality->name == 'Refinanciamiento de Préstamo a Corto Plazo Sector Activ
     </div><br><br>
     <div class="text-center">
         <p class="center">
-        La Paz, {{ Carbon::parse($loan->request_date)->isoFormat('LL') }}
+        La Paz, {{ Carbon::now()->isoFormat('LL') }}
         </p>
     </div>
 </div>
