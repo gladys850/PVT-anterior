@@ -40,7 +40,7 @@
                         <span>Ver préstamo</span>
                       </v-tooltip>
                     </span>
-                    <span v-if="item.state.name == 'En Proceso'">
+                    <span v-if="item.state.name == 'En Proceso' && permissionSimpleSelected.includes('create-loan')">
                       <v-tooltip
                         left
                       >
