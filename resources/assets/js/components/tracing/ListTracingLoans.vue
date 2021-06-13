@@ -453,7 +453,7 @@
                     small
                     v-on="on"
                     color="info"
-                    @click="imprimir(1, item.id_loan)"
+                    @click="imprimir(2, item.id_loan)"
                     ><v-icon>mdi-file-document</v-icon>
                   </v-btn>
                 </template>
@@ -466,7 +466,7 @@
                     small
                     v-on="on"
                     color="info"
-                    @click="imprimir(2, item.id_loan)"
+                    @click="imprimir(1, item.id_loan)"
                     ><v-icon>mdi-file</v-icon>
                   </v-btn>
                 </template>
