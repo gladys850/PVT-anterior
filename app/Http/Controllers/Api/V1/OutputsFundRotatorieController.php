@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Schema;
 use App\OutputsFundRotatorie;
+use App\Affiliate;
 use Illuminate\Support\Facades\Auth;
 use App\Helpers\Util;
 use Carbon\CarbonImmutable;
@@ -155,7 +156,58 @@ class OutputsFundRotatorieController extends Controller
     * @authenticated
     * @responseFile responses/outputs_fund_rotatorie/print_fund_rotatorie.200.json
     */
-    public function print_fund_rotary(Request $request,$loan_payment, $standalone = true)
+    public function print_fund_rotary(Request $request,$ouputs_fund_rotatorie_id, $standalone = true)
     { 
+        $ouputs_fund_rotatorie = OutputsFundRotatorie::find($ouputs_fund_rotatorie_id);
+        $loan = Loan::findOrFail($ouputs_fund_rotatorie->loan_id);   
+        $affiliate = Affiliate::findOrFail($loan->disbursable_id);
+        $lenders = [];
+        $lenders[] = LoanController::verify_spouse_disbursable($affiliate)->disbursable;
+        $persons = collect([]);  
+        $persons->push([
+            'id' => $affiliate->id,
+            'full_name' => implode(' ', [$affiliate->title, $affiliate->full_name]),
+            'identity_card' => $affiliate->identity_card_ext,
+            'position' => 'RECIBIDIDO POR'
+        ]);      
+        $data = [
+            'header' => [
+                'direction' => 'DIRECCIÓN DE ESTRATEGIAS SOCIALES E INVERSIONES',
+                'unity' => 'UNIDAD DE INVERSIÓN EN PRÉSTAMOS',
+                'table' => [
+                    ['Código', $ouputs_fund_rotatorie->code],
+                    ['Fecha', Carbon::now()->format('d/m/Y')],
+                    ['Hora', Carbon::now()->format('h:m:s a')],
+                    ['Usuario', Auth::user()->username]
+                ]
+            ],
+            'title' => 'RECIBO DE PAGO',
+            'ouputs_fund_rotatorie' => $ouputs_fund_rotatorie,
+            'loan' => $loan,
+            'signers' => $persons,
+            'lenders' => collect($lenders)
+        ];
+        $information = $this->get_information_loan($ouputs_fund_rotatorie);
+        $file_name = implode('_', ['ouputs_fund_rotatorie', $ouputs_fund_rotatorie->code]) . '.pdf';
+        $view = view()->make('loan.forms.disbursement_receipt_form')->with($data)->render();
+        if ($standalone) return Util::pdf_to_base64([$view], $file_name, $information, 'letter', $request->copies ?? 1);
+        return $view; 
+    }
+
+    public function get_information_loan(OutputsFundRotatorie $ouputs_fund_rotatorie)
+    {
+        $file_name='';
+            $loan = Loan::findOrFail($ouputs_fund_rotatorie->loan_id);
+            $lend='';
+            foreach ($loan->lenders as $lender) {
+                $lenders[] = LoanController::verify_spouse_disbursable($lender);
+            }
+            foreach ($loan->lenders as $lender) {
+                $lend = $lend.'*'.' ' . $lender->first_name .' '. $lender->second_name .' '. $lender->last_name.' '. $lender->mothers_last_name;
+            }
+            
+            $loan_affiliates= $loan->loan_affiliates[0]->first_name;
+            $file_name =implode(' ', ['Información:',$ouputs_fund_rotatorie->code,$loan->code,$loan->modality->name,$lend]);
+        return $file_name;
     }
 }
