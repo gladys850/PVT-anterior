@@ -17,7 +17,7 @@ Route::group([
     //Route::get('depuracion', 'Api\V1\AffiliateController@eliminacion');
     // INDEFINIDO (TODO)
     Route::get('document/{affiliate_id}', 'Api\V1\ScannedDocumentController@create_document');
-
+    
 
     // Autenticado con token
     Route::group([
@@ -97,7 +97,7 @@ Route::group([
         Route::get('loan_tracking', 'Api\V1\LoanReportController@loan_tracking');//seguimiento de prestamos
 
         Route::apiResource('fund_rotatory_entry', 'Api\V1\FundRotaryEntrieController')->only('index', 'show', 'store', 'update', 'destroy');//Fondo rotatorio
-
+        Route::get('print_fund_rotary/{ouputs_fund_rotatorie_id}', 'Api\V1\OutputsFundRotatorieController@print_fund_rotary');
         //get_list_month
         // Afiliados
         Route::group([
