@@ -35,12 +35,11 @@ class FundRotatoryController extends Controller
     /**
      * Nuevo registro de fondo Rotatorio
      * Inserta nuevo fondo rotatorio
-     * @bodyParam code_entry string required Código del fondo rotatorio. Example: 06/2021
-     * @bodyParam check_number numeric required Numero del Cheque del fondo rotatorio. Example: 06/2021
+     * @bodyParam check_number numeric required Numero del Cheque del fondo rotatorio. Example: 112
      * @bodyParam amount numeric required Monto de ingreso del fondo rotatoio. Example: 50000
-     * @bodyParam date_check_delivery date required Fecha de ingreso del fondo o asignacion. Example: 2021/06/01
+     * @bodyParam date_check_delivery date required Fecha de ingreso del fondo o asignacion. Example: 2021-06-01
      * @bodyParam role_id numeric required Rol con el cual se realizo el registro. Example: 92
-     * @bodyParam description string  Descripcion del registro de del fondo Rotatorio. Example: 06/2021
+     * @bodyParam description string  Descripcion del registro de del fondo Rotatorio. Example: Ingres
      * @authenticated
      * @responseFile responses/fund_rotary_entry/store.200.json
      */
@@ -48,14 +47,15 @@ class FundRotatoryController extends Controller
     {
         $fundRotatory = new FundRotatory;
         $fundRotatory->user_id = Auth::id();
-        $code_entry= count(FundRotatory::all());
-        $fundRotatory->code_entry = $code_entry+1;
+        $code_entry = count(FundRotatory::all());
+        $code_entry = $code_entry+1;
+        $fundRotatory->code_entry ="FR-".$code_entry;
         $fundRotatory->check_number = $request->input('check_number');
         $fundRotatory->amount = $request->input('amount');
         $fundRotatory->date_check_delivery = $request->input('date_check_delivery');
         $fundRotatory->description = $request->input('description');
         $fundRotatory->role_id = $request->input('role_id');
-        $fundRotatory->balance = $request->input('amount');
+        $fundRotatory->balance = $request->input('amount')+$fundRotatory->last->balance;
         if($fundRotatory->last == null)
             $fundRotatory->balance_previous= 0;
         else{
@@ -84,7 +84,6 @@ class FundRotatoryController extends Controller
      * Actualizar informacion del fondo rotatorio
      * Actualizar datos del fondo rotatorio
      * @urlParam fund_rotatory_id ID del fondo rotatorio. Example: 1
-     * @bodyParam code_entry string Código del fondo rotatorio. Example: 06/2021
      * @bodyParam amount numeric Monto de ingreso del fondo rotatoio. Example: 50000
      * @bodyParam date_check_delivery date Fecha de ingreso del fondo o asignacion. Example: 2021/06/01
      * @bodyParam role_id numeric Rol con el cual se realizo el registro. Example: 92

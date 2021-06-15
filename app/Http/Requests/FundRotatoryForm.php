@@ -24,7 +24,6 @@ class FundRotatoryForm extends FormRequest
     public function rules()
     {
         $rules = [
-            'code_entry' => 'min:3',
             'check_number' => 'numeric',
             'date_check_delivery' => 'date_format:"Y-m-d',
             'amount' => 'numeric',
@@ -36,7 +35,7 @@ class FundRotatoryForm extends FormRequest
         ];
         switch ($this->method()) {
             case 'POST': {
-                foreach (array_slice($rules, 0, 5) as $key => $rule) {
+                foreach (array_slice($rules, 0, 4) as $key => $rule) {
                     $rules[$key] = implode('|', ['required', $rule]);
                 }
                 return $rules;
