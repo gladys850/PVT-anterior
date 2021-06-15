@@ -41,8 +41,8 @@ class Spouse extends Model
     }
 
     public function getTitleAttribute()
-    {
-        return 'Vd' . ($this->affiliate->gender == 'M' ? 'a' : 'o') . '.';
+    {   return '';
+        //return 'Vd' . ($this->affiliate->gender == 'M' ? 'a' : 'o') . '.';
     }
 
     public function getGenderAttribute()
