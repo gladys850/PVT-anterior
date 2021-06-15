@@ -104,7 +104,7 @@ class OutputsFundRotatorieController extends Controller
     * @urlParam id required ID del registro realizado. Example: 1
 	* @bodyParam description string Texto de descripción. Example: pago de anticipo
     * @bodyParam loan_id integer numero del prestamo perteneciente al fondo de retiro. Example: 1
-    * @bodyParam fund_rotary_entry_id integer ID del condo de retiro ingresado. Example: 1
+    * @bodyParam fund_rotary_entry_id integer ID del fondo de retiro ingresado. Example: 1
     * @bodyParam user_id integer ID del usuario que registro. Example: 70
     * @bodyParam role_id integer role con el que el registro fue creado. Example: 90
     * @authenticated
@@ -133,7 +133,7 @@ class OutputsFundRotatorieController extends Controller
 
 
     /**
-    * Nuevo registro de periodo
+    * Nuevo registro de fondo rotatorio
     * Inserta el registro del fondo rotatorio
     * @bodyParam description string Texto de descripción. Example: pago de anticipo
     * @bodyParam loan_id integer numero del prestamo perteneciente al fondo de retiro. Example: 1
