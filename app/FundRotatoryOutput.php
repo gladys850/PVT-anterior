@@ -8,6 +8,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Util;
 use Carbon\CarbonImmutable;
 use Carbon;
+use App\FundRotatory;
+use App\Loan;
+
 use Illuminate\Support\Facades\DB;
 
 class FundRotatoryOutput extends Model
@@ -41,11 +44,11 @@ class FundRotatoryOutput extends Model
         return $this->belongsTo(Loan::class);
     }
 
-    public function fundRotatory()
+    public function fund_rotatory()
     {
       return $this->belongsTo(FundRotatory::class);
     }
-
+    
     public function user()
     {
         return $this->belongsTo(User::class);
