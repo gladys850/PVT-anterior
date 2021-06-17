@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Helpers\Util;
 use App\User;
 use App\FundRotatory;
+use App\fund_rotatory_outputs;
 use App\Http\Requests\FundRotatoryForm;
 use Illuminate\Support\Facades\Auth;
 
@@ -114,4 +115,19 @@ class FundRotatoryController extends Controller
         $fundRotatory->delete();
         return $fundRotatory;
     }
+     /**
+    * Obtener todos los ingresos y salidas del fondo rotatorio
+    * Devuelve un listado de fondo rotatorio y sus salidas
+    * @authenticated
+    * @responseFile responses/fund_rotary_entry/get_fund_rotatori_entry_output.200.json
+    */
+    public function get_fund_rotatori_entry_output()
+    {
+        $fundRotatories =  FundRotatory::all();
+        foreach($fundRotatories as $fundRotatory){  
+            $fundRotatory->fund_rotatory_outputs;
+        } 
+        $fundRotatories = array('data'=>$fundRotatories);
+        return json_encode($fundRotatories); 
+      }  
 }
