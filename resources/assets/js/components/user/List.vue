@@ -11,11 +11,9 @@
   >
     <template v-slot:item="props">
       <tr :class="props.isExpanded ? 'secondary white--text' : ''">
-        <td @click.stop="expand(props)">{{ props.item.last_name | uppercase }}</td>
-        <td @click.stop="expand(props)">{{ props.item.first_name | uppercase }}</td>
-        <td @click.stop="expand(props)">{{ props.item.position | uppercase }}</td>
-        <td @click.stop="expand(props)">{{ props.item.username | lowercase }}</td>
-        <td v-if="active">
+        <td @click.stop="props.expand(!props.isExpanded )">ssdfs</td>
+
+        <td >
           <v-tooltip top v-if="$store.getters.permissions.includes('update-user')">
             <template v-slot:activator="{ on }">
               <v-btn
@@ -24,7 +22,7 @@
                 x-small
                 color="warning"
                 v-on="on"
-                @click.stop="switchActiveUser(props.item.id)"
+         
               >
                 <v-icon>mdi-cancel</v-icon>
               </v-btn>
@@ -32,45 +30,13 @@
             <span class="caption">Deshabilitar</span>
           </v-tooltip>
         </td>
-        <td v-else>
-          <v-tooltip top v-if="$store.getters.permissions.includes('update-user')">
-            <template v-slot:activator="{ on }">
-              <v-btn
-                fab
-                dark
-                x-small
-                color="success"
-                class="mr-2"
-                v-on="on"
-                @click.stop="switchActiveUser(props.item.id)"
-              >
-                <v-icon>mdi-sync</v-icon>
-              </v-btn>
-            </template>
-            <span class="caption">Habilitar</span>
-          </v-tooltip>
-          <v-tooltip top  v-if="$store.getters.permissions.includes('delete-user')">
-            <template v-slot:activator="{ on }">
-              <v-btn
-                fab
-                dark
-                x-small
-                color="error"
-                v-on="on"
-                @click.stop="bus.$emit('openRemoveDialog', `user/${props.item.id}`)"
-              >
-                <v-icon>mdi-close</v-icon>
-              </v-btn>
-            </template>
-            <span class="caption">Eliminar</span>
-          </v-tooltip>
-        </td>
+
       </tr>
     </template>
     <template v-slot:expanded-item="{ headers }">
       <tr>
         <td :colspan="headers.length" class="px-0">
-          <Role :user.sync="selectedUser"/>
+          fdfgdfgdf
         </td>
       </tr>
     </template>
@@ -85,12 +51,7 @@ export default {
   components: {
     Role
   },
-  props: {
-    bus: {
-      type: Object,
-      required: true
-    }
-  },
+
   data: () => ({
     loading: true,
     search: '',
@@ -143,51 +104,15 @@ export default {
         this.getUsers()
       }
     },
-    search: function(newVal, oldVal) {
-      if (newVal != oldVal) {
-        this.options.page = 1
-        this.getUsers()
-      }
-    },
-    active: function(newVal, oldVal) {
-      if (newVal != oldVal) {
-        this.getUsers()
-      }
-    }
+
   },
   mounted() {
-    this.bus.$on('added', val => {
-      this.getUsers()
-    })
-    this.bus.$on('removed', val => {
-      this.getUsers()
-    })
-    this.bus.$on('search', val => {
-      this.search = val
-    })
-    this.bus.$on('active', val => {
-      this.active = val
-    })
+
     this.getUsers()
   },
   methods: {
-    expand(props) {
-      props.expand(!props.isExpanded && this.active && this.$store.getters.permissions.includes('update-user'))
-      if (this.selectedUser != props.item.id) this.selectedUser = props.item.id
-    },
-    async switchActiveUser(id) {
-      try {
-        this.loading = true
-        let res = await axios.patch(`user/${id}`, {
-          active: !this.active
-        })
-        this.bus.$emit('removed', id)
-      } catch (e) {
-        console.log(e)
-      } finally {
-        this.loading = false
-      }
-    },
+
+
     async getUsers(params) {
       try {
         this.loading = true
