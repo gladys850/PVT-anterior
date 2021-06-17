@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Helpers\Util;
 use App\User;
+use App\Affiliate;
 use App\FundRotatory;
 use App\FundRotatoryOutput;
 use App\Http\Requests\FundRotatoryForm;
@@ -125,9 +126,11 @@ class FundRotatoryController extends Controller
     {
         $fundRotatories =  FundRotatory::all();
         foreach($fundRotatories as $fundRotatory){
-                $fundRotatory->fund_rotatory_outputs ;
+                $fundRotatory->fund_rotatory_outputs->sortBy('id');
             foreach($fundRotatory->fund_rotatory_outputs as $loan_outputs){ 
-                    $loan_outputs->loan;
+                $loan = $loan_outputs->loan;
+                $loan->affiliate=Affiliate::find($loan->disbursable_id);
+                $loan->procedure_type = $loan->modality->procedure_type;
             } 
         } 
         $fundRotatories = array('data'=>$fundRotatories);
