@@ -122,7 +122,7 @@ class FundRotatoryController extends Controller
     */
     public function get_fund_rotatori_entry_output()
     {
-        $fundRotatories =  FundRotatory::orderByDesc('id')->get();
+        $fundRotatories =  FundRotatory::orderBy('id')->get();
         foreach($fundRotatories as $fundRotatory){
                 $fundRotatory->fund_rotatory_outputs->sortBy('id');
             foreach($fundRotatory->fund_rotatory_outputs as $loan_outputs){ 

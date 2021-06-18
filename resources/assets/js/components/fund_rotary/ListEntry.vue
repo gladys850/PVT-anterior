@@ -12,7 +12,7 @@
             :headers="headers"
             :items="fund_rotatory_list"
             :loading="loading"
-            :footer-props="{ itemsPerPageOptions: [8, 15, 30] }"
+            :footer-props="{ itemsPerPageOptions: [50,100] }"
             multi-sort
             single-expand
             :key="refreshFoundRotatoryTable"
@@ -21,6 +21,24 @@
             <template v-slot:top>
               <v-divider class="mx-4" inset vertical></v-divider>
               <v-spacer></v-spacer>
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on }">
+                  <v-btn
+                    fab
+                    x-small
+                    color="warning"
+                    dark
+                    v-on="on"
+                    right
+                    absolute
+                    style="margin-top: -60px; margin-right:40px"
+                    @click="getFundRotary()"
+                  >
+                    <v-icon>mdi-refresh</v-icon>
+                  </v-btn>
+                </template>
+                <span>Recargar información</span>
+              </v-tooltip>
 
               <v-dialog v-model="dialog" max-width="500px">
                 <template v-slot:activator="{ on }">
@@ -37,9 +55,6 @@
                     <v-icon>mdi-plus</v-icon>
                   </v-btn>
                 </template>
-                <div>
-                  <span>Cancelar</span>
-                </div>
 
                 <v-card>
                   <v-card-title>
@@ -126,13 +141,18 @@
                   {{ props.item.balance_previous | money }}
                 </td>
                 <td @click.stop="props.expand(!props.isExpanded)">
+                  {{ parseFloat(props.item.amount) + parseFloat(props.item.balance_previous) - parseFloat(props.item.balance) | money }}
+                </td>
+                <td @click.stop="props.expand(!props.isExpanded)">
                   {{ props.item.balance | money }}
                 </td>
+
                 <!--Actiones-->
                 <td>
                   <v-tooltip bottom>
                     <template v-slot:activator="{ on }">
                       <v-btn
+                        v-if="props.item.fund_rotatory_outputs.length ==0"
                         icon
                         small
                         v-on="on"
@@ -142,7 +162,7 @@
                         <v-icon>mdi-pencil</v-icon>
                       </v-btn>
                     </template>
-                    <span>Editar registro</span>
+                    <span>Editar registro </span>
                   </v-tooltip>
 
                   <v-tooltip bottom>
@@ -167,7 +187,6 @@
                     dense
                     hide-default-footer
                   >
-
                   <template v-slot:[`item_correlativo`]="{ item }">
                     {{$options.filters.fullName(item.loan.affiliate, true) }}
                   </template>
@@ -177,8 +196,11 @@
                   <template v-slot:[`item.loan.disbursement_date`]="{ item }">
                     {{ item.loan.disbursement_date | datetimeshorted }}
                   </template>
-                  <template v-slot:[`item.loan.modality.procedure_type`]="{ item }">
-                    {{ item.loan.modality.procedure_type.name }}
+                  <template v-slot:[`item.loan.amount_requested`]="{ item }">
+                    {{ item.loan.amount_requested | money }}
+                  </template>
+                  <template v-slot:[`item.loan.modality`]="{ item }">
+                    {{ item.loan.modality.name }}
                   </template>
                   
                   <template v-slot:[`item.actions`]="{ item }">
@@ -233,37 +255,45 @@ export default {
     fund_rotatory_list: [],
     totalFundRotatoryEntry: 0,
     headers: [
+
       {
-        text: "Cód. Recibo",
+        text: "Código de Ingreso",
         value: "code_entry",
         class: ["normal", "white--text"],
         width: "15%",
         sortable: true,
       },
       {
-        text: "Número de cheque",
+        text: "Número de Cheque",
         value: "check_number",
         class: ["normal", "white--text"],
         width: "15%",
         sortable: false,
       },
       {
-        text: "Fecha de entrega cheque",
+        text: "Fecha Entrega Cheque",
         value: "date_check_delivery",
         class: ["normal", "white--text"],
         width: "15%",
         sortable: false,
       },
       {
-        text: "Monto [Bs]",
+        text: "Monto Ingreso (+)[Bs]",
         value: "amount",
         class: ["normal", "white--text"],
         width: "10%",
         sortable: false,
       },
       {
-        text: "Saldo Anterior [Bs]",
+        text: "Saldo Anterior (+)[Bs]",
         value: "balance_previous",
+        class: ["normal", "white--text"],
+        width: "10%",
+        sortable: false,
+      },
+      {
+        text: "Egreso (-)[Bs]",
+        value: "salidas",
         class: ["normal", "white--text"],
         width: "10%",
         sortable: false,
@@ -275,6 +305,7 @@ export default {
         width: "10%",
         sortable: false,
       },
+
       {
         text: "Acción",
         value: "actions",
@@ -285,8 +316,9 @@ export default {
       },
     ],
     headersOutput: [
+
       {
-        text: "Nro Recibo",
+        text: "Cód. Recibo",
         value: "code",
         class: ["white", "black--text"],
         width: "5%",
@@ -296,11 +328,11 @@ export default {
         text: "Nro Contrato",
         value: "loan.code",
         class: ["white", "black--text"],
-        width: "15%",
+        width: "20%",
         sortable: false,
       },
       {
-        text: "Fecha desembolso",
+        text: "Fecha Desembolso",
         value: "loan.disbursement_date",
         class: ["white", "black--text"],
         width: "15%",
@@ -310,7 +342,7 @@ export default {
         text: "Afiliado",
         value: "affiliate",
         class: ["white", "black--text"],
-        width: "25%",
+        width: "20%",
         sortable: false,
       },
       {
@@ -323,9 +355,9 @@ export default {
 
       {
         text: "Concepto",
-        value: "loan.modality.procedure_type",
+        value: "loan.modality",
         class: ["white", "black--text"],
-        width: "10%",
+        width: "20%",
         sortable: false,
       },
       {
@@ -333,7 +365,7 @@ export default {
         value: "actions",
         class: ["white", "black--text"],
         sortable: false,
-        width: "15%",
+        width: "10%",
         sortable: false,
       },
     ],
@@ -407,6 +439,7 @@ export default {
             {
               check_number: this.fund_rotatory_item.check_number,
               amount: this.fund_rotatory_item.amount,
+              balance: parseFloat(this.fund_rotatory_item.amount) + parseFloat(this.fund_rotatory_item.balance_previous),
               date_check_delivery: this.$moment(this.fund_rotatory_item.date_check_delivery).format("YYYY-MM-DD"),
               description: this.fund_rotatory_item.description,
               role_id: this.$store.getters.rolePermissionSelected.id,

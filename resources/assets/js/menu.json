@@ -47,7 +47,7 @@
     "href": "fundRotaryList",
     "title": "Fondo Rotatorio",
     "icon": "mdi-warehouse",
-    "permission": "show-loan",
+    "permission": "show-fund-rotatory",
     "params": {}
   },
   {
