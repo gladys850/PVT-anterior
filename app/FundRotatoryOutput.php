@@ -60,8 +60,8 @@ class FundRotatoryOutput extends Model
         return $this->belongsTo(Role::class);
     }
     public static function register_advance_fund($loan_id,$role_id)
-    {   $fundRotatory = FundRotatory::latest()->first();
-  
+    {   
+        $fundRotatory = FundRotatory::get()->last();
         $FundRotatoryOutput = new FundRotatoryOutput;
         $FundRotatoryOutput->user_id = auth()->id();
         $FundRotatoryOutput->loan_id = $loan_id;
@@ -70,9 +70,9 @@ class FundRotatoryOutput extends Model
         $FundRotatoryOutput = FundRotatoryOutput::create($FundRotatoryOutput->toArray());
         $loan = Loan::find($FundRotatoryOutput->loan_id);
         $amount_balance = $loan->amount_approved;
-        $FundRotatory = FundRotatory::find($fundRotatory->id);
-        $FundRotatory->balance = $FundRotatory->balance - $amount_balance;
-        $FundRotatory->update();
+        $fundRotatory = FundRotatory::find($fundRotatory->id);
+        $fundRotatory->balance = $fundRotatory->balance - $amount_balance;
+        $fundRotatory->update();
         return $FundRotatoryOutput;
      //   return FundRotatoryOutput::create($request->all());
     }
