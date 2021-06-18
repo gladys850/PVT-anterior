@@ -26,6 +26,10 @@ class FundRotatory extends Model
 
     public function getLastAttribute()
     {
-        return $this->latest()->first();
+        return $this->get()->last();
+    }
+    public function fund_rotatory_outputs()
+    {
+        return $this->hasMany(FundRotatoryOutput::class);
     }
 }

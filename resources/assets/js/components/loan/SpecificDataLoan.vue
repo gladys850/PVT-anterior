@@ -243,7 +243,7 @@
                                         :readonly="!edit_delivery_date"
                                       ></v-text-field>
                                     </v-col>
-                                    <v-col cols="12" md="1"  v-if="!permissionSimpleSelected.includes('registration-delivery-return-contracts') && $route.query.workTray != 'tracingLoans'">
+                                    <v-col cols="12" md="3"  v-if="!permissionSimpleSelected.includes('registration-delivery-return-contracts') && $route.query.workTray != 'tracingLoans'">
                                     </v-col>
                                     <v-col cols="12" md="3"  v-if="permissionSimpleSelected.includes('registration-delivery-return-contracts') && $route.query.workTray != 'tracingLoans'">
                                       <div>
@@ -303,7 +303,7 @@
                                         :readonly="!edit_return_date"
                                       ></v-text-field>
                                     </v-col>
-                                      <v-col cols="12" md="3"  v-show="loan.delivery_contract_date == 'Fecha invalida'">
+                                      <v-col cols="12" md="3"  v-show="loan.delivery_contract_date == 'Fecha invalida'" v-if="!permissionSimpleSelected.includes('registration-delivery-return-contracts') && $route.query.workTray != 'tracingLoans'">
                                     </v-col>
                                     <v-col cols="12" md="3" v-show="loan.delivery_contract_date != 'Fecha invalida'"  v-if="permissionSimpleSelected.includes('registration-delivery-return-contracts') && $route.query.workTray != 'tracingLoans'">
                                       <div >
@@ -352,9 +352,9 @@
                                       </v-tooltip>
                                     </div>
                                   </v-col>
-                                   <v-col cols="12" md="3" v-if="!permissionSimpleSelected.includes('registration-delivery-return-contracts')">
+                                   <v-col cols="12" md="2" v-if="permissionSimpleSelected.includes('print-payment-plan')">
                                     </v-col>
-                                  <v-col cols="12" md="3">
+                                   <v-col cols="12" md="3">
                                       <v-text-field
                                         dense
                                         v-model="loan.regional_delivery_contract_date"
@@ -364,6 +364,8 @@
                                         :outlined="edit_delivery_date_regional"
                                         :readonly="!edit_delivery_date_regional"
                                       ></v-text-field>
+                                    </v-col>
+                                    <v-col cols="12" md="2" v-if="!permissionSimpleSelected.includes('registration-delivery-return-contracts')">
                                     </v-col>
                                     <v-col cols="12" md="3" v-if="permissionSimpleSelected.includes('registration-delivery-return-contracts') && $route.query.workTray != 'tracingLoans'">
                                       <div>
@@ -1012,7 +1014,7 @@
                                       <v-col cols="12" md="3" v-show="loan.payment_type.name=='Depósito Bancario'">
                                         <p><b>CUENTA SIGEP:</b> {{' '+loan.lenders[0].sigep_status}}</p>
                                       </v-col>
-                                    
+
                                       <!--v-col cols="12" md="4">
                                         <v-select
                                           dense

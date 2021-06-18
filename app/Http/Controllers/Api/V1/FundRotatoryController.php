@@ -6,7 +6,9 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Helpers\Util;
 use App\User;
+use App\Affiliate;
 use App\FundRotatory;
+use App\FundRotatoryOutput;
 use App\Http\Requests\FundRotatoryForm;
 use Illuminate\Support\Facades\Auth;
 
@@ -55,16 +57,15 @@ class FundRotatoryController extends Controller
         $fundRotatory->date_check_delivery = $request->input('date_check_delivery');
         $fundRotatory->description = $request->input('description');
         $fundRotatory->role_id = $request->input('role_id');
-        $fundRotatory->balance = $request->input('amount')+$fundRotatory->last->balance;
-        if($fundRotatory->last == null)
+        if($fundRotatory->last == null){
             $fundRotatory->balance_previous= 0;
-        else{
+            $fundRotatory->balance = $request->input('amount');
+        }else{
             $balance_previous= $fundRotatory->last->balance;
-            $fundRotatory->balance_previous= $balance_previous;
+            $fundRotatory->balance_previous = $balance_previous;
+            $fundRotatory->balance = $request->input('amount')+$fundRotatory->last->balance;
         }
-
         return FundRotatory::create($fundRotatory->toArray());
-
     }
 
     /**
@@ -112,5 +113,25 @@ class FundRotatoryController extends Controller
         $fundRotatory = FundRotatory::find($fundRotatory);
         $fundRotatory->delete();
         return $fundRotatory;
+    }
+     /**
+    * Listado de ingresos y salidas del fondo rotatorio
+    * Devuelve un listado de fondo rotatorio y sus salidas
+    * @authenticated
+    * @responseFile responses/fund_rotary_entry/get_fund_rotatori_entry_output.200.json
+    */
+    public function get_fund_rotatori_entry_output()
+    {
+        $fundRotatories =  FundRotatory::orderByDesc('id')->get();
+        foreach($fundRotatories as $fundRotatory){
+                $fundRotatory->fund_rotatory_outputs->sortBy('id');
+            foreach($fundRotatory->fund_rotatory_outputs as $loan_outputs){ 
+                $loan = $loan_outputs->loan;
+                $loan->affiliate=Affiliate::find($loan->disbursable_id);
+                $loan->procedure_type = $loan->modality->procedure_type;
+            } 
+        } 
+        $fundRotatories = array('data'=>$fundRotatories);
+        return $fundRotatories;
     }
 }
