@@ -908,8 +908,7 @@ class LoanController extends Controller
         }
         $employees = [
             ['position' => 'Director General Ejecutivo','name'=>'CNL. DESP. EDGAR JOSE CORTEZ ALBORNOZ','identity_card'=>'3351371 LP'],
-            ['position' => 'Director de Asuntos Administrativos','name'=>'LIC. FRANZ LAZO CHAVEZ','identity_card'=>'3367169 LP'],
-            ['position' => 'Director De Estratégias Sociales e Inversiones', 'name'=>'LIC. JORGE FRANCISCO MACHACA CALCINA','identity_card'=>'4881022 LP']
+            ['position' => 'Director de Asuntos Administrativos','name'=>'LIC. FRANZ LAZO CHAVEZ','identity_card'=>'3367169 LP']
         ];
         /*foreach ($employees as $key => $employee) {
             $employees[$key] = Util::request_rrhh_employee($employee['position']);
@@ -1539,7 +1538,7 @@ class LoanController extends Controller
                 $view = view()->make('loan.payments.payment_kardex')->with($data)->render();
             else
                 $view = view()->make('loan.payments.payment_kardex_unfolded')->with($data)->render();
-            if ($standalone) return Util::pdf_to_base64([$view], $file_name, $information_loan, 'legal', $request->copies ?? 1, false);
+            if ($standalone) return Util::pdf_to_base64([$view], $file_name, $information_loan, 'letter', $request->copies ?? 1, false);
             return $view;
         }else{
             return "prestamo no desembolsado";
