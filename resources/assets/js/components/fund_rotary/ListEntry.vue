@@ -12,12 +12,10 @@
             :headers="headers"
             :items="fund_rotatory_list"
             :loading="loading"
-            :options.sync="options"
-            :server-items-length="totalFundRotatoryEntry"
             :footer-props="{ itemsPerPageOptions: [8, 15, 30] }"
-            dense
             multi-sort
             single-expand
+            :key="refreshFoundRotatoryTable"
           >
             <!--Modal-->
             <template v-slot:top>
@@ -51,26 +49,26 @@
                   <v-card-text>
                     <v-container>
                       <v-row>
-                        <v-col cols="12" sm="6" md="4">
+                        <v-col cols="12" sm="6" md="6">
                           <v-text-field
                             v-model="fund_rotatory_item.check_number"
                             label="Nro Cheque"
                           ></v-text-field>
                         </v-col>
-                        <v-col cols="12" sm="6" md="4">
+                        <v-col cols="12" sm="6" md="6">
                           <v-text-field
                             v-model="fund_rotatory_item.date_check_delivery"
                             label="Fecha de entrega cheque"
                             type="date"
                           ></v-text-field>
                         </v-col>
-                        <v-col cols="12" sm="6" md="4">
+                        <v-col cols="12" sm="6" md="12">
                           <v-text-field
                             v-model="fund_rotatory_item.amount"
                             label="Monto"
                           ></v-text-field>
                         </v-col>
-                        <v-col cols="12" sm="6" md="4">
+                        <v-col cols="12" sm="6" md="12">
                           <v-text-field
                             v-model="fund_rotatory_item.description"
                             label="Descripción"
@@ -82,7 +80,7 @@
 
                   <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn color="blue darken-1" text @click="close">
+                    <v-btn color="blue darken-1" text @click="close()">
                       Cancel
                     </v-btn>
                     <v-btn color="blue darken-1" text @click="saveFundRotary()">
@@ -91,7 +89,7 @@
                   </v-card-actions>
                 </v-card>
               </v-dialog>
-              <v-dialog v-model="dialogDelete" max-width="500px">
+              <!--<v-dialog v-model="dialogDelete" max-width="500px">
                 <v-card>
                   <v-card-title class="text-h5"
                     >Are you sure you want to delete this item?</v-card-title
@@ -107,11 +105,11 @@
                     <v-spacer></v-spacer>
                   </v-card-actions>
                 </v-card>
-              </v-dialog>
+              </v-dialog>-->
             </template>
             <!--Encabezados y registros-->
             <template v-slot:item="props">
-              <tr :class="props.isExpanded ? 'secondary white--text' : ''">
+              <tr :class="props.isExpanded ? 'info white--text' : ''">
                 <td @click.stop="props.expand(!props.isExpanded)">
                   {{ props.item.code_entry | uppercase }}
                 </td>
@@ -134,7 +132,13 @@
                 <td>
                   <v-tooltip bottom>
                     <template v-slot:activator="{ on }">
-                      <v-btn icon small v-on="on" color="warning" @click="updateFundRotary(props.item.id)">
+                      <v-btn
+                        icon
+                        small
+                        v-on="on"
+                        color="warning"
+                        @click="editItem(props.item)"
+                      >
                         <v-icon>mdi-pencil</v-icon>
                       </v-btn>
                     </template>
@@ -153,10 +157,49 @@
               </tr>
             </template>
             <!--Expanded-->
-            <template v-slot:expanded-item="{ headers }">
-              <tr>
-                <td :colspan="headers.length" class="px-0">
-                  <ListOutput />
+            <template v-slot:expanded-item="{ headers, item }">
+              <tr >
+                <td :colspan="headers.length" class="pa-0 pl-10 pb-1 pr-1" style=" background-color:#0288D1" >
+                  <v-data-table
+                    :headers="headersOutput"
+                    :items="item.fund_rotatory_outputs"
+                    :loading="loading"
+                    dense
+                    hide-default-footer
+                  >
+
+                  <template v-slot:[`item_correlativo`]="{ item }">
+                    {{$options.filters.fullName(item.loan.affiliate, true) }}
+                  </template>
+                  <template v-slot:[`item.affiliate`]="{ item }">
+                    {{$options.filters.fullName(item.loan.affiliate, true) }}
+                  </template>
+                  <template v-slot:[`item.loan.disbursement_date`]="{ item }">
+                    {{ item.loan.disbursement_date | datetimeshorted }}
+                  </template>
+                  <template v-slot:[`item.loan.modality.procedure_type`]="{ item }">
+                    {{ item.loan.modality.procedure_type.name }}
+                  </template>
+                  
+                  <template v-slot:[`item.actions`]="{ item }">
+                    <v-tooltip bottom>
+                      <template v-slot:activator="{ on }">
+                        <v-btn
+                          icon
+                          x-small
+                          v-on="on"
+                          color="primary"
+                          @click="imprimirRecive(item.loan.id)"
+                        ><v-icon>mdi-printer</v-icon>
+                        </v-btn>
+                      </template>
+                      <span>{{tray != 'all'? 'Revisar trámite' : 'Ver trámite'}}</span>
+                    </v-tooltip>
+                  </template>
+
+
+
+                  </v-data-table>
                 </td>
               </tr>
             </template>
@@ -183,7 +226,7 @@ export default {
     search: "",
     options: {
       page: 1,
-      itemsPerPage: 8,
+      //itemsPerPage: 8,
       sortBy: ["code_entry"],
       sortDesc: [false],
     },
@@ -191,11 +234,11 @@ export default {
     totalFundRotatoryEntry: 0,
     headers: [
       {
-        text: "Código",
+        text: "Cód. Recibo",
         value: "code_entry",
         class: ["normal", "white--text"],
         width: "15%",
-        sortable: false,
+        sortable: true,
       },
       {
         text: "Número de cheque",
@@ -212,21 +255,21 @@ export default {
         sortable: false,
       },
       {
-        text: "Monto",
+        text: "Monto [Bs]",
         value: "amount",
         class: ["normal", "white--text"],
         width: "10%",
         sortable: false,
       },
       {
-        text: "Saldo Anterior",
+        text: "Saldo Anterior [Bs]",
         value: "balance_previous",
         class: ["normal", "white--text"],
         width: "10%",
         sortable: false,
       },
       {
-        text: "Saldo Actual",
+        text: "Saldo Actual [Bs]",
         value: "balance",
         class: ["normal", "white--text"],
         width: "10%",
@@ -241,16 +284,71 @@ export default {
         sortable: false,
       },
     ],
+    headersOutput: [
+      {
+        text: "Nro Recibo",
+        value: "code",
+        class: ["white", "black--text"],
+        width: "5%",
+        sortable: false,
+      },
+      {
+        text: "Nro Contrato",
+        value: "loan.code",
+        class: ["white", "black--text"],
+        width: "15%",
+        sortable: false,
+      },
+      {
+        text: "Fecha desembolso",
+        value: "loan.disbursement_date",
+        class: ["white", "black--text"],
+        width: "15%",
+        sortable: false,
+      },
+      {
+        text: "Afiliado",
+        value: "affiliate",
+        class: ["white", "black--text"],
+        width: "25%",
+        sortable: false,
+      },
+      {
+        text: "Monto [Bs]",
+        value: "loan.amount_requested",
+        class: ["white", "black--text"],
+        width: "10%",
+        sortable: false,
+      },
 
+      {
+        text: "Concepto",
+        value: "loan.modality.procedure_type",
+        class: ["white", "black--text"],
+        width: "10%",
+        sortable: false,
+      },
+      {
+        text: "Acción",
+        value: "actions",
+        class: ["white", "black--text"],
+        sortable: false,
+        width: "15%",
+        sortable: false,
+      },
+    ],
     fund_rotatory_item: {},
     editedIndexPerRef: -1,
+    dialog: false,
+    //editedItem: {},
+    defaultItem: {},
+    refreshFoundRotatoryTable: 0,
   }),
   computed: {
     //Metodo para obtener Permisos por rol
     permissionSimpleSelected() {
       return this.$store.getters.permissionSimpleSelected;
     },
-
   },
   watch: {
     options: function (newVal, oldVal) {
@@ -274,7 +372,8 @@ export default {
     async getFundRotary(params) {
       try {
         this.loading = true;
-        let res = await axios.get(`fund_rotatory_entry`, {
+        let res = await axios.get(
+          `fund_rotatory_entry_output` /*, {
           params: {
             page: this.options.page,
             per_page: this.options.itemsPerPage,
@@ -282,15 +381,18 @@ export default {
             sortDesc: this.options.sortDesc,
             //search: this.search
           },
-        });
+        }
+        */
+        );
 
         this.fund_rotatory_list = res.data.data;
         console.log(this.fund_rotatory_list);
-        this.totalFundRotatoryEntry = res.data.total;
+        /*this.totalFundRotatoryEntry = res.data.total;
         delete res.data["data"];
         this.options.page = res.data.current_page;
         this.options.itemsPerPage = parseInt(res.data.per_page);
-        this.options.totalItems = res.data.total;
+        this.options.totalItems = res.data.total;*/
+        this.refreshFoundRotatoryTable++
       } catch (e) {
         console.log(e);
       } finally {
@@ -300,30 +402,68 @@ export default {
 
     async saveFundRotary() {
       try {
-        let res = await axios.post(`fund_rotatory_entry`, {
-          check_number: this.fund_rotatory_item.check_number,
-          amount: this.fund_rotatory_item.amount,
-          date_check_delivery: this.fund_rotatory_item.date_check_delivery,
-          description: this.fund_rotatory_item.description,
-          role_id: this.$store.getters.rolePermissionSelected.id,
-        });
+        if (this.fund_rotatory_item.id) {
+          let res = await axios.patch(`fund_rotatory_entry/${this.fund_rotatory_item.id}`,
+            {
+              check_number: this.fund_rotatory_item.check_number,
+              amount: this.fund_rotatory_item.amount,
+              date_check_delivery: this.$moment(this.fund_rotatory_item.date_check_delivery).format("YYYY-MM-DD"),
+              description: this.fund_rotatory_item.description,
+              role_id: this.$store.getters.rolePermissionSelected.id,
+            }
+          );
+        } else {
+          let res = await axios.post(`fund_rotatory_entry`, {
+            check_number: this.fund_rotatory_item.check_number,
+            amount: this.fund_rotatory_item.amount,
+            date_check_delivery: this.fund_rotatory_item.date_check_delivery,
+            description: this.fund_rotatory_item.description,
+            role_id: this.$store.getters.rolePermissionSelected.id,
+          });
+        }
+
+        this.dialog = false;
+        this.getFundRotary();
       } catch (e) {
         console.log(e);
       } finally {
         this.loading = false;
       }
     },
-    async updateFundRotary(id) {
+    editItem(item) {
+      this.fund_rotatory_item = item;
+      this.fund_rotatory_item.date_check_delivery= this.$moment(this.fund_rotatory_item.date_check_delivery).format('YYYY-MM-DD')
+      console.log("edit");
+      console.log(this.fund_rotatory_item);
+      this.dialog = true;
+    },
+
+    deleteItem(item) {
+      const index = this.contrib_codebtor.indexOf(item);
+      confirm("Esta seguro que?") && this.contrib_codebtor.splice(index, 1);
+    },
+
+    close() {
+      this.dialog = false;
+      this.$nextTick(() => {
+        this.fund_rotatory_item = Object.assign({}, this.defaultItem);
+        this.editedIndex = -1;
+      });
+    },
+        async imprimirRecive(item) {
       try {
-        let res = await axios.patch(`fund_rotatory_entry/${id}`,this.fund_rotatory_item);
+          let res = await axios.get(`print_fund_rotary_output/${item}`)
+            printJS({
+              printable: res.data.content,
+              type: res.data.type,
+              file_name: res.data.file_name,
+              base64: true
+            })
       } catch (e) {
-        console.log(e);
-      } finally {
-        this.loading = false;
+        this.toastr.error("Ocurrió un error en la impresión.")
+        console.log(e)
       }
     },
-
-
 
   },
 };
