@@ -235,12 +235,10 @@
 
 <script>
 import RemoveItem from "@/components/shared/RemoveItem";
-import ListOutput from "@/components/fund_rotary/ListOutput";
 export default {
   name: "fund_rotatory_entry-list",
   components: {
-    RemoveItem,
-    ListOutput,
+    RemoveItem
   },
   data: () => ({
     bus: new Vue(),
