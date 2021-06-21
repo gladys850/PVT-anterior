@@ -1390,7 +1390,13 @@ export default {
               }
             ]
         })
-            this.loan.amount_approved = res.data.amount_requested
+        if(res.data.amount_requested  > res.data.amount_maximum_suggested )
+        {
+           this.loan.amount_approved = res.data.amount_maximum_suggested
+        }
+        else{
+           this.loan.amount_approved = res.data.amount_requested
+        }
             this.loan.loan_term = res.data.months_term
             this.loan.indebtedness_calculated = res.data.indebtedness_calculated_total
             this.loan.estimated_quota = res.data.quota_calculated_estimated_total
