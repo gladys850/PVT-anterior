@@ -37,7 +37,8 @@ class PeriodController extends Controller
      * Inserta el periodo 
      * @bodyParam year numeric Año del periodo. Example: 2021
      * @bodyParam month numeric mes de la boleta es requerido. Example: 2
-     * @bodyParam  numeric Monto de conciliacion. Example: 1255.5
+     * @bodyParam import_command boolean estado de los registros de pago. Example: 2
+     * @bodyParam import_senasir boolean mes de . Example: 2
      * @bodyParam description string Descripcion del periodo. Example: Periodo de descripción
      * @authenticated
      * @responseFile responses/periods/store.200.json
@@ -55,8 +56,7 @@ class PeriodController extends Controller
             $period->month = $estimated_date->month;
             $period->description = $request->description;
             $period->import_command = false;
-            $period->import_senasir = false;
-            
+            $period->import_senasir = false;          
             return Period::create($period->toArray());
             } 
         else{
