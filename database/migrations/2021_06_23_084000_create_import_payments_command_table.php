@@ -13,7 +13,7 @@ class CreateImportPaymentsCommandTable extends Migration
      */
     public function up()
     {
-        Schema::create('import_payments_commands', function (Blueprint $table) {
+        Schema::create('import_payments_command', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('period_id')->unsigned();
             $table->foreign('period_id')->references('id')->on('periods');
