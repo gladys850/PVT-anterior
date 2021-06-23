@@ -11,7 +11,6 @@
 @php ($modality = $loan->modality)
     @php ($title_refinancing = explode(" ",$modality->name))
     @php ($title_refinancing = $title_refinancing[0] == "Refinanciamiento" ? '':"PRÉSTAMO ")
-  
     <div class="font-semibold leading-tight text-center m-b-10 text-xs">
         CONTRATO DE {{$title_refinancing}}<font style="text-transform: uppercase;">{{ $title }}</font>
         <div>Nº {{ $loan->code }}</div>
@@ -195,7 +194,7 @@ if(($modality->name == 'Refinanciamiento de Préstamo a Corto Plazo Sector Activ
                 if($modality->name =='Refinanciamiento de Préstamo a Corto Plazo Sector Pasivo SENASIR'|| $modality->name == 'Refinanciamiento de Préstamo a Corto Plazo Sector Activo' || $modality->name == 'Refinanciamiento de Préstamo a Corto Plazo sector Pasivo AFP'){
                     $loan_name = 'de refinancimiento';
                 }?>
-            <?php}?>
+            <?php } ?>
             damos nuestra plena conformidad con todas y cada una de las cláusulas precedentes, obligándolos a su fiel y estricto cumplimiento. En señal de lo cual suscribimos el presente contrato {{$loan_name}} de préstamo de dinero a corto plazo en manifestación de nuestra libre y espontánea voluntad y sin que medie vicio de consentimiento alguno.
         </span>
         @endif
