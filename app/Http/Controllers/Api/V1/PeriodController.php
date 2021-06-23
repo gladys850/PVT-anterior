@@ -47,7 +47,7 @@ class PeriodController extends Controller
     { 
       $estimated_date = Carbon::now()->endOfMonth();
       $period = Period::where('year',$estimated_date->year)->where('month',$estimated_date->month)->first();
-      $last_period = Period::all()->last();
+      $last_period = Period::orderBy('id')->get()->last();
       $last_date=Carbon::parse($last_period->year.'-'.$last_period->month);
       if($period == null){    
         if($last_period->import_command && $last_period->import_senasir){ 
