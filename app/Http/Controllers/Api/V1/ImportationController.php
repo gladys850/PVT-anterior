@@ -10,6 +10,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\ArchivoPrimarioExport;
 use Carbon;
 use Illuminate\Support\Facades\Log;
+use App\Period;
 
 /** @group Importacion de datos C o S
 * Importacion de datos Comando  o Senasir
@@ -28,14 +29,14 @@ class ImportationController extends Controller
      */
 
  public function agruped_payments(Request $request){
+    $request->validate([
+        'origin'=>'required|string',
+        'period'=>'required|exists:periods,id'
+    ]);
 
     DB::beginTransaction();
     try {
 
-        $request->validate([
-            'origin'=>'required|string',
-            'period'=>'required|exists:periods,id'
-        ]);
     $data = array();
     $count_affiliate = 0;
     $count_no_exist = 0;
@@ -59,6 +60,8 @@ class ImportationController extends Controller
                       "identity_card" =>$payment_agroup->identity_card,
                       "amount" => $payment_agroup->amount,
                       "amount_balance" => $payment_agroup->amount,
+                      "created_at" =>Carbon::now(),
+                      "updated_at" =>Carbon::now(),
                     ]);
                    Log::info('Registro agrupado de affiliado con Id: '.$affiliate_id);
                   $count_affiliate++;
@@ -111,6 +114,8 @@ class ImportationController extends Controller
         //verificar exixtencia de afiliados
             if($count_no_exist > 0){
                 DB::rollback();
+                //return $period;
+                $delete_copy = $this->delete_copy_payments($period,$origin);
                 //DB::commit();//eliminar
                 Log::info('Cantidad de registros no existentes: '.$count_no_exist);
 
@@ -138,11 +143,12 @@ class ImportationController extends Controller
                 if($count_affiliate > 0){
                     $validado =true;
                     DB::commit();
-                return  response()->json(['message' =>'Validación de datos realizado con exito!','validated_agroup'=>$validado,'count_affilites'=>$count_affiliate]);
+                    return  response()->json(['message' =>'Validación de datos realizado con exito!','validated_agroup'=>$validado,'count_affilites'=>$count_affiliate]);
 
                 }else{
-                    DB::commit();
-                return  response()->json(['message' =>'Validación de datos incorrecto! no se encontraron datos por agrupar','validated_agroup'=>$validado,'count_affilites'=>$count_affiliate]);
+                    //DB::commit();
+                    $delete_copy = $this->delete_copy_payments($period,$origin);
+                    return  response()->json(['message' =>'Validación de datos incorrecto! no se encontraron datos por agrupar','validated_agroup'=>$validado,'count_affilites'=>$count_affiliate]);
                 }
             }
         } catch (\Exception $e) {
