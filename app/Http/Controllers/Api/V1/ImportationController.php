@@ -227,4 +227,114 @@ class ImportationController extends Controller
        $loan_guarantors= DB::select($query);
         return $loan_guarantors;
     }
+
+    public function copy_payments(request $request)
+    {
+        DB::beginTransaction();
+        try{
+            if(Period::whereId($request->period_id)->first()){
+                $drop = "drop table if exists payments_aux";
+                $drop = DB::select($drop);
+                if($request->type == 'C'){
+                    $temporary = "create temporary table payments_aux(period_id integer, identity_card varchar, amount float)";
+                    $temporary = DB::select($temporary);
+
+                    $copy = "copy payments_aux(identity_card, amount)
+                            FROM '$request->location'
+                            WITH DELIMITER ':' CSV header;";
+                    $copy = DB::select($copy);
+
+                    $update = "update payments_aux
+                                set period_id = $request->period_id";
+                    $update = DB::select($update);
+
+                    $update2 = "update payments_aux
+                                set identity_card = REPLACE(LTRIM(REPLACE(identity_card,'0',' ')),' ','0')";
+                    $update2 = DB::select($update2);
+
+                    $insert = "INSERT INTO import_command_payments(period_id, identity_card, amount)
+                                SELECT period_id, identity_card, amount FROM payments_aux;";
+                    $insert = DB::select($insert);
+                    DB::commit();
+
+                    $drop = "drop table if exists payments_aux";
+                    $drop = DB::select($drop);
+
+                    $consult = "select count(*) from import_command_payments where period_id = $request->period_id";
+                    $consult = DB::select($consult);
+                    return $consult;
+                }
+                else{
+                    if($request->type == 'S'){
+                        $temporary = "create temporary table payments_aux(period_id integer, registration varchar, registration_dh varchar, amount float)";
+                        $temporary = DB::select($temporary);
+
+                        $copy = "copy payments_aux(registration, registration_dh, amount)
+                                FROM '$request->location'
+                                WITH DELIMITER ':' CSV header;";
+                        $copy = DB::select($copy);
+
+                        $update = "update payments_aux
+                                    set period_id = $request->period_id";
+                        $update = DB::select($update);
+
+                        $insert = "INSERT INTO import_senasir_payments(period_id, registration, registration_dh, amount)
+                                    SELECT period_id, registration, registration_dh, amount FROM payments_aux;";
+                        $insert = DB::select($insert);
+                        DB::commit();
+
+                        $drop = "drop table if exists payments_aux";
+                        $drop = DB::select($drop);
+
+                        $consult = "select count(*) from import_senasir_payments where period_id = $request->period_id";
+                        $consult = DB::select($consult);
+                        return $consult;
+                        
+                    }
+                    else{
+                        return "tipo inexistente";
+                    }
+                }
+            }else{
+                return "periodo inexistente";
+            }
+        }catch(Exception $e){
+            DB::rollback();
+            return $e;
+        }
+    }
+
+    public function delete_copy_payments($period, $origin)
+    {
+        DB::beginTransaction();
+        try{
+            if(Period::whereId($period)->first() && $origin == 'C' || Period::whereId($period)->first() && $origin == 'S')
+            {
+                $count = 0;
+                if($origin == 'C'){
+                    $query = "delete
+                                from import_command_payments
+                                where period_id = $period";
+                    $query = DB::select($query);
+                    DB::commit();
+                    return true;
+                }
+                if($origin == 'S'){
+                    $query = "delete
+                                from import_senasir_payments
+                                where period_id = $period";
+                    $query = DB::select($query);
+                    DB::commit();
+                    return true;
+                }
+            }
+            else
+                return false;
+        }
+        catch (Exception $e)
+        {
+            DB::rollback();
+            return $e;
+        }
+    }
 }
