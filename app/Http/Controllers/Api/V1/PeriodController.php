@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Helpers\Util;
 use App\User;
 use App\Period;
+use Carbon;
 use App\Http\Requests\PeriodForm;
 
 /** @group Periodos de cobros 
@@ -25,7 +26,7 @@ class PeriodController extends Controller
     * @queryParam page Número de página. Example: 1
     * @authenticated
     * @responseFile responses/periods/index.200.json
-     */
+    */
     public function index(Request $request)
     {
         return Util::search_sort(new Period(), $request);
@@ -34,16 +35,38 @@ class PeriodController extends Controller
     /**
      * Nuevo registro de periodo
      * Inserta el periodo 
-     * @bodyParam year numeric required Año del periodo. Example: 2021
-     * @bodyParam month numeric required mes de la boleta es requerido. Example: 2
-     * @bodyParam amount_conciliation numeric Monto de conciliacion. Example: 1255.5
+     * @bodyParam year numeric Año del periodo. Example: 2021
+     * @bodyParam month numeric mes de la boleta es requerido. Example: 2
+     * @bodyParam import_command boolean estado de los registros de pago. Example: true
+     * @bodyParam import_senasir boolean mes de . Example: false
      * @bodyParam description string Descripcion del periodo. Example: Periodo de descripción
      * @authenticated
      * @responseFile responses/periods/store.200.json
      */
-    public function store(PeriodForm $request)
-    {
-        return Period::create($request->all());
+    public function store(Request $request)
+    { 
+      $estimated_date = Carbon::now()->endOfMonth();
+      $period = Period::where('year',$estimated_date->year)->where('month',$estimated_date->month)->first();
+      $last_period = Period::orderBy('id')->get()->last();
+      $last_date=Carbon::parse($last_period->year.'-'.$last_period->month);
+      if($period == null){    
+        if($last_period->import_command && $last_period->import_senasir){ 
+            $period = new Period;
+            $period->year = $estimated_date->year;
+            $period->month = $estimated_date->month;
+            $period->description = $request->description;
+            $period->import_command = false;
+            $period->import_senasir = false;          
+            return Period::create($period->toArray());
+            } 
+        else{
+         $result['message'] = "Para realizar la creación de un nuevo periodo, debe realizar la confirmación de los pagos de Comando y Senasir del periodo de ".$last_date->isoFormat('MMMM');
+        }
+       } 
+       else{
+        $result['message'] = "El periodo ya existe";
+       }
+       return $result; 
     }
 
     /**
@@ -60,15 +83,15 @@ class PeriodController extends Controller
     }
 
     /**
-     * Actualizar contribucion del sector pasivo
-     * Actualizar datos principales destino de préstamo
-     * @urlParam aid_contribution ID de destino de Préstamo. Example: 591292
-     * @bodyParam affiliate_id integer ID del afiliado es requerido. Example: 10528
-     * @bodyParam month_year date mes de la boleta es requerido. Example: 2020-02-01
-     * @bodyParam rent numeric  Monto de la renta es requerido. Example: 1255.5
-     * @bodyParam dignity_rent numeric  Monto de la renta dignidad es requerido. Example: 300
+     * Actualizar periodo
+     * Actualizar periodo para cobranzas
+     * @urlParam period ID de periodo. Example: 591292
+     * @bodyParam year numeric required Año del periodo. Example: 2021
+     * @bodyParam month numeric required mes de la boleta es requerido. Example: 2
+     * @bodyParam amount_conciliation numeric Monto de conciliacion. Example: 1255.5
+     * @bodyParam description string Descripcion del periodo. Example: Periodo de descripción
      * @authenticated
-     * @responseFile responses/aid_contribution/update.200.json
+     * @responseFile responses/periods/update.200.json
      */
     public function update(PeriodForm $request,Period $period)
     {
@@ -78,10 +101,10 @@ class PeriodController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * Eliminar periodo.
+     * @urlParam period ID de periodo. Example: 2
+     * @authenticated
+     * @responseFile responses/periods/destroy.200.json
      */
     public function destroy(Period $period)
     {
@@ -91,30 +114,28 @@ class PeriodController extends Controller
 
     /**
      * Listar los meses de un año
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @queryParam year required Año de busqueda. Example: 2020
+     * @authenticated
+     * @responseFile responses/periods/get_list_month.200.json
      */
     public function get_list_month(Request $request)
     {
         $request->validate([
-            'year' => 'required|exists:periods,year',
-            'state' => 'integer'
+            'year' => 'required|exists:periods,year'
         ]);
         $period = Period::where('year',$request->year)->get();
         return $period;
     }
 
      /**
-     * Listar los años registrados
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * Listar los años registrados en la tabla periodos
+     * @authenticated
+     * @responseFile responses/periods/get_list_year.200.json
      */
     public function get_list_year(Request $request)
     {
         $period = Period::select('year')->distinct()->get();
         return $period;
-    }    
-    
+    }
+
 }

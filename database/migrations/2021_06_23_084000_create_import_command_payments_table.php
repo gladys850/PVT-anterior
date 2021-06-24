@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreatePeriodsTable extends Migration
+class CreateImportCommandPaymentsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,14 +13,12 @@ class CreatePeriodsTable extends Migration
      */
     public function up()
     {
-        Schema::create('periods', function (Blueprint $table) {
+        Schema::create('import_command_payments', function (Blueprint $table) {
             $table->id();
-            $table->year('year');
-            $table->integer('month');
-            $table->unique(['year', 'month']);
-          	$table->boolean('import_command')->default(false);
-          	$table->boolean('import_senasir')->default(false);
-            $table->text('description')->nullable();
+            $table->unsignedBigInteger('period_id')->unsigned();
+            $table->foreign('period_id')->references('id')->on('periods');
+            $table->string('identity_card');
+            $table->float('amount',10,2);
             $table->timestamps();
             $table->softDeletes();
         });
@@ -33,6 +31,6 @@ class CreatePeriodsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('periods');
+        Schema::dropIfExists('import_command_payments');
     }
 }

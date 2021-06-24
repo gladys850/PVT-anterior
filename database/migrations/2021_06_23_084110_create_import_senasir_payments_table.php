@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreatePaymentGroupedsTable extends Migration
+class CreateImportSenasirPaymentsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,15 +13,13 @@ class CreatePaymentGroupedsTable extends Migration
      */
     public function up()
     {
-        Schema::create('payment_groupeds', function (Blueprint $table) {
+        Schema::create('import_senasir_payments', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('affiliate_id')->unsigned();
-            $table->foreign('affiliate_id')->references('id')->on('affiliates');
             $table->unsignedBigInteger('period_id')->unsigned();
             $table->foreign('period_id')->references('id')->on('periods');
+            $table->string('registration');
+            $table->string('registration_dh')->nullable();
             $table->float('amount',10,2);
-            $table->float('amount_balance',10,2);
-            $table->enum('origin', ['C', 'S']);
             $table->timestamps();
             $table->softDeletes();
         });
@@ -34,6 +32,6 @@ class CreatePaymentGroupedsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('payment_groupeds');
+        Schema::dropIfExists('import_senasir_payments');
     }
 }
