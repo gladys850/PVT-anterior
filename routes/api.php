@@ -97,6 +97,9 @@ Route::group([
 
         Route::apiResource('fund_rotatory_entry', 'Api\V1\FundRotatoryController')->only('index', 'show', 'store', 'update', 'destroy');//Fondo rotatorio
         Route::get('print_fund_rotary_output/{loan_id}', 'Api\V1\FundRotatoryOutputController@print_fund_rotary');
+        //import payments
+        Route::get('agruped_payments', 'Api\V1\ImportationController@agruped_payments');
+        Route::post('importation_payments_prueba', 'Api\V1\ImportationController@importation_payment');
         //get_list_month
         // Afiliados
         Route::group([
