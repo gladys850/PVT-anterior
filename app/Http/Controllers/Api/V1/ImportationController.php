@@ -228,7 +228,7 @@ class ImportationController extends Controller
         return $loan_guarantors;
     }
 
-    public function import_payments(request $request)
+    public function copy_payments(request $request)
     {
         DB::beginTransaction();
         try{
@@ -304,31 +304,32 @@ class ImportationController extends Controller
         }
     }
 
-    public function delete_copy_payments($period, $type)
+    public function delete_copy_payments($period, $origin)
     {
         DB::beginTransaction();
         try{
-            if(Period::whereId($period)->first() && $type == 'C' || Period::whereId($period)->first() && $type == 'S')
+            if(Period::whereId($period)->first() && $origin == 'C' || Period::whereId($period)->first() && $origin == 'S')
             {
                 $count = 0;
-                if($type == 'C'){
+                if($origin == 'C'){
                     $query = "delete
                                 from import_command_payments
                                 where period_id = $period";
                     $query = DB::select($query);
-                    $count = count($query);
+                    DB::commit();
+                    return true;
                 }
-                if($type == 'S'){
+                if($origin == 'S'){
                     $query = "delete
                                 from import_senasir_payments
                                 where period_id = $period";
-                    $count = count($query);
+                    $query = DB::select($query);
+                    DB::commit();
+                    return true;
                 }
-                return $count;
-                DB::commit();
             }
             else
-                return "periodo inexistente o tipo inexistente";
+                return false;
         }
         catch (Exception $e)
         {
