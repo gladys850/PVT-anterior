@@ -139,46 +139,51 @@ class LoanPaymentController extends Controller
     * Cargado del archivo csv de Pagos 
     * Realiza el copiado del archivo por ftp.
 	* @bodyParam file file required Archivo de importación. Example: file.csv
-    * @bodyParam state boolean required Tipo importacion Activo(1) o Pasivo(0). Example: 1
-    * @bodyParam estimated_date date Fecha estimada para la importacion. Example: 2020-12-31
+    * @bodyParam state enum required Tipo importacion Comando(C) o Senasir(S). Example: 1
     * @authenticated
     * @responseFile responses/loan_payment/upload_file_payment.200.json
     */
     public function upload_file_payment(Request $request){
         $request->validate([
             'file' => 'required',
-            'state'=> 'required|boolean',
-            'estimated_date'=> 'nullable|date_format:"Y-m-d"',
+            'state'=> 'string|in:C,S',       
          ]);
-         $ruta_archivo = false;
-         $estimated_date_importation = $request->estimated_date? Carbon::parse($request->estimated_date) : Carbon::now()->endOfMonth();
-         $month_contribution =  $estimated_date_importation->month;
-         $year_contributions = $estimated_date_importation->year;
-         $period = Period::where('year',$year_contributions)->where('month',$month_contribution)->first();
-         if($period == null){ 
-            $period = new Period;
-            $period->year = $year_contributions;
-            $period->month = $month_contribution;
-            $period->save();
-          }  
-         if($request->state){
-            $origin="comando_".$year_contributions;
-         }else{
-            $origin="senasir_".$year_contributions;
-         }
-        $file_name = $request->estimated_date.'.csv';
-       
         try {
-            $base_path = 'contribución/'.$origin;    
-            $file_path = Storage::disk('ftp')->putFileAs($base_path,$request->file,$file_name);
-            $result['period']=$period;
-            $result['file_path'] = $file_path;
-            return $result;
-        }      
+        $extencion= strtolower($request->file->getClientOriginalExtension()); 
+        if($extencion == "csv"){
+            $result = false;
+            $period_state =false;
+            $last_period = Period::orderBy('id')->get()->last();
+            $last_date = Carbon::parse($last_period->year.'-'.$last_period->month)->toDateString();
+            if($request->state == "C"){
+                $origin = "comando_".$last_period->year;
+                $period_state = $last_period->import_command;
+            }else{
+                $origin = "senasir_".$last_period->year;
+                $period_state = $last_period->import_senasir;
+            }
+            if($period_state == false){
+                $file_name = $last_date.'.csv';
+                $base_path = 'contribución/'.$origin;    
+                $file_path = Storage::disk('ftp')->putFileAs($base_path,$request->file,$file_name);
+                $result['period'] = $last_period->id;
+                $result['file_path'] = $file_path;
+                $result['state'] = $request->state;
+                $result['message'] = "Archivo csv guadado en el servidor FTP";
+                return $result;
+            }else{
+                $result['message'] = "No se puede ralizar el cargado del archivo ya que se realizo el registro de pago";  
+            }
+        }else {
+             $result['message'] = "El tipo de archivo requerido es .csv";
+        }
+        return $result;       
+     }      
         catch (\Exception $e) {
             return false;
         }
     }
+
 
 
     /**
