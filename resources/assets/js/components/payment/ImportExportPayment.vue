@@ -74,7 +74,7 @@
                                 bottom
                                 right
                                 v-on="on"
-                                @click.stop="importacionComando()"
+                                @click.stop="importacionComando(item.month)"
                                >
                                 <v-icon style="color:white">mdi-warehouse</v-icon>
                               </v-btn>
@@ -94,7 +94,7 @@
                                 :color="'teal'"
                                 right
                                 v-on="on"
-                                 @click.stop="importacionSenasir()"
+                                 @click.stop="importacionSenasir(item.month)"
                               >
                                 <v-icon  style="color:white" >mdi-home-analytics</v-icon>
                               </v-btn>
@@ -172,7 +172,7 @@
                   <v-toolbar-title>IMPORTACION {{title}}</v-toolbar-title>
                   <v-spacer></v-spacer>
                   <v-toolbar-items>
-                    <v-btn dark text v-show="true" @click="dialog = false" >
+                    <v-btn dark text v-show="importacion" @click="dialog = false" >
                       Ejecutar la Importación
                     </v-btn>
                   </v-toolbar-items>
@@ -184,7 +184,7 @@
                     <v-col cols="3"  md="3" >
                       <v-col cols="12" >
                         <v-toolbar-title>
-                          <center><b>Información para descuento</b></center>
+                          <center><b>Información para descuento </b></center>
                         </v-toolbar-title>
                         <v-progress-linear></v-progress-linear>
                       </v-col>
@@ -215,7 +215,6 @@
                       <v-col cols="6" >
                         <v-btn
                           color="success"
-                          :loading="loading_ipb"
                           @click.stop="uploadFilePayment()"
                           >Subir Archivo
                         </v-btn>
@@ -223,7 +222,6 @@
                          <v-col cols="6" >
                         <v-btn
                           color="info"
-                          :loading="loading_ipb"
                           @click.stop="validateFilePayment()"
                           >Validar Datos
                         </v-btn>
@@ -321,8 +319,10 @@ export default {
   data: () => ({
   
   bus: new Vue(),
+  importacion:false,
 
   dialog: false,
+  aux_period:null,
   title: null,
   dialog1: false,
   tab: null,
@@ -364,49 +364,6 @@ export default {
     clearInputs() {
       this.import_export.file = null
       this.import_export.state_affiliate = null
-      this.import_export.cutoff_date = null
-    },
-
-    /*async registerPaymentsBatch() {
-      try {
-        this.loading_rpb = true;
-        let res = await axios.post(`command_senasir_save_payment`, {
-          estimated_date: this.import_export.cutoff_date,
-        });
-        this.paymentsBatch = res.data;
-        this.toastr.success("Se realizo el registro de: " + this.paymentsBatch.loans_quantity + " pago del mes de " + this.import_export.cutoff_date);
-        console.log(this.paymentsBatch);
-      } catch (e) {
-        console.log(e);
-      }
-      this.loading_rpb = false;
-    },*/
-
-    async registerPaymentsBatch() {
-      const formData = new FormData();
-      formData.append("estimated_date", this.import_export.cutoff_date);
-      this.loading_rpb = true;
-      await axios({
-        url: "command_senasir_save_payment",
-        method: "POST",
-        responseType: "blob", // important
-        headers: { Accept: "application/vnd.ms-excel" },
-        data: formData,
-      })
-        .then((response) => {
-          console.log(response.data);
-          const url = window.URL.createObjectURL(new Blob([response.data]));
-          const link = document.createElement("a");
-          link.href = url;
-          link.setAttribute("download", "ReporteDecuento.txt");
-          document.body.appendChild(link);
-          link.click();
-          this.clearInputs();
-        })
-        .catch((e) => {
-          console.log(e);
-        });
-      this.loading_rpb = false;
     },
 
     async uploadFilePayment() {
@@ -429,34 +386,6 @@ export default {
       this.loading_ipb = false;
     },
 
-    async importationPaymentsBatch() {
-      const formData = new FormData();
-      formData.append("file", this.import_export.file);
-      formData.append("state", this.import_export.state_affiliate);
-      formData.append("estimated_date", this.import_export.cutoff_date);
-      this.loading_ipb = true
-      await axios({
-        url: "/loan_payment/importation_command_senasir",
-        method: "POST",
-        responseType: "blob", // important
-        headers: { Accept: "application/vnd.ms-excel" },
-        data: formData,
-      })
-        .then((response) => {
-          console.log(response.data);
-          const url = window.URL.createObjectURL(new Blob([response.data]));
-          const link = document.createElement("a");
-          link.href = url;
-          link.setAttribute("download", "ReporteDecuento.xls");
-          document.body.appendChild(link);
-          link.click();
-          this.clearInputs();
-        })
-        .catch((e) => {
-          console.log(e);
-        });
-      this.loading_ipb = false;
-    },
     async getYear() {
       try {
         this.loading = true;
@@ -509,12 +438,15 @@ export default {
         this.loading = false;
       }
     },
-     async importacionComando(){
+     async importacionComando(id){
+
+      this.aux_period= id,
       this.dialog=true
       this.import_export.state_affiliate = 'C'
       this.title= 'COMANDO'
     },
-    async importacionSenasir(){
+    async importacionSenasir(id){
+      this.aux_period= id,
       this.dialog=true
       this.import_export.state_affiliate = 'S'
       this.title= 'SENASIR'
@@ -524,7 +456,7 @@ export default {
       let res = await axios.get(`agruped_payments`,{
         params:{
           origin:'C',
-          period: 1
+          period: this.mes
         }
       }).then((res) => {
           const url = window.URL.createObjectURL(new Blob([res.data]));
@@ -546,71 +478,43 @@ export default {
     async validateFilePayment(){
     try {
 
-     // let res = await axios.get(`agruped_payments`,{
-     //   params:{
-     //     origin:'C',
-    //      period: 1
-    //    }
-   //   })
-   //     if(res.data.message){
-//this.toastr.error('entro por verdadero :)')
-         //   }
-         //   else{
-                 const formData = new FormData();
-       await axios({
-          url: '/agruped_payments',
-          method: "GET",
-       //   responseType: "blob", // important
-          headers: { Accept: "application/vnd.ms-excel" },
-          //headers: { Accept: "text/plain" },
-          data: formData,
-          params: {
-            origin:'C',
-            period: 1
-          }
-        })
-          .then((response) => {
-            console.log(response.data); 
-             const url = window.URL.createObjectURL(new Blob([response.data]));
-           const link = document.createElement("a");
-           link.href = url;
-           link.setAttribute("download", "ReporteAfiliadosNoImportados.xls");
-           document.body.appendChild(link);
-           link.click();
-          })
-     //       }
-/*
-        const formData = new FormData();
-       await axios({
-          url: '/agruped_payments',
+      let res = await axios.get(`agruped_payments`,{
+        params:{
+        origin: this.import_export.state_affiliate,
+        period: this.aux_period
+        }
+      })
+       if(res.data.validated_agroup){
+        this.importacion =res.data.validated_agroup
+        this.toastr.success(res.data.message +' '+'cantidad de afiliados '+res.data.count_affilites)
+      }
+      else{
+         this.importacion =res.data.validated_agroup
+             const formData = new FormData();
+
+         await axios({
+          url: '/upload_fail_validated_group',
           method: "GET",
           responseType: "blob", // important
           headers: { Accept: "application/vnd.ms-excel" },
           //headers: { Accept: "text/plain" },
           data: formData,
           params: {
-            origin:'C',
-            period: 1
+            origin:this.import_export.state_affiliate,
+            period: this.aux_period
           }
         })
           .then((response) => {
-            console.log(response.data); 
-            if(response.data.message){
-this.toastr.error('entro por verdadero :)')
-            }
-            else{
-          /*    const url = window.URL.createObjectURL(new Blob([response.data]));
-            const link = document.createElement("a");
-            link.href = url;
-            link.setAttribute("download", "ReporteAfiliadosNoImportados.xls");
-            document.body.appendChild(link);
-            link.click();*/
-
-           // this.toastr.error('entro por falso :)')
-
-           // }
-            
-          //})
+            console.log(response.data);
+             const url = window.URL.createObjectURL(new Blob([response.data]));
+           const link = document.createElement("a");
+           link.href = url;
+           link.setAttribute("download", "ReporteAfiliadosNoImportados.xls");
+           document.body.appendChild(link);
+           link.click();
+         })
+           this.toastr.error(res.data.message)
+      }
 
       } catch (e) {
         this.loading = false;
@@ -619,8 +523,6 @@ this.toastr.error('entro por verdadero :)')
         this.loading = false;
       }
     },
-      
-       
   },
 };
 </script>
