@@ -45,7 +45,7 @@ class PeriodController extends Controller
      */
     public function store(Request $request)
     {  $last_period = Period::orderBy('id')->get()->last();
-       $last_date=Carbon::parse($last_period->year.'-'.$last_period->month);
+     
        $result = [];
         if(!$last_period){
         $estimated_date = Carbon::now()->endOfMonth();
@@ -57,7 +57,8 @@ class PeriodController extends Controller
             $period->import_senasir = false;          
             return Period::create($period->toArray());
         }else{  
-        if($last_period->import_command && $last_period->import_senasir){     
+        $last_date=Carbon::parse($last_period->year.'-'.$last_period->month); 
+        if($last_period->import_command && $last_period->import_senasir){    
             $estimated_date = $last_date->addMonth();
             $period = new Period;
             $period->year = $estimated_date->year;
@@ -68,9 +69,10 @@ class PeriodController extends Controller
             return Period::create($period->toArray());
             } 
         else{
-            return $result['message'] = "Para realizar la creación de un nuevo periodo, debe realizar la confirmación de los pagos de Comando y Senasir del periodo de ".$last_date->isoFormat('MMMM');
+          $result['message'] = "Para realizar la creación de un nuevo periodo, debe realizar la confirmación de los pagos de Comando y Senasir del periodo de ".$last_date->isoFormat('MMMM');
         }
-        }     
+        }  
+        return $result;      
     }
 
     /**
