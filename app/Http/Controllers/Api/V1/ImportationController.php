@@ -132,12 +132,12 @@ class ImportationController extends Controller
                $last_date = Carbon::parse($last_period->year.'-'.$last_period->month)->toDateString();
                if($origin == 'C'){
                 $export = new ArchivoPrimarioExport($data_cabeceraC);
-                $file_name = $last_date.'.xls';
+                $file_name = $origin.'_'.$last_date.'.xls';
                 $base_path = 'errorValidacion_Command/'.'Command_'.$last_date;
                 Excel::store($export,$base_path.'/'.$file_name, 'ftp');
                }else{
                 $export = new ArchivoPrimarioExport($data_cabeceraS);
-                $file_name = $last_date.'.xls';
+                $file_name = $origin.'_'.$last_date.'.xls';
                 $base_path = 'errorValidacion_Senasir/'.'Senasir_'.$last_date;
                 Excel::store($export,$base_path.'/'.$file_name, 'ftp');
                }
@@ -389,10 +389,46 @@ class ImportationController extends Controller
             }else {
                 $result['message'] = "El tipo de archivo requerido es .csv";
             }
-            return $result;       
-        }      
+            return $result;
+        }
         catch (\Exception $e) {
             return $e;
         }
     }
+
+    /**
+    * Descargar archivo de error validacion de C o S
+    * Descargar error validacion de C o S
+    * @queryParam origin required Tipo de importacion C (Comando general) o S (Senasir). Example: C
+    * @queryParam period required id_del periodo . Example: 1
+    * @authenticated
+    * @responseFile responses/importation/validation_group.200.json
+     */
+
+    public function upload_fail_validated_group(Request $request){
+
+        $request->validate([
+            'origin'=>'required|string',
+            'period'=>'required|exists:periods,id'
+        ]);
+
+        $origin=$request->origin;
+        $last_period = Period::find($request->period);
+        $last_date = Carbon::parse($last_period->year.'-'.$last_period->month)->toDateString();
+
+        if($origin == 'C'){
+            $file_name = $origin.'_'.$last_date.'.xls';
+            $base_path = 'errorValidacion_Command/'.'Command_'.$last_date;
+        }else{
+            $file_name = $origin.'_'.$last_date.'.xls';
+            $base_path = 'errorValidacion_Senasir/'.'Senasir_'.$last_date;
+        }
+
+        if(Storage::disk('ftp')->has($base_path.'/'.$file_name)){
+            return $file = Storage::disk('ftp')->download($base_path.'/'.$file_name);
+        }else{
+            return abort(403, 'No existe archivo de falla para mostrar');
+        }
+    }
+
 }
