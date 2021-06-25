@@ -99,7 +99,10 @@ Route::group([
         Route::get('print_fund_rotary_output/{loan_id}', 'Api\V1\FundRotatoryOutputController@print_fund_rotary');
         //import payments
         Route::get('agruped_payments', 'Api\V1\ImportationController@agruped_payments');
-        Route::post('importation_payments_prueba', 'Api\V1\ImportationController@importation_payment');
+        Route::get('importation_payments_prueba', 'Api\V1\ImportationController@importation_payment');
+
+        Route::get('upload_fail_validated_group', 'Api\V1\ImportationController@upload_fail_validated_group');
+
         //get_list_month
         // Afiliados
         Route::group([
