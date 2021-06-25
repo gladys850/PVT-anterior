@@ -56,7 +56,7 @@ class ImportationController extends Controller
                     DB::table("command_payment_groups")
                     ->insert([
                       "affiliate_id" => $affiliate_id,
-                      "period_id" => 1,
+                      "period_id" => $period,
                       "identity_card" =>$payment_agroup->identity_card,
                       "amount" => $payment_agroup->amount,
                       "amount_balance" => $payment_agroup->amount,
@@ -89,7 +89,7 @@ class ImportationController extends Controller
                     DB::table("senasir_payment_groups")
                     ->insert([
                       "affiliate_id" => $affiliate_id,
-                      "period_id" => 1,
+                      "period_id" => $period,
                       "registration" =>$payment_agroup->registration,
                       "registration_dh" =>$payment_agroup->registration_dh,
                       "amount" => $payment_agroup->amount,
@@ -114,12 +114,9 @@ class ImportationController extends Controller
         //verificar exixtencia de afiliados
             if($count_no_exist > 0){
                 DB::rollback();
-                //return $period;
                 $delete_copy = $this->delete_copy_payments($period,$origin);
-                //DB::commit();//eliminar
                 Log::info('Cantidad de registros no existentes: '.$count_no_exist);
 
-               $FileC="DatosNoEncontradosComando"; $FileS="DatosNoEncontradosSenasir";
 
                $data_cabeceraC=array(array("NRO de CARNET", "MONTO TOTAL"));
                $data_cabeceraS=array(array("MATRÍCULA", "MATRÍCULA D_H", "MONTO TOTAL"));
@@ -131,14 +128,21 @@ class ImportationController extends Controller
                         array_push($data_cabeceraS, array($row->registration, $row->registration_dh, $row->amount));
                    }
                }
+               $last_period = Period::find($period);
+               $last_date = Carbon::parse($last_period->year.'-'.$last_period->month)->toDateString();
                if($origin == 'C'){
                 $export = new ArchivoPrimarioExport($data_cabeceraC);
-                return Excel::download($export, $FileC.'.xls');
+                $file_name = $last_date.'.xls';
+                $base_path = 'errorValidacion_Command/'.'Command_'.$last_date;
+                Excel::store($export,$base_path.'/'.$file_name, 'ftp');
                }else{
                 $export = new ArchivoPrimarioExport($data_cabeceraS);
-                return Excel::download($export, $FileS.'.xls');
+                $file_name = $last_date.'.xls';
+                $base_path = 'errorValidacion_Senasir/'.'Senasir_'.$last_date;
+                Excel::store($export,$base_path.'/'.$file_name, 'ftp');
                }
-               // return  response()->json(['count_affiliates_not_exist'=>$count_no_exist, 'Affiliates_regularize'=>$data]);
+               $count_affiliate = 0;
+                return  response()->json(['message' =>'Validación de datos incorrecto!','validated_agroup'=>$validado,'count_affilites'=>$count_affiliate]);
             }else{
                 if($count_affiliate > 0){
                     $validado =true;
