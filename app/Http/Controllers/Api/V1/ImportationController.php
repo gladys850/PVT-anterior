@@ -236,6 +236,10 @@ class ImportationController extends Controller
 
     public function copy_payments(request $request)
     {
+        $file = Storage::disk('ftp')->get($request->location."/".$request->file_name);
+        Storage::disk('public')->put($request->file_name, $file);
+        //return Storage::disk('public')->path($request->file_name);
+        //return Storage::disk('public')->getDriver()->getAdapter()->getPathPrefix();
         DB::beginTransaction();
         try{
             if(Period::whereId($request->period_id)->first()){
@@ -246,9 +250,10 @@ class ImportationController extends Controller
                     $temporary = DB::select($temporary);
 
                     $copy = "copy payments_aux(identity_card, amount)
-                            FROM '$request->location'
+                            FROM '/home/richard/Documentos/trabajo/PVT/storage/app/public/".$request->file_name."'
                             WITH DELIMITER ':' CSV header;";
                     $copy = DB::select($copy);
+                    Storage::disk('public')->delete($request->file_name);
 
                     $update = "update payments_aux
                                 set period_id = $request->period_id";
@@ -268,7 +273,7 @@ class ImportationController extends Controller
 
                     $consult = "select count(*) from import_command_payments where period_id = $request->period_id";
                     $consult = DB::select($consult);
-                    return $consult;
+                    return $consult['count'];
                 }
                 else{
                     if($request->type == 'S'){
@@ -276,9 +281,10 @@ class ImportationController extends Controller
                         $temporary = DB::select($temporary);
 
                         $copy = "copy payments_aux(registration, registration_dh, amount)
-                                FROM '$request->location'
+                                FROM '/home/richard/Documentos/trabajo/PVT/storage/app/public/".$request->file_name."'
                                 WITH DELIMITER ':' CSV header;";
                         $copy = DB::select($copy);
+                        Storage::disk('public')->delete($request->file_name);
 
                         $update = "update payments_aux
                                     set period_id = $request->period_id";
@@ -375,9 +381,10 @@ class ImportationController extends Controller
                     $base_path = 'contribución/'.$origin;    
                     $file_path = Storage::disk('ftp')->putFileAs($base_path,$request->file,$file_name);
                     $request['period_id'] = $last_period->id;
-                    $request['location'] = $file_path;
+                    $request['location'] = $base_path;
                     $request['type'] = $request->state;
-                    $result = $this->copy_payments($request);
+                    $request['file_name'] = $file_name;
+                    $result['message'] = $this->copy_payments($request);
                     return $result;
                 }else{
                     $result['message'] = "No se puede ralizar el cargado del archivo ya que se realizo el registro de pago";  
