@@ -571,12 +571,12 @@ class ImportationController extends Controller
     */
     public function create_payments_command(request $request)
     {
-        $period = Period::whereId($request->period_id)->first();
+        $period = Period::whereId($request->period)->first();
         $query = "select * from command_payment_groups where period_id = $period->id order by id";
         $payments = DB::select($query);//return $payments;
         $estimated_date = Carbon::create($period->year, $period->month, 1);
         $estimated_date = Carbon::parse($estimated_date)->endOfMonth()->format('Y-m-d');
-        $c = 0;$sw = false;
+        $c = 0;$sw = false;$c2 = 0;
         foreach ($payments as $payment){
             $amount = $payment->amount_balance;
             $affiliate = "select * from Affiliates where id = $payment->affiliate_id";
@@ -642,7 +642,7 @@ class ImportationController extends Controller
            }
         }
         $paids = [
-            'period' => $period,
+            'period'=> $period,
             'paid_by_lenders' => $c,
             'paid_by_guarantors' => $c2,
         ];
