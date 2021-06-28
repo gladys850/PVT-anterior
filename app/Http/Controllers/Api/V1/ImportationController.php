@@ -213,123 +213,88 @@ class ImportationController extends Controller
       DB::beginTransaction();
       try{
         $period =Period::whereId($request->period)->first();
-        $senasir_lender = 0;
-        $senasir_guarantor = 0;
+        $procedure_modality_id = ProcedureModality::whereShortened('DES-SENASIR')->first()->id;
+        $categorie_id = LoanPaymentCategorie::whereTypeRegister('SISTEMA')->first()->id;
+        $senasir_lender = 0; $senasir_guarantor = 0;
         if(!$period->import_senasir){
             $estimated_date = Carbon::create($period->year, $period->month, 1);
             $estimated_date = Carbon::parse($estimated_date)->endOfMonth()->format('Y-m-d');
 
-            $query = "  SELECT *
-                            FROM senasir_payment_groups
-                            where senasir_payment_groups.period_id = '$period->id'";
+            $query = "SELECT * FROM senasir_payment_groups where senasir_payment_groups.period_id = '$period->id'";
 
             $payment_agroups = DB::select($query);
 
             foreach($payment_agroups as $payment_agroup){
+                $sw = false;
                 $amount_group = $payment_agroup->amount_balance;
                 if($amount_group > 0){
                     if($this->loan_lenders($payment_agroup->affiliate_id)){
                         $loans_lender = $this->loan_lenders($payment_agroup->affiliate_id);
                         foreach($loans_lender as $loan_lender){
-                            if($amount_group > 0){
                             $loan = Loan::whereId($loan_lender->id)->first();
-                            $payment = $loan->next_payment2($payment_agroup->affiliate_id, null,'T' ,59, null,false);
-                            if($amount_group >= $payment->estimated_quota){
-                                $form = (object)[
-                                    'procedure_modality_id' => 59,
-                                    'affiliate_id' => $payment_agroup->affiliate_id,
-                                    'paid_by' => "T",
-                                    'categorie_id' => 4,
-                                    'estimated_date' => $estimated_date,
-                                    'voucher' => 'AUTOMÁTICO',
-                                    'estimated_quota' => $payment->estimated_quota,
-                                    'loan_payment_date' => Carbon::now()->format('Y-m-d'),
-                                    'liquidate' => false,
-                                    'description'=> 'Pago realizado por sistema',
-                                ];
-                                $registry_patment = $this->set_payment($form, $loan);
-                                $amount_group = $amount_group - $registry_patment->estimated_quota;
-                                $update = "update senasir_payment_groups
-                                        set amount_balance = $amount_group where id = $payment_agroup->id";
-                                $update = DB::select($update);
-                                $senasir_lender++;
-                            }else{
-                                $form = (object)[
-                                    'procedure_modality_id' => 59,
-                                    'affiliate_id' => $payment_agroup->affiliate_id,
-                                    'paid_by' => "T",
-                                    'categorie_id' => 4,
-                                    'estimated_date' => $estimated_date,
-                                    'voucher' => 'AUTOMÁTICO',
-                                    'estimated_quota' => $amount_group,
-                                    'loan_payment_date' => Carbon::now()->format('Y-m-d'),
-                                    'liquidate' => false,
-                                    'description'=> 'Pago realizado por sistema',
-                                ];
-                                $registry_patment = $this->set_payment($form, $loan);
-                                $amount_group = $amount_group - $registry_patment->estimated_quota;
-                                $update = "update senasir_payment_groups
-                                        set amount_balance = $amount_group where id = $payment_agroup->id";
-                                $update = DB::select($update);
-                                $senasir_lender++;
-                            }
+                            if($amount_group > 0 && $loan->balance > 0 ){
+                            //$loan = Loan::whereId($loan_lender->id)->first();
+                            $payment = $loan->next_payment2($payment_agroup->affiliate_id, null,'T' ,$procedure_modality_id, null,false);
+                            if($amount_group >= $payment->estimated_quota)
+                            $sw =true;
+                                if($amount_group > 0){
+                                    $form = (object)[
+                                        'procedure_modality_id' => $procedure_modality_id,
+                                        'affiliate_id' => $payment_agroup->affiliate_id,
+                                        'paid_by' => "T",
+                                        'categorie_id' => $categorie_id,
+                                        'estimated_date' => $estimated_date,
+                                        'voucher' => 'AUTOMÁTICO',
+                                        'estimated_quota' => $sw == true ? $payment->estimated_quota:$amount_group,
+                                        'loan_payment_date' => Carbon::now()->format('Y-m-d'),
+                                        'liquidate' => false,
+                                        'description'=> 'Pago realizado por sistema',
+                                    ];
+                                    $registry_patment = $this->set_payment($form, $loan);
+                                    $amount_group = $amount_group - $registry_patment->estimated_quota;
+                                    $update = "UPDATE senasir_payment_groups set amount_balance = $amount_group where id = $payment_agroup->id";
+                                    $update = DB::select($update);
+                                    $senasir_lender++;
+                                }
                             }
                         }
                     }
                     if($this->loan_guarantors($payment_agroup->affiliate_id) && $amount_group > 0){//garantias del afiliado
                         $loans_lender = $this->loan_guarantors($payment_agroup->affiliate_id);
                         foreach($loans_lender as $loan_lender){
-                        if($amount_group > 0){
-                            $loan = Loan::whereId($loan_lender->id)->first();
-                            $payment = $loan->next_payment2($payment_agroup->affiliate_id, null,'G' ,59, null,false);
-                            if($amount_group >= $payment->estimated_quota){
+                           $loan = Loan::whereId($loan_lender->id)->first();
+                           if($amount_group > 0 && $loan->balance > 0 ){
+                            //$loan = Loan::whereId($loan_lender->id)->first();
+                            $payment = $loan->next_payment2($payment_agroup->affiliate_id, null,'G' ,$procedure_modality_id, null,false);
+                            if($amount_group >= $payment->estimated_quota)
+                            $sw =true;
+                            if($amount_group >0){
                                 $form = (object)[
-                                    'procedure_modality_id' => 59,
+                                    'procedure_modality_id' => $procedure_modality_id,
                                     'affiliate_id' => $payment_agroup->affiliate_id,
                                     'paid_by' => "G",
-                                    'categorie_id' => 4,
+                                    'categorie_id' => $categorie_id,
                                     'estimated_date' => $estimated_date,
                                     'voucher' => 'AUTOMÁTICO',
-                                    'estimated_quota' => $payment->estimated_quota,
+                                    'estimated_quota' => $sw == true ? $payment->estimated_quota:$amount_group,
                                     'loan_payment_date' => Carbon::now()->format('Y-m-d'),
                                     'liquidate' => false,
                                     'description'=> 'Pago realizado por sistema',
                                 ];
-                            $registry_patment = $this->set_payment($form, $loan);
-                            $amount_group = $amount_group - $registry_patment->estimated_quota;
-                            $update = "update senasir_payment_groups
-                                    set amount_balance = $amount_group where id = $payment_agroup->id";
-                            $update = DB::select($update);
-                            $senasir_guarantor++;
-                            }else{
-                                $form = (object)[
-                                    'procedure_modality_id' => 59,
-                                    'affiliate_id' => $payment_agroup->affiliate_id,
-                                    'paid_by' => "T",
-                                    'categorie_id' => 4,
-                                    'estimated_date' => $estimated_date,
-                                    'voucher' => 'AUTOMÁTICO',
-                                    'estimated_quota' => $amount_group,
-                                    'loan_payment_date' => Carbon::now()->format('Y-m-d'),
-                                    'liquidate' => false,
-                                    'description'=> 'Pago realizado por sistema',
-                                ];
-                            $registry_patment = $this->set_payment($form, $loan);
-                            $amount_group = $amount_group - $registry_patment->estimated_quota;
-                            $update = "update senasir_payment_groups
-                                    set amount_balance = $amount_group where id = $payment_agroup->id";
-                            $update = DB::select($update);
-                            $senasir_guarantor++;
+                                $registry_patment = $this->set_payment($form, $loan);
+                                $amount_group = $amount_group - $registry_patment->estimated_quota;
+                                $update = "UPDATE senasir_payment_groups set amount_balance = $amount_group where id = $payment_agroup->id";
+                                $update = DB::select($update);
+                                $senasir_guarantor++;
                             }
-                        }
+                          }
                         }
 
                     }
                 }
             }
 
-            $update_period = "update periods
-            set import_senasir = true where id = $period->id";
+            $update_period = "UPDATE periods set import_senasir = true where id = $period->id";
             $update_period = DB::select($update_period);
 
             $paids = [
@@ -340,7 +305,7 @@ class ImportationController extends Controller
                 'importation_validated'=> true
             ];
             DB::commit();
-                return $paids;
+            return $paids;
 
         }else{
             $paids = [
@@ -596,6 +561,14 @@ class ImportationController extends Controller
         }
     }
 
+
+    /**
+    * Importar/registrar cobros de COMANDO
+    * Importar/registrar cobros de COMANDO
+    * @queryParam period required id_del periodo . Example: 1
+    * @authenticated
+    * @responseFile responses/importation/importation_command.200.json
+    */
     public function create_payments_command(request $request)
     {
         $period = Period::whereId($request->period_id)->first();
@@ -669,6 +642,7 @@ class ImportationController extends Controller
            }
         }
         $paids = [
+            'period' => $period,
             'paid_by_lenders' => $c,
             'paid_by_guarantors' => $c2,
         ];
@@ -699,11 +673,7 @@ class ImportationController extends Controller
 
             $payment->paid_by = $request->paid_by;
             $payment->validated = true;
-            if($request->user_id){
-                $payment->user_id = $request->user_id;
-            }else{
-                $payment->user_id = auth()->id();
-            }
+            $payment->user_id = auth()->id();
             $loan_payment = $loan->payments()->create($payment->toArray());
             return $payment;
         }else{
