@@ -166,13 +166,13 @@
             >
               <v-card>
                 <v-toolbar dark color="primary" >
-                  <v-btn icon dark @click="dialog = false" >
+                  <v-btn icon dark @click="closePayment()" >
                     <v-icon>mdi-close</v-icon>
                   </v-btn>
                   <v-toolbar-title>IMPORTACION {{title}}</v-toolbar-title>
                   <v-spacer></v-spacer>
                   <v-toolbar-items>
-                    <v-btn dark text v-show="importacion" @click="dialog = false" >
+                    <v-btn dark text v-show="importacion" @click="importPayment()" >
                       Ejecutar la Importación
                     </v-btn>
                   </v-toolbar-items>
@@ -301,9 +301,9 @@
 export default {
   name: "payment-ImportExport",
   data: () => ({
-  
+
   bus: new Vue(),
-  importacion:false,
+  importacion:true,
 
   dialog: false,
   aux_period:null,
@@ -509,6 +509,47 @@ export default {
       } finally {
         this.loading = false;
       }
+    },
+    async importPayment(){
+    try {
+      this.loading = true
+      if(this.import_export.state_affiliate=='C'){
+          this.toastr.error('Comando')
+
+      }else{
+        let res = await axios.get(`importation_payments_senasir`,{
+        params:{
+          period: this.mes
+        }
+      })
+      if(res.data.importation_validated){
+          this.toastr.success('Importado Correctamente: '+res.data.paid_by_lenders+ ' titulares y '+ res.data.paid_by_guarantors+' garantes' )
+      }
+      else{
+        this.toastr.error(res.data.message)
+      }
+     }
+       } catch (e) {
+        this.loading = false;
+        console.log(e);
+      } finally {
+        this.loading = false;
+      }
+    },
+    async closePayment(){
+        let res = await axios.get(`rollback_copy_groups_payments`,{
+        params:{
+          origin: this.import_export.state_affiliate,
+          period: this.mes
+        }
+      })
+      if(res.data.validated_rollback){
+          this.toastr.success(res.data.message)
+      }
+      else{
+        this.toastr.error(res.data.message)
+      }
+     this.dialog=false
     },
   },
 };
