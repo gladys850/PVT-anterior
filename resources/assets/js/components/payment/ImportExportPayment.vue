@@ -248,7 +248,7 @@
                           <v-card-text >
                              <v-icon style="color:white">mdi-arrow-right-thick</v-icon>
                             <b style="color:white" >
-                             CI : Carnet de identidad del afiliado
+                             CI / MATRICULA: Del afiliado
                             </b>
                             <br/>
                             <v-icon style="color:white">mdi-arrow-right-thick</v-icon>
@@ -256,15 +256,6 @@
                              MONTO : Monto de la importación
                             </b>
                             <br/>
-                            <v-icon style="color:white">mdi-arrow-right-thick</v-icon>
-                            <b style="color:white" >
-                             TIPO : S si es senasir, C si es comando
-                            </b>
-                            <br/>
-                            <v-icon style="color:white">mdi-arrow-right-thick</v-icon>
-                            <b style="color:white" >
-                             FECHA PERIODO : Fecha de la importación
-                            </b>
                           </v-card-text>
                         </v-card>
                         <br/>
@@ -282,17 +273,9 @@
                             <b style="color:white" >
                              MONTO
                             </b>
-                            <v-icon style="color:white">*</v-icon>
-                            <b style="color:white" >
-                             TIPO
-                            </b>
-                            <v-icon style="color:white">*</v-icon>
-                            <b style="color:white" >
-                             FECHA PERIODO
-                            </b>
                             <br/>
                             <b style="color:white" >
-                              82716152,1256.56,C,12-06-2021
+                              82716152:1256.56
                             </b>
                           </v-card-text>
                         </v-card>
@@ -428,6 +411,8 @@ export default {
             this.month.push(res.data.month)
 
             this.mes= res.data.id
+            this.year= new Date().toISOString().substr(0, 10)
+            this.$moment(this.year).format("YYYY")
             this.getMonthYear()
             this.$forceUpdate();
          }
