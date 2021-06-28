@@ -53,7 +53,7 @@
                 <v-col cols="12" md="4" class="py-0"
                   v-for="(item, i) in month"
                   :key="i">
-                  <v-card color="black" class="headline font-weight-bold"  max-width="90%" max-height="500" >
+                  <v-card color="#454545" class="headline font-weight-bold"  max-width="90%" max-height="500" >
                     <v-card-text >
                       <v-row>
                         <v-col cols="4" md="12" class="py-0">
@@ -69,8 +69,8 @@
                               <v-btn
                                 fab
                                 dark
-                                x-small
-                                :color="'teal'"
+                                small
+                                :color="'info'"
                                 bottom
                                 right
                                 v-on="on"
@@ -90,8 +90,8 @@
                               <v-btn
                                 fab
                                 dark
-                                x-small
-                                :color="'teal'"
+                                small
+                                :color="'info'"
                                 right
                                 v-on="on"
                                  @click.stop="importacionSenasir(item.month)"
@@ -120,7 +120,7 @@
                               fab
                               dark
                               small
-                              :color="'black'"
+                              :color="'#454545'"
                               bottom
                               right
                               v-on="on"
@@ -139,7 +139,7 @@
                               fab
                               dark
                               small
-                              :color="'black'"
+                              :color="'#454545'"
                               bottom
                               right
                               v-on="on"
@@ -409,10 +409,9 @@ export default {
             this.toastr.error(res.data.message)
          }else{
             this.month.push(res.data.month)
+            this.period_year=res.data.year
 
             this.mes= res.data.id
-            this.year= new Date().toISOString().substr(0, 10)
-            this.$moment(this.year).format("YYYY")
             this.getMonthYear()
             this.$forceUpdate();
          }
