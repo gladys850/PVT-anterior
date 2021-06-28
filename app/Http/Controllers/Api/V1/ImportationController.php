@@ -11,6 +11,12 @@ use App\Exports\ArchivoPrimarioExport;
 use Carbon;
 use Illuminate\Support\Facades\Log;
 use App\Period;
+use App\Loan;
+use App\ProcedureModality;
+use App\LoanPaymentState;
+use App\Role;
+use App\Affiliate;
+use App\Http\Requests\LoanPaymentForm;
 
 /** @group Importacion de datos C o S
 * Importacion de datos Comando  o Senasir
@@ -240,12 +246,16 @@ class ImportationController extends Controller
 
     public function copy_payments(request $request)
     {
-        $file = Storage::disk('ftp')->get($request->location."/".$request->file_name);
-        Storage::disk('public')->put($request->file_name, $file);
+        //$file = Storage::disk('ftp')->get($request->location."/".$request->file_name);
+        //$file = Storage::path('public')->get($request->location);
+        //Storage::disk('public')->put($request->file_name, $file);
+        //return Storage::disk('local2')->path($request->file_name);
+        //return "ok2";
         //return Storage::disk('public')->path($request->file_name);
         //return Storage::disk('public')->getDriver()->getAdapter()->getPathPrefix();
         DB::beginTransaction();
         try{
+            $this->delete_copy_payments($request->period_id, $request->type);
             if(Period::whereId($request->period_id)->first()){
                 $drop = "drop table if exists payments_aux";
                 $drop = DB::select($drop);
@@ -254,7 +264,7 @@ class ImportationController extends Controller
                     $temporary = DB::select($temporary);
 
                     $copy = "copy payments_aux(identity_card, amount)
-                            FROM '/home/richard/Documentos/trabajo/PVT/storage/app/public/".$request->file_name."'
+                            FROM '/home/richard/Escritorio/descuento_comando.csv'
                             WITH DELIMITER ':' CSV header;";
                     $copy = DB::select($copy);
                     Storage::disk('public')->delete($request->file_name);
@@ -277,7 +287,7 @@ class ImportationController extends Controller
 
                     $consult = "select count(*) from import_command_payments where period_id = $request->period_id";
                     $consult = DB::select($consult);
-                    return $consult['count'];
+                    return $consult;
                 }
                 else{
                     if($request->type == 'S'){
@@ -285,10 +295,10 @@ class ImportationController extends Controller
                         $temporary = DB::select($temporary);
 
                         $copy = "copy payments_aux(registration, registration_dh, amount)
-                                FROM '/home/richard/Documentos/trabajo/PVT/storage/app/public/".$request->file_name."'
+                                FROM '/home/richard/Escritorio/senasir2.csv'
                                 WITH DELIMITER ':' CSV header;";
                         $copy = DB::select($copy);
-                        Storage::disk('public')->delete($request->file_name);
+                        //Storage::disk('public')->delete($request->file_name);
 
                         $update = "update payments_aux
                                     set period_id = $request->period_id";
@@ -438,4 +448,118 @@ class ImportationController extends Controller
         }
     }
 
+    public function create_payments_command(request $request)
+    {
+        $period = Period::whereId($request->period_id)->first();
+        $query = "select * from command_payment_groups where period_id = $period->id";
+        $payments = DB::select($query);//return $payments;
+        $estimated_date = Carbon::create($period->year, $period->month, 1);
+        $estimated_date = Carbon::parse($estimated_date)->endOfMonth()->format('Y-m-d');
+        $c = 0;$sw = false;
+        foreach ($payments as $payment){
+            $amount = $payment->amount;
+            $affiliate = "select * from Affiliates where id = $payment->affiliate_id";
+            $affiliate = DB::select($affiliate);//return $affiliate;
+            $affiliate = $affiliate[0];
+            $loans = "select * from loans where id in (select loan_id from loan_affiliates where affiliate_id = $affiliate->id)
+            and state_id in (select id from loan_states where name = 'Vigente')
+            order by disbursement_date";
+            $loans = DB::select($loans);
+            foreach($loans as $loan){
+                $loan_calculate = Loan::whereId($loan->id)->first();
+                if( $loan_calculate->estimated_quota >= $amount )
+                    $sw = true;
+                $form = (object)[
+                    'procedure_modality_id' => 58,
+                    'affiliate_id' => $affiliate->id,
+                    'paid_by' => "T",
+                    'categorie_id' => 4,
+                    'estimated_date' => $estimated_date,
+                    'voucher' => 'aut-001',
+                    'estimated_quota' => $sw == true ? $loan_calculate->estimated_quota : $amount,
+                    'user_id' => 90,
+                    'loan_payment_date' => Carbon::now()->format('Y-m-d'),
+                    'liquidate' => false,
+                    'initial_affiliate'=> "aaaa",
+                    'state_affiliate'=> "ACTIVO,PASIVO",
+                    'description'=> null,
+                ];
+                $loan_payment = $this->set_payment($form, $loan_calculate);
+                $amount = $amount - $loan_payment->estimated_quota;
+                $c++;
+            }
+            $guarantees = "select * from loans where id in (select loan_id from loan_affiliates where affiliate_id = $affiliate->id and guarantor = true)
+            and state_id in (select id from loan_states where name = 'Vigente')
+            and guarantor_amortizing = true
+            order by disbursement_date";
+            $guarantees = DB::select($guarantees);
+            $c2 = 0;
+            foreach($guarantees as $guarantee){
+                /*$loan_calculate = Loan::whereId($loan->id)->first();
+               $next_payment = $loan_calculate->next_payment2($affiliate->id,$estimated_date, 'T', $loan->procedure_modality_id, null, false);*/
+               $loan_calculate = Loan::whereId($guarantee->id)->first();
+               $form = (object)[
+                   'procedure_modality_id' => 58,
+                   'affiliate_id' => $affiliate->id,
+                   'paid_by' => "G",
+                   'categorie_id' => 4,
+                   'estimated_date' => $estimated_date,
+                   'voucher' => 'aut-001',
+                   'estimated_quota' => $sw == true ? $loan_calculate->estimated_quota : $amount,
+                   'user_id' => 90,
+                   'loan_payment_date' => Carbon::now()->format('Y-m-d'),
+                   'liquidate' => false,
+                   'initial_affiliate'=> "aaaa",
+                   'state_affiliate'=> "ACTIVO,PASIVO",
+                   'description'=> null,
+               ];
+               $loan_payment = $this->set_payment($form, $loan_calculate);
+               $c2++;
+           }
+        }
+        $paids = [
+            'paid_by_lenders' => $c,
+            'paid_by_guarantors' => $c2,
+        ];
+        return $paids;
+    }
+
+    public function set_payment($request, $loan)
+    {
+        //$loan = Loan::whereId($loan->id)->first();
+        if($loan->balance!=0){
+            $payment = $loan->next_payment2($request->affiliate_id, $request->estimated_date, $request->paid_by, $request->procedure_modality_id, $request->estimated_quota, $request->liquidate);
+            $payment->description = $request->description;
+            $payment->state_id = LoanPaymentState::whereName('Pagado')->first()->id;
+            $payment->role_id = Role::whereName('PRE-cobranzas')->first()->id;
+            if($request->procedure_modality_id){
+                $modality = ProcedureModality::findOrFail($request->procedure_modality_id)->procedure_type;
+                if($modality->name == "Amortización Directa") $payment->validated = true;
+            }
+            $payment->procedure_modality_id = $request->procedure_modality_id;
+            $payment->voucher = $request->voucher;
+            //$payment->amortization_type_id = $request->input('amortization_type_id');
+            $payment->affiliate_id = $request->affiliate_id;
+
+            $affiliate_id=$request->affiliate_id;
+            $affiliate=Affiliate::find($affiliate_id);
+            $affiliate_state=$affiliate->affiliate_state->affiliate_state_type->name;
+            $payment->state_affiliate = strtoupper($affiliate_state);
+
+            $payment->initial_affiliate = $affiliate->initials;//iniciales
+
+            $payment->categorie_id = $request->categorie_id;
+
+            $payment->paid_by = $request->paid_by;
+            if($request->user_id){
+                $payment->user_id = $request->user_id;
+            }else{
+                $payment->user_id = auth()->id();
+            }
+            $loan_payment = $loan->payments()->create($payment->toArray());
+            return $payment;
+        }else{
+            abort(403, 'El préstamo ya fue liquidado');
+        }
+    }
 }
