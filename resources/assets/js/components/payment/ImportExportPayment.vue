@@ -74,7 +74,7 @@
                                 bottom
                                 right
                                 v-on="on"
-                                @click.stop="importacionComando(item.month)"
+                                @click.stop="importacionComando(item.month, item.id)"
                                >
                                 <v-icon style="color:white">mdi-warehouse</v-icon>
                               </v-btn>
@@ -94,7 +94,7 @@
                                 :color="'info'"
                                 right
                                 v-on="on"
-                                 @click.stop="importacionSenasir(item.month)"
+                                 @click.stop="importacionSenasir(item.month, item.id)"
                               >
                                 <v-icon  style="color:white" >mdi-home-analytics</v-icon>
                               </v-btn>
@@ -423,15 +423,17 @@ export default {
         this.loading = false;
       }
     },
-     async importacionComando(id){
+     async importacionComando(month, id){
 
-      this.aux_period= id,
+      this.aux_period= month
+      this.mes=id
       this.dialog=true
       this.import_export.state_affiliate = 'C'
       this.title= 'COMANDO'
     },
-    async importacionSenasir(id){
-      this.aux_period= id,
+    async importacionSenasir(month, id){
+      this.aux_period= month
+      this.mes=id
       this.dialog=true
       this.import_export.state_affiliate = 'S'
       this.title= 'SENASIR'
@@ -466,7 +468,7 @@ export default {
       let res = await axios.get(`agruped_payments`,{
         params:{
         origin: this.import_export.state_affiliate,
-        period: this.aux_period
+        period: this.mes
         }
       })
        if(res.data.validated_agroup){
@@ -485,8 +487,8 @@ export default {
           //headers: { Accept: "text/plain" },
           data: formData,
           params: {
-            origin:this.import_export.state_affiliate,
-            period: this.aux_period
+            origin: this.import_export.state_affiliate,
+            period: this.mes
           }
         })
           .then((response) => {
