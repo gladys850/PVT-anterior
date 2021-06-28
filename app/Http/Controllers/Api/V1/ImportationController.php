@@ -571,81 +571,105 @@ class ImportationController extends Controller
     */
     public function create_payments_command(request $request)
     {
-        $period = Period::whereId($request->period)->first();
-        $query = "select * from command_payment_groups where period_id = $period->id order by id";
-        $payments = DB::select($query);//return $payments;
-        $estimated_date = Carbon::create($period->year, $period->month, 1);
-        $estimated_date = Carbon::parse($estimated_date)->endOfMonth()->format('Y-m-d');
+        $period = Period::whereId($request->period_id)->first();
         $c = 0;$sw = false;$c2 = 0;
-        foreach ($payments as $payment){
-            $amount = $payment->amount_balance;
-            $affiliate = "select * from Affiliates where id = $payment->affiliate_id";
-            $affiliate = DB::select($affiliate);//return $affiliate;
-            $affiliate = $affiliate[0];
-            $loans = "select * from loans where id in (select loan_id from loan_affiliates where affiliate_id = $affiliate->id and guarantor = false)
-            and state_id in (select id from loan_states where name = 'Vigente')
-            and guarantor_amortizing = false
-            order by disbursement_date";
-            $loans = DB::select($loans);
-            foreach($loans as $loan){
-                $loan_calculate = Loan::whereId($loan->id)->first();
-                if( $loan_calculate->estimated_quota <= $amount )
-                    $sw = true;
-                if($amount > 0){
-                    $form = (object)[
-                        'procedure_modality_id' => ProcedureModality::whereShortened('DES-COMANDO')->first()->id,
-                        'affiliate_id' => $affiliate->id,
-                        'paid_by' => "T",
-                        'categorie_id' => LoanPaymentCategorie::whereTypeRegister('SISTEMA')->first()->id,
-                        'estimated_date' => $estimated_date,
-                        'voucher' => 'AUTOMATICO',
-                        'estimated_quota' => $sw == true ? $loan_calculate->estimated_quota : $amount,
-                        'user_id' => null,
-                        'loan_payment_date' => Carbon::now()->format('Y-m-d'),
-                        'liquidate' => false,
-                        'state_affiliate'=> "ACTIVO,PASIVO",
-                        'description'=> null,
-                    ];
-                    $loan_payment = $this->set_payment($form, $loan_calculate);
-                    $amount = $amount - $loan_payment->estimated_quota;
-                    $c++;
+        if(!$period->import_command)
+        {
+            $query = "select * from command_payment_groups where period_id = $period->id order by id";
+            $payments = DB::select($query);//return $payments;
+            $estimated_date = Carbon::create($period->year, $period->month, 1);
+            $estimated_date = Carbon::parse($estimated_date)->endOfMonth()->format('Y-m-d');
+            $c = 0;$sw = false;$c2 = 0;
+            foreach ($payments as $payment){
+                $amount = $payment->amount_balance;
+                $affiliate = "select * from Affiliates where id = $payment->affiliate_id";
+                $affiliate = DB::select($affiliate);//return $affiliate;
+                $affiliate = $affiliate[0];
+                $loans = "select * from loans where id in (select loan_id from loan_affiliates where affiliate_id = $affiliate->id and guarantor = false)
+                and state_id in (select id from loan_states where name = 'Vigente')
+                and guarantor_amortizing = false
+                order by disbursement_date";
+                $loans = DB::select($loans);
+                foreach($loans as $loan){
+                    $loan_calculate = Loan::whereId($loan->id)->first();
+                    if( $loan_calculate->estimated_quota <= $amount )
+                        $sw = true;
+                    if($amount > 0){
+                        $form = (object)[
+                            'procedure_modality_id' => ProcedureModality::whereShortened('DES-COMANDO')->first()->id,
+                            'affiliate_id' => $affiliate->id,
+                            'paid_by' => "T",
+                            'categorie_id' => LoanPaymentCategorie::whereTypeRegister('SISTEMA')->first()->id,
+                            'estimated_date' => $estimated_date,
+                            'voucher' => 'AUTOMATICO',
+                            'estimated_quota' => $sw == true ? $loan_calculate->estimated_quota : $amount,
+                            'user_id' => null,
+                            'loan_payment_date' => Carbon::now()->format('Y-m-d'),
+                            'liquidate' => false,
+                            'state_affiliate'=> "ACTIVO,PASIVO",
+                            'description'=> null,
+                        ];
+                        $loan_payment = $this->set_payment($form, $loan_calculate);
+                        $amount = $amount - $loan_payment->estimated_quota;
+                        $c++;
+                    }
                 }
+                $guarantees = "select * from loans where id in (select loan_id from loan_affiliates where affiliate_id = $affiliate->id and guarantor = true)
+                and state_id in (select id from loan_states where name = 'Vigente')
+                and guarantor_amortizing = true
+                order by disbursement_date";
+                $guarantees = DB::select($guarantees);
+                $c2 = 0;
+                foreach($guarantees as $guarantee)
+                {
+                    $loan_calculate = Loan::whereId($guarantee->id)->first();
+                    $quota = "select quota_treat from loan_affiliates la 
+                    where loan_id = $guarantee->id
+                    and affiliate_id = $affiliate->id
+                    and guarantor = true";
+                    $quota = DB::select($quota)[0]->quota_treat;
+                    if( $quota <= $amount )
+                            $sw = true;
+                    if($amount > 0){
+                        $form = (object)[
+                            'procedure_modality_id' => ProcedureModality::whereShortened('DES-COMANDO')->first()->id,
+                            'affiliate_id' => $affiliate->id,
+                            'paid_by' => "G",
+                            'categorie_id' => LoanPaymentCategorie::whereTypeRegister('SISTEMA')->first()->id,
+                            'estimated_date' => $estimated_date,
+                            'voucher' => 'AUTOMATICO',
+                            'estimated_quota' => $sw == true ? $quota : $amount,
+                            'user_id' => null,
+                            'loan_payment_date' => Carbon::now()->format('Y-m-d'),
+                            'liquidate' => false,
+                            'state_affiliate'=> "ACTIVO",
+                            'description'=> null,
+                        ];
+                        $loan_payment = $this->set_payment($form, $loan_calculate);
+                        $amount = $amount - $loan_payment->estimated_quota;
+                        $c2++;
+                    }
+                }
+                $update_command_grupded = "UPDATE command_payment_groups set amount_balance = $amount where id = $payment->id";
+                $update_command_grupded = DB::select($update_command_grupded);
             }
-            $guarantees = "select * from loans where id in (select loan_id from loan_affiliates where affiliate_id = $affiliate->id and guarantor = true)
-            and state_id in (select id from loan_states where name = 'Vigente')
-            and guarantor_amortizing = true
-            order by disbursement_date";
-            $guarantees = DB::select($guarantees);
-            $c2 = 0;
-            foreach($guarantees as $guarantee){
-               $loan_calculate = Loan::whereId($guarantee->id)->first();
-               /*if( $affiliate->quota_treat <= $amount )
-                    $sw = true;*/
-               if($amount > 0){
-                $form = (object)[
-                    'procedure_modality_id' => ProcedureModality::whereShortened('DES-COMANDO')->first()->id,
-                    'affiliate_id' => $affiliate->id,
-                    'paid_by' => "G",
-                    'categorie_id' => LoanPaymentCategorie::whereTypeRegister('SISTEMA')->first()->id,
-                    'estimated_date' => $estimated_date,
-                    'voucher' => 'AUTOMATICO',
-                    'estimated_quota' => $amount,//$sw == true ? $affiliate->quota_treat : $amount,
-                    'user_id' => null,
-                    'loan_payment_date' => Carbon::now()->format('Y-m-d'),
-                    'liquidate' => false,
-                    'state_affiliate'=> "ACTIVO",
-                    'description'=> null,
-                ];
-                $loan_payment = $this->set_payment($form, $loan_calculate);
-                $c2++;
-            }
-           }
-        }
+            $update_period = "UPDATE periods set import_command = true where id = $period->id";
+            $update_period = DB::select($update_period);
+            $paids = [
+                'period'=> Period::whereId($request->period_id)->first(),
+                'paid_by_lenders' => $c,
+                'paid_by_guarantors' => $c2,
+                'importation_validated'=> false                
+            ];
+        }else{
         $paids = [
-            'period'=> $period,
+            'period'=>$period,
             'paid_by_lenders' => $c,
             'paid_by_guarantors' => $c2,
+            'message'=>"SENASIR Error! Anteriormente ya realizó la importación del periodo: ".$period->month.'/'.$period->year,
+            'importation_validated'=> false
         ];
+        }
         return $paids;
     }
 
