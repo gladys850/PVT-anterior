@@ -53,7 +53,7 @@
                 <v-col cols="12" md="4" class="py-0"
                   v-for="(item, i) in month"
                   :key="i">
-                  <v-card color="black" class="headline font-weight-bold"  max-width="90%" max-height="500" >
+                  <v-card color="#454545" class="headline font-weight-bold"  max-width="90%" max-height="500" >
                     <v-card-text >
                       <v-row>
                         <v-col cols="4" md="12" class="py-0">
@@ -69,8 +69,8 @@
                               <v-btn
                                 fab
                                 dark
-                                x-small
-                                :color="'teal'"
+                                small
+                                :color="'info'"
                                 bottom
                                 right
                                 v-on="on"
@@ -90,8 +90,8 @@
                               <v-btn
                                 fab
                                 dark
-                                x-small
-                                :color="'teal'"
+                                small
+                                :color="'info'"
                                 right
                                 v-on="on"
                                  @click.stop="importacionSenasir(item.month)"
@@ -120,7 +120,7 @@
                               fab
                               dark
                               small
-                              :color="'black'"
+                              :color="'#454545'"
                               bottom
                               right
                               v-on="on"
@@ -139,7 +139,7 @@
                               fab
                               dark
                               small
-                              :color="'black'"
+                              :color="'#454545'"
                               bottom
                               right
                               v-on="on"
@@ -248,7 +248,8 @@
                           <v-card-text >
                              <v-icon style="color:white">mdi-arrow-right-thick</v-icon>
                             <b style="color:white" >
-                             CI : Carnet de identidad del afiliado
+                             CI / MATRICULA: CI del afiliado cuando sea una importacion por COMANDO.
+                             Matricula del afiliado cuando sea una importacion por SENASIR.
                             </b>
                             <br/>
                             <v-icon style="color:white">mdi-arrow-right-thick</v-icon>
@@ -256,15 +257,6 @@
                              MONTO : Monto de la importación
                             </b>
                             <br/>
-                            <v-icon style="color:white">mdi-arrow-right-thick</v-icon>
-                            <b style="color:white" >
-                             TIPO : S si es senasir, C si es comando
-                            </b>
-                            <br/>
-                            <v-icon style="color:white">mdi-arrow-right-thick</v-icon>
-                            <b style="color:white" >
-                             FECHA PERIODO : Fecha de la importación
-                            </b>
                           </v-card-text>
                         </v-card>
                         <br/>
@@ -282,17 +274,9 @@
                             <b style="color:white" >
                              MONTO
                             </b>
-                            <v-icon style="color:white">*</v-icon>
-                            <b style="color:white" >
-                             TIPO
-                            </b>
-                            <v-icon style="color:white">*</v-icon>
-                            <b style="color:white" >
-                             FECHA PERIODO
-                            </b>
                             <br/>
                             <b style="color:white" >
-                              82716152,1256.56,C,12-06-2021
+                              82716152:1256.56
                             </b>
                           </v-card-text>
                         </v-card>
@@ -426,6 +410,7 @@ export default {
             this.toastr.error(res.data.message)
          }else{
             this.month.push(res.data.month)
+            this.period_year=res.data.year
 
             this.mes= res.data.id
             this.getMonthYear()
