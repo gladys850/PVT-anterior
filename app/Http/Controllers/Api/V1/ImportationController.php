@@ -18,6 +18,8 @@ use App\Role;
 use App\Affiliate;
 use App\Http\Requests\LoanPaymentForm;
 use App\LoanPaymentCategorie;
+use App\User;
+use App\Auth;
 
 /** @group Importacion de datos C o S
 * Importacion de datos Comando  o Senasir
@@ -37,7 +39,7 @@ class ImportationController extends Controller
 
  public function agruped_payments(Request $request){
     $request->validate([
-        'origin'=>'required|string',
+        'origin'=>'required|string|in:C,S',
         'period'=>'required|exists:periods,id'
     ]);
 
@@ -83,7 +85,7 @@ class ImportationController extends Controller
         }else{
             if($origin == 'S'){
 
-            $query = "  SELECT import_senasir_payments.registration as registration, import_senasir_payments.registration_dh as registration_dh, sum(amount) as amount
+             $query = "  SELECT import_senasir_payments.registration as registration, import_senasir_payments.registration_dh as registration_dh, sum(amount) as amount
                         FROM import_senasir_payments
                         where import_senasir_payments.period_id = '$period'
                         group by import_senasir_payments.registration, import_senasir_payments.registration_dh";
@@ -113,8 +115,8 @@ class ImportationController extends Controller
                 }
             }
 
-            }else{
-                abort(409, 'Incorrecto! Debe enviar C(Comando General) ó S(Senasir)');
+        }else{
+            abort(409, 'Incorrecto! Debe enviar C(Comando General) ó S(Senasir)');
             }
         }
 
@@ -196,25 +198,170 @@ class ImportationController extends Controller
         }
     }
 
-     //importacion de cobros 
-     public function importation_payment(Request $request){
-        $origin = 'C';$period =1;
-        $query = "  SELECT *
-                    FROM payment_groupeds
-                    where payment_groupeds.origin = '$origin'
-                    and payment_groupeds.period_id = '$period'";
+    /**
+    * Importar/registrar cobros de SENASIR
+    * Importar/registrar cobros de SENASIR
+    * @queryParam period required id_del periodo . Example: 1
+    * @authenticated
+    * @responseFile responses/importation/importation_senasir.200.json
+     */
+    public function importation_payment_senasir(Request $request){
+        $request->validate([
+            'origin'=>'string|in:C,S',
+            'period'=>'required|exists:periods,id'
+        ]);
+      DB::beginTransaction();
+      try{
+        $period =Period::whereId($request->period)->first();
+        $senasir_lender = 0;
+        $senasir_guarantor = 0;
+        if(!$period->import_senasir){
+            $estimated_date = Carbon::create($period->year, $period->month, 1);
+            $estimated_date = Carbon::parse($estimated_date)->endOfMonth()->format('Y-m-d');
 
-       $payment_agroups = DB::select($query);
-       foreach($payment_agroups as $payment_agroup){
-        return $payment_agroup->id;
-       }
-        return $payment_agroups;
+            $query = "  SELECT *
+                            FROM senasir_payment_groups
+                            where senasir_payment_groups.period_id = '$period->id'";
+
+            $payment_agroups = DB::select($query);
+
+            foreach($payment_agroups as $payment_agroup){
+                $amount_group = $payment_agroup->amount_balance;
+                if($amount_group > 0){
+                    if($this->loan_lenders($payment_agroup->affiliate_id)){
+                        $loans_lender = $this->loan_lenders($payment_agroup->affiliate_id);
+                        foreach($loans_lender as $loan_lender){
+                            if($amount_group > 0){
+                            $loan = Loan::whereId($loan_lender->id)->first();
+                            $payment = $loan->next_payment2($payment_agroup->affiliate_id, null,'T' ,59, null,false);
+                            if($amount_group >= $payment->estimated_quota){
+                                $form = (object)[
+                                    'procedure_modality_id' => 59,
+                                    'affiliate_id' => $payment_agroup->affiliate_id,
+                                    'paid_by' => "T",
+                                    'categorie_id' => 4,
+                                    'estimated_date' => $estimated_date,
+                                    'voucher' => 'AUTOMÁTICO',
+                                    'estimated_quota' => $payment->estimated_quota,
+                                    'loan_payment_date' => Carbon::now()->format('Y-m-d'),
+                                    'liquidate' => false,
+                                    'description'=> 'Pago realizado por sistema',
+                                ];
+                                $registry_patment = $this->set_payment($form, $loan);
+                                $amount_group = $amount_group - $registry_patment->estimated_quota;
+                                $update = "update senasir_payment_groups
+                                        set amount_balance = $amount_group where id = $payment_agroup->id";
+                                $update = DB::select($update);
+                                $senasir_lender++;
+                            }else{
+                                $form = (object)[
+                                    'procedure_modality_id' => 59,
+                                    'affiliate_id' => $payment_agroup->affiliate_id,
+                                    'paid_by' => "T",
+                                    'categorie_id' => 4,
+                                    'estimated_date' => $estimated_date,
+                                    'voucher' => 'AUTOMÁTICO',
+                                    'estimated_quota' => $amount_group,
+                                    'loan_payment_date' => Carbon::now()->format('Y-m-d'),
+                                    'liquidate' => false,
+                                    'description'=> 'Pago realizado por sistema',
+                                ];
+                                $registry_patment = $this->set_payment($form, $loan);
+                                $amount_group = $amount_group - $registry_patment->estimated_quota;
+                                $update = "update senasir_payment_groups
+                                        set amount_balance = $amount_group where id = $payment_agroup->id";
+                                $update = DB::select($update);
+                                $senasir_lender++;
+                            }
+                            }
+                        }
+                    }
+                    if($this->loan_guarantors($payment_agroup->affiliate_id) && $amount_group > 0){//garantias del afiliado
+                        $loans_lender = $this->loan_guarantors($payment_agroup->affiliate_id);
+                        foreach($loans_lender as $loan_lender){
+                        if($amount_group > 0){
+                            $loan = Loan::whereId($loan_lender->id)->first();
+                            $payment = $loan->next_payment2($payment_agroup->affiliate_id, null,'G' ,59, null,false);
+                            if($amount_group >= $payment->estimated_quota){
+                                $form = (object)[
+                                    'procedure_modality_id' => 59,
+                                    'affiliate_id' => $payment_agroup->affiliate_id,
+                                    'paid_by' => "G",
+                                    'categorie_id' => 4,
+                                    'estimated_date' => $estimated_date,
+                                    'voucher' => 'AUTOMÁTICO',
+                                    'estimated_quota' => $payment->estimated_quota,
+                                    'loan_payment_date' => Carbon::now()->format('Y-m-d'),
+                                    'liquidate' => false,
+                                    'description'=> 'Pago realizado por sistema',
+                                ];
+                            $registry_patment = $this->set_payment($form, $loan);
+                            $amount_group = $amount_group - $registry_patment->estimated_quota;
+                            $update = "update senasir_payment_groups
+                                    set amount_balance = $amount_group where id = $payment_agroup->id";
+                            $update = DB::select($update);
+                            $senasir_guarantor++;
+                            }else{
+                                $form = (object)[
+                                    'procedure_modality_id' => 59,
+                                    'affiliate_id' => $payment_agroup->affiliate_id,
+                                    'paid_by' => "T",
+                                    'categorie_id' => 4,
+                                    'estimated_date' => $estimated_date,
+                                    'voucher' => 'AUTOMÁTICO',
+                                    'estimated_quota' => $amount_group,
+                                    'loan_payment_date' => Carbon::now()->format('Y-m-d'),
+                                    'liquidate' => false,
+                                    'description'=> 'Pago realizado por sistema',
+                                ];
+                            $registry_patment = $this->set_payment($form, $loan);
+                            $amount_group = $amount_group - $registry_patment->estimated_quota;
+                            $update = "update senasir_payment_groups
+                                    set amount_balance = $amount_group where id = $payment_agroup->id";
+                            $update = DB::select($update);
+                            $senasir_guarantor++;
+                            }
+                        }
+                        }
+
+                    }
+                }
+            }
+
+            $update_period = "update periods
+            set import_senasir = true where id = $period->id";
+            $update_period = DB::select($update_period);
+
+            $paids = [
+                'period'=>$period,
+                'paid_by_lenders' => $senasir_lender,
+                'paid_by_guarantors' => $senasir_guarantor,
+                'message'=>"SENASIR Importación realizada con exito! ".$period->month.'/'.$period->year,
+                'importation_validated'=> true
+            ];
+            DB::commit();
+                return $paids;
+
+        }else{
+            $paids = [
+                'period'=>$period,
+                'paid_by_lenders' => $senasir_lender,
+                'paid_by_guarantors' => $senasir_guarantor,
+                'message'=>"SENASIR Error! Anteriormente ya realizó la importación del periodo: ".$period->month.'/'.$period->year,
+                'importation_validated'=> false
+            ];
+            return $paids;
+        }
+        }catch(Exception $e){
+            DB::rollback();
+            return $e;
+        }
     }
 
     //prestamos por  afiliado
     public function loan_lenders($id_affiliate){
 
-        $query = " SELECT loans.*
+        $query = " SELECT loans.id
                     FROM loans
                     join loan_affiliates ON loan_affiliates.loan_id = loans.id
                     join affiliates ON affiliates.id = loan_affiliates.affiliate_id
@@ -230,7 +377,7 @@ class ImportationController extends Controller
     }
     //prestamos por  guarantor
     public function loan_guarantors($id_affiliate){
-        $query = " SELECT loans.*
+        $query = " SELECT loans.id
                     FROM loans
                     join loan_affiliates ON loan_affiliates.loan_id = loans.id
                     join affiliates ON affiliates.id = loan_affiliates.affiliate_id
@@ -426,7 +573,7 @@ class ImportationController extends Controller
     public function upload_fail_validated_group(Request $request){
 
         $request->validate([
-            'origin'=>'required|string',
+            'origin'=>'required|string|in:C,S',
             'period'=>'required|exists:periods,id'
         ]);
 
@@ -563,4 +710,93 @@ class ImportationController extends Controller
             abort(403, 'El préstamo ya fue liquidado');
         }
     }
+
+    //borrado de pagos agrupados
+    public function delete_agroups_payments($period, $origin)
+    {
+        DB::beginTransaction();
+        try{
+            if(Period::whereId($period)->first() && $origin == 'C' || Period::whereId($period)->first() && $origin == 'S')
+            {
+                $count = 0;
+                if($origin == 'C'){
+                    $query = "delete
+                                from command_payment_groups
+                                where period_id = $period";
+                    $query = DB::select($query);
+                    DB::commit();
+                    return true;
+                }
+                if($origin == 'S'){
+                    $query = "delete
+                                from senasir_payment_groups
+                                where period_id = $period";
+                    $query = DB::select($query);
+                    DB::commit();
+                    return true;
+                }
+            }
+            else
+                return false;
+        }
+        catch (Exception $e)
+        {
+            DB::rollback();
+            return $e;
+        }
+    }
+
+    /**
+    * Rollback datos de command o SENASIR
+    * Rollback datos de command o SENASIR siempre y cuando los estados en el periodo esten en estado FALSE
+    * @queryParam origin required Tipo de importacion C (Comando general) o S (Senasir). Example: C
+    * @queryParam period required id_del periodo . Example: 1
+    * @authenticated
+    * @responseFile responses/importation/rollback_copy_groups.200.json
+    */
+    public function rollback_copy_groups_payments(Request $request)
+    {
+        $request->validate([
+            'origin'=>'required|string|in:C,S',
+            'period'=>'required|exists:periods,id'
+        ]);
+        DB::beginTransaction();
+        try{
+            $validated_rollback = false;
+            $period = $request->period;$origin = $request->origin;
+            $period =Period::whereId($request->period)->first();
+
+            if($origin == 'C' && !$period->import_command){
+                $this->delete_agroups_payments($period->id,$origin);
+                $this->delete_copy_payments($period->id,$origin);
+                $validated_rollback = true;
+
+            }
+            if($origin == 'S' && !$period->import_senasir){
+                $this->delete_agroups_payments($period->id,$origin);
+                $this->delete_copy_payments($period->id,$origin);
+                $validated_rollback = true;
+            }
+
+            if(!$validated_rollback){
+                $message = "No se puede realizar el rollback";
+
+            }else{
+                $message = "Realizado con exito!";
+            }
+
+            $rollback = [
+                'validated_rollback'=> $validated_rollback,
+                'message'=>$message
+            ];
+            DB::commit();
+            return $rollback;
+        }catch (Exception $e)
+        {
+            DB::rollback();
+            return $e;
+        }
+
+    }
+
 }
