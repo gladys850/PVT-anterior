@@ -512,6 +512,7 @@ class ImportationController extends Controller
                     $request['type'] = $request->state;
                     $request['file_name'] = $file_name;
                     $result['message'] = $this->copy_payments($request);
+                    $result['validate'] = true;
                     return $result;
                 }else{
                     $result['message'] = "No se puede ralizar el cargado del archivo ya que se realizo el registro de pago";  
