@@ -248,7 +248,8 @@
                           <v-card-text >
                              <v-icon style="color:white">mdi-arrow-right-thick</v-icon>
                             <b style="color:white" >
-                             CI / MATRICULA: Del afiliado
+                             CI / MATRICULA: CI del afiliado cuando sea una importacion por COMANDO.
+                             Matricula del afiliado cuando sea una importacion por SENASIR.
                             </b>
                             <br/>
                             <v-icon style="color:white">mdi-arrow-right-thick</v-icon>
