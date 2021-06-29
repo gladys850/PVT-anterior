@@ -108,6 +108,8 @@ Route::group([
 
         Route::get('rollback_copy_groups_payments', 'Api\V1\ImportationController@rollback_copy_groups_payments');
 
+        Route::get('report_amortization_importation_payments', 'Api\V1\ImportationReportController@report_amortization_importation_payments');
+
         //get_list_month
         // Afiliados
         Route::group([
