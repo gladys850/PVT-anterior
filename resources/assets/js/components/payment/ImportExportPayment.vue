@@ -221,7 +221,7 @@
                           >Subir Archivo
                         </v-btn>
                       </v-col>
-                         <v-col cols="6" >
+                         <v-col cols="6" v-show="validar_datos" >
                         <v-btn
                           color="info"
                           @click.stop="validateFilePayment()"
@@ -338,6 +338,7 @@
                 <v-btn
                   color="green darken-1"
                   text
+                  :loading="loading_importacion"
                   @click="importPayment()"
                 >
                   Aceptar
@@ -360,11 +361,11 @@ export default {
   data: () => ({
 
   bus: new Vue(),
-  importacion:true,
-
+  importacion:false,
+  loading_importacion:false,
   reporte_comando_loading:false,
   reporte_senasir_loading:false,
-
+  validar_datos:false,
   dialog: false,
   dialog_confirm : false,
   dialog_confirm_import:false,
@@ -413,6 +414,7 @@ export default {
     },
 
     async uploadFilePayment() {
+      const formData = new FormData();
       formData.append("file", this.import_export.file);
       formData.append("state", this.import_export.state_affiliate);
       this.loading_ipb = true
@@ -420,14 +422,22 @@ export default {
         url: "/loan_payment/upload_file_payment",
         method: "POST",
         headers: { Accept: "application/vnd.ms-excel" },
+        data: formData,
       })
         .then((response) => {
           console.log(response.data);
+           this.validar_datos=response.data.validate
+           if(this.validar_datos){
+            this.toastr.success('Datos efectivizados '+ response.data.message[0].count)
+           }
+           else{
+            this.toastr.error(response.data.message)
+           }
+            this.import_export.file=null
         })
         .catch((e) => {
           console.log(e);
         });
-      this.loading_ipb = false;
     },
 
     async getYear() {
@@ -572,18 +582,23 @@ export default {
     },
     async importPayment(){
     try {
-      this.loading = true
-      if(this.import_export.state_affiliate=='C'){
-        let res = await axios.get(`create_payments_command`,{
-          params:{
-            period: this.mes
-        }
-      })
+      this.loading_importacion = true
+      if( this.loading_importacion == true)
+      {
+        if(this.import_export.state_affiliate=='C'){
+          let res = await axios.get(`create_payments_command`,{
+            params:{
+              period: this.mes
+          }
+        })
         if(res.data.importation_validated){
-          this.dialog=false
-          this.dialog_confirm_import=false
-          this.toastr.success('Importado Correctamente: '+res.data.paid_by_lenders+ ' titulares y '+ res.data.paid_by_guarantors+' garantes' )
+          if(res.status==201 || res.status == 200){
+            this.dialog=false
+            this.dialog_confirm_import=false
+            this.toastr.success('Importado Correctamente: '+res.data.paid_by_lenders+ ' titulares y '+ res.data.paid_by_guarantors+' garantes' )
+          }
         }else{
+          this.dialog_confirm_import=false
           this.toastr.error(res.data.message)
         }
       }else{
@@ -593,14 +608,19 @@ export default {
         }
       })
       if(res.data.importation_validated){
+        if(res.status==201 || res.status == 200){
           this.dialog=false
           this.dialog_confirm_import=false
           this.toastr.success('Importado Correctamente: '+res.data.paid_by_lenders+ ' titulares y '+ res.data.paid_by_guarantors+' garantes' )
+        }
       }
       else{
         this.toastr.error(res.data.message)
       }
      }
+      }
+        this.importacion=false
+        this.validar_datos=false
        } catch (e) {
         this.loading = false;
         console.log(e);
@@ -624,6 +644,7 @@ export default {
       this.clearInputs()
       this.dialog=false
       this.dialog_confirm=false
+      this.validar_datos=false
     },
     async reporteComandoSenasir(id, tipo){
     try {
@@ -639,7 +660,7 @@ export default {
           const formData = new FormData();
 
          await axios({
-          url: '/report_amortization_discount_months',
+          url: '/report_amortization_importation_payments',
           method: "GET",
           responseType: "blob", // important
           headers: { Accept: "application/vnd.ms-excel" },
