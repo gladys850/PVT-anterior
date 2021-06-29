@@ -124,7 +124,8 @@
                               bottom
                               right
                               v-on="on"
-                              @click.stop="reporteComandoSenasir()"
+                              :loading="reporte_comando_loading"
+                              @click.stop="reporteComandoSenasir(item.id,'C')"
                             >
                               <v-icon>mdi-warehouse</v-icon>
                             </v-btn>
@@ -143,7 +144,8 @@
                               bottom
                               right
                               v-on="on"
-                              @click.stop="reporteComandoSenasir()"
+                              :loading="reporte_senasir_loading"
+                              @click.stop="reporteComandoSenasir(item.id,'S')"
                             >
                               <v-icon >mdi-home-analytics</v-icon>
                             </v-btn>
@@ -360,6 +362,9 @@ export default {
   bus: new Vue(),
   importacion:true,
 
+  reporte_comando_loading:false,
+  reporte_senasir_loading:false,
+
   dialog: false,
   dialog_confirm : false,
   dialog_confirm_import:false,
@@ -408,7 +413,6 @@ export default {
     },
 
     async uploadFilePayment() {
-      const formData = new FormData();
       formData.append("file", this.import_export.file);
       formData.append("state", this.import_export.state_affiliate);
       this.loading_ipb = true
@@ -416,7 +420,6 @@ export default {
         url: "/loan_payment/upload_file_payment",
         method: "POST",
         headers: { Accept: "application/vnd.ms-excel" },
-        data: formData,
       })
         .then((response) => {
           console.log(response.data);
@@ -622,9 +625,18 @@ export default {
       this.dialog=false
       this.dialog_confirm=false
     },
-    async reporteComandoSenasir(){
+    async reporteComandoSenasir(id, tipo){
     try {
-         const formData = new FormData();
+          if(tipo=='C')
+          {
+            this.reporte_comando_loading = true
+          }
+          else{
+            this.reporte_senasir_loading = true
+          }
+          if(this.reporte_comando_loading==true || this.reporte_senasir_loading ){
+
+          const formData = new FormData();
 
          await axios({
           url: '/report_amortization_discount_months',
@@ -634,19 +646,24 @@ export default {
           //headers: { Accept: "text/plain" },
           data: formData,
           params: {
-            origin: this.import_export.state_affiliate,
-            period: this.mes
+            origin: tipo,
+            period: id
           }
         })
           .then((response) => {
-            console.log(response.data);
-             const url = window.URL.createObjectURL(new Blob([response.data]));
+           const url = window.URL.createObjectURL(new Blob([response.data]));
            const link = document.createElement("a");
            link.href = url;
            link.setAttribute("download", "ReporteImportacion.xls");
            document.body.appendChild(link);
            link.click();
-         })
+         if(response.status==201 || response.status == 200){
+              this.reporte_comando_loading=false
+              this.reporte_senasir_loading=false
+            }
+        })
+
+          }
       } catch (e) {
         this.loading = false;
         console.log(e);
