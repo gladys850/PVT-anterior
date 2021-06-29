@@ -578,6 +578,7 @@ export default {
       })
         if(res.data.importation_validated){
           this.dialog=false
+          this.dialog_confirm_import=false
           this.toastr.success('Importado Correctamente: '+res.data.paid_by_lenders+ ' titulares y '+ res.data.paid_by_guarantors+' garantes' )
         }else{
           this.toastr.error(res.data.message)
@@ -590,6 +591,7 @@ export default {
       })
       if(res.data.importation_validated){
           this.dialog=false
+          this.dialog_confirm_import=false
           this.toastr.success('Importado Correctamente: '+res.data.paid_by_lenders+ ' titulares y '+ res.data.paid_by_guarantors+' garantes' )
       }
       else{
