@@ -669,14 +669,15 @@ class ImportationController extends Controller
                     'period'=> Period::whereId($request->period)->first(),
                     'paid_by_lenders' => $c,
                     'paid_by_guarantors' => $c2,
-                    'importation_validated'=> false                
+                    'message'=>"Comando General Importación realizada con exito! ".$period->month.'/'.$period->year,
+                    'importation_validated'=> true
                 ];
             }else{
             $paids = [
                 'period'=>$period,
                 'paid_by_lenders' => $c,
                 'paid_by_guarantors' => $c2,
-                'message'=>"COMMAND Error! Anteriormente ya realizó la importación del periodo: ".$period->month.'/'.$period->year,
+                'message'=>"Comando General Error! Anteriormente ya realizó la importación del periodo: ".$period->month.'/'.$period->year,
                 'importation_validated'=> false
             ];
             }
