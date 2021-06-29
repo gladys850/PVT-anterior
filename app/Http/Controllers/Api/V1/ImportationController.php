@@ -364,15 +364,13 @@ class ImportationController extends Controller
 
     public function copy_payments(request $request)
     {
-        //$file = Storage::disk('ftp')->get($request->location."/".$request->file_name);
-        //$file = Storage::path('public')->get($request->location);
-        //Storage::disk('public')->put($request->file_name, $file);
-        //return Storage::disk('local2')->path($request->file_name);
-        //return "ok2";
-        //return Storage::disk('public')->path($request->file_name);
-        //return Storage::disk('public')->getDriver()->getAdapter()->getPathPrefix();
+       
         DB::beginTransaction();
         try{
+            $base_path = $request->location."/".$request->file_name;
+            $base_path ='ftp://'.env('FTP_HOST').'/'.$base_path;
+            $username =env('FTP_USERNAME');
+            $password =env('FTP_PASSWORD');
             $this->delete_copy_payments($request->period_id, $request->type);
             if(Period::whereId($request->period_id)->first()){
                 $drop = "drop table if exists payments_aux";
@@ -380,12 +378,11 @@ class ImportationController extends Controller
                 if($request->type == 'C'){
                     $temporary = "create temporary table payments_aux(period_id integer, identity_card varchar, amount float)";
                     $temporary = DB::select($temporary);
-
                     $copy = "copy payments_aux(identity_card, amount)
-                            FROM '/home/richard/Escritorio/descuento_comando.csv'
+                            FROM PROGRAM 'wget -q -O - $@  --user=$username --password=$password $base_path'
                             WITH DELIMITER ':' CSV header;";
                     $copy = DB::select($copy);
-                    Storage::disk('public')->delete($request->file_name);
+                   // Storage::disk('public')->delete($request->file_name);
 
                     $update = "update payments_aux
                                 set period_id = $request->period_id";
@@ -413,7 +410,7 @@ class ImportationController extends Controller
                         $temporary = DB::select($temporary);
 
                         $copy = "copy payments_aux(registration, registration_dh, amount)
-                                FROM '/home/richard/Escritorio/senasir2.csv'
+                                FROM PROGRAM 'wget -q -O - $@  --user=$username --password=$password $base_path'
                                 WITH DELIMITER ':' CSV header;";
                         $copy = DB::select($copy);
                         //Storage::disk('public')->delete($request->file_name);
@@ -511,13 +508,14 @@ class ImportationController extends Controller
                 }
                 if($period_state == false){
                     $file_name = $last_date.'.csv';
-                    $base_path = 'contribución/'.$origin;    
+                    $base_path = 'contribucion/'.$origin;    
                     $file_path = Storage::disk('ftp')->putFileAs($base_path,$request->file,$file_name);
                     $request['period_id'] = $last_period->id;
                     $request['location'] = $base_path;
                     $request['type'] = $request->state;
                     $request['file_name'] = $file_name;
                     $result['message'] = $this->copy_payments($request);
+                    
                     $result['validate'] = true;
                     return $result;
                 }else{
