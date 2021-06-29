@@ -255,6 +255,7 @@ class ImportationController extends Controller
                                     $update = "UPDATE senasir_payment_groups set amount_balance = $amount_group where id = $payment_agroup->id";
                                     $update = DB::select($update);
                                     $senasir_lender++;
+                                    Log::info('Cantidad: '.$senasir_lender.' *Titularidad : Se registro el cobro en el loanPayments con id: '.$registry_patment->id. 'y codigo: '.$registry_patment->code);
                                 }
                             }
                         }
@@ -286,6 +287,7 @@ class ImportationController extends Controller
                                 $update = "UPDATE senasir_payment_groups set amount_balance = $amount_group where id = $payment_agroup->id";
                                 $update = DB::select($update);
                                 $senasir_guarantor++;
+                                Log::info('Cantidad: '.$senasir_guarantor.' *Garantia: Se registro el cobro en el loanPayments con id: '.$registry_patment->id. 'y codigo: '.$registry_patment->code);
                             }
                           }
                         }
@@ -296,6 +298,7 @@ class ImportationController extends Controller
 
             $update_period = "UPDATE periods set import_senasir = true where id = $period->id";
             $update_period = DB::select($update_period);
+            Log::info('Se actualizo el estado del periodo en la columna import_senasir  del id_periodo: '.$period->id);
 
             $paids = [
                 'period'=>$period,
@@ -308,6 +311,7 @@ class ImportationController extends Controller
             return $paids;
 
         }else{
+            Log::info('No se puede volver a realizar la importación de cobros del periodo con id : '.$period->id.' por que ya se lo realizó anteriormente :)');
             $paids = [
                 'period'=>$period,
                 'paid_by_lenders' => $senasir_lender,
@@ -319,6 +323,7 @@ class ImportationController extends Controller
         }
         }catch(Exception $e){
             DB::rollback();
+            Log::info('ocurrio un error se realizó un rollback...');
             return $e;
         }
     }
@@ -710,6 +715,7 @@ class ImportationController extends Controller
             $payment->paid_by = $request->paid_by;
             $payment->validated = true;
             $payment->user_id = auth()->id();
+            $payment->loan_payment_date = $request->loan_payment_date;
             $loan_payment = $loan->payments()->create($payment->toArray());
             return $payment;
         }else{
