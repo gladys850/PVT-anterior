@@ -613,6 +613,8 @@ class ImportationController extends Controller
                 $payments = DB::select($query);//return $payments;
                 $estimated_date = Carbon::create($period->year, $period->month, 1);
                 $estimated_date = Carbon::parse($estimated_date)->endOfMonth()->format('Y-m-d');
+                $estimated_date_disbursement = Carbon::create($period->year, $period->month, LoanGlobalParameter::first()->offset_interest_day);
+                $estimated_date_disbursement = Carbon::parse($estimated_date_disbursement)->endOfMonth()->format('Y-m-d');
                 $c = 0;$sw = false;$c2 = 0;
                 foreach ($payments as $payment){
                     $amount = $payment->amount_balance;
@@ -622,6 +624,7 @@ class ImportationController extends Controller
                     $loans = "select * from loans where id in (select loan_id from loan_affiliates where affiliate_id = $affiliate->id and guarantor = false)
                     and state_id in (select id from loan_states where name = 'Vigente')
                     and guarantor_amortizing = false
+                    and disbursement_date <= '$estimated_date_disbursement'
                     order by disbursement_date";
                     $loans = DB::select($loans);
                     foreach($loans as $loan){
@@ -651,6 +654,7 @@ class ImportationController extends Controller
                     $guarantees = "select * from loans where id in (select loan_id from loan_affiliates where affiliate_id = $affiliate->id and guarantor = true)
                     and state_id in (select id from loan_states where name = 'Vigente')
                     and guarantor_amortizing = true
+                    and disbursement_date <= '$estimated_date_disbursement'
                     order by disbursement_date";
                     $guarantees = DB::select($guarantees);
                     $c2 = 0;
