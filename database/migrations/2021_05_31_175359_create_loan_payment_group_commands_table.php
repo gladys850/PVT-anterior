@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateCommandPaymentGroupsTable extends Migration
+class CreateLoanPaymentGroupCommandsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreateCommandPaymentGroupsTable extends Migration
      */
     public function up()
     {
-        Schema::create('command_payment_groups', function (Blueprint $table) {
+        Schema::create('loan_payment_group_commands', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('affiliate_id')->unsigned();
             $table->foreign('affiliate_id')->references('id')->on('affiliates');
@@ -36,6 +36,6 @@ class CreateCommandPaymentGroupsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('command_payment_groups');
+        Schema::dropIfExists('loan_payment_group_commands');
     }
 }
