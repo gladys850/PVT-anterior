@@ -127,7 +127,7 @@ class LoanPaymentPeriodController extends Controller
     public function get_list_month(Request $request)
     {
         $request->validate([
-            'year' => 'required|exists:periods,year'
+            'year' => 'required|exists:loan_payment_periods,year'
         ]);
         $loan_payment_period = LoanPaymentPeriod::where('year',$request->year)->orderBy('month', 'asc')->get();
         return $loan_payment_period;
