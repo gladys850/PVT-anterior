@@ -18,7 +18,7 @@ class CreateLoanPaymentGroupCommandsTable extends Migration
             $table->unsignedBigInteger('affiliate_id')->unsigned();
             $table->foreign('affiliate_id')->references('id')->on('affiliates');
             $table->unsignedBigInteger('period_id')->unsigned();
-            $table->foreign('period_id')->references('id')->on('periods');
+            $table->foreign('period_id')->references('id')->on('loan_payment_periods');
 
         	$table->unique(['affiliate_id', 'period_id']);
             $table->string('identity_card');

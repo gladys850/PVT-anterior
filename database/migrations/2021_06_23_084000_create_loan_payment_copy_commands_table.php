@@ -16,7 +16,7 @@ class CreateLoanPaymentCopyCommandsTable extends Migration
         Schema::create('loan_payment_copy_commands', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('period_id')->unsigned();
-            $table->foreign('period_id')->references('id')->on('periods');
+            $table->foreign('period_id')->references('id')->on('loan_payment_periods');
             $table->string('identity_card');
             $table->float('amount',10,2);
             $table->timestamps();
