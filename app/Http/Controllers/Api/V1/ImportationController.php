@@ -256,6 +256,7 @@ class ImportationController extends Controller
                                     $update = "UPDATE loan_payment_group_senasirs set amount_balance = $amount_group where id = $payment_agroup->id";
                                     $update = DB::select($update);
                                     $senasir_lender++;
+                                    $sw =false;
                                     Log::info('Cantidad: '.$senasir_lender.' *Titularidad : Se registro el cobro en el loanPayments con id: '.$registry_patment->id. 'y codigo: '.$registry_patment->code);
                                 }
                             }
@@ -288,6 +289,7 @@ class ImportationController extends Controller
                                 $update = "UPDATE loan_payment_group_senasirs set amount_balance = $amount_group where id = $payment_agroup->id";
                                 $update = DB::select($update);
                                 $senasir_guarantor++;
+                                $sw =false;
                                 Log::info('Cantidad: '.$senasir_guarantor.' *Garantia: Se registro el cobro en el loanPayments con id: '.$registry_patment->id. 'y codigo: '.$registry_patment->code);
                             }
                           }
