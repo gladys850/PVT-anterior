@@ -392,7 +392,7 @@ class ImportationController extends Controller
                 $drop = "drop table if exists payments_aux";
                 $drop = DB::select($drop);
                 if($request->type == 'C'){
-                    if($file_validate == "identity_card:amount"){
+                    if($file_validate == "CI:MONTO"){
                         $temporary = "create temporary table payments_aux(period_id integer, identity_card varchar, amount float)";
                         $temporary = DB::select($temporary);
                         $copy = "copy payments_aux(identity_card, amount)
@@ -426,7 +426,7 @@ class ImportationController extends Controller
                 }
                 else{
                     if($request->type == 'S'){
-                        if($file_validate == "registration:registration_dh:amount"){
+                        if($file_validate == "MATRICULA:MATRICULA_DH:MONTO"){
                             $temporary = "create temporary table payments_aux(period_id integer, registration varchar, registration_dh varchar, amount float)";
                             $temporary = DB::select($temporary);
 
@@ -523,15 +523,15 @@ class ImportationController extends Controller
                 $last_period = LoanPaymentPeriod::orderBy('id')->get()->last();
                 $last_date = Carbon::parse($last_period->year.'-'.$last_period->month)->toDateString();
                 if($request->state == "C"){
-                    $origin = "comando_".$last_period->year;
+                    $origin = "comando-".$last_period->year;
                     $period_state = $last_period->import_command;
                 }else{
-                    $origin = "senasir_".$last_period->year;
+                    $origin = "senasir-".$last_period->year;
                     $period_state = $last_period->import_senasir;
                 }
                 if($period_state == false){
                     $file_name = $last_date.'.csv';
-                    $base_path = 'contribucion/'.$origin;    
+                    $base_path = 'cobranzas-importacion/'.$origin;    
                     $file_path = Storage::disk('ftp')->putFileAs($base_path,$request->file,$file_name);
                     $request['period_id'] = $last_period->id;
                     $request['location'] = $base_path;
