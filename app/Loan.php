@@ -62,7 +62,8 @@ class Loan extends Model
         'delivery_contract_date',
         'return_contract_date',
         'regional_delivery_contract_date',
-        'regional_return_contract_date'
+        'regional_return_contract_date',
+        'payment_plan_compliance'
     ];
 
     function __construct(array $attributes = [])
