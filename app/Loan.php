@@ -1152,21 +1152,24 @@ class Loan extends Model
 
     public function verify_regular_payments(){
         $date = Carbon::parse($this->disbursement_date)->format('Y-m-d');
-        $c = 1;
+        $extra_amount = 0;
         $regular = true;
         if(Carbon::parse($date)->format('d') <= LoanGlobalParameter::first()->offset_interest_day)
-            $date = Carbon::parse($date)->endOfMonth();
+            $date = Carbon::parse($date)->endOfMonth()->format('Y-m-d');
         else{
-            $date = Carbon::parse($date)->startOfMonth()->addMonth()->endOfMonth();
+            $extra_days = Carbon::parse($date)->endOfMonth()->format('d') - Carbon::parse($this->disbursement_date)->format('d');
+            $date = Carbon::parse($date)->startOfMonth()->addMonth()->endOfMonth()->format('Y-m-d');
+            $extra_amount = number_format(((($this->interest->annual_interest/100)/360)*$extra_days*$this->amount_approved) , 2);
         }
         foreach($this->paymentsKardex as $payment)
         {
-            if($date != Carbon::parse($payment->estimated_date)->format('Y-m-d') || $this->estimated_quota > $payment->estimated_quota){
+            if($date != Carbon::parse($payment->estimated_date)->format('Y-m-d') || $payment->estimated_quota != $this->estimated_quota + $extra_amount){
                 $regular = false;
                 break;
             }
             else
-                $date = Carbon::parse($date)->startOfMonth()->addMonth()->endOfMonth();
+                $date = Carbon::parse($date)->startOfMonth()->addMonth()->endOfMonth()->format('Y-m-d');
+            $extra_amount = 0;
         }
         return $regular;
     }
