@@ -1154,9 +1154,9 @@ class Loan extends Model
         $c = 1;
         $regular = true;
         if(Carbon::parse($date)->format('d') <= LoanGlobalParameter::first()->offset_interest_day)
-            $date = $date->endOfMonth();
+            $date = Carbon::parse($date)->endOfMonth();
         else{
-            $date = $date->startOfMonth()->addMonth()->endOfMonth();
+            $date = Carbon::parse($date)->startOfMonth()->addMonth()->endOfMonth();
         }
         foreach($this->paymentsKardex as $payment)
         {
@@ -1165,7 +1165,7 @@ class Loan extends Model
                 break;
             }
             else
-                $date = $date->startOfMonth()->addMonth()->endOfMonth();
+                $date = Carbon::parse($date)->startOfMonth()->addMonth()->endOfMonth();
         }
         return $regular;
     }
