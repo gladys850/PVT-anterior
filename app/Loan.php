@@ -237,7 +237,7 @@ class Loan extends Model
     {
         $id_pagado = LoanPaymentState::where('name','Pagado')->first();
         $id_pendiente = LoanPaymentState::where('name', 'Pendiente por confirmar')->first();
-        return $this->hasMany(LoanPayment::class)->whereIn('state_id', [$id_pagado->id, $id_pendiente->id])->orderBy('quota_number', 'desc')->orderBy('created_at');
+        return $this->hasMany(LoanPayment::class)->whereIn('state_id', [$id_pagado->id, $id_pendiente->id])->orderBy('quota_number', 'asc');
     }
     //relacion uno a muchos
     public function loan_contribution_adjusts()
