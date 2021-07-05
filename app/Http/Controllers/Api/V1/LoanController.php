@@ -1088,8 +1088,8 @@ class LoanController extends Controller
     public function print_plan(Request $request, Loan $loan, $standalone = true)
     {
         if($loan->disbursement_date){
-            $file_title = implode('_', ['PLAN','DE','PAGOS', $procedure_modality->shortened, $loan->code,Carbon::now()->format('m/d')]);
             $procedure_modality = $loan->modality;
+            $file_title = implode('_', ['PLAN','DE','PAGOS', $procedure_modality->shortened, $loan->code,Carbon::now()->format('m/d')]);
             $lenders = [];
             $is_dead = false;
             foreach ($loan->lenders as $lender) {
