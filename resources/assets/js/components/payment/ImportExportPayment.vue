@@ -168,156 +168,349 @@
             >
               <v-card>
                 <v-toolbar dark color="primary" >
-                  <v-btn icon dark @click="dialog_confirm=true" >
+                  <v-btn icon dark @click="dialog=close()" >
                     <v-icon>mdi-close</v-icon>
                   </v-btn>
                   <v-toolbar-title>IMPORTACION {{title}}</v-toolbar-title>
-                  <v-spacer></v-spacer>
-                  <v-toolbar-items>
-                    <v-btn dark text v-show="importacion" @click="dialog_confirm_import=true" >
-                      Ejecutar la Importación
-                    </v-btn>
-                  </v-toolbar-items>
                 </v-toolbar>
                 <v-col cols="12" >
                   <v-row>
-                    <v-col cols="3"  md="3" >
+                    <v-col cols="2"  md="2" >
                     </v-col>
-                    <v-col cols="3"  md="3" >
+                    <v-col cols="8"  md="8" >
                       <v-col cols="12" >
-                        <v-toolbar-title>
-                          <center><b>Información para descuento </b></center>
-                        </v-toolbar-title>
-                        <v-progress-linear></v-progress-linear>
-                      </v-col>
-                      <v-col cols="6" md="10" >
-                       <v-select
-                          dense
-                          :items="state_affiliate"
-                          item-text="name"
-                          item-value="value"
-                          label="Estado del afiliado"
-                          disabled
-                          readonly
-                          v-model="import_export.state_affiliate"
-                        ></v-select>
-                      </v-col>
-                      <v-col cols="6"  md="10">
-                        <v-file-input
-                          counter
-                          show-size
-                          truncate-length="30"
-                          outlined
-                          small-chips
-                          dense
-                          label="Importar información"
-                          v-model="import_export.file"
-                        ></v-file-input>
-                      </v-col>
-                      <v-col cols="6" >
-                        <v-btn
-                          color="success"
-                          @click.stop="uploadFilePayment()"
-                          >Subir Archivo
-                        </v-btn>
-                      </v-col>
-                         <v-col cols="6" v-show="validar_datos" >
-                        <v-btn
-                          color="info"
-                          @click.stop="validateFilePayment()"
-                          >Validar Datos
-                        </v-btn>
-                      </v-col>
+                        <v-row>
+                           <v-col cols="2"  md="2" >
+                           </v-col>
+                          <v-col cols="7"  md="7" >
+                            <v-toolbar-title>
+                              <center><b>Información para descuento </b></center>
+                            </v-toolbar-title>
+                          </v-col>
+                          <v-col cols="2"  md="2" >
+                            <div class="text-center">
+                            <v-menu
+                              v-model="menu"
+                              :close-on-content-click="false"
+                              :nudge-width="200"
+                              offset-x
+                            >
+                              <template v-slot:activator="{ on, attrs }">
+                                <v-btn
+                                  text
+                                  color="indigo"
+                                  dark
+                                  v-bind="attrs"
+                                  v-on="on"
+                                >
+                                  Información
+                                </v-btn>
+                              </template>
+                              <v-card>
+                                <v-list>
+                                  <v-list-item>
+                                    <v-list-item-content>
+                                      <v-list-item-title v-show="import_export.state_affiliate !='C'">Importación Senasir</v-list-item-title>
+                                       <v-list-item-title v-show="import_export.state_affiliate =='C'">Importación Comando</v-list-item-title>
+                                      <v-list-item-subtitle>Descripción de documento de Importacion</v-list-item-subtitle>
+                                    </v-list-item-content>
+                                  </v-list-item>
+                                </v-list>
+                                <v-divider></v-divider>
+                                <div class="py-1 pl-2 ma-1">
+                                    <small class="py-0 ma-0"><v-icon class="py-1 ma-0">mdi-check</v-icon>
+                                      Archivo CSV </small> <br>
+                                    <small><v-icon>mdi-check</v-icon>
+                                      FORMATO CABECERA DEL ARCHIVO</small><br v-show="import_export.state_affiliate !='C'">
+                                     <small class=" pl-6 ma-1" v-show="import_export.state_affiliate !='C'">
+                                      MATRICULA:MATRICULADH:MONTO</small><br v-show="import_export.state_affiliate =='C'">
+                                      <small class=" pl-6 ma-1" v-show="import_export.state_affiliate =='C'">
+                                      CI:MONTO</small><br>
+                                     <small><v-icon>mdi-check</v-icon>
+                                      Campos del Archivo CSV</small><br v-show="import_export.state_affiliate !='C'" >
+                                    <small v-show="import_export.state_affiliate !='C'" class=" pl-6 ma-1"><v-icon >mdi-arrow-right-thick</v-icon>
+                                      MATRICULA: Matricula del afiliado</small><br v-show="import_export.state_affiliate !='C'">
+                                     <small class=" pl-6 ma-1" v-show="import_export.state_affiliate !='C'"><v-icon >mdi-arrow-right-thick</v-icon>
+                                      MATRICULA DERECHO HABIENTE: Matricula del conyugue</small><br v-show="import_export.state_affiliate =='C'">
+                                    <small class=" pl-6 ma-1" v-show="import_export.state_affiliate =='C'"><v-icon >mdi-arrow-right-thick</v-icon>
+                                      CI/MATRICULA: CI o Matricula del afiliado</small><br>
+                                     <small class=" pl-6 ma-1"><v-icon >mdi-arrow-right-thick</v-icon>
+                                      MONTO : Monto de la importación</small><br>
+                                </div>
+                              <v-card-actions>
+                              <v-spacer></v-spacer>
+                              <v-btn
+                                text
+                                @click="menu = false"
+                              >
+                                Salir
+                              </v-btn>
+                            </v-card-actions>
+                          </v-card>
+                        </v-menu>
+                      </div>
                     </v-col>
-                    <v-col cols="6"  md="6" class="py-0" >
-                      <v-col cols="12" >
-                        <v-card color="warning" class="headline font-weight-bold"  max-width="53%" max-height="500"  >
-                      <v-card-text >
-                        <b style="color:white" >
-                          *DATOS A TOMAR EN CUENTA PARA LA IMPORTACIÓN
-                        </b>
-                        <v-progress-linear style="color:primary"></v-progress-linear><br/>
-                        <v-icon style="color:white">mdi-check</v-icon>
-                        <b style="color:white" >
-                         Archivo CSV
-                        </b>
-                        <br/>
-                        <v-icon style="color:white">mdi-check</v-icon>
-                        <b style="color:white" >
-                         Campos del Archivo CSV
-                        </b>
-                        <v-card color="primary" class="headline font-weight-bold"  max-width="100%" max-height="500"  >
-                          <v-card-text >
-                             <v-icon style="color:white">mdi-arrow-right-thick</v-icon>
-                            <b style="color:white" >
-                             CI / MATRICULA: CI del afiliado cuando sea una importacion por COMANDO.
-                             Matricula del afiliado cuando sea una importacion por SENASIR.
-                            </b>
-                            <br/>
-                            <v-icon style="color:white">mdi-arrow-right-thick</v-icon>
-                            <b style="color:white" >
-                             MONTO : Monto de la importación
-                            </b>
-                            <br/>
-                          </v-card-text>
-                        </v-card>
-                        <br/>
-                        <v-icon style="color:white">mdi-check</v-icon>
-                        <b style="color:white" >
-                          Ejemplo de introduccion de datos en el archivo .csv
-                        </b>
-                        <v-card color="info" class="headline font-weight-bold"  max-width="100%" max-height="500"  >
-                          <v-card-text >
-                            <v-icon style="color:white">*</v-icon>
-                            <b style="color:white" >
-                             CI
-                            </b>
-                            <v-icon style="color:white">*</v-icon>
-                            <b style="color:white" >
-                             MONTO
-                            </b>
-                            <br/>
-                            <b style="color:white" >
-                              82716152:1256.56
-                            </b>
-                          </v-card-text>
-                        </v-card>
-                      </v-card-text>
-                    </v-card >
-                  </v-col>
+                  </v-row>
+                  <v-progress-linear
+                    color="info"
+                    height="15"
+                    :value="percentage"
+                    striped
+                  >
+                    <strong>Porcentaje de Importación: {{percentage}}%</strong>
+                  </v-progress-linear>
                 </v-col>
-              </v-row>
-            </v-col>
-          </v-card>
-        </v-dialog>
-         <v-dialog
-            v-model="dialog_confirm"
-            max-width="500"
-          >
-            <v-card>
-              <v-card-title>
-                Esta seguro de salir?
-                <br> Al salir se borraran todos los datos ingresados
-              </v-card-title>
-              <v-card-actions>
-                <v-spacer></v-spacer>
-                <v-btn
-                  color="red darken-1"
-                  text
-                  @click="dialog_confirm=false"
-                >
-                  Cancelar
-                </v-btn>
-                <v-btn
-                  color="green darken-1"
-                  text
-                  @click="closePayment()"
-                >
-                  Aceptar
-                </v-btn>
-              </v-card-actions>
-            </v-card>
-          </v-dialog>
+                <v-stepper v-model="e1" >
+                  <v-stepper-header class=" !pa-0 ml-0" >
+                    <template>
+                      <v-stepper-step
+                        editable
+                        :key="`${1}-step`"
+                        :complete="e1 > 1"
+                        :step="1">Subir Archivo
+                      </v-stepper-step >
+                      <v-divider v-if="1 !== steps" :key="1" ></v-divider>
+                      <v-stepper-step
+                      editable
+                        :key="`${2}-step`"
+                        :complete="e1 > 2"
+                        :step="2">Validar Datos
+                      </v-stepper-step>
+                      <v-divider v-if="2 !== steps" :key="2" ></v-divider>
+                      <v-stepper-step
+                      editable
+                        :key="`${3}-step`"
+                        :complete="e1 > 3"
+                        :step="3">Importar
+                      </v-stepper-step>
+                      <v-divider v-if="3 !== steps" :key="3" ></v-divider>
+                    </template>
+                  </v-stepper-header>
+                <v-stepper-items>
+                  <v-stepper-content :key="`${1}-content`" :step="1">
+                    <v-card color="grey lighten-1">
+                      <v-card-text >
+                        <v-card color="white">
+                          <v-col cols="12" md="12">
+                            <v-row>
+                              <v-col cols="1" md="1">
+                              </v-col>
+                              <v-col cols="5" md="5">
+                                <v-select
+                                  dense
+                                  :items="state_affiliate"
+                                  item-text="name"
+                                  item-value="value"
+                                  label="Estado del afiliado"
+                                  disabled
+                                  readonly
+                                  v-model="import_export.state_affiliate"
+                                ></v-select>
+                              </v-col>
+                              <v-col cols="5" md="5">
+                                <v-file-input
+                                  counter
+                                  show-size
+                                  truncate-length="30"
+                                  outlined
+                                  small-chips
+                                  dense
+                                  label="Cargar Archivo"
+                                  v-model="import_export.file"
+                                ></v-file-input>
+                              </v-col>
+                              <v-col cols="9" md="9" class="py-0">
+                              </v-col>
+                              <v-col cols="2" md="2" class="py-0">
+                                <v-btn
+                                  color="success"
+                                  @click.stop="uploadFilePayment()"
+                                  > Subir Archivo
+                                </v-btn>
+                              </v-col>
+                            </v-row>
+                          </v-col>
+                        </v-card >
+                      </v-card-text>
+                      <v-container class="py-0">
+                        <v-row>
+                          <v-spacer></v-spacer> <v-spacer></v-spacer> <v-spacer></v-spacer>
+                            <v-col class="py-0">
+                              <v-btn
+                                v-show="validar_datos"
+                                color="primary"
+                                @click="nextStep(1)">
+                                Siguiente
+                              </v-btn>
+                            </v-col>
+                            <!--{{contrib_codebtor}}-->
+                        </v-row>
+                      </v-container>
+                    </v-card>
+                  </v-stepper-content>
+                  <v-stepper-content :key="`${2}-content`" :step="2" >
+                    <v-card color="grey lighten-1">
+                      <v-card-text >
+                        <v-card color="white">
+                          <v-row>
+                            <v-col cols="3">
+                            </v-col>
+                            <v-col cols="4" v-show="import_export.state_affiliate== 'S'">
+                              <label>
+                                Tipo de Importacion : SENASIR
+                              </label>
+                            </v-col>
+                             <v-col cols="4" v-show="import_export.state_affiliate== 'C'">
+                              <label>
+                                Tipo de Importacion : COMANDO
+                              </label>
+                            </v-col>
+                            <v-col cols="4">
+                              <label>
+                                {{'Periodo: '+period_year+'-'+aux_period}}
+                              </label>
+                            </v-col>
+                            <v-col cols="12" >
+                              <v-progress-linear></v-progress-linear>
+                            </v-col>
+                            <v-col cols="4" >
+                            </v-col>
+                            <v-col cols="3" v-show="validar_datos" >
+                              <v-btn
+                                color="success"
+                                @click.stop="validateFilePayment()"
+                                >Validar Datos
+                                <v-icon color="white">mdi-check</v-icon>
+                              </v-btn>
+                            </v-col>
+                            <v-col cols="4" v-show="true" >
+                            <v-tooltip top>
+                            <template v-slot:activator="{ on }">
+                              <v-btn
+                                color="info"
+                                v-on="on"
+                                @click="dialog_confirm=true"
+                              >Rehacer
+                                <v-icon color="white">mdi-eraser</v-icon>
+                              </v-btn>
+                            </template>
+                            <div>
+                              <span>Empezar de nuevo</span>
+                            </div>
+                          </v-tooltip>
+                        </v-col>
+                      </v-row>
+                    </v-card>
+                    <v-container class="py-0">
+                      <v-row>
+                      <v-spacer></v-spacer><v-spacer> </v-spacer> <v-spacer></v-spacer>
+                        <v-col class="py-0">
+                          <v-btn
+                            v-show="importacion"
+                            right
+                            color="primary"
+                            @click.stop="nextStep(2)">
+                            Siguiente
+                          </v-btn>
+                        </v-col>
+                      </v-row>
+                    </v-container>
+                  </v-card-text >
+                </v-card>
+              </v-stepper-content>
+              <v-stepper-content :key="`${3}-content`" :step="3" >
+                <v-card color="grey lighten-1">
+                  <h3 class="text-uppercase text-center">Ultimo Paso la Importación</h3>
+                    <v-card-text >
+                      <v-card color="white">
+                        <v-row>
+                             <v-col cols="3">
+                            </v-col>
+                            <v-col cols="4" v-show="import_export.state_affiliate== 'S'">
+                              <label>
+                                Tipo de Importacion : SENASIR
+                              </label>
+                            </v-col>
+                            <v-col cols="4" v-show="import_export.state_affiliate== 'C'">
+                              <label>
+                                Tipo de Importacion : COMANDO
+                              </label>
+                            </v-col>
+                            <v-col cols="4">
+                              <label>
+                                {{'Periodo: '+period_year+'-'+aux_period}}
+                              </label>
+                            </v-col>
+                            <v-col cols="12" >
+                              <v-progress-linear></v-progress-linear>
+                            </v-col>
+                          <v-col cols="3" >
+                          </v-col>
+                          <v-col cols="4" >
+                            <v-btn dark color="success" v-show="importacion" @click="dialog_confirm_import=true" >
+                              Ejecutar la Importación
+                              <v-icon color="white">mdi-check</v-icon>
+                            </v-btn>
+                          </v-col>
+                          <v-col cols="4" v-show="true" >
+                            <v-tooltip top>
+                            <template v-slot:activator="{ on }">
+                              <v-btn
+                                color="info"
+                                v-on="on"
+                                @click.stop="closePayment()"
+                              > Rehacer
+                                <v-icon>mdi-eraser</v-icon>
+                              </v-btn>
+                            </template>
+                            <div>
+                              <span>Empezar de nuevo</span>
+                            </div>
+                          </v-tooltip>
+                        </v-col>
+                      </v-row>
+                    </v-card>
+                  </v-card-text >
+                </v-card>
+              </v-stepper-content>
+            </v-stepper-items>
+          </v-stepper>
+        </v-col>
+        <v-col cols="6"  md="6" class="py-0" >
+        </v-col>
+      </v-row>
+    </v-col>
+  </v-card>
+</v-dialog>
+<v-dialog
+  v-model="dialog_confirm"
+  max-width="600"
+>
+  <v-card>
+    <v-card-title>
+      <center>¿Esta seguro que quiere rehacer el proceso de importación?</center>
+      <br>
+      <br> <small class='caption'>Al rehacer se borraran todos los datos ingresados</small>
+    </v-card-title>
+    <v-card-actions>
+      <v-spacer></v-spacer>
+      <v-btn
+        color="red darken-1"
+        text
+        @click="dialog_confirm=false"
+      >
+        Cancelar
+      </v-btn>
+      <v-btn
+        color="green darken-1"
+        text
+        @click="closePayment()"
+      >
+        Aceptar
+      </v-btn>
+    </v-card-actions>
+  </v-card>
+</v-dialog>
            <v-dialog
             v-model="dialog_confirm_import"
             max-width="500"
@@ -352,13 +545,20 @@
 </ValidationObserver>
 </v-container>
 </template>
-
-
-
 <script>
 export default {
   name: "payment-ImportExport",
   data: () => ({
+    e1: 1,
+  
+     steps: 6,
+
+ fav: true,
+      menu: false,
+      message: false,
+      hints: true,
+
+
 
   bus: new Vue(),
   importacion:false,
@@ -401,16 +601,51 @@ export default {
   visible: false,
   loading_rpb: false,
   loading_ipb: false,
-  aux:null
+  aux:null,
+  percentage:0
 
   }),
+    watch: {
+    steps (val) {
+      if (this.e1 > val) {
+        this.e1 = val
+      }
+    },
+    /*'loanTypeSelected.id': function(newVal, oldVal){
+      if(newVal!= oldVal)
+      this.loanTypeSelected.id = this.modalidad_refi_repro_remake
+      //alert ('steps' + this.loanTypeSelected.id)
+    },*/
+  },
   beforeMount() {
     this.getYear();
   },
   methods: {
+      nextStep (n) {
+      if (n == this.steps) {
+        this.e1 = 1
+      }
+      else {
+        if(n==1)
+        {
+          this.percentage= this.percentage + 30
+        }
+        if(n==2)
+        {
+          this.percentage= this.percentage + 30
+        }
+        this.e1 = n + 1
+      }
+    },
+
     clearInputs() {
       this.import_export.file = null
       this.import_export.state_affiliate = null
+      this.loading_rpb =false
+      this.loading_ipb =false
+      this.loading_importacion =false
+      this.loading =false
+      this.percentage=0
     },
 
     async uploadFilePayment() {
@@ -433,7 +668,6 @@ export default {
            else{
             this.toastr.error(response.data.message)
            }
-            this.import_export.file=null
         })
         .catch((e) => {
           console.log(e);
@@ -504,6 +738,25 @@ export default {
           this.dialog=true
           this.import_export.state_affiliate = 'C'
           this.title= 'COMANDO'
+          let resp = await axios.post(`loan_payment/import_progress_bar`,{
+            period_id: this.mes,
+            origin: this.import_export.state_affiliate
+          });
+          if(resp.data.percentage > 0){
+            this.percentage=resp.data.percentage
+            if(resp.data.query_step_1 == true)
+            {
+              this.e1=2
+              this.validar_datos=true
+            }else{
+              if(resp.data.query_step_2 == true){
+                this.e1=3
+                this.importacion=true
+              }
+            }
+          }else{
+            this.percentage=0
+          }
         }
       } catch (e) {
         this.loading = false;
@@ -523,6 +776,23 @@ export default {
           this.dialog=true
           this.import_export.state_affiliate = 'S'
           this.title= 'SENASIR'
+          let resp = await axios.post(`loan_payment/import_progress_bar`,{
+            period_id: this.mes,
+            origin: this.import_export.state_affiliate
+          });
+          if(resp.data.percentage > 0){
+            this.percentage=resp.data.percentage
+            if(resp.data.query_step_1 == true)
+            {
+              this.e1=2
+              this.validar_datos=true
+            }else{
+              if(resp.data.query_step_2 == true){
+                this.e1=3
+                this.importacion=true
+              }
+            }
+          }
         }
       } catch (e) {
         this.loading = false;
@@ -621,6 +891,7 @@ export default {
       }
         this.importacion=false
         this.validar_datos=false
+        this.clearInputs()
        } catch (e) {
         this.loading = false;
         console.log(e);
@@ -642,9 +913,14 @@ export default {
         this.toastr.error(res.data.message)
       }
       this.clearInputs()
-      this.dialog=false
+
+      this.e1=1
       this.dialog_confirm=false
       this.validar_datos=false
+    },
+    close()
+    {
+      this.clearInputs()
     },
     async reporteComandoSenasir(id, tipo){
     try {
