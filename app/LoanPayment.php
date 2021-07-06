@@ -227,7 +227,7 @@ class LoanPayment extends Model
     }
 
     public static function interest_by_days($days, $annual_interest, $balance){
-            return (($annual_interest/100)/360)*$days*$balance;
+            return ((($annual_interest/100)/360)*$days*$balance);
     }
 
     public function user()
