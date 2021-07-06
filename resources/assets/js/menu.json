@@ -61,7 +61,7 @@
     "href": "ImportExportPayment",
     "title": "Imp./Exp. Cobros",
     "icon": "mdi-bank-transfer",
-    "permission": "show-payment-loan",
+    "permission": "importation_payments",
     "params": {}
   },
   {
