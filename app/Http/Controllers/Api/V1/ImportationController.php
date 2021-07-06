@@ -235,8 +235,8 @@ class ImportationController extends Controller
                             $loan = Loan::whereId($loan_lender->id)->first();
                             if($amount_group > 0 && $loan->balance > 0 ){
                             //$loan = Loan::whereId($loan_lender->id)->first();
-                            $payment = $loan->next_payment2($payment_agroup->affiliate_id, null,'T' ,$procedure_modality_id, null,false);
-                            if($amount_group >= $payment->estimated_quota)
+                            $payment = $loan->get_amount_payment($estimated_date,false,'T');
+                            if($amount_group >= $payment)
                             $sw =true;
                                 if($amount_group > 0){
                                     $form = (object)[
@@ -246,7 +246,7 @@ class ImportationController extends Controller
                                         'categorie_id' => $categorie_id,
                                         'estimated_date' => $estimated_date,
                                         'voucher' => 'AUTOMÁTICO',
-                                        'estimated_quota' => $sw == true ? $payment->estimated_quota:$amount_group,
+                                        'estimated_quota' => $sw == true ? $payment:$amount_group,
                                         'loan_payment_date' => Carbon::now()->format('Y-m-d'),
                                         'liquidate' => false,
                                         'description'=> 'Pago realizado por sistema',
@@ -268,8 +268,8 @@ class ImportationController extends Controller
                            $loan = Loan::whereId($loan_lender->id)->first();
                            if($amount_group > 0 && $loan->balance > 0 ){
                             //$loan = Loan::whereId($loan_lender->id)->first();
-                            $payment = $loan->next_payment2($payment_agroup->affiliate_id, null,'G' ,$procedure_modality_id, null,false);
-                            if($amount_group >= $payment->estimated_quota)
+                            $payment = $loan->get_amount_payment($estimated_date,false,'G');
+                            if($amount_group >= $payment)
                             $sw =true;
                             if($amount_group >0){
                                 $form = (object)[
@@ -279,7 +279,7 @@ class ImportationController extends Controller
                                     'categorie_id' => $categorie_id,
                                     'estimated_date' => $estimated_date,
                                     'voucher' => 'AUTOMÁTICO',
-                                    'estimated_quota' => $sw == true ? $payment->estimated_quota:$amount_group,
+                                    'estimated_quota' => $sw == true ? $payment:$amount_group,
                                     'loan_payment_date' => Carbon::now()->format('Y-m-d'),
                                     'liquidate' => false,
                                     'description'=> 'Pago realizado por sistema',
@@ -349,7 +349,7 @@ class ImportationController extends Controller
                     and  loan_states.name = 'Vigente'
                     and  loans.guarantor_amortizing = false
                     and  loans.disbursement_date <= '$estimated_date'
-                    order by loans.disbursement_date desc";
+                    order by loans.disbursement_date";
 
         $loan_lenders = DB::select($query);
         return $loan_lenders;
@@ -370,7 +370,7 @@ class ImportationController extends Controller
                     and  loan_states.name = 'Vigente'
                     and  loans.guarantor_amortizing = true
                     and  loans.disbursement_date <= '$estimated_date'
-                    order by loans.disbursement_date desc";
+                    order by loans.disbursement_date";
 
        $loan_guarantors= DB::select($query);
         return $loan_guarantors;
@@ -517,20 +517,26 @@ class ImportationController extends Controller
          $result['validate'] = false;
         try {
             $extencion= strtolower($request->file->getClientOriginalExtension()); 
-            if($extencion == "csv"){
-                $result=[];
-                $period_state =false;
-                $last_period = LoanPaymentPeriod::orderBy('id')->get()->last();
-                $last_date = Carbon::parse($last_period->year.'-'.$last_period->month)->toDateString();
-                if($request->state == "C"){
-                    $origin = "comando-".$last_period->year;
-                    $period_state = $last_period->import_command;
-                }else{
-                    $origin = "senasir-".$last_period->year;
-                    $period_state = $last_period->import_senasir;
-                }
+            $last_period = LoanPaymentPeriod::orderBy('id')->get()->last();
+            $last_date = Carbon::parse($last_period->year.'-'.$last_period->month)->format('Y-m');            
+        if($extencion == "csv"){
+            $file_name_entry = $request->file->getClientOriginalName(); 
+            $file_name_entry = explode(".csv",$file_name_entry);
+            $file_name_entry = $file_name_entry[0];
+            $result=[];
+            $period_state = false;
+            if($request->state == "C"){
+                $origin = "comando-".$last_period->year;
+                $period_state = $last_period->import_command;
+                $new_file_name ="comando-".$last_date;
+            }else{
+                $origin = "senasir-".$last_period->year;
+                $period_state = $last_period->import_senasir;
+                $new_file_name ="senasir-".$last_date;
+            }
+            if($file_name_entry == $new_file_name){
                 if($period_state == false){
-                    $file_name = $last_date.'.csv';
+                    $file_name = $new_file_name.'.csv';
                     $base_path = 'cobranzas-importacion/'.$origin;    
                     $file_path = Storage::disk('ftp')->putFileAs($base_path,$request->file,$file_name);
                     $request['period_id'] = $last_period->id;
@@ -549,8 +555,11 @@ class ImportationController extends Controller
                     $result['message'] = "No se puede ralizar el cargado del archivo ya que se realizo el registro de pago";  
                 }
             }else {
-                $result['message'] = "El tipo de archivo requerido es .csv";
+                $result['message'] = "El nombre del archivo debe ser igual al requerido";
             }
+        }else {
+            $result['message'] = "El tipo de archivo requerido es .csv";
+        }
             return $result;
         }
         catch (\Exception $e) {
@@ -840,5 +849,71 @@ class ImportationController extends Controller
         }
 
     }
-
+     /**
+    * Pasos y porcentage del proceso de importación 
+    * Reporte para visualizar pasos de importacion.
+	* @bodyParam period_id required id_del periodo . Example: 1
+    * @bodyParam origin enum required Tipo importacion Comando(C) o Senasir(S). Example: C
+    * @authenticated
+    * @responseFile responses/loan_payment/import_progress_bar.200.json
+    */
+    public function  import_progress_bar(Request $request){
+        $request->validate([
+            'origin'=>'required|string|in:C,S',
+            'period_id'=>'required|exists:loan_payment_periods,id'
+        ]);
+        $period = $request->period_id;$origin = $request->origin;
+        $period = LoanPaymentPeriod::whereId($request->period_id)->first();
+        $result['percentage'] = 0;
+        $result['query_step_1'] = false;
+        $result['query_step_2'] = false;
+        $result['query_step_3'] = false;
+        if($origin == 'C'){
+            $query = " select (count(*)>0) as num_reg 
+            from loan_payment_copy_commands 
+            where period_id = $request->period_id" ;
+            $query_step_1 = DB::select($query)[0]->num_reg;
+            $query_grouped = " select (count(*)>0) as num_reg 
+            from loan_payment_group_commands 
+            where period_id = $request->period_id" ;
+            $query_step_2 = DB::select($query_grouped)[0]->num_reg;
+            $query_step_3 = $period->import_command;
+            if($query_step_1 == true && $query_step_2 == true && $query_step_3 == true ){
+                $result['percentage'] = 100;
+                $result['query_step_3'] = true;
+            }else{ 
+                if($query_step_1 == true && $query_step_2 == true && $query_step_3 == false ){
+                    $result['percentage'] = 60;
+                    $result['query_step_2'] = true;
+                }elseif($query_step_1 == true && $query_step_2 == false && $query_step_3 == false ){
+                $result['query_step_1'] = true;
+                $result['percentage'] = 30;
+                }
+            }
+        }
+        if($origin == 'S'){
+            $query = " select (count(*)>0) as num_reg 
+            from loan_payment_copy_senasirs 
+            where period_id = $request->period_id" ;
+            $query_step_1 = DB::select($query)[0]->num_reg;
+            $query_grouped = " select (count(*)>0) as num_reg 
+            from loan_payment_group_senasirs 
+            where period_id = $request->period_id" ;
+            $query_step_2 = DB::select($query_grouped)[0]->num_reg;
+            $query_step_3 = $period->import_senasir;
+            if($query_step_1 == true && $query_step_2 == true && $query_step_3 == true ){
+                $result['percentage'] = 100;
+                $result['query_step_3'] = true;
+            }else{ 
+                if($query_step_1 == true && $query_step_2 == true && $query_step_3 == false ){
+                    $result['percentage'] = 60;
+                    $result['query_step_2'] = true;
+                }elseif($query_step_1 == true && $query_step_2 == false && $query_step_3 == false ){
+                $result['query_step_1'] = true;
+                $result['percentage'] = 30;
+                }
+            }
+        }    
+        return $result; 
+    }
 }
