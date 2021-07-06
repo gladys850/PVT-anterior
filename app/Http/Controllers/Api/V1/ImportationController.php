@@ -840,5 +840,64 @@ class ImportationController extends Controller
         }
 
     }
-
+    
+    public function  import_progress_bar(Request $request){
+        $request->validate([
+            'origin'=>'required|string|in:C,S',
+            'period_id'=>'required|exists:loan_payment_periods,id'
+        ]);
+        $period = $request->period_id;$origin = $request->origin;
+        $period = LoanPaymentPeriod::whereId($request->period_id)->first();
+        $result['percentage'] = 0;
+        $result['query_step_1'] = false;
+        $result['query_step_2'] = false;
+        $result['query_step_3'] = false;
+        if($origin == 'C'){
+            $query = " select (count(*)>0) as num_reg 
+            from loan_payment_copy_commands 
+            where period_id = $request->period_id" ;
+            $query_step_1 = DB::select($query)[0]->num_reg;
+            $query_grouped = " select (count(*)>0) as num_reg 
+            from loan_payment_group_commands 
+            where period_id = $request->period_id" ;
+            $query_step_2 = DB::select($query_grouped)[0]->num_reg;
+            $query_step_3 = $period->import_command;
+            if($query_step_1 == true && $query_step_2 == true && $query_step_3 == true ){
+                $result['percentage'] = 100;
+                $result['query_step_3'] = true;
+            }else{ 
+                if($query_step_1 == true && $query_step_2 == true && $query_step_3 == false ){
+                    $result['percentage'] = 60;
+                    $result['query_step_2'] = true;
+                }elseif($query_step_1 == true && $query_step_2 == false && $query_step_3 == false ){
+                $result['query_step_1'] = true;
+                $result['percentage'] = 30;
+                }
+            }
+        }
+        if($origin == 'S'){
+            $query = " select (count(*)>0) as num_reg 
+            from loan_payment_copy_senasirs 
+            where period_id = $request->period_id" ;
+            $query_step_1 = DB::select($query)[0]->num_reg;
+            $query_grouped = " select (count(*)>0) as num_reg 
+            from loan_payment_group_senasirs 
+            where period_id = $request->period_id" ;
+            $query_step_2 = DB::select($query_grouped)[0]->num_reg;
+            $query_step_3 = $period->import_command;
+            if($query_step_1 == true && $query_step_2 == true && $query_step_3 == true ){
+                $result['percentage'] = 100;
+                $result['query_step_3'] = true;
+            }else{ 
+                if($query_step_1 == true && $query_step_2 == true && $query_step_3 == false ){
+                    $result['percentage'] = 60;
+                    $result['query_step_2'] = true;
+                }elseif($query_step_1 == true && $query_step_2 == false && $query_step_3 == false ){
+                $result['query_step_1'] = true;
+                $result['percentage'] = 30;
+                }
+            }
+        }    
+        return $result; 
+    }
 }
