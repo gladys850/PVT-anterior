@@ -2262,7 +2262,7 @@ class LoanController extends Controller
                     }
             }
             else{
-                if($loan->regular_payments && ($loan->paymentsKardex->count()+1) == $loan->loan_term){
+                if($loan->verify_regular_payments() && ($loan->paymentsKardex->count()+1) == $loan->loan_term){
                     $days = Carbon::parse($request->loan_payment_date)->format('d');
                     $interest_by_days = LoanPayment::interest_by_days($days, $loan->interest->annual_interest, $loan->balance);
                     $suggested_amount = number_format(($loan->estimated_quota + $loan->balance), 2);
