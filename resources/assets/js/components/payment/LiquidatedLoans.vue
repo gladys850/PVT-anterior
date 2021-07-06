@@ -368,13 +368,13 @@
                     icon
                     small
                     v-on="on"
-                    color="teal lighten-3"
+                    color="teal"
                     :to="{
                       name: 'flowAdd',
                       params: { id: item.id_loan },
                       query: { redirectTab: 6 },
                     }"
-                    ><v-icon>mdi-folder-multiple</v-icon>
+                    ><v-icon>mdi-text-box-multiple</v-icon>
                   </v-btn>
                 </template>
                 <span>Kardex</span>

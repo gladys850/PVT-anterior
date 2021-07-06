@@ -50,7 +50,7 @@
                 </template>
                 <span>Imprimir Contrato</span>
               </v-tooltip>
-              <v-tooltip bottom v-if="loan.state.name == 'Vigente'">
+              <v-tooltip bottom v-if="loan.state.name == 'Vigente' || loan.state.name == 'Liquidado'">
                 <template v-slot:activator="{ on }">
                   <v-btn
                     fab
@@ -65,7 +65,7 @@
                 </template>
                 <span>Imprimir Plan de pagos</span>
               </v-tooltip>
-              <v-tooltip bottom v-if=" loan.state.name == 'Vigente'">
+              <v-tooltip bottom v-if="loan.state.name == 'Vigente' || loan.state.name == 'Liquidado'">
                 <template v-slot:activator="{ on }">
                   <v-btn
                     fab

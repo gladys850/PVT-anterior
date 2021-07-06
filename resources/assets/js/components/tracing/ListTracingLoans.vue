@@ -8,21 +8,24 @@
               <v-toolbar-title>Seguimiento de Préstamos</v-toolbar-title>
             </v-toolbar>
           </v-card-title>
-          <!--<v-tooltip top>
+          <v-tooltip top>
             <template v-slot:activator="{ on }">
               <v-btn
                 fab
                 @click="download_loans()"
                 color="success"
-                class="mb-2"
                 v-on="on"
-                small
+                x-small
+                absolute
+                right
+                style="margin-top: -53px; margin-right:50px" 
+                :loading= loading
               >
                 <v-icon> mdi-file-excel </v-icon>
               </v-btn>
             </template>
             <span class="caption">Descargar reporte</span>
-          </v-tooltip>-->
+          </v-tooltip>
           <v-tooltip top>
             <template v-slot:activator="{ on }">
               <v-btn
@@ -362,8 +365,8 @@
                 <span>{{ item.sub_modality_loan }}</span>
               </v-tooltip>
             </template>
-            <template v-slot:[`item.guarantor_loan_affiliate`]="{ item }">
-              {{ item.guarantor_loan_affiliate ? "SI" : "NO" }}
+            <template v-slot:[`item.request_date_loan`]="{ item }">
+              {{ item.request_date_loan | date }}
             </template>
             <template v-slot:[`item.amount_approved_loan`]="{ item }">
               {{ item.amount_approved_loan | money }}
@@ -374,10 +377,6 @@
             <template v-slot:[`item.quota_loan`]="{ item }">
               {{ item.quota_loan | moneyString }}
             </template>
-            <template v-slot:[`item.request_date_loan`]="{ item }">
-              {{ item.request_date_loan | date }}
-            </template>
-
             <template v-slot:[`item.actions`]="{ item }">
               <v-tooltip bottom>
                 <template v-slot:activator="{ on }">
@@ -392,7 +391,7 @@
                 </template>
                 <span>Ver información del trámite</span>
               </v-tooltip>
-              <v-tooltip bottom >
+              <!--<v-tooltip bottom >
                 <template v-slot:activator="{ on }">
                   <v-btn
                     icon
@@ -443,7 +442,24 @@
                   </v-btn>
                 </template>
                 <span>Imprimir Kardex</span>
-              </v-tooltip>
+              </v-tooltip>-->
+        <v-menu offset-y close-on-content-click>
+          <template v-slot:activator="{ on }">
+            <v-btn icon color="primary" dark v-on="on">
+              <v-icon>mdi-printer</v-icon>
+            </v-btn>
+          </template>
+          <v-list dense class="py-0">
+            <span v-for="doc in printDocs" :key="doc.id">
+            <v-list-item v-if="!(doc.id >= 3 && item.state_loan == 'En Proceso')" @click="imprimir(doc.id, item.id)">
+                <v-list-item-icon class="ma-0 py-0 pt-2">
+                  <v-icon class="ma-0 py-0" small v-text="doc.icon" color="light-blue accent-4"></v-icon>
+                </v-list-item-icon>
+                <v-list-item-title class="ma-0 py-0 mt-n2">{{ doc.title }}</v-list-item-title>
+            </v-list-item>
+            </span>
+          </v-list>
+        </v-menu>
 
             </template>
           </v-data-table>
@@ -470,10 +486,6 @@ export default {
         first_name_affiliate: "",
         second_name_affiliate: "",
         shortened_sub_modality_loan: "",
-        request_date_loan: "",
-        amount_approved_loan: "",
-        loan_term: "",
-        quota_loan: "",
         state_loan: "",
       },
       headers: [
@@ -503,6 +515,7 @@ export default {
         sortDesc: [false],
       },
       totalLoans: 0,
+      loading: false
     };
   },
   computed: {
@@ -562,6 +575,7 @@ export default {
     },
 
     async download_loans() {
+      this.loading = true
       await axios({
         url: "/loan_tracking",
         method: "GET",
@@ -569,23 +583,18 @@ export default {
         headers: { Accept: "application/vnd.ms-excel" },
         data: this.datos,
         params: {
-          code_loan: this.searching.code_loan,
-          identity_card_affiliate: this.searching.identity_card_affiliate,
-          registration_affiliate: this.searching.registration_affiliate,
-          registration_spouse: this.searching.registration_spouse,
-          last_name_affiliate: this.searching.last_name_affiliate,
-          mothers_last_name_affiliate: this.searching.mothers_last_name_affiliate,
-          first_name_affiliate: this.searching.first_name_affiliate,
-          second_name_affiliate: this.searching.second_name_affiliate,
-          surname_husband_affiliate: this.searching.surname_husband_affiliate,
-          shortened_sub_modality_loan: this.searching.shortened_sub_modality_loan,
-          request_date_loan: this.searching.request_date_loan,
-          amount_approved_loan: this.searching.amount_approved_loan,
-          state_type_affiliate: this.searching.state_type_affiliate,
-          quota_loan: this.searching.quota_loan,
-          state_loan: this.state_loan,
-          guarantor_loan_affiliate: false,
-          excel: true,
+            citi_loan:this.searching.citi_loan,
+            name_role_loan:this.searching.name_role_loan,
+            user_loan:this.searching.user_loan,
+            code_loan: this.searching.code_loan,
+            identity_card_affiliate: this.searching.identity_card_affiliate,
+            last_name_affiliate: this.searching.last_name_affiliate,
+            mothers_last_name_affiliate: this.searching.mothers_last_name_affiliate,
+            first_name_affiliate: this.searching.first_name_affiliate,
+            second_name_affiliate: this.searching.second_name_affiliate,
+            shortened_sub_modality_loan: this.searching.shortened_sub_modality_loan,
+            state_loan: this.searching.state_loan,
+            excel: true,
         },
       })
         .then((response) => {
@@ -599,29 +608,23 @@ export default {
         })
         .catch((error) => {
           console.log(error);
+          this.loading = false
         });
+        this.loading = false
     },
 
     clearAll() {
       this.searching.citi_loan = "",
-      this.searching.user_loan = "",
       this.searching.name_role_loan = "",
+      this.searching.user_loan = "",
       this.searching.code_loan = "",
       this.searching.identity_card_affiliate = "",
-      this.searching.registration_affiliate = "",
-      this.searching.registration_spouse= "",
       this.searching.last_name_affiliate = "",
       this.searching.mothers_last_name_affiliate = "",
       this.searching.first_name_affiliate = "",
       this.searching.second_name_affiliate = "",
-      this.searching.surname_husband_affiliate = "",
       this.searching.shortened_sub_modality_loan = "",
-      this.searching.request_date_loan = "",
-      this.searching.amount_approved_loan = "",
-      this.searching.state_type_affiliate = "",
-      this.searching.quota_loan = "",
       this.searching.state_loan = "",
-      this.searching.guarantor_loan_affiliate = "",
       this.search_loans();
     },
 
@@ -650,16 +653,16 @@ export default {
     },
     docsLoans() {
       let docs = [];
-      if (this.permissionSimpleSelected.includes("print-contract-loan")) {
+      if (true) {
         docs.push(
           { id: 1, title: "Contrato", icon: "mdi-file-document" },
           { id: 2, title: "Solicitud", icon: "mdi-file" }
         );
       }
-      if (this.permissionSimpleSelected.includes("print-payment-plan")) {
+      if (true) {
         docs.push({ id: 3, title: "Plan de pagos", icon: "mdi-cash" });
       }
-      if (this.permissionSimpleSelected.includes("print-payment-kardex-loan")) {
+      if (true) {
         docs.push({ id: 4, title: "Kardex", icon: "mdi-view-list" });
       } else {
         console.log("Se ha producido un error durante la generación de la impresión");

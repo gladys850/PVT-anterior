@@ -130,7 +130,7 @@
         <template v-slot:[`item.created_at`]="{ item }">
           {{ item.created_at | date }}
         </template>
-                <template v-slot:[`item.capital_payment`]="{ item }">
+        <template v-slot:[`item.capital_payment`]="{ item }">
           {{ item.capital_payment | moneyString }}
         </template>
                 <template v-slot:[`item.interest_payment`]="{ item }">
@@ -159,14 +159,14 @@
             <span>{{item.modality.name}}</span>
           </v-tooltip>
         </template>
-        <!--<template v-slot:[`item.amortization_type_id`]="{ item }">
-          {{ searchAmortizationType(item.amortization_type_id) }}
-        </template>-->
         <template v-slot:[`item.state_name`]="{ item }">
           {{ item.state.name }}
         </template>
         <template v-slot:[`item.voucher_treasury_code`]="{ item }">
           {{ item.voucher_treasury != null ? item.voucher_treasury.code : ''}}
+        </template>
+        <template v-slot:[`item.paid_by`]="{ item }">
+          {{item.paid_by}}-{{item.initial_affiliate}}
         </template>
 
         <template v-slot:[`item.actions`]="{ item }">

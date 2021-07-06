@@ -1114,11 +1114,14 @@ class LoanReportController extends Controller
                }
                $File="ListadoPrestamos";
                $data=array(
-                   array("Id del préstamo", "Codigo", "ID afiliado", "Nro de carnet", "Matrícula", "Primer apellido","Segundo apellido","Primer nombre","Segundo nombre","Apellido casada","Sub modalidad",
+                   array("Dpto", "Área", "Usuario", "Id del préstamo", "Codigo", "ID afiliado", "Nro de carnet", "Matrícula", "Primer apellido","Segundo apellido","Primer nombre","Segundo nombre","Apellido casada","Sub modalidad", "Sub modalidad Corta",
                    "Modalidad","Monto del prestamo", "estado del affiliado","Tipo de estado del affiliado","Cuota del prestamo","Estado del préstamo","Es garante?","Entidad de pensión del afiliado",'Saldo préstamo','Fecha desembolso' )
                );
                foreach ($list_loan as $row){
                    array_push($data, array(
+                       $row->citi_loan,
+                       $row->name_role_loan,
+                       $row->user_loan,
                        $row->id_loan,
                        $row->code_loan,
                        $row->id_affiliate,
