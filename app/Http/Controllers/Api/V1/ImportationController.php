@@ -517,20 +517,26 @@ class ImportationController extends Controller
          $result['validate'] = false;
         try {
             $extencion= strtolower($request->file->getClientOriginalExtension()); 
-            if($extencion == "csv"){
-                $result=[];
-                $period_state =false;
-                $last_period = LoanPaymentPeriod::orderBy('id')->get()->last();
-                $last_date = Carbon::parse($last_period->year.'-'.$last_period->month)->toDateString();
-                if($request->state == "C"){
-                    $origin = "comando-".$last_period->year;
-                    $period_state = $last_period->import_command;
-                }else{
-                    $origin = "senasir-".$last_period->year;
-                    $period_state = $last_period->import_senasir;
-                }
+            $last_period = LoanPaymentPeriod::orderBy('id')->get()->last();
+            $last_date = Carbon::parse($last_period->year.'-'.$last_period->month)->format('Y-m');            
+        if($extencion == "csv"){
+            $file_name_entry = $request->file->getClientOriginalName(); 
+            $file_name_entry = explode(".csv",$file_name_entry);
+            $file_name_entry = $file_name_entry[0];
+            $result=[];
+            $period_state = false;
+            if($request->state == "C"){
+                $origin = "comando-".$last_period->year;
+                $period_state = $last_period->import_command;
+                $new_file_name ="comando-".$last_date;
+            }else{
+                $origin = "senasir-".$last_period->year;
+                $period_state = $last_period->import_senasir;
+                $new_file_name ="senasir-".$last_date;
+            }
+            if($file_name_entry == $new_file_name){
                 if($period_state == false){
-                    $file_name = $last_date.'.csv';
+                    $file_name = $new_file_name.'.csv';
                     $base_path = 'cobranzas-importacion/'.$origin;    
                     $file_path = Storage::disk('ftp')->putFileAs($base_path,$request->file,$file_name);
                     $request['period_id'] = $last_period->id;
@@ -549,8 +555,11 @@ class ImportationController extends Controller
                     $result['message'] = "No se puede ralizar el cargado del archivo ya que se realizo el registro de pago";  
                 }
             }else {
-                $result['message'] = "El tipo de archivo requerido es .csv";
+                $result['message'] = "El nombre del archivo debe ser igual al requerido";
             }
+        }else {
+            $result['message'] = "El tipo de archivo requerido es .csv";
+        }
             return $result;
         }
         catch (\Exception $e) {
@@ -840,7 +849,14 @@ class ImportationController extends Controller
         }
 
     }
-    
+     /**
+    * Pasos y porcentage del proceso de importación 
+    * Reporte para visualizar pasos de importacion.
+	* @bodyParam period_id required id_del periodo . Example: 1
+    * @bodyParam origin enum required Tipo importacion Comando(C) o Senasir(S). Example: C
+    * @authenticated
+    * @responseFile responses/loan_payment/import_progress_bar.200.json
+    */
     public function  import_progress_bar(Request $request){
         $request->validate([
             'origin'=>'required|string|in:C,S',
@@ -884,7 +900,7 @@ class ImportationController extends Controller
             from loan_payment_group_senasirs 
             where period_id = $request->period_id" ;
             $query_step_2 = DB::select($query_grouped)[0]->num_reg;
-            $query_step_3 = $period->import_command;
+            $query_step_3 = $period->import_senasir;
             if($query_step_1 == true && $query_step_2 == true && $query_step_3 == true ){
                 $result['percentage'] = 100;
                 $result['query_step_3'] = true;
