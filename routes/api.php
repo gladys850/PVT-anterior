@@ -245,6 +245,7 @@ Route::group([
             Route::post('loan_payment/importation_command_senasir', 'Api\V1\LoanPaymentController@importation_command_senasir');//importacion de pagos
             Route::post('loan_payment/importation_pending_command_senasir', 'Api\V1\LoanPaymentController@importation_pending_command_senasir');//importacion de pendientes de pagos
             Route::post('loan_payment/upload_file_payment', 'Api\V1\ImportationController@upload_file_payment'); 
+            Route::post('loan_payment/import_progress_bar', 'Api\V1\ImportationController@import_progress_bar');
         });
         Route::group([
             'middleware' => 'permission:update-payment-loan'
