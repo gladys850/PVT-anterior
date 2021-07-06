@@ -62,7 +62,7 @@
             </tr>
             <tr>
                 <td>{{ $loan->interest->annual_interest}}</td>
-                <td>{{ $loan->estimated_quota }}</td>
+                <td>{{ Util::money_format($loan->estimated_quota) }}</td>
                 <td>{{ Carbon::parse($loan->disbursement_date)->format('d/m/Y H:i:s') }}</td>
             </tr>
             <tr class="bg-grey-darker text-xxs text-white">

@@ -640,26 +640,31 @@ class ImportationController extends Controller
                     $loans = DB::select($loans);
                     foreach($loans as $loan){
                         $loan_calculate = Loan::whereId($loan->id)->first();
-                        if( $loan_calculate->estimated_quota <= $amount )
-                            $sw = true;
-                        if($amount > 0){
-                            $form = (object)[
-                                'procedure_modality_id' => ProcedureModality::whereShortened('DES-COMANDO')->first()->id,
-                                'affiliate_id' => $affiliate->id,
-                                'paid_by' => "T",
-                                'categorie_id' => LoanPaymentCategorie::whereTypeRegister('SISTEMA')->first()->id,
-                                'estimated_date' => $estimated_date,
-                                'voucher' => 'AUTOMATICO',
-                                'estimated_quota' => $sw == true ? $loan_calculate->estimated_quota : $amount,
-                                'user_id' => null,
-                                'loan_payment_date' => Carbon::now()->format('Y-m-d'),
-                                'liquidate' => false,
-                                'state_affiliate'=> "ACTIVO,PASIVO",
-                                'description'=> null,
-                            ];
-                            $loan_payment = $this->set_payment($form, $loan_calculate);
-                            $amount = $amount - $loan_payment->estimated_quota;
-                            $c++;
+                        if($loan_calculate->balance > 0)
+                        {
+                            $estimated_quota = $loan_calculate->get_amount_payment($estimated_date,false,'T');
+                            $sw = false;
+                            if( $estimated_quota <= $amount )
+                                $sw = true;
+                            if($amount > 0){
+                                $form = (object)[
+                                    'procedure_modality_id' => ProcedureModality::whereShortened('DES-COMANDO')->first()->id,
+                                    'affiliate_id' => $affiliate->id,
+                                    'paid_by' => "T",
+                                    'categorie_id' => LoanPaymentCategorie::whereTypeRegister('SISTEMA')->first()->id,
+                                    'estimated_date' => $estimated_date,
+                                    'voucher' => 'AUTOMATICO',
+                                    'estimated_quota' => $sw == true ? $estimated_quota : $amount,
+                                    'user_id' => null,
+                                    'loan_payment_date' => Carbon::now()->format('Y-m-d'),
+                                    'liquidate' => false,
+                                    'state_affiliate'=> "ACTIVO,PASIVO",
+                                    'description'=> null,
+                                ];
+                                $loan_payment = $this->set_payment($form, $loan_calculate);
+                                $amount = $amount - $loan_payment->estimated_quota;
+                                $c++;
+                            }
                         }
                     }
                     $guarantees = "select * from loans where id in (select loan_id from loan_affiliates where affiliate_id = $affiliate->id and guarantor = true)
@@ -672,31 +677,35 @@ class ImportationController extends Controller
                     foreach($guarantees as $guarantee)
                     {
                         $loan_calculate = Loan::whereId($guarantee->id)->first();
-                        $quota = "select quota_treat from loan_affiliates la 
-                        where loan_id = $guarantee->id
-                        and affiliate_id = $affiliate->id
-                        and guarantor = true";
-                        $quota = DB::select($quota)[0]->quota_treat;
-                        if( $quota <= $amount )
-                                $sw = true;
-                        if($amount > 0){
-                            $form = (object)[
-                                'procedure_modality_id' => ProcedureModality::whereShortened('DES-COMANDO')->first()->id,
-                                'affiliate_id' => $affiliate->id,
-                                'paid_by' => "G",
-                                'categorie_id' => LoanPaymentCategorie::whereTypeRegister('SISTEMA')->first()->id,
-                                'estimated_date' => $estimated_date,
-                                'voucher' => 'AUTOMATICO',
-                                'estimated_quota' => $sw == true ? $quota : $amount,
-                                'user_id' => null,
-                                'loan_payment_date' => Carbon::now()->format('Y-m-d'),
-                                'liquidate' => false,
-                                'state_affiliate'=> "ACTIVO",
-                                'description'=> null,
-                            ];
-                            $loan_payment = $this->set_payment($form, $loan_calculate);
-                            $amount = $amount - $loan_payment->estimated_quota;
-                            $c2++;
+                        if($loan_calculate->balance > 0)
+                        {
+                            $quota = "select quota_treat from loan_affiliates la 
+                            where loan_id = $guarantee->id
+                            and affiliate_id = $affiliate->id
+                            and guarantor = true";
+                            $quota = DB::select($quota)[0]->quota_treat;
+                            $sw = false;
+                            if( $quota <= $amount )
+                                    $sw = true;
+                            if($amount > 0){
+                                $form = (object)[
+                                    'procedure_modality_id' => ProcedureModality::whereShortened('DES-COMANDO')->first()->id,
+                                    'affiliate_id' => $affiliate->id,
+                                    'paid_by' => "G",
+                                    'categorie_id' => LoanPaymentCategorie::whereTypeRegister('SISTEMA')->first()->id,
+                                    'estimated_date' => $estimated_date,
+                                    'voucher' => 'AUTOMATICO',
+                                    'estimated_quota' => $sw == true ? $quota : $amount,
+                                    'user_id' => null,
+                                    'loan_payment_date' => Carbon::now()->format('Y-m-d'),
+                                    'liquidate' => false,
+                                    'state_affiliate'=> "ACTIVO",
+                                    'description'=> null,
+                                ];
+                                $loan_payment = $this->set_payment($form, $loan_calculate);
+                                $amount = $amount - $loan_payment->estimated_quota;
+                                $c2++;
+                            }
                         }
                     }
                     $update_command_grupded = "UPDATE loan_payment_group_commands set amount_balance = $amount where id = $payment->id";
@@ -862,13 +871,24 @@ class ImportationController extends Controller
             'origin'=>'required|string|in:C,S',
             'period_id'=>'required|exists:loan_payment_periods,id'
         ]);
-        $period = $request->period_id;$origin = $request->origin;
+        $origin = $request->origin;
         $period = LoanPaymentPeriod::whereId($request->period_id)->first();
         $result['percentage'] = 0;
         $result['query_step_1'] = false;
         $result['query_step_2'] = false;
         $result['query_step_3'] = false;
+        $result['file_name'] = false;
+        $last_date = Carbon::parse($period->year.'-'.$period->month)->format('Y-m');      
+        $base_path = 'cobranzas-importacion/';   
         if($origin == 'C'){
+        $origin_name ='comando-';
+        $new_file_name = $origin_name.$last_date.'.csv';
+        $base_path = $base_path.$origin_name.$period->year.'/'.$new_file_name;
+            if(Storage::disk('ftp')->has($base_path)){
+                $result['file_name'] = $new_file_name;
+            }else{
+                $result['file_name'] = false;
+            }
             $query = " select (count(*)>0) as num_reg 
             from loan_payment_copy_commands 
             where period_id = $request->period_id" ;
@@ -892,6 +912,14 @@ class ImportationController extends Controller
             }
         }
         if($origin == 'S'){
+            $origin_name = 'senasir-';
+            $new_file_name = $origin_name.$last_date.'.csv';
+            $base_path = $base_path.$origin_name.$period->year.'/'.$new_file_name;
+            if(Storage::disk('ftp')->has($base_path)){
+                $result['file_name'] = $new_file_name;
+            }else{
+                $result['file_name'] = false;
+            }
             $query = " select (count(*)>0) as num_reg 
             from loan_payment_copy_senasirs 
             where period_id = $request->period_id" ;
