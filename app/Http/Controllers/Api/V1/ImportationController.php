@@ -235,8 +235,8 @@ class ImportationController extends Controller
                             $loan = Loan::whereId($loan_lender->id)->first();
                             if($amount_group > 0 && $loan->balance > 0 ){
                             //$loan = Loan::whereId($loan_lender->id)->first();
-                            $payment = $loan->next_payment2($payment_agroup->affiliate_id, null,'T' ,$procedure_modality_id, null,false);
-                            if($amount_group >= $payment->estimated_quota)
+                            $payment = $loan->get_amount_payment($estimated_date,false,'T');
+                            if($amount_group >= $payment)
                             $sw =true;
                                 if($amount_group > 0){
                                     $form = (object)[
@@ -246,7 +246,7 @@ class ImportationController extends Controller
                                         'categorie_id' => $categorie_id,
                                         'estimated_date' => $estimated_date,
                                         'voucher' => 'AUTOMÁTICO',
-                                        'estimated_quota' => $sw == true ? $payment->estimated_quota:$amount_group,
+                                        'estimated_quota' => $sw == true ? $payment:$amount_group,
                                         'loan_payment_date' => Carbon::now()->format('Y-m-d'),
                                         'liquidate' => false,
                                         'description'=> 'Pago realizado por sistema',
@@ -268,8 +268,8 @@ class ImportationController extends Controller
                            $loan = Loan::whereId($loan_lender->id)->first();
                            if($amount_group > 0 && $loan->balance > 0 ){
                             //$loan = Loan::whereId($loan_lender->id)->first();
-                            $payment = $loan->next_payment2($payment_agroup->affiliate_id, null,'G' ,$procedure_modality_id, null,false);
-                            if($amount_group >= $payment->estimated_quota)
+                            $payment = $loan->get_amount_payment($estimated_date,false,'G');
+                            if($amount_group >= $payment)
                             $sw =true;
                             if($amount_group >0){
                                 $form = (object)[
@@ -279,7 +279,7 @@ class ImportationController extends Controller
                                     'categorie_id' => $categorie_id,
                                     'estimated_date' => $estimated_date,
                                     'voucher' => 'AUTOMÁTICO',
-                                    'estimated_quota' => $sw == true ? $payment->estimated_quota:$amount_group,
+                                    'estimated_quota' => $sw == true ? $payment:$amount_group,
                                     'loan_payment_date' => Carbon::now()->format('Y-m-d'),
                                     'liquidate' => false,
                                     'description'=> 'Pago realizado por sistema',
