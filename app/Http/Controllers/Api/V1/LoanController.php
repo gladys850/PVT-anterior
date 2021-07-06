@@ -2236,6 +2236,9 @@ class LoanController extends Controller
         'type'=>'required|string|in:T,G',
        ]);
        $loan = Loan::whereId($request->loan)->first();
-       return $loan->get_amount_payment($request->loan_payment_date, $request->liquidate, $request->type);
+
+       return response()->json([
+        'suggested_amount' => $loan->get_amount_payment($request->loan_payment_date, $request->liquidate, $request->type)
+       ]);
     }
 }
