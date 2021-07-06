@@ -65,7 +65,7 @@
           <v-text-field
             v-model="search"
             append-icon="mdi-magnify"
-            label="Buscar"
+            label="Buscar Cód."
             single-line
             hide-details
             clearable
