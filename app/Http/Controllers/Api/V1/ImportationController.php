@@ -862,13 +862,24 @@ class ImportationController extends Controller
             'origin'=>'required|string|in:C,S',
             'period_id'=>'required|exists:loan_payment_periods,id'
         ]);
-        $period = $request->period_id;$origin = $request->origin;
+        $origin = $request->origin;
         $period = LoanPaymentPeriod::whereId($request->period_id)->first();
         $result['percentage'] = 0;
         $result['query_step_1'] = false;
         $result['query_step_2'] = false;
         $result['query_step_3'] = false;
+        $result['file_name'] = false;
+        $last_date = Carbon::parse($period->year.'-'.$period->month)->format('Y-m');      
+        $base_path = 'cobranzas-importacion/';   
         if($origin == 'C'){
+        $origin_name ='comando-';
+        $new_file_name = $origin_name.$last_date.'.csv';
+        $base_path = $base_path.$origin_name.$period->year.'/'.$new_file_name;
+            if(Storage::disk('ftp')->has($base_path)){
+                $result['file_name'] = $new_file_name;
+            }else{
+                $result['file_name'] = false;
+            }
             $query = " select (count(*)>0) as num_reg 
             from loan_payment_copy_commands 
             where period_id = $request->period_id" ;
@@ -892,6 +903,14 @@ class ImportationController extends Controller
             }
         }
         if($origin == 'S'){
+            $origin_name = 'senasir-';
+            $new_file_name = $origin_name.$last_date.'.csv';
+            $base_path = $base_path.$origin_name.$period->year.'/'.$new_file_name;
+            if(Storage::disk('ftp')->has($base_path)){
+                $result['file_name'] = $new_file_name;
+            }else{
+                $result['file_name'] = false;
+            }
             $query = " select (count(*)>0) as num_reg 
             from loan_payment_copy_senasirs 
             where period_id = $request->period_id" ;
