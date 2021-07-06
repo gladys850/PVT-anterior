@@ -19,8 +19,7 @@
                     <v-toolbar-title>
                       <b>Seleccione un reporte</b>
                     </v-toolbar-title>
-                    <v-progress-linear></v-progress-linear>
-                    <br />
+                    <v-progress-linear class="mb-5"></v-progress-linear>
                     <v-select
                       dense
                       outlined
@@ -32,11 +31,12 @@
                     </v-select>
                     <!-- SOLAMENTE SE MOSTRARA CUANDO HAYA UN REPORTE SELECCIONADO -->
                     <template v-if="report_selected">
-                      <v-toolbar-title>
-                        <b>Criterios de búsqueda</b>
-                      </v-toolbar-title>
-                      <v-progress-linear></v-progress-linear>
-                      <br />
+                      <template v-if="report_selected.criterios.includes('initial_date') || report_selected.criterios.includes('final_date') || report_selected.criterios.includes('date')">
+                        <v-toolbar-title>
+                          <b>Criterios de búsqueda</b>
+                        </v-toolbar-title>
+                      <v-progress-linear class="mb-5"></v-progress-linear>
+                      </template>
                       <template v-if="report_selected.criterios.includes('initial_date')">
                         <v-text-field
                           dense
@@ -44,6 +44,7 @@
                           label="Fecha inicio"
                           hint="Día/Mes/Año"
                           type="date"
+                          :max="$moment(Date.now()).format('YYYY-MM-DD')"
                           outlined
                         ></v-text-field>
                       </template>
@@ -54,6 +55,8 @@
                           label="Fecha final"
                           hint="Día/Mes/Año"
                           type="date"
+                          :min="report_inputs.initial_date"
+                          :max="$moment(Date.now()).format('YYYY-MM-DD')"
                           outlined
                         ></v-text-field>
                       </template>
@@ -90,8 +93,8 @@ export default {
   data: () => ({
     tab: null,
     actions: [
-      { nameTab: "Reportes de Prestamos", value: "prestamos" },
-      { nameTab: "Reportes de amortizaciones", value: "amortizaciones" },
+      { nameTab: "Reportes de Préstamos", value: "prestamos" },
+      { nameTab: "Reportes de Amortizaciones", value: "amortizaciones" },
     ],
     loading_button: false,
     // Reports
@@ -108,7 +111,7 @@ export default {
       { id: 1, name: 'Reporte de amortizaciones de descuentos Titular - Garante', tab: 1, criterios: ['initial_date', 'final_date'], service: '/report_amortization_discount_months' },
       { id: 2, name: 'Reporte de amortizaciones en efectivo y deposito en cuenta', tab: 1, criterios: ['initial_date', 'final_date'], service: '/report_amortization_cash_deposit' },
       { id: 3, name: 'Reporte de amortizaciones por ajustes', tab: 1, criterios: ['initial_date', 'final_date'], service: '/report_amortization_ajust' },
-      { id: 4, name: 'Reporte de amortizaciones pendientes de confirmacion deacuerdo al comprobante de generacion', tab: 1, criterios: ['initial_date', 'final_date'], service: '/report_amortization_pending_confirmation' },
+      { id: 4, name: 'Reporte de amortizaciones pendientes de confirmacion de acuerdo al comprobante de generacion', tab: 1, criterios: ['initial_date', 'final_date'], service: '/report_amortization_pending_confirmation' },
       { id: 5, name: 'Reporte de amortizaciones por complemento y fondo de retiro', tab: 1, criterios: ['initial_date', 'final_date'], service: '/report_amortization_fondo_complement' },
       { id: 6, name: 'Reporte de prestamos desembolsados', tab: 0, criterios: ['initial_date', 'final_date'], service: '/report_loan_vigent' },
       { id: 7, name: 'Reporte de prestamos del estado de cartera', tab: 0, criterios: ['initial_date', 'final_date'], service: '/report_loan_state_cartera' },
@@ -127,6 +130,7 @@ export default {
     async downloadReport() {
       if(this.report_selected) {
         let params = []
+        //this.validateCriterios()
         const formData = new FormData();
         // let validation = true
         this.report_selected.criterios.forEach(criterio => {
@@ -144,7 +148,7 @@ export default {
         //   this.toastr.error("Debe ingresar todos los campos");
         // }
         // console.log(`${this.report_selected.service}?${params}`)
-        this.loading_ipb = true
+        this.loading_button = true
         await axios({
           url: this.report_selected.service,
           method: "GET",
@@ -152,11 +156,11 @@ export default {
           headers: { Accept: "application/vnd.ms-excel" },
           //headers: { Accept: "text/plain" },
           data: formData,
-          params: {                
+          params: {
             initial_date: this.report_inputs.initial_date,
             final_date : this.report_inputs.final_date,
             date: this.report_inputs.date,
-          }          
+          }
         })
           .then((response) => {
             console.log(response.data);
@@ -169,9 +173,10 @@ export default {
             this.clearInputs();
           })
           .catch((e) => {
-            console.log(e);
+            console.log(e)
+            this.loading_button = false
           });
-        this.loading_button = false;
+        this.loading_button = false
       }
     },
   },
