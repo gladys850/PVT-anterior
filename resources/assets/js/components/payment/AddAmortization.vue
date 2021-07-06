@@ -486,33 +486,34 @@ export default {
     }
   },
   methods: {
-      OnchangeAmortization(){
- //        this.data_payment.pago_total=null
+      async OnchangeAmortization(){
+      try {
         if(this.data_payment.affiliate_id=="G"){
-          if(this.data_payment.pago=="Liquidar"){
-      
-          this.data_payment.pago_total= this.garantes.balance
-          this.data_payment.liquidate=true
-
+          let res = await axios.get(`get_amount_payment`,{
+            params:{
+              loan: this.$route.query.loan_id,
+              loan_payment_date: this.$moment(this.data_payment.payment_date).format('DD-MM-YYYY'),
+              liquidate: this.data_payment.pago == 'Liquidar' ? 1 : 0,
+              type: 'G'
+            }
+          })
+          this.data_payment.pago_total=res.data.suggested_amount
         }else{
-          this.data_payment.pago_total=this.garantes.guarantors[0].pivot.quota_treat
-          this.data_payment.liquidate=false
+          let res = await axios.get(`get_amount_payment`,{
+            params:{
+              loan: this.$route.query.loan_id,
+              loan_payment_date: this.$moment(this.data_payment.payment_date).format('DD-MM-YYYY'),
+              liquidate: this.data_payment.pago == 'Liquidar' ? 1 : 0,
+              type: 'T'
+            }
+          })
+          this.data_payment.pago_total=res.data.suggested_amount
         }
-
-
-        }else{
-          if(this.data_payment.pago=="Liquidar"){
-      
-          this.data_payment.pago_total= this.garantes.balance
-          this.data_payment.liquidate=true
-
-        }else{
-          this.data_payment.pago_total=(this.garantes.estimated_quota).toFixed(2)
-          this.data_payment.liquidate=false
-        }
-
-        }
-        
+         } catch (e) {
+        console.log(e)
+      } finally {
+        this.loading = false
+      }
       },
       OnchangeAffiliate(){
       if(this.data_payment.affiliate_id=="G")
