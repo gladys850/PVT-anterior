@@ -632,7 +632,7 @@ class LoanReportController extends Controller
 
         $date_previous = Carbon::parse($request->date)->startOfMonth()->subMonth()->endOfMonth()->format('Y-m-d');
 
-        $loans_request = Loan::where('state_id', LoanState::where('name', 'Vigente')->first()->id)->where('disbursement_date','<=', $date_previous)->get();
+        $loans_request = Loan::where('state_id', LoanState::where('name', 'Vigente')->first()->id)->where('disbursement_date','<=', '2021-06-15')->get();
 
         $id_senasir = array();
         foreach(ProcedureModality::where('name', 'like', '%SENASIR')->get() as $procedure)
