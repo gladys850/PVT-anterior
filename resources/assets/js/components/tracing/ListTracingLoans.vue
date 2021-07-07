@@ -451,7 +451,7 @@
           </template>
           <v-list dense class="py-0">
             <span v-for="doc in printDocs" :key="doc.id">
-            <v-list-item v-if="!(doc.id >= 3 && item.state_loan == 'En Proceso')" @click="imprimir(doc.id, item.id)">
+            <v-list-item v-if="!(doc.id >= 3 && item.state_loan == 'En Proceso')" @click="imprimir(doc.id, item.id_loan)">
                 <v-list-item-icon class="ma-0 py-0 pt-2">
                   <v-icon class="ma-0 py-0" small v-text="doc.icon" color="light-blue accent-4"></v-icon>
                 </v-list-item-icon>

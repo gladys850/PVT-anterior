@@ -7,19 +7,6 @@
         </v-toolbar-title>
         <v-spacer></v-spacer>
         <template>
-          <v-tooltip bottom>
-                <template v-slot:activator="{ on }">
-                  <v-btn
-                    icon
-                    small
-                    v-on="on"
-                    color="primary"
-                    :to="{ name: 'tracingAdd', params: { id: item.id_loan } }"
-                    ><v-icon>mdi-eye</v-icon>
-                  </v-btn>
-                </template>
-                <span>Ver información del trámite</span>
-              </v-tooltip>
               <v-tooltip bottom >
                 <template v-slot:activator="{ on }">
                   <v-btn
@@ -29,7 +16,7 @@
                     v-on="on"
                     color="primary"
                     class="ml-1"
-                    @click="imprimir(2, item.id_loan)"
+                    @click="imprimir(2, loan.id)"
                     ><v-icon>mdi-file-document</v-icon>
                   </v-btn>
                 </template>
@@ -44,7 +31,7 @@
                     v-on="on"
                     color="primary"
                     class="ml-1"
-                    @click="imprimir(1, item.id_loan)"
+                    @click="imprimir(1, loan.id)"
                     ><v-icon>mdi-file</v-icon>
                   </v-btn>
                 </template>
@@ -59,7 +46,7 @@
                     v-on="on"
                     color="primary"
                     class="ml-1"
-                    @click="imprimir(3, item.id_loan)"
+                    @click="imprimir(3, loan.id)"
                     ><v-icon>mdi-cash</v-icon>
                   </v-btn>
                 </template>
@@ -74,7 +61,7 @@
                     v-on="on"
                     color="primary"
                     class="ml-1"
-                    @click="imprimir(4, item.id_loan)"
+                    @click="imprimir(4, loan.id)"
                     ><v-icon>mdi-view-list</v-icon>
                   </v-btn>
                 </template>
@@ -369,7 +356,7 @@ export default {
         console.log(e)
       }
     },
-  },
+
       async getAddress(id) {
       try {
         this.loading = true
@@ -408,6 +395,6 @@ export default {
         console.log(e);
       }
     },
-  }
-
+  },
+}
 </script>
