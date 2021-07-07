@@ -7,7 +7,7 @@
     :loading="loading"
     :options="options"
     :server-items-length="totalLoans"
-    :footer-props="{ itemsPerPageOptions: [8, 15, 30] }"
+    :footer-props="{ itemsPerPageOptions: [8, 15, 100] }"
     multi-sort
     :show-select="tray == 'validated'"
     @update:options="updateOptions"
@@ -102,7 +102,7 @@
           </template>
           <span>Registrar pago</span>
         </v-tooltip>
-        <!--SE QUITA LA OPCION DE ANULACIÓN DESDE LA BANDEJA POR QUE NO SE IDENTIFICA EL ULTIMO PAGO
+        <!--SE APLICA LA ANU8LACIÓN SOLO PARA AMORTIZACIONES DIRECTAS-->
         <v-tooltip bottom v-if="permissionSimpleSelected.includes('delete-payment-loan')">
           <template v-slot:activator="{ on }">
             <v-btn
@@ -110,14 +110,14 @@
               small
               v-on="on"
               color="error"
-              v-if="item.state.name == 'Pendiente por confirmar' || item.state.name == 'Pendiente de Pago' "
+              v-if="item.state.name == 'Pendiente de Pago'"
               @click.stop="bus.$emit('openRemoveDialog', `loan_payment/${item.id}`)"
             >
               <v-icon>mdi-file-cancel-outline</v-icon>
             </v-btn>
           </template>
           <span>Anular registro de cobro</span>
-        </v-tooltip> -->
+        </v-tooltip>
 
         <v-menu offset-y close-on-content-click>
           <template v-slot:activator="{ on }">
@@ -199,7 +199,7 @@ export default {
     selectedLoans: [],
     headers: [
       {
-        text: 'Nro recibo',
+        text: 'Cód. recibo',
         value: 'code',
         class: ['normal', 'white--text'],
         align: 'center',

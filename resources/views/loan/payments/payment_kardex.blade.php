@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <title>PLATAFORMA VIRTUAL ADMINISTRATIVA - MUSERPOL </title>
+    <title>{{$file_title}}</title>
     <link rel="stylesheet" href="{{ public_path("/css/report-print.min.css") }}" media="all"/>
 </head>
 
@@ -36,7 +36,7 @@
                 @if($lender->affiliate_state != null)
                     <td class="data-row py-5">{{ $lender->affiliate_state->affiliate_state_type->name }}</td>
                 @else
-                    <td class="data-row py-5">{{ $lender->affiliate_state->affiliate_state_type->name }}</td>
+                    <td class="data-row py-5"></td>
                 @endif
             </tr>
         </table>
@@ -175,7 +175,7 @@
                 <tr>
                     <td class="w-5">{{ $parent_loan_payment->quota_number }}</td>
                     <td class="w-9">{{ Carbon::parse($parent_loan_payment->estimated_date)->format('d/m/Y') }}</td>
-                    <td class="w-9">{{ Carbon::parse($parent_loan_payment->pay_date)->format('d/m/Y') }}</td>
+                    <td class="w-9">{{ Carbon::parse($parent_loan_payment->loan_payment_date)->format('d/m/Y') }}</td>
                     <td class="w-9 text-right">{{ Util::money_format($parent_loan_payment->capital_payment) }}</td> {{-- capital --}}
                     <td class="w-9 text-right">{{ Util::money_format($parent_loan_payment->interest_payment) }}</td>{{-- interes corriente --}}
                     <td class="w-9 text-right">{{ Util::money_format($parent_loan_payment->penal_payment) }}</td>{{-- interes penal --}}
@@ -223,7 +223,7 @@
                 <tr>
                     <td class="w-5">{{ $payment->quota_number }}</td>
                     <td class="w-9">{{ Carbon::parse($payment->estimated_date)->format('d/m/Y') }}</td>
-                    <td class="w-9">{{ Carbon::parse($payment->pay_date)->format('d/m/Y') }}</td>
+                    <td class="w-9">{{ Carbon::parse($payment->loan_payment_date)->format('d/m/Y') }}</td>
                     <td class="w-9 text-right">{{ Util::money_format($payment->capital_payment) }}</td> {{-- capital --}}
                     <td class="w-9 text-right">{{ Util::money_format($payment->interest_payment) }}</td>{{-- interes corriente --}}
                     <td class="w-9 text-right">{{ Util::money_format($payment->penal_payment) }}</td>{{-- interes penal --}}

@@ -32,7 +32,7 @@ use App\Loan;
 use App\Role;
 use App\ProcedureModality;
 use App\PaymentType;
-use App\Period;
+use App\LoanPaymentPeriod;
 //use App\AmortizationType;
 use App\ProcedureType;
 use App\AffiliateStateType;
@@ -135,51 +135,6 @@ class LoanPaymentController extends Controller
         });
         return $data;
     }
-     /**
-    * Cargado del archivo csv de Pagos 
-    * Realiza el copiado del archivo por ftp.
-	* @bodyParam file file required Archivo de importación. Example: file.csv
-    * @bodyParam state boolean required Tipo importacion Activo(1) o Pasivo(0). Example: 1
-    * @bodyParam estimated_date date Fecha estimada para la importacion. Example: 2020-12-31
-    * @authenticated
-    * @responseFile responses/loan_payment/upload_file_payment.200.json
-    */
-    public function upload_file_payment(Request $request){
-        $request->validate([
-            'file' => 'required',
-            'state'=> 'required|boolean',
-            'estimated_date'=> 'nullable|date_format:"Y-m-d"',
-         ]);
-         $ruta_archivo = false;
-         $estimated_date_importation = $request->estimated_date? Carbon::parse($request->estimated_date) : Carbon::now()->endOfMonth();
-         $month_contribution =  $estimated_date_importation->month;
-         $year_contributions = $estimated_date_importation->year;
-         $period = Period::where('year',$year_contributions)->where('month',$month_contribution)->first();
-         if($period == null){ 
-            $period = new Period;
-            $period->year = $year_contributions;
-            $period->month = $month_contribution;
-            $period->save();
-          }  
-         if($request->state){
-            $origin="comando_".$year_contributions;
-         }else{
-            $origin="senasir_".$year_contributions;
-         }
-        $file_name = $request->estimated_date.'.csv';
-       
-        try {
-            $base_path = 'contribución/'.$origin;    
-            $file_path = Storage::disk('ftp')->putFileAs($base_path,$request->file,$file_name);
-            $result['period']=$period;
-            $result['file_path'] = $file_path;
-            return $result;
-        }      
-        catch (\Exception $e) {
-            return false;
-        }
-    }
-
 
     /**
     * Kardex de pagos
@@ -607,7 +562,7 @@ class LoanPaymentController extends Controller
             }else{                
                 $reg_payment_date = CarbonImmutable::parse($loan_payment->previous_payment_date);
                 $estimated_days['current'] = $reg_payment_date->diffInDays(CarbonImmutable::parse($loan_payment->estimated_date)->toDateString());
-                if($estimated_days['current'] > $max_current)
+                if($estimated_days['current'] >= $max_current)
                 $estimated_days['penal'] = $estimated_days['current'] - $global_parameter->days_current_interest;
                 else
                 $estimated_days['penal'] = 0;
@@ -1637,14 +1592,14 @@ class LoanPaymentController extends Controller
                     set identity_card = REPLACE(LTRIM(REPLACE(identity_card,'0',' ')),' ','0')";
         $update2 = DB::select($update2);
 
-        $insert = "INSERT INTO import_command_payments(period_id, identity_card, amount)
+        $insert = "INSERT INTO loan_payment_copy_commands(period_id, identity_card, amount)
                     SELECT period_id, identity_card, amount FROM payments_aux;";
         $insert = DB::select($insert);
 
         $drop = "drop table if exists payments_aux";
         $drop = DB::select($drop);
 
-        $consult = "select count(*) from import_command_payments where period_id = 9";
+        $consult = "select count(*) from loan_payment_copy_commands where period_id = 9";
         $consult = DB::select($consult);
 
         return $consult;

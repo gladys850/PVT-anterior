@@ -132,8 +132,8 @@ class LoanReportController extends Controller
                        Util::money_format($row->balance_loan),
                        $row->parent_reason_loan,//ampliacion
                        Util::money_format($row->amount_disbursement),//monto desembolsado
-                       $row->refinancing_balance? Util::money_format($row->payment_amount_ampli->stimated_date):'0',//MONTO REFINANCIADO//MONTO REFINANCIADO
-                       Util::money_format($row->amount_disbursement_liquido),//liquido desembolsado
+                       $row->parent_reason_loan? Util::money_format($row->amount_disbursement_liquido):'0,00',//MONTO REFINANCIADO//MONTO REFINANCIADO
+                       $row->parent_reason_loan? Util::money_format($row->amount_disbursement - $row->amount_disbursement_liquido) : Util::money_format($row->amount_disbursement),//liquido desembolsado
                        $row->term_loan,//plazo
                        $row->state_loan,//estado del prestamo
 
@@ -269,7 +269,7 @@ class LoanReportController extends Controller
                        $row->last_payment? Util::money_format($row->last_payment->previous_balance-$row->last_payment->capital_payment):' sin registro',//Saldo a fecha de corte
                        Util::money_format($row->amount_approved),//monto aprobado 
                        $row->refinancing_balance? Util::money_format($row->refinancing_balance):Util::money_format($row->amount_approved),//MONTO DESEMBOLSADO
-                       $row->refinancing_balance? Util::money_format($row->payment_amount_ampli->stimated_date):'0',//MONTO REFINANCIADO
+                       $row->payment_amount_ampli? Util::money_format($row->payment_amount_ampli->stimated_date):'0',//MONTO REFINANCIADO
                        $row->parent_reason? $row->parent_reason:'no',//SI ES AMPLIACION
                        Util::money_format($row->indebtedness_calculated_loan_affiliate)//indice de endeudamineto
                       
@@ -363,7 +363,7 @@ class LoanReportController extends Controller
                       $row->last_payment? Util::money_format($row->last_payment->previous_balance-$row->last_payment->capital_payment):' sin registro',//Saldo a fecha de corte
                       Util::money_format($row->amount_approved),//monto aprobado 
                       $row->refinancing_balance? Util::money_format($row->refinancing_balance):Util::money_format($row->amount_approved),//MONTO DESEMBOLSADO
-                      $row->refinancing_balance? Util::money_format($row->payment_amount_ampli->stimated_date):'0',//MONTO REFINANCIADO
+                      $row->payment_amount_ampli? Util::money_format($row->payment_amount_ampli->stimated_date):'0',//MONTO REFINANCIADO
                       $row->parent_reason? $row->parent_reason:'no',//SI ES AMPLIACION
                       Util::money_format($row->indebtedness_calculated_loan_affiliate)//indice de endeudamineto
                    ));
@@ -626,7 +626,7 @@ class LoanReportController extends Controller
     public function loan_information(Request $request)
     {
         $month = Carbon::parse($request->date)->format('m');
-        $year = Carbon::parse($request->date)->format('Y');
+        $year = Carbon::parse($request->date)->format('Y'); 
         $loans = Loan::whereMonth('disbursement_date', $month)->whereYear('disbursement_date', $year)->get();
         $id_senasir = array();
         foreach(ProcedureModality::where('name', 'like', '%SENASIR')->get() as $procedure)
@@ -912,6 +912,7 @@ class LoanReportController extends Controller
    * @queryParam second_name_affiliate Buscar por segundo Nombre del afiliado. Example: FAUST
    * @queryParam surname_husband_affiliate Buscar por Apellido de casada Nombre del afiliado. Example: De LA CRUZ
    * @queryParam sub_modality_loan Buscar por sub modalidad del préstamo. Example: Corto plazo sector activo
+   * @queryParam shortened_sub_modality_loan Buscar por nombre corto sub modalidad del préstamo. Example: COR-AFP
    * @queryParam modality_loan Buscar por Modalidad del prestamo. Example: Préstamo a corto plazo
    * @queryParam amount_approved_loan Buscar monto aprobado del afiliado. Example: 25000
    * @queryParam state_type_affiliate Buscar por tipo de estado del afiliado. Example: Activo
@@ -961,6 +962,7 @@ class LoanReportController extends Controller
     $surname_husband_affiliate = request('surname_husband_affiliate') ?? '';
 
     $sub_modality_loan = request('sub_modality_loan') ?? '';
+    $shortened_sub_modality_loan = request('shortened_sub_modality_loan') ?? '';
     $modality_loan = request('modality_loan') ?? '';
     $amount_approved_loan = request('amount_approved_loan') ?? '';
     $state_type_affiliate = request('state_type_affiliate') ?? '';
@@ -1024,6 +1026,9 @@ class LoanReportController extends Controller
 
       if ($sub_modality_loan != '') {
         array_push($conditions, array('procedure_modalities.name', 'ilike', "%{$sub_modality_loan}%"));
+      }
+      if ($shortened_sub_modality_loan != '') {
+        array_push($conditions, array('procedure_modalities.shortened', 'ilike', "%{$shortened_sub_modality_loan}%"));
       }
       if ($modality_loan != '') {
         array_push($conditions, array('procedure_types.name', 'ilike', "%{$modality_loan}%"));
@@ -1109,11 +1114,14 @@ class LoanReportController extends Controller
                }
                $File="ListadoPrestamos";
                $data=array(
-                   array("Id del préstamo", "Codigo", "ID afiliado", "Nro de carnet", "Matrícula", "Primer apellido","Segundo apellido","Primer nombre","Segundo nombre","Apellido casada","Sub modalidad",
+                   array("Dpto", "Área", "Usuario", "Id del préstamo", "Codigo", "ID afiliado", "Nro de carnet", "Matrícula", "Primer apellido","Segundo apellido","Primer nombre","Segundo nombre","Apellido casada","Sub modalidad", "Sub modalidad Corta",
                    "Modalidad","Monto del prestamo", "estado del affiliado","Tipo de estado del affiliado","Cuota del prestamo","Estado del préstamo","Es garante?","Entidad de pensión del afiliado",'Saldo préstamo','Fecha desembolso' )
                );
                foreach ($list_loan as $row){
                    array_push($data, array(
+                       $row->citi_loan,
+                       $row->name_role_loan,
+                       $row->user_loan,
                        $row->id_loan,
                        $row->code_loan,
                        $row->id_affiliate,
@@ -1125,6 +1133,7 @@ class LoanReportController extends Controller
                        $row->second_name_affiliate,
                        $row->surname_husband_affiliate,
                        $row->sub_modality_loan,
+                       $row->shortened_sub_modality_loan,
                        $row->modality_loan,
                        $row->amount_approved_loan,
                        $row->state_type_affiliate,

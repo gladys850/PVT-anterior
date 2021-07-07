@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <title>PLATAFORMA VIRTUAL ADMINISTRATIVA - MUSERPOL </title>
+    <title>{{$file_title}}</title>
     <link rel="stylesheet" href="{{ public_path("/css/report-print.min.css") }}" media="all"/>
 </head>
 
@@ -62,7 +62,7 @@
             </tr>
             <tr>
                 <td>{{ $loan->interest->annual_interest}}</td>
-                <td>{{ $loan->estimated_quota }}</td>
+                <td>{{ Util::money_format($loan->estimated_quota) }}</td>
                 <td>{{ Carbon::parse($loan->disbursement_date)->format('d/m/Y H:i:s') }}</td>
             </tr>
             <tr class="bg-grey-darker text-xxs text-white">
