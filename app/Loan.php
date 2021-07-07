@@ -1163,7 +1163,7 @@ class Loan extends Model
         }
         foreach($this->paymentsKardex as $payment)
         {
-            if($date != Carbon::parse($payment->estimated_date)->format('Y-m-d') || $payment->estimated_quota != $this->estimated_quota + $extra_amount){
+            if($date != Carbon::parse($payment->estimated_date)->format('Y-m-d') || $payment->estimated_quota != round(($this->estimated_quota + $extra_amount),2)){
                 $regular = false;
                 break;
             }
