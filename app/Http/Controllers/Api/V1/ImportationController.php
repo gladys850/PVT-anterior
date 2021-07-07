@@ -660,7 +660,7 @@ class ImportationController extends Controller
                                     'user_id' => null,
                                     'loan_payment_date' => Carbon::now()->format('Y-m-d'),
                                     'liquidate' => false,
-                                    'state_affiliate'=> "ACTIVO,PASIVO",
+                                    'state_affiliate'=> "ACTIVO",
                                     'description'=> null,
                                 ];
                                 $loan_payment = $this->set_payment($form, $loan_calculate);
