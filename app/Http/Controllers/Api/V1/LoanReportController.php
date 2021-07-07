@@ -132,8 +132,8 @@ class LoanReportController extends Controller
                        Util::money_format($row->balance_loan),
                        $row->parent_reason_loan,//ampliacion
                        Util::money_format($row->amount_disbursement),//monto desembolsado
-                       $row->payment_amount_ampli? Util::money_format($row->payment_amount_ampli->stimated_date):'0,00',//MONTO REFINANCIADO//MONTO REFINANCIADO
-                       Util::money_format($row->amount_disbursement_liquido),//liquido desembolsado
+                       $row->parent_reason_loan? Util::money_format($row->amount_disbursement_liquido):'0,00',//MONTO REFINANCIADO//MONTO REFINANCIADO
+                       $row->parent_reason_loan? Util::money_format($row->amount_disbursement - $row->amount_disbursement_liquido) : Util::money_format($row->amount_disbursement),//liquido desembolsado
                        $row->term_loan,//plazo
                        $row->state_loan,//estado del prestamo
 
@@ -626,7 +626,7 @@ class LoanReportController extends Controller
     public function loan_information(Request $request)
     {
         $month = Carbon::parse($request->date)->format('m');
-        $year = Carbon::parse($request->date)->format('Y');
+        $year = Carbon::parse($request->date)->format('Y'); 
         $loans = Loan::whereMonth('disbursement_date', $month)->whereYear('disbursement_date', $year)->get();
         $id_senasir = array();
         foreach(ProcedureModality::where('name', 'like', '%SENASIR')->get() as $procedure)
