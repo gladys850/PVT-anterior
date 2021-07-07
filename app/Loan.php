@@ -348,6 +348,7 @@ class Loan extends Model
         $quota->previous_payment_date = $latest_quota ? $latest_quota->estimated_date : $this->disbursement_date;
         $quota->quota_number = $this->paymentsKardex->count() + 1;
         $date_ini = CarbonImmutable::parse($this->disbursement_date);
+        $penal_days = 0;
         if($date_ini->day <= LoanGlobalParameter::latest()->first()->offset_interest_day)
             $date_pay = $date_ini->endOfMonth()->format('Y-m-d');
         else
@@ -359,8 +360,9 @@ class Loan extends Model
             $current_days = (Carbon::parse($quota->previous_payment_date)->diffInDays(Carbon::parse($estimated_date)) + 1);
         }
         else{
-            $penal_days = (Carbon::parse($quota->previous_payment_date)->diffInDays(Carbon::parse($estimated_date)) - 31);
             $current_days = (Carbon::parse($quota->previous_payment_date)->diffInDays(Carbon::parse($estimated_date)));
+            if($current_days > 31)
+                $penal_days = (Carbon::parse($quota->previous_payment_date)->diffInDays(Carbon::parse($estimated_date)) - 31);
         }
 
         //dias y montos estimados
