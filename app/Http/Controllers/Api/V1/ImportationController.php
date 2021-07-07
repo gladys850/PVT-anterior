@@ -386,7 +386,7 @@ class ImportationController extends Controller
             $file_validate = explode("\n",$file_validate);
             $file_validate = $file_validate[0]; 
             $base_path = $request->location."/".$request->file_name;
-            $base_path ='ftp://'.env('FTP_HOST').'/'.$base_path;
+            $base_path ='ftp://'.env('FTP_HOST').env('FTP_ROOT').$base_path;
             $username =env('FTP_USERNAME');
             $password =env('FTP_PASSWORD');
             $this->delete_copy_payments($request->period_id, $request->type);
@@ -880,6 +880,8 @@ class ImportationController extends Controller
         $result['query_step_2'] = false;
         $result['query_step_3'] = false;
         $result['file_name'] = false;
+        $result['reg_copy'] = 0;
+        $result['reg_group'] = 0;
         $last_date = Carbon::parse($period->year.'-'.$period->month)->format('Y-m');      
         $base_path = 'cobranzas-importacion/';   
         if($origin == 'C'){
@@ -891,14 +893,16 @@ class ImportationController extends Controller
             }else{
                 $result['file_name'] = false;
             }
-            $query = " select (count(*)>0) as num_reg 
+            $query = " select (count(*)>0) as num_reg, count(*) as num_tot_reg
             from loan_payment_copy_commands 
             where period_id = $request->period_id" ;
             $query_step_1 = DB::select($query)[0]->num_reg;
-            $query_grouped = " select (count(*)>0) as num_reg 
+            $result['reg_copy'] = DB::select($query)[0]->num_tot_reg;
+            $query_grouped = " select (count(*)>0) as num_reg, count(*) as num_reg_group
             from loan_payment_group_commands 
             where period_id = $request->period_id" ;
             $query_step_2 = DB::select($query_grouped)[0]->num_reg;
+            $result['reg_group'] = DB::select($query_grouped)[0]->num_reg_group;
             $query_step_3 = $period->import_command;
             if($query_step_1 == true && $query_step_2 == true && $query_step_3 == true ){
                 $result['percentage'] = 100;
@@ -922,14 +926,16 @@ class ImportationController extends Controller
             }else{
                 $result['file_name'] = false;
             }
-            $query = " select (count(*)>0) as num_reg 
+            $query = " select (count(*)>0) as num_reg, count(*) as num_tot_reg 
             from loan_payment_copy_senasirs 
             where period_id = $request->period_id" ;
             $query_step_1 = DB::select($query)[0]->num_reg;
-            $query_grouped = " select (count(*)>0) as num_reg 
+            $result['reg_copy'] = DB::select($query)[0]->num_tot_reg;
+            $query_grouped = " select (count(*)>0) as num_reg, count(*) as num_reg_group 
             from loan_payment_group_senasirs 
             where period_id = $request->period_id" ;
             $query_step_2 = DB::select($query_grouped)[0]->num_reg;
+            $result['reg_group'] = DB::select($query_grouped)[0]->num_reg_group;
             $query_step_3 = $period->import_senasir;
             if($query_step_1 == true && $query_step_2 == true && $query_step_3 == true ){
                 $result['percentage'] = 100;
