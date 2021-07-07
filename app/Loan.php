@@ -1184,33 +1184,34 @@ class Loan extends Model
                     $penal_interest = LoanPayment::interest_by_days($days - LoanGlobalParameter::first()->days_current_interest, $this->interest->penal_interest, $this->balance);
                     $suggested_amount = round(($this->balance + $interest_by_days + $penal_interest),2);
        }
-       if($type == "T"){
-            if(!$this->last_payment_validated){
-                    $date_ini = CarbonImmutable::parse($this->disbursement_date);
-                    if($date_ini->day <= LoanGlobalParameter::latest()->first()->offset_interest_day){
-                        $quota = $this->estimated_quota;
-                        $suggested_amount = round($this->estimated_quota, 2);
-                    }
-                    else{
-                        $days = date('t', strtotime($loan_payment_date)) - Carbon::parse($this->disbursement_date)->format('d')-1;
-                        $interest_by_days = LoanPayment::interest_by_days($days, $this->interest->annual_interest, $this->balance);
-                        $suggested_amount = round($this->estimated_quota + $interest_by_days, 2);
-                    }
-            }
-            else{
-                if($this->verify_regular_payments() && ($this->paymentsKardex->count()+1) == $this->loan_term){
-                    $days = Carbon::parse($loan_payment_date)->format('d');
-                    $interest_by_days = LoanPayment::interest_by_days($days, $this->interest->annual_interest, $this->balance);
-                    $suggested_amount = round(($this->estimated_quota + $this->balance), 2);
+       else{
+        if($type == "T"){
+                if(!$this->last_payment_validated){
+                        $date_ini = CarbonImmutable::parse($this->disbursement_date);
+                        if($date_ini->day <= LoanGlobalParameter::latest()->first()->offset_interest_day){
+                            $quota = $this->estimated_quota;
+                            $suggested_amount = round($this->estimated_quota, 2);
+                        }
+                        else{
+                            $days = date('t', strtotime($loan_payment_date)) - Carbon::parse($this->disbursement_date)->format('d')-1;
+                            $interest_by_days = LoanPayment::interest_by_days($days, $this->interest->annual_interest, $this->balance);
+                            $suggested_amount = round($this->estimated_quota + $interest_by_days, 2);
+                        }
                 }
                 else{
-                    $suggested_amount = $this->estimated_quota;
+                    if($this->verify_regular_payments() && ($this->paymentsKardex->count()+1) == $this->loan_term){
+                        $days = Carbon::parse($loan_payment_date)->format('d');
+                        $interest_by_days = LoanPayment::interest_by_days($days, $this->interest->annual_interest, $this->balance);
+                        $suggested_amount = round(($this->estimated_quota + $this->balance), 2);
+                    }
+                    else{
+                        $suggested_amount = $this->estimated_quota;
+                    }
                 }
             }
+            else
+                $suggested_amount = $this->guarantors->first()->pivot->quota_treat;
         }
-        else
-            $suggested_amount = $loan->guarantors->first()->pivot->quota_treat;
-
-        return  $suggested_amount;
+        return  round($suggested_amount,2);
     }
 }

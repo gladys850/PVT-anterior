@@ -640,7 +640,6 @@ export default {
 
     clearInputs() {
       this.import_export.file = null
-      this.import_export.state_affiliate = null
       this.loading_rpb =false
       this.loading_ipb =false
       this.loading_importacion =false

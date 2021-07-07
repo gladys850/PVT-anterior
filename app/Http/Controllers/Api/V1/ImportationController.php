@@ -60,6 +60,7 @@ class ImportationController extends Controller
 
             $payment_agroups = DB::select($query);
 
+            $this->delete_agroups_payments($period, $origin);
             foreach($payment_agroups as $payment_agroup){
                 $affiliate_id = $this->serch_id($payment_agroup->identity_card);
                 if($affiliate_id != 0){
@@ -93,6 +94,7 @@ class ImportationController extends Controller
 
             $payment_agroups = DB::select($query);
 
+            $this->delete_agroups_payments($period, $origin);
             foreach($payment_agroups as $payment_agroup){
                 $affiliate_id = $this->serch_id($payment_agroup->registration);
                 if($affiliate_id != 0){
