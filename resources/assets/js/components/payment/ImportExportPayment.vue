@@ -264,21 +264,18 @@
                   <v-stepper-header class=" !pa-0 ml-0" >
                     <template>
                       <v-stepper-step
-                        editable
                         :key="`${1}-step`"
                         :complete="e1 > 1"
                         :step="1">Subir Archivo
                       </v-stepper-step >
                       <v-divider v-if="1 !== steps" :key="1" ></v-divider>
                       <v-stepper-step
-                      editable
                         :key="`${2}-step`"
                         :complete="e1 > 2"
                         :step="2">Validar Datos
                       </v-stepper-step>
                       <v-divider v-if="2 !== steps" :key="2" ></v-divider>
                       <v-stepper-step
-                      editable
                         :key="`${3}-step`"
                         :complete="e1 > 3"
                         :step="3">Importar
@@ -755,6 +752,7 @@ export default {
             }
           }else{
             this.percentage=0
+            this.e1=1
           }
         }
       } catch (e) {
@@ -791,6 +789,9 @@ export default {
                 this.importacion=true
               }
             }
+          }else{
+            this.percentage=0
+            this.e1=1
           }
         }
       } catch (e) {
