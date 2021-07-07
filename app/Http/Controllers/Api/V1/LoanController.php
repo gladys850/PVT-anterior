@@ -2221,10 +2221,10 @@ class LoanController extends Controller
    /**
     * Obtener el monto a pagar
     * devuelve el monto a pagar del titular o garante del prestamo
-    * @bodyParam loan integer required ID del préstamo. Example: 6
-    * @bodyParam loan_payment_date date required fecha calculada del pago. Example: 31-07-2021
-    * @bodyParam liquidate boolean required liquidacion del prestamo. Example: true
-    * @bodyParam type string required tipo del afiliado que ira a pagar. Example: T
+    * @queryParam loan integer required ID del préstamo. Example: 6
+    * @queryParam loan_payment_date date required fecha calculada del pago. Example: 31-07-2021
+    * @queryParam liquidate boolean required liquidacion del prestamo. Example: true
+    * @queryParam type string required tipo del afiliado que ira a pagar. Example: T
     * @authenticated
     * @responseFile responses/loan/payment_amount.200.json
     */
