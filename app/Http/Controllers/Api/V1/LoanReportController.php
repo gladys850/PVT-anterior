@@ -772,7 +772,9 @@ class LoanReportController extends Controller
                          }
                      }
                  }
-             }else{
+             }
+         }
+         foreach($loans_request as $loan){
               if(in_array($loan->procedure_modality_id, $id_comando))
               {
                   foreach($loan->lenders as $lender)
@@ -825,9 +827,7 @@ class LoanReportController extends Controller
                       }
                   }
               }
-
-             }
-         }
+      }
 
          $file_name = $month.'-'.$year;
          $extension = '.xls';
