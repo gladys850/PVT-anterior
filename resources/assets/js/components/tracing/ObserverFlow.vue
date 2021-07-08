@@ -13,6 +13,9 @@
                         :items="observations"
                         :items-per-page="6"
                         class="elevation-1"
+                        :options.sync="options"
+                        :server-items-length="options.totalItems"
+                        :footer-props="{ itemsPerPageOptions: [8, 15, 30, 100] }"
                       >
                       </v-data-table>
                     </v-col>
@@ -31,30 +34,9 @@
 export default {
   name: "observer-flow",
   data: () => ({
-    //valor: false,
     observation_type: [],
     bus: new Vue(),
     headersHist: [
-      {
-        text: "Fecha creación",
-        class: ["normal", "white--text"],
-        align: "left",
-        value: "created_at"
-      },
-      {
-        text: "Fecha actualización",
-        class: ["normal", "white--text"],
-        align: "left",
-        value: "update_at"
-      },
-      {
-        text: "Acciones realizadas",
-        class: ["normal", "white--text"],
-        align: "left",
-        value: "accion"
-      }
-    ],
-      headersHist2: [
       {
         text: "Fecha creación",
         class: ["normal", "white--text"],
@@ -102,7 +84,12 @@ export default {
     
     ],
     record: [],
-    //record_payment: []
+    options: {
+      page: 1,
+      itemsPerPage: 8,
+      sortBy: ['created_at'],
+      sortDesc: [false]
+    },
   }),
   props: {
     affiliate: {
@@ -122,7 +109,13 @@ export default {
       required: true
     },
   },
-
+  watch: {
+    options: function(newVal, oldVal) {
+      if (newVal.page != oldVal.page || newVal.itemsPerPage != oldVal.itemsPerPage || newVal.sortBy != oldVal.sortBy || newVal.sortDesc != oldVal.sortDesc) {
+        this.getRecords(this.loan.id)
+      }
+    },
+  },
   mounted() {
     this.getObservationType()
     this.getRecords(this.loan.id)
@@ -147,11 +140,19 @@ export default {
         this.loading = true
         let res = await axios.get(`record`, {
           params: {
-            loan_id: id
+            loan_id: id,
+            page: this.options.page,
+            per_page: this.options.itemsPerPage,
+            sortBy: this.options.sortBy,
+            sortDesc: this.options.sortDesc,
           }
         })
         this.record = res.data.data
-        console.log(this.record)
+        //console.log(this.record)
+        delete res.data['data']
+        this.options.page = res.data.current_page
+        this.options.itemsPerPage = parseInt(res.data.per_page)
+        this.options.totalItems = res.data.total
       } catch (e) {
         console.log(e)
       } finally {
