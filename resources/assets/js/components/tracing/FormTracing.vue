@@ -425,8 +425,6 @@
                               <v-card-text>
                                 <ObserverFlow
                                 :loan.sync="loan"
-                                :observations.sync="observations"
-                                :bus1="bus1"
                                 :affiliate.sync="affiliate">
                                 </ObserverFlow>
                               </v-card-text>
