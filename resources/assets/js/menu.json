@@ -51,13 +51,6 @@
     "params": {}
   },
   {
-    "href": "ImportExport",
-    "title": "Imp./Exp.",
-    "icon": "mdi-file-import-outline",
-    "permission": "show-payment-loan",
-    "params": {}
-  },
-  {
     "href": "ImportExportPayment",
     "title": "Imp./Exp. Cobros",
     "icon": "mdi-bank-transfer",
