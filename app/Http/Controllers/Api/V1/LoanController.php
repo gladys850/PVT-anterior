@@ -535,8 +535,8 @@ class LoanController extends Controller
             }
        }
     }
-        $saved = $this->save_loan($request, $loan);
-        return $saved->loan;
+    $saved = $this->save_loan($request, $loan);
+    return $saved->loan;
     }
 
     /**
@@ -558,6 +558,7 @@ class LoanController extends Controller
 
     private function save_loan(Request $request, $loan = null)
     {
+        $loan_copy = $loan;
         /** Verificando información de los titulares y garantes */
         if($request->lenders && $request->guarantors){
             $lenders_guarantors = array_merge($request->lenders, $request->guarantors);
@@ -623,15 +624,19 @@ class LoanController extends Controller
         }if($request->has('indebtedness_calculated')){
             $loan->indebtedness_calculated_previous = $request->indebtedness_calculated;
         }
-        //ini aqui
-        $option = $loan;
-        $loan_a = Loan::withoutEvents(function () use ($option) {
-        $option->save();
-        return $option;
-        });
-
-        $loan=$loan_a;//fin aqui
         //$loan->save();
+        if($loan_copy){
+            $loan->update();
+        }else{
+            //ini aqui
+            $option = $loan;
+            $loan_a = Loan::withoutEvents(function () use ($option) {
+            $option->save();
+            return $option;
+            });
+            $loan=$loan_a;
+            //fin aqui
+        }
 
         if($request->has('data_loan') && $request->parent_loan_id == null && $request->parent_reason != null && !$request->has('id')){
             $data_loan = $request->data_loan[0];

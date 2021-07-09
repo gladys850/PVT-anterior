@@ -349,7 +349,7 @@ class ImportationController extends Controller
                     where loan_affiliates.affiliate_id = '$id_affiliate'
                     and  loan_affiliates.guarantor = false
                     and  loan_states.name = 'Vigente'
-                    and  loans.guarantor_amortizing = false
+                    /*and  loans.guarantor_amortizing = false*/
                     and  loans.disbursement_date <= '$estimated_date'
                     order by loans.disbursement_date";
 
