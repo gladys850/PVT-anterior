@@ -295,4 +295,41 @@ class ImportationReportController extends Controller
         $export = new ArchivoPrimarioExport($senasir_ancient);
         return Excel::download($export, $file_name.$extension);
     }
+    public function report_rquest_command_payments(request $request){
+        // $mes
+        // aumenta el tiempo máximo de ejecución de este script a 150 min:
+        ini_set('max_execution_time', 9000);
+        // aumentar el tamaño de memoria permitido de este script:
+        ini_set('memory_limit', '960M');
+        $request->validate([
+            'period_id'=>'integer|exists:loan_payment_periods,id',
+            'estimated_date'=> 'nullable|date_format:"Y-m-d"'
+        ]);
+         $period_id = $request->period_id;
+         $origin_name="cobros-comando-";
+         if($period_id){
+            $period = LoanPaymentPeriod::find($request->period_id);
+            $name_month = Carbon::parse($period->year.'-'.$period->month)->isoFormat('MMMM');
+            $year = $period->year;
+            $month = $period->month;
+            $file_name = $origin_name.$name_month.'-'.$year;
+         }else{
+             
+            $name_month = Carbon::parse($request->estimated_date)->isoFormat('MMMM');
+            $year = Carbon::parse($request->estimated_date)->format('Y');
+            $month = Carbon::parse($request->date)->format('m');
+            $file_name = $origin_name.$name_month.'-'.$year;      
+         }
+         $data = array(
+            array("Nro Préstamo", "Fecha de desembolso", "Ciudad", "tipo", "Matricula Titular",
+            "Matricula Derecho Habiente", "CI", "Extensión", "Primer Nombre", "Segundo Nombre", "Paterno",
+             "Materno","Ap de Casada", "Saldo Actual", "Cuota Fija Mensual", "Descuento Programado", "Interés","Amort. TIT o GAR?",
+            "GAR Estado","GAR Tipo de estado","Matricula garante","GAR CI", "GAR Exp","GAR Primer Nombre","GAR Segundo Nombre",
+            "GAR 1er Apellido","GAR 2do Apellido","GAR Apellido de Casada")
+        );
+         $export = new ArchivoPrimarioExport($data);
+         return Excel::download($export, $file_name.'.xls');
+    
+     }
+
 }
