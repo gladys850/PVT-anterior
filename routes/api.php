@@ -90,6 +90,7 @@ Route::group([
         Route::get('fund_rotatory_entry_output', 'Api\V1\FundRotatoryController@get_fund_rotatori_entry_output');//listadosentradas y salidas
         Route::get('get_list_month', 'Api\V1\LoanPaymentPeriodController@get_list_month');//listado de meses por gestion
         Route::get('get_list_year', 'Api\V1\LoanPaymentPeriodController@get_list_year');//listado de meses por gestion
+        Route::get('loan_pvt_sismu_report', 'Api\V1\LoanReportController@loan_pvt_sismu_report');//reporte de prestamos PVT y sismu simultaneos
 
         Route::get('get_categorie_user', 'Api\V1\LoanPaymentCategorieController@get_categorie_user');//listado de meses por gestion
 

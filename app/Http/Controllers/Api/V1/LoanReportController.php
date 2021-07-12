@@ -619,7 +619,7 @@ class LoanReportController extends Controller
   /** @group Reportes de Prestamos
     * generar reporte de nuevos prestamos desembolsados
     * reporte de los nuevos desembolsados por periodo
-	  * @bodyParam date date Fecha para el periodo a consultar. Example: 16-06-2021
+	* @bodyParam date date Fecha para el periodo a consultar. Example: 16-06-2021
     * @responseFile responses/report_loans/loan_desembolsado.200.json
     * @authenticated
     */
@@ -1254,4 +1254,87 @@ class LoanReportController extends Controller
            return $list_loan;
       }
    }
+
+   /** @group Reportes de Prestamos
+     * PVT y SISMU descuentos simultaneos
+     * @bodyParam date date required Fecha para el periodo a consultar. Example: 16-06-2021
+     * @responseFile responses/report_loans/loan_desembolsado.200.json
+     * @authenticated
+     */ 
+   public function loan_pvt_sismu_report(request $request){
+        $month = Carbon::now()->format('m');
+        $year = Carbon::now()->format('Y');
+        $loans_lenders = Loan::where('disbursement_date', '<=', Carbon::parse($request->date))->where('guarantor_amortizing', false)->where('state_id', LoanState::whereName('Vigente')->first()->id)->get();
+        //$loans_guarantors = Loan::where('disbursement_date', '!=', null)->where('guarantor_amortizing', true)->where('state_id', LoanState::whereName('Vigente')->first()->id)->get();
+        $loan_sheets = array(
+            array("Nombres y Apellidos", "Cedula de Identidad", "Matricula", "Matricula DH", "Nro Prestamo", "Fecha de desembolso", "origen", "cuota fija mensual", "tipo")
+        );
+        foreach($loans_lenders as $loan)
+        {
+            foreach($loan->lenders as $lender)
+            {
+                $loans_sismu = $lender->active_loans_sismu();
+                $guarantees_sismu = $lender->active_guarantees_sismu();
+                if($loans_sismu != null || $guarantees_sismu != null)
+                {
+                    array_push($loan_sheets, array(
+                        $lender->full_name,
+                        $lender->identity_card,
+                        $lender->registration,
+                        $lender->spouse ? $lender->spouse->registration : "",
+                        $loan->code,
+                        Carbon::parse($loan->disbursement_date)->format('d/m/Y H:i:s'),
+                        "PVT",
+                        $lender->pivot->quota_treat,
+                        "TITULAR",
+                    ));
+                    foreach($loans_sismu as $loan_sismu)
+                    {
+                        array_push($loan_sheets, array(
+                            $lender->full_name,
+                            $lender->identity_card,
+                            $lender->registration,
+                            $lender->spouse ? $lender->spouse->registration : "",
+                            $loan_sismu->PresNumero,
+                            Carbon::parse($loan_sismu->PresFechaDesembolso)->format('d/m/Y H:i:s'),
+                            "SISMU",
+                            $loan_sismu->PresCuotaMensual,
+                            "TITULAR",
+                        ));
+                    }
+
+                    foreach($guarantees_sismu as $guarantees_sismu)
+                    {
+                        array_push($loan_sheets, array(
+                            $lender->full_name,
+                            $lender->identity_card,
+                            $lender->registration,
+                            $lender->spouse ? $lender->spouse->registration : "",
+                            $guarantees_sismu->PresNumero,
+                            Carbon::parse($guarantees_sismu->PresFechaDesembolso)->format('d/m/Y H:i:s'),
+                            "SISMU",
+                            $guarantees_sismu->PresCuotaMensual,
+                            "GARANTE"
+                        ));
+                    }
+
+                    array_push($loan_sheets, array(
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                    ));
+                }
+            }
+        }
+        $file_name = $month.'-'.$year;
+         $extension = '.xls';
+         $export = new SheetExportPayment($loan_sheets, "Prestamos PVT y SISMU");
+         return Excel::download($export, $file_name.$extension);
+    }
 }

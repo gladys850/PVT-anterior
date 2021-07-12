@@ -6,8 +6,9 @@ namespace App\Exports;
 use Maatwebsite\Excel\Concerns\FromArray;
 use Maatwebsite\Excel\Concerns\WithTitle;
 use Maatwebsite\Excel\Concerns\WithColumnWidths;
+use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 
-class SheetExportPayment implements FromArray, WithTitle,WithColumnWidths
+class SheetExportPayment implements FromArray, WithTitle,ShouldAutoSize
 {
     protected $data;
     protected $name;
@@ -31,7 +32,7 @@ class SheetExportPayment implements FromArray, WithTitle,WithColumnWidths
     public function columnWidths(): array
     {
         return [
-            'A' => 20,
+            'A' => 25,
             'B' => 20,
             'C' => 10,
             'D' => 30,
