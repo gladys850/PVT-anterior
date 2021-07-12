@@ -1264,10 +1264,13 @@ class LoanReportController extends Controller
    public function loan_pvt_sismu_report(request $request){
         $month = Carbon::now()->format('m');
         $year = Carbon::now()->format('Y');
+        $first_month = Carbon::parse($request->date);
+        $first_month->startOfMonth()->subMonth()->endOfMonth()->format('d-m-Y');
+        $second_month = $first_month->startOfMonth()->subMonth()->endOfMonth()->format('d-m-Y');
         $loans_lenders = Loan::where('disbursement_date', '<=', Carbon::parse($request->date))->where('guarantor_amortizing', false)->where('state_id', LoanState::whereName('Vigente')->first()->id)->get();
         //$loans_guarantors = Loan::where('disbursement_date', '!=', null)->where('guarantor_amortizing', true)->where('state_id', LoanState::whereName('Vigente')->first()->id)->get();
         $loan_sheets = array(
-            array("Nombres y Apellidos", "Cedula de Identidad", "Matricula", "Matricula DH", "Nro Prestamo", "Fecha de desembolso", "origen", "cuota fija mensual", "tipo")
+            array("Nombres y Apellidos", "Cedula de Identidad", "Matricula", "Matricula DH", "Nro Prestamo", "Fecha de Solicitud", "Fecha de desembolso", "Monto solicitado", "Saldo", "cuota fija mensual", "origen", "Amortizado Por")
         );
         foreach($loans_lenders as $loan)
         {
@@ -1275,17 +1278,31 @@ class LoanReportController extends Controller
             {
                 $loans_sismu = $lender->active_loans_sismu();
                 $guarantees_sismu = $lender->active_guarantees_sismu();
-                if($loans_sismu != null || $guarantees_sismu != null)
+                if($loans_sismu != null)
                 {
+                    array_push($loan_sheets, array(
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                    ));
                     array_push($loan_sheets, array(
                         $lender->full_name,
                         $lender->identity_card,
                         $lender->registration,
                         $lender->spouse ? $lender->spouse->registration : "",
                         $loan->code,
+                        $loan->request_date,
                         Carbon::parse($loan->disbursement_date)->format('d/m/Y H:i:s'),
-                        "PVT",
+                        $loan->amount_approved,
+                        $loan->balance,
                         $lender->pivot->quota_treat,
+                        "PVT",
                         "TITULAR",
                     ));
                     foreach($loans_sismu as $loan_sismu)
@@ -1296,39 +1313,93 @@ class LoanReportController extends Controller
                             $lender->registration,
                             $lender->spouse ? $lender->spouse->registration : "",
                             $loan_sismu->PresNumero,
+                            Carbon::parse($loan_sismu->PresFechaPrestamo)->format('d/m/Y'),
                             Carbon::parse($loan_sismu->PresFechaDesembolso)->format('d/m/Y H:i:s'),
-                            "SISMU",
+                            $loan_sismu->PresMntDesembolso,
+                            $loan_sismu->PresSaldoAct,
                             $loan_sismu->PresCuotaMensual,
+                            "SISMU",
                             "TITULAR",
                         ));
                     }
-
-                    foreach($guarantees_sismu as $guarantees_sismu)
+                }
+                if($guarantees_sismu != null)
+                {
+                    $state = false;
+                    foreach($guarantees_sismu as $guarantee_sismu)
                     {
+                        $query = "SELECT top 4 *
+                                    from Amortizacion
+                                    where Amortizacion.IdPrestamo = '$guarantee_sismu->IdPrestamo'
+                                    and Amortizacion.AmrTipPago = 'GARANTE'
+                                    order by Amortizacion.AmrFecPag DESC";
+                        $payments = DB::connection('sqlsrv')->select($query);
+                        foreach($payments as $payment)
+                        {
+                            if(Carbon::parse($payment->AmrFecPag)->format('d-m-Y') == $first_month || Carbon::parse($payment->AmrFecPag)->format('d-m-Y') == $second_month){
+                                $state = true;
+                            }
+                        }
+                    }
+                    if($loans_sismu == null && $state == true)
+                    {
+                        array_push($loan_sheets, array(
+                            "",
+                            "",
+                            "",
+                            "",
+                            "",
+                            "",
+                            "",
+                            "",
+                            "",
+                        ));
                         array_push($loan_sheets, array(
                             $lender->full_name,
                             $lender->identity_card,
                             $lender->registration,
                             $lender->spouse ? $lender->spouse->registration : "",
-                            $guarantees_sismu->PresNumero,
-                            Carbon::parse($guarantees_sismu->PresFechaDesembolso)->format('d/m/Y H:i:s'),
-                            "SISMU",
-                            $guarantees_sismu->PresCuotaMensual,
-                            "GARANTE"
+                            $loan->code,
+                            $loan->request_date,
+                            Carbon::parse($loan->disbursement_date)->format('d/m/Y H:i:s'),
+                            $loan->amount_approved,
+                            $loan->balance,
+                            $lender->pivot->quota_treat,
+                            "PVT",
+                            "TITULAR",
                         ));
                     }
-
-                    array_push($loan_sheets, array(
-                        "",
-                        "",
-                        "",
-                        "",
-                        "",
-                        "",
-                        "",
-                        "",
-                        "",
-                    ));
+                    foreach($guarantees_sismu as $guarantee_sismu)
+                    {
+                        $state = false;
+                        $query = "SELECT top 4 *
+                                    from Amortizacion
+                                    where Amortizacion.IdPrestamo = '$guarantee_sismu->IdPrestamo'
+                                    and Amortizacion.AmrTipPago = 'GARANTE'
+                                    order by Amortizacion.AmrFecPag DESC";
+                        $payments = DB::connection('sqlsrv')->select($query);
+                        foreach($payments as $payment)
+                        {
+                            if(Carbon::parse($payment->AmrFecPag)->format('d-m-Y') == $first_month || Carbon::parse($payment->AmrFecPag)->format('d-m-Y') == $second_month)
+                                $state = true;
+                        }
+                        if($state == true){
+                            array_push($loan_sheets, array(
+                                $lender->full_name,
+                                $lender->identity_card,
+                                $lender->registration,
+                                $lender->spouse ? $lender->spouse->registration : "",
+                                $guarantee_sismu->PresNumero,
+                                Carbon::parse($loan_sismu->PresFechaPrestamo)->format('d/m/Y'),
+                                Carbon::parse($guarantee_sismu->PresFechaDesembolso)->format('d/m/Y H:i:s'),
+                                $guarantee_sismu->PresMntDesembolso,
+                                $guarantee_sismu->PresSaldoAct,
+                                $guarantee_sismu->PresCuotaMensual/$guarantee_sismu->quantity_guarantors,
+                                "SISMU",
+                                "GARANTE"
+                            ));
+                        }
+                    }
                 }
             }
         }
