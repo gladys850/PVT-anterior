@@ -487,7 +487,7 @@ class Affiliate extends Model
    }
 
    public function active_guarantees_sismu(){
-    $query = "SELECT Prestamos.IdPrestamo, Prestamos.PresNumero, Prestamos.IdPadron, Prestamos.PresCuotaMensual, Prestamos.PresEstPtmo, Prestamos.PresMeses
+    $query = "SELECT Prestamos.IdPrestamo, Prestamos.PresNumero, Prestamos.IdPadron, Prestamos.PresCuotaMensual, Prestamos.PresEstPtmo, Prestamos.PresMeses, Prestamos.PresFechaDesembolso
     FROM Padron
     join PrestamosLevel1 on PrestamosLevel1.IdPadronGar = Padron.IdPadron
     join Prestamos on PrestamosLevel1.IdPrestamo = prestamos.IdPrestamo
@@ -505,7 +505,7 @@ class Affiliate extends Model
    }
 
    public function active_loans_sismu(){
-    $query = "SELECT Prestamos.IdPrestamo, Prestamos.PresNumero, Prestamos.IdPadron, Prestamos.PresCuotaMensual, Prestamos.PresEstPtmo, Prestamos.PresMeses
+    $query = "SELECT Prestamos.IdPrestamo, Prestamos.PresNumero, Prestamos.IdPadron, Prestamos.PresCuotaMensual, Prestamos.PresEstPtmo, Prestamos.PresMeses, Prestamos.PresFechaDesembolso
     FROM Prestamos
     join Padron on Prestamos.IdPadron = Padron.IdPadron
     where Padron.PadCedulaIdentidad = '$this->identity_card'
