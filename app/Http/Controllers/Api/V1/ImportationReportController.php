@@ -245,7 +245,7 @@ class ImportationReportController extends Controller
             "Matricula Derecho Habiente", "CI", "Extensión", "Primer Nombre", "Segundo Nombre", "Paterno",
              "Materno","Ap de Casada", "Saldo Actual", "Cuota Fija Mensual", "Descuento Programado", "Interés","Amort. TIT o GAR?",
             "GAR Estado","GAR Tipo de estado","Matricula garante","GAR CI", "GAR Exp","GAR Primer Nombre","GAR Segundo Nombre",
-            "GAR 1er Apellido","GAR 2do Apellido","GAR Apellido de Casada"));
+            "GAR 1er Apellido","GAR 2do Apellido","GAR Apellido de Casada","GAR Cuota fija","GAR descuento"));
 
 
         foreach ($loans_request as $loan) {
@@ -269,19 +269,21 @@ class ImportationReportController extends Controller
                             $lender->surname_husband,
                             Util::money_format($loan->balance),
                             Util::money_format($loan->estimated_quota),
-                            $loan->guarantor_amortizing? Util::money_format($loan->get_amount_payment($estimated_date,false,'G')) : Util::money_format($loan->get_amount_payment($estimated_date,false,'T')),
+                            Util::money_format($loan->get_amount_payment($estimated_date,false,'T')),
                             $loan->interest->annual_interest,
                             $loan->guarantor_amortizing? 'Amort. Garante':'Amort. Titular',
-                            $loan->guarantor_amortizing? $loan->guarantors[0]->affiliate_state->affiliate_state_type->name: 'Amort. Titular',
-                            $loan->guarantor_amortizing? $loan->guarantors[0]->affiliate_state->name : 'Amort. Titular',
-                            $loan->guarantor_amortizing? $loan->guarantors[0]->registration : 'Amort. Titular',
-                            $loan->guarantor_amortizing? $loan->guarantors[0]->identity_card : 'Amort. Titular',
-                            $loan->guarantor_amortizing? $loan->guarantors[0]->city_identity_card->first_shortened : 'Amort. Titular',
-                            $loan->guarantor_amortizing? $loan->guarantors[0]->first_name : 'Amort. Titular',
-                            $loan->guarantor_amortizing? $loan->guarantors[0]->second_name : 'Amort. Titular',
-                            $loan->guarantor_amortizing? $loan->guarantors[0]->last_name : 'Amort. Titular',
-                            $loan->guarantor_amortizing? $loan->guarantors[0]->mothers_last_name : 'Amort. Titular',
-                            $loan->guarantor_amortizing? $loan->guarantors[0]->surname_husband : 'Amort. Titular',
+                            $loan->guarantor_amortizing? $loan->guarantors[0]->affiliate_state->affiliate_state_type->name: '',
+                            $loan->guarantor_amortizing? $loan->guarantors[0]->affiliate_state->name : '',
+                            $loan->guarantor_amortizing? $loan->guarantors[0]->registration : '',
+                            $loan->guarantor_amortizing? $loan->guarantors[0]->identity_card : '',
+                            $loan->guarantor_amortizing? $loan->guarantors[0]->city_identity_card->first_shortened : '',
+                            $loan->guarantor_amortizing? $loan->guarantors[0]->first_name : '',
+                            $loan->guarantor_amortizing? $loan->guarantors[0]->second_name : '',
+                            $loan->guarantor_amortizing? $loan->guarantors[0]->last_name : '',
+                            $loan->guarantor_amortizing? $loan->guarantors[0]->mothers_last_name : '',
+                            $loan->guarantor_amortizing? $loan->guarantors[0]->surname_husband : '',
+                            $loan->guarantor_amortizing? $loan->guarantors[0]->pivot->quota_treat : '',
+                            $loan->guarantor_amortizing? Util::money_format($loan->get_amount_payment($estimated_date,false,'G')) : '',
                     ));
                 }
             }
