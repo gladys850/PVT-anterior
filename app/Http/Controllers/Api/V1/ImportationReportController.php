@@ -13,8 +13,10 @@ use Illuminate\Support\Facades\Log;
 use App\LoanPaymentPeriod;
 use App\Loan;
 use App\ProcedureModality;
+use App\LoanState;
 
-/** @group Report. amortizacion periodos
+
+/** @group Report.Solicitud y Amortizacion por periodos
 * Reportes de amortizaciones por periodos Comando  o Senasir
 */
 
@@ -181,10 +183,114 @@ class ImportationReportController extends Controller
                        $row->voucher_payment, //comprobante
                        $row->code_payment, //Nro de cobro
                        $row->state_payment, //Estado del cobro
-                       $row->category_name //categoria de cobro 
+                       $row->category_name //categoria de cobro
                    ));
         }
         $export = new ArchivoPrimarioExport($data);
         return Excel::download($export, $File.'.xls');
+    }
+
+    //reporte desenasir
+
+    /**
+    * Reporte de solicitud a senasir
+    * @queryParam estimated_date date Fecha para el periiodo de solicitud. Example: 2021-05-02
+    * @queryParam period_id integer id_del periodo . Example: 40
+    * @authenticated
+    * @responseFile responses/reports_request_payments/request_senasir.200.json
+    */
+    public function report_request_senasir_payments(Request $request)
+    {
+        $request->validate([
+        'period_id'=>'integer|exists:loan_payment_periods,id',
+        'estimated_date'=> 'nullable|date_format:"Y-m-d"'
+    ]);
+
+        // aumenta el tiempo máximo de ejecución de este script a 150 min:
+        ini_set('max_execution_time', 9000);
+        // aumentar el tamaño de memoria permitido de este script:
+        ini_set('memory_limit', '960M');
+
+        //origin y period
+        $procedure_modality_id = ProcedureModality::whereShortened('DES-SENASIR')->first()->id;
+
+
+        if ($request->has('period_id')) {
+            $period = LoanPaymentPeriod::whereId($request->period_id)->first();
+            $estimated_date = Carbon::create($period->year, $period->month, 1);
+            $estimated_date = Carbon::parse($estimated_date)->format('Y-m-d');
+        } else {
+            if ($request->has('estimated_date')) {
+                $estimated_date  = $request->estimated_date;
+            } else {
+                $estimated_date = Carbon::now()->format('Y-m-d');
+            }
+        }
+        //comversión de la fecha estimada
+        $estimated_date = Carbon::create(Carbon::parse($estimated_date)->format('Y'), Carbon::parse($estimated_date)->format('m'), 15);
+        $estimated_date = Carbon::parse($estimated_date)->format('Y-m-d');
+        //filtros
+        $final_date = $estimated_date? $estimated_date:'';
+
+        $loans_request = Loan::where('state_id', LoanState::where('name', 'Vigente')->first()->id)->where('disbursement_date', '<=', $final_date)->get();
+
+
+        $id_senasir = array();
+        foreach (ProcedureModality::where('name', 'like', '%SENASIR')->get() as $procedure) {
+            array_push($id_senasir, $procedure->id);
+        }
+
+        $senasir_ancient=array(
+            array("Nro Préstamo", "Fecha de desembolso", "Ciudad", "tipo", "Matricula Titular",
+            "Matricula Derecho Habiente", "CI", "Extensión", "Primer Nombre", "Segundo Nombre", "Paterno",
+             "Materno","Ap de Casada", "Saldo Actual", "Cuota Fija Mensual", "Descuento Programado", "Interés","Amort. TIT o GAR?",
+            "GAR Estado","GAR Tipo de estado","Matricula garante","GAR CI", "GAR Exp","GAR Primer Nombre","GAR Segundo Nombre",
+            "GAR 1er Apellido","GAR 2do Apellido","GAR Apellido de Casada"));
+
+
+        foreach ($loans_request as $loan) {
+            if (in_array($loan->procedure_modality_id, $id_senasir)) {
+                foreach ($loan->lenders as $lender) {
+                    array_push($senasir_ancient, array(
+                            $loan->code,
+                            //$loan->disbursement_date,
+                            Carbon::parse($loan->disbursement_date)->format('d/m/Y H:i:s'),
+                            $loan->city->name,
+
+                            $lender->affiliate_state->name,
+                            $lender->registration,
+                            $lender->spouse ? $lender->spouse->registration : 0,
+                            $lender->identity_card,
+                            $lender->city_identity_card->first_shortened,
+                            $lender->first_name,
+                            $lender->second_name,
+                            $lender->last_name,
+                            $lender->mothers_last_name,
+                            $lender->surname_husband,
+                            Util::money_format($loan->balance),
+                            Util::money_format($loan->estimated_quota),
+                            $loan->guarantor_amortizing? Util::money_format($loan->get_amount_payment($estimated_date,false,'G')) : Util::money_format($loan->get_amount_payment($estimated_date,false,'T')),
+                            $loan->interest->annual_interest,
+                            $loan->guarantor_amortizing? 'Amort. Garante':'Amort. Titular',
+                            $loan->guarantor_amortizing? $loan->guarantors[0]->affiliate_state->affiliate_state_type->name: 'Amort. Titular',
+                            $loan->guarantor_amortizing? $loan->guarantors[0]->affiliate_state->name : 'Amort. Titular',
+                            $loan->guarantor_amortizing? $loan->guarantors[0]->registration : 'Amort. Titular',
+                            $loan->guarantor_amortizing? $loan->guarantors[0]->identity_card : 'Amort. Titular',
+                            $loan->guarantor_amortizing? $loan->guarantors[0]->city_identity_card->first_shortened : 'Amort. Titular',
+                            $loan->guarantor_amortizing? $loan->guarantors[0]->first_name : 'Amort. Titular',
+                            $loan->guarantor_amortizing? $loan->guarantors[0]->second_name : 'Amort. Titular',
+                            $loan->guarantor_amortizing? $loan->guarantors[0]->last_name : 'Amort. Titular',
+                            $loan->guarantor_amortizing? $loan->guarantors[0]->mothers_last_name : 'Amort. Titular',
+                            $loan->guarantor_amortizing? $loan->guarantors[0]->surname_husband : 'Amort. Titular',
+                    ));
+                }
+            }
+        }
+
+        $file_name="solicitud_Senasir";
+        $extension = '.xls';
+
+        $export = new ArchivoPrimarioExport($senasir_ancient);
+        return Excel::download($export, $file_name.$extension);
     }
 }
