@@ -64,7 +64,7 @@
                         <v-text-field
                           dense
                           v-model="report_inputs.date"
-                          label="Periódo (seleccione cualquier dia del mes)"
+                          :label="report_selected.label"
                           hint="Día/Mes/Año"
                           type="date"
                           outlined
@@ -108,47 +108,116 @@ export default {
   }),
   created() {
     this.reports_items = [
-      { id: 1, name: 'Reporte de amortizaciones de descuentos Titular - Garante', tab: 1, criterios: ['initial_date', 'final_date'], service: '/report_amortization_discount_months' },
-      { id: 2, name: 'Reporte de amortizaciones en efectivo y deposito en cuenta', tab: 1, criterios: ['initial_date', 'final_date'], service: '/report_amortization_cash_deposit' },
-      { id: 3, name: 'Reporte de amortizaciones por ajustes', tab: 1, criterios: ['initial_date', 'final_date'], service: '/report_amortization_ajust' },
-      { id: 4, name: 'Reporte de amortizaciones pendientes de confirmacion de acuerdo al comprobante de generacion', tab: 1, criterios: ['initial_date', 'final_date'], service: '/report_amortization_pending_confirmation' },
-      { id: 5, name: 'Reporte de amortizaciones por complemento y fondo de retiro', tab: 1, criterios: ['initial_date', 'final_date'], service: '/report_amortization_fondo_complement' },
-      { id: 6, name: 'Reporte de prestamos desembolsados', tab: 0, criterios: ['initial_date', 'final_date'], service: '/report_loan_vigent' },
-      { id: 7, name: 'Reporte de prestamos del estado de cartera', tab: 0, criterios: ['initial_date', 'final_date'], service: '/report_loan_state_cartera' },
-      { id: 8, name: 'Reporte de informacion de prestamos para solicitud de descuentos', tab: 0, criterios: ['date'], service: '/loan_information' },
-      { id: 9, name: 'Reporte de mora', tab: 0, criterios: [], service: '/report_loans_mora' },
-      { id: 10, name: 'Prestamos amortizados mensualmente mediante descuentos por garantia', tab: 0, criterios: [], service: '/loan_defaulted_guarantor' },
-    ]
+      {
+        id: 1,
+        name: "Rep. Amortizaciones de descuentos Titular - Garante",
+        tab: 1,
+        criterios: ["initial_date", "final_date"],
+        service: "/report_amortization_discount_months",
+      },
+      {
+        id: 2,
+        name: "Rep. Amortizaciones en efectivo y deposito en cuenta",
+        tab: 1,
+        criterios: ["initial_date", "final_date"],
+        service: "/report_amortization_cash_deposit",
+      },
+      {
+        id: 3,
+        name: "Rep. Amortizaciones por ajustes",
+        tab: 1,
+        criterios: ["initial_date", "final_date"],
+        service: "/report_amortization_ajust",
+      },
+      {
+        id: 4,
+        name: "Rep. Amortizaciones pendientes de confirmacion de acuerdo al comprobante de generacion",
+        tab: 1,
+        criterios: ["initial_date", "final_date"],
+        service: "/report_amortization_pending_confirmation",
+      },
+      {
+        id: 5,
+        name: "Rep. Amortizaciones por complemento y fondo de retiro",
+        tab: 1,
+        criterios: ["initial_date", "final_date"],
+        service: "/report_amortization_fondo_complement",
+      },
+      {
+        id: 6,
+        name: "Rep. Préstamos desembolsados",
+        tab: 0,
+        criterios: ["initial_date", "final_date"],
+        service: "/report_loan_vigent",
+      },
+      {
+        id: 7,
+        name: "Rep. Préstamos del estado de cartera",
+        tab: 0,
+        criterios: ["initial_date", "final_date"],
+        service: "/report_loan_state_cartera",
+      },
+      {
+        id: 8,
+        name: "Rep. Información de préstamos para solicitud de descuentos",
+        tab: 0,
+        criterios: ["date"],
+        service: "/loan_information",
+        label:"Periódo (Seleccione el último dia del mes)"
+      },
+      {
+        id: 9,
+        name: "Rep. Préstamos en mora",
+        tab: 0,
+        criterios: [],
+        service: "/report_loans_mora",
+      },
+      {
+        id: 10,
+        name: "Rep. Préstamos amortizados mensualmente mediante descuentos por garantía",
+        tab: 0,
+        criterios: [],
+        service: "/loan_defaulted_guarantor",
+      },
+      {
+        id: 11,
+        name: "Rep. Préstamos vigentes simultaneos en PVT y SISMU",
+        tab: 0,
+        criterios: ["date"],
+        service: "/loan_pvt_sismu_report",
+        label: "Fecha final"
+      },
+    ];
   },
   methods: {
     clearInputs() {
-      this.report_selected = null
-      this.report_inputs.initial_date = null
-      this.report_inputs.final_date = null
-      this.report_inputs.date = null
+      this.report_selected = null;
+      this.report_inputs.initial_date = null;
+      this.report_inputs.final_date = null;
+      this.report_inputs.date = null;
     },
     async downloadReport() {
-      if(this.report_selected) {
-        let params = []
+      if (this.report_selected) {
+        let params = [];
         //this.validateCriterios()
         const formData = new FormData();
         // let validation = true
-        this.report_selected.criterios.forEach(criterio => {
-          let respuesta = this.report_inputs[criterio]
-          if(respuesta != null) {
-            params += criterio +'='+ this.report_inputs[criterio] + '&'
+        this.report_selected.criterios.forEach((criterio) => {
+          let respuesta = this.report_inputs[criterio];
+          if (respuesta != null) {
+            params += criterio + "=" + this.report_inputs[criterio] + "&";
             formData.append(criterio, this.report_inputs[criterio]);
           } else {
             // validation =false
           }
-        })
+        });
         // if(validation) {
         //   console.log(`${this.report_selected.service}?${params}`)
         // } else {
         //   this.toastr.error("Debe ingresar todos los campos");
         // }
         // console.log(`${this.report_selected.service}?${params}`)
-        this.loading_button = true
+        this.loading_button = true;
         await axios({
           url: this.report_selected.service,
           method: "GET",
@@ -158,9 +227,9 @@ export default {
           data: formData,
           params: {
             initial_date: this.report_inputs.initial_date,
-            final_date : this.report_inputs.final_date,
+            final_date: this.report_inputs.final_date,
             date: this.report_inputs.date,
-          }
+          },
         })
           .then((response) => {
             console.log(response.data);
@@ -173,17 +242,17 @@ export default {
             this.clearInputs();
           })
           .catch((e) => {
-            console.log(e)
-            this.loading_button = false
+            console.log(e);
+            this.loading_button = false;
           });
-        this.loading_button = false
+        this.loading_button = false;
       }
     },
   },
   computed: {
     computedReportsItems() {
-      return this.reports_items.filter(item => item.tab == this.tab)
-    }
-  }
+      return this.reports_items.filter((item) => item.tab == this.tab);
+    },
+  },
 };
 </script>
