@@ -323,7 +323,7 @@ class ImportationReportController extends Controller
      /**
     * Reporte de solicitud a senasir o COMANDO
     * @queryParam origin required Tipo de Solicitud C (Comando general) o S (Senasir). Example: C
-    * @queryParam estimated_date date Fecha para el periiodo de solicitud. Example: 2021-05-02
+    * @queryParam date date Fecha para el periiodo de solicitud. Example: 2021-05-02
     * @queryParam period_id integer id_del periodo . Example: 40
     * @authenticated
     * @responseFile responses/reports_request_payments/request_senasir.200.json
@@ -332,13 +332,13 @@ class ImportationReportController extends Controller
         $request->validate([
             'origin'=>'required|string|in:C,S',
             'period_id'=>'integer|exists:loan_payment_periods,id',
-            'estimated_date'=> 'nullable|date_format:"Y-m-d"'
+            'date'=> 'nullable|date_format:"Y-m-d"'
         ]);
 
         if ($request->origin == 'C') {
-            return $this->report_rquest_command_payments($period_id,$estimated_date);
+            return $this->report_rquest_command_payments($request->period_id, $request->date);
         }else{
-            return $this->report_request_senasir_payments($request->period_id, $request->estimated_date);
+            return $this->report_request_senasir_payments($request->period_id, $request->date);
         }
 
      }
