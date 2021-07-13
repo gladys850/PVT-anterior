@@ -63,7 +63,52 @@
                         </v-col>
                         <v-progress-linear color="white"></v-progress-linear>
                         <br>
-                        <v-col cols="4" md="2" class="py-0">
+                        <v-col cols="6" md="6" class="py-0">
+                          <b style="color:white">Solicitud Comando/Senasir</b>
+                        </v-col>
+                        <v-col cols="6" md="6" class="py-0">
+                          <b style="color:white">Importaciones Comando/Senasir</b>
+                        </v-col>
+                        <v-col cols="6" md="6" class="py-0">
+                          <v-tooltip top>
+                            <template v-slot:activator="{ on }">
+                              <v-btn
+                                fab
+                                dark
+                                small
+                                :color="'info'"
+                                bottom
+                                right
+                                v-on="on"
+                                @click.stop="solicitudComando('C', item.id)"
+                               >
+                                <v-icon style="color:white">mdi-city-variant-outline</v-icon>
+                              </v-btn>
+                            </template>
+                            <div>
+                              <span>Solicitud Comando</span>
+                            </div>
+                          </v-tooltip>
+                          <v-tooltip top>
+                            <template v-slot:activator="{ on}">
+                              <v-btn
+                                fab
+                                dark
+                                small
+                                :color="'info'"
+                                right
+                                v-on="on"
+                                 @click.stop="solicitudSenasir('S', item.id)"
+                              >
+                                <v-icon  style="color:white" >mdi-city</v-icon>
+                              </v-btn>
+                            </template>
+                            <div>
+                              <span>Solicitud Senasir</span>
+                            </div>
+                          </v-tooltip>
+                        </v-col>
+                        <v-col cols="6" md="6" class="py-0">
                            <v-tooltip top>
                             <template v-slot:activator="{ on }">
                               <v-btn
@@ -83,8 +128,6 @@
                               <span>Importación Comando</span>
                             </div>
                           </v-tooltip>
-                        </v-col>
-                        <v-col cols="4" md="2" class="py-0">
                            <v-tooltip top>
                             <template v-slot:activator="{ on}">
                               <v-btn
@@ -104,56 +147,53 @@
                             </div>
                           </v-tooltip>
                         </v-col>
-                        <v-col cols="4" md="6" class="py-0">
-                          <b style="color:white">Importaciones Comando/Senasir</b>
-                        </v-col>
                       </v-row>
-                      </v-card-text>
-                      <v-progress-linear color="white"></v-progress-linear>
-                      <v-card-actions>
-                        <v-col cols="4" md="8" class="py-0">
-                          <b style="color:white" class="caption">Reportes Comando/Senasir</b>
-                        </v-col>
-                        <v-tooltip top>
-                          <template v-slot:activator="{ on }">
-                            <v-btn
-                              fab
-                              dark
-                              small
-                              :color="'#454545'"
-                              bottom
-                              right
-                              v-on="on"
-                              :loading="reporte_comando_loading"
-                              @click.stop="reporteComandoSenasir(item.id,'C')"
-                            >
-                              <v-icon>mdi-warehouse</v-icon>
-                            </v-btn>
-                          </template>
-                          <div>
-                            <span>Reporte Pago Comando</span>
-                          </div>
-                        </v-tooltip>
-                        <v-tooltip top>
-                          <template v-slot:activator="{ on }">
-                            <v-btn
-                              fab
-                              dark
-                              small
-                              :color="'#454545'"
-                              bottom
-                              right
-                              v-on="on"
-                              :loading="reporte_senasir_loading"
-                              @click.stop="reporteComandoSenasir(item.id,'S')"
-                            >
-                              <v-icon >mdi-home-analytics</v-icon>
-                            </v-btn>
-                          </template>
-                          <div>
-                            <span>Reporte Pago Senasir</span>
-                          </div>
-                        </v-tooltip>
+                    </v-card-text>
+                    <v-progress-linear color="white"></v-progress-linear>
+                    <v-card-actions>
+                      <v-col cols="4" md="8" class="py-0">
+                        <b style="color:white" class="caption">Reportes Comando/Senasir</b>
+                      </v-col>
+                      <v-tooltip top>
+                        <template v-slot:activator="{ on }">
+                          <v-btn
+                            fab
+                            dark
+                            small
+                            :color="'#454545'"
+                            bottom
+                            right
+                            v-on="on"
+                            :loading="reporte_comando_loading"
+                            @click.stop="reporteComandoSenasir(item.id,'C')"
+                          >
+                            <v-icon>mdi-warehouse</v-icon>
+                          </v-btn>
+                        </template>
+                        <div>
+                          <span>Reporte Pago Comando</span>
+                        </div>
+                      </v-tooltip>
+                      <v-tooltip top>
+                        <template v-slot:activator="{ on }">
+                          <v-btn
+                            fab
+                            dark
+                            small
+                            :color="'#454545'"
+                            bottom
+                            right
+                            v-on="on"
+                            :loading="reporte_senasir_loading"
+                            @click.stop="reporteComandoSenasir(item.id,'S')"
+                          >
+                            <v-icon >mdi-home-analytics</v-icon>
+                          </v-btn>
+                        </template>
+                        <div>
+                          <span>Reporte Pago Senasir</span>
+                        </div>
+                      </v-tooltip>
                     </v-card-actions>
                   </v-card>
                   <br>
@@ -180,11 +220,11 @@
                     <v-col cols="8"  md="8" >
                       <v-col cols="12" >
                         <v-row>
-                           <v-col cols="2"  md="2" >
+                           <v-col cols="1"  md="1" >
                            </v-col>
-                          <v-col cols="7"  md="7" >
+                          <v-col cols="8"  md="8" >
                             <v-toolbar-title>
-                              <center><b>Información para descuento </b></center>
+                              <center><b>INFORMACION PARA EL DESCUENTO DEL MES DE {{meses[ aux_period- 1]}} </b></center>
                             </v-toolbar-title>
                           </v-col>
                           <v-col cols="2"  md="2" >
@@ -220,10 +260,16 @@
                                 <div class="py-1 pl-2 ma-1">
                                     <small class="py-0 ma-0"><v-icon class="py-1 ma-0">mdi-check</v-icon>
                                       Archivo CSV </small> <br>
+                                    <small v-show="import_export.state_affiliate =='C'"><v-icon>mdi-check</v-icon>
+                                      NOMBRE DEL ARCHIVO EJEMPLO: comando-2021-03.csv</small>
+                                    <small v-show="import_export.state_affiliate !='C'"><v-icon>mdi-check</v-icon>
+                                      NOMBRE DEL ARCHIVO EJEMPLO: senasir-2021-03.csv</small><br>
+                                    <small class=" pl-6 ma-1"><v-icon >mdi-arrow-right-thick</v-icon>
+                                      tipo-año-periodo.csv</small><br>
                                     <small><v-icon>mdi-check</v-icon>
                                       FORMATO CABECERA DEL ARCHIVO</small><br v-show="import_export.state_affiliate !='C'">
-                                     <small class=" pl-6 ma-1" v-show="import_export.state_affiliate !='C'">
-                                      MATRICULA:MATRICULADH:MONTO</small><br v-show="import_export.state_affiliate =='C'">
+                                      <small class=" pl-6 ma-1" v-show="import_export.state_affiliate !='C'">
+                                      MATRICULA:MATRICULA_DH:MONTO</small><br v-show="import_export.state_affiliate =='C'">
                                       <small class=" pl-6 ma-1" v-show="import_export.state_affiliate =='C'">
                                       CI:MONTO</small><br>
                                      <small><v-icon>mdi-check</v-icon>
@@ -233,7 +279,7 @@
                                      <small class=" pl-6 ma-1" v-show="import_export.state_affiliate !='C'"><v-icon >mdi-arrow-right-thick</v-icon>
                                       MATRICULA DERECHO HABIENTE: Matricula del conyugue</small><br v-show="import_export.state_affiliate =='C'">
                                     <small class=" pl-6 ma-1" v-show="import_export.state_affiliate =='C'"><v-icon >mdi-arrow-right-thick</v-icon>
-                                      CI/MATRICULA: CI o Matricula del afiliado</small><br>
+                                      CI: CI del afiliado</small><br>
                                      <small class=" pl-6 ma-1"><v-icon >mdi-arrow-right-thick</v-icon>
                                       MONTO : Monto de la importación</small><br>
                                 </div>
@@ -260,287 +306,321 @@
                     <strong>Porcentaje de Importación: {{percentage}}%</strong>
                   </v-progress-linear>
                 </v-col>
-                <v-stepper v-model="e1" >
-                  <v-stepper-header class=" !pa-0 ml-0" >
-                    <template>
-                      <v-stepper-step
-                        :key="`${1}-step`"
-                        :complete="e1 > 1"
-                        :step="1">Subir Archivo
-                      </v-stepper-step >
-                      <v-divider v-if="1 !== steps" :key="1" ></v-divider>
-                      <v-stepper-step
-                        :key="`${2}-step`"
-                        :complete="e1 > 2"
-                        :step="2">Validar Datos
-                      </v-stepper-step>
-                      <v-divider v-if="2 !== steps" :key="2" ></v-divider>
-                      <v-stepper-step
-                        :key="`${3}-step`"
-                        :complete="e1 > 3"
-                        :step="3">Importar
-                      </v-stepper-step>
-                      <v-divider v-if="3 !== steps" :key="3" ></v-divider>
-                    </template>
-                  </v-stepper-header>
-                <v-stepper-items>
-                  <v-stepper-content :key="`${1}-content`" :step="1">
-                    <v-card color="grey lighten-1">
-                      <v-card-text >
-                        <v-card color="white">
-                          <v-col cols="12" md="12">
-                            <v-row>
-                              <v-col cols="1" md="1">
-                              </v-col>
-                              <v-col cols="5" md="5">
-                                <v-select
-                                  dense
-                                  :items="state_affiliate"
-                                  item-text="name"
-                                  item-value="value"
-                                  label="Estado del afiliado"
-                                  disabled
-                                  readonly
-                                  v-model="import_export.state_affiliate"
-                                ></v-select>
-                              </v-col>
-                              <v-col cols="5" md="5">
-                                <v-file-input
-                                  counter
-                                  show-size
-                                  truncate-length="30"
-                                  outlined
-                                  small-chips
-                                  dense
-                                  label="Cargar Archivo"
-                                  v-model="import_export.file"
-                                ></v-file-input>
-                              </v-col>
-                              <v-col cols="9" md="9" class="py-0">
-                              </v-col>
-                              <v-col cols="2" md="2" class="py-0">
-                                <v-btn
-                                  color="success"
-                                  @click.stop="uploadFilePayment()"
-                                  > Subir Archivo
-                                </v-btn>
-                              </v-col>
-                            </v-row>
-                          </v-col>
-                        </v-card >
-                      </v-card-text>
-                      <v-container class="py-0">
-                        <v-row>
-                          <v-spacer></v-spacer> <v-spacer></v-spacer> <v-spacer></v-spacer>
-                            <v-col class="py-0">
-                              <v-btn
-                                v-show="validar_datos"
-                                color="primary"
-                                @click="nextStep(1)">
-                                Siguiente
-                              </v-btn>
-                            </v-col>
-                            <!--{{contrib_codebtor}}-->
-                        </v-row>
-                      </v-container>
-                    </v-card>
-                  </v-stepper-content>
-                  <v-stepper-content :key="`${2}-content`" :step="2" >
-                    <v-card color="grey lighten-1">
-                      <v-card-text >
-                        <v-card color="white">
-                          <v-row>
-                            <v-col cols="3">
-                            </v-col>
-                            <v-col cols="4" v-show="import_export.state_affiliate== 'S'">
-                              <label>
-                                Tipo de Importacion : SENASIR
-                              </label>
-                            </v-col>
-                             <v-col cols="4" v-show="import_export.state_affiliate== 'C'">
-                              <label>
-                                Tipo de Importacion : COMANDO
-                              </label>
-                            </v-col>
-                            <v-col cols="4">
-                              <label>
-                                {{'Periodo: '+period_year+'-'+aux_period}}
-                              </label>
-                            </v-col>
-                            <v-col cols="12" >
-                              <v-progress-linear></v-progress-linear>
-                            </v-col>
-                            <v-col cols="4" >
-                            </v-col>
-                            <v-col cols="3" v-show="validar_datos" >
-                              <v-btn
-                                color="success"
-                                @click.stop="validateFilePayment()"
-                                >Validar Datos
-                                <v-icon color="white">mdi-check</v-icon>
-                              </v-btn>
-                            </v-col>
-                            <v-col cols="4" v-show="true" >
-                            <v-tooltip top>
-                            <template v-slot:activator="{ on }">
-                              <v-btn
-                                color="info"
-                                v-on="on"
-                                @click="dialog_confirm=true"
-                              >Rehacer
-                                <v-icon color="white">mdi-eraser</v-icon>
-                              </v-btn>
-                            </template>
-                            <div>
-                              <span>Empezar de nuevo</span>
-                            </div>
-                          </v-tooltip>
-                        </v-col>
-                      </v-row>
-                    </v-card>
-                    <v-container class="py-0">
-                      <v-row>
-                      <v-spacer></v-spacer><v-spacer> </v-spacer> <v-spacer></v-spacer>
-                        <v-col class="py-0">
-                          <v-btn
-                            v-show="importacion"
-                            right
-                            color="primary"
-                            @click.stop="nextStep(2)">
-                            Siguiente
-                          </v-btn>
-                        </v-col>
-                      </v-row>
-                    </v-container>
-                  </v-card-text >
-                </v-card>
-              </v-stepper-content>
-              <v-stepper-content :key="`${3}-content`" :step="3" >
-                <v-card color="grey lighten-1">
-                  <h3 class="text-uppercase text-center">Ultimo Paso la Importación</h3>
-                    <v-card-text >
-                      <v-card color="white">
-                        <v-row>
-                             <v-col cols="3">
-                            </v-col>
-                            <v-col cols="4" v-show="import_export.state_affiliate== 'S'">
-                              <label>
-                                Tipo de Importacion : SENASIR
-                              </label>
-                            </v-col>
-                            <v-col cols="4" v-show="import_export.state_affiliate== 'C'">
-                              <label>
-                                Tipo de Importacion : COMANDO
-                              </label>
-                            </v-col>
-                            <v-col cols="4">
-                              <label>
-                                {{'Periodo: '+period_year+'-'+aux_period}}
-                              </label>
-                            </v-col>
-                            <v-col cols="12" >
-                              <v-progress-linear></v-progress-linear>
-                            </v-col>
-                          <v-col cols="3" >
-                          </v-col>
-                          <v-col cols="4" >
-                            <v-btn dark color="success" v-show="importacion" @click="dialog_confirm_import=true" >
-                              Ejecutar la Importación
-                              <v-icon color="white">mdi-check</v-icon>
-                            </v-btn>
-                          </v-col>
-                          <v-col cols="4" v-show="true" >
-                            <v-tooltip top>
-                            <template v-slot:activator="{ on }">
-                              <v-btn
-                                color="info"
-                                v-on="on"
-                                @click.stop="closePayment()"
-                              > Rehacer
-                                <v-icon>mdi-eraser</v-icon>
-                              </v-btn>
-                            </template>
-                            <div>
-                              <span>Empezar de nuevo</span>
-                            </div>
-                          </v-tooltip>
-                        </v-col>
-                      </v-row>
-                    </v-card>
-                  </v-card-text >
-                </v-card>
-              </v-stepper-content>
-            </v-stepper-items>
-          </v-stepper>
-        </v-col>
-        <v-col cols="6"  md="6" class="py-0" >
-        </v-col>
-      </v-row>
-    </v-col>
-  </v-card>
-</v-dialog>
-<v-dialog
-  v-model="dialog_confirm"
-  max-width="600"
->
-  <v-card>
-    <v-card-title>
-      <center>¿Esta seguro que quiere rehacer el proceso de importación?</center>
-      <br>
-      <br> <small class='caption'>Al rehacer se borraran todos los datos ingresados</small>
-    </v-card-title>
-    <v-card-actions>
-      <v-spacer></v-spacer>
-      <v-btn
-        color="red darken-1"
-        text
-        @click="dialog_confirm=false"
-      >
-        Cancelar
-      </v-btn>
-      <v-btn
-        color="green darken-1"
-        text
-        @click="closePayment()"
-      >
-        Aceptar
-      </v-btn>
-    </v-card-actions>
-  </v-card>
-</v-dialog>
-           <v-dialog
-            v-model="dialog_confirm_import"
-            max-width="500"
-          >
-            <v-card>
-              <v-card-title>
-                Esta seguro de realizar la importación?
-              </v-card-title>
-              <v-card-actions>
-                <v-spacer></v-spacer>
-                <v-btn
-                  color="red darken-1"
-                  text
-                  @click="dialog_confirm_import=false"
-                >
-                  Cancelar
-                </v-btn>
-                <v-btn
-                  color="green darken-1"
-                  text
-                  :loading="loading_importacion"
-                  @click="importPayment()"
-                >
-                  Aceptar
-                </v-btn>
-              </v-card-actions>
-            </v-card>
-          </v-dialog>
-      </template>
-    </v-card>
-  </v-form>
-</ValidationObserver>
-</v-container>
+                    <v-stepper v-model="e1" >
+                      <v-stepper-header class=" !pa-0 ml-0" >
+                        <template>
+                          <v-stepper-step
+                            :key="`${1}-step`"
+                            :complete="e1 > 1"
+                            :step="1">Subir Archivo
+                          </v-stepper-step >
+                          <v-divider v-if="1 !== steps" :key="1" ></v-divider>
+                          <v-stepper-step
+                            :key="`${2}-step`"
+                            :complete="e1 > 2"
+                            :step="2">Validar Datos
+                          </v-stepper-step>
+                          <v-divider v-if="2 !== steps" :key="2" ></v-divider>
+                          <v-stepper-step
+                            :key="`${3}-step`"
+                            :complete="e1 > 3"
+                            :step="3">Importar
+                          </v-stepper-step>
+                          <v-divider v-if="3 !== steps" :key="3" ></v-divider>
+                        </template>
+                      </v-stepper-header>
+                      <v-stepper-items>
+                        <v-stepper-content :key="`${1}-content`" :step="1">
+                          <v-card color="grey lighten-1">
+                            <v-card-text >
+                              <v-card color="white">
+                                <v-col cols="12" md="12">
+                                  <v-row>
+                                    <v-col cols="1" md="1">
+                                    </v-col>
+                                    <v-col cols="5" md="5">
+                                      <v-select
+                                        dense
+                                        :items="state_affiliate"
+                                        item-text="name"
+                                        item-value="value"
+                                        label="Estado del afiliado"
+                                        disabled
+                                        readonly
+                                        v-model="import_export.state_affiliate"
+                                      ></v-select>
+                                    </v-col>
+                                    <v-col cols="5" md="5">
+                                      <v-file-input
+                                        counter
+                                        show-size
+                                        truncate-length="30"
+                                        outlined
+                                        small-chips
+                                        dense
+                                        label="Cargar Archivo"
+                                        v-model="import_export.file"
+                                      ></v-file-input>
+                                    </v-col>
+                                    <v-col cols="9" md="9" class="py-0">
+                                    </v-col>
+                                    <v-col cols="2" md="2" class="py-0">
+                                      <v-btn
+                                        color="success"
+                                        @click.stop="uploadFilePayment()"
+                                      > Subir Archivo
+                                      </v-btn>
+                                    </v-col>
+                                  </v-row>
+                                </v-col>
+                              </v-card >
+                            </v-card-text>
+                            <v-container class="py-0">
+                              <v-row>
+                                <v-spacer></v-spacer> <v-spacer></v-spacer> <v-spacer></v-spacer>
+                                  <v-col class="py-0">
+                                    <v-btn
+                                      v-show="validar_datos"
+                                      color="primary"
+                                      @click="nextStep(1)">
+                                      Siguiente
+                                    </v-btn>
+                                  </v-col>
+                                  <!--{{contrib_codebtor}}-->
+                              </v-row>
+                            </v-container>
+                          </v-card>
+                        </v-stepper-content>
+                        <v-stepper-content :key="`${2}-content`" :step="2" >
+                          <v-card color="grey lighten-1">
+                            <v-card-text >
+                              <v-card color="white">
+                                <v-row>
+                                  <v-col cols="2">
+                                  </v-col>
+                                  <v-col cols="3">
+                                    <label>
+                                      Nombre del Archivo:{{import_export.file_name}}
+                                    </label>
+                                  </v-col>
+                                  <v-col cols="4" v-show="import_export.state_affiliate== 'S'">
+                                    <label>
+                                      Tipo de Importacion : SENASIR
+                                    </label>
+                                  </v-col>
+                                  <v-col cols="4" v-show="import_export.state_affiliate== 'C'">
+                                    <label>
+                                      Tipo de Importacion : COMANDO
+                                    </label>
+                                  </v-col>
+                                  <v-col cols="3">
+                                    <label>
+                                      {{'Periodo: '+period_year+'-'+aux_period}}
+                                    </label>
+                                  </v-col>
+                                  <v-col cols="2">
+                                  </v-col>
+                                  <v-col cols="3" style="color:teal">
+                                    <label>
+                                      <b>{{'Datos Copiados: '+import_export.reg_copy}}</b>
+                                    </label>
+                                  </v-col>
+                                  <v-col cols="3" style="color:teal">
+                                    <label>
+                                      <b>{{'Datos Agrupados: '+import_export.reg_group}}</b>
+                                    </label>
+                                  </v-col>
+                                  <v-col cols="12" >
+                                    <v-progress-linear></v-progress-linear>
+                                  </v-col>
+                                  <v-col cols="4" >
+                                  </v-col>
+                                  <v-col cols="3" v-show="validar_datos" >
+                                    <v-btn
+                                      color="success"
+                                      @click.stop="validateFilePayment()"
+                                      >Validar Datos
+                                      <v-icon color="white">mdi-check</v-icon>
+                                    </v-btn>
+                                  </v-col>
+                                  <v-col cols="4" v-show="true" >
+                                    <v-tooltip top>
+                                      <template v-slot:activator="{ on }">
+                                        <v-btn
+                                          color="info"
+                                          v-on="on"
+                                          @click="dialog_confirm=true"
+                                        >Rehacer
+                                          <v-icon color="white">mdi-eraser</v-icon>
+                                        </v-btn>
+                                      </template>
+                                      <div>
+                                        <span>Empezar de nuevo</span>
+                                      </div>
+                                    </v-tooltip>
+                                  </v-col>
+                                </v-row>
+                              </v-card>
+                              <v-container class="py-0">
+                                <v-row>
+                                <v-spacer></v-spacer><v-spacer> </v-spacer> <v-spacer></v-spacer>
+                                  <v-col class="py-0">
+                                    <v-btn
+                                      v-show="importacion"
+                                      right
+                                      color="primary"
+                                      @click.stop="nextStep(2)">
+                                      Siguiente
+                                    </v-btn>
+                                  </v-col>
+                                </v-row>
+                              </v-container>
+                            </v-card-text >
+                          </v-card>
+                        </v-stepper-content>
+                        <v-stepper-content :key="`${3}-content`" :step="3" >
+                          <v-card color="grey lighten-1">
+                            <h3 class="text-uppercase text-center">Ultimo Paso la Importación</h3>
+                              <v-card-text >
+                                <v-card color="white">
+                                  <v-row>
+                                   <v-col cols="2">
+                                    </v-col>
+                                    <v-col cols="3">
+                                      <label>
+                                        Nombre del Archivo:{{import_export.file_name}}
+                                      </label>
+                                    </v-col>
+                                    <v-col cols="4" v-show="import_export.state_affiliate== 'S'">
+                                      <label>
+                                        Tipo de Importacion : SENASIR
+                                      </label>
+                                    </v-col>
+                                    <v-col cols="4" v-show="import_export.state_affiliate== 'C'">
+                                      <label>
+                                        Tipo de Importacion : COMANDO
+                                      </label>
+                                    </v-col>
+                                    <v-col cols="3">
+                                      <label>
+                                        {{'Periodo: '+period_year+'-'+aux_period}}
+                                      </label>
+                                    </v-col>
+                                    <v-col cols="2">
+                                    </v-col>
+                                    <v-col cols="3" style="color:teal">
+                                      <label>
+                                        <b>{{'Datos Copiados: '+import_export.reg_copy}}</b>
+                                      </label>
+                                    </v-col>
+                                    <v-col cols="3" style="color:teal">
+                                      <label>
+                                        <b>{{'Datos Agrupados: '+import_export.reg_group}}</b>
+                                      </label>
+                                    </v-col>
+                                    <v-col cols="12" >
+                                      <v-progress-linear></v-progress-linear>
+                                    </v-col>
+                                    <v-col cols="3" >
+                                    </v-col>
+                                    <v-col cols="4" >
+                                      <v-btn dark color="success" v-show="importacion" @click="dialog_confirm_import=true" >
+                                        Ejecutar la Importación
+                                        <v-icon color="white">mdi-check</v-icon>
+                                      </v-btn>
+                                    </v-col>
+                                    <v-col cols="4" v-show="true" >
+                                      <v-tooltip top>
+                                        <template v-slot:activator="{ on }">
+                                          <v-btn
+                                            color="info"
+                                            v-on="on"
+                                            @click.stop="closePayment()"
+                                          > Rehacer
+                                            <v-icon>mdi-eraser</v-icon>
+                                          </v-btn>
+                                        </template>
+                                        <div>
+                                          <span>Empezar de nuevo</span>
+                                        </div>
+                                      </v-tooltip>
+                                    </v-col>
+                                  </v-row>
+                                </v-card>
+                              </v-card-text >
+                            </v-card>
+                          </v-stepper-content>
+                        </v-stepper-items>
+                      </v-stepper>
+                    </v-col>
+                    <v-col cols="6"  md="6" class="py-0" >
+                    </v-col>
+                  </v-row>
+                </v-col>
+              </v-card>
+            </v-dialog>
+            <v-dialog
+              v-model="dialog_confirm"
+              max-width="600"
+            >
+              <v-card>
+                <v-card-title>
+                  <center>¿Esta seguro que quiere rehacer el proceso de importación?</center>
+                  <br>
+                  <br> <small class='caption'>Al rehacer se borraran todos los datos ingresados</small>
+                </v-card-title>
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+                  <v-btn
+                    color="red darken-1"
+                    text
+                    @click="dialog_confirm=false"
+                  >
+                    Cancelar
+                  </v-btn>
+                  <v-btn
+                    color="green darken-1"
+                    text
+                    @click="closePayment()"
+                  >
+                    Aceptar
+                  </v-btn>
+                </v-card-actions>
+              </v-card>
+            </v-dialog>
+            <v-dialog
+              v-model="dialog_confirm_import"
+              max-width="500"
+            >
+              <v-card>
+                <v-card-title>
+                  Esta seguro de realizar la importación?
+                </v-card-title>
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+                  <v-btn
+                    color="red darken-1"
+                    text
+                    @click="dialog_confirm_import=false"
+                  >
+                    Cancelar
+                  </v-btn>
+                  <v-btn
+                    color="green darken-1"
+                    text
+                    :loading="loading_importacion"
+                    @click="importPayment()"
+                  >
+                    Aceptar
+                  </v-btn>
+                </v-card-actions>
+              </v-card>
+            </v-dialog>
+          </template>
+        </v-card>
+      </v-form>
+    </ValidationObserver>
+  </v-container>
 </template>
 <script>
 export default {
@@ -642,6 +722,8 @@ export default {
       this.loading_importacion =false
       this.loading =false
       this.percentage=0
+      this.import_export.reg_copy = 0
+      this.import_export.reg_group = 0
     },
 
     async uploadFilePayment() {
@@ -659,7 +741,8 @@ export default {
           console.log(response.data);
            this.validar_datos=response.data.validate
            if(this.validar_datos){
-            this.toastr.success('Datos efectivizados '+ response.data.message[0].count)
+              this.import_export.reg_copy = response.data.message[0].count
+              this.toastr.success('Datos efectivizados '+ response.data.message[0].count)
            }
            else{
             this.toastr.error(response.data.message)
@@ -750,6 +833,8 @@ export default {
                 this.importacion=true
               }
             }
+            this.import_export.reg_copy = resp.data.reg_copy
+            this.import_export.reg_group = resp.data.reg_group
           }else{
             this.percentage=0
             this.e1=1
@@ -789,6 +874,8 @@ export default {
                 this.importacion=true
               }
             }
+            this.import_export.reg_copy = resp.data.reg_copy
+            this.import_export.reg_group = resp.data.reg_group
           }else{
             this.percentage=0
             this.e1=1
@@ -812,6 +899,7 @@ export default {
       })
        if(res.data.validated_agroup){
         this.importacion =res.data.validated_agroup
+        this.import_export.reg_group = res.data.count_affilites
         this.toastr.success(res.data.message +' '+'cantidad de afiliados '+res.data.count_affilites)
       }
       else{
@@ -961,6 +1049,70 @@ export default {
         })
 
           }
+      } catch (e) {
+        this.loading = false;
+        console.log(e);
+      } finally {
+        this.loading = false;
+      }
+    },
+    async solicitudComando(tipo, id){
+      try {
+        const formData = new FormData();
+
+         await axios({
+          url: '/report_request_institution',
+          method: "GET",
+          responseType: "blob", // important
+          headers: { Accept: "application/vnd.ms-excel" },
+          //headers: { Accept: "text/plain" },
+          data: formData,
+          params: {
+            origin: tipo,
+            period: id
+          }
+        })
+          .then((response) => {
+           const url = window.URL.createObjectURL(new Blob([response.data]));
+           const link = document.createElement("a");
+           link.href = url;
+           link.setAttribute("download", "SolicitudComando.xls");
+           document.body.appendChild(link);
+           link.click();
+        })
+
+      }
+       catch (e) {
+        this.loading = false;
+        console.log(e);
+      } finally {
+        this.loading = false;
+      }
+    },
+       async solicitudSenasir(tipo, id){
+        try {
+        const formData = new FormData();
+
+         await axios({
+          url: '/report_request_institution',
+          method: "GET",
+          responseType: "blob", // important
+          headers: { Accept: "application/vnd.ms-excel" },
+          //headers: { Accept: "text/plain" },
+          data: formData,
+          params: {
+            origin: tipo,
+            period: id
+          }
+        })
+          .then((response) => {
+           const url = window.URL.createObjectURL(new Blob([response.data]));
+           const link = document.createElement("a");
+           link.href = url;
+           link.setAttribute("download", "SolicitudSenasir.xls");
+           document.body.appendChild(link);
+           link.click();
+        })
       } catch (e) {
         this.loading = false;
         console.log(e);
