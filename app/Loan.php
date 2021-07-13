@@ -846,7 +846,7 @@ class Loan extends Model
         return Sismu::find($this->id);
     }
     public function user(){
-        return $this->hasOne(User::class,'id','id');
+        return $this->hasOne(User::class,'id','user_id');
     }
 
     //obtener mod 
