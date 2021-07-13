@@ -190,22 +190,10 @@ class ImportationReportController extends Controller
         return Excel::download($export, $File.'.xls');
     }
 
-    //reporte desenasir
+    //reporte de senasir
 
-    /**
-    * Reporte de solicitud a senasir
-    * @queryParam estimated_date date Fecha para el periiodo de solicitud. Example: 2021-05-02
-    * @queryParam period_id integer id_del periodo . Example: 40
-    * @authenticated
-    * @responseFile responses/reports_request_payments/request_senasir.200.json
-    */
-    public function report_request_senasir_payments(Request $request)
+    public function report_request_senasir_payments($period_id = null, $estimated_date_entry = null)
     {
-        $request->validate([
-        'period_id'=>'integer|exists:loan_payment_periods,id',
-        'estimated_date'=> 'nullable|date_format:"Y-m-d"'
-    ]);
-
         // aumenta el tiempo máximo de ejecución de este script a 150 min:
         ini_set('max_execution_time', 9000);
         // aumentar el tamaño de memoria permitido de este script:
@@ -215,13 +203,13 @@ class ImportationReportController extends Controller
         $procedure_modality_id = ProcedureModality::whereShortened('DES-SENASIR')->first()->id;
 
 
-        if ($request->has('period_id')) {
-            $period = LoanPaymentPeriod::whereId($request->period_id)->first();
+        if ($period_id) {
+            $period = LoanPaymentPeriod::whereId($period_id)->first();
             $estimated_date = Carbon::create($period->year, $period->month, 1);
             $estimated_date = Carbon::parse($estimated_date)->format('Y-m-d');
         } else {
-            if ($request->has('estimated_date')) {
-                $estimated_date  = $request->estimated_date;
+            if ($estimated_date_entry) {
+                $estimated_date  = $estimated_date_entry;
             } else {
                 $estimated_date = Carbon::now()->format('Y-m-d');
             }
@@ -330,6 +318,29 @@ class ImportationReportController extends Controller
          $export = new ArchivoPrimarioExport($data);
          return Excel::download($export, $file_name.'.xls');
     
+     }
+
+     /**
+    * Reporte de solicitud a senasir o COMANDO
+    * @queryParam origin required Tipo de Solicitud C (Comando general) o S (Senasir). Example: C
+    * @queryParam estimated_date date Fecha para el periiodo de solicitud. Example: 2021-05-02
+    * @queryParam period_id integer id_del periodo . Example: 40
+    * @authenticated
+    * @responseFile responses/reports_request_payments/request_senasir.200.json
+    */
+     public function report_request_institution(request $request){
+        $request->validate([
+            'origin'=>'required|string|in:C,S',
+            'period_id'=>'integer|exists:loan_payment_periods,id',
+            'estimated_date'=> 'nullable|date_format:"Y-m-d"'
+        ]);
+
+        if ($request->origin == 'C') {
+            return $this->report_rquest_command_payments($period_id,$estimated_date);
+        }else{
+            return $this->report_request_senasir_payments($request->period_id, $request->estimated_date);
+        }
+
      }
 
 }

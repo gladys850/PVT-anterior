@@ -111,7 +111,7 @@ Route::group([
 
         Route::get('report_amortization_importation_payments', 'Api\V1\ImportationReportController@report_amortization_importation_payments');
 
-        Route::get('report_request_senasir_payments', 'Api\V1\ImportationReportController@report_request_senasir_payments');
+        Route::get('report_request_institution', 'Api\V1\ImportationReportController@report_request_institution');
         Route::get('report_request_command_payments', 'Api\V1\ImportationReportController@report_rquest_command_payments');
         //get_list_month
         // Afiliados
