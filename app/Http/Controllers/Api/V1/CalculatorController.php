@@ -260,7 +260,7 @@ class CalculatorController extends Controller
     // funcion para sacar la cuota estimada con la calculadora---
     public static function quota_calculator($procedure_modality, $months_term, $amount_requested){
         $interest_rate = $procedure_modality->current_interest->monthly_current_interest;
-        return ((($interest_rate)/(1-(1/pow((1+$interest_rate),$months_term))))*$amount_requested);
+        return Util::round2(((($interest_rate)/(1-(1/pow((1+$interest_rate),$months_term))))*$amount_requested));
     }
     // liquido para calificacion
     // type true para lenders, false para guarantees
@@ -338,10 +338,10 @@ class CalculatorController extends Controller
         //$ams = $this->maximum_amount($procedure_modality,$plm,$liquid_qualification_calculated);
         $cosigners=array();
         $top_debt_index = $liquid_qualification_calculated * ($debt_index / 100);
-        $percentage_change = Util::round((1 - ($ce / $top_debt_index)));
+        $percentage_change = (1 - ($ce / $top_debt_index));
         foreach($lc as $liquid_calculated){
-            $estimated_quota = Util::round((($liquid_calculated["liquid_qualification_calculated"]*$debt_index /100) * $percentage_change));
-            $estimated_quota = Util::round((($liquid_calculated["liquid_qualification_calculated"]*$debt_index /100))) - $estimated_quota;
+            $estimated_quota = (($liquid_calculated["liquid_qualification_calculated"]*$debt_index /100) * $percentage_change);
+            $estimated_quota = Util::round2((($liquid_calculated["liquid_qualification_calculated"]*$debt_index /100))) - $estimated_quota;
             $livelihood_amount = 0;
             $valuate_affiliate = false;
             $livelihood_amount = $liquid_calculated['liquid_qualification_calculated'] - $estimated_quota; // liquido para calificacion menos la cuota estimada debe ser menor igual al monto de subsistencia
