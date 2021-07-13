@@ -390,13 +390,13 @@ class ImportationReportController extends Controller
         $request->validate([
             'origin'=>'required|string|in:C,S',
             'period_id'=>'integer|exists:loan_payment_periods,id',
-            'estimated_date'=> 'nullable|date_format:"Y-m-d"'
+            'date'=> 'nullable|date_format:"Y-m-d"'
         ]);
 
         if ($request->origin == 'C') {
-            return $this->report_request_command_payments($request->period_id,$request->estimated_date);
+            return $this->report_request_command_payments($request->period_id,$request->date);
         }else{
-            return $this->report_request_senasir_payments($request->period_id, $request->estimated_date);
+            return $this->report_request_senasir_payments($request->period_id, $request->date);
         }
 
      }
