@@ -1408,4 +1408,50 @@ class LoanReportController extends Controller
          $export = new SheetExportPayment($loan_sheets, "Prestamos PVT y SISMU");
          return Excel::download($export, $file_name.$extension);
     }
+
+
+    /** @group Reportes de Prestamos
+     * Estado de Solicitudes de Prestamo
+     * @bodyParam date date required Fecha para el periodo a consultar. Example: 16-06-2021
+     * @responseFile responses/loan/print_request_loans.200.json
+     * @authenticated
+     */ 
+    public function request_state_report(request $request, $standalone = true)
+    {
+        $loans = Loan::whereStateId(LoanState::whereName('En Proceso')->first()->id)->where('request_date', '<=', $request->date)->orderBy('role_id')->get();
+        $loans_array = collect([]);
+        foreach($loans as $loan)
+        {
+            $loans_array->push([
+                "code" => $loan->code,
+                "request_date" => Carbon::parse($loan->request_date)->format('d-m-Y'),
+                "lenders" => $loan->lenders,
+                "role" => $loan->role->display_name,
+                "update_date" => "",
+                "user" => $loan->user ? $loan->user->username : "",
+                "amount" => $loan->amount_approved,
+            ]);
+            //$loans_array->push($data);
+        }/*foreach ($loans_array as $loan_array)
+            return $loan_array->loan_code;*/
+
+        $data = [
+            'header' => [
+                'direction' => 'DIRECCIÓN DE ASUNTOS ADMINISTRATIVOS',
+                'unity' => 'UNIDAD DE SISTEMAS',
+                'table' => [
+                    ['Fecha', Carbon::now()->format('d-m-Y')],
+                    ['Hora', Carbon::now()->format('H:m:s')],
+                    ['Usuario', Auth::user()->username]
+                ]
+            ],
+            'title' => 'Estado de Solicitudes de Prestamos',
+            'loans' => $loans_array,
+            'file_title' => 'Estado de Solicitudes de Prestamos',
+        ];
+        $file_name = 'Solicitudes de Prestamos.pdf';
+        $view = view()->make('loan.reports.request_state_report')->with($data)->render();
+        if ($standalone) return Util::pdf_to_base64([$view], $file_name, $request->copies ?? 1);
+        return $view;
+    }
 }
