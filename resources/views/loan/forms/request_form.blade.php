@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <title>PLATAFORMA VIRTUAL ADMINISTRATIVA - MUSERPOL </title>
+    <title>{{$file_title}}</title>
     <link rel="stylesheet" href="{{ public_path("/css/report-print.min.css") }}" media="all"/>
 </head>
 
@@ -87,7 +87,7 @@
               
             </tr>
             <tr class="bg-grey-darker text-white">
-                <td>Domilicio actual</td>
+                <td>Domicilio actual</td>
                 <td colspan="2">Teléfono(s)</td>
             </tr>
             <tr>
@@ -108,22 +108,22 @@
             <tr class="bg-grey-darker text-white">
                 @php ($inactive = $lender->pension_entity )
                 @if ($lender->affiliate_state->affiliate_state_type->name != "Pasivo")
-                                <td colspan="{{$inactive ? 1 : 2}}">Unidad</td>
-                @else 
+                    <td colspan="{{$inactive ? 1 : 2}}">Unidad</td>
+                    <td >Categoría</td>
+                @else
                 @php ($pasivo = true )
                 @endif
-                <td>Categoría</td>
-                @if ($inactive)
-                <td colspan="{{$pasivo ? 2 : 1}}">Tipo de Renta</td>
+                @if ($pasivo)
+                <td colspan="{{$pasivo ? 3 : 1}}">Tipo de Renta</td>
                 @endif
             </tr>
             <tr>
-                 @if ($lender->affiliate_state->affiliate_state_type->name != "Pasivo")
-                <td class="data-row py-5" colspan="{{$inactive ? 1 : 2}}">{{ $lender->full_unit}}</td>
-                @endif
-                <td class="data-row py-5">{{ $lender->category ? $lender->category->name : '' }}</td>
-                @if ($inactive)
-                <td colspan="{{$pasivo ? 2 : 1}}" class="data-row py-5">{{$lender->pension_entity ? $lender->pension_entity->name :''}}</td>
+                @if ($lender->affiliate_state->affiliate_state_type->name != "Pasivo")
+                    <td class="data-row py-5" colspan="{{$inactive ? 1 : 2}}">{{ $lender->full_unit}}</td>
+                    <td class="data-row py-5">{{ $lender->category ? $lender->category->name : '' }}</td>
+                @endif       
+                @if ($pasivo)
+                    <td colspan="{{$pasivo ? 3 : 1}}" class="data-row py-5">{{$lender->pension_entity ? $lender->pension_entity->name :''}}</td>
                 @endif
             </tr>
             @endif
