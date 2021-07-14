@@ -42,7 +42,9 @@ class AppServiceProvider extends ServiceProvider
             'vouchers' => 'App\Voucher',
             'aid_contributions' => 'App\AidContribution',
             'loan_contribution_adjusts'=>'App\LoanContributionAdjust',
-            'sismus' => 'App\Sismu'   
+            'sismus' => 'App\Sismu',
+            'fund_rotatories'=>'App\FundRotatory',
+
         ]);
 
         // DATABASE eloquent logs

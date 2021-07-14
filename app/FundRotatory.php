@@ -32,4 +32,9 @@ class FundRotatory extends Model
     {
         return $this->hasMany(FundRotatoryOutput::class);
     }
+    // add records
+    public function records()
+    {
+      return $this->morphMany(Record::class, 'recordable');
+    }
 }
