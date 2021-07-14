@@ -632,7 +632,12 @@ class LoanReportController extends Controller
 
         $date_previous = Carbon::parse($request->date)->startOfMonth()->subMonth()->endOfMonth()->format('Y-m-d');
 
-        $loans_request = Loan::where('state_id', LoanState::where('name', 'Vigente')->first()->id)->where('disbursement_date','<=', '2021-06-15')->get();
+        $date_calculate = Carbon::parse($request->date)->endOfMonth()->format('Y-m-d');
+
+        $date_limit = Carbon::create(Carbon::parse($date_previous)->format('Y'), Carbon::parse($date_previous)->format('m'), 15);
+        $date_limit = Carbon::parse($date_limit)->format('Y-m-d');
+
+        $loans_request = Loan::where('state_id', LoanState::where('name', 'Vigente')->first()->id)->where('disbursement_date','<=', $date_limit)->get();
 
         $id_senasir = array();
         foreach(ProcedureModality::where('name', 'like', '%SENASIR')->get() as $procedure)
@@ -642,23 +647,41 @@ class LoanReportController extends Controller
              array_push($id_comando, $procedure->id);
  
          $command_sheet_before=array(
-             array("Nro Prestamo", "Fecha de desembolso", "Ciudad", "tipo", "Matricula Titular", "Matricula Derecho Habiente", "CI", "Extension", "Primer Nombre", "Segundo Nombre", "Paterno", "Materno", "Saldo Actual", "Cuota Fija Mensual", "Descuento Programado", "Interes")
+             array("Nro Prestamo", "Fecha de desembolso", "Ciudad", "tipo", "Matricula Titular", "Matricula Derecho Habiente", "CI", "Extension", "Primer Nombre", "Segundo Nombre", "Paterno", "Materno", "Saldo Actual", "Cuota Fija Mensual", "Descuento Programado", "Interes","Amort. TIT o GAR?","***",
+             "GAR Estado","GAR Tipo de estado","Matricula garante","GAR CI", "GAR Exp","GAR Primer Nombre","GAR Segundo Nombre",
+             "GAR 1er Apellido","GAR 2do Apellido","GAR Apellido de Casada","GAR Cuota fija","GAR descuento","***","GAR2 Estado","GAR2 Tipo de estado","Matricula garante","GAR2 CI", "GAR2 Exp","GAR2 Primer Nombre","GAR2 Segundo Nombre",
+             "GAR2 1er Apellido","GAR2 2do Apellido","GAR2 Apellido de Casada","GAR2 Cuota fija","GAR2 descuento")
          );
          $command_sheet_later=array(
-             array("Nro Prestamo", "Fecha de desembolso", "Ciudad", "tipo", "Matricula Titular", "Matricula Derecho Habiente", "CI", "Extension", "Primer Nombre", "Segundo Nombre", "Paterno", "Materno", "Saldo Actual", "Cuota Fija Mensual", "Descuento Programado", "Interes")
+             array("Nro Prestamo", "Fecha de desembolso", "Ciudad", "tipo", "Matricula Titular", "Matricula Derecho Habiente", "CI", "Extension", "Primer Nombre", "Segundo Nombre", "Paterno", "Materno", "Saldo Actual", "Cuota Fija Mensual", "Descuento Programado", "Interes","Amort. TIT o GAR?","***",
+             "GAR Estado","GAR Tipo de estado","Matricula garante","GAR CI", "GAR Exp","GAR Primer Nombre","GAR Segundo Nombre",
+             "GAR 1er Apellido","GAR 2do Apellido","GAR Apellido de Casada","GAR Cuota fija","GAR descuento","***","GAR2 Estado","GAR2 Tipo de estado","Matricula garante","GAR2 CI", "GAR2 Exp","GAR2 Primer Nombre","GAR2 Segundo Nombre",
+             "GAR2 1er Apellido","GAR2 2do Apellido","GAR2 Apellido de Casada","GAR2 Cuota fija","GAR2 descuento")
          );
          $senasir_sheet_before=array(
-             array("Nro Prestamo", "Fecha de desembolso", "Ciudad", "tipo", "Matricula Titular", "Matricula Derecho Habiente", "CI", "Extension", "Primer Nombre", "Segundo Nombre", "Paterno", "Materno", "Saldo Actual", "Cuota Fija Mensual", "Descuento Programado", "Interes")
+             array("Nro Prestamo", "Fecha de desembolso", "Ciudad", "tipo", "Matricula Titular", "Matricula Derecho Habiente", "CI", "Extension", "Primer Nombre", "Segundo Nombre", "Paterno", "Materno", "Saldo Actual", "Cuota Fija Mensual", "Descuento Programado", "Interes","Amort. TIT o GAR?","***",
+             "GAR Estado","GAR Tipo de estado","Matricula garante","GAR CI", "GAR Exp","GAR Primer Nombre","GAR Segundo Nombre",
+             "GAR 1er Apellido","GAR 2do Apellido","GAR Apellido de Casada","GAR Cuota fija","GAR descuento","***","GAR2 Estado","GAR2 Tipo de estado","Matricula garante","GAR2 CI", "GAR2 Exp","GAR2 Primer Nombre","GAR2 Segundo Nombre",
+             "GAR2 1er Apellido","GAR2 2do Apellido","GAR2 Apellido de Casada","GAR2 Cuota fija","GAR2 descuento")
          );
          $senasir_sheet_later=array(
-             array("Nro Prestamo", "Fecha de desembolso", "Ciudad", "tipo", "Matricula Titular", "Matricula Derecho Habiente", "CI", "Extension", "Primer Nombre", "Segundo Nombre", "Paterno", "Materno", "Saldo Actual", "Cuota Fija Mensual", "Descuento Programado", "Interes")
+             array("Nro Prestamo", "Fecha de desembolso", "Ciudad", "tipo", "Matricula Titular", "Matricula Derecho Habiente", "CI", "Extension", "Primer Nombre", "Segundo Nombre", "Paterno", "Materno", "Saldo Actual", "Cuota Fija Mensual", "Descuento Programado", "Interes","Amort. TIT o GAR?","***",
+             "GAR Estado","GAR Tipo de estado","Matricula garante","GAR CI", "GAR Exp","GAR Primer Nombre","GAR Segundo Nombre",
+             "GAR 1er Apellido","GAR 2do Apellido","GAR Apellido de Casada","GAR Cuota fija","GAR descuento","***","GAR2 Estado","GAR2 Tipo de estado","Matricula garante","GAR2 CI", "GAR2 Exp","GAR2 Primer Nombre","GAR2 Segundo Nombre",
+             "GAR2 1er Apellido","GAR2 2do Apellido","GAR2 Apellido de Casada","GAR2 Cuota fija","GAR2 descuento")
          );
 
          $command_ancient=array(
-          array("Nro Prestamo", "Fecha de desembolso", "Ciudad", "tipo", "Matricula Titular", "Matricula Derecho Habiente", "CI", "Extension", "Primer Nombre", "Segundo Nombre", "Paterno", "Materno", "Saldo Actual", "Cuota Fija Mensual", "Descuento Programado", "Interes")
+          array("Nro Prestamo", "Fecha de desembolso", "Ciudad", "tipo", "Matricula Titular", "Matricula Derecho Habiente", "CI", "Extension", "Primer Nombre", "Segundo Nombre", "Paterno", "Materno", "Saldo Actual", "Cuota Fija Mensual", "Descuento Programado", "Interes","Amort. TIT o GAR?","***",
+          "GAR Estado","GAR Tipo de estado","Matricula garante","GAR CI", "GAR Exp","GAR Primer Nombre","GAR Segundo Nombre",
+          "GAR 1er Apellido","GAR 2do Apellido","GAR Apellido de Casada","GAR Cuota fija","GAR descuento","***","GAR2 Estado","GAR2 Tipo de estado","Matricula garante","GAR2 CI", "GAR2 Exp","GAR2 Primer Nombre","GAR2 Segundo Nombre",
+          "GAR2 1er Apellido","GAR2 2do Apellido","GAR2 Apellido de Casada","GAR2 Cuota fija","GAR2 descuento")
           );
           $senasir_ancient=array(
-              array("Nro Prestamo", "Fecha de desembolso", "Ciudad", "tipo", "Matricula Titular", "Matricula Derecho Habiente", "CI", "Extension", "Primer Nombre", "Segundo Nombre", "Paterno", "Materno", "Saldo Actual", "Cuota Fija Mensual", "Descuento Programado", "Interes")
+              array("Nro Prestamo", "Fecha de desembolso", "Ciudad", "tipo", "Matricula Titular", "Matricula Derecho Habiente", "CI", "Extension", "Primer Nombre", "Segundo Nombre", "Paterno", "Materno", "Saldo Actual", "Cuota Fija Mensual", "Descuento Programado", "Interes","Amort. TIT o GAR?","***",
+              "GAR Estado","GAR Tipo de estado","Matricula garante","GAR CI", "GAR Exp","GAR Primer Nombre","GAR Segundo Nombre",
+              "GAR 1er Apellido","GAR 2do Apellido","GAR Apellido de Casada","GAR Cuota fija","GAR descuento","***","GAR2 Estado","GAR2 Tipo de estado","Matricula garante","GAR2 CI", "GAR2 Exp","GAR2 Primer Nombre","GAR2 Segundo Nombre",
+              "GAR2 1er Apellido","GAR2 2do Apellido","GAR2 Apellido de Casada","GAR2 Cuota fija","GAR2 descuento")
           );
          foreach($loans as $loan){
              if(Carbon::parse($loan->disbursement_date)->day <= LoanGlobalParameter::first()->offset_interest_day){
@@ -682,8 +705,35 @@ class LoanReportController extends Controller
                              $lender->mothers_last_name,
                              Util::money_format($loan->balance),
                              Util::money_format($loan->estimated_quota),
-                             Util::money_format($lender->pivot->quota_treat),
-                             $loan->interest->annual_interest,
+                             Util::money_format($loan->get_amount_payment($date_calculate,false,'T')),
+                            $loan->interest->annual_interest,
+                            $loan->guarantor_amortizing? 'Amort. Garante':'Amort. Titular',
+                            $loan->guarantor_amortizing? '***' : '***',
+                            $loan->guarantor_amortizing? $loan->guarantors[0]->affiliate_state->affiliate_state_type->name: '',
+                            $loan->guarantor_amortizing? $loan->guarantors[0]->affiliate_state->name : '',
+                            $loan->guarantor_amortizing? $loan->guarantors[0]->registration : '',
+                            $loan->guarantor_amortizing? $loan->guarantors[0]->identity_card : '',
+                            $loan->guarantor_amortizing? $loan->guarantors[0]->city_identity_card->first_shortened : '',
+                            $loan->guarantor_amortizing? $loan->guarantors[0]->first_name : '',
+                            $loan->guarantor_amortizing? $loan->guarantors[0]->second_name : '',
+                            $loan->guarantor_amortizing? $loan->guarantors[0]->last_name : '',
+                            $loan->guarantor_amortizing? $loan->guarantors[0]->mothers_last_name : '',
+                            $loan->guarantor_amortizing? $loan->guarantors[0]->surname_husband : '',
+                            $loan->guarantor_amortizing? $loan->guarantors[0]->pivot->quota_treat : '',
+                            $loan->guarantor_amortizing? Util::money_format($loan->get_amount_payment($date_calculate,false,'G')) : '',
+                            $loan->guarantor_amortizing? '***' : '***',
+                            $loan->guarantor_amortizing?  (count($loan->guarantors)==2? ($loan->guarantors[1]->affiliate_state->affiliate_state_type->name):('SIN')):'',
+                            $loan->guarantor_amortizing? (count($loan->guarantors)==2? ($loan->guarantors[1]->affiliate_state->name) : ('SIN')):'',
+                            $loan->guarantor_amortizing? (count($loan->guarantors)==2? ($loan->guarantors[1]->registration) : ('SIN')):'',
+                            $loan->guarantor_amortizing? (count($loan->guarantors)==2? ($loan->guarantors[1]->identity_card) : ('SIN')):'',
+                            $loan->guarantor_amortizing? (count($loan->guarantors)==2? ($loan->guarantors[1]->city_identity_card->first_shortened) : ('SIN')):'',
+                            $loan->guarantor_amortizing? (count($loan->guarantors)==2? ($loan->guarantors[1]->first_name) : ('SIN')):'',
+                            $loan->guarantor_amortizing? (count($loan->guarantors)==2? ($loan->guarantors[1]->second_name) : ('SIN')):'',
+                            $loan->guarantor_amortizing? (count($loan->guarantors)==2? ($loan->guarantors[1]->last_name) : ('SIN')):'',
+                            $loan->guarantor_amortizing? (count($loan->guarantors)==2? ($loan->guarantors[1]->mothers_last_name) : ('SIN')):'',
+                            $loan->guarantor_amortizing? (count($loan->guarantors)==2? ($loan->guarantors[1]->surname_husband) : ('SIN')):'',
+                            $loan->guarantor_amortizing? (count($loan->guarantors)==2? ($loan->guarantors[1]->pivot->quota_treat) : ('SIN')):'',
+                            $loan->guarantor_amortizing? (count($loan->guarantors)==2? (Util::money_format($loan->get_amount_payment($estimated_date=null,false,'G'))) : ('SIN')):'',
                          ));
                      }
                  }
@@ -708,8 +758,35 @@ class LoanReportController extends Controller
                                  $lender->mothers_last_name,
                                  Util::money_format($loan->balance),
                                  Util::money_format($loan->estimated_quota),
-                                 Util::money_format($lender->pivot->quota_treat),
-                                 $loan->interest->annual_interest,
+                                 Util::money_format($loan->get_amount_payment($date_calculate,false,'T')),
+                            $loan->interest->annual_interest,
+                            $loan->guarantor_amortizing? 'Amort. Garante':'Amort. Titular',
+                            $loan->guarantor_amortizing? '***' : '***',
+                            $loan->guarantor_amortizing? $loan->guarantors[0]->affiliate_state->affiliate_state_type->name: '',
+                            $loan->guarantor_amortizing? $loan->guarantors[0]->affiliate_state->name : '',
+                            $loan->guarantor_amortizing? $loan->guarantors[0]->registration : '',
+                            $loan->guarantor_amortizing? $loan->guarantors[0]->identity_card : '',
+                            $loan->guarantor_amortizing? $loan->guarantors[0]->city_identity_card->first_shortened : '',
+                            $loan->guarantor_amortizing? $loan->guarantors[0]->first_name : '',
+                            $loan->guarantor_amortizing? $loan->guarantors[0]->second_name : '',
+                            $loan->guarantor_amortizing? $loan->guarantors[0]->last_name : '',
+                            $loan->guarantor_amortizing? $loan->guarantors[0]->mothers_last_name : '',
+                            $loan->guarantor_amortizing? $loan->guarantors[0]->surname_husband : '',
+                            $loan->guarantor_amortizing? $loan->guarantors[0]->pivot->quota_treat : '',
+                            $loan->guarantor_amortizing? Util::money_format($loan->get_amount_payment($date_calculate,false,'G')) : '',
+                            $loan->guarantor_amortizing? '***' : '***',
+                            $loan->guarantor_amortizing? (count($loan->guarantors)==2? ($loan->guarantors[1]->affiliate_state->affiliate_state_type->name):('SIN')):'',
+                            $loan->guarantor_amortizing? (count($loan->guarantors)==2? ($loan->guarantors[1]->affiliate_state->name) : ('SIN')):'',
+                            $loan->guarantor_amortizing? (count($loan->guarantors)==2? ($loan->guarantors[1]->registration) : ('SIN')):'',
+                            $loan->guarantor_amortizing? (count($loan->guarantors)==2? ($loan->guarantors[1]->identity_card) : ('SIN')):'',
+                            $loan->guarantor_amortizing? (count($loan->guarantors)==2? ($loan->guarantors[1]->city_identity_card->first_shortened) : ('SIN')):'',
+                            $loan->guarantor_amortizing? (count($loan->guarantors)==2? ($loan->guarantors[1]->first_name) : ('SIN')):'',
+                            $loan->guarantor_amortizing? (count($loan->guarantors)==2? ($loan->guarantors[1]->second_name) : ('SIN')):'',
+                            $loan->guarantor_amortizing? (count($loan->guarantors)==2? ($loan->guarantors[1]->last_name) : ('SIN')):'',
+                            $loan->guarantor_amortizing? (count($loan->guarantors)==2? ($loan->guarantors[1]->mothers_last_name) : ('SIN')):'',
+                            $loan->guarantor_amortizing? (count($loan->guarantors)==2? ($loan->guarantors[1]->surname_husband) : ('SIN')):'',
+                            $loan->guarantor_amortizing? (count($loan->guarantors)==2? ($loan->guarantors[1]->pivot->quota_treat) : ('SIN')):'',
+                            $loan->guarantor_amortizing? (count($loan->guarantors)==2? (Util::money_format($loan->get_amount_payment($estimated_date=null,false,'G'))) : ('SIN')):'',
                              ));
                          }
                      }
@@ -740,8 +817,35 @@ class LoanReportController extends Controller
                              $lender->mothers_last_name,
                              Util::money_format($loan->balance),
                              Util::money_format($loan->estimated_quota),
-                             Util::money_format($lender->pivot->quota_treat),
-                             $loan->interest->annual_interest,
+                             Util::money_format($loan->get_amount_payment($date_calculate,false,'T')),
+                            $loan->interest->annual_interest,
+                            $loan->guarantor_amortizing? 'Amort. Garante':'Amort. Titular',
+                            $loan->guarantor_amortizing? '***' : '***',
+                            $loan->guarantor_amortizing? $loan->guarantors[0]->affiliate_state->affiliate_state_type->name: '',
+                            $loan->guarantor_amortizing? $loan->guarantors[0]->affiliate_state->name : '',
+                            $loan->guarantor_amortizing? $loan->guarantors[0]->registration : '',
+                            $loan->guarantor_amortizing? $loan->guarantors[0]->identity_card : '',
+                            $loan->guarantor_amortizing? $loan->guarantors[0]->city_identity_card->first_shortened : '',
+                            $loan->guarantor_amortizing? $loan->guarantors[0]->first_name : '',
+                            $loan->guarantor_amortizing? $loan->guarantors[0]->second_name : '',
+                            $loan->guarantor_amortizing? $loan->guarantors[0]->last_name : '',
+                            $loan->guarantor_amortizing? $loan->guarantors[0]->mothers_last_name : '',
+                            $loan->guarantor_amortizing? $loan->guarantors[0]->surname_husband : '',
+                            $loan->guarantor_amortizing? $loan->guarantors[0]->pivot->quota_treat : '',
+                            $loan->guarantor_amortizing? Util::money_format($loan->get_amount_payment($date_calculate,false,'G')) : '',
+                            $loan->guarantor_amortizing? '***' : '***',
+                            $loan->guarantor_amortizing? (count($loan->guarantors)==2? ($loan->guarantors[1]->affiliate_state->affiliate_state_type->name):('SIN')):'',
+                            $loan->guarantor_amortizing? (count($loan->guarantors)==2? ($loan->guarantors[1]->affiliate_state->name) : ('SIN')):'',
+                            $loan->guarantor_amortizing? (count($loan->guarantors)==2? ($loan->guarantors[1]->registration) : ('SIN')):'',
+                            $loan->guarantor_amortizing? (count($loan->guarantors)==2? ($loan->guarantors[1]->identity_card) : ('SIN')):'',
+                            $loan->guarantor_amortizing? (count($loan->guarantors)==2? ($loan->guarantors[1]->city_identity_card->first_shortened) : ('SIN')):'',
+                            $loan->guarantor_amortizing? (count($loan->guarantors)==2? ($loan->guarantors[1]->first_name) : ('SIN')):'',
+                            $loan->guarantor_amortizing? (count($loan->guarantors)==2? ($loan->guarantors[1]->second_name) : ('SIN')):'',
+                            $loan->guarantor_amortizing? (count($loan->guarantors)==2? ($loan->guarantors[1]->last_name) : ('SIN')):'',
+                            $loan->guarantor_amortizing? (count($loan->guarantors)==2? ($loan->guarantors[1]->mothers_last_name) : ('SIN')):'',
+                            $loan->guarantor_amortizing? (count($loan->guarantors)==2? ($loan->guarantors[1]->surname_husband) : ('SIN')):'',
+                            $loan->guarantor_amortizing? (count($loan->guarantors)==2? ($loan->guarantors[1]->pivot->quota_treat) : ('SIN')):'',
+                            $loan->guarantor_amortizing? (count($loan->guarantors)==2? (Util::money_format($loan->get_amount_payment($estimated_date=null,false,'G'))) : ('SIN')):'',
                          ));
                      }
                  }
@@ -766,8 +870,36 @@ class LoanReportController extends Controller
                                  $lender->mothers_last_name,
                                  Util::money_format($loan->balance),
                                  Util::money_format($loan->estimated_quota),
-                                 Util::money_format($lender->pivot->quota_treat),
-                                 $loan->interest->annual_interest,
+                                 Util::money_format($loan->get_amount_payment($date_calculate,false,'T')),
+                            $loan->interest->annual_interest,
+                            $loan->guarantor_amortizing? 'Amort. Garante':'Amort. Titular',
+                            $loan->guarantor_amortizing? '***' : '***',
+                            $loan->guarantor_amortizing? $loan->guarantors[0]->affiliate_state->affiliate_state_type->name: '',
+                            $loan->guarantor_amortizing? $loan->guarantors[0]->affiliate_state->name : '',
+                            $loan->guarantor_amortizing? $loan->guarantors[0]->registration : '',
+                            $loan->guarantor_amortizing? $loan->guarantors[0]->identity_card : '',
+                            $loan->guarantor_amortizing? $loan->guarantors[0]->city_identity_card->first_shortened : '',
+                            $loan->guarantor_amortizing? $loan->guarantors[0]->first_name : '',
+                            $loan->guarantor_amortizing? $loan->guarantors[0]->second_name : '',
+                            $loan->guarantor_amortizing? $loan->guarantors[0]->last_name : '',
+                            $loan->guarantor_amortizing? $loan->guarantors[0]->mothers_last_name : '',
+                            $loan->guarantor_amortizing? $loan->guarantors[0]->surname_husband : '',
+                            $loan->guarantor_amortizing? $loan->guarantors[0]->pivot->quota_treat : '',
+                            $loan->guarantor_amortizing? Util::money_format($loan->get_amount_payment($date_calculate,false,'G')) : '',
+                            $loan->guarantor_amortizing? '***' : '***',
+                            $loan->guarantor_amortizing? (count($loan->guarantors)==2? ($loan->guarantors[1]->affiliate_state->affiliate_state_type->name):('SIN')):'',
+                            $loan->guarantor_amortizing? (count($loan->guarantors)==2? ($loan->guarantors[1]->affiliate_state->name) : ('SIN')):'',
+                            $loan->guarantor_amortizing? (count($loan->guarantors)==2? ($loan->guarantors[1]->registration) : ('SIN')):'',
+                            $loan->guarantor_amortizing? (count($loan->guarantors)==2? ($loan->guarantors[1]->identity_card) : ('SIN')):'',
+                            $loan->guarantor_amortizing? (count($loan->guarantors)==2? ($loan->guarantors[1]->city_identity_card->first_shortened) : ('SIN')):'',
+                            $loan->guarantor_amortizing? (count($loan->guarantors)==2? ($loan->guarantors[1]->first_name) : ('SIN')):'',
+                            $loan->guarantor_amortizing? (count($loan->guarantors)==2? ($loan->guarantors[1]->second_name) : ('SIN')):'',
+                            $loan->guarantor_amortizing? (count($loan->guarantors)==2? ($loan->guarantors[1]->last_name) : ('SIN')):'',
+                            $loan->guarantor_amortizing? (count($loan->guarantors)==2? ($loan->guarantors[1]->mothers_last_name) : ('SIN')):'',
+                            $loan->guarantor_amortizing? (count($loan->guarantors)==2? ($loan->guarantors[1]->surname_husband) : ('SIN')):'',
+                            $loan->guarantor_amortizing? (count($loan->guarantors)==2? ($loan->guarantors[1]->pivot->quota_treat) : ('SIN')):'',
+                            $loan->guarantor_amortizing? (count($loan->guarantors)==2? (Util::money_format($loan->get_amount_payment($estimated_date=null,false,'G'))) : ('SIN')):'',
+
                              ));
                          }
                      }
@@ -795,8 +927,35 @@ class LoanReportController extends Controller
                           $lender->mothers_last_name,
                           Util::money_format($loan->balance),
                           Util::money_format($loan->estimated_quota),
-                          Util::money_format($lender->pivot->quota_treat),
-                          $loan->interest->annual_interest,
+                          Util::money_format($loan->get_amount_payment($date_calculate,false,'T')),
+                            $loan->interest->annual_interest,
+                            $loan->guarantor_amortizing? 'Amort. Garante':'Amort. Titular',
+                            $loan->guarantor_amortizing? '***' : '***',
+                            $loan->guarantor_amortizing? $loan->guarantors[0]->affiliate_state->affiliate_state_type->name: '',
+                            $loan->guarantor_amortizing? $loan->guarantors[0]->affiliate_state->name : '',
+                            $loan->guarantor_amortizing? $loan->guarantors[0]->registration : '',
+                            $loan->guarantor_amortizing? $loan->guarantors[0]->identity_card : '',
+                            $loan->guarantor_amortizing? $loan->guarantors[0]->city_identity_card->first_shortened : '',
+                            $loan->guarantor_amortizing? $loan->guarantors[0]->first_name : '',
+                            $loan->guarantor_amortizing? $loan->guarantors[0]->second_name : '',
+                            $loan->guarantor_amortizing? $loan->guarantors[0]->last_name : '',
+                            $loan->guarantor_amortizing? $loan->guarantors[0]->mothers_last_name : '',
+                            $loan->guarantor_amortizing? $loan->guarantors[0]->surname_husband : '',
+                            $loan->guarantor_amortizing? $loan->guarantors[0]->pivot->quota_treat : '',
+                            $loan->guarantor_amortizing? Util::money_format($loan->get_amount_payment($date_calculate,false,'G')) : '',
+                            $loan->guarantor_amortizing? '***' : '***',
+                            $loan->guarantor_amortizing? (count($loan->guarantors)==2? ($loan->guarantors[1]->affiliate_state->affiliate_state_type->name):('SIN')):'',
+                            $loan->guarantor_amortizing? (count($loan->guarantors)==2? ($loan->guarantors[1]->affiliate_state->name) : ('SIN')):'',
+                            $loan->guarantor_amortizing? (count($loan->guarantors)==2? ($loan->guarantors[1]->registration) : ('SIN')):'',
+                            $loan->guarantor_amortizing? (count($loan->guarantors)==2? ($loan->guarantors[1]->identity_card) : ('SIN')):'',
+                            $loan->guarantor_amortizing? (count($loan->guarantors)==2? ($loan->guarantors[1]->city_identity_card->first_shortened) : ('SIN')):'',
+                            $loan->guarantor_amortizing? (count($loan->guarantors)==2? ($loan->guarantors[1]->first_name) : ('SIN')):'',
+                            $loan->guarantor_amortizing? (count($loan->guarantors)==2? ($loan->guarantors[1]->second_name) : ('SIN')):'',
+                            $loan->guarantor_amortizing? (count($loan->guarantors)==2? ($loan->guarantors[1]->last_name) : ('SIN')):'',
+                            $loan->guarantor_amortizing? (count($loan->guarantors)==2? ($loan->guarantors[1]->mothers_last_name) : ('SIN')):'',
+                            $loan->guarantor_amortizing? (count($loan->guarantors)==2? ($loan->guarantors[1]->surname_husband) : ('SIN')):'',
+                            $loan->guarantor_amortizing? (count($loan->guarantors)==2? ($loan->guarantors[1]->pivot->quota_treat) : ('SIN')):'',
+                            $loan->guarantor_amortizing? (count($loan->guarantors)==2? (Util::money_format($loan->get_amount_payment($estimated_date=null,false,'G'))) : ('SIN')):'',
                       ));
                   }
               }
@@ -821,8 +980,35 @@ class LoanReportController extends Controller
                               $lender->mothers_last_name,
                               Util::money_format($loan->balance),
                               Util::money_format($loan->estimated_quota),
-                              Util::money_format($lender->pivot->quota_treat),
-                              $loan->interest->annual_interest,
+                              Util::money_format($loan->get_amount_payment($date_calculate,false,'T')),
+                            $loan->interest->annual_interest,
+                            $loan->guarantor_amortizing? 'Amort. Garante':'Amort. Titular',
+                            $loan->guarantor_amortizing? '***' : '***',
+                            $loan->guarantor_amortizing? $loan->guarantors[0]->affiliate_state->affiliate_state_type->name: '',
+                            $loan->guarantor_amortizing? $loan->guarantors[0]->affiliate_state->name : '',
+                            $loan->guarantor_amortizing? $loan->guarantors[0]->registration : '',
+                            $loan->guarantor_amortizing? $loan->guarantors[0]->identity_card : '',
+                            $loan->guarantor_amortizing? $loan->guarantors[0]->city_identity_card->first_shortened : '',
+                            $loan->guarantor_amortizing? $loan->guarantors[0]->first_name : '',
+                            $loan->guarantor_amortizing? $loan->guarantors[0]->second_name : '',
+                            $loan->guarantor_amortizing? $loan->guarantors[0]->last_name : '',
+                            $loan->guarantor_amortizing? $loan->guarantors[0]->mothers_last_name : '',
+                            $loan->guarantor_amortizing? $loan->guarantors[0]->surname_husband : '',
+                            $loan->guarantor_amortizing? $loan->guarantors[0]->pivot->quota_treat : '',
+                            $loan->guarantor_amortizing? Util::money_format($loan->get_amount_payment($date_calculate,false,'G')) : '',
+                            $loan->guarantor_amortizing? '***' : '***',
+                            $loan->guarantor_amortizing? (count($loan->guarantors)==2? ($loan->guarantors[1]->affiliate_state->affiliate_state_type->name):('SIN')):'',
+                            $loan->guarantor_amortizing? (count($loan->guarantors)==2? ($loan->guarantors[1]->affiliate_state->name) : ('SIN')):'',
+                            $loan->guarantor_amortizing? (count($loan->guarantors)==2? ($loan->guarantors[1]->registration) : ('SIN')):'',
+                            $loan->guarantor_amortizing? (count($loan->guarantors)==2? ($loan->guarantors[1]->identity_card) : ('SIN')):'',
+                            $loan->guarantor_amortizing? (count($loan->guarantors)==2? ($loan->guarantors[1]->city_identity_card->first_shortened) : ('SIN')):'',
+                            $loan->guarantor_amortizing? (count($loan->guarantors)==2? ($loan->guarantors[1]->first_name) : ('SIN')):'',
+                            $loan->guarantor_amortizing? (count($loan->guarantors)==2? ($loan->guarantors[1]->second_name) : ('SIN')):'',
+                            $loan->guarantor_amortizing? (count($loan->guarantors)==2? ($loan->guarantors[1]->last_name) : ('SIN')):'',
+                            $loan->guarantor_amortizing? (count($loan->guarantors)==2? ($loan->guarantors[1]->mothers_last_name) : ('SIN')):'',
+                            $loan->guarantor_amortizing? (count($loan->guarantors)==2? ($loan->guarantors[1]->surname_husband) : ('SIN')):'',
+                            $loan->guarantor_amortizing? (count($loan->guarantors)==2? ($loan->guarantors[1]->pivot->quota_treat) : ('SIN')):'',
+                            $loan->guarantor_amortizing? (count($loan->guarantors)==2? (Util::money_format($loan->get_amount_payment($estimated_date=null,false,'G'))) : ('SIN')):'',
                           ));
                       }
                   }
