@@ -5,7 +5,7 @@
         <v-card flat>
           <v-card-title class="pa-0 pb-3">
             <v-toolbar dense color="tertiary" class="font-weight-regular">
-              <v-toolbar-title>REPORTES {{visible}} {{tab}} {{report_selected}}</v-toolbar-title>
+              <v-toolbar-title>REPORTES</v-toolbar-title>
             </v-toolbar>
           </v-card-title>
           <v-card-text>
@@ -133,6 +133,7 @@ export default {
         tab: 1,
         criterios: ["initial_date", "final_date"],
         service: "/report_amortization_discount_months",
+        type: "excel",
       },
       {
         id: 2,
@@ -140,6 +141,7 @@ export default {
         tab: 1,
         criterios: ["initial_date", "final_date"],
         service: "/report_amortization_cash_deposit",
+        type: "excel",
       },
       {
         id: 3,
@@ -147,6 +149,7 @@ export default {
         tab: 1,
         criterios: ["initial_date", "final_date"],
         service: "/report_amortization_ajust",
+        type: "excel",
       },
       {
         id: 4,
@@ -154,6 +157,7 @@ export default {
         tab: 1,
         criterios: ["initial_date", "final_date"],
         service: "/report_amortization_pending_confirmation",
+        type: "excel",
       },
       {
         id: 5,
@@ -161,6 +165,7 @@ export default {
         tab: 1,
         criterios: ["initial_date", "final_date"],
         service: "/report_amortization_fondo_complement",
+        type: "excel",
       },
       {
         id: 6,
@@ -168,6 +173,7 @@ export default {
         tab: 0,
         criterios: ["initial_date", "final_date"],
         service: "/report_loan_vigent",
+        type: "excel",
       },
       {
         id: 7,
@@ -175,6 +181,7 @@ export default {
         tab: 0,
         criterios: ["initial_date", "final_date"],
         service: "/report_loan_state_cartera",
+        type: "excel",
       },
       {
         id: 8,
@@ -182,6 +189,7 @@ export default {
         tab: 0,
         criterios: [],
         service: "/report_loans_mora",
+        type: "excel",
       },
       {
         id: 9,
@@ -189,6 +197,7 @@ export default {
         tab: 0,
         criterios: [],
         service: "/loan_defaulted_guarantor",
+        type: "excel",
       },
       {
         id: 10,
@@ -196,7 +205,8 @@ export default {
         tab: 0,
         criterios: ["date"],
         service: "/loan_pvt_sismu_report",
-        label: "Fecha final"
+        label: "Fecha final",
+        type: "excel",
       },
       {
         id: 11,
@@ -204,7 +214,8 @@ export default {
         tab: 0,
         criterios: ["date"],
         service: "/loan_information",
-        label:"Periódo (Seleccione el último dia del mes)"
+        label:"Periódo (Seleccione el último dia del mes)",
+        type: "excel",
       },
       {
         id: 12,
@@ -212,7 +223,8 @@ export default {
         tab: 0,
         criterios: ["origin","date"],
         service: "/report_request_institution",
-        label: "Periódo (Seleccione el último dia del mes)"
+        label: "Periódo (Seleccione el último dia del mes)",
+        type: "excel",
       },
       {
         id: 13,
@@ -220,7 +232,8 @@ export default {
         tab: 2,
         criterios: ["date"],
         service: "/request_state_report",
-        label: "Hasta fecha"
+        label: "Hasta fecha",
+        type: "pdf",
       },
     ],
     this.type_institution= [
@@ -255,55 +268,88 @@ export default {
     },
 
     async downloadReport() {
-      if (this.report_selected) {
-        //let params = [];
-        const formData = new FormData();
-        this.report_selected.criterios.forEach((criterio) => {
-          let respuesta = this.report_inputs[criterio];
-          //Verifica e introduce si existe respuesta de los criterios
-          if (respuesta != null) {
-            //params += criterio + "=" + this.report_inputs[criterio] + "&";
-            formData.append(criterio, this.report_inputs[criterio]);
-          } else {
-            // validation =false
-          }
-        });
-        // if(validation) {
-        //   console.log(`${this.report_selected.service}?${params}`)
-        // } else {
-        //   this.toastr.error("Debe ingresar todos los campos");
-        // }
-        // console.log(`${this.report_selected.service}?${params}`)
-        this.loading_button = true;
-        await axios({
-          url: this.report_selected.service,
-          method: "GET",
-          responseType: "blob", // important
-          headers: { Accept: "application/vnd.ms-excel" },
-          data: formData,
-          params: {
-            initial_date: this.report_inputs.initial_date,
-            final_date: this.report_inputs.final_date,
-            date: this.report_inputs.date,
-            origin: this.report_inputs.origin
-          },
-        })
-          .then((response) => {
-            console.log(response.data);
-            const url = window.URL.createObjectURL(new Blob([response.data]));
-            const link = document.createElement("a");
-            link.href = url;
-            link.setAttribute("download", this.report_selected.name + ".xls");
-            document.body.appendChild(link);
-            link.click();
-            this.clearInputs();
-          })
-          .catch((e) => {
-            console.log(e);
-            this.loading_button = false;
+    
+        if (this.report_selected) {
+          if(this.report_selected.type == 'excel'){
+                      //let params = [];
+          const formData = new FormData();
+          this.report_selected.criterios.forEach((criterio) => {
+            let respuesta = this.report_inputs[criterio];
+            //Verifica e introduce si existe respuesta de los criterios
+            if (respuesta != null) {
+              //params += criterio + "=" + this.report_inputs[criterio] + "&";
+              formData.append(criterio, this.report_inputs[criterio]);
+            } else {
+              // validation =false
+            }
           });
-        this.loading_button = false;
-      }
+          // if(validation) {
+          //   console.log(`${this.report_selected.service}?${params}`)
+          // } else {
+          //   this.toastr.error("Debe ingresar todos los campos");
+          // }
+          // console.log(`${this.report_selected.service}?${params}`)
+          this.loading_button = true
+          await axios({
+            url: this.report_selected.service,
+            method: "GET",
+            responseType: "blob", // important
+            headers: { Accept: "application/vnd.ms-excel" },
+            data: formData,
+            params: {
+              initial_date: this.report_inputs.initial_date,
+              final_date: this.report_inputs.final_date,
+              date: this.report_inputs.date,
+              origin: this.report_inputs.origin
+            },
+          })
+            .then((response) => {
+              console.log(response.data);
+              if(response.status==201 || response.status == 200){
+                const url = window.URL.createObjectURL(new Blob([response.data]));
+                const link = document.createElement("a");
+                link.href = url;
+                link.setAttribute("download", this.report_selected.name + ".xls");
+                document.body.appendChild(link);
+                link.click();
+                this.clearInputs();       
+              } else{
+                this.toastr.error("Seleecione los criterios de búsqueda.");
+              }
+
+            })
+            .catch((e) => {
+              console.log(e);
+              this.loading_button = false;
+              this.toast.error("Favor seleccione los criterios de búsqueda.")
+            });
+          this.loading_button = false;
+          } else{
+            try {
+              this.loading_button = true
+              let res = await axios.get(`${this.report_selected.service}`, {
+                params: {
+                  date: this.report_inputs.date,
+                },
+              });
+              printJS({
+                printable: res.data.content,
+                type: res.data.type,
+                file_name: res.data.file_name,
+                base64: true,
+              });
+              this.loading_button = false
+            } catch (e) {
+              this.loading_button = false
+              this.toastr.error("Ocurrió un error en la impresión, seleecione los criterios de búsqueda.");
+              console.log(e);
+            }
+          }
+            
+        } else {
+          this.toastr.error("Seleccione un reporte.")
+          this.loading_button = false
+        }
     },
   },
   computed: {
