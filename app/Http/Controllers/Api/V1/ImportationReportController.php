@@ -14,6 +14,8 @@ use App\LoanPaymentPeriod;
 use App\Loan;
 use App\ProcedureModality;
 use App\LoanState;
+use App\AffiliateState;
+
 
 
 /** @group Report.Solicitud y Amortizacion por periodos
@@ -309,10 +311,12 @@ class ImportationReportController extends Controller
          }
          $estimated_date = Carbon::create($year,$month, 15);
          $estimated_date = Carbon::parse($estimated_date)->format('Y-m-d');
-         $loan_state = LoanState::where('name', 'Vigente')->first()->id; 
+         $loan_state = LoanState::where('name','Vigente')->first()->id; 
+         $state_service_id = AffiliateState::whereName('Servicio')->first()->id;
+         $state_disp_id = AffiliateState::whereName('Disponibilidad')->first()->id;
          //todos los prestamos menores o iguales a la fecha de corte
-        $current_loans =  "select lo.id from affiliates as af,loans as lo, affiliate_states as afs where af.id= lo.disbursable_id and lo.disbursable_type ='affiliates'
-         and lo.state_id=3 and affiliate_state_id in(1,3) and CAST(lo.disbursement_date AS date) <= CAST('$estimated_date' AS date) 
+         $current_loans =  "select lo.id from affiliates as af,loans as lo, affiliate_states as afs where af.id= lo.disbursable_id and lo.disbursable_type ='affiliates'
+         and lo.state_id = $loan_state and affiliate_state_id in($state_service_id,$state_disp_id) and CAST(lo.disbursement_date AS date) <= CAST('$estimated_date' AS date) 
          and afs.id = af.affiliate_state_id"; 
          $current_loans = DB::select($current_loans);
          $data = array(
