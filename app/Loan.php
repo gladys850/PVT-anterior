@@ -1004,7 +1004,7 @@ class Loan extends Model
             }      
         }
         $data = [
-            'ballot' => $ballot,   
+            'ballot' => $ballot->sortBy('month_year'),   
             'adjusts' => $adjusts 
         ];
           return (object)$data; 
