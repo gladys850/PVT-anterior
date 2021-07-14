@@ -57,6 +57,9 @@ class Record extends Model
                 case 'App\Sismu':
                     $action .= $this->recordable->id;
                     break;
+                case 'App\FundRotatory':
+                    $action .= $this->recordable->id;
+                break;
 
             }
         }

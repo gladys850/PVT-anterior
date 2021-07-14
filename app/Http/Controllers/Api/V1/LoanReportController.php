@@ -54,7 +54,8 @@ class LoanReportController extends Controller
       array_push($conditions, array('loans.disbursement_date', '>=', "%{$initial_date}%"));
     }
     if ($final_date != '') {
-      array_push($conditions, array('loans.disbursement_date', '<=', "%{$final_date}%"));
+        $date = $request->final_date.' 23:59:59';
+      array_push($conditions, array('loans.disbursement_date', '<=', "%{$date}%"));
     }
     
     array_push($conditions, array('loan_states.name', 'ilike', "%{$state_vigente}%"));
@@ -107,7 +108,7 @@ class LoanReportController extends Controller
                );
                foreach ($list_loan as $row){
                    array_push($data, array(
-                      // $row->id_loan,
+                       // $row->id_loan,
                        $row->code_loan,//NRO DE PRESTAMO
                        //$row->request_date_loan,
                        Carbon::parse($row->request_date_loan)->format('d/m/Y'),
@@ -171,8 +172,9 @@ class LoanReportController extends Controller
       array_push($conditions_liq, array('loans.disbursement_date', '>=', "%{$initial_date}%"));
     }
     if ($final_date != '') {
-      array_push($conditions, array('loans.disbursement_date', '<=', "%{$final_date}%"));
-      array_push($conditions_liq, array('loans.disbursement_date', '<=', "%{$final_date}%"));
+        $date = $request->final_date.' 23:59:59';
+      array_push($conditions, array('loans.disbursement_date', '<=', "%{$date}%"));
+      array_push($conditions_liq, array('loans.disbursement_date', '<=', "%{$date}%"));
     }else{
         $final_date=Carbon::now()->format('Y-m-d');
         //array_push($conditions, array('loans.disbursement_date', '<=', "%{$final_date}%"));
