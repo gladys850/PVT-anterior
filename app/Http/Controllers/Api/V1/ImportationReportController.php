@@ -284,7 +284,7 @@ class ImportationReportController extends Controller
         return Excel::download($export, $file_name.$extension);
     }
     //reporte de solicitud comando
-    public function report_request_command_payments($period_id,$estimated_date){
+    public function report_request_command_payments($period_id,$date){
         // aumenta el tiempo máximo de ejecución de este script a 150 min:
         ini_set('max_execution_time', 9000);
         // aumentar el tamaño de memoria permitido de este script:
@@ -297,8 +297,8 @@ class ImportationReportController extends Controller
             $month = $period->month;
             $file_name = $origin_name.$name_month.'-'.$year;
          }else{
-            if ($estimated_date){
-                $estimated_date  = $estimated_date;
+            if ($date){
+                $estimated_date  = $date;
             } else {
                 $estimated_date = Carbon::now()->format('Y-m-d');
             }           
@@ -310,7 +310,6 @@ class ImportationReportController extends Controller
          $estimated_date = Carbon::create($year,$month, 15);
          $estimated_date = Carbon::parse($estimated_date)->format('Y-m-d');
          $loan_state = LoanState::where('name', 'Vigente')->first()->id; 
-        // $last_estimated=$estimated_date->endOfMonth();
          //todos los prestamos menores o iguales a la fecha de corte
         $current_loans =  "select lo.id from affiliates as af,loans as lo, affiliate_states as afs where af.id= lo.disbursable_id and lo.disbursable_type ='affiliates'
          and lo.state_id=3 and affiliate_state_id in(1,3) and CAST(lo.disbursement_date AS date) <= CAST('$estimated_date' AS date) 
@@ -357,22 +356,21 @@ class ImportationReportController extends Controller
                         $loan->guarantor_amortizing? $loan->guarantors[0]->surname_husband : '',
                         $loan->guarantor_amortizing? $loan->guarantors[0]->pivot->quota_treat : '',
                         $loan->guarantor_amortizing? Util::money_format($loan->get_amount_payment($estimated_date=null,false,'G')) : '',
-                        $loan->guarantor_amortizing? $loan->guarantors[1]->affiliate_state->affiliate_state_type->name: '',
-                        $loan->guarantor_amortizing? $loan->guarantors[1]->affiliate_state->name : '',
-                        $loan->guarantor_amortizing? $loan->guarantors[1]->registration : '',
-                        $loan->guarantor_amortizing? $loan->guarantors[1]->identity_card : '',
-                        $loan->guarantor_amortizing? $loan->guarantors[1]->city_identity_card->first_shortened : '',
-                        $loan->guarantor_amortizing? $loan->guarantors[1]->first_name : '',
-                        $loan->guarantor_amortizing? $loan->guarantors[1]->second_name : '',
-                        $loan->guarantor_amortizing? $loan->guarantors[1]->last_name : '',
-                        $loan->guarantor_amortizing? $loan->guarantors[1]->mothers_last_name : '',
-                        $loan->guarantor_amortizing? $loan->guarantors[1]->surname_husband : '',
-                        $loan->guarantor_amortizing? $loan->guarantors[1]->pivot->quota_treat : '',
-                        $loan->guarantor_amortizing? Util::money_format($loan->get_amount_payment($estimated_date=null,false,'G')) : '',
+                        $loan->guarantor_amortizing? ((isset($loan->guarantors[1])) ? $loan->guarantors[1]->affiliate_state->affiliate_state_type->name : ''): '' ,
+                        $loan->guarantor_amortizing? ((isset($loan->guarantors[1])) ? $loan->guarantors[1]->affiliate_state->name : ''): '' ,
+                        $loan->guarantor_amortizing? ((isset($loan->guarantors[1])) ? $loan->guarantors[1]->registration : ''): '' ,
+                        $loan->guarantor_amortizing? ((isset($loan->guarantors[1])) ? $loan->guarantors[1]->identity_card : ''): '' ,
+                        $loan->guarantor_amortizing? ((isset($loan->guarantors[1])) ? $loan->guarantors[1]->city_identity_card->first_shortened : ''): '' ,
+                        $loan->guarantor_amortizing? ((isset($loan->guarantors[1])) ? $loan->guarantors[1]->first_name : ''): '' ,
+                        $loan->guarantor_amortizing? ((isset($loan->guarantors[1])) ? $loan->guarantors[1]->second_name : ''): '' ,
+                        $loan->guarantor_amortizing? ((isset($loan->guarantors[1])) ? $loan->guarantors[1]->last_name : ''): '' ,
+                        $loan->guarantor_amortizing? ((isset($loan->guarantors[1])) ? $loan->guarantors[1]->mothers_last_name : ''): '' ,
+                        $loan->guarantor_amortizing? ((isset($loan->guarantors[1])) ? $loan->guarantors[1]->surname_husband : ''): '' ,
+                        $loan->guarantor_amortizing? ((isset($loan->guarantors[1])) ? $loan->guarantors[1]->pivot->quota_treat  : ''): '' ,
+                        $loan->guarantor_amortizing? ((isset($loan->guarantors[1])) ? Util::money_format($loan->get_amount_payment($estimated_date=null,false,'G')) : ''):'',           
                 ));
             }     
-        }
-     
+        }    
          $export = new ArchivoPrimarioExport($data);
          return Excel::download($export, $file_name.'.xls');
     
