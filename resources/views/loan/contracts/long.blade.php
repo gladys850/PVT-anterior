@@ -59,7 +59,7 @@ if(($modality->name == 'Refinanciamiento de Préstamo a Largo Plazo Sector Activ
     </div>
     <div>
     <?php $modality = $loan->modality;
-        if(($modality->name == 'Largo Plazo con Garantía Personal Sector Pasivo AFP' || $modality->name == 'Refinanciamiento de Préstamo a Largo Plazo Sector Pasivo AFP')){ ?>
+        if(($modality->name == 'Refinanciamiento de Préstamo a Largo Plazo Sector Pasivo AFP')){ ?>
         <b>SEXTA.- (DE LA FORMA DE PAGO Y OTRAS CONTINGENCIAS):</b> Para el cumplimiento estricto de la obligación (capital e intereses) el PRESTATARIO, se obliga a cumplir con la cuota de amortización en forma mensual mediante pago directo en la oficina central de la MUSERPOL de la ciudad de La Paz o efectuar el depósito en la cuenta bancaria de la MUSERPOL y enviar la boleta de depósito original a la oficina central inmediatamente. <br>Caso contrario el PRESTATARIO se hará pasible al recargo correspondiente a los intereses que se generen al día de pago por la deuda contraída.
         <?php }
         else{
@@ -260,7 +260,7 @@ if(($modality->name == 'Refinanciamiento de Préstamo a Largo Plazo Sector Activ
     </div>
     <div>
     <?php $modality = $loan->modality;
-            if(($modality->name == 'Refinanciamiento de Préstamo a Largo Plazo Sector Pasivo AFP')){ ?>
+            if(($modality->name == 'Largo Plazo con Garantía Personal Sector Pasivo AFP')){ ?>
         <b>QUINTA.- (DE LA FORMA DE PAGO Y OTRAS CONTINGENCIAS):</b> Para el cumplimiento estricto de la obligación (capital e intereses) el PRESTATARIO, se obliga a cumplir con la cuota de amortización en forma mensual mediante pago directo en la oficina central de la MUSERPOL de la ciudad de La Paz o efectuar el depósito en la cuenta bancaria de la MUSERPOL y enviar la boleta de depósito original a la oficina central inmediatamente. <br>Caso contrario el PRESTATARIO se hará pasible al recargo correspondiente a los intereses que se generen al día de pago por la deuda contraída.
         <?php }
         else{
