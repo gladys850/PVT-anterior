@@ -5,12 +5,12 @@
         <v-card flat>
           <v-card-title class="pa-0 pb-3">
             <v-toolbar dense color="tertiary" class="font-weight-regular">
-              <v-toolbar-title>REPORTES</v-toolbar-title>
+              <v-toolbar-title>REPORTES {{visible}} {{tab}} {{report_selected}}</v-toolbar-title>
             </v-toolbar>
           </v-card-title>
           <v-card-text>
             <v-tabs dark active-class="secondary" v-model="tab">
-              <v-tab v-for="item in actions" :key="item.nameTab">{{item.nameTab}}</v-tab>
+              <v-tab v-for="item in actions" :key="item.nameTab">{{item.nameTab}} </v-tab>
             </v-tabs>
             <v-tabs-items v-model="tab">
               <v-tab-item v-for="item in actions" :key="item.nameTab">
@@ -30,8 +30,10 @@
                       label="Seleccione un reporte">
                     </v-select>
                     <!-- SOLAMENTE SE MOSTRARA CUANDO HAYA UN REPORTE SELECCIONADO -->
-                    <template v-if="report_selected">
-                      <template v-if="report_selected.criterios.includes('initial_date') || report_selected.criterios.includes('final_date') || report_selected.criterios.includes('date')">
+                    <template v-if="report_selected && visible == true">
+                      <template v-if="report_selected.criterios.includes('initial_date') || 
+                                      report_selected.criterios.includes('final_date') || 
+                                      report_selected.criterios.includes('date')">
                         <v-toolbar-title>
                           <b>Criterios de búsqueda</b>
                         </v-toolbar-title>
@@ -41,7 +43,7 @@
                         <v-text-field
                           dense
                           v-model="report_inputs.initial_date"
-                          label="Fecha inicio"
+                          label="Desde fecha"
                           hint="Día/Mes/Año"
                           type="date"
                           :max="$moment(Date.now()).format('YYYY-MM-DD')"
@@ -52,7 +54,7 @@
                         <v-text-field
                           dense
                           v-model="report_inputs.final_date"
-                          label="Fecha final"
+                          label="Hasta fecha"
                           hint="Día/Mes/Año"
                           type="date"
                           :min="report_inputs.initial_date"
@@ -69,6 +71,18 @@
                           type="date"
                           outlined
                         ></v-text-field>
+                      </template>
+                      <template v-if="report_selected.criterios.includes('origin')">
+                        <v-select
+                          dense
+                          :items="type_institution"
+                          item-text="name"
+                          item-value="value"
+                          label= "Tipo institución"
+                          v-model= report_inputs.origin
+                          outlined
+                        >
+                        </v-select>
                       </template>
                       <v-btn
                         color="primary"
@@ -95,6 +109,7 @@ export default {
     actions: [
       { nameTab: "Reportes de Préstamos", value: "prestamos" },
       { nameTab: "Reportes de Amortizaciones", value: "amortizaciones" },
+      { nameTab: "Otros Reportes", value: "otros" },
     ],
     loading_button: false,
     // Reports
@@ -104,7 +119,11 @@ export default {
       initial_date: null,
       final_date: null,
       date: null,
+      origin: null
     },
+    type_institution: [],
+    visible: false,
+
   }),
   created() {
     this.reports_items = [
@@ -159,53 +178,91 @@ export default {
       },
       {
         id: 8,
-        name: "Rep. Información de préstamos para solicitud de descuentos",
-        tab: 0,
-        criterios: ["date"],
-        service: "/loan_information",
-        label:"Periódo (Seleccione el último dia del mes)"
-      },
-      {
-        id: 9,
         name: "Rep. Préstamos en mora",
         tab: 0,
         criterios: [],
         service: "/report_loans_mora",
       },
       {
-        id: 10,
+        id: 9,
         name: "Rep. Préstamos amortizados mensualmente mediante descuentos por garantía",
         tab: 0,
         criterios: [],
         service: "/loan_defaulted_guarantor",
       },
       {
-        id: 11,
+        id: 10,
         name: "Rep. Préstamos vigentes simultaneos en PVT y SISMU",
         tab: 0,
         criterios: ["date"],
         service: "/loan_pvt_sismu_report",
         label: "Fecha final"
       },
-    ];
+      {
+        id: 11,
+        name: "Rep. Información para solicitud de descuentos Nuevos - Recurrentes",
+        tab: 0,
+        criterios: ["date"],
+        service: "/loan_information",
+        label:"Periódo (Seleccione el último dia del mes)"
+      },
+      {
+        id: 12,
+        name: "Rep. Solicitud de descuentos a Comando / Senasir",
+        tab: 0,
+        criterios: ["origin","date"],
+        service: "/report_request_institution",
+        label: "Periódo (Seleccione el último dia del mes)"
+      },
+      {
+        id: 13,
+        name: "Rep. Estado de solicitud de Préstamos",
+        tab: 2,
+        criterios: ["date"],
+        service: "/request_state_report",
+        label: "Hasta fecha"
+      },
+    ],
+    this.type_institution= [
+      { value:"C", name:"Comando" },
+      { value:"S", name: "Senasir" }
+    ]
+  },
+  watch:{
+   tab: function(newVal, oldVal) {
+      if(newVal != oldVal) {
+        this.visible = false
+        this.clearInputs()
+      }
+      else {
+        this.visible = true
+      }
+    },
+    report_selected: {
+      deep: true,
+      handler(val) {
+        this.visible = true
+      }
+    },
   },
   methods: {
     clearInputs() {
-      this.report_selected = null;
-      this.report_inputs.initial_date = null;
-      this.report_inputs.final_date = null;
-      this.report_inputs.date = null;
+      this.report_selected = null
+      this.report_inputs.initial_date = null
+      this.report_inputs.final_date = null
+      this.report_inputs.date = null
+      this.report_inputs.origin = null
     },
+
     async downloadReport() {
       if (this.report_selected) {
-        let params = [];
-        //this.validateCriterios()
+        //let params = [];
         const formData = new FormData();
-        // let validation = true
         this.report_selected.criterios.forEach((criterio) => {
           let respuesta = this.report_inputs[criterio];
+          //Verifica e introduce si existe respuesta de los criterios
           if (respuesta != null) {
-            params += criterio + "=" + this.report_inputs[criterio] + "&";
+            //params += criterio + "=" + this.report_inputs[criterio] + "&";
             formData.append(criterio, this.report_inputs[criterio]);
           } else {
             // validation =false
@@ -223,12 +280,12 @@ export default {
           method: "GET",
           responseType: "blob", // important
           headers: { Accept: "application/vnd.ms-excel" },
-          //headers: { Accept: "text/plain" },
           data: formData,
           params: {
             initial_date: this.report_inputs.initial_date,
             final_date: this.report_inputs.final_date,
             date: this.report_inputs.date,
+            origin: this.report_inputs.origin
           },
         })
           .then((response) => {
