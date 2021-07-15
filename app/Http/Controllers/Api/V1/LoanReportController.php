@@ -59,44 +59,26 @@ class LoanReportController extends Controller
     }
     
     array_push($conditions, array('loan_states.name', 'ilike', "%{$state_vigente}%"));
+    //desde aqui
+    if ($initial_date != '' && $final_date != '') {
+        $date_ini = $request->initial_date.' 00:00:00';
+        $date_fin = $request->final_date.' 23:59:59';
 
-    $list_loan = DB::table('loans')
-            ->join('procedure_modalities','loans.procedure_modality_id', '=', 'procedure_modalities.id')
-            ->join('procedure_types','procedure_modalities.procedure_type_id', '=', 'procedure_types.id')
-            ->join('loan_states','loans.state_id', '=', 'loan_states.id')
-            ->join('cities','loans.city_id', '=', 'cities.id')
-            //->join('loan_affiliates','loans.id', '=', 'loan_affiliates.loan_id')
-        // ->join('affiliates','loan_affiliates.affiliate_id', '=', 'affiliates.id')
-            ->join('affiliates','loans.disbursable_id', '=', 'affiliates.id')
-            ->leftjoin('spouses','affiliates.id', '=', 'spouses.affiliate_id')
-            ->join('affiliate_states','affiliates.affiliate_state_id', '=', 'affiliate_states.id')
-            ->join('affiliate_state_types','affiliate_states.affiliate_state_type_id', '=', 'affiliate_state_types.id')
-            ->leftjoin('pension_entities','affiliates.pension_entity_id', '=', 'pension_entities.id')
-            ->leftjoin('loan_destinies','loans.destiny_id', '=', 'loan_destinies.id')
-            ->whereNull('loans.deleted_at')
-            ->where($conditions)
-            ->select('loans.id as id_loan','loans.code as code_loan','affiliates.id as id_affiliate','affiliates.identity_card as identity_card_affiliate',
-            'affiliates.registration as registration_affiliate','affiliates.last_name as last_name_affiliate','affiliates.mothers_last_name as mothers_last_name_affiliate',
-            'affiliates.first_name as first_name_affiliate','affiliates.second_name as second_name_affiliate','affiliates.surname_husband as surname_husband_affiliate',
-            'procedure_modalities.name as sub_modality_loan','procedure_types.second_name as modality_loan','loans.amount_approved as amount_approved_loan',
-            'affiliate_state_types.name as state_type_affiliate','affiliate_states.name as state_affiliate',
-        // 'loan_affiliates.quota_treat as quota_loan', 'loan_affiliates.guarantor as guarantor_loan_affiliate',
-            'loan_states.name as state_loan',
-            'pension_entities.name as pension_entity_affiliate','loans.disbursement_date as disbursement_date_loan',
-            'loans.request_date as request_date_loan','cities.name as name_city','spouses.registration as registration_spouse','loans.num_accounting_voucher as loan_accounting',
-            'loans.parent_reason as parent_reason_loan','loans.amount_approved as amount_disbursement',DB::raw("(loans.amount_approved - loans.refinancing_balance) as amount_disbursement_liquido"),
-            'loans.loan_term as term_loan','loan_destinies.name as name_destinity_loan')
-            //->where('affiliates.identity_card','LIKE'.'%'.$request->identity_card.'%')
-            ->orderBy('loans.code', $order_loan)
-            ->get();
- 
-               foreach ($list_loan as $loan) {
-                 $padron = Loan::where('id', $loan->id_loan)->first();
-                 $loan->balance_loan=$padron->balance;
-                 $loan->lender = $padron->lenders;
-                 $loan->refinancing_balance=$padron->refinancing_balance;
-                 $loan->payment_amount_ampli= $padron->payment_pending_confirmation();
-               }
+        $list_loan = Loan::where('state_id', LoanState::where('name', 'Vigente')->first()->id)->whereBetween('disbursement_date', [$date_ini, $date_fin])->get();
+    }else{
+        if ($final_date != '') {
+            $date_fin = $request->final_date.' 23:59:59';
+            $list_loan = Loan::where('state_id', LoanState::where('name', 'Vigente')->first()->id)->where('disbursement_date', '<=', $date_fin)->get();
+
+        }else{
+            if ($initial_date != '') {
+                $date_ini = $request->initial_date.' 00:00:00';
+                $list_loan = Loan::where('state_id', LoanState::where('name', 'Vigente')->first()->id)->where('disbursement_date', '>=', $date_ini)->get();
+            }else{
+                $list_loan = Loan::where('state_id', LoanState::where('name', 'Vigente')->first()->id)->get();
+            }
+        } 
+    }
                $File="ListadoPrestamosDesembolsados";
                $data=array(
                    array( "NRO DE PRÉSTAMO", "FECHA DE SOLICITUD", "FECHA DESEMBOLSO",
@@ -106,39 +88,39 @@ class LoanReportController extends Controller
                    "NRO CBTE CONTABLE","SALDO ACTUAL","AMPLIACIÓN","MONTO DESEMBOLSADO","MONTO REFINANCIADO","LIQUIDO DESEMBOLSADO",
                    "PLAZO","ESTÁDO PRÉSTAMO","DESTINO CREDITO" )
                );
-               foreach ($list_loan as $row){
+               foreach ($list_loan as $loan){
                    array_push($data, array(
-                       // $row->id_loan,
-                       $row->code_loan,//NRO DE PRESTAMO
-                       //$row->request_date_loan,
-                       Carbon::parse($row->request_date_loan)->format('d/m/Y'),
-                       //$row->disbursement_date_loan,
-                       Carbon::parse($row->disbursement_date_loan)->format('d/m/Y H:i:s'),
-                       $row->name_city,
-                       $row->state_type_affiliate,
-                       $row->modality_loan,//modalidad
-                       $row->sub_modality_loan,//sub modalidad
-                       $row->identity_card_affiliate,
-                       $row->lender[0]->expeditionCard,
-                       $row->registration_affiliate,//matrifcula 
-                       $row->registration_spouse, //matricula esposa
+                       $loan->code,
+                       Carbon::parse($loan->request_date)->format('d/m/Y'),
+                       Carbon::parse($loan->disbursement_date)->format('d/m/Y H:i:s'),
 
-                       $row->first_name_affiliate,
-                       $row->second_name_affiliate,
-                       $row->last_name_affiliate,
-                       $row->mothers_last_name_affiliate,
-                       $row->surname_husband_affiliate,
+                       $loan->city->name,
+                       $loan->lenders[0]->affiliate_state->affiliate_state_type->name,
+                       $loan->modality->procedure_type->name,
+                       $loan->modality->shortened,
 
-                       $row->loan_accounting,
-                       Util::money_format($row->balance_loan),
-                       $row->parent_reason_loan,//ampliacion
-                       Util::money_format($row->amount_disbursement),//monto desembolsado
-                       $row->parent_reason_loan? Util::money_format($row->amount_disbursement_liquido):'0,00',//MONTO REFINANCIADO//MONTO REFINANCIADO
-                       $row->parent_reason_loan? Util::money_format($row->amount_disbursement - $row->amount_disbursement_liquido) : Util::money_format($row->amount_disbursement),//liquido desembolsado
-                       $row->term_loan,//plazo
-                       $row->state_loan,//estado del prestamo
+                       $loan->lenders[0]->identity_card,
+                       $loan->lenders[0]->city_identity_card->first_shortened,
 
-                       $row->name_destinity_loan
+                       $loan->lenders[0]->registration,
+
+                       $loan->lenders[0]->spouse ? $loan->lenders[0]->spouse->registration : 0,
+                       $loan->lenders[0]->first_name,
+                       $loan->lenders[0]->second_name,
+                       $loan->lenders[0]->last_name,
+                       $loan->lenders[0]->mothers_last_name,
+                       $loan->lenders[0]->surname_husband,
+                       $loan->num_accounting_voucher,
+                       Util::money_format($loan->balance),
+                       $loan->parent_reason,
+                       Util::money_format($loan->amount_approved),
+
+                       $loan->parent_reason? Util::money_format($loan->refinancing_balance):'0,00',//MONTO REFINANCIADO//MONTO REFINANCIADO
+                       $loan->parent_reason? Util::money_format($loan->amount_approved - $loan->refinancing_balance) : Util::money_format($loan->amount_approved),//liquido desembolsado
+                       $loan->loan_term,//plazo
+                       $loan->state->name,//estado del prestamo
+
+                       $loan->destiny->name
                    ));
                }
                $export = new ArchivoPrimarioExport($data);
