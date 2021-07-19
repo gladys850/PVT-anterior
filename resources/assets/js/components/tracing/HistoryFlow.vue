@@ -71,10 +71,6 @@ export default {
     },
   }),
   props: {
-    affiliate: {
-      type: Object,
-      required: true,
-    },
     loan: {
       type: Object,
       required: true
