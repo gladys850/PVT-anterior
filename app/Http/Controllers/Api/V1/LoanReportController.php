@@ -128,8 +128,8 @@ class LoanReportController extends Controller
                        $loan->parent_reason,
                        Util::money_format($loan->amount_approved),
 
-                       $loan->parent_reason? Util::money_format($loan->refinancing_balance):'0,00',//MONTO REFINANCIADO//MONTO REFINANCIADO
-                       $loan->parent_reason? Util::money_format($loan->amount_approved - $loan->refinancing_balance) : Util::money_format($loan->amount_approved),//liquido desembolsado
+                       $loan->parent_reason? Util::money_format($loan->amount_approved - $loan->refinancing_balance) : '0,00',//liquido desembolsado
+                       $loan->parent_reason? Util::money_format($loan->refinancing_balance):Util::money_format($loan->amount_approved),//MONTO REFINANCIADO//MONTO REFINANCIADO
                        $loan->loan_term,//plazo
                        $loan->state->name,//estado del prestamo
 
@@ -237,7 +237,7 @@ class LoanReportController extends Controller
                     Util::money_format($loan->amount_approved),
 
                     $loan->parent_reason? Util::money_format($loan->refinancing_balance):'0,00',//MONTO REFINANCIADO//MONTO REFINANCIADO
-                    $loan->parent_reason? Util::money_format($loan->amount_approved - $loan->refinancing_balance) : Util::money_format($loan->amount_approved),//liquido desembolsado
+                    $loan->parent_reason? Util::money_format($loan->amount_approved - $loan->refinancing_balance) : '0,00',//
                     $loan->parent_reason? $loan->parent_reason:'',//SI ES AMPLIACION
                     Util::money_format($loan->lenders[0]->pivot->indebtedness_calculated)//indice de endeudamineto
                    ));
@@ -318,7 +318,8 @@ class LoanReportController extends Controller
                     $loan->state->name,//estado del prestamo
                     $loan->destiny->name,
 
-                    $loan->last_payment? Util::money_format($loan->amount_approved - $loan->last_payment->previous_balance+$loan->last_payment->capital_payment):' sin registro',//capital pagado 
+                    //$loan->last_payment? Util::money_format($loan->amount_approved - $loan->last_payment->previous_balance + $loan->last_payment->capital_payment):' sin registro',//capital pagado
+                    $loan->last_payment? Util::money_format($loan->amount_approved - $loan->last_payment->previous_balance+$loan->last_payment->capital_payment):' sin registro',//capital pagado
                     $loan->last_payment? Util::money_format($loan->last_payment->previous_balance-$loan->last_payment->capital_payment):' sin registro',//Saldo a fecha de corte
                     Util::money_format($loan->amount_approved),
 
