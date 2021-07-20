@@ -429,6 +429,7 @@ computed: {
         val || this.closeDelete()
       },
     },
+
  beforeMount() {
     this.getDocumentsSubmitted(this.$route.params.id)
     this.getNotes(this.$route.params.id)
