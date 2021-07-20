@@ -392,20 +392,20 @@ export default {
   data: () => ({
 
  dialog: false,
-      dialogDelete: false,
-      headers: [
-        {
-          text: 'Descripcion',
-          align: 'start',
-          sortable: false,
-          value: 'message',
-        },
-        { text: 'Actions', value: 'actions', sortable: false },
-      ],
-      desserts: [],
-      editedIndex: -1,
-      editedItem: {},
-      defaultItem: {},
+    dialogDelete: false,
+    headers: [
+      {
+        text: 'Descripcion',
+        align: 'start',
+        sortable: false,
+        value: 'message',
+      },
+      { text: 'Actions', value: 'actions', sortable: false },
+    ],
+    desserts: [],
+    editedIndex: -1,
+    editedItem: {},
+    defaultItem: {},
     editar:false,
     docsRequired: [],
     docsOptional: [],
@@ -424,7 +424,6 @@ computed: {
       rolePermissionSelected () {
         return this.$store.getters.rolePermissionSelected
       },
-      
       formTitle () {
         return this.editedIndex === -1 ? 'New Item' : 'Edit Item'
       },
@@ -439,15 +438,7 @@ computed: {
       },
     },
 
-    created () {
-      this.initialize()
-    },
-
-
-
-
-
-  beforeMount() {
+ beforeMount() {
     this.getDocumentsSubmitted(this.$route.params.id)
     this.getNotes(this.$route.params.id)
   },
@@ -490,8 +481,10 @@ computed: {
       },
 
       deleteItemConfirm () {
+        //console.log('entro a la confirmacion')
         this.desserts.splice(this.editedIndex, 1)
-        this.closeDelete()
+        //console.log(this.desserts)
+         this.closeDelete()
       },
 
       close () {
@@ -502,12 +495,18 @@ computed: {
         })
       },
 
-      closeDelete () {
-        this.dialogDelete = false
-        this.$nextTick(() => {
-          this.editedItem = Object.assign({}, this.defaultItem)
-          this.editedIndex = -1
-        })
+      closeDelete (id) {
+         try {
+        this.loading = true
+
+         return axios.delete(`note/${id}`)
+      } catch (e) {
+        console.log(e)
+      } finally {
+        this.loading = false
+      }
+  
+
       },
 
       save () {
