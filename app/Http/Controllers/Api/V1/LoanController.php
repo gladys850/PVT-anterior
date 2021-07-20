@@ -2205,6 +2205,10 @@ class LoanController extends Controller
     */
    public function switch_guarantor_lender(request $request)
    {
+        $request->validate([
+        'loan_id'=>'required|integer|exists:loans,id',
+        'role_id'=>'required|integer|exists:roles,id',
+       ]);
        $message = [];
        if(Loan::whereId($request->loan_id)->first() != null && Role::whereId($request->role_id)->first() != null){
             $option = Loan::whereId($request->loan_id)->first();

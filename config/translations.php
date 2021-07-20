@@ -13,6 +13,12 @@ return [
     'procedure_types' => 'Tipo de trámite',
     'loan_payments' => 'Pago de préstamo',
     'aid_contributions' => 'Contribuciones sector Pasivo',
+    //FOndo Rotatorio
+    'fund_rotatories' => 'Fondo rotatorio',
+    'date_check_delivery'=> 'Fecha de entrega del cheque',
+    'check_number'=> 'Número de Cheque',
+    'balance_previous'=> 'Saldo previo',
+    'balance'=> 'Saldo',
     // User
     'first_name' => 'Primer Nombre',
     'last_name' => 'Apellido Paterno',
