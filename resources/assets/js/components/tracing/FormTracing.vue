@@ -424,8 +424,7 @@
                             <v-card flat>
                               <v-card-text>
                                 <ObserverFlow
-                                :loan.sync="loan"
-                                :affiliate.sync="affiliate">
+                                :loan.sync="loan">
                                 </ObserverFlow>
                               </v-card-text>
                             </v-card>
@@ -434,10 +433,7 @@
                             <v-card flat>
                               <v-card-text>
                                 <HistoryFlow
-                                :loan.sync="loan"
-                                :observations.sync="observations"
-                                :bus1="bus1"
-                                :affiliate.sync="affiliate">
+                                :loan.sync="loan">
                                 </HistoryFlow>
                               </v-card-text>
                             </v-card>
@@ -595,7 +591,7 @@ export default {
         for(let i=0; i<this.city.length;i++){
           if(this.city[i].id == id){
             ext = this.city[i].first_shortened
-          }  
+          }
         }
       return ext
       }else{

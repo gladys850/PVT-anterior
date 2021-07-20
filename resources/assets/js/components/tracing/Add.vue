@@ -129,6 +129,13 @@ export default {
     payable_liquid: [0, 0, 0],
     modalidad: {},
     loan: {
+      lenders: [
+        {pivot:{},}
+      ],
+      guarantors: [],
+      cosigners: [],
+      personal_references: [],
+      payment_type:{},
       intereses: {},
       state: {},
       user:{}
