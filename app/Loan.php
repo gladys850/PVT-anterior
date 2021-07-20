@@ -846,7 +846,7 @@ class Loan extends Model
         return Sismu::find($this->id);
     }
     public function user(){
-        return $this->hasOne(User::class,'id','id');
+        return $this->hasOne(User::class,'id','user_id');
     }
 
     //obtener mod 
@@ -1004,7 +1004,7 @@ class Loan extends Model
             }      
         }
         $data = [
-            'ballot' => $ballot,   
+            'ballot' => $ballot->sortBy('month_year'),   
             'adjusts' => $adjusts 
         ];
           return (object)$data; 
@@ -1163,7 +1163,7 @@ class Loan extends Model
         }
         foreach($this->paymentsKardex as $payment)
         {
-            if($date != Carbon::parse($payment->estimated_date)->format('Y-m-d') || $payment->estimated_quota != $this->estimated_quota + $extra_amount){
+            if($date != Carbon::parse($payment->estimated_date)->format('Y-m-d') || $payment->estimated_quota != round(($this->estimated_quota + $extra_amount),2)){
                 $regular = false;
                 break;
             }

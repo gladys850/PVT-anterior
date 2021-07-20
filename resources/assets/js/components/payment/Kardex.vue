@@ -2,6 +2,80 @@
   <v-container fluid>
     <v-toolbar-title class="pb-2 ma-0 pa-0">KARDEX</v-toolbar-title>
     <template v-if="loan.disbursement_date != 'Fecha invalida'">
+
+      <v-tooltip top v-if="permissionSimpleSelected.includes('create-payment-loan')">
+        <template v-slot:activator="{ on }">
+          <v-btn
+            fab
+            dark
+            x-small
+            :color="'success'"
+            top
+            left
+            absolute
+            v-on="on"
+            style="margin-left: 100px; margin-top: 20px"
+            :disabled="loan.state.name == 'Liquidado' ? true : false"
+            @click="createPayment()"
+          >
+            <v-icon>mdi-plus</v-icon>
+          </v-btn>
+        </template>
+        <div>
+          <span>Nuevo registro de cobro</span>
+        </div>
+      </v-tooltip>
+
+      <v-tooltip top v-if="permissionSimpleSelected.includes('create-payment-loan')">
+        <template v-slot:activator="{ on }">
+          <v-btn
+            fab
+            dark
+            x-small
+            :color="'error'"
+            top
+            left
+            absolute
+            v-on="on"
+            style="margin-left: 250px; margin-top: 20px"
+            @click="dialog=true"
+            :disabled="!loan.guarantor_amortizing"
+          >
+            <v-icon>mdi-account-switch</v-icon>
+          </v-btn>
+        </template>
+        <div>
+          <span>Cambio de amortización a titular</span>
+        </div>
+      </v-tooltip>
+    <v-dialog
+      v-model="dialog"
+      max-width="500"
+    >
+      <v-card>
+        <v-card-title>
+          Esta seguro de cambiar la amortizacion al titular?
+        </v-card-title>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="red darken-1"
+            text
+            @click="dialog = false"
+          >
+            Cancelar
+          </v-btn>
+          <v-btn
+            color="green darken-1"
+            text
+            @click="changeGuarantorLender()"
+          >
+            Aceptar
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
       <v-tooltip top v-if="permissionSimpleSelected.includes('print-payment-kardex-loan')">
         <template v-slot:activator="{ on }">
           <v-btn
@@ -41,29 +115,6 @@
         </template>
         <div>
           <span>Imprimir Kardex desplegado</span>
-        </div>
-      </v-tooltip>
-
-      <v-tooltip top v-if="permissionSimpleSelected.includes('create-payment-loan')">
-        <template v-slot:activator="{ on }">
-          <v-btn
-            fab
-            dark
-            x-small
-            :color="'success'"
-            top
-            left
-            absolute
-            v-on="on"
-            style="margin-left: 100px; margin-top: 20px"
-            :disabled="loan.state.name == 'Liquidado' ? true : false"
-            @click="createPayment()"
-          >
-            <v-icon>mdi-plus</v-icon>
-          </v-btn>
-        </template>
-        <div>
-          <span>Nuevo registro de cobro</span>
         </div>
       </v-tooltip>
 
@@ -448,11 +499,16 @@ export default {
       },
     ],
     refreshKardexTable: 0,
+    refreshKardexButton: 0,
+    dialog:false,
   }),
   computed: {
     //Metodo para obtener Permisos por rol
     permissionSimpleSelected() {
       return this.$store.getters.permissionSimpleSelected;
+    },
+    rolePermissionSelected () {
+      return this.$store.getters.rolePermissionSelected
     },
   },
   watch: {
@@ -580,6 +636,19 @@ export default {
         return false
       }
     },
+    async changeGuarantorLender(){
+      try {
+        let res = await axios.post(`switch_guarantor_lender`,{
+            loan_id: this.$route.params.id,
+            role_id: this.$store.getters.rolePermissionSelected.id
+        })
+        this.dialog = false
+        this.toastr.success(res.data.validate)
+      } catch (e) {
+        this.toastr.error(res.data.validate)
+        console.log(e)
+      }
+    }
   
 
     //Busca el tipo de Cobro que se realizará para el cobro

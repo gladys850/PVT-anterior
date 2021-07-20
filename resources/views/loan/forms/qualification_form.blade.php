@@ -256,7 +256,7 @@
     </div>
    </div>
    <div class="block">
-        <div class="font-semibold leading-tight text-left m-b-10 text-sm">{{ $n++ }}. DATOS DE EVALUACIÓN AL TITULAR</div>
+        <div class="font-semibold leading-tight text-left m-b-10 text-sm">{{ $n++ }}. DATOS DE EVALUACIÓN AL PRESTATARIO</div>
     </div>
     <div class="block">
         <table style="font-size:12px;" class="table-info w-100 text-center uppercase my-10">

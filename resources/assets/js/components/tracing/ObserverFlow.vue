@@ -14,6 +14,15 @@
                         :items-per-page="6"
                         class="elevation-1"
                       >
+                         <template v-slot:item="items">
+                          <tr>
+                            
+                            <td>{{items.item.user_name}}</td>
+                            <td>{{observation_type.find(o => o.id == items.item.observation_type_id).name }}</td>
+                            <td>{{items.item.message}}</td>
+                            <td>{{items.item.date|datetime}}</td>
+                          </tr>
+                        </template>
                       </v-data-table>
                     </v-col>
                   </v-card-text>
@@ -27,53 +36,12 @@
 
 <script>
 
-
 export default {
   name: "observer-flow",
   data: () => ({
     //valor: false,
     observation_type: [],
     bus: new Vue(),
-    headersHist: [
-      {
-        text: "Fecha creación",
-        class: ["normal", "white--text"],
-        align: "left",
-        value: "created_at"
-      },
-      {
-        text: "Fecha actualización",
-        class: ["normal", "white--text"],
-        align: "left",
-        value: "update_at"
-      },
-      {
-        text: "Acciones realizadas",
-        class: ["normal", "white--text"],
-        align: "left",
-        value: "accion"
-      }
-    ],
-      headersHist2: [
-      {
-        text: "Fecha creación",
-        class: ["normal", "white--text"],
-        align: "left",
-        value: "created_at"
-      },
-      {
-        text: "Fecha actualización",
-        class: ["normal", "white--text"],
-        align: "left",
-        value: "update_at"
-      },
-      {
-        text: "Acciones realizadas",
-        class: ["normal", "white--text"],
-        align: "left",
-        value: "accion"
-      }
-    ],
     headersObs: [
       {
         text: "Usuario",
@@ -101,31 +69,24 @@ export default {
       },
     
     ],
+    observations:[],
     record: [],
     //record_payment: []
   }),
   props: {
-    affiliate: {
-      type: Object,
-      required: true,
-    },
+    
     loan: {
       type: Object,
       required: true
     },
-    observations: {
-      type: Array,
-      required: true
-    },
-    bus1: {
-      type: Object,
-      required: true
-    },
+ 
   },
-
+beforeMount(){
+ this.getObservationType()
+   
+},
   mounted() {
-    this.getObservationType()
-    this.getRecords(this.loan.id)
+     this.getObservation(this.loan.id)
   },
   methods: {
   
@@ -133,7 +94,7 @@ export default {
       try {
         this.loading = true
         let res = await axios.get(
-          `module/${this.$store.getters.module.id}/observation_type`
+          `module/${6}/observation_type`
         )
         this.observation_type = res.data
       } catch (e) {
@@ -142,16 +103,18 @@ export default {
         this.loading = false
       }
     },
-    async getRecords(id) {
+
+    async getObservation(id) {
       try {
         this.loading = true
-        let res = await axios.get(`record`, {
-          params: {
-            loan_id: id
-          }
-        })
-        this.record = res.data.data
-        console.log(this.record)
+        let res = await axios.get(`loan/${id}/observation`)
+        this.observations = res.data
+        for (this.i = 0; this.i < this.observations.length; this.i++) {
+          let res1 = await axios.get(`user/${this.observations[this.i].user_id}`
+          )
+          this.observations[this.i].user_name = res1.data.username
+        }
+        this.$forceUpdate()
       } catch (e) {
         console.log(e)
       } finally {

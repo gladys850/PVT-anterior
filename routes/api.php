@@ -90,6 +90,7 @@ Route::group([
         Route::get('fund_rotatory_entry_output', 'Api\V1\FundRotatoryController@get_fund_rotatori_entry_output');//listadosentradas y salidas
         Route::get('get_list_month', 'Api\V1\LoanPaymentPeriodController@get_list_month');//listado de meses por gestion
         Route::get('get_list_year', 'Api\V1\LoanPaymentPeriodController@get_list_year');//listado de meses por gestion
+        Route::get('loan_pvt_sismu_report', 'Api\V1\LoanReportController@loan_pvt_sismu_report');//reporte de prestamos PVT y sismu simultaneos
 
         Route::get('get_categorie_user', 'Api\V1\LoanPaymentCategorieController@get_categorie_user');//listado de meses por gestion
 
@@ -110,6 +111,10 @@ Route::group([
 
         Route::get('report_amortization_importation_payments', 'Api\V1\ImportationReportController@report_amortization_importation_payments');
 
+        Route::get('report_request_institution', 'Api\V1\ImportationReportController@report_request_institution');
+        Route::get('report_request_command_payments', 'Api\V1\ImportationReportController@report_rquest_command_payments');
+
+        Route::get('request_state_report', 'Api\V1\LoanReportController@request_state_report');
         //get_list_month
         // Afiliados
         Route::group([
@@ -208,7 +213,7 @@ Route::group([
             Route::apiResource('loan', 'Api\V1\LoanController')->only('update');
             Route::patch('loan/{loan}/document/{document}', 'Api\V1\LoanController@update_document');
             Route::patch('loan/{loan}/sismu', 'Api\V1\LoanController@update_sismu');
-            Route::get('switch_guarantor_lender', 'Api\V1\LoanController@switch_guarantor_lender');
+            Route::post('switch_guarantor_lender', 'Api\V1\LoanController@switch_guarantor_lender');
         });
         Route::group([
             'middleware' => 'permission:delete-loan'
