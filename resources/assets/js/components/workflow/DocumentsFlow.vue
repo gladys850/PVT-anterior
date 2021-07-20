@@ -187,9 +187,9 @@
           </v-col>
         </v-row>-->
         <v-row>
-          <v-col cols="12" v-if="docsOptional.length >0" >
+          <v-col cols="12">
            <!--<v-data-iterator :items="docsOptional" hide-default-footer>-->
-              <template>
+              <template  v-if="docsOptional.length >0">
                 <v-toolbar-title>ADICIONALES</v-toolbar-title>
                  <v-progress-linear></v-progress-linear>
                 <v-row  class="py-3">
@@ -261,7 +261,7 @@
                   </v-col>
                 </v-row>
               </template>
-              <template>
+              <template  v-if="notes.length >0">
                 <v-toolbar-title class="align-end font-weight-black text-left ma-0 pa-4 pl-8" v-show="!editar">
                   <h5 v-if="notes.length >0">Otros Documentos</h5>
                 </v-toolbar-title>
@@ -367,14 +367,6 @@
                           mdi-delete
                         </v-icon>
                       </template>
-                      <template v-slot:no-data>
-                        <v-btn
-                          color="primary"
-                          @click="initialize"
-                        >
-                          Reset
-                        </v-btn>
-                      </template>
                     </v-data-table>
                   </v-col>
                 </v-row>
@@ -437,7 +429,6 @@ computed: {
         val || this.closeDelete()
       },
     },
-
  beforeMount() {
     this.getDocumentsSubmitted(this.$route.params.id)
     this.getNotes(this.$route.params.id)
@@ -518,11 +509,6 @@ computed: {
         this.close()
       },
 
-
-
-
-
-
     async getDocumentsSubmitted(id) {
       try {
         this.loading = true
@@ -553,12 +539,10 @@ computed: {
       document.id = id,
       document.is_valid = is_valid,
       document.comment = comment
-      console.log("mostar objeto")
-      console.log(document)
-     
-          this.documents.push(document)
-      
-      console.log(this.documents)
+      //console.log("mostar objeto")
+      //console.log(document)
+      this.documents.push(document)
+      //console.log(this.documents)
 
     },
     async validarDoc() {
