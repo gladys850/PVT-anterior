@@ -62,7 +62,7 @@ class LoanController extends Controller
         $loan->defaulted = $loan->defaulted;
         $loan->observed = $loan->observed;
         $loan->last_payment_validated = $loan->last_payment_validated;
-        if ($with_lenders) {
+        /*if ($with_lenders) {
             foreach($loan->lenders as $lender)
             {
                 $lender->affiliate_state = $lender->affiliate_state;
@@ -75,7 +75,7 @@ class LoanController extends Controller
             }
             $loan->lenders = $loan->lenders;
             $loan->guarantors = $loan->guarantors;
-        }
+        }*/
         $loan->personal_references = $loan->personal_references;
         $loan->cosigners = $loan->cosigners;
         $loan->data_loan = $loan->data_loan;
@@ -98,6 +98,7 @@ class LoanController extends Controller
         }
         $loan->payment_type;
         $loan->state;
+        $loan->borrower = $loan->borrower;
         //$loan->procedure=$loan->modality;
         //$loan->loan_contribution = $loan->loan_contribution_adjusts;
         return $loan;
