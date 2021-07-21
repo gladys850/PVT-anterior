@@ -315,7 +315,7 @@ class ImportationReportController extends Controller
          $state_service_id = AffiliateState::whereName('Servicio')->first()->id;
          $state_disp_id = AffiliateState::whereName('Disponibilidad')->first()->id;
          //todos los prestamos menores o iguales a la fecha de corte
-         $current_loans =  "select lo.id from affiliates as af,loans as lo, affiliate_states as afs where af.id= lo.disbursable_id and lo.disbursable_type ='affiliates'
+         $current_loans =  "select lo.id from affiliates as af,loans as lo, affiliate_states as afs, loan_affiliates as laf where af.id = lo.affiliate_id and lo.affiliate_id = laf.affiliate_id and laf.type='affiliates'
          and lo.state_id = $loan_state and affiliate_state_id in($state_service_id,$state_disp_id) and CAST(lo.disbursement_date AS date) <= CAST('$estimated_date' AS date) 
          and afs.id = af.affiliate_state_id"; 
          $current_loans = DB::select($current_loans);
