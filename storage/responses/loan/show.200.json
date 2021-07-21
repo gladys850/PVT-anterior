@@ -320,5 +320,117 @@
             "type_initials": "T-JVJ",
             "disbursable": true
         }
+    ],
+    "titularguarantors": [
+        {
+            "id": 43924,
+            "full_name": " JUAN BARROZO ALANDIA ",
+            "second_name": "JUAN",
+            "last_name": "BARROZO",
+            "mothers_last_name": "ALANDIA",
+            "surname_husband": null,
+            "identity_card": "7271508",
+            "city_identity_card": {
+                "id": 5,
+                "name": "ORURO",
+                "first_shortened": "OR",
+                "second_shortened": "ORU",
+                "third_shortened": "ORU",
+                "to_bank": "OR",
+                "latitude": -17.959307,
+                "longitude": -67.109766,
+                "company_address": "Av. 6 de Octubre entre oblitas y Belzu Zona Central Nº 4836",
+                "phone_prefix": 5,
+                "company_phones": "\"[246509]\"",
+                "company_cellphones": "\"[67200819]\""
+            },
+            "category": null,
+            "unit": {
+                "id": 4,
+                "breakdown_id": 10,
+                "district": "LA PAZ",
+                "code": "20181",
+                "name": "SEGURIDAD FISICA ESTATAL",
+                "shortened": "S.F.E.",
+                "created_at": "2017-06-01T14:41:04.000000Z",
+                "updated_at": "2017-06-01T14:41:04.000000Z",
+                "deleted_at": null
+            },
+            "registration": null,
+            "birth_date": "1989-03-09",
+            "degree": {
+                "id": 11,
+                "hierarchy_id": 2,
+                "code": "06",
+                "name": "TENIENTE",
+                "shortened": "TTE.",
+                "correlative": 11
+            },
+            "account_number": null,
+            "financial_entity": null,
+            "type": "affiliates",
+            "quota": "1314.2",
+            "percentage_quota": null,
+            "state": {
+                "id": 1,
+                "name": "Activo"
+            },
+            "type_initials": "G-JJBA"
+        },
+        {
+            "id": 48266,
+            "full_name": " VANNIA QUELCA ZAMBRANA ",
+            "second_name": "VANNIA",
+            "last_name": "QUELCA",
+            "mothers_last_name": "ZAMBRANA",
+            "surname_husband": null,
+            "identity_card": "6133710",
+            "city_identity_card": {
+                "id": 4,
+                "name": "LA PAZ",
+                "first_shortened": "LP",
+                "second_shortened": "LPZ",
+                "third_shortened": "LPZ",
+                "to_bank": "LP",
+                "latitude": -16.5086,
+                "longitude": -68.12653,
+                "company_address": "Zona Sopocachi - Av. 6 de Agosto N° 2354",
+                "phone_prefix": 2,
+                "company_phones": "\"[2442270,2445101,2443506]\"",
+                "company_cellphones": "\"[]\""
+            },
+            "category": null,
+            "unit": {
+                "id": 4,
+                "breakdown_id": 10,
+                "district": "LA PAZ",
+                "code": "20181",
+                "name": "SEGURIDAD FISICA ESTATAL",
+                "shortened": "S.F.E.",
+                "created_at": "2017-06-01T14:41:04.000000Z",
+                "updated_at": "2017-06-01T14:41:04.000000Z",
+                "deleted_at": null
+            },
+            "registration": null,
+            "birth_date": "1990-02-20",
+            "degree": {
+                "id": 11,
+                "hierarchy_id": 2,
+                "code": "06",
+                "name": "TENIENTE",
+                "shortened": "TTE.",
+                "correlative": 11
+            },
+            "account_number": null,
+            "financial_entity": null,
+            "type": "affiliates",
+            "quota": "1314.2",
+            "percentage_quota": null,
+            "state": {
+                "id": 1,
+                "name": "Activo"
+            },
+            "type_initials": "G-VAQZ"
+        }
     ]
 }
