@@ -44,7 +44,8 @@ class LoanPayment extends Model
         'user_id',
         'categorie_id',
         'initial_affiliate',
-        'state_affiliate'
+        'state_affiliate',
+        'affiliate_id'
 
     ];
 

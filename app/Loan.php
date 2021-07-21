@@ -32,8 +32,8 @@ class Loan extends Model
     public $guarded = ['id'];
     public $fillable = [
         'code',
-        'disbursable_id',
-        'disbursable_type',
+        //'disbursable_id',
+       // 'disbursable_type',
         'procedure_modality_id',
         'disbursement_date',
         'disbursement_time',
@@ -94,6 +94,10 @@ class Loan extends Model
                 $this->code = implode(['PTMO', str_pad($latest_loan->id + 1, 6, '0', STR_PAD_LEFT), '-', Carbon::now()->year]);
             }
         }
+    }
+    public function affiliate()
+    {
+        return $this->belongsTo(Affiliate::class,'affiliate_id','id');
     }
 
     public function setProcedureModalityIdAttribute($id)
@@ -181,7 +185,7 @@ class Loan extends Model
 
     public function lenders()
     {
-        return $this->loan_affiliates()->withPivot('payment_percentage','payable_liquid_calculated', 'bonus_calculated', 'quota_previous','quota_treat', 'indebtedness_calculated','indebtedness_calculated_previous','liquid_qualification_calculated','contributionable_ids','contributionable_type', 'type')->whereGuarantor(false);
+        return $this->loan_affiliates()->withPivot('payment_percentage','payable_liquid_calculated', 'bonus_calculated', 'quota_previous','quota_treat', 'indebtedness_calculated','indebtedness_calculated_previous','liquid_qualification_calculated','contributionable_ids','contributionable_type','type')->whereGuarantor(false);
     }
 
     public function loan_affiliates()

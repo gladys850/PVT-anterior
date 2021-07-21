@@ -187,9 +187,9 @@
           </v-col>
         </v-row>-->
         <v-row>
-          <v-col cols="12" v-if="docsOptional.length >0" >
+          <v-col cols="12">
            <!--<v-data-iterator :items="docsOptional" hide-default-footer>-->
-              <template>
+              <template  v-if="docsOptional.length >0">
                 <v-toolbar-title>ADICIONALES</v-toolbar-title>
                  <v-progress-linear></v-progress-linear>
                 <v-row  class="py-3">
@@ -261,7 +261,7 @@
                   </v-col>
                 </v-row>
               </template>
-              <template>
+              <template  v-if="notes.length >0">
                 <v-toolbar-title class="align-end font-weight-black text-left ma-0 pa-4 pl-8" v-show="!editar">
                   <h5 v-if="notes.length >0">Otros Documentos</h5>
                 </v-toolbar-title>
@@ -367,14 +367,6 @@
                           mdi-delete
                         </v-icon>
                       </template>
-                      <template v-slot:no-data>
-                        <v-btn
-                          color="primary"
-                          @click="initialize"
-                        >
-                          Reset
-                        </v-btn>
-                      </template>
                     </v-data-table>
                   </v-col>
                 </v-row>
@@ -392,20 +384,20 @@ export default {
   data: () => ({
 
  dialog: false,
-      dialogDelete: false,
-      headers: [
-        {
-          text: 'Descripcion',
-          align: 'start',
-          sortable: false,
-          value: 'message',
-        },
-        { text: 'Actions', value: 'actions', sortable: false },
-      ],
-      desserts: [],
-      editedIndex: -1,
-      editedItem: {},
-      defaultItem: {},
+    dialogDelete: false,
+    headers: [
+      {
+        text: 'Descripcion',
+        align: 'start',
+        sortable: false,
+        value: 'message',
+      },
+      { text: 'Actions', value: 'actions', sortable: false },
+    ],
+    desserts: [],
+    editedIndex: -1,
+    editedItem: {},
+    defaultItem: {},
     editar:false,
     docsRequired: [],
     docsOptional: [],
@@ -424,7 +416,6 @@ computed: {
       rolePermissionSelected () {
         return this.$store.getters.rolePermissionSelected
       },
-      
       formTitle () {
         return this.editedIndex === -1 ? 'New Item' : 'Edit Item'
       },
@@ -439,15 +430,7 @@ computed: {
       },
     },
 
-    created () {
-      this.initialize()
-    },
-
-
-
-
-
-  beforeMount() {
+ beforeMount() {
     this.getDocumentsSubmitted(this.$route.params.id)
     this.getNotes(this.$route.params.id)
   },
@@ -490,8 +473,10 @@ computed: {
       },
 
       deleteItemConfirm () {
+        //console.log('entro a la confirmacion')
         this.desserts.splice(this.editedIndex, 1)
-        this.closeDelete()
+        //console.log(this.desserts)
+         this.closeDelete()
       },
 
       close () {
@@ -502,12 +487,18 @@ computed: {
         })
       },
 
-      closeDelete () {
-        this.dialogDelete = false
-        this.$nextTick(() => {
-          this.editedItem = Object.assign({}, this.defaultItem)
-          this.editedIndex = -1
-        })
+      closeDelete (id) {
+         try {
+        this.loading = true
+
+         return axios.delete(`note/${id}`)
+      } catch (e) {
+        console.log(e)
+      } finally {
+        this.loading = false
+      }
+  
+
       },
 
       save () {
@@ -518,11 +509,6 @@ computed: {
         }
         this.close()
       },
-
-
-
-
-
 
     async getDocumentsSubmitted(id) {
       try {
@@ -554,12 +540,10 @@ computed: {
       document.id = id,
       document.is_valid = is_valid,
       document.comment = comment
-      console.log("mostar objeto")
-      console.log(document)
-     
-          this.documents.push(document)
-      
-      console.log(this.documents)
+      //console.log("mostar objeto")
+      //console.log(document)
+      this.documents.push(document)
+      //console.log(this.documents)
 
     },
     async validarDoc() {

@@ -578,11 +578,11 @@ class LoanController extends Controller
                 $affiliates[$a] = $lender['affiliate_id'];
                 $a++;
             }
-            if (!$request->has('disbursable_id')) {
+            if (!$request->has('affiliate_id')) {
                 $disbursable_id = $request->lenders[0]['affiliate_id'];
             } else {
-                if (!in_array($request->disbursable_id, $affiliates)) abort(404);
-                $disbursable_id = $request->disbursable_id;
+                if (!in_array($request->affiliate_id, $affiliates)) abort(404);
+                $disbursable_id = $request->affiliate_id;
             }
             $disbursable = Affiliate::findOrFail($disbursable_id);
         }
@@ -594,7 +594,8 @@ class LoanController extends Controller
                 }
             }
             if (Auth::user()->can('update-loan')) {
-                $loan->fill(array_merge($request->except($exceptions), isset($disbursable) ? (array)self::verify_spouse_disbursable($disbursable) : []));
+               // $loan->fill(array_merge($request->except($exceptions), isset($disbursable) ? (array)self::verify_spouse_disbursable($disbursable) : []));
+                $loan->fill(array_merge($request->except($exceptions)));
             }
             if (in_array('validated', $exceptions)) $loan->validated = $request->validated;
             if ($request->has('role_id')) {
@@ -605,7 +606,7 @@ class LoanController extends Controller
                 }
             }
         } else {
-            $loan = new Loan(array_merge($request->all(), (array)self::verify_spouse_disbursable($disbursable), ['amount_approved' => $request->amount_requested]));
+            $loan = new Loan(array_merge($request->all(), ['affiliate_id' => $disbursable->id,'amount_approved' => $request->amount_requested]));
         }
 
         //heredar el codigo del prestamo padre
@@ -662,6 +663,7 @@ class LoanController extends Controller
                 }else{
                     $indebtedness = 0;
                 }
+                $affiliate_lender = Affiliate::findOrFail($affiliate['affiliate_id']);
                 $affiliates[$a] = [
                     'affiliate_id' => $affiliate['affiliate_id'],
                     'payment_percentage' => $affiliate['payment_percentage'],
@@ -675,6 +677,7 @@ class LoanController extends Controller
                     'guarantor' => false,
                     'contributionable_type' => $affiliate['contributionable_type'],
                     'contributionable_ids' => json_encode($affiliate['contributionable_ids']),
+                    'type' =>$affiliate_lender->dead ? 'spouses':'affiliates' ,
                 ];
                 if(array_key_exists('loan_contributions_adjust_ids', $affiliate)){
                     $idsajust=$affiliate['loan_contributions_adjust_ids'];
@@ -687,9 +690,10 @@ class LoanController extends Controller
                     $ajuste->update();
                 }
                 $a++;
-            }           
+            }
             if($request->guarantors){
                 foreach ($request->guarantors as $affiliate) {
+                    $affiliate_guarantor = Affiliate::findOrFail($affiliate['affiliate_id']);
                     $affiliates[$a] = [
                         'affiliate_id' => $affiliate['affiliate_id'],
                         'payment_percentage' => $affiliate['payment_percentage'],
@@ -703,6 +707,7 @@ class LoanController extends Controller
                         'guarantor' => true,
                         'contributionable_type'=>$affiliate['contributionable_type'],
                         'contributionable_ids'=>json_encode($affiliate['contributionable_ids']),
+                        'type' =>$affiliate_guarantor->dead ? 'spouses':'affiliates',
                     ];
                     if(array_key_exists('loan_contributions_adjust_ids', $affiliate)){
                         $idsajust=$affiliate['loan_contributions_adjust_ids'];
@@ -714,7 +719,7 @@ class LoanController extends Controller
                         $ajuste->loan_id=$loan->id;
                         $ajuste->update();
                     }
-                    
+
                     $a++;
                 }
             }
