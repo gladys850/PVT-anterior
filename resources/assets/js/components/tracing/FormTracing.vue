@@ -259,26 +259,10 @@
                                 <v-progress-linear></v-progress-linear>
                                   <v-row>
                                   <v-col cols="12" md="6">
-                                    <v-text-field
-                                      dense
-                                      v-model="loan.delivery_contract_date"
-                                      label="FECHA ENTREGA DE CONTRATO"
-                                      hint="Día/Mes/Año"
-                                      type="date"
-                                      :outlined="edit_delivery_date"
-                                      :readonly="!edit_delivery_date"
-                                    ></v-text-field>
+                                    <p><b>FECHA ENTREGA DE CONTRATO:</b> {{loan.delivery_contract_date}}</p>
                                   </v-col>
                                   <v-col cols="12" md="6">
-                                    <v-text-field
-                                      dense
-                                      v-model="loan.return_contract_date"
-                                      label="FECHA RECEPCION DE CONTRATO"
-                                      hint="Día/Mes/Año"
-                                      type="date"
-                                      :outlined="edit_return_date"
-                                      :readonly="!edit_return_date"
-                                    ></v-text-field>
+                                    <p><b>FECHA RECEPCION DE CONTRATO:</b> {{loan.return_contract_date==null? loan.return_contract_date:' '}}</p>
                                   </v-col>
                                   </v-row>
                                   <v-col cols="12" class="pa-0">
@@ -286,42 +270,28 @@
                                       <p style="color:teal"> <b>DATOS DE DESEMBOLSO</b></p>
                                     <v-progress-linear></v-progress-linear>
                                     <v-row>
-                                      <v-col cols="12" md="4">
+                                      <v-col cols="12" md="6" >
                                         <p><b>TIPO DE DESEMBOLSO:</b> {{loan.payment_type.name}}</p>
                                       </v-col>
-                                      <v-col cols="12" md="3" v-show="loan.payment_type.name=='Depósito Bancario'">
+                                      <v-col cols="12" md="6" v-show="loan.payment_type.name=='Depósito Bancario'">
                                         <p><b>ENTIDAD FINANCIERA:</b>{{' '+cuenta}}</p>
                                       </v-col>
-                                      <v-col cols="12" md="3" v-show="loan.payment_type.name=='Depósito Bancario'">
+                                      <v-col cols="12" md="6" v-show="loan.payment_type.name=='Depósito Bancario'" class="py-0">
                                         <p><b>NUMERO DE CUENTA:</b>{{' '+loan.lenders[0].account_number}}</p>
                                       </v-col>
-                                      <v-col cols="12" md="3" v-show="loan.payment_type.name=='Depósito Bancario'">
+                                      <v-col cols="12" md="6" v-show="loan.payment_type.name=='Depósito Bancario'" class="py-0">
                                         <p><b>CUENTA SIGEP:</b> {{' '+loan.lenders[0].sigep_status}}</p>
                                       </v-col>
-                                      <v-col cols="12" md="4">
-                                        <div class="py-0">
-                                          <v-text-field
-                                            dense
-                                            :readonly="true"
-                                            :label="'CERTIFICACIÓN PRESUPUESTARIA CONTABLE'"
-                                            v-model="loan.num_accounting_voucher"
-                                          ></v-text-field>
-                                        </div>
+                                      <v-col cols="12" md="6" class="py-0">
+                                        <p><b>CERTIFICACIÓN PRESUPUESTARIA CONTABLE:</b> {{loan.num_accounting_voucher}}</p>
                                       </v-col>
-                                      <v-col cols="12" md="4">
-                                        <v-text-field
-                                          dense
-                                          v-model=" loan.disbursement_date"
-                                          label="FECHA DE DESEMBOLSO"
-                                          hint="Día/Mes/Año"
-                                          type="date"
-                                          :readonly="true"
-                                        ></v-text-field>
+                                      <v-col cols="12" md="6" class="py-0">
+                                        <p><b>FECHA DE DESEMBOLSO:</b> {{loan.disbursement_date}}</p>
                                     </v-col>
                                   </v-row>
                                 </v-col>
                                 <v-col cols="12" md="6" class="pb-0" v-show="loan_refinancing.refinancing">
-                                  <p style="color:teal"><b>DATOS DEL PRéSTAMO A REFINANCIAR{{' => '+ loan_refinancing.description}}</b></p>
+                                  <p style="color:teal"><b>DATOS DEL PRÉSTAMO A REFINANCIAR{{' => '+ loan_refinancing.description}}</b></p>
                                 </v-col>
                                 <v-progress-linear v-show="loan_refinancing.refinancing"></v-progress-linear  >
                                 <v-row v-show="loan_refinancing.refinancing">

@@ -29,9 +29,9 @@
           </v-col>
         </v-row>-->
         <v-row>
-          <v-col cols="12" v-if="docsOptional.length >0" >
+          <v-col cols="12"  >
            <!--<v-data-iterator :items="docsOptional" hide-default-footer>-->
-              <template>
+              <template v-if="docsOptional.length >0">
                 <v-toolbar-title style="color:teal" >ADICIONALES</v-toolbar-title>
                  <v-progress-linear></v-progress-linear>
                 <v-row  class="py-3">
@@ -59,9 +59,9 @@
                   </v-col>
                 </v-row>
               </template>
-              <template>
+              <template v-if="notes.length >0">
                 <v-toolbar-title class="align-end font-weight-black text-left ma-0 pa-4 pl-8">
-                  <h5 v-if="notes.length >0" style="color:teal">Otros Documentos</h5>
+                  <h5  style="color:teal">Otros Documentos</h5>
                 </v-toolbar-title>
                 <v-row v-show="!editar">
                   <v-col cols="12" class="ma-0 px-10">
