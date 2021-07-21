@@ -13,7 +13,6 @@ use App\Http\Controllers\Api\V1\CalculatorController;
 use Carbon;
 use Util;
 use App\Affiliate;
-use App\Http\Resources\BorrowerResource;
 
 class Loan extends Model
 {
@@ -109,11 +108,6 @@ class Loan extends Model
     public function loan_property()
     {
         return $this->belongsTo(LoanProperty::class, 'property_id','id');
-    }
-
-    public function affiliate()
-    {
-        return $this->belongsTo(Affiliate::class, 'affiliate_id','id');
     }
 
     public function notes()

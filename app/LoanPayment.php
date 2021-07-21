@@ -45,8 +45,6 @@ class LoanPayment extends Model
         'categorie_id',
         'initial_affiliate',
         'state_affiliate',
-        'affiliate_id'
-
     ];
 
     function __construct(array $attributes = [])
