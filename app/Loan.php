@@ -174,7 +174,7 @@ class Loan extends Model
 
     public function guarantors()
     {
-        return $this->loan_affiliates()->withPivot('payment_percentage','payable_liquid_calculated', 'bonus_calculated', 'quota_previous','quota_treat','indebtedness_calculated','indebtedness_calculated_previous','liquid_qualification_calculated','contributionable_ids','contributionable_type', 'type')->whereGuarantor(true);
+        return $this->loan_affiliates()->withPivot('payment_percentage','payable_liquid_calculated', 'bonus_calculated', 'quota_previous','quota_treat','indebtedness_calculated','indebtedness_calculated_previous','liquid_qualification_calculated','contributionable_ids','contributionable_type','type')->whereGuarantor(true);
     }
 
     public function lenders()
@@ -1246,7 +1246,7 @@ class Loan extends Model
                 $borrower->degree = $lender->degree;
                 $borrower->category = $lender->category;
             }
-            else{
+            if($lender->pivot->type == 'spouses'){
                 $borrower->id = $lender->spouse->id;
                 $borrower->full_name = $lender->spouse->full_name;
                 $borrower->first_name = $lender->spouse->first_name;
@@ -1276,6 +1276,57 @@ class Loan extends Model
             else
                 $borrower->disbursable = false;
                 $data->push($borrower);
+        }
+        return $data;
+    }
+
+    public function getTitularGuarantorsAttribute(){
+        $data = collect([]);
+        foreach($this->guarantors as $guarantor){
+            $titular_guarantor = new Affiliate();
+            if($guarantor->pivot->type == "affiliates"){
+                $titular_guarantor->id = $guarantor->id;
+                $titular_guarantor->full_name = $guarantor->full_name;
+                $titular_guarantor->second_name = $guarantor->first_name;
+                $titular_guarantor->last_name = $guarantor->second_name;
+                $titular_guarantor->last_name = $guarantor->last_name;
+                $titular_guarantor->mothers_last_name = $guarantor->mothers_last_name;
+                $titular_guarantor->surname_husband = $guarantor->surname_husband;
+                $titular_guarantor->identity_card = $guarantor->identity_card;
+                $titular_guarantor->city_identity_card = $guarantor->city_identity_card;
+                $titular_guarantor->category = $guarantor->category;
+                $titular_guarantor->unit = $guarantor->unit;
+                $titular_guarantor->registration = $guarantor->registration;
+                $titular_guarantor->birth_date = $guarantor->birth_date;
+                $titular_guarantor->degree = $guarantor->degree;
+                $titular_guarantor->category = $guarantor->category;
+            }
+            if($guarantor->pivot->type == "spouses"){
+                $titular_guarantor->id = $guarantor->spouse->id;
+                $titular_guarantor->full_name = $guarantor->spouse->full_name;
+                $titular_guarantor->first_name = $guarantor->spouse->first_name;
+                $titular_guarantor->second_name = $guarantor->spouse->second_name;
+                $titular_guarantor->last_name = $guarantor->spouse->last_name;
+                $titular_guarantor->mothers_last_name = $guarantor->spouse->mothers_last_name;
+                $titular_guarantor->surname_husband = $guarantor->spouse->surname_husband;
+                $titular_guarantor->identity_card = $guarantor->spouse->identity_card;
+                $titular_guarantor->city_identity_card = $guarantor->spouse->city_identity_card;
+                $titular_guarantor->quota = $guarantor->pivot->quota_treat;
+                $titular_guarantor->category = null;
+                $titular_guarantor->unit = null;
+                $titular_guarantor->registration = $guarantor->spouse->registration;
+                $titular_guarantor->birth_date = $guarantor->spouse->birth_date;
+                $titular_guarantor->degree = null;
+                $titular_guarantor->category = null;
+            }
+            $titular_guarantor->account_number = $guarantor->account_number;
+            $titular_guarantor->financial_entity = $guarantor->financial_entity;
+            $titular_guarantor->type = $guarantor->pivot->type;
+            $titular_guarantor->quota = $guarantor->pivot->quota_treat;
+            $titular_guarantor->percentage_quota = $guarantor->pivot->percentage_quota;
+            $titular_guarantor->state = $guarantor->affiliate_state->affiliate_state_type;
+            $titular_guarantor ->type_initials = "G-".$guarantor->initials;
+            $data->push($titular_guarantor);
         }
         return $data;
     }
