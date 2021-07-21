@@ -13,7 +13,6 @@ use App\Http\Controllers\Api\V1\CalculatorController;
 use Carbon;
 use Util;
 use App\Affiliate;
-use App\Http\Resources\BorrowerResource;
 
 class Loan extends Model
 {
@@ -32,8 +31,8 @@ class Loan extends Model
     public $guarded = ['id'];
     public $fillable = [
         'code',
-        'disbursable_id',
-        'disbursable_type',
+        //'disbursable_id',
+       // 'disbursable_type',
         'procedure_modality_id',
         'disbursement_date',
         'disbursement_time',
@@ -95,6 +94,10 @@ class Loan extends Model
             }
         }
     }
+    public function affiliate()
+    {
+        return $this->belongsTo(Affiliate::class,'affiliate_id','id');
+    }
 
     public function setProcedureModalityIdAttribute($id)
     {
@@ -105,11 +108,6 @@ class Loan extends Model
     public function loan_property()
     {
         return $this->belongsTo(LoanProperty::class, 'property_id','id');
-    }
-
-    public function affiliate()
-    {
-        return $this->belongsTo(Affiliate::class, 'affiliate_id','id');
     }
 
     public function notes()
@@ -176,12 +174,12 @@ class Loan extends Model
 
     public function guarantors()
     {
-        return $this->loan_affiliates()->withPivot('payment_percentage','payable_liquid_calculated', 'bonus_calculated', 'quota_previous','quota_treat','indebtedness_calculated','indebtedness_calculated_previous','liquid_qualification_calculated','contributionable_ids','contributionable_type', 'type')->whereGuarantor(true);
+        return $this->loan_affiliates()->withPivot('payment_percentage','payable_liquid_calculated', 'bonus_calculated', 'quota_previous','quota_treat','indebtedness_calculated','indebtedness_calculated_previous','liquid_qualification_calculated','contributionable_ids','contributionable_type','type')->whereGuarantor(true);
     }
 
     public function lenders()
     {
-        return $this->loan_affiliates()->withPivot('payment_percentage','payable_liquid_calculated', 'bonus_calculated', 'quota_previous','quota_treat', 'indebtedness_calculated','indebtedness_calculated_previous','liquid_qualification_calculated','contributionable_ids','contributionable_type', 'type')->whereGuarantor(false);
+        return $this->loan_affiliates()->withPivot('payment_percentage','payable_liquid_calculated', 'bonus_calculated', 'quota_previous','quota_treat', 'indebtedness_calculated','indebtedness_calculated_previous','liquid_qualification_calculated','contributionable_ids','contributionable_type','type')->whereGuarantor(false);
     }
 
     public function loan_affiliates()
