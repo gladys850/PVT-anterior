@@ -14,7 +14,7 @@ class AddTypeToLoanAffiliates extends Migration
     public function up()
     {
         Schema::table('loan_affiliates', function (Blueprint $table) {
-            $table->enum('type',['affiliates', 'spouses'])->default('affiliates');
+            $table->enum('type',['affiliates', 'spouses'])->nullable();
         });
     }
 
