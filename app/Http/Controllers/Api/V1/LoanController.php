@@ -99,7 +99,7 @@ class LoanController extends Controller
         $loan->payment_type;
         $loan->state;
         $loan->borrower = $loan->borrower;
-        $loan->titularguarantors = $loan->titularguarantors;
+        $loan->borrowerguarantors = $loan->borrowerguarantors;
         //$loan->procedure=$loan->modality;
         //$loan->loan_contribution = $loan->loan_contribution_adjusts;
         return $loan;

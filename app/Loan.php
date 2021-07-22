@@ -1232,13 +1232,13 @@ class Loan extends Model
             if($lender->pivot->type == 'affiliates'){
                 $borrower->id = $lender->id;
                 $borrower->full_name = $lender->full_name;
-                $borrower->second_name = $lender->first_name;
-                $borrower->last_name = $lender->second_name;
+                $borrower->first_name = $lender->first_name;
+                $borrower->second_name = $lender->second_name;
                 $borrower->last_name = $lender->last_name;
                 $borrower->mothers_last_name = $lender->mothers_last_name;
                 $borrower->surname_husband = $lender->surname_husband;
                 $borrower->identity_card = $lender->identity_card;
-                $borrower->city_identity_card = $lender->city_identity_card;
+                $borrower->city_identity_card = $lender->city_identity_card->first_shortened;
                 $borrower->category = $lender->category;
                 $borrower->unit = $lender->unit;
                 $borrower->registration = $lender->registration;
@@ -1256,7 +1256,7 @@ class Loan extends Model
                 $borrower->mothers_last_name = $lender->spouse->mothers_last_name;
                 $borrower->surname_husband = $lender->spouse->surname_husband;
                 $borrower->identity_card = $lender->spouse->identity_card;
-                $borrower->city_identity_card = $lender->spouse->city_identity_card;
+                $borrower->city_identity_card = $lender->spouse->city_identity_card->first_shortened;
                 $borrower->quota = $lender->pivot->quota_treat;
                 $borrower->category = null;
                 $borrower->unit = null;
@@ -1272,7 +1272,7 @@ class Loan extends Model
             $borrower->quota = $lender->pivot->quota_treat;
             $borrower->percentage_quota = $lender->pivot->percentage_quota;
             $borrower->state = $lender->affiliate_state;
-            $borrower->state_type = $lender->affiliate_state->affiliate_state_type;
+            $borrower->address = $lender->address;
             if($this->affiliate_id == $lender->pivot->affiliate_id)
                 $borrower->disbursable = true;
             else
@@ -1282,20 +1282,20 @@ class Loan extends Model
         return $data;
     }
 
-    public function getTitularGuarantorsAttribute(){
+    public function getBorrowerGuarantorsAttribute(){
         $data = collect([]);
         foreach($this->guarantors as $guarantor){
             $titular_guarantor = new Affiliate();
             if($guarantor->pivot->type == "affiliates"){
                 $titular_guarantor->id = $guarantor->id;
                 $titular_guarantor->full_name = $guarantor->full_name;
-                $titular_guarantor->second_name = $guarantor->first_name;
-                $titular_guarantor->last_name = $guarantor->second_name;
+                $titular_guarantor->first_name = $guarantor->first_name;
+                $titular_guarantor->second_name = $guarantor->second_name;
                 $titular_guarantor->last_name = $guarantor->last_name;
                 $titular_guarantor->mothers_last_name = $guarantor->mothers_last_name;
                 $titular_guarantor->surname_husband = $guarantor->surname_husband;
                 $titular_guarantor->identity_card = $guarantor->identity_card;
-                $titular_guarantor->city_identity_card = $guarantor->city_identity_card;
+                $titular_guarantor->city_identity_card = $guarantor->city_identity_card->first_shortened;
                 $titular_guarantor->category = $guarantor->category;
                 $titular_guarantor->unit = $guarantor->unit;
                 $titular_guarantor->registration = $guarantor->registration;
@@ -1313,7 +1313,7 @@ class Loan extends Model
                 $titular_guarantor->mothers_last_name = $guarantor->spouse->mothers_last_name;
                 $titular_guarantor->surname_husband = $guarantor->spouse->surname_husband;
                 $titular_guarantor->identity_card = $guarantor->spouse->identity_card;
-                $titular_guarantor->city_identity_card = $guarantor->spouse->city_identity_card;
+                $titular_guarantor->city_identity_card = $guarantor->spouse->city_identity_card->first_shortened;
                 $titular_guarantor->quota = $guarantor->pivot->quota_treat;
                 $titular_guarantor->category = null;
                 $titular_guarantor->unit = null;
@@ -1329,7 +1329,7 @@ class Loan extends Model
             $titular_guarantor->quota = $guarantor->pivot->quota_treat;
             $titular_guarantor->percentage_quota = $guarantor->pivot->percentage_quota;
             $titular_guarantor->state = $guarantor->affiliate_state;
-            $titular_guarantor->state_type = $guarantor->affiliate_state->affiliate_state_type;
+            $titular_guarantor->address = $guarantor->address;
             $data->push($titular_guarantor);
         }
         return $data;
