@@ -184,9 +184,9 @@ class Loan extends Model
 
     public function loan_affiliates()
     {
-        return $this->belongsToMany(Affiliate::class, 'loan_affiliates')->withPivot('contributionable_ids','contributionable_type');
+        return $this->belongsToMany(Affiliate::class, 'loan_affiliates')->withPivot('payment_percentage','guarantor','payable_liquid_calculated', 'bonus_calculated', 'quota_previous','quota_treat', 'indebtedness_calculated','indebtedness_calculated_previous','liquid_qualification_calculated','contributionable_ids','contributionable_type','type');
     }
-
+    
     public function loan_affiliates_ballot()
     {
         return $this->belongsToMany(Affiliate::class, 'loan_affiliates')->withPivot('contributionable_ids','contributionable_type');
