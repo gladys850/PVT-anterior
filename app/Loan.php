@@ -1238,7 +1238,7 @@ class Loan extends Model
                 $borrower->mothers_last_name = $lender->mothers_last_name;
                 $borrower->surname_husband = $lender->surname_husband;
                 $borrower->identity_card = $lender->identity_card;
-                $borrower->city_identity_card = $lender->city_identity_card->first_shortened;
+                $borrower->city_identity_card = $lender->city_identity_card;
                 $borrower->identity_card_ext = $lender->identity_card_ext;
                 $borrower->category = $lender->category;
                 $borrower->unit = $lender->unit;
@@ -1258,7 +1258,7 @@ class Loan extends Model
                 $borrower->mothers_last_name = $lender->spouse->mothers_last_name;
                 $borrower->surname_husband = $lender->spouse->surname_husband;
                 $borrower->identity_card = $lender->spouse->identity_card;
-                $borrower->city_identity_card = $lender->spouse->city_identity_card->first_shortened;
+                $borrower->city_identity_card = $lender->spouse->city_identity_card;
                 $borrower->identity_card_ext = $lender->spouse->identity_card_ext;
                 $borrower->quota = $lender->pivot->quota_treat;
                 $borrower->category = null;
@@ -1299,7 +1299,7 @@ class Loan extends Model
                 $titular_guarantor->mothers_last_name = $guarantor->mothers_last_name;
                 $titular_guarantor->surname_husband = $guarantor->surname_husband;
                 $titular_guarantor->identity_card = $guarantor->identity_card;
-                $titular_guarantor->city_identity_card = $guarantor->city_identity_card->first_shortened;
+                $titular_guarantor->city_identity_card = $guarantor->city_identity_card;
                 $titular_guarantor->identity_card_ext = $guarantor->identity_card_ext;
                 $titular_guarantor->category = $guarantor->category;
                 $titular_guarantor->unit = $guarantor->unit;
@@ -1319,7 +1319,7 @@ class Loan extends Model
                 $titular_guarantor->mothers_last_name = $guarantor->spouse->mothers_last_name;
                 $titular_guarantor->surname_husband = $guarantor->spouse->surname_husband;
                 $titular_guarantor->identity_card = $guarantor->spouse->identity_card;
-                $titular_guarantor->city_identity_card = $guarantor->spouse->city_identity_card->first_shortened;
+                $titular_guarantor->city_identity_card = $guarantor->spouse->city_identity_card;
                 $titular_guarantor->identity_card_ext = $guarantor->spouse->identity_card_ext;
                 $titular_guarantor->quota = $guarantor->pivot->quota_treat;
                 $titular_guarantor->category = null;
