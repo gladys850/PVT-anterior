@@ -68,7 +68,7 @@ return [
     'amount_requested'=>'Monto solicitado',
     'state_id'=>'Estado del prestamo',
     'code'=>'Codigo',
-    'disbursable_id'=>'Beneficiario',
+  //  'disbursable_id'=>'Beneficiario',
     'disbursable_type'=>'Beneficiario',
     'lenders'=>'Titular',
     'guarantors'=>'Garante',

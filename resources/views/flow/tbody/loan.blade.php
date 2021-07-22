@@ -1,6 +1,6 @@
 <td class="data-row py-5">{{ $procedure->code }}</td>
-<td class="data-row py-5">{{ $procedure->disbursable->title }} {{ $procedure->disbursable->full_name }}</td>
-<td class="data-row py-5">{{ $procedure->disbursable->identity_card_ext }}</td>
+<td class="data-row py-5">{{ $procedure->borrower[0]->title }} {{ $procedure->borrower[0]->full_name }}</td>
+<td class="data-row py-5">{{ $procedure->borrower[0]->identity_card_ext }}</td>
 @php ($created_at = Carbon::parse($procedure->created_at))
 <td class="data-row py-5">{{ $created_at->isoFormat('L') }} {{ $created_at->toTimeString() }}</td>
 <td class="data-row py-5">{{ Util::money_format($procedure->amount_approved) }}</td>
