@@ -46,7 +46,7 @@
           >
             <template v-slot:[`header.code_loan`]="{ header }">
               {{ header.text }}<br />
-              <v-menu offset-y :close-on-content-click="false">
+              <v-menu offset-x :close-on-content-click="false" >
                 <template v-slot:activator="{ on, attrs }">
                   <v-btn icon v-bind="attrs" v-on="on">
                     <v-icon
@@ -73,7 +73,7 @@
 
             <template v-slot:[`header.identity_card_affiliate`]="{ header }">
               {{ header.text }}<br />
-              <v-menu offset-y :close-on-content-click="false">
+              <v-menu offset-x :close-on-content-click="false">
                 <template v-slot:activator="{ on, attrs }">
                   <v-btn icon v-bind="attrs" v-on="on">
                     <v-icon
@@ -100,7 +100,7 @@
 
             <template v-slot:[`header.registration_affiliate`]="{ header }">
               {{ header.text }}<br />
-              <v-menu offset-y :close-on-content-click="false">
+              <v-menu offset-x :close-on-content-click="false">
                 <template v-slot:activator="{ on, attrs }">
                   <v-btn icon v-bind="attrs" v-on="on">
                     <v-icon
@@ -128,7 +128,7 @@
 
             <template v-slot:[`header.registration_affiliateF`]="{ header }">
               {{ header.text }}<br />
-              <v-menu offset-y :close-on-content-click="false">
+              <v-menu offset-x :close-on-content-click="false">
                 <template v-slot:activator="{ on, attrs }">
                   <v-btn icon v-bind="attrs" v-on="on">
                     <v-icon
@@ -156,7 +156,7 @@
 
             <template v-slot:[`header.first_name_affiliate`]="{ header }">
               {{ header.text }}<br />
-              <v-menu offset-y :close-on-content-click="false">
+              <v-menu offset-x :close-on-content-click="false">
                 <template v-slot:activator="{ on, attrs }">
                   <v-btn icon v-bind="attrs" v-on="on">
                     <v-icon
@@ -184,7 +184,7 @@
 
             <template v-slot:[`header.second_name_affiliate`]="{ header }">
               {{ header.text }}<br />
-              <v-menu offset-y :close-on-content-click="false">
+              <v-menu offset-x :close-on-content-click="false">
                 <template v-slot:activator="{ on, attrs }">
                   <v-btn icon v-bind="attrs" v-on="on">
                     <v-icon
@@ -212,7 +212,7 @@
 
             <template v-slot:[`header.last_name_affiliate`]="{ header }">
               {{ header.text }}<br />
-              <v-menu offset-y :close-on-content-click="false">
+              <v-menu offset-x :close-on-content-click="false">
                 <template v-slot:activator="{ on, attrs }">
                   <v-btn icon v-bind="attrs" v-on="on">
                     <v-icon
@@ -242,7 +242,7 @@
               v-slot:[`header.mothers_last_name_affiliate`]="{ header }"
             >
               {{ header.text }}<br />
-              <v-menu offset-y :close-on-content-click="false">
+              <v-menu offset-x :close-on-content-click="false">
                 <template v-slot:activator="{ on, attrs }">
                   <v-btn icon v-bind="attrs" v-on="on">
                     <v-icon
@@ -270,7 +270,7 @@
 
             <template v-slot:[`header.surname_husband_affiliate`]="{ header }">
               {{ header.text }}<br />
-              <v-menu offset-y :close-on-content-click="false">
+              <v-menu offset-x :close-on-content-click="false">
                 <template v-slot:activator="{ on, attrs }">
                   <v-btn icon v-bind="attrs" v-on="on">
                     <v-icon
@@ -339,7 +339,7 @@
                 <span>Kardex</span>
               </v-tooltip>
               <v-menu
-                offset-y
+                offset-x
                 close-on-content-click
                 v-if="permissionSimpleSelected.includes('print-contract-loan') || 
                 (permissionSimpleSelected.includes('print-payment-plan') && item.state_loan == 'Vigente') || 
