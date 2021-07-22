@@ -1245,7 +1245,8 @@ class Loan extends Model
                 $borrower->birth_date = $lender->birth_date;
                 $borrower->degree = $lender->degree;
                 $borrower->category = $lender->category;
-                $borrower ->type_initials = "T-".$lender->initials;
+                $borrower->type_initials = "T-".$lender->initials;
+                $borrower->title = $lender->title;
             }
             if($lender->pivot->type == 'spouses'){
                 $borrower->id = $lender->spouse->id;
@@ -1264,7 +1265,8 @@ class Loan extends Model
                 $borrower->birth_date = $lender->spouse->birth_date;
                 $borrower->degree = null;
                 $borrower->category = null;
-                $borrower ->type_initials = "T-".$lender->spouse->initials;
+                $borrower->type_initials = "T-".$lender->spouse->initials;
+                $borrower->title = null;
             }
             $borrower->account_number = $lender->account_number;
             $borrower->financial_entity = $lender->financial_entity;
@@ -1302,7 +1304,8 @@ class Loan extends Model
                 $titular_guarantor->birth_date = $guarantor->birth_date;
                 $titular_guarantor->degree = $guarantor->degree;
                 $titular_guarantor->category = $guarantor->category;
-                $titular_guarantor ->type_initials = "G-".$guarantor->initials;
+                $titular_guarantor->type_initials = "G-".$guarantor->initials;
+                $titular_guarantor->title = $guarantor->title;
             }
             if($guarantor->pivot->type == "spouses"){
                 $titular_guarantor->id = $guarantor->spouse->id;
@@ -1321,7 +1324,8 @@ class Loan extends Model
                 $titular_guarantor->birth_date = $guarantor->spouse->birth_date;
                 $titular_guarantor->degree = null;
                 $titular_guarantor->category = null;
-                $titular_guarantor ->type_initials = "G-".$guarantor->spouse->initials;
+                $titular_guarantor->type_initials = "G-".$guarantor->spouse->initials;
+                $titular_guarantor->title = null;
             }
             $titular_guarantor->account_number = $guarantor->account_number;
             $titular_guarantor->financial_entity = $guarantor->financial_entity;
