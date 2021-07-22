@@ -19,17 +19,11 @@
     <template v-slot:[`item.data-table-select`]="{ isSelected, select }">
       <v-simple-checkbox color="success" :value="isSelected" @input="select($event)"></v-simple-checkbox>
     </template>
-    <template v-slot:[`item.lenders[0].identity_card`]="{ item }">
-      {{ item.lenders[0] ? item.lenders[0].identity_card  : ''}}
+    <template v-slot:[`item.borrower[0].identity_card`]="{ item }">
+      {{ item.borrower[0] ? item.borrower[0].identity_card  : ''}}
     </template>
-    <template v-slot:[`item.lenders`]="{ item }">
-      {{ item.lenders[0] ? $options.filters.fullName(item.lenders[0], true) : '' }}
-    </template>
-    <template v-slot:[`item.lenders[0].spouse.identity_card`]="{ item }">
-      {{ item.lenders[0].spouse ? item.lenders[0].spouse.identity_card : ''}}
-    </template>
-    <template v-slot:[`item.lenders[0].spouse`]="{ item }">
-      {{ item.lenders[0].spouse ? $options.filters.fullName(item.lenders[0].spouse, true) : '' }}
+    <template v-slot:[`item.borrower`]="{ item }">
+      {{ item.borrower[0] ? $options.filters.fullName(item.borrower[0], true) : '' }}
     </template>
     <template v-slot:[`item.role_id`]="{ item }">
       {{ $store.getters.roles.find(o => o.id == item.role_id).display_name }}
@@ -185,26 +179,14 @@ export default {
         align: 'center',
         sortable: true
       }, {
-        text: 'CI Afiliado',
-        value: 'lenders[0].identity_card',
+        text: 'CI',
+        value: 'borrower[0].identity_card',
         class: ['normal', 'white--text'],
         align: 'center',
         sortable: true
       }, {
-        text: 'Nombre Afiliado',
-        value: 'lenders',
-        class: ['normal', 'white--text'],
-        align: 'center',
-        sortable: true
-      }, {
-        text: 'CI Conyugue',
-        value: 'lenders[0].spouse.identity_card',
-        class: ['normal', 'white--text'],
-        align: 'center',
-        sortable: true
-      }, {
-        text: 'Nombre Conyugue',
-        value: 'lenders[0].spouse',
+        text: 'Nombre',
+        value: 'borrower',
         class: ['normal', 'white--text'],
         align: 'center',
         sortable: true
