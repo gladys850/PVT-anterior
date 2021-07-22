@@ -1245,6 +1245,7 @@ class Loan extends Model
                 $borrower->birth_date = $lender->birth_date;
                 $borrower->degree = $lender->degree;
                 $borrower->category = $lender->category;
+                $borrower ->type_initials = "T-".$lender->initials;
             }
             if($lender->pivot->type == 'spouses'){
                 $borrower->id = $lender->spouse->id;
@@ -1263,14 +1264,15 @@ class Loan extends Model
                 $borrower->birth_date = $lender->spouse->birth_date;
                 $borrower->degree = null;
                 $borrower->category = null;
+                $borrower ->type_initials = "T-".$lender->spouse->initials;
             }
             $borrower->account_number = $lender->account_number;
             $borrower->financial_entity = $lender->financial_entity;
             $borrower->type = $lender->pivot->type;
             $borrower->quota = $lender->pivot->quota_treat;
             $borrower->percentage_quota = $lender->pivot->percentage_quota;
-            $borrower->state = $lender->affiliate_state->affiliate_state_type;
-            $borrower ->type_initials = "T-".$lender->initials;
+            $borrower->state = $lender->affiliate_state;
+            $borrower->state_type = $lender->affiliate_state->affiliate_state_type;
             if($this->affiliate_id == $lender->pivot->affiliate_id)
                 $borrower->disbursable = true;
             else
@@ -1300,6 +1302,7 @@ class Loan extends Model
                 $titular_guarantor->birth_date = $guarantor->birth_date;
                 $titular_guarantor->degree = $guarantor->degree;
                 $titular_guarantor->category = $guarantor->category;
+                $titular_guarantor ->type_initials = "G-".$guarantor->initials;
             }
             if($guarantor->pivot->type == "spouses"){
                 $titular_guarantor->id = $guarantor->spouse->id;
@@ -1318,14 +1321,15 @@ class Loan extends Model
                 $titular_guarantor->birth_date = $guarantor->spouse->birth_date;
                 $titular_guarantor->degree = null;
                 $titular_guarantor->category = null;
+                $titular_guarantor ->type_initials = "G-".$guarantor->spouse->initials;
             }
             $titular_guarantor->account_number = $guarantor->account_number;
             $titular_guarantor->financial_entity = $guarantor->financial_entity;
             $titular_guarantor->type = $guarantor->pivot->type;
             $titular_guarantor->quota = $guarantor->pivot->quota_treat;
             $titular_guarantor->percentage_quota = $guarantor->pivot->percentage_quota;
-            $titular_guarantor->state = $guarantor->affiliate_state->affiliate_state_type;
-            $titular_guarantor ->type_initials = "G-".$guarantor->initials;
+            $titular_guarantor->state = $guarantor->affiliate_state;
+            $titular_guarantor->state_type = $guarantor->affiliate_state->affiliate_state_type;
             $data->push($titular_guarantor);
         }
         return $data;

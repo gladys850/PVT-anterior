@@ -260,13 +260,13 @@
     },
     "borrower": [
         {
-            "id": 21442,
-            "full_name": " JACINTO VINO JIMENEZ ",
-            "second_name": "JACINTO",
-            "last_name": "VINO",
-            "mothers_last_name": "JIMENEZ",
+            "id": 48089,
+            "full_name": " IVAN GEMIO URRUTIA ",
+            "second_name": "IVAN",
+            "last_name": "GEMIO",
+            "mothers_last_name": "URRUTIA",
             "surname_husband": null,
-            "identity_card": "3435152",
+            "identity_card": "2643378-1D",
             "city_identity_card": {
                 "id": 4,
                 "name": "LA PAZ",
@@ -294,16 +294,17 @@
                 "deleted_at": null
             },
             "registration": null,
-            "birth_date": "1969-09-11",
+            "birth_date": "1968-05-30",
             "degree": {
-                "id": 23,
-                "hierarchy_id": 4,
-                "code": "12",
-                "name": "SARGENTO PRIMERO",
-                "shortened": "SGTO. 1RO.",
-                "correlative": 17
+                "id": 7,
+                "hierarchy_id": 2,
+                "code": "02",
+                "name": "CORONEL",
+                "shortened": "CNL.",
+                "correlative": 7
             },
-            "account_number": 10000027219703,
+            "type_initials": "T-IGU",
+            "account_number": 10000004981218,
             "financial_entity": {
                 "id": 1,
                 "name": "BANCO UNION S.A.",
@@ -311,13 +312,21 @@
                 "updated_at": "2020-07-01T07:17:12.000000Z"
             },
             "type": "affiliates",
-            "quota": "1017.92",
+            "quota": "2628.39",
             "percentage_quota": null,
             "state": {
                 "id": 1,
+                "affiliate_state_type_id": 1,
+                "name": "Servicio",
+                "affiliate_state_type": {
+                    "id": 1,
+                    "name": "Activo"
+                }
+            },
+            "state_type": {
+                "id": 1,
                 "name": "Activo"
             },
-            "type_initials": "T-JVJ",
             "disbursable": true
         }
     ],
@@ -366,6 +375,7 @@
                 "shortened": "TTE.",
                 "correlative": 11
             },
+            "type_initials": "G-JJBA",
             "account_number": null,
             "financial_entity": null,
             "type": "affiliates",
@@ -373,9 +383,17 @@
             "percentage_quota": null,
             "state": {
                 "id": 1,
-                "name": "Activo"
+                "affiliate_state_type_id": 1,
+                "name": "Servicio",
+                "affiliate_state_type": {
+                    "id": 1,
+                    "name": "Activo"
+                }
             },
-            "type_initials": "G-JJBA"
+            "state_type": {
+                "id": 1,
+                "name": "Activo"
+            }
         },
         {
             "id": 48266,
@@ -421,6 +439,7 @@
                 "shortened": "TTE.",
                 "correlative": 11
             },
+            "type_initials": "G-VAQZ",
             "account_number": null,
             "financial_entity": null,
             "type": "affiliates",
@@ -428,9 +447,143 @@
             "percentage_quota": null,
             "state": {
                 "id": 1,
-                "name": "Activo"
+                "affiliate_state_type_id": 1,
+                "name": "Servicio",
+                "affiliate_state_type": {
+                    "id": 1,
+                    "name": "Activo"
+                }
             },
-            "type_initials": "G-VAQZ"
+            "state_type": {
+                "id": 1,
+                "name": "Activo"
+            }
+        }
+    ],
+    "parent_loan": null,
+    "payment_type": {
+        "id": 1,
+        "name": "Depósito Bancario",
+        "created_at": "2021-06-04T13:15:43.000000Z",
+        "updated_at": "2021-06-04T13:15:43.000000Z"
+    },
+    "state": {
+        "id": 3,
+        "name": "Vigente",
+        "description": "Préstamo en vigencia"
+    },
+    "lenders": [
+        {
+            "id": 48089,
+            "user_id": 1,
+            "affiliate_state_id": 1,
+            "city_identity_card_id": 4,
+            "city_birth_id": 4,
+            "degree_id": 7,
+            "unit_id": 4,
+            "category_id": 7,
+            "pension_entity_id": null,
+            "identity_card": "2643378-1D",
+            "registration": null,
+            "type": "Comando",
+            "last_name": "GEMIO",
+            "mothers_last_name": "URRUTIA",
+            "first_name": "IVAN",
+            "second_name": null,
+            "surname_husband": null,
+            "gender": "M",
+            "civil_status": "S",
+            "birth_date": "1968-05-30",
+            "date_entry": "1992-01-01",
+            "date_death": null,
+            "reason_death": null,
+            "date_derelict": null,
+            "reason_derelict": null,
+            "change_date": "2021-05-01",
+            "phone_number": null,
+            "cell_phone_number": "(680)-05017",
+            "afp": true,
+            "nua": 100214939,
+            "item": 1,
+            "created_at": "2017-06-03T00:21:29.000000Z",
+            "updated_at": "2021-06-08T21:43:10.000000Z",
+            "deleted_at": null,
+            "service_years": null,
+            "service_months": null,
+            "death_certificate_number": null,
+            "due_date": null,
+            "is_duedate_undefined": false,
+            "affiliate_registration_number": null,
+            "file_code": null,
+            "account_number": 10000004981218,
+            "financial_entity_id": 1,
+            "sigep_status": "ACTIVO",
+            "unit_police_description": "B. S. F. E.",
+            "type_initials": "T-IGU",
+            "pivot": {
+                "loan_id": 9,
+                "affiliate_id": 48089,
+                "payment_percentage": "100",
+                "guarantor": false,
+                "payable_liquid_calculated": "7927.5",
+                "bonus_calculated": "0",
+                "quota_previous": "0",
+                "quota_treat": "2628.39",
+                "indebtedness_calculated": "35.44",
+                "indebtedness_calculated_previous": "35.44",
+                "liquid_qualification_calculated": "7417.5",
+                "contributionable_ids": "[9043087]",
+                "contributionable_type": "contributions",
+                "type": "affiliates"
+            },
+            "city_identity_card": {
+                "id": 4,
+                "name": "LA PAZ",
+                "first_shortened": "LP",
+                "second_shortened": "LPZ",
+                "third_shortened": "LPZ",
+                "to_bank": "LP",
+                "latitude": -16.5086,
+                "longitude": -68.12653,
+                "company_address": "Zona Sopocachi - Av. 6 de Agosto N° 2354",
+                "phone_prefix": 2,
+                "company_phones": "\"[2442270,2445101,2443506]\"",
+                "company_cellphones": "\"[]\""
+            },
+            "unit": {
+                "id": 4,
+                "breakdown_id": 10,
+                "district": "LA PAZ",
+                "code": "20181",
+                "name": "SEGURIDAD FISICA ESTATAL",
+                "shortened": "S.F.E.",
+                "created_at": "2017-06-01T14:41:04.000000Z",
+                "updated_at": "2017-06-01T14:41:04.000000Z",
+                "deleted_at": null
+            },
+            "degree": {
+                "id": 7,
+                "hierarchy_id": 2,
+                "code": "02",
+                "name": "CORONEL",
+                "shortened": "CNL.",
+                "correlative": 7
+            },
+            "financial_entity": {
+                "id": 1,
+                "name": "BANCO UNION S.A.",
+                "created_at": "2020-07-01T07:17:12.000000Z",
+                "updated_at": "2020-07-01T07:17:12.000000Z"
+            },
+            "affiliate_state": {
+                "id": 1,
+                "affiliate_state_type_id": 1,
+                "name": "Servicio",
+                "affiliate_state_type": {
+                    "id": 1,
+                    "name": "Activo"
+                }
+            }
         }
     ]
 }
