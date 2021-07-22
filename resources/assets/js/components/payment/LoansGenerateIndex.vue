@@ -22,11 +22,10 @@
                           <v-row align="center" no-gutters>
                             <v-col cols="12" class="pa-0">
                               <v-layout row wrap>
-                                <v-col cols="12" md="12" class="py-0" v-if="tab == 0">
-                                  <CurrentLoans/>
-                                </v-col>
-                                <v-col cols="12" md="12" class="py-0" v-else>
-                                  <LiquidatedLoans/>
+                                <v-col cols="12" md="12" class="py-0">
+                                  <LoansGenerateList
+                                  :tab.sync ="tab"
+                                  />
                                 </v-col>
                               </v-layout>
                             </v-col>
@@ -45,27 +44,31 @@
   </v-container>
 </template>
 
-
 <script>
-import CurrentLoans from '@/components/payment/CurrentLoans'
-import LiquidatedLoans from '@/components/payment/LiquidatedLoans'
+import LoansGenerateList from '@/components/payment/LoansGenerateList'
 
 export default {
-  name: "payment-ImportExport",
+  name: "payment-LoanGenerateIndex",
     components: {
-    LiquidatedLoans,
-    CurrentLoans
+      LoansGenerateList
   },
-  data: () => ({
-    tab: null,
 
+  data: () => ({
+    tab: 0,
     actions: [
       { nameTab: "Préstamos vigentes", value: "0" },
       { nameTab: "Prestamos cancelados", value: "1" },
     ],
   }),
-  methods: {
 
+  watch: {
+    tab: function(newVal, oldVal){
+      if(newVal != oldVal){
+        this.tab = newVal
+      }
+    }
   },
+
+  methods: {},
 };
 </script>

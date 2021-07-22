@@ -9,9 +9,11 @@
                 fab
                 @click="download_loans()"
                 color="success"
-                class="mb-2"
                 v-on="on"
-                small
+                x-small
+                absolute
+                right
+                style="margin-right: 40px; margin-top: -50px"
               >
                 <v-icon> mdi-file-excel </v-icon>
               </v-btn>
@@ -24,9 +26,11 @@
                 fab
                 @click="clearAll()"
                 color="info"
-                class="mb-2"
                 v-on="on"
-                small
+                x-small
+                absolute
+                right
+                style="margin-right:0px; margin-top: -50px"
               >
                 <v-icon> mdi-broom </v-icon>
               </v-btn>
@@ -121,34 +125,6 @@
                 </div>
               </v-menu>
             </template>
-
-            <!--<template v-slot:[`header.registration_spouse`]="{ header }">
-              {{ header.text }}<br />
-              <v-menu offset-y :close-on-content-click="false">
-                <template v-slot:activator="{ on, attrs }">
-                  <v-btn icon v-bind="attrs" v-on="on">
-                    <v-icon
-                      small
-                      :color="
-                        searching.registration_spouse != '' ? 'red' : 'black'"
-                    >
-                      mdi-filter
-                    </v-icon>
-                  </v-btn>
-                </template>
-                <div>
-                  <v-text-field
-                    dense
-                    v-model="searching.registration_spouse"
-                    type="text"
-                    :label="'Buscar ' + header.text"
-                    @keydown.enter="search_loans()"
-                    hide-details
-                    single-line
-                  ></v-text-field>
-                </div>
-              </v-menu>
-            </template>-->
 
             <template v-slot:[`header.registration_affiliateF`]="{ header }">
               {{ header.text }}<br />
@@ -345,24 +321,7 @@
             </template>
 
             <template v-slot:[`item.actions`]="{ item }">
-              <!--<v-tooltip bottom>
-                <template v-slot:activator="{ on }">
-                  <v-btn
-                    icon
-                    small
-                    v-on="on"
-                    color="warning"
-                    :to="{
-                      name: 'flowAdd',
-                      params: { id: item.id_loan },
-                      query: { workTray: 'all' },
-                    }"
-                    ><v-icon>mdi-eye</v-icon>
-                  </v-btn>
-                </template>
-                <span>Ver trámite</span>
-              </v-tooltip>-->
-              <v-tooltip bottom v-if="item.state_loan == 'Vigente'">
+              <v-tooltip bottom>
                 <template v-slot:activator="{ on }">
                   <v-btn
                     icon
@@ -382,8 +341,11 @@
               <v-menu
                 offset-y
                 close-on-content-click
-                v-if="permissionSimpleSelected.includes('print-contract-loan') || (permissionSimpleSelected.includes('print-payment-plan') && 
-                item.state_loan == 'Vigente') || (permissionSimpleSelected.includes('print-payment-kardex-loan') && item.state_loan == 'Vigente')"
+                v-if="permissionSimpleSelected.includes('print-contract-loan') || 
+                (permissionSimpleSelected.includes('print-payment-plan') && item.state_loan == 'Vigente') || 
+                (permissionSimpleSelected.includes('print-payment-kardex-loan') && item.state_loan == 'Vigente') ||
+                (permissionSimpleSelected.includes('print-payment-plan') && item.state_loan == 'Liquidado') || 
+                (permissionSimpleSelected.includes('print-payment-kardex-loan') && item.state_loan == 'Liquidado')"
               >
                 <template v-slot:activator="{ on }">
                   <v-btn icon color="primary" dark v-on="on">
@@ -420,10 +382,15 @@
 
 <script>
 export default {
-  name: "list-loans-generate",
-
-  data() {
-    return {
+  name: "payment-loanGenerateList",
+  props: {
+    tab:{
+      type: Number,
+      require: true,
+      default: 0
+    }
+  },
+  data: () =>({
       searching: {
         code_loan: "",
         identity_card_affiliate: "",
@@ -439,7 +406,6 @@ export default {
         amount_approved_loan: "",
         state_type_affiliate: "",
         quota_loan: "",
-        state_loan: "",
         guarantor_loan_affiliate: "",
       },
       headers: [
@@ -471,8 +437,7 @@ export default {
         sortDesc: [false],
       },
       totalAffiliates: 0,
-    };
-  },
+  }),
   computed: {
     //permisos del selector global por rol
     permissionSimpleSelected() {
@@ -481,19 +446,23 @@ export default {
   },
   watch: {
     options: function (newVal, oldVal) {
-      if (
-        newVal.page != oldVal.page ||
+      if (newVal.page != oldVal.page ||
         newVal.itemsPerPage != oldVal.itemsPerPage ||
         newVal.sortBy != oldVal.sortBy ||
-        newVal.sortDesc != oldVal.sortDesc
-      ) {
+        newVal.sortDesc != oldVal.sortDesc) {
         this.search_loans();
       }
     },
+    tab: function(newVal, oldVal){
+      if(newVal!= oldVal){
+        this.search_loans()
+      }
+    }
   },
-  mounted() {
+  created() {
     this.search_loans();
     this.docsLoans();
+   
   },
   methods: {
     async search_loans() {
@@ -514,7 +483,7 @@ export default {
             amount_approved_loan: this.searching.amount_approved_loan,
             state_type_affiliate: this.searching.state_type_affiliate,
             quota_loan: this.searching.quota_loan,
-            state_loan: 'Vigente',
+            state_loan: this.tab == 0 ? 'Vigente' : 'Liquidado',
             guarantor_loan_affiliate: false,
             excel: false,
             page: this.options.page,
@@ -556,7 +525,7 @@ export default {
           amount_approved_loan: this.searching.amount_approved_loan,
           state_type_affiliate: this.searching.state_type_affiliate,
           quota_loan: this.searching.quota_loan,
-          state_loan: 'Vigente',
+          state_loan: this.tab == 0 ? 'Vigente' : 'Liquidado',
           guarantor_loan_affiliate: false,
           excel: true,
         },
@@ -590,7 +559,6 @@ export default {
       this.searching.amount_approved_loan = "",
       this.searching.state_type_affiliate = "",
       this.searching.quota_loan = "",
-      this.searching.state_loan = "",
       this.searching.guarantor_loan_affiliate = "",
       this.search_loans();
     },
