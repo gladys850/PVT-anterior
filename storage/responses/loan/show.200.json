@@ -261,26 +261,14 @@
     "borrower": [
         {
             "id": 48089,
-            "full_name": " IVAN GEMIO URRUTIA ",
-            "second_name": "IVAN",
+            "full_name": "IVAN GEMIO URRUTIA ",
+            "first_name": "IVAN",
+            "second_name": null,
             "last_name": "GEMIO",
             "mothers_last_name": "URRUTIA",
             "surname_husband": null,
             "identity_card": "2643378-1D",
-            "city_identity_card": {
-                "id": 4,
-                "name": "LA PAZ",
-                "first_shortened": "LP",
-                "second_shortened": "LPZ",
-                "third_shortened": "LPZ",
-                "to_bank": "LP",
-                "latitude": -16.5086,
-                "longitude": -68.12653,
-                "company_address": "Zona Sopocachi - Av. 6 de Agosto N° 2354",
-                "phone_prefix": 2,
-                "company_phones": "\"[2442270,2445101,2443506]\"",
-                "company_cellphones": "\"[]\""
-            },
+            "city_identity_card": "LP",
             "category": null,
             "unit": {
                 "id": 4,
@@ -317,42 +305,42 @@
             "state": {
                 "id": 1,
                 "affiliate_state_type_id": 1,
-                "name": "Servicio",
-                "affiliate_state_type": {
-                    "id": 1,
-                    "name": "Activo"
-                }
+                "name": "Servicio"
             },
-            "state_type": {
-                "id": 1,
-                "name": "Activo"
+            "address": {
+                "id": 16149,
+                "city_address_id": 4,
+                "zone": null,
+                "street": null,
+                "number_address": null,
+                "created_at": "2021-06-08T13:33:07.000000Z",
+                "updated_at": "2021-06-08T13:33:07.000000Z",
+                "latitude": 0,
+                "longitude": 0,
+                "description": "C. CANONIGO AYLLON N. 1021 Z. TEMBLADERANI",
+                "pivot": {
+                    "addressable_id": 48089,
+                    "address_id": 16149,
+                    "addressable_type": "affiliates",
+                    "validated": true,
+                    "created_at": "2021-06-08T13:33:48.000000Z",
+                    "updated_at": "2021-06-08T13:33:48.000000Z"
+                }
             },
             "disbursable": true
         }
     ],
-    "titularguarantors": [
+    "borrowerguarantors": [
         {
             "id": 43924,
-            "full_name": " JUAN BARROZO ALANDIA ",
-            "second_name": "JUAN",
+            "full_name": "JUAN JOSE BARROZO ALANDIA ",
+            "first_name": "JUAN",
+            "second_name": "JOSE",
             "last_name": "BARROZO",
             "mothers_last_name": "ALANDIA",
             "surname_husband": null,
             "identity_card": "7271508",
-            "city_identity_card": {
-                "id": 5,
-                "name": "ORURO",
-                "first_shortened": "OR",
-                "second_shortened": "ORU",
-                "third_shortened": "ORU",
-                "to_bank": "OR",
-                "latitude": -17.959307,
-                "longitude": -67.109766,
-                "company_address": "Av. 6 de Octubre entre oblitas y Belzu Zona Central Nº 4836",
-                "phone_prefix": 5,
-                "company_phones": "\"[246509]\"",
-                "company_cellphones": "\"[67200819]\""
-            },
+            "city_identity_card": "OR",
             "category": null,
             "unit": {
                 "id": 4,
@@ -384,39 +372,39 @@
             "state": {
                 "id": 1,
                 "affiliate_state_type_id": 1,
-                "name": "Servicio",
-                "affiliate_state_type": {
-                    "id": 1,
-                    "name": "Activo"
-                }
+                "name": "Servicio"
             },
-            "state_type": {
-                "id": 1,
-                "name": "Activo"
+            "address": {
+                "id": 16152,
+                "city_address_id": 4,
+                "zone": null,
+                "street": null,
+                "number_address": null,
+                "created_at": "2021-06-08T13:37:57.000000Z",
+                "updated_at": "2021-06-08T13:37:57.000000Z",
+                "latitude": 0,
+                "longitude": 0,
+                "description": "AV. BUSCH N. 1173 Z. MIRAFLORES",
+                "pivot": {
+                    "addressable_id": 43924,
+                    "address_id": 16152,
+                    "addressable_type": "affiliates",
+                    "validated": true,
+                    "created_at": "2021-06-08T13:38:23.000000Z",
+                    "updated_at": "2021-06-08T13:38:23.000000Z"
+                }
             }
         },
         {
             "id": 48266,
-            "full_name": " VANNIA QUELCA ZAMBRANA ",
-            "second_name": "VANNIA",
+            "full_name": "VANNIA AURORA QUELCA ZAMBRANA ",
+            "first_name": "VANNIA",
+            "second_name": "AURORA",
             "last_name": "QUELCA",
             "mothers_last_name": "ZAMBRANA",
             "surname_husband": null,
             "identity_card": "6133710",
-            "city_identity_card": {
-                "id": 4,
-                "name": "LA PAZ",
-                "first_shortened": "LP",
-                "second_shortened": "LPZ",
-                "third_shortened": "LPZ",
-                "to_bank": "LP",
-                "latitude": -16.5086,
-                "longitude": -68.12653,
-                "company_address": "Zona Sopocachi - Av. 6 de Agosto N° 2354",
-                "phone_prefix": 2,
-                "company_phones": "\"[2442270,2445101,2443506]\"",
-                "company_cellphones": "\"[]\""
-            },
+            "city_identity_card": "LP",
             "category": null,
             "unit": {
                 "id": 4,
@@ -448,25 +436,30 @@
             "state": {
                 "id": 1,
                 "affiliate_state_type_id": 1,
-                "name": "Servicio",
-                "affiliate_state_type": {
-                    "id": 1,
-                    "name": "Activo"
-                }
+                "name": "Servicio"
             },
-            "state_type": {
-                "id": 1,
-                "name": "Activo"
+            "address": {
+                "id": 16151,
+                "city_address_id": 4,
+                "zone": null,
+                "street": null,
+                "number_address": null,
+                "created_at": "2021-06-08T13:35:26.000000Z",
+                "updated_at": "2021-06-08T13:35:26.000000Z",
+                "latitude": 0,
+                "longitude": 0,
+                "description": "C. FRANCISCO VILLAREJOS N.177 ZONA VINO TINTO",
+                "pivot": {
+                    "addressable_id": 48266,
+                    "address_id": 16151,
+                    "addressable_type": "affiliates",
+                    "validated": true,
+                    "created_at": "2021-06-08T13:35:54.000000Z",
+                    "updated_at": "2021-06-08T13:35:54.000000Z"
+                }
             }
         }
     ],
-    "parent_loan": null,
-    "payment_type": {
-        "id": 1,
-        "name": "Depósito Bancario",
-        "created_at": "2021-06-04T13:15:43.000000Z",
-        "updated_at": "2021-06-04T13:15:43.000000Z"
-    },
     "state": {
         "id": 3,
         "name": "Vigente",
