@@ -32,65 +32,6 @@
     "estimated_quota": 754.78,
     "defaulted": false,
     "observed": false,
-    "lenders": [
-        {
-            "id": 47461,
-            "user_id": 1,
-            "affiliate_state_id": 1,
-            "city_identity_card_id": 2,
-            "city_birth_id": 3,
-            "degree_id": 26,
-            "unit_id": 38,
-            "category_id": 2,
-            "pension_entity_id": null,
-            "identity_card": "8794107",
-            "registration": null,
-            "type": "Comando",
-            "last_name": "TERRAZAS",
-            "mothers_last_name": "QUIROZ",
-            "first_name": "ABAVETH",
-            "second_name": "KATERINE",
-            "surname_husband": null,
-            "gender": "F",
-            "civil_status": "S",
-            "birth_date": "1991-11-25",
-            "date_entry": "2014-01-01",
-            "date_death": null,
-            "reason_death": null,
-            "date_derelict": null,
-            "reason_derelict": null,
-            "change_date": "2020-05-01",
-            "phone_number": null,
-            "cell_phone_number": "55454545",
-            "afp": true,
-            "nua": 42883787,
-            "item": 19723,
-            "created_at": "2017-06-03T00:00:29.000000Z",
-            "updated_at": "2020-09-29T12:18:38.000000Z",
-            "deleted_at": null,
-            "service_years": null,
-            "service_months": null,
-            "death_certificate_number": null,
-            "due_date": null,
-            "is_duedate_undefined": false,
-            "affiliate_registration_number": null,
-            "file_code": null,
-            "account_number": null,
-            "financial_entity_id": null,
-            "sigep_status": null,
-            "pivot": {
-                "loan_id": 13,
-                "affiliate_id": 47461,
-                "payment_percentage": 100,
-                "payable_liquid_calculated": "2000",
-                "bonus_calculated": "300",
-                "quota_previous": "514.6",
-                "quota_treat": "514.6",
-                "indebtedness_calculated": "34",
-                "liquid_qualification_calculated": "2000"
-            }
-        }, {}
-    ],
     "guarantors": [
         {
             "id": 22773,
@@ -316,6 +257,180 @@
         "name": "Cheque",
         "created_at": "2021-04-29T20:59:12.000000Z",
         "updated_at": "2021-04-29T20:59:12.000000Z"
-    }
-
+    },
+    "borrower": [
+        {
+            "id": 21442,
+            "full_name": " JACINTO VINO JIMENEZ ",
+            "second_name": "JACINTO",
+            "last_name": "VINO",
+            "mothers_last_name": "JIMENEZ",
+            "surname_husband": null,
+            "identity_card": "3435152",
+            "city_identity_card": {
+                "id": 4,
+                "name": "LA PAZ",
+                "first_shortened": "LP",
+                "second_shortened": "LPZ",
+                "third_shortened": "LPZ",
+                "to_bank": "LP",
+                "latitude": -16.5086,
+                "longitude": -68.12653,
+                "company_address": "Zona Sopocachi - Av. 6 de Agosto N° 2354",
+                "phone_prefix": 2,
+                "company_phones": "\"[2442270,2445101,2443506]\"",
+                "company_cellphones": "\"[]\""
+            },
+            "category": null,
+            "unit": {
+                "id": 4,
+                "breakdown_id": 10,
+                "district": "LA PAZ",
+                "code": "20181",
+                "name": "SEGURIDAD FISICA ESTATAL",
+                "shortened": "S.F.E.",
+                "created_at": "2017-06-01T14:41:04.000000Z",
+                "updated_at": "2017-06-01T14:41:04.000000Z",
+                "deleted_at": null
+            },
+            "registration": null,
+            "birth_date": "1969-09-11",
+            "degree": {
+                "id": 23,
+                "hierarchy_id": 4,
+                "code": "12",
+                "name": "SARGENTO PRIMERO",
+                "shortened": "SGTO. 1RO.",
+                "correlative": 17
+            },
+            "account_number": 10000027219703,
+            "financial_entity": {
+                "id": 1,
+                "name": "BANCO UNION S.A.",
+                "created_at": "2020-07-01T07:17:12.000000Z",
+                "updated_at": "2020-07-01T07:17:12.000000Z"
+            },
+            "type": "affiliates",
+            "quota": "1017.92",
+            "percentage_quota": null,
+            "state": {
+                "id": 1,
+                "name": "Activo"
+            },
+            "type_initials": "T-JVJ",
+            "disbursable": true
+        }
+    ],
+    "titularguarantors": [
+        {
+            "id": 43924,
+            "full_name": " JUAN BARROZO ALANDIA ",
+            "second_name": "JUAN",
+            "last_name": "BARROZO",
+            "mothers_last_name": "ALANDIA",
+            "surname_husband": null,
+            "identity_card": "7271508",
+            "city_identity_card": {
+                "id": 5,
+                "name": "ORURO",
+                "first_shortened": "OR",
+                "second_shortened": "ORU",
+                "third_shortened": "ORU",
+                "to_bank": "OR",
+                "latitude": -17.959307,
+                "longitude": -67.109766,
+                "company_address": "Av. 6 de Octubre entre oblitas y Belzu Zona Central Nº 4836",
+                "phone_prefix": 5,
+                "company_phones": "\"[246509]\"",
+                "company_cellphones": "\"[67200819]\""
+            },
+            "category": null,
+            "unit": {
+                "id": 4,
+                "breakdown_id": 10,
+                "district": "LA PAZ",
+                "code": "20181",
+                "name": "SEGURIDAD FISICA ESTATAL",
+                "shortened": "S.F.E.",
+                "created_at": "2017-06-01T14:41:04.000000Z",
+                "updated_at": "2017-06-01T14:41:04.000000Z",
+                "deleted_at": null
+            },
+            "registration": null,
+            "birth_date": "1989-03-09",
+            "degree": {
+                "id": 11,
+                "hierarchy_id": 2,
+                "code": "06",
+                "name": "TENIENTE",
+                "shortened": "TTE.",
+                "correlative": 11
+            },
+            "account_number": null,
+            "financial_entity": null,
+            "type": "affiliates",
+            "quota": "1314.2",
+            "percentage_quota": null,
+            "state": {
+                "id": 1,
+                "name": "Activo"
+            },
+            "type_initials": "G-JJBA"
+        },
+        {
+            "id": 48266,
+            "full_name": " VANNIA QUELCA ZAMBRANA ",
+            "second_name": "VANNIA",
+            "last_name": "QUELCA",
+            "mothers_last_name": "ZAMBRANA",
+            "surname_husband": null,
+            "identity_card": "6133710",
+            "city_identity_card": {
+                "id": 4,
+                "name": "LA PAZ",
+                "first_shortened": "LP",
+                "second_shortened": "LPZ",
+                "third_shortened": "LPZ",
+                "to_bank": "LP",
+                "latitude": -16.5086,
+                "longitude": -68.12653,
+                "company_address": "Zona Sopocachi - Av. 6 de Agosto N° 2354",
+                "phone_prefix": 2,
+                "company_phones": "\"[2442270,2445101,2443506]\"",
+                "company_cellphones": "\"[]\""
+            },
+            "category": null,
+            "unit": {
+                "id": 4,
+                "breakdown_id": 10,
+                "district": "LA PAZ",
+                "code": "20181",
+                "name": "SEGURIDAD FISICA ESTATAL",
+                "shortened": "S.F.E.",
+                "created_at": "2017-06-01T14:41:04.000000Z",
+                "updated_at": "2017-06-01T14:41:04.000000Z",
+                "deleted_at": null
+            },
+            "registration": null,
+            "birth_date": "1990-02-20",
+            "degree": {
+                "id": 11,
+                "hierarchy_id": 2,
+                "code": "06",
+                "name": "TENIENTE",
+                "shortened": "TTE.",
+                "correlative": 11
+            },
+            "account_number": null,
+            "financial_entity": null,
+            "type": "affiliates",
+            "quota": "1314.2",
+            "percentage_quota": null,
+            "state": {
+                "id": 1,
+                "name": "Activo"
+            },
+            "type_initials": "G-VAQZ"
+        }
+    ]
 }
