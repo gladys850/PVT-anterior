@@ -95,7 +95,7 @@
                 @if(!$is_dead)
                 <td class="data-row py-5">{{ $lender->affiliate_state->affiliate_state_type->name }}</td>
                 @else
-                <td class="data-row py-5">no corresponde</td>
+                <td class="data-row py-5">PASIVO</td>
                 @endif
                 @if($plural)
                 <td class="data-row py-5">{{ round(($loan->estimated_quota*$lender->pivot->payment_percentage)/100,2)}}</td>

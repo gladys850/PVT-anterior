@@ -62,7 +62,7 @@ class LoanController extends Controller
         $loan->defaulted = $loan->defaulted;
         $loan->observed = $loan->observed;
         $loan->last_payment_validated = $loan->last_payment_validated;
-        /*if ($with_lenders) {
+        if ($with_lenders) {
             foreach($loan->lenders as $lender)
             {
                 $lender->affiliate_state = $lender->affiliate_state;
@@ -75,7 +75,7 @@ class LoanController extends Controller
             }
             $loan->lenders = $loan->lenders;
             $loan->guarantors = $loan->guarantors;
-        }*/
+        }
         $loan->personal_references = $loan->personal_references;
         $loan->cosigners = $loan->cosigners;
         $loan->data_loan = $loan->data_loan;
@@ -844,6 +844,27 @@ class LoanController extends Controller
         return $object;
     }
 
+    public static function verify_loan_affiliates(Affiliate $affiliate, Loan $loan)
+    {
+        foreach ($loan->loan_affiliates as $loan_affiliate) {
+            if($loan_affiliate->pivot->affiliate_id == $affiliate->id){
+                if($loan_affiliate->pivot->type =="spouses"){
+                    $spouse = $loan_affiliate->spouse;
+                    $object = (object)[
+                        'type' => 'spouses',
+                        'disbursable' => $spouse
+                    ];
+                }else{
+                    $object = (object)[
+                        'type' => 'affiliates',
+                        'disbursable' => $affiliate
+                    ];
+                }
+            }
+        }
+        return $object;
+    }
+
     public function switch_states()
     {
         $user = User::whereUsername('admin')->first();
@@ -915,11 +936,11 @@ class LoanController extends Controller
         if($loan->parent_loan_id) $parent_loan = Loan::findOrFail($loan->parent_loan_id);
         $lenders = [];
         foreach ($loan->lenders as $lender) {
-            $lenders[] = self::verify_spouse_disbursable($lender);
+            $lenders[] = self::verify_loan_affiliates($lender,$loan);
         }
         $guarantors = [];
         foreach ($loan->guarantors as $guarantor) {
-            $guarantors[] = $guarantor;
+            $guarantors[] = self::verify_loan_affiliates($guarantor,$loan)->disbursable;
         }
         $employees = [
             ['position' => 'Director General Ejecutivo','name'=>'CNL. DESP. EDGAR JOSE CORTEZ ALBORNOZ','identity_card'=>'3351371 LP'],
@@ -979,9 +1000,9 @@ class LoanController extends Controller
     {
         $lend='';
         foreach ($loan->lenders as $lender) {
-            $lenders[] = self::verify_spouse_disbursable($lender);
+            $lenders[] = self::verify_loan_affiliates($lender,$loan)->disbursable;
         }
-        foreach ($loan->lenders as $lender) {
+        foreach ($lenders as $lender) {
             $lend=$lend.'*'.' ' . $lender->first_name .' '. $lender->second_name .' '. $lender->last_name.' '. $lender->mothers_last_name;
         }
         
@@ -1006,14 +1027,14 @@ class LoanController extends Controller
         $is_spouse = false;
         $file_title = implode('_', ['FORM','SOLICITUD','PRESTAMO', $loan->code,Carbon::now()->format('m/d')]);
         foreach ($loan->lenders as $lender) {
-            array_push($lenders, self::verify_spouse_disbursable($lender)->disbursable);
+            array_push($lenders, self::verify_loan_affiliates($lender,$loan)->disbursable);
             if($lender->dead) $is_dead = true;
         }
         $persons = collect([]);
         $loans = collect([]);
         foreach ($lenders as $lender) {
             //balance de otros prestamos
-            if(!$lender->affiliate_id){
+        if(!$lender->affiliate_id){
                 foreach($lender->current_loans as $current_loans){
                     $loans->push([
                         'code' => $current_loans->code,
@@ -1023,7 +1044,7 @@ class LoanController extends Controller
                 }
         }
         else{
-            foreach($lender->current_loans() as $current_loans){
+            foreach($lender->current_loans as $current_loans){
                 $loans->push([
                     'code' => $current_loans->code,
                     'balance' => $current_loans->balance,
@@ -1105,7 +1126,7 @@ class LoanController extends Controller
             $lenders = [];
             $is_dead = false;
             foreach ($loan->lenders as $lender) {
-                array_push($lenders, self::verify_spouse_disbursable($lender)->disbursable);
+                array_push($lenders, self::verify_loan_affiliates($lender,$loan)->disbursable);
                 //$lenders[] = self::verify_spouse_disbursable($lender)->disbursable;
                 if($lender->dead) $is_dead = true;
             }
@@ -1161,9 +1182,9 @@ class LoanController extends Controller
     if(!$parent_loan_id == null && !$parent_reason == null){
         $loan_type_title = $loan->parent_reason== "REFINANCIAMIENTO" ? "REFINANCIAMIENTO":"REPROGRAMACIÓN";
     }
-        $lenders = [];     
+        $lenders = [];
         foreach ($loan->lenders as $lender) {
-            $lenders[] = self::verify_spouse_disbursable($lender);         
+            $lenders[] = self::verify_loan_affiliates($lender,$loan);
         }
         $data = [
            'header' => [
@@ -1293,7 +1314,7 @@ class LoanController extends Controller
             $affiliate_state=$affiliate->affiliate_state->affiliate_state_type->name;
             $payment->state_affiliate = strtoupper($affiliate_state);
 
-            $payment->initial_affiliate = $affiliate->initials;//iniciales
+            $payment->initial_affiliate = LoanController::verify_loan_affiliates($affiliate,$loan)->disbursable->initials;//iniciales
 
             $payment->categorie_id = $request->input('categorie_id');
 
@@ -1536,7 +1557,7 @@ class LoanController extends Controller
             $procedure_modality = $loan->modality;
             $lenders = [];
             foreach ($loan->lenders as $lender) {
-                $lenders[] = self::verify_spouse_disbursable($lender)->disbursable;
+                $lenders[] = self::verify_loan_affiliates($lender,$loan)->disbursable;
             }
           $file_title = implode('_', ['KARDEX', $procedure_modality->shortened, $loan->code,Carbon::now()->format('m/d')]);
             $data = [

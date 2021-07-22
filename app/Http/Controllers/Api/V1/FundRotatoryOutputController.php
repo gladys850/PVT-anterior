@@ -161,7 +161,7 @@ class FundRotatoryOutputController extends Controller
         $loan = Loan::findOrFail($ouputs_fund_rotatorie->loan_id);   
         $affiliate = Affiliate::findOrFail($loan->disbursable_id);
         $lenders = [];
-        $lenders[] = LoanController::verify_spouse_disbursable($affiliate)->disbursable;
+        $lenders[] = LoanController::verify_loan_affiliates($affiliate,$loan)->disbursable;
         $persons = collect([]);  
         $persons->push([
             'id' => $affiliate->id,
@@ -199,9 +199,9 @@ class FundRotatoryOutputController extends Controller
             $loan = Loan::findOrFail($ouputs_fund_rotatorie->loan_id);
             $lend='';
             foreach ($loan->lenders as $lender) {
-                $lenders[] = LoanController::verify_spouse_disbursable($lender);
+                $lenders[] = LoanController::verify_loan_affiliates($lender,$loan)->disbursable;
             }
-            foreach ($loan->lenders as $lender) {
+            foreach ($lenders as $lender) {
                 $lend = $lend.'*'.' ' . $lender->first_name .' '. $lender->second_name .' '. $lender->last_name.' '. $lender->mothers_last_name;
             }
             
