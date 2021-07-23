@@ -1231,10 +1231,12 @@ class Loan extends Model
             $borrower = new Affiliate();
             if($lender->pivot->type == 'affiliates'){
                 $borrower = $lender;
+                $borrower->city_identity_card = $lender->city_identity_card;
                 $borrower->type_initials = "T-".$lender->initials;
             }
             if($lender->pivot->type == 'spouses'){
                 $borrower = $lender->spouse;
+                $borrower->city_identity_card = $lender->spouse->city_identity_card;
                 $borrower->type_initials = "T-".$lender->spouse->initials;
             }
             $borrower->account_number = $lender->account_number;
@@ -1259,10 +1261,12 @@ class Loan extends Model
             $titular_guarantor = new Affiliate();
             if($guarantor->pivot->type == "affiliates"){
                 $titular_guarantor = $guarantor;
+                $titular_guarantor = $guarantor->city_identity_card;
                 $titular_guarantor->type_initials = "G-".$guarantor->initials;
             }
             if($guarantor->pivot->type == "spouses"){
                 $titular_guarantor = $guarantor->spouse;
+                $titular_guarantor = $guarantor->spouse->city_identity_card;
                 $titular_guarantor->type_initials = "G-".$guarantor->spouse->initials;
             }
             $titular_guarantor->account_number = $guarantor->account_number;
