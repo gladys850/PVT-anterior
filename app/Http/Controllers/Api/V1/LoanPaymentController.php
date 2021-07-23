@@ -546,7 +546,7 @@ class LoanPaymentController extends Controller
         $is_dead = false;
         $quota_treat = 0;
         foreach ($loan->lenders as $lender) {
-            $lenders[] = LoanController::verify_spouse_disbursable($lender)->disbursable;
+            $lenders[] = LoanController::verify_loan_affiliates($lender,$loan)->disbursable;
             if($lender->dead) $is_dead = true;
         }
         $global_parameter=LoanGlobalParameter::latest()->first();
@@ -605,9 +605,9 @@ class LoanPaymentController extends Controller
     {
         $lend='';
         foreach ($loan->lenders as $lender) {
-            $lenders[] = LoanController::verify_spouse_disbursable($lender);
+            $lenders[] = LoanController::verify_loan_affiliates($lender,$loan)->disbursable;
         }
-        foreach ($loan->lenders as $lender) {
+        foreach ($lenders as $lender) {
             $lend=$lend.'*'.' ' . $lender->first_name .' '. $lender->second_name .' '. $lender->last_name.' '. $lender->mothers_last_name;
         }
         

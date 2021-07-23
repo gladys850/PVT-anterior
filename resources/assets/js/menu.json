@@ -23,7 +23,7 @@
     "permission": "show-loan",
     "params": {}
   }, {
-    "href": "listLoanGenerate",
+    "href": "loansGenerateIndex",
     "title": "Préstamos desembolsados",
     "icon": "mdi-view-list",
     "permission": "show-list-loans-generated",

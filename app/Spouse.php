@@ -82,23 +82,18 @@ class Spouse extends Model
     {
         return $this->belongsTo(City::class, 'city_birth_id', 'id');
     }
-    public function disbursements()
-    {
-        return $this->morphMany(Loan::class, 'disbursable');
-    }
     
     public function active_loans()
     {
-        return Loan::where('disbursable_id', $this->id)->where('disbursable_type', 'spouses')->whereIn('state_id', [1,3])->count();
+        return $this->affiliate->belongsToMany(Loan::class, 'loan_affiliates')->withPivot(['type'])->where('type', 'spouses')->whereGuarantor(false)->whereIn('state_id', [1,3])->count();
     }
     public function loans(){
-        return Loan::where('disbursable_id', $this->id)->where('disbursable_type', 'spouses')->whereIn('state_id', [1,3])->get();
+        return $this->affiliate->belongsToMany(Loan::class, 'loan_affiliates')->withPivot(['type'])->where('type', 'spouses')->whereGuarantor(false)->whereIn('state_id', [1,3])->orderBy('loans.created_at', 'desc');
     }
     public function current_loans()
     {
       $loan_state = LoanState::whereName('Vigente')->first();
-      return Loan::where('disbursable_id', $this->id)->where('disbursable_type', 'spouses')->where('state_id', $loan_state->id)->get();
-      //return $this->belongsToMany(Loan::class, 'loan_affiliates')->withPivot(['payment_percentage'])->whereGuarantor(false)->where('state_id', $loan_state->id)->orderBy('loans.created_at', 'desc');
+      return $this->affiliate->belongsToMany(Loan::class, 'loan_affiliates')->withPivot(['payment_percentage'])->whereGuarantor(false)->where('state_id', $loan_state->id)->orderBy('loans.created_at', 'desc');
     }
     public function guarantees(){
         return $this->affiliate();
@@ -159,4 +154,8 @@ class Spouse extends Model
         }
         return $loans;
        }
+
+       public function getInitialsAttribute(){
+        return (substr($this->first_name, 0, 1).substr($this->second_name, 0, 1).substr($this->last_name, 0, 1).substr($this->mothers_last_name, 0, 1).substr($this->surname_husband, 0, 1));
+      }
 }

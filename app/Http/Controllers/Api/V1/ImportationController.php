@@ -21,6 +21,7 @@ use App\LoanPaymentCategorie;
 use App\User;
 use App\Auth;
 use App\LoanGlobalParameter;
+use App\Http\Controllers\Api\V1\LoanController;
 
 /** @group Importacion de datos C o S
 * Importacion de datos Comando  o Senasir
@@ -758,7 +759,7 @@ class ImportationController extends Controller
             $affiliate_state=$affiliate->affiliate_state->affiliate_state_type->name;
             $payment->state_affiliate = strtoupper($affiliate_state);
 
-            $payment->initial_affiliate = $affiliate->initials;//iniciales
+            $payment->initial_affiliate = LoanController::verify_loan_affiliates($affiliate,$loan)->disbursable->initials;//iniciales
 
             $payment->categorie_id = $request->categorie_id;
 
