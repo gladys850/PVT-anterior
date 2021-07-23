@@ -1838,7 +1838,8 @@ class LoanController extends Controller
                     'liquid_qualification_calculated' => (float)$lender->pivot->liquid_qualification_calculated,
                     'guarantor' => false,
                     'contributionable_type' => $lender->pivot->contributionable_type,
-                    'contributionable_ids' => $lender->pivot->contributionable_ids
+                    'contributionable_ids' => $lender->pivot->contributionable_ids,
+                    'type' => $lender->pivot->type
                     ];
                 $lender->loans()->where('id',$loan->id)->sync([$lenders_update]);
             }            
@@ -1867,7 +1868,8 @@ class LoanController extends Controller
                             'liquid_qualification_calculated' => (float)$guarantor->pivot->liquid_qualification_calculated,
                             'guarantor' => true,
                             'contributionable_type' => $guarantor->pivot->contributionable_type,
-                            'contributionable_ids' => $guarantor->pivot->contributionable_ids
+                            'contributionable_ids' => $guarantor->pivot->contributionable_ids,
+                            'type' => $lender->pivot->type
                         ];
                         $guarantor->loans()->where('id',$loan->id)->sync([$guarantor_update]);
                 } 
