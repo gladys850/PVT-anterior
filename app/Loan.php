@@ -1230,45 +1230,12 @@ class Loan extends Model
         {
             $borrower = new Affiliate();
             if($lender->pivot->type == 'affiliates'){
-                $borrower->id = $lender->id;
-                $borrower->full_name = $lender->full_name;
-                $borrower->first_name = $lender->first_name;
-                $borrower->second_name = $lender->second_name;
-                $borrower->last_name = $lender->last_name;
-                $borrower->mothers_last_name = $lender->mothers_last_name;
-                $borrower->surname_husband = $lender->surname_husband;
-                $borrower->identity_card = $lender->identity_card;
-                $borrower->city_identity_card = $lender->city_identity_card;
-                $borrower->identity_card_ext = $lender->identity_card_ext;
-                $borrower->category = $lender->category;
-                $borrower->unit = $lender->unit;
-                $borrower->registration = $lender->registration;
-                $borrower->birth_date = $lender->birth_date;
-                $borrower->degree = $lender->degree;
-                $borrower->category = $lender->category;
+                $borrower = $lender;
                 $borrower->type_initials = "T-".$lender->initials;
-                $borrower->title = $lender->title;
             }
             if($lender->pivot->type == 'spouses'){
-                $borrower->id = $lender->spouse->id;
-                $borrower->full_name = $lender->spouse->full_name;
-                $borrower->first_name = $lender->spouse->first_name;
-                $borrower->second_name = $lender->spouse->second_name;
-                $borrower->last_name = $lender->spouse->last_name;
-                $borrower->mothers_last_name = $lender->spouse->mothers_last_name;
-                $borrower->surname_husband = $lender->spouse->surname_husband;
-                $borrower->identity_card = $lender->spouse->identity_card;
-                $borrower->city_identity_card = $lender->spouse->city_identity_card;
-                $borrower->identity_card_ext = $lender->spouse->identity_card_ext;
-                $borrower->quota = $lender->pivot->quota_treat;
-                $borrower->category = null;
-                $borrower->unit = null;
-                $borrower->registration = $lender->spouse->registration;
-                $borrower->birth_date = $lender->spouse->birth_date;
-                $borrower->degree = null;
-                $borrower->category = null;
+                $borrower = $lender->spouse;
                 $borrower->type_initials = "T-".$lender->spouse->initials;
-                $borrower->title = null;
             }
             $borrower->account_number = $lender->account_number;
             $borrower->financial_entity = $lender->financial_entity;
@@ -1291,45 +1258,12 @@ class Loan extends Model
         foreach($this->guarantors as $guarantor){
             $titular_guarantor = new Affiliate();
             if($guarantor->pivot->type == "affiliates"){
-                $titular_guarantor->id = $guarantor->id;
-                $titular_guarantor->full_name = $guarantor->full_name;
-                $titular_guarantor->first_name = $guarantor->first_name;
-                $titular_guarantor->second_name = $guarantor->second_name;
-                $titular_guarantor->last_name = $guarantor->last_name;
-                $titular_guarantor->mothers_last_name = $guarantor->mothers_last_name;
-                $titular_guarantor->surname_husband = $guarantor->surname_husband;
-                $titular_guarantor->identity_card = $guarantor->identity_card;
-                $titular_guarantor->city_identity_card = $guarantor->city_identity_card;
-                $titular_guarantor->identity_card_ext = $guarantor->identity_card_ext;
-                $titular_guarantor->category = $guarantor->category;
-                $titular_guarantor->unit = $guarantor->unit;
-                $titular_guarantor->registration = $guarantor->registration;
-                $titular_guarantor->birth_date = $guarantor->birth_date;
-                $titular_guarantor->degree = $guarantor->degree;
-                $titular_guarantor->category = $guarantor->category;
+                $titular_guarantor = $guarantor;
                 $titular_guarantor->type_initials = "G-".$guarantor->initials;
-                $titular_guarantor->title = $guarantor->title;
             }
             if($guarantor->pivot->type == "spouses"){
-                $titular_guarantor->id = $guarantor->spouse->id;
-                $titular_guarantor->full_name = $guarantor->spouse->full_name;
-                $titular_guarantor->first_name = $guarantor->spouse->first_name;
-                $titular_guarantor->second_name = $guarantor->spouse->second_name;
-                $titular_guarantor->last_name = $guarantor->spouse->last_name;
-                $titular_guarantor->mothers_last_name = $guarantor->spouse->mothers_last_name;
-                $titular_guarantor->surname_husband = $guarantor->spouse->surname_husband;
-                $titular_guarantor->identity_card = $guarantor->spouse->identity_card;
-                $titular_guarantor->city_identity_card = $guarantor->spouse->city_identity_card;
-                $titular_guarantor->identity_card_ext = $guarantor->spouse->identity_card_ext;
-                $titular_guarantor->quota = $guarantor->pivot->quota_treat;
-                $titular_guarantor->category = null;
-                $titular_guarantor->unit = null;
-                $titular_guarantor->registration = $guarantor->spouse->registration;
-                $titular_guarantor->birth_date = $guarantor->spouse->birth_date;
-                $titular_guarantor->degree = null;
-                $titular_guarantor->category = null;
+                $titular_guarantor = $guarantor->spouse;
                 $titular_guarantor->type_initials = "G-".$guarantor->spouse->initials;
-                $titular_guarantor->title = null;
             }
             $titular_guarantor->account_number = $guarantor->account_number;
             $titular_guarantor->financial_entity = $guarantor->financial_entity;

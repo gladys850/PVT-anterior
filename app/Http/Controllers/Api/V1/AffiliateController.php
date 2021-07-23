@@ -1005,11 +1005,12 @@ class AffiliateController extends Controller
 
     public function get_mixed_loans($id, $type){
         if($type){
-            $loans = Loan::where('disbursable_id', $id)->where('disbursable_type', 'affiliates')->get();
+            $loans = Loan::where('affiliate_id', $id)->get();
             $ci=Affiliate::whereId($id)->first()->identity_card;
         }
         else{
-            $loans = Loan::where('disbursable_id', $id)->where('disbursable_type', 'spouses')->get();
+            $loans = Affiliate::whereId($id)->first()->spouse->spouse_loans();
+            //$loans = Loan::where('disbursable_id', $id)->where('disbursable_type', 'spouses')->get();
             $ci=Spouse::whereId($id)->first()->identity_card;
         }
         $data = array();
@@ -1201,7 +1202,7 @@ class AffiliateController extends Controller
          ]);
          $message = array();
          $ci=$request->identity_card;
-         $affiliate = Affiliate::whereIdentity_card($ci)->first();
+         $affiliate = Affiliate::where('identity_card', $ci)->first();
          $state_affiliate=$affiliate->affiliate_state->affiliate_state_type->name;
          $state_affiliate_sub=$affiliate->affiliate_state->name;
          $evaluate=false;
