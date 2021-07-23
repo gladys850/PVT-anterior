@@ -90,6 +90,9 @@ class Spouse extends Model
     public function loans(){
         return $this->affiliate->belongsToMany(Loan::class, 'loan_affiliates')->withPivot(['type'])->where('type', 'spouses')->whereGuarantor(false)->whereIn('state_id', [1,3])->orderBy('loans.created_at', 'desc');
     }
+    public function spouse_loans(){
+        return $this->affiliate->belongsToMany(Loan::class, 'loan_affiliates')->withPivot(['type'])->where('type', 'spouses')->whereGuarantor(false)->orderBy('loans.created_at', 'desc');
+    }
     public function current_loans()
     {
       $loan_state = LoanState::whereName('Vigente')->first();
