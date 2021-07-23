@@ -15,7 +15,7 @@
                   {{ affiliate.identity_card }}
                 </h6>
                 <h6>
-                  <strong><b style="color:white"> {{Object.keys(spouse).length === 0 ? 'PRESTATARIO':'TITULAR' }}: </b></strong>
+                  <strong><b style="color:white"> {{borrower.type == 'affiliates' ? 'PRESTATARIO':'TITULAR' }}: </b></strong>
                   {{ $options.filters.fullName(affiliate, true) }}
                 </h6>
                 <h6><strong><b style="color:white">GRADO: </b></strong> {{ degree_name }}</h6>
@@ -25,15 +25,15 @@
           </v-col>
 
           <v-col cols="12" class="text-center py-0" style="margin-bottom:10px">
-            <div v-if="loan.disbursable_type == 'spouses'">
+            <div v-if="borrower.type == 'spouses'">
               <v-card class="py-0" color="#406b32" dark max-width="100%" max-height="1000"
               >
                 <v-card-text class="headline font-weight-bold">
                   <v-icon large left style="font-size: 50px;">
                     mdi-account-heart
                   </v-icon>
-                  <h6><strong><b style="color:white">PRESTATARIO:</b></strong> {{ $options.filters.fullName(spouse, true) }}</h6>
-                  <h6><strong><b style="color:white">C.I: </b></strong> {{ spouse.identity_card }}</h6>
+                  <h6><strong><b style="color:white">PRESTATARIO:</b></strong> {{ $options.filters.fullName(borrower, true)}}</h6>
+                  <h6><strong><b style="color:white">C.I: </b></strong> {{ borrower.affiliate.identity_card }}</h6>
                 </v-card-text>
               </v-card>
             </div>
@@ -97,6 +97,10 @@ export default {
   name: "flow-dashboard",
   props: {
     affiliate: {
+      type: Object,
+      required: true
+    },
+    borrower: {
       type: Object,
       required: true
     },

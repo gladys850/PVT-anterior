@@ -229,7 +229,7 @@ export default {
             type: res.data.attachment.type,
             base64: true
           })
-          this.$router.push({ name: 'flowAdd',  params: { id: this.$route.query.loan_id, workTray: 'received'}, query:{ redirectTab: 6 } })
+          this.$router.push({ name: 'flowAdd',  params: { id: this.$route.query.loan_id, workTray: 'received'}, query:{ redirectTab: 7 } })
           this.payment = res.data
         }
       }catch (e) {

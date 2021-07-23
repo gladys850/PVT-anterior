@@ -24,7 +24,7 @@
                     bottom
                     right
                     v-on="on"
-                    :to="{ name: 'flowAdd', params: { id: $route.query.loan_id ? $route.query.loan_id : loan_payment.loan_id }, query:{ redirectTab: 6 } }"
+                    :to="{ name: 'flowAdd', params: { id: $route.query.loan_id ? $route.query.loan_id : loan_payment.loan_id }, query:{ redirectTab: 7 } }"
                   >
                   <v-icon>mdi-arrow-left-bold-outline</v-icon>
                   </v-btn>

@@ -98,7 +98,11 @@
                 <v-card flat tile>
                   <v-card-text>
                     <v-col cols="12" class="mb-0">
-                      <HistoryPayments :affiliate.sync="affiliate" :loan="loan"  />
+                      <HistoryPayments 
+                        :affiliate.sync="affiliate"
+                        :borrower.sync ="borrower"
+                        :loan="loan"
+                       />
                     </v-col>
                   </v-card-text>
                 </v-card>
@@ -195,6 +199,10 @@ export default {
     affiliate: {
       type: Object,
       required: true,
+    },
+    borrower: {
+      type: Object,
+      required: true
     },
     loan: {
       type: Object,
