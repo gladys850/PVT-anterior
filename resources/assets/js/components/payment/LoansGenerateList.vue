@@ -331,7 +331,7 @@
                     :to="{
                       name: 'flowAdd',
                       params: { id: item.id_loan },
-                      query: { redirectTab: 6 },
+                      query: { redirectTab: 7 },
                     }"
                     ><v-icon>mdi-text-box-multiple</v-icon>
                   </v-btn>

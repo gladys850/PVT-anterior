@@ -1261,12 +1261,12 @@ class Loan extends Model
             $titular_guarantor = new Affiliate();
             if($guarantor->pivot->type == "affiliates"){
                 $titular_guarantor = $guarantor;
-                $titular_guarantor = $guarantor->city_identity_card;
+                $titular_guarantor->city_identity_card = $guarantor->city_identity_card;
                 $titular_guarantor->type_initials = "G-".$guarantor->initials;
             }
             if($guarantor->pivot->type == "spouses"){
                 $titular_guarantor = $guarantor->spouse;
-                $titular_guarantor = $guarantor->spouse->city_identity_card;
+                $titular_guarantor->city_identity_card = $guarantor->spouse->city_identity_card;
                 $titular_guarantor->type_initials = "G-".$guarantor->spouse->initials;
             }
             $titular_guarantor->account_number = $guarantor->account_number;

@@ -573,7 +573,7 @@
                   small
                   v-on="on"
                   color="teal lighten-3"
-                  :to="{ name: 'flowAdd', params: { id: item.id_loan }, query:{ redirectTab: 6 , workTray: 'all'}}"
+                  :to="{ name: 'flowAdd', params: { id: item.id_loan }, query:{ redirectTab: 7 , workTray: 'all'}}"
                 ><v-icon>mdi-folder-multiple</v-icon>
                 </v-btn>
               </template>
