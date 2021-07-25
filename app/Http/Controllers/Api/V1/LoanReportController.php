@@ -1217,26 +1217,33 @@ class LoanReportController extends Controller
       }
       if ($identity_card_affiliate != '') {
         array_push($conditions, array('affiliates.identity_card', 'ilike', "%{$identity_card_affiliate}%"));
+        array_push($conditions_or, array('spouses.identity_card', 'ilike', "%{$identity_card_affiliate}%"));//
       }
       if ($registration_affiliate != '') {
         array_push($conditions, array('affiliates.registration', 'ilike', "%{$registration_affiliate}%"));
+        array_push($conditions_or, array('spouses.registration', 'ilike', "%{$registration_affiliate}%"));//
       }
 
       if ($last_name_affiliate != '') {
         array_push($conditions, array('affiliates.last_name', 'ilike', "%{$last_name_affiliate}%"));
+        array_push($conditions_or, array('spouses.last_name', 'ilike', "%{$last_name_affiliate}%"));//
       }
       if ($mothers_last_name_affiliate != '') {
         array_push($conditions, array('affiliates.mothers_last_name', 'ilike', "%{$mothers_last_name_affiliate}%"));
+        array_push($conditions_or, array('spouses.mothers_last_name', 'ilike', "%{$mothers_last_name_affiliate}%"));//
       }
 
       if ($first_name_affiliate != '') {
         array_push($conditions, array('affiliates.first_name', 'ilike', "%{$first_name_affiliate}%"));//
+        array_push($conditions_or, array('spouses.first_name', 'ilike', "%{$first_name_affiliate}%"));//
       }
       if ($second_name_affiliate != '') {
         array_push($conditions, array('affiliates.second_name', 'ilike', "%{$second_name_affiliate}%"));
+        array_push($conditions_or, array('spouses.second_name', 'ilike', "%{$second_name_affiliate}%"));//
       }
       if ($surname_husband_affiliate != '') {
         array_push($conditions, array('affiliates.surname_husband', 'ilike', "%{$surname_husband_affiliate}%"));
+        array_push($conditions_or, array('spouses.surname_husband', 'ilike', "%{$surname_husband_affiliate}%"));//
       }
 
       if ($sub_modality_loan != '') {
@@ -1291,39 +1298,75 @@ class LoanReportController extends Controller
       if ($validated_loan != '') {
         array_push($conditions, array('loans.validated', 'ilike', "%{$validated_loan}%"));
       }
-      
+
+      array_push($conditions, array('loan_affiliates.guarantor', '=', false));
       if($excel==true){
 
        $list_loan = DB::table('loans')
-                ->join('procedure_modalities','loans.procedure_modality_id', '=', 'procedure_modalities.id')
-                ->join('procedure_types','procedure_modalities.procedure_type_id', '=', 'procedure_types.id')
-                ->join('loan_states','loans.state_id', '=', 'loan_states.id')
-                ->join('cities','loans.city_id', '=', 'cities.id')
-                ->join('loan_affiliates','loans.id', '=', 'loan_affiliates.loan_id')
-                ->join('affiliates','loan_affiliates.affiliate_id', '=', 'affiliates.id')
-                ->join('affiliate_states','affiliates.affiliate_state_id', '=', 'affiliate_states.id')
-                ->join('affiliate_state_types','affiliate_states.affiliate_state_type_id', '=', 'affiliate_state_types.id')
-                ->leftjoin('pension_entities','affiliates.pension_entity_id', '=', 'pension_entities.id')
-                ->leftjoin('users','loans.user_id', '=', 'users.id')
-                ->join('roles','loans.role_id', '=', 'roles.id')
-                ->whereNull('loans.deleted_at')
-                ->where($conditions)
-                //->orWhere($conditions_or)
-                ->select('loans.id as id_loan','loans.code as code_loan','affiliates.id as id_affiliate','affiliates.identity_card as identity_card_affiliate',
-                'affiliates.registration as registration_affiliate','affiliates.last_name as last_name_affiliate','affiliates.mothers_last_name as mothers_last_name_affiliate',
-                'affiliates.first_name as first_name_affiliate','affiliates.second_name as second_name_affiliate','affiliates.surname_husband as surname_husband_affiliate',
-                'procedure_modalities.name as sub_modality_loan','procedure_modalities.shortened as shortened_sub_modality_loan','procedure_types.second_name as modality_loan','procedure_types.name as name_modality_loan'
-                ,'loans.amount_approved as amount_approved_loan',
-                'affiliate_state_types.name as state_type_affiliate','affiliate_states.name as state_affiliate','loan_affiliates.quota_treat as quota_loan','loan_states.name as state_loan',
-                'loan_affiliates.guarantor as guarantor_loan_affiliate','pension_entities.name as pension_entity_affiliate',
-                'cities.name as citi_loan','users.username as user_loan','roles.display_name as name_role_loan','loans.loan_term as loan_term',
-                'loans.disbursement_date as disbursement_date_loan','loans.request_date as request_date_loan','loans.validated as validated_loan','loans.amount_approved')
-               //->where('affiliates.identity_card','LIKE'.'%'.$request->identity_card.'%')
-               ->distinct('loans.code')
-               ->orderBy('loans.code', $order_loan)
-               ->get();
+               ->join('procedure_modalities','loans.procedure_modality_id', '=', 'procedure_modalities.id')
+               ->join('procedure_types','procedure_modalities.procedure_type_id', '=', 'procedure_types.id')
+               ->join('loan_states','loans.state_id', '=', 'loan_states.id')
+               ->join('cities','loans.city_id', '=', 'cities.id')
+               ->join('loan_affiliates','loans.id', '=', 'loan_affiliates.loan_id')
+               ->join('affiliates','loan_affiliates.affiliate_id', '=', 'affiliates.id')
+               ->join('affiliate_states','affiliates.affiliate_state_id', '=', 'affiliate_states.id')
+               ->join('affiliate_state_types','affiliate_states.affiliate_state_type_id', '=', 'affiliate_state_types.id')
+               ->leftjoin('pension_entities','affiliates.pension_entity_id', '=', 'pension_entities.id')
+               ->leftjoin('users','loans.user_id', '=', 'users.id')
+               ->join('roles','loans.role_id', '=', 'roles.id')
+               ->whereNull('loans.deleted_at')
+               ->where('loan_affiliates.type','=','affiliates')
+               ->where($conditions)
+               //->orWhere($conditions_or)
+               ->select('loans.id as id_loan','loans.code as code_loan','affiliates.id as id_affiliate','affiliates.identity_card as identity_card_affiliate',
+               'affiliates.registration as registration_affiliate','affiliates.last_name as last_name_affiliate','affiliates.mothers_last_name as mothers_last_name_affiliate',
+               'affiliates.first_name as first_name_affiliate','affiliates.second_name as second_name_affiliate','affiliates.surname_husband as surname_husband_affiliate',
+               'procedure_modalities.name as sub_modality_loan','procedure_modalities.shortened as shortened_sub_modality_loan','procedure_types.second_name as modality_loan','procedure_types.name as name_modality_loan'
+               ,'loans.amount_approved as amount_approved_loan',
+               'affiliate_state_types.name as state_type_affiliate','affiliate_states.name as state_affiliate','loan_affiliates.quota_treat as quota_loan','loan_states.name as state_loan',
+               'loan_affiliates.guarantor as guarantor_loan_affiliate','pension_entities.name as pension_entity_affiliate',
+               'cities.name as citi_loan','users.username as user_loan','roles.display_name as name_role_loan','loans.loan_term as loan_term',
+               'loans.disbursement_date as disbursement_date_loan','loans.request_date as request_date_loan','loans.validated as validated_loan','loans.amount_approved',
+               'loan_affiliates.type as type'
+              );
+               //->orderBy('loans.code', $order_loan)
+               //->distinct('loans.code');
+               //->paginate($pagination_rows);
 
-               foreach ($list_loan as $loan) {
+               $list_loan_spouses = DB::table('loans')
+               ->join('procedure_modalities','loans.procedure_modality_id', '=', 'procedure_modalities.id')
+               ->join('procedure_types','procedure_modalities.procedure_type_id', '=', 'procedure_types.id')
+               ->join('loan_states','loans.state_id', '=', 'loan_states.id')
+               ->join('cities','loans.city_id', '=', 'cities.id')
+               ->join('loan_affiliates','loans.id', '=', 'loan_affiliates.loan_id')
+               ->join('affiliates','loan_affiliates.affiliate_id', '=', 'affiliates.id')
+               ->join('spouses','affiliates.id', '=', 'spouses.affiliate_id')//
+               ->join('affiliate_states','affiliates.affiliate_state_id', '=', 'affiliate_states.id')
+               ->join('affiliate_state_types','affiliate_states.affiliate_state_type_id', '=', 'affiliate_state_types.id')
+               ->leftjoin('pension_entities','affiliates.pension_entity_id', '=', 'pension_entities.id')
+               ->leftjoin('users','loans.user_id', '=', 'users.id')
+               ->join('roles','loans.role_id', '=', 'roles.id')
+               ->whereNull('loans.deleted_at')
+               ->where('loan_affiliates.type','=','spouses')
+               ->where($conditions)
+               ->orWhere($conditions_or)
+               ->select('loans.id as id_loan','loans.code as code_loan','affiliates.id as id_affiliate','spouses.identity_card as identity_card_affiliate',
+               'affiliates.registration as registration_affiliate','spouses.last_name as last_name_affiliate','spouses.mothers_last_name as mothers_last_name_affiliate',
+               'spouses.first_name as first_name_affiliate','spouses.second_name as second_name_affiliate','spouses.surname_husband as surname_husband_affiliate',
+               'procedure_modalities.name as sub_modality_loan','procedure_modalities.shortened as shortened_sub_modality_loan','procedure_types.second_name as modality_loan','procedure_types.name as name_modality_loan'
+               ,'loans.amount_approved as amount_approved_loan',
+               'affiliate_state_types.name as state_type_affiliate','affiliate_states.name as state_affiliate','loan_affiliates.quota_treat as quota_loan','loan_states.name as state_loan',
+               'loan_affiliates.guarantor as guarantor_loan_affiliate','pension_entities.name as pension_entity_affiliate',
+               'cities.name as citi_loan','users.username as user_loan','roles.display_name as name_role_loan','loans.loan_term as loan_term',
+               'loans.disbursement_date as disbursement_date_loan','loans.request_date as request_date_loan','loans.validated as validated_loan','loans.amount_approved',
+               'loan_affiliates.type as type'
+              )->union($list_loan)->get();
+               //->orderBy('loans.code', $order_loan)
+               //->distinct('loans.code')
+               //->paginate($pagination_rows);
+
+
+               foreach ($list_loan_spouses as $loan) {
                  $padron = Loan::where('id', $loan->id_loan)->first();
                  $loan->balance_loan=$padron->balance;
                }
@@ -1332,7 +1375,7 @@ class LoanReportController extends Controller
                    array("Dpto", "Área", "Usuario", "Id del préstamo", "Codigo", "ID afiliado", "Nro de carnet", "Matrícula", "Primer apellido","Segundo apellido","Primer nombre","Segundo nombre","Apellido casada","Sub modalidad", "Sub modalidad Corta",
                    "Modalidad","Monto del prestamo", "estado del affiliado","Tipo de estado del affiliado","Cuota del prestamo","Estado del préstamo","Es garante?","Entidad de pensión del afiliado",'Saldo préstamo','Fecha desembolso' )
                );
-               foreach ($list_loan as $row){
+               foreach ($list_loan_spouses as $row){
                    array_push($data, array(
                        $row->citi_loan,
                        $row->name_role_loan,
@@ -1378,6 +1421,7 @@ class LoanReportController extends Controller
                ->leftjoin('users','loans.user_id', '=', 'users.id')
                ->join('roles','loans.role_id', '=', 'roles.id')
                ->whereNull('loans.deleted_at')
+               ->where('loan_affiliates.type','=','affiliates')
                ->where($conditions)
                //->orWhere($conditions_or)
                ->select('loans.id as id_loan','loans.code as code_loan','affiliates.id as id_affiliate','affiliates.identity_card as identity_card_affiliate',
@@ -1388,17 +1432,52 @@ class LoanReportController extends Controller
                'affiliate_state_types.name as state_type_affiliate','affiliate_states.name as state_affiliate','loan_affiliates.quota_treat as quota_loan','loan_states.name as state_loan',
                'loan_affiliates.guarantor as guarantor_loan_affiliate','pension_entities.name as pension_entity_affiliate',
                'cities.name as citi_loan','users.username as user_loan','roles.display_name as name_role_loan','loans.loan_term as loan_term',
-               'loans.disbursement_date as disbursement_date_loan','loans.request_date as request_date_loan','loans.validated as validated_loan','loans.amount_approved')
-               ->orderBy('loans.code', $order_loan)
-               ->distinct('loans.code')
-               ->paginate($pagination_rows);
+               'loans.disbursement_date as disbursement_date_loan','loans.request_date as request_date_loan','loans.validated as validated_loan','loans.amount_approved',
+               'loan_affiliates.type as type'
+              );
+               //->orderBy('loans.code', $order_loan)
+               //->distinct('loans.code');
+               //->paginate($pagination_rows);
 
-              /* $list_loan->getCollection()->transform(function ($list_loan) {
-                 $padron = Loan::findOrFail($list_loan->id_loan);
-                 $list_loan->balance_loan=$padron->balance;
-                 return $list_loan;
+               $list_loan_spouses = DB::table('loans')
+               ->join('procedure_modalities','loans.procedure_modality_id', '=', 'procedure_modalities.id')
+               ->join('procedure_types','procedure_modalities.procedure_type_id', '=', 'procedure_types.id')
+               ->join('loan_states','loans.state_id', '=', 'loan_states.id')
+               ->join('cities','loans.city_id', '=', 'cities.id')
+               ->join('loan_affiliates','loans.id', '=', 'loan_affiliates.loan_id')
+               ->join('affiliates','loan_affiliates.affiliate_id', '=', 'affiliates.id')
+               ->join('spouses','affiliates.id', '=', 'spouses.affiliate_id')//
+               ->join('affiliate_states','affiliates.affiliate_state_id', '=', 'affiliate_states.id')
+               ->join('affiliate_state_types','affiliate_states.affiliate_state_type_id', '=', 'affiliate_state_types.id')
+               ->leftjoin('pension_entities','affiliates.pension_entity_id', '=', 'pension_entities.id')
+               ->leftjoin('users','loans.user_id', '=', 'users.id')
+               ->join('roles','loans.role_id', '=', 'roles.id')
+               ->whereNull('loans.deleted_at')
+               ->where('loan_affiliates.type','=','spouses')
+               ->where($conditions)
+               ->orWhere($conditions_or)
+               ->select('loans.id as id_loan','loans.code as code_loan','affiliates.id as id_affiliate','spouses.identity_card as identity_card_affiliate',
+               'affiliates.registration as registration_affiliate','spouses.last_name as last_name_affiliate','spouses.mothers_last_name as mothers_last_name_affiliate',
+               'spouses.first_name as first_name_affiliate','spouses.second_name as second_name_affiliate','spouses.surname_husband as surname_husband_affiliate',
+               'procedure_modalities.name as sub_modality_loan','procedure_modalities.shortened as shortened_sub_modality_loan','procedure_types.second_name as modality_loan','procedure_types.name as name_modality_loan'
+               ,'loans.amount_approved as amount_approved_loan',
+               'affiliate_state_types.name as state_type_affiliate','affiliate_states.name as state_affiliate','loan_affiliates.quota_treat as quota_loan','loan_states.name as state_loan',
+               'loan_affiliates.guarantor as guarantor_loan_affiliate','pension_entities.name as pension_entity_affiliate',
+               'cities.name as citi_loan','users.username as user_loan','roles.display_name as name_role_loan','loans.loan_term as loan_term',
+               'loans.disbursement_date as disbursement_date_loan','loans.request_date as request_date_loan','loans.validated as validated_loan','loans.amount_approved',
+               'loan_affiliates.type as type'
+              )->union($list_loan)
+               //->orderBy('loans.code', $order_loan)
+               //->distinct('loans.code')
+               ->paginate($pagination_rows);
+               //
+
+               /*$list_loan_spouses->getCollection()->transform(function ($list_loan_spouses) {
+                 $padron = Loan::findOrFail($list_loan_spouses->id_loan);
+                 $list_loan_spouses->balance_loan=$padron->balance;
+                 return $list_loan_spouses;
                });*/
-           return $list_loan;
+           return $list_loan_spouses;
       }
    }
 

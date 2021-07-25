@@ -47,13 +47,13 @@ class SpouseForm extends FormRequest
         ];
         switch ($this->method()) {
             case 'POST': {
-                foreach (array_slice($rules, 0, 7) as $key => $rule) {
+                foreach (array_slice($rules, 0, 8) as $key => $rule) {
                     $rules[$key] = implode('|', ['required', $rule]);
                 }
                 $rules['identity_card'] = implode('|', ['unique:spouses', $rules['identity_card']]);
                 return $rules;
             }
-              
+            
             case 'PUT':
             case 'PATCH':{
                 return $rules;
