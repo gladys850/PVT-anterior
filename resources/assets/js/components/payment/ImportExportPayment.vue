@@ -1,52 +1,50 @@
 <template>
   <v-container fluid>
-    <ValidationObserver>
-      <v-form>
-        <v-card flat>
-          <v-card-title class="pa-0 pb-3">
-            <v-toolbar dense color="tertiary" class="font-weight-regular pa-3">
-              <v-col cols="12" md="12">
-                <v-row>
-                  <v-col cols="12" md="8" class="py-0">
-                    <v-toolbar-title>GENERACIÓN DE PERIODOS </v-toolbar-title>
-                  </v-col>
-                  <v-col cols="12" md="2" class="py-0">
-                    <v-select
-                      dense
-                      :items="year"
-                      item-text="year"
-                      item-value="year"
-                      :loading="loading"
-                      label="Gestion"
-                      v-model="period_year"
-                      @change="Onchange()"
-                    ></v-select>
-                  </v-col>
-                  <v-col cols="12" md="2" class="py-0">
-                    <v-tooltip top>
-                      <template v-slot:activator="{ on }">
-                        <v-btn
-                          fab
-                          dark
-                          x-small
-                          :color="'success'"
-                          bottom
-                          right
-                          v-on="on"
-                          @click.stop="savePeriod()"
-                        >
-                          <v-icon>mdi-plus</v-icon>
-                        </v-btn>
-                      </template>
-                      <div>
-                        <span>Añadir Periodo</span>
-                      </div>
-                    </v-tooltip>
-                  </v-col>
-                </v-row>
+    <v-card flat>
+      <v-card-title class="pa-0 pb-3">
+        <v-toolbar dense color="tertiary" class="font-weight-regular pa-3">
+          <v-col cols="12" md="12">
+            <v-row>
+              <v-col cols="12" md="8" class="py-0">
+                <v-toolbar-title>GENERACIÓN DE PERIODOS </v-toolbar-title>
               </v-col>
-            </v-toolbar>
-          </v-card-title>
+              <v-col cols="12" md="2" class="py-0">
+                <v-select
+                  dense
+                  :items="year"
+                  item-text="year"
+                  item-value="year"
+                  :loading="loading"
+                  label="Gestion"
+                  v-model="period_year"
+                  @change="Onchange()"
+                ></v-select>
+              </v-col>
+              <v-col cols="12" md="2" class="py-0">
+                <v-tooltip top>
+                  <template v-slot:activator="{ on }">
+                    <v-btn
+                      fab
+                      dark
+                      x-small
+                      :color="'success'"
+                      bottom
+                      right
+                      v-on="on"
+                      @click.stop="savePeriod()"
+                    >
+                      <v-icon>mdi-plus</v-icon>
+                    </v-btn>
+                  </template>
+                  <div>
+                    <span>Añadir Periodo</span>
+                  </div>
+                </v-tooltip>
+              </v-col>
+            </v-row>
+          </v-col>
+        </v-toolbar>
+      </v-card-title>
           <template>
             <v-container fluid class="px-2 pt-0">
               <v-row justify="center" class="py-0">
@@ -618,8 +616,6 @@
             </v-dialog>
           </template>
         </v-card>
-      </v-form>
-    </ValidationObserver>
   </v-container>
 </template>
 <script>
@@ -627,78 +623,55 @@ export default {
   name: "payment-ImportExport",
   data: () => ({
     e1: 1,
-  
-     steps: 6,
-
- fav: true,
-      menu: false,
-      message: false,
-      hints: true,
-
-
-
-  bus: new Vue(),
-  importacion:false,
-  loading_importacion:false,
-  reporte_comando_loading:false,
-  reporte_senasir_loading:false,
-  validar_datos:false,
-  dialog: false,
-  dialog_confirm : false,
-  dialog_confirm_import:false,
-  aux_period:null,
-  title: null,
-  dialog1: false,
-  tab: null,
-  import_export: {
-    file: null,
-    state_affiliate: null,
-    cutoff_date: null,
-  },
-  meses: [ 'ENERO','FEBRERO','MARZO','ABRIL','MAYO','JUNIO','JULIO','AGOSTO','SEPTIEMBRE','OCTUBRE','NOVIEMBRE','DICIEMBRE'
-  ],
-  actions: [
-    { nameTab: "Exportación", value: "export" },
-    { nameTab: "Importación", value: "import" },
-  ],
-  state_affiliate: [
-    { name: "Activo - Comando", value: 'C' },
-    { name: "Pasivo - Senasir", value: 'S' },
-  ],
-  paymentsBatch: [],
+    steps: 6,
+    menu: false,
+    message: false,
+    importacion:false,
+    loading_importacion:false,
+    reporte_comando_loading:false,
+    reporte_senasir_loading:false,
+    validar_datos:false,
+    dialog: false,
+    dialog_confirm : false,
+    dialog_confirm_import:false,
+    aux_period:null,
+    title: null,
+    import_export: {
+      file: null,
+      state_affiliate: null,
+      cutoff_date: null,
+    },
+    meses: [ 'ENERO','FEBRERO','MARZO','ABRIL','MAYO','JUNIO','JULIO','AGOSTO','SEPTIEMBRE','OCTUBRE','NOVIEMBRE','DICIEMBRE'
+    ],
+    actions: [
+      { nameTab: "Exportación", value: "export" },
+      { nameTab: "Importación", value: "import" },
+    ],
+    state_affiliate: [
+      { name: "Activo - Comando", value: 'C' },
+      { name: "Pasivo - Senasir", value: 'S' },
+    ],
   datos: [],
-  import_payments: {
-    automatic: 0,
-    no_automatic: 0,
-  },
   period_year:null,
   mes:null,
   year:[],
   month:[],
-  visible: false,
   loading_rpb: false,
   loading_ipb: false,
-  aux:null,
   percentage:0
-
   }),
-    watch: {
+  watch: {
     steps (val) {
       if (this.e1 > val) {
         this.e1 = val
       }
     },
-    /*'loanTypeSelected.id': function(newVal, oldVal){
-      if(newVal!= oldVal)
-      this.loanTypeSelected.id = this.modalidad_refi_repro_remake
-      //alert ('steps' + this.loanTypeSelected.id)
-    },*/
   },
   beforeMount() {
     this.getYear();
   },
   methods: {
-      nextStep (n) {
+    nextStep (n) {
       if (n == this.steps) {
         this.e1 = 1
       }
@@ -714,7 +687,7 @@ export default {
         this.e1 = n + 1
       }
     },
-
+    //Metodo para limpiar los imputs
     clearInputs() {
       this.import_export.file = null
       this.loading_rpb =false
@@ -725,7 +698,7 @@ export default {
       this.import_export.reg_copy = 0
       this.import_export.reg_group = 0
     },
-
+    //Metodo para subir el archivo
     async uploadFilePayment() {
       const formData = new FormData();
       formData.append("file", this.import_export.file);
@@ -752,7 +725,7 @@ export default {
           console.log(e);
         });
     },
-
+    //Metodo para sacar el año
     async getYear() {
       try {
         this.loading = true;
@@ -765,12 +738,14 @@ export default {
         this.loading = false;
       }
     },
-      Onchange(){
+    //Metodo para sacar el periodo
+    Onchange(){
       if(this.period_year!=null)
       {
          this.getMonthYear()
       }
     },
+    //Metodo para la lista de los periodos
     async getMonthYear() {
       try {
          let res = await axios.get(`get_list_month`,{
@@ -786,6 +761,7 @@ export default {
         this.loading = false;
       }
     },
+    //Metodo para crear el periodo
     async savePeriod() {
       try {
          let res = await axios.post(`periods`);
@@ -806,6 +782,7 @@ export default {
         this.loading = false;
       }
     },
+    //Metodo para realizar el porcentaje la importacion de Comando
     async importacionComando(month, id){
       try {
         let res = await axios.get(`periods/${id}`)
@@ -847,6 +824,7 @@ export default {
         this.loading = false;
       }
     },
+    //Metodo para realizar el porcentaje la importacion de Senasir
     async importacionSenasir(month, id){
         try {
         let res = await axios.get(`periods/${id}`)
@@ -888,6 +866,7 @@ export default {
         this.loading = false;
       }
     },
+    //Metodo para realizar la validacion del archivo a importar
     async validateFilePayment(){
     try {
 
@@ -938,6 +917,7 @@ export default {
         this.loading = false;
       }
     },
+    //Metodo para realizar la importacion
     async importPayment(){
     try {
       this.loading_importacion = true
@@ -987,6 +967,7 @@ export default {
         this.loading = false;
       }
     },
+    //Metodo para reiniciar el proceso de importacion realizando el rollback
     async closePayment(){
         let res = await axios.get(`rollback_copy_groups_payments`,{
         params:{
@@ -1010,6 +991,7 @@ export default {
     {
       this.clearInputs()
     },
+    //Metodo para saacr el reporte de Comando y Senasir
     async reporteComandoSenasir(id, tipo){
     try {
           if(tipo=='C')
@@ -1056,6 +1038,7 @@ export default {
         this.loading = false;
       }
     },
+    //Metodo para sacar la solicitud de pago de comando
     async solicitudComando(tipo, id){
       try {
         const formData = new FormData();
@@ -1089,6 +1072,7 @@ export default {
         this.loading = false;
       }
     },
+    //Metodo para sacar la solicitud de pago de senasir
        async solicitudSenasir(tipo, id){
         try {
         const formData = new FormData();

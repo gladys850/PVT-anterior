@@ -9,8 +9,7 @@
             :step="1">Creación Amortización
           </v-stepper-step>
           <v-divider v-if="1 !== steps" :key="1" ></v-divider>
-
-         </template>
+        </template>
       </v-stepper-header>
       <v-stepper-items>
         <v-stepper-content :key="`${1}-content`" :step="1">
@@ -36,8 +35,6 @@
             </v-container>
           </v-card>
         </v-stepper-content>
-     
-     
       </v-stepper-items>
     </v-stepper>
   </div>
@@ -81,8 +78,6 @@ export default {
       voucher_date:new Date().toISOString().substr(0, 10),
       pago_total: null,
       voucher:'REGISTRO MANUAL'
-  
-      
     },
      garantes:{
       lenders:[]
@@ -111,17 +106,8 @@ export default {
       }
     },
   },
-  mounted() {
-  /*  if(this.$route.params.hash == 'edit')
-    {
-      this.getLoanPayment(this.$route.query.loan_payment)
-    }
-     if(this.$route.params.hash == 'view')
-    {
-      this.getLoanPayment(this.$route.query.loan_payment)
-    }*/
-  },
   methods: {
+    //Metodo que envia al listado
     atras(){
        try {
         this.loading = true
@@ -144,7 +130,7 @@ export default {
       this.e1 = n -1
     },
     //Metodo para el creado del voucher
-      async savePaymentTreasury() {
+    async savePaymentTreasury() {
       try {
             let res1 = await axios.patch(`loan_payment/${this.$route.query.loan_payment}`,{
             validated:true
@@ -206,7 +192,6 @@ export default {
           this.status_click = true
           if(this.status_click==true)
           {
-
             let res = await axios.post(`loan/${this.$route.query.loan_id}/payment`,{
             estimated_date:this.data_payment.payment_date,
             estimated_quota:this.data_payment.pago_total,
@@ -237,7 +222,6 @@ export default {
       }finally {
         this.loading = false
       }
-
     },
      //Metodo para sacar datos del pago
      async getLoanPayment(id) {
@@ -245,8 +229,7 @@ export default {
         this.loading = true
         let res = await axios.get(`loan_payment/${id}`)
         this.loan_payment = res.data
-          this.garantes.lenders=this.loan_payment.affiliate
-    
+        this.garantes.lenders=this.loan_payment.affiliate
         this.data_payment.code=this.loan_payment.code
         this.data_payment.payment_date= this.loan_payment.estimated_date
         this.data_payment.pago_total=this.loan_payment.estimated_quota
@@ -277,25 +260,6 @@ export default {
         this.loading = false
       }
     },
-    //Metodo para editar el pago
-   /* async editLoanPayment(id) {
-      try {
-        this.loading = true
-        let res = await axios.patch(`loan_payment/${id}`,{
-        })
-        this.loan_payment = res.data
-        this.data_payment.code=this.loan_payment.code
-        this.data_payment.payment_date= this.loan_payment.estimated_date
-        this.data_payment.pago_total=this.loan_payment.estimated_quota
-        this.data_payment.affiliate_id =this.loan_payment.paid_by
-        this.data_payment.voucher=this.loan_payment.voucher
-        this.data_payment.pago  =this.loan_payment.amortization_type_id
-      } catch (e) {
-        console.log(e)
-      } finally {
-        this.loading = false
-      }
-    },*/
     //Metodo calculo de siguiente cuota
     async Calcular(id) {
       try {
@@ -315,6 +279,7 @@ export default {
         this.loading = false
       }
     },
+    //Validacion del segundo paso
     async validatedStepTwo()
     {
       try {
@@ -334,6 +299,7 @@ export default {
         this.loading = false
       }
     },
+    //Validacion del paso uno
     async validatedStepOne() {
       try {
            if(!this.isNew)

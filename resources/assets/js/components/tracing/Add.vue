@@ -6,7 +6,7 @@
           <Breadcrumbs />
         </v-toolbar-title>
         <v-spacer></v-spacer>
-        <template>
+          <template>
               <v-tooltip bottom >
                 <template v-slot:activator="{ on }">
                   <v-btn
@@ -257,6 +257,7 @@ export default {
 
 
 
+        console.log("este es el loan" )
         console.log("este es el loan" + this.loan)
         let res1 = await axios.get(`affiliate/${this.loan.lenders[0].id}`)
         this.affiliate = res1.data
@@ -320,7 +321,6 @@ export default {
         this.loading = true
         let res = await axios.get(`loan/${id}/observation`)
         this.observations = res.data
-        
         for (this.i = 0; this.i < this.observations.length; this.i++) {
            console.log("ww"+this.observations[this.i].user_id)
           let res1 = await axios.get(`user/${this.observations[this.i].user_id}`

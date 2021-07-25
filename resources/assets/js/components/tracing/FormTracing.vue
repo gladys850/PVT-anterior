@@ -1,6 +1,5 @@
 <template>
   <v-container fluid class="py-0 px-0">
-    <ValidationObserver ref="observer">
       <v-form>
         <!--BOTONES CUANDO SE REALICE LA EDICIÓN-->
         <v-row justify="center" >
@@ -63,26 +62,31 @@
                           <v-card flat>
                             <v-card-text>
                               <v-row>
-                                <v-col cols="12" md="4" v-show="!calificacion_edit" class="py-0">
-                                  <p style="color:teal"><b>MONTO SOLICITADO: </b> {{loan.amount_approved | moneyString}} Bs.</p>
+                                <v-col cols="12" md="12" class="py-0">
+                                  <p style="color:teal"><b>EVALUACION DEL PRESTATARIO</b></p>
+                                </v-col>
+                                <v-progress-linear></v-progress-linear>
+                                <br>
+                                <v-col cols="12" md="4" class="py-0">
+                                  <p><b>MONTO SOLICITADO: </b> {{loan.amount_approved | moneyString}} Bs.</p>
+                                </v-col>
+                                <v-col class="py-0">
+                                  <p><b>PLAZO EN MESES:</b>{{' '+loan.loan_term}}</p>
                                 </v-col>
                                 <v-col cols="12" md="4" class="py-0">
-                                  <p style="color:teal"><b>PROMEDIO LIQUIDO PAGABLE: </b> {{loan.lenders[0].pivot.payable_liquid_calculated | moneyString }} Bs.</p>
+                                  <p><b>PROMEDIO LIQUIDO PAGABLE: </b> {{loan.lenders[0].pivot.payable_liquid_calculated | moneyString }} Bs.</p>
                                 </v-col>
                                 <v-col cols="12" md="4" class="py-0" >
-                                  <p style="color:teal"><b>LIQUIDO PARA CALIFICACION: </b> {{loan.liquid_qualification_calculated | moneyString}} Bs.</p>
-                                </v-col>
-                                <v-col cols="12" md="4" v-show="!calificacion_edit" class="py-0">
-                                  <p style="color:teal"><b>PLAZO EN MESES:</b>{{' '+loan.loan_term}}</p>
+                                  <p><b>LIQUIDO PARA CALIFICACION: </b> {{loan.liquid_qualification_calculated | moneyString}} Bs.</p>
                                 </v-col>
                                 <v-col cols="12" md="4" class="py-0">
-                                  <p style="color:teal"><b>TOTAL BONOS:</b> {{loan.lenders[0].pivot.bonus_calculated | moneyString}}</p>
+                                  <p><b>TOTAL BONOS:</b> {{loan.lenders[0].pivot.bonus_calculated | moneyString}}</p>
                                 </v-col>
                                 <v-col cols="12" md="4" class="py-0">
-                                  <p style="color:teal"><b>INDICE DE ENDEUDAMIENTO:</b> {{loan.indebtedness_calculated|percentage }}% </p>
+                                  <p><b>INDICE DE ENDEUDAMIENTO:</b> {{loan.indebtedness_calculated|percentage }}% </p>
                                 </v-col>
                                 <v-col cols="12" md="4" class="py-0">
-                                  <p style="color:teal"><b>CALCULO DE CUOTA: </b> {{loan.estimated_quota | moneyString}} Bs.</p>
+                                  <p><b>CALCULO DE CUOTA: </b> {{loan.estimated_quota | moneyString}} Bs.</p>
                                 </v-col>
                                 <v-col cols="12" md="12" >
                                   <div v-for="procedure_type in procedure_types" :key="procedure_type.id">
@@ -143,11 +147,10 @@
                                             </v-row>
                                           </v-col>
                                         </li>
-                                        <br>
                                         <p  style="color:teal" v-if="loan.guarantors.length==0" ><b> NO TIENE GARANTES </b></p>
                                       </ul>
                                       <v-col cols="12" md="12" v-if="procedure_type.name == 'Préstamo Hipotecario' || procedure_type.name == 'Refinanciamiento Préstamo Hipotecario'">
-                                        <p style="color:teal"><b>GARANTIA HIPOTECARIA </b></p>
+                                       <p style="color:teal"><b>GARANTIA HIPOTECARIA </b></p>
                                         <v-row>
                                           <v-progress-linear></v-progress-linear><br>
                                           <v-col cols="12" md="4">
@@ -162,30 +165,15 @@
                                             ></v-select>
                                           </v-col>
                                           <v-col cols="12" md="4">
-                                            <v-text-field
-                                              :readonly="true"
-                                              :label="'UBICACION'"
-                                              dense
-                                              v-model="loan_properties.location"
-                                            ></v-text-field>
+                                            <p><b>UBICACION:</b> {{loan_properties.location}}</p>
                                           </v-col>
                                           <v-col cols="12" md="4">
-                                            <v-text-field
-                                              :readonly="true"
-                                              :label="'NUMERO DE LOTE'"
-                                              dense
-                                              v-model="loan_properties.land_lot_number"
-                                            ></v-text-field>
+                                            <p><b>NUMERO DE LOTE:</b> {{loan_properties.land_lot_number}}</p>
                                           </v-col>
-                                          <v-col cols="12" md="1">
-                                            <v-text-field
-                                              :readonly="true"
-                                              :label="'SUPERFICIE'"
-                                              dense
-                                              v-model="loan_properties.surface"
-                                            ></v-text-field>
+                                          <v-col cols="12" md="4">
+                                            <p><b>SUPERFICIE:</b> {{loan_properties.surface}}</p>
                                           </v-col>
-                                          <v-col cols="12" md="3">
+                                          <v-col cols="12" md="4">
                                             <v-select
                                               :readonly="true"
                                               dense
@@ -197,47 +185,22 @@
                                             ></v-select>
                                           </v-col>
                                           <v-col cols="12" md="4">
-                                            <v-text-field
-                                              :readonly="true"
-                                              :label="'CODIGO CATASTRAL'"
-                                              dense
-                                              v-model="loan_properties.cadastral_code"
-                                            ></v-text-field>
+                                            <p><b>CODIGO CATASTRAL:</b> {{loan_properties.cadastral_code}}</p>
                                           </v-col>
                                           <v-col cols="12" md="4">
-                                            <v-text-field
-                                              :readonly="true"
-                                              :label="'NRO MATRICULA'"
-                                              dense
-                                              v-model="loan_properties.registration_number"
-                                            ></v-text-field>
+                                            <p><b>NRO MATRICULA:</b> {{loan_properties.registration_number}}</p>
                                           </v-col>
                                           <v-col cols="12" md="4">
-                                            <v-text-field
-                                              :readonly="true"
-                                              :label="'NRO FOLIO REAL'"
-                                              dense
-                                              v-model="loan_properties.real_folio_number"
-                                            ></v-text-field>
+                                            <p><b>NRO FOLIO REAL:</b> {{loan_properties.real_folio_number}}</p>
                                           </v-col>
                                           <v-col cols="12" md="4">
                                             <p><b>VNR: </b>{{ loan_properties.net_realizable_value}} </p>
                                           </v-col>
-                                          <v-col cols="12" md="6">
-                                            <v-text-field
-                                              :readonly="true"
-                                              :label="'VALOR COMERCIAL'"
-                                              dense
-                                              v-model="loan_properties.commercial_value"
-                                            ></v-text-field>
+                                          <v-col cols="12" md="4">
+                                             <p><b>VALOR COMERCIAL: </b>{{loan_properties.commercial_value}} </p>
                                           </v-col>
-                                          <v-col cols="12" md="6">
-                                            <v-text-field
-                                              :readonly="true"
-                                              :label="'VALOR DE RESCATE HIPOTECARIO'"
-                                              dense
-                                              v-model="loan_properties.rescue_value"
-                                            ></v-text-field>
+                                          <v-col cols="12" md="4">
+                                            <p><b>VALOR DE RESCATE HIPOTECARIO: </b>{{loan_properties.rescue_value}} </p>
                                           </v-col>
                                         </v-row>
                                       </v-col>
@@ -253,7 +216,7 @@
                           <v-tab-item>
                             <v-card flat>
                               <v-card-text>
-                                <v-col cols="12" md="6" class="py-0" >
+                                <v-col cols="12" md="6" class="pa-0" >
                                   <p style="color:teal"><b>DATOS DEL CONTRATO</b></p>
                                 </v-col>
                                 <v-progress-linear></v-progress-linear>
@@ -267,13 +230,16 @@
                                   </v-row>
                                   <v-col cols="12" class="pa-0">
                                     <v-progress-linear></v-progress-linear>
+                                    <br>
                                       <p style="color:teal"> <b>DATOS DE DESEMBOLSO</b></p>
                                     <v-progress-linear></v-progress-linear>
                                     <v-row>
-                                      <v-col cols="12" md="6" >
+                                      <v-col cols="12" md="6" class="py-0">
+                                        <br>
                                         <p><b>TIPO DE DESEMBOLSO:</b> {{loan.payment_type.name}}</p>
                                       </v-col>
-                                      <v-col cols="12" md="6" v-show="loan.payment_type.name=='Depósito Bancario'">
+                                      <v-col cols="12" md="6" v-show="loan.payment_type.name=='Depósito Bancario'" class="py-0">
+                                        <br>
                                         <p><b>ENTIDAD FINANCIERA:</b>{{' '+cuenta}}</p>
                                       </v-col>
                                       <v-col cols="12" md="6" v-show="loan.payment_type.name=='Depósito Bancario'" class="py-0">
@@ -307,29 +273,11 @@
                                   <v-col cols="12" md="4" class="py-0">
                                     <p><b>Cuota de Préstamo Padre:</b> {{loan_refinancing.estimated_quota | money}}</p>
                                   </v-col>
-                                  <v-col cols="12" md="4" class="py-0"  v-show="!cobranzas_edit_sismu" v-if="loan_refinancing.type_sismu==true">
+                                  <v-col cols="12" md="4" class="py-0">
                                     <p><b>Fecha de Corte :</b> {{loan_refinancing.date_cut_refinancing ? loan_refinancing.date_cut_refinancing : 'Sin registar'}}</p>
                                   </v-col>
-                                  <v-col cols="12" md="4"  v-show="cobranzas_edit_sismu "  class="py-0">
-                                    <v-text-field
-                                      dense
-                                      v-model="loan_refinancing.date_cut_refinancing"
-                                      label="Fecha de Corte"
-                                      hint="Día/Mes/Año"
-                                      type="date"
-                                      :outlined="true"
-                                  ></v-text-field>
-                                  </v-col>
-                                  <v-col cols="12" md="4" class="py-0" v-show="!cobranzas_edit_sismu">
+                                  <v-col cols="12" md="4" class="py-0">
                                     <p><b>Saldo de Prestamo a Refinanciar:</b> {{loan_refinancing.balance | money}}</p>
-                                  </v-col>
-                                  <v-col cols="12" md="4" v-show="cobranzas_edit_sismu " class="py-0" >
-                                    <v-text-field
-                                      dense
-                                      label="Saldo de Prestamo a Refinanciar"
-                                      v-model="loan_refinancing.balance"
-                                    :outlined="true"
-                                    ></v-text-field>
                                   </v-col>
                                   <v-col cols="12" md="4" class="py-0" >
                                     <p class="success--text"><b>Monto Solicitado del Prestamo Nuevo:</b> {{loan_refinancing.amount_approved | money}}</p>
@@ -365,15 +313,16 @@
                             <v-card flat>
                               <v-card-text>
                                 <p style="color:teal" v-if="loan.personal_references.length>0"><b>CODEUDOR NO AFILIADO </b></p>
-                              <v-card flat tile>
-                                <v-card-text>
-                                <p v-if="loan.cosigners.length>0"><b>CODEUDOR NO AFILIADO</b></p>
-                                <v-progress-linear v-if="loan.cosigners.length>0"></v-progress-linear><br>
-                                <v-data-table
-                                  v-if="loan.cosigners.length>0"
-                                  :headers="headers"
-                                  :items="loan.cosigners"
-                                  dense
+                                <v-progress-linear></v-progress-linear>
+                                <v-card flat tile>
+                                  <v-card-text>
+                                  <p v-if="loan.cosigners.length>0"><b>CODEUDOR NO AFILIADO</b></p>
+                                  <v-progress-linear v-if="loan.cosigners.length>0"></v-progress-linear><br>
+                                  <v-data-table
+                                    v-if="loan.cosigners.length>0"
+                                    :headers="headers"
+                                    :items="loan.cosigners"
+                                    dense
                                   >
                                 </v-data-table>
                                 <p v-if="loan.cosigners.length==0" > <b>NO TIENE CODEUDORES</b></p>
@@ -418,7 +367,6 @@
           </v-row>
         <!--/v-card-->
       </v-form>
-    </ValidationObserver>
   </v-container>
 </template>
 <script>
@@ -456,33 +404,10 @@ export default {
     }*/
   },
    data: () => ({
-     civil_statuses: [
-      { name: "Soltero", value: "S" },
-      { name: "Casado", value: "C" },
-      { name: "Viudo", value: "V" },
-      { name: "Divorciado", value: "D" }
-    ],
     items_measurement: [
       { name: "Metros cuadrados", value: "METROS CUADRADOS" },
       { name: "Hectáreas", value: "HECTÁREAS" }
     ],
-    genders: [
-      {
-        name: "Femenino",
-        value: "F"
-      },
-      {
-        name: "Masculino",
-        value: "M"
-      }
-    ],
-      dialog: false,
-      dialog1: false,
-      calificacion_edit:false,
-      cobranzas_edit:false,
-      cobranzas_edit_sismu:false,
-      edit_return_date : false,
-      edit_delivery_date : false,
       editedIndex: -1,
       editedItem: {},
       defaultItem: {},
@@ -502,10 +427,6 @@ export default {
         { text: 'CELULAR', value: 'cell_phone_number' },
         { text: 'DIRECCION ', value: 'address' },
       ],
-    editable1: false,
-    editable: false,
-    reload: false,
-    payment_types:[],
     city: [],
     entity: [],
     entities:null,
@@ -536,8 +457,7 @@ export default {
         this.loading = true
         let res = await axios.get(`financial_entity`)
         this.entity = res.data
-        console.log("ciudad "+ this.entity)
-      } catch (e) {
+       } catch (e) {
         console.log(e)
       } finally {
         this.loading = false
@@ -548,7 +468,6 @@ export default {
         this.loading = true
         let res = await axios.get(`city`)
         this.city = res.data
-        console.log("ciudad "+ this.city)
       } catch (e) {
         console.log(e)
       } finally {
