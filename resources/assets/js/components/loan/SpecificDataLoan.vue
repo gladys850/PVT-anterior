@@ -489,7 +489,7 @@
                                 <v-card-text class="pa-0 mb-0">
                                   <div v-for="procedure_type in procedure_types" :key="procedure_type.id" class="pa-0 py-0" >
                                     <ul style="list-style: none" class="pa-0" v-if="procedure_type.name == 'Préstamo a Largo Plazo' || procedure_type.name == 'Préstamo a Corto Plazo'|| procedure_type.name == 'Refinanciamiento Préstamo a Corto Plazo' || procedure_type.name == 'Refinanciamiento Préstamo a Largo Plazo'">
-                                      <li v-for="guarantor in loan.borrowerguarantors" :key="guarantor.id">
+                                      <li v-for="guarantor in loan.guarantors" :key="guarantor.id">
                                         <v-col cols="12" md="12" class="pa-0">
                                           <v-row class="pa-2">
                                             <v-col cols="12" md="12" class="py-0">
@@ -774,7 +774,7 @@
                                           <v-btn
                                             color="success"
                                             text
-                                            @click="guardar()"
+                                            @click="savePersonReference()"
                                           >
                                             Guardar
                                           </v-btn>
@@ -924,7 +924,7 @@
                                           <v-btn
                                             color="success"
                                             text
-                                            @click="guardarCodeptor()"
+                                            @click="saveCodeptor()"
                                           >
                                             Guardar
                                           </v-btn>
@@ -1105,14 +1105,14 @@
                 <v-btn
                   color="red darken-1"
                   text
-                  @click="prueba2()"
+                  @click="closeRefinancingCut()"
                 >
                   Cancelar
                 </v-btn>
                 <v-btn
                   color="green darken-1"
                   text
-                  @click="prueba()"
+                  @click="saveRefinancingCut()"
                 >
                   Aceptar
                 </v-btn>
@@ -1145,10 +1145,6 @@ export default {
       type: Object,
       required: true
     },
-    /*validate:{
-      type: Object,
-      required: false
-    }*/
   },
    data: () => ({
      civil_statuses: [
@@ -1222,6 +1218,7 @@ export default {
       permissionSimpleSelected () {
         return this.$store.getters.permissionSimpleSelected
       },
+      //Metodo para obtener la entidad financiera
       cuenta() {
        for (this.i = 0; this.i< this.entity.length; this.i++) {
         if(this.loan.lenders[0].financial_entity_id==this.entity[this.i].id)
@@ -1238,7 +1235,8 @@ export default {
       },
     },
   methods:{
-    async guardar(){
+    //Metodo para guardar persona de Referencia
+    async savePersonReference(){
       let res = await axios.patch(`personal_reference/${this.editedItem.id}`, {
         first_name:this.editedItem.first_name,
         second_name:this.editedItem.second_name,
@@ -1250,8 +1248,9 @@ export default {
         this.toastr.success('Se registró correctamente.')
     this.close()
     this.$forceUpdate()
-},
-  async guardarCodeptor(){
+    },
+    //Metodo para guardar persona de referencia
+    async saveCodeptor(){
       let res = await axios.patch(`personal_reference/${this.editedItem1.id}`, {
         first_name:this.editedItem1.first_name,
         second_name:this.editedItem1.second_name,
@@ -1268,21 +1267,18 @@ export default {
         this.toastr.success('Se registró correctamente.')
     this.closeCodeptor()
     this.$forceUpdate()
-},
+    },
+    //Metodo para obtener los datos para el guardado del codeudor
       editItem1 (item) {
-        //this.editedIndex = this.loan.personal_references.indexOf(item)
         this.editedItem1 =  item
-        console.log('edit')
-        console.log(this.editedItem1)
         this.dialog1 = true
       },
+    //Metodo para obtener los datos para el guardado de persona de referencia
       editItem (item) {
-        //this.editedIndex = this.loan.personal_references.indexOf(item)
         this.editedItem =  item
-        console.log('edit')
-        console.log(this.editedItem)
         this.dialog = true
       },
+    //Metodo para cerrar el modal del guardado del codeudor
       closeCodeptor() {
         this.dialog1 = false
         this.$nextTick(() => {
@@ -1290,6 +1286,7 @@ export default {
           this.editedIndex = -1
         })
       },
+    //Metodo para cerrar el modal del guardado de persona de referencia
       close () {
         this.dialog = false
         this.$nextTick(() => {
@@ -1297,37 +1294,31 @@ export default {
           this.editedIndex = -1
         })
       },
-    desembolso () {
-      if(this.loan.payment_type_id=='1'){
-      this.loan.number_payment_type = this.loan.lenders[0].account_number;
-      }else{
-      this.loan.number_payment_type = null
-    }
-    },
+    //Metodo para obtener las entidades financieras
     async getEntity() {
       try {
         this.loading = true
         let res = await axios.get(`financial_entity`)
         this.entity = res.data
-        console.log("ciudad "+ this.entity)
       } catch (e) {
         console.log(e)
       } finally {
         this.loading = false
       }
     },
+    //Metodo para obtener las ciudades
     async getCity() {
       try {
         this.loading = true
         let res = await axios.get(`city`)
         this.city = res.data
-        console.log("ciudad "+ this.city)
-      } catch (e) {
+     } catch (e) {
         console.log(e)
       } finally {
         this.loading = false
       }
     },
+    //Metodo para obtener la extencion del ci
     identityCardExt(id){
       let ext
       if(id != null){
@@ -1341,6 +1332,7 @@ export default {
         return ''
       }
     },
+    //Metodo para limpiar los campos
     resetForm() {
       this.editable1 = false
       this.editable = false
@@ -1357,9 +1349,8 @@ export default {
       }else{
         this.loan_refinancing.balance= this.loan.balance_parent_loan_refinancing
       }
+      //Obtener y volver a los datos antiguos de la variable
       this.loan_refinancing.date_cut_refinancing= this.loan.date_cut_refinancing
-
-
       this.loan.amount_approved = this.loan.amount_approved_aux
       this.loan.lenders[0].pivot.payable_liquid_calculated = this.loan.payable_liquid_calculated_aux
       this.loan.liquid_qualification_calculated = this.loan.liquid_qualification_calculated_aux
@@ -1367,81 +1358,68 @@ export default {
       this.loan.lenders[0].pivot.bonus_calculated = this.loan.bonus_calculated_aux
       this.loan.indebtedness_calculated = this.loan.indebtedness_calculated_aux
       this.loan.estimated_quota = this.loan.estimated_quota_aux
-
-
       this.$nextTick(() => {
       this.reload = false
       })
     },
-     async simuladores() {
-      try {
-     //   if(this.loan.amount_approved_before >= this.loan.amount_approved)
-      //  {
-          let res = await axios.post(`simulator`, {
-            procedure_modality_id:this.loan.procedure_modality_id,
-            amount_requested: this.loan.amount_approved,
-            months_term:  this.loan.loan_term,
-            guarantor: false,
-            liquid_qualification_calculated_lender: 0,
-            liquid_calculated:[
-              {
-                affiliate_id: this.loan.lenders[0].id,
-                liquid_qualification_calculated: this.loan.lenders[0].pivot.liquid_qualification_calculated
-              }
-            ]
-        })
-        if(res.data.amount_requested  > res.data.amount_maximum_suggested )
-        {
-           this.loan.amount_approved = res.data.amount_maximum_suggested
-        }
-        else{
-           this.loan.amount_approved = res.data.amount_requested
-        }
-            this.loan.loan_term = res.data.months_term
-            this.loan.indebtedness_calculated = res.data.indebtedness_calculated_total
-            this.loan.estimated_quota = res.data.quota_calculated_estimated_total
-       // }
-      //  else{
-       //   this.loan.amount_approved = this.loan.amount_approved_before
-       //   this.loan.loan_term = this.loan.loan_term_before
-        //  this.toastr.error("El Monto Solicitado sobrepasa al monto anterior")
-       // }
+    //Metodo para el calculo del monto al editar
+    async simuladores() {
+    try {
+      let res = await axios.post(`simulator`, {
+        procedure_modality_id:this.loan.procedure_modality_id,
+        amount_requested: this.loan.amount_approved,
+        months_term:  this.loan.loan_term,
+        guarantor: false,
+        liquid_qualification_calculated_lender: 0,
+        liquid_calculated:[
+          {
+            affiliate_id: this.loan.lenders[0].id,
+            liquid_qualification_calculated: this.loan.lenders[0].pivot.liquid_qualification_calculated
+          }
+        ]
+    })
+      if(res.data.amount_requested  > res.data.amount_maximum_suggested )
+      {
+          this.loan.amount_approved = res.data.amount_maximum_suggested
+      }
+      else{
+          this.loan.amount_approved = res.data.amount_requested
+      }
+          this.loan.loan_term = res.data.months_term
+          this.loan.indebtedness_calculated = res.data.indebtedness_calculated_total
+          this.loan.estimated_quota = res.data.quota_calculated_estimated_total
       } catch (e) {
         console.log(e)
       } finally {
         this.loading = false
       }
     },
-      async editDateDelivery(){
-      try {
-        if (!this.edit_delivery_date) {
-          this.edit_delivery_date = true
-          console.log('entro al grabar por verdadero :)')
-        } else {
-          console.log('entro al grabar por falso :)')
-          //Edit data delivery
-            let res = await axios.patch(`loan/${this.loan.id}`, {
-            delivery_contract_date:this.loan.delivery_contract_date,
-           })
-            this.toastr.success('Se registró correctamente.')
-            this.edit_delivery_date = false
-         }
+    //Metodo para editar fecha de entrega de contrato
+    async editDateDelivery(){
+    try {
+      if (!this.edit_delivery_date) {
+        this.edit_delivery_date = true
+      } else {
+          let res = await axios.patch(`loan/${this.loan.id}`, {
+          delivery_contract_date:this.loan.delivery_contract_date,
+          })
+          this.toastr.success('Se registró correctamente.')
+          this.edit_delivery_date = false
+        }
       } catch (e) {
         console.log(e)
       } finally {
         this.loading = false
       }
     },
-      async editDateReturn(){
+    //Metodo para editar fecha de retorno de contrato
+    async editDateReturn(){
       try {
         if (!this.edit_return_date) {
           this.edit_return_date = true
-          console.log('entro al grabar por verdadero :)')
         } else {
-          console.log('entro al grabar por falso :)')
-          //Edit data return
             let res = await axios.patch(`loan/${this.loan.id}`, {
-              return_contract_date: this.loan.return_contract_date
+            return_contract_date: this.loan.return_contract_date
           })
             this.toastr.success('Se registró correctamente.')
             this.edit_return_date = false
@@ -1452,12 +1430,12 @@ export default {
         this.loading = false
       }
     },
-       async editDateDeliveryRegional(){
+    //Metodo para editar fecha de entrega de contrato regional
+    async editDateDeliveryRegional(){
       try {
         if (!this.edit_delivery_date_regional) {
           this.edit_delivery_date_regional = true
         } else {
-          //Edit data delivery
             let res = await axios.patch(`loan/${this.loan.id}`, {
             regional_delivery_contract_date:this.loan.regional_delivery_contract_date,
            })
@@ -1470,12 +1448,12 @@ export default {
         this.loading = false
       }
     },
-      async editDateReturnRegional(){
+    //Metodo para editar fecha de retorno de contrato regional
+    async editDateReturnRegional(){
       try {
         if (!this.edit_return_date_regional) {
           this.edit_return_date_regional = true
         } else {
-           //Edit data return
             let res = await axios.patch(`loan/${this.loan.id}`, {
               regional_return_contract_date: this.loan.regional_return_contract_date
           })
@@ -1488,22 +1466,18 @@ export default {
         this.loading = false
       }
     },
+    //Metodo para ingresar la fecha de desembolso
     async editLoan(){
       try {
         if (!this.editable) {
           this.editable = true
-          console.log('entro al grabar por verdadero :)')
-        } else {
-          console.log('entro al grabar por falso :)')
-          //Edit desembolso
+         } else {
             if(this.loan.disbursement_date=='Fecha invalida'){
               let res = await axios.patch(`loan/${this.loan.id}`, {
                num_accounting_voucher: this.loan.num_accounting_voucher
             })
           }else{
           let res = await axios.patch(`loan/${this.loan.id}`, {
-            // payment_type_id: this.loan.payment_type_id,
-            // number_payment_type: this.loan.number_payment_type,
             disbursement_date:this.loan.disbursement_date,
             date_signal:false,
           })
@@ -1517,27 +1491,26 @@ export default {
         this.loading = false
       }
     },
-   prueba2(){
+    //Cerrar modal de corte de refinanciamiento
+    closeRefinancingCut(){
       this.dialog = false
       this.resetForm()
-    }, 
-    async  prueba(){
-    try {      
-          let res = await axios.patch(`loan/${this.loan.id}/update_refinancing_balance`)
-          this.loan_refinancing.refinancing_balance= res.data.refinancing_balance
-          this.loan_refinancing.balance_parent_loan_refinancing= res.data.balance_parent_loan_refinancing
-          //  this.loan_refinancing.date_cut_refinancing= this.$moment(res.data.request_date).format("YYYY-MM-DD")
-
-          this.toastr.success('Se Actualizó Correctamente.')
-          this.cobranzas_edit = false
-        //    this.cobranzas_edit_sismu= false
-          this.dialog=false 
-      } catch (e) {
+    },
+    //Metodo para guardar el corte de refinanciamiento PVT
+    async  saveRefinancingCut(){
+    try {
+      let res = await axios.patch(`loan/${this.loan.id}/update_refinancing_balance`)
+      this.loan_refinancing.refinancing_balance= res.data.refinancing_balance
+      this.loan_refinancing.balance_parent_loan_refinancing= res.data.balance_parent_loan_refinancing
+      this.toastr.success('Se Actualizó Correctamente.')
+      this.cobranzas_edit = false
+      this.dialog=false
+    } catch (e) {
         this.toastr.error("Ocurrió un error en la impresión.")
         console.log(e)
       }
     },
- 
+    //Metodo para guardar el corte de refinanciamiento SISMU
     async editRefinanciamiento(){
       try {
         if (!this.cobranzas_edit) {
@@ -1545,12 +1518,10 @@ export default {
           if(this.loan_refinancing.type_sismu){
             this.cobranzas_edit_sismu= true
           }else{
-           this.dialog=true
+            this.dialog=true
             this.cobranzas_edit_sismu= false
-            
           }
         } else {
-         //Edit refinancing
             if(this.loan_refinancing.type_sismu==true){
                  let res1 = await axios.patch(`loan/${this.loan.id}/sismu`, {
                  data_loan:[{
@@ -1559,19 +1530,15 @@ export default {
                   }
                  ]
                })
-                let res = await axios.patch(`loan/${this.loan.id}/update_refinancing_balance`)
-                this.loan_refinancing.refinancing_balance= res.data.refinancing_balance
-                this.loan_refinancing.balance_parent_loan_refinancing= res.data.balance_parent_loan_refinancing
-
-                  this.toastr.success('Se Actualizó Correctamente.')
+            let res = await axios.patch(`loan/${this.loan.id}/update_refinancing_balance`)
+            this.loan_refinancing.refinancing_balance= res.data.refinancing_balance
+            this.loan_refinancing.balance_parent_loan_refinancing= res.data.balance_parent_loan_refinancing
+            this.toastr.success('Se Actualizó Correctamente.')
             this.cobranzas_edit = false
             this.cobranzas_edit_sismu= false
-      
-            }else{
-              this.cobranzas_edit_sismu=false
-     
-            }
-          
+          }else{
+            this.cobranzas_edit_sismu=false
+          }
         }
       } catch (e) {
         console.log(e)
@@ -1579,15 +1546,13 @@ export default {
         this.loading = false
       }
     },
-       async editSimulate(){
+    //Metodo para editar el monto y plazo
+    async editSimulate(){
       try {
         if (!this.calificacion_edit) {
           this.calificacion_edit = true
-          console.log('entro al grabar por verdadero :)')
         } else {
-          console.log('entro al grabar por falso :)')
-         //Edit monto y plazo
-            let res = await axios.patch(`edit_loan/${this.loan.id}/qualification`, {
+          let res = await axios.patch(`edit_loan/${this.loan.id}/qualification`, {
             amount_approved: this.loan.amount_approved,
             loan_term: this.loan.loan_term
           })
@@ -1605,12 +1570,12 @@ export default {
         this.loading = false
       }
     },
+    //Metodo para editar datos de la propiedad hipotecaria
       async editLoanHipotecaryProperti(){
       try {
         if (!this.editable1) {
           this.editable1 = true
          } else {
-           //Edita propiedad hipotecaria
           let res = await axios.patch(`loan_property/${this.loan_properties.id}`, {
             location:this.loan_properties.location,
             land_lot_number:this.loan_properties.land_lot_number,
@@ -1632,12 +1597,12 @@ export default {
         this.loading = false
       }
     },
-     async getPaymentTypes() {
+    //Metodo para obtener los tipos de pago
+    async getPaymentTypes() {
       try {
         this.loading = true
         let res = await axios.get(`payment_type`)
         this.payment_types = res.data
-        console.log(this.payment_types+'este es el tipo de desembolso');
       } catch (e) {
         console.log(e)
       } finally {

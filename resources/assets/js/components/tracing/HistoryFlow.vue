@@ -5,6 +5,7 @@
         <v-row justify="center" class="py-0">
           <v-col cols="12" class="py-0">
               <p style="color:teal"> <b>HISTORIAL DEL TRAMITE</b></p>
+              <v-progress-linear></v-progress-linear>
               <v-card flat tile>
                 <v-card-text>
                   <v-col cols="12" class="mb-0">
