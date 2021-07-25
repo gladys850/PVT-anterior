@@ -5,6 +5,7 @@
         <v-row justify="center" class="py-0">
           <v-col cols="12" class="py-0">
             <p style="color:teal"> <b>OBSERVACIONES DEL TRAMITE</b></p>
+              <v-progress-linear></v-progress-linear>
                   <v-card flat tile>
                   <v-card-text >
                     <v-col cols="12" class="pl-3">
@@ -16,7 +17,6 @@
                       >
                          <template v-slot:item="items">
                           <tr>
-                            
                             <td>{{items.item.user_name}}</td>
                             <td>{{observation_type.find(o => o.id == items.item.observation_type_id).name }}</td>
                             <td>{{items.item.message}}</td>
@@ -38,6 +38,12 @@
 
 export default {
   name: "observer-flow",
+    props: {
+    loan: {
+      type: Object,
+      required: true
+    },
+  },
   data: () => ({
     //valor: false,
     observation_type: [],
@@ -67,29 +73,21 @@ export default {
         align: "left",
         value: "date"
       },
-    
     ],
     observations:[],
-    record: [],
-    //record_payment: []
   }),
-  props: {
-    
-    loan: {
-      type: Object,
-      required: true
+  watch: {
+    options: function() {
+        this.getObservation(this.loan.id)
     },
- 
   },
 beforeMount(){
  this.getObservationType()
-   
 },
   mounted() {
      this.getObservation(this.loan.id)
   },
   methods: {
-  
     async getObservationType() {
       try {
         this.loading = true
@@ -114,7 +112,6 @@ beforeMount(){
           )
           this.observations[this.i].user_name = res1.data.username
         }
-        this.$forceUpdate()
       } catch (e) {
         console.log(e)
       } finally {
