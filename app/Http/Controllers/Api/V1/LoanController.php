@@ -1921,13 +1921,13 @@ class LoanController extends Controller
    * @queryParam id_loan Buscar ID del Préstamo. Example: 1
    * @queryParam code_loan  Buscar código del Préstamo. Example: PTMO000012-2021
    * @queryParam id_affiliate  Buscar por ID del affiliado. Example: 33121
-   * @queryParam identity_card_affiliate  Buscar por nro de CI del afiliado. Example: 10069775
-   * @queryParam registration_affiliate  Buscar por Matricula del afiliado. Example: 100697MDF
-   * @queryParam last_name_affiliate Buscar por primer apellido del afiliado. Example: RIVERA
-   * @queryParam mothers_last_name_affiliate Buscar por segundo apellido del afiliado. Example: ARTEAG
-   * @queryParam first_name_affiliate Buscar por primer Nombre del afiliado. Example: ABAD
-   * @queryParam second_name_affiliate Buscar por segundo Nombre del afiliado. Example: FAUST
-   * @queryParam surname_husband_affiliate Buscar por Apellido de casada Nombre del afiliado. Example: De LA CRUZ
+   * @queryParam identity_card_borrower  Buscar por nro de CI del afiliado. Example: 10069775
+   * @queryParam registration_borrower  Buscar por Matricula del afiliado. Example: 100697MDF
+   * @queryParam last_name_borrower Buscar por primer apellido del afiliado. Example: RIVERA
+   * @queryParam mothers_last_name_borrower Buscar por segundo apellido del afiliado. Example: ARTEAG
+   * @queryParam first_name_borrower Buscar por primer Nombre del afiliado. Example: ABAD
+   * @queryParam second_name_borrower Buscar por segundo Nombre del afiliado. Example: FAUST
+   * @queryParam surname_husband_borrower Buscar por Apellido de casada Nombre del afiliado. Example: De LA CRUZ
    * @queryParam sub_modality_loan Buscar por sub modalidad del préstamo. Example: Corto plazo sector activo
    * @queryParam modality_loan Buscar por Modalidad del prestamo. Example: Préstamo a corto plazo
    * @queryParam amount_approved_loan Buscar monto aprobado del afiliado. Example: 25000
@@ -1935,7 +1935,7 @@ class LoanController extends Controller
    * @queryParam state_affiliate Buscar por estado del affiliado. Example: Servicio
    * @queryParam quota_loan Buscar por la quota del prestamo. Example: 1500
    * @queryParam state_loan Buscar por el estado del prestamo. Example: En proceso
-   * @queryParam guarantor_loan_affiliate Buscar los garantes del préstamo. Example: false
+   * @queryParam guarantor_loan Buscar los garantes del préstamo. Example: false
    * @queryParam pension_entity_affiliate Buscar por la La pension entidad del afiliado. Example: SENASIR
    * @queryParam disbursement_date_loan Buscar por fecha de desembolso. Example: 2021
    * @authenticated
@@ -1985,7 +1985,7 @@ class LoanController extends Controller
     $state_loan = request('state_loan') ?? '';
  
     $quota_loan = request('quota_loan') ?? '';
-    $guarantor_loan_affiliate = request('guarantor_loan_affiliate') ?? '';
+    $guarantor_loan = request('guarantor_loan') ?? '';
     $pension_entity_affiliate = request('pension_entity_affiliate') ?? '';
 
     $disbursement_date_loan = request('disbursement_date_loan') ?? '';
@@ -1993,7 +1993,7 @@ class LoanController extends Controller
     $amount_approved_loan = request('amount_approved_loan') ?? '';
  
        if ($id_loan != '') {
-        array_push($conditions, array('view_loan_borrower.id', 'ilike', "%{$id_loan}%"));
+        array_push($conditions, array('view_loan_borrower.id_loan', 'ilike', "%{$id_loan}%"));
       }
  
       if ($code_loan != '') {
@@ -2001,7 +2001,7 @@ class LoanController extends Controller
       }
   
       if ($id_affiliate != '') {
-        array_push($conditions, array('view_loan_borrower.id', 'ilike', "%{$id_affiliate}%"));
+        array_push($conditions, array('view_loan_borrower.id_affiliate', 'ilike', "%{$id_affiliate}%"));
       }
 
       if ($identity_card_borrower != '') {
@@ -2035,37 +2035,37 @@ class LoanController extends Controller
         array_push($conditions, array('view_loan_borrower.full_name_borrower', 'ilike', "%{$full_name_borrower}%"));
       }
       if ($sub_modality_loan != '') {
-        array_push($conditions, array('view_loan_borrower.name', 'ilike', "%{$sub_modality_loan}%"));
+        array_push($conditions, array('view_loan_borrower.sub_modality_loan', 'ilike', "%{$sub_modality_loan}%"));
       }
 
       if ($modality_loan != '') {
-        array_push($conditions, array('view_loan_borrower.name', 'ilike', "%{$modality_loan}%"));
+        array_push($conditions, array('view_loan_borrower.modality_loan', 'ilike', "%{$modality_loan}%"));
       }
  
       if ($amount_approved_loan != '') {
-        array_push($conditions, array('view_loan_borrower.amount_approved', 'ilike', "%{$amount_approved_loan}%"));
+        array_push($conditions, array('view_loan_borrower.amount_approved_loan', 'ilike', "%{$amount_approved_loan}%"));
       }
       if ($state_type_affiliate != '') {
         array_push($conditions, array('view_loan_borrower.state_loan', 'ilike', "%{$state_type_affiliate}%"));
       }
       if ($state_affiliate != '') {
-        array_push($conditions, array('view_loan_borrower.name', 'ilike', "%{$state_affiliate}%"));
+        array_push($conditions, array('view_loan_borrower.state_affiliate', 'ilike', "%{$state_affiliate}%"));
       }
   
       if ($quota_loan != '') {
-        array_push($conditions, array('view_loan_borrower.quota_treat', 'ilike', "%{$quota_loan}%"));
+        array_push($conditions, array('view_loan_borrower.quota_loan', 'ilike', "%{$quota_loan}%"));
       }
       if ($state_loan != '') {
         array_push($conditions, array('view_loan_borrower.state_loan', 'ilike', "%{$state_loan}%"));
       }
-      if ($guarantor_loan_affiliate != '') {
-        array_push($conditions, array('view_loan_borrower.guarantor_loan', 'ilike', "%{$guarantor_loan_affiliate}%"));
+      if ($guarantor_loan != '') {
+        array_push($conditions, array('view_loan_borrower.guarantor_loan', 'ilike', "%{$guarantor_loan}%"));
       }
       if ($pension_entity_affiliate != '') {
         array_push($conditions, array('view_loan_borrower.pension_entity_affiliate', 'ilike', "%{$pension_entity_affiliate}%"));
       }
       if ($disbursement_date_loan != '') {
-        array_push($conditions, array('view_loan_borrower.disbursement_date', 'ilike', "%{$disbursement_date_loan}%"));
+        array_push($conditions, array('view_loan_borrower.disbursement_date_loan', 'ilike', "%{$disbursement_date_loan}%"));
       }
  
       if($excel==true){
