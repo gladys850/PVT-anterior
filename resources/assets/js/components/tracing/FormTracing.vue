@@ -14,7 +14,7 @@
                           <v-icon left>
                             mdi-account
                           </v-icon>
-                          EVALUACION DEL TITULAR
+                          EVALUACION DEL PRESTATARIO
                         </v-tab>
                         <v-tab>
                           <v-icon left>
@@ -26,7 +26,7 @@
                           <v-icon left>
                             mdi-access-point
                           </v-icon>
-                          DATOS DEL PRESTAMO
+                          INFORMACION DEL TRAMITE
                         </v-tab>
                         <v-tab>
                           <v-icon left>
@@ -50,7 +50,7 @@
                           <v-icon left>
                             mdi-alert
                           </v-icon>
-                          OBSERVACIONES
+                          OBSERVACIONES DEL TRAMITE
                         </v-tab>
                         <v-tab>
                           <v-icon left>
@@ -63,7 +63,7 @@
                             <v-card-text>
                               <v-row>
                                 <v-col cols="12" md="12" class="py-0">
-                                  <p style="color:teal"><b>EVALUACION DEL PRESTATARIO</b></p>
+                                  <p style="color:teal"><b>EVALUACION DEL PRESTATARIO PARA ACCEDER AL PRESTAMO</b></p>
                                 </v-col>
                                 <v-progress-linear></v-progress-linear>
                                 <br>
@@ -88,20 +88,6 @@
                                 <v-col cols="12" md="4" class="py-0">
                                   <p><b>CALCULO DE CUOTA: </b> {{loan.estimated_quota | moneyString}} Bs.</p>
                                 </v-col>
-                                <v-col cols="12" md="12" >
-                                  <div v-for="procedure_type in procedure_types" :key="procedure_type.id">
-                                    <div v-if="procedure_type.name === 'Préstamo Hipotecario'">
-                                      <v-progress-linear></v-progress-linear><br>
-                                      <p style="color:teal"><b>CODEUDOR</b></p>
-                                        <div v-for="(lenders,i) in loan.lenders" :key="i">
-                                          <div  v-if="(lenders,i)>0">
-                                            <p style="color:teal"><b>PROMEDIO LIQUIDO PAGABLE:</b> {{lenders.pivot.payable_liquid_calculated | money}}</p>
-                                            <p style="color:teal"><b>TOTAL BONOS:</b> {{lenders.pivot.bonus_calculated | money}}</p>
-                                          </div>
-                                        </div>
-                                      </div>
-                                    </div>
-                                  </v-col>
                                 </v-row>
                               </v-card-text>
                             </v-card>
@@ -216,8 +202,13 @@
                           <v-tab-item>
                             <v-card flat>
                               <v-card-text>
+                                <v-col cols="12" md="12" class="pa-0" >
+                                  <h3 style="color:teal"><b>INFORMACION DEL TRAMITE</b></h3>
+                                </v-col>
+                                <v-progress-linear></v-progress-linear>
+                                <br>
                                 <v-col cols="12" md="6" class="pa-0" >
-                                  <p style="color:teal"><b>DATOS DEL CONTRATO</b></p>
+                                  <p style="color:teal">DATOS DEL CONTRATO</p>
                                 </v-col>
                                 <v-progress-linear></v-progress-linear>
                                   <v-row>
@@ -231,7 +222,7 @@
                                   <v-col cols="12" class="pa-0">
                                     <v-progress-linear></v-progress-linear>
                                     <br>
-                                      <p style="color:teal"> <b>DATOS DE DESEMBOLSO</b></p>
+                                      <p style="color:teal">DATOS DEL DESEMBOLSO</p>
                                     <v-progress-linear></v-progress-linear>
                                     <v-row>
                                       <v-col cols="12" md="6" class="py-0">
@@ -257,7 +248,7 @@
                                   </v-row>
                                 </v-col>
                                 <v-col cols="12" md="6" class="pb-0" v-show="loan_refinancing.refinancing">
-                                  <p style="color:teal"><b>DATOS DEL PRÉSTAMO A REFINANCIAR{{' => '+ loan_refinancing.description}}</b></p>
+                                  <p style="color:teal">DATOS DEL PRÉSTAMO A REFINANCIAR{{' => '+ loan_refinancing.description}}</p>
                                 </v-col>
                                 <v-progress-linear v-show="loan_refinancing.refinancing"></v-progress-linear  >
                                 <v-row v-show="loan_refinancing.refinancing">
@@ -312,13 +303,45 @@
                           <v-tab-item>
                             <v-card flat>
                               <v-card-text>
-                                <p style="color:teal" v-if="loan.personal_references.length>0"><b>CODEUDOR NO AFILIADO </b></p>
-                                <v-progress-linear></v-progress-linear>
+                                <v-col cols="12" md="12" >
+                                  <div v-for="procedure_type in procedure_types" :key="procedure_type.id">
+                                    <div v-if="procedure_type.name === 'Préstamo Hipotecario'">
+                                      <p style="color:teal"><b>EVALUACION DEL CODEUDOR AFILIADO</b></p>
+                                          <v-progress-linear></v-progress-linear><br>
+                                        <div v-for="(lenders,i) in loan.lenders" :key="i">
+                                          <div  v-if="(lenders,i)>0">
+                                            <v-row>
+                                               <br>
+                                              <v-col cols="12" md="4" class="py-0">
+                                                <p><b>NOMBRE: </b> {{$options.filters.fullName(loan.borrower[i], true)}} </p>
+                                              </v-col>
+                                              <v-col cols="12" md="4" class="py-0">
+                                                <p><b>PROMEDIO LIQUIDO PAGABLE: </b> {{loan.borrower[i].pivot.payable_liquid_calculated}} Bs.</p>
+                                              </v-col>
+                                              <v-col cols="12" md="4" class="py-0" >
+                                                <p><b>LIQUIDO PARA CALIFICACION: </b> {{loan.borrower[i].pivot.liquid_qualification_calculated | moneyString}} Bs.</p>
+                                              </v-col>
+                                              <v-col cols="12" md="4" class="py-0">
+                                                <p><b>TOTAL BONOS:</b> {{loan.borrower[i].pivot.bonus_calculated | moneyString}}</p>
+                                              </v-col>
+                                              <v-col cols="12" md="4" class="py-0">
+                                                <p><b>INDICE DE ENDEUDAMIENTO:</b> {{loan.borrower[i].pivot.indebtedness_calculated|percentage }}% </p>
+                                              </v-col>
+                                              <v-col cols="12" md="4" class="py-0">
+                                                <p><b>CALCULO DE CUOTA: </b> {{loan.borrower[i].pivot.quota_treat | moneyString}} Bs.</p>
+                                              </v-col>
+                                              </v-row>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <v-progress-linear></v-progress-linear>
+                                    <br>
+                                <p style="color:teal" v-if="loan.cosigners.length>0"><b>CODEUDOR NO AFILIADO </b></p>
+                                <v-progress-linear v-if="loan.cosigners.length>0"></v-progress-linear>
                                 <v-card flat tile>
                                   <v-card-text>
-                                  <p v-if="loan.cosigners.length>0"><b>CODEUDOR NO AFILIADO</b></p>
-                                  <v-progress-linear v-if="loan.cosigners.length>0"></v-progress-linear><br>
-                                  <v-data-table
+                                   <v-data-table
                                     v-if="loan.cosigners.length>0"
                                     :headers="headers"
                                     :items="loan.cosigners"
@@ -328,12 +351,18 @@
                                 <p v-if="loan.cosigners.length==0" > <b>NO TIENE CODEUDORES</b></p>
                               </v-card-text>
                             </v-card>
+                                  </v-col>
                             </v-card-text>
                           </v-card>
                         </v-tab-item>
                             <v-tab-item>
                             <v-card flat>
                               <v-card-text>
+                                <v-col cols="12" md="12" class="pa-0" >
+                                  <h3 style="color:teal"><b>DOCUMENTOS PRESENTADOS</b></h3>
+                                </v-col>
+                                <v-progress-linear></v-progress-linear>
+                                <br>
                                 <DocumentsFlow>
                                 </DocumentsFlow>
                               </v-card-text>
