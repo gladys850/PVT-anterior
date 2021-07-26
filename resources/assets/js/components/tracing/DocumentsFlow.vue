@@ -1,38 +1,33 @@
 <template>
   <v-container fluid class="py-0" >
-   <v-form>
-             <v-row  class="py-0">
-                  <v-toolbar-title style="color:teal"> DOCUMENTOS REQUERIDOS</v-toolbar-title>
-                  <v-col v-for="(req,i) in docsRequired" :key="req.id" cols="12" class="py-1">
-                      <v-row>
-                        <v-col cols="12" class="py-0">
-                          <v-list dense class="py-0">
-                            <v-list-item class="py-0">
-                              <v-col cols="2" class="py-0">
-                                <v-list-item-content class="align-end font-weight-light">
-                                  <div>
-                                    <h1>{{i+1}}</h1>
-                                  </div>
-                                </v-list-item-content>
-                              </v-col>
-                              <v-col cols="10" class="py-0 ml-n8">
-                              {{ req.name }}
-                              </v-col>
-                            </v-list-item>
-                          </v-list>
-                        </v-col>
-                      </v-row>
-                  </v-col>
-                </v-row>
-              <!--</template>
-            </v-data-iterator>
-          </v-col>
-        </v-row>-->
+    <v-row  class="py-0">
+      <p style="color:teal">DOCUMENTOS REQUERIDOS</p>
+        <v-progress-linear></v-progress-linear>
+        <v-col v-for="(req,i) in docsRequired" :key="req.id" cols="12" class="py-1">
+            <v-row>
+              <v-col cols="12" class="py-0">
+                <v-list dense class="py-0">
+                  <v-list-item class="py-0">
+                    <v-col cols="2" class="py-0">
+                      <v-list-item-content class="align-end font-weight-light">
+                        <div>
+                          <h2>{{i+1}}</h2>
+                        </div>
+                      </v-list-item-content>
+                    </v-col>
+                    <v-col cols="10" class="py-0 ml-n8">
+                    {{ req.name }}
+                    </v-col>
+                  </v-list-item>
+                </v-list>
+              </v-col>
+            </v-row>
+        </v-col>
+      </v-row>
         <v-row>
           <v-col cols="12"  >
-           <!--<v-data-iterator :items="docsOptional" hide-default-footer>-->
-              <template v-if="docsOptional.length >0">
-                <v-toolbar-title style="color:teal" >ADICIONALES</v-toolbar-title>
+            <template v-if="docsOptional.length >0">
+                <p style="color:teal">DOCUMENTOS ADICIONALES</p>
                  <v-progress-linear></v-progress-linear>
                 <v-row  class="py-3">
                   <v-col v-for="(opt,i) in docsOptional" :key="opt.id" cols="12" class="py-1">
@@ -60,10 +55,9 @@
                 </v-row>
               </template>
               <template v-if="notes.length >0">
-                <v-toolbar-title class="align-end font-weight-black text-left ma-0 pa-4 pl-8">
-                  <h5  style="color:teal">Otros Documentos</h5>
-                </v-toolbar-title>
-                <v-row v-show="!editar">
+                 <p style="color:teal">OTROS DOCUMENTOS</p>
+                 <v-progress-linear></v-progress-linear>
+                <v-row >
                   <v-col cols="12" class="ma-0 px-10">
                     <div
                       class="align-end font-weight-light ma-0 pa-0 pl-2"
@@ -76,11 +70,8 @@
                   </v-col>
                 </v-row>
               </template>
-            <!--</v-data-iterator>-->
           </v-col>
         </v-row>
-      <!--</v-card>-->
-    </v-form>
   </v-container>
 </template>
 <script>
@@ -88,35 +79,14 @@ export default {
   name: "documents-flow",
   data: () => ({
 
- dialog: false,
-      dialogDelete: false,
-      headers: [
-        {
-          text: 'Descripcion',
-          align: 'start',
-          sortable: false,
-          value: 'message',
-        },
-        { text: 'Actions', value: 'actions', sortable: false },
-      ],
-      desserts: [],
-      editedIndex: -1,
-      editedItem: {},
-      defaultItem: {},
-    editar:false,
     docsRequired: [],
     docsOptional: [],
-    notes: [],
-    editable: false,
-    reload: false,
-    documents:[]
+    notes: []
   }),
-
   beforeMount() {
     this.getDocumentsSubmitted(this.$route.params.id)
     this.getNotes(this.$route.params.id)
   },
-
   methods: {
     async getDocumentsSubmitted(id) {
       try {
