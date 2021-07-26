@@ -587,7 +587,7 @@ class LoanReportController extends Controller
     public function loan_information(Request $request)
     {
         $month = Carbon::parse($request->date)->format('m');
-        $year = Carbon::parse($request->date)->format('Y'); 
+        $year = Carbon::parse($request->date)->format('Y');
         $loans = Loan::whereMonth('disbursement_date', $month)->whereYear('disbursement_date', $year)->get();
         //$date_pay = $date_ini->startOfMonth()->addMonth()->endOfMonth()->format('Y-m-d');
 
@@ -1113,7 +1113,7 @@ class LoanReportController extends Controller
    * Seguimiento de prestamos
    * Lista todos los prestamos con opcion a busquedas
    * @queryParam sortDesc Vector de orden descendente(0) o ascendente(1). Example: 0
-   * @queryParam trashed_loan Para filtrar ANULADOS. Example: true
+   * @queryParam trashed_loan Para filtrar ANULADOS(true) o estados Vigente,Liq,En Proceso(false). Example: true
    * @queryParam per_page Número de datos por página. Example: 8
    * @queryParam page Número de página. Example: 1
    * @queryParam excel Valor booleano para descargar  el docExcel. Example: true
@@ -1328,7 +1328,7 @@ class LoanReportController extends Controller
               }
 
               if ($city_loan != '') {
-                  array_push($conditions, array('view_loan_borrower.city_name', 'ilike', "%{$city_loan}%"));
+                  array_push($conditions, array('view_loan_borrower.city_loan', 'ilike', "%{$city_loan}%"));
               }
               if ($user_loan != '') {
                   array_push($conditions, array('view_loan_borrower.user_loan', 'ilike', "%{$user_loan}%"));
@@ -1355,7 +1355,7 @@ class LoanReportController extends Controller
                   $File="ListadoPrestamos";
                   $data=array(
                       array("DPTO","ÁREA","USUARIO","ID PRESTAMO", "COD. PRESTAMO", "ID AFILIADO","CI AFILIADO","MATRICULA AFILIADO","NOMBRE COMPLETO AFILIADO","CI PRESTATARIO", "MATRÍCULA PRESTATARIO", "NOMBRE COMPLETO PRESTATARIO","SUB MODALIDAD",
-                      "MODALIDAD","MONTO","ESTADO AFILIADO","TIPO ESTADO","CUOTA","ESTADO PRÉSTAMO","ENTE GESTOR AFILIADO",'FECHA DE DESEMBOLSO','TIPO SOLICITUD AFILIADO/ESPOSA' )
+                      "MODALIDAD","MONTO","TIPO ESTADO","ESTADO AFILIADO","CUOTA","ESTADO PRÉSTAMO","ENTE GESTOR AFILIADO",'FECHA DE DESEMBOLSO','TIPO SOLICITUD AFILIADO/ESPOSA' )
              );
                   foreach ($list_loan as $row){
                  array_push($data, array(
