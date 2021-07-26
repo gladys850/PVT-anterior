@@ -5,7 +5,7 @@
     "icon": "mdi-home",
     "params": {}
   }, {
-    "href": "listTracing",
+    "href": "ListTracingLoans",
     "title": "Seguimiento",
     "icon": "mdi-swap-horizontal",
     "permission": "show-all-loan",

@@ -208,15 +208,15 @@ export const routes = [
     }
   },
   {
-    path: '/listTracing',
-    name: 'listTracing',
+    path: '/ListTracingLoans',
+    name: 'ListTracingLoans',
     component: ListTracingLoans,
     meta: {
       requiresAuth: true
     }
   },
   {
-    path: '/tracing/:id',
+    path: '/tracingLoan/:id',
     name: 'tracingAdd',
     component: TracingAdd,
     meta: {
