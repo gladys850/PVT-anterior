@@ -883,7 +883,8 @@ class ImportationController extends Controller
         $result['file_name'] = false;
         $result['reg_copy'] = 0;
         $result['reg_group'] = 0;
-        $last_date = Carbon::parse($period->year.'-'.$period->month)->format('Y-m');      
+        $last_date = Carbon::parse($period->year.'-'.$period->month)->format('Y-m');  
+        $result['period_importation'] = "$last_date";    
         $base_path = 'cobranzas-importacion/';   
         if($origin == 'C'){
         $origin_name ='comando-';
