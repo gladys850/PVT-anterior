@@ -129,6 +129,16 @@ export default {
     payable_liquid: [0, 0, 0],
     modalidad: {},
     loan: {
+      borrower:[
+        {first_name:null,
+        last_name:null,
+        city_identity_card:{},
+          pivot:{},},
+        {first_name:null,
+        last_name:null,
+        city_identity_card:{},
+          pivot:{},}
+      ],
       lenders: [
         {pivot:{},}
       ],
