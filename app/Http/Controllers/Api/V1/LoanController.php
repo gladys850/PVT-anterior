@@ -1967,14 +1967,15 @@ class LoanController extends Controller
     $id_loan = request('id_loan') ?? '';
     $code_loan = request('code_loan') ?? '';
     $id_affiliate = request('id_affiliate') ?? '';
-    $identity_card_affiliate = request('identity_card_affiliate') ?? '';
-    $registration_affiliate = request('registration_affiliate') ?? '';
+    $identity_card_borrower = request('identity_card_borrower') ?? '';
+    $registration_borrower = request('registration_borrower') ?? '';
  
-    $last_name_affiliate = request('last_name_affiliate') ?? '';
-    $mothers_last_name_affiliate = request('mothers_last_name_affiliate') ?? '';
-    $first_name_affiliate = request('first_name_affiliate') ?? '';
-    $second_name_affiliate = request('second_name_affiliate') ?? '';
-    $surname_husband_affiliate = request('surname_husband_affiliate') ?? '';
+    $last_name_borrower = request('last_name_borrower') ?? '';
+    $mothers_last_name_borrower = request('mothers_last_name_borrower') ?? '';
+    $first_name_borrower = request('first_name_borrower') ?? '';
+    $second_name_borrower = request('second_name_borrower') ?? '';
+    $surname_husband_borrower = request('surname_husband_borrower') ?? '';
+    $full_name_borrower = request('full_name_borrower') ?? '';
  
     $sub_modality_loan = request('sub_modality_loan') ?? '';
     $modality_loan = request('modality_loan') ?? '';
@@ -2003,34 +2004,34 @@ class LoanController extends Controller
         array_push($conditions, array('view_loan_borrower.id', 'ilike', "%{$id_affiliate}%"));
       }
 
-      if ($identity_card_affiliate != '') {
-        array_push($conditions, array('view_loan_borrower.identity_card_borrower', 'ilike', "%{$identity_card_affiliate}%"));
+      if ($identity_card_borrower != '') {
+        array_push($conditions, array('view_loan_borrower.identity_card_borrower', 'ilike', "%{$identity_card_borrower}%"));
       }
 
-      if ($registration_affiliate != '') {
-        array_push($conditions, array('view_loan_borrower.registration_borrower', 'ilike', "%{$registration_affiliate}%"));
+      if ($registration_borrower != '') {
+        array_push($conditions, array('view_loan_borrower.registration_borrower', 'ilike', "%{$registration_borrower}%"));
       }
 
-      if ($last_name_affiliate != '') {
-        array_push($conditions, array('view_loan_borrower.last_name_borrower', 'ilike', "%{$last_name_affiliate}%"));
+      if ($last_name_borrower != '') {
+        array_push($conditions, array('view_loan_borrower.last_name_borrower', 'ilike', "%{$last_name_borrower}%"));
       }
 
-     if ($mothers_last_name_affiliate != '') {
-        array_push($conditions, array('view_loan_borrower.mothers_last_name_borrower', 'ilike', "%{$mothers_last_name_affiliate}%"));
+     if ($mothers_last_name_borrower != '') {
+        array_push($conditions, array('view_loan_borrower.mothers_last_name_borrower', 'ilike', "%{$mothers_last_name_borrower}%"));
       }
 
-      if ($first_name_affiliate != '') {
-        array_push($conditions, array('view_loan_borrower.first_name_borrower', 'ilike', "%{$first_name_affiliate}%"));
+      if ($first_name_borrower != '') {
+        array_push($conditions, array('view_loan_borrower.first_name_borrower', 'ilike', "%{$first_name_borrower}%"));
       }
 
-      if ($second_name_affiliate != '') {
-        array_push($conditions, array('view_loan_borrower.second_name_borrower', 'ilike', "%{$second_name_affiliate}%"));
+      if ($second_name_borrower != '') {
+        array_push($conditions, array('view_loan_borrower.second_name_borrower', 'ilike', "%{$second_name_borrower}%"));
       }
 
-      if ($surname_husband_affiliate != '') {
-        array_push($conditions_or, array('view_loan_borrower.surname_husband_borrower', 'ilike', "%{$surname_husband_affiliate}%"));
+      if ($surname_husband_borrower != '') {
+        array_push($conditions_or, array('view_loan_borrower.surname_husband_borrower', 'ilike', "%{$surname_husband_borrower}%"));
       }
-      if ($last_name_affiliate != '') {
+      if ($full_name_borrower != '') {
         array_push($conditions, array('view_loan_borrower.full_name_borrower', 'ilike', "%{$full_name_borrower}%"));
       }
       if ($sub_modality_loan != '') {
