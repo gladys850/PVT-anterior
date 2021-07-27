@@ -81,61 +81,48 @@ class LoanReportController extends Controller
     }
                $File="ListadoPrestamosDesembolsados";
                $data=array(
-                   array( "NRO DE PRÉSTAMO", "FECHA DE SOLICITUD", "FECHA DESEMBOLSO",
-                   "REGIONAL","TIPO","MODALIDAD","SUB MODALIDAD",
-                   "CEDULA DE IDENTIDAD","EXP","MATRICULA","MATRICULA CÓNYUGUE",
+                   array( "CI AFILIADO","MATRICULA AFILIADO","NOMBRE COMPLETO AFILIADO","***","COD PRESTAMO", "FECHA DE SOLICITUD", "FECHA DE DESEMBOLSO",
+                   "DPTO","TIPO ESTADO","ESTADO AFILIADO","MODALIDAD","SUB MODALIDAD",
+                   "CEDULA DE IDENTIDAD","EXP","MATRICULA",
                    "PRIMER NOMBRE","SEGUNDO NOMBRE","PATERNO","MATERNO","APELLIDO CASADA","***",
-                   "ESP CEDULA DE IDENTIDAD","ESP EXP","ESP MATRICULA","ESP MATRICULA CÓNYUGUE",
-                   "ESP PRIMER NOMBRE","ESP SEGUNDO NOMBRE","ESP PATERNO","ESP MATERNO","ESP APELLIDO CASADA","***",
                    "NRO CBTE CONTABLE","SALDO ACTUAL","AMPLIACIÓN","MONTO DESEMBOLSADO","MONTO REFINANCIADO","LIQUIDO DESEMBOLSADO",
                    "PLAZO","ESTÁDO PRÉSTAMO","DESTINO CREDITO" )
                );
                foreach ($list_loan as $loan){
+               foreach($loan->getBorrowers() as $lender){
                    array_push($data, array(
-                       $loan->code,
-                       Carbon::parse($loan->request_date)->format('d/m/Y'),
-                       Carbon::parse($loan->disbursement_date)->format('d/m/Y H:i:s'),
-
-                       $loan->city->name,
-                       $loan->lenders[0]->affiliate_state->affiliate_state_type->name,
-                       $loan->modality->procedure_type->name,
-                       $loan->modality->shortened,
-
-                       $loan->lenders[0]->identity_card,
-                       $loan->lenders[0]->city_identity_card->first_shortened,
-                       $loan->lenders[0]->registration,
-                       $loan->lenders[0]->spouse ? $loan->lenders[0]->spouse->registration : 0,
-                       $loan->lenders[0]->first_name,
-                       $loan->lenders[0]->second_name,
-                       $loan->lenders[0]->last_name,
-                       $loan->lenders[0]->mothers_last_name,
-                       $loan->lenders[0]->surname_husband,
-                       //
-                       $loan->lenders[0]->spouse ? '***':'***',
-                       $loan->lenders[0]->spouse ? $loan->lenders[0]->spouse->identity_card :'',
-                       $loan->lenders[0]->spouse ? $loan->lenders[0]->spouse->city_identity_card->first_shortened:'',
-                       $loan->lenders[0]->spouse ? $loan->lenders[0]->spouse->registration:'',
-                       $loan->lenders[0]->spouse ? $loan->lenders[0]->registration :'',
-                       $loan->lenders[0]->spouse ? $loan->lenders[0]->spouse->first_name:'',
-                       $loan->lenders[0]->spouse ? $loan->lenders[0]->spouse->second_name:'',
-                       $loan->lenders[0]->spouse ? $loan->lenders[0]->spouse->last_name:'',
-                       $loan->lenders[0]->spouse ? $loan->lenders[0]->spouse->mothers_last_name:'',
-                       $loan->lenders[0]->spouse ? $loan->lenders[0]->spouse->surname_husband:'',
-                       $loan->lenders[0]->spouse ? '***':'***',
-                       //
-                       $loan->num_accounting_voucher,
-                       Util::money_format($loan->balance),
-                       $loan->parent_reason,
-                       Util::money_format($loan->amount_approved),
-
-                       $loan->parent_reason? Util::money_format($loan->amount_approved - $loan->refinancing_balance) : '0,00',//liquido desembolsado
-                       $loan->parent_reason? Util::money_format($loan->refinancing_balance):Util::money_format($loan->amount_approved),//MONTO REFINANCIADO//MONTO REFINANCIADO
-                       $loan->loan_term,//plazo
-                       $loan->state->name,//estado del prestamo
-
-                       $loan->destiny->name
+                    $lender->identity_card_affiliate,
+                    $lender->registration_affiliate,
+                    $lender->full_name_affiliate,
+                    $loan->guarantor_amortizing? '***' : '***',
+                    $loan->code,
+                    Carbon::parse($loan->request_date)->format('d/m/Y'),
+                    Carbon::parse($loan->disbursement_date)->format('d/m/Y H:i:s'),
+                    $loan->city->name,
+                    $lender->state_type_affiliate,
+                    $lender->state_affiliate,
+                    $loan->modality->procedure_type->name,
+                    $loan->modality->shortened,
+                    $lender->identity_card_borrower,
+                    $lender->city_exp_first_shortened_borrower,
+                    $lender->registration_borrower,
+                    $lender->first_name_borrower,
+                    $lender->second_name_borrower,
+                    $lender->last_name_borrower,
+                    $lender->mothers_last_name_borrower,
+                    $lender->surname_husband_borrower,'***',
+                    $loan->num_accounting_voucher,
+                    Util::money_format($loan->balance),//SALDO ACTUAL
+                    $loan->parent_reason,
+                    Util::money_format($loan->amount_approved),
+                    $loan->parent_reason? Util::money_format($loan->amount_approved - $loan->refinancing_balance) : '0,00',//MONTO REFINANCIADO//MONTO REFINANCIADO
+                    $loan->parent_reason? Util::money_format($loan->refinancing_balance):Util::money_format($loan->amount_approved),// LIQUIDO DESEMBOLSADO
+                    $loan->loan_term,//plazo
+                    $loan->state->name,//estado del prestamo
+                    $loan->destiny->name
                    ));
                }
+            }
                $export = new ArchivoPrimarioExport($data);
                return Excel::download($export, $File.'.xls');
    }
@@ -181,7 +168,7 @@ class LoanReportController extends Controller
                //return $list_loan;
                $File="ListadoPrestamosDesembolsados";
                $data=array(
-                   array( "NRO DE PRÉSTAMO", "FECHA DE SOLICITUD", "FECHA DESEMBOLSO",
+                   array("CI AFILIADO","MATRICULA AFILIADO","NOMBRE COMPLETO AFILIADO","***", "NRO DE PRÉSTAMO", "FECHA DE SOLICITUD", "FECHA DESEMBOLSO",
                    "REGIONAL","TIPO","MODALIDAD","SUB MODALIDAD",
                    "CEDULA DE IDENTIDAD","EXP","MATRICULA","MATRICULA CÓNYUGUE",
                    "PRIMER NOMBRE","SEGUNDO NOMBRE","PATERNO","MATERNO","APELLIDO CASADA","***",
@@ -191,9 +178,35 @@ class LoanReportController extends Controller
                    "PLAZO","ESTÁDO PRÉSTAMO","DESTINO CREDITO","CAPITAL PAGADO FECHA DE CORTE","SALDO A FECHA DE CORTE",
                    "MONTO APROBADO","MONTO DESEMBOLSADO DE REFINANCIAMIENTO" ,"MONTO REFINANCIADO","AMPLIACIÓN?","INDICE DE ENDEUDAMIENTO")
                );
-               foreach ($list_loan as $loan){
+               //foreach($loan->getBorrowers() as $lender)
+               foreach ($list_loan->getBorrowers() as $lender){
                    array_push($data, array(
-                    $loan->code,
+                    $lender->identity_card_affiliate,
+                    $lender->registration_affiliate,
+                    $lender->full_name_affiliate,
+                    $loan->guarantor_amortizing? '***' : '***',
+                    $lender->code_loan,
+                    Carbon::parse($lender->request_date)->format('d/m/Y'),
+                    Carbon::parse($lender->disbursement_date_loan)->format('d/m/Y H:i:s'),
+                     $lender->city_loan,
+                     $lender->state_type_affiliate,
+                     $lender->state_affiliate,
+                     $lender->registration_borrower,
+                     $lender->identity_card_borrower,
+                     $lender->first_name_borrower,
+                     $lender->second_name_borrower,
+                     $lender->last_name_borrower,
+                     $lender->mothers_last_name_borrower,
+                     $lender->surname_husband_borrower,
+                     Util::money_format($loan->balance),
+                     Util::money_format($loan->estimated_quota),
+                     Util::money_format($loan->get_amount_payment($date_calculate,false,'T')),
+                     $loan->interest->annual_interest,
+                     $loan->guarantor_amortizing? 'Amort. Garante':'Amort. Titular',
+                     $loan->guarantor_amortizing? '***' : '***',
+                    //$loan->code,
+
+                   /* $loan->code,
                     Carbon::parse($loan->request_date)->format('d/m/Y'),
                     Carbon::parse($loan->disbursement_date)->format('d/m/Y H:i:s'),
 
@@ -239,7 +252,7 @@ class LoanReportController extends Controller
                     $loan->parent_reason? Util::money_format($loan->refinancing_balance):'0,00',//MONTO REFINANCIADO//MONTO REFINANCIADO
                     $loan->parent_reason? Util::money_format($loan->amount_approved - $loan->refinancing_balance) : '0,00',//
                     $loan->parent_reason? $loan->parent_reason:'',//SI ES AMPLIACION
-                    Util::money_format($loan->lenders[0]->pivot->indebtedness_calculated)//indice de endeudamineto
+                    Util::money_format($loan->lenders[0]->pivot->indebtedness_calculated)//indice de endeudamineto*/
                    ));
                }
 
