@@ -45,23 +45,6 @@
             </v-col>
             <v-col  cols="4" v-show="ver" class='mb-0 pb-0'>
                 <span>
-                <!--<v-tooltip left>
-                <template v-slot:activator="{ on }">
-                  <v-btn
-                    icon
-                    dark
-                    small
-                    color="success"
-                    bottom
-                    right
-                    v-on="on"
-                    :to="{ name: 'flowAdd', params: { id: loan_payment.loan_id,  workTray: 'received'}, query:{ redirectTab: 6 } }"
-                  >
-                  <v-icon>mdi-arrow-left-bold-outline</v-icon>
-                  </v-btn>
-                </template>
-                <span>Regresar tesoreria</span>
-                </v-tooltip>-->
               </span>
              {{"TITULAR: "+$options.filters.fullName(this.loan.lenders[0], true)}}
             </v-col>
@@ -81,8 +64,7 @@
               CUOTA ESTIMADA MENSUAL : {{this.loan.estimated_quota | money}}
             </v-col>
           </v-row>
-          <Steps
-          :loan.sync="loan"/>
+          <Steps/>
         </div>
       </v-container>
     </template>
@@ -104,9 +86,7 @@ export default {
       lenders:[{}]
     },
     loan_payment:{},
-    degree_name: null,
-    category_name: null,
-  }),
+    }),
   computed: {
     isNew() {
       return this.$route.params.hash == 'new'
@@ -164,24 +144,24 @@ export default {
       let breadcrumbs = [
         {
           text: 'Cobros',
-          to: { name: 'paymentIndex' }
+          to: { name: 'loanPaymentIndex' }
         }
       ]
       if (this.isNew) {
         breadcrumbs.push({
           text: 'Nuevo Cobro',
-          to: { name: 'paymentIndex' }
+          to: { name: 'loanPaymentIndex' }
         })
       } else {
         if (this.ver) {
           breadcrumbs.push({
           text: 'Ver Cobro',
-          to: { name: 'paymentIndex' }
+          to: { name: 'loanPaymentIndex' }
           })
         }else{
           breadcrumbs.push({
             text: 'Editar Cobro',
-            to: { name: 'paymentIndex' }
+            to: { name: 'loanPaymentIndex'}
           })
         }
       }
