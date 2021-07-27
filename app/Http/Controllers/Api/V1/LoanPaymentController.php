@@ -1307,6 +1307,7 @@ class LoanPaymentController extends Controller
    * @queryParam state_type_affiliate  Estado del afiliado. Example: Activo
    * @queryParam identity_card_affiliate ID del afiliado. Example: 667895
    * @queryParam registration_affiliate ID del afiliado. Example: 667895MP
+   * @queryParam full_name_affiliate Buscar por el nombre completo del afiliado. Example: RIVERA
    * @queryParam last_name_affiliate Buscar por primer apellido del afiliado. Example: RIVERA
    * @queryParam mothers_last_name_affiliate Buscar por segundo apellido del afiliado. Example: ARTEAG
    * @queryParam first_name_affiliate Buscar por primer Nombre del afiliado. Example: ABAD
@@ -1365,6 +1366,7 @@ class LoanPaymentController extends Controller
   $first_name_affiliate = request('first_name_affiliate') ?? '';
   $second_name_affiliate = request('second_name_affiliate') ?? '';
   $surname_husband_affiliate = request('surname_husband_affiliate') ?? '';
+  $full_name_affiliate = request('full_name_affiliate') ?? '';
 
   $pension_entity_affiliate = request('pension_entity_affiliate') ?? '';
   
@@ -1427,7 +1429,9 @@ class LoanPaymentController extends Controller
     if ($surname_husband_affiliate != '') {//13
       array_push($conditions, array('view_loan_amortization.surname_husband_affiliate', 'ilike', "%{$surname_husband_affiliate}%"));
     }
-
+    if ($full_name_affiliate != '') {//13
+        array_push($conditions, array('view_loan_amortization.full_name_affiliate', 'ilike', "%{$full_name_affiliate}%"));
+    }
     if ($pension_entity_affiliate != '') {//14
       array_push($conditions, array('view_loan_amortization.pension_entity_affiliate', 'ilike', "%{$pension_entity_affiliate}%"));
     }
@@ -1478,7 +1482,7 @@ class LoanPaymentController extends Controller
 
         $File="ListadoPrestamos";
         $data=array(
-                 array("Id del préstamo", "Código préstamo", "Fecha desembolso préstamo","estado del afiliado","Tipo de estado del afiliado", "Nro de carnet", "Matrícula", "Primer apellido","Segundo apellido","Primer nombre","Segundo nombre","Apellido casada",
+                 array("Id del préstamo", "Código préstamo", "Fecha desembolso préstamo","estado del afiliado","Tipo de estado del afiliado", "Nro de carnet", "Matrícula", "Primer apellido","Segundo apellido","Primer nombre","Segundo nombre","Apellido casada","nombre completo afiliado",
                  "Entidad de pensión del afiliado","Código pago","fecha de pago","Total pagado","Nro comprobante","Modalidad pago","Modalidad pago nombre","Tipo amortización","Estado del pago", "Tipo de Pago",
                  "Pagado por","Capital pagado","Interés corriente pagado","Interés penal pagado","Interés corriente pendiente","Interés penal pendiente","Total pagado","Saldo anterior","Saldo actual","fecha y hora de cobro")
         );
@@ -1496,6 +1500,7 @@ class LoanPaymentController extends Controller
                      $row->first_name_affiliate,
                      $row->second_name_affiliate,
                      $row->surname_husband_affiliate,
+                     $row->full_name_affiliate,
                      $row->pension_entity_affiliate,
                      $row->code_loan_payment,
                      $row->estimated_date_loan_payment,
