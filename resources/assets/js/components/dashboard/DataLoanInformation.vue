@@ -4,7 +4,6 @@
       <v-container class="py-0">
         <v-card color="grey lighten-1" class="ma-0 pa-3">
 
-       
           <!--TITULAR--->
           <template v-if="Object.entries(loans_lender).length !== 0">
             <template v-if="ver && loans_lender.loans.length > 0">
@@ -228,7 +227,7 @@
                 </v-col>
               </v-row>
             </template>
-            
+
             <template v-if="loans_spouse.guarantees.length > 0 && ver ">
               <h3 class="pa-1 text-center">PRESTAMOS GARANTIZADOS POR CONYUGUE</h3>
               <v-row>
@@ -301,9 +300,7 @@
                 </v-col>
               </v-row>
             </template>
-
-            </template> 
-          
+            </template>
         </v-card>
       </v-container>
     </v-card-text>
@@ -491,118 +488,15 @@ export default {
         width: "10%",
       },
     ],
-    //loans: {},
-    //affiliate_ci: null,
-    //affiliate: {},
-    //exist_affiliate: false,
-    //ver: false,
-    //loading: false,
-    //degree_name: null,
-    //category_name: null,
-    //unit_name: null,
-    //state_name_status: null,
   }),
-  /*watch: {
-    affiliate_ci() {
-      this.ver = false;
-    },
-  },*/
+
   methods: {
-    /*async getLoansHistory() {
-      try {
-        this.loading = true;
-        let message = [];
-        let res = await axios.get(`affiliate_record`, {
-          params: {
-            ci: this.affiliate_ci,
-          },
-        });
-        this.loans = res.data;
-        message = this.loans.message[0];
-        if (message != "afiliado-inexistente") {
-          this.exist_affiliate = true;
-          this.ver = true;
-          if (this.loans.tit_pvt) {
-            this.getAffiliate(this.loans.id);
-          }
-        } else {
-          this.exist_affiliate = false;
-          this.ver = true;
-          console.log("no coincide");
-        }
-      } catch (e) {
-        console.log(e);
-      } finally {
-        this.loading = false;
-      }
-    },*/
     routeSismu(id) {
       window.open(
         "http://sismu.muserpol.gob.bo/musepol/akardex.aspx?" + id,
         "_blank"
       );
     },
-    /*async getAffiliate(id) {
-      try {
-        this.loading = true;
-        let res = await axios.get(`affiliate/${id}`);
-        this.affiliate = res.data;
-        this.getDegree_name(this.affiliate.degree_id);
-        this.getCategory_name(this.affiliate.category_id);
-        this.getUnit_name(this.affiliate.unit_id);
-        this.getState_name(id);
-      } catch (e) {
-        console.log(e);
-      } finally {
-        this.loading = false;
-      }
-    },
-    /*async getDegree_name(id) {
-      try {
-        this.loading = true;
-        let res = await axios.get(`degree/${id}`);
-        this.degree_name = res.data.name;
-      } catch (e) {
-        console.log(e);
-      } finally {
-        this.loading = false;
-      }
-    },*/
-    /*async getCategory_name(id) {
-      try {
-        this.loading = true;
-        let res = await axios.get(`category/${id}`);
-        this.category_name = res.data.name;
-      } catch (e) {
-        console.log(e);
-      } finally {
-        this.loading = false;
-      }
-    },*/
-    /*async getUnit_name(id) {
-      try {
-        this.loading = true;
-        let res = await axios.get(`unit/${id}`);
-        this.unit_name = res.data.name;
-      } catch (e) {
-        console.log(e);
-      } finally {
-        this.loading = false;
-      }
-    },*/
-    /*async getState_name(id) {
-      try {
-        this.loading = true;
-        let res = await axios.get(`affiliate/${id}/state`);
-        this.state_name = res.data;
-        this.state_name_type = this.state_name.affiliate_state_type.name;
-        this.state_name_status = this.state_name.name;
-      } catch (e) {
-        console.log(e);
-      } finally {
-        this.loading = false;
-      }
-    },*/
     itemRowBackground: function (item) {
       return item.state === false ? "style-1" : "style-2";
     },

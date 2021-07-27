@@ -202,7 +202,7 @@
                       </h3>
                     </v-col>
                   </v-row>
-                  
+
                 </v-card>
               </v-col>
               <!--TABLA DE OBSERVABLES-->
@@ -300,33 +300,12 @@ export default {
   },
 
   data: () => ({
-    civil_statuses: [
-      { name: "Soltero", value: "S" },
-      { name: "Casado", value: "C" },
-      { name: "Viudo", value: "V" },
-      { name: "Divorciado", value: "D" },
-    ],
-    genders: [
-      {
-        name: "Femenino",
-        value: "F",
-      },
-      {
-        name: "Masculino",
-        value: "M",
-      },
-    ],
 
     loans: {},
     affiliate_ci: null,
     loading: false,
     ver: false,
-    /*affiliate: {},
-    degree_name: null,
-    category_name: null,
-    unit_name: null,
-    state_name_status: null,
-*/
+
 
     loans1: {
       message: {
@@ -442,7 +421,7 @@ export default {
         this.history_observables = res.data.observables;
 
           if (this.history_affiliate != null){
-            let res2 = await axios.post(`affiliate_loans_guarantees`, { 
+            let res2 = await axios.post(`affiliate_loans_guarantees`, {
                 affiliate_id: this.history_affiliate.id,
                 type: true
             });
@@ -452,15 +431,15 @@ export default {
             if (this.history_spouse != null){
               if (this.history_spouse.origin == "affiliate") {
 
-                let res3 = await axios.post(`affiliate_loans_guarantees`, {        
+                let res3 = await axios.post(`affiliate_loans_guarantees`, {
                     affiliate_id: this.history_spouse.id,
-                    type: true      
+                    type: true
                 });
                 this.loans_spouse = res3.data
                 this.ver = true
                 console.log("Afiliada conyugue")
-              } 
-              else if(this.history_spouse.origin == "spouse") {         
+              }
+              else if(this.history_spouse.origin == "spouse") {
 
                 let res3 = await axios.post(`affiliate_loans_guarantees`, {
                     affiliate_id: this.history_spouse.id,
@@ -472,45 +451,15 @@ export default {
               } else{
                 console.log("No tiene conyugue")
               }
-            }  
-          }       
+            }
+          }
       } catch (e) {
         this.$refs.observer.setErrors(e)
       } finally {
         this.loading = false
       }
-    
     },
-
-    /*async getLoansHistory() {
-      try {
-        this.getCalculator();
-        this.loading = true;
-        let message = [];
-        let res = await axios.get(`affiliate_record`, {
-          params: {
-            ci: this.affiliate_ci,
-          },
-        });
-        this.loans = res.data;
-        message = this.loans.message[0];
-        if (message != "afiliado-inexistente") {
-  
-          this.ver = true;
-          if (this.loans.tit_pvt) {
-            this.getAffiliate(this.loans.id);
-          }
-        } else {
-
-          this.ver = true;
-          console.log("no coincide");
-        }
-      } catch (e) {
-        console.log(e);
-      } finally {
-        this.loading = false;
-      }
-    },*/
+    //Metodo de la evaluacion de todas las modalidades
     async getCalculator() {
       try {
         this.loading = false;
@@ -546,76 +495,13 @@ export default {
             this.largo_plazo.quota_calculated = this.loans1.modalities[i].quota_calculated;
           }
         }
-
         this.evaluacion = res.data.evaluate;
-        //this.$forceUpdate();
       } catch (e) {
         console.log(e);
       } finally {
         this.loading = false;
       }
     },
-    /*async getAffiliate(id) {
-      try {
-        this.loading = true;
-        let res = await axios.get(`affiliate/${id}`);
-        this.affiliate = res.data;
-        this.yyy=this.getDegree_name(this.affiliate.degree_id);
-        this.getCategory_name(this.affiliate.category_id);
-        this.getUnit_name(this.affiliate.unit_id);
-        this.getState_name(id);
-      } catch (e) {
-        console.log(e);
-      } finally {
-        this.loading = false;
-      }
-    },
-      async getDegree_name(id) {
-      try {
-        this.loading = true;
-        let res = await axios.get(`degree/${id}`);
-        this.degree_name = res.data.name;
-      } catch (e) {
-        console.log(e);
-      } finally {
-        this.loading = false;
-      }
-    },
-    async getCategory_name(id) {
-      try {
-        this.loading = true;
-        let res = await axios.get(`category/${id}`);
-        this.category_name = res.data.name;
-      } catch (e) {
-        console.log(e);
-      } finally {
-        this.loading = false;
-      }
-    },
-    async getUnit_name(id) {
-      try {
-        this.loading = true;
-        let res = await axios.get(`unit/${id}`);
-        this.unit_name = res.data.name;
-      } catch (e) {
-        console.log(e);
-      } finally {
-        this.loading = false;
-      }
-    },
-    async getState_name(id) {
-      try {
-        this.loading = true;
-        let res = await axios.get(`affiliate/${id}/state`);
-        this.state_name = res.data;
-        this.state_name_type = this.state_name.affiliate_state_type.name;
-        this.state_name_status = this.state_name.name;
-      } catch (e) {
-        console.log(e);
-      } finally {
-        this.loading = false;
-      }
-    },*/
   },
 };
 </script>
