@@ -3,5 +3,8 @@
     "query_step_1": false,
     "query_step_2": false,
     "query_step_3": true,
-    "file_name": "comando-2021-08.csv"
+    "file_name": "comando-2021-08.csv",
+    "reg_copy": 34,
+    "reg_group": 34,
+    "period_importation":"2021-08"
 }

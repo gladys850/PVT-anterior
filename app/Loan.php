@@ -1280,4 +1280,21 @@ class Loan extends Model
         }
         return $data;
     }
+    public function getGuarantors(){
+        $loans_guarantors = DB::table('view_loan_borrower_guarantors')
+        ->where('guarantor_loan',true)
+        ->where('id_loan',$this->id)
+        ->select('*')
+        ->get();
+        return $loans_guarantors;
+    }
+
+    public function getBorrowers(){
+        $loans_borrowers = DB::table('view_loan_borrower_guarantors')
+        ->where('guarantor_loan',false)
+        ->where('id_loan',$this->id)
+        ->select('*')
+        ->get();
+        return $loans_borrowers;
+    }
 }
