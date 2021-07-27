@@ -1449,11 +1449,11 @@ class LoanPaymentController extends Controller
         array_push($conditions, array('view_loan_amortizations.full_name_affiliate', 'ilike', "%{$full_name_affiliate}%"));
     }
 
-    if ($identity_card_affiliate != '') {//7
-        array_push($conditions, array('view_loan_amortizations.identity_card_affiliate', 'ilike', "%{$identity_card_affiliate}%"));
+    if ($identity_card_borrower != '') {//7
+        array_push($conditions, array('view_loan_amortizations.identity_card_borrower', 'ilike', "%{$identity_card_borrower}%"));
       }
-      if ($registration_affiliate != '') {//8
-        array_push($conditions, array('view_loan_amortizations.registration_affiliate', 'ilike', "%{$registration_affiliate}%"));
+      if ($registration_borrower != '') {//8
+        array_push($conditions, array('view_loan_amortizations.registration_borrower', 'ilike', "%{$registration_borrower}%"));
       }  
       if ($last_name_borrower != '') {//9
         array_push($conditions, array('view_loan_amortizations.last_name_borrower', 'ilike', "%{$last_name_borrower}%"));
