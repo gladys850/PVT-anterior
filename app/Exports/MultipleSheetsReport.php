@@ -5,8 +5,9 @@ namespace App\Exports;
 use Maatwebsite\Excel\Concerns\FromArray;
 use Maatwebsite\Excel\Concerns\WithTitle;
 use Maatwebsite\Excel\Concerns\WithColumnWidths;
+use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 
-class MultipleSheetsReport implements FromArray, WithTitle, WithColumnWidths
+class MultipleSheetsReport implements FromArray, WithTitle, WithColumnWidths,ShouldAutoSize
 {
     protected $data;
     protected $name;
@@ -27,7 +28,7 @@ class MultipleSheetsReport implements FromArray, WithTitle, WithColumnWidths
         return $this->name;
     }
 
-    public function columnWidths(): array
+   public function columnWidths(): array
     {
         return [
             'A' => 20,
