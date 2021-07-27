@@ -159,16 +159,17 @@ class FundRotatoryOutputController extends Controller
     public function print_fund_rotary(Request $request,$loan_id, $standalone = true)
     {   $ouputs_fund_rotatorie = FundRotatoryOutput::whereLoanId($loan_id)->first();
         $loan = Loan::findOrFail($ouputs_fund_rotatorie->loan_id);   
-        $affiliate = Affiliate::findOrFail($loan->disbursable_id);
+        $affiliate = Affiliate::findOrFail($loan->affiliate_id);
         $lenders = [];
         $lenders[] = LoanController::verify_loan_affiliates($affiliate,$loan)->disbursable;
-        $persons = collect([]);  
-        $persons->push([
-            'id' => $affiliate->id,
-            'full_name' => implode(' ', [$affiliate->title, $affiliate->full_name]),
-            'identity_card' => $affiliate->identity_card_ext,
-            'position' => 'RECIBIDO POR'
-        ]);      
+        $persons = collect([]);
+        foreach ($lenders as $lender) {
+            $persons->push([
+                'full_name' => implode(' ', [$lender->full_name, $lender->full_name]),
+                'identity_card' => $lender->identity_card_ext,
+                'position' => 'RECIBIDO POR'
+            ]);
+        }
         $data = [
             'header' => [
                 'direction' => 'DIRECCIÓN DE ESTRATEGIAS SOCIALES E INVERSIONES',
