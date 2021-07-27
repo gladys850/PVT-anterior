@@ -4,7 +4,7 @@
       <v-col cols="4" class="ma-0 pa-2 pt-0">
         <v-card color="#EDF2F4">
           <v-card-title class="ma-0 pa-0">
-            <v-col cols="5">
+            <v-col cols="5" md="5">
               <v-row>
                 <div class="pl-3">
                   <div v-if="profilePictures.length > 0">
@@ -23,8 +23,8 @@
                 </div>
               </v-row>
             </v-col>
-            <v-col cols="7" class=" text--lighten-5">
-              <small>
+            <v-col cols="7" md="7" class="text--lighten-5">
+              <v-card-text>
                 C.I.: {{affiliate.identity_card_ext}}
                 <br />
                 Categoría: <span v-if="affiliate.category != null">{{affiliate.category.name}}</span>
@@ -41,18 +41,17 @@
                 <span v-else>
                   {{affiliate.civil_status=='C'? 'CASADA':affiliate.civil_status=='S'? 'SOLTERA':affiliate.civil_status=='D'?'DIVORCIADA':'VIUDA'}}
                   </span>
-              </small>
+              </v-card-text>
             </v-col>
           </v-card-title>
-          <v-card-text class="ma-0 pa-0 pa-3" v-if="affiliate.spouse != null">
+          <v-card-text class="ma-0 pa-0 pl-3 pb-3" v-if="affiliate.spouse != null">
             <v-col cols="12" color="#EDF2F4" class="text--lighten-5 ma-0 pa-0">
-             
-                <strong>Conyugue:</strong> {{$options.filters.fullName(affiliate.spouse, true) }}
-                <br />
-                <strong>C.I.:</strong> {{affiliate.spouse.identity_card}}
-                <br />
-                <strong>Matrícula:</strong> {{affiliate.spouse.registration}}
-                <br />
+              <strong>Conyugue:</strong> {{$options.filters.fullName(affiliate.spouse, true) }}
+              <br />
+              <strong>C.I.:</strong> {{affiliate.spouse.identity_card}}
+              <br />
+              <strong>Matrícula:</strong> {{affiliate.spouse.registration}}
+              <br />
             </v-col>
           </v-card-text>
         </v-card>
