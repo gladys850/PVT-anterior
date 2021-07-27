@@ -4,9 +4,7 @@
       <v-col cols="12" class="py-0">
         <v-row justify="center" class="py-0">
           <v-col cols="12" class="py-0">
-            <p style="color:teal"> <b>OBSERVACIONES DEL TRAMITE</b></p>
-              <v-progress-linear></v-progress-linear>
-                  <v-card flat tile>
+                <v-card flat tile>
                   <v-card-text >
                     <v-col cols="12" class="pl-3">
                       <v-data-table
@@ -18,7 +16,7 @@
                          <template v-slot:item="items">
                           <tr>
                             <td>{{items.item.user_name}}</td>
-                            <td>{{observation_type.find(o => o.id == items.item.observation_type_id).name }}</td>
+                            <td>{{items.item.observation_type_name }}</td>
                             <td>{{items.item.message}}</td>
                             <td>{{items.item.date|datetime}}</td>
                           </tr>
@@ -26,7 +24,7 @@
                       </v-data-table>
                     </v-col>
                   </v-card-text>
-                </v-card>
+              </v-card>
           </v-col>
         </v-row>
       </v-col>
@@ -43,11 +41,16 @@ export default {
       type: Object,
       required: true
     },
+    observations: {
+      type: Array,
+      required: true
+    },
+    observation_type: {
+      type: Array,
+      required: true
+    },
   },
   data: () => ({
-    //valor: false,
-    observation_type: [],
-    bus: new Vue(),
     headersObs: [
       {
         text: "Usuario",
@@ -74,50 +77,6 @@ export default {
         value: "date"
       },
     ],
-    observations:[],
   }),
-  watch: {
-    options: function() {
-        this.getObservation(this.loan.id)
-    },
-  },
-beforeMount(){
- this.getObservationType()
-},
-  mounted() {
-     this.getObservation(this.loan.id)
-  },
-  methods: {
-    async getObservationType() {
-      try {
-        this.loading = true
-        let res = await axios.get(
-          `module/${6}/observation_type`
-        )
-        this.observation_type = res.data
-      } catch (e) {
-        console.log(e)
-      } finally {
-        this.loading = false
-      }
-    },
-
-    async getObservation(id) {
-      try {
-        this.loading = true
-        let res = await axios.get(`loan/${id}/observation`)
-        this.observations = res.data
-        for (this.i = 0; this.i < this.observations.length; this.i++) {
-          let res1 = await axios.get(`user/${this.observations[this.i].user_id}`
-          )
-          this.observations[this.i].user_name = res1.data.username
-        }
-      } catch (e) {
-        console.log(e)
-      } finally {
-        this.loading = false
-      }
-    },
-  }
 }
 </script>
