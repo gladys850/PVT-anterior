@@ -541,7 +541,7 @@
                                             v-on="on"
                                             style="margin-right: 45px; "
                                             @click.stop="resetForm()"
-                                            v-show="editable1"
+                                            v-show="edit_hipotecari"
                                           >
                                             <v-icon>mdi-close</v-icon>
                                           </v-btn>
@@ -556,7 +556,7 @@
                                             fab
                                             dark
                                             x-small
-                                            :color="editable1 ? 'danger' : 'success'"
+                                            :color="edit_hipotecari ? 'danger' : 'success'"
                                             top
                                             right
                                             absolute
@@ -564,12 +564,12 @@
                                             style="margin-right: -9px;"
                                             @click.stop="editLoanHipotecaryProperti()"
                                           >
-                                            <v-icon v-if="editable1">mdi-check</v-icon>
+                                            <v-icon v-if="edit_hipotecari">mdi-check</v-icon>
                                             <v-icon v-else>mdi-pencil</v-icon>
                                           </v-btn>
                                         </template>
                                         <div>
-                                          <span v-if="editable1">Guardar</span>
+                                          <span v-if="edit_hipotecari">Guardar</span>
                                           <span v-else>Editar</span>
                                         </div>
                                       </v-tooltip>
@@ -578,8 +578,8 @@
                                         <v-col cols="12" md="4">
                                         <v-select
                                           dense
-                                          :outlined="editable1 && permissionSimpleSelected.includes('update-warranty-hipotecary')"
-                                          :readonly="!editable1 && !permissionSimpleSelected.includes('update-warranty-hipotecary')"
+                                          :outlined="edit_hipotecari && permissionSimpleSelected.includes('update-warranty-hipotecary')"
+                                          :readonly="!edit_hipotecari && !permissionSimpleSelected.includes('update-warranty-hipotecary')"
                                           :items="city"
                                           item-text="name"
                                           item-value="id"
@@ -589,8 +589,8 @@
                                       </v-col>
                                       <v-col cols="12" md="4">
                                         <v-text-field
-                                          :outlined="editable1 && permissionSimpleSelected.includes('update-warranty-hipotecary')"
-                                          :readonly="!editable1 && !permissionSimpleSelected.includes('update-warranty-hipotecary')"
+                                          :outlined="edit_hipotecari && permissionSimpleSelected.includes('update-warranty-hipotecary')"
+                                          :readonly="!edit_hipotecari && !permissionSimpleSelected.includes('update-warranty-hipotecary')"
                                           :label="'UBICACION'"
                                           dense
                                           v-model="loan_properties.location"
@@ -598,8 +598,8 @@
                                       </v-col>
                                       <v-col cols="12" md="4">
                                         <v-text-field
-                                          :outlined="editable1 && permissionSimpleSelected.includes('update-warranty-hipotecary')"
-                                          :readonly="!editable1 && !permissionSimpleSelected.includes('update-warranty-hipotecary')"
+                                          :outlined="edit_hipotecari && permissionSimpleSelected.includes('update-warranty-hipotecary')"
+                                          :readonly="!edit_hipotecari && !permissionSimpleSelected.includes('update-warranty-hipotecary')"
                                           :label="'NUMERO DE LOTE'"
                                           dense
                                           v-model="loan_properties.land_lot_number"
@@ -607,8 +607,8 @@
                                       </v-col>
                                       <v-col cols="12" md="1">
                                         <v-text-field
-                                          :outlined="editable1 && permissionSimpleSelected.includes('update-warranty-hipotecary')"
-                                          :readonly="!editable1 && !permissionSimpleSelected.includes('update-warranty-hipotecary')"
+                                          :outlined="edit_hipotecari && permissionSimpleSelected.includes('update-warranty-hipotecary')"
+                                          :readonly="!edit_hipotecari && !permissionSimpleSelected.includes('update-warranty-hipotecary')"
                                           :label="'SUPERFICIE'"
                                           dense
                                           v-model="loan_properties.surface"
@@ -616,8 +616,8 @@
                                       </v-col>
                                       <v-col cols="12" md="3">
                                       <v-select
-                                        :outlined="editable1 && permissionSimpleSelected.includes('update-warranty-hipotecary')"
-                                        :readonly="!editable1 && !permissionSimpleSelected.includes('update-warranty-hipotecary')"
+                                        :outlined="edit_hipotecari && permissionSimpleSelected.includes('update-warranty-hipotecary')"
+                                        :readonly="!edit_hipotecari && !permissionSimpleSelected.includes('update-warranty-hipotecary')"
                                         dense
                                         :items="items_measurement"
                                         item-text="name"
@@ -628,8 +628,8 @@
                                       </v-col>
                                       <v-col cols="12" md="4">
                                         <v-text-field
-                                          :outlined="editable1 && permissionSimpleSelected.includes('update-warranty-hipotecary')"
-                                          :readonly="!editable1 && !permissionSimpleSelected.includes('update-warranty-hipotecary')"
+                                          :outlined="edit_hipotecari && permissionSimpleSelected.includes('update-warranty-hipotecary')"
+                                          :readonly="!edit_hipotecari && !permissionSimpleSelected.includes('update-warranty-hipotecary')"
                                           :label="'CODIGO CATASTRAL'"
                                           dense
                                           v-model="loan_properties.cadastral_code"
@@ -637,8 +637,8 @@
                                       </v-col>
                                       <v-col cols="12" md="4">
                                         <v-text-field
-                                          :outlined="editable1 && permissionSimpleSelected.includes('update-warranty-hipotecary')"
-                                          :readonly="!editable1 && !permissionSimpleSelected.includes('update-warranty-hipotecary')"
+                                          :outlined="edit_hipotecari && permissionSimpleSelected.includes('update-warranty-hipotecary')"
+                                          :readonly="!edit_hipotecari && !permissionSimpleSelected.includes('update-warranty-hipotecary')"
                                           :label="'NRO MATRICULA'"
                                           dense
                                           v-model="loan_properties.registration_number"
@@ -646,8 +646,8 @@
                                       </v-col>
                                       <v-col cols="12" md="4">
                                         <v-text-field
-                                          :outlined="editable1 && permissionSimpleSelected.includes('update-warranty-hipotecary')"
-                                          :readonly="!editable1 && !permissionSimpleSelected.includes('update-warranty-hipotecary')"
+                                          :outlined="edit_hipotecari && permissionSimpleSelected.includes('update-warranty-hipotecary')"
+                                          :readonly="!edit_hipotecari && !permissionSimpleSelected.includes('update-warranty-hipotecary')"
                                           :label="'NRO FOLIO REAL'"
                                           dense
                                           v-model="loan_properties.real_folio_number"
@@ -658,8 +658,8 @@
                                       </v-col>
                                        <v-col cols="12" md="6">
                                         <v-text-field
-                                          :outlined="editable1 && permissionSimpleSelected.includes('update-values-commercial-rescue')"
-                                          :readonly="!editable1  && !permissionSimpleSelected.includes('update-values-commercial-rescue')"
+                                          :outlined="edit_hipotecari && permissionSimpleSelected.includes('update-values-commercial-rescue')"
+                                          :readonly="!edit_hipotecari  && !permissionSimpleSelected.includes('update-values-commercial-rescue')"
                                           :label="'VALOR COMERCIAL'"
                                           dense
                                           v-model="loan_properties.commercial_value"
@@ -667,8 +667,8 @@
                                       </v-col>
                                        <v-col cols="12" md="6">
                                         <v-text-field
-                                          :outlined="editable1 && permissionSimpleSelected.includes('update-values-commercial-rescue')"
-                                          :readonly="!editable1 && !permissionSimpleSelected.includes('update-values-commercial-rescue')"
+                                          :outlined="edit_hipotecari && permissionSimpleSelected.includes('update-values-commercial-rescue')"
+                                          :readonly="!edit_hipotecari && !permissionSimpleSelected.includes('update-values-commercial-rescue')"
                                           :label="'VALOR DE RESCATE HIPOTECARIO'"
                                           dense
                                           v-model="loan_properties.rescue_value"
@@ -809,7 +809,7 @@
                                 :items="loan.cosigners"
                                 >
                                 <template v-slot:top>
-                                  <v-dialog v-model="dialog1" max-width="500px" >
+                                  <v-dialog v-model="dialog_codeptor" max-width="500px" >
                                     <v-card>
                                       <v-card-title>
                                         <span style="color:teal" class="headline">EDITAR CODEUDOR</span>
@@ -967,7 +967,7 @@
                                               v-on="on"
                                               style="margin-right: 45px;"
                                               @click.stop="resetForm()"
-                                              v-show="editable"
+                                              v-show="edit_disbursement"
                                             >
                                               <v-icon>mdi-close</v-icon>
                                             </v-btn>
@@ -982,7 +982,7 @@
                                               fab
                                               dark
                                               x-small
-                                              :color="editable ? 'danger' : 'success'"
+                                              :color="edit_disbursement ? 'danger' : 'success'"
                                               top
                                               right
                                               absolute
@@ -990,12 +990,12 @@
                                               style="margin-right: -9px;"
                                               @click.stop="editLoan()"
                                             >
-                                              <v-icon v-if="editable">mdi-check</v-icon>
+                                              <v-icon v-if="edit_disbursement">mdi-check</v-icon>
                                               <v-icon v-else>mdi-pencil</v-icon>
                                             </v-btn>
                                           </template>
                                           <div>
-                                            <span v-if="editable">Guardar</span>
+                                            <span v-if="edit_disbursement">Guardar</span>
                                             <span v-else>Editar</span>
                                           </div>
                                         </v-tooltip>
@@ -1014,57 +1014,12 @@
                                       <v-col cols="12" md="3" v-show="loan.payment_type.name=='Depósito Bancario'">
                                         <p><b>CUENTA SIGEP:</b> {{' '+loan.lenders[0].sigep_status}}</p>
                                       </v-col>
-
-                                      <!--v-col cols="12" md="4">
-                                        <v-select
-                                          dense
-                                          :outlined="permissionSimpleSelected.includes('disbursement-loan') ? editable : false"
-                                          :readonly="permissionSimpleSelected.includes('disbursement-loan') ? !editable : true"
-                                          :items="payment_types"
-                                          item-text="name"
-                                          item-value="id"
-                                          label="TIPO"
-                                          @change="desembolso()"
-                                          v-model="loan.payment_type_id"
-                                        ></v-select>
-                                      </!--v-col-->
-                                      <!--v-col cols="12" md="4">
-                                        <div v-if="loan.payment_type_id=='1'"  class="py-0">
-                                          <v-text-field
-                                            dense
-                                            :outlined="permissionSimpleSelected.includes('disbursement-loan') ? editable : false"
-                                            :readonly="permissionSimpleSelected.includes('disbursement-loan') ? !editable : true"
-                                            :label="'NRO DE DEPOSITO'"
-                                            v-model="loan.number_payment_type"
-                                          ></v-text-field>
-                                        </div>
-                                        <div v-if="loan.payment_type_id!='1'">
-                                          <v-text-field
-                                            dense
-                                            :outlined="permissionSimpleSelected.includes('disbursement-loan') ? editable : false"
-                                            :readonly="permissionSimpleSelected.includes('disbursement-loan') ? !editable : true"
-                                            :label="loan.payment_type_id=='2'? 'NRO DE CHEQUE':loan.payment_type_id=='3'?'NRO DE RECIBO':'OTRO'"
-                                            v-model="loan.number_payment_type"
-                                          ></v-text-field>
-                                        </div>
-                                      </-v-col-->
-                                      <!--<v-col cols="12" md="4">
-                                        <div class="py-0">
-                                          <v-text-field
-                                            dense
-                                            :outlined="editable"
-                                            :readonly="!editable"
-                                            :label="'CÓDIGO DE CERTIFICACIÓN PRESUPUESTARIA'"
-                                             v-model="loan.num_budget_certification"
-                                          ></v-text-field>
-                                        </div>
-                                      </v-col>-->
                                        <v-col cols="12" md="4">
                                         <div class="py-0">
                                           <v-text-field
                                             dense
-                                            :outlined="permissionSimpleSelected.includes('update-accounting-voucher') ? editable : false"
-                                            :readonly="permissionSimpleSelected.includes('update-accounting-voucher') ? !editable : true"
+                                            :outlined="permissionSimpleSelected.includes('update-accounting-voucher') ? edit_disbursement : false"
+                                            :readonly="permissionSimpleSelected.includes('update-accounting-voucher') ? !edit_disbursement : true"
                                             :label="'CERTIFICACIÓN PRESUPUESTARIA CONTABLE'"
                                              v-model="loan.num_accounting_voucher"
                                           ></v-text-field>
@@ -1077,8 +1032,8 @@
                                           label="FECHA DE DESEMBOLSO"
                                           hint="Día/Mes/Año"
                                           type="date"
-                                         :outlined="permissionSimpleSelected.includes('change-disbursement-date') ? editable : false"
-                                          :readonly="permissionSimpleSelected.includes('change-disbursement-date') ? !editable : true"
+                                         :outlined="permissionSimpleSelected.includes('change-disbursement-date') ? edit_disbursement : false"
+                                          :readonly="permissionSimpleSelected.includes('change-disbursement-date') ? !edit_disbursement : true"
                                         ></v-text-field>
                                       </v-col>
                                     </v-row>
@@ -1167,8 +1122,11 @@ export default {
         value: "M"
       }
     ],
-      dialog: false,
-      dialog1: false,
+      dialog: false, //dialog para editar persona de referencia
+      dialog_codeptor: false, //dialog para editar codeudor no afiliado
+
+      //Variables que sirven para habilitar los imputs y editarlos
+
       calificacion_edit:false,
       cobranzas_edit:false,
       cobranzas_edit_sismu:false,
@@ -1176,6 +1134,13 @@ export default {
       edit_delivery_date : false,
       edit_return_date_regional : false,
       edit_delivery_date_regional : false,
+      edit_hipotecari: false,
+      edit_disbursement: false,
+      reload: false,
+      payment_types:[],
+      city: [],
+      entity: [],
+      entities:null,
       editedIndex: -1,
       editedItem: {},
       defaultItem: {},
@@ -1200,13 +1165,6 @@ export default {
       sortable: false
     }
       ],
-    editable1: false,
-    editable: false,
-    reload: false,
-    payment_types:[],
-    city: [],
-    entity: [],
-    entities:null,
   }),
   beforeMount(){
     this.getPaymentTypes()
@@ -1271,7 +1229,7 @@ export default {
     //Metodo para obtener los datos para el guardado del codeudor
       editItem1 (item) {
         this.editedItem1 =  item
-        this.dialog1 = true
+        this.dialog_codeptor = true
       },
     //Metodo para obtener los datos para el guardado de persona de referencia
       editItem (item) {
@@ -1280,7 +1238,7 @@ export default {
       },
     //Metodo para cerrar el modal del guardado del codeudor
       closeCodeptor() {
-        this.dialog1 = false
+        this.dialog_codeptor = false
         this.$nextTick(() => {
           this.editedItem1 = Object.assign({}, this.defaultItem1)
           this.editedIndex = -1
@@ -1334,8 +1292,8 @@ export default {
     },
     //Metodo para limpiar los campos
     resetForm() {
-      this.editable1 = false
-      this.editable = false
+      this.edit_hipotecari = false
+      this.edit_disbursement = false
       this.calificacion_edit = false
       this.cobranzas_edit=false
       this.cobranzas_edit_sismu=false
@@ -1469,8 +1427,8 @@ export default {
     //Metodo para ingresar la fecha de desembolso
     async editLoan(){
       try {
-        if (!this.editable) {
-          this.editable = true
+        if (!this.edit_disbursement) {
+          this.edit_disbursement = true
          } else {
             if(this.loan.disbursement_date=='Fecha invalida'){
               let res = await axios.patch(`loan/${this.loan.id}`, {
@@ -1483,7 +1441,7 @@ export default {
           })
         }
             this.toastr.success('Se registró correctamente.')
-            this.editable = false
+            this.edit_disbursement = false
          }
       } catch (e) {
         console.log(e)
@@ -1573,8 +1531,8 @@ export default {
     //Metodo para editar datos de la propiedad hipotecaria
       async editLoanHipotecaryProperti(){
       try {
-        if (!this.editable1) {
-          this.editable1 = true
+        if (!this.edit_hipotecari) {
+          this.edit_hipotecari = true
          } else {
           let res = await axios.patch(`loan_property/${this.loan_properties.id}`, {
             location:this.loan_properties.location,
@@ -1589,7 +1547,7 @@ export default {
             rescue_value :this.loan_properties.rescue_value
           })
             this.toastr.success('Se registró correctamente.')
-            this.editable1 = false
+            this.edit_hipotecari = false
         }
       } catch (e) {
         console.log(e)

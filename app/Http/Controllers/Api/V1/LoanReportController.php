@@ -666,50 +666,50 @@ class LoanReportController extends Controller
              array_push($id_comando, $procedure->id);
  
              $command_sheet_before=array(
-                array("CI AFILIADO","MATRICULA AFILIADO","NOMBRE COMPLETO AFILIADO","***",
+                array("CI AFILIADO","EXP AFILIADO","MATRICULA AFILIADO","NOMBRE COMPLETO AFILIADO","***",
                 "COD PRESTAMO", "FECHA DE DESEMBOLSO", "DPTO", "TIPO ESTADO","ESTADO AFILIADO",
-                "MATRICULA PRESTATARIO", "CI PRESTATARIO", "1ER NOMBRE", "2DO NOMBRE", "APELLIDO PATERNO", "APELLIDO MATERNO","APELLIDO DE CASADA", "SALDO ACTUAL", "CUOTA FIJA MENSUAL", "DESCUENTO PROGRAMADO", "INTERES","Amort. TIT o GAR?","***",
+                "MATRICULA PRESTATARIO", "CI PRESTATARIO","EXP PRESTATARIO", "1ER NOMBRE", "2DO NOMBRE", "APELLIDO PATERNO", "APELLIDO MATERNO","APELLIDO DE CASADA", "SALDO ACTUAL", "CUOTA FIJA MENSUAL", "DESCUENTO PROGRAMADO", "INTERES","Amort. TIT o GAR?","***",
                 "GAR Estado","GAR Tipo de estado","Matricula garante","GAR CI", "GAR Exp","GAR Primer Nombre","GAR Segundo Nombre",
                 "GAR 1er Apellido","GAR 2do Apellido","GAR Apellido de Casada","GAR Cuota fija","GAR descuento","***","GAR2 Estado","GAR2 Tipo de estado","Matricula garante","GAR2 CI", "GAR2 Exp","GAR2 Primer Nombre","GAR2 Segundo Nombre",
                 "GAR2 1er Apellido","GAR2 2do Apellido","GAR2 Apellido de Casada","GAR2 Cuota fija","GAR2 descuento")
             );
          $command_sheet_later=array(
-            array("CI AFILIADO","MATRICULA AFILIADO","NOMBRE COMPLETO AFILIADO","***",
+            array("CI AFILIADO","EXP AFILIADO","MATRICULA AFILIADO","NOMBRE COMPLETO AFILIADO","***",
             "COD PRESTAMO", "FECHA DE DESEMBOLSO", "DPTO", "TIPO ESTADO","ESTADO AFILIADO",
-            "MATRICULA PRESTATARIO", "CI PRESTATARIO", "1ER NOMBRE", "2DO NOMBRE", "APELLIDO PATERNO", "APELLIDO MATERNO","APELLIDO DE CASADA", "SALDO ACTUAL", "CUOTA FIJA MENSUAL", "DESCUENTO PROGRAMADO", "INTERES","Amort. TIT o GAR?","***",
+            "MATRICULA PRESTATARIO", "CI PRESTATARIO","EXP PRESTATARIO", "1ER NOMBRE", "2DO NOMBRE", "APELLIDO PATERNO", "APELLIDO MATERNO","APELLIDO DE CASADA", "SALDO ACTUAL", "CUOTA FIJA MENSUAL", "DESCUENTO PROGRAMADO", "INTERES","Amort. TIT o GAR?","***",
             "GAR Estado","GAR Tipo de estado","Matricula garante","GAR CI", "GAR Exp","GAR Primer Nombre","GAR Segundo Nombre",
             "GAR 1er Apellido","GAR 2do Apellido","GAR Apellido de Casada","GAR Cuota fija","GAR descuento","***","GAR2 Estado","GAR2 Tipo de estado","Matricula garante","GAR2 CI", "GAR2 Exp","GAR2 Primer Nombre","GAR2 Segundo Nombre",
             "GAR2 1er Apellido","GAR2 2do Apellido","GAR2 Apellido de Casada","GAR2 Cuota fija","GAR2 descuento")
         );
          $senasir_sheet_before=array(
-            array("CI AFILIADO","MATRICULA AFILIADO","NOMBRE COMPLETO AFILIADO","***",
-                "COD PRESTAMO", "FECHA DE DESEMBOLSO", "DPTO", "TIPO ESTADO","ESTADO AFILIADO",
-                "MATRICULA PRESTATARIO", "CI PRESTATARIO", "1ER NOMBRE", "2DO NOMBRE", "APELLIDO PATERNO", "APELLIDO MATERNO","APELLIDO DE CASADA", "SALDO ACTUAL", "CUOTA FIJA MENSUAL", "DESCUENTO PROGRAMADO", "INTERES","Amort. TIT o GAR?","***",
-                "GAR Estado","GAR Tipo de estado","Matricula garante","GAR CI", "GAR Exp","GAR Primer Nombre","GAR Segundo Nombre",
-                "GAR 1er Apellido","GAR 2do Apellido","GAR Apellido de Casada","GAR Cuota fija","GAR descuento","***","GAR2 Estado","GAR2 Tipo de estado","Matricula garante","GAR2 CI", "GAR2 Exp","GAR2 Primer Nombre","GAR2 Segundo Nombre",
-                "GAR2 1er Apellido","GAR2 2do Apellido","GAR2 Apellido de Casada","GAR2 Cuota fija","GAR2 descuento")
-            );
-         $senasir_sheet_later=array(
-            array("CI AFILIADO","MATRICULA AFILIADO","NOMBRE COMPLETO AFILIADO","***",
+            array("CI AFILIADO","EXP AFILIADO","MATRICULA AFILIADO","NOMBRE COMPLETO AFILIADO","***",
             "COD PRESTAMO", "FECHA DE DESEMBOLSO", "DPTO", "TIPO ESTADO","ESTADO AFILIADO",
-            "MATRICULA PRESTATARIO", "CI PRESTATARIO", "1ER NOMBRE", "2DO NOMBRE", "APELLIDO PATERNO", "APELLIDO MATERNO","APELLIDO DE CASADA", "SALDO ACTUAL", "CUOTA FIJA MENSUAL", "DESCUENTO PROGRAMADO", "INTERES","Amort. TIT o GAR?","***",
+            "MATRICULA PRESTATARIO", "CI PRESTATARIO","EXP PRESTATARIO", "1ER NOMBRE", "2DO NOMBRE", "APELLIDO PATERNO", "APELLIDO MATERNO","APELLIDO DE CASADA", "SALDO ACTUAL", "CUOTA FIJA MENSUAL", "DESCUENTO PROGRAMADO", "INTERES","Amort. TIT o GAR?","***",
+            "GAR Estado","GAR Tipo de estado","Matricula garante","GAR CI", "GAR Exp","GAR Primer Nombre","GAR Segundo Nombre",
+            "GAR 1er Apellido","GAR 2do Apellido","GAR Apellido de Casada","GAR Cuota fija","GAR descuento","***","GAR2 Estado","GAR2 Tipo de estado","Matricula garante","GAR2 CI", "GAR2 Exp","GAR2 Primer Nombre","GAR2 Segundo Nombre",
+            "GAR2 1er Apellido","GAR2 2do Apellido","GAR2 Apellido de Casada","GAR2 Cuota fija","GAR2 descuento")
+        );
+         $senasir_sheet_later=array(
+            array("CI AFILIADO","EXP AFILIADO","MATRICULA AFILIADO","NOMBRE COMPLETO AFILIADO","***",
+            "COD PRESTAMO", "FECHA DE DESEMBOLSO", "DPTO", "TIPO ESTADO","ESTADO AFILIADO",
+            "MATRICULA PRESTATARIO", "CI PRESTATARIO","EXP PRESTATARIO", "1ER NOMBRE", "2DO NOMBRE", "APELLIDO PATERNO", "APELLIDO MATERNO","APELLIDO DE CASADA", "SALDO ACTUAL", "CUOTA FIJA MENSUAL", "DESCUENTO PROGRAMADO", "INTERES","Amort. TIT o GAR?","***",
             "GAR Estado","GAR Tipo de estado","Matricula garante","GAR CI", "GAR Exp","GAR Primer Nombre","GAR Segundo Nombre",
             "GAR 1er Apellido","GAR 2do Apellido","GAR Apellido de Casada","GAR Cuota fija","GAR descuento","***","GAR2 Estado","GAR2 Tipo de estado","Matricula garante","GAR2 CI", "GAR2 Exp","GAR2 Primer Nombre","GAR2 Segundo Nombre",
             "GAR2 1er Apellido","GAR2 2do Apellido","GAR2 Apellido de Casada","GAR2 Cuota fija","GAR2 descuento")
         );
 
          $command_ancient=array(
-            array("CI AFILIADO","MATRICULA AFILIADO","NOMBRE COMPLETO AFILIADO","***",
+            array("CI AFILIADO","EXP AFILIADO","MATRICULA AFILIADO","NOMBRE COMPLETO AFILIADO","***",
             "COD PRESTAMO", "FECHA DE DESEMBOLSO", "DPTO", "TIPO ESTADO","ESTADO AFILIADO",
-            "MATRICULA PRESTATARIO", "CI PRESTATARIO", "1ER NOMBRE", "2DO NOMBRE", "APELLIDO PATERNO", "APELLIDO MATERNO","APELLIDO DE CASADA", "SALDO ACTUAL", "CUOTA FIJA MENSUAL", "DESCUENTO PROGRAMADO", "INTERES","Amort. TIT o GAR?","***",
+            "MATRICULA PRESTATARIO", "CI PRESTATARIO","EXP PRESTATARIO", "1ER NOMBRE", "2DO NOMBRE", "APELLIDO PATERNO", "APELLIDO MATERNO","APELLIDO DE CASADA", "SALDO ACTUAL", "CUOTA FIJA MENSUAL", "DESCUENTO PROGRAMADO", "INTERES","Amort. TIT o GAR?","***",
             "GAR Estado","GAR Tipo de estado","Matricula garante","GAR CI", "GAR Exp","GAR Primer Nombre","GAR Segundo Nombre",
             "GAR 1er Apellido","GAR 2do Apellido","GAR Apellido de Casada","GAR Cuota fija","GAR descuento","***","GAR2 Estado","GAR2 Tipo de estado","Matricula garante","GAR2 CI", "GAR2 Exp","GAR2 Primer Nombre","GAR2 Segundo Nombre",
             "GAR2 1er Apellido","GAR2 2do Apellido","GAR2 Apellido de Casada","GAR2 Cuota fija","GAR2 descuento")
         );
           $senasir_ancient=array(
-            array("CI AFILIADO","MATRICULA AFILIADO","NOMBRE COMPLETO AFILIADO","***",
+            array("CI AFILIADO","EXP AFILIADO","MATRICULA AFILIADO","NOMBRE COMPLETO AFILIADO","***",
             "COD PRESTAMO", "FECHA DE DESEMBOLSO", "DPTO", "TIPO ESTADO","ESTADO AFILIADO",
-            "MATRICULA PRESTATARIO", "CI PRESTATARIO", "1ER NOMBRE", "2DO NOMBRE", "APELLIDO PATERNO", "APELLIDO MATERNO","APELLIDO DE CASADA", "SALDO ACTUAL", "CUOTA FIJA MENSUAL", "DESCUENTO PROGRAMADO", "INTERES","Amort. TIT o GAR?","***",
+            "MATRICULA PRESTATARIO", "CI PRESTATARIO","EXP PRESTATARIO", "1ER NOMBRE", "2DO NOMBRE", "APELLIDO PATERNO", "APELLIDO MATERNO","APELLIDO DE CASADA", "SALDO ACTUAL", "CUOTA FIJA MENSUAL", "DESCUENTO PROGRAMADO", "INTERES","Amort. TIT o GAR?","***",
             "GAR Estado","GAR Tipo de estado","Matricula garante","GAR CI", "GAR Exp","GAR Primer Nombre","GAR Segundo Nombre",
             "GAR 1er Apellido","GAR 2do Apellido","GAR Apellido de Casada","GAR Cuota fija","GAR descuento","***","GAR2 Estado","GAR2 Tipo de estado","Matricula garante","GAR2 CI", "GAR2 Exp","GAR2 Primer Nombre","GAR2 Segundo Nombre",
             "GAR2 1er Apellido","GAR2 2do Apellido","GAR2 Apellido de Casada","GAR2 Cuota fija","GAR2 descuento")
@@ -723,6 +723,7 @@ class LoanReportController extends Controller
                      {
                          array_push($command_sheet_before, array(
                             $lender->identity_card_affiliate,
+                            $lender->city_exp_first_shortened_affiliate,
                             $lender->registration_affiliate,
                             $lender->full_name_affiliate,
                             $loan->guarantor_amortizing? '***' : '***',
@@ -733,6 +734,7 @@ class LoanReportController extends Controller
                              $lender->state_affiliate,
                              $lender->registration_borrower,
                              $lender->identity_card_borrower,
+                             $lender->city_exp_first_shortened_borrower,
                              $lender->first_name_borrower,
                              $lender->second_name_borrower,
                              $lender->last_name_borrower,
@@ -783,6 +785,7 @@ class LoanReportController extends Controller
                          {
                             array_push($senasir_sheet_before, array(
                                 $lender->identity_card_affiliate,
+                                $lender->city_exp_first_shortened_affiliate,
                                 $lender->registration_affiliate,
                                 $lender->full_name_affiliate,
                                 $loan->guarantor_amortizing? '***' : '***',
@@ -793,6 +796,7 @@ class LoanReportController extends Controller
                                  $lender->state_affiliate,
                                  $lender->registration_borrower,
                                  $lender->identity_card_borrower,
+                                 $lender->city_exp_first_shortened_borrower,
                                  $lender->first_name_borrower,
                                  $lender->second_name_borrower,
                                  $lender->last_name_borrower,
@@ -849,6 +853,7 @@ class LoanReportController extends Controller
                      {
                         array_push($command_sheet_later, array(
                             $lender->identity_card_affiliate,
+                            $lender->city_exp_first_shortened_affiliate,
                             $lender->registration_affiliate,
                             $lender->full_name_affiliate,
                             $loan->guarantor_amortizing? '***' : '***',
@@ -859,6 +864,7 @@ class LoanReportController extends Controller
                              $lender->state_affiliate,
                              $lender->registration_borrower,
                              $lender->identity_card_borrower,
+                             $lender->city_exp_first_shortened_borrower,
                              $lender->first_name_borrower,
                              $lender->second_name_borrower,
                              $lender->last_name_borrower,
@@ -909,6 +915,7 @@ class LoanReportController extends Controller
                          {
                             array_push($senasir_sheet_later, array(
                                 $lender->identity_card_affiliate,
+                                $lender->city_exp_first_shortened_affiliate,
                                 $lender->registration_affiliate,
                                 $lender->full_name_affiliate,
                                 $loan->guarantor_amortizing? '***' : '***',
@@ -919,6 +926,7 @@ class LoanReportController extends Controller
                                  $lender->state_affiliate,
                                  $lender->registration_borrower,
                                  $lender->identity_card_borrower,
+                                 $lender->city_exp_first_shortened_borrower,
                                  $lender->first_name_borrower,
                                  $lender->second_name_borrower,
                                  $lender->last_name_borrower,
@@ -972,6 +980,7 @@ class LoanReportController extends Controller
                   {
                     array_push($command_ancient, array(
                         $lender->identity_card_affiliate,
+                        $lender->city_exp_first_shortened_affiliate,
                         $lender->registration_affiliate,
                         $lender->full_name_affiliate,
                         $loan->guarantor_amortizing? '***' : '***',
@@ -982,6 +991,7 @@ class LoanReportController extends Controller
                          $lender->state_affiliate,
                          $lender->registration_borrower,
                          $lender->identity_card_borrower,
+                         $lender->city_exp_first_shortened_borrower,
                          $lender->first_name_borrower,
                          $lender->second_name_borrower,
                          $lender->last_name_borrower,
@@ -1032,6 +1042,7 @@ class LoanReportController extends Controller
                       {
                         array_push($senasir_ancient, array(
                             $lender->identity_card_affiliate,
+                            $lender->city_exp_first_shortened_affiliate,
                             $lender->registration_affiliate,
                             $lender->full_name_affiliate,
                             $loan->guarantor_amortizing? '***' : '***',
@@ -1042,6 +1053,7 @@ class LoanReportController extends Controller
                              $lender->state_affiliate,
                              $lender->registration_borrower,
                              $lender->identity_card_borrower,
+                             $lender->city_exp_first_shortened_borrower,
                              $lender->first_name_borrower,
                              $lender->second_name_borrower,
                              $lender->last_name_borrower,
@@ -1402,6 +1414,9 @@ class LoanReportController extends Controller
               if ($surname_husband_borrower != '') {
                   array_push($conditions, array('view_loan_borrower.surname_husband_borrower', 'ilike', "%{$surname_husband_borrower}%"));
               }
+              if ($full_name_borrower != '') {
+                array_push($conditions, array('view_loan_borrower.full_name_borrower', 'ilike', "%{$full_name_borrower}%"));
+            }
 
               if ($sub_modality_loan != '') {
                   array_push($conditions, array('view_loan_borrower.sub_modality_loan', 'ilike', "%{$sub_modality_loan}%"));

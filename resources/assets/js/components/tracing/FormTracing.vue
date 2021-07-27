@@ -133,7 +133,12 @@
                                             </v-row>
                                           </v-col>
                                         </li>
-                                        <p  style="color:teal" v-if="loan.guarantors.length==0" ><b> NO TIENE GARANTES </b></p>
+                                        <v-col cols="12" md="12" class="py-0" >
+                                          <p style="color:teal"><b>GARANTES</b></p>
+                                        </v-col>
+                                        <v-progress-linear></v-progress-linear>
+                                        <br>
+                                        <p v-if="loan.guarantors.length==0" ><b> NO TIENE GARANTES </b></p>
                                       </ul>
                                       <v-col cols="12" md="12" v-if="procedure_type.name == 'Préstamo Hipotecario' || procedure_type.name == 'Refinanciamiento Préstamo Hipotecario'">
                                        <p style="color:teal"><b>GARANTIA HIPOTECARIA </b></p>
@@ -190,8 +195,13 @@
                                           </v-col>
                                         </v-row>
                                       </v-col>
-                                      <ul style="list-style: none" class="pa-0 py-4" v-if="procedure_type.name == 'Préstamo Anticipo'">
-                                        <p  style="color:teal" > <b>NO TIENE GARANTES</b></p>
+                                      <ul style="list-style: none" class="pa-0 py-0" v-if="procedure_type.name == 'Préstamo Anticipo'">
+                                      <v-col cols="12" md="12" class="py-0" >
+                                        <p style="color:teal" ><b>GARANTE</b></p>
+                                      </v-col>
+                                      <v-progress-linear></v-progress-linear>
+                                      <br>
+                                        <p> <b>NO TIENE GARANTES</b></p>
                                       </ul>
                                     </div>
                                   </v-card-text>
@@ -202,13 +212,13 @@
                           <v-tab-item>
                             <v-card flat>
                               <v-card-text>
-                                <v-col cols="12" md="12" class="pa-0" >
-                                  <h3 style="color:teal"><b>INFORMACION DEL TRAMITE</b></h3>
+                                <v-col cols="12" md="12" class="py-0" >
+                                  <p style="color:teal"><b>INFORMACION DEL TRAMITE</b></p>
                                 </v-col>
                                 <v-progress-linear></v-progress-linear>
                                 <br>
                                 <v-col cols="12" md="6" class="pa-0" >
-                                  <p style="color:teal">DATOS DEL CONTRATO</p>
+                                  <p>DATOS DEL CONTRATO</p>
                                 </v-col>
                                 <v-progress-linear></v-progress-linear>
                                   <v-row>
@@ -222,7 +232,7 @@
                                   <v-col cols="12" class="pa-0">
                                     <v-progress-linear></v-progress-linear>
                                     <br>
-                                      <p style="color:teal">DATOS DEL DESEMBOLSO</p>
+                                      <p>DATOS DEL DESEMBOLSO</p>
                                     <v-progress-linear></v-progress-linear>
                                     <v-row>
                                       <v-col cols="12" md="6" class="py-0">
@@ -286,8 +296,10 @@
                           <v-tab-item>
                             <v-card flat>
                               <v-card-text>
-                                <p style="color:teal" v-if="loan.personal_references.length>0"><b>PERSONA DE REFERENCIA </b></p>
-                                <v-progress-linear v-if="loan.personal_references.length>0"></v-progress-linear><br>
+                                <v-col cols="12" md="4" class="py-0" >
+                                  <p style="color:teal"><b>PERSONA DE REFERENCIA </b></p>
+                                </v-col>
+                                <v-progress-linear></v-progress-linear><br>
                                 <v-data-table
                                   dense
                                   v-if="loan.personal_references.length>0"
@@ -296,13 +308,19 @@
                                   hide-default-footer
                                   >
                                 </v-data-table>
-                                <p v-if="loan.personal_references.length==0" style="color:teal"> <b>NO TIENE PERSONA DE REFERENCIA</b></p>
+                                <p v-if="loan.personal_references.length==0"> <b>NO TIENE PERSONA DE REFERENCIA</b></p>
                               </v-card-text>
                             </v-card>
                           </v-tab-item>
                           <v-tab-item>
                             <v-card flat>
                               <v-card-text>
+                                <v-col v-if="loan.cosigners.length==0" cols="12" md="12" class="py-0" >
+                                  <p style="color:teal"><b>CODEUDOR</b></p>
+                                </v-col>
+                               <v-progress-linear></v-progress-linear>
+                               <br>
+                                <p v-if="loan.cosigners.length==0" > <b>NO TIENE CODEUDORES</b></p>
                                 <v-col cols="12" md="12" >
                                   <div v-for="procedure_type in procedure_types" :key="procedure_type.id">
                                     <div v-if="procedure_type.name === 'Préstamo Hipotecario'">
@@ -333,10 +351,10 @@
                                               </v-row>
                                           </div>
                                         </div>
+                                        <v-progress-linear></v-progress-linear>
+                                        <br>
                                       </div>
                                     </div>
-                                    <v-progress-linear></v-progress-linear>
-                                    <br>
                                 <p style="color:teal" v-if="loan.cosigners.length>0"><b>CODEUDOR NO AFILIADO </b></p>
                                 <v-progress-linear v-if="loan.cosigners.length>0"></v-progress-linear>
                                 <v-card flat tile>
@@ -348,7 +366,6 @@
                                     dense
                                   >
                                 </v-data-table>
-                                <p v-if="loan.cosigners.length==0" > <b>NO TIENE CODEUDORES</b></p>
                               </v-card-text>
                             </v-card>
                                   </v-col>
@@ -358,8 +375,8 @@
                             <v-tab-item>
                             <v-card flat>
                               <v-card-text>
-                                <v-col cols="12" md="12" class="pa-0" >
-                                  <h3 style="color:teal"><b>DOCUMENTOS PRESENTADOS</b></h3>
+                                <v-col cols="12" md="12" class="py-0" >
+                                  <p style="color:teal"><b>DOCUMENTOS PRESENTADOS</b></p>
                                 </v-col>
                                 <v-progress-linear></v-progress-linear>
                                 <br>
@@ -371,8 +388,15 @@
                             <v-tab-item>
                             <v-card flat>
                               <v-card-text>
+                                <v-col cols="12" md="12" class="py-0" >
+                                  <p style="color:teal"><b>OBSERVACIONES DEL TRAMITE</b></p>
+                                </v-col>
+                                <v-progress-linear></v-progress-linear>
+                                <br>
                                 <ObserverFlow
-                                :loan.sync="loan">
+                                :loan.sync="loan"
+                                 :observations.sync="observations"
+                                 :observation_type.sync="observation_type">
                                 </ObserverFlow>
                               </v-card-text>
                             </v-card>
@@ -380,6 +404,11 @@
                           <v-tab-item>
                             <v-card flat>
                               <v-card-text>
+                                <v-col cols="12" md="12" class="py-0" >
+                                  <p style="color:teal"><b>HISTORIAL DEL TRAMITE</b></p>
+                                </v-col>
+                                <v-progress-linear></v-progress-linear>
+                                <br>
                                 <HistoryFlow
                                 :loan.sync="loan">
                                 </HistoryFlow>
@@ -419,6 +448,14 @@ export default {
       type: Object,
       required: true
     },
+    observations: {
+      type: Array,
+      required: true
+    },
+    observation_type: {
+      type: Array,
+      required: true
+    },
     loan_properties: {
       type: Object,
       required: true
@@ -427,22 +464,13 @@ export default {
       type: Object,
       required: true
     },
-    /*validate:{
-      type: Object,
-      required: false
-    }*/
   },
    data: () => ({
     items_measurement: [
       { name: "Metros cuadrados", value: "METROS CUADRADOS" },
       { name: "Hectáreas", value: "HECTÁREAS" }
     ],
-      editedIndex: -1,
-      editedItem: {},
-      defaultItem: {},
-      editedItem1: {},
-      defaultItem1: {},
-      headers: [
+       headers: [
         {
           text: 'PRIMER NOMBRE',
           align: 'start',
@@ -465,10 +493,6 @@ export default {
     this.getEntity()
   },
   computed: {
-      //Metodo para obtener Permisos por rol
-      permissionSimpleSelected () {
-        return this.$store.getters.permissionSimpleSelected
-      },
       cuenta() {
        for (this.i = 0; this.i< this.entity.length; this.i++) {
         if(this.loan.lenders[0].financial_entity_id==this.entity[this.i].id)
@@ -480,7 +504,7 @@ export default {
     }
   },
   methods:{
-
+  //Metodo para obtener la entidad financiera
     async getEntity() {
       try {
         this.loading = true
@@ -492,6 +516,7 @@ export default {
         this.loading = false
       }
     },
+    //Metodo para obtener la ciudad
     async getCity() {
       try {
         this.loading = true
@@ -503,6 +528,7 @@ export default {
         this.loading = false
       }
     },
+    //Metodo para obtener la extencion del ci
     identityCardExt(id){
       let ext
       if(id != null){

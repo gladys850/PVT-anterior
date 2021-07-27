@@ -57,7 +57,6 @@
 </template>
 
 <script>
-import common from "@/plugins/common"
 export default {
   name: "flow-dashboard",
   props: {
@@ -69,82 +68,24 @@ export default {
       type: Object,
       required: true
     },
-    spouse: {
-      type: Object,
-      required: true
-    }
   },
   data: () => ({
     loading: false,
-    degree_name: null,
-    unit_name: null,
-    last_name: null,
-    mothers_last_name: null,
-    last_name:null,
-    first_name:null,
-    //identity_card: null,
     procedure_modality_name: ""
   }),
   computed: {
     isNew() {
       return this.$route.params.id == "new"
     },
-
-    /*spouseNombre: function() {
-      return (
-        this.spouse.mothers_last_name +
-        " " +
-        this.spouse.last_name +
-        " " +
-        this.spouse.first_name
-      );
-    }*/
-  },
-  watch: {
-    affiliate(newVal, oldVal) {
-      if (oldVal != newVal) {
-        if (newVal.hasOwnProperty("degree_id"))
-          this.getDegree_name(newVal.degree_id);
-        if (newVal.hasOwnProperty("unit_id")) this.getUnit_name(newVal.unit_id)
-      }
-    },
-    loan(newVal, oldVal) {
-      if (oldVal != newVal) {
-        if (newVal.hasOwnProperty("procedure_modality_id"))
-          this.getProcedureModalityName(newVal.procedure_modality_id);
-      }
-    }
   },
   methods: {
-    async getDegree_name(id) {
-      try {
-        this.loading = true
-        let res = await axios.get(`degree/${id}`)
-        this.degree_name = res.data.name;
-      } catch (e) {
-        console.log(e);
-      } finally {
-        this.loading = false;
-      }
-    },
-    async getUnit_name(id) {
-      try {
-        this.loading = true;
-        let res = await axios.get(`unit/${id}`)
-        this.unit_name = res.data.name;
-      } catch (e) {
-        console.log(e);
-      } finally {
-        this.loading = false;
-      }
-    },
+    //Metodo para sacar el procedure modality
     async getProcedureModalityName(id) {
       try {
         this.loading = true;
         let res = await axios.get(`procedure_modality/${id}`)
         this.procedure_modality_name = res.data.name
-        console.log(this.procedure_modality_name)
-      } catch (e) {
+       } catch (e) {
         console.log(e)
       } finally {
         this.loading = false
