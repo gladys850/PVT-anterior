@@ -455,7 +455,7 @@ class Loan extends Model
 
         // Interés corriente
             
-        $quota->interest_payment = $quota->balance * $interest->daily_current_interest * $quota->paid_days['current'];
+        $quota->interest_payment = Util::round2($quota->balance * $interest->daily_current_interest * $quota->paid_days['current']);
         if($amount >= $quota->interest_payment){
                 $amount = $amount - $quota->interest_payment;
         }
