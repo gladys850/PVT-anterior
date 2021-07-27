@@ -98,7 +98,6 @@ export default {
           }
         })
         this.record = res.data.data
-        //console.log(this.record)
         delete res.data['data']
         this.options.page = res.data.current_page
         this.options.itemsPerPage = parseInt(res.data.per_page)

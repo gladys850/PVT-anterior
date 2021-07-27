@@ -95,8 +95,7 @@ export default {
         let res = await axios.get(`loan/${id}/document`)
         this.docsRequired = res.data.required
         this.docsOptional = res.data.optional
-        console.log(this.docsRequired + " " + this.docsOptional)
-      } catch (e) {
+       } catch (e) {
         console.log(e)
       } finally {
         this.loading = false
@@ -108,8 +107,7 @@ export default {
         this.loading = true
         let res = await axios.get(`loan/${id}/note`)
         this.notes = res.data
-        console.log("NOTES  " + this.notes)
-      } catch (e) {
+       } catch (e) {
         console.log(e)
       } finally {
         this.loading = false
