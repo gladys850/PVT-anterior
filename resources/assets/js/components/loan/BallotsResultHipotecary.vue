@@ -4,61 +4,61 @@
       <v-form>
         <!--v-card-->
           <v-row justify="center">
-            <v-col cols="3" class="py-2" v-show="editar || (($route.params.hash == 'remake' && data_loan_parent_aux.parent_reason != null))">
+            <v-col cols="3" class="py-2" v-show="edit_parent_sismu || (($route.params.hash == 'remake' && data_loan_parent_aux.parent_reason != null))">
                <v-text-field
                 class="py-0"
                 dense
-                :outlined="habilitar"
-                :readonly="!habilitar"
+                :outlined="enable_sismu_field"
+                :readonly="!enable_sismu_field"
                 label="Código de Préstamo Padre"
                 v-model="data_loan_parent_aux.code"
               ></v-text-field>
           </v-col>
-          <v-col cols="3" class="py-2" v-show="editar || (($route.params.hash == 'remake' && data_loan_parent_aux.parent_reason != null))">
+          <v-col cols="3" class="py-2" v-show="edit_parent_sismu || (($route.params.hash == 'remake' && data_loan_parent_aux.parent_reason != null))">
             <ValidationProvider v-slot="{ errors }" name="monto" :rules="'required|numeric|min_value:'+loan_detail.minimun_amoun+'|max_value:'+loan_detail.maximun_amoun"  mode="aggressive">
               <v-text-field
                 :error-messages="errors"
                 class="py-0"
                 dense
-                :outlined="habilitar"
-                :readonly="!habilitar"
+                :outlined="enable_sismu_field"
+                :readonly="!enable_sismu_field"
                 label="Monto"
                 v-model="data_loan_parent_aux.amount_approved"
               ></v-text-field>
             </ValidationProvider>
           </v-col>
-          <v-col cols="2" class="py-2" v-show="editar || (($route.params.hash == 'remake' && data_loan_parent_aux.parent_reason != null))">
+          <v-col cols="2" class="py-2" v-show="edit_parent_sismu || (($route.params.hash == 'remake' && data_loan_parent_aux.parent_reason != null))">
             <ValidationProvider v-slot="{ errors }" name="plazo" :rules="'required|numeric|min_value:'+loan_detail.minimum_term+'|max_value:'+loan_detail.maximum_term" mode="aggressive">
               <v-text-field
                 :error-messages="errors"
                 class="py-0"
                 dense
-                :outlined="habilitar"
-                :readonly="!habilitar"
+                :outlined="enable_sismu_field"
+                :readonly="!enable_sismu_field"
                 label="Plazo"
                 v-model="data_loan_parent_aux.loan_term"
               ></v-text-field>
             </ValidationProvider>
           </v-col>
-          <v-col cols="2" class="py-2" v-show="editar || (($route.params.hash == 'remake' && data_loan_parent_aux.parent_reason != null))">
+          <v-col cols="2" class="py-2" v-show="edit_parent_sismu || (($route.params.hash == 'remake' && data_loan_parent_aux.parent_reason != null))">
             <ValidationProvider v-slot="{ errors }" name="saldo" :rules="'required|min_value:0|max_value:'+calculator_result.amount_requested" mode="aggressive">
               <v-text-field
                 :error-messages="errors"
                 class="py-0"
                 dense
-                :outlined="habilitar"
-                :readonly="!habilitar"
+                :outlined="enable_sismu_field"
+                :readonly="!enable_sismu_field"
                 label="Saldo"
                 v-model="data_loan_parent_aux.balance"
               ></v-text-field>
             </ValidationProvider>
           </v-col>
-          <v-col cols="2" class="py-2" v-show="editar || (($route.params.hash == 'remake' && data_loan_parent_aux.parent_reason != null))">
+          <v-col cols="2" class="py-2" v-show="edit_parent_sismu || (($route.params.hash == 'remake' && data_loan_parent_aux.parent_reason != null))">
               <v-text-field
                 class="py-0"
                 dense
-                :outlined="habilitar"
-                :readonly="!habilitar"
+                :outlined="enable_sismu_field"
+                :readonly="!enable_sismu_field"
                 label="Cuota"
                 v-model="data_loan_parent_aux.estimated_quota"
               ></v-text-field>
@@ -77,7 +77,7 @@
                         :error-messages="errors"
                         label="Plazo en Meses"
                         v-model="calculator_result.months_term"
-                        v-on:keyup.enter="calculadora()"
+                        v-on:keyup.enter="simulator()"
                       ></v-text-field>
                       </ValidationProvider>
                       <ValidationProvider v-slot="{ errors }" name="monto solicitado" :rules="'numeric|min_value:'+loan_detail.minimun_amoun+'|max_value:'+loan_detail.net_realizable_value" mode="aggressive">
@@ -86,7 +86,7 @@
                         :error-messages="errors"
                         label="Monto Solicitado"
                         v-model ="calculator_result.amount_requested"
-                        v-on:keyup.enter="calculadora()"
+                        v-on:keyup.enter="simulator()"
                       ></v-text-field>
                       </ValidationProvider>
                          <center>
@@ -95,7 +95,7 @@
                             color="info"
                             rounded
                             x-small
-                            @click="calculadora()">Calcular
+                            @click="simulator()">Calcular
                           </v-btn>
                         </center>
                         </fieldset>
@@ -140,7 +140,7 @@
                               <ul style="list-style: none" class="pa-0">
                                 <li v-for="(calculado,i) in calculator_result.affiliates" :key="i" >
                                   <v-progress-linear></v-progress-linear>
-                                   <h5 class="py-0 mb-0 caption ">Nombre del Afiliado: {{ lenders_aux[i] }}</h5>
+                                   <h5 class="py-0 mb-0 caption ">Nombre del Afiliado: {{lenders_aux[i]}}</h5>
                                   <p class="py-0 mb-0 caption">Liquido para Callificacion: {{calculado.liquid_qualification_calculated | money}} <b> | </b> Cuota Estimada: {{calculado.quota_calculated_estimated | money}} <b> | </b> Porcentaje de Pago: {{calculado.payment_percentage|percentage }}% </p>
                                 </li>
                               </ul>
@@ -162,9 +162,7 @@
 export default {
   name: "ballots-result-hipotecary",
   data: () => ({
-    //editar:true,
-    //loanTypeSelected:null,
-    simulator:{},
+     simulator:{},
   }),
   props: {
     data_sismu: {
@@ -183,7 +181,7 @@ export default {
       type: Object,
       required: true
     },
-      loan_detail: {
+    loan_detail: {
       type: Object,
       required: true
     },
@@ -207,35 +205,17 @@ export default {
         return true
       }
     },
-    /*editar() {
-      if(this.$route.query.type_sismu)
-      {
-        return true
-      }
-      else{
-         if(this.$route.query.loan_id)
-          {
-            return true
-          }else{
-            return false
-          }
-      }
-      return this.$route.params.hash == 'new'
-    },*/
-    editar() {
+    edit_parent_sismu() { //Visualiza los campos para editar los datos del refinanciamiento
       if(this.refinancing || this.reprogramming)
       {
         return true
       }
-      /*if(this.$route.params.hash == 'remake' && this.data_loan_parent_aux.parent_reason != null)
-      {
-        return true
-      }*/else{
+      else{
         return false
       }
 
     },
-    habilitar() {
+    enable_sismu_field() { //Habilita los campos para editar los datos del refinanciamiento
       if(this.$route.query.type_sismu)
       {
         return true
@@ -243,7 +223,6 @@ export default {
       else{
         return false
       }
-      return this.$route.params.hash == 'new'
     },
 
     refinancing() {
@@ -254,16 +233,11 @@ export default {
     }
   },
   methods: {
-
-    async calculadora() {
+    //Metodo del simulador para el monto maximo de prestamo
+    async simulator() {
       try {
-        console.log('Entro a calculadora hipotecario')
-          console.log(this.calculator_result.amount_requested)
-              console.log(this.loan_detail.net_realizable_value)
-        if( parseFloat(this.calculator_result.amount_requested)  <= parseFloat(this.loan_detail.net_realizable_value))
+       if( parseFloat(this.calculator_result.amount_requested)  <= parseFloat(this.loan_detail.net_realizable_value))
         {
-          console.log(this.calculator_result.amount_requested)
-              console.log(this.loan_detail.net_realizable_value)
           let res = await axios.post(`simulator`, {
           procedure_modality_id: this.modalidad.id,
           amount_requested: this.calculator_result.amount_requested,
