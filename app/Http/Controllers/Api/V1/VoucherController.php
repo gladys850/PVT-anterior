@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use App\Voucher;
 use App\LoanState;
+use App\Loan;
 use App\LoanPaymentState;
 use Illuminate\Http\Request;
 use App\Http\Requests\VoucherForm;
@@ -153,6 +154,7 @@ class VoucherController extends Controller
     public function print_voucher(Request $request, Voucher $voucher, $standalone = true)
     {
         $loan_payment=LoanPayment::find($voucher->payable_id);
+        $loan = Loan::find($loan_payment->loan_id);
         $affiliate = Affiliate::findOrFail($loan_payment->affiliate_id);
         $lenders = [];
         $lenders[] = LoanController::verify_loan_affiliates($affiliate,$loan)->disbursable;
