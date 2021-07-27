@@ -406,7 +406,7 @@ class CalculatorController extends Controller
         $livelihood_amount = true;
         $quantity_guarantors = $procedure_modality->loan_modality_parameter->guarantors;
         if($quantity_guarantors > 0){$type = false;
-            $debt_index = $procedure_modality->loan_modality_parameter->debt_index;
+            $debt_index = 50; // solo para garantias se evalua al 50%
             $affiliate_id = $request->affiliate_id;
             $affiliate = Affiliate::findOrFail($request->affiliate_id);
             $contributions = collect($request->contributions);
@@ -424,7 +424,7 @@ class CalculatorController extends Controller
             $active_guarantees_sismu = $affiliate->active_guarantees_sismu();
             foreach($active_guarantees_sismu as $res)
                 $sum_quota += $res->PresCuotaMensual / $res->quantity_guarantors; // descuento en caso de tener garantias activas del sismu*/
-            $liquid_rest = Util::round(($liquid_qualification_calculated * ($procedure_modality->loan_modality_parameter->debt_index/100)) - ($quota_calculated + $sum_quota));
+            $liquid_rest = Util::round(($liquid_qualification_calculated * 0.5) - ($quota_calculated + $sum_quota));
             $indebtedness_calculated = ($quota_calculated + $sum_quota)/$liquid_qualification_calculated * 100;
             if($liquid_qualification_calculated < 0)
                 $livelihood_amount = false;
