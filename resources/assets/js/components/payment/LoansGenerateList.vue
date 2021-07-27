@@ -42,7 +42,7 @@
             :headers="headers"
             :items="loans"
             :options.sync="options"
-            :server-items-length="totalAffiliates"
+            :server-items-length="totalLoans"
             :footer-props="{ itemsPerPageOptions: [8, 15, 30] }"
           >
             <template v-slot:[`header.code_loan`]="{ header }">
@@ -333,7 +333,7 @@ export default {
         sortBy: ["code_loan"],
         sortDesc: [false],
       },
-      totalAffiliates: 0,
+      totalLoans: 0,
   }),
   computed: {
     //permisos del selector global por rol
@@ -381,7 +381,7 @@ export default {
           },
         });
         this.loans = res.data.data;
-        this.totalAffiliates = res.data.total;
+        this.totalLoans = res.data.total;
         delete res.data["data"];
         this.options.page = res.data.current_page;
         this.options.itemsPerPage = parseInt(res.data.per_page);
