@@ -1,7 +1,64 @@
 <template>
   <v-container class="ma-0 pa-0">
     <v-row>
-      <v-col cols="8" class="text-center">
+      <v-col cols="4" class="ma-0 pa-2 pt-0">
+        <v-card color="#EDF2F4">
+          <v-card-title class="ma-0 pa-0">
+            <v-col cols="5">
+              <v-row>
+                <div class="pl-3">
+                  <div v-if="profilePictures.length > 0">
+                    <v-avatar class="mx-auto d-block elevation-3" tile size="125">
+                      <v-img
+                        :src="`data:${profilePictures[0].format};base64,${profilePictures[0].content}`"
+                      />
+                    </v-avatar>
+                  </div>
+                  <div v-else>
+                    <v-avatar class="mx-auto d-block elevation-3" tile size="125">
+                      <v-icon size="125" color="black" v-if="affiliate.gender==='M'">mdi-face</v-icon>
+                      <v-icon size="125" color="black" v-else>mdi-face-woman</v-icon>
+                    </v-avatar>
+                  </div>
+                </div>
+              </v-row>
+            </v-col>
+            <v-col cols="7" class=" text--lighten-5">
+              <small>
+                C.I.: {{affiliate.identity_card_ext}}
+                <br />
+                Categoría: <span v-if="affiliate.category != null">{{affiliate.category.name}}</span>
+                <br />
+                Estado:  {{this.state_name_status}}
+                <br />
+                Grado: {{this.degree_name}}
+                <br/>
+                Unidad: {{this.unit_name}}
+                <br />
+                Estado Civil: <span v-if ="affiliate.gender==='M'">
+                  {{affiliate.civil_status=='C'? 'CASADO':affiliate.civil_status=='S'? 'SOLTERO':affiliate.civil_status=='D'?'DIVORCIADO':'VIUDO'}}
+                  </span>
+                <span v-else>
+                  {{affiliate.civil_status=='C'? 'CASADA':affiliate.civil_status=='S'? 'SOLTERA':affiliate.civil_status=='D'?'DIVORCIADA':'VIUDA'}}
+                  </span>
+              </small>
+            </v-col>
+          </v-card-title>
+          <v-card-text class="ma-0 pa-0 pa-3" v-if="affiliate.spouse != null">
+            <v-col cols="12" color="#EDF2F4" class="text--lighten-5 ma-0 pa-0">
+             
+                <strong>Conyugue:</strong> {{$options.filters.fullName(affiliate.spouse, true) }}
+                <br />
+                <strong>C.I.:</strong> {{affiliate.spouse.identity_card}}
+                <br />
+                <strong>Matrícula:</strong> {{affiliate.spouse.registration}}
+                <br />
+            </v-col>
+          </v-card-text>
+        </v-card>
+      </v-col>
+
+      <v-col cols="8" class="text-center pt-0">
         <v-card color="#EDF2F4" shaped class="mx-5">
           <v-card-title>Préstamos</v-card-title>
           <v-card-text>
@@ -10,7 +67,7 @@
               <ul style="list-style: none;" class="pa-0">
                 <li v-for="(item,index) in loan" :key="item.id" class="pb-2">
                   <div v-if="index < 3">
-                    
+
                     <strong>Cód.:</strong>
                     {{ item.code }} |
                     <strong>Desembolso:</strong>
@@ -190,57 +247,7 @@
           </v-card-text>
         </v-card>
       </v-col>
-      <v-col cols="4" class="ma-0 pa-0">
-        <v-card color="secondary">
-          <v-card-title class="ma-0 pa-0">
-            <v-col cols="6">
-              <v-row>
-                <div>
-                  <div v-if="profilePictures.length > 0">
-                    <v-avatar class="mx-auto d-block elevation-3" size="125">
-                      <v-img
-                        :src="`data:${profilePictures[0].format};base64,${profilePictures[0].content}`"
-                      />
-                    </v-avatar>
-                  </div>
-                  <div v-else>
-                    <v-avatar class="mx-auto d-block elevation-3" size="125">
-                      <v-icon size="125" color="black" v-if="affiliate.gender==='M'">mdi-face</v-icon>
-                      <v-icon size="125" color="black" v-else>mdi-face-woman</v-icon>
-                    </v-avatar>
-                  </div>
-                </div>
-              </v-row>
-            </v-col>
-            <v-col cols="5" class="red--text text--lighten-5 ma-0 pa-0">
-              <small>
-                C.I.: {{affiliate.identity_card_ext}}
-                <br />
-                Categoría: <span v-if="affiliate.category != null">{{affiliate.category.name}}</span>
-                <br />
-                Estado:  {{this.state_name_status}}
-                <br />
-              </small>
-            </v-col>
-          </v-card-title>
-          <v-card-text class="ma-0 pa-0">
-            <v-col cols="12" color="#EDF2F4" class="red--text text--lighten-5 ma-0 pa-0">
-              <center>
-                Grado: {{this.degree_name}}
-                <br/>
-                Unidad: {{this.unit_name}}
-                <br />
-                Estado Civil: <span v-if ="affiliate.gender==='M'">
-                  {{affiliate.civil_status=='C'? 'CASADO':affiliate.civil_status=='S'? 'SOLTERO':affiliate.civil_status=='D'?'DIVORCIADO':'VIUDO'}}
-                  </span>
-                <span v-else>
-                  {{affiliate.civil_status=='C'? 'CASADA':affiliate.civil_status=='S'? 'SOLTERA':affiliate.civil_status=='D'?'DIVORCIADA':'VIUDA'}}
-                  </span>
-              </center>
-            </v-col>
-          </v-card-text>
-        </v-card>
-      </v-col>
+
     </v-row>
   </v-container>
 </template>
