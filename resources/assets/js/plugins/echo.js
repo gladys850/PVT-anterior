@@ -1,6 +1,6 @@
 import Echo from 'laravel-echo'
 
-window.io = require('socket.io-client')
+/*window.io = require('socket.io-client')
 window.Echo = new Echo({
   broadcaster: 'socket.io',
   host: `${process.env.MIX_LARAVEL_ECHO_SERVER_HOST}:${process.env.MIX_LARAVEL_ECHO_SERVER_PORT}`
@@ -13,4 +13,4 @@ window.Echo.connector.socket.on('disconnect', () => {
 })
 window.Echo.connector.socket.on('reconnecting', attemptNumber => {
   console.log(`Reconnecting to echo server, try #${attemptNumber}`)
-})
+})*/

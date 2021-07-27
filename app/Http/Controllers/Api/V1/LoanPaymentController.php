@@ -1313,6 +1313,13 @@ class LoanPaymentController extends Controller
    * @queryParam first_name_affiliate Buscar por primer Nombre del afiliado. Example: ABAD
    * @queryParam second_name_affiliate Buscar por segundo Nombre del afiliado. Example: FAUST
    * @queryParam surname_husband_affiliate Buscar por Apellido de casada Nombre del afiliado. Example: De LA CRUZ
+   * @queryParam identity_card_borrower ID del afiliado. Example: 667895
+   * @queryParam full_name_borrower Buscar por el nombre completo del afiliado. Example: RIVERA
+   * @queryParam last_name_borrower Buscar por primer apellido del afiliado. Example: RIVERA
+   * @queryParam mothers_last_name_borrower Buscar por segundo apellido del afiliado. Example: ARTEAG
+   * @queryParam first_name_borrower Buscar por primer Nombre del afiliado. Example: ABAD
+   * @queryParam second_name_borrower Buscar por segundo Nombre del afiliado. Example: FAUST
+   * @queryParam surname_husband_borrower Buscar por Apellido de casada Nombre del afiliado. Example: De LA CRUZ
    * @queryParam pension_entity_affiliate Buscar por la La pension entidad del afiliado. Example: SENASIR
    * @queryParam sub_modality_loan Buscar por sub modalidad del préstamo. Example: Corto plazo sector activo
    * @queryParam modality_loan_payment Buscar por Modalidad del prestamo. Example: Préstamo a corto plazo
@@ -1367,6 +1374,15 @@ class LoanPaymentController extends Controller
   $second_name_affiliate = request('second_name_affiliate') ?? '';
   $surname_husband_affiliate = request('surname_husband_affiliate') ?? '';
   $full_name_affiliate = request('full_name_affiliate') ?? '';
+
+  $identity_card_borrower = request('identity_card_borrower') ?? '';
+  $registration_borrower = request('registration_borrower') ?? '';
+  $last_name_borrower = request('last_name_borrower') ?? '';
+  $mothers_last_name_borrower = request('mothers_last_name_borrower') ?? '';
+  $first_name_borrower = request('first_name_borrower') ?? '';
+  $second_name_borrower = request('second_name_borrower') ?? '';
+  $surname_husband_borrower = request('surname_husband_borrower') ?? '';
+  $full_name_borrower = request('full_name_borrower') ?? '';
 
   $pension_entity_affiliate = request('pension_entity_affiliate') ?? '';
   
@@ -1432,6 +1448,32 @@ class LoanPaymentController extends Controller
     if ($full_name_affiliate != '') {//13
         array_push($conditions, array('view_loan_amortization.full_name_affiliate', 'ilike', "%{$full_name_affiliate}%"));
     }
+
+    if ($identity_card_affiliate != '') {//7
+        array_push($conditions, array('view_loan_amortization.identity_card_affiliate', 'ilike', "%{$identity_card_affiliate}%"));
+      }
+      if ($registration_affiliate != '') {//8
+        array_push($conditions, array('view_loan_amortization.registration_affiliate', 'ilike', "%{$registration_affiliate}%"));
+      }  
+      if ($last_name_borrower != '') {//9
+        array_push($conditions, array('view_loan_amortization.last_name_borrower', 'ilike', "%{$last_name_borrower}%"));
+      }
+      if ($mothers_last_name_borrower != '') {//10
+        array_push($conditions, array('view_loan_amortization.mothers_last_name_borrower', 'ilike', "%{$mothers_last_name_borrower}%"));
+      }
+  
+      if ($first_name_borrower != '') {//11
+        array_push($conditions, array('view_loan_amortization.first_name_borrower', 'ilike', "%{$first_name_borrower}%"));//
+      }
+      if ($second_name_borrower != '') {//12
+        array_push($conditions, array('view_loan_amortization.second_name_borrower', 'ilike', "%{$second_name_borrower}%"));
+      }
+      if ($surname_husband_borrower != '') {//13
+        array_push($conditions, array('view_loan_amortization.surname_husband_borrower', 'ilike', "%{$surname_husband_borrower}%"));
+      }
+      if ($full_name_borrower != '') {//13
+          array_push($conditions, array('view_loan_amortization.full_name_borrower', 'ilike', "%{$full_name_borrower}%"));
+      }
     if ($pension_entity_affiliate != '') {//14
       array_push($conditions, array('view_loan_amortization.pension_entity_affiliate', 'ilike', "%{$pension_entity_affiliate}%"));
     }
@@ -1482,7 +1524,8 @@ class LoanPaymentController extends Controller
 
         $File="ListadoPrestamos";
         $data=array(
-                 array("Id del préstamo", "Código préstamo", "Fecha desembolso préstamo","estado del afiliado","Tipo de estado del afiliado", "Nro de carnet", "Matrícula", "Primer apellido","Segundo apellido","Primer nombre","Segundo nombre","Apellido casada","nombre completo afiliado",
+                 array("Id del préstamo", "Código préstamo", "Fecha desembolso préstamo","estado del afiliado","Tipo de estado del afiliado", "Nro de carnet", "Matrícula", "Primer apellido","Segundo apellido","Primer nombre","Segundo nombre","Apellido casada","Nombre completo afiliado",
+                 "Nro de carnet del Prestatario", "Matrícula del prestatario", "Primer apellido del prestatario","Segundo apellido del prestatario","Primer nombre del prestatario","Segundo nombre del prestatario","Apellido casada del prestatario","Nombre completo del prestatario",
                  "Entidad de pensión del afiliado","Código pago","fecha de pago","Total pagado","Nro comprobante","Modalidad pago","Modalidad pago nombre","Tipo amortización","Estado del pago", "Tipo de Pago",
                  "Pagado por","Capital pagado","Interés corriente pagado","Interés penal pagado","Interés corriente pendiente","Interés penal pendiente","Total pagado","Saldo anterior","Saldo actual","fecha y hora de cobro")
         );
@@ -1501,6 +1544,14 @@ class LoanPaymentController extends Controller
                      $row->second_name_affiliate,
                      $row->surname_husband_affiliate,
                      $row->full_name_affiliate,
+                     $row->identity_card_borrower,
+                     $row->registration_borrower,
+                     $row->last_name_borrower,
+                     $row->mothers_last_name_borrower,
+                     $row->first_name_borrower,
+                     $row->second_name_borrower,
+                     $row->surname_husband_borrower,
+                     $row->full_name_borrower,
                      $row->pension_entity_affiliate,
                      $row->code_loan_payment,
                      $row->estimated_date_loan_payment,
