@@ -2053,7 +2053,7 @@ class LoanController extends Controller
         array_push($conditions, array('view_loan_borrower.amount_approved_loan', 'ilike', "%{$amount_approved_loan}%"));
       }
       if ($state_type_affiliate != '') {
-        array_push($conditions, array('view_loan_borrower.state_loan', 'ilike', "%{$state_type_affiliate}%"));
+        array_push($conditions, array('view_loan_borrower.state_type_affiliate', 'ilike', "%{$state_type_affiliate}%"));
       }
       if ($state_affiliate != '') {
         array_push($conditions, array('view_loan_borrower.state_affiliate', 'ilike', "%{$state_affiliate}%"));
