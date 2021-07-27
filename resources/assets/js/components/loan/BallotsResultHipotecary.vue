@@ -77,7 +77,7 @@
                         :error-messages="errors"
                         label="Plazo en Meses"
                         v-model="calculator_result.months_term"
-                        v-on:keyup.enter="simulator()"
+                        v-on:keyup.enter="simulator_hipotecary()"
                       ></v-text-field>
                       </ValidationProvider>
                       <ValidationProvider v-slot="{ errors }" name="monto solicitado" :rules="'numeric|min_value:'+loan_detail.minimun_amoun+'|max_value:'+loan_detail.net_realizable_value" mode="aggressive">
@@ -86,7 +86,7 @@
                         :error-messages="errors"
                         label="Monto Solicitado"
                         v-model ="calculator_result.amount_requested"
-                        v-on:keyup.enter="simulator()"
+                        v-on:keyup.enter="simulator_hipotecary()"
                       ></v-text-field>
                       </ValidationProvider>
                          <center>
@@ -95,7 +95,7 @@
                             color="info"
                             rounded
                             x-small
-                            @click="simulator()">Calcular
+                            @click="simulator_hipotecary()">Calcular
                           </v-btn>
                         </center>
                         </fieldset>
@@ -234,7 +234,7 @@ export default {
   },
   methods: {
     //Metodo del simulador para el monto maximo de prestamo
-    async simulator() {
+    async simulator_hipotecary() {
       try {
        if( parseFloat(this.calculator_result.amount_requested)  <= parseFloat(this.loan_detail.net_realizable_value))
         {
