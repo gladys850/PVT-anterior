@@ -338,7 +338,7 @@ export default {
   computed: {
     //permisos del selector global por rol
     permissionSimpleSelected() {
-      return this.$store.getters.permissionSimpleSelected;
+      return this.$store.getters.permissionSimpleSelected
     },
   },
   watch: {
@@ -347,7 +347,7 @@ export default {
         newVal.itemsPerPage != oldVal.itemsPerPage ||
         newVal.sortBy != oldVal.sortBy ||
         newVal.sortDesc != oldVal.sortDesc) {
-        this.search_loans();
+        this.search_loans()
       }
     },
     tab: function(newVal, oldVal){
@@ -357,8 +357,8 @@ export default {
     }
   },
   created() {
-    this.search_loans();
-    this.docsLoans();
+    this.search_loans()
+    this.docsLoans()
    
   },
   methods: {
@@ -379,15 +379,15 @@ export default {
             sortBy: this.options.sortBy,
             sortDesc: this.options.sortDesc,
           },
-        });
-        this.loans = res.data.data;
-        this.totalLoans = res.data.total;
-        delete res.data["data"];
-        this.options.page = res.data.current_page;
-        this.options.itemsPerPage = parseInt(res.data.per_page);
-        this.options.totalItems = res.data.total;
+        })
+        this.loans = res.data.data
+        this.totalLoans = res.data.total
+        delete res.data["data"]
+        this.options.page = res.data.current_page
+        this.options.itemsPerPage = parseInt(res.data.per_page)
+        this.options.totalItems = res.data.total
       } catch (e) {
-        console.log(e);
+        console.log(e)
       }
     },
 
@@ -410,17 +410,16 @@ export default {
         },
       })
         .then((response) => {
-          console.log(response);
-          const url = window.URL.createObjectURL(new Blob([response.data]));
-          const link = document.createElement("a");
-          link.href = url;
-          link.setAttribute("download", "ReportePrestamo.xls");
-          document.body.appendChild(link);
-          link.click();
+          const url = window.URL.createObjectURL(new Blob([response.data]))
+          const link = document.createElement("a")
+          link.href = url
+          link.setAttribute("download", "ReportePrestamo.xls")
+          document.body.appendChild(link)
+          link.click()
         })
-        .catch((error) => {
-          console.log(error);
-        });
+        .catch((e) => {
+          console.log(e)
+        })
     },
 
     clearAll() {
@@ -431,53 +430,52 @@ export default {
       this.searching.modality_loan = "",
       this.searching.shortened_sub_modality_loan = "",
       this.searching.state_type_affiliate = "",
-      this.search_loans();
+      this.search_loans()
     },
 
     async imprimir(id, item) {
       try {
-        let res;
+        let res
         if (id == 1) {
-          res = await axios.get(`loan/${item}/print/contract`);
+          res = await axios.get(`loan/${item}/print/contract`)
         } else if (id == 2) {
-          res = await axios.get(`loan/${item}/print/form`);
+          res = await axios.get(`loan/${item}/print/form`)
         } else if (id == 3) {
-          res = await axios.get(`loan/${item}/print/plan`);
+          res = await axios.get(`loan/${item}/print/plan`)
         } else {
-          res = await axios.get(`loan/${item}/print/kardex`);
+          res = await axios.get(`loan/${item}/print/kardex`)
         }
         printJS({
           printable: res.data.content,
           type: res.data.type,
           documentTitle: res.data.file_name,
           base64: true,
-        });
+        })
       } catch (e) {
-        this.toastr.error("Ocurrió un error en la impresión.");
-        console.log(e);
+        this.toastr.error("Ocurrió un error en la impresión.")
+        console.log(e)
       }
     },
     docsLoans() {
-      let docs = [];
+      let docs = []
       if (this.permissionSimpleSelected.includes("print-contract-loan")) {
         docs.push(
           { id: 1, title: "Contrato", icon: "mdi-file-document" },
           { id: 2, title: "Solicitud", icon: "mdi-file" }
-        );
+        )
       }
       if (this.permissionSimpleSelected.includes("print-payment-plan")) {
-        docs.push({ id: 3, title: "Plan de pagos", icon: "mdi-cash" });
+        docs.push({ id: 3, title: "Plan de pagos", icon: "mdi-cash" })
       }
       if (this.permissionSimpleSelected.includes("print-payment-kardex-loan")) {
-        docs.push({ id: 4, title: "Kardex", icon: "mdi-view-list" });
+        docs.push({ id: 4, title: "Kardex", icon: "mdi-view-list" })
       } else {
-        console.log("Se ha producido un error durante la generación de la impresión");
+        console.log("Se ha producido un error durante la generación de la impresión")
       }
-      this.printDocs = docs;
-      console.log(this.printDocs);
+      this.printDocs = docs
     },
   },
-};
+}
 </script>
 <style scoped>
 .v-text-field {

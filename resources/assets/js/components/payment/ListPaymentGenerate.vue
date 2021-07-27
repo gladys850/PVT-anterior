@@ -264,19 +264,6 @@
           </template>
 
           <template v-slot:[`item.actions`]="{ item }" >
-            <v-tooltip bottom>
-              <template v-slot:activator="{ on }">
-                <v-btn
-                  icon
-                  small
-                  v-on="on"
-                  color="warning"
-                  :to="{ name: 'flowAdd', params: { id: item.id_loan }, query: { workTray: 'all'}}"
-                ><v-icon>mdi-eye</v-icon>
-                </v-btn>
-              </template>
-              <span>Ver trámite</span>
-            </v-tooltip>
             <v-tooltip bottom >
               <template v-slot:activator="{ on }">
                 <v-btn
@@ -353,17 +340,17 @@ data () {
     },
 
     headers: [
-      { text: 'Cód. Pago', value: 'code_loan_payment',input:'' , menu:false,type:"text",class: ['normal', 'white--text','text-md-center'],width: '5%'},
-      { text: 'Cód. Préstamo', value: 'code_loan',input:'' , menu:false,type:"text",class: ['normal', 'white--text','text-md-center'],width: '5%'},
+      { text: 'Cód. Pago', value: 'code_loan_payment',input:'' , menu:false,type:"text",class: ['normal', 'white--text','text-md-center'],width: '10%'},
+      { text: 'Cód. Préstamo', value: 'code_loan',input:'' , menu:false,type:"text",class: ['normal', 'white--text','text-md-center'],width: '10%'},
       { text: 'Fecha Cálculo', value: 'estimated_date_loan_payment',input:'' , menu:false,type:"text",class: ['normal', 'white--text','text-md-center'],width: '5%'},
       { text: 'Fecha Transacción', value: 'date_loan_payment',input:'' , menu:false,type:"text",class: ['normal', 'white--text','text-md-center'],width: '5%'},
       { text: 'Cuota', value: 'quota_loan_payment',input:'' , menu:false,type:"text",class: ['normal', 'white--text','text-md-center'],width: '5%'},
       { text: 'CI Prestatario', value: 'identity_card_borrower',input:'' , menu:false,type:"text",class: ['normal', 'white--text','text-md-center'],width: '5%'},
       { text: 'Matrícula Prestatario', value: 'registration_borrower' ,input:'', menu:false,type:"text",class: ['normal', 'white--text','text-md-center'],width: '5%'},
-      { text: 'Nombre Completo Prestatario', value: 'full_name_borrower',input:'' , menu:false,type:"text",class: ['normal', 'white--text','text-md-center'],width: '5%'},
-      { text: 'Tpo Amortización',value:'modality_shortened_loan_payment',input:'', menu:false,type:"text",class: ['normal', 'white--text','text-md-center'],width: '5%'},
+      { text: 'Nombre Completo Prestatario', value: 'full_name_borrower',input:'' , menu:false,type:"text",class: ['normal', 'white--text','text-md-center'],width: '20%'},
+      { text: 'Tpo Amortización',value:'modality_shortened_loan_payment',input:'', menu:false,type:"text",class: ['normal', 'white--text','text-md-center'],width: '10%'},
       { text: 'Tipo Pago',value:'voucher_type_loan_payment',input:'', menu:false,type:"text",class: ['normal', 'white--text','text-md-center'],width: '5%'},
-      { text: 'Estado',value:'states_loan_payment',input:'', menu:false,type:"text",class: ['normal', 'white--text','text-md-center'],width: '5%'},
+      { text: 'Estado',value:'states_loan_payment',input:'', menu:false,type:"text",class: ['normal', 'white--text','text-md-center'],width: '10%'},
       { text: 'Acción',value:'actions',input:'', menu:false,type:"text",class: ['normal', 'white--text','text-md-center'], sortable: false,width: '10%'},
     ],
 
@@ -399,7 +386,7 @@ data () {
 
   },
     mounted(){
-      this.search_payments();
+      this.search_payments()
       this.docsLoans()
     },
 
@@ -454,17 +441,17 @@ data () {
         }
       })
         .then(response => {
-          console.log(response);
-          const url = window.URL.createObjectURL(new Blob([response.data]));
-          const link = document.createElement("a");
-          link.href = url;
-          link.setAttribute("download", "ReporteAmortizaciones.xls");
-          document.body.appendChild(link);
-          link.click();
+          console.log(response)
+          const url = window.URL.createObjectURL(new Blob([response.data]))
+          const link = document.createElement("a")
+          link.href = url
+          link.setAttribute("download", "ReporteAmortizaciones.xls")
+          document.body.appendChild(link)
+          link.click()
         })
-        .catch(error => {
-          console.log(error);
-        });
+        .catch(e => {
+          console.log(e)
+        })
     },
 
     clearAll(){
@@ -481,13 +468,13 @@ data () {
 
     async imprimir(id, item){
       try {
-        let res;
+        let res
         if (id == 5) {
-          res = await axios.get(`loan_payment/${item}/print/loan_payment`);
+          res = await axios.get(`loan_payment/${item}/print/loan_payment`)
         } else if(id == 6){
           let resv = await axios.get(`loan_payment/${item}/voucher`)
           let idVoucher = resv.data.id
-          res = await axios.get(`voucher/${idVoucher}/print/voucher`);
+          res = await axios.get(`voucher/${idVoucher}/print/voucher`)
         }
         printJS({
             printable: res.data.content,
@@ -502,17 +489,16 @@ data () {
     },
 
     docsLoans(){
-      let docs = [];
+      let docs = []
       if (this.permissionSimpleSelected.includes("print-payment-loan")) {
-        docs.push({ id: 5, title: "Registro de cobro", icon: "mdi-file-check-outline" });
+        docs.push({ id: 5, title: "Registro de cobro", icon: "mdi-file-check-outline" })
       }
       if (this.permissionSimpleSelected.includes("print-payment-voucher")) {
-        docs.push({ id: 6, title: "Registro de pago", icon: "mdi-cash-multiple" });
+        docs.push({ id: 6, title: "Registro de pago", icon: "mdi-cash-multiple" })
       } else {
-        console.log("Se ha producido un error durante la generación de la impresión");
+        console.log("Se ha producido un error durante la generación de la impresión")
       }
-      this.printDocs = docs;
-      console.log(this.printDocs);
+      this.printDocs = docs
       },
    }
   }
