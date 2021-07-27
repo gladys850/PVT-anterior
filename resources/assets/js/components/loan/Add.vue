@@ -43,7 +43,8 @@
           <Steps
             :affiliate.sync="affiliate"
             :affiliate_data.sync="affiliate_data"
-            :addresses.sync="addresses"/>
+            :addresses.sync="addresses"
+            :lenders_aux.sync="lenders_aux"/>
         </div>
       </v-container>
     </template>
@@ -64,6 +65,7 @@ export default {
   },
   data: () => ({
     addresses:[],
+    lenders_aux:[],
     affiliate:{
       phone_number:null,
       cell_phone_number:null
@@ -90,6 +92,7 @@ export default {
     this.getAddress(this.$route.query.affiliate_id)
   },
   methods:{
+    //Metodo para sacar el detalle del afiliado
     async getAffiliate(id) {
       try {
         this.loading = true
@@ -99,12 +102,14 @@ export default {
         this.getCategory_name(res.data.category_id)
         this.getDegree_name(res.data.degree_id)
         this.setBreadcrumbs()
+        this.lenders_aux.push(res.data.full_name)
       } catch (e) {
         console.log(e)
       } finally {
         this.loading = false
       }
     },
+  //Metodo para el encabezado del BreadCrumbs
   setBreadcrumbs() {
     let breadcrumbs = [
       {
@@ -125,6 +130,7 @@ export default {
     }
     this.$store.commit('setBreadcrumbs', breadcrumbs)
   },
+  //Metodo para sacar las direcciones
   async getAddress(id) {
       try {
         this.loading = true
@@ -136,6 +142,7 @@ export default {
         this.loading = false
       }
   },
+  //Metodo para sacar el grado
     async getDegree_name(id) {
       try {
         this.loading = true;
@@ -147,6 +154,7 @@ export default {
         this.loading = false
       }
     },
+    //Metodo para sacar la categoria
     async getCategory_name(id) {
       try {
         this.loading = true;
