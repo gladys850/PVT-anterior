@@ -11,6 +11,7 @@ use App\FundRotatory;
 use App\FundRotatoryOutput;
 use App\Http\Requests\FundRotatoryForm;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\Api\V1\LoanController;
 
 /** @group Fondo Rotatorio Anticipos
 * Fondo rotatorio para anticipos
@@ -130,7 +131,8 @@ class FundRotatoryController extends Controller
                 $fundRotatory->fund_rotatory_outputs->sortBy('id');
             foreach($fundRotatory->fund_rotatory_outputs as $loan_outputs){ 
                 $loan = $loan_outputs->loan;
-                $loan->affiliate=Affiliate::find($loan->disbursable_id);
+                $affiliate = Affiliate::findOrFail($loan->affiliate_id);
+                $loan->affiliate = LoanController::verify_loan_affiliates($affiliate,$loan)->disbursable;
                 $loan->procedure_type = $loan->modality->procedure_type;
             } 
         } 
