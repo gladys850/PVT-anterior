@@ -366,7 +366,7 @@
 <script>
 import Breadcrumbs from "@/components/shared/Breadcrumbs"
 import Profile from "@/components/affiliate/Profile"
-import SpecificDataLoan from "@/components/loan/SpecificDataLoan"
+import SpecificDataLoan from "@/components/workflow/SpecificDataLoan"
 import DocumentsFlow from "@/components/workflow/DocumentsFlow"
 import ObserverFlow from "@/components/workflow/ObserverFlow"
 import AddObservation from "@/components/workflow/AddObservation"
