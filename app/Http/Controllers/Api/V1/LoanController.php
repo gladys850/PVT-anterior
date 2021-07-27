@@ -1921,15 +1921,17 @@ class LoanController extends Controller
    * @queryParam id_loan Buscar ID del Préstamo. Example: 1
    * @queryParam code_loan  Buscar código del Préstamo. Example: PTMO000012-2021
    * @queryParam id_affiliate  Buscar por ID del affiliado. Example: 33121
-   * @queryParam identity_card_borrower  Buscar por nro de CI del afiliado. Example: 10069775
-   * @queryParam registration_borrower  Buscar por Matricula del afiliado. Example: 100697MDF
-   * @queryParam last_name_borrower Buscar por primer apellido del afiliado. Example: RIVERA
-   * @queryParam mothers_last_name_borrower Buscar por segundo apellido del afiliado. Example: ARTEAG
-   * @queryParam first_name_borrower Buscar por primer Nombre del afiliado. Example: ABAD
-   * @queryParam second_name_borrower Buscar por segundo Nombre del afiliado. Example: FAUST
-   * @queryParam surname_husband_borrower Buscar por Apellido de casada Nombre del afiliado. Example: De LA CRUZ
+   * @queryParam identity_card_borrower  Buscar por nro de CI del Prestatario. Example: 10069775
+   * @queryParam registration_borrower  Buscar por Matricula del Prestatario. Example: 100697MDF
+   * @queryParam last_name_borrower Buscar por primer apellido del Prestatario. Example: RIVERA
+   * @queryParam mothers_last_name_borrower Buscar por segundo apellido del Prestatario. Example: ARTEAG
+   * @queryParam first_name_borrower Buscar por primer Nombre del Prestatario. Example: ABAD
+   * @queryParam second_name_borrower Buscar por segundo Nombre del Prestatario. Example: FAUST
+   * @queryParam surname_husband_borrower Buscar por Apellido de casada Nombre del Prestatario. Example: De LA CRUZ
+   * @queryParam full_name_borrower Buscar por Apellido de casada Nombre del Prestatario. Example: RIVERA ARTEAG ABAD FAUST De LA CRUZ
    * @queryParam sub_modality_loan Buscar por sub modalidad del préstamo. Example: Corto plazo sector activo
    * @queryParam modality_loan Buscar por Modalidad del prestamo. Example: Préstamo a corto plazo
+   * @queryParam shortened_sub_modality_loan Buscar por nombre corto de la sub modalidad del prestamo. Example:COR-ACT
    * @queryParam amount_approved_loan Buscar monto aprobado del afiliado. Example: 25000
    * @queryParam state_type_affiliate Buscar por tipo de estado del afiliado. Example: Activo
    * @queryParam state_affiliate Buscar por estado del affiliado. Example: Servicio
@@ -1979,6 +1981,8 @@ class LoanController extends Controller
  
     $sub_modality_loan = request('sub_modality_loan') ?? '';
     $modality_loan = request('modality_loan') ?? '';
+    $shortened_sub_modality_loan = request('shortened_sub_modality_loan') ?? '';
+
     $amount_approved_loan = request('amount_approved_loan') ?? '';
     $state_type_affiliate = request('state_type_affiliate') ?? '';
     $state_affiliate = request('state_affiliate') ?? '';
@@ -2041,6 +2045,9 @@ class LoanController extends Controller
       if ($modality_loan != '') {
         array_push($conditions, array('view_loan_borrower.modality_loan', 'ilike', "%{$modality_loan}%"));
       }
+      if ($shortened_sub_modality_loan != '') {
+        array_push($conditions, array('view_loan_borrower.shortened_sub_modality_loan', 'ilike', "%{$shortened_sub_modality_loan}%"));
+      }
  
       if ($amount_approved_loan != '') {
         array_push($conditions, array('view_loan_borrower.amount_approved_loan', 'ilike', "%{$amount_approved_loan}%"));
@@ -2080,29 +2087,40 @@ class LoanController extends Controller
                }
                $File="ListadoPrestamos";
                $data=array(
-                   array("ID PRESTAMO", "COD. PRESTAMO", "ID AFILIADO","CI AFILIADO","MATRICULA AFILIADO","CI PRESTATARIO", "MATRÍCULA PRESTATARIO", "NOMBRE COMPLETO PRESTATARIO","SUB MODALIDAD",
-                   "MODALIDAD","MONTO","ESTADO AFILIADO","TIPO ESTADO","CUOTA","ESTADO PRÉSTAMO","ENTE GESTOR AFILIADO",'SALDO PRÉSTAMO','FECHA DE DESEMBOLSO','TIPO SOLICITUD AFILIADO/ESPOSA' )
+                   array("CI AFILIADO","EXP","MATRICULA AFILIADO","NOMBRE COMPLETO AFILIADO","ID PRESTAMO", "COD. PRESTAMO","FECHA DE SOLICITUD","FECHA DE DESEMBOLSO","DPTO","ÍNDICE DE ENDEUDAMIENTO","SUB MODALIDAD",
+                   "MODALIDAD","CI PRESTATARIO","EXP",
+                   "MATRÍCULA PRESTATARIO","APELLIDO PATERNO ","APELLIDO MATERNO","AP. CASADA","1ER. NOMBRE","2DO. NOMBRE","NRO CPTE CTB","MONTO","ESTADO AFILIADO","TIPO ESTADO","CUOTA","ESTADO PRÉSTAMO","ENTE GESTOR AFILIADO",'SALDO PRÉSTAMO','TIPO SOLICITUD AFILIADO/ESPOSA' )
                );
                foreach ($list_loan as $row){
                    array_push($data, array(
+                       $row->identity_card_affiliate,
+                       $row->city_exp_first_shortened_affiliate,
+                       $row->registration_affiliate,
+                       $row->full_name_affiliate,
                        $row->id_loan,
                        $row->code_loan,
-                       $row->id_affiliate,
-                       $row->identity_card_affiliate,
-                       $row->registration_affiliate,
-                       $row->identity_card_borrower,
-                       $row->registration_borrower,
-                       $row->full_name_borrower,
+                       $row->request_date_loan,
+                       $row->disbursement_date_loan,
+                       $row->city_loan,
+                       $row->indebtedness_borrower,
                        $row->sub_modality_loan,
                        $row->modality_loan,
+                       $row->identity_card_borrower,
+                       $row->city_exp_first_shortened_borrower,
+                       $row->registration_borrower,
+                       $row->last_name_borrower,
+                       $row->mothers_last_name_borrower,
+                       $row->surname_husband_borrower,
+                       $row->first_name_borrower,
+                       $row->second_name_borrower, 
+                       $row->num_accounting_voucher_loan,   
                        $row->amount_approved_loan,
                        $row->state_type_affiliate,
                        $row->state_affiliate,
                        $row->quota_loan,
                        $row->state_loan,
                        $row->pension_entity_affiliate,
-                       $row->balance_loan,
-                       $row->disbursement_date_loan,
+                       $row->balance_loan,       
                        $row->type_affiliate_spouse_loan
                    ));
                }
@@ -2114,10 +2132,10 @@ class LoanController extends Controller
        ->select('*')
        ->orderBy('code_loan', $order_loan)   
        ->paginate($pagination_rows);
-        $list_loan->getCollection()->transform(function ($list_loan) {
-        $padron = Loan::findOrFail($list_loan->id_loan);
-        $list_loan->balance_loan=$padron->balance;
-        return $list_loan;
+            $list_loan->getCollection()->transform(function ($list_loan) {
+            $padron = Loan::findOrFail($list_loan->id_loan);
+            $list_loan->balance_loan=$padron->balance;
+            return $list_loan;
                });
            return $list_loan;
       }
