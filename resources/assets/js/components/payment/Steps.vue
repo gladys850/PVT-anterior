@@ -1,78 +1,48 @@
 <template>
   <div>
-    <v-stepper v-model="e1" >
-      <v-stepper-header class=" !pa-0 ml-0" >
-        <template>
-          <v-stepper-step
-            :key="`${1}-step`"
-            :complete="e1 > 1"
-            :step="1">Creación Amortización
-          </v-stepper-step>
-          <v-divider v-if="1 !== steps" :key="1" ></v-divider>
-        </template>
-      </v-stepper-header>
-      <v-stepper-items>
-        <v-stepper-content :key="`${1}-content`" :step="1">
-          <v-card color="grey lighten-1">
-            <AddAmortization
-            :data_payment.sync="data_payment"
-             :payment.sync="payment"/>
-            <v-container class="py-0">
-              <v-row>
-                <v-spacer></v-spacer> <v-spacer></v-spacer> <v-spacer></v-spacer><v-spacer></v-spacer>
-                <v-col class="py-0">
-                  <v-btn color="seccundary"
-                    @click="atras()"  v-show="!isNew">
-                    Atras
-                  </v-btn>
-                  <v-btn
-                    color="primary"
-                    @click="validatedStepOne()" v-show="!ver">
-                    Guardar
-                  </v-btn>
-                </v-col>
-              </v-row>
-            </v-container>
-          </v-card>
-        </v-stepper-content>
-      </v-stepper-items>
-    </v-stepper>
+    <v-progress-linear></v-progress-linear>
+    <v-toolbar-title>
+      <center style="color:teal">CREACION DE LA AMORTIZACION</center>
+    </v-toolbar-title>
+    <v-card color="grey lighten-1">
+      <AddAmortization
+        :data_payment.sync="data_payment"
+        :payment.sync="payment"/>
+        <v-container class="py-0">
+          <v-row>
+            <v-spacer></v-spacer> <v-spacer></v-spacer>
+            <v-col class="py-0">
+              <v-btn color="seccundary"
+                @click="atras()"  v-show="!isNew">
+                Volver a la bandeja
+              </v-btn>
+              <v-btn
+                color="primary"
+                @click="validatedStepOne()" v-show="!ver">
+                Guardar
+              </v-btn>
+            </v-col>
+          </v-row>
+        </v-container>
+    </v-card>
   </div>
 </template>
-<style >
-.v-expansion-panel-content__wrap {
-    padding: 0 0px 0px;
-}
-.v-stepper__content {
-    padding: 0px 0px 0px;
-}
-</style>
 <script>
 import AddAmortization from '@/components/payment/AddAmortization'
-import AddPayment from '@/components/payment/AddPayment'
 
 export default {
   name: "payment-steps",
-  props: {
-    loan: {
-      type: Object,
-      required: true
-    }
-  },
   components: {
-    AddAmortization,
-    AddPayment
+    AddAmortization
   },
    data: () => ({
-    bus: new Vue(),
-    e1: 1,
-    steps: 2,
     payment:{
       estimated_days:{
         penal:null
       }
     },
-    status_click:false,
+    status_click:false, //Variable que activa el loading al momento de crear una amortizacion
+    validar:false, //Variable que ayuda a identificar si es una amortizacion directa para hacer la derivacion
     data_payment:{
       payment_date:new Date().toISOString().substr(0, 10),
       voucher_date:new Date().toISOString().substr(0, 10),
@@ -82,7 +52,6 @@ export default {
      garantes:{
       lenders:[]
     },
-    validar:false,
   }),
   computed: {
     //Metodo para obtener Permisos por rol
@@ -99,13 +68,6 @@ export default {
        return  this.$route.params.hash == 'edit'
     },
   },
-  watch: {
-    steps (val) {
-      if (this.e1 > val) {
-        this.e1 = val
-      }
-    },
-  },
   methods: {
     //Metodo que envia al listado
     atras(){
@@ -117,17 +79,6 @@ export default {
       } finally {
         this.loading = false
       }
-    },
-    nextStep (n) {
-      if (n == this.steps) {
-        this.e1 = 1
-      }
-      else {
-        this.e1 = n + 1
-     }
-    },
-    beforeStep (n) {
-      this.e1 = n -1
     },
     //Metodo para el creado del voucher
     async savePaymentTreasury() {

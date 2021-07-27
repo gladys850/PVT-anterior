@@ -1,7 +1,7 @@
 <template>
   <v-container fluid class="py-0" >
     <v-row  class="py-0">
-      <p style="color:teal">DOCUMENTOS REQUERIDOS</p>
+      <p >DOCUMENTOS REQUERIDOS</p>
         <v-progress-linear></v-progress-linear>
         <v-col v-for="(req,i) in docsRequired" :key="req.id" cols="12" class="py-1">
             <v-row>
@@ -27,7 +27,7 @@
         <v-row>
           <v-col cols="12"  >
             <template v-if="docsOptional.length >0">
-                <p style="color:teal">DOCUMENTOS ADICIONALES</p>
+                <p >DOCUMENTOS ADICIONALES</p>
                  <v-progress-linear></v-progress-linear>
                 <v-row  class="py-3">
                   <v-col v-for="(opt,i) in docsOptional" :key="opt.id" cols="12" class="py-1">
@@ -55,7 +55,7 @@
                 </v-row>
               </template>
               <template v-if="notes.length >0">
-                 <p style="color:teal">OTROS DOCUMENTOS</p>
+                 <p >OTROS DOCUMENTOS</p>
                  <v-progress-linear></v-progress-linear>
                 <v-row >
                   <v-col cols="12" class="ma-0 px-10">
@@ -88,26 +88,26 @@ export default {
     this.getNotes(this.$route.params.id)
   },
   methods: {
+    //Metodo para obtener los documentos requeridos y adicionales
     async getDocumentsSubmitted(id) {
       try {
         this.loading = true
         let res = await axios.get(`loan/${id}/document`)
         this.docsRequired = res.data.required
         this.docsOptional = res.data.optional
-        console.log(this.docsRequired + " " + this.docsOptional)
-      } catch (e) {
+       } catch (e) {
         console.log(e)
       } finally {
         this.loading = false
       }
     },
+    //Metodo para obtener otros documentos
     async getNotes(id) {
       try {
         this.loading = true
         let res = await axios.get(`loan/${id}/note`)
         this.notes = res.data
-        console.log("NOTES  " + this.notes)
-      } catch (e) {
+       } catch (e) {
         console.log(e)
       } finally {
         this.loading = false

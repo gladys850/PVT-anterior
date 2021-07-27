@@ -19,9 +19,13 @@
                             <label><b>Nro Prestamos:</b></label>
                              {{garantes.code}}
                           </v-col>
-                          <v-col cols="3" class="ma-0 py-2">
+                          <v-col cols="3" class="ma-0 py-2" v-show="isNew">
                             <label><b>Fecha de Desembolso:</b></label>
                             {{garantes.disbursement_date | date}}
+                          </v-col>
+                          <v-col cols="3" class="ma-0 py-2" v-show="!isNew">
+                            <label><b>Fecha de Desembolso:</b></label>
+                            {{garantes.disbursement_date }}
                           </v-col>
                           <v-col cols="3" class="ma-0 py-2">
                             <label><b>Monto Desembolsado:</b></label>
@@ -31,7 +35,7 @@
                             <label><b>Plazo :</b></label>
                               {{ garantes.loan_term +' Meses'}}
                           </v-col>
-                          <v-col cols="12" md="12" class="py-0">
+                          <v-col cols="12" md="12" class="py-0" v-show="isNew">
                             <p style="color:teal"><b>PRESTATARIO.-</b></p>
                           </v-col>
                           <ul style="list-style: none" class="py-0" >
@@ -184,6 +188,7 @@
                             label="Codigo de Comprobante"
                             :outlined=" isNew || editable "
                             :readonly="ver"
+                            :disabled="ver"
                           ></v-text-field>
                         </v-col>
                         <v-col cols="4" class="ma-0 pb-0" v-show="permissionSimpleSelected.includes('create-payment-loan')" v-if="!isNew">
@@ -219,8 +224,25 @@
                           ></v-text-field>
                         </v-col>
                            <v-col cols="4" class="ma-0 pb-0" v-show="isNew">
+                            <v-select
+                              dense
+                              class="caption"
+                              style="font-size: 10px;"
+                              :Onchange="OnchangeAffiliate()"
+                              v-model="data_payment.categori_id"
+                              :outlined="isNew"
+                              :readonly="!isNew"
+                              :items="tipo_de_categoria"
+                              item-text="name"
+                              item-value="id"
+                              label="Categoria "
+                              persistent-hint
+                              :disabled="ver || editable"
+                            ></v-select>
+                        </v-col>
+                            <v-col cols="3" class="ma-0 pb-0" v-show="permissionSimpleSelected.includes('create-payment-loan') && isNew" >
                           <v-select
-                             class="caption"
+                            class="caption"
                             style="font-size: 10px;"
                             dense
                             v-model="data_payment.pago"
@@ -235,7 +257,7 @@
                             :disabled="ver || editable"
                           ></v-select>
                         </v-col>
-                        <v-col cols="4" class="ma-0 pb-0" v-show="view">
+                        <v-col cols="4" class="ma-0 pb-0" >
                           <v-text-field
                             dense
                             v-model="data_payment.pago_total"
@@ -310,23 +332,6 @@
                             label="Glosa"
                           ></v-text-field>
                         </v-col>
-                          <v-col cols="3" class="ma-0 pb-0" v-show="permissionSimpleSelected.includes('create-payment-loan') && isNew" >
-                          <v-select
-                            dense
-                            class="caption"
-                            style="font-size: 10px;"
-                            :Onchange="OnchangeAffiliate()"
-                            v-model="data_payment.categori_id"
-                            :outlined="isNew"
-                            :readonly="!isNew"
-                            :items="tipo_de_categoria"
-                            item-text="name"
-                            item-value="id"
-                            label="Categoria "
-                            persistent-hint
-                            :disabled="ver || editable"
-                          ></v-select>
-                        </v-col>
                           <v-col cols="8" v-show="permissionSimpleSelected.includes('create-payment-loan')">
                         </v-col>
                          <v-col cols="10" v-show="isNew" class="py-0">
@@ -367,26 +372,25 @@ export default {
     AddPayment
   },
   data: () => ({
+    //Variables que ayudan a la visualizacion
+    garante_show: false, //Variable que hace visible datos informativos cuando el prestamo tiene garante
+    last_payment:false, //Variable que hace visible datos informativos del ultimo pago
+    titular_show:true, //Variable que hace visible datos informativos del tittular
+    //Variables
     loan: {},
     radios:[],
-    garante_show: false,
     tipo_tramite: [],
-    regular:false,
     payment:{},
     garantes:{
       lenders:[],
       last_payment_validated:{},
       modality:{}
     },
-    separa:[],
     tipo_de_amortizacion: [],
     tipo_afiliado:[],
     tipo_de_categoria:[],
-    view:true,
-    titular_show:true,
     code_initials:null,
-    last_payment:false,
-    loan_payment:{},
+     loan_payment:{},
     payment_types:[
       {
         value:1,
@@ -728,8 +732,6 @@ export default {
         this.loading = true
         let res = await axios.get(`loan/${id}`)
         this.garantes=res.data
-        console.log(this.garantes)
-        console.log(this.garantes.modality.name)
         if(this.garantes.last_payment_validated==null)
         {
           this.garantes.last_payment_validated={}

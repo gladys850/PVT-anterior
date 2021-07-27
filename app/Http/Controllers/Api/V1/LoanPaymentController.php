@@ -1403,116 +1403,116 @@ class LoanPaymentController extends Controller
   $voucher_type_loan_payment = request('voucher_type_loan_payment') ?? '';
 
     if ($id_loan != '') {//1
-      array_push($conditions, array('view_loan_amortization.id_loan', 'ilike', "%{$id_loan}%"));
+      array_push($conditions, array('view_loan_amortizations.id_loan', 'ilike', "%{$id_loan}%"));
     }
 
     if ($code_loan != '') {//2
-      array_push($conditions, array('view_loan_amortization.code_loan', 'ilike', "%{$code_loan}%"));
+      array_push($conditions, array('view_loan_amortizations.code_loan', 'ilike', "%{$code_loan}%"));
     }
 
     if ($disbursement_date_loan != '') {//3
-      array_push($conditions, array('view_loan_amortization.disbursement_date_loan', 'ilike', "%{$disbursement_date_loan}%"));
+      array_push($conditions, array('view_loan_amortizations.disbursement_date_loan', 'ilike', "%{$disbursement_date_loan}%"));
     }
 
     if ($state_type_affiliate != '') {//4
-      array_push($conditions, array('view_loan_amortization.state_type_affiliate', 'ilike', "%{$state_type_affiliate}%"));
+      array_push($conditions, array('view_loan_amortizations.state_type_affiliate', 'ilike', "%{$state_type_affiliate}%"));
     }
     if ($state_affiliate != '') {//5
-      array_push($conditions, array('view_loan_amortization.state_affiliate', 'ilike', "%{$state_affiliate}%"));
+      array_push($conditions, array('view_loan_amortizations.state_affiliate', 'ilike', "%{$state_affiliate}%"));
     }
 
     if ($identity_card_affiliate != '') {//7
-      array_push($conditions, array('view_loan_amortization.identity_card_affiliate', 'ilike', "%{$identity_card_affiliate}%"));
+      array_push($conditions, array('view_loan_amortizations.identity_card_affiliate', 'ilike', "%{$identity_card_affiliate}%"));
     }
     if ($registration_affiliate != '') {//8
-      array_push($conditions, array('view_loan_amortization.registration_affiliate', 'ilike', "%{$registration_affiliate}%"));
+      array_push($conditions, array('view_loan_amortizations.registration_affiliate', 'ilike', "%{$registration_affiliate}%"));
     }
 
 
     if ($last_name_affiliate != '') {//9
-      array_push($conditions, array('view_loan_amortization.last_name_affiliate', 'ilike', "%{$last_name_affiliate}%"));
+      array_push($conditions, array('view_loan_amortizations.last_name_affiliate', 'ilike', "%{$last_name_affiliate}%"));
     }
     if ($mothers_last_name_affiliate != '') {//10
-      array_push($conditions, array('view_loan_amortization.mothers_last_name_affiliate', 'ilike', "%{$mothers_last_name_affiliate}%"));
+      array_push($conditions, array('view_loan_amortizations.mothers_last_name_affiliate', 'ilike', "%{$mothers_last_name_affiliate}%"));
     }
 
     if ($first_name_affiliate != '') {//11
-      array_push($conditions, array('view_loan_amortization.first_name_affiliate', 'ilike', "%{$first_name_affiliate}%"));//
+      array_push($conditions, array('view_loan_amortizations.first_name_affiliate', 'ilike', "%{$first_name_affiliate}%"));//
     }
     if ($second_name_affiliate != '') {//12
-      array_push($conditions, array('view_loan_amortization.second_name_affiliate', 'ilike', "%{$second_name_affiliate}%"));
+      array_push($conditions, array('view_loan_amortizations.second_name_affiliate', 'ilike', "%{$second_name_affiliate}%"));
     }
     if ($surname_husband_affiliate != '') {//13
-      array_push($conditions, array('view_loan_amortization.surname_husband_affiliate', 'ilike', "%{$surname_husband_affiliate}%"));
+      array_push($conditions, array('view_loan_amortizations.surname_husband_affiliate', 'ilike', "%{$surname_husband_affiliate}%"));
     }
     if ($full_name_affiliate != '') {//13
-        array_push($conditions, array('view_loan_amortization.full_name_affiliate', 'ilike', "%{$full_name_affiliate}%"));
+        array_push($conditions, array('view_loan_amortizations.full_name_affiliate', 'ilike', "%{$full_name_affiliate}%"));
     }
 
-    if ($identity_card_affiliate != '') {//7
-        array_push($conditions, array('view_loan_amortization.identity_card_affiliate', 'ilike', "%{$identity_card_affiliate}%"));
+    if ($identity_card_borrower != '') {//7
+        array_push($conditions, array('view_loan_amortizations.identity_card_borrower', 'ilike', "%{$identity_card_borrower}%"));
       }
-      if ($registration_affiliate != '') {//8
-        array_push($conditions, array('view_loan_amortization.registration_affiliate', 'ilike', "%{$registration_affiliate}%"));
+      if ($registration_borrower != '') {//8
+        array_push($conditions, array('view_loan_amortizations.registration_borrower', 'ilike', "%{$registration_borrower}%"));
       }  
       if ($last_name_borrower != '') {//9
-        array_push($conditions, array('view_loan_amortization.last_name_borrower', 'ilike', "%{$last_name_borrower}%"));
+        array_push($conditions, array('view_loan_amortizations.last_name_borrower', 'ilike', "%{$last_name_borrower}%"));
       }
       if ($mothers_last_name_borrower != '') {//10
-        array_push($conditions, array('view_loan_amortization.mothers_last_name_borrower', 'ilike', "%{$mothers_last_name_borrower}%"));
+        array_push($conditions, array('view_loan_amortizations.mothers_last_name_borrower', 'ilike', "%{$mothers_last_name_borrower}%"));
       }
   
       if ($first_name_borrower != '') {//11
-        array_push($conditions, array('view_loan_amortization.first_name_borrower', 'ilike', "%{$first_name_borrower}%"));//
+        array_push($conditions, array('view_loan_amortizations.first_name_borrower', 'ilike', "%{$first_name_borrower}%"));//
       }
       if ($second_name_borrower != '') {//12
-        array_push($conditions, array('view_loan_amortization.second_name_borrower', 'ilike', "%{$second_name_borrower}%"));
+        array_push($conditions, array('view_loan_amortizations.second_name_borrower', 'ilike', "%{$second_name_borrower}%"));
       }
       if ($surname_husband_borrower != '') {//13
-        array_push($conditions, array('view_loan_amortization.surname_husband_borrower', 'ilike', "%{$surname_husband_borrower}%"));
+        array_push($conditions, array('view_loan_amortizations.surname_husband_borrower', 'ilike', "%{$surname_husband_borrower}%"));
       }
       if ($full_name_borrower != '') {//13
-          array_push($conditions, array('view_loan_amortization.full_name_borrower', 'ilike', "%{$full_name_borrower}%"));
+          array_push($conditions, array('view_loan_amortizations.full_name_borrower', 'ilike', "%{$full_name_borrower}%"));
       }
     if ($pension_entity_affiliate != '') {//14
-      array_push($conditions, array('view_loan_amortization.pension_entity_affiliate', 'ilike', "%{$pension_entity_affiliate}%"));
+      array_push($conditions, array('view_loan_amortizations.pension_entity_affiliate', 'ilike', "%{$pension_entity_affiliate}%"));
     }
 
     if ($code_loan_payment != '') {//14
-      array_push($conditions, array('view_loan_amortization.code_loan_payment', 'ilike', "%{$code_loan_payment}%"));
+      array_push($conditions, array('view_loan_amortizations.code_loan_payment', 'ilike', "%{$code_loan_payment}%"));
     }
 
     if ($estimated_date_loan_payment != '') {//14
-      array_push($conditions, array('view_loan_amortization.estimated_date_loan_payment', 'ilike', "%{$estimated_date_loan_payment}%"));
+      array_push($conditions, array('view_loan_amortizations.estimated_date_loan_payment', 'ilike', "%{$estimated_date_loan_payment}%"));
     }
 
     if ($quota_loan_payment != '') {//14
-      array_push($conditions, array('view_loan_amortization.quota_loan_payment', 'ilike', "%{$quota_loan_payment}%"));
+      array_push($conditions, array('view_loan_amortizations.quota_loan_payment', 'ilike', "%{$quota_loan_payment}%"));
     }
     if ($voucher_loan_payment != '') {//14
-      array_push($conditions, array('view_loan_amortization.voucher_loan_payment', 'ilike', "%{$voucher_loan_payment}%"));
+      array_push($conditions, array('view_loan_amortizations.voucher_loan_payment', 'ilike', "%{$voucher_loan_payment}%"));
     }
 
     if ($modality_loan_payment != '') {
-      array_push($conditions, array('view_loan_amortization.modality_loan_payment', 'ilike', "%{$modality_loan_payment}%"));
+      array_push($conditions, array('view_loan_amortizations.modality_loan_payment', 'ilike', "%{$modality_loan_payment}%"));
     }
     if ($modality_shortened_loan_payment != '') {
-      array_push($conditions, array('view_loan_amortization.modality_shortened_loan_payment', 'ilike', "%{$modality_shortened_loan_payment}%"));
+      array_push($conditions, array('view_loan_amortizations.modality_shortened_loan_payment', 'ilike', "%{$modality_shortened_loan_payment}%"));
     }
     if ($procedure_loan_payment != '') {
-      array_push($conditions, array('view_loan_amortization.procedure_loan_payment', 'ilike', "%{$procedure_loan_payment}%"));
+      array_push($conditions, array('view_loan_amortizations.procedure_loan_payment', 'ilike', "%{$procedure_loan_payment}%"));
     }
     if ($states_loan_payment != '') {
-      array_push($conditions, array('view_loan_amortization.states_loan_payment', 'ilike', "%{$states_loan_payment}%"));
+      array_push($conditions, array('view_loan_amortizations.states_loan_payment', 'ilike', "%{$states_loan_payment}%"));
     }
     if ($paid_by_loan_payment != '') {
-      array_push($conditions, array('view_loan_amortization.paid_by_loan_payment', 'ilike', "%{$paid_by_loan_payment}%"));
+      array_push($conditions, array('view_loan_amortizations.paid_by_loan_payment', 'ilike', "%{$paid_by_loan_payment}%"));
     }
     if ($date_loan_payment != '') {
-      array_push($conditions, array('view_loan_amortization.date_loan_payment', 'ilike', "%{$date_loan_payment}%"));
+      array_push($conditions, array('view_loan_amortizations.date_loan_payment', 'ilike', "%{$date_loan_payment}%"));
     }
     if ($voucher_type_loan_payment != '') {
-        array_push($conditions, array('view_loan_amortization.voucher_type_loan_payment', 'ilike', "%{$voucher_type_loan_payment}%"));
+        array_push($conditions, array('view_loan_amortizations.voucher_type_loan_payment', 'ilike', "%{$voucher_type_loan_payment}%"));
     }
 
     if($excel==true){
