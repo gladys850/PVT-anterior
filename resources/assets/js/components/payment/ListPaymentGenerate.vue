@@ -48,7 +48,7 @@
           :items="loans"
           :options.sync="options"
           :server-items-length="totalPayments"
-          :footer-props="{ itemsPerPageOptions: [5, 15, 30] }"
+          :footer-props="{ itemsPerPageOptions: [8, 15, 30] }"
         >
           <template v-slot:[`header.code_loan_payment`]="{ header }">
             {{ header.text }}<br>
@@ -242,27 +242,24 @@
             </v-menu>
           </template>
 
-          <template v-slot:[`item.disbursement_date_loan`]="{ item }">
-            {{ item.disbursement_date_loan | datetimeshorted}}
+          <template v-slot:[`item.estimated_date_loan_payment`]="{ item }">
+            {{ item.estimated_date_loan_payment | date}}
           </template>
 
-          <template v-slot:[`item.estimated_date_payment`]="{ item }">
-            {{ item.estimated_date_payment | date}}
+          <template v-slot:[`item.date_loan_payment`]="{ item }">
+            {{ item.date_loan_payment | date}}
           </template>
 
-          <template v-slot:[`item.estimated_quota_payment`]="{ item }">
-            {{ item.estimated_quota_payment | money}}
+          <template v-slot:[`item.quota_loan_payment`]="{ item }">
+            {{ item.quota_loan_payment | money}}
           </template>
 
-          <template v-slot:[`item.modality_payment`]="{ item }">
-          {{ item.modality_payment }}
-          </template>
-              <template v-slot:[`item.sub_modality_shortened_payment`]="{ item }">
+         <template v-slot:[`item.modality_shortened_loan_payment`]="{ item }">
             <v-tooltip top>
               <template v-slot:activator="{ on }">
-                <span v-on="on">{{ item.sub_modality_shortened_payment }}</span>
+                <span v-on="on">{{ item.modality_shortened_loan_payment }}</span>
               </template>
-              <span>{{ item.sub_modality_payment }}</span>
+              <span>{{ item.modality_loan_payment }}</span>
             </v-tooltip>
           </template>
 
@@ -286,9 +283,9 @@
                   icon
                   small
                   v-on="on"
-                  color="teal lighten-3"
+                  color="teal"
                   :to="{ name: 'flowAdd', params: { id: item.id_loan }, query:{ redirectTab: 7 , workTray: 'all'}}"
-                ><v-icon>mdi-folder-multiple</v-icon>
+                ><v-icon>mdi-text-box-multiple</v-icon>
                 </v-btn>
               </template>
               <span>Kardex</span>
@@ -374,7 +371,7 @@ data () {
     printDocs: [],
     options: {
       page: 1,
-      itemsPerPage: 5,
+      itemsPerPage: 8,
       sortBy: ["code_loan"],
       sortDesc: [false],
     },
