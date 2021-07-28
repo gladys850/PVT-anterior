@@ -18,7 +18,7 @@
               </v-btn>
               <v-btn
                 color="primary"
-                @click="validatedStepOne()" v-show="!ver">
+                @click="validatedStepOne()" v-show="!show">
                 Guardar
               </v-btn>
             </v-col>
@@ -38,19 +38,16 @@ export default {
    data: () => ({
     payment:{
       estimated_days:{
-        penal:null
+        penal:null,
+        current:null
       }
     },
     status_click:false, //Variable que activa el loading al momento de crear una amortizacion
-    validar:false, //Variable que ayuda a identificar si es una amortizacion directa para hacer la derivacion
     data_payment:{
       payment_date:new Date().toISOString().substr(0, 10),
       voucher_date:new Date().toISOString().substr(0, 10),
       pago_total: null,
       voucher:'REGISTRO MANUAL'
-    },
-     garantes:{
-      lenders:[]
     },
   }),
   computed: {
@@ -61,10 +58,10 @@ export default {
     isNew() {
       return this.$route.params.hash == 'new'
     },
-    ver(){
+    show(){
        return  this.$route.params.hash == 'view'
     },
-    editar(){
+    edit(){
        return  this.$route.params.hash == 'edit'
     },
   },
@@ -114,7 +111,7 @@ export default {
             description:this.data_payment.glosa,
             voucher:this.data_payment.voucher
           })
-          this.toastr.success('Se editar correctamente')
+          this.toastr.success('Se edito correctamente')
             this.$router.push('/loanPayment')
       }catch (e) {
         console.log(e)
@@ -180,7 +177,6 @@ export default {
         this.loading = true
         let res = await axios.get(`loan_payment/${id}`)
         this.loan_payment = res.data
-        this.garantes.lenders=this.loan_payment.affiliate
         this.data_payment.code=this.loan_payment.code
         this.data_payment.payment_date= this.loan_payment.estimated_date
         this.data_payment.pago_total=this.loan_payment.estimated_quota
@@ -239,7 +235,7 @@ export default {
             this.savePayment()
           }
           else{
-            if(this.editar)
+            if(this.edit)
             {
               this.toastr.error("No tiene los permisos")
             }

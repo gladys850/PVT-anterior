@@ -10,36 +10,36 @@
                   <v-flex xs12 class="px-2" >
                     <fieldset class="pa-2">
                       <center>
-                       <v-toolbar-title>{{garantes.modality.name}}</v-toolbar-title>
+                       <v-toolbar-title>{{guarantor.modality.name}}</v-toolbar-title>
                       </center>
                       <v-progress-linear></v-progress-linear>
                       <template>
                         <v-row>
                           <v-col cols="3" class="ma-0 py-2">
                             <label><b>Nro Prestamos:</b></label>
-                             {{garantes.code}}
+                             {{guarantor.code}}
                           </v-col>
                           <v-col cols="3" class="ma-0 py-2" v-show="isNew">
                             <label><b>Fecha de Desembolso:</b></label>
-                            {{garantes.disbursement_date | date}}
+                            {{guarantor.disbursement_date | date}}
                           </v-col>
                           <v-col cols="3" class="ma-0 py-2" v-show="!isNew">
                             <label><b>Fecha de Desembolso:</b></label>
-                            {{garantes.disbursement_date }}
+                            {{guarantor.disbursement_date }}
                           </v-col>
                           <v-col cols="3" class="ma-0 py-2">
                             <label><b>Monto Desembolsado:</b></label>
-                            {{ garantes.amount_approved | moneyString}}
+                            {{ guarantor.amount_approved | moneyString}}
                           </v-col>
                             <v-col cols="3" class="ma-0 py-2">
                             <label><b>Plazo :</b></label>
-                              {{ garantes.loan_term +' Meses'}}
+                              {{ guarantor.loan_term +' Meses'}}
                           </v-col>
                           <v-col cols="12" md="12" class="py-0" v-show="isNew">
                             <p style="color:teal"><b>PRESTATARIO.-</b></p>
                           </v-col>
                           <ul style="list-style: none" class="py-0" >
-                            <li v-for="borrower in garantes.borrower" :key="borrower.id">
+                            <li v-for="borrower in guarantor.borrower" :key="borrower.id">
                               <v-col cols="12" md="12" class="pa-0">
                                 <v-row class="pa-0">
                                    <v-col cols="12" md="4" class="py-0">
@@ -58,8 +58,24 @@
                               </v-col>
                             </li>
                            </ul>
-                            <v-col cols="12" md="12" class="py-0" v-show="!isNew">
-                            <p style="color:teal"><b>PERSONA QUIEN REALIZAO EL PAGO.-</b></p>
+                          <v-col cols="12" md="12" class="py-0" v-show="!isNew">
+                            <p style="color:teal"><b>PRESTATARIO.-</b></p>
+                          </v-col>
+                          <v-col cols="12" md="12" class="py-0" v-show="!isNew">
+                            <ul style="list-style: none" class="py-0" >
+                            <li v-for="borrower_detail in guarantor.borrower_detail" :key="borrower_detail.id">
+                              <v-col cols="12" md="12" class="pa-0">
+                                <v-row class="pa-0">
+                                   <v-col cols="12" md="7" class="py-0">
+                                    <p><b>NOMBRE:</b> {{borrower_detail.full_name_borrower}}</p>
+                                  </v-col>
+                                  <v-col cols="12" md="5" class="py-0">
+                                    <p><b>CÉDULA DE IDENTIDAD:</b> {{borrower_detail.identity_card_borrower +' '+  borrower_detail.city_exp_first_shortened_borrower}}</p>
+                                  </v-col>
+                                </v-row>
+                              </v-col>
+                            </li>
+                           </ul>
                           </v-col>
                           <v-progress-linear></v-progress-linear>
                         <v-col cols="12" class="py-0" v-show="isNew" v-if="last_payment" >
@@ -70,36 +86,36 @@
                       <v-progress-linear v-show="isNew" v-if="last_payment"></v-progress-linear>
                       <v-col cols="3" class="ma-0 py-2"  v-show="isNew" v-if="last_payment">
                         <label><b style="color:teal" >Saldo Capital:</b></label>
-                        <b style="color:teal">{{garantes.balance | moneyString}}</b>
+                        <b style="color:teal">{{guarantor.balance | moneyString}}</b>
                       </v-col>
                       <v-col cols="3" class="ma-0 py-2" v-show="isNew" v-if="last_payment">
                         <label><b style="color:teal">Número de Cuota:</b></label>
-                        <b style="color:teal">{{(garantes.last_payment_validated.quota_number+1)  }}</b>
+                        <b style="color:teal">{{(guarantor.last_payment_validated.quota_number+1)  }}</b>
                       </v-col>
                       <v-col cols="3" class="ma-0 py-2" v-show="isNew" v-if="last_payment">
                         <label><b style="color:teal">Fecha del ultimo Pago:</b></label>
-                        <b style="color:teal">{{garantes.last_payment_validated.estimated_date | date }}</b>
+                        <b style="color:teal">{{guarantor.last_payment_validated.estimated_date | date }}</b>
                       </v-col>
                       <v-col cols="3" class="ma-0 py-2" v-show="isNew" v-if="last_payment">
                         <label><b style="color:teal" >Total Pagado:</b></label>
-                        <b style="color:teal">{{garantes.last_payment_validated.estimated_quota | moneyString}}</b>
+                        <b style="color:teal">{{guarantor.last_payment_validated.estimated_quota | moneyString}}</b>
                       </v-col>
                       <v-col cols="6" class="ma-0 py-2" v-show="isNew" v-if="last_payment">
                         <label><b>Intereses Corrientes Pendientes:</b></label>
-                        {{garantes.last_payment_validated.interest_accumulated}}
+                        {{guarantor.last_payment_validated.interest_accumulated}}
                       </v-col>
                       <v-col cols="6" class="ma-0 py-2" v-show="isNew" v-if="last_payment">
                         <label><b>Interes Penales Pendientes:</b></label>
-                        {{garantes.last_payment_validated.penal_accumulated}}
+                        {{guarantor.last_payment_validated.penal_accumulated}}
                       </v-col>
                       <v-progress-linear></v-progress-linear>
-                        <v-col cols="9"  v-show="editable" v-if="permissionSimpleSelected.includes('create-payment-loan') && this.data_payment.validar">
+                        <v-col cols="9"  v-show="edit" v-if="permissionSimpleSelected.includes('create-payment-loan') && this.data_payment.validar">
                         </v-col>
-                         <v-col cols="3" class="ma-0 py-0" v-show="permissionSimpleSelected.includes('create-payment-loan') && this.data_payment.validar" v-if="editable">
+                         <v-col cols="3" class="ma-0 py-0" v-show="permissionSimpleSelected.includes('create-payment-loan') && this.data_payment.validar" v-if="edit">
                           <v-checkbox class="ma-0 py-3"
-                            :outlined="editable"
-                            :readonly="!editable"
-                            :disabled="ver "
+                            :outlined="edit"
+                            :readonly="!edit"
+                            :disabled="show "
                             v-model="data_payment.validated"
                             label="Validar Pago"
                           ></v-checkbox>
@@ -113,11 +129,11 @@
                             v-model="data_payment.procedure_id"
                             :outlined="isNew"
                             :readonly="!isNew"
-                            :items="tipo_tramite"
+                            :items="type_procedure"
                             item-text="name"
                             item-value="id"
                             label='Tipo de tramite'
-                            :disabled="ver || editable"
+                            :disabled="show || edit"
                           ></v-select>
                         </v-col>
                         <v-col cols="3" class="ma-0 pb-0" v-show="isNew">
@@ -126,9 +142,9 @@
                             class="caption"
                             style="font-size: 10px;"
                             v-model="data_payment.procedure_modality_id"
-                            :outlined="!editable"
-                            :readonly="editable"
-                            :items="tipo_de_amortizacion"
+                            :outlined="!edit"
+                            :readonly="edit"
+                            :items="type_amortizacion"
                             item-text="name"
                             item-value="id"
                             label="Tipo de Amortizacion"
@@ -144,12 +160,12 @@
                             v-model="data_payment.affiliate_id"
                             :outlined="isNew"
                             :readonly="!isNew"
-                            :items="tipo_afiliado"
+                            :items="type_affiliate"
                             item-text="name"
                             item-value="id"
                             label="Pago del "
                             persistent-hint
-                            :disabled="ver || editable"
+                            :disabled="show || edit"
                           ></v-select>
                         </v-col>
                          <v-col cols="2" class="ma-0 pb-0" v-show="permissionSimpleSelected.includes('create-payment-loan') && isNew" >
@@ -162,17 +178,17 @@
                             :readonly="true"
                           ></v-text-field>
                         </v-col>
-                        <v-col cols="3" class="ma-0 pb-0" v-show="garante_show">
+                        <v-col cols="3" class="ma-0 pb-0" v-show="guarantor_show">
                             <ul style="list-style: none" class="pa-0" >
-                               <li v-for="guarantor in garantes.borrowerguarantors" :key="guarantor.id" class="mb-4">
+                               <li v-for="guarantor in guarantor.borrowerguarantors" :key="guarantor.id" class="mb-4">
                                  {{$options.filters.fullName(guarantor, true)}}
                                  <br>
                                </li>
                             </ul>
                         </v-col>
-                         <v-col cols="1" class="my-0 pb-0" v-show="garante_show">
+                         <v-col cols="1" class="my-0 pb-0" v-show="guarantor_show">
                             <ul style="list-style: none" class="pa-0 my-0" >
-                               <li v-for="guarantor in garantes.borrowerguarantors" :key="guarantor.id" class="my-0">
+                               <li v-for="guarantor in guarantor.borrowerguarantors" :key="guarantor.id" class="my-0">
                                   <v-radio-group  v-model="radios" class="py-0 my-0">
                               <v-radio
                               color="info"
@@ -189,9 +205,9 @@
                             dense
                             v-model="data_payment.voucher"
                             label="Codigo de Comprobante"
-                            :outlined=" isNew || editable "
-                            :readonly="ver"
-                            :disabled="ver"
+                            :outlined=" isNew || edit "
+                            :readonly="show"
+                            :disabled="show"
                           ></v-text-field>
                         </v-col>
                         <v-col cols="4" class="ma-0 pb-0" v-show="permissionSimpleSelected.includes('create-payment-loan')" v-if="!isNew">
@@ -220,10 +236,10 @@
                             class="purple-input"
                             type="date"
                             label="Fecha de Calculo"
-                            :clearable="editable"
+                            :clearable="edit"
                             :outlined="isNew"
                             :readonly="!isNew"
-                            :disabled="ver || editable"
+                            :disabled="show || edit"
                           ></v-text-field>
                         </v-col>
                            <v-col cols="4" class="ma-0 pb-0" v-show="isNew">
@@ -235,12 +251,12 @@
                               v-model="data_payment.categori_id"
                               :outlined="isNew"
                               :readonly="!isNew"
-                              :items="tipo_de_categoria"
+                              :items="type_category"
                               item-text="name"
                               item-value="id"
                               label="Categoria "
                               persistent-hint
-                              :disabled="ver || editable"
+                              :disabled="show || edit"
                             ></v-select>
                         </v-col>
                             <v-col cols="3" class="ma-0 pb-0" v-show="permissionSimpleSelected.includes('create-payment-loan') && isNew" >
@@ -257,7 +273,7 @@
                             label="Tipo de Pago"
                             persistent-hint
                             @change="OnchangeAmortization()"
-                            :disabled="ver || editable"
+                            :disabled="show || edit"
                           ></v-select>
                         </v-col>
                         <v-col cols="4" class="ma-0 pb-0" >
@@ -267,26 +283,26 @@
                             label="Total Pagado"
                             :outlined="isNew"
                             :readonly="!isNew"
-                            :disabled="ver || editable"
+                            :disabled="show || edit"
                           ></v-text-field>
                         </v-col>
-                          <v-col cols="4" v-show="!isNew" v-if="permissionSimpleSelected.includes('create-payment')" >
+                          <v-col cols="4" v-show="edit" v-if="permissionSimpleSelected.includes('create-payment')" >
                           <v-text-field
                             v-model="data_payment.voucher_amount_total"
-                            :outlined="editable"
-                            :readonly="!editable"
+                            :outlined="edit"
+                            :readonly="!edit"
                             label="Total Pagado en Tesoreria"
                             dense
                           ></v-text-field>
                         </v-col>
-                        <v-col cols="4" class="ma-0 pb-0" v-show="editable" v-if="permissionSimpleSelected.includes('create-payment')">
+                        <v-col cols="4" class="ma-0 pb-0" v-show="edit" v-if="permissionSimpleSelected.includes('create-payment')">
                           <v-select
                             class="caption"
                             style="font-size: 10px;"
                             dense
                             v-model="data_payment.tipo_pago"
-                            :outlined="editable"
-                            :readonly="!editable"
+                            :outlined="edit"
+                            :readonly="!edit"
                             :items="payment_type_treasury"
                             item-text="name"
                             item-value="id"
@@ -294,11 +310,11 @@
                             persistent-hint
                           ></v-select>
                         </v-col>
-                        <v-col cols="4" v-show="!isNew" v-if="permissionSimpleSelected.includes('create-payment')" >
+                        <v-col cols="4" v-show="edit" v-if="permissionSimpleSelected.includes('create-payment')" >
                           <v-text-field
                             v-model="data_payment.comprobante"
-                            :outlined="editable"
-                            :readonly="!editable"
+                            :outlined="edit"
+                            :readonly="!edit"
                             label="Nro. de Comprobante"
                             dense
                           ></v-text-field>
@@ -317,20 +333,20 @@
                         </v-col>
                         <v-col cols="4" class="ma-0 pb-0" v-show="permissionSimpleSelected.includes('create-payment')">
                           <v-text-field
-                            v-if="!ver"
+                            v-if="!show"
                             v-model="data_payment.glosa_voucher"
-                            :outlined="editable"
-                            :readonly="!editable"
+                            :outlined="edit"
+                            :readonly="!edit"
                             dense
                             label="Glosa"
                           ></v-text-field>
                         </v-col>
                          <v-col cols="5" class="ma-0 pb-0" v-show="permissionSimpleSelected.includes('create-payment-loan')">
                           <v-text-field
-                            v-show="isNew || editable" v-if="!ver"
+                            v-show="isNew || edit" v-if="!show"
                             v-model="data_payment.glosa"
-                            :outlined=" isNew || editable "
-                            :readonly="ver"
+                            :outlined=" isNew || edit "
+                            :readonly="show"
                             dense
                             label="Glosa"
                           ></v-text-field>
@@ -342,12 +358,13 @@
                         <v-col cols="2" v-show="isNew" class="py-0">
                           <v-btn
                             color="info"
-                            @click="Calcular($route.query.loan_id)" v-show="!ver">
+                            @click="validatedStepOne()" v-show="!show">
                             Calcular
                           </v-btn>
                         </v-col>
                         <AddPayment
-                          :payment.sync="payment"/>
+                          v-show="payment_detail.show_detail_payment"
+                          :payment_detail.sync="payment_detail"/>
                         </v-row>
                         </template>
                       </fieldset>
@@ -370,29 +387,39 @@ export default {
       type: Object,
       required: true
     },
+    payment: {
+      type: Object,
+      required: true
+    }
   },
     components: {
     AddPayment
   },
   data: () => ({
     //Variables que ayudan a la visualizacion
-    garante_show: false, //Variable que hace visible datos informativos cuando el prestamo tiene garante
+    guarantor_show: false, //Variable que hace visible datos informativos cuando el prestamo tiene garante
     last_payment:false, //Variable que hace visible datos informativos del ultimo pago
-    titular_show:true, //Variable que hace visible datos informativos del tittular
+    borrower_show:true, //Variable que hace visible datos informativos del tittular
     //Variables
+    payment_detail: {
+      show_detail_payment:false,
+      estimated_days:{
+        penal:null,
+        current:null
+      }
+    },
     loan: {},
     radios:[],
-    tipo_tramite: [],
-    payment:{},
-    garantes:{
+    type_procedure: [],
+    guarantor:{
       lenders:[],
-      borrowerguarantors:[],
+      borrower_detail:[],
       last_payment_validated:{},
       modality:{}
     },
-    tipo_de_amortizacion: [],
-    tipo_afiliado:[],
-    tipo_de_categoria:[],
+    type_amortizacion: [],
+    type_affiliate:[],
+    type_category:[],
     code_initials:null,
      loan_payment:{},
     payment_types:[
@@ -422,10 +449,10 @@ export default {
     isNew() {
       return  this.$route.params.hash == 'new'
     },
-    editable(){
+    edit(){
        return  this.$route.params.hash == 'edit'
     },
-    ver(){
+    show(){
        return  this.$route.params.hash == 'view'
     },
   },
@@ -499,15 +526,15 @@ export default {
       OnchangeAffiliate(){
       if(this.data_payment.affiliate_id=="G")
       {
-        this.garante_show= true
-        this.titular_show=false
+        this.guarantor_show= true
+        this.borrower_show=false
       }
      else{
-      this.garante_show= false
-      this.titular_show=true
-        for (let i = 0; i<  this.garantes.lenders.length; i++) {
-          this.data_payment.affiliate_id_paid_by=this.garantes.lenders[0].id
-          this.code_initials=this.garantes.lenders[0].type_initials
+      this.guarantor_show= false
+      this.borrower_show=true
+        for (let i = 0; i<  this.guarantor.lenders.length; i++) {
+          this.data_payment.affiliate_id_paid_by=this.guarantor.lenders[0].id
+          this.code_initials=this.guarantor.lenders[0].type_initials
         }
       }
     },
@@ -516,11 +543,11 @@ export default {
     {
       if(this.data_payment.affiliate_id=='G')
       {
-        for (let i = 0; i<  this.garantes.borrowerguarantors.length; i++) {
-        if(this.garantes.borrowerguarantors[i].id==this.radios)
+        for (let i = 0; i<  this.guarantor.borrowerguarantors.length; i++) {
+        if(this.guarantor.borrowerguarantors[i].id==this.radios)
         {
-          this.data_payment.affiliate_id_paid_by=this.garantes.borrowerguarantors[i].affiliate_id
-          this.code_initials = this.garantes.borrowerguarantors[i].type_initials
+          this.data_payment.affiliate_id_paid_by=this.guarantor.borrowerguarantors[i].affiliate_id
+          this.code_initials = this.guarantor.borrowerguarantors[i].type_initials
         }
       }
       }else{
@@ -533,19 +560,18 @@ export default {
         this.loading = true
         let res = await axios.get(`loan_payment/${id}`)
         this.loan_payment = res.data
-             this.garantes.lenders=[this.loan_payment.affiliate]
-       
-       this.garantes.borrower_detail=this.loan_payment.borrower
+        this.guarantor.lenders=[this.loan_payment.affiliate]
 
-             this.garantes.code=this.loan_payment.loan.code
-             this.garantes.disbursement_date=this.$moment(this.loan_payment.loan.disbursement_date).format("DD-MM-YYYY")
-             this.garantes.amount_approved=this.loan_payment.loan.amount_approved
-             this.garantes.loan_term=this.loan_payment.loan.loan_term
-             this.garantes.estimated_quota=0
-             this.garantes.balance=0
-             this.garantes.last_payment_validated.previous_payment_date=0
-             this.garantes.last_payment_validated.estimated_date=0
-             this.garantes.modality.name = res.data.modality.name
+        this.guarantor.borrower_detail=this.loan_payment.borrower
+        this.guarantor.code=this.loan_payment.loan.code
+        this.guarantor.disbursement_date=this.$moment(this.loan_payment.loan.disbursement_date).format("DD-MM-YYYY")
+        this.guarantor.amount_approved=this.loan_payment.loan.amount_approved
+        this.guarantor.loan_term=this.loan_payment.loan.loan_term
+        this.guarantor.estimated_quota=0
+        this.guarantor.balance=0
+        this.guarantor.last_payment_validated.previous_payment_date=0
+        this.guarantor.last_payment_validated.estimated_date=0
+        this.guarantor.modality.name = res.data.modality.name
 
         this.data_payment.code=this.loan_payment.code
         this.data_payment.payment_date= this.loan_payment.estimated_date
@@ -567,7 +593,7 @@ export default {
         this.data_payment.quota_number=this.loan_payment.quota_number
         if(this.data_payment.procedure_modality_name == 'Amortización Complemento Económico' ||
             this.data_payment.procedure_modality_name == 'Amortización Fondo de Retiro' ||
-            this.data_payment.procedure_modality_name == 'Amortización por Ajuste' ||
+            this.data_payment.procedure_modality_name == 'Amortización por Ajuste Contable' ||
             this.data_payment.procedure_modality_name == 'Amortización Automática')
           {
             this.data_payment.validar =true
@@ -577,7 +603,7 @@ export default {
               this.data_payment.validar =false
             }
           }
-           this.tipo_afiliado.push(
+           this.type_affiliate.push(
               {
                 name:"Titular",
                 id:"T"
@@ -614,7 +640,7 @@ export default {
         })
         this.modulo= resp.data.data[0].id
         let res = await axios.get(`module/${this.modulo}/amortization_loan`)
-        this.tipo_tramite = res.data
+        this.type_procedure = res.data
       } catch (e) {
         console.log(e)
       } finally {
@@ -626,7 +652,7 @@ export default {
       try {
         this.loading = true
         let res = await axios.get(`procedure_type/${id}/modality`)
-        this.tipo_de_amortizacion = res.data
+        this.type_amortizacion = res.data
       } catch (e) {
         console.log(e)
       } finally {
@@ -638,7 +664,7 @@ export default {
       try {
         this.loading = true
         let res = await axios.get(`get_categorie_user`)
-        this.tipo_de_categoria = res.data
+        this.type_category = res.data
       } catch (e) {
         console.log(e)
       } finally {
@@ -668,11 +694,17 @@ export default {
                 {
                   if(this.data_payment.pago)
                   {
-                    if(this.data_payment.pago_total)
+                    if(this.data_payment.categori_id)
                     {
-                      this.Calcular(this.$route.query.loan_id)
-                    }else{
-                      this.toastr.error('Debe introducir el total pagado')
+                      if(this.data_payment.pago_total)
+                      {
+                        this.Calcular(this.$route.query.loan_id)
+                      }else{
+                        this.toastr.error('Debe introducir el total pagado')
+                      }
+                    }
+                    else{
+                      this.toastr.error('Debe introducir a que categoria pertenece la amortizacion')
                     }
                   }
                   else{
@@ -710,10 +742,11 @@ export default {
           estimated_quota:this.data_payment.pago_total,
           liquidate : this.data_payment.liquidate,
           procedure_modality_id:this.data_payment.procedure_modality_id,
-            categorie_id :this.data_payment.categori_id
+          categorie_id :this.data_payment.categori_id
         })
-          this.payment = res.data
-          this.payment.now_date= new Date().toISOString().substr(0, 10),
+          this.payment_detail = res.data
+          this.payment_detail.show_detail_payment=true
+          this.payment_detail.now_date= new Date().toISOString().substr(0, 10),
           this.$forceUpdate()
       }catch (e) {
         console.log(e)
@@ -738,18 +771,18 @@ export default {
       try {
         this.loading = true
         let res = await axios.get(`loan/${id}`)
-        this.garantes=res.data
-        if(this.garantes.last_payment_validated==null)
+        this.guarantor=res.data
+        if(this.guarantor.last_payment_validated==null)
         {
-          this.garantes.last_payment_validated={}
+          this.guarantor.last_payment_validated={}
           this.last_payment=false
         }
         else{
           this.last_payment=true
         }
-        if(this.garantes.guarantors.length > 0)
+        if(this.guarantor.guarantors.length > 0)
         {
-            this.tipo_afiliado.push(
+            this.type_affiliate.push(
               {
                 name:"Titular",
                 id:"T"
@@ -759,13 +792,13 @@ export default {
                 id:"G"
               })
         }else{
-           this.tipo_afiliado.push(
+           this.type_affiliate.push(
               {
                 name:"Titular",
                 id:"T"
               })
               this.data_payment.affiliate_id="T"
-              this.code_initials=this.garantes.lenders[0].type_initials
+              this.code_initials=this.guarantor.lenders[0].type_initials
         }
       } catch (e) {
         console.log(e)

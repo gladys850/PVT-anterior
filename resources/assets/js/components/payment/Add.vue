@@ -12,7 +12,7 @@
       <v-container>
         <div>
           <v-row>
-            <v-col cols="5" v-show="!ver">
+            <v-col cols="5" v-show="!show">
               <span>
                 <v-tooltip left >
                 <template v-slot:activator="{ on }">
@@ -34,33 +34,33 @@
               </span>
               {{"TITULAR: "+$options.filters.fullName(this.loan.lenders[0], true)}}
             </v-col>
-            <v-col  cols="3" v-show="!ver">
+            <v-col  cols="3" v-show="!show">
               {{"PRESTAMO: "+this.loan.code}}
             </v-col>
-            <v-col  cols="2" v-show="!ver">
+            <v-col  cols="2" v-show="!show">
               MONTO: {{this.loan.amount_approved | money}}
             </v-col>
-             <v-col  cols="2" v-show="!ver">
+             <v-col  cols="2" v-show="!show">
               CUOTA: {{this.loan.estimated_quota | money}}
             </v-col>
-            <v-col  cols="4" v-show="ver" class='mb-0 pb-0'>
+            <v-col  cols="4" v-show="show" class='mb-0 pb-0'>
                 <span>
               </span>
              {{"TITULAR: "+$options.filters.fullName(this.loan.lenders[0], true)}}
             </v-col>
-              <v-col  cols="4" v-show="ver" class='mb-0 pb-0'>
+              <v-col  cols="4" v-show="show" class='mb-0 pb-0'>
               {{"CODIGO DEL PAGO: "+' '+this.loan_payment.code}}
             </v-col>
-            <v-col  cols="4" v-show="ver" class='mb-0 pb-0'>
+            <v-col  cols="4" v-show="show" class='mb-0 pb-0'>
               {{"PRESTAMO: "+this.loan.code}}
             </v-col>
-            <v-col  cols="4" v-show="ver" class='py-1'>
+            <v-col  cols="4" v-show="show" class='py-1'>
               NÚMERO DE CUOTA: {{this.loan_payment.quota_number }}
             </v-col>
-            <v-col  cols="4" v-show="ver" class='py-1'>
+            <v-col  cols="4" v-show="show" class='py-1'>
               MONTO: {{this.loan.amount_approved | money}}
             </v-col>
-            <v-col  cols="4" v-show="ver" class='py-1'>
+            <v-col  cols="4" v-show="show" class='py-1'>
               CUOTA ESTIMADA MENSUAL : {{this.loan.estimated_quota | money}}
             </v-col>
           </v-row>
@@ -91,21 +91,21 @@ export default {
     isNew() {
       return this.$route.params.hash == 'new'
     },
-     editable(){
+    edit(){
       return  this.$route.params.hash == 'edit'
     },
-    ver(){
+    show(){
       return  this.$route.params.hash == 'view'
     },
   },
   beforeMount() {
     this.setBreadcrumbs()
-      if(this.ver){
+      if(this.show){
         this.getLoanPayment(this.$route.query.loan_payment)
       }
   },
   mounted() {
-    if(this.editable){
+    if(this.edit){
       this.getLoanPayment(this.$route.query.loan_payment)
     }
     if(this.isNew){
@@ -153,7 +153,7 @@ export default {
           to: { name: 'loanPaymentIndex' }
         })
       } else {
-        if (this.ver) {
+        if (this.show) {
           breadcrumbs.push({
           text: 'Ver Cobro',
           to: { name: 'loanPaymentIndex' }
