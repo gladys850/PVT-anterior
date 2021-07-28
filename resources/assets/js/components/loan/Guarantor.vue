@@ -723,11 +723,7 @@ ver()
               this.toastr.error(resp.data.validate)
             }else{
               this.affiliate_garantor=resp.data
-
-              this.toastr.success(this.affiliate_garantor)
-              this.double_perception= this.affiliate_garantor.double_perception
-         
-
+               this.double_perception= this.affiliate_garantor.double_perception
               if(!this.double_perception)
               {
                if(this.affiliate_garantor.affiliate.spouse == null  )
