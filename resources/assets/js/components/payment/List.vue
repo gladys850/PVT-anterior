@@ -28,7 +28,7 @@
       </v-tooltip>
     </template>-->
     <template v-slot:[`item.affiliate`]="{ item }">
-      {{ $options.filters.fullName(item.affiliate, true) }}
+     {{ item.borrower[0].full_name_borrower}}
     </template>
 
     <template v-slot:[`item.role_id`]="{ item }">

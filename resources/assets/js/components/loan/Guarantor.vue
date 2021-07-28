@@ -1,6 +1,7 @@
 <template>
   <v-container fluid >
     <v-row justify="center"  v-show="modalidad.procedure_type_name!= 'Préstamo Hipotecario'">
+      <!-- Vista cuando el prestamo no tiene garantes-->
          <v-col cols="12" class="py-0" v-if="modalidad_guarantors == 0">
           <v-card>
             <v-container class="py-0">
@@ -10,6 +11,7 @@
             </v-container>
           </v-card>
          </v-col>
+      <!-- Detalle del garante cuando es rehacer una modalidad con garante-->
       <v-col cols="12" v-if="modalidad_guarantors > 0" v-show="remake">
         <v-card>
           <v-container class="py-0">
@@ -38,7 +40,9 @@
           </v-container>
         </v-card>
       </v-col>
+        <!-- Vista cuando sea creacion de un nuevo tramite y tenga garante parte izquierda-->
       <v-col cols="4" class="py-0" v-if="modalidad_guarantors > 0" >
+          <!-- Panel del buscador-->
         <v-card>
           <v-container class="py-0">
             <v-row>
@@ -65,7 +69,7 @@
                       x-small
                       v-on="on"
                       color="info"
-                      @click.stop="activar()">
+                      @click.stop="searchGuarantor()">
                       <v-icon>mdi-magnify</v-icon>
                     </v-btn>
                   </template>
@@ -86,13 +90,13 @@
                       label="Titular"
                       :value="false"
                       class="pb-0 ma-0 py-0"
-                         @change="activar()"
+                         @change="searchGuarantor()"
                      ></v-radio>
                     <v-radio
                       label="Viuda"
                       :value="true"
                       class="pb-0 ma-0 py-0"
-                         @change="activar()"
+                         @change="searchGuarantor()"
                     ></v-radio>
                   </v-radio-group>
                 </v-col>
@@ -111,6 +115,7 @@
           </v-container>
         </v-card>
         <br>
+        <!-- Panel del las boletas-->
         <v-card v-show="show_calculated">
           <v-container class="py-0">
             <v-row>
@@ -250,6 +255,7 @@
             </v-container>
           </v-card>
         </v-col>
+        <!-- Vista cuando sea creacion de un nuevo tramite y tenga garante parte derecha-->
         <v-col cols="8" class="py-0" v-if="modalidad_guarantors>0">
           <v-card v-show="show_garante">
             <v-container v-if="modalidad_guarantors>0">
@@ -268,12 +274,8 @@
                 <v-col cols="12" md="6"  class="py-0" >
                   <h3 class="red--text" v-show="!validated">NO PUEDE SER GARANTE</h3>
                   <h3 class="success--text" v-show="validated1"> PUEDE SER GARANTE</h3>
-                  <!--{{affiliate_garantor.guarantor_information}}-->
-                </v-col>
-                <!--v-col cols="12" md="12" class="py-0" v-show="affiliate_garantor.affiliate.cpop">
-                  <h5 class="success--text text-center">AFILIADO CPOP</h5>
-                </!--v-col-->
-                <v-progress-linear></v-progress-linear>
+                 </v-col>
+                  <v-progress-linear></v-progress-linear>
                 <v-col cols="12" md="8" class="font-weight-black caption ma-0 py-0 " >
                   DATOS DEL AFILIADO
                 </v-col>
@@ -371,7 +373,7 @@
                               class="py-0"
                               color="info"
                               rounded
-                              @click="añadir()">Añadir Garante
+                              @click="addGuarantor()">Añadir Garante
                             </v-btn>
                           </div>
                         </fieldset>
@@ -395,7 +397,7 @@
                               color="info"
                               rounded
                                x-small
-                              @click="simulador()">Calculo de Cuota
+                              @click="simulator()">Calculo de Cuota
                             </v-btn>
                           </div>
                         </fieldset>
@@ -461,6 +463,10 @@
       type: Object,
       required: true
     },
+    global_parameters:{
+      type: Object,
+      required:true
+    },
     guarantors: {
       type: Array,
       required: true
@@ -469,6 +475,7 @@
       type: Object,
       required: true
     },
+    //Cantidad de garantes de acuerdo a la modalidad
     modalidad_guarantors: {
       type: Number,
       required: true,
@@ -493,7 +500,8 @@
     affiliate_garantor:{
       affiliate:{
         category:{},
-        affiliate_state:{}
+        affiliate_state:{},
+        full_name:null
       },
       guarantees_sismu:[],
       loans_sismu:[]
@@ -505,10 +513,7 @@
     tipo_afiliado:false,
     monto_ajustable_descripcion:null,
     number_diff_month:1,
-    contribusion:true,
-    comision:false,
     periodo:null,
-    pasivo:false,
     retroceder_meses:false,
     data_ballots_state_affiliate:null,
     periodo_boletas:null,
@@ -558,6 +563,9 @@
     editar:true,
     editarPasivo:true,
     //Variables que sirven de visualizacion de los paneles y botones
+    contribusion:true,
+    comision:false,
+    pasivo:false,
     spouse_view:false,
     show_data:true,
     show_ajuste:true,
@@ -571,7 +579,7 @@
  watch:{
 ver()
 {
-  añadir()
+  addGuarantor()
 }
  },
   computed: {
@@ -587,6 +595,8 @@ ver()
     //Metodo para limpiar los imputs
     async clear()
     {
+      this.show_garante=true
+      this.show_calculated=false
       this.editar=true
       this.payable_liquid[0]=0,
       this.bonos[0]=0
@@ -665,7 +675,7 @@ ver()
       }
     },
     //Metodo para sacar el porcentage de pago segun la cantidad de garantes
-    async simulador() {
+    async simulator() {
       try {
         this.show_simulador=true
         let res = await axios.post(`simulator`, {
@@ -691,7 +701,7 @@ ver()
       }
     },
     //Metodo para la busqueda de garante por ci y matricula
-    async activar()
+    async searchGuarantor()
     {
       this.clear()
       try {
@@ -708,13 +718,12 @@ ver()
             remake_evaluation:this.$route.params.hash == 'remake' ? true : false,
             remake_loan_id: this.$route.params.hash == 'remake' ? this.$route.query.loan_id : 0
           })
-            this.affiliate_garantor=resp.data
-            this.double_perception= this.affiliate_garantor.double_perception
-             if(this.affiliate_garantor.validate)
+             if(resp.data.validate)
             {
-              this.toastr.error(this.affiliate_garantor.validate)
+              this.toastr.error(resp.data.validate)
             }else{
-
+              this.affiliate_garantor=resp.data
+               this.double_perception= this.affiliate_garantor.double_perception
               if(!this.double_perception)
               {
                if(this.affiliate_garantor.affiliate.spouse == null  )
@@ -756,7 +765,6 @@ ver()
               this.periodo=this.$moment(res.data.current_tiket).format('YYYY-MM-DD')
               if(res.data.name_table_contribution=='contributions')
               {
-              // this.toastr.error("afiliado que pertenece a contribution")
                 if(res.data.valid)
                 {
                  this.periodo_boletas=this.$moment(this.data_ballots[0].month_year).format('MMMM')
@@ -827,13 +835,7 @@ ver()
                   this.periodo_boletas=this.$moment(res.data.current_tiket).format('MMMM')
                   this.editar=true
                   this.show_ajuste=true
-              //  this.payable_liquid[0] = this.data_ballots[0].rent
-              //  this.bonos[0] = this.data_ballots[0].dignity_rent
               }
-              //this.payable_liquid[0] = this.data_ballots[0].rent,
-              //this.bonos[0] = this.data_ballots[0].dignity_rent,
-
-              //this.toastr.error("afiliado que pertenece a aid contribution")
             }
             else{
               if(res.data.name_table_contribution==null)
@@ -843,12 +845,8 @@ ver()
                 this.contribusion=false
                 this.pasivo=false
                 this.show_ajuste=false
-                //this.periodo=res.data.current_date
-                //this.periodo=this.periodo.getMonth()
                 this.retroceder_meses=false
-              //  this.toastr.error("afiliado que esta de comision")
               }
-
             }
           }
             this.validated=this.affiliate_garantor.guarantor
@@ -867,7 +865,7 @@ ver()
       }
     },
     //Metodo para añadir al garante
-    async añadir()
+    async addGuarantor()
     {
        let resp = await axios.post(`affiliate_guarantor`,{
             identity_card: this.guarantor_ci,
@@ -1049,7 +1047,7 @@ ver()
     }
     },
     //Metodo para retroceder las contribuciones del garante
-    async retrocederContribusiones(){
+    async backContributions(){
           let res = await axios.get(`affiliate/${this.affiliate_garantor.affiliate.id}/contribution`, {
           params:{
             city_id: this.$store.getters.cityId,
@@ -1084,10 +1082,10 @@ ver()
     },
   //Retrocede las contribuciones
   appendIconCallback () {
-      if(this.number_diff_month < 8){
+      if(this.number_diff_month < this.global_parameters.max_months_go_back){
       this.number_diff_month++
       this.choose_diff_month = 1
-      this.retrocederContribusiones()
+      this.backContributions()
     }
   },
   //Aumenta las contribuciones
@@ -1096,7 +1094,7 @@ ver()
       if(this.number_diff_month > 1){
       this.number_diff_month--
       this.choose_diff_month = 1
-      this.retrocederContribusiones()
+      this.backContributions()
     }
   },
   //Metodo para sacar las contribusiones cuando es doble percepcion

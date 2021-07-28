@@ -97,7 +97,7 @@
                             :error-messages="errors"
                             label="Plazo en Meses"
                             v-model="calculator_result.months_term"
-                            v-on:keyup.enter="simuladores()"
+                            v-on:keyup.enter="simulator()"
                           ></v-text-field>
                         </ValidationProvider>
                        <ValidationProvider v-slot="{ errors }" name="monto solicitado" :rules="'numeric|min_value:'+loan_detail.minimun_amoun+'|max_value:'+loan_detail.maximun_amoun" mode="aggressive">
@@ -106,7 +106,7 @@
                             :error-messages="errors"
                             label="Monto Solicitado"
                             v-model ="calculator_result.amount_requested"
-                            v-on:keyup.enter="simuladores()"
+                            v-on:keyup.enter="simulator()"
                           ></v-text-field>
                         </ValidationProvider>
                         <center>
@@ -115,7 +115,7 @@
                             color="info"
                             rounded
                             x-small
-                            @click="simuladores()">Calcular
+                            @click="simulator()">Calcular
                           </v-btn>
                         </center>
                       </fieldset>
@@ -200,7 +200,6 @@
 export default {
   name: "loan-requirement",
   data: () => ({
-    ver:false,
     calculator_result_aux:{},
     global_parameters:{}
   }),
@@ -221,11 +220,6 @@ export default {
       type: Object,
       required: true
     },
-    modalidad_id: {
-      type: Number,
-      required: true,
-      default: 0
-    },
     modalidad: {
       type: Object,
       required: true
@@ -241,7 +235,6 @@ export default {
   },
   mounted(){
     this.getGlobalParameters()
-
   },
     computed: {
 
@@ -251,33 +244,14 @@ export default {
         return true
       }
     },
-    /*editar() {
-      if(this.$route.query.type_sismu)
-      {
-        return true
-      }
-      else{
-         if(this.$route.query.loan_id && this.$route.params.hash != 'remake')
-          {
-            return true
-          }else{
-            return false
-          }
-      }
-      return this.$route.params.hash == 'new'
-    },*/
     editar() {
       if(this.refinancing || this.reprogramming)
       {
         return true
       }
-      /*if(this.$route.params.hash == 'remake' && this.data_loan_parent_aux.parent_reason != null)
-      {
-        return true
-      }*/else{
+      else{
         return false
       }
-
     },
     habilitar() {
       if(this.$route.query.type_sismu || (this.remake && this.data_loan_parent_aux.parent_loan_id == null))//Si es sismu o rehacer sismu
@@ -287,7 +261,6 @@ export default {
       else{
         return false
       }
-      return this.$route.params.hash == 'new'
     },
 
     refinancing() {
@@ -301,6 +274,7 @@ export default {
     }
   },
   methods: {
+    //Metodo para sacar los parametros globales
     async getGlobalParameters(){
       try {
         let res = await axios.get(`loan_global_parameter`)
@@ -309,7 +283,8 @@ export default {
         console.log(e)
       }
     },
-    async simuladores() {
+    //Metodo del simulador para el monto maximo de prestamo
+    async simulator() {
       try {
         if(this.loan_detail.maximun_amoun>=this.calculator_result.amount_requested)
         {

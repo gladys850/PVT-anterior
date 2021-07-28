@@ -49,15 +49,18 @@
                                     <p><b>CÉDULA DE IDENTIDAD:</b> {{borrower.identity_card +' '+  borrower.city_identity_card.first_shortened}}</p>
                                   </v-col>
                                   <v-col cols="12" md="4" class="py-0">
-                                    <p><b>ESTATDO:</b> {{borrower.state.name}}</p>
+                                    <p><b>ESTADO:</b> {{borrower.state.name}}</p>
                                   </v-col>
                                   <v-col cols="12" md="12" class="py-0">
-                                    <p><b>GRADO:</b> {{borrower.city_identity_card.company_address}}</p>
+                                    <p><b>DIRECCION:</b> {{borrower.address.description}}</p>
                                   </v-col>
                                 </v-row>
                               </v-col>
                             </li>
                            </ul>
+                            <v-col cols="12" md="12" class="py-0" v-show="!isNew">
+                            <p style="color:teal"><b>PERSONA QUIEN REALIZAO EL PAGO.-</b></p>
+                          </v-col>
                           <v-progress-linear></v-progress-linear>
                         <v-col cols="12" class="py-0" v-show="isNew" v-if="last_payment" >
                           <center>
@@ -383,6 +386,7 @@ export default {
     payment:{},
     garantes:{
       lenders:[],
+      borrowerguarantors:[],
       last_payment_validated:{},
       modality:{}
     },
@@ -515,7 +519,7 @@ export default {
         for (let i = 0; i<  this.garantes.borrowerguarantors.length; i++) {
         if(this.garantes.borrowerguarantors[i].id==this.radios)
         {
-          this.data_payment.affiliate_id_paid_by=this.radios
+          this.data_payment.affiliate_id_paid_by=this.garantes.borrowerguarantors[i].affiliate_id
           this.code_initials = this.garantes.borrowerguarantors[i].type_initials
         }
       }
@@ -530,6 +534,9 @@ export default {
         let res = await axios.get(`loan_payment/${id}`)
         this.loan_payment = res.data
              this.garantes.lenders=[this.loan_payment.affiliate]
+       
+       this.garantes.borrower_detail=this.loan_payment.borrower
+
              this.garantes.code=this.loan_payment.loan.code
              this.garantes.disbursement_date=this.$moment(this.loan_payment.loan.disbursement_date).format("DD-MM-YYYY")
              this.garantes.amount_approved=this.loan_payment.loan.amount_approved
