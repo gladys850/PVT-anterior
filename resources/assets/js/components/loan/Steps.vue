@@ -917,63 +917,75 @@ export default {
 
     validateStepsTwo()
     {
-      if(!this.loan_detail.maximum_suggested_valid){
-        this.toastr.error("El monto solicitado no pertenece a esta modalidad.")
-      }else{
-        if(!this.loan_detail.is_valid)
+      if(this.calculator_result.amount_requested < 1 )
+      {
+        this.toastr.error("El monto solicitado no puede ser 0")
+      }
+      else{
+        if(this.calculator_result.months_term < 1 )
         {
-          this.toastr.error("No puede quedarse con un liquido menor al monto de subsistencia.")
+          this.toastr.error("El plazo no puede ser 0")
         }
-        else{
-          if(!(this.isNew || (this.remake && this.data_loan.parent_reason == null))){
-            if(this.data_loan_parent_aux.code==null)
-            {
-              this.toastr.error("Tiene que llenar el Codigo del Prestamo Padre.")
-            }else{
-              if(this.data_loan_parent_aux.disbursement_date== null)
+        else
+        {
+          if(!this.loan_detail.maximum_suggested_valid){
+          this.toastr.error("El monto solicitado no pertenece a esta modalidad.")
+          }else{
+          if(!this.loan_detail.is_valid)
+          {
+            this.toastr.error("No puede quedarse con un liquido menor al monto de subsistencia.")
+          }
+          else{
+            if(!(this.isNew || (this.remake && this.data_loan.parent_reason == null))){
+              if(this.data_loan_parent_aux.code==null)
               {
-                this.toastr.error("Tiene que llenar la fecha de desembolso del Préstamo Padre.")
+                this.toastr.error("Tiene que llenar el Codigo del Prestamo Padre.")
               }else{
-                if(this.data_loan_parent_aux.amount_approved==null)
+                if(this.data_loan_parent_aux.disbursement_date== null)
                 {
-                  this.toastr.error("Tiene que llenar el Monto del Prestamo Padre.")
+                  this.toastr.error("Tiene que llenar la fecha de desembolso del Préstamo Padre.")
                 }else{
-                  if(this.data_loan_parent_aux.loan_term==null)
+                  if(this.data_loan_parent_aux.amount_approved==null)
                   {
-                    this.toastr.error("Tiene que llenar el Plazo del Prestamo Padre.")
+                    this.toastr.error("Tiene que llenar el Monto del Prestamo Padre.")
                   }else{
-                    if(this.data_loan_parent_aux.balance==null)
+                    if(this.data_loan_parent_aux.loan_term==null)
                     {
-                      this.toastr.error("Tiene que llenar el Saldo del Prestamo Padre.")
+                      this.toastr.error("Tiene que llenar el Plazo del Prestamo Padre.")
                     }else{
-                      if(this.reprogramming){
-                        if(this.data_loan_parent_aux.loan_term >= this.calculator_result.months_term )
-                        {
-                          this.toastr.error("El plazo no puede ser menor o igual al plazo anterior.")
-                        }else{
-                          if(this.data_loan_parent_aux.balance == this.calculator_result.amount_requested)
-                          {
-                            this.addDataLoan()
-                            this.nextStep(2)
-                          }else{
-                            this.toastr.error("El Monto Solicitado debe ser igual al Saldo.")
-                          }
-                        }
+                      if(this.data_loan_parent_aux.balance==null)
+                      {
+                        this.toastr.error("Tiene que llenar el Saldo del Prestamo Padre.")
                       }else{
-                        if(parseFloat(this.data_loan_parent_aux.balance) >= parseFloat(this.calculator_result.amount_requested))
-                        {
-                          this.toastr.error("El saldo no puede ser mayor al Monto Solicitado.")
-                        }
-                        else{
-                          if(this.data_loan_parent_aux.estimated_quota==null)
+                        if(this.reprogramming){
+                          if(this.data_loan_parent_aux.loan_term >= this.calculator_result.months_term )
                           {
-                            this.toastr.error("Tiene que llenar la Cuota del Prestamo Padre.")
+                            this.toastr.error("El plazo no puede ser menor o igual al plazo anterior.")
                           }else{
-                            if( parseFloat(this.data_loan_parent_aux.estimated_quota) <= parseFloat(this.calculator_result.quota_calculated_estimated_total)){
+                            if(this.data_loan_parent_aux.balance == this.calculator_result.amount_requested)
+                            {
                               this.addDataLoan()
                               this.nextStep(2)
                             }else{
-                              this.toastr.error("La cuota del nuevo prestamo no puede ser menor a la antigua cuota.")
+                              this.toastr.error("El Monto Solicitado debe ser igual al Saldo.")
+                            }
+                          }
+                        }else{
+                          if(parseFloat(this.data_loan_parent_aux.balance) >= parseFloat(this.calculator_result.amount_requested))
+                          {
+                            this.toastr.error("El saldo no puede ser mayor al Monto Solicitado.")
+                          }
+                          else{
+                            if(this.data_loan_parent_aux.estimated_quota==null)
+                            {
+                              this.toastr.error("Tiene que llenar la Cuota del Prestamo Padre.")
+                            }else{
+                              if( parseFloat(this.data_loan_parent_aux.estimated_quota) <= parseFloat(this.calculator_result.quota_calculated_estimated_total)){
+                                this.addDataLoan()
+                                this.nextStep(2)
+                              }else{
+                                this.toastr.error("La cuota del nuevo prestamo no puede ser menor a la antigua cuota.")
+                              }
                             }
                           }
                         }
@@ -982,26 +994,28 @@ export default {
                   }
                 }
               }
-            }
-            }else{
-              if(this.modalidad.procedure_type_name=='Préstamo Hipotecario' || this.modalidad.procedure_type_name == 'Refinanciamiento Préstamo Hipotecario'){
-                 if(parseFloat(this.calculator_result.amount_requested) > parseFloat(this.loan_detail.net_realizable_value) )
-                {
-                  this.toastr.error("El Monto Solicitado no puede ser mayor al Monto del Inmueble")
-                }
-                else{
-                  this.nextStep(2)
-                }
               }else{
-                if(this.calculator_result.amount_requested>this.loan_detail.amount_maximum_suggested)
-                {
-                  this.toastr.error("El Monto Solicitado no puede ser mayor al Monto maximo sugerido")
+                if(this.modalidad.procedure_type_name=='Préstamo Hipotecario' || this.modalidad.procedure_type_name == 'Refinanciamiento Préstamo Hipotecario'){
+                  if(parseFloat(this.calculator_result.amount_requested) > parseFloat(this.loan_detail.net_realizable_value) )
+                  {
+                    this.toastr.error("El Monto Solicitado no puede ser mayor al Monto del Inmueble")
+                  }
+                  else{
+                    this.nextStep(2)
+                  }
+                }else{
+                  if(this.calculator_result.amount_requested>this.loan_detail.amount_maximum_suggested)
+                  {
+                    this.toastr.error("El Monto Solicitado no puede ser mayor al Monto maximo sugerido")
+                  }
+                  else{
+                    this.nextStep(2)
+                  }
                 }
-                else{
-                  this.nextStep(2)
-                }
-              }
+            }
           }
+        }
+
         }
       }
     },
