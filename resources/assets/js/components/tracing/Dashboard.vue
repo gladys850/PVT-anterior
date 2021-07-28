@@ -78,6 +78,9 @@ export default {
       return this.$route.params.id == "new"
     },
   },
+  beforeMount(){
+    this.getProcedureModalityName(this.loan.procedure_modality_id)
+  },
   methods: {
     //Metodo para sacar el procedure modality
     async getProcedureModalityName(id) {

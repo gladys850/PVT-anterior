@@ -83,7 +83,7 @@
                  <v-col cols="12" md="5" class="pb-0 ma-0 py-0" v-show="double_perception">
                   <v-radio-group
                     class="pb-0 ma-0 py-0"
-                    v-model="tipo_afiliado"
+                    v-model="type_affiliate"
                     row
                   >
                     <v-radio
@@ -125,12 +125,12 @@
                     <fieldset class="pa-3">
                       <v-row>
                         <v-col cols="12" md="10" class="py-0" style="color:teal">
-                          <label><b>Boleta de Pago del mes de {{' '+periodo_boletas}} </b></label>
+                          <label><b>Boleta de Pago del mes de {{' '+period_ballots}} </b></label>
                         </v-col>
                         <v-col cols="12" md="5" class="pb-0">
                           <v-text-field
-                            :outlined="editar"
-                            :readonly="!editar"
+                            :outlined="edit_contributions"
+                            :readonly="!edit_contributions"
                             dense
                             class="py-0"
                             v-model="payable_liquid[0]"
@@ -156,7 +156,7 @@
                       <v-col cols="12" md="4" v-show="show_ajuste">
                         <v-text-field
                           dense
-                          v-model="monto_ajustable"
+                          v-model="amount_adjustable"
                           :outlined="show_ajuste"
                           class="mt-0 pt-0"
                           label="Monto Ajustable"
@@ -167,69 +167,69 @@
                       <v-col cols="12" md="8" v-show="show_ajuste">
                         <v-text-field
                           dense
-                          v-model="monto_ajustable_descripcion"
+                          v-model="amount_adjustable_description"
                           :outlined="show_ajuste"
                           class="mt-0 pt-0"
                           label="Descripcion Monto Ajustable"
                           type="text"
                         ></v-text-field>
                       </v-col>
-                      <v-col cols="12" md="6" class="pb-0" v-show="comision">
+                      <v-col cols="12" md="6" class="pb-0" v-show="show_commission">
                         <v-text-field
-                          :outlined="editarComision"
-                          :readonly="!editarComision"
+                          :outlined="edit_commission"
+                          :readonly="!edit_commission"
                           dense
                           class="py-0"
-                          v-model="periodo"
+                          v-model="period"
                           label="Periodo"
                         ></v-text-field>
                       </v-col>
                       </v-row>
                       <v-row >
-                        <v-col cols="12" md="6" class="pb-0" v-show="contribusion">
+                        <v-col cols="12" md="6" class="pb-0" v-show="show_contributios">
                           <v-text-field
-                            :outlined="editar"
-                            :readonly="!editar"
+                            :outlined="edit_contributions"
+                            :readonly="!edit_contributions"
                             dense
                             class="py-0"
                             v-model="bonos[0]"
                             label="Bono Frontera"
                           ></v-text-field>
                         </v-col>
-                        <v-col cols="12" md="6" class="pb-0" v-show="contribusion" >
+                        <v-col cols="12" md="6" class="pb-0" v-show="show_contributios" >
                           <v-text-field
-                            :outlined="editar"
-                            :readonly="!editar"
+                            :outlined="edit_contributions"
+                            :readonly="!edit_contributions"
                             dense
                             class="py-0"
                             v-model="bonos[1]"
                             label="Bono Oriente"
                           ></v-text-field>
                         </v-col>
-                      <v-col cols="12" md="6" class="pb-0" v-show="contribusion" >
+                      <v-col cols="12" md="6" class="pb-0" v-show="show_contributios" >
                         <v-text-field
-                          :outlined="editar"
-                          :readonly="!editar"
+                          :outlined="edit_contributions"
+                          :readonly="!edit_contributions"
                           dense
                           class="py-0"
                           v-model="bonos[2]"
                           label="Bono Cargo"
                         ></v-text-field>
                       </v-col>
-                      <v-col cols="12" md="6" class="pb-0" v-show="contribusion">
+                      <v-col cols="12" md="6" class="pb-0" v-show="show_contributios">
                         <v-text-field
-                          :outlined="editar"
-                          :readonly="!editar"
+                          :outlined="edit_contributions"
+                          :readonly="!edit_contributions"
                           dense
                           class="py-0"
                           v-model="bonos[3]"
                           label="Bono Seguridad"
                         ></v-text-field>
                       </v-col>
-                      <v-col cols="12" md="6" class="pb-0" v-show="pasivo">
+                      <v-col cols="12" md="6" class="pb-0" v-show="show_passive">
                         <v-text-field
-                          :outlined="editarPasivo"
-                          :readonly="!editarPasivo"
+                          :outlined="edit_passive"
+                          :readonly="!edit_passive"
                           dense
                           class="py-0"
                           v-model="bonos[0]"
@@ -262,7 +262,7 @@
               <v-row>
                 <v-col class="text-center"  cols="12" md="12">
                     <h4 class="error--text" > CANTIDAD DE GARANTES QUE NECESITA ESTA MODALIDAD:{{modalidad_guarantors}}<br>
-                  EL GARANTE DEBE ESTAR ENTRE UNA CATEGORIA DE {{loan_detail.min_guarantor_category}} A {{loan_detail.max_guarantor_category}} </h4>
+                  EL GARANTE DEBE ESTAR ENTRE UNA CATEGORIA DE {{loan_detail.min_guarantor_category * 100}}% A {{loan_detail.max_guarantor_category * 100}}% </h4>
                 </v-col>
               </v-row>
             </v-container>
@@ -272,8 +272,8 @@
               <v-row>
                 <v-col cols="12" md="4"></v-col>
                 <v-col cols="12" md="6"  class="py-0" >
-                  <h3 class="red--text" v-show="!validated">NO PUEDE SER GARANTE</h3>
-                  <h3 class="success--text" v-show="validated1"> PUEDE SER GARANTE</h3>
+                  <h3 class="red--text" v-show="!show_guarantor_false">NO PUEDE SER GARANTE</h3>
+                  <h3 class="success--text" v-show="show_guarantor_true"> PUEDE SER GARANTE</h3>
                  </v-col>
                   <v-progress-linear></v-progress-linear>
                 <v-col cols="12" md="8" class="font-weight-black caption ma-0 py-0 " >
@@ -358,17 +358,17 @@
                     <v-layout row wrap>
                       <v-flex xs6 class="px-2">
                         <fieldset class="pa-3" >
-                          <h1 class="caption" >{{'Cantidad de garantes faltantes a añadir: '}}{{modalidad_guarantors-garantes_detalle.length}}</h1>
+                          <h1 class="caption" >{{'Cantidad de garantes faltantes a añadir: '}}{{modalidad_guarantors-guarantor_detail.length}}</h1>
                           <v-progress-linear></v-progress-linear>
                           <h1 class="caption" v-show="cont=0">{{'Calcular el porcentaje de pago del garante'}}</h1>
                           <p class="py-0 mb-0 caption" v-show="show_data">Liquido Total:{{evaluate_garantor.payable_liquid_calculated +' '}}<br>
                            Total de Bonos:{{evaluate_garantor.bonus_calculated +' '}}<br>
                            Liquido para la Calificacion:{{evaluate_garantor.liquid_qualification_calculated }}</p>
-                          <p class="py-0 mb-0 caption" v-show="show_data">Indice de Endeudamiento: {{evaluate_garantor.indebtnes_calculated|percentage }}%<br>{{'Monto Ajustable:'+ monto_ajustable}}<br> {{'Liquido Restante para garantias:'+ evaluate_garantor.liquid_rest}}<br><b>{{evaluate_garantor.is_valid?'Cubre la Cuota ':'No Cubre la Cuota'}}</b></p>
+                          <p class="py-0 mb-0 caption" v-show="show_data">Indice de Endeudamiento: {{evaluate_garantor.indebtnes_calculated|percentage }}%<br>{{'Monto Ajustable:'+ amount_adjustable}}<br> {{'Liquido Restante para garantias:'+ evaluate_garantor.liquid_rest}}<br><b>{{evaluate_garantor.is_valid?'Cubre la Cuota ':'No Cubre la Cuota'}}</b></p>
                           <div class="text-right"  v-show="evaluate_garantor.is_valid">
                             <v-btn
                               v-if="show_data"
-                              v-show="garantes_detalle.length < modalidad_guarantors"
+                              v-show="guarantor_detail.length < modalidad_guarantors"
                               x-small
                               class="py-0"
                               color="info"
@@ -384,14 +384,14 @@
                               <v-progress-linear></v-progress-linear>
                           <div
                             class="align-end font-weight-light ma-0 pa-0"
-                            v-for="(otherDoc, index) of garantes_detalle"
+                            v-for="(otherDoc, index) of guarantor_detail"
                             :key="index"
                           >
                             {{index+1 +". "}} {{otherDoc}}
                             <v-btn text icon color="error" @click.stop="deleteGuarantor(index)">X</v-btn>
                               <v-divider></v-divider>
                           </div>
-                          <div class="text-right"  v-if="modalidad_guarantors==garantes_detalle.length">
+                          <div class="text-right"  v-if="modalidad_guarantors==guarantor_detail.length">
                             <v-btn
                               class="py-0"
                               color="info"
@@ -426,7 +426,7 @@
                                 <v-progress-linear></v-progress-linear>
                                  <v-row>
                                   <v-col cols="12" md="12" class="py-0">
-                                    Nombre del Afiliado: {{ garantes_detalle[i]}}
+                                    Nombre del Afiliado: {{ guarantor_detail[i]}}
                                   </v-col>
                                   <v-col cols="12" md="3" class="py-0">
                                     Cuota: {{afiliados.quota_calculated}}
@@ -508,27 +508,27 @@
     },
     affiliate_id:null,
     spouse:{},
-    nombre:null,
+    name_guarantor:null,
     double_perception:false,
-    tipo_afiliado:false,
-    monto_ajustable_descripcion:null,
+    type_affiliate:false,
+    amount_adjustable_description:null,
     number_diff_month:1,
-    periodo:null,
-    retroceder_meses:false,
+    period:null,
+    back_months:false,
     data_ballots_state_affiliate:null,
-    periodo_boletas:null,
-    monto_ajustable:0,
+    period_ballots:null,
+    amount_adjustable:0,
     data_ballots_name:null,
     contributionable:[],
     loan_contributions_adjust_ids:[],
-    garante_boletas:{},
+    guarantor_ballots:{},
     data_ballots:[],
     simulator_guarantors:{},
     loan:[],
     index: [],
-    guarantor_objeto:{},
-    garantes_detalle:[],
-    garantes_simulador:[],
+    guarantor_objet:{},
+    guarantor_detail:[],
+    guarantor_simulator:[],
     payable_liquid:[0],
     bonos:[0,0,0,0],
     evaluate_garantor:{},
@@ -559,13 +559,13 @@
       }
     ],
     //Variables que activan los imputs para editar
-    editarComision:false,
-    editar:true,
-    editarPasivo:true,
+    edit_commission:false,
+    edit_contributions:true,
+    edit_passive:true,
     //Variables que sirven de visualizacion de los paneles y botones
-    contribusion:true,
-    comision:false,
-    pasivo:false,
+    show_contributios:true,
+    show_commission:false,
+    show_passive:false,
     spouse_view:false,
     show_data:true,
     show_ajuste:true,
@@ -573,8 +573,8 @@
     show_garante:true,
     show_calculated:false,
     show_result:false,
-    validated:true,
-    validated1:false,
+    show_guarantor_false:true,
+    show_guarantor_true:false,
   }),
  watch:{
 ver()
@@ -597,21 +597,21 @@ ver()
     {
       this.show_garante=true
       this.show_calculated=false
-      this.editar=true
+      this.edit_contributions=true
       this.payable_liquid[0]=0,
       this.bonos[0]=0
       this.bonos[1]=0
       this.bonos[2]=0
       this.bonos[3]=0
-      this.monto_ajustable=0
-      this.monto_ajustable_descripcion=null
+      this.amount_adjustable=0
+      this.amount_adjustable_description=null
       this.number_diff_month=1
     },
     //Metodo para borrar un garante adicionado
     deleteGuarantor(i) {
       this.show_simulador=false
-      this.garantes_detalle.splice(i, 1)
-      this.garantes_simulador.splice(i, 1)
+      this.guarantor_detail.splice(i, 1)
+      this.guarantor_simulator.splice(i, 1)
       this.guarantors.splice(i, 1)
       this.contributionable.splice(i, 1)
       this.loan_contributions_adjust_ids.splice(i, 1)
@@ -620,13 +620,12 @@ ver()
     //Metodo para calcular las boletas
      async calculator() {
       try {
-          if(this.monto_ajustable>0){
-            if(this.monto_ajustable_descripcion)
+          if(this.amount_adjustable>0){
+            if(this.amount_adjustable_description)
             {
               this.show_result=true
               this.show_data=true
-              // this.payable_liquid[0]=parseFloat(this.payable_liquid[0]) + parseFloat(this.monto_ajustable)
-              let res = await axios.post(`evaluate_garantor`, {
+                let res = await axios.post(`evaluate_garantor`, {
                 procedure_modality_id:this.modalidad_id,
                 affiliate_id:this.affiliate_garantor.affiliate.id,
                 quota_calculated_total_lender:this.loan_detail.quota_calculated_total_lender,
@@ -634,7 +633,7 @@ ver()
                 remake_loan_id: this.$route.params.hash == 'remake' ? this.$route.query.loan_id : null,
                 contributions: [
                 {
-                  payable_liquid: parseFloat(this.payable_liquid[0]) + parseFloat(this.monto_ajustable),
+                  payable_liquid: parseFloat(this.payable_liquid[0]) + parseFloat(this.amount_adjustable),
                   position_bonus:  this.bonos[2],
                   border_bonus: this.bonos[0],
                   public_security_bonus: this.bonos[3],
@@ -650,14 +649,13 @@ ver()
           }else{
             this.show_result=true
             this.show_data=true
-            // this.payable_liquid[0]=parseFloat(this.payable_liquid[0]) + parseFloat(this.monto_ajustable)
             let res = await axios.post(`evaluate_garantor`, {
               procedure_modality_id:this.modalidad_id,
               affiliate_id:this.affiliate_garantor.affiliate.id,
               quota_calculated_total_lender:this.loan_detail.quota_calculated_total_lender,
               contributions: [
               {
-                payable_liquid: parseFloat(this.payable_liquid[0]) + parseFloat(this.monto_ajustable),
+                payable_liquid: parseFloat(this.payable_liquid[0]) + parseFloat(this.amount_adjustable),
                 position_bonus:  this.bonos[2],
                 border_bonus: this.bonos[0],
                 public_security_bonus: this.bonos[3],
@@ -683,8 +681,8 @@ ver()
           amount_requested: this.loan_detail.amount_requested,
           months_term: this.loan_detail.months_term,
           guarantor: true,
-          liquid_qualification_calculated_lender: this.loan_detail.liquid_qualification_calculated + this.monto_ajustable,
-          liquid_calculated:this.garantes_simulador
+          liquid_qualification_calculated_lender: this.loan_detail.liquid_qualification_calculated + this.amount_adjustable,
+          liquid_calculated:this.guarantor_simulator
         })
         this.simulator_guarantors = res.data
         for (this.j = 0; this.j< this.guarantors.length; this.j++) {
@@ -714,7 +712,7 @@ ver()
           let resp = await axios.post(`affiliate_guarantor`,{
             identity_card: this.guarantor_ci,
             procedure_modality_id:this.modalidad_id,
-            type_guarantor_spouse:this.tipo_afiliado,
+            type_guarantor_spouse:this.type_affiliate,
             remake_evaluation:this.$route.params.hash == 'remake' ? true : false,
             remake_loan_id: this.$route.params.hash == 'remake' ? this.$route.query.loan_id : 0
           })
@@ -729,16 +727,16 @@ ver()
                if(this.affiliate_garantor.affiliate.spouse == null  )
               {
                 this.spouse_view = false
-                this.nombre=this.affiliate_garantor.affiliate.full_name
+                this.name_guarantor=this.affiliate_garantor.affiliate.full_name
                 this.affiliate_id=this.affiliate_garantor.affiliate.id
               }else{
                 this.spouse_view = true
                 this.spouse=this.affiliate_garantor.affiliate.spouse
-                this.nombre=this.$options.filters.fullName(this.affiliate_garantor.affiliate.spouse, true)
+                this.name_guarantor=this.$options.filters.fullName(this.affiliate_garantor.affiliate.spouse, true)
 
                   if(this.affiliate_garantor.double_perception)
                   {
-                    if(this.tipo_afiliado == false)
+                    if(this.type_affiliate == false)
                     {
                       this.affiliate_id=this.affiliate_garantor.affiliate.id
                     }else{
@@ -762,18 +760,18 @@ ver()
               this.data_ballots=res.data.data
               this.data_ballots_name=res.data.name_table_contribution
               this.data_ballots_state_affiliate=res.data.state_affiliate
-              this.periodo=this.$moment(res.data.current_tiket).format('YYYY-MM-DD')
+              this.period=this.$moment(res.data.current_tiket).format('YYYY-MM-DD')
               if(res.data.name_table_contribution=='contributions')
               {
                 if(res.data.valid)
                 {
-                 this.periodo_boletas=this.$moment(this.data_ballots[0].month_year).format('MMMM')
+                 this.period_ballots=this.$moment(this.data_ballots[0].month_year).format('MMMM')
 
-                  this.editar=false
-                  this.contribusion=true
-                  this.comision=false
-                  this.pasivo=false
-                  this.retroceder_meses=true
+                  this.edit_contributions=false
+                  this.show_contributios=true
+                  this.show_commission=false
+                  this.show_passive=false
+                  this.back_months=true
                   this.show_ajuste=true
                   this.payable_liquid[0] = this.data_ballots[0].payable_liquid,
                   this.bonos[0] = this.data_ballots[0].border_bonus,
@@ -782,14 +780,14 @@ ver()
                   this.bonos[3] = this.data_ballots[0].public_security_bonus
                 } else{
 
-                  this.periodo_boletas=this.$moment(res.data.current_tiket).format('MMMM')
+                  this.period_ballots=this.$moment(res.data.current_tiket).format('MMMM')
 
-                  this.editar=false
-                  this.contribusion=true
-                  this.comision=false
+                  this.edit_contributions=false
+                  this.show_contributios=true
+                  this.show_commission=false
                   this.show_ajuste=true
-                  this.pasivo=false
-                  this.retroceder_meses=true
+                  this.show_passive=false
+                  this.back_months=true
                   this.payable_liquid[0] = this.payable_liquid[0]
                   this.bonos[0] = this.bonos[0]
                   this.bonos[1] =this.bonos[1]
@@ -799,58 +797,58 @@ ver()
               }else{
                 if(res.data.name_table_contribution=='aid_contributions')
                 {
-                  this.pasivo= true
-                  this.contribusion=false
-                  this.retroceder_meses=false
-                  this.comision=false
+                  this.show_passive= true
+                  this.show_contributios=false
+                  this.back_months=false
+                  this.show_commission=false
                   this.show_ajuste=true
 
                 if(res.data.valid)
                 {
-                  this.periodo_boletas=this.$moment(this.data_ballots[0].month_year).format('MMMM')
+                  this.period_ballots=this.$moment(this.data_ballots[0].month_year).format('MMMM')
                   if(this.data_ballots[0].rent==0 && this.data_ballots[0].dignity_rent==0){
-                    this.editar=true
-                    this.editarPasivo= true
+                    this.edit_contributions=true
+                    this.edit_passive= true
                   }else{
                     if(this.data_ballots[0].dignity_rent>0 && this.data_ballots[0].rent>0){
-                      this.editar=false
-                      this.editarPasivo= false
+                      this.edit_contributions=false
+                      this.edit_passive= false
                       this.payable_liquid[0] = this.data_ballots[0].rent
                       this.bonos[0] = this.data_ballots[0].dignity_rent
                     }else{
                       if(this.data_ballots[0].dignity_rent==0){
-                        this.editarPasivo= true
-                        this.editar=false
+                        this.edit_passive= true
+                        this.edit_contributions=false
                         this.payable_liquid[0] = this.data_ballots[0].rent
                       }else{
                         if(this.data_ballots[0].rent==0){
-                          this.editar=true
-                          this.editarPasivo= false
+                          this.edit_contributions=true
+                          this.edit_passive= false
                           this.bonos[0] = this.data_ballots[0].dignity_rent
                         }
                       }
                     }
                   }
                 } else{
-                  this.periodo_boletas=this.$moment(res.data.current_tiket).format('MMMM')
-                  this.editar=true
+                  this.period_ballots=this.$moment(res.data.current_tiket).format('MMMM')
+                  this.edit_contributions=true
                   this.show_ajuste=true
               }
             }
             else{
               if(res.data.name_table_contribution==null)
               {
-                this.periodo_boletas=this.$moment(res.data.current_tiket).format('MMMM')
-                this.comision=true
-                this.contribusion=false
-                this.pasivo=false
+                this.period_ballots=this.$moment(res.data.current_tiket).format('MMMM')
+                this.show_commission=true
+                this.show_contributios=false
+                this.show_passive=false
                 this.show_ajuste=false
-                this.retroceder_meses=false
+                this.back_months=false
               }
             }
           }
-            this.validated=this.affiliate_garantor.guarantor
-            this.validated1=this.affiliate_garantor.guarantor
+            this.show_guarantor_false=this.affiliate_garantor.guarantor
+            this.show_guarantor_true=this.affiliate_garantor.guarantor
             this.show_calculated=this.affiliate_garantor.guarantor
             this.loan=this.affiliate_garantor.affiliate.loans
             this.show_garante=false
@@ -870,7 +868,7 @@ ver()
        let resp = await axios.post(`affiliate_guarantor`,{
             identity_card: this.guarantor_ci,
             procedure_modality_id:this.modalidad_id,
-            type_guarantor_spouse:this.tipo_afiliado,
+            type_guarantor_spouse:this.type_affiliate,
             remake_evaluation:this.$route.params.hash == 'remake' ? true : false,
             remake_loan_id: this.$route.params.hash == 'remake' ? this.$route.query.loan_id : 0
           })
@@ -880,14 +878,14 @@ ver()
       {
       this.guarantor_ci=null
       this.show_data=false
-      this.garante_boletas.affiliate_id=this.affiliate_garantor.affiliate.id
-      this.garante_boletas.liquid_qualification_calculated=this.evaluate_garantor.liquid_qualification_calculated
-      this.guarantor_objeto.affiliate_id=this.affiliate_garantor.affiliate.id
-      this.guarantor_objeto.bonus_calculated=this.evaluate_garantor.bonus_calculated
-      this.guarantor_objeto.payable_liquid_calculated=this.evaluate_garantor.payable_liquid_calculated
+      this.guarantor_ballots.affiliate_id=this.affiliate_garantor.affiliate.id
+      this.guarantor_ballots.liquid_qualification_calculated=this.evaluate_garantor.liquid_qualification_calculated
+      this.guarantor_objet.affiliate_id=this.affiliate_garantor.affiliate.id
+      this.guarantor_objet.bonus_calculated=this.evaluate_garantor.bonus_calculated
+      this.guarantor_objet.payable_liquid_calculated=this.evaluate_garantor.payable_liquid_calculated
 
       if(this.guarantors.length>0){
-        if(this.garante_boletas.affiliate_id == this.guarantors[0].affiliate_id){
+        if(this.guarantor_ballots.affiliate_id == this.guarantors[0].affiliate_id){
           this.toastr.error("Este afiliado ya se encuentra registrado.")
         }else{
           if(this.data_ballots_name==null)
@@ -899,68 +897,68 @@ ver()
             type_affiliate:'guarantor',
             amount: this.payable_liquid[0],
             type_adjust: 'liquid',
-            period_date: this.periodo,
+            period_date: this.period,
             description: 'Liquido Pagable Comision',
           })
-        this.guarantor_objeto.contributionable_ids=this.contributionable
-        this.guarantor_objeto.contributionable_type='loan_contribution_adjusts'
+        this.guarantor_objet.contributionable_ids=this.contributionable
+        this.guarantor_objet.contributionable_type='loan_contribution_adjusts'
         this.loan_contributions_adjust_ids.push(res.data.id)
-        this.guarantor_objeto.loan_contributions_adjust_ids=this.loan_contributions_adjust_ids
+        this.guarantor_objet.loan_contributions_adjust_ids=this.loan_contributions_adjust_ids
       }else{
         if(this.data_ballots_state_affiliate=='Pasivo'){
           let res_aid_contribution = await axios.post(`aid_contribution/updateOrCreate`, {
               affiliate_id: this.affiliate_garantor.affiliate.id,
-              month_year: this.periodo,
+              month_year: this.period,
               rent: this.payable_liquid[0],
               dignity_rent: this.bonos[0],
           })
           this.contributionable.push(res_aid_contribution.data.id)
-          this.guarantor_objeto.contributionable_ids=this.contributionable
-          this.guarantor_objeto.contributionable_type=this.data_ballots_name
+          this.guarantor_objet.contributionable_ids=this.contributionable
+          this.guarantor_objet.contributionable_type=this.data_ballots_name
 
-          if(this.monto_ajustable>0){
+          if(this.amount_adjustable>0){
             let res_adjust_pasivo= await axios.post(`loan_contribution_adjust`, {
               affiliate_id: this.affiliate_garantor.affiliate.id,
               adjustable_id:res_aid_contribution.data.id,
               adjustable_type: this.data_ballots_name,
               type_affiliate:'guarantor',
-              amount: this.monto_ajustable,
+              amount: this.amount_adjustable,
               type_adjust: 'adjust',
-              period_date: this.periodo,
-              description: this.monto_ajustable_descripcion,
+              period_date: this.period,
+              description: this.amount_adjustable_description,
             })
             this.loan_contributions_adjust_ids.push(res_adjust_pasivo.data.id)
-            this.guarantor_objeto.loan_contributions_adjust_ids=this.loan_contributions_adjust_ids
+            this.guarantor_objet.loan_contributions_adjust_ids=this.loan_contributions_adjust_ids
           }else{
-            this.guarantor_objeto.loan_contributions_adjust_ids=this.loan_contributions_adjust_ids
+            this.guarantor_objet.loan_contributions_adjust_ids=this.loan_contributions_adjust_ids
           }
         }else{
 
           this.contributionable.push(this.data_ballots[0].id)
-          this.guarantor_objeto.contributionable_ids=this.contributionable
-          this.guarantor_objeto.contributionable_type=this.data_ballots_name
+          this.guarantor_objet.contributionable_ids=this.contributionable
+          this.guarantor_objet.contributionable_type=this.data_ballots_name
 
-          if(this.monto_ajustable>0){
+          if(this.amount_adjustable>0){
             let res_adjust_activo = await axios.post(`loan_contribution_adjust`, {
               affiliate_id: this.affiliate_garantor.affiliate.id,
               adjustable_id:this.data_ballots[0].id,
               adjustable_type: this.data_ballots_name,
               type_affiliate:'guarantor',
-              amount: this.monto_ajustable,
+              amount: this.amount_adjustable,
               type_adjust: 'adjust',
-              period_date: this.periodo,
-              description: this.monto_ajustable_descripcion,
+              period_date: this.period,
+              description: this.amount_adjustable_description,
             })
             this.loan_contributions_adjust_ids.push(res_adjust_activo.data.id)
-            this.guarantor_objeto.loan_contributions_adjust_ids=this.loan_contributions_adjust_ids
+            this.guarantor_objet.loan_contributions_adjust_ids=this.loan_contributions_adjust_ids
           }else{
-            this.guarantor_objeto.loan_contributions_adjust_ids=this.loan_contributions_adjust_ids
+            this.guarantor_objet.loan_contributions_adjust_ids=this.loan_contributions_adjust_ids
           }
         }
       }
-        this.garantes_detalle.push(this.nombre);
-        this.garantes_simulador.push(this.garante_boletas);
-        this.guarantors.push(this.guarantor_objeto);
+        this.guarantor_detail.push(this.name_guarantor);
+        this.guarantor_simulator.push(this.guarantor_ballots);
+        this.guarantors.push(this.guarantor_objet);
 
         }
       }else{
@@ -973,71 +971,71 @@ ver()
             type_affiliate:'guarantor',
             amount: this.payable_liquid[0],
             type_adjust: 'liquid',
-            period_date: this.periodo,
+            period_date: this.period,
             description: 'Liquido Pagable Comision',
           })
-        this.guarantor_objeto.contributionable_ids=this.contributionable
-        this.guarantor_objeto.contributionable_type='loan_contribution_adjusts'
+        this.guarantor_objet.contributionable_ids=this.contributionable
+        this.guarantor_objet.contributionable_type='loan_contribution_adjusts'
         this.loan_contributions_adjust_ids.push(res.data.id)
-        this.guarantor_objeto.loan_contributions_adjust_ids=this.loan_contributions_adjust_ids
+        this.guarantor_objet.loan_contributions_adjust_ids=this.loan_contributions_adjust_ids
       }else{
         if(this.data_ballots_state_affiliate=='Pasivo'){
           let res_aid_contribution = await axios.post(`aid_contribution/updateOrCreate`, {
               affiliate_id: this.affiliate_garantor.affiliate.id,
-              month_year: this.periodo,
+              month_year: this.period,
               rent: this.payable_liquid[0],
               dignity_rent: this.bonos[0],
           })
           this.contributionable.push(res_aid_contribution.data.id)
-          this.guarantor_objeto.contributionable_ids=this.contributionable
-          this.guarantor_objeto.contributionable_type=this.data_ballots_name
+          this.guarantor_objet.contributionable_ids=this.contributionable
+          this.guarantor_objet.contributionable_type=this.data_ballots_name
 
-          if(this.monto_ajustable>0){
+          if(this.amount_adjustable>0){
             let res_adjust_pasivo= await axios.post(`loan_contribution_adjust`, {
               affiliate_id: this.affiliate_garantor.affiliate.id,
               adjustable_id:res_aid_contribution.data.id,
               adjustable_type: this.data_ballots_name,
               type_affiliate:'guarantor',
-              amount: this.monto_ajustable,
+              amount: this.amount_adjustable,
               type_adjust: 'adjust',
-              period_date: this.periodo,
-              description: this.monto_ajustable_descripcion,
+              period_date: this.period,
+              description: this.amount_adjustable_description,
             })
             this.loan_contributions_adjust_ids.push(res_adjust_pasivo.data.id)
-            this.guarantor_objeto.loan_contributions_adjust_ids=this.loan_contributions_adjust_ids
+            this.guarantor_objet.loan_contributions_adjust_ids=this.loan_contributions_adjust_ids
           }else{
-            this.guarantor_objeto.loan_contributions_adjust_ids=this.loan_contributions_adjust_ids
+            this.guarantor_objet.loan_contributions_adjust_ids=this.loan_contributions_adjust_ids
           }
         }else{
 
           this.contributionable.push(this.data_ballots[0].id)
-          this.guarantor_objeto.contributionable_ids=this.contributionable
-          this.guarantor_objeto.contributionable_type=this.data_ballots_name
+          this.guarantor_objet.contributionable_ids=this.contributionable
+          this.guarantor_objet.contributionable_type=this.data_ballots_name
 
-          if(this.monto_ajustable>0){
+          if(this.amount_adjustable>0){
             let res_adjust_activo = await axios.post(`loan_contribution_adjust`, {
               affiliate_id: this.affiliate_garantor.affiliate.id,
               adjustable_id:this.data_ballots[0].id,
               adjustable_type: this.data_ballots_name,
               type_affiliate:'guarantor',
-              amount: this.monto_ajustable,
+              amount: this.amount_adjustable,
               type_adjust: 'adjust',
-              period_date: this.periodo,
-              description: this.monto_ajustable_descripcion,
+              period_date: this.period,
+              description: this.amount_adjustable_description,
             })
             this.loan_contributions_adjust_ids.push(res_adjust_activo.data.id)
-            this.guarantor_objeto.loan_contributions_adjust_ids=this.loan_contributions_adjust_ids
+            this.guarantor_objet.loan_contributions_adjust_ids=this.loan_contributions_adjust_ids
           }else{
-            this.guarantor_objeto.loan_contributions_adjust_ids=this.loan_contributions_adjust_ids
+            this.guarantor_objet.loan_contributions_adjust_ids=this.loan_contributions_adjust_ids
           }
         }
       }
-        this.garantes_detalle.push(this.nombre);
-        this.garantes_simulador.push(this.garante_boletas);
-        this.guarantors.push(this.guarantor_objeto);
+        this.guarantor_detail.push(this.name_guarantor);
+        this.guarantor_simulator.push(this.guarantor_ballots);
+        this.guarantors.push(this.guarantor_objet);
       }
-        this.garante_boletas={}
-        this.guarantor_objeto={}
+        this.guarantor_ballots={}
+        this.guarantor_objet={}
         this.loan_contributions_adjust_ids=[]
         this.contributionable=[]
         this.clear()
@@ -1062,17 +1060,17 @@ ver()
           this.data_ballots=res.data.data
            if(res.data.valid)
             {
-              this.periodo_boletas = this.$moment(this.data_ballots[0].month_year).format('MMMM')
-              this.editar=false
+              this.period_ballots = this.$moment(this.data_ballots[0].month_year).format('MMMM')
+              this.edit_contributions=false
               this.payable_liquid[0] = this.data_ballots[0].payable_liquid,
               this.bonos[0] = this.data_ballots[0].border_bonus,
               this.bonos[1] = this.data_ballots[0].east_bonus,
               this.bonos[2] = this.data_ballots[0].position_bonus,
               this.bonos[3] = this.data_ballots[0].public_security_bonus
             } else{
-              this.periodo_boletas = this.$moment(res.data.current_tiket).format('MMMM')
-              this.editar=false
-              this.retroceder_meses=true
+              this.period_ballots = this.$moment(res.data.current_tiket).format('MMMM')
+              this.edit_contributions=false
+              this.back_months=true
               this.payable_liquid[0] = 0
               this.bonos[0] = 0
               this.bonos[1] = 0
@@ -1100,7 +1098,7 @@ ver()
   //Metodo para sacar las contribusiones cuando es doble percepcion
   async contributionChange(){
   try {
-    if(this.tipo_afiliado)
+    if(this.type_affiliate)
       {
         let resp = await axios.post(`affiliate_spouse_guarantor`,{
             affiliate_id:  this.affiliate_garantor.affiliate.id,
@@ -1117,17 +1115,17 @@ ver()
       if(this.affiliate_garantor.affiliate.spouse == null  )
       {
         this.spouse_view = false
-        this.nombre=this.affiliate_garantor.affiliate.full_name
+        this.name_guarantor=this.affiliate_garantor.affiliate.full_name
         this.affiliate_id=this.affiliate_garantor.affiliate.id
       }else{
 
         this.spouse_view = true
         this.spouse=this.affiliate_garantor.affiliate.spouse
-        this.nombre=this.$options.filters.fullName(this.affiliate_garantor.affiliate.spouse, true)
+        this.name_guarantor=this.$options.filters.fullName(this.affiliate_garantor.affiliate.spouse, true)
 
               if(this.affiliate_garantor.double_perception)
               {
-                if(this.tipo_afiliado == false)
+                if(this.type_affiliate == false)
                 {
                   this.affiliate_id=this.affiliate_garantor.affiliate.id
                 }else{
@@ -1151,17 +1149,17 @@ ver()
           this.data_ballots=res.data.data
           this.data_ballots_name=res.data.name_table_contribution
           this.data_ballots_state_affiliate=res.data.state_affiliate
-          this.periodo=this.$moment(res.data.current_tiket).format('YYYY-MM-DD')
+          this.period=this.$moment(res.data.current_tiket).format('YYYY-MM-DD')
           if(res.data.name_table_contribution=='contributions')
           {
           // this.toastr.error("afiliado que pertenece a contribution")
             if(res.data.valid)
             {
-              this.editar=false
-              this.contribusion=true
-              this.comision=false
-              this.pasivo=false
-              this.retroceder_meses=true
+              this.edit_contributions=false
+              this.show_contributios=true
+              this.show_commission=false
+              this.show_passive=false
+              this.back_months=true
               this.show_ajuste=true
               this.payable_liquid[0] = this.data_ballots[0].payable_liquid,
               this.bonos[0] = this.data_ballots[0].border_bonus,
@@ -1169,12 +1167,12 @@ ver()
               this.bonos[2] = this.data_ballots[0].position_bonus,
               this.bonos[3] = this.data_ballots[0].public_security_bonus
             } else{
-              this.editar=false
-              this.contribusion=true
-              this.comision=false
+              this.edit_contributions=false
+              this.show_contributios=true
+              this.show_commission=false
               this.show_ajuste=true
-              this.pasivo=false
-              this.retroceder_meses=true
+              this.show_passive=false
+              this.back_months=true
               this.payable_liquid[0] = this.payable_liquid[0]
               this.bonos[0] = this.bonos[0]
               this.bonos[1] =this.bonos[1]
@@ -1184,56 +1182,56 @@ ver()
           }else{
             if(res.data.name_table_contribution=='aid_contributions')
             {
-              this.pasivo= true
-              this.contribusion=false
-              this.retroceder_meses=false
-              this.comision=false
+              this.show_passive= true
+              this.show_contributios=false
+              this.back_months=false
+              this.show_commission=false
               this.show_ajuste=true
 
             if(res.data.valid)
             {
               if(this.data_ballots[0].rent==0 && this.data_ballots[0].dignity_rent==0){
-                this.editar=true
-                this.editarPasivo= true
+                this.edit_contributions=true
+                this.edit_passive= true
               }else{
                 if(this.data_ballots[0].dignity_rent>0 && this.data_ballots[0].rent>0){
-                  this.editar=false
-                  this.editarPasivo= false
+                  this.edit_contributions=false
+                  this.edit_passive= false
                   this.payable_liquid[0] = this.data_ballots[0].rent
                   this.bonos[0] = this.data_ballots[0].dignity_rent
                 }else{
                   if(this.data_ballots[0].dignity_rent==0){
-                    this.editarPasivo= true
-                    this.editar=false
+                    this.edit_passive= true
+                    this.edit_contributions=false
                     this.payable_liquid[0] = this.data_ballots[0].rent
                   }else{
                     if(this.data_ballots[0].rent==0){
-                      this.editar=true
-                      this.editarPasivo= false
+                      this.edit_contributions=true
+                      this.edit_passive= false
                       this.bonos[0] = this.data_ballots[0].dignity_rent
                     }
                   }
                 }
               }
             } else{
-                this.editar=true
+                this.edit_contributions=true
                 this.show_ajuste=true
               }
             }
             else{
               if(res.data.name_table_contribution==null)
               {
-                this.comision=true
-                this.contribusion=false
-                this.pasivo=false
+                this.show_commission=true
+                this.show_contributios=false
+                this.show_passive=false
                 this.show_ajuste=false
-                this.retroceder_meses=false
+                this.back_months=false
               }
 
             }
           }
-            this.validated=this.affiliate_garantor.guarantor
-            this.validated1=this.affiliate_garantor.guarantor
+            this.show_guarantor_false=this.affiliate_garantor.guarantor
+            this.show_guarantor_true=this.affiliate_garantor.guarantor
             this.show_calculated=this.affiliate_garantor.guarantor
             this.loan=this.affiliate_garantor.affiliate.loans
             this.show_garante=false

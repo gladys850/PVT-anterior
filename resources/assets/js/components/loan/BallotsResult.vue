@@ -4,17 +4,17 @@
       <v-form>
         <!--v-card-->
         <v-row justify="center">
-          <v-col cols="2" class="py-2" v-show="editar || (($route.params.hash == 'remake' && data_loan_parent_aux.parent_reason != null))">
+          <v-col cols="2" class="py-2" v-show="show_parent_sismu || (($route.params.hash == 'remake' && data_loan_parent_aux.parent_reason != null))">
               <v-text-field
                 class="py-0"
                 dense
-                :outlined="habilitar"
-                :readonly="!habilitar"
+                :outlined="enable_sismu"
+                :readonly="!enable_sismu"
                 label="Código de Préstamo Padre"
                 v-model="data_loan_parent_aux.code"
               ></v-text-field>
           </v-col>
-          <v-col cols="2" class="py-2" v-show="editar || (($route.params.hash == 'remake' && data_loan_parent_aux.parent_reason != null))">
+          <v-col cols="2" class="py-2" v-show="show_parent_sismu || (($route.params.hash == 'remake' && data_loan_parent_aux.parent_reason != null))">
             <v-text-field
               dense
               v-model="data_loan_parent_aux.disbursement_date"
@@ -22,51 +22,42 @@
               hint="Día/Mes/Año"
               class="purple-input"
               type="date"
-              :clearable="habilitar"
-              :outlined="habilitar"
-              :readonly="!habilitar"
+              :clearable="enable_sismu"
+              :outlined="enable_sismu"
+              :readonly="!enable_sismu"
             ></v-text-field>
           </v-col>
-          <v-col cols="2" class="py-2" v-show="editar || (($route.params.hash == 'remake' && data_loan_parent_aux.parent_reason != null))">
-            <ValidationProvider v-slot="{ errors }" name="monto" :rules="'required|min_value:'+loan_detail.minimun_amoun+'|max_value:'+loan_detail.maximun_amoun"  mode="aggressive">
+          <v-col cols="2" class="py-2" v-show="show_parent_sismu || (($route.params.hash == 'remake' && data_loan_parent_aux.parent_reason != null))">
               <v-text-field
-                :error-messages="errors"
                 class="py-0"
                 dense
-                :outlined="habilitar"
-                :readonly="!habilitar"
+                :outlined="enable_sismu"
+                :readonly="!enable_sismu"
                 label="Monto"
                 v-model="data_loan_parent_aux.amount_approved"
               ></v-text-field>
-            </ValidationProvider>
-          </v-col>
-          <v-col cols="2" class="py-2" v-show="editar || (($route.params.hash == 'remake' && data_loan_parent_aux.parent_reason != null))">
-            <ValidationProvider v-slot="{ errors }" name="plazo" :rules="'required|numeric|min_value:'+loan_detail.minimum_term+'|max_value:'+loan_detail.maximum_term" mode="aggressive">
+         </v-col>
+          <v-col cols="2" class="py-2" v-show="show_parent_sismu || (($route.params.hash == 'remake' && data_loan_parent_aux.parent_reason != null))">
               <v-text-field
-                :error-messages="errors"
                 class="py-0"
                 dense
-                :outlined="habilitar"
-                :readonly="!habilitar"
+                :outlined="enable_sismu"
+                :readonly="!enable_sismu"
                 label="Plazo"
                 v-model="data_loan_parent_aux.loan_term"
               ></v-text-field>
-            </ValidationProvider>
           </v-col>
-          <v-col cols="2" class="py-2" v-show="editar || (($route.params.hash == 'remake' && data_loan_parent_aux.parent_reason != null))">
-            <ValidationProvider v-slot="{ errors }" name="saldo" :rules="'required|min_value:0 |max_value:'+calculator_result.amount_requested" mode="aggressive">
+          <v-col cols="2" class="py-2" v-show="show_parent_sismu || (($route.params.hash == 'remake' && data_loan_parent_aux.parent_reason != null))">
               <v-text-field
-                :error-messages="errors"
                 class="py-0"
                 dense
-                :outlined="habilitar"
-                :readonly="!habilitar"
+                :outlined="enable_sismu"
+                :readonly="!enable_sismu"
                 label="Saldo"
                 v-model="data_loan_parent_aux.balance"
               ></v-text-field>
-            </ValidationProvider>
           </v-col>
-          <v-col cols="2" class="py-2" v-show="editar || (($route.params.hash == 'remake' && data_loan_parent_aux.parent_reason != null))">
+          <v-col cols="2" class="py-2" v-show="show_parent_sismu || (($route.params.hash == 'remake' && data_loan_parent_aux.parent_reason != null))">
              <v-text-field
                 class="py-0"
                 dense
@@ -244,7 +235,8 @@ export default {
         return true
       }
     },
-    editar() {
+    //Valor para habilitar la cabecera de datos del sismu
+    show_parent_sismu() {
       if(this.refinancing || this.reprogramming)
       {
         return true
@@ -253,7 +245,8 @@ export default {
         return false
       }
     },
-    habilitar() {
+    //Valor para habilitar la cabecera de datos del sismu
+    enable_sismu() {
       if(this.$route.query.type_sismu || (this.remake && this.data_loan_parent_aux.parent_loan_id == null))//Si es sismu o rehacer sismu
       {
         return true

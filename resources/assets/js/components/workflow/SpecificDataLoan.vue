@@ -21,7 +21,7 @@
                                     <p style="color:teal"><b>TITULAR</b></p>
                                   </v-col>
                                   <v-col cols="12" md="1" class="py-0" >
-                                <div v-if="permissionSimpleSelected.includes('update-loan-calculations') && $route.query.workTray != 'tracingLoans'" >
+                                <div v-if="permissionSimpleSelected.includes('update-loan-calculations') " >
                                   <v-tooltip top >
                                     <template v-slot:activator="{ on }">
                                       <v-btn
@@ -33,7 +33,7 @@
                                         right
                                         v-on="on"
                                         @click.stop="resetForm()"
-                                        v-show="calificacion_edit"
+                                        v-show="qualification_edit"
                                       >
                                       <v-icon>mdi-close</v-icon>
                                       </v-btn>
@@ -48,33 +48,33 @@
                                         fab
                                         dark
                                         x-small
-                                        :color="calificacion_edit ? 'danger' : 'success'"
+                                        :color="qualification_edit ? 'danger' : 'success'"
                                         top
                                         right
                                         v-on="on"
-                                        @click.stop="editSimulate()"
+                                        @click.stop="editSimulator()"
                                       >
-                                        <v-icon v-if="calificacion_edit">mdi-check</v-icon>
+                                        <v-icon v-if="qualification_edit">mdi-check</v-icon>
                                         <v-icon v-else>mdi-pencil</v-icon>
                                       </v-btn>
                                     </template>
                                     <div>
-                                      <span v-if="calificacion_edit">Guardar Montos</span>
+                                      <span v-if="qualification_edit">Guardar Montos</span>
                                       <span v-else>Editar</span>
                                     </div>
                                   </v-tooltip>
                                   </div>
                                   </v-col>
                                   <v-progress-linear></v-progress-linear>
-                                  <v-col cols="12" md="4" v-show="!calificacion_edit" class="pb-0">
+                                  <v-col cols="12" md="4" v-show="!qualification_edit" class="pb-0">
                                     <p><b>MONTO SOLICITADO: </b> {{loan.amount_approved | moneyString}} Bs.</p>
                                   </v-col>
-                                  <v-col cols="12" md="4" v-show="calificacion_edit" class="pb-0" >
+                                  <v-col cols="12" md="4" v-show="qualification_edit" class="pb-0" >
                                     <v-text-field
                                       dense
                                       label="MONTO SOLICITADO"
                                       v-model="loan.amount_approved"
-                                      v-on:keyup.enter="simuladores()"
+                                      v-on:keyup.enter="simulator()"
                                       :outlined="true"
                                     ></v-text-field>
                                   </v-col>
@@ -84,15 +84,15 @@
                                   <v-col cols="12" md="4" class="pb-0" >
                                     <p><b>LIQUIDO PARA CALIFICACION: </b> {{loan.liquid_qualification_calculated | moneyString}} Bs.</p>
                                   </v-col>
-                                  <v-col cols="12" md="4" v-show="!calificacion_edit" class="py-0">
+                                  <v-col cols="12" md="4" v-show="!qualification_edit" class="py-0">
                                     <p><b>PLAZO EN MESES:</b>{{' '+loan.loan_term}}</p>
                                   </v-col>
-                                  <v-col cols="12" md="4" v-show="calificacion_edit" class="py-0" >
+                                  <v-col cols="12" md="4" v-show="qualification_edit" class="py-0" >
                                     <v-text-field
                                       dense
                                       label="PLAZO EN MESES"
                                       v-model="loan.loan_term"
-                                      v-on:keyup.enter="simuladores()"
+                                      v-on:keyup.enter="simulator()"
                                       :outlined="true"
                                     ></v-text-field>
                                   </v-col>
@@ -102,14 +102,14 @@
                                    <v-col cols="12" md="4" class="py-0">
                                     <p><b>INDICE DE ENDEUDAMIENTO:</b> {{loan.indebtedness_calculated|percentage }}% </p>
                                   </v-col>
-                                  <v-col cols="12" md="4" v-show="calificacion_edit" class="py-0">
+                                  <v-col cols="12" md="4" v-show="qualification_edit" class="py-0">
                                     <center>
                                       <v-btn
                                         class="py-0 text-right"
                                         color="info"
                                         rounded
                                         x-small
-                                        @click="simuladores()">Calcular
+                                        @click="simulator()">Calcular
                                       </v-btn>
                                     </center>
                                   </v-col>
@@ -147,7 +147,7 @@
                                         right
                                         v-on="on"
                                         @click.stop="resetForm()"
-                                        v-show="cobranzas_edit"
+                                        v-show="collection_edit"
                                       >
                                         <v-icon>mdi-close</v-icon>
                                       </v-btn>
@@ -162,18 +162,18 @@
                                         fab
                                         dark
                                         x-small
-                                        :color="cobranzas_edit ? 'danger' : 'success'"
+                                        :color="collection_edit ? 'danger' : 'success'"
                                         top
                                         right
                                         v-on="on"
-                                        @click.stop="editRefinanciamiento()"
+                                        @click.stop="editRefinancing()"
                                       >
-                                        <v-icon v-if="cobranzas_edit">mdi-check</v-icon>
+                                        <v-icon v-if="collection_edit">mdi-check</v-icon>
                                         <v-icon v-else>mdi-calculator</v-icon>
                                       </v-btn>
                                     </template>
                                     <div>
-                                      <span v-if="cobranzas_edit">Actualizar el Saldo</span>
+                                      <span v-if="collection_edit">Actualizar el Saldo</span>
                                       <span v-else>Editar Saldo Refinanciamiento</span>
                                     </div>
                                   </v-tooltip>
@@ -193,10 +193,10 @@
                                    <v-col cols="12" md="4" class="py-0">
                                     <p><b>Cuota de Préstamo Padre:</b> {{loan_refinancing.estimated_quota | money}}</p>
                                   </v-col>
-                                  <v-col cols="12" md="4" class="py-0"  v-show="!cobranzas_edit_sismu" v-if="loan_refinancing.type_sismu==true">
+                                  <v-col cols="12" md="4" class="py-0"  v-show="!collection_edit_sismu" v-if="loan_refinancing.type_sismu==true">
                                     <p><b>Fecha de Corte :</b> {{loan_refinancing.date_cut_refinancing ? loan_refinancing.date_cut_refinancing : 'Sin registar'}}</p>
                                   </v-col>
-                                  <v-col cols="12" md="4"  v-show="cobranzas_edit_sismu "  class="py-0">
+                                  <v-col cols="12" md="4"  v-show="collection_edit_sismu "  class="py-0">
                                     <v-text-field
                                       dense
                                       v-model="loan_refinancing.date_cut_refinancing"
@@ -206,10 +206,10 @@
                                       :outlined="true"
                                    ></v-text-field>
                                   </v-col>
-                                  <v-col cols="12" md="4" class="py-0" v-show="!cobranzas_edit_sismu">
+                                  <v-col cols="12" md="4" class="py-0" v-show="!collection_edit_sismu">
                                     <p><b>Saldo de Préstamo a Refinanciar:</b> {{loan_refinancing.balance | money}}</p>
                                   </v-col>
-                                  <v-col cols="12" md="4" v-show="cobranzas_edit_sismu " class="py-0" >
+                                  <v-col cols="12" md="4" v-show="collection_edit_sismu " class="py-0" >
                                     <v-text-field
                                       dense
                                       label="Saldo de Prestamo a Refinanciar"
@@ -243,9 +243,7 @@
                                         :readonly="!edit_delivery_date"
                                       ></v-text-field>
                                     </v-col>
-                                    <v-col cols="12" md="3"  v-if="!permissionSimpleSelected.includes('registration-delivery-return-contracts') && $route.query.workTray != 'tracingLoans'">
-                                    </v-col>
-                                    <v-col cols="12" md="3"  v-if="permissionSimpleSelected.includes('registration-delivery-return-contracts') && $route.query.workTray != 'tracingLoans'">
+                                    <v-col cols="12" md="3"  v-if="permissionSimpleSelected.includes('registration-delivery-return-contracts') ">
                                       <div>
                                       <v-tooltip top>
                                         <template v-slot:activator="{ on }">
@@ -292,6 +290,8 @@
                                       </v-tooltip>
                                     </div>
                                     </v-col>
+                                     <v-col cols="12" md="3"  v-if="!permissionSimpleSelected.includes('registration-delivery-return-contracts')">
+                                    </v-col>
                                     <v-col cols="12" md="3">
                                       <v-text-field
                                         dense
@@ -303,9 +303,7 @@
                                         :readonly="!edit_return_date"
                                       ></v-text-field>
                                     </v-col>
-                                      <v-col cols="12" md="3"  v-show="loan.delivery_contract_date == 'Fecha invalida' && $route.query.workTray != 'tracingLoans'">
-                                    </v-col>
-                                    <v-col cols="12" md="3" v-show="loan.delivery_contract_date != 'Fecha invalida'"  v-if="permissionSimpleSelected.includes('registration-delivery-return-contracts') && $route.query.workTray != 'tracingLoans'">
+                                    <v-col cols="12" md="3" v-show="loan.delivery_contract_date != 'Fecha invalida'"  v-if="permissionSimpleSelected.includes('registration-delivery-return-contracts')">
                                       <div >
                                       <v-tooltip top>
                                         <template v-slot:activator="{ on }">
@@ -352,8 +350,10 @@
                                       </v-tooltip>
                                     </div>
                                   </v-col>
-                                   <v-col cols="12" md="2" v-if="permissionSimpleSelected.includes('print-payment-plan')">
-                                    </v-col>
+                                  <v-col cols="12" md="3" v-if="!permissionSimpleSelected.includes('registration-delivery-return-contracts')">
+                                  </v-col>
+                                  <v-col cols="12" md="3" v-show="loan.delivery_contract_date == 'Fecha invalida' && permissionSimpleSelected.includes('registration-delivery-return-contracts')" >
+                                  </v-col>
                                    <v-col cols="12" md="3">
                                       <v-text-field
                                         dense
@@ -361,13 +361,12 @@
                                         label="FECHA ENTREGA DE CONTRATO REGIONAL"
                                         hint="Día/Mes/Año"
                                         type="date"
+                                        :clearable="edit_delivery_date_regional"
                                         :outlined="edit_delivery_date_regional"
                                         :readonly="!edit_delivery_date_regional"
                                       ></v-text-field>
                                     </v-col>
-                                    <v-col cols="12" md="2" v-if="!permissionSimpleSelected.includes('registration-delivery-return-contracts')">
-                                    </v-col>
-                                    <v-col cols="12" md="3" v-if="permissionSimpleSelected.includes('registration-delivery-return-contracts') && $route.query.workTray != 'tracingLoans'">
+                                      <v-col cols="12" md="3" v-if="permissionSimpleSelected.includes('registration-delivery-return-contracts')">
                                       <div>
                                       <v-tooltip top>
                                         <template v-slot:activator="{ on }">
@@ -414,7 +413,7 @@
                                       </v-tooltip>
                                     </div>
                                     </v-col>
-                                      <v-col cols="12" md="1"  v-if="!permissionSimpleSelected.includes('registration-delivery-return-contracts')">
+                                      <v-col cols="12" md="3" v-if="!permissionSimpleSelected.includes('registration-delivery-return-contracts')">
                                     </v-col>
                                     <v-col cols="12" md="3">
                                       <v-text-field
@@ -423,6 +422,7 @@
                                         label="FECHA RECEPCION DE CONTRATO REGIONAL"
                                         hint="Día/Mes/Año"
                                         type="date"
+                                        :clearable="edit_return_date_regional"
                                         :outlined="edit_return_date_regional"
                                         :readonly="!edit_return_date_regional"
                                       ></v-text-field>
@@ -1006,7 +1006,7 @@
                                         <p><b>TIPO DE DESEMBOLSO:</b> {{loan.payment_type.name}}</p>
                                       </v-col>
                                       <v-col cols="12" md="3" v-show="loan.payment_type.name=='Depósito Bancario'">
-                                        <p><b>ENTIDAD FINANCIERA:</b>{{' '+cuenta}}</p>
+                                        <p><b>ENTIDAD FINANCIERA:</b>{{' '+financial_account}}</p>
                                       </v-col>
                                       <v-col cols="12" md="3" v-show="loan.payment_type.name=='Depósito Bancario'">
                                         <p><b>NUMERO DE CUENTA:</b>{{' '+loan.lenders[0].account_number}}</p>
@@ -1127,14 +1127,14 @@ export default {
 
       //Variables que sirven para habilitar los imputs y editarlos
 
-      calificacion_edit:false,
-      cobranzas_edit:false,
-      cobranzas_edit_sismu:false,
+      qualification_edit:false,
+      collection_edit:false,
+      collection_edit_sismu:false,
       edit_return_date : false,
       edit_delivery_date : false,
       edit_return_date_regional : false,
       edit_delivery_date_regional : false,
-      edit_hipotecari: false,
+      edit_hipotecary: false,
       edit_disbursement: false,
       reload: false,
       payment_types:[],
@@ -1177,7 +1177,7 @@ export default {
         return this.$store.getters.permissionSimpleSelected
       },
       //Metodo para obtener la entidad financiera
-      cuenta() {
+      financial_account() {
        for (this.i = 0; this.i< this.entity.length; this.i++) {
         if(this.loan.lenders[0].financial_entity_id==this.entity[this.i].id)
         {
@@ -1294,9 +1294,9 @@ export default {
     resetForm() {
       this.edit_hipotecari = false
       this.edit_disbursement = false
-      this.calificacion_edit = false
-      this.cobranzas_edit=false
-      this.cobranzas_edit_sismu=false
+      this.qualification_edit = false
+      this.collection_edit=false
+      this.collection_edit_sismu=false
       this.edit_return_date = false
       this.edit_delivery_date = false
       this.edit_return_date_regional = false
@@ -1321,7 +1321,7 @@ export default {
       })
     },
     //Metodo para el calculo del monto al editar
-    async simuladores() {
+    async simulator() {
     try {
       let res = await axios.post(`simulator`, {
         procedure_modality_id:this.loan.procedure_modality_id,
@@ -1461,7 +1461,7 @@ export default {
       this.loan_refinancing.refinancing_balance= res.data.refinancing_balance
       this.loan_refinancing.balance_parent_loan_refinancing= res.data.balance_parent_loan_refinancing
       this.toastr.success('Se Actualizó Correctamente.')
-      this.cobranzas_edit = false
+      this.collection_edit = false
       this.dialog=false
     } catch (e) {
         this.toastr.error("Ocurrió un error en la impresión.")
@@ -1469,15 +1469,15 @@ export default {
       }
     },
     //Metodo para guardar el corte de refinanciamiento SISMU
-    async editRefinanciamiento(){
+    async editRefinancing(){
       try {
-        if (!this.cobranzas_edit) {
-          this.cobranzas_edit = true
+        if (!this.collection_edit) {
+          this.collection_edit = true
           if(this.loan_refinancing.type_sismu){
-            this.cobranzas_edit_sismu= true
+            this.collection_edit_sismu= true
           }else{
             this.dialog=true
-            this.cobranzas_edit_sismu= false
+            this.collection_edit_sismu= false
           }
         } else {
             if(this.loan_refinancing.type_sismu==true){
@@ -1492,10 +1492,10 @@ export default {
             this.loan_refinancing.refinancing_balance= res.data.refinancing_balance
             this.loan_refinancing.balance_parent_loan_refinancing= res.data.balance_parent_loan_refinancing
             this.toastr.success('Se Actualizó Correctamente.')
-            this.cobranzas_edit = false
-            this.cobranzas_edit_sismu= false
+            this.collection_edit = false
+            this.collection_edit_sismu= false
           }else{
-            this.cobranzas_edit_sismu=false
+            this.collection_edit_sismu=false
           }
         }
       } catch (e) {
@@ -1505,10 +1505,10 @@ export default {
       }
     },
     //Metodo para editar el monto y plazo
-    async editSimulate(){
+    async editSimulator(){
       try {
-        if (!this.calificacion_edit) {
-          this.calificacion_edit = true
+        if (!this.qualification_edit) {
+          this.qualification_edit = true
         } else {
           let res = await axios.patch(`edit_loan/${this.loan.id}/qualification`, {
             amount_approved: this.loan.amount_approved,
@@ -1520,7 +1520,7 @@ export default {
           if(res.data.id){
             this.toastr.success('Se registró correctamente.')
           }
-            this.calificacion_edit = false
+            this.qualification_edit = false
         }
       } catch (e) {
         console.log(e)
