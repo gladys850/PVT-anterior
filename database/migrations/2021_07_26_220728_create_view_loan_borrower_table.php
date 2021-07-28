@@ -15,6 +15,9 @@ class CreateViewLoanBorrowerTable extends Migration
     {
         DB::statement("CREATE OR REPLACE VIEW public.view_loan_borrower AS SELECT l.id AS id_loan,
         l.code AS code_loan,
+        l.parent_reason as parent_reason_loan,
+        l.parent_loan_id,
+        ld.name as name_loan_destiny,
         l.num_accounting_voucher AS num_accounting_voucher_loan,
         l.guarantor_amortizing AS guarantor_amortizing_loan,
         a.id AS id_affiliate,
@@ -56,7 +59,8 @@ class CreateViewLoanBorrowerTable extends Migration
         l.request_date AS request_date_loan,
         l.validated AS validated_loan,
         la.type AS type_affiliate_spouse_loan,
-        la.guarantor AS guarantor_loan
+        la.guarantor AS guarantor_loan,
+        d.name AS name_degree
        FROM loans l
          JOIN loan_affiliates la ON l.id = la.loan_id
          JOIN affiliates a ON a.id = l.affiliate_id
@@ -72,10 +76,15 @@ class CreateViewLoanBorrowerTable extends Migration
          LEFT JOIN users u ON l.user_id = u.id
          JOIN roles r ON l.role_id = r.id
          LEFT JOIN pension_entities pe ON pe.id = a.pension_entity_id
+         LEFT JOIN degrees d ON a.degree_id = d.id
+         JOIN loan_destinies ld ON l.destiny_id = ld.id
       WHERE la.type::text = 'spouses'::text AND l.affiliate_id = la.affiliate_id
     UNION
      SELECT l.id AS id_loan,
         l.code AS code_loan,
+        l.parent_reason as parent_reason_loan,
+        l.parent_loan_id,
+        ld.name as name_loan_destiny,
         l.num_accounting_voucher AS num_accounting_voucher_loan,
         l.guarantor_amortizing AS guarantor_amortizing_loan,
         a.id AS id_affiliate,
@@ -117,7 +126,8 @@ class CreateViewLoanBorrowerTable extends Migration
         l.request_date AS request_date_loan,
         l.validated AS validated_loan,
         la.type AS type_affiliate_spouse_loan,
-        la.guarantor AS guarantor_loan
+        la.guarantor AS guarantor_loan,
+        d.name AS name_degree
        FROM loans l
          JOIN loan_affiliates la ON l.id = la.loan_id
          JOIN affiliates a ON a.id = l.affiliate_id
@@ -131,6 +141,8 @@ class CreateViewLoanBorrowerTable extends Migration
          LEFT JOIN users u ON l.user_id = u.id
          JOIN roles r ON l.role_id = r.id
          LEFT JOIN pension_entities pe ON pe.id = a.pension_entity_id
+         LEFT JOIN degrees d ON a.degree_id = d.id
+         JOIN loan_destinies ld ON l.destiny_id = ld.id
       WHERE la.type::text = 'affiliates'::text AND l.affiliate_id = la.affiliate_id");
     }
 
