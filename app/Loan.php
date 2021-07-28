@@ -306,7 +306,7 @@ class Loan extends Model
         return $this->payments()->whereLoanId($this->id)->where('state_id', $loan_states->first()->id)->orWhere('state_id',$loan_states->last()->id)->whereLoanId($this->id)->latest()->first();
     }
 
-    public function getLastPaymentDateAttribute($date_final)
+    public function last_payment_date($date_final)
     {
         $loan_states = LoanPaymentState::where('name', 'Pagado')->first();
         return $this->payments()->whereLoanId($this->id)->where('state_id', $loan_states->id)->Where('estimated_date','<=', $date_final)->orderBy('estimated_date', 'asc')->limit(1)->first();
