@@ -13,7 +13,7 @@ class CreateViewLoanBorrowerTable extends Migration
      */
     public function up()
     {
-        DB::statement("CREATE OR REPLACE VIEW public.view_loan_borrower AS SELECT l.id AS id_loan,
+        DB::statement("   CREATE OR REPLACE VIEW public.view_loan_borrower AS SELECT l.id AS id_loan,
         l.code AS code_loan,
         l.parent_reason as parent_reason_loan,
         l.parent_loan_id,
@@ -29,7 +29,7 @@ class CreateViewLoanBorrowerTable extends Migration
         a.first_name AS first_name_affiliate,
         a.second_name AS second_name_affiliate,
         a.surname_husband AS surname_husband_affiliate,
-        (((((((COALESCE(a.first_name, ''::character varying)::text) || ' '::text) || COALESCE(a.second_name, ''::character varying)::text) || ' '::text) || COALESCE(a.last_name, ''::character varying)::text || ' '::text) || COALESCE(a.mothers_last_name, ''::character varying)::text) || ' '::text) || COALESCE(a.surname_husband, ''::character varying)::text AS full_name_affiliate,
+        (((((((COALESCE(a.first_name, ''::character varying)::text || ' '::text) || COALESCE(a.second_name, ''::character varying)::text) || ' '::text) || COALESCE(a.last_name, ''::character varying)::text) || ' '::text) || COALESCE(a.mothers_last_name, ''::character varying)::text) || ' '::text) || COALESCE(a.surname_husband, ''::character varying)::text AS full_name_affiliate,
         ast.name AS state_type_affiliate,
         afs.name AS state_affiliate,
         pe.name AS pension_entity_affiliate,
@@ -42,7 +42,7 @@ class CreateViewLoanBorrowerTable extends Migration
         s.first_name AS first_name_borrower,
         s.second_name AS second_name_borrower,
         s.surname_husband AS surname_husband_borrower,
-        ((((((COALESCE(s.first_name, ''::character varying)::text) || ' '::text) || COALESCE(s.second_name, ''::character varying)::text) || ' '::text) || COALESCE(s.last_name, ''::character varying)::text || ' '::text) || COALESCE(s.mothers_last_name, ''::character varying)::text) || ' '::text) || COALESCE(s.surname_husband, ''::character varying)::text AS full_name_borrower,
+         (((((((COALESCE(s.first_name, ''::character varying)::text || ' '::text) || COALESCE(s.second_name, ''::character varying)::text) || ' '::text) || COALESCE(s.last_name, ''::character varying)::text) || ' '::text) || COALESCE(s.mothers_last_name, ''::character varying)::text) || ' '::text) || COALESCE(s.surname_husband, ''::character varying)::text AS full_name_borrower,
         pm.name AS sub_modality_loan,
         pm.shortened AS shortened_sub_modality_loan,
         pt.second_name AS modality_loan,
