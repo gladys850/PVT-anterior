@@ -47,6 +47,7 @@ class LoanPaymentObserver
                 $loan->update();
             });
         }
+        $loan = Loan::find($object->loan_id);
         if($loan->payment_plan_compliance && !$loan->verify_regular_payments() && $object->state_id == LoanPaymentState::whereName('Pagado')->first()->id && $object->validated){
             $loan->payment_plan_compliance = false;
             $loan->update();
