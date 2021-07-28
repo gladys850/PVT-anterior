@@ -223,7 +223,7 @@
                                 <v-progress-linear></v-progress-linear>
                                   <v-row>
                                   <v-col cols="12" md="6">
-                                    <p><b>FECHA ENTREGA DE CONTRATO:</b> {{loan.delivery_contract_date}}</p>
+                                    <p><b>FECHA ENTREGA DE CONTRATO:</b> {{loan.delivery_contract_date | date}}</p>
                                   </v-col>
                                   <v-col cols="12" md="6">
                                     <p><b>FECHA RECEPCION DE CONTRATO:</b> {{loan.return_contract_date==null? loan.return_contract_date:' '}}</p>
@@ -253,7 +253,7 @@
                                         <p><b>CERTIFICACIÓN PRESUPUESTARIA CONTABLE:</b> {{loan.num_accounting_voucher}}</p>
                                       </v-col>
                                       <v-col cols="12" md="6" class="py-0">
-                                        <p><b>FECHA DE DESEMBOLSO:</b> {{loan.disbursement_date}}</p>
+                                        <p><b>FECHA DE DESEMBOLSO:</b> {{loan.disbursement_date | date}}</p>
                                     </v-col>
                                   </v-row>
                                 </v-col>
