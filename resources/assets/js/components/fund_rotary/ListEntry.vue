@@ -3,7 +3,7 @@
     <ValidationObserver>
       <v-form>
         <v-card flat>
-          <v-card-title class="pa-0 ma-0">
+          <v-card-title class="pa-0 pb-3">
             <v-toolbar dense color="tertiary" class="font-weight-regular">
               <v-toolbar-title>FONDO ROTATORIO</v-toolbar-title>
             </v-toolbar>
@@ -16,13 +16,10 @@
             :server-items-length="totalFundRotatoryEntry"
             :footer-props="{ itemsPerPageOptions: [8, 15, 30] }"
             multi-sort
-            single-expand
             :key="refreshFoundRotatoryTable"
           >
             <!--Modal-->
             <template v-slot:top>
-              <v-divider class="mx-4" inset vertical></v-divider>
-              <v-spacer></v-spacer>
               <v-tooltip top>
                 <template v-slot:activator="{ on }">
                   <v-btn
@@ -33,7 +30,7 @@
                     v-on="on"
                     right
                     absolute
-                    style="margin-top: -60px; margin-right:40px"
+                    style="margin-top: -62px; margin-right:40px"
                     @click="getFundRotary()"
                   >
                     <v-icon>mdi-refresh</v-icon>
@@ -42,7 +39,7 @@
                 <span>Recargar información</span>
               </v-tooltip>
 
-              <v-dialog v-model="dialog" max-width="500px">
+              <v-dialog v-model="dialog" max-width="600px">
                 <template v-slot:activator="{ on }">
                   <v-btn
                     fab
@@ -52,7 +49,7 @@
                     v-on="on"
                     right
                     absolute
-                    style="margin-top: -60px"
+                    style="margin-top: -62px"
                   >
                     <v-icon>mdi-plus</v-icon>
                   </v-btn>
@@ -124,7 +121,7 @@
                 </v-card>
               </v-dialog>-->
             </template>
-            <!--Encabezados y registros-->
+            <!--Encabezados y registro de egresos-->
             <template v-slot:item="props">
               <tr :class="props.isExpanded ? 'info white--text' : ''">
                 <td @click.stop="props.expand(!props.isExpanded)">
@@ -149,9 +146,9 @@
                   {{ props.item.balance | money }}
                 </td>
 
-                <!--Actiones-->
+                <!--Acciones-->
                 <td>
-                  <v-tooltip bottom v-if="props.item.fund_rotatory_outputs.length ==0 || props.item.fund_rotatory_outputs.length == 0">
+                  <v-tooltip bottom v-if="props.item.fund_rotatory_outputs.length == 0 || props.item.fund_rotatory_outputs.length == 0">
                     <template v-slot:activator="{ on }">
                       <v-btn
                         v-if="last(props.item)"
@@ -170,8 +167,10 @@
                   <!--<v-tooltip bottom>
                     <template v-slot:activator="{ on }">
                       <v-btn 
-                      v-if="last(props.item)"
-                      icon small v-on="on" color="error" @click.stop="">
+                        v-if="last(props.item)"
+                        icon small v-on="on" color="error" 
+                        @click.stop="deleteItem(props.item)"
+                      >
                         <v-icon>mdi-delete</v-icon>
                       </v-btn>
                     </template>
@@ -213,11 +212,11 @@
                           x-small
                           v-on="on"
                           color="primary"
-                          @click="imprimirRecive(item.loan.id)"
+                          @click="printReceipt(item.loan.id)"
                         ><v-icon>mdi-printer</v-icon>
                         </v-btn>
                       </template>
-                      <span>{{tray != 'all'? 'Revisar trámite' : 'Ver trámite'}}</span>
+                      <span>Imnprimir recibo de pago</span>
                     </v-tooltip>
                   </template>
                   </v-data-table>
@@ -336,7 +335,7 @@ export default {
         sortable: false,
       },
       {
-        text: "Afiliado",
+        text: "Prestatario",
         value: "affiliate",
         class: ["white", "black--text"],
         width: "20%",
@@ -463,8 +462,8 @@ export default {
     },
 
     deleteItem(item) {
-      const index = this.contrib_codebtor.indexOf(item);
-      confirm("Esta seguro que?") && this.contrib_codebtor.splice(index, 1);
+      const index = this.fund_rotatory_item.indexOf(item);
+      confirm("Esta seguro que?") && this.fund_rotatory_item.splice(index, 1);
     },
 
     close() {
@@ -474,7 +473,7 @@ export default {
         this.editedIndex = -1;
       });
     },
-        async imprimirRecive(item) {
+        async printReceipt(item) {
       try {
           let res = await axios.get(`print_fund_rotary_output/${item}`)
             printJS({

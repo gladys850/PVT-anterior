@@ -33,7 +33,7 @@
                     mdi-account-heart
                   </v-icon>
                   <h6><strong><b style="color:white">PRESTATARIO:</b></strong> {{ $options.filters.fullName(borrower, true)}}</h6>
-                  <h6><strong><b style="color:white">C.I: </b></strong> {{ borrower.affiliate.identity_card }}</h6>
+                  <h6><strong><b style="color:white">C.I: </b></strong> {{ borrower.identity_card }}</h6>
                 </v-card-text>
               </v-card>
             </div>

@@ -306,7 +306,7 @@ class Loan extends Model
         return $this->payments()->whereLoanId($this->id)->where('state_id', $loan_states->first()->id)->orWhere('state_id',$loan_states->last()->id)->whereLoanId($this->id)->latest()->first();
     }
 
-    public function getLastPaymentDateAttribute($date_final)
+    public function last_payment_date($date_final)
     {
         $loan_states = LoanPaymentState::where('name', 'Pagado')->first();
         return $this->payments()->whereLoanId($this->id)->where('state_id', $loan_states->id)->Where('estimated_date','<=', $date_final)->orderBy('estimated_date', 'asc')->limit(1)->first();
@@ -605,54 +605,6 @@ class Loan extends Model
         } while ($liquidate);
         return $quota;
     }
-
-    /*public function getPlanAttribute() {
-        $plan = [];
-        $daily_interest = $this->interest->daily_current_interest;
-        $balance = $this->amount_approved;
-        $estimated_quota = $this->estimated_quota;
-        $loan_term = $this->loan_term;
-        $i = 0;
-        while ($balance > 0) {
-            if (count($plan) == 0) {
-                $next_payment = LoanPayment::quota_date($this, true);
-            } else {
-                $next_payment = (object)[
-                    'quota' => $plan[$i-1]->quota + 1,
-                    'date' => Carbon::parse($plan[$i-1]->date)->startOfMonth()->addMonth()->endOfMonth()->toDateString()
-                ];
-            }
-            $interest = LoanPayment::days_interest($this, $next_payment->date);
-            $next_interest = Util::round2($balance * $interest->current * $daily_interest);
-            if (($balance + $next_interest) > $estimated_quota) {
-                $next_balance = $estimated_quota - $next_interest;
-            } else {
-                $next_balance = $balance;
-            }
-            $next_balance = Util::round2($next_balance);
-            $balance = Util::round2($balance - $next_balance);
-            $total = $next_balance + $next_interest;
-            if($next_payment->quota == $loan_term){
-                $next_balance = $next_balance + $balance;
-                $estimated_quota = $estimated_quota + $balance;
-                $total = $total + $balance;
-                $balance = 0;
-            }
-            array_push($plan, (object)[
-                'quota' => $next_payment->quota,
-                'date' => $next_payment->date,
-                'days' => $interest->current,
-                'interest_accumulated' => $interest->accumulated_amount,
-                'estimated_quota' => ($estimated_quota >= $total) ? $total : $estimated_quota,
-                'capital' => $next_balance,
-                'interest' => $next_interest,
-                'next_balance' => $balance,
-                'accumulated' => $interest->accumulated
-            ]);
-            $i++;
-        }
-        return $plan;
-    }*/
 
     //obtener modalidad teniendo el tipo y el afiliado
     public static function get_modality($modality, $affiliate, $type_sismu, $cpop_affiliate,$remake_loan){
@@ -1025,29 +977,33 @@ class Loan extends Model
         $interest_rest = 0;
         $estimated_quota = $this->estimated_quota;
         for($i = 1 ;$i<= $this->loan_term; $i++){
+            $days = 0;
+            $interest = 0;
             if($i == 1){
                 $date_ini = Carbon::parse($this->disbursement_date)->format('d-m-Y');
+                $interest_rest = 0;
+                $days_rest = 0;
                 if(Carbon::parse($date_ini)->format('d') <= $loan_global_parameter->offset_interest_day){
                     $date_fin = Carbon::parse($date_ini)->endOfMonth();
                     $days = $date_fin->diffInDays($date_ini);
                 }
                 else{
                     $date_fin = Carbon::parse($date_ini)->startOfMonth()->addMonth()->endOfMonth();
-                    $days_aux = Carbon::parse($date_ini)->diffInDays(Carbon::parse($date_ini)->endOfMonth());
-                    $date_ini_aux = $date_ini;
-                    $date_ini = Carbon::parse($date_ini)->startOfMonth()->addMonth()->startOfMonth();
-                    $interest_rest = LoanPayment::interest_by_days($days_aux, $this->interest->annual_interest, $balance);
-                    $days = $date_fin->diffInDays($date_ini)+1;
+                    $days = Carbon::parse($date_fin)->day;
+                    $days_rest = Carbon::parse($date_ini)->diffInDays(Carbon::parse($date_ini)->endOfMonth());
+                    $interest_rest = round(LoanPayment::interest_by_days($days_rest, $this->interest->annual_interest, $balance),2);
                 }
-                $interest = LoanPayment::interest_by_days($days, $this->interest->annual_interest, $balance);
+                $interest = round((LoanPayment::interest_by_days($days, $this->interest->annual_interest, $balance)),2);
+                $days = $days + $days_rest;
                 $capital = round(($estimated_quota - $interest),2);
-                $payment = $estimated_quota;
+                $interest = round(($interest + $interest_rest),2);
+                $payment = $estimated_quota + $interest_rest;
             }
             else{
                 $date_fin = Carbon::parse($date_ini)->endOfMonth();
-                $days = $date_fin->diffInDays($date_ini)+1;
+                $days = Carbon::parse($date_fin)->day;
                 $interest = round(LoanPayment::interest_by_days($days, $this->interest->annual_interest, $balance),2);
-                $capital = round(($estimated_quota - $interest),2);
+                $capital = $estimated_quota - $interest;
                 $payment = $estimated_quota;
             }
             $balance = ($balance - $capital);
@@ -1056,10 +1012,10 @@ class Loan extends Model
                 'nro' => $i,
                 'date' => Carbon::parse($date_fin)->format('d-m-Y'),
                 'days' => $days + $days_aux,
-                'interest' => round(($interest + $interest_rest),2),
-                'capital' => round(($capital),2),
-                'payment' => round(($payment + $interest_rest),2),
-                'balance' => round($balance,2),
+                'interest' => $interest,
+                'capital' => $capital,
+                'payment' => $payment,
+                'balance' => $balance,
                 ]);
             }
             else{
@@ -1068,9 +1024,9 @@ class Loan extends Model
                         'nro' => $i,
                         'date' => Carbon::parse($date_fin)->format('d-m-Y'),
                         'days' => $days,
-                        'interest' => round($interest,2),
-                        'capital' => round(($capital+$balance),2),
-                        'payment' => round(($payment+$balance),2),
+                        'interest' => $interest,
+                        'capital' => $capital+$balance,
+                        'payment' => $payment+$balance,
                         'balance' => 0,
                         ]);
                 }
@@ -1079,10 +1035,10 @@ class Loan extends Model
                         'nro' => $i,
                         'date' => Carbon::parse($date_fin)->format('d-m-Y'),
                         'days' => $days,
-                        'interest' => round($interest,2),
-                        'capital' => round($capital,2),
-                        'payment' => round($payment,2),
-                        'balance' => round($balance,2),
+                        'interest' => $interest,
+                        'capital' => $capital,
+                        'payment' => $payment,
+                        'balance' => $balance,
                         ]);
                 }
             }
