@@ -40,9 +40,9 @@
                     mdi-bank
                     </v-icon>
                     <strong><b style="color:white">MODALIDAD:</b></strong>
-                      {{ procedure_modality_name | uppercase }}</h6>
+                      {{ loan.modality }}</h6>
                     <h6><strong><b style="color:white">MONTO SOLICITADO:</b></strong>
-                      {{ loan.amount_approved | money}}  Bs
+                      {{ loan.amount_approved | moneyString}}  Bs
                     <strong><b style="color:white">MESES PLAZO:</b></strong>
                       {{ loan.loan_term }}</h6>
                   </v-col>
@@ -69,31 +69,10 @@ export default {
       required: true
     },
   },
-  data: () => ({
-    loading: false,
-    procedure_modality_name: ""
-  }),
   computed: {
     isNew() {
       return this.$route.params.id == "new"
     },
   },
-  beforeMount(){
-    this.getProcedureModalityName(this.loan.procedure_modality_id)
-  },
-  methods: {
-    //Metodo para sacar el procedure modality
-    async getProcedureModalityName(id) {
-      try {
-        this.loading = true;
-        let res = await axios.get(`procedure_modality/${id}`)
-        this.procedure_modality_name = res.data.name
-       } catch (e) {
-        console.log(e)
-      } finally {
-        this.loading = false
-      }
-    }
-  }
 };
 </script>
