@@ -977,33 +977,29 @@ class Loan extends Model
         $interest_rest = 0;
         $estimated_quota = $this->estimated_quota;
         for($i = 1 ;$i<= $this->loan_term; $i++){
-            $days = 0;
-            $interest = 0;
             if($i == 1){
                 $date_ini = Carbon::parse($this->disbursement_date)->format('d-m-Y');
-                $interest_rest = 0;
-                $days_rest = 0;
                 if(Carbon::parse($date_ini)->format('d') <= $loan_global_parameter->offset_interest_day){
                     $date_fin = Carbon::parse($date_ini)->endOfMonth();
                     $days = $date_fin->diffInDays($date_ini);
                 }
                 else{
                     $date_fin = Carbon::parse($date_ini)->startOfMonth()->addMonth()->endOfMonth();
-                    $days = Carbon::parse($date_fin)->day;
-                    $days_rest = Carbon::parse($date_ini)->diffInDays(Carbon::parse($date_ini)->endOfMonth());
-                    $interest_rest = round(LoanPayment::interest_by_days($days_rest, $this->interest->annual_interest, $balance),2);
+                    $days_aux = Carbon::parse($date_ini)->diffInDays(Carbon::parse($date_ini)->endOfMonth());
+                    $date_ini_aux = $date_ini;
+                    $date_ini = Carbon::parse($date_ini)->startOfMonth()->addMonth()->startOfMonth();
+                    $interest_rest = LoanPayment::interest_by_days($days_aux, $this->interest->annual_interest, $balance);
+                    $days = $date_fin->diffInDays($date_ini)+1;
                 }
-                $interest = round((LoanPayment::interest_by_days($days, $this->interest->annual_interest, $balance)),2);
-                $days = $days + $days_rest;
+                $interest = LoanPayment::interest_by_days($days, $this->interest->annual_interest, $balance);
                 $capital = round(($estimated_quota - $interest),2);
-                $interest = round(($interest + $interest_rest),2);
-                $payment = $estimated_quota + $interest_rest;
+                $payment = $estimated_quota;
             }
             else{
                 $date_fin = Carbon::parse($date_ini)->endOfMonth();
-                $days = Carbon::parse($date_fin)->day;
+                $days = $date_fin->diffInDays($date_ini)+1;
                 $interest = round(LoanPayment::interest_by_days($days, $this->interest->annual_interest, $balance),2);
-                $capital = $estimated_quota - $interest;
+                $capital = round(($estimated_quota - $interest),2);
                 $payment = $estimated_quota;
             }
             $balance = ($balance - $capital);
@@ -1012,10 +1008,10 @@ class Loan extends Model
                 'nro' => $i,
                 'date' => Carbon::parse($date_fin)->format('d-m-Y'),
                 'days' => $days + $days_aux,
-                'interest' => $interest,
-                'capital' => $capital,
-                'payment' => $payment,
-                'balance' => $balance,
+                'interest' => round(($interest + $interest_rest),2),
+                'capital' => round(($capital),2),
+                'payment' => round(($payment + $interest_rest),2),
+                'balance' => round($balance,2),
                 ]);
             }
             else{
@@ -1024,9 +1020,9 @@ class Loan extends Model
                         'nro' => $i,
                         'date' => Carbon::parse($date_fin)->format('d-m-Y'),
                         'days' => $days,
-                        'interest' => $interest,
-                        'capital' => $capital+$balance,
-                        'payment' => $payment+$balance,
+                        'interest' => round($interest,2),
+                        'capital' => round(($capital+$balance),2),
+                        'payment' => round(($payment+$balance),2),
                         'balance' => 0,
                         ]);
                 }
@@ -1035,10 +1031,10 @@ class Loan extends Model
                         'nro' => $i,
                         'date' => Carbon::parse($date_fin)->format('d-m-Y'),
                         'days' => $days,
-                        'interest' => $interest,
-                        'capital' => $capital,
-                        'payment' => $payment,
-                        'balance' => $balance,
+                        'interest' => round($interest,2),
+                        'capital' => round($capital,2),
+                        'payment' => round($payment,2),
+                        'balance' => round($balance,2),
                         ]);
                 }
             }
