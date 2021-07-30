@@ -29,7 +29,7 @@ class CreateViewLoanAmortizationsTable extends Migration
                 join affiliates a on a.id = lp.affiliate_id
                 join affiliate_states as2 on a.affiliate_state_id = as2 .id 
                 join affiliate_state_types ast on as2.affiliate_state_type_id = ast.id
-                join pension_entities pe on a.pension_entity_id = pe.id 
+                left join pension_entities pe on a.pension_entity_id = pe.id 
                 join loan_affiliates la on la.affiliate_id  = a.id
                 join procedure_modalities pm on pm.id = lp.procedure_modality_id
                 join procedure_types  pt on pt.id = pm.procedure_type_id 
@@ -53,7 +53,7 @@ class CreateViewLoanAmortizationsTable extends Migration
                 join affiliates a on a.id = lp.affiliate_id
                 join affiliate_states as2 on a.affiliate_state_id = as2 .id 
                 join affiliate_state_types ast on as2.affiliate_state_type_id = ast.id
-                join pension_entities pe on a.pension_entity_id = pe.id 
+                left join pension_entities pe on a.pension_entity_id = pe.id 
                 join loan_affiliates la on la.affiliate_id  = a.id
                 join procedure_modalities pm on pm.id = lp.procedure_modality_id
                 join procedure_types  pt on pt.id = pm.procedure_type_id
