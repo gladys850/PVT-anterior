@@ -26,55 +26,26 @@
         </div>
       </v-tooltip>
 
-      <v-tooltip top v-if="permissionSimpleSelected.includes('create-payment-loan')">
+      <v-tooltip top v-if="permissionSimpleSelected.includes('print-payment-plan')">
         <template v-slot:activator="{ on }">
           <v-btn
             fab
-            dark
             x-small
-            :color="'error'"
+            color="info"
             top
             left
             absolute
             v-on="on"
-            style="margin-left: 250px; margin-top: 20px"
-            @click="dialog=true"
-            :disabled="!loan.guarantor_amortizing"
+            style="margin-left: 150px; margin-top: 20px"
+            @click="imprimirPlan($route.params.id)"
           >
-            <v-icon>mdi-account-switch</v-icon>
+            <v-icon>mdi-printer</v-icon>
           </v-btn>
         </template>
         <div>
-          <span>Cambio de amortización a titular</span>
+          <span>Imprimir Plan de Pagos</span>
         </div>
       </v-tooltip>
-    <v-dialog
-      v-model="dialog"
-      max-width="500"
-    >
-      <v-card>
-        <v-card-title>
-          Esta seguro de cambiar la amortizacion al titular?
-        </v-card-title>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn
-            color="red darken-1"
-            text
-            @click="dialog = false"
-          >
-            Cancelar
-          </v-btn>
-          <v-btn
-            color="green darken-1"
-            text
-            @click="changeGuarantorLender()"
-          >
-            Aceptar
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
 
       <v-tooltip top v-if="permissionSimpleSelected.includes('print-payment-kardex-loan')">
         <template v-slot:activator="{ on }">
@@ -86,7 +57,7 @@
             left
             absolute
             v-on="on"
-            style="margin-left: 150px; margin-top: 20px"
+            style="margin-left: 200px; margin-top: 20px"
             @click="imprimirK($route.params.id, true)"
           >
             <v-icon>mdi-printer</v-icon>
@@ -107,7 +78,7 @@
             left
             absolute
             v-on="on"
-            style="margin-left: 200px; margin-top: 20px"
+            style="margin-left: 250px; margin-top: 20px"
             @click="imprimirK($route.params.id, false)"
           >
             <v-icon>mdi-printer</v-icon>
@@ -117,6 +88,57 @@
           <span>Imprimir Kardex desplegado</span>
         </div>
       </v-tooltip>
+
+      <v-tooltip top v-if="permissionSimpleSelected.includes('create-payment-loan')">
+        <template v-slot:activator="{ on }">
+          <v-btn
+            fab
+            dark
+            x-small
+            :color="'error'"
+            top
+            left
+            absolute
+            v-on="on"
+            style="margin-left: 300px; margin-top: 20px"
+            @click="dialog=true"
+            :disabled="!loan.guarantor_amortizing"
+          >
+            <v-icon>mdi-account-switch</v-icon>
+          </v-btn>
+        </template>
+        <div>
+          <span>Cambio de amortización a titular</span>
+        </div>
+      </v-tooltip>
+
+      <v-dialog
+        v-model="dialog"
+        max-width="500"
+      >
+        <v-card>
+          <v-card-title>
+            Esta seguro de cambiar la amortizacion al titular?
+          </v-card-title>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn
+              color="red darken-1"
+              text
+              @click="dialog = false"
+            >
+              Cancelar
+            </v-btn>
+            <v-btn
+              color="green darken-1"
+              text
+              @click="changeGuarantorLender()"
+            >
+              Aceptar
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
 
       <v-card class="ma-0 pa-0 pb-2">
         <v-row class="ma-0 pa-0">
@@ -559,7 +581,7 @@ export default {
           this.$router.push({ name: 'paymentAdd', params: { hash: 'new' }, query: { loan_id: this.$route.params.id } })
         }else{
           this.toastr.error("El saldo es 0, no puede realizar mas pagos.")
-        }        
+        }
       }
       else {
         this.toastr.error("El trámite tiene estado LIQUIDADO, no puede realizar mas pagos.")
@@ -621,7 +643,6 @@ export default {
             folded: folded,
           },
         });
-        console.log("kardex " + item);
         printJS({
           printable: res.data.content,
           type: res.data.type,
@@ -633,6 +654,22 @@ export default {
         console.log(e);
       }
     },
+
+    async imprimirPlan(item) {
+      try {
+        let res = await axios.get(`loan/${item}/print/plan`);
+        printJS({
+          printable: res.data.content,
+          type: res.data.type,
+          file_name: res.data.file_name,
+          base64: true,
+        });
+      } catch (e) {
+        this.toastr.error("Ocurrió un error en la impresión.");
+        console.log(e);
+      }
+    },
+
     last_payment(item){
       if(item.id == this.payments[this.payments.length -1].id ){
         return true
@@ -653,25 +690,6 @@ export default {
         console.log(e)
       }
     }
-  
-
-    //Busca el tipo de Cobro que se realizará para el cobro
-    /*searchAmortizationType(item) {
-      let procedureAmortization_type = this.amortization_type.find((o) => o.id == item);
-      if (procedureAmortization_type) {
-        return procedureAmortization_type.name;
-      } else {
-        return null;
-      }
-    },
-    async getAmortizationType() {
-      try {
-        let res = await axios.get(`amortization_type`);
-        this.amortization_type = res.data;
-      } catch (e) {
-        console.log(e);
-      }
-    },*/
 
   },
 };
