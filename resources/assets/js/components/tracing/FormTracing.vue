@@ -145,15 +145,7 @@
                                         <v-row>
                                           <v-progress-linear></v-progress-linear><br>
                                           <v-col cols="12" md="4">
-                                            <v-select
-                                              dense
-                                              :readonly="true"
-                                              :items="city"
-                                              item-text="name"
-                                              item-value="id"
-                                              label="CIUDAD"
-                                              v-model="loan_properties.real_city_id"
-                                            ></v-select>
+                                            <p><b>CIUDAD:</b> {{loan_properties.city_properties}}</p>
                                           </v-col>
                                           <v-col cols="12" md="4">
                                             <p><b>UBICACION:</b> {{loan_properties.location}}</p>
@@ -165,15 +157,7 @@
                                             <p><b>SUPERFICIE:</b> {{loan_properties.surface}}</p>
                                           </v-col>
                                           <v-col cols="12" md="4">
-                                            <v-select
-                                              :readonly="true"
-                                              dense
-                                              :items="items_measurement"
-                                              item-text="name"
-                                              item-value="value"
-                                              label="Unidad de medida"
-                                              v-model="loan_properties.measurement"
-                                            ></v-select>
+                                            <p><b>UNIDAD DE MEDIDA:</b> {{loan_properties.measurement}}</p>
                                           </v-col>
                                           <v-col cols="12" md="4">
                                             <p><b>CODIGO CATASTRAL:</b> {{loan_properties.cadastral_code}}</p>
@@ -258,7 +242,7 @@
                                   </v-row>
                                 </v-col>
                                 <v-col cols="12" md="6" class="pb-0" v-show="loan_refinancing.refinancing">
-                                  <p style="color:teal">DATOS DEL PRÉSTAMO A REFINANCIAR{{' => '+ loan_refinancing.description}}</p>
+                                 <b><p style="color:teal">DATOS DEL PRÉSTAMO A REFINANCIAR{{' => '+ loan_refinancing.description}}</p></b>
                                 </v-col>
                                 <v-progress-linear v-show="loan_refinancing.refinancing"></v-progress-linear  >
                                 <v-row v-show="loan_refinancing.refinancing">
@@ -274,8 +258,11 @@
                                   <v-col cols="12" md="4" class="py-0">
                                     <p><b>Cuota de Préstamo Padre:</b> {{loan_refinancing.estimated_quota | money}}</p>
                                   </v-col>
-                                  <v-col cols="12" md="4" class="py-0">
-                                    <p><b>Fecha de Corte :</b> {{loan_refinancing.date_cut_refinancing ? loan_refinancing.date_cut_refinancing : 'Sin registar'}}</p>
+                                  <v-col cols="12" md="4" class="py-0" v-show="loan_refinancing.date_cut_refinancing==null">
+                                    <p><b>Fecha de Corte :</b> Sin registar</p>
+                                  </v-col>
+                                  <v-col cols="12" md="4" class="py-0" v-show="loan_refinancing.date_cut_refinancing !=null">
+                                    <p><b>Fecha de Corte :</b> {{loan_refinancing.date_cut_refinancing |date }}</p>
                                   </v-col>
                                   <v-col cols="12" md="4" class="py-0">
                                     <p><b>Saldo de Prestamo a Refinanciar:</b> {{loan_refinancing.balance | money}}</p>
@@ -318,10 +305,10 @@
                                 <v-col v-if="loan.cosigners.length==0" cols="12" md="12" class="py-0" >
                                   <p style="color:teal"><b>CODEUDOR</b></p>
                                 </v-col>
-                               <v-progress-linear></v-progress-linear>
-                               <br>
+                               <v-progress-linear v-if="loan.cosigners.length==0"></v-progress-linear>
+                               <br v-if="loan.cosigners.length==0">
                                 <p v-if="loan.cosigners.length==0" > <b>NO TIENE CODEUDORES</b></p>
-                                <v-col cols="12" md="12" >
+                                <v-col cols="12" md="12" class="py-0">
                                   <div v-for="procedure_type in procedure_types" :key="procedure_type.id">
                                     <div v-if="procedure_type.name === 'Préstamo Hipotecario'">
                                       <p style="color:teal"><b>EVALUACION DEL CODEUDOR AFILIADO</b></p>
@@ -476,13 +463,14 @@ export default {
           align: 'start',
           sortable: false,
           value: 'first_name',
+          class: ['normal', 'white--text','text-md-center']
         },
-        { text: 'SEGUNDO NOMBRE',  value: 'second_name' },
-        { text: 'PRIMER APELLIDO ', value: 'last_name' },
-        { text: 'SEGUNDO APELLIDO ', value: 'mothers_last_name' },
-        { text: 'TELÉFONO', value: 'phone_number' },
-        { text: 'CELULAR', value: 'cell_phone_number' },
-        { text: 'DIRECCION ', value: 'address' },
+        { text: 'SEGUNDO NOMBRE',  value: 'second_name', class: ['normal', 'white--text','text-md-center'] },
+        { text: 'PRIMER APELLIDO ', value: 'last_name', class: ['normal', 'white--text','text-md-center'] },
+        { text: 'SEGUNDO APELLIDO ', value: 'mothers_last_name', class: ['normal', 'white--text','text-md-center'] },
+        { text: 'TELÉFONO', value: 'phone_number', class: ['normal', 'white--text','text-md-center'] },
+        { text: 'CELULAR', value: 'cell_phone_number', class: ['normal', 'white--text','text-md-center'] },
+        { text: 'DIRECCION ', value: 'address', class: ['normal', 'white--text','text-md-center'] },
       ],
     city: [],
     entity: [],
