@@ -14,7 +14,6 @@ import FlowIndex from '@/components/workflow/Index'
 import FlowAdd from '@/components/workflow/Add'
 import PaymentAdd from '@/components/payment/Add'
 import LoanPaymentIndex from '@/components/payment/Index'
-import ImportExport from '@/components/payment/ImportExport'
 import ImportExportPayment from '@/components/payment/ImportExportPayment'
 import LoansGenerateIndex from '@/components/payment/LoansGenerateIndex'
 import ListPaymentGenerate from '@/components/payment/ListPaymentGenerate'
@@ -122,14 +121,6 @@ export const routes = [
     path: '/loan/:hash',
     name: 'loanAdd',
     component: LoanAdd,
-    meta: {
-      requiresAuth: true
-    }
-  },
-  {
-    path: '/importExport',
-    name: 'ImportExport',
-    component: ImportExport,
     meta: {
       requiresAuth: true
     }

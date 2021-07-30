@@ -143,6 +143,7 @@ export default {
       state: {},
       user:{}
     },
+    city:[],
     loan_refinancing:{},
     observations: [],
     observation_type: [],
@@ -157,6 +158,7 @@ export default {
    mounted() {
     this.getloan(this.$route.params.id)
     this.getObservation(this.$route.params.id)
+    this.getCity()
   },
   methods: {
     setBreadcrumbs() {
@@ -190,6 +192,7 @@ export default {
         this.loan.disbursement_date=this.$moment(res.data.disbursement_date).format('YYYY-MM-DD')
         this.loan.delivery_contract_date=this.$moment(res.data.delivery_contract_date).format('YYYY-MM-DD')
         this.loan.return_contract_date=this.$moment(res.data.return_contract_date).format('YYYY-MM-DD')
+        this.loan.modality=this.loan.modality.name
 
         if(this.loan.parent_reason=='REFINANCIAMIENTO')
         {
@@ -236,12 +239,31 @@ export default {
         this.loading = false
       }
     },
+    //Metodo para obtener la ciudad
+    async getCity() {
+      try {
+        this.loading = true
+        let res = await axios.get(`city`)
+        this.city = res.data
+      } catch (e) {
+        console.log(e)
+      } finally {
+        this.loading = false
+      }
+    },
     //Metodo para sacar detalle de la propiedad
     async getLoanproperty(id) {
       try {
         this.loading = true
         let res = await axios.get(`loan_property/${id}`)
         this.loan_properties = res.data
+        for(let i=0; i<= this.city.length ; i++ )
+        {
+          if(this.city[i].id == this.loan_properties.real_city_id)
+          {
+           this.loan_properties.city_properties = this.city[i].name
+          }
+        }
       } catch (e) {
         console.log(e)
       } finally {

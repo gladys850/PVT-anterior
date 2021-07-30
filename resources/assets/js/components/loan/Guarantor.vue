@@ -361,10 +361,10 @@
                           <h1 class="caption" >{{'Cantidad de garantes faltantes a añadir: '}}{{modalidad_guarantors-guarantor_detail.length}}</h1>
                           <v-progress-linear></v-progress-linear>
                           <h1 class="caption" v-show="cont=0">{{'Calcular el porcentaje de pago del garante'}}</h1>
-                          <p class="py-0 mb-0 caption" v-show="show_data">Liquido Total:{{evaluate_garantor.payable_liquid_calculated +' '}}<br>
-                           Total de Bonos:{{evaluate_garantor.bonus_calculated +' '}}<br>
-                           Liquido para la Calificacion:{{evaluate_garantor.liquid_qualification_calculated }}</p>
-                          <p class="py-0 mb-0 caption" v-show="show_data">Indice de Endeudamiento: {{evaluate_garantor.indebtnes_calculated|percentage }}%<br>{{'Monto Ajustable:'+ amount_adjustable}}<br> {{'Liquido Restante para garantias:'+ evaluate_garantor.liquid_rest}}<br><b>{{evaluate_garantor.is_valid?'Cubre la Cuota ':'No Cubre la Cuota'}}</b></p>
+                          <p class="py-0 mb-0 caption" v-show="show_data">Liquido Total:{{evaluate_garantor.payable_liquid_calculated | moneyString}}<br>
+                           Total de Bonos:{{evaluate_garantor.bonus_calculated | moneyString}}<br>
+                           Liquido para la Calificacion:{{evaluate_garantor.liquid_qualification_calculated | moneyString}}</p>
+                          <p class="py-0 mb-0 caption" v-show="show_data">Indice de Endeudamiento: {{evaluate_garantor.indebtnes_calculated|percentage }}%<br>Monto Ajustable: {{ amount_adjustable | moneyString}}<br> Liquido Restante para garantias: {{evaluate_garantor.liquid_rest | moneyString}}<br><b>{{evaluate_garantor.is_valid?'Cubre la Cuota ':'No Cubre la Cuota'}}</b></p>
                           <div class="text-right"  v-show="evaluate_garantor.is_valid">
                             <v-btn
                               v-if="show_data"
