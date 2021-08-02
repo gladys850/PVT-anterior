@@ -245,7 +245,7 @@ class LoanPaymentController extends Controller
             'paid_by'=> 'string|in:T,G',
         ]);
         if (Auth::user()->can('update-payment-loan')) {
-            $update = $request->only('description', 'validated','procedure_modality_id','affiliate_id','voucher','paid_by');
+            $update = $request->only('description','loan_payment_date', 'validated','procedure_modality_id','affiliate_id','voucher','paid_by');
         }
         if($payment_procedure_type != 'Amortización Directa' && $request->validated) {
             $loanPayment->state_id=$Pagado;
@@ -257,10 +257,10 @@ class LoanPaymentController extends Controller
         $loanPayment->fill($update);
         $loanPayment->save();
         $loanPayment->update(['user_id' => $user_id]);
-        if($request->validated && $loanPayment->state_id == $Pagado || $request->validated && $request->state_id == $Pagado){
+       /* if($request->validated && $loanPayment->state_id == $Pagado || $request->validated && $request->state_id == $Pagado){
             $loanPayment->update(['loan_payment_date' => Carbon::now()]);
             $loanPayment->save();
-        }
+        }*/
         return  $loanPayment;
     }
 
