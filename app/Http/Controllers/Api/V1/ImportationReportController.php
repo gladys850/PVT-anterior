@@ -49,10 +49,10 @@ class ImportationReportController extends Controller
 
         //origin y period
         if ($request->origin == 'C') {
-            $procedure_modality_id = ProcedureModality::whereShortened('DES-COMANDO')->first()->id;
+            $procedure_modality_id = 'DES-COMANDO';
         }
         if ($request->origin == 'S') {
-            $procedure_modality_id = ProcedureModality::whereShortened('DES-SENASIR')->first()->id;
+            $procedure_modality_id = 'DES-SENASIR';
         }
 
         $period = LoanPaymentPeriod::whereId($request->period)->first();
@@ -65,129 +65,85 @@ class ImportationReportController extends Controller
         //filtros
         $initial_date = $estimated_date? $estimated_date:'';
         $final_date = $estimated_date;
-        $category_name = $request->category_name? $request->category_name:'Regular' ;
+        //$category_name = $request->category_name? $request->category_name:'Regular' ;//para imprementar otro listado de refis y repros  descomentar
         $state_pagado= $request->state_name? $request->state_name:'Pagado';
 
         $final_date = $estimated_date;
 
         if ($initial_date != '') {
-            array_push($conditions, array('loan_payments.estimated_date', '=', "%{$initial_date}%"));
+            array_push($conditions, array('view_loan_amortizations.estimated_date_loan_payment', '=', "%{$initial_date}%"));
         }
         if ($final_date != '') {
-            array_push($conditions, array('loan_payments.estimated_date', '=', "%{$final_date}%"));
+            array_push($conditions, array('view_loan_amortizations.estimated_date_loan_payment', '=', "%{$final_date}%"));
         }
-        array_push($conditions, array('loan_payment_states.name', 'ilike', "%{$state_pagado}%"));
-        array_push($conditions, array('loan_payment_categories.name', 'ilike', "%{$category_name}%"));
+        //array_push($conditions, array('view_loan_amortizations.states_loan_payment', 'ilike', "%{$state_pagado}%"));
+       // array_push($conditions, array('view_loan_amortizations.name_category', 'ilike', "%{$category_name}%")); //listado de refis y repros  descomentar
         //prodedure
-        array_push($conditions, array('loan_payments.procedure_modality_id', '=', "{$procedure_modality_id}"));
+        array_push($conditions, array('view_loan_amortizations.modality_shortened_loan_payment', 'like', "{$procedure_modality_id}"));
 
-        $list_loan = DB::table('loan_payments')
-                ->join('procedure_modalities', 'loan_payments.procedure_modality_id', '=', 'procedure_modalities.id')
-                ->join('procedure_types', 'procedure_modalities.procedure_type_id', '=', 'procedure_types.id')
-                ->join('loan_payment_states', 'loan_payments.state_id', '=', 'loan_payment_states.id')
-                ->join('affiliates', 'loan_payments.affiliate_id', '=', 'affiliates.id')
-                ->leftjoin('spouses', 'affiliates.id', '=', 'spouses.affiliate_id')
-                ->join('affiliate_states', 'affiliates.affiliate_state_id', '=', 'affiliate_states.id')
-                ->join('affiliate_state_types', 'affiliate_states.affiliate_state_type_id', '=', 'affiliate_state_types.id')
-                ->leftjoin('pension_entities', 'affiliates.pension_entity_id', '=', 'pension_entities.id')
-                ->join('loans', 'loan_payments.loan_id', '=', 'loans.id')
-                ->join('loan_payment_categories', 'loan_payments.categorie_id', '=', 'loan_payment_categories.id')
-                ->leftJoin('vouchers', 'loan_payments.id', '=', 'vouchers.payable_id')
-                ->leftJoin('voucher_types', 'vouchers.voucher_type_id', '=', 'voucher_types.id')
-                ->whereNull('loan_payments.deleted_at')
-                ->where($conditions)
-                ->select(
-                    'loans.id as id_loan',
-                    'loans.code as code_loan',
-                    'loans.disbursement_date as disbursement_date_loan',
-                    'affiliate_state_types.name as state_type_affiliate',
-                    'affiliate_states.name as state_affiliate',
-                    'affiliates.id as id_affiliate',
-                    'affiliates.identity_card as identity_card_affiliate',
-                    'affiliates.registration as registration_affiliate',
-                    'affiliates.last_name as last_name_affiliate',
-                    'affiliates.mothers_last_name as mothers_last_name_affiliate',
-                    'affiliates.first_name as first_name_affiliate',
-                    'affiliates.second_name as second_name_affiliate',
-                    'affiliates.surname_husband as surname_husband_affiliate',
-                    'pension_entities.name as pension_entity_affiliate',
-                    'loan_payments.code as code_payment',
-                    'loan_payments.estimated_date as estimated_date_payment',
-                    'loan_payments.loan_payment_date as loan_payment_date',
-                    'loan_payments.estimated_quota as estimated_quota_payment',
-                    'loan_payments.voucher as voucher_payment',
-                    'procedure_modalities.name as sub_modality_payment',
-                    'procedure_modalities.shortened as sub_modality_shortened_payment',
-                    'procedure_types.name as modality_payment',
-                    'loan_payment_states.name as state_payment',
-                    'voucher_types.name as name_voucher_type',
-                    'spouses.registration as registration_spouse',
-                    'loan_payments.paid_by as payment_by',
-                    'loan_payments.capital_payment as capital_payment',
-                    'loan_payments.interest_payment as interest_payment',
-                    'loan_payments.penal_payment as penal_payment',
-                    'loan_payments.interest_remaining as interest_current_pending',
-                    'loan_payments.penal_remaining as interest_penal_pending',
-                    'loan_payments.estimated_quota as estimated_quota_payment',
-                    'loan_payments.previous_balance as previous_balance',
-                    DB::raw("(loan_payments.previous_balance - loan_payments.capital_payment) as current_balance"),
-                    'loan_payments.id as id_payment',
-                    'loan_payment_categories.name as category_name'
-                )
-                ->orderBy('loan_payments.code', $order_loan)
-                ->get();
+        $list_loan = DB::table('view_loan_amortizations')
+                    ->where($conditions)
+                    ->select('*')
+                    ->orderBy('code_loan', $order_loan)
+                    ->get();
 
-        foreach ($list_loan as $loan) {
-            $padron = Loan::where('id', $loan->id_loan)->first();
-            $loan->modality=$padron->modality->procedure_type->second_name;
-            $loan->sub_modality=$padron->modality->shortened;
+      //  return $list_loan;
+
+      foreach ($list_loan as $loan) {
+        $padron = Loan::where('id', $loan->id_loan)->first();
+        $loan->modality=$padron->modality->procedure_type->second_name;
+        $loan->sub_modality=$padron->modality->shortened;
+        $loan->separation='***';
         }
 
         $File="Amortizaciones_".$request->origin.'_'.$period->month.'_'.$period->year;
         $data=array(
-                   array("NRO DE PRÉSTAMO", "FECHA DE DESEMBOLSO", "TIPO","FECHA DE PAGO","FECHA DE TRANSACCIÓN","MODALIDAD","SUB MODALIDAD",
-                   "MATRICULA AFILIADO","MATRICULA CÓNYUGUE", "CI", "APELLIDO PATERNO","APELLIDO CASADA","APELLIDO MATERNO",
-                   "PRIMER NOMBRE","SEGUNDO NOMBRE","CAPITAL","INTERÉS CORRIENTE","INTERÉS PENAL","INTERÉS CORRIENTE PENDIENTE",
-                   "INTERÉS PENAL PENDIENTE","TOTAL PAGADO","SALDO ANTERIOR", "SALDO ACTUAL","PAGADO POR","TIPO DESCUENTO","CBTE","NRO DE COBRO","ESTADO DEL COBRO","CATEGORIA DEL COBRO")
-               );
-        foreach ($list_loan as $row) {
-            array_push($data, array(
-                       $row->code_loan,//nro de prestamo
-                       Carbon::parse($row->disbursement_date_loan)->format('d/m/Y H:i:s'),//fecha de desembolso
-                       $row->state_type_affiliate,//tipo (pasivo o activo)
+            array("CI AFILIADO","MATRICULA AFILIADO","NOMBRE COMPLETO AFILIADO","***","COD PRÉSTAMO", "FECHA DE DESEMBOLSO", "TIPO","FECHA DE CALCULO","FECHA DE TRANSACCIÓN",
+            "MODALIDAD PRÉSTAMO","SUB MODALIDAD PRÉSTAMO",
+            "MATRICULA", "CI", "PRIMER NOMBRE","SEGUNDO NOMBRE","APELLIDO PATERNO","APELLIDO MATERNO","APELLIDO CASADA",
+            "CAPITAL","INTERÉS CORRIENTE","INTERÉS PENAL","INTERÉS CORRIENTE PENDIENTE",
+            "INTERÉS PENAL PENDIENTE","TOTAL PAGADO","SALDO ANTERIOR", "SALDO ACTUAL","PAGADO POR","TIPO DESCUENTO","NRO DE COBRO","ESTADO AMORTIZACIÓN","CATEGORIA")
+        );
+               foreach ($list_loan as $row){
+                array_push($data, array(
+                    $row->identity_card_affiliate,
+                    $row->registration_affiliate,
+                    $row->full_name_affiliate,
+                    $row->separation,
+                    $row->code_loan,//nro de prestamo
+                    Carbon::parse($row->disbursement_date_loan)->format('d/m/Y H:i:s'),//fecha de desembolso
+                    $row->state_affiliate_loan_payment,//tipo (pasivo o activo)
 
-                       Carbon::parse($row->estimated_date_payment)->format('d/m/Y'),//fecha de pago
-                       Carbon::parse($row->loan_payment_date)->format('d/m/Y H:i:s'),//fecha de transacción
-                       $row->modality, //MOdalidad
-                       $row->sub_modality, //Sub modalidad
+                    Carbon::parse($row->estimated_date_loan_payment)->format('d/m/Y'),//fecha de pago
+                    Carbon::parse($row->date_loan_payment)->format('d/m/Y H:i:s'),//fecha de transacción
+                    $row->modality, //MOdalidad
+                    $row->sub_modality, //Sub modalidad
 
-                       $row->registration_affiliate,//matricula afiliado
-                       $row->registration_spouse,//matricula esposa
-                       $row->identity_card_affiliate,//CI
+                    $row->registration_borrower,//matricula del prestatario
+                    $row->identity_card_borrower,//CI del prestatario
+                    $row->first_name_borrower,//primer nombre del prestatario
+                    $row->second_name_borrower,//segundo nombre del prestatario
+                    $row->last_name_borrower,// aprellido paterno del prestatario
+                    $row->mothers_last_name_borrower,//apellido matyerno del prestatario
+                    $row->surname_husband_borrower,//apellido de casado del prestatario
 
-                       $row->last_name_affiliate,//ap paterno
-                       $row->surname_husband_affiliate,//ap casada
-                       $row->mothers_last_name_affiliate,//ap materno
-                       $row->first_name_affiliate,//primer nombre
-                       $row->second_name_affiliate,//segundo nombre
-                       Util::money_format($row->capital_payment),//capital .. pagado
-                       Util::money_format($row->interest_payment), //interes corriente
-                       Util::money_format($row->penal_payment),// interes penal
-                       Util::money_format($row->interest_current_pending),//interes corriente pendiente
-                       Util::money_format($row->interest_penal_pending),//interes penal pendiente
-                       Util::money_format($row->estimated_quota_payment),//total pagado
-                       Util::money_format($row->previous_balance),// saldo anterior
-                       Util::money_format($row->current_balance),//saldo actual
+                    Util::money_format($row->capital_payment),//capital .. pagado
+                    Util::money_format($row->interest_payment), //interes corriente
+                    Util::money_format($row->penal_payment),// interes penal
+                    Util::money_format($row->interest_accumulated),//interes corriente pendiente
+                    Util::money_format($row->penal_accumulated),//interes penal pendiente
+                    Util::money_format($row->quota_loan_payment),//total pagado
+                    Util::money_format($row->previous_balance),// saldo anterior
+                    Util::money_format($row->previous_balance - $row->capital_payment),//saldo actual
 
-                       $row->payment_by,//pagado por
-                       $row->sub_modality_shortened_payment,// tipo de descuento
+                    $row->paid_by_loan_payment,//pagado por
+                    $row->modality_shortened_loan_payment,// tipo de descuento
 
-                       $row->voucher_payment, //comprobante
-                       $row->code_payment, //Nro de cobro
-                       $row->state_payment, //Estado del cobro
-                       $row->category_name //categoria de cobro
-                   ));
-        }
+                    $row->code_loan_payment, //Nro de cobro
+                    $row->states_loan_payment, //estado del cobro
+                    $row->name_category
+                ));
+            }
         $export = new ArchivoPrimarioExport($data);
         return Excel::download($export, $File.'.xls');
     }
