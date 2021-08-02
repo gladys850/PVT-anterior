@@ -1317,6 +1317,7 @@ class LoanController extends Controller
             $payment->initial_affiliate = LoanController::verify_loan_affiliates($affiliate,$loan)->disbursable->initials;//iniciales
 
             $payment->categorie_id = $request->input('categorie_id');
+            $payment->loan_payment_date = Carbon::now();
 
             $payment->paid_by = $request->input('paid_by');
             if($request->has('user_id')){
