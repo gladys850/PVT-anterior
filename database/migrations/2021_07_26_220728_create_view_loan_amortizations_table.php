@@ -22,7 +22,8 @@ class CreateViewLoanAmortizationsTable extends Migration
               a.first_name as first_name_borrower, a.second_name as second_name_borrower, a.last_name as last_name_borrower, a.mothers_last_name as mothers_last_name_borrower, a.surname_husband as surname_husband_borrower, a.identity_card as identity_card_borrower, a.registration as registration_borrower,
               (coalesce(a.first_name, '') || ' ' || coalesce(a.second_name, '') || ' ' || coalesce(a.last_name, '')|| ' ' || coalesce(a.mothers_last_name, '')|| ' ' || coalesce(a.surname_husband, '')) AS full_name_borrower,
               as2.name as state_affiliate, ast.name as state_type_affiliate, pe.name as pension_entity_affiliate, pm.name as modality_loan_payment, pm.shortened as modality_shortened_loan_payment, ls.name as state_loan, lp.paid_by as paid_by_loan_payment, pt.name as procedure_loan_payment,
-              lp.capital_payment as capital_payment, lp.penal_remaining, lp.penal_accumulated, lp.penal_payment, lp.interest_remaining, lp.interest_accumulated, lp.interest_payment, lp.previous_balance, (lp.previous_balance - lp.capital_payment) as current_balance
+              lp.capital_payment as capital_payment, lp.penal_remaining, lp.penal_accumulated, lp.penal_payment, lp.interest_remaining, lp.interest_accumulated, lp.interest_payment, lp.previous_balance, (lp.previous_balance - lp.capital_payment) as current_balance,
+              lpc.name as name_category, lpc.shortened as shortened_category, lpc.type_register as type_register_category
                 from loan_payments lp
                 join loans l on l.id = lp.loan_id
                 join loan_states ls on ls.id = l.state_id
@@ -34,6 +35,7 @@ class CreateViewLoanAmortizationsTable extends Migration
                 join procedure_modalities pm on pm.id = lp.procedure_modality_id
                 join procedure_types  pt on pt.id = pm.procedure_type_id 
                 join loan_payment_states lps on lps.id = lp.state_id
+                join loan_payment_categories lpc on lpc.id = lp.categorie_id
                 left join vouchers v on v.payable_id = lp.id
                 left join voucher_types vt on vt.id = v.voucher_type_id
                 where la.type = 'affiliates'
@@ -46,7 +48,8 @@ class CreateViewLoanAmortizationsTable extends Migration
               s.first_name as first_name_borrower, s.second_name as second_name_borrower, s.last_name as last_name_borrower, s.mothers_last_name as mothers_last_name_borrower, s.surname_husband as surname_husband_borrower, s.identity_card as identity_card_borrower, s.registration as registration_borrower,
               (coalesce(s.first_name, '') || ' ' || coalesce(s.second_name, '') || ' ' || coalesce(s.last_name, '')|| ' ' || coalesce(s.mothers_last_name, '')|| ' ' || coalesce(s.surname_husband, '')) AS full_name_borrower,
               as2.name as state_affiliate, ast.name as state_type_affiliate, pe.name as pension_entity_affiliate, pm.name as modality_loan_payment, pm.shortened as modality_shortened_loan_payment, ls.name as state_loan, lp.paid_by as paid_by_loan_payment, pt.name as procedure_loan_payment,
-              lp.capital_payment as capital_payment, lp.penal_remaining, lp.penal_accumulated, lp.penal_payment, lp.interest_remaining, lp.interest_accumulated, lp.interest_payment, lp.previous_balance, (lp.previous_balance - lp.capital_payment) as current_balance
+              lp.capital_payment as capital_payment, lp.penal_remaining, lp.penal_accumulated, lp.penal_payment, lp.interest_remaining, lp.interest_accumulated, lp.interest_payment, lp.previous_balance, (lp.previous_balance - lp.capital_payment) as current_balance,
+              lpc.name as name_category, lpc.shortened as shortened_category, lpc.type_register as type_register_category
                 from loan_payments lp
                 join loans l on l.id = lp.loan_id
                 join loan_states ls on ls.id = l.state_id
@@ -59,6 +62,7 @@ class CreateViewLoanAmortizationsTable extends Migration
                 join procedure_types  pt on pt.id = pm.procedure_type_id
                 join loan_payment_states lps on lps.id = lp.state_id
                 join spouses s on s.affiliate_id = a.id
+                join loan_payment_categories lpc on lpc.id = lp.categorie_id
                 left join vouchers v on v.payable_id = lp.id
                 left join voucher_types vt on vt.id = v.voucher_type_id
                 where la.type = 'spouses'");
