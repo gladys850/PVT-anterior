@@ -359,6 +359,56 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <!--CAMBIO DE GARANTE A PRESTATARIO-->
+      <v-tooltip top v-if="permissionSimpleSelected.includes('create-payment-loan') && (loan.guarantors.length>0 && loan.guarantor_amortizing)">
+        <template v-slot:activator="{ on }">
+          <v-btn
+            fab
+            dark
+            x-small
+            :color="'error'"
+            top
+            left
+            absolute
+            v-on="on"
+            style="margin-left: 400px; margin-top: 100px"
+            @click="dialog_guarantor_lender=true"
+          >
+            <v-icon>mdi-account-switch</v-icon>
+          </v-btn>
+        </template>
+        <div>
+          <span>Cambio de amortización a titular</span>
+        </div>
+      </v-tooltip>
+
+      <v-dialog
+        v-model="dialog_guarantor_lender"
+        max-width="500"
+      >
+        <v-card>
+          <v-card-title>
+            Esta seguro de cambiar la amortizacion al titular?
+          </v-card-title>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn
+              color="red darken-1"
+              text
+              @click="dialog_guarantor_lender = false"
+            >
+              Cancelar
+            </v-btn>
+            <v-btn
+              color="green darken-1"
+              text
+              @click.stop="changeGuarantorLender()"
+            >
+              Aceptar
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
 
     <AddObservation :bus="bus" :loan="loan" />
   </v-card>
@@ -457,11 +507,17 @@ export default {
     role_name: null,
     user_name: null,
     id_street: 0,
+    dialog_guarantor_lender:false,
   }),
   watch: {
     search: _.debounce(function() {
       this.bus.$emit("search", this.search)
-    }, 1000)
+    }, 1000),
+    dialog_guarantor_lender: function(newVal, oldVal){
+      if(newVal!=oldVal){
+        this.getloan(this.$route.params.id)
+      }
+    }
   },
   computed: {
     //permisos del selector global por rol
@@ -866,9 +922,10 @@ export default {
           }
         }
       }
-    }
     },
-      async getAddress(id) {
+ 
+
+    async getAddress(id) {
       try {
         this.loading = true
         let res = await axios.get(`affiliate/${id}/address`)
@@ -882,6 +939,22 @@ export default {
         this.loading = false
       }
     },
+
+    async changeGuarantorLender(){
+      try {
+        let res = await axios.post(`switch_guarantor_lender`,{
+            loan_id: this.$route.params.id,
+            role_id: this.$store.getters.rolePermissionSelected.id
+        })
+        this.dialog_guarantor_lender = false
+        this.toastr.success(res.data.validate)
+      } catch (e) {
+        this.toastr.error(res.data.validate)
+        console.log(e)
+      }
+    }
+
+   },
   }
 
 </script>
