@@ -14,13 +14,13 @@
                 v-model="data_loan_parent_aux.code"
               ></v-text-field>
           </v-col>
-          <v-col cols="2" class="py-2" v-show="show_parent_sismu || (($route.params.hash == 'remake' && data_loan_parent_aux.parent_reason != null))">
+          <v-col cols="3" class="py-2" v-show="show_parent_sismu || (($route.params.hash == 'remake' && data_loan_parent_aux.parent_reason != null))">
             <v-text-field
               dense
               v-model="data_loan_parent_aux.disbursement_date"
               label="Fecha Desembolso"
               hint="Día/Mes/Año"
-              class="purple-input"
+              class="pa-0 ma-0"
               type="date"
               :clearable="enable_sismu"
               :outlined="enable_sismu"
@@ -37,7 +37,7 @@
                 v-model="data_loan_parent_aux.amount_approved"
               ></v-text-field>
          </v-col>
-          <v-col cols="2" class="py-2" v-show="show_parent_sismu || (($route.params.hash == 'remake' && data_loan_parent_aux.parent_reason != null))">
+          <v-col cols="1" class="py-2" v-show="show_parent_sismu || (($route.params.hash == 'remake' && data_loan_parent_aux.parent_reason != null))">
               <v-text-field
                 class="py-0"
                 dense
