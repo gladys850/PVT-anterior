@@ -8,23 +8,31 @@
               <v-card-text class="headline font-weight-bold">
                 <v-row>
                   <v-col cols="5" class="py-0">
-                    <h6><v-icon large left style="font-size: 25px;">
+                    <h6  v-show="loan.borrower.length == 1"><v-icon large left style="font-size: 25px;">
                       mdi-shield-account
+                      </v-icon>
+                    <strong><b style="color:white">PRESTATARIO: </b></strong>
+                      {{ $options.filters.fullName(loan.borrower[0], true) }} <br>
+                       <b style="color:white">C.I: </b>{{loan.borrower[0].identity_card +' '+loan.borrower[0].city_identity_card.first_shortened}}</h6>
+                     <h6 v-show="loan.borrower[0].type=='spouses'" v-if="loan.borrower.length == 1"><v-icon large left style="font-size: 25px;">
+                      mdi-account-check-outline
                     </v-icon>
-                    <strong><b style="color:white">{{Object.keys(spouse).length === 0 ? 'PRESTATARIO':'TITULAR' }}: </b></strong>
+                    <strong ><b style="color:white">TITULAR:  </b></strong>
                       {{ $options.filters.fullName(affiliate, true) }}</h6>
-                    <h6><strong><b style="color:white">CI: </b></strong>
-                      {{ affiliate.identity_card }}</h6>
-                    <div v-if="loan.disbursable_type == 'spouses'">
+
+
+                    <div v-show="loan.borrower.length > 1">
                       <h6><v-icon large left style="font-size: 25px;">
-                        mdi-account-heart
+                        mdi-shield-account
                         </v-icon>
-                      <strong><b style="color:white">PRESTATARIO:</b></strong> {{ $options.filters.fullName(spouse, true) }}
-                      <b style="color:white">C.I: </b> {{ spouse.identity_card }}</h6>
+                      <strong><b style="color:white">PRESTATARIO:</b></strong> {{ $options.filters.fullName(loan.borrower[0], true) }}
+                      <b style="color:white">C.I: </b> {{ loan.borrower[0].identity_card +' '+loan.borrower[0].city_identity_card.first_shortened }}</h6>
                     </div>
-                    <div v-for="(lenders,i) in loan.lenders" :key="i" v-show="loan.lenders.length > 1">
-                      <h6><strong><b style="color:white">CODEUDOR: </b>{{  $options.filters.fullName(lenders,true)}}</strong>
-                      <b style="color:white">C.I: </b>{{lenders.identity_card}} </h6>
+                    <div   v-for="(lenders,i) in loan.borrower" :key="i" v-show="loan.borrower.length > 1">
+                      <h6 v-if="i > 0"><v-icon large left style="font-size: 25px;">
+                      mdi-account-check-outline
+                    </v-icon><strong><b style="color:white"  v-if="loan.borrower.length > 1 ">CODEUDOR: </b>{{  $options.filters.fullName( loan.borrower[i],true)}}</strong>
+                      <b style="color:white">C.I: </b>{{ loan.borrower[i].identity_card +' '+ loan.borrower[i].city_identity_card.first_shortened}} </h6>
                     </div>
                   </v-col>
                   <v-col cols="7" class="py-0 ">
@@ -32,9 +40,9 @@
                     mdi-bank
                     </v-icon>
                     <strong><b style="color:white">MODALIDAD:</b></strong>
-                      {{ procedure_modality_name | uppercase }}</h6>
+                      {{ loan.modality }}</h6>
                     <h6><strong><b style="color:white">MONTO SOLICITADO:</b></strong>
-                      {{ loan.amount_approved | money}}  Bs
+                      {{ loan.amount_approved | moneyString}}  Bs
                     <strong><b style="color:white">MESES PLAZO:</b></strong>
                       {{ loan.loan_term }}</h6>
                   </v-col>
@@ -49,7 +57,6 @@
 </template>
 
 <script>
-import common from "@/plugins/common"
 export default {
   name: "flow-dashboard",
   props: {
@@ -61,87 +68,11 @@ export default {
       type: Object,
       required: true
     },
-    spouse: {
-      type: Object,
-      required: true
-    }
   },
-  data: () => ({
-    loading: false,
-    degree_name: null,
-    unit_name: null,
-    last_name: null,
-    mothers_last_name: null,
-    last_name:null,
-    first_name:null,
-    //identity_card: null,
-    procedure_modality_name: ""
-  }),
   computed: {
     isNew() {
       return this.$route.params.id == "new"
     },
-
-    /*spouseNombre: function() {
-      return (
-        this.spouse.mothers_last_name +
-        " " +
-        this.spouse.last_name +
-        " " +
-        this.spouse.first_name
-      );
-    }*/
   },
-  watch: {
-    affiliate(newVal, oldVal) {
-      if (oldVal != newVal) {
-        if (newVal.hasOwnProperty("degree_id"))
-          this.getDegree_name(newVal.degree_id);
-        if (newVal.hasOwnProperty("unit_id")) this.getUnit_name(newVal.unit_id)
-      }
-    },
-    loan(newVal, oldVal) {
-      if (oldVal != newVal) {
-        if (newVal.hasOwnProperty("procedure_modality_id"))
-          this.getProcedureModalityName(newVal.procedure_modality_id);
-      }
-    }
-  },
-  methods: {
-    async getDegree_name(id) {
-      try {
-        this.loading = true
-        let res = await axios.get(`degree/${id}`)
-        this.degree_name = res.data.name;
-      } catch (e) {
-        console.log(e);
-      } finally {
-        this.loading = false;
-      }
-    },
-    async getUnit_name(id) {
-      try {
-        this.loading = true;
-        let res = await axios.get(`unit/${id}`)
-        this.unit_name = res.data.name;
-      } catch (e) {
-        console.log(e);
-      } finally {
-        this.loading = false;
-      }
-    },
-    async getProcedureModalityName(id) {
-      try {
-        this.loading = true;
-        let res = await axios.get(`procedure_modality/${id}`)
-        this.procedure_modality_name = res.data.name
-        console.log(this.procedure_modality_name)
-      } catch (e) {
-        console.log(e)
-      } finally {
-        this.loading = false
-      }
-    }
-  }
 };
 </script>

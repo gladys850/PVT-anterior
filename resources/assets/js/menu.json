@@ -5,7 +5,7 @@
     "icon": "mdi-home",
     "params": {}
   }, {
-    "href": "listTracing",
+    "href": "ListTracingLoans",
     "title": "Seguimiento",
     "icon": "mdi-swap-horizontal",
     "permission": "show-all-loan",
@@ -23,7 +23,7 @@
     "permission": "show-loan",
     "params": {}
   }, {
-    "href": "listLoanGenerate",
+    "href": "loansGenerateIndex",
     "title": "Préstamos desembolsados",
     "icon": "mdi-view-list",
     "permission": "show-list-loans-generated",

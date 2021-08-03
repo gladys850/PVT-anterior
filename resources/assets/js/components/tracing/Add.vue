@@ -6,7 +6,7 @@
           <Breadcrumbs />
         </v-toolbar-title>
         <v-spacer></v-spacer>
-        <template>
+          <template>
               <v-tooltip bottom >
                 <template v-slot:activator="{ on }">
                   <v-btn
@@ -67,7 +67,6 @@
                 </template>
                 <span>Imprimir Kardex</span>
               </v-tooltip>
-
           <v-divider vertical class="mx-4"></v-divider>
           <h6 class="caption">
           <strong>Ubicación trámite:</strong> <br />
@@ -77,12 +76,14 @@
       </v-toolbar>
     </v-card-title>
     <v-card-text>
-      <Dashboard :affiliate.sync="affiliate" :loan.sync="loan" :spouse.sync="spouse" />
+      <Dashboard :affiliate.sync="affiliate" :loan.sync="loan"/>
       <FormTracing
           :loan.sync="loan"
           :loan_refinancing.sync="loan_refinancing"
-          :loan_properties="loan_properties"
-          :procedure_types="procedure_types"
+          :loan_properties.sync="loan_properties"
+          :procedure_types.sync="procedure_types"
+          :observations.sync="observations"
+          :observation_type.sync="observation_type"
       >
       </FormTracing>
     </v-card-text>
@@ -101,10 +102,6 @@ export default {
     Dashboard,
   },
   data: () => ({
-    bus: new Vue(),
-    search: "",
-    bus1: new Vue(), //Creamos la instancia de bus1
-    addresses: [],
     affiliate: {
       first_name: null,
       second_name: null,
@@ -124,11 +121,17 @@ export default {
       unit_name: null,
       registration: null
     },
-    dialog:false,
-    bonos: [0, 0, 0, 0],
-    payable_liquid: [0, 0, 0],
-    modalidad: {},
     loan: {
+      borrower:[
+        {first_name:null,
+        last_name:null,
+        city_identity_card:{},
+          pivot:{},},
+        {first_name:null,
+        last_name:null,
+        city_identity_card:{},
+          pivot:{},}
+      ],
       lenders: [
         {pivot:{},}
       ],
@@ -140,59 +143,25 @@ export default {
       state: {},
       user:{}
     },
+    city:[],
     loan_refinancing:{},
-    datos: {},
-    formulario: [],
     observations: [],
-    spouse: {},
+    observation_type: [],
     loan_properties: {},
     procedure_types: {},
-    intervalos: {},
-    modalidad: {},
-    icons: true,
     vertical: true,
-    editable: false,
-    reload: false,
     tab: "tab-1",
-    validate: {
-      valid_disbursement: false,
-      valid_date_contract : false,
-      valid_date_contract_return: false,
-      valid_certificate : false
-
-    },
     role_name: null,
     user_name: null,
     id_street: 0,
   }),
    mounted() {
-    // si existe el query de redireccion de tab, se setea el valor
-    if(this.$route.query.redirectTab) {
-      this.tab = 'tab-'+this.$route.query.redirectTab
-    }
-    /*if(this.$route.params.workTray){
-      this.workTray = 'received'
-    }*/
     this.getloan(this.$route.params.id)
-    this.getSpouse(this.$route.params.id)
     this.getObservation(this.$route.params.id)
-    this.getProceduretype(this.$route.params.id)
-    
-    this.bus1.$on("emitGetObservation", id => {
-      //escuchamos la emision de ObserverFlow
-      this.getObservation(id) //y monstramos la lista de observaciones segun el id del prestamo
-    })
+    this.getCity()
   },
   methods: {
-    resetForm() {
-      this.getAddress(this.affiliate.id)
-      this.editable = false
-      this.reload = true
-      this.$nextTick(() => {
-        this.reload = false
-      })
-    },
-      setBreadcrumbs() {
+    setBreadcrumbs() {
       let breadcrumbs = [
         {
           text: "Seguimiento",
@@ -205,6 +174,7 @@ export default {
       })
       this.$store.commit("setBreadcrumbs", breadcrumbs)
     },
+    //Metodo para sacar el detalle del loan
     async getloan(id) {
       try {
         this.loading = true
@@ -212,7 +182,6 @@ export default {
         this.loan = res.data
         this.loan.amount_approved_before= res.data.amount_approved
         this.loan.loan_term_before= res.data.loan_term
-
         this.loan.amount_approved_aux = this.loan.amount_approved
         this.loan.payable_liquid_calculated_aux = this.loan.lenders[0].pivot.payable_liquid_calculated
         this.loan.liquid_qualification_calculated_aux = this.loan.liquid_qualification_calculated
@@ -220,11 +189,10 @@ export default {
         this.loan.bonus_calculated_aux = this.loan.lenders[0].pivot.bonus_calculated
         this.loan.indebtedness_calculated_aux = this.loan.indebtedness_calculated
         this.loan.estimated_quota_aux = this.loan.estimated_quota
-
-
         this.loan.disbursement_date=this.$moment(res.data.disbursement_date).format('YYYY-MM-DD')
         this.loan.delivery_contract_date=this.$moment(res.data.delivery_contract_date).format('YYYY-MM-DD')
         this.loan.return_contract_date=this.$moment(res.data.return_contract_date).format('YYYY-MM-DD')
+        this.loan.modality=this.loan.modality.name
 
         if(this.loan.parent_reason=='REFINANCIAMIENTO')
         {
@@ -255,54 +223,54 @@ export default {
             this.loan_refinancing.amount_approved = this.loan.amount_approved
             this.loan_refinancing.refinancing_balance = this.loan.refinancing_balance
 
-
-
-        console.log("este es el loan" + this.loan)
         let res1 = await axios.get(`affiliate/${this.loan.lenders[0].id}`)
         this.affiliate = res1.data
         if (this.loan.property_id != null) {
           this.getLoanproperty(this.loan.property_id)
         }
+        //Saca el procedure tipe del tramite
         this.getProceduretype(this.loan.procedure_modality_id)
-        if (this.loan.disbursable_type == "spouses") {
-          this.getSpouse(this.affiliate.id)
-        }
         this.setBreadcrumbs()
-        this.getAddress(this.affiliate.id)
-
         this.role(this.loan.role_id)
         this.user(this.loan.user_id)
-        console.log(this.loan)
       } catch (e) {
         console.log(e)
       } finally {
         this.loading = false
       }
     },
-    async getSpouse(id) {
+    //Metodo para obtener la ciudad
+    async getCity() {
       try {
         this.loading = true
-        let res = await axios.get(`affiliate/${id}/spouse`)
-        this.spouse = res.data
+        let res = await axios.get(`city`)
+        this.city = res.data
       } catch (e) {
         console.log(e)
       } finally {
         this.loading = false
       }
     },
-
+    //Metodo para sacar detalle de la propiedad
     async getLoanproperty(id) {
       try {
         this.loading = true
         let res = await axios.get(`loan_property/${id}`)
         this.loan_properties = res.data
+        for(let i=0; i<= this.city.length ; i++ )
+        {
+          if(this.city[i].id == this.loan_properties.real_city_id)
+          {
+           this.loan_properties.city_properties = this.city[i].name
+          }
+        }
       } catch (e) {
         console.log(e)
       } finally {
         this.loading = false
       }
     },
-
+    //Metodo para sacar el procedure
     async getProceduretype(id) {
       try {
         this.loading = true
@@ -314,30 +282,43 @@ export default {
         this.loading = false
       }
     },
-
-    async getObservation(id) {
+    //Metodo para sacar el tipo de observacion
+    async getObservationType() {
       try {
         this.loading = true
-        let res = await axios.get(`loan/${id}/observation`)
-        this.observations = res.data
-        
-        for (this.i = 0; this.i < this.observations.length; this.i++) {
-           console.log("ww"+this.observations[this.i].user_id)
-          let res1 = await axios.get(`user/${this.observations[this.i].user_id}`
-          )
-          this.observations[this.i].user_name = res1.data.username
-        }
+        let res = await axios.get(
+          `module/${6}/observation_type`
+        )
+        this.observation_type = res.data
       } catch (e) {
         console.log(e)
       } finally {
         this.loading = false
       }
     },
-    async getAddress(id) {
+    //Metodo para sacar las observaciones del tramite
+    async getObservation(id) {
       try {
         this.loading = true
-        let res = await axios.get(`affiliate/${id}/address`)
-        this.addresses = res.data
+        let res = await axios.get(`loan/${id}/observation`)
+        this.observations = res.data
+        let res_observables = await axios.get(
+          `module/${6}/observation_type`
+        )
+        this.observation_type = res_observables.data
+
+        for (let i = 0; i < this.observations.length; i++) {
+          let res1 = await axios.get(`user/${this.observations[i].user_id}`
+          )
+          this.observations[i].user_name = res1.data.username
+
+          for (let j = 0; j < this.observations.length; j++) {
+            if(this.observations[j].observation_type_id=this.observation_type[j].id){
+              this.observations[j].observation_type_name=this.observation_type[j].name
+            }
+        }
+
+        }
       } catch (e) {
         console.log(e)
       } finally {
@@ -348,37 +329,19 @@ export default {
       try {
         let res = await axios.get(`role/${role_id}`)
         this.role_name = res.data.display_name
-        console.log(this.role_name)
       } catch (e) {
         console.log(e)
       }
     },
-
+    //Metodo para sacar los usuarios
     async user(user_id){
       try {
         let res = await axios.get(`user/${user_id}`)
         this.user_name = res.data.username
-        console.log(this.user_name)
       } catch (e) {
         console.log(e)
       }
     },
-
-      async getAddress(id) {
-      try {
-        this.loading = true
-        let res = await axios.get(`affiliate/${id}/address`)
-        this.addresses = res.data
-        // Seteando el valor del address
-        let address = this.addresses.find(item => item.pivot.validated)
-        this.id_street = address.id
-      } catch (e) {
-        console.log(e)
-      } finally {
-        this.loading = false
-      }
-    },
-
     async imprimir(id, item) {
       try {
         let res;

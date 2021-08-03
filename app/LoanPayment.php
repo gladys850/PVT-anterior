@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Http\Controllers\Api\V1\LoanController;
 use Carbon\CarbonImmutable;
 use Carbon;
 use Util;
@@ -44,8 +45,7 @@ class LoanPayment extends Model
         'user_id',
         'categorie_id',
         'initial_affiliate',
-        'state_affiliate'
-
+        'state_affiliate',
     ];
 
     function __construct(array $attributes = [])
@@ -217,7 +217,7 @@ class LoanPayment extends Model
         $affiliate=Affiliate::find($affiliate_id);
         $affiliate_state=$affiliate->affiliate_state->affiliate_state_type->name;
         $payment->state_affiliate = strtoupper($affiliate_state);
-        $payment->initial_affiliate = $affiliate->initials;//iniciales
+        $payment->initial_affiliate = LoanController::verify_loan_affiliates($affiliate,$loan)->disbursable->initials;//iniciales
         $payment->loan_payment_date =Carbon::now();
 
         //$payment->amortization_type_id = $payment_type->id;

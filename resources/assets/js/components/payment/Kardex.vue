@@ -26,55 +26,26 @@
         </div>
       </v-tooltip>
 
-      <v-tooltip top v-if="permissionSimpleSelected.includes('create-payment-loan')">
+      <v-tooltip top v-if="permissionSimpleSelected.includes('print-payment-plan')">
         <template v-slot:activator="{ on }">
           <v-btn
             fab
-            dark
             x-small
-            :color="'error'"
+            color="info"
             top
             left
             absolute
             v-on="on"
-            style="margin-left: 250px; margin-top: 20px"
-            @click="dialog=true"
-            :disabled="!loan.guarantor_amortizing"
+            style="margin-left: 150px; margin-top: 20px"
+            @click="imprimirPlan($route.params.id)"
           >
-            <v-icon>mdi-account-switch</v-icon>
+            <v-icon>mdi-printer</v-icon>
           </v-btn>
         </template>
         <div>
-          <span>Cambio de amortización a titular</span>
+          <span>Imprimir Plan de Pagos</span>
         </div>
       </v-tooltip>
-    <v-dialog
-      v-model="dialog"
-      max-width="500"
-    >
-      <v-card>
-        <v-card-title>
-          Esta seguro de cambiar la amortizacion al titular?
-        </v-card-title>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn
-            color="red darken-1"
-            text
-            @click="dialog = false"
-          >
-            Cancelar
-          </v-btn>
-          <v-btn
-            color="green darken-1"
-            text
-            @click="changeGuarantorLender()"
-          >
-            Aceptar
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
 
       <v-tooltip top v-if="permissionSimpleSelected.includes('print-payment-kardex-loan')">
         <template v-slot:activator="{ on }">
@@ -86,7 +57,7 @@
             left
             absolute
             v-on="on"
-            style="margin-left: 150px; margin-top: 20px"
+            style="margin-left: 200px; margin-top: 20px"
             @click="imprimirK($route.params.id, true)"
           >
             <v-icon>mdi-printer</v-icon>
@@ -107,7 +78,7 @@
             left
             absolute
             v-on="on"
-            style="margin-left: 200px; margin-top: 20px"
+            style="margin-left: 250px; margin-top: 20px"
             @click="imprimirK($route.params.id, false)"
           >
             <v-icon>mdi-printer</v-icon>
@@ -121,9 +92,9 @@
       <v-card class="ma-0 pa-0 pb-2">
         <v-row class="ma-0 pa-0">
           <v-col md="4" class="ma-0 pa-0">
-            <strong>Deudor: </strong> {{ $options.filters.fullName(affiliate, true) }}<br />
-            <strong>CI: </strong> {{ affiliate.identity_card }}<br />
-            <strong>Matrícula: </strong> {{ affiliate.registration }}<br />
+            <strong>Prestatario: </strong> {{ borrower.type == 'affiliate' ? $options.filters.fullName(affiliate, true) : $options.filters.fullName(borrower, true)}}<br />
+            <strong>CI: </strong> {{ borrower.type == 'affiliate' ? affiliate.identity_card : borrower.identity_card }}<br />
+            <strong>Matrícula: </strong> {{ borrower.type == 'affiliate' ? affiliate.registration : borrower.registration }}<br />
             <strong>Cuotas: </strong> {{ payments.length ? payments.length : ""}}<br />
           </v-col>
           <v-col md="4" class="ma-0 pa-0">
@@ -140,7 +111,7 @@
            </v-col>
         </v-row>
       </v-card>
-  
+
       <v-data-table
         dense
         :headers="headers"
@@ -151,7 +122,7 @@
         :search="search"
         :key="refreshKardexTable"
       >
-        
+
         <template v-slot:[`header.code`]="{ header }">
             {{ header.text }}<br>
             <v-menu offset-y :close-on-content-click="false">
@@ -318,6 +289,10 @@ export default {
   },
   props: {
     affiliate: {
+      type: Object,
+      required: true,
+    },
+    borrower: {
       type: Object,
       required: true,
     },
@@ -500,7 +475,6 @@ export default {
     ],
     refreshKardexTable: 0,
     refreshKardexButton: 0,
-    dialog:false,
   }),
   computed: {
     //Metodo para obtener Permisos por rol
@@ -555,7 +529,7 @@ export default {
           this.$router.push({ name: 'paymentAdd', params: { hash: 'new' }, query: { loan_id: this.$route.params.id } })
         }else{
           this.toastr.error("El saldo es 0, no puede realizar mas pagos.")
-        }        
+        }
       }
       else {
         this.toastr.error("El trámite tiene estado LIQUIDADO, no puede realizar mas pagos.")
@@ -617,7 +591,6 @@ export default {
             folded: folded,
           },
         });
-        console.log("kardex " + item);
         printJS({
           printable: res.data.content,
           type: res.data.type,
@@ -629,6 +602,22 @@ export default {
         console.log(e);
       }
     },
+
+    async imprimirPlan(item) {
+      try {
+        let res = await axios.get(`loan/${item}/print/plan`);
+        printJS({
+          printable: res.data.content,
+          type: res.data.type,
+          file_name: res.data.file_name,
+          base64: true,
+        });
+      } catch (e) {
+        this.toastr.error("Ocurrió un error en la impresión.");
+        console.log(e);
+      }
+    },
+
     last_payment(item){
       if(item.id == this.payments[this.payments.length -1].id ){
         return true
@@ -636,38 +625,6 @@ export default {
         return false
       }
     },
-    async changeGuarantorLender(){
-      try {
-        let res = await axios.post(`switch_guarantor_lender`,{
-            loan_id: this.$route.params.id,
-            role_id: this.$store.getters.rolePermissionSelected.id
-        })
-        this.dialog = false
-        this.toastr.success(res.data.validate)
-      } catch (e) {
-        this.toastr.error(res.data.validate)
-        console.log(e)
-      }
-    }
-  
-
-    //Busca el tipo de Cobro que se realizará para el cobro
-    /*searchAmortizationType(item) {
-      let procedureAmortization_type = this.amortization_type.find((o) => o.id == item);
-      if (procedureAmortization_type) {
-        return procedureAmortization_type.name;
-      } else {
-        return null;
-      }
-    },
-    async getAmortizationType() {
-      try {
-        let res = await axios.get(`amortization_type`);
-        this.amortization_type = res.data;
-      } catch (e) {
-        console.log(e);
-      }
-    },*/
 
   },
 };

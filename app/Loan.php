@@ -12,6 +12,7 @@ use App\Rules\LoanIntervalTerm;
 use App\Http\Controllers\Api\V1\CalculatorController;
 use Carbon;
 use Util;
+use App\Affiliate;
 
 class Loan extends Model
 {
@@ -30,8 +31,8 @@ class Loan extends Model
     public $guarded = ['id'];
     public $fillable = [
         'code',
-        'disbursable_id',
-        'disbursable_type',
+        //'disbursable_id',
+       // 'disbursable_type',
         'procedure_modality_id',
         'disbursement_date',
         'disbursement_time',
@@ -63,7 +64,8 @@ class Loan extends Model
         'return_contract_date',
         'regional_delivery_contract_date',
         'regional_return_contract_date',
-        'payment_plan_compliance'
+        'payment_plan_compliance',
+        'affiliate_id'
     ];
 
     function __construct(array $attributes = [])
@@ -91,6 +93,10 @@ class Loan extends Model
                 $this->code = implode(['PTMO', str_pad($latest_loan->id + 1, 6, '0', STR_PAD_LEFT), '-', Carbon::now()->year]);
             }
         }
+    }
+    public function affiliate()
+    {
+        return $this->belongsTo(Affiliate::class,'affiliate_id','id');
     }
 
     public function setProcedureModalityIdAttribute($id)
@@ -168,19 +174,19 @@ class Loan extends Model
 
     public function guarantors()
     {
-        return $this->loan_affiliates()->withPivot('payment_percentage','payable_liquid_calculated', 'bonus_calculated', 'quota_previous','quota_treat','indebtedness_calculated','indebtedness_calculated_previous','liquid_qualification_calculated','contributionable_ids','contributionable_type')->whereGuarantor(true);
+        return $this->loan_affiliates()->withPivot('payment_percentage','payable_liquid_calculated', 'bonus_calculated', 'quota_previous','quota_treat','indebtedness_calculated','indebtedness_calculated_previous','liquid_qualification_calculated','contributionable_ids','contributionable_type','type')->whereGuarantor(true);
     }
 
     public function lenders()
     {
-        return $this->loan_affiliates()->withPivot('payment_percentage','payable_liquid_calculated', 'bonus_calculated', 'quota_previous','quota_treat', 'indebtedness_calculated','indebtedness_calculated_previous','liquid_qualification_calculated','contributionable_ids','contributionable_type')->whereGuarantor(false);
+        return $this->loan_affiliates()->withPivot('payment_percentage','payable_liquid_calculated', 'bonus_calculated', 'quota_previous','quota_treat', 'indebtedness_calculated','indebtedness_calculated_previous','liquid_qualification_calculated','contributionable_ids','contributionable_type','type')->whereGuarantor(false);
     }
 
     public function loan_affiliates()
     {
-        return $this->belongsToMany(Affiliate::class, 'loan_affiliates')->withPivot('contributionable_ids','contributionable_type');
+        return $this->belongsToMany(Affiliate::class, 'loan_affiliates')->withPivot('payment_percentage','guarantor','payable_liquid_calculated', 'bonus_calculated', 'quota_previous','quota_treat', 'indebtedness_calculated','indebtedness_calculated_previous','liquid_qualification_calculated','contributionable_ids','contributionable_type','type');
     }
-
+    
     public function loan_affiliates_ballot()
     {
         return $this->belongsToMany(Affiliate::class, 'loan_affiliates')->withPivot('contributionable_ids','contributionable_type');
@@ -297,10 +303,11 @@ class Loan extends Model
     public function getLastPaymentValidatedAttribute()
     {
         $loan_states = LoanPaymentState::where('name', 'Pagado')->orWhere('name', 'Pendiente por confirmar')->get();
-        return $this->payments()->whereLoanId($this->id)->where('state_id', $loan_states->first()->id)->orWhere('state_id',$loan_states->last()->id)->whereLoanId($this->id)->latest()->first();
+        $payment = $this->payments()->whereLoanId($this->id)->where('state_id', $loan_states->first()->id)->orWhere('state_id',$loan_states->last()->id)->whereLoanId($this->id)->latest()->first();
+        return $payment;
     }
 
-    public function getLastPaymentDateAttribute($date_final)
+    public function last_payment_date($date_final)
     {
         $loan_states = LoanPaymentState::where('name', 'Pagado')->first();
         return $this->payments()->whereLoanId($this->id)->where('state_id', $loan_states->id)->Where('estimated_date','<=', $date_final)->orderBy('estimated_date', 'asc')->limit(1)->first();
@@ -345,19 +352,19 @@ class Loan extends Model
         $latest_quota = $this->last_payment_validated;
         $quota->estimated_date = $estimated_date;
         $quota->previous_balance = $this->balance;
-        $quota->previous_payment_date = $latest_quota ? $latest_quota->estimated_date : $this->disbursement_date;
+        $quota->previous_payment_date = $latest_quota ? Carbon::parse($latest_quota->estimated_date)->endOfDay() : Carbon::parse($this->disbursement_date)->endOfDay();
         $quota->quota_number = $this->paymentsKardex->count() + 1;
         $date_ini = CarbonImmutable::parse($this->disbursement_date);
         $penal_days = 0;
         if($date_ini->day <= LoanGlobalParameter::latest()->first()->offset_interest_day)
-            $date_pay = $date_ini->endOfMonth()->format('Y-m-d');
+            $date_pay = $date_ini->endOfMonth()->endOfDay()->format('Y-m-d');
         else
-            $date_pay = $date_ini->startOfMonth()->addMonth()->endOfMonth()->format('Y-m-d');
+            $date_pay = $date_ini->startOfMonth()->addMonth()->endOfMonth()->endOfDay()->format('Y-m-d');
         $date_pay = Carbon::parse($date_pay);
-        $estimated_date = Carbon::parse($estimated_date);
+        $estimated_date = Carbon::parse($estimated_date)->endOfDay();
         if($quota->quota_number == 1 && $estimated_date->lessThan($date_pay) || $quota->quota_number == 1 && $estimated_date == $date_pay){
             $penal_days = 0;
-            $current_days = (Carbon::parse($quota->previous_payment_date)->diffInDays(Carbon::parse($estimated_date)) + 1);
+            $current_days = (Carbon::parse($quota->previous_payment_date)->diffInDays(Carbon::parse($estimated_date)));
         }
         else{
             $current_days = (Carbon::parse($quota->previous_payment_date)->diffInDays(Carbon::parse($estimated_date)));
@@ -449,7 +456,7 @@ class Loan extends Model
 
         // Interés corriente
             
-        $quota->interest_payment = $quota->balance * $interest->daily_current_interest * $quota->paid_days['current'];
+        $quota->interest_payment = Util::round2($quota->balance * $interest->daily_current_interest * $quota->paid_days['current']);
         if($amount >= $quota->interest_payment){
                 $amount = $amount - $quota->interest_payment;
         }
@@ -599,54 +606,6 @@ class Loan extends Model
         } while ($liquidate);
         return $quota;
     }
-
-    /*public function getPlanAttribute() {
-        $plan = [];
-        $daily_interest = $this->interest->daily_current_interest;
-        $balance = $this->amount_approved;
-        $estimated_quota = $this->estimated_quota;
-        $loan_term = $this->loan_term;
-        $i = 0;
-        while ($balance > 0) {
-            if (count($plan) == 0) {
-                $next_payment = LoanPayment::quota_date($this, true);
-            } else {
-                $next_payment = (object)[
-                    'quota' => $plan[$i-1]->quota + 1,
-                    'date' => Carbon::parse($plan[$i-1]->date)->startOfMonth()->addMonth()->endOfMonth()->toDateString()
-                ];
-            }
-            $interest = LoanPayment::days_interest($this, $next_payment->date);
-            $next_interest = Util::round2($balance * $interest->current * $daily_interest);
-            if (($balance + $next_interest) > $estimated_quota) {
-                $next_balance = $estimated_quota - $next_interest;
-            } else {
-                $next_balance = $balance;
-            }
-            $next_balance = Util::round2($next_balance);
-            $balance = Util::round2($balance - $next_balance);
-            $total = $next_balance + $next_interest;
-            if($next_payment->quota == $loan_term){
-                $next_balance = $next_balance + $balance;
-                $estimated_quota = $estimated_quota + $balance;
-                $total = $total + $balance;
-                $balance = 0;
-            }
-            array_push($plan, (object)[
-                'quota' => $next_payment->quota,
-                'date' => $next_payment->date,
-                'days' => $interest->current,
-                'interest_accumulated' => $interest->accumulated_amount,
-                'estimated_quota' => ($estimated_quota >= $total) ? $total : $estimated_quota,
-                'capital' => $next_balance,
-                'interest' => $next_interest,
-                'next_balance' => $balance,
-                'accumulated' => $interest->accumulated
-            ]);
-            $i++;
-        }
-        return $plan;
-    }*/
 
     //obtener modalidad teniendo el tipo y el afiliado
     public static function get_modality($modality, $affiliate, $type_sismu, $cpop_affiliate,$remake_loan){
@@ -1178,43 +1137,130 @@ class Loan extends Model
         $quota = 0;$penal_interest = 0;$suggested_amount = 0;
        if($liquidate){
             if(!$this->last_payment_validated)
-                $days = Carbon::parse($loan_payment_date)->diffInDays(Carbon::parse($this->disbursement_date)) + 1;
-            else
-                $days = Carbon::parse($this->last_payment_validated->estimated_date)->diffInDays($loan_payment_date) + 1;
-
+            {
+                $days = Carbon::parse(Carbon::parse($this->disbursement_date)->format('d-m-Y'))->diffInDays(Carbon::parse($loan_payment_date));
+            }
+            else{
+                $days = Carbon::parse(Carbon::parse($this->last_payment_validated->estimated_date)->format('d-m-Y'))->diffInDays($loan_payment_date);
+            }
                 $interest_by_days = LoanPayment::interest_by_days($days, $this->interest->annual_interest, $this->balance);
                 if($days > LoanGlobalParameter::first()->days_current_interest + LoanGlobalParameter::first()->grace_period)
                     $penal_interest = LoanPayment::interest_by_days($days - LoanGlobalParameter::first()->days_current_interest, $this->interest->penal_interest, $this->balance);
-                    $suggested_amount = round(($this->balance + $interest_by_days + $penal_interest),2);
+                    $suggested_amount = $this->balance + $interest_by_days + $penal_interest;
        }
        else{
-        if($type == "T"){
-                if(!$this->last_payment_validated){
-                        $date_ini = CarbonImmutable::parse($this->disbursement_date);
-                        if($date_ini->day <= LoanGlobalParameter::latest()->first()->offset_interest_day){
-                            $quota = $this->estimated_quota;
-                            $suggested_amount = round($this->estimated_quota, 2);
-                        }
-                        else{
-                            $days = date('t', strtotime($loan_payment_date)) - Carbon::parse($this->disbursement_date)->format('d')-1;
-                            $interest_by_days = LoanPayment::interest_by_days($days, $this->interest->annual_interest, $this->balance);
-                            $suggested_amount = round($this->estimated_quota + $interest_by_days, 2);
-                        }
-                }
-                else{
-                    if($this->verify_regular_payments() && ($this->paymentsKardex->count()+1) == $this->loan_term){
-                        $days = Carbon::parse($loan_payment_date)->format('d');
-                        $interest_by_days = LoanPayment::interest_by_days($days, $this->interest->annual_interest, $this->balance);
-                        $suggested_amount = round(($this->estimated_quota + $this->balance), 2);
+            if($type == "T"){
+                    if(!$this->last_payment_validated){
+                            $date_ini = CarbonImmutable::parse($this->disbursement_date);
+                            if($date_ini->day <= LoanGlobalParameter::latest()->first()->offset_interest_day){
+                                //$date_pay = Carbon::parse($this->disbursement_date)->endOfMonth()->format('d-m-Y');
+                                $extra_days = 0;
+                                $suggested_amount = $this->estimated_quota;
+                            }
+                            else{
+                                $extra_days = Carbon::parse(Carbon::parse($this->disbursement_date)->format('d-m-Y'))->diffInDays(Carbon::parse($this->disbursement_date)->endOfMonth()->format('d-m-Y'));
+                                $date_pay = Carbon::parse($this->disbursement_date)->startOfMontH()->addMonth()->endOfMonth();
+                                $loan_payment_date = Carbon::parse($loan_payment_date);
+                                if($loan_payment_date->lt($date_pay))
+                                    $suggested_amount = LoanPayment::interest_by_days($extra_days, $this->interest->annual_interest, $this->balance) + $this->estimated_quota;
+                                else
+                                    $suggested_amount = $this->estimated_quota;
+                            }
                     }
                     else{
-                        $suggested_amount = $this->estimated_quota;
+                        if($this->verify_regular_payments() && ($this->paymentsKardex->count()+1) == $this->loan_term){
+                            $days = Carbon::parse($loan_payment_date)->format('d');
+                            $interest_by_days = LoanPayment::interest_by_days($days, $this->interest->annual_interest, $this->balance);
+                            $suggested_amount = $this->estimated_quota + $this->balance;
+                        }
+                        else{
+                            if($this->balance > $this->estimated_quota)
+                                $suggested_amount = $this->estimated_quota;
+                            else{
+                                $days = Carbon::parse($this->last_payment_validated->estimated_date)->diffInDays($loan_payment_date);
+                                $interest_by_days = LoanPayment::interest_by_days($days, $this->interest->annual_interest, $this->balance);
+                                $suggested_amount = $this->balance + $interest_by_days;
+                            }
+                        }
                     }
                 }
-            }
-            else
-                $suggested_amount = $this->guarantors->first()->pivot->quota_treat;
+                else
+                    $suggested_amount = $this->guarantors->first()->pivot->quota_treat;
         }
         return  round($suggested_amount,2);
+    }
+
+    public function getBorrowerAttribute(){
+        $data = collect([]);
+        foreach($this->lenders as $lender)
+        {
+            $borrower = new Affiliate();
+            if($lender->pivot->type == 'affiliates'){
+                $borrower = $lender;
+                $borrower->city_identity_card = $lender->city_identity_card;
+                $borrower->type_initials = "T-".$lender->initials;
+            }
+            if($lender->pivot->type == 'spouses'){
+                $borrower = $lender->spouse;
+                $borrower->city_identity_card = $lender->spouse->city_identity_card;
+                $borrower->type_initials = "T-".$lender->spouse->initials;
+            }
+            $borrower->account_number = $lender->account_number;
+            $borrower->financial_entity = $lender->financial_entity;
+            $borrower->type = $lender->pivot->type;
+            $borrower->quota = $lender->pivot->quota_treat;
+            $borrower->percentage_quota = $lender->pivot->percentage_quota;
+            $borrower->state = $lender->affiliate_state;
+            $borrower->address = $lender->address;
+            if($this->affiliate_id == $lender->pivot->affiliate_id)
+                $borrower->disbursable = true;
+            else
+                $borrower->disbursable = false;
+                $data->push($borrower);
+        }
+        return $data;
+    }
+
+    public function getBorrowerGuarantorsAttribute(){
+        $data = collect([]);
+        foreach($this->guarantors as $guarantor){
+            $titular_guarantor = new Affiliate();
+            if($guarantor->pivot->type == "affiliates"){
+                $titular_guarantor = $guarantor;
+                $titular_guarantor->city_identity_card = $guarantor->city_identity_card;
+                $titular_guarantor->type_initials = "G-".$guarantor->initials;
+            }
+            if($guarantor->pivot->type == "spouses"){
+                $titular_guarantor = $guarantor->spouse;
+                $titular_guarantor->city_identity_card = $guarantor->spouse->city_identity_card;
+                $titular_guarantor->type_initials = "G-".$guarantor->spouse->initials;
+            }
+            $titular_guarantor->account_number = $guarantor->account_number;
+            $titular_guarantor->financial_entity = $guarantor->financial_entity;
+            $titular_guarantor->type = $guarantor->pivot->type;
+            $titular_guarantor->quota = $guarantor->pivot->quota_treat;
+            $titular_guarantor->percentage_quota = $guarantor->pivot->percentage_quota;
+            $titular_guarantor->state = $guarantor->affiliate_state;
+            $titular_guarantor->address = $guarantor->address;
+            $data->push($titular_guarantor);
+        }
+        return $data;
+    }
+    public function getGuarantors(){
+        $loans_guarantors = DB::table('view_loan_borrower_guarantors')
+        ->where('guarantor_loan',true)
+        ->where('id_loan',$this->id)
+        ->select('*')
+        ->get();
+        return $loans_guarantors;
+    }
+
+    public function getBorrowers(){
+        $loans_borrowers = DB::table('view_loan_borrower_guarantors')
+        ->where('guarantor_loan',false)
+        ->where('id_loan',$this->id)
+        ->select('*')
+        ->get();
+        return $loans_borrowers;
     }
 }

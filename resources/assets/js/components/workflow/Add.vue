@@ -121,7 +121,17 @@
             </span>
           </v-tooltip>
         </v-tab>
-        <v-tab :href="`#tab-5`">
+        <v-tab :href="`#tab-5`" v-if="borrower.type == 'spouses'">
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on, attrs }">
+              <v-icon v-if="icons" v-bind="attrs" v-on="on">mdi-account-heart</v-icon>
+            </template>
+            <span>
+              <b>INFORMACION CONYUGE</b>
+            </span>
+          </v-tooltip>
+        </v-tab>
+        <v-tab :href="`#tab-6`">
           <v-tooltip bottom>
             <template v-slot:activator="{ on, attrs }">
               <v-icon v-if="icons" v-bind="attrs" v-on="on">mdi-file-account</v-icon>
@@ -131,7 +141,7 @@
             </span>
           </v-tooltip>
         </v-tab>
-        <v-tab :href="`#tab-6`">
+        <v-tab :href="`#tab-7`">
           <v-tooltip bottom>
             <template v-slot:activator="{ on, attrs }">
               <v-icon v-if="icons" v-bind="attrs" v-on="on">mdi-format-list-checkbox</v-icon>
@@ -141,7 +151,7 @@
             </span>
           </v-tooltip>
         </v-tab>
-        <v-tab :href="`#tab-7`">
+        <v-tab :href="`#tab-8`">
           <v-tooltip bottom>
             <template v-slot:activator="{ on, attrs }">
               <v-icon v-if="icons" v-bind="attrs" v-on="on">mdi-comment-eye-outline</v-icon>
@@ -154,7 +164,11 @@
         <v-tab-item :value="'tab-1'">
           <v-card flat tile>
             <v-card-text>
-              <Dashboard :affiliate.sync="affiliate" :loan.sync="loan" :spouse.sync="spouse" />
+              <Dashboard 
+              :affiliate.sync="affiliate"
+              :borrower.sync="borrower"
+              :loan.sync="loan" 
+              :spouse.sync="spouse" />
             </v-card-text>
           </v-card>
         </v-tab-item>
@@ -256,6 +270,7 @@
               <Profile
                 v-if="!reload"
                 :affiliate.sync="affiliate"
+                :borrower.sync="borrower"
                 :addresses.sync="addresses"
                 :editable.sync="editable"
                 :permission="permission"
@@ -263,24 +278,26 @@
             </v-card-text>
           </v-card>
         </v-tab-item>
-        <!--<v-tab-item :value="'tab-5'">
+        <v-tab-item :value="'tab-5'">
           <v-card flat tile>
             <v-card-text class="py-0 pl-0">
-              <PoliceData
+              <Spouse
                 v-if="!reload"
-                :affiliate.sync="affiliate"
+                state_id="4"
+                :spouse.sync="spouse"
                 :editable.sync="editable"
                 :permission="permission"
               />
             </v-card-text>
           </v-card>
-        </v-tab-item>-->
-        <v-tab-item :value="'tab-5'">
+        </v-tab-item>
+        <v-tab-item :value="'tab-6'">
           <v-card flat tile>
             <v-card-text class="py-0 pl-0">
               <AdditionalInformation
                 v-if="!reload"
                 :affiliate.sync="affiliate"
+                :borrower.sync="borrower"
                 :addresses.sync="addresses"
                 :editable.sync="editable"
                 :permission="permission"
@@ -289,26 +306,27 @@
             </v-card-text>
           </v-card>
         </v-tab-item>
-
-        <v-tab-item :value="'tab-6'">
+        <v-tab-item :value="'tab-7'">
           <v-card flat tile>
             <v-card-text class="pa-0 pl-3 pr-10 py-0">
               <Kardex
               :loan.sync="loan"
               :bus="bus"
-              :affiliate.sync="affiliate" />
+              :affiliate.sync="affiliate"
+              :borrower.sync="borrower" />
             </v-card-text>
           </v-card>
         </v-tab-item>
 
-        <v-tab-item :value="'tab-7'">
+        <v-tab-item :value="'tab-8'">
           <v-card flat tile>
             <v-card-text class="pa-0 pl-3 pr-0 py-0">
-              <ObserverFlow 
-              :loan.sync="loan" 
-              :observations.sync="observations" 
-              :bus1="bus1" 
-              :affiliate.sync="affiliate" />
+              <ObserverFlow
+              :loan.sync="loan"
+              :observations.sync="observations"
+              :bus1="bus1"
+              :affiliate.sync="affiliate"
+              :borrower.sync="borrower" />
             </v-card-text>
           </v-card>
         </v-tab-item>
@@ -341,6 +359,56 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <!--CAMBIO DE GARANTE A PRESTATARIO-->
+      <v-tooltip top v-if="permissionSimpleSelected.includes('create-payment-loan') && (loan.guarantors.length>0 && loan.guarantor_amortizing)">
+        <template v-slot:activator="{ on }">
+          <v-btn
+            fab
+            dark
+            x-small
+            :color="'error'"
+            top
+            left
+            absolute
+            v-on="on"
+            style="margin-left: 400px; margin-top: 100px"
+            @click="dialog_guarantor_lender=true"
+          >
+            <v-icon>mdi-account-switch</v-icon>
+          </v-btn>
+        </template>
+        <div>
+          <span>Cambio de amortización a titular</span>
+        </div>
+      </v-tooltip>
+
+      <v-dialog
+        v-model="dialog_guarantor_lender"
+        max-width="500"
+      >
+        <v-card>
+          <v-card-title>
+            Esta seguro de cambiar la amortizacion al titular?
+          </v-card-title>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn
+              color="red darken-1"
+              text
+              @click="dialog_guarantor_lender = false"
+            >
+              Cancelar
+            </v-btn>
+            <v-btn
+              color="green darken-1"
+              text
+              @click.stop="changeGuarantorLender()"
+            >
+              Aceptar
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
 
     <AddObservation :bus="bus" :loan="loan" />
   </v-card>
@@ -348,14 +416,14 @@
 <script>
 import Breadcrumbs from "@/components/shared/Breadcrumbs"
 import Profile from "@/components/affiliate/Profile"
-import SpecificDataLoan from "@/components/loan/SpecificDataLoan"
+import SpecificDataLoan from "@/components/workflow/SpecificDataLoan"
 import DocumentsFlow from "@/components/workflow/DocumentsFlow"
 import ObserverFlow from "@/components/workflow/ObserverFlow"
 import AddObservation from "@/components/workflow/AddObservation"
-//import PoliceData from "@/components/affiliate/PoliceData"
 import Dashboard from "@/components/workflow/Dashboard"
 import Kardex from "@/components/payment/Kardex"
 import AdditionalInformation from '@/components/affiliate/AdditionalInformation'
+import Spouse from "@/components/affiliate/Spouse"
 
 export default {
   name: "flow-index",
@@ -364,12 +432,12 @@ export default {
     Profile,
     SpecificDataLoan,
     DocumentsFlow,
-    //PoliceData,
     ObserverFlow,
     AddObservation,
     Dashboard,
     Kardex,
-    AdditionalInformation
+    AdditionalInformation,
+    Spouse
   },
   data: () => ({
     bus: new Vue(),
@@ -394,6 +462,17 @@ export default {
       date_derelict: null,
       unit_name: null,
       registration: null
+    },
+    borrower: {
+      first_name: null,
+      second_name: null,
+      last_name: null,
+      mothers_last_name: null,
+      //full_name: null,
+      identity_card: null,
+      registration: null,
+      type: null,
+      disbursable: null
     },
     dialog:false,
     bonos: [0, 0, 0, 0],
@@ -428,11 +507,17 @@ export default {
     role_name: null,
     user_name: null,
     id_street: 0,
+    dialog_guarantor_lender:false,
   }),
   watch: {
     search: _.debounce(function() {
       this.bus.$emit("search", this.search)
-    }, 1000)
+    }, 1000),
+    dialog_guarantor_lender: function(newVal, oldVal){
+      if(newVal!=oldVal){
+        this.getloan(this.$route.params.id)
+      }
+    }
   },
   computed: {
     //permisos del selector global por rol
@@ -473,9 +558,9 @@ export default {
       this.workTray = 'received'
     }*/
     this.getloan(this.$route.params.id)
-    this.getSpouse(this.$route.params.id)
+    //this.getSpouse(this.$route.params.id)
     this.getObservation(this.$route.params.id)
-    this.getProceduretype(this.$route.params.id)
+    //this.getProceduretype(this.$route.params.id)
 
     this.bus1.$on("emitGetObservation", id => {
       //escuchamos la emision de ObserverFlow
@@ -565,7 +650,8 @@ export default {
           this.getLoanproperty(this.loan.property_id)
         }
         this.getProceduretype(this.loan.procedure_modality_id)
-        if (this.loan.disbursable_type == "spouses") {
+        this.borrower = this.loan.borrower[0]
+        if (this.loan.borrower[0].type == "spouses") {
           this.getSpouse(this.affiliate.id)
         }
         this.setBreadcrumbs()
@@ -836,9 +922,10 @@ export default {
           }
         }
       }
-    }
     },
-      async getAddress(id) {
+ 
+
+    async getAddress(id) {
       try {
         this.loading = true
         let res = await axios.get(`affiliate/${id}/address`)
@@ -852,6 +939,22 @@ export default {
         this.loading = false
       }
     },
+
+    async changeGuarantorLender(){
+      try {
+        let res = await axios.post(`switch_guarantor_lender`,{
+            loan_id: this.$route.params.id,
+            role_id: this.$store.getters.rolePermissionSelected.id
+        })
+        this.dialog_guarantor_lender = false
+        this.toastr.success(res.data.validate)
+      } catch (e) {
+        this.toastr.error(res.data.validate)
+        console.log(e)
+      }
+    }
+
+   },
   }
 
 </script>

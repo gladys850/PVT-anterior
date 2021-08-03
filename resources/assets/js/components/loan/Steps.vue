@@ -90,7 +90,6 @@
                 :loan_detail.sync="loan_detail"
                 :data_loan_parent_aux.sync="data_loan_parent_aux"
                 :modalidad.sync="modalidad"
-                :modalidad_id.sync="modalidad.id"
                 :liquid_calificated="liquid_calificated"
                 >
                 <template v-slot:title>
@@ -143,6 +142,7 @@
             :data_loan_parent_aux.sync="data_loan_parent_aux"
             :guarantors.sync="guarantors"
             :affiliate.sync="affiliate"
+            :global_parameters ="global_parameters"
             :modalidad_id.sync="modalidad.id"/>
           <v-container class="py-0" v-show="modalidad.procedure_type_name!='Préstamo Hipotecario' && modalidad.procedure_type_name!='Refinanciamiento Préstamo Hipotecario'">
             <v-row>
@@ -269,7 +269,11 @@ export default {
     addresses: {
       type: Array,
       required: true
-    }
+    },
+    lenders_aux: {
+      type: Array,
+      required: true
+    },
   },
   components: {
     Requirement,
@@ -296,7 +300,7 @@ export default {
     modalities: [],
     guarantors: [],
     lenders:[],
-    lenders_aux:[],
+    //lenders_aux:[],
     data_loan_parent_aux:{},
     data_loan_parent:[],
     modalidad:{},
@@ -307,7 +311,11 @@ export default {
     personal_codebtor:[],
     contrib_codebtor: [],
     contributions_aux: [],
-    liquid_calificated:[],
+    liquid_calificated:[
+      {
+        guarantees:[],
+      }
+    ],
     loan_property: {},
     destino:[],
     //Variables reprogramacion y refinanciamiento
@@ -397,28 +405,10 @@ export default {
         if(n==1)
         {
          this.$refs.ballotsComponent.getLoanModalityAffiliate(this.$route.query.affiliate_id)
-         // this.$refs.ballotsComponent.getLoanModalityAffiliate()
-        }
+          }
         if(n==2)
         {
-          this.$refs.BallotsResult.simuladores()
-        }
-        if(n==3){
-          console.log('Estos son los lenders')
-          console.log(this.lenders)
-
-          console.log('Calculator')
-          console.log(this.calculator_result)
-        }
-        if(n==4)
-        {
-          console.log('segundo'+this.modalidad.personal_reference)
-        }
-        if(n==5)
-        {
-          //this.personal()
-          //this.savePersonalReference()
-          //console.log('segundo'+this.modalidad.personal_reference)
+          this.$refs.BallotsResult.simulator()
         }
         this.e1 = n + 1
       }
@@ -430,9 +420,7 @@ export default {
 
     async addDataLoan()
     {
-      console.log('entro a añadir loan')
-      if(!this.isNew){ //Si es nuevo y rehacer de nuevo
-        //this.data_loan_parent.push(this.data_loan_parent_aux);
+       if(!this.isNew){ //Si es nuevo y rehacer de nuevo
           this.data_loan_parent=[]
           this.data_loan_parent.push({
             code: this.data_loan_parent_aux.code,
@@ -443,7 +431,6 @@ export default {
             estimated_quota: this.data_loan_parent_aux.estimated_quota,
           });
         }
-       console.log(this.data_loan_parent)
     },
     async getProcedureType(){
       try {
@@ -625,7 +612,7 @@ export default {
 
          if(this.modalidad.procedure_type_name == 'Préstamo Hipotecario' || this.modalidad.procedure_type_name == 'Refinanciamiento Préstamo Hipotecario')
           {
-              if(this.loan_detail.net_realizable_value<=this.modalidad.maximun_amoun)
+            if(this.loan_detail.net_realizable_value<=this.modalidad.maximun_amoun)
               {
                 this.amount_requested=this.loan_detail.net_realizable_value
               }
@@ -655,8 +642,11 @@ export default {
 
               for(let i = 0; i < this.lenders.length; i++ ){
                 //Armar el nombre de los lenders
-                let res4 = await axios.get(`affiliate/${this.lenders[i].affiliate_id}`)
-                this.lenders_aux[i] =res4.data.full_name
+                if(i > 0)
+                {
+                  let res4 = await axios.get(`affiliate/${this.lenders[i].affiliate_id}`)
+                  this.lenders_aux.push(res4.data.full_name)
+                }
                 //obtener las contribuciones para hipotecario de contrib_codebtor, i=0 es lender de ballots
                 this.lenders[i].payment_percentage=this.calculator_result.affiliates[i].payment_percentage
                 this.lenders[i].indebtedness_calculated=this.calculator_result.affiliates[i].indebtnes_calculated
@@ -805,6 +795,17 @@ export default {
         console.log(e)
       }
     },
+    async getLenders(){
+
+       // this.toastr.success(this.lenders.length)
+      
+        for(let i = 0; i < this.lenders.length; i++ ){
+                //Armar el nombre de los lenders
+                let res4 = await axios.get(`affiliate/${this.lenders[i].affiliate_id}`)
+                this.lenders_aux[i] =res4.data.full_name
+        }
+        
+    },
 
     validateStepsOne(){
       //this.contributions = []
@@ -916,63 +917,75 @@ export default {
 
     validateStepsTwo()
     {
-      if(!this.loan_detail.maximum_suggested_valid){
-        this.toastr.error("El monto solicitado no pertenece a esta modalidad.")
-      }else{
-        if(!this.loan_detail.is_valid)
+      if(this.calculator_result.amount_requested < 1 )
+      {
+        this.toastr.error("El monto solicitado no puede ser 0")
+      }
+      else{
+        if(this.calculator_result.months_term < 1 )
         {
-          this.toastr.error("No puede quedarse con un liquido menor al monto de subsistencia.")
+          this.toastr.error("El plazo no puede ser 0")
         }
-        else{
-          if(!(this.isNew || (this.remake && this.data_loan.parent_reason == null))){
-            if(this.data_loan_parent_aux.code==null)
-            {
-              this.toastr.error("Tiene que llenar el Codigo del Prestamo Padre.")
-            }else{
-              if(this.data_loan_parent_aux.disbursement_date== null)
+        else
+        {
+          if(!this.loan_detail.maximum_suggested_valid){
+          this.toastr.error("El monto solicitado no pertenece a esta modalidad.")
+          }else{
+          if(!this.loan_detail.is_valid)
+          {
+            this.toastr.error("No puede quedarse con un liquido menor al monto de subsistencia.")
+          }
+          else{
+            if(!(this.isNew || (this.remake && this.data_loan.parent_reason == null))){
+              if(this.data_loan_parent_aux.code==null)
               {
-                this.toastr.error("Tiene que llenar la fecha de desembolso del Préstamo Padre.")
+                this.toastr.error("Tiene que llenar el Codigo del Prestamo Padre.")
               }else{
-                if(this.data_loan_parent_aux.amount_approved==null)
+                if(this.data_loan_parent_aux.disbursement_date== null)
                 {
-                  this.toastr.error("Tiene que llenar el Monto del Prestamo Padre.")
+                  this.toastr.error("Tiene que llenar la fecha de desembolso del Préstamo Padre.")
                 }else{
-                  if(this.data_loan_parent_aux.loan_term==null)
+                  if(this.data_loan_parent_aux.amount_approved==null)
                   {
-                    this.toastr.error("Tiene que llenar el Plazo del Prestamo Padre.")
+                    this.toastr.error("Tiene que llenar el Monto del Prestamo Padre.")
                   }else{
-                    if(this.data_loan_parent_aux.balance==null)
+                    if(this.data_loan_parent_aux.loan_term==null)
                     {
-                      this.toastr.error("Tiene que llenar el Saldo del Prestamo Padre.")
+                      this.toastr.error("Tiene que llenar el Plazo del Prestamo Padre.")
                     }else{
-                      if(this.reprogramming){
-                        if(this.data_loan_parent_aux.loan_term >= this.calculator_result.months_term )
-                        {
-                          this.toastr.error("El plazo no puede ser menor o igual al plazo anterior.")
-                        }else{
-                          if(this.data_loan_parent_aux.balance == this.calculator_result.amount_requested)
-                          {
-                            this.addDataLoan()
-                            this.nextStep(2)
-                          }else{
-                            this.toastr.error("El Monto Solicitado debe ser igual al Saldo.")
-                          }
-                        }
+                      if(this.data_loan_parent_aux.balance==null)
+                      {
+                        this.toastr.error("Tiene que llenar el Saldo del Prestamo Padre.")
                       }else{
-                        if(parseFloat(this.data_loan_parent_aux.balance) >= parseFloat(this.calculator_result.amount_requested))
-                        {
-                          this.toastr.error("El saldo no puede ser mayor al Monto Solicitado.")
-                        }
-                        else{
-                          if(this.data_loan_parent_aux.estimated_quota==null)
+                        if(this.reprogramming){
+                          if(this.data_loan_parent_aux.loan_term >= this.calculator_result.months_term )
                           {
-                            this.toastr.error("Tiene que llenar la Cuota del Prestamo Padre.")
+                            this.toastr.error("El plazo no puede ser menor o igual al plazo anterior.")
                           }else{
-                            if( parseFloat(this.data_loan_parent_aux.estimated_quota) <= parseFloat(this.calculator_result.quota_calculated_estimated_total)){
+                            if(this.data_loan_parent_aux.balance == this.calculator_result.amount_requested)
+                            {
                               this.addDataLoan()
                               this.nextStep(2)
                             }else{
-                              this.toastr.error("La cuota del nuevo prestamo no puede ser menor a la antigua cuota.")
+                              this.toastr.error("El Monto Solicitado debe ser igual al Saldo.")
+                            }
+                          }
+                        }else{
+                          if(parseFloat(this.data_loan_parent_aux.balance) >= parseFloat(this.calculator_result.amount_requested))
+                          {
+                            this.toastr.error("El saldo no puede ser mayor al Monto Solicitado.")
+                          }
+                          else{
+                            if(this.data_loan_parent_aux.estimated_quota==null)
+                            {
+                              this.toastr.error("Tiene que llenar la Cuota del Prestamo Padre.")
+                            }else{
+                              if( parseFloat(this.data_loan_parent_aux.estimated_quota) <= parseFloat(this.calculator_result.quota_calculated_estimated_total)){
+                                this.addDataLoan()
+                                this.nextStep(2)
+                              }else{
+                                this.toastr.error("La cuota del nuevo prestamo no puede ser menor a la antigua cuota.")
+                              }
                             }
                           }
                         }
@@ -981,26 +994,28 @@ export default {
                   }
                 }
               }
-            }
-            }else{
-              if(this.modalidad.procedure_type_name=='Préstamo Hipotecario' || this.modalidad.procedure_type_name == 'Refinanciamiento Préstamo Hipotecario'){
-                 if(parseFloat(this.calculator_result.amount_requested) > parseFloat(this.loan_detail.net_realizable_value) )
-                {
-                  this.toastr.error("El Monto Solicitado no puede ser mayor al Monto del Inmueble")
-                }
-                else{
-                  this.nextStep(2)
-                }
               }else{
-                if(this.calculator_result.amount_requested>this.loan_detail.amount_maximum_suggested)
-                {
-                  this.toastr.error("El Monto Solicitado no puede ser mayor al Monto maximo sugerido")
+                if(this.modalidad.procedure_type_name=='Préstamo Hipotecario' || this.modalidad.procedure_type_name == 'Refinanciamiento Préstamo Hipotecario'){
+                  if(parseFloat(this.calculator_result.amount_requested) > parseFloat(this.loan_detail.net_realizable_value) )
+                  {
+                    this.toastr.error("El Monto Solicitado no puede ser mayor al Monto del Inmueble")
+                  }
+                  else{
+                    this.nextStep(2)
+                  }
+                }else{
+                  if(this.calculator_result.amount_requested>this.loan_detail.amount_maximum_suggested)
+                  {
+                    this.toastr.error("El Monto Solicitado no puede ser mayor al Monto maximo sugerido")
+                  }
+                  else{
+                    this.nextStep(2)
+                  }
                 }
-                else{
-                  this.nextStep(2)
-                }
-              }
+            }
           }
+        }
+
         }
       }
     },

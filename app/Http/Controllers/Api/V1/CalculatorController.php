@@ -406,7 +406,7 @@ class CalculatorController extends Controller
         $livelihood_amount = true;
         $quantity_guarantors = $procedure_modality->loan_modality_parameter->guarantors;
         if($quantity_guarantors > 0){$type = false;
-            $debt_index = $procedure_modality->loan_modality_parameter->debt_index;
+            $debt_index = 50; // solo para garantias se evalua al 50%
             $affiliate_id = $request->affiliate_id;
             $affiliate = Affiliate::findOrFail($request->affiliate_id);
             $contributions = collect($request->contributions);

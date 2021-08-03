@@ -14,9 +14,8 @@ import FlowIndex from '@/components/workflow/Index'
 import FlowAdd from '@/components/workflow/Add'
 import PaymentAdd from '@/components/payment/Add'
 import LoanPaymentIndex from '@/components/payment/Index'
-import ImportExport from '@/components/payment/ImportExport'
 import ImportExportPayment from '@/components/payment/ImportExportPayment'
-import ListLoanGenerate from '@/components/payment/ListLoanGenerate'
+import LoansGenerateIndex from '@/components/payment/LoansGenerateIndex'
 import ListPaymentGenerate from '@/components/payment/ListPaymentGenerate'
 import ChangeRol from '@/components/dashboard/ChangeRol'
 import ListVouchers from '@/components/treasury/ListVouchers'
@@ -127,14 +126,6 @@ export const routes = [
     }
   },
   {
-    path: '/importExport',
-    name: 'ImportExport',
-    component: ImportExport,
-    meta: {
-      requiresAuth: true
-    }
-  },
-  {
     path: '/importExportPayment',
     name: 'ImportExportPayment',
     component: ImportExportPayment,
@@ -159,9 +150,9 @@ export const routes = [
     }
   },
   {
-    path: '/listLoanGenerate',
-    name: 'listLoanGenerate',
-    component: ListLoanGenerate,
+    path: '/loansGenerate',
+    name: 'loansGenerateIndex',
+    component: LoansGenerateIndex,
     meta: {
       requiresAuth: true
     }
@@ -208,15 +199,15 @@ export const routes = [
     }
   },
   {
-    path: '/listTracing',
-    name: 'listTracing',
+    path: '/ListTracingLoans',
+    name: 'ListTracingLoans',
     component: ListTracingLoans,
     meta: {
       requiresAuth: true
     }
   },
   {
-    path: '/tracing/:id',
+    path: '/tracingLoan/:id',
     name: 'tracingAdd',
     component: TracingAdd,
     meta: {

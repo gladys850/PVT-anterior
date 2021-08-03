@@ -12,7 +12,7 @@
       <v-container>
         <div>
           <v-row>
-            <v-col cols="5" v-show="!ver">
+            <v-col cols="5" v-show="!show">
               <span>
                 <v-tooltip left >
                 <template v-slot:activator="{ on }">
@@ -24,7 +24,7 @@
                     bottom
                     right
                     v-on="on"
-                    :to="{ name: 'flowAdd', params: { id: $route.query.loan_id ? $route.query.loan_id : loan_payment.loan_id }, query:{ redirectTab: 6 } }"
+                    :to="{ name: 'flowAdd', params: { id: $route.query.loan_id ? $route.query.loan_id : loan_payment.loan_id }, query:{ redirectTab: 7 } }"
                   >
                   <v-icon>mdi-arrow-left-bold-outline</v-icon>
                   </v-btn>
@@ -34,55 +34,37 @@
               </span>
               {{"TITULAR: "+$options.filters.fullName(this.loan.lenders[0], true)}}
             </v-col>
-            <v-col  cols="3" v-show="!ver">
+            <v-col  cols="3" v-show="!show">
               {{"PRESTAMO: "+this.loan.code}}
             </v-col>
-            <v-col  cols="2" v-show="!ver">
+            <v-col  cols="2" v-show="!show">
               MONTO: {{this.loan.amount_approved | money}}
             </v-col>
-             <v-col  cols="2" v-show="!ver">
+             <v-col  cols="2" v-show="!show">
               CUOTA: {{this.loan.estimated_quota | money}}
             </v-col>
-            <v-col  cols="4" v-show="ver" class='mb-0 pb-0'>
+            <v-col  cols="4" v-show="show" class='mb-0 pb-0'>
                 <span>
-                <!--<v-tooltip left>
-                <template v-slot:activator="{ on }">
-                  <v-btn
-                    icon
-                    dark
-                    small
-                    color="success"
-                    bottom
-                    right
-                    v-on="on"
-                    :to="{ name: 'flowAdd', params: { id: loan_payment.loan_id,  workTray: 'received'}, query:{ redirectTab: 6 } }"
-                  >
-                  <v-icon>mdi-arrow-left-bold-outline</v-icon>
-                  </v-btn>
-                </template>
-                <span>Regresar tesoreria</span>
-                </v-tooltip>-->
               </span>
              {{"TITULAR: "+$options.filters.fullName(this.loan.lenders[0], true)}}
             </v-col>
-              <v-col  cols="4" v-show="ver" class='mb-0 pb-0'>
+              <v-col  cols="4" v-show="show" class='mb-0 pb-0'>
               {{"CODIGO DEL PAGO: "+' '+this.loan_payment.code}}
             </v-col>
-            <v-col  cols="4" v-show="ver" class='mb-0 pb-0'>
+            <v-col  cols="4" v-show="show" class='mb-0 pb-0'>
               {{"PRESTAMO: "+this.loan.code}}
             </v-col>
-            <v-col  cols="4" v-show="ver" class='py-1'>
+            <v-col  cols="4" v-show="show" class='py-1'>
               NÚMERO DE CUOTA: {{this.loan_payment.quota_number }}
             </v-col>
-            <v-col  cols="4" v-show="ver" class='py-1'>
+            <v-col  cols="4" v-show="show" class='py-1'>
               MONTO: {{this.loan.amount_approved | money}}
             </v-col>
-            <v-col  cols="4" v-show="ver" class='py-1'>
+            <v-col  cols="4" v-show="show" class='py-1'>
               CUOTA ESTIMADA MENSUAL : {{this.loan.estimated_quota | money}}
             </v-col>
           </v-row>
-          <Steps
-          :loan.sync="loan"/>
+          <Steps/>
         </div>
       </v-container>
     </template>
@@ -104,28 +86,26 @@ export default {
       lenders:[{}]
     },
     loan_payment:{},
-    degree_name: null,
-    category_name: null,
-  }),
+    }),
   computed: {
     isNew() {
       return this.$route.params.hash == 'new'
     },
-     editable(){
+    edit(){
       return  this.$route.params.hash == 'edit'
     },
-    ver(){
+    show(){
       return  this.$route.params.hash == 'view'
     },
   },
   beforeMount() {
     this.setBreadcrumbs()
-      if(this.ver){
+      if(this.show){
         this.getLoanPayment(this.$route.query.loan_payment)
       }
   },
   mounted() {
-    if(this.editable){
+    if(this.edit){
       this.getLoanPayment(this.$route.query.loan_payment)
     }
     if(this.isNew){
@@ -164,24 +144,24 @@ export default {
       let breadcrumbs = [
         {
           text: 'Cobros',
-          to: { name: 'paymentIndex' }
+          to: { name: 'loanPaymentIndex' }
         }
       ]
       if (this.isNew) {
         breadcrumbs.push({
           text: 'Nuevo Cobro',
-          to: { name: 'paymentIndex' }
+          to: { name: 'loanPaymentIndex' }
         })
       } else {
-        if (this.ver) {
+        if (this.show) {
           breadcrumbs.push({
           text: 'Ver Cobro',
-          to: { name: 'paymentIndex' }
+          to: { name: 'loanPaymentIndex' }
           })
         }else{
           breadcrumbs.push({
             text: 'Editar Cobro',
-            to: { name: 'paymentIndex' }
+            to: { name: 'loanPaymentIndex'}
           })
         }
       }

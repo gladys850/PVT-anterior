@@ -98,6 +98,8 @@ class LoanController extends Controller
         }
         $loan->payment_type;
         $loan->state;
+        $loan->borrower = $loan->borrower;
+        $loan->borrowerguarantors = $loan->borrowerguarantors;
         //$loan->procedure=$loan->modality;
         //$loan->loan_contribution = $loan->loan_contribution_adjusts;
         return $loan;
@@ -577,11 +579,11 @@ class LoanController extends Controller
                 $affiliates[$a] = $lender['affiliate_id'];
                 $a++;
             }
-            if (!$request->has('disbursable_id')) {
+            if (!$request->has('affiliate_id')) {
                 $disbursable_id = $request->lenders[0]['affiliate_id'];
             } else {
-                if (!in_array($request->disbursable_id, $affiliates)) abort(404);
-                $disbursable_id = $request->disbursable_id;
+                if (!in_array($request->affiliate_id, $affiliates)) abort(404);
+                $disbursable_id = $request->affiliate_id;
             }
             $disbursable = Affiliate::findOrFail($disbursable_id);
         }
@@ -593,7 +595,8 @@ class LoanController extends Controller
                 }
             }
             if (Auth::user()->can('update-loan')) {
-                $loan->fill(array_merge($request->except($exceptions), isset($disbursable) ? (array)self::verify_spouse_disbursable($disbursable) : []));
+               // $loan->fill(array_merge($request->except($exceptions), isset($disbursable) ? (array)self::verify_spouse_disbursable($disbursable) : []));
+                $loan->fill(array_merge($request->except($exceptions)));
             }
             if (in_array('validated', $exceptions)) $loan->validated = $request->validated;
             if ($request->has('role_id')) {
@@ -604,7 +607,7 @@ class LoanController extends Controller
                 }
             }
         } else {
-            $loan = new Loan(array_merge($request->all(), (array)self::verify_spouse_disbursable($disbursable), ['amount_approved' => $request->amount_requested]));
+            $loan = new Loan(array_merge($request->all(), ['affiliate_id' => $disbursable->id,'amount_approved' => $request->amount_requested]));
         }
 
         //heredar el codigo del prestamo padre
@@ -661,6 +664,7 @@ class LoanController extends Controller
                 }else{
                     $indebtedness = 0;
                 }
+                $affiliate_lender = Affiliate::findOrFail($affiliate['affiliate_id']);
                 $affiliates[$a] = [
                     'affiliate_id' => $affiliate['affiliate_id'],
                     'payment_percentage' => $affiliate['payment_percentage'],
@@ -674,6 +678,7 @@ class LoanController extends Controller
                     'guarantor' => false,
                     'contributionable_type' => $affiliate['contributionable_type'],
                     'contributionable_ids' => json_encode($affiliate['contributionable_ids']),
+                    'type' =>$affiliate_lender->dead ? 'spouses':'affiliates' ,
                 ];
                 if(array_key_exists('loan_contributions_adjust_ids', $affiliate)){
                     $idsajust=$affiliate['loan_contributions_adjust_ids'];
@@ -686,9 +691,10 @@ class LoanController extends Controller
                     $ajuste->update();
                 }
                 $a++;
-            }           
+            }
             if($request->guarantors){
                 foreach ($request->guarantors as $affiliate) {
+                    $affiliate_guarantor = Affiliate::findOrFail($affiliate['affiliate_id']);
                     $affiliates[$a] = [
                         'affiliate_id' => $affiliate['affiliate_id'],
                         'payment_percentage' => $affiliate['payment_percentage'],
@@ -702,6 +708,7 @@ class LoanController extends Controller
                         'guarantor' => true,
                         'contributionable_type'=>$affiliate['contributionable_type'],
                         'contributionable_ids'=>json_encode($affiliate['contributionable_ids']),
+                        'type' =>$affiliate_guarantor->dead ? 'spouses':'affiliates',
                     ];
                     if(array_key_exists('loan_contributions_adjust_ids', $affiliate)){
                         $idsajust=$affiliate['loan_contributions_adjust_ids'];
@@ -713,7 +720,7 @@ class LoanController extends Controller
                         $ajuste->loan_id=$loan->id;
                         $ajuste->update();
                     }
-                    
+
                     $a++;
                 }
             }
@@ -837,6 +844,27 @@ class LoanController extends Controller
         return $object;
     }
 
+    public static function verify_loan_affiliates(Affiliate $affiliate, Loan $loan)
+    {
+        foreach ($loan->loan_affiliates as $loan_affiliate) {
+            if($loan_affiliate->pivot->affiliate_id == $affiliate->id){
+                if($loan_affiliate->pivot->type =="spouses"){
+                    $spouse = $loan_affiliate->spouse;
+                    $object = (object)[
+                        'type' => 'spouses',
+                        'disbursable' => $spouse
+                    ];
+                }else{
+                    $object = (object)[
+                        'type' => 'affiliates',
+                        'disbursable' => $affiliate
+                    ];
+                }
+            }
+        }
+        return $object;
+    }
+
     public function switch_states()
     {
         $user = User::whereUsername('admin')->first();
@@ -908,11 +936,11 @@ class LoanController extends Controller
         if($loan->parent_loan_id) $parent_loan = Loan::findOrFail($loan->parent_loan_id);
         $lenders = [];
         foreach ($loan->lenders as $lender) {
-            $lenders[] = self::verify_spouse_disbursable($lender);
+            $lenders[] = self::verify_loan_affiliates($lender,$loan);
         }
         $guarantors = [];
         foreach ($loan->guarantors as $guarantor) {
-            $guarantors[] = $guarantor;
+            $guarantors[] = self::verify_loan_affiliates($guarantor,$loan)->disbursable;
         }
         $employees = [
             ['position' => 'Director General Ejecutivo','name'=>'CNL. DESP. EDGAR JOSE CORTEZ ALBORNOZ','identity_card'=>'3351371 LP'],
@@ -972,9 +1000,9 @@ class LoanController extends Controller
     {
         $lend='';
         foreach ($loan->lenders as $lender) {
-            $lenders[] = self::verify_spouse_disbursable($lender);
+            $lenders[] = self::verify_loan_affiliates($lender,$loan)->disbursable;
         }
-        foreach ($loan->lenders as $lender) {
+        foreach ($lenders as $lender) {
             $lend=$lend.'*'.' ' . $lender->first_name .' '. $lender->second_name .' '. $lender->last_name.' '. $lender->mothers_last_name;
         }
         
@@ -999,14 +1027,14 @@ class LoanController extends Controller
         $is_spouse = false;
         $file_title = implode('_', ['FORM','SOLICITUD','PRESTAMO', $loan->code,Carbon::now()->format('m/d')]);
         foreach ($loan->lenders as $lender) {
-            array_push($lenders, self::verify_spouse_disbursable($lender)->disbursable);
+            array_push($lenders, self::verify_loan_affiliates($lender,$loan)->disbursable);
             if($lender->dead) $is_dead = true;
         }
         $persons = collect([]);
         $loans = collect([]);
         foreach ($lenders as $lender) {
             //balance de otros prestamos
-            if(!$lender->affiliate_id){
+        if(!$lender->affiliate_id){
                 foreach($lender->current_loans as $current_loans){
                     $loans->push([
                         'code' => $current_loans->code,
@@ -1016,7 +1044,7 @@ class LoanController extends Controller
                 }
         }
         else{
-            foreach($lender->current_loans() as $current_loans){
+            foreach($lender->current_loans as $current_loans){
                 $loans->push([
                     'code' => $current_loans->code,
                     'balance' => $current_loans->balance,
@@ -1098,7 +1126,7 @@ class LoanController extends Controller
             $lenders = [];
             $is_dead = false;
             foreach ($loan->lenders as $lender) {
-                array_push($lenders, self::verify_spouse_disbursable($lender)->disbursable);
+                array_push($lenders, self::verify_loan_affiliates($lender,$loan)->disbursable);
                 //$lenders[] = self::verify_spouse_disbursable($lender)->disbursable;
                 if($lender->dead) $is_dead = true;
             }
@@ -1154,9 +1182,9 @@ class LoanController extends Controller
     if(!$parent_loan_id == null && !$parent_reason == null){
         $loan_type_title = $loan->parent_reason== "REFINANCIAMIENTO" ? "REFINANCIAMIENTO":"REPROGRAMACIÓN";
     }
-        $lenders = [];     
+        $lenders = [];
         foreach ($loan->lenders as $lender) {
-            $lenders[] = self::verify_spouse_disbursable($lender);         
+            $lenders[] = self::verify_loan_affiliates($lender,$loan);
         }
         $data = [
            'header' => [
@@ -1286,9 +1314,10 @@ class LoanController extends Controller
             $affiliate_state=$affiliate->affiliate_state->affiliate_state_type->name;
             $payment->state_affiliate = strtoupper($affiliate_state);
 
-            $payment->initial_affiliate = $affiliate->initials;//iniciales
+            $payment->initial_affiliate = LoanController::verify_loan_affiliates($affiliate,$loan)->disbursable->initials;//iniciales
 
             $payment->categorie_id = $request->input('categorie_id');
+            $payment->loan_payment_date = Carbon::now();
 
             $payment->paid_by = $request->input('paid_by');
             if($request->has('user_id')){
@@ -1529,7 +1558,7 @@ class LoanController extends Controller
             $procedure_modality = $loan->modality;
             $lenders = [];
             foreach ($loan->lenders as $lender) {
-                $lenders[] = self::verify_spouse_disbursable($lender)->disbursable;
+                $lenders[] = self::verify_loan_affiliates($lender,$loan)->disbursable;
             }
           $file_title = implode('_', ['KARDEX', $procedure_modality->shortened, $loan->code,Carbon::now()->format('m/d')]);
             $data = [
@@ -1810,7 +1839,8 @@ class LoanController extends Controller
                     'liquid_qualification_calculated' => (float)$lender->pivot->liquid_qualification_calculated,
                     'guarantor' => false,
                     'contributionable_type' => $lender->pivot->contributionable_type,
-                    'contributionable_ids' => $lender->pivot->contributionable_ids
+                    'contributionable_ids' => $lender->pivot->contributionable_ids,
+                    'type' => $lender->pivot->type
                     ];
                 $lender->loans()->where('id',$loan->id)->sync([$lenders_update]);
             }            
@@ -1839,7 +1869,8 @@ class LoanController extends Controller
                             'liquid_qualification_calculated' => (float)$guarantor->pivot->liquid_qualification_calculated,
                             'guarantor' => true,
                             'contributionable_type' => $guarantor->pivot->contributionable_type,
-                            'contributionable_ids' => $guarantor->pivot->contributionable_ids
+                            'contributionable_ids' => $guarantor->pivot->contributionable_ids,
+                            'type' => $lender->pivot->type
                         ];
                         $guarantor->loans()->where('id',$loan->id)->sync([$guarantor_update]);
                 } 
@@ -1891,21 +1922,23 @@ class LoanController extends Controller
    * @queryParam id_loan Buscar ID del Préstamo. Example: 1
    * @queryParam code_loan  Buscar código del Préstamo. Example: PTMO000012-2021
    * @queryParam id_affiliate  Buscar por ID del affiliado. Example: 33121
-   * @queryParam identity_card_affiliate  Buscar por nro de CI del afiliado. Example: 10069775
-   * @queryParam registration_affiliate  Buscar por Matricula del afiliado. Example: 100697MDF
-   * @queryParam last_name_affiliate Buscar por primer apellido del afiliado. Example: RIVERA
-   * @queryParam mothers_last_name_affiliate Buscar por segundo apellido del afiliado. Example: ARTEAG
-   * @queryParam first_name_affiliate Buscar por primer Nombre del afiliado. Example: ABAD
-   * @queryParam second_name_affiliate Buscar por segundo Nombre del afiliado. Example: FAUST
-   * @queryParam surname_husband_affiliate Buscar por Apellido de casada Nombre del afiliado. Example: De LA CRUZ
+   * @queryParam identity_card_borrower  Buscar por nro de CI del Prestatario. Example: 10069775
+   * @queryParam registration_borrower  Buscar por Matricula del Prestatario. Example: 100697MDF
+   * @queryParam last_name_borrower Buscar por primer apellido del Prestatario. Example: RIVERA
+   * @queryParam mothers_last_name_borrower Buscar por segundo apellido del Prestatario. Example: ARTEAG
+   * @queryParam first_name_borrower Buscar por primer Nombre del Prestatario. Example: ABAD
+   * @queryParam second_name_borrower Buscar por segundo Nombre del Prestatario. Example: FAUST
+   * @queryParam surname_husband_borrower Buscar por Apellido de casada Nombre del Prestatario. Example: De LA CRUZ
+   * @queryParam full_name_borrower Buscar por Apellido de casada Nombre del Prestatario. Example: RIVERA ARTEAG ABAD FAUST De LA CRUZ
    * @queryParam sub_modality_loan Buscar por sub modalidad del préstamo. Example: Corto plazo sector activo
    * @queryParam modality_loan Buscar por Modalidad del prestamo. Example: Préstamo a corto plazo
+   * @queryParam shortened_sub_modality_loan Buscar por nombre corto de la sub modalidad del prestamo. Example:COR-ACT
    * @queryParam amount_approved_loan Buscar monto aprobado del afiliado. Example: 25000
    * @queryParam state_type_affiliate Buscar por tipo de estado del afiliado. Example: Activo
    * @queryParam state_affiliate Buscar por estado del affiliado. Example: Servicio
    * @queryParam quota_loan Buscar por la quota del prestamo. Example: 1500
    * @queryParam state_loan Buscar por el estado del prestamo. Example: En proceso
-   * @queryParam guarantor_loan_affiliate Buscar los garantes del préstamo. Example: false
+   * @queryParam guarantor_loan Buscar los garantes del préstamo. Example: false
    * @queryParam pension_entity_affiliate Buscar por la La pension entidad del afiliado. Example: SENASIR
    * @queryParam disbursement_date_loan Buscar por fecha de desembolso. Example: 2021
    * @authenticated
@@ -1937,24 +1970,27 @@ class LoanController extends Controller
     $id_loan = request('id_loan') ?? '';
     $code_loan = request('code_loan') ?? '';
     $id_affiliate = request('id_affiliate') ?? '';
-    $identity_card_affiliate = request('identity_card_affiliate') ?? '';
-    $registration_affiliate = request('registration_affiliate') ?? '';
+    $identity_card_borrower = request('identity_card_borrower') ?? '';
+    $registration_borrower = request('registration_borrower') ?? '';
  
-    $last_name_affiliate = request('last_name_affiliate') ?? '';
-    $mothers_last_name_affiliate = request('mothers_last_name_affiliate') ?? '';
-    $first_name_affiliate = request('first_name_affiliate') ?? '';
-    $second_name_affiliate = request('second_name_affiliate') ?? '';
-    $surname_husband_affiliate = request('surname_husband_affiliate') ?? '';
+    $last_name_borrower = request('last_name_borrower') ?? '';
+    $mothers_last_name_borrower = request('mothers_last_name_borrower') ?? '';
+    $first_name_borrower = request('first_name_borrower') ?? '';
+    $second_name_borrower = request('second_name_borrower') ?? '';
+    $surname_husband_borrower = request('surname_husband_borrower') ?? '';
+    $full_name_borrower = request('full_name_borrower') ?? '';
  
     $sub_modality_loan = request('sub_modality_loan') ?? '';
     $modality_loan = request('modality_loan') ?? '';
+    $shortened_sub_modality_loan = request('shortened_sub_modality_loan') ?? '';
+
     $amount_approved_loan = request('amount_approved_loan') ?? '';
     $state_type_affiliate = request('state_type_affiliate') ?? '';
     $state_affiliate = request('state_affiliate') ?? '';
     $state_loan = request('state_loan') ?? '';
  
     $quota_loan = request('quota_loan') ?? '';
-    $guarantor_loan_affiliate = request('guarantor_loan_affiliate') ?? '';
+    $guarantor_loan = request('guarantor_loan') ?? '';
     $pension_entity_affiliate = request('pension_entity_affiliate') ?? '';
 
     $disbursement_date_loan = request('disbursement_date_loan') ?? '';
@@ -1962,162 +1998,145 @@ class LoanController extends Controller
     $amount_approved_loan = request('amount_approved_loan') ?? '';
  
        if ($id_loan != '') {
-        array_push($conditions, array('loans.id', 'ilike', "%{$id_loan}%"));
+        array_push($conditions, array('view_loan_borrower.id_loan', 'ilike', "%{$id_loan}%"));
       }
  
       if ($code_loan != '') {
-        array_push($conditions, array('loans.code', 'ilike', "%{$code_loan}%"));
+        array_push($conditions, array('view_loan_borrower.code_loan', 'ilike', "%{$code_loan}%"));
       }
   
       if ($id_affiliate != '') {
-        array_push($conditions, array('affiliates.id', 'ilike', "%{$id_affiliate}%"));
+        array_push($conditions, array('view_loan_borrower.id_affiliate', 'ilike', "%{$id_affiliate}%"));
       }
-      if ($identity_card_affiliate != '') {
-        array_push($conditions, array('affiliates.identity_card', 'ilike', "%{$identity_card_affiliate}%"));
+
+      if ($identity_card_borrower != '') {
+        array_push($conditions, array('view_loan_borrower.identity_card_borrower', 'ilike', "%{$identity_card_borrower}%"));
       }
-      if ($registration_affiliate != '') {
-        array_push($conditions, array('affiliates.registration', 'ilike', "%{$registration_affiliate}%"));
+
+      if ($registration_borrower != '') {
+        array_push($conditions, array('view_loan_borrower.registration_borrower', 'ilike', "%{$registration_borrower}%"));
       }
-  
-      if ($last_name_affiliate != '') {
-        array_push($conditions, array('affiliates.last_name', 'ilike', "%{$last_name_affiliate}%"));
+
+      if ($last_name_borrower != '') {
+        array_push($conditions, array('view_loan_borrower.last_name_borrower', 'ilike', "%{$last_name_borrower}%"));
       }
-      if ($mothers_last_name_affiliate != '') {
-        array_push($conditions, array('affiliates.mothers_last_name', 'ilike', "%{$mothers_last_name_affiliate}%"));
+
+     if ($mothers_last_name_borrower != '') {
+        array_push($conditions, array('view_loan_borrower.mothers_last_name_borrower', 'ilike', "%{$mothers_last_name_borrower}%"));
       }
- 
-      if ($first_name_affiliate != '') {
-        array_push($conditions, array('affiliates.first_name', 'ilike', "%{$first_name_affiliate}%"));//
+
+      if ($first_name_borrower != '') {
+        array_push($conditions, array('view_loan_borrower.first_name_borrower', 'ilike', "%{$first_name_borrower}%"));
       }
-      if ($second_name_affiliate != '') {
-        array_push($conditions, array('affiliates.second_name', 'ilike', "%{$second_name_affiliate}%"));
+
+      if ($second_name_borrower != '') {
+        array_push($conditions, array('view_loan_borrower.second_name_borrower', 'ilike', "%{$second_name_borrower}%"));
       }
-      if ($surname_husband_affiliate != '') {
-        array_push($conditions, array('affiliates.surname_husband', 'ilike', "%{$surname_husband_affiliate}%"));
+
+      if ($surname_husband_borrower != '') {
+        array_push($conditions_or, array('view_loan_borrower.surname_husband_borrower', 'ilike', "%{$surname_husband_borrower}%"));
       }
-  
+      if ($full_name_borrower != '') {
+        array_push($conditions, array('view_loan_borrower.full_name_borrower', 'ilike', "%{$full_name_borrower}%"));
+      }
       if ($sub_modality_loan != '') {
-        array_push($conditions, array('procedure_modalities.name', 'ilike', "%{$sub_modality_loan}%"));
+        array_push($conditions, array('view_loan_borrower.sub_modality_loan', 'ilike', "%{$sub_modality_loan}%"));
       }
+
       if ($modality_loan != '') {
-        array_push($conditions, array('procedure_types.name', 'ilike', "%{$modality_loan}%"));
+        array_push($conditions, array('view_loan_borrower.modality_loan', 'ilike', "%{$modality_loan}%"));
+      }
+      if ($shortened_sub_modality_loan != '') {
+        array_push($conditions, array('view_loan_borrower.shortened_sub_modality_loan', 'ilike', "%{$shortened_sub_modality_loan}%"));
       }
  
       if ($amount_approved_loan != '') {
-        array_push($conditions, array('loans.amount_approved', 'ilike', "%{$amount_approved_loan}%"));
+        array_push($conditions, array('view_loan_borrower.amount_approved_loan', 'ilike', "%{$amount_approved_loan}%"));
       }
       if ($state_type_affiliate != '') {
-        array_push($conditions, array('affiliate_state_types.name', 'ilike', "%{$state_type_affiliate}%"));
+        array_push($conditions, array('view_loan_borrower.state_type_affiliate', 'ilike', "%{$state_type_affiliate}%"));
       }
       if ($state_affiliate != '') {
-        array_push($conditions, array('affiliate_states.name', 'ilike', "%{$state_affiliate}%"));
+        array_push($conditions, array('view_loan_borrower.state_affiliate', 'ilike', "%{$state_affiliate}%"));
       }
   
       if ($quota_loan != '') {
-        array_push($conditions, array('loan_affiliates.quota_treat', 'ilike', "%{$quota_loan}%"));
+        array_push($conditions, array('view_loan_borrower.quota_loan', 'ilike', "%{$quota_loan}%"));
       }
       if ($state_loan != '') {
-        array_push($conditions, array('loan_states.name', 'ilike', "%{$state_loan}%"));
+        array_push($conditions, array('view_loan_borrower.state_loan', 'ilike', "%{$state_loan}%"));
       }
-      if ($guarantor_loan_affiliate != '') {
-        array_push($conditions, array('loan_affiliates.guarantor', 'ilike', "%{$guarantor_loan_affiliate}%"));
+      if ($guarantor_loan != '') {
+        array_push($conditions, array('view_loan_borrower.guarantor_loan', 'ilike', "%{$guarantor_loan}%"));
       }
       if ($pension_entity_affiliate != '') {
-        array_push($conditions, array('pension_entities.name', 'ilike', "%{$pension_entity_affiliate}%"));
+        array_push($conditions, array('view_loan_borrower.pension_entity_affiliate', 'ilike', "%{$pension_entity_affiliate}%"));
       }
       if ($disbursement_date_loan != '') {
-        array_push($conditions, array('loans.disbursement_date', 'ilike', "%{$disbursement_date_loan}%"));
+        array_push($conditions, array('view_loan_borrower.disbursement_date_loan', 'ilike', "%{$disbursement_date_loan}%"));
       }
  
       if($excel==true){
-       
-       $list_loan = DB::table('loans')
-               ->join('procedure_modalities','loans.procedure_modality_id', '=', 'procedure_modalities.id')
-               ->join('procedure_types','procedure_modalities.procedure_type_id', '=', 'procedure_types.id')
-               ->join('loan_states','loans.state_id', '=', 'loan_states.id')
-               ->join('cities','loans.city_id', '=', 'cities.id')
-               ->join('loan_affiliates','loans.id', '=', 'loan_affiliates.loan_id')
-               ->join('affiliates','loan_affiliates.affiliate_id', '=', 'affiliates.id')
-               ->join('affiliate_states','affiliates.affiliate_state_id', '=', 'affiliate_states.id')
-               ->join('affiliate_state_types','affiliate_states.affiliate_state_type_id', '=', 'affiliate_state_types.id')
-               ->leftjoin('pension_entities','affiliates.pension_entity_id', '=', 'pension_entities.id')
-               ->whereNull('loans.deleted_at')
-               ->where($conditions)
-               ->select('loans.id as id_loan','loans.code as code_loan','affiliates.id as id_affiliate','affiliates.identity_card as identity_card_affiliate',
-               'affiliates.registration as registration_affiliate','affiliates.last_name as last_name_affiliate','affiliates.mothers_last_name as mothers_last_name_affiliate',
-               'affiliates.first_name as first_name_affiliate','affiliates.second_name as second_name_affiliate','affiliates.surname_husband as surname_husband_affiliate',
-               'procedure_modalities.name as sub_modality_loan','procedure_types.second_name as modality_loan','loans.amount_approved as amount_approved_loan',
-               'affiliate_state_types.name as state_type_affiliate','affiliate_states.name as state_affiliate','loan_affiliates.quota_treat as quota_loan','loan_states.name as state_loan',
-               'loan_affiliates.guarantor as guarantor_loan_affiliate','pension_entities.name as pension_entity_affiliate','loans.disbursement_date as disbursement_date_loan')
-               //->where('affiliates.identity_card','LIKE'.'%'.$request->identity_card.'%')
-               ->distinct('loans.code')
-               ->orderBy('loans.code', $order_loan)
-               ->get();
- 
+                $list_loan = DB::table('view_loan_borrower')
+                ->where($conditions)
+                ->select('*')
+                ->orderBy('code_loan', $order_loan)
+                ->get();
                foreach ($list_loan as $loan) {
                  $padron = Loan::where('id', $loan->id_loan)->first();
-                 $loan->balance_loan=$padron->balance;
+                 $loan->balance_loan = $padron->balance;
                }
                $File="ListadoPrestamos";
                $data=array(
-                   array("Id del préstamo", "Codigo", "ID afiliado", "Nro de carnet", "Matrícula", "Primer apellido","Segundo apellido","Primer nombre","Segundo nombre","Apellido casada","Sub modalidad",
-                   "Modalidad","Monto del prestamo", "estado del affiliado","Tipo de estado del affiliado","Cuota del prestamo","Estado del préstamo","Es garante?","Entidad de pensión del afiliado",'Saldo préstamo','Fecha desembolso' )
+                   array("CI AFILIADO","EXP","MATRICULA AFILIADO","NOMBRE COMPLETO AFILIADO","ID PRESTAMO", "COD. PRESTAMO","FECHA DE SOLICITUD","FECHA DE DESEMBOLSO","DPTO","ÍNDICE DE ENDEUDAMIENTO","SUB MODALIDAD",
+                   "MODALIDAD","CI PRESTATARIO","EXP",
+                   "MATRÍCULA PRESTATARIO","APELLIDO PATERNO ","APELLIDO MATERNO","AP. CASADA","1ER. NOMBRE","2DO. NOMBRE","NRO CPTE CTB","MONTO","ESTADO AFILIADO","TIPO ESTADO","CUOTA","ESTADO PRÉSTAMO","ENTE GESTOR AFILIADO",'SALDO PRÉSTAMO','TIPO SOLICITUD AFILIADO/ESPOSA' )
                );
                foreach ($list_loan as $row){
                    array_push($data, array(
+                       $row->identity_card_affiliate,
+                       $row->city_exp_first_shortened_affiliate,
+                       $row->registration_affiliate,
+                       $row->full_name_affiliate,
                        $row->id_loan,
                        $row->code_loan,
-                       $row->id_affiliate,
-                       $row->identity_card_affiliate,
-                       $row->registration_affiliate,
-                       $row->last_name_affiliate,
-                       $row->mothers_last_name_affiliate,
-                       $row->first_name_affiliate,
-                       $row->second_name_affiliate,
-                       $row->surname_husband_affiliate,
+                       $row->request_date_loan,
+                       $row->disbursement_date_loan,
+                       $row->city_loan,
+                       $row->indebtedness_borrower,
                        $row->sub_modality_loan,
                        $row->modality_loan,
+                       $row->identity_card_borrower,
+                       $row->city_exp_first_shortened_borrower,
+                       $row->registration_borrower,
+                       $row->last_name_borrower,
+                       $row->mothers_last_name_borrower,
+                       $row->surname_husband_borrower,
+                       $row->first_name_borrower,
+                       $row->second_name_borrower, 
+                       $row->num_accounting_voucher_loan,   
                        $row->amount_approved_loan,
                        $row->state_type_affiliate,
                        $row->state_affiliate,
                        $row->quota_loan,
                        $row->state_loan,
-                       $row->guarantor_loan_affiliate,
                        $row->pension_entity_affiliate,
-                       $row->balance_loan,
-                       $row->disbursement_date_loan
+                       $row->balance_loan,       
+                       $row->type_affiliate_spouse_loan
                    ));
                }
                $export = new ArchivoPrimarioExport($data);
                return Excel::download($export, $File.'.xls');
-      }else{
-      
-       $list_loan = DB::table('loans')
-               ->join('procedure_modalities','loans.procedure_modality_id', '=', 'procedure_modalities.id')
-               ->join('procedure_types','procedure_modalities.procedure_type_id', '=', 'procedure_types.id')
-               ->join('loan_states','loans.state_id', '=', 'loan_states.id')
-               ->join('cities','loans.city_id', '=', 'cities.id')
-               ->join('loan_affiliates','loans.id', '=', 'loan_affiliates.loan_id')
-               ->join('affiliates','loan_affiliates.affiliate_id', '=', 'affiliates.id')
-               ->join('affiliate_states','affiliates.affiliate_state_id', '=', 'affiliate_states.id')
-               ->join('affiliate_state_types','affiliate_states.affiliate_state_type_id', '=', 'affiliate_state_types.id')
-               ->leftjoin('pension_entities','affiliates.pension_entity_id', '=', 'pension_entities.id')
-               ->whereNull('loans.deleted_at')
-               ->where($conditions)
-               ->select('loans.id as id_loan','loans.code as code_loan','affiliates.id as id_affiliate','affiliates.identity_card as identity_card_affiliate',
-               'affiliates.registration as registration_affiliate','affiliates.last_name as last_name_affiliate','affiliates.mothers_last_name as mothers_last_name_affiliate',
-               'affiliates.first_name as first_name_affiliate','affiliates.second_name as second_name_affiliate','affiliates.surname_husband as surname_husband_affiliate',
-               'procedure_modalities.name as sub_modality_loan','procedure_types.second_name as modality_loan','loans.amount_approved as amount_approved_loan',
-               'affiliate_state_types.name as state_type_affiliate','affiliate_states.name as state_affiliate','loan_affiliates.quota_treat as quota_loan','loan_states.name as state_loan',
-               'loan_affiliates.guarantor as guarantor_loan_affiliate','pension_entities.name as pension_entity_affiliate','loans.disbursement_date as disbursement_date_loan')
-               ->orderBy('loans.code', $order_loan)
-               ->distinct('loans.code')
-               ->paginate($pagination_rows);
- 
-               $list_loan->getCollection()->transform(function ($list_loan) {
-                 $padron = Loan::findOrFail($list_loan->id_loan);
-                 $list_loan->balance_loan=$padron->balance;
-                 return $list_loan;
+      }else{    
+        $list_loan = DB::table('view_loan_borrower')
+       ->where($conditions)
+       ->select('*')
+       ->orderBy('code_loan', $order_loan)   
+       ->paginate($pagination_rows);
+            $list_loan->getCollection()->transform(function ($list_loan) {
+            $padron = Loan::findOrFail($list_loan->id_loan);
+            $list_loan->balance_loan=$padron->balance;
+            return $list_loan;
                });
            return $list_loan;
       }

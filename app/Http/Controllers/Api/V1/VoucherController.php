@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use App\Voucher;
 use App\LoanState;
+use App\Loan;
 use App\LoanPaymentState;
 use Illuminate\Http\Request;
 use App\Http\Requests\VoucherForm;
@@ -153,9 +154,10 @@ class VoucherController extends Controller
     public function print_voucher(Request $request, Voucher $voucher, $standalone = true)
     {
         $loan_payment=LoanPayment::find($voucher->payable_id);
+        $loan = Loan::find($loan_payment->loan_id);
         $affiliate = Affiliate::findOrFail($loan_payment->affiliate_id);
         $lenders = [];
-        $lenders[] = LoanController::verify_spouse_disbursable($affiliate)->disbursable;
+        $lenders[] = LoanController::verify_loan_affiliates($affiliate,$loan)->disbursable;
         $data = [
             'header' => [
                 'direction' => 'DIRECCIÓN DE ESTRATEGIAS SOCIALES E INVERSIONES',
@@ -185,9 +187,9 @@ class VoucherController extends Controller
             $loan = LoanPayment::findOrFail($voucher->payable_id)->loan;
             $lend='';
             foreach ($loan->lenders as $lender) {
-                $lenders[] = LoanController::verify_spouse_disbursable($lender);
+                $lenders[] = LoanController::verify_loan_affiliates($lender,$loan)->disbursable;
             }
-            foreach ($loan->lenders as $lender) {
+            foreach ($lenders as $lender) {
                 $lend=$lend.'*'.' ' . $lender->first_name .' '. $lender->second_name .' '. $lender->last_name.' '. $lender->mothers_last_name;
             }
             

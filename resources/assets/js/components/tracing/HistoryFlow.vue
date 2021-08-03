@@ -4,7 +4,6 @@
       <v-col cols="12" class="py-0">
         <v-row justify="center" class="py-0">
           <v-col cols="12" class="py-0">
-              <p style="color:teal"> <b>HISTORIAL DEL TRAMITE</b></p>
               <v-card flat tile>
                 <v-card-text>
                   <v-col cols="12" class="mb-0">
@@ -36,8 +35,6 @@
 </template>
 
 <script>
-
-
 export default {
   name: "history-flow",
   data: () => ({
@@ -87,6 +84,7 @@ export default {
     this.getRecords(this.loan.id)
   },
   methods: {
+    //Metodo para obtener el record
     async getRecords(id) {
       try {
         this.loading = true
@@ -100,7 +98,6 @@ export default {
           }
         })
         this.record = res.data.data
-        //console.log(this.record)
         delete res.data['data']
         this.options.page = res.data.current_page
         this.options.itemsPerPage = parseInt(res.data.per_page)
