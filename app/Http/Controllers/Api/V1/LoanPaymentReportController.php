@@ -136,10 +136,10 @@ class LoanPaymentReportController extends Controller
     $procedure_type='Directo';
 
     if ($initial_date != '') {
-      array_push($conditions, array('view_loan_amortizations.estimated_date', '>=', "%{$initial_date}%"));
+      array_push($conditions, array('view_loan_amortizations.estimated_date_loan_payment', '>=', "%{$initial_date}%"));
     }
     if ($final_date != '') {
-      array_push($conditions, array('view_loan_amortizations.estimated_date', '<=', "%{$final_date}%"));
+      array_push($conditions, array('view_loan_amortizations.estimated_date_loan_payment', '<=', "%{$final_date}%"));
     }
     array_push($conditions, array('view_loan_amortizations.states_loan_payment', 'ilike', "%{$state_pagado}%"));
     array_push($conditions, array('view_loan_amortizations.modality_loan_payment', 'ilike', "%{$procedure_type}%"));
@@ -235,10 +235,10 @@ class LoanPaymentReportController extends Controller
   $procedure_type='Amortización por Ajuste';
 
   if ($initial_date != '') {
-    array_push($conditions, array('view_loan_amortizations.estimated_date', '>=', "%{$initial_date}%"));
+    array_push($conditions, array('view_loan_amortizations.estimated_date_loan_payment', '>=', "%{$initial_date}%"));
   }
   if ($final_date != '') {
-    array_push($conditions, array('view_loan_amortizations.estimated_date', '<=', "%{$final_date}%"));
+    array_push($conditions, array('view_loan_amortizations.estimated_date_loan_payment', '<=', "%{$final_date}%"));
   }
   array_push($conditions, array('view_loan_amortizations.states_loan_payment', 'ilike', "%{$state_pagado}%"));
   array_push($conditions, array('view_loan_amortizations.procedure_loan_payment', 'ilike', "%{$procedure_type}%"));
