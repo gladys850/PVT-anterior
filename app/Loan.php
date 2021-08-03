@@ -1153,8 +1153,9 @@ class Loan extends Model
                     if(!$this->last_payment_validated){
                             $date_ini = CarbonImmutable::parse($this->disbursement_date);
                             if($date_ini->day <= LoanGlobalParameter::latest()->first()->offset_interest_day){
-                                $date_pay = Carbon::parse($this->disbursement_date)->endOfMonth()->format('d-m-Y');
+                                //$date_pay = Carbon::parse($this->disbursement_date)->endOfMonth()->format('d-m-Y');
                                 $extra_days = 0;
+                                $suggested_amount = $this->estimated_quota;
                             }
                             else{
                                 $extra_days = Carbon::parse(Carbon::parse($this->disbursement_date)->format('d-m-Y'))->diffInDays(Carbon::parse($this->disbursement_date)->endOfMonth()->format('d-m-Y'));
