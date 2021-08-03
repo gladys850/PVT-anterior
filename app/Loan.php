@@ -352,19 +352,19 @@ class Loan extends Model
         $latest_quota = $this->last_payment_validated;
         $quota->estimated_date = $estimated_date;
         $quota->previous_balance = $this->balance;
-        $quota->previous_payment_date = $latest_quota ? $latest_quota->estimated_date : $this->disbursement_date;
+        $quota->previous_payment_date = $latest_quota ? Carbon::parse($latest_quota->estimated_date)->endOfDay() : Carbon::parse($this->disbursement_date)->endOfDay();
         $quota->quota_number = $this->paymentsKardex->count() + 1;
         $date_ini = CarbonImmutable::parse($this->disbursement_date);
         $penal_days = 0;
         if($date_ini->day <= LoanGlobalParameter::latest()->first()->offset_interest_day)
-            $date_pay = $date_ini->endOfMonth()->format('Y-m-d');
+            $date_pay = $date_ini->endOfMonth()->endOfDay()->format('Y-m-d');
         else
-            $date_pay = $date_ini->startOfMonth()->addMonth()->endOfMonth()->format('Y-m-d');
+            $date_pay = $date_ini->startOfMonth()->addMonth()->endOfMonth()->endOfDay()->format('Y-m-d');
         $date_pay = Carbon::parse($date_pay);
-        $estimated_date = Carbon::parse($estimated_date);
+        $estimated_date = Carbon::parse($estimated_date)->endOfDay();
         if($quota->quota_number == 1 && $estimated_date->lessThan($date_pay) || $quota->quota_number == 1 && $estimated_date == $date_pay){
             $penal_days = 0;
-            $current_days = (Carbon::parse($quota->previous_payment_date)->diffInDays(Carbon::parse($estimated_date)) + 1);
+            $current_days = (Carbon::parse($quota->previous_payment_date)->diffInDays(Carbon::parse($estimated_date)));
         }
         else{
             $current_days = (Carbon::parse($quota->previous_payment_date)->diffInDays(Carbon::parse($estimated_date)));
@@ -1153,8 +1153,9 @@ class Loan extends Model
                     if(!$this->last_payment_validated){
                             $date_ini = CarbonImmutable::parse($this->disbursement_date);
                             if($date_ini->day <= LoanGlobalParameter::latest()->first()->offset_interest_day){
-                                $date_pay = Carbon::parse($this->disbursement_date)->endOfMonth()->format('d-m-Y');
+                                //$date_pay = Carbon::parse($this->disbursement_date)->endOfMonth()->format('d-m-Y');
                                 $extra_days = 0;
+                                $suggested_amount = $this->estimated_quota;
                             }
                             else{
                                 $extra_days = Carbon::parse(Carbon::parse($this->disbursement_date)->format('d-m-Y'))->diffInDays(Carbon::parse($this->disbursement_date)->endOfMonth()->format('d-m-Y'));
