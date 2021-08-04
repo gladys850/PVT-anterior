@@ -637,28 +637,27 @@ class LoanReportController extends Controller
     {
         $month = Carbon::parse($request->date)->format('m');
         $year = Carbon::parse($request->date)->format('Y');
-        $loans = Loan::whereMonth('disbursement_date', $month)->whereYear('disbursement_date', $year)->get();
-        //$date_pay = $date_ini->startOfMonth()->addMonth()->endOfMonth()->format('Y-m-d');
-
+        $loans = Loan::whereMonth('disbursement_date', $month)->whereYear('disbursement_date', $year)->orderBy('disbursement_date')->get();
         $date_previous = Carbon::parse($request->date)->startOfMonth()->subMonth()->endOfMonth()->format('Y-m-d');
 
         $date_calculate = Carbon::parse($request->date)->endOfMonth()->format('Y-m-d');
 
         $date_limit = Carbon::create(Carbon::parse($date_previous)->format('Y'), Carbon::parse($date_previous)->format('m'), 15);
         $date_limit = Carbon::parse($date_limit)->format('Y-m-d');
+        $date_limit = Carbon::parse($date_limit)->endOfDay();
 
-        $loans_request = Loan::where('state_id', LoanState::where('name', 'Vigente')->first()->id)->where('disbursement_date','<=', $date_limit)->get();
+        $loans_request = Loan::where('state_id', LoanState::where('name', 'Vigente')->first()->id)->where('disbursement_date','<=', $date_limit)->orderBy('disbursement_date')->get();
 
         $id_senasir = array();
-        foreach(ProcedureModality::where('name', 'like', '%SENASIR')->get() as $procedure)
+        foreach(ProcedureModality::where('name', 'like', '%SENASIR%')->get() as $procedure)
              array_push($id_senasir, $procedure->id);
         $id_comando = array();
-        foreach(ProcedureModality::where('name', 'like', '%Activo')->orWhere('name', 'like', '%Activo%')->get() as $procedure)
+        foreach(ProcedureModality::where('name', 'like', '%Activo%')->orWhere('name', 'like', '%Disponibilidad%')->get() as $procedure)
              array_push($id_comando, $procedure->id);
- 
+
              $command_sheet_before=array(
                 array("CI AFILIADO","EXP AFILIADO","MATRICULA AFILIADO","NOMBRE COMPLETO AFILIADO","***",
-                "COD PRESTAMO", "FECHA DE DESEMBOLSO", "DPTO", "TIPO ESTADO","ESTADO AFILIADO",
+                "COD PRESTAMO","MODALIDAD","SUB MODALIDAD", "FECHA DE DESEMBOLSO", "DPTO", "TIPO ESTADO","ESTADO AFILIADO",
                 "MATRICULA PRESTATARIO", "CI PRESTATARIO","EXP PRESTATARIO", "1ER NOMBRE", "2DO NOMBRE", "APELLIDO PATERNO", "APELLIDO MATERNO","APELLIDO DE CASADA", "SALDO ACTUAL", "CUOTA FIJA MENSUAL", "DESCUENTO PROGRAMADO", "INTERES","Amort. TIT o GAR?","***",
                 "GAR Estado","GAR Tipo de estado","Matricula garante","GAR CI", "GAR Exp","GAR Primer Nombre","GAR Segundo Nombre",
                 "GAR 1er Apellido","GAR 2do Apellido","GAR Apellido de Casada","GAR Cuota fija","GAR descuento","***","GAR2 Estado","GAR2 Tipo de estado","Matricula garante","GAR2 CI", "GAR2 Exp","GAR2 Primer Nombre","GAR2 Segundo Nombre",
@@ -666,7 +665,7 @@ class LoanReportController extends Controller
             );
          $command_sheet_later=array(
             array("CI AFILIADO","EXP AFILIADO","MATRICULA AFILIADO","NOMBRE COMPLETO AFILIADO","***",
-            "COD PRESTAMO", "FECHA DE DESEMBOLSO", "DPTO", "TIPO ESTADO","ESTADO AFILIADO",
+            "COD PRESTAMO","MODALIDAD","SUB MODALIDAD", "FECHA DE DESEMBOLSO", "DPTO", "TIPO ESTADO","ESTADO AFILIADO",
             "MATRICULA PRESTATARIO", "CI PRESTATARIO","EXP PRESTATARIO", "1ER NOMBRE", "2DO NOMBRE", "APELLIDO PATERNO", "APELLIDO MATERNO","APELLIDO DE CASADA", "SALDO ACTUAL", "CUOTA FIJA MENSUAL", "DESCUENTO PROGRAMADO", "INTERES","Amort. TIT o GAR?","***",
             "GAR Estado","GAR Tipo de estado","Matricula garante","GAR CI", "GAR Exp","GAR Primer Nombre","GAR Segundo Nombre",
             "GAR 1er Apellido","GAR 2do Apellido","GAR Apellido de Casada","GAR Cuota fija","GAR descuento","***","GAR2 Estado","GAR2 Tipo de estado","Matricula garante","GAR2 CI", "GAR2 Exp","GAR2 Primer Nombre","GAR2 Segundo Nombre",
@@ -674,7 +673,7 @@ class LoanReportController extends Controller
         );
          $senasir_sheet_before=array(
             array("CI AFILIADO","EXP AFILIADO","MATRICULA AFILIADO","NOMBRE COMPLETO AFILIADO","***",
-            "COD PRESTAMO", "FECHA DE DESEMBOLSO", "DPTO", "TIPO ESTADO","ESTADO AFILIADO",
+            "COD PRESTAMO","MODALIDAD","SUB MODALIDAD", "FECHA DE DESEMBOLSO", "DPTO", "TIPO ESTADO","ESTADO AFILIADO",
             "MATRICULA PRESTATARIO", "CI PRESTATARIO","EXP PRESTATARIO", "1ER NOMBRE", "2DO NOMBRE", "APELLIDO PATERNO", "APELLIDO MATERNO","APELLIDO DE CASADA", "SALDO ACTUAL", "CUOTA FIJA MENSUAL", "DESCUENTO PROGRAMADO", "INTERES","Amort. TIT o GAR?","***",
             "GAR Estado","GAR Tipo de estado","Matricula garante","GAR CI", "GAR Exp","GAR Primer Nombre","GAR Segundo Nombre",
             "GAR 1er Apellido","GAR 2do Apellido","GAR Apellido de Casada","GAR Cuota fija","GAR descuento","***","GAR2 Estado","GAR2 Tipo de estado","Matricula garante","GAR2 CI", "GAR2 Exp","GAR2 Primer Nombre","GAR2 Segundo Nombre",
@@ -682,7 +681,7 @@ class LoanReportController extends Controller
         );
          $senasir_sheet_later=array(
             array("CI AFILIADO","EXP AFILIADO","MATRICULA AFILIADO","NOMBRE COMPLETO AFILIADO","***",
-            "COD PRESTAMO", "FECHA DE DESEMBOLSO", "DPTO", "TIPO ESTADO","ESTADO AFILIADO",
+            "COD PRESTAMO","MODALIDAD","SUB MODALIDAD", "FECHA DE DESEMBOLSO", "DPTO", "TIPO ESTADO","ESTADO AFILIADO",
             "MATRICULA PRESTATARIO", "CI PRESTATARIO","EXP PRESTATARIO", "1ER NOMBRE", "2DO NOMBRE", "APELLIDO PATERNO", "APELLIDO MATERNO","APELLIDO DE CASADA", "SALDO ACTUAL", "CUOTA FIJA MENSUAL", "DESCUENTO PROGRAMADO", "INTERES","Amort. TIT o GAR?","***",
             "GAR Estado","GAR Tipo de estado","Matricula garante","GAR CI", "GAR Exp","GAR Primer Nombre","GAR Segundo Nombre",
             "GAR 1er Apellido","GAR 2do Apellido","GAR Apellido de Casada","GAR Cuota fija","GAR descuento","***","GAR2 Estado","GAR2 Tipo de estado","Matricula garante","GAR2 CI", "GAR2 Exp","GAR2 Primer Nombre","GAR2 Segundo Nombre",
@@ -691,7 +690,7 @@ class LoanReportController extends Controller
 
          $command_ancient=array(
             array("CI AFILIADO","EXP AFILIADO","MATRICULA AFILIADO","NOMBRE COMPLETO AFILIADO","***",
-            "COD PRESTAMO", "FECHA DE DESEMBOLSO", "DPTO", "TIPO ESTADO","ESTADO AFILIADO",
+            "COD PRESTAMO","MODALIDAD","SUB MODALIDAD", "FECHA DE DESEMBOLSO", "DPTO", "TIPO ESTADO","ESTADO AFILIADO",
             "MATRICULA PRESTATARIO", "CI PRESTATARIO","EXP PRESTATARIO", "1ER NOMBRE", "2DO NOMBRE", "APELLIDO PATERNO", "APELLIDO MATERNO","APELLIDO DE CASADA", "SALDO ACTUAL", "CUOTA FIJA MENSUAL", "DESCUENTO PROGRAMADO", "INTERES","Amort. TIT o GAR?","***",
             "GAR Estado","GAR Tipo de estado","Matricula garante","GAR CI", "GAR Exp","GAR Primer Nombre","GAR Segundo Nombre",
             "GAR 1er Apellido","GAR 2do Apellido","GAR Apellido de Casada","GAR Cuota fija","GAR descuento","***","GAR2 Estado","GAR2 Tipo de estado","Matricula garante","GAR2 CI", "GAR2 Exp","GAR2 Primer Nombre","GAR2 Segundo Nombre",
@@ -699,7 +698,7 @@ class LoanReportController extends Controller
         );
           $senasir_ancient=array(
             array("CI AFILIADO","EXP AFILIADO","MATRICULA AFILIADO","NOMBRE COMPLETO AFILIADO","***",
-            "COD PRESTAMO", "FECHA DE DESEMBOLSO", "DPTO", "TIPO ESTADO","ESTADO AFILIADO",
+            "COD PRESTAMO","MODALIDAD","SUB MODALIDAD", "FECHA DE DESEMBOLSO", "DPTO", "TIPO ESTADO","ESTADO AFILIADO",
             "MATRICULA PRESTATARIO", "CI PRESTATARIO","EXP PRESTATARIO", "1ER NOMBRE", "2DO NOMBRE", "APELLIDO PATERNO", "APELLIDO MATERNO","APELLIDO DE CASADA", "SALDO ACTUAL", "CUOTA FIJA MENSUAL", "DESCUENTO PROGRAMADO", "INTERES","Amort. TIT o GAR?","***",
             "GAR Estado","GAR Tipo de estado","Matricula garante","GAR CI", "GAR Exp","GAR Primer Nombre","GAR Segundo Nombre",
             "GAR 1er Apellido","GAR 2do Apellido","GAR Apellido de Casada","GAR Cuota fija","GAR descuento","***","GAR2 Estado","GAR2 Tipo de estado","Matricula garante","GAR2 CI", "GAR2 Exp","GAR2 Primer Nombre","GAR2 Segundo Nombre",
@@ -719,6 +718,8 @@ class LoanReportController extends Controller
                             $lender->full_name_affiliate,
                             $loan->guarantor_amortizing? '***' : '***',
                              $lender->code_loan,
+                             $lender->sub_modality_loan,
+                             $lender->shortened_sub_modality_loan,
                              Carbon::parse($lender->disbursement_date_loan)->format('d/m/Y H:i:s'),
                              $lender->city_loan,
                              $lender->state_type_affiliate,
@@ -781,6 +782,8 @@ class LoanReportController extends Controller
                                 $lender->full_name_affiliate,
                                 $loan->guarantor_amortizing? '***' : '***',
                                  $lender->code_loan,
+                                 $lender->sub_modality_loan,
+                                 $lender->shortened_sub_modality_loan,
                                  Carbon::parse($lender->disbursement_date_loan)->format('d/m/Y H:i:s'),
                                  $lender->city_loan,
                                  $lender->state_type_affiliate,
@@ -835,7 +838,7 @@ class LoanReportController extends Controller
              }
          }
          $sub_month = Carbon::parse($request->date)->subMonth()->format('m');
-         $loans_before = Loan::whereMonth('disbursement_date', $sub_month)->whereYear('disbursement_date', $year)->get();//considerar caso fin de año
+         $loans_before = Loan::whereMonth('disbursement_date', $sub_month)->whereYear('disbursement_date', $year)->orderBy('disbursement_date')->get();//considerar caso fin de año
          foreach($loans_before as $loan){
              if(Carbon::parse($loan->disbursement_date)->day > LoanGlobalParameter::first()->offset_interest_day){
                  if(in_array($loan->procedure_modality_id, $id_comando))
@@ -849,6 +852,8 @@ class LoanReportController extends Controller
                             $lender->full_name_affiliate,
                             $loan->guarantor_amortizing? '***' : '***',
                              $lender->code_loan,
+                             $lender->sub_modality_loan,
+                             $lender->shortened_sub_modality_loan,
                              Carbon::parse($lender->disbursement_date_loan)->format('d/m/Y H:i:s'),
                              $lender->city_loan,
                              $lender->state_type_affiliate,
@@ -911,6 +916,8 @@ class LoanReportController extends Controller
                                 $lender->full_name_affiliate,
                                 $loan->guarantor_amortizing? '***' : '***',
                                  $lender->code_loan,
+                                 $lender->sub_modality_loan,
+                                 $lender->shortened_sub_modality_loan,
                                  Carbon::parse($lender->disbursement_date_loan)->format('d/m/Y H:i:s'),
                                  $lender->city_loan,
                                  $lender->state_type_affiliate,
@@ -976,6 +983,8 @@ class LoanReportController extends Controller
                         $lender->full_name_affiliate,
                         $loan->guarantor_amortizing? '***' : '***',
                          $lender->code_loan,
+                         $lender->sub_modality_loan,
+                         $lender->shortened_sub_modality_loan,
                          Carbon::parse($lender->disbursement_date_loan)->format('d/m/Y H:i:s'),
                          $lender->city_loan,
                          $lender->state_type_affiliate,
@@ -1038,6 +1047,8 @@ class LoanReportController extends Controller
                             $lender->full_name_affiliate,
                             $loan->guarantor_amortizing? '***' : '***',
                              $lender->code_loan,
+                             $lender->sub_modality_loan,
+                             $lender->shortened_sub_modality_loan,
                              Carbon::parse($lender->disbursement_date_loan)->format('d/m/Y H:i:s'),
                              $lender->city_loan,
                              $lender->state_type_affiliate,

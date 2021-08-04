@@ -465,9 +465,9 @@ class ImportationController extends Controller
             }else{
                 return "periodo inexistente";
             }
-        }catch(Exception $e){
+        }catch(\Illuminate\Database\QueryException $e){
             DB::rollback();
-            return $e;
+            return false;
         }
     }
 
