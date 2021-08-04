@@ -217,6 +217,7 @@ export default {
         label:"Periódo (Seleccione el último dia del mes)",
         type: "excel",
       },
+      /* el reporte se encuentra en la importación, asi que si se requiere descomentar las lineas
       {
         id: 12,
         name: "Rep. Solicitud de descuentos a Comando / Senasir",
@@ -225,7 +226,7 @@ export default {
         service: "/report_request_institution",
         label: "Periódo (Seleccione el último dia del mes)",
         type: "excel",
-      },
+      },*/
       {
         id: 13,
         name: "Rep. Estado de solicitud de Préstamos",
