@@ -181,17 +181,20 @@
                                   </v-col>
                                   <v-progress-linear v-show="loan_refinancing.refinancing"></v-progress-linear  >
                                   <v-row v-show="loan_refinancing.refinancing">
-                                  <v-col cols="12" md="4" class="py-2">
-                                    <p><b>Codigo de Prestamo Padre:</b>{{' '+loan_refinancing.code}}</p>
+                                  <v-col cols="12" md="3" class="py-2">
+                                    <p><b>Codigo Ptmo Padre:</b>{{' '+loan_refinancing.code}}</p>
                                   </v-col>
-                                  <v-col cols="12" md="4" class="py-2" >
-                                    <p><b>Monto de Préstamo Padre:</b> {{loan_refinancing.amount_approved_son | money}}</p>
+                                  <v-col cols="12" md="3" class="py-2" >
+                                    <p><b>Monto Ptmo Padre:</b> {{loan_refinancing.amount_approved_son | money}}</p>
                                   </v-col>
-                                  <v-col cols="12" md="4" class="py-2">
-                                    <p><b>Plazo de Préstamo Padre:</b>{{' '+loan_refinancing.loan_term}}</p>
+                                  <v-col cols="12" md="3" class="py-2">
+                                    <p><b>Plazo Ptmo Padre:</b>{{' '+loan_refinancing.loan_term}}</p>
                                   </v-col>
-                                   <v-col cols="12" md="4" class="py-0">
-                                    <p><b>Cuota de Préstamo Padre:</b> {{loan_refinancing.estimated_quota | money}}</p>
+                                   <v-col cols="12" md="3" class="py-2">
+                                    <p><b>Cuota Ptmo Padre:</b> {{loan_refinancing.estimated_quota | money}}</p>
+                                  </v-col>
+                                  <v-col cols="12" md="4" class="py-0">
+                                    <p><b>Fecha Desembolso Ptmo Padre:</b> {{loan_refinancing.disbursement_date | date}}</p>
                                   </v-col>
                                   <v-col cols="12" md="4" class="py-0"  v-show="!collection_edit_sismu" v-if="loan_refinancing.type_sismu==true">
                                     <p><b>Fecha de Corte :</b> {{loan_refinancing.date_cut_refinancing ? loan_refinancing.date_cut_refinancing : 'Sin registar'}}</p>
