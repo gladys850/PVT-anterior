@@ -988,11 +988,11 @@ class Loan extends Model
                 }
                 else{
                     $date_fin = Carbon::parse($date_ini)->startOfMonth()->addMonth()->endOfMonth();
-                    $capital = round(($estimated_quota - LoanPayment::interest_by_days($date_fin->day, $this->interest->annual_interest, $balance)),2);
+                    $capital = ($estimated_quota - LoanPayment::interest_by_days($date_fin->day, $this->interest->annual_interest, $balance));
                     $days = $date_fin->diffInDays($date_ini);
-                    $interest = round((LoanPayment::interest_by_days($date_fin->day, $this->interest->annual_interest, $balance) + LoanPayment::interest_by_days(Carbon::parse($date_ini)->endOfMonth()->format('d') - Carbon::parse($date_ini)->format('d'), $this->interest->annual_interest, $balance)),2);
+                    $interest = LoanPayment::interest_by_days($date_fin->day, $this->interest->annual_interest, $balance) + LoanPayment::interest_by_days(Carbon::parse($date_ini)->endOfMonth()->format('d') - Carbon::parse($date_ini)->format('d'), $this->interest->annual_interest, $balance);
                 }
-                $payment = $capital + $interest;
+                $payment = round(($capital + $interest),2);
             }
             else{
                 $date_fin = Carbon::parse($date_ini)->endOfMonth();
