@@ -349,6 +349,7 @@ class Loan extends Model
 
         // nuevos calculos
         $quota = new LoanPayment();
+        $sw = false;
         $latest_quota = $this->last_payment_validated;
         $quota->estimated_date = $estimated_date;
         $quota->previous_balance = $this->balance;
@@ -356,18 +357,31 @@ class Loan extends Model
         $quota->quota_number = $this->paymentsKardex->count() + 1;
         $date_ini = CarbonImmutable::parse($this->disbursement_date);
         $penal_days = 0;
-        if($date_ini->day <= LoanGlobalParameter::latest()->first()->offset_interest_day)
+        if($date_ini->day <= LoanGlobalParameter::latest()->first()->offset_interest_day){
             $date_pay = $date_ini->endOfMonth()->endOfDay()->format('Y-m-d');
-        else
+        }
+        else{
             $date_pay = $date_ini->startOfMonth()->addMonth()->endOfMonth()->endOfDay()->format('Y-m-d');
+            $sw = true;
+        }
         $date_pay = Carbon::parse($date_pay)->endOfDay();
         $estimated_date = Carbon::parse($estimated_date)->endOfDay();
         if($quota->quota_number == 1 && $estimated_date <= $date_pay){
             $penal_days = 0;
             $current_days = (Carbon::parse($quota->previous_payment_date)->diffInDays(Carbon::parse($estimated_date)));
+            if($estimated_date != $date_pay){
+                $interest_generated = LoanPayment::interest_by_days($current_days, $this->interest->annual_interest, $this->balance);
+            }
+            else{
+                if($sw)
+                    $interest_generated = LoanPayment::interest_by_days(Carbon::parse($this->disbursement_date)->endOfMonth()->format('d') - Carbon::parse($this->disbursement_date)->format('d'), $this->interest->annual_interest, $this->balance) + LoanPayment::interest_by_days(Carbon::parse($this->disbursement_date)->startOfMonth()->addMonth()->endOfMonth()->format('d'),$this->interest->annual_interest,$this->balance);
+                else
+                    $interest_generated = LoanPayment::interest_by_days($current_days, $this->interest->annual_interest, $this->balance);
+            }
         }
         else{
             $current_days = (Carbon::parse($quota->previous_payment_date)->diffInDays(Carbon::parse($estimated_date)));
+            $interest_generated = LoanPayment::interest_by_days($current_days, $this->interest->annual_interest, $this->balance);
             if($current_days > 31)
                 $penal_days = (Carbon::parse($quota->previous_payment_date)->diffInDays(Carbon::parse($estimated_date)) - 31);
         }
@@ -375,7 +389,8 @@ class Loan extends Model
         //dias y montos estimados
         $estimated_days = [
             'current' => $current_days,
-            'current_generated' => LoanPayment::interest_by_days($current_days, $this->interest->annual_interest, $this->balance),
+            'current_generated' => $interest_generated,
+            //'current_generated' => LoanPayment::interest_by_days($current_days, $this->interest->annual_interest, $this->balance),
             'interest_accumulated' => $latest_quota ? $latest_quota->interest_accumulated : 0,
             'penal' => $penal_days,
             'penal_generated' => LoanPayment::interest_by_days($penal_days, $this->interest->penal_interest, $this->balance),
@@ -436,7 +451,8 @@ class Loan extends Model
         // Interés penal 
 
         if($quota->estimated_days['penal'] >= $grace_period){
-            $quota->penal_payment = Util::round2($quota->balance * $interest->daily_penal_interest * $quota->paid_days['penal']);
+            //$quota->penal_payment = Util::round2($quota->balance * $interest->daily_penal_interest * $quota->paid_days['penal']);
+            $quota->penal_payment = LoanPayment::interest_by_days($penal_days, $this->interest->penal_interest, $this->balance);
             if($quota->penal_payment >= 0){
                 if($amount >= $quota->penal_payment){
                     $amount = $amount - $quota->penal_payment;
@@ -455,8 +471,7 @@ class Loan extends Model
 
 
         // Interés corriente
-        $quota->interest_payment = ($quota->paid_days['current']* $interest->daily_current_interest* $quota->balance);
-        //$quota->interest_payment = LoanPayment::interest_by_days($quota->paid_days['current'], $interest->annual_interest, $quota->balance);
+        $quota->interest_payment = $interest_generated;
         if($amount >= $quota->interest_payment){
                 $amount = $amount - $quota->interest_payment;
         }
