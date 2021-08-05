@@ -187,8 +187,9 @@ export default {
         id: 8,
         name: "Rep. Préstamos en mora",
         tab: 0,
-        criterios: [],
+        criterios: ["date"],
         service: "/report_loans_mora",
+        label: "Fecha final",
         type: "excel",
       },
       {
