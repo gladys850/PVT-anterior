@@ -81,10 +81,8 @@
             </tr>
             <tr> 
                 <td class="data-row py-5">{{ $lender->title ? $lender->title : '' }} {{ $lender->full_name }}</td>
-                <td class="data-row py-5">{{ $lender->identity_card_ext }}</td>
-           
-                <td class="data-row py-5">{{ $lender->affiliate_state ? $lender->affiliate_state->affiliate_state_type->name : 'Pasivo' }}</td>
-              
+                <td class="data-row py-5">{{ $lender->identity_card_ext }}</td>     
+                <td class="data-row py-5">{{ $lender->affiliate_state ? $lender->affiliate_state->affiliate_state_type->name : $lender->affiliate->affiliate_state->affiliate_state_type->name }}</td>     
             </tr>
             <tr class="bg-grey-darker text-white">
                 <td>Domicilio actual</td>
@@ -103,45 +101,38 @@
                 @endif
                 </td>
             </tr>
-            @php ($pasivo = false )
-            @if (!$lender->affiliate_id)
-            <tr class="bg-grey-darker text-white">
-                @php ($inactive = $lender->pension_entity )
-                @if ($lender->affiliate_state->affiliate_state_type->name != "Pasivo")
-                    <td colspan="{{$inactive ? 1 : 2}}">Unidad</td>
+            @php ($pasivo =  $lender->affiliate_state ? $lender->affiliate_state->affiliate_state_type->name : $lender->affiliate->affiliate_state->affiliate_state_type->name )          
+            <tr class="bg-grey-darker text-white">  
+                @if ($pasivo  != "Pasivo" )
+                    <td colspan="2">Unidad</td>
                     <td >Categoría</td>
-                @else
-                @php ($pasivo = true )
-                @endif
-                @if ($pasivo)
-                <td colspan="{{$pasivo ? 3 : 1}}">Tipo de Renta</td>
+                @else             
+                    <td colspan="3">Tipo de Renta</td>
                 @endif
             </tr>
             <tr>
-                @if ($lender->affiliate_state->affiliate_state_type->name != "Pasivo")
-                    <td class="data-row py-5" colspan="{{$inactive ? 1 : 2}}">{{ $lender->full_unit}}</td>
+                @if ($pasivo  != "Pasivo")
+                    <td class="data-row py-5" colspan="2">{{ $lender->full_unit}}</td>
                     <td class="data-row py-5">{{ $lender->category ? $lender->category->name : '' }}</td>
-                @endif       
-                @if ($pasivo)
-                    <td colspan="{{$pasivo ? 3 : 1}}" class="data-row py-5">{{$lender->pension_entity ? $lender->pension_entity->name :''}}</td>
+                @else       
+                    <td colspan="3" class="data-row py-5">{{ $lender->pension_entity ? $lender->pension_entity->name : $lender->affiliate->pension_entity->name}}</td>
                 @endif
-            </tr>
-            @endif
-            @if(count($lender->loans_balance)>0)
-            <tr class="bg-grey-darker text-white">
-                <td>Codigo de Prestamo</td>
-                <td>Saldo</td>
-                <td>origen</td>
-            </tr>
-            @foreach ($lender->loans_balance as $loans_balance)
-            <tr>
-                <td>{{$loans_balance['code']}}</td>
-                <td>{{Util::money_format($loans_balance['balance'])}}</td>
-                <td>{{$loans_balance['origin']}}</td>
-            </tr>
-            @endforeach
-            </tr>
-            @endif
+            </tr>   
+                @if(count($lender->loans_balance)>0)
+                <tr class="bg-grey-darker text-white">
+                    <td>Codigo de Prestamo</td>
+                    <td>Saldo</td>
+                    <td>origen</td>
+                </tr>
+                        @foreach ($lender->loans_balance as $loans_balance)
+                        <tr>
+                            <td>{{$loans_balance['code']}}</td>
+                            <td>{{Util::money_format($loans_balance['balance'])}}</td>
+                            <td>{{$loans_balance['origin']}}</td>
+                        </tr>
+                        @endforeach
+                </tr>
+                @endif
         </table>
         @endforeach
     </div>
