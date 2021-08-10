@@ -356,7 +356,7 @@ class LoanReportController extends Controller
     //$date = Carbon::parse(Loan::find(1)->last_payment_validated->estimated_date)->endOfDay()->diffInDays($final_date);return $date;
     //mora
     foreach($loans as $loan){
-        if(count($loan->payments) > 0 && $loan->last_payment_validated->estimated_date < $final_date && Carbon::parse($loan->last_payment_validated->estimated_date)->endOfDay()->diffInDays($final_date) > LoanGlobalParameter::first()->offset_interest_day){
+        if(count($loan->payments) > 0 && $loan->last_payment_validated->estimated_date < $final_date && Carbon::parse($loan->last_payment_validated->estimated_date)->endOfDay()->diffInDays($final_date) > LoanGlobalParameter::first()->days_current_interest){
             if(count($loan->guarantors)>0){
                 $loan->guarantor = $loan->guarantors;
             }
@@ -460,7 +460,7 @@ class LoanReportController extends Controller
                 $row->lenders[0]->affiliate_state->affiliate_state_type->name,
                 $row->modality->procedure_type->second_name,
                 $row->modality->shortened,
-                $row->getdelay()->penal,
+                Carbon::parse($row->disbursement_date)->startOfDay()->diffInDays(Carbon::parse($final_date)->endOfDay()) - LoanGlobalParameter::first()->days_current_interest,
                 $row->separation,
                 $row->personal_ref ? $row->personal_ref[0]->first_name.' '.$row->personal_ref[0]->second_name.' '.$row->personal_ref[0]->last_name.' '.$row->personal_ref[0]->mothers_last_name.' '.$row->personal_ref[0]->surname_husband:'no tiene registro',
                 $row->personal_ref ? $row->personal_ref[0]->phone_number:'S/R',
@@ -503,7 +503,7 @@ class LoanReportController extends Controller
         $File="PrestamosMoraParcial";
         $data_mora_parcial=array(
             array("MATRICULA AFILIADO","CI AFILIADO", "EXP","NOMBRE COMPLETO AFILIADO", "***","MATRICULA","CI","EXP","NOMBRE COMPLETO","NRO DE CEL. 1","NRO DE CEL. 2","NRO FIJO","CIUDAD","DIRECCIÓN","PTMO","FECHA DESEMBOLSO",
-            "NRO DE CUOTAS","TASA ANUAL","FECHA DEL ÚLTIMO PAGO","TIPO DE PAGO","CUOTA MENSUAL","SALDO ACTUAL","ÉSTADO DEL AFILIADO","MODALIDAD","SUB MODALIDAD","DÍAS MORA",
+            "NRO DE CUOTAS","TASA ANUAL","FECHA DEL ÚLTIMO PAGO","TIPO DE PAGO","CUOTA MENSUAL","SALDO ACTUAL","ÉSTADO DEL AFILIADO","MODALIDAD","SUB MODALIDAD","DÍAS",
             "*","NOMBRE COMPLETO (Ref. Personal)","NRO DE TEL. FIJO (Ref. Personal)","NRO DE CEL (Ref. Personal)","DIRECCIÓN(Ref. Personal)",
             "**","MATRICULA AFILIADO (GARANTE 1)", "CI AFILIADO (GARANTE 1)", "EXP (GARANTE 1)", "NOMBRE COMPLETO AFILIADO (GARANTE 1)", "*-->*","MATRICULA (GARANTE TITULAR 1)","CI (GARANTE TITULAR 1)","EXP (GARANTE TITULAR 1)","NOMBRE COMPLETO (GARANTE TITULAR 1)","NRO DE TEL. FIJO","NRO DE CEL. 1","NRO DE CEL. 2","ESTADO DEL AFILIADO",
             "***","MATRICULA AFILIADO (GARANTE 2)", "CI AFILIADO (GARANTE 2)", "EXP (GARANTE 2)", "NOMBRE COMPLETO AFILIADO (GARANTE 2)", "*-->*","MATRICULA (GARANTE TITULAR 2)","CI (GARANTE TITULAR 2)","EXP (GARANTE TITULAR 2)","NOMBRE COMPLETO (GARANTE TITULAR 2)","NRO DE TEL. FIJO","NRO DE CEL. 1","NRO DE CEL. 2","ESTADO DEL AFILIADO")
@@ -555,7 +555,7 @@ class LoanReportController extends Controller
                 $row->lenders[0]->affiliate_state->affiliate_state_type->name,
                 $row->modality->procedure_type->second_name,
                 $row->modality->shortened,
-                $row->getdelay()->penal,
+                $row->last_payment_validated ? Carbon::parse($row->last_payment_validated->estimated_date)->diffInDays(Carbon::parse($final_date)) : Carbon::parse($row->disbursement_date)->diffInDays(Carbon::parse($final_date)),
                 $row->separation,
                 $row->personal_ref ? $row->personal_ref[0]->first_name.' '.$row->personal_ref[0]->second_name.' '.$row->personal_ref[0]->last_name.' '.$row->personal_ref[0]->mothers_last_name.' '.$row->personal_ref[0]->surname_husband:'no tiene registro',
                 $row->personal_ref ? $row->personal_ref[0]->phone_number:'S/R',
@@ -652,7 +652,7 @@ class LoanReportController extends Controller
                 $row->lenders[0]->affiliate_state->affiliate_state_type->name,
                 $row->modality->procedure_type->second_name,
                 $row->modality->shortened,
-                $row->getdelay()->penal,
+                Carbon::parse($row->last_payment_validated->estimated_date)->diffInDays(Carbon::parse($final_date)) - LoanGlobalParameter::first()->days_current_interest,
                 $row->separation,
                 $row->personal_ref ? $row->personal_ref[0]->first_name.' '.$row->personal_ref[0]->second_name.' '.$row->personal_ref[0]->last_name.' '.$row->personal_ref[0]->mothers_last_name.' '.$row->personal_ref[0]->surname_husband:'no tiene registro',
                 $row->personal_ref ? $row->personal_ref[0]->phone_number:'S/R',
