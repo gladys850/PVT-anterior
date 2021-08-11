@@ -349,6 +349,7 @@ class Loan extends Model
 
         // nuevos calculos
         $quota = new LoanPayment();
+        $quota->transaction_date = Carbon::now()->format('Y-m-d H:i:s');
         $sw = false;
         $latest_quota = $this->last_payment_validated;
         $quota->estimated_date = $estimated_date;

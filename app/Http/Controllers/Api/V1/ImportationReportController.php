@@ -76,7 +76,7 @@ class ImportationReportController extends Controller
         if ($final_date != '') {
             array_push($conditions, array('view_loan_amortizations.estimated_date_loan_payment', '=', "%{$final_date}%"));
         }
-        //array_push($conditions, array('view_loan_amortizations.states_loan_payment', 'ilike', "%{$state_pagado}%"));
+        array_push($conditions, array('view_loan_amortizations.states_loan_payment', 'ilike', "%{$state_pagado}%"));
        // array_push($conditions, array('view_loan_amortizations.name_category', 'ilike', "%{$category_name}%")); //listado de refis y repros  descomentar
         //prodedure
         array_push($conditions, array('view_loan_amortizations.modality_shortened_loan_payment', 'like', "{$procedure_modality_id}"));
@@ -178,7 +178,7 @@ class ImportationReportController extends Controller
         //filtros
         $final_date = $estimated_date? $estimated_date:'';
 
-        $loans_request = Loan::where('state_id', LoanState::where('name', 'Vigente')->first()->id)->where('disbursement_date', '<=', $final_date)->get();
+        $loans_request = Loan::where('state_id', LoanState::where('name', 'Vigente')->first()->id)->where('disbursement_date', '<=', $final_date)->orderby('disbursement_date')->get();
 
 
         $id_senasir = array();
@@ -189,7 +189,7 @@ class ImportationReportController extends Controller
         $senasir_ancient=array(
             array("CI Afiliado", "Matricula Afiliado", "Nombre Completo Afiliado", "***",
                 "Nro Préstamo", "Fecha de desembolso", "Ciudad", "tipo", "Matricula Titular",
-                "Matricula Derecho Habiente", "CI", "Extensión", "Primer Nombre", "Segundo Nombre", "Paterno",
+                "Matricula Prestatario", "CI", "Extensión", "Primer Nombre", "Segundo Nombre", "Paterno",
                 "Materno","Ap de Casada", "Saldo Actual", "Cuota Fija Mensual", "Descuento Programado", "Interés","Amort. TIT o GAR?",
                 "CI GAR", "Matricula GAR", "Nombre Completo Garante", "***",
                 "GAR Estado","GAR Tipo de estado","Matricula garante","GAR CI", "GAR Exp","GAR Primer Nombre","GAR Segundo Nombre",
