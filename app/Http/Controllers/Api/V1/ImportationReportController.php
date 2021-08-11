@@ -178,7 +178,7 @@ class ImportationReportController extends Controller
         //filtros
         $final_date = $estimated_date? $estimated_date:'';
 
-        $loans_request = Loan::where('state_id', LoanState::where('name', 'Vigente')->first()->id)->where('disbursement_date', '<=', $final_date)->get();
+        $loans_request = Loan::where('state_id', LoanState::where('name', 'Vigente')->first()->id)->where('disbursement_date', '<=', $final_date)->orderby('disbursement_date')->get();
 
 
         $id_senasir = array();
@@ -189,7 +189,7 @@ class ImportationReportController extends Controller
         $senasir_ancient=array(
             array("CI Afiliado", "Matricula Afiliado", "Nombre Completo Afiliado", "***",
                 "Nro Préstamo", "Fecha de desembolso", "Ciudad", "tipo", "Matricula Titular",
-                "Matricula Derecho Habiente", "CI", "Extensión", "Primer Nombre", "Segundo Nombre", "Paterno",
+                "Matricula Prestatario", "CI", "Extensión", "Primer Nombre", "Segundo Nombre", "Paterno",
                 "Materno","Ap de Casada", "Saldo Actual", "Cuota Fija Mensual", "Descuento Programado", "Interés","Amort. TIT o GAR?",
                 "CI GAR", "Matricula GAR", "Nombre Completo Garante", "***",
                 "GAR Estado","GAR Tipo de estado","Matricula garante","GAR CI", "GAR Exp","GAR Primer Nombre","GAR Segundo Nombre",
