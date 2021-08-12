@@ -76,7 +76,7 @@ class ImportationReportController extends Controller
         if ($final_date != '') {
             array_push($conditions, array('view_loan_amortizations.estimated_date_loan_payment', '=', "%{$final_date}%"));
         }
-        //array_push($conditions, array('view_loan_amortizations.states_loan_payment', 'ilike', "%{$state_pagado}%"));
+        array_push($conditions, array('view_loan_amortizations.states_loan_payment', 'ilike', "%{$state_pagado}%"));
        // array_push($conditions, array('view_loan_amortizations.name_category', 'ilike', "%{$category_name}%")); //listado de refis y repros  descomentar
         //prodedure
         array_push($conditions, array('view_loan_amortizations.modality_shortened_loan_payment', 'like', "{$procedure_modality_id}"));
