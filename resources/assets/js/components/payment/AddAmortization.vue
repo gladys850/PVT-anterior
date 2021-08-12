@@ -546,7 +546,7 @@ export default {
         for (let i = 0; i<  this.guarantor.borrowerguarantors.length; i++) {
         if(this.guarantor.borrowerguarantors[i].id==this.radios)
         {
-          this.data_payment.affiliate_id_paid_by=this.guarantor.borrowerguarantors[i].affiliate_id
+          this.data_payment.affiliate_id_paid_by=this.guarantor.borrowerguarantors[i].id
           this.code_initials = this.guarantor.borrowerguarantors[i].type_initials
         }
       }
