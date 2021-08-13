@@ -1656,7 +1656,9 @@ class LoanController extends Controller
         $loan_process = count($affiliate->process_loans);
         if ($affiliate->affiliate_state){
             if($affiliate->affiliate_state->affiliate_state_type->name != "Baja" && $affiliate->affiliate_state->affiliate_state_type->name != ""){
-                if((count($affiliate->spouses) === 0 && $affiliate->affiliate_state->name != 'Fallecido') || (count($affiliate->spouses) !== 0 && $affiliate->affiliate_state->name  == 'Fallecido')) {
+            
+               // if((count($affiliate->spouses) === 0 && $affiliate->affiliate_state->name != 'Fallecido') || (count($affiliate->spouses) !== 0 && $affiliate->affiliate_state->name  == 'Fallecido')) {
+                    if((!$affiliate->dead) || (($affiliate->dead == true)  && (($affiliate->spouses->first() ? ($affiliate->spouses->first()->date_death ? false: true) : false) == true))){
                    /* if($affiliate->identity_card != null && $affiliate->city_identity_card_id != null){*/
                         if($affiliate->civil_status != null){
                             //if($affiliate->financial_entity_id != null && $affiliate->account_number != null && $affiliate->sigep_status != null){
@@ -1701,7 +1703,7 @@ class LoanController extends Controller
                     }     */ 
                 }
                 else{ 
-                    $message['validate'] = 'El afiliado no puede acceder a un préstamo por estar fallecido ó estar fallecido y no tener registrado a un(a) conyugue.';
+                    $message['validate'] = 'El afiliado no puede acceder a un préstamo por estar fallecido ó no tener registrado a un(a) conyugue.';
                 }
             }
            else{   
