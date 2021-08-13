@@ -1823,21 +1823,29 @@ class LoanReportController extends Controller
     {
         $loans = Loan::whereStateId(LoanState::whereName('En Proceso')->first()->id)->where('request_date', '<=', $request->date)->orderBy('role_id')->get();
         $loans_array = collect([]);
+        $date = "";
         foreach($loans as $loan)
         {
+            foreach($loan->records as $record){
+                if(strpos($record->action, "derivó") != false){
+                    $date = "";
+                    $date = $record->created_at;
+                    break;
+                }
+            }
             $loans_array->push([
                 "code" => $loan->code,
                 "request_date" => Carbon::parse($loan->request_date)->format('d-m-Y'),
                 "lenders" => $loan->lenders,
                 "role" => $loan->role->display_name,
-                "update_date" => "",
+                "update_date" => Carbon::parse($date)->format('d-m-Y'),
                 "user" => $loan->user ? $loan->user->username : "",
                 "amount" => $loan->amount_approved,
             ]);
             //$loans_array->push($data);
         }/*foreach ($loans_array as $loan_array)
             return $loan_array->loan_code;*/
-
+            
         $data = [
             'header' => [
                 'direction' => 'DIRECCIÓN DE ASUNTOS ADMINISTRATIVOS',
