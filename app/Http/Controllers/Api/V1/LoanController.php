@@ -1658,6 +1658,7 @@ class LoanController extends Controller
             if($affiliate->affiliate_state->affiliate_state_type->name != "Baja" && $affiliate->affiliate_state->affiliate_state_type->name != ""){
             
                // if((count($affiliate->spouses) === 0 && $affiliate->affiliate_state->name != 'Fallecido') || (count($affiliate->spouses) !== 0 && $affiliate->affiliate_state->name  == 'Fallecido')) {
+                   
                     if((!$affiliate->dead) || (($affiliate->dead == true)  && (($affiliate->spouses->first() ? ($affiliate->spouses->first()->date_death ? false: true) : false) == true))){
                    /* if($affiliate->identity_card != null && $affiliate->city_identity_card_id != null){*/
                         if($affiliate->civil_status != null){
