@@ -717,7 +717,7 @@ class AffiliateController extends Controller
         foreach($modality_names as $modality)
             if($modality->id == $request->procedure_modality_id)
                 $validation = true;
-        if($affiliate->spouse){
+        if($affiliate->spouse && $affiliate->dead){
             if($validation){
                 if($affiliate->pension_entity != null && $affiliate->pension_entity->name != null){
                     if($affiliate->pension_entity->name == "SENASIR")
