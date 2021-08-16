@@ -844,6 +844,7 @@ class LoanController extends Controller
         return $object;
     }
 
+    //Verifica a los afiliados del prestamo con que tipificacion fue si como afiliado o esposa 
     public static function verify_loan_affiliates(Affiliate $affiliate, Loan $loan)
     {
         foreach ($loan->loan_affiliates as $loan_affiliate) {
@@ -852,12 +853,14 @@ class LoanController extends Controller
                     $spouse = $loan_affiliate->spouse;
                     $object = (object)[
                         'type' => 'spouses',
-                        'disbursable' => $spouse
+                        'disbursable' => $spouse,
+                        'affiliate'=>$affiliate
                     ];
                 }else{
                     $object = (object)[
                         'type' => 'affiliates',
-                        'disbursable' => $affiliate
+                        'disbursable' => $affiliate,
+                        'affiliate'=>$affiliate
                     ];
                 }
             }
@@ -1033,7 +1036,7 @@ class LoanController extends Controller
         $persons = collect([]);
         $loans = collect([]);
         foreach ($lenders as $lender) {
-            //balance de otros prestamos
+        //balance de otros prestamos
         if(!$lender->affiliate_id){
                 foreach($lender->current_loans as $current_loans){
                     $loans->push([
@@ -1068,19 +1071,21 @@ class LoanController extends Controller
                 'position' => 'SOLICITANTE',
             ]);
             $lender->loans_balance = $loans;
-        }     
+        }
         $guarantors = [];
         foreach ($loan->guarantors as $guarantor) {
-            $spouse = $guarantor->spouse;
-            if(isset($spouse)){
-                $guarantor = $spouse;
+        $guarantor_loan = self::verify_loan_affiliates($guarantor,$loan)->disbursable;
+        array_push($guarantors, $guarantor_loan);
+            //$spouse = $guarantor->spouse;
+            if(self::verify_loan_affiliates($guarantor,$loan)->type == 'spouses' ){
+                //$guarantor = $spouse;
                 $is_spouse = true;
-                }
-                array_push($guarantors, $guarantor); 
+            }
+            //array_push($guarantors, $guarantor);
             $persons->push([
-                'id' => $lender->id,
-                'full_name' => implode(' ', [$guarantor->title ? $guarantor->title :'', $guarantor->full_name]),
-                'identity_card' => $guarantor->identity_card_ext,
+                'id' => $guarantor_loan->id,
+                'full_name' => implode(' ', [$guarantor_loan->title ? $guarantor_loan->title :'', $guarantor_loan->full_name]),
+                'identity_card' => $guarantor_loan->identity_card_ext,
                 'position' => 'GARANTE'
             ]);
         }
