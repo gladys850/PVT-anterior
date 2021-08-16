@@ -87,21 +87,16 @@
         @php ($sum_prom_payable_liquid_calculated = 0)
         @php ($sum_prom_bonus_calculated = 0)
         @php ($count_lender = 0)
-        @foreach($loan->lenders as $lender_affiliate)
+        @foreach($lenders as $lender_affiliate_loan)
+            @php ($lender_affiliate = $lender_affiliate_loan->affiliate)
             @php ($count_lender = $count_lender + 1)
-            @php ($title_lender = $count_lender == 1 ? "PRESTATARIO":"CODEUDOR")    
-            @php ($spouse = $lender_affiliate->spouse)
-        @if(isset($spouse))
-            @php ($lender_affiliate_title = $spouse)
-            @php ($spose_activo = true)          
-        @else 
-            @php ($lender_affiliate_title = $lender_affiliate)
-            @php ($spose_activo = false)
-        @endif
+            @php ($title_lender = $count_lender == 1 ? "PRESTATARIO":"CODEUDOR")       
         <tr class="bg-grey-darker text-white">
-            <td class=" text-left px-10"colspan="{{$spose_activo ? 3 : 7}}"> {{$title_lender}} {{$lender_affiliate_title->full_name}} </td>
-        @if($spose_activo)
-            <td class="text-left px-10" colspan="{{$spose_activo ? 4 : 7}}"> TITULAR {{$lender_affiliate->full_name}} </td>
+        @if($lender_affiliate_loan->type == "spouses")
+            <td class=" text-left px-10"colspan="3"> {{$title_lender}} {{$lender_affiliate_loan->disbursable->full_name}} </td>
+            <td class="text-left px-10" colspan="4"> TITULAR {{$lender_affiliate->full_name}}</td>
+            @else
+            <td class=" text-left px-10"colspan="7"> {{$title_lender}} {{$lender_affiliate_loan->disbursable->full_name}} </td>
         @endif
         </tr>
             @php ($sum_prom_payable_liquid_calculated += $lender_affiliate->pivot->payable_liquid_calculated)
