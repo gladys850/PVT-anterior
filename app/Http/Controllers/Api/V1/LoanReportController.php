@@ -1865,4 +1865,233 @@ class LoanReportController extends Controller
         if ($standalone) return Util::pdf_to_base64([$view], $file_name, $request->copies ?? 1);
         return $view;
     }
+  /**
+   * Listar prestamos generando reportes
+   * Lista todos los prestamos con opcion a busquedas
+   * @queryParam sortDesc Vector de orden descendente(0) o ascendente(1). Example: 0
+   * @queryParam per_page Número de datos por página. Example: 8
+   * @queryParam page Número de página. Example: 1
+   * @queryParam excel Valor booleano para descargar  el docExcel. Example: true
+   * @queryParam id_loan Buscar ID del Préstamo. Example: 1
+   * @queryParam code_loan  Buscar código del Préstamo. Example: PTMO000012-2021
+   * @queryParam id_affiliate  Buscar por ID del affiliado. Example: 33121
+   * @queryParam identity_card_borrower  Buscar por nro de CI del Prestatario. Example: 10069775
+   * @queryParam registration_borrower  Buscar por Matricula del Prestatario. Example: 100697MDF
+   * @queryParam last_name_borrower Buscar por primer apellido del Prestatario. Example: RIVERA
+   * @queryParam mothers_last_name_borrower Buscar por segundo apellido del Prestatario. Example: ARTEAG
+   * @queryParam first_name_borrower Buscar por primer Nombre del Prestatario. Example: ABAD
+   * @queryParam second_name_borrower Buscar por segundo Nombre del Prestatario. Example: FAUST
+   * @queryParam surname_husband_borrower Buscar por Apellido de casada Nombre del Prestatario. Example: De LA CRUZ
+   * @queryParam full_name_borrower Buscar por Apellido de casada Nombre del Prestatario. Example: RIVERA ARTEAG ABAD FAUST De LA CRUZ
+   * @queryParam sub_modality_loan Buscar por sub modalidad del préstamo. Example: Corto plazo sector activo
+   * @queryParam modality_loan Buscar por Modalidad del prestamo. Example: Préstamo a corto plazo
+   * @queryParam shortened_sub_modality_loan Buscar por nombre corto de la sub modalidad del prestamo. Example:COR-ACT
+   * @queryParam amount_approved_loan Buscar monto aprobado del afiliado. Example: 25000
+   * @queryParam state_type_affiliate Buscar por tipo de estado del afiliado. Example: Activo
+   * @queryParam state_affiliate Buscar por estado del affiliado. Example: Servicio
+   * @queryParam quota_loan Buscar por la quota del prestamo. Example: 1500
+   * @queryParam state_loan Buscar por el estado del prestamo. Example: En proceso
+   * @queryParam guarantor_loan Buscar los garantes del préstamo. Example: false
+   * @queryParam pension_entity_affiliate Buscar por la La pension entidad del afiliado. Example: SENASIR
+   * @queryParam disbursement_date_loan Buscar por fecha de desembolso. Example: 2021
+   * @authenticated
+   * @responseFile responses/loan/list_loans_generate.200.json
+   */
+
+  public function list_loan_generate(Request $request){
+    // aumenta el tiempo máximo de ejecución de este script a 150 min:
+    ini_set('max_execution_time', 9000);
+    // aumentar el tamaño de memoria permitido de este script:
+    ini_set('memory_limit', '960M');
+ 
+    if($request->has('excel'))
+         $excel = $request->boolean('excel');
+    else 
+         $excel =false;
+ 
+    $order = request('sortDesc') ?? '';
+    if($order != ''){
+        if($order) $order_loan = 'Asc';
+        if(!$order) $order_loan = 'Desc';
+ 
+    }else{
+     $order_loan = 'Desc';
+    }
+    $pagination_rows = request('per_page') ?? 10;
+    $conditions = [];
+    //filtros
+    $id_loan = request('id_loan') ?? '';
+    $code_loan = request('code_loan') ?? '';
+    $id_affiliate = request('id_affiliate') ?? '';
+    $identity_card_borrower = request('identity_card_borrower') ?? '';
+    $registration_borrower = request('registration_borrower') ?? '';
+ 
+    $last_name_borrower = request('last_name_borrower') ?? '';
+    $mothers_last_name_borrower = request('mothers_last_name_borrower') ?? '';
+    $first_name_borrower = request('first_name_borrower') ?? '';
+    $second_name_borrower = request('second_name_borrower') ?? '';
+    $surname_husband_borrower = request('surname_husband_borrower') ?? '';
+    $full_name_borrower = request('full_name_borrower') ?? '';
+ 
+    $sub_modality_loan = request('sub_modality_loan') ?? '';
+    $modality_loan = request('modality_loan') ?? '';
+    $shortened_sub_modality_loan = request('shortened_sub_modality_loan') ?? '';
+
+    $amount_approved_loan = request('amount_approved_loan') ?? '';
+    $state_type_affiliate = request('state_type_affiliate') ?? '';
+    $state_affiliate = request('state_affiliate') ?? '';
+    $state_loan = request('state_loan') ?? '';
+ 
+    $quota_loan = request('quota_loan') ?? '';
+    $guarantor_loan = request('guarantor_loan') ?? '';
+    $pension_entity_affiliate = request('pension_entity_affiliate') ?? '';
+
+    $disbursement_date_loan = request('disbursement_date_loan') ?? '';
+ 
+    $amount_approved_loan = request('amount_approved_loan') ?? '';
+ 
+       if ($id_loan != '') {
+        array_push($conditions, array('view_loan_borrower.id_loan', 'ilike', "%{$id_loan}%"));
+      }
+ 
+      if ($code_loan != '') {
+        array_push($conditions, array('view_loan_borrower.code_loan', 'ilike', "%{$code_loan}%"));
+      }
+  
+      if ($id_affiliate != '') {
+        array_push($conditions, array('view_loan_borrower.id_affiliate', 'ilike', "%{$id_affiliate}%"));
+      }
+
+      if ($identity_card_borrower != '') {
+        array_push($conditions, array('view_loan_borrower.identity_card_borrower', 'ilike', "%{$identity_card_borrower}%"));
+      }
+
+      if ($registration_borrower != '') {
+        array_push($conditions, array('view_loan_borrower.registration_borrower', 'ilike', "%{$registration_borrower}%"));
+      }
+
+      if ($last_name_borrower != '') {
+        array_push($conditions, array('view_loan_borrower.last_name_borrower', 'ilike', "%{$last_name_borrower}%"));
+      }
+
+     if ($mothers_last_name_borrower != '') {
+        array_push($conditions, array('view_loan_borrower.mothers_last_name_borrower', 'ilike', "%{$mothers_last_name_borrower}%"));
+      }
+
+      if ($first_name_borrower != '') {
+        array_push($conditions, array('view_loan_borrower.first_name_borrower', 'ilike', "%{$first_name_borrower}%"));
+      }
+
+      if ($second_name_borrower != '') {
+        array_push($conditions, array('view_loan_borrower.second_name_borrower', 'ilike', "%{$second_name_borrower}%"));
+      }
+
+      if ($surname_husband_borrower != '') {
+        array_push($conditions_or, array('view_loan_borrower.surname_husband_borrower', 'ilike', "%{$surname_husband_borrower}%"));
+      }
+      if ($full_name_borrower != '') {
+        array_push($conditions, array('view_loan_borrower.full_name_borrower', 'ilike', "%{$full_name_borrower}%"));
+      }
+      if ($sub_modality_loan != '') {
+        array_push($conditions, array('view_loan_borrower.sub_modality_loan', 'ilike', "%{$sub_modality_loan}%"));
+      }
+
+      if ($modality_loan != '') {
+        array_push($conditions, array('view_loan_borrower.modality_loan', 'ilike', "%{$modality_loan}%"));
+      }
+      if ($shortened_sub_modality_loan != '') {
+        array_push($conditions, array('view_loan_borrower.shortened_sub_modality_loan', 'ilike', "%{$shortened_sub_modality_loan}%"));
+      }
+ 
+      if ($amount_approved_loan != '') {
+        array_push($conditions, array('view_loan_borrower.amount_approved_loan', 'ilike', "%{$amount_approved_loan}%"));
+      }
+      if ($state_type_affiliate != '') {
+        array_push($conditions, array('view_loan_borrower.state_type_affiliate', 'ilike', "%{$state_type_affiliate}%"));
+      }
+      if ($state_affiliate != '') {
+        array_push($conditions, array('view_loan_borrower.state_affiliate', 'ilike', "%{$state_affiliate}%"));
+      }
+  
+      if ($quota_loan != '') {
+        array_push($conditions, array('view_loan_borrower.quota_loan', 'ilike', "%{$quota_loan}%"));
+      }
+      if ($state_loan != '') {
+        array_push($conditions, array('view_loan_borrower.state_loan', 'ilike', "%{$state_loan}%"));
+      }
+      if ($guarantor_loan != '') {
+        array_push($conditions, array('view_loan_borrower.guarantor_loan', 'ilike', "%{$guarantor_loan}%"));
+      }
+      if ($pension_entity_affiliate != '') {
+        array_push($conditions, array('view_loan_borrower.pension_entity_affiliate', 'ilike', "%{$pension_entity_affiliate}%"));
+      }
+      if ($disbursement_date_loan != '') {
+        array_push($conditions, array('view_loan_borrower.disbursement_date_loan', 'ilike', "%{$disbursement_date_loan}%"));
+      }
+ 
+      if($excel==true){
+                $list_loan = DB::table('view_loan_borrower')
+                ->where($conditions)
+                ->select('*')
+                ->orderBy('code_loan', $order_loan)
+                ->get();
+               foreach ($list_loan as $loan) {
+                 $padron = Loan::where('id', $loan->id_loan)->first();
+                 $loan->balance_loan = $padron->balance;
+               }
+               $File="ListadoPrestamos";
+               $data=array(
+                   array("CI AFILIADO","EXP","MATRICULA AFILIADO","NOMBRE COMPLETO AFILIADO","ID PRESTAMO", "COD. PRESTAMO","FECHA DE SOLICITUD","FECHA DE DESEMBOLSO","DPTO","ÍNDICE DE ENDEUDAMIENTO","SUB MODALIDAD",
+                   "MODALIDAD","CI PRESTATARIO","EXP",
+                   "MATRÍCULA PRESTATARIO","APELLIDO PATERNO ","APELLIDO MATERNO","AP. CASADA","1ER. NOMBRE","2DO. NOMBRE","NRO CPTE CTB","MONTO","ESTADO AFILIADO","TIPO ESTADO","CUOTA","ESTADO PRÉSTAMO","ENTE GESTOR AFILIADO",'SALDO PRÉSTAMO','TIPO SOLICITUD AFILIADO/ESPOSA' )
+               );
+               foreach ($list_loan as $row){
+                   array_push($data, array(
+                       $row->identity_card_affiliate,
+                       $row->city_exp_first_shortened_affiliate,
+                       $row->registration_affiliate,
+                       $row->full_name_affiliate,
+                       $row->id_loan,
+                       $row->code_loan,
+                       $row->request_date_loan,
+                       $row->disbursement_date_loan,
+                       $row->city_loan,
+                       $row->indebtedness_borrower,
+                       $row->sub_modality_loan,
+                       $row->modality_loan,
+                       $row->identity_card_borrower,
+                       $row->city_exp_first_shortened_borrower,
+                       $row->registration_borrower,
+                       $row->last_name_borrower,
+                       $row->mothers_last_name_borrower,
+                       $row->surname_husband_borrower,
+                       $row->first_name_borrower,
+                       $row->second_name_borrower, 
+                       $row->num_accounting_voucher_loan,   
+                       $row->amount_approved_loan,
+                       $row->state_type_affiliate,
+                       $row->state_affiliate,
+                       $row->quota_loan,
+                       $row->state_loan,
+                       $row->pension_entity_affiliate,
+                       $row->balance_loan,       
+                       $row->type_affiliate_spouse_loan
+                   ));
+               }
+               $export = new ArchivoPrimarioExport($data);
+               return Excel::download($export, $File.'.xls');
+      }else{    
+        $list_loan = DB::table('view_loan_borrower')
+       ->where($conditions)
+       ->select('*')
+       ->orderBy('code_loan', $order_loan)   
+       ->paginate($pagination_rows);
+            $list_loan->getCollection()->transform(function ($list_loan) {
+            $padron = Loan::findOrFail($list_loan->id_loan);
+            $list_loan->balance_loan=$padron->balance;
+            return $list_loan;
+               });
+           return $list_loan;
+      }
+   }
 }
