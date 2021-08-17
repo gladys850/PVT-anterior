@@ -349,7 +349,7 @@ class LoanReportController extends Controller
     $final_date = request('date') ? Carbon::parse(request('date'))->endOfDay()->format('d-m-Y') : Carbon::now()->endOfDay()->format('d-m-Y');
     $state = LoanState::whereName('Vigente')->first();
 
-    $loans=Loan::where('state_id',$state->id)->get();
+    $loans=Loan::where('state_id',$state->id)->orderBy('code')->where('disbursement_date', '<', $final_date)->get();
     $loans_mora_total = collect();
     $loans_mora_parcial = collect();
     $loans_mora = collect();
@@ -372,7 +372,7 @@ class LoanReportController extends Controller
           }
          //return $loan->guarantors[1];
 
-          if(count($loan->payments)== 0 && Carbon::parse($loan->disbursement_date)->diffInDays($final_date) > LoanGlobalParameter::first()->offset_interest_day && $final_date > $loan->disbursement_date){
+          if(count($loan->payments)== 0 && Carbon::parse($loan->disbursement_date)->diffInDays($final_date) > LoanGlobalParameter::first()->days_current_interest){
             if(count($loan->guarantors)>0){
                 $loan->guarantor = $loan->guarantors;
             }
@@ -1823,21 +1823,29 @@ class LoanReportController extends Controller
     {
         $loans = Loan::whereStateId(LoanState::whereName('En Proceso')->first()->id)->where('request_date', '<=', $request->date)->orderBy('role_id')->get();
         $loans_array = collect([]);
+        $date = "";
         foreach($loans as $loan)
         {
+            foreach($loan->records as $record){
+                if(strpos($record->action, "derivó") != false){
+                    $date = "";
+                    $date = $record->created_at;
+                    break;
+                }
+            }
             $loans_array->push([
                 "code" => $loan->code,
                 "request_date" => Carbon::parse($loan->request_date)->format('d-m-Y'),
                 "lenders" => $loan->lenders,
                 "role" => $loan->role->display_name,
-                "update_date" => "",
+                "update_date" => Carbon::parse($date)->format('d-m-Y'),
                 "user" => $loan->user ? $loan->user->username : "",
                 "amount" => $loan->amount_approved,
             ]);
             //$loans_array->push($data);
         }/*foreach ($loans_array as $loan_array)
             return $loan_array->loan_code;*/
-
+            
         $data = [
             'header' => [
                 'direction' => 'DIRECCIÓN DE ASUNTOS ADMINISTRATIVOS',
