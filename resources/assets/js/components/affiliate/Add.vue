@@ -495,12 +495,27 @@ export default {
         if(Object.entries(this.spouse).length === 0){
           this.has_registered_spouse = false
         }else{
-          this.has_registered_spouse = true
+          if(cleanSpace(affiliate.spouse.date_death) == null  &&
+              cleanSpace(affiliate.spouse.death_certificate_number) == null &&
+              cleanSpace(affiliate.spouse.reason_death) == null)
+            this.has_registered_spouse = true
+          else
+            this.has_registered_spouse = false
         }
       } catch (e) {
         console.log(e)
       } finally {
         this.loading = false
+      }
+    },
+    cleanSpace(text){
+      if(text != null){
+        if(text.trim() != '')
+          return text
+        else 
+          return null
+      }else{
+        return null
       }
     },
     async getAddress(id) {
