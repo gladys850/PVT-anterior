@@ -104,7 +104,6 @@ Route::group([
 
         Route::get('copy_payments', 'Api\V1\ImportationController@copy_payments');
         Route::get('create_payments_command', 'Api\V1\ImportationController@create_payments_command');
-        Route::get('get_plan_payments/{loan}', 'Api\V1\LoanController@get_plan_payments');
 
         Route::get('rollback_copy_groups_payments', 'Api\V1\ImportationController@rollback_copy_groups_payments');
 
