@@ -6,12 +6,10 @@
           <Breadcrumbs />
         </v-toolbar-title>
         <v-spacer></v-spacer>
-        <template v-if="$route.query.workTray != 'all'">
-          <template>
           <v-tooltip top>
             <template v-slot:activator="{ on }">
               <v-btn
-                v-show="!loan.validated"
+                v-if="!loan.validated && role_name != 'Archivo'"
                 v-on="on"
                 icon
                 outlined
@@ -28,7 +26,7 @@
           <v-tooltip top>
             <template v-slot:activator="{ on }">
               <v-btn
-                v-show="!loan.validated"
+                v-if="!loan.validated && role_name != 'Archivo'"
                 v-on="on"
                 icon
                 outlined
@@ -62,13 +60,6 @@
             </template>
             <span>Anular trámite</span>
           </v-tooltip>
-          </template>
-        </template>
-        <template v-else><h6 class="caption">
-          <strong>Ubicación trámite:</strong> <br />
-          <v-icon x-small color="orange">mdi-folder-information</v-icon>{{role_name}} <br>
-          <v-icon x-small color="blue" v-if="user_name != null">mdi-file-account</v-icon> {{user_name}}</h6>
-        </template>
       </v-toolbar>
     </v-card-title>
     <v-card-text>
