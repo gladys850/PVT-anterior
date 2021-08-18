@@ -67,7 +67,7 @@
                   </v-card-text>
                 </v-card>
               </v-tab-item>
-              <v-tab>HISTORIAL DEL TRÁMITE</v-tab>
+              <v-tab>HISTORIAL DEL TRÁMITE{{$store.getters.module.id}}</v-tab>
               <v-tab-item >
                 <v-card flat tile>
                   <v-card-text>
@@ -240,7 +240,7 @@ export default {
         let res = await axios.patch(`loan/${id}`, {
           role_id: this.valArea
         })
-        this.toastr.success("Se devolvio satisfacctoriamente el tramite.")
+        this.toastr.success("Se devolvio satisfactoriamente el trámite.")
         this.$router.push("/workflow")
         console.log("se cambio el rol")
       } catch (e) {
@@ -251,7 +251,7 @@ export default {
       try {
         this.loading = true
         let res = await axios.get(
-          `module/${this.$store.getters.module.id}/observation_type`
+          `module/${6}/observation_type`
         )
         this.observation_type = res.data
       } catch (e) {
