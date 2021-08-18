@@ -9,7 +9,6 @@ Route::group([
     Route::apiResource('auth', 'Api\V1\AuthController')->only('store');
     //Route::post('command_senasir_save_payment', 'Api\V1\LoanPaymentController@command_senasir_save_payment');
     //Route::get('senasir_save_payment', 'Api\V1\LoanPaymentController@senasir_save_payment');
-    Route::get('loans_delay', 'Api\V1\LoanPaymentController@loans_delay');
     //Route::get('excel', 'Api\V1\LoanPaymentController@download');    
     //sismu
     //Route::get('prueba', 'Api\V1\AffiliateController@get_mixed_guarantees');
@@ -72,9 +71,8 @@ Route::group([
         Route::post('search_loan','Api\V1\AffiliateController@search_loan');
         Route::apiResource('contributions_affiliate', 'Api\V1\ContributionController')->only('index', 'show', 'store', 'update', 'destroy');
         Route::get('affiliate/{affiliate}/contributions_affiliate', 'Api\V1\ContributionController@get_all_contribution_affiliate');
-        Route::get('list_loan_generate', 'Api\V1\LoanController@list_loan_generate');
-        Route::get('list_loan_payments_generate', 'Api\V1\LoanPaymentController@list_loan_payments_generate');
-        Route::get('list_loan_generate_co', 'Api\V1\LoanReportController@list_loan_generate_co');
+        Route::get('list_loan_generate', 'Api\V1\LoanReportController@list_loan_generate');
+        Route::get('list_loan_payments_generate', 'Api\V1\LoanPaymentReportController@list_loan_payments_generate');
         Route::get('report_amortization_discount_months', 'Api\V1\LoanPaymentReportController@report_amortization_discount_months');//1
         Route::get('report_amortization_cash_deposit', 'Api\V1\LoanPaymentReportController@report_amortization_cash_deposit');//2
         Route::get('report_amortization_ajust', 'Api\V1\LoanPaymentReportController@report_amortization_ajust');//3
