@@ -315,6 +315,56 @@
               :affiliate.sync="affiliate"
               :borrower.sync="borrower" />
             </v-card-text>
+                <!--CAMBIO DE GARANTE A PRESTATARIO-->
+            <v-tooltip top v-if="permissionSimpleSelected.includes('create-payment-loan') && (loan.guarantors.length>0 && loan.guarantor_amortizing)">
+              <template v-slot:activator="{ on }">
+                <v-btn
+                  fab
+                  dark
+                  x-small
+                  :color="'error'"
+                  top
+                  left
+                  absolute
+                  v-on="on"
+                  style="margin-left: 300px; margin-top: 20px"
+                  @click="dialog_guarantor_lender=true"
+                >
+                  <v-icon>mdi-account-switch</v-icon>
+                </v-btn>
+              </template>
+              <div>
+                <span>Cambio de amortización a titular</span>
+              </div>
+            </v-tooltip>
+
+            <v-dialog
+              v-model="dialog_guarantor_lender"
+              max-width="500"
+            >
+              <v-card>
+                <v-card-title>
+                  Esta seguro de cambiar la amortizacion al titular?
+                </v-card-title>
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+                  <v-btn
+                    color="red darken-1"
+                    text
+                    @click="dialog_guarantor_lender = false"
+                  >
+                    Cancelar
+                  </v-btn>
+                  <v-btn
+                    color="green darken-1"
+                    text
+                    @click.stop="changeGuarantorLender()"
+                  >
+                    Aceptar
+                  </v-btn>
+                </v-card-actions>
+              </v-card>
+            </v-dialog>
           </v-card>
         </v-tab-item>
 
@@ -359,56 +409,6 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <!--CAMBIO DE GARANTE A PRESTATARIO-->
-      <v-tooltip top v-if="permissionSimpleSelected.includes('create-payment-loan') && (loan.guarantors.length>0 && loan.guarantor_amortizing)">
-        <template v-slot:activator="{ on }">
-          <v-btn
-            fab
-            dark
-            x-small
-            :color="'error'"
-            top
-            left
-            absolute
-            v-on="on"
-            style="margin-left: 400px; margin-top: 100px"
-            @click="dialog_guarantor_lender=true"
-          >
-            <v-icon>mdi-account-switch</v-icon>
-          </v-btn>
-        </template>
-        <div>
-          <span>Cambio de amortización a titular</span>
-        </div>
-      </v-tooltip>
-
-      <v-dialog
-        v-model="dialog_guarantor_lender"
-        max-width="500"
-      >
-        <v-card>
-          <v-card-title>
-            Esta seguro de cambiar la amortizacion al titular?
-          </v-card-title>
-          <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-btn
-              color="red darken-1"
-              text
-              @click="dialog_guarantor_lender = false"
-            >
-              Cancelar
-            </v-btn>
-            <v-btn
-              color="green darken-1"
-              text
-              @click.stop="changeGuarantorLender()"
-            >
-              Aceptar
-            </v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
 
     <AddObservation :bus="bus" :loan="loan" />
   </v-card>
@@ -481,7 +481,8 @@ export default {
     loan: {
       intereses: {},
       state: {},
-      user:{}
+      user:{},
+      guarantors:[]
     },
     loan_refinancing:{},
     datos: {},
