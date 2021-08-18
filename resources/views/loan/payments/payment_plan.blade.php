@@ -153,15 +153,15 @@
                 @php ($sum_days_amr = 0)
                 @php ($sw = 0)
                 @php ($aux = 0)
-                @foreach ($loan->plan as $quota)
+                @foreach ($loan->loan_plan as $quota)
                 <tr>
-                    <td class="data-row py-2">{{ $quota->nro }}</td>
-                    <td class="data-row py-2">{{ Carbon::parse($quota->date)->format('d/m/Y') }}</td>
+                    <td class="data-row py-2">{{ $quota->quota_number }}</td>
+                    <td class="data-row py-2">{{ Carbon::parse($quota->estimated_date)->format('d/m/Y') }}</td>
                     <td class="data-row py-2">{{ $quota->days }}</td>
                     <td class="data-row py-2">{{ Util::money_format($quota->capital) }}</td>
                     <td class="data-row py-2">{{ Util::money_format($quota->interest) }}</td>
                     <td class="data-row py-2">{{ Util::money_format(0) }}</td>
-                    <td class="data-row py-2">{{ Util::money_format($quota->payment) }}</td>
+                    <td class="data-row py-2">{{ Util::money_format($quota->total_amount) }}</td>
                     <td class="data-row py-2">{{ Util::money_format($quota->balance) }}</td>
                 </tr>
                 @php ($sum_estimated_quota += $quota->payment)

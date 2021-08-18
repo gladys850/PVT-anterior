@@ -189,7 +189,7 @@ export default {
     async getObservationType() {
       try {
         this.loading = true
-        let res = await axios.get(`module/${this.$store.getters.module.id}/observation_type`)
+        let res = await axios.get(`module/${6}/observation_type`)
         this.observation_type = res.data
         console.log('estas son las observaciones'+this.observation_type)
       } catch (e) {

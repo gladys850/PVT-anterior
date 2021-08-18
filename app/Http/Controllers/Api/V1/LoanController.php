@@ -47,6 +47,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\ArchivoPrimarioExport;
 use App\Exports\FileWithMultipleSheetsReport;
 use App\Exports\FileWithMultipleSheetsDefaulted;
+use App\LoanPlanPayment;
 
 /** @group Préstamos
 * Datos de los trámites de préstamos y sus relaciones
@@ -2029,5 +2030,109 @@ class LoanController extends Controller
        return response()->json([
         'suggested_amount' => $loan->get_amount_payment($request->loan_payment_date, $request->liquidate, $request->type)
        ]);
+    }
+
+    
+    /**
+    * generacion del plan de pagos
+    * Genera el plan de pagos
+    * @urlParam loan required ID del préstamo. Example: 2
+    * @authenticated
+    * @responseFile responses/loan/plan_payments.200.json
+    */
+    public function get_plan_payments(Loan $loan)
+    {
+        DB::beginTransaction();
+        try{
+            $message = [];
+            if($loan->loan_plan->count() == 0)
+            {
+                $plan = [];
+                $loan_global_parameter = LoanGlobalParameter::latest()->first();
+                $balance = $loan->amount_approved;
+                $days_aux = 0;
+                $interest_rest = 0;
+                $estimated_quota = $loan->estimated_quota;
+                for($i = 1 ;$i<= $loan->loan_term; $i++){
+                    if($i == 1){
+                        $date_ini = Carbon::parse($loan->disbursement_date)->format('d-m-Y');
+                        if(Carbon::parse($date_ini)->format('d') <= $loan_global_parameter->offset_interest_day){
+                            $date_fin = Carbon::parse($date_ini)->endOfMonth();
+                            $days = $date_fin->diffInDays($date_ini);
+                            $interest = LoanPayment::interest_by_days($days, $loan->interest->annual_interest, $balance);
+                            $capital = $estimated_quota - $interest;
+                        }
+                        else{
+                            $date_fin = Carbon::parse($date_ini)->startOfMonth()->addMonth()->endOfMonth();
+                            $capital = ($estimated_quota - LoanPayment::interest_by_days($date_fin->day, $loan->interest->annual_interest, $balance));
+                            $days = $date_fin->diffInDays($date_ini);
+                            $interest = LoanPayment::interest_by_days($date_fin->day, $loan->interest->annual_interest, $balance) + LoanPayment::interest_by_days(Carbon::parse($date_ini)->endOfMonth()->format('d') - Carbon::parse($date_ini)->format('d'), $loan->interest->annual_interest, $balance);
+                        }
+                        $payment = round(($capital + $interest),2);
+                    }
+                    else{
+                        $date_fin = Carbon::parse($date_ini)->endOfMonth();
+                        $days = $date_fin->diffInDays($date_ini)+1;
+                        $interest = LoanPayment::interest_by_days($days, $loan->interest->annual_interest, $balance);
+                        $capital = $estimated_quota - $interest;
+                        $payment = $estimated_quota;
+                    }
+                    $balance = ($balance - $capital);
+                    if($i == 1){
+                        $loan_payment = new LoanPlanPayment;
+                        $loan_payment->loan_id = $loan->id;
+                        $loan_payment->quota_number = $i;
+                        $loan_payment->estimated_date = Carbon::parse($date_fin)->format('d-m-Y');
+                        $loan_payment->days = $days + $days_aux;
+                        $loan_payment->capital = $capital;
+                        $loan_payment->interest = $interest;
+                        $loan_payment->total_amount = $payment;
+                        $loan_payment->balance = $balance;
+                        $loan_payment->save();
+                    }
+                    else{
+                        if($i == $loan->loan_term){
+                            $loan_payment = new LoanPlanPayment;
+                            $loan_payment->loan_id = $loan->id;
+                            $loan_payment->quota_number = $i;
+                            $loan_payment->estimated_date = Carbon::parse($date_fin)->format('d-m-Y');
+                            $loan_payment->days = $days;
+                            $loan_payment->capital = $capital + $balance;
+                            $loan_payment->interest = $interest;
+                            $loan_payment->total_amount = $balance + $payment;
+                            $loan_payment->balance = 0;
+                            $loan_payment->save();
+                        }
+                        else{
+                            $loan_payment = new LoanPlanPayment;
+                            $loan_payment->loan_id = $loan->id;
+                            $loan_payment->quota_number = $i;
+                            $loan_payment->estimated_date = Carbon::parse($date_fin)->format('d-m-Y');
+                            $loan_payment->days = $days;
+                            $loan_payment->capital = $capital;
+                            $loan_payment->interest = $interest;
+                            $loan_payment->total_amount = $payment;
+                            $loan_payment->balance = $balance;
+                            $loan_payment->save();
+                        }
+                    }
+                    $date_ini = Carbon::parse($date_fin)->startOfMonth()->addMonth();
+                }
+                DB::commit();
+                return $message = ([
+                    'status' => true,
+                    'message' => 'plan de pagos creado'
+                ]);
+            }
+            else
+            return $message = ([
+                'status' => false,
+                'message' => 'el plan de pagos ya fue generado con anterioridad'
+            ]);
+        }
+        catch (\Exception $e){
+            DB::rollback();
+            return $e;
+        }
     }
 }
