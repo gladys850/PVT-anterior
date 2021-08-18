@@ -99,6 +99,12 @@ class Loan extends Model
         return $this->belongsTo(Affiliate::class,'affiliate_id','id');
     }
 
+    public function loan_plan()
+    {
+        return $this->hasMany(LoanPlanPayment::class);
+        //return $this->belongsToMany(Loan::class, 'loan_plan_payments')->withPivot('loan_id', 'quota_number', 'estimated_date', 'interest', 'capital', 'total_amount', 'balance');
+    }
+
     public function setProcedureModalityIdAttribute($id)
     {
         $this->attributes['procedure_modality_id'] = $id;
