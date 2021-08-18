@@ -158,6 +158,7 @@ export default {
    mounted() {
     this.getloan(this.$route.params.id)
     this.getObservation(this.$route.params.id)
+    this.getObservationType()
     this.getCity()
   },
   methods: {
@@ -302,22 +303,12 @@ export default {
         this.loading = true
         let res = await axios.get(`loan/${id}/observation`)
         this.observations = res.data
-        let res_observables = await axios.get(
-          `module/${6}/observation_type`
-        )
-        this.observation_type = res_observables.data
 
-        for (let i = 0; i < this.observations.length; i++) {
-          let res1 = await axios.get(`user/${this.observations[i].user_id}`
+        for (this.i = 0; this.i < this.observations.length; this.i++) {
+           console.log("ww"+this.observations[this.i].user_id)
+          let res1 = await axios.get(`user/${this.observations[this.i].user_id}`
           )
-          this.observations[i].user_name = res1.data.username
-
-          for (let j = 0; j < this.observations.length; j++) {
-            if(this.observations[j].observation_type_id=this.observation_type[j].id){
-              this.observations[j].observation_type_name=this.observation_type[j].name
-            }
-        }
-
+          this.observations[this.i].user_name = res1.data.username
         }
       } catch (e) {
         console.log(e)

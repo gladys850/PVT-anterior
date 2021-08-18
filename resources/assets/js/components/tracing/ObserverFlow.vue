@@ -16,7 +16,7 @@
                          <template v-slot:item="items">
                           <tr>
                             <td>{{items.item.user_name}}</td>
-                            <td>{{items.item.observation_type_name }}</td>
+                            <td>{{observation_type.find(o => o.id == items.item.observation_type_id).name }}</td>
                             <td>{{items.item.message}}</td>
                             <td>{{items.item.date|datetime}}</td>
                           </tr>
