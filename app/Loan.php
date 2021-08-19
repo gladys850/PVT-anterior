@@ -101,8 +101,7 @@ class Loan extends Model
 
     public function loan_plan()
     {
-        return $this->hasMany(LoanPlanPayment::class);
-        //return $this->belongsToMany(Loan::class, 'loan_plan_payments')->withPivot('loan_id', 'quota_number', 'estimated_date', 'interest', 'capital', 'total_amount', 'balance');
+        return $this->hasMany(LoanPlanPayment::class)->orderBy('quota_number');
     }
 
     public function setProcedureModalityIdAttribute($id)
@@ -1131,8 +1130,17 @@ class Loan extends Model
 
     public function verify_regular_payments(){
         $date = Carbon::parse($this->disbursement_date)->format('Y-m-d');
-        $extra_amount = 0;
         $regular = true;
+        //nuevo procedimiento
+        foreach($this->paymentsKardex as $payment)
+        {
+            if($payment->estimated_quota != $this->loan_plan->where('quota_number', $payment->quota_number)->first()->total_amount || $payment->estimated_date != $this->loan_plan->where('quota_number', $payment->quota_number)->first()->estimated_date)
+            {
+                $regular = false;
+                break;
+            }
+        }
+        /*$extra_amount = 0;
         if(Carbon::parse($date)->format('d') <= LoanGlobalParameter::first()->offset_interest_day)
             $date = Carbon::parse($date)->endOfMonth()->format('Y-m-d');
         else{
@@ -1149,7 +1157,7 @@ class Loan extends Model
             else
                 $date = Carbon::parse($date)->startOfMonth()->addMonth()->endOfMonth()->format('Y-m-d');
             $extra_amount = 0;
-        }
+        }*/
         return $regular;
     }
 

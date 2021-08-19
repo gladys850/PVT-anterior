@@ -2127,4 +2127,19 @@ class LoanController extends Controller
             return false;
         }
     }
+
+    public function generate_plans()
+    {
+        $loans = Loan::whereNotNull('disbursement_date')->get();
+        $c=0;
+        foreach($loans as $loan)
+        {
+            if($loan->loan_plan->count() == 0)
+            {
+                $this->get_plan_payments($loan, $loan->disbursement_date);
+                $c++;
+            }
+        }
+        return $c;
+    }
 }
