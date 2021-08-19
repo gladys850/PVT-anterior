@@ -16,6 +16,7 @@ Route::group([
     //Route::get('depuracion', 'Api\V1\AffiliateController@eliminacion');
     // INDEFINIDO (TODO)
     Route::get('document/{affiliate_id}', 'Api\V1\ScannedDocumentController@create_document');
+    Route::get('generate_plans', 'Api\V1\LoanController@generate_plans');
 
     // Autenticado con token
     Route::group([
