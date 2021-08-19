@@ -12,9 +12,12 @@ use Illuminate\Support\Facades\DB;
 class LoanPlanPayment extends Model
 {
     use Traits\EloquentGetTableNameTrait;
+    use SoftDeletes;
     public $fillable = [
         'id',
         'loan_id',
+        'user_id',
+        'disbursement_date',
         'quota_number',
         'estimated_date',
         'days',

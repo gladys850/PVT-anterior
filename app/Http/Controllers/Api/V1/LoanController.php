@@ -537,6 +537,7 @@ class LoanController extends Controller
                 }
             }
        }
+       $this->get_plan_payments($loan, $request->disbursement_date);
     }
     $saved = $this->save_loan($request, $loan);
     return $saved->loan;
@@ -2033,20 +2034,15 @@ class LoanController extends Controller
     }
 
     
-    /**
-    * generacion del plan de pagos
-    * Genera el plan de pagos
-    * @urlParam loan required ID del préstamo. Example: 2
-    * @authenticated
-    * @responseFile responses/loan/plan_payments.200.json
-    */
-    public function get_plan_payments(Loan $loan)
+    // almacenamiento del plan de pagos
+    public function get_plan_payments(Loan $loan, $disbursement_date)
     {
         DB::beginTransaction();
         try{
             $message = [];
-            if($loan->loan_plan->count() == 0)
-            {
+            if($loan->loan_plan->count() > 0){
+                LoanPlanPayment::where('loan_id', $loan->id)->delete();
+            }
                 $plan = [];
                 $loan_global_parameter = LoanGlobalParameter::latest()->first();
                 $balance = $loan->amount_approved;
@@ -2055,7 +2051,7 @@ class LoanController extends Controller
                 $estimated_quota = $loan->estimated_quota;
                 for($i = 1 ;$i<= $loan->loan_term; $i++){
                     if($i == 1){
-                        $date_ini = Carbon::parse($loan->disbursement_date)->format('d-m-Y');
+                        $date_ini = Carbon::parse($disbursement_date)->format('d-m-Y');
                         if(Carbon::parse($date_ini)->format('d') <= $loan_global_parameter->offset_interest_day){
                             $date_fin = Carbon::parse($date_ini)->endOfMonth();
                             $days = $date_fin->diffInDays($date_ini);
@@ -2081,6 +2077,8 @@ class LoanController extends Controller
                     if($i == 1){
                         $loan_payment = new LoanPlanPayment;
                         $loan_payment->loan_id = $loan->id;
+                        $loan_payment->user_id = Auth::user()->id;
+                        $loan_payment->disbursement_date = Carbon::parse($disbursement_date)->format('d-m-Y');
                         $loan_payment->quota_number = $i;
                         $loan_payment->estimated_date = Carbon::parse($date_fin)->format('d-m-Y');
                         $loan_payment->days = $days + $days_aux;
@@ -2094,6 +2092,8 @@ class LoanController extends Controller
                         if($i == $loan->loan_term){
                             $loan_payment = new LoanPlanPayment;
                             $loan_payment->loan_id = $loan->id;
+                            $loan_payment->user_id = Auth::user()->id;
+                            $loan_payment->disbursement_date = Carbon::parse($disbursement_date)->format('d-m-Y');
                             $loan_payment->quota_number = $i;
                             $loan_payment->estimated_date = Carbon::parse($date_fin)->format('d-m-Y');
                             $loan_payment->days = $days;
@@ -2106,6 +2106,8 @@ class LoanController extends Controller
                         else{
                             $loan_payment = new LoanPlanPayment;
                             $loan_payment->loan_id = $loan->id;
+                            $loan_payment->user_id = Auth::user()->id;
+                            $loan_payment->disbursement_date = Carbon::parse($disbursement_date)->format('d-m-Y');
                             $loan_payment->quota_number = $i;
                             $loan_payment->estimated_date = Carbon::parse($date_fin)->format('d-m-Y');
                             $loan_payment->days = $days;
@@ -2119,20 +2121,11 @@ class LoanController extends Controller
                     $date_ini = Carbon::parse($date_fin)->startOfMonth()->addMonth();
                 }
                 DB::commit();
-                return $message = ([
-                    'status' => true,
-                    'message' => 'plan de pagos creado'
-                ]);
-            }
-            else
-            return $message = ([
-                'status' => false,
-                'message' => 'el plan de pagos ya fue generado con anterioridad'
-            ]);
+                return true;
         }
         catch (\Exception $e){
             DB::rollback();
-            return $e;
+            return false;
         }
     }
 }

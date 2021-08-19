@@ -16,7 +16,10 @@ class CreateLoanPaymentsPlanTable extends Migration
         Schema::create('loan_plan_payments', function (Blueprint $table) {
             $table->bigIncrements('id');// id unico
             $table->unsignedBigInteger('loan_id');
-            $table->foreign('loan_id')->references('id')->on('loans')->onDelete('cascade');
+            $table->foreign('loan_id')->references('id')->on('loans');
+            $table->unsignedBigInteger('user_id');
+            $table->date('disbursement_date');
+            $table->foreign('user_id')->references('id')->on('users');
             $table->unsignedSmallInteger('quota_number'); // numero de cuota
             $table->date('estimated_date'); // fecha estimada de pago
             $table->unsignedSmallInteger('days'); // numero de dias calculados

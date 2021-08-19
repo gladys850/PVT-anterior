@@ -59,7 +59,12 @@ class Spouse extends Model
     {
         return preg_replace('/[[:blank:]]+/', ' ', join(' ', [$this->first_name, $this->second_name, $this->last_name, $this->mothers_last_name,$this->surname_husband]));
     }
-
+    
+    public function getDeadAttribute()
+    {
+      return ($this->date_death != null || $this->reason_death != null || $this->death_certificate_number != null);
+    }
+    
     public function getAddressAttribute()
     {
         return $this->affiliate->address;
