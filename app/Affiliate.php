@@ -368,16 +368,18 @@ class Affiliate extends Model
     public function test_guarantor($modality, $sw, $remake_evaluation = false, $remake_loan_id = null){
       $guarantor= self::verify_guarantor($this);
       $remake_loan = 0;
-      if($guarantor===true){
-      if($modality){
-          $modality = ProcedureModality::findOrFail($modality); //evaluando categoria acorde a la modalidad
-          if($modality->loan_modality_parameter->min_guarantor_category <= $this->category->percentage && $this->category->percentage <= $modality->loan_modality_parameter->max_guarantor_category) $guarantor = true;
-          else $guarantor = false;
-      }else{
-          $loan_modality_parameter = LoanModalityParameter::get();
-          if( $loan_modality_parameter->min('min_guarantor_category')<= $this->category->percentage && $this->category->percentage <= $loan_modality_parameter->max('max_guarantor_category')) $guarantor = true; //evaluando categoria sin tomar en cuenta la modalidad
-          else $guarantor = false;
-      }  
+    if($guarantor===true){
+      if(!$this->dead){
+        if($modality){
+            $modality = ProcedureModality::findOrFail($modality); //evaluando categoria acorde a la modalidad
+            if($modality->loan_modality_parameter->min_guarantor_category <= $this->category->percentage && $this->category->percentage <= $modality->loan_modality_parameter->max_guarantor_category) $guarantor = true;
+            else $guarantor = false;
+        }else{
+            $loan_modality_parameter = LoanModalityParameter::get();
+            if( $loan_modality_parameter->min('min_guarantor_category')<= $this->category->percentage && $this->category->percentage <= $loan_modality_parameter->max('max_guarantor_category')) $guarantor = true; //evaluando categoria sin tomar en cuenta la modalidad
+            else $guarantor = false;
+        }
+      }
       if($guarantor){
           $loan_global_parameter = LoanGlobalParameter::latest()->first();
           if($this->affiliate_state->affiliate_state_type->name == 'Activo'){
@@ -429,7 +431,7 @@ class Affiliate extends Model
             if($affiliate->pension_entity){
             if($affiliate->pension_entity->name == 'SENASIR'){
               $spouse = $affiliate->spouse;
-              if(isset($spouse)){ 
+              if(isset($spouse)){
                     $guarantor = true;
                   } else{
                     $guarantor = false;
