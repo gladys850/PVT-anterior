@@ -385,7 +385,6 @@ export default {
         delete res.data["data"]
         this.options.page = res.data.current_page
         this.options.itemsPerPage = parseInt(res.data.per_page)
-        this.options.totalItems = res.data.total
       } catch (e) {
         console.log(e)
       }
