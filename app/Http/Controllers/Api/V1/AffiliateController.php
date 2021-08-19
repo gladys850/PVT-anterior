@@ -55,8 +55,10 @@ class AffiliateController extends Controller
         $affiliate->cpop = $affiliate->cpop;
         if($affiliate->spouse){
             $affiliate->spouse = $affiliate->spouse;
+            $affiliate->dead_spouse = $affiliate->spouse->dead;
             }else
             {$affiliate->spouse = [];
+            $affiliate->dead_spouse = [];
             }
         if ($with_category){
             if($affiliate->category){
