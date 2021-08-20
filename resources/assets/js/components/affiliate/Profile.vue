@@ -295,7 +295,7 @@
                 </ValidationProvider>
               </v-col>
               <v-col cols="12" md="6" v-if="!visible">
-                <span class="red--text" v-show="has_registered_spouse">* Se tiene registrado datos del conyugue, cambie el estado del afiliado. <br/></span>
+                <span class="red--text" v-show="!affiliate.dead  && !affiliate.dead_spouse">* Se tiene registrado datos del conyugue, cambie el estado del afiliado. <br/></span>
                 <span class="red--text" v-show="(affiliate.death_certificate_number != null && affiliate.death_certificate_number.trim() != '') ||
                     (affiliate.date_death != null && affiliate.date_death.trim() != '') ||
                     (affiliate.reason_death != null && affiliate.reason_death.trim() != '')">
