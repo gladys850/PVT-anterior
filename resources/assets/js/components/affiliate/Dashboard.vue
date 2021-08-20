@@ -44,10 +44,7 @@
               </v-card-text>
             </v-col>
           </v-card-title>
-          <v-card-text class="ma-0 pa-0 pl-3 pb-3" v-if="affiliate.spouse != null && affiliate.dead">
-            <template v-if="cleanSpace(affiliate.spouse.date_death) != null  &&
-              cleanSpace(affiliate.spouse.death_certificate_number) != null &&
-              cleanSpace(affiliate.spouse.reason_death) != null">
+          <v-card-text class="ma-0 pa-0 pl-3 pb-3" v-if="affiliate.dead && !affiliate.dead_spouse">
               <v-col cols="12" color="#EDF2F4" class="text--lighten-5 ma-0 pa-0">
                 <strong>Conyugue:</strong> {{$options.filters.fullName(affiliate.spouse, true) }}
                 <br />
@@ -56,19 +53,19 @@
                 <strong>Matrícula:</strong> {{affiliate.spouse.registration}}
                 <br />
               </v-col>
-            </template>
           </v-card-text>
         </v-card>
         <div class="red--text pa-4" v-if="affiliate.spouse != null">
-          <span v-if="affiliate.dead && (cleanSpace(affiliate.spouse.date_death) != null  ||
-              cleanSpace(affiliate.spouse.death_certificate_number) != null ||
-              cleanSpace(affiliate.spouse.reason_death) != null)">
+          <span v-if="affiliate.dead && affiliate.dead_spouse">
               *El afiliado y conyugue se encuentran registrados como fallecidos.
           </span>
-          <span  v-if="affiliate.dead == false && cleanSpace(affiliate.spouse.date_death) != null  &&
-              cleanSpace(affiliate.spouse.death_certificate_number) != null &&
-              cleanSpace(affiliate.spouse.reason_death) != null">
+          <span  v-if="!affiliate.dead  && !affiliate.dead_spouse">
               **Se tiene el registro datos del conyugue. Verifique el estado del afiliado/a
+          </span>
+          <span  v-if="(affiliate.death_certificate_number != null && affiliate.death_certificate_number.trim() != '') ||
+                    (affiliate.date_death != null && affiliate.date_death.trim() != '') ||
+                    (affiliate.reason_death != null && affiliate.reason_death.trim() != '')">
+              *** Se tiene registrado datos de fallecimiento del afiliado, cambie el estado del afiliado a Fallecido.
           </span>
         </div>
       </v-col>
