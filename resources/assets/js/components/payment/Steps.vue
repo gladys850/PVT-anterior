@@ -18,6 +18,7 @@
               </v-btn>
               <v-btn
                 color="primary"
+                :loading="status_click"
                 @click="validatedStepOne()" v-show="!show">
                 Guardar
               </v-btn>
