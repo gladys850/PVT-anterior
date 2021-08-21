@@ -20,7 +20,7 @@
     </div>
 
     <div class="block">
-        <table style="font-size:12px;" class="table-info w-100 text-center uppercase my-10">
+        <table style="font-size:11px;" class="table-info w-100 text-center uppercase my-10">
             <tr class="bg-grey-darker text-white">
                 <td class="w-25">Código Tŕamite</td>
                 @if ($loan->parent_loan || $loan->parent_reason)
@@ -73,7 +73,7 @@
     
     <div class="block">
         @foreach ($lenders as $lender)
-        <table style="font-size:12px;" class="table-info w-100 text-center uppercase my-10">
+        <table style="font-size:11px;" class="table-info w-100 text-center uppercase my-10">
             <tr class="bg-grey-darker text-white">
                 <td class="w-70">Solicitante</td>
                 <td class="w-15">CI</td>
@@ -81,7 +81,7 @@
             </tr>
             <tr> 
                 <td class="data-row py-5">{{ $lender->title ? $lender->title : '' }} {{ $lender->full_name }}</td>
-                <td class="data-row py-5">{{ $lender->identity_card_ext }}</td>     
+                <td class="data-row py-5">{{ $lender->identity_card_ext }}</td>
                 <td class="data-row py-5">{{ $lender->affiliate_state ? $lender->affiliate_state->affiliate_state_type->name : $lender->affiliate->affiliate_state->affiliate_state_type->name }}</td>     
             </tr>
             <tr class="bg-grey-darker text-white">
@@ -149,7 +149,7 @@
         <div class="block">
             <div class="font-semibold leading-tight text-left m-b-10 text-base">Garante {{$count}}</div>@php ($count = $count + 1) 
         </div>
-        <table style="font-size:12px;" class="table-info w-100 text-center uppercase my-10">
+        <table style="font-size:11px;" class="table-info w-100 text-center uppercase my-10">
             <tr class="bg-grey-darker text-white">
                 <td class="w-70">Garante</td>
                 <td class="w-15">CI</td>
@@ -213,7 +213,7 @@
 
     <div class="block">
     @foreach ($loan->personal_references as $personal_reference)
-        <table style="font-size:12px;" class="table-info w-100 text-center uppercase my-10">
+        <table style="font-size:11px;" class="table-info w-100 text-center uppercase my-10">
             <tr class="bg-grey-darker text-white">
                 <td class="w-70">Referencia</td>
                 <td class="w-15">Teléfono(s)</td>
@@ -247,7 +247,7 @@
     </div>
 
     <div class="block">
-        <table style="font-size:12px;" class="table-info w-100 text-center uppercase my-10">
+        <table style="font-size:11px;" class="table-info w-100 text-center uppercase my-10">
             <tr class="bg-grey-darker text-white">
                 <td colspan="3">Requisitos</td>
             </tr>
@@ -281,16 +281,16 @@
                     <td class="data-row py-5">{{ $key + 1 }}</td>
                     <td class="data-row py-5" colspan="2">{{ $note->message }}</td>
                 </tr>
-               
+
             @endforeach
             @endif
         </table>
     </div>
     @if (count($loan->guarantors) == 2)
     <div style="page-break-after: always"></div>
-    @endif    
+    @endif
     <div style="font-size:10px;" class="block  text-justify ">
-        <div>   
+        <div>
             La presente solicitud se constituye en una <span class="font-bold">DECLARACIÓN JURADA</span>, consignandose los datos como fidedignos por los interesados.
         </div>
         <br>
@@ -300,10 +300,10 @@
     </div>
     <div class="block no-page-break">
     </div>
-    <hr class="my-20" style="margin-top: 0; padding-top: 0;">
-    <table>
+    <!--<hr class="my-20" style="margin-top: 0; padding-top: 0;">-->
+    <table style="font-size:11px;">
             <tbody>
-                @php ($cont = 0)             
+                @php ($cont = 0)
                 @foreach ($signers->chunk(2) as $chunk)
                 <tr class="align-top">
                     @foreach ($chunk as $person)
@@ -337,6 +337,6 @@
                 </tr>
                 @endif
             </tbody>
-        </table>         
+        </table>
 </body>
 </html>
