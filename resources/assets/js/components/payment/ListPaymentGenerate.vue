@@ -5,7 +5,7 @@
         <v-card flat>
           <v-card-title class="pa-0 pb-3">
             <v-toolbar dense color="tertiary" class="font-weight-regular">
-              <v-toolbar-title>Amortizaciones</v-toolbar-title>
+              <v-toolbar-title>AMORTIZACIONES</v-toolbar-title>
             </v-toolbar>
           </v-card-title>
         <v-tooltip top>
@@ -45,7 +45,7 @@
         </v-tooltip> 
         <v-data-table
           :headers="headers"
-          :items="loans"
+          :items="loan_payments"
           :options.sync="options"
           :server-items-length="totalPayments"
           :footer-props="{ itemsPerPageOptions: [8, 15, 30] }"
@@ -217,7 +217,7 @@
               </div>
             </v-menu>
           </template>
-          
+
           <template v-slot:[`header.states_loan_payment`]="{ header }">
             {{ header.text }}<br>
             <v-menu offset-y :close-on-content-click="false">
@@ -297,7 +297,7 @@
                   <v-list-item
                     v-for="doc in printDocs"
                     :key="doc.id"
-                    @click="imprimir(doc.id, item.id_loan )"
+                    @click="imprimir(doc.id, item)"
                   >
                     <v-list-item-icon class="ma-0 py-0 pt-2">
                       <v-icon 
@@ -325,7 +325,7 @@
 <script>
 
 export default {
-name: 'list-payment-generate',
+name: 'payment-listPaymentGenerate',
 data () {
   return {
     searching:{
@@ -354,15 +354,15 @@ data () {
       { text: 'Acción',value:'actions',input:'', menu:false,type:"text",class: ['normal', 'white--text','text-md-center'], sortable: false,width: '10%'},
     ],
 
-    loans: [],
+    loan_payments: [],
     printDocs: [],
     options: {
       page: 1,
       itemsPerPage: 8,
-      sortBy: ["code_loan"],
+      sortBy: ["code_loan_payment"],
       sortDesc: [false],
     },
-    totalPayments :0,
+    totalPayments: 0,
     excel: false
   }
 },
@@ -410,12 +410,11 @@ data () {
                 sortDesc: this.options.sortDesc,
               }
             })
-            this.loans = res.data.data
+            this.loan_payments = res.data.data
             this.totalPayments = res.data.total
             delete res.data['data']
             this.options.page = res.data.current_page
             this.options.itemsPerPage = parseInt(res.data.per_page)
-            this.options.totalItems = res.data.total
         } catch (e) {
             console.log(e)
         }
@@ -470,11 +469,14 @@ data () {
       try {
         let res
         if (id == 5) {
-          res = await axios.get(`loan_payment/${item}/print/loan_payment`)
-        } else if(id == 6){
-          let resv = await axios.get(`loan_payment/${item}/voucher`)
+          res = await axios.get(`loan_payment/${item.id_loan_payment}/print/loan_payment`)
+        }
+        else if(id == 6 && item.procedure_loan_payment == 'Amortización Directa'){
+          let resv = await axios.get(`loan_payment/${item.id_loan_payment}/voucher`)
           let idVoucher = resv.data.id
           res = await axios.get(`voucher/${idVoucher}/print/voucher`)
+        }else{
+          this.toastr.error("Este registro es una " + item.procedure_loan_payment + " no cuenta con Comprobante de Registro de Pago (Amort. Directa).")
         }
         printJS({
             printable: res.data.content,
