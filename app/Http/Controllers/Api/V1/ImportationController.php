@@ -252,7 +252,7 @@ class ImportationController extends Controller
                                         'estimated_quota' => $sw == true ? $payment:$amount_group,
                                         'loan_payment_date' => Carbon::now(),
                                         'liquidate' => false,
-                                        'description'=> 'Pago realizado por sistema',
+                                        'description'=> 'Pago registrado',
                                     ];
                                     $registry_patment = $this->set_payment($form, $loan);
                                     $amount_group = $amount_group - $registry_patment->estimated_quota;
@@ -285,7 +285,7 @@ class ImportationController extends Controller
                                     'estimated_quota' => $sw == true ? $payment:$amount_group,
                                     'loan_payment_date' => Carbon::now(),
                                     'liquidate' => false,
-                                    'description'=> 'Pago realizado por sistema',
+                                    'description'=> 'Pago registrado',
                                 ];
                                 $registry_patment = $this->set_payment($form, $loan);
                                 $amount_group = $amount_group - $registry_patment->estimated_quota;
@@ -395,7 +395,7 @@ class ImportationController extends Controller
                 $drop = "drop table if exists payments_aux";
                 $drop = DB::select($drop);
                 if($request->type == 'C'){
-                    if($file_validate == "CI:MONTO"){
+                   // if($file_validate == "CI:MONTO"){
                         $temporary = "create temporary table payments_aux(period_id integer, identity_card varchar, amount float)";
                         $temporary = DB::select($temporary);
                         $copy = "copy payments_aux(identity_card, amount)
@@ -422,14 +422,14 @@ class ImportationController extends Controller
                         $consult = "select count(*) from loan_payment_copy_commands where period_id = $request->period_id";
                         $consult = DB::select($consult);
                         return $consult;
-                    }
+                   /* }
                     else{
                     return false;
-                    }
+                    }*/
                 }
                 else{
                     if($request->type == 'S'){
-                        if($file_validate == "MATRICULA:MATRICULA_DH:MONTO"){
+                        //if($file_validate == "MATRICULA:MATRICULA_DH:MONTO"){
                             $temporary = "create temporary table payments_aux(period_id integer, registration varchar, registration_dh varchar, amount float)";
                             $temporary = DB::select($temporary);
 
@@ -453,10 +453,10 @@ class ImportationController extends Controller
                             $consult = "select count(*) from loan_payment_copy_senasirs where period_id = $request->period_id";
                             $consult = DB::select($consult);
                             return $consult;
-                        }
+                       /* }
                         else{
                         return false;
-                        }
+                        }*/
                     }
                     else{
                         return "tipo inexistente";
@@ -662,7 +662,7 @@ class ImportationController extends Controller
                                     'loan_payment_date' => Carbon::now(),
                                     'liquidate' => false,
                                     'state_affiliate'=> "ACTIVO",
-                                    'description'=> null,
+                                    'description'=> 'Pago registrado',
                                 ];
                                 $loan_payment = $this->set_payment($form, $loan_calculate);
                                 $amount = $amount - $loan_payment->estimated_quota;
@@ -703,7 +703,7 @@ class ImportationController extends Controller
                                     'loan_payment_date' => Carbon::now(),
                                     'liquidate' => false,
                                     'state_affiliate'=> "ACTIVO",
-                                    'description'=> null,
+                                    'description'=> 'Pago registrado',
                                 ];
                                 $loan_payment = $this->set_payment($form, $loan_calculate);
                                 $amount = $amount - $loan_payment->estimated_quota;
