@@ -2077,9 +2077,9 @@ class LoanController extends Controller
                         $loan_payment = new LoanPlanPayment;
                         $loan_payment->loan_id = $loan->id;
                         $loan_payment->user_id = Auth::user()->id;
-                        $loan_payment->disbursement_date = Carbon::parse($disbursement_date)->format('d-m-Y');
+                        $loan_payment->disbursement_date = $disbursement_date;
                         $loan_payment->quota_number = $i;
-                        $loan_payment->estimated_date = Carbon::parse($date_fin)->format('d-m-Y');
+                        $loan_payment->estimated_date = Carbon::parse($date_fin)->endOfDay();
                         $loan_payment->days = $days + $days_aux;
                         $loan_payment->capital = $capital;
                         $loan_payment->interest = $interest;
@@ -2092,9 +2092,9 @@ class LoanController extends Controller
                             $loan_payment = new LoanPlanPayment;
                             $loan_payment->loan_id = $loan->id;
                             $loan_payment->user_id = Auth::user()->id;
-                            $loan_payment->disbursement_date = Carbon::parse($disbursement_date)->format('d-m-Y');
+                            $loan_payment->disbursement_date = $disbursement_date;
                             $loan_payment->quota_number = $i;
-                            $loan_payment->estimated_date = Carbon::parse($date_fin)->format('d-m-Y');
+                            $loan_payment->estimated_date = Carbon::parse($date_fin)->endOfDay();
                             $loan_payment->days = $days;
                             $loan_payment->capital = $capital + $balance;
                             $loan_payment->interest = $interest;
@@ -2106,9 +2106,9 @@ class LoanController extends Controller
                             $loan_payment = new LoanPlanPayment;
                             $loan_payment->loan_id = $loan->id;
                             $loan_payment->user_id = Auth::user()->id;
-                            $loan_payment->disbursement_date = Carbon::parse($disbursement_date)->format('d-m-Y');
+                            $loan_payment->disbursement_date = $disbursement_date;
                             $loan_payment->quota_number = $i;
-                            $loan_payment->estimated_date = Carbon::parse($date_fin)->format('d-m-Y');
+                            $loan_payment->estimated_date = Carbon::parse($date_fin)->endOfDay();
                             $loan_payment->days = $days;
                             $loan_payment->capital = $capital;
                             $loan_payment->interest = $interest;
