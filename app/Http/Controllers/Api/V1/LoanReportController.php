@@ -152,8 +152,7 @@ class LoanReportController extends Controller
 
         //$list_loan = Loan::where('state_id', LoanState::where('name', 'Vigente')->first()->id)->whereBetween('disbursement_date', [$date_ini, $date_fin])->get();
         $list_loan = DB::table('view_loan_borrower')
-              ->where("view_loan_borrower.disbursement_date_loan", ">=", $date_ini)
-              ->where("view_loan_borrower.disbursement_date_loan", "<=", $date_fin)
+               ->whereBetween('view_loan_borrower.disbursement_date_loan', [$date_ini, $date_fin])
               ->where("view_loan_borrower.state_loan", "Vigente")
               ->select('*')
               ->orderBy('code_loan')
@@ -2094,4 +2093,99 @@ class LoanReportController extends Controller
            return $list_loan;
       }
    }
+ /** @group Reportes de salidas de ANTICIPOS
+     * Reportes de salidas de Anticipos Prestamos
+     * @queryParam initial_date Fecha inicial. Example: 2021-01-01
+     * @queryParam final_date Fecha Final. Example: 2021-05-01
+     * @responseFile responses/loan/disbursement_receipt_form.200.json
+     * @authenticated
+     */ 
+    public function disbursements_report(request $request, $standalone = true)
+    {
+        $initial_date = request('initial_date') ?? '';
+        $final_date = request('final_date') ?? '';
+        $state_vigente='Vigente';
+        $conditions = [];
+        //return $final_date;
+        //desde aqui
+        if ($initial_date != '' && $final_date != '') {
+            $date_ini = $request->initial_date.' 00:00:00';
+            $date_fin = $request->final_date.' 23:59:59';
+
+            $loans = DB::table('view_loan_borrower')
+              ->join('fund_rotatory_outputs','fund_rotatory_outputs.loan_id','=','view_loan_borrower.id_loan')
+              ->whereBetween('view_loan_borrower.disbursement_date_loan', [$date_ini, $date_fin])
+              ->where("view_loan_borrower.state_loan", "Vigente")
+              ->select('*')
+              ->orderBy('view_loan_borrower.disbursement_date_loan')
+              ->get();
+        } else {
+            if ($final_date != '') {
+                $date_fin = $request->final_date.' 23:59:59';
+                $loans = DB::table('view_loan_borrower')
+                ->join('fund_rotatory_outputs', 'fund_rotatory_outputs.loan_id', '=', 'view_loan_borrower.id_loan')
+                ->where("view_loan_borrower.disbursement_date_loan", "<=", $date_fin)
+                ->where("view_loan_borrower.state_loan", "Vigente")
+                ->select('*')
+                ->orderBy('view_loan_borrower.disbursement_date_loan')
+                ->get();
+            } else {
+                $date_fin = Carbon::now();
+                if ($initial_date != '') {
+                    $date_ini = $request->initial_date.' 00:00:00';
+
+                    $loans = DB::table('view_loan_borrower')
+                    ->join('fund_rotatory_outputs', 'fund_rotatory_outputs.loan_id', '=', 'view_loan_borrower.id_loan')
+                    ->where("view_loan_borrower.disbursement_date_loan", ">=", $date_ini)
+                    ->where("view_loan_borrower.state_loan", "Vigente")
+                    ->select('*')
+                    ->orderBy('view_loan_borrower.disbursement_date_loan')
+                    ->get();
+                } else {
+                    $loans = DB::table('view_loan_borrower')
+                    ->join('fund_rotatory_outputs', 'fund_rotatory_outputs.loan_id', '=', 'view_loan_borrower.id_loan')
+                    ->where("view_loan_borrower.state_loan", "Vigente")
+                    ->select('*')
+                    ->orderBy('view_loan_borrower.disbursement_date_loan')
+                    ->get();
+                }
+            }
+        }
+            $loans_array = collect([]);
+            foreach ($loans as $loan) {
+                $loans_array->push([
+                "code" => $loan->code,
+                "disbursement_date_loan" => $loan->disbursement_date_loan,
+                "code_loan" => $loan->code_loan,
+                "full_name_borrower" => $loan->full_name_borrower,
+                "amount_approved_loan" => $loan->amount_approved_loan,
+                ]);
+            }
+            //return Carbon::parse($loans_array[0]['disbursement_date_loan'])->format('d-m-Y');
+            $data = [
+            'header' => [
+                'direction' => 'DIRECCIÓN DE ASUNTOS ADMINISTRATIVOS',
+                'unity' => '',
+                'table' => [
+                    ['Fecha', Carbon::now()->format('d-m-Y')],
+                    ['Hora', Carbon::now()->format('H:i:s')],
+                    ['Usuario', Auth::user()->username]
+                ]
+            ],
+            'title' => 'REPORTE DE DESEMBOLSOS',
+            'initial_date' => $initial_date? $initial_date: Carbon::parse($loans_array[0]['disbursement_date_loan'])->format('d-m-Y'),
+            'final_date' => $final_date,
+            'loans' => $loans_array,
+            'file_title' => 'reporte de desembolsos',
+        ];
+            $file_name = 'Reporte de desembolsos anticipos.pdf';
+            $view = view()->make('loan.reports_tesoreria.output_report')->with($data)->render();
+            if ($standalone) {
+                return Util::pdf_to_treasury_receipt([$view],'letter', $request->copies ?? 1);
+            }
+            return $view;
+    }
+
+
+
 }
