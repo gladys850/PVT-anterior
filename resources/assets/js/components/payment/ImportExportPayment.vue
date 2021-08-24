@@ -809,9 +809,9 @@ export default {
           this.aux_period= month
           this.mes=id
           if( this.aux_period < 10){
-            this.period_show= this.year+'-0'+this.aux_period
+            this.period_show= res.data.year+'-0'+this.aux_period
           }else{
-            this.period_show= this.year+'-'+this.aux_period
+            this.period_show= res.data.year+'-'+this.aux_period
           }
           this.dialog=true
           this.import_export.state_affiliate = 'C'
