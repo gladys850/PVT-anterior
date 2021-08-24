@@ -537,7 +537,7 @@ class LoanController extends Controller
                 }
             }
        }
-       $this->get_plan_payments($loan, $request->disbursement_date);
+       return $this->get_plan_payments($loan, $loan['disbursement_date']);
     }
     $saved = $this->save_loan($request, $loan);
     return $saved->loan;
@@ -2124,7 +2124,7 @@ class LoanController extends Controller
         }
         catch (\Exception $e){
             DB::rollback();
-            return false;
+            return $e;
         }
     }
 
