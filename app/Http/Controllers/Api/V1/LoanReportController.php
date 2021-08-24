@@ -348,7 +348,7 @@ class LoanReportController extends Controller
     $final_date = request('date') ? Carbon::parse(request('date'))->endOfDay()->format('d-m-Y') : Carbon::now()->endOfDay()->format('d-m-Y');
     $state = LoanState::whereName('Vigente')->first();
 
-    $loans=Loan::where('state_id',$state->id)->orderBy('code')->where('disbursement_date', '<', $final_date)->get();
+    $loans=Loan::where('state_id',$state->id)->orderBy('code')->where('disbursement_date', '<', Carbon::parse($final_date))->get();
     $loans_mora_total = collect();
     $loans_mora_parcial = collect();
     $loans_mora = collect();
