@@ -42,7 +42,7 @@
         {{ item.public_security_bonus | money }}
       </template>
       <template v-slot:[`item.payable_liquid`]="{ item }">
-        {{ item.payable_liquid | money }}
+        {{ item.payable_liquid || 0 | money }}
       </template>
     </v-data-table>
   </div>

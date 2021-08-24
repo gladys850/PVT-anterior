@@ -400,7 +400,7 @@
                                   </v-col>
                                   <v-col cols="3">
                                     <label>
-                                      Nombre del Archivo:{{import_export.file_name==null? import_export.file:import_export.file_name }}
+                                      Nombre del Archivo:{{fileName()}}
                                     </label>
                                   </v-col>
                                   <v-col cols="4" v-show="import_export.state_affiliate== 'S'">
@@ -488,7 +488,7 @@
                                     </v-col>
                                     <v-col cols="3">
                                       <label>
-                                      Nombre del Archivo:{{import_export.file_name==null? import_export.file : import_export.file_name }}
+                                      Nombre del Archivo:{{fileName()}}
                                       </label>
                                     </v-col>
                                     <v-col cols="4" v-show="import_export.state_affiliate== 'S'">
@@ -701,6 +701,17 @@ export default {
       this.import_export.reg_copy = 0
       this.import_export.reg_group = 0
     },
+    //Metodo para obtener el nombre del Archivo.
+    //Verificamos si el backend nos envio el nombre del archivo, caso contrario lo hacemos desde el frontend
+    fileName(){
+      if(this.import_export.file_name ==null){
+        if(this.import_export.file!=null)
+          return this.import_export.file.name
+      }
+      else{
+        return this.import_export.file_name 
+      }
+    },
     //Metodo para subir el archivo
     async uploadFilePayment() {
       const formData = new FormData();
@@ -847,9 +858,9 @@ export default {
           this.aux_period= month
           this.mes=id
           if( this.aux_period < 10){
-            this.period_show= this.year+'-0'+this.aux_period
+            this.period_show= res.data.year+'-0'+this.aux_period
           }else{
-            this.period_show= this.year+'-'+this.aux_period
+            this.period_show= res.data.year+'-'+this.aux_period
           }
           this.dialog=true
           this.import_export.state_affiliate = 'S'
@@ -1005,6 +1016,7 @@ export default {
       this.e1=1
       this.dialog_confirm=false
       this.validate_data=false
+      this.show_import=false
     },
     close()
     {
