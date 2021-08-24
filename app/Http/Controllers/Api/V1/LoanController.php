@@ -537,7 +537,7 @@ class LoanController extends Controller
                 }
             }
        }
-       return $this->get_plan_payments($loan, $loan['disbursement_date']);
+       $this->get_plan_payments($loan, $loan['disbursement_date']);
     }
     $saved = $this->save_loan($request, $loan);
     return $saved->loan;
