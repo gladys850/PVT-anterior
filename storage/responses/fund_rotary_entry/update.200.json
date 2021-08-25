@@ -1,12 +1,21 @@
 {
-    "user_id": 70,
-    "code_entry": "ddd",
-    "amount": 50200,
-    "date_entry_amount": "2021-01-02",
-    "role_id": 82,
-    "balance": 50200,
-    "balance_previous": "20",
-    "updated_at": "2021-06-13T15:15:12.000000Z",
-    "created_at": "2021-06-13T15:15:12.000000Z",
-    "id": 7
+    "fundRotatory": {
+        "id": 2,
+        "code_entry": "FR-2",
+        "check_number": "CH-12585",
+        "date_check_delivery": "2021-08-25 00:00:00",
+        "amount": "15000",
+        "balance_previous": "48000",
+        "balance": 63000,
+        "description": "Primer fondo cambio",
+        "user_id": 181,
+        "role_id": 86,
+        "created_at": "2021-08-25T13:33:16.000000Z",
+        "updated_at": "2021-08-25T19:08:15.000000Z",
+        "deleted_at": null
+    },
+    "message": "Datos actualizados correctamente.",
+    "updated_data": {
+        "check_number": "CH-12585"
+    }
 }
