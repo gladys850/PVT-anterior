@@ -512,12 +512,17 @@ class LoanController extends Controller
                 if($loan->modality->procedure_type->name == "Préstamo Anticipo"){
                     $fund_rotatory = FundRotatory::orderBy('id')->get()->last();
                     if(isset($fund_rotatory)){
-                        if($fund_rotatory->balance >= $loan->amount_approved){
-                            FundRotatoryOutput::register_advance_fund($loan->id,$loan->role_id);
-                            $authorized_disbursement = true;   
-                        }else{ 
-                            return abort(409, "Para poder realizar el desembolso el saldo existente en el fondo rotatorio debe ser mayor o igual a ".$loan->amount_approved);
-                        } 
+                        $fund_rotatory_output = FundRotatoryOutput::whereLoanId($loan->id)->first();
+                        if(!isset($fund_rotatory_output)){
+                            if($fund_rotatory->balance >= $loan->amount_approved){
+                                FundRotatoryOutput::register_advance_fund($loan->id,$loan->role_id);
+                                $authorized_disbursement = true;   
+                            }else{ 
+                                return abort(409, "Para poder realizar el desembolso el saldo existente en el fondo rotatorio debe ser mayor o igual a ".$loan->amount_approved);
+                            }
+                        }else{
+                            abort(409, "No se puede realizar el desembolso por que el prestamo ya tiene registros relacionados con el fondo rotatorio");
+                        }     
                     }else {
                         return abort(409, "Debe realizar registro del fondo rotatorio para poder realizar el desembolso");
                     } 
