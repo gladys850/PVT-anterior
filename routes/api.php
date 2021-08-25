@@ -96,7 +96,6 @@ Route::group([
 
         Route::get('loan_tracking', 'Api\V1\LoanReportController@loan_tracking');//seguimiento de prestamos
 
-        Route::apiResource('fund_rotatory_entry', 'Api\V1\FundRotatoryController')->only('index', 'show', 'store', 'update', 'destroy');//Fondo rotatorio
         Route::get('print_fund_rotary_output/{loan_id}', 'Api\V1\FundRotatoryOutputController@print_fund_rotary');
         //import payments
         Route::get('agruped_payments', 'Api\V1\ImportationController@agruped_payments');
@@ -116,6 +115,7 @@ Route::group([
 
         Route::get('request_state_report', 'Api\V1\LoanReportController@request_state_report');
         Route::get('disbursements_fund_rotatory_outputs_report', 'Api\V1\LoanReportController@disbursements_fund_rotatory_outputs_report'); //report de desembolsos anticipo 
+        //Route::apiResource('fund_rotatory_entry', 'Api\V1\FundRotatoryController')->only('index', 'show');//Fondo rotatorio
         // Afiliados
         Route::group([
             'middleware' => 'permission:show-affiliate'
@@ -224,6 +224,22 @@ Route::group([
             'middleware' => 'permission:update-refinancing-balance'
         ], function () {
             Route::patch('loan/{loan}/update_refinancing_balance','Api\V1\LoanController@update_balance_refinancing');
+        });
+        //fondo rotatorio
+        Route::group([
+            'middleware' => 'permission:create-fund_rotatory'
+        ], function () {
+            Route::apiResource('fund_rotatory_entry', 'Api\V1\FundRotatoryController')->only('store');
+        });
+        Route::group([
+            'middleware' => 'permission:update-fund_rotatory'
+        ], function () {
+            Route::apiResource('fund_rotatory_entry', 'Api\V1\FundRotatoryController')->only('update');
+        });
+        Route::group([
+            'middleware' => 'permission:delete-fund_rotatory'
+        ], function () {
+            Route::apiResource('fund_rotatory_entry', 'Api\V1\FundRotatoryController')->only('destroy');
         });
         // payments
         Route::group([

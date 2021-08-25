@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\DB;
 
 class FundRotatory extends Model
 {
@@ -36,5 +37,21 @@ class FundRotatory extends Model
     public function records()
     {
       return $this->morphMany(Record::class, 'recordable');
+    }
+    //verificar desembolsos del fondo rotatorio
+    public function verify_fund_rotatory_disbursements()
+    {
+        $has_disbursements = true;
+        $query = "SELECT count(fro.id) AS cant_found_rotatory_outputs
+                  FROM fund_rotatories fr
+                  JOIN fund_rotatory_outputs fro ON fr.id = fro.fund_rotatory_id
+                  WHERE fro.deleted_at is null AND fr.id = $this->id
+                  GROUP BY fro.id";
+
+        $cant_found_rotatory_outputs = DB::select($query);
+
+        if(empty($cant_found_rotatory_outputs)) $has_disbursements = false;
+
+        return $has_disbursements;
     }
 }
