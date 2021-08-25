@@ -2093,14 +2093,14 @@ class LoanReportController extends Controller
            return $list_loan;
       }
    }
- /** @group Reportes de salidas de ANTICIPOS
-     * Reportes de salidas de Anticipos Prestamos
+ /** @group Reportes de Fondo rotatorio
+     * Reportes de salidas fondo rotatorio Prestamos
      * @queryParam initial_date Fecha inicial. Example: 2021-01-01
      * @queryParam final_date Fecha Final. Example: 2021-05-01
      * @responseFile responses/loan/disbursement_receipt_form.200.json
      * @authenticated
      */ 
-    public function disbursements_report(request $request, $standalone = true)
+    public function disbursements_fund_rotatory_outputs_report(request $request, $standalone = true)
     {
         $initial_date = request('initial_date') ?? '';
         $final_date = request('final_date') ?? '';
@@ -2178,7 +2178,7 @@ class LoanReportController extends Controller
             'loans' => $loans_array,
             'file_title' => 'reporte de desembolsos',
         ];
-            $file_name = 'Reporte de desembolsos anticipos.pdf';
+            $file_name = 'Reporte salidas fondo rotatorio.pdf';
             $view = view()->make('loan.reports_tesoreria.output_report')->with($data)->render();
             if ($standalone) {
                 return Util::pdf_to_treasury_receipt([$view],'letter', $request->copies ?? 1);

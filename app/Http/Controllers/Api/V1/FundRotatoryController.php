@@ -12,6 +12,7 @@ use App\FundRotatoryOutput;
 use App\Http\Requests\FundRotatoryForm;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Api\V1\LoanController;
+use Illuminate\Support\Facades\DB;
 
 /** @group Fondo Rotatorio Anticipos
 * Fondo rotatorio para anticipos
@@ -137,5 +138,33 @@ class FundRotatoryController extends Controller
             } 
         } 
         return $fundRotatories;
+    }
+     /**
+    * Verificar fondo rotatorio desmbolsos
+    * Verificar si el fondo rotatorio tiene desembolsos asociados debuelve un booleano
+    * @queryParam id_fund_rotatory required ID del fondo rotatorio a varificar. Example: 2
+    * @authenticated
+    * @responseFile responses/fund_rotary_entry/verify_fund_rotatory_disbursements.200.json
+    */
+    public function verify_fund_rotatory_disbursements(Request $request)
+    {
+        $request->validate([
+            'id_fund_rotatory'=>'required|exists:fund_rotatories,id',
+        ]);
+
+        $has_disbursements = true;
+        $query = "SELECT count(fro.id) AS cant_found_rotatory_outputs
+                  FROM fund_rotatories fr
+                  JOIN fund_rotatory_outputs fro ON fr.id = fro.fund_rotatory_id
+                  WHERE fro.deleted_at is null AND fr.id = $request->id_fund_rotatory
+                  GROUP BY fro.id";
+
+        $cant_found_rotatory_outputs = DB::select($query);
+
+        if(empty($cant_found_rotatory_outputs)) $has_disbursements = false;
+
+        return response()->json([
+            'has_disbursements' =>  $has_disbursements
+        ]);
     }
 }

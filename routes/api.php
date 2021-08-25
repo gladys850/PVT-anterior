@@ -87,6 +87,7 @@ Route::group([
         Route::apiResource('periods', 'Api\V1\LoanPaymentPeriodController')->only('index', 'show', 'store', 'update', 'destroy');//cambiar a cobranzas
         Route::apiResource('fundRotatoryOutput', 'Api\V1\FundRotatoryOutputController');
         Route::get('fund_rotatory_entry_output', 'Api\V1\FundRotatoryController@get_fund_rotatori_entry_output');//listadosentradas y salidas
+        Route::get('verify_fund_rotatory_disbursements', 'Api\V1\FundRotatoryController@verify_fund_rotatory_disbursements');//Verificar fondo rotatorio desembolsos
         Route::get('get_list_month', 'Api\V1\LoanPaymentPeriodController@get_list_month');//listado de meses por gestion
         Route::get('get_list_year', 'Api\V1\LoanPaymentPeriodController@get_list_year');//listado de meses por gestion
         Route::get('loan_pvt_sismu_report', 'Api\V1\LoanReportController@loan_pvt_sismu_report');//reporte de prestamos PVT y sismu simultaneos
@@ -114,7 +115,7 @@ Route::group([
         Route::get('report_request_command_payments', 'Api\V1\ImportationReportController@report_rquest_command_payments');
 
         Route::get('request_state_report', 'Api\V1\LoanReportController@request_state_report');
-        //get_list_month
+        Route::get('disbursements_fund_rotatory_outputs_report', 'Api\V1\LoanReportController@disbursements_fund_rotatory_outputs_report'); //report de desembolsos anticipo 
         // Afiliados
         Route::group([
             'middleware' => 'permission:show-affiliate'
