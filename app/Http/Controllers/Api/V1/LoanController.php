@@ -31,6 +31,7 @@ use App\Contribution;
 use App\AidContribution;
 use App\LoanContributionAdjust;
 use App\LoanGlobalParameter;
+use App\FundRotatory;
 use App\FundRotatoryOutput;
 use App\Http\Requests\LoansForm;
 use App\Http\Requests\LoanForm;
@@ -475,19 +476,12 @@ class LoanController extends Controller
     * @responseFile responses/loan/update.200.json
     */
     public function update(LoanForm $request, Loan $loan)
-    {    $message = [];
+    {   DB::beginTransaction();
+        try {
+        $request['validate'] = false;
          if($request->date_signal == true || ($request->date_signal == false && $request->has('disbursement_date') && $request->disbursement_date != NULL)){
             $state_id = LoanState::whereName('Vigente')->first()->id;
             $request['state_id'] = $state_id;
-            /*$hour = Carbon::now()->hour;
-            $minute = Carbon::now()->minute;
-            $second = Carbon::now()->second;
-            $date = Carbon::parse($request['disbursement_date']);
-            $date->addHours($hour);
-            $date->addMinutes($minute);
-            $date->addSeconds($second);
-            $date = Carbon::parse($date);
-            $request['disbursement_date'] = $date;*/
         //si es refinanciamiento o reprogramacion colocar la etiqueta correspondiente al padre del préstamo
             if($loan->parent_loan_id != null){
                 $user = User::whereUsername('admin')->first();
@@ -512,35 +506,77 @@ class LoanController extends Controller
                 }
             }
         }
-    if(Auth::user()->can('disbursement-loan')) {
-        if($request->date_signal == true){
-            $loan['disbursement_date'] = Carbon::now();
-            $state_id = LoanState::whereName('Vigente')->first()->id;
-            $loan['state_id'] = $state_id;
-            $loan->save();
-            $procedure_modality_id = ProcedureModality::whereShortened("DES-COMANDO")->first()->id;
-            if($loan->modality->procedure_type->name == "Préstamo Anticipo"){
-                FundRotatoryOutput::register_advance_fund($loan->id,$loan->role_id);
-            }
-        }else{
-            if($request->date_signal == false){
-                if($request->has('disbursement_date') && $request->disbursement_date != NULL){
-                    if(Auth::user()->can('change-disbursement-date')) {
-                    $loan['disbursement_date'] = $request->disbursement_date;
+        $authorized_disbursement = false;
+        if(Auth::user()->can('disbursement-loan')) {
+            if($request->date_signal == true){
+                if($loan->modality->procedure_type->name == "Préstamo Anticipo"){
+                    $fund_rotatory = FundRotatory::orderBy('id')->get()->last();
+                    if(isset($fund_rotatory)){
+                        if($fund_rotatory->balance >= $loan->amount_approved){
+                            FundRotatoryOutput::register_advance_fund($loan->id,$loan->role_id);
+                            $authorized_disbursement = true;   
+                        }else{ 
+                            return abort(409, "Para poder realizar el desembolso el saldo existente en el fondo rotatorio debe ser mayor o igual a ".$loan->amount_approved);
+                        } 
+                    }else {
+                        return abort(409, "Debe realizar registro del fondo rotatorio para poder realizar el desembolso");
+                    } 
+                }else{
+                    $authorized_disbursement = true;
+                } 
+                if($authorized_disbursement){
+                    $loan['disbursement_date'] = Carbon::now();
                     $state_id = LoanState::whereName('Vigente')->first()->id;
                     $loan['state_id'] = $state_id;
                     $loan->save();
-                    if($loan->modality->procedure_type->name == "Préstamo Anticipo"){
-                        FundRotatoryOutput::register_advance_fund($loan->id,$loan->role_id);
+                    }       
+            }else{
+                if($request->date_signal == false){
+                    if($request->has('disbursement_date') && $request->disbursement_date != NULL){
+                        if(Auth::user()->can('change-disbursement-date')) {
+                            if($loan->modality->procedure_type->name == "Préstamo Anticipo"){
+                                $fund_rotatory = FundRotatory::orderBy('id')->get()->last();
+                                if(isset($fund_rotatory)){
+                                    $fund_rotatory_output = FundRotatoryOutput::whereLoanId($loan->id)->first();
+                                    if(!isset($fund_rotatory_output)){
+                                        if($fund_rotatory->balance >= $loan->amount_approved){  
+                                            FundRotatoryOutput::register_advance_fund($loan->id,$loan->role_id);
+                                            $authorized_disbursement = true;   
+                                        }else{ 
+                                            abort(409, "Para poder realizar el desembolso el saldo existente en el fondo rotatorio debe ser mayor o igual a ".$loan->amount_approved);
+                                        } 
+                                    }else{
+                                        abort(409, "No se puede realizar la edición por que ya se encuentra un registro en el fondo rotatorio");
+                                    }
+                                }else {
+                                    abort(409, "Debe realizar registro del fondo rotatorio para poder realizar el desembolso");
+                                }                       
+                            }else{
+                                $authorized_disbursement = true;
+                            } 
+                            if($authorized_disbursement){
+                                $loan['disbursement_date'] = $request->disbursement_date;
+                                $state_id = LoanState::whereName('Vigente')->first()->id;
+                                $loan['state_id'] = $state_id;
+                                $loan->save();      
+                            }           
+                        }else abort(409, "El usuario no tiene los permisos necesarios para realizar el registro");
                     }
-                    }  else return $message['validate'] = "El usuario no tiene los permisos necesarios para realizar el registro" ;
                 }
             }
-       }
-       $this->get_plan_payments($loan, $loan['disbursement_date']);
+        $this->get_plan_payments($loan, $loan['disbursement_date']);
+        }
+    else{
+        abort(409, "El usuario no tiene los permisos para realizar el desembolso");
+    }
+    DB::commit();
+    } catch (\Exception $e) {
+        DB::rollback();
+        throw $e;
     }
     $saved = $this->save_loan($request, $loan);
     return $saved->loan;
+   
     }
 
     /**
@@ -745,11 +781,11 @@ class LoanController extends Controller
                 }
             }
             if (count($persons) > 0) $loan->loan_persons()->sync($persons);
-        }
+        } 
         return (object)[
             'request' => $request,
             'loan' => $loan
-        ];
+        ];  
     }
 
     /**
@@ -1126,7 +1162,7 @@ class LoanController extends Controller
     * @responseFile responses/loan/print_plan.200.json
     */
     public function print_plan(Request $request, Loan $loan, $standalone = true)
-    {
+    {  
         if($loan->disbursement_date){
             $procedure_modality = $loan->modality;
             $file_title = implode('_', ['PLAN','DE','PAGOS', $procedure_modality->shortened, $loan->code,Carbon::now()->format('m/d')]);
