@@ -16,7 +16,7 @@ class CreateFundRotatoriesTable extends Migration
         Schema::create('fund_rotatories', function (Blueprint $table) {
             $table->id();
             $table->string('code_entry')->unique();
-            $table->unsignedBigInteger('check_number'); 
+            $table->string('check_number'); 
             $table->dateTime('date_check_delivery'); 
             $table->float('amount',10,2); //mondo ingresado   
             $table->float('balance_previous',10,2); //saldo anterior al monto ingresado     

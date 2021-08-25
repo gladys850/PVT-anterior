@@ -18,6 +18,7 @@ class CreateFundRotatoryOutputsTable extends Migration
             $table->string('code')->unique();
             $table->float('balance_previous_output',10,2); //saldo anterior al monto de salida     
             $table->float('balance_later_output',10,2); //saldo despues de registro de salida
+            $table->float('amount_disbursed'); //monto desembolsado del fondo rotatorio
             $table->unsignedBigInteger('loan_id')->unsigned(); //id del prestamo
             $table->foreign('loan_id')->references('id')->on('loans');
             $table->unsignedBigInteger('fund_rotatory_id');  // id del fondo rotatorio 
