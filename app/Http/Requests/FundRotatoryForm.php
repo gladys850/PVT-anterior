@@ -24,7 +24,7 @@ class FundRotatoryForm extends FormRequest
     public function rules()
     {
         $rules = [
-            'check_number' => 'numeric',
+            'check_number' => 'string',
             'date_check_delivery' => 'date_format:"Y-m-d',
             'amount' => 'numeric',
             'role_id' => 'integer|exists:roles,id',//hasta aqui requerido

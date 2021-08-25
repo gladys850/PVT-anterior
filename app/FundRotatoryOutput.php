@@ -21,6 +21,9 @@ class FundRotatoryOutput extends Model
   protected $table = 'fund_rotatory_outputs';
     public $fillable = [
         'code',
+        'balance_previous_output',
+        'balance_later_output',
+        'amount_disbursed',
         'loan_id',
         'fund_rotatory_id',
         'user_id',
@@ -32,11 +35,9 @@ class FundRotatoryOutput extends Model
     {
         parent::__construct($attributes);
         if (!$this->code) {
-            //$latest_payments = DB::table('loan_payments')->orderBy('created_at', 'desc')->limit(1)->first();
             $latest_fund = DB::table('fund_rotatory_outputs')->orderBy('id', 'desc')->latest()->first();
-            if (!$latest_fund) $latest_fund = (object)['id' => 0];
-            $this->code = implode([str_pad($latest_fund->id + 1, 6, '0', STR_PAD_LEFT)]);
-            //$this->code = implode(['FondoRot', str_pad($latest_fund->id + 1, 6, '0', STR_PAD_LEFT), '-', Carbon::now()->year]);
+            if (!$latest_fund) $latest_fund = (object)['id' => 0]; //$this->code = implode([str_pad($latest_fund->id + 1, 6, '0', STR_PAD_LEFT)]);
+            $this->code = implode(['REC','-', str_pad($latest_fund->id + 1, 1, '0', STR_PAD_LEFT), '/', Carbon::now()->year]);
         }
     }
 
@@ -60,13 +61,17 @@ class FundRotatoryOutput extends Model
         return $this->belongsTo(Role::class);
     }
     public static function register_advance_fund($loan_id,$role_id)
-    {   
+    {
+        $loan = Loan::find($loan_id);
         $fundRotatory = FundRotatory::get()->last();
         $FundRotatoryOutput = new FundRotatoryOutput;
         $FundRotatoryOutput->user_id = auth()->id();
         $FundRotatoryOutput->loan_id = $loan_id;
         $FundRotatoryOutput->fund_rotatory_id = $fundRotatory->id;
         $FundRotatoryOutput->role_id = $role_id;
+        $FundRotatoryOutput->balance_previous_output = $fundRotatory->balance;
+        $FundRotatoryOutput->balance_later_output = $fundRotatory->balance - $loan->amount_approved;
+        $FundRotatoryOutput->amount_disbursed = $loan->amount_approved;
         $FundRotatoryOutput = FundRotatoryOutput::create($FundRotatoryOutput->toArray());
         $loan = Loan::find($FundRotatoryOutput->loan_id);
         $amount_balance = $loan->amount_approved;
