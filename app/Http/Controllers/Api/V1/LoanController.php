@@ -569,14 +569,13 @@ class LoanController extends Controller
     else{
         abort(409, "El usuario no tiene los permisos para realizar el desembolso");
     }
+    $saved = $this->save_loan($request, $loan);
     DB::commit();
+    return $saved->loan;
     } catch (\Exception $e) {
         DB::rollback();
         throw $e;
-    }
-    $saved = $this->save_loan($request, $loan);
-    return $saved->loan;
-   
+    } 
     }
 
     /**
