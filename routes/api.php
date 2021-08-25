@@ -115,6 +115,9 @@ Route::group([
 
         Route::get('request_state_report', 'Api\V1\LoanReportController@request_state_report');
         Route::get('disbursements_fund_rotatory_outputs_report', 'Api\V1\LoanReportController@disbursements_fund_rotatory_outputs_report'); //report de desembolsos anticipo 
+        Route::get('treasury_report', 'Api\V1\LoanPaymentReportController@treasury_report');
+        Route::get('affiliate_record', 'Api\V1\AffiliateController@affiliate_record');
+        Route::post('affiliate_guarantor', 'Api\V1\AffiliateController@test_guarantor');
         //Route::apiResource('fund_rotatory_entry', 'Api\V1\FundRotatoryController')->only('index', 'show');//Fondo rotatorio
         // Afiliados
         Route::group([
@@ -132,11 +135,9 @@ Route::group([
             Route::post('affiliate/{affiliate}/observation','Api\V1\AffiliateController@set_observation');
             Route::patch('affiliate/{affiliate}/observation','Api\V1\AffiliateController@update_observation');
             Route::delete('affiliate/{affiliate}/observation','Api\V1\AffiliateController@unset_observation');
-            Route::post('affiliate_guarantor', 'Api\V1\AffiliateController@test_guarantor');
             Route::post('affiliate_spouse_guarantor', 'Api\V1\AffiliateController@test_spouse_guarantor');
             Route::get('affiliate_existence','Api\V1\AffiliateController@get_existence');
             Route::get('affiliate/{affiliate}/maximum_loans','Api\V1\AffiliateController@evaluate_maximum_loans');
-            Route::get('affiliate_record', 'Api\V1\AffiliateController@affiliate_record');
             Route::post('affiliate_loans_guarantees', 'Api\V1\AffiliateController@loans_guarantees');
             Route::get('affiliate/{affiliate}/verify_affiliate_spouse','Api\V1\AffiliateController@verify_affiliate_spouse');
 

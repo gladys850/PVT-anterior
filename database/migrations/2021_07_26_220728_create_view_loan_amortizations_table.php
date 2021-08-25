@@ -14,7 +14,7 @@ class CreateViewLoanAmortizationsTable extends Migration
     public function up()
     {
         DB::statement("CREATE or replace  VIEW public.view_loan_amortizations
-        as select l.id as id_loan, l.code as code_loan, l.disbursement_date as disbursement_date_loan, lp.state_affiliate as state_affiliate_loan_payment,
+        as select l.id as id_loan, l.code as code_loan, l.disbursement_date as disbursement_date_loan, l.amount_approved as amount_approved_loan, ptl.name as procedure_type_loan, li.annual_interest as annual_interest_loan, lp.state_affiliate as state_affiliate_loan_payment,
               lp.id as id_loan_payment, lp.code as code_loan_payment, lp.estimated_date as estimated_date_loan_payment, lp.loan_payment_date as date_loan_payment, lp.estimated_quota as quota_loan_payment, lp.voucher as voucher_loan_payment, 
               lps.name as states_loan_payment, la.type as type_loan_payment, vt.name as voucher_type_loan_payment, v.code as code_voucher,
               a.first_name as first_name_affiliate, a.second_name as second_name_affiliate, a.last_name as last_name_affiliate, a.mothers_last_name as mothers_last_name_affiliate, a.surname_husband as surname_husband_affiliate, a.identity_card as identity_card_affiliate, a.registration as registration_affiliate,
@@ -27,6 +27,9 @@ class CreateViewLoanAmortizationsTable extends Migration
                 from loan_payments lp
                 join loans l on l.id = lp.loan_id
                 join loan_states ls on ls.id = l.state_id
+                join procedure_modalities pml on pml.id = l.procedure_modality_id
+                join procedure_types  ptl on ptl.id = pml.procedure_type_id 
+                join loan_interests li on li.id = l.interest_id
                 join affiliates a on a.id = lp.affiliate_id
                 join affiliate_states as2 on a.affiliate_state_id = as2 .id 
                 join affiliate_state_types ast on as2.affiliate_state_type_id = ast.id
@@ -40,7 +43,7 @@ class CreateViewLoanAmortizationsTable extends Migration
                 left join voucher_types vt on vt.id = v.voucher_type_id
                 where la.type = 'affiliates'
                 union
-                select l.id as id_loan, l.code as code_loan, l.disbursement_date as disbursement_date_loan, lp.state_affiliate as state_affiliate_loan_payment,
+                select l.id as id_loan, l.code as code_loan, l.disbursement_date as disbursement_date_loan,l.amount_approved as amount_approved_loan, ptl.name as procedure_type_loan, li.annual_interest as annual_interest_loan, lp.state_affiliate as state_affiliate_loan_payment,
               lp.id as id_loan_payment, lp.code as code_loan_payment, lp.estimated_date as estimated_date_loan_payment, lp.loan_payment_date as date_loan_payment, lp.estimated_quota as quota_loan_payment, lp.voucher as voucher_loan_payment, 
               lps.name as states_loan_payment, la.type as type_loan_payment, vt.name as voucher_type_loan_payment, v.code as code_voucher,
               a.first_name as first_name_affiliate, a.second_name as second_name_affiliate, a.last_name as last_name_affiliate, a.mothers_last_name as mothers_last_name_affiliate, a.surname_husband as surname_husband_affiliate, a.identity_card as identity_card_affiliate, a.registration as registration_affiliate,
@@ -52,6 +55,9 @@ class CreateViewLoanAmortizationsTable extends Migration
               lpc.name as name_category, lpc.shortened as shortened_category, lpc.type_register as type_register_category
                 from loan_payments lp
                 join loans l on l.id = lp.loan_id
+                join procedure_modalities pml on pml.id = l.procedure_modality_id
+                join procedure_types  ptl on ptl.id = pml.procedure_type_id
+                join loan_interests li on li.id = l.interest_id
                 join loan_states ls on ls.id = l.state_id
                 join affiliates a on a.id = lp.affiliate_id
                 join affiliate_states as2 on a.affiliate_state_id = as2 .id 
