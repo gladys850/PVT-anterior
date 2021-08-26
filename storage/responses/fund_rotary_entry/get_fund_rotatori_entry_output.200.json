@@ -37,7 +37,6 @@
                 {
                     "id": 4,
                     "code": "REC-1/2021",
-                    "balance_previous_output": "52141.89",
                     "balance_later_output": "50141.89",
                     "amount_disbursed": "2000",
                     "loan_id": 1059,
