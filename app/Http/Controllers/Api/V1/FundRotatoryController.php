@@ -49,25 +49,33 @@ class FundRotatoryController extends Controller
      */
     public function store(FundRotatoryForm $request)
     {
-        $fundRotatory = new FundRotatory;
-        $fundRotatory->user_id = Auth::id();
-        $code_entry = count(FundRotatory::all());
-        $code_entry = $code_entry+1;
-        $fundRotatory->code_entry ="FR-".$code_entry;
-        $fundRotatory->check_number = $request->input('check_number');
-        $fundRotatory->amount = $request->input('amount');
-        $fundRotatory->date_check_delivery = $request->input('date_check_delivery');
-        $fundRotatory->description = $request->input('description');
-        $fundRotatory->role_id = $request->input('role_id');
-        if($fundRotatory->last == null){
-            $fundRotatory->balance_previous= 0;
-            $fundRotatory->balance = $request->input('amount');
-        }else{
-            $balance_previous= $fundRotatory->last->balance;
-            $fundRotatory->balance_previous = $balance_previous;
-            $fundRotatory->balance = $request->input('amount')+$fundRotatory->last->balance;
+        DB::beginTransaction();
+        try {
+            $fundRotatory = new FundRotatory;
+            $fundRotatory->user_id = Auth::id();
+            $code_entry = count(FundRotatory::all());
+            $code_entry = $code_entry+1;
+            $fundRotatory->code_entry ="FR-".$code_entry;
+            $fundRotatory->check_number = $request->input('check_number');
+            $fundRotatory->amount = $request->input('amount');
+            $fundRotatory->date_check_delivery = $request->input('date_check_delivery');
+            $fundRotatory->description = $request->input('description');
+            $fundRotatory->role_id = $request->input('role_id');
+            if($fundRotatory->last == null){
+                $fundRotatory->balance_previous= 0;
+                $fundRotatory->balance = $request->input('amount');
+            }else{
+                $balance_previous= $fundRotatory->last->balance;
+                $fundRotatory->balance_previous = $balance_previous;
+                $fundRotatory->balance = $request->input('amount')+$fundRotatory->last->balance;
+            }
+            $fundRotatory_return = FundRotatory::create($fundRotatory->toArray());
+            DB::commit();
+            return $fundRotatory_return;
+        } catch (\Exception $e) {
+            DB::rollback();
+            throw $e;
         }
-        return FundRotatory::create($fundRotatory->toArray());
     }
 
     /**
@@ -89,18 +97,48 @@ class FundRotatoryController extends Controller
      * @urlParam fund_rotatory_id ID del fondo rotatorio. Example: 1
      * @bodyParam amount numeric Monto de ingreso del fondo rotatoio. Example: 50000
      * @bodyParam date_check_delivery date Fecha de ingreso del fondo o asignacion. Example: 2021/06/01
+     * @bodyParam check_number string Cheque numero. Example: CH-12589
+     * @bodyParam description string Descripcion del cheque: Primer cheque
      * @bodyParam role_id numeric Rol con el cual se realizo el registro. Example: 92
-     * @bodyParam balance numeric Saldo del fondo rotatorio. Example: 10000
-     * @bodyParam balance_previous numeric Saldo del fondo rotatorio anterior. Example: 200
      * @authenticated
-     * @responseFile responses/aid_contribution/update.200.json
+     * @responseFile responses/fund_rotary_entry/update.200.json
      */
     public function update(FundRotatoryForm $request,$fundRotatory)
     {
-        $fundRotatory = FundRotatory::find($fundRotatory);
-        $fundRotatory->fill($request->all());
-        $fundRotatory->save();
-        return  $fundRotatory;
+        DB::beginTransaction();
+        try {
+            $message = 'Envíe lo datos que desee actualizar.';
+            $fundRotatory = FundRotatory::find($fundRotatory);
+            $verify_fund_rotatory_disbursements = $fundRotatory->verify_fund_rotatory_disbursements();
+            if($fundRotatory->verify_fund_rotatory_disbursements()){ //tiene salidas el FR
+                $exceptions = ['code_entry','date_check_delivery','role_id','amount','balance_previous','balance','user_id'];
+                if($request->has('amount')) $message = 'No se puede modificar MONTO del fondo rotatorio, por que existen salidas registradas';
+                if($request->has('date_check_delivery')) $message = 'No se puede modificar Fecha de entrega del Cheque del fondo rotatorio, por que existen salidas registradas';
+                if($request->has('date_check_delivery') && $request->has('amount')) $message = 'No se puede modificar Monto y Fecha de entrega del Cheque del fondo rotatorio, por que existen salidas registradas';
+            }else{
+                $exceptions = ['code_entry','balance_previous','balance'];
+            }
+            if($request->has('amount')){
+                $fundRotatory->fill(array_merge($request->except($exceptions),['balance' =>  $fundRotatory->balance_previous + $request->amount]));
+                if($fundRotatory->isDirty()) $message = 'Datos actualizados correctamente.';
+                $updated_data =$fundRotatory->getDirty();
+            }else{
+                $fundRotatory->fill(array_merge($request->except($exceptions)));
+                if($fundRotatory->isDirty()) $message = 'Datos actualizados correctamente.';
+                $updated_data =$fundRotatory->getDirty();
+            }
+
+            $fundRotatory->save();
+            DB::commit();
+            return response()->json([
+                'fundRotatory' =>  $fundRotatory,
+                'message' => $message,
+                'updated_data' => $updated_data
+            ]);
+        } catch (\Exception $e) {
+            DB::rollback();
+            throw $e;
+        }
     }
 
     /**
@@ -113,8 +151,12 @@ class FundRotatoryController extends Controller
     public function destroy($fundRotatory)
     {
         $fundRotatory = FundRotatory::find($fundRotatory);
-        $fundRotatory->delete();
-        return $fundRotatory;
+        if(!$fundRotatory->verify_fund_rotatory_disbursements()){
+            $fundRotatory->delete();
+            return $fundRotatory;
+        }else{
+            abort(409, 'No se puede eliminar, el fondo rotatorio tiene resgistrado salidas! ');
+        }
     }
      /**
     * Listado de ingresos y salidas del fondo rotatorio
@@ -151,20 +193,9 @@ class FundRotatoryController extends Controller
         $request->validate([
             'id_fund_rotatory'=>'required|exists:fund_rotatories,id',
         ]);
-
-        $has_disbursements = true;
-        $query = "SELECT count(fro.id) AS cant_found_rotatory_outputs
-                  FROM fund_rotatories fr
-                  JOIN fund_rotatory_outputs fro ON fr.id = fro.fund_rotatory_id
-                  WHERE fro.deleted_at is null AND fr.id = $request->id_fund_rotatory
-                  GROUP BY fro.id";
-
-        $cant_found_rotatory_outputs = DB::select($query);
-
-        if(empty($cant_found_rotatory_outputs)) $has_disbursements = false;
-
+        $fundRotatory =  FundRotatory::find($request->id_fund_rotatory);
         return response()->json([
-            'has_disbursements' =>  $has_disbursements
+            'has_disbursements' =>  $fundRotatory->verify_fund_rotatory_disbursements()
         ]);
     }
 }

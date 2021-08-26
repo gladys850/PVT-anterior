@@ -14,6 +14,7 @@ use App\Exports\ArchivoPrimarioExport;
 use App\Exports\SheetExportPayment;
 use App\Exports\MultipleSheetExportPayment;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
 //use App\Exports\SheetExportPayment;
 use Carbon;
 
@@ -855,5 +856,51 @@ class LoanPaymentReportController extends Controller
     }
   }
 
-
+  /** @group Reporte de amortizaciones en caja
+   * Reporte de amortizaciones realizados en caja
+   * @queryParam initial_date Fecha inicial. Example: 2021-01-01
+   * @queryParam final_date Fecha Final. Example: 2021-05-01
+   * @authenticated
+   * @responseFile responses/reports_request_payments/payments_in_treasury.200.json
+   */
+  public function treasury_report(request $request, $standalone = true)
+  {
+    try{
+      if($request->initial_date == null)
+        $initial_date = Carbon::now();
+      else
+        $initial_date = $request->initial_date;
+      if($request->final_date == null)
+        $final_date = Carbon::now();
+      else
+        $final_date = $request->final_date;
+      $payments = DB::table('view_loan_amortizations')
+      ->where('date_loan_payment', '>=', Carbon::parse($initial_date)->startOfDay())
+      ->where('date_loan_payment', '<=', Carbon::parse($final_date)->endOfDay())
+      ->orderBy('procedure_type_loan')
+      ->get();
+      $data = [
+        'header' => [
+            'direction' => 'DIRECCIÓN DE ASUNTOS ADMINISTRATIVOS',
+            'unity' => 'UNIDAD DE TESORERIA',
+            'table' => [
+                ['Fecha', Carbon::now()->format('d-m-Y')],
+                ['Hora', Carbon::now()->format('H:m:s')],
+                ['Usuario', Auth::user()->username]
+            ]
+        ],
+        'title' => 'AMORTIZACION PRESTAMO',
+        'initial_date' => $request->initial_date,
+        'final_date' => $request->final_date,
+        'payments' => $payments,
+        'file_title' => 'Ingresos Depositados en Tesoreria',
+    ];
+    $file_name = 'Ingresos Depositados en Tesoreria.pdf';
+    $view = view()->make('loan.reports.payments_in_treasury_report')->with($data)->render();
+    if ($standalone) return Util::pdf_to_base64([$view], $file_name, 'letter', $request->copies ?? 1, false);
+    return $view;
+    }catch(\Exception $e){
+      return $e;
+    }
+  }
 }
