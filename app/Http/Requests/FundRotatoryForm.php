@@ -27,15 +27,15 @@ class FundRotatoryForm extends FormRequest
             'check_number' => 'string',
             'date_check_delivery' => 'date_format:"Y-m-d',
             'amount' => 'numeric',
-            'role_id' => 'integer|exists:roles,id',//hasta aqui requerido
+            'role_id' => 'integer|exists:roles,id',
+            'description' => 'string|nullable',//hasta aqui requerido
             'balance' =>'numeric|nullable',
             'balance_previous' =>'numeric|nullable',
             'user_id' =>'integer|nullable',
-            'description' => 'string|nullable'
         ];
         switch ($this->method()) {
             case 'POST': {
-                foreach (array_slice($rules, 0, 4) as $key => $rule) {
+                foreach (array_slice($rules, 0, 5) as $key => $rule) {
                     $rules[$key] = implode('|', ['required', $rule]);
                 }
                 return $rules;
