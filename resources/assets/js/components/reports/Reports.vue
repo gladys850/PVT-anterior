@@ -125,6 +125,7 @@ export default {
     visible: false,
 
   }),
+
   created() {
     this.reports_items = [
       {
@@ -133,7 +134,8 @@ export default {
         tab: 1,
         criterios: ["initial_date", "final_date"],
         service: "/report_amortization_discount_months",
-        type: "excel",
+        type: "xls",
+        permissions: 'show-report-collections'
       },
       {
         id: 2,
@@ -141,7 +143,8 @@ export default {
         tab: 1,
         criterios: ["initial_date", "final_date"],
         service: "/report_amortization_cash_deposit",
-        type: "excel",
+        type: "xls",
+        permissions: 'show-report-collections'
       },
       {
         id: 3,
@@ -149,7 +152,8 @@ export default {
         tab: 1,
         criterios: ["initial_date", "final_date"],
         service: "/report_amortization_ajust",
-        type: "excel",
+        type: "xls",
+        permissions: 'show-report-collections'
       },
       {
         id: 4,
@@ -157,7 +161,8 @@ export default {
         tab: 1,
         criterios: ["initial_date", "final_date"],
         service: "/report_amortization_pending_confirmation",
-        type: "excel",
+        type: "xls",
+        permissions: 'show-report-collections'
       },
       {
         id: 5,
@@ -165,7 +170,8 @@ export default {
         tab: 1,
         criterios: ["initial_date", "final_date"],
         service: "/report_amortization_fondo_complement",
-        type: "excel",
+        type: "xls",
+        permissions: 'show-report-collections'
       },
       {
         id: 6,
@@ -173,7 +179,8 @@ export default {
         tab: 0,
         criterios: ["initial_date", "final_date"],
         service: "/report_loan_vigent",
-        type: "excel",
+        type: "xls",
+        permissions: 'show-report-collections'
       },
       {
         id: 7,
@@ -181,7 +188,8 @@ export default {
         tab: 0,
         criterios: ["initial_date", "final_date"],
         service: "/report_loan_state_cartera",
-        type: "excel",
+        type: "xls",
+        permissions: 'show-report-collections'
       },
       {
         id: 8,
@@ -190,7 +198,8 @@ export default {
         criterios: ["date"],
         service: "/report_loans_mora",
         label: "Fecha final",
-        type: "excel",
+        type: "xls",
+        permissions: 'show-report-collections'
       },
       {
         id: 9,
@@ -198,7 +207,8 @@ export default {
         tab: 0,
         criterios: [],
         service: "/loan_defaulted_guarantor",
-        type: "excel",
+        type: "xls",
+        permissions: 'show-report-collections'
       },
       {
         id: 10,
@@ -207,7 +217,8 @@ export default {
         criterios: ["date"],
         service: "/loan_pvt_sismu_report",
         label: "Fecha final",
-        type: "excel",
+        type: "xls",
+        permissions: 'show-report-collections'
       },
       {
         id: 11,
@@ -216,7 +227,8 @@ export default {
         criterios: ["date"],
         service: "/loan_information",
         label:"Periódo (Seleccione el último dia del mes)",
-        type: "excel",
+        type: "xls",
+        permissions: 'show-report-collections'
       },
       /* el reporte se encuentra en la importación, asi que si se requiere descomentar las lineas
       {
@@ -226,7 +238,7 @@ export default {
         criterios: ["origin","date"],
         service: "/report_request_institution",
         label: "Periódo (Seleccione el último dia del mes)",
-        type: "excel",
+        type: "xls",
       },*/
       {
         id: 13,
@@ -236,6 +248,25 @@ export default {
         service: "/request_state_report",
         label: "Hasta fecha",
         type: "pdf",
+        permissions: 'show-report-others'
+      },
+      {
+        id: 14,
+        name: "Rep. de salidas fondo rotatorio Préstamos",
+        tab: 0,
+        criterios: ["initial_date","final_date"],
+        service: "/disbursements_fund_rotatory_outputs_report",
+        type: "pdf",
+        permissions: 'show-report-treasury'
+      },
+      {
+        id: 15,
+        name: "Rep. de amortizaciones realizados en caja",
+        tab: 1,
+        criterios: ["initial_date","final_date"],
+        service: "/treasury_report",
+        type: "pdf",
+        permissions: 'show-report-treasury'
       },
     ],
     this.type_institution= [
@@ -243,6 +274,7 @@ export default {
       { value:"S", name: "Senasir" }
     ]
   },
+
   watch:{
    tab: function(newVal, oldVal) {
       if(newVal != oldVal) {
@@ -260,7 +292,9 @@ export default {
       }
     },
   },
+
   methods: {
+
     clearInputs() {
       this.report_selected = null
       this.report_inputs.initial_date = null
@@ -270,27 +304,19 @@ export default {
     },
 
     async downloadReport() {
-    
+
         if (this.report_selected) {
-          if(this.report_selected.type == 'excel'){
-                      //let params = [];
-          const formData = new FormData();
-          this.report_selected.criterios.forEach((criterio) => {
-            let respuesta = this.report_inputs[criterio];
-            //Verifica e introduce si existe respuesta de los criterios
-            if (respuesta != null) {
-              //params += criterio + "=" + this.report_inputs[criterio] + "&";
-              formData.append(criterio, this.report_inputs[criterio]);
-            } else {
-              // validation =false
-            }
+          if(this.report_selected.type == 'xls'){
+            const formData = new FormData();
+            this.report_selected.criterios.forEach((criterio) => {
+              let respuesta = this.report_inputs[criterio];
+              //Verifica e introduce si existe respuesta de los criterios
+              if (respuesta != null) {
+                formData.append(criterio, this.report_inputs[criterio]);
+              } else {
+                console.log(validation)
+              }
           });
-          // if(validation) {
-          //   console.log(`${this.report_selected.service}?${params}`)
-          // } else {
-          //   this.toastr.error("Debe ingresar todos los campos");
-          // }
-          // console.log(`${this.report_selected.service}?${params}`)
           this.loading_button = true
           await axios({
             url: this.report_selected.service,
@@ -314,11 +340,10 @@ export default {
                 link.setAttribute("download", this.report_selected.name + ".xls");
                 document.body.appendChild(link);
                 link.click();
-                this.clearInputs();       
+                this.clearInputs();
               } else{
-                this.toastr.error("Seleecione los criterios de búsqueda.");
+                this.toastr.error("Seleccione los criterios de búsqueda.");
               }
-
             })
             .catch((e) => {
               console.log(e);
@@ -331,7 +356,10 @@ export default {
               this.loading_button = true
               let res = await axios.get(`${this.report_selected.service}`, {
                 params: {
+                  initial_date: this.report_inputs.initial_date,
+                  final_date: this.report_inputs.final_date,
                   date: this.report_inputs.date,
+                  origin: this.report_inputs.origin
                 },
               });
               printJS({
@@ -347,16 +375,35 @@ export default {
               console.log(e);
             }
           }
-            
+
         } else {
           this.toastr.error("Seleccione un reporte.")
           this.loading_button = false
         }
     },
   },
+
   computed: {
+    //permisos del selector global por rol
+    permissionSimpleSelected() {
+      return this.$store.getters.permissionSimpleSelected
+    },
+
     computedReportsItems() {
-      return this.reports_items.filter((item) => item.tab == this.tab);
+      let reports_items
+      reports_items = this.reports_items.filter((item) => item.tab == this.tab)
+      if (this.permissionSimpleSelected.includes("show-report-collections")){
+         reports_items = reports_items.filter((item) => item.permissions == 'show-report-collections');
+      }
+      else if (this.permissionSimpleSelected.includes("show-report-treasury")){
+         reports_items = reports_items.filter((item) => item.permissions == 'show-report-treasury');
+      }
+      else if (this.permissionSimpleSelected.includes("show-report-others")){
+         reports_items = reports_items.filter((item) => item.permissions == 'show-report-others');
+      }else{
+        reports_items= []
+      }
+      return reports_items
     },
   },
 };
