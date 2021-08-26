@@ -128,8 +128,8 @@ class LoanPermissionSeeder extends Seeder
                 'name' => 'delete-voucher-paid',
                 'display_name' => 'Anular comprobante pagado'
             ],[
-                'name' => 'show-report-payment',
-                'display_name' => 'Ver reporte de cobranza'
+                'name' => 'show-report',
+                'display_name' => 'Ver reportes'
             ],[
                 'name' => 'show-list-voucher',
                 'display_name' => 'Ver listado de comprobantes en tesorería'
@@ -139,7 +139,16 @@ class LoanPermissionSeeder extends Seeder
             ],[
                 'name' => 'importation_payments',
                 'display_name' => 'Importación de cobros Comando Senasir'
-            ]
+            ],[
+                'name' => 'show-report-collections',
+                'display_name' => 'Ver reporte de cobranzas'
+            ],[
+                'name' => 'show-report-treasury',
+                'display_name' => 'Ver reporte de tesoreria'
+            ],[
+                'name' => 'show-report-others',
+                'display_name' => 'Ver otros reportes'
+            ],
         ];
         foreach ($permissions as $permission) {
             Permission::firstOrCreate($permission);
