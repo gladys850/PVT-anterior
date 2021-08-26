@@ -9,8 +9,10 @@ class MovimentFundRotatory extends Model
 {
     use Traits\EloquentGetTableNameTrait;
     use SoftDeletes;
+    public $timestamps = true;
     protected $table = 'moviment_fund_rotatories';
-      public $fillable = [
+    public $guarded = ['id'];
+    public $fillable = [
           'loan_id',
           'date_check_delivery',
           'check_number',
@@ -23,4 +25,28 @@ class MovimentFundRotatory extends Model
           'user_id',
           'role_id',
       ];   
+    public function role()
+    {
+        return $this->belongsTo(Role::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function loan()
+    {
+        return $this->belongsTo(Loan::class);
+    }
+    public function movement_concept()
+    {
+        return $this->belongsTo(MovementConcept::class);
+    }
+  
+
+  
+
+ 
+
 }
