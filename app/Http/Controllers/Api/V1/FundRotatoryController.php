@@ -118,7 +118,7 @@ class FundRotatoryController extends Controller
             }else{
                 $exceptions = ['code_entry','balance_previous','balance'];
             }
-            if($request->has('amount')){
+            if($request->has('amount') && !$fundRotatory->verify_fund_rotatory_disbursements()){
                 $fundRotatory->fill(array_merge($request->except($exceptions),['balance' =>  $fundRotatory->balance_previous + $request->amount]));
                 if($fundRotatory->isDirty()) $message = 'Datos actualizados correctamente.';
                 $updated_data =$fundRotatory->getDirty();
@@ -171,6 +171,7 @@ class FundRotatoryController extends Controller
         $pagination_rows = request('per_page') ?? 10;
         $fundRotatories =  FundRotatory::orderBy('id')->paginate($pagination_rows);    
         foreach($fundRotatories as $fundRotatory){
+                $fundRotatory->amount_egress =$fundRotatory->egress;
                 $fundRotatory->fund_rotatory_outputs->sortBy('id');
             foreach($fundRotatory->fund_rotatory_outputs as $loan_outputs){ 
                 $loan = $loan_outputs->loan;

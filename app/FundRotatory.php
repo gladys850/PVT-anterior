@@ -45,13 +45,17 @@ class FundRotatory extends Model
         $query = "SELECT count(fro.id) AS cant_found_rotatory_outputs
                   FROM fund_rotatories fr
                   JOIN fund_rotatory_outputs fro ON fr.id = fro.fund_rotatory_id
-                  WHERE fro.deleted_at is null AND fr.id = $this->id
-                  GROUP BY fro.id";
+                  WHERE fro.deleted_at is null AND fr.id = $this->id";
 
         $cant_found_rotatory_outputs = DB::select($query);
 
-        if(empty($cant_found_rotatory_outputs)) $has_disbursements = false;
-
+        if($cant_found_rotatory_outputs[0]->cant_found_rotatory_outputs == 0) $has_disbursements = false;
         return $has_disbursements;
+    }
+//egreso
+    public function getEgressAttribute()
+    {
+        $egress_fund_rotatory =DB::select('select egress_fund_rotatory('.$this->id.')');
+        return $egress_fund_rotatory[0]->egress_fund_rotatory;
     }
 }
