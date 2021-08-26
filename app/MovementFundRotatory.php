@@ -5,12 +5,12 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class MovimentFundRotatory extends Model
+class MovementFundRotatories extends Model
 {
     use Traits\EloquentGetTableNameTrait;
     use SoftDeletes;
     public $timestamps = true;
-    protected $table = 'moviment_fund_rotatories';
+    protected $table = 'movement_fund_rotatories';
     public $guarded = ['id'];
     public $fillable = [
           'loan_id',
