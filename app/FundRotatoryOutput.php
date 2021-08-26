@@ -21,7 +21,7 @@ class FundRotatoryOutput extends Model
   protected $table = 'fund_rotatory_outputs';
     public $fillable = [
         'code',
-        'balance_previous_output',
+       // 'balance_previous_output',
         'balance_later_output',
         'amount_disbursed',
         'loan_id',
@@ -69,7 +69,7 @@ class FundRotatoryOutput extends Model
         $FundRotatoryOutput->loan_id = $loan_id;
         $FundRotatoryOutput->fund_rotatory_id = $fundRotatory->id;
         $FundRotatoryOutput->role_id = $role_id;
-        $FundRotatoryOutput->balance_previous_output = $fundRotatory->balance;
+        //$FundRotatoryOutput->balance_previous_output = $fundRotatory->balance;
         $FundRotatoryOutput->balance_later_output = $fundRotatory->balance - $loan->amount_approved;
         $FundRotatoryOutput->amount_disbursed = $loan->amount_approved;
         $FundRotatoryOutput = FundRotatoryOutput::create($FundRotatoryOutput->toArray());

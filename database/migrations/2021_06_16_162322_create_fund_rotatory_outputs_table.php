@@ -16,7 +16,7 @@ class CreateFundRotatoryOutputsTable extends Migration
         Schema::create('fund_rotatory_outputs', function (Blueprint $table) {
             $table->id();
             $table->string('code')->unique();
-            $table->float('balance_previous_output',10,2); //saldo anterior al monto de salida     
+           // $table->float('balance_previous_output',10,2); //saldo anterior al monto de salida     
             $table->float('balance_later_output',10,2); //saldo despues de registro de salida
             $table->float('amount_disbursed'); //monto desembolsado del fondo rotatorio
             $table->unsignedBigInteger('loan_id')->unsigned(); //id del prestamo
