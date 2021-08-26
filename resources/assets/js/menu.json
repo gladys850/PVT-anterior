@@ -68,7 +68,7 @@
     "href": "reports",
     "title": "Reportes",
     "icon": "mdi-file-table-outline",
-    "permission": "show-report-payment",
+    "permission": "show-report",
     "params": {}
   },
   {
