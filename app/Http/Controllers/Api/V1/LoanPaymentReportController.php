@@ -897,7 +897,7 @@ class LoanPaymentReportController extends Controller
     ];
     $file_name = 'Ingresos Depositados en Tesoreria.pdf';
     $view = view()->make('loan.reports.payments_in_treasury_report')->with($data)->render();
-    if ($standalone) return Util::pdf_to_base64([$view], $file_name, 'letter', $request->copies ?? 1, false);
+    if ($standalone) return Util::pdf_to_base64([$view], $file_name, 'Depositos en Tesoreria' ,'letter', $request->copies ?? 1, false);
     return $view;
     }catch(\Exception $e){
       return $e;
