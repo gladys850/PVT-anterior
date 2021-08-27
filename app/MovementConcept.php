@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class MovementConcept extends Model
 {
@@ -10,7 +11,7 @@ class MovementConcept extends Model
 
     public $timestamps = true;
     public $guarded = ['id'];
-    public $fillable = ['name','shortened','description','type', 'is_valid','user_id','role_id'];
+    public $fillable = ['name','shortened','description','type','abbreviated_supporting_document', 'is_valid','user_id','role_id'];
     use SoftDeletes;
 
     public function user()

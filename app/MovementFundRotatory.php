@@ -15,7 +15,7 @@ class MovementFundRotatory extends Model
     public $fillable = [
           'loan_id',
           'date_check_delivery',
-          'check_number',
+          //'check_number',
           'description',
           'entry_amount',
           'output_amount',

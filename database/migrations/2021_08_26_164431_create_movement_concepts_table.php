@@ -19,6 +19,8 @@ class CreateMovementConceptsTable extends Migration
             $table->string('shortened')->unique();
             $table->string('description');
             $table->enum('type',['INGRESO', 'EGRESO']);
+            $table->string('abbreviated_supporting_document');
+            $table->unique(['name', 'type','abbreviated_supporting_document']);
             $table->boolean('is_valid')->default(true);
             $table->unsignedBigInteger('user_id');  // id usuario
             $table->foreign('user_id')->references('id')->on('users');
