@@ -31,8 +31,10 @@ use App\Contribution;
 use App\AidContribution;
 use App\LoanContributionAdjust;
 use App\LoanGlobalParameter;
-use App\FundRotatory;
-use App\FundRotatoryOutput;
+//use App\FundRotatory;
+//use App\FundRotatoryOutput;
+use App\MovementConcept;
+use App\MovementFundRotatory;
 use App\Http\Requests\LoansForm;
 use App\Http\Requests\LoanForm;
 use App\Http\Requests\LoanPaymentForm;
@@ -507,15 +509,16 @@ class LoanController extends Controller
             }
         }
         $authorized_disbursement = false;
+        $moviment_concept_disbursement_id = MovementConcept::whereIsValid(true)->whereType("EGRESO")->whereShortened("DES-ANT-EG")->first()->id;
         if(Auth::user()->can('disbursement-loan')) {
             if($request->date_signal == true){
                 if($loan->modality->procedure_type->name == "Préstamo Anticipo"){
-                    $fund_rotatory = FundRotatory::orderBy('id')->get()->last();
+                    $fund_rotatory = MovementFundRotatory::orderBy('id')->get()->last();
                     if(isset($fund_rotatory)){
-                        $fund_rotatory_output = FundRotatoryOutput::whereLoanId($loan->id)->first();
+                        $fund_rotatory_output = MovementFundRotatory::whereLoanId($loan->id)->first();
                         if(!isset($fund_rotatory_output)){
                             if($fund_rotatory->balance >= $loan->amount_approved){
-                                FundRotatoryOutput::register_advance_fund($loan->id,$loan->role_id);
+                                MovementFundRotatory::register_advance_fund($loan->id,$loan->role_id,$moviment_concept_disbursement_id);
                                 $authorized_disbursement = true;   
                             }else{ 
                                 return abort(409, "Para poder realizar el desembolso el saldo existente en el fondo rotatorio debe ser mayor o igual a ".$loan->amount_approved);
@@ -540,12 +543,12 @@ class LoanController extends Controller
                     if($request->has('disbursement_date') && $request->disbursement_date != NULL){
                         if(Auth::user()->can('change-disbursement-date')) {
                             if($loan->modality->procedure_type->name == "Préstamo Anticipo"){
-                                $fund_rotatory = FundRotatory::orderBy('id')->get()->last();
+                                $fund_rotatory = MovementFundRotatory::orderBy('id')->get()->last();
                                 if(isset($fund_rotatory)){
-                                    $fund_rotatory_output = FundRotatoryOutput::whereLoanId($loan->id)->first();
+                                    $fund_rotatory_output = MovementFundRotatory::whereLoanId($loan->id)->first();
                                     if(!isset($fund_rotatory_output)){
                                         if($fund_rotatory->balance >= $loan->amount_approved){  
-                                            FundRotatoryOutput::register_advance_fund($loan->id,$loan->role_id);
+                                            MovementFundRotatory::register_advance_fund($loan->id,$loan->role_id,$moviment_concept_disbursement_id);
                                             $authorized_disbursement = true;   
                                         }else{ 
                                             abort(409, "Para poder realizar el desembolso el saldo existente en el fondo rotatorio debe ser mayor o igual a ".$loan->amount_approved);
