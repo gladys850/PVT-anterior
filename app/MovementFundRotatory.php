@@ -4,6 +4,12 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Carbon;
+use App\Loan;
+use App\Auth;
+use App\MovementConcept;
+
+use Illuminate\Support\Facades\DB;
 
 class MovementFundRotatory extends Model
 {
@@ -43,10 +49,26 @@ class MovementFundRotatory extends Model
     {
         return $this->belongsTo(MovementConcept::class);
     }
-  
-
-  
-
- 
-
+    public static function register_advance_fund($loan_id,$role_id,$moviment_concept_disbursement_id)
+    {
+        $loan = Loan::find($loan_id);
+        $fund_rotatory = MovementFundRotatory::orderBy('id')->get()->last();    
+        $abbreviated_supporting_document = MovementConcept::find($moviment_concept_disbursement_id)->abbreviated_supporting_document;
+        $movement_concept_code = MovementFundRotatory::where('movement_concept_id',$moviment_concept_disbursement_id)->withTrashed()->count()+1;
+        $name_affiliate = DB::table('view_loan_borrower')
+        ->where("view_loan_borrower.id_loan", "=", $loan_id)
+        ->select('full_name_borrower as full_name_borrower')
+        ->get();
+        $FundRotatoryOutput = new MovementFundRotatory;
+        $FundRotatoryOutput->user_id = auth()->id();
+        $FundRotatoryOutput->loan_id = $loan_id;
+        $FundRotatoryOutput->movement_concept_code =$abbreviated_supporting_document."-".$movement_concept_code.'/'.Carbon::now()->year;
+        $FundRotatoryOutput->description = $name_affiliate[0]->full_name_borrower;
+        $FundRotatoryOutput->movement_concept_id = $moviment_concept_disbursement_id;
+        $FundRotatoryOutput->role_id = $role_id;
+        $FundRotatoryOutput->output_amount = $loan->amount_approved;
+        $FundRotatoryOutput->balance = $fund_rotatory->balance - $loan->amount_approved;
+        $FundRotatoryOutput = MovementFundRotatory::create($FundRotatoryOutput->toArray());
+        return $FundRotatoryOutput;
+    }
 }

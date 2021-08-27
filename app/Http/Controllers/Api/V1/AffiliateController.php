@@ -58,7 +58,7 @@ class AffiliateController extends Controller
             $affiliate->dead_spouse = $affiliate->spouse->dead;
             }else
             {$affiliate->spouse = [];
-            $affiliate->dead_spouse = [];
+            $affiliate->dead_spouse = null;
             }
         if ($with_category){
             if($affiliate->category){
