@@ -7,6 +7,12 @@ use Illuminate\Http\Request;
 use App\MovementFundRotatory;
 use App\Http\Requests\MovementFundRotatoryForm;
 
+use App\Affiliate;
+use Illuminate\Support\Facades\Auth;
+use App\Helpers\Util;
+use Carbon\CarbonImmutable;
+use Carbon;
+use App\Loan;
 
 /** @group Movimientos
 * Datos de los movimientos de fondo rotatorio
@@ -91,4 +97,51 @@ class MovementFundRotatoryController extends Controller
 
     public function store_output()
     {}
+
+    /**
+    * Impresión del recibo desembolso de prestamo
+    * Devuelve un pdf del Pago acorde a un ID de registro de fondo rotatorio
+    * @urlParam loan_id required ID del prestamo. Example: 1
+    * @queryParam copies Número de copias del documento. Example: 2
+    * @authenticated
+    * @responseFile responses/movements/print_output_fund_rotatory.200.json
+    */
+    public function print_fund_rotary(Request $request,$loan_id, $standalone = true)
+
+    {   $movement_fund_rotatorie = MovementFundRotatory::whereLoanId($loan_id)->first();
+        $loan = Loan::findOrFail($loan_id);
+        $affiliate = Affiliate::findOrFail($loan->affiliate_id);
+        $lenders = [];
+        $lenders[] = LoanController::verify_loan_affiliates($affiliate,$loan)->disbursable;
+        $persons = collect([]);
+        foreach ($lenders as $lender) {
+            $persons->push([
+                'full_name' => implode(' ', [$lender->full_name, $lender->full_name]),
+                'identity_card' => $lender->identity_card_ext,
+                'position' => 'RECIBIDO POR'
+            ]);
+        }
+        $data = [
+            'header' => [
+                'direction' => 'DIRECCIÓN DE ESTRATEGIAS SOCIALES E INVERSIONES',
+                'unity' => 'UNIDAD DE INVERSIÓN EN PRÉSTAMOS',
+                'table' => [
+                    ['Código', $movement_fund_rotatorie->movement_concept_code],
+                    ['Fecha', Carbon::now()->format('d/m/Y')],
+                    ['Hora', Carbon::now()->format('h:m:i')],
+                    ['Usuario', Auth::user()->username]
+                ]
+            ],
+            'title' => 'RECIBO DE PAGO',
+            'ouputs_fund_rotatorie' => $movement_fund_rotatorie,
+            'loan' => $loan,
+            'signers' => $persons,
+            'lenders' => collect($lenders)
+        ];
+     
+        $file_name = implode('_', ['movement_fund_rotatory', $movement_fund_rotatorie->movement_concept_code]) . '.pdf';
+        $view = view()->make('loan.forms.disbursement_receipt_form')->with($data)->render();
+        if ($standalone) return Util::pdf_to_treasury_receipt([$view],'letter', $request->copies ?? 1);
+        return $view; 
+    }
 }
