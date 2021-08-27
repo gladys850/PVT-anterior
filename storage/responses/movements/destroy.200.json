@@ -1,0 +1,16 @@
+{
+    "id": 1,
+    "loan_id": 1,
+    "date_check_delivery": "2021-08-29",
+    "description": "s,sdfkllm",
+    "entry_amount": "50000",
+    "output_amount": "0",
+    "balance": "50000",
+    "movement_concept_code": "ksjdfhlk",
+    "movement_concept_id": 1,
+    "user_id": 90,
+    "role_id": 13,
+    "created_at": "2021-08-27T15:25:34.000000Z",
+    "updated_at": "2021-08-27T15:25:34.000000Z",
+    "deleted_at": "2021-08-27T15:25:34.000000Z"
+}

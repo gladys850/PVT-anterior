@@ -243,6 +243,17 @@ Route::group([
         ], function () {
             Route::apiResource('fund_rotatory_entry', 'Api\V1\FundRotatoryController')->only('destroy');
         });
+        //movimientos del fondo rotatorio
+        Route::group([
+            'middleware' => 'permission:index-fund_rotatory'
+        ], function () {
+        Route::apiResource('movements', 'Api\V1\MovementFundRotatoryController')->only('index');
+        });
+        Route::group([
+            'middleware' => 'permission:show-fund_rotatory'
+        ], function () {
+        Route::apiResource('movements', 'Api\V1\MovementFundRotatoryController')->only('show');
+        });
         // payments
         Route::group([
             'middleware' => 'permission:show-payment-loan|show-all-payment-loan'
