@@ -114,7 +114,7 @@ Route::group([
         Route::get('report_request_command_payments', 'Api\V1\ImportationReportController@report_rquest_command_payments');
 
         Route::get('request_state_report', 'Api\V1\LoanReportController@request_state_report');
-        Route::get('disbursements_fund_rotatory_outputs_report', 'Api\V1\LoanReportController@disbursements_fund_rotatory_outputs_report'); //report de desembolsos anticipo 
+        Route::get('disbursements_fund_rotatory_outputs_report', 'Api\V1\MovementFundRotatoryController@disbursements_fund_rotatory_outputs_report'); //report de desembolsos anticipo 
         Route::get('treasury_report', 'Api\V1\LoanPaymentReportController@treasury_report');
         Route::get('affiliate_record', 'Api\V1\AffiliateController@affiliate_record');
         Route::post('affiliate_guarantor', 'Api\V1\AffiliateController@test_guarantor');
