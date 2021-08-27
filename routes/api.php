@@ -96,7 +96,7 @@ Route::group([
 
         Route::get('loan_tracking', 'Api\V1\LoanReportController@loan_tracking');//seguimiento de prestamos
 
-        Route::get('print_fund_rotary_output/{loan_id}', 'Api\V1\FundRotatoryOutputController@print_fund_rotary');
+        Route::get('print_fund_rotary_output/{loan_id}', 'Api\V1\MovementFundRotatoryController@print_fund_rotary');
         //import payments
         Route::get('agruped_payments', 'Api\V1\ImportationController@agruped_payments');
         Route::get('importation_payments_senasir', 'Api\V1\ImportationController@importation_payment_senasir');//senasir pagos
