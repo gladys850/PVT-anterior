@@ -1,0 +1,71 @@
+{
+    "current_page": 1,
+    "data": [
+        {
+            "id": 5,
+            "name": "DESEMBOLSO ANTICIPO",
+            "shortened": "DES-ANT-EG",
+            "description": "Desembolso de préstamo modalidad Anticipo",
+            "type": "EGRESO",
+            "abbreviated_supporting_document": "REC",
+            "is_valid": true,
+            "user_id": 127,
+            "role_id": 92,
+            "created_at": "2021-08-27T14:53:26.000000Z",
+            "updated_at": "2021-08-27T14:53:26.000000Z",
+            "deleted_at": null
+        },
+        {
+            "id": 6,
+            "name": "INGRESO FONDO ROTATORIO",
+            "shortened": "FON-ROT-IN",
+            "description": "Ingreso Fondo Rotatorio",
+            "type": "INGRESO",
+            "abbreviated_supporting_document": "CH",
+            "is_valid": true,
+            "user_id": 127,
+            "role_id": 92,
+            "created_at": "2021-08-27T14:53:26.000000Z",
+            "updated_at": "2021-08-27T14:53:26.000000Z",
+            "deleted_at": null
+        },
+        {
+            "id": 7,
+            "name": "CIERRE DE FONDO ROTATORIO",
+            "shortened": "C-FON-ROT-EG",
+            "description": "CIERRE DE GESTIÓN DEL FONDO ROTATORIO",
+            "type": "EGRESO",
+            "abbreviated_supporting_document": "C",
+            "is_valid": true,
+            "user_id": 127,
+            "role_id": 92,
+            "created_at": "2021-08-27T14:53:26.000000Z",
+            "updated_at": "2021-08-27T14:53:26.000000Z",
+            "deleted_at": null
+        },
+        {
+            "id": 8,
+            "name": "dese",
+            "shortened": "DES",
+            "description": "Descripcion",
+            "type": "EGRESO",
+            "abbreviated_supporting_document": "AA",
+            "is_valid": true,
+            "user_id": 181,
+            "role_id": 92,
+            "created_at": "2021-08-27T15:25:02.000000Z",
+            "updated_at": "2021-08-27T15:25:02.000000Z",
+            "deleted_at": null
+        }
+    ],
+    "first_page_url": "http://192.168.2.242/api/v1/movement_concept?page=1",
+    "from": 1,
+    "last_page": 1,
+    "last_page_url": "http://192.168.2.242/api/v1/movement_concept?page=1",
+    "next_page_url": null,
+    "path": "http://192.168.2.242/api/v1/movement_concept",
+    "per_page": 10,
+    "prev_page_url": null,
+    "to": 4,
+    "total": 4
+}

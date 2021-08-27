@@ -119,6 +119,7 @@ Route::group([
         Route::get('affiliate_record', 'Api\V1\AffiliateController@affiliate_record');
         Route::post('affiliate_guarantor', 'Api\V1\AffiliateController@test_guarantor');
         //Route::apiResource('fund_rotatory_entry', 'Api\V1\FundRotatoryController')->only('index', 'show');//Fondo rotatorio
+        Route::apiResource('movement_concept', 'Api\V1\MovementConceptController')->only('index', 'show', 'store', 'update', 'destroy');
         // Afiliados
         Route::group([
             'middleware' => 'permission:show-affiliate'
