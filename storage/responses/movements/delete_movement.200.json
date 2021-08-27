@@ -1,0 +1,33 @@
+{
+    "message": "movimiento eliminado",
+    "movement": {
+        "id": 3,
+        "loan_id": 3,
+        "date_check_delivery": "2021-08-29 00:00:00",
+        "description": "asjhdalñds",
+        "entry_amount": "0",
+        "output_amount": "1500",
+        "balance": "46500",
+        "movement_concept_code": "sadjkhskdf",
+        "movement_concept_id": 1,
+        "user_id": 90,
+        "role_id": 13,
+        "created_at": null,
+        "updated_at": "2021-08-27T21:36:09.000000Z",
+        "deleted_at": "2021-08-27T21:36:09.000000Z",
+        "movement_concept": {
+            "id": 1,
+            "name": "DESEMBOLSO ANTICIPO",
+            "shortened": "DES-ANT-EG",
+            "description": "Desembolso de préstamo modalidad Anticipo",
+            "type": "EGRESO",
+            "abbreviated_supporting_document": "REC",
+            "is_valid": true,
+            "user_id": 127,
+            "role_id": 98,
+            "created_at": "2021-08-27T15:04:50.000000Z",
+            "updated_at": "2021-08-27T15:04:50.000000Z",
+            "deleted_at": null
+        }
+    }
+}

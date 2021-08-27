@@ -17,6 +17,7 @@ Route::group([
     // INDEFINIDO (TODO)
     Route::get('document/{affiliate_id}', 'Api\V1\ScannedDocumentController@create_document');
     Route::get('generate_plans', 'Api\V1\LoanController@generate_plans');
+    Route::delete('delete_movement/{movement}', 'Api\V1\MovementFundRotatoryController@delete_movement');
 
     // Autenticado con token
     Route::group([
@@ -245,14 +246,19 @@ Route::group([
         });
         //movimientos del fondo rotatorio
         Route::group([
-            'middleware' => 'permission:index-fund_rotatory'
+            'middleware' => 'permission:index-movement_fund_rotatory'
         ], function () {
         Route::apiResource('movements', 'Api\V1\MovementFundRotatoryController')->only('index');
         });
         Route::group([
-            'middleware' => 'permission:show-fund_rotatory'
+            'middleware' => 'permission:show-movement_fund_rotatory'
         ], function () {
         Route::apiResource('movements', 'Api\V1\MovementFundRotatoryController')->only('show');
+        });
+        Route::group([
+            'middleware' => 'permission:update-movement_fund_rotatory'
+        ], function () {
+        Route::apiResource('movements', 'Api\V1\MovementFundRotatoryController')->only('update');
         });
         // payments
         Route::group([

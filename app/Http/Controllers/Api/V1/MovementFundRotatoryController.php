@@ -14,6 +14,7 @@ use App\Helpers\Util;
 use Carbon\CarbonImmutable;
 use Carbon;
 use App\Loan;
+use App\LoanPlanPayment;
 
 /** @group Movimientos
 * Datos de los movimientos de fondo rotatorio
@@ -56,18 +57,43 @@ class MovementFundRotatoryController extends Controller
 	* @bodyParam date_check_delivery date fecha del cheque. Example: 28-08-2121
     * @bodyParam description string descripcion del movimiento. Example: ingreso de fondo rotatorio
     * @bodyParam entry_amount float monto de ingreso del movimiento. Example: 50000
-    * @bodyParam output_amount float monto de egreso del movimiento. Example: 2000
     * @bodyParam user_id integer ID del usuario que registro. Example: 70
     * @bodyParam role_id integer role con el que el registro fue creado. Example: 90
     * @authenticated
     * @responseFile responses/movements/update.200.json
     */
-    public function update(MovementFundRotatoryForm $request,$movementfundRotatory_id)
+    public function update(MovementFundRotatoryForm $request, MovementFundRotatory $movement)
     {
-        $movementfundRotatory = MovementFundRotatory::findOrFail($movementfundRotatory_id);
-        $movementfundRotatory->fill($request->all());
-        $movementfundRotatory->save();
-        return  $movementfundRotatory;
+        DB::beginTransaction();
+        try{
+            if($movement->movement_concept->type == "INGRESO"){
+                $last_mov = MovementFundRotatory::orderBy('id')->get();
+                $last_mov = $last_mov->last();
+                if($last_mov->id == $movement->id)
+                {
+                    if($request->has('entry_amount')){
+                    $new_balance = $movement->balance - $movement->entry_amount;
+                    $new_balance = $new_balance + $request->entry_amount;
+                    $movement->balance = $new_balance;
+                    }
+                    $movement->fill($request->all());
+                    $movement->save();
+                    DB::commit();
+                    $message['message'] = "movimiento editado";
+                    $message['movement'] = $movement;
+                }else{
+                        $message['message'] = "no es el ultimo registro";
+                        $message['movement'] = $movement;
+                }
+            }else{
+                $message['message'] = "no se puede editar un egreso";
+                $message['movement'] = $movement;;
+            }
+            return $message;
+        }catch (\Exception $e){
+            DB::rollback();
+            return $e;
+        }
     }
 
     /**
@@ -249,4 +275,50 @@ class MovementFundRotatoryController extends Controller
             return $view;
     }
 
+
+    /**
+    * Elimina un Movimiento de fondo rotatorio
+    * Elimina un movimiento rotatorio siempre que sea el ultimo
+    * @urlParam movement_fund_rotatory required ID del movimiento de fondo rotatorio. Example: 1
+    * @authenticated
+    * @responseFile responses/movements/delete_movement.200.json
+    */
+    public function delete_movement(MovementFundRotatory $movement)
+    {
+        DB::beginTransaction();
+        $message = [];
+        try{
+            $last_mov = MovementFundRotatory::orderBy('id')->get();
+            $last_mov = $last_mov->last();
+            if($last_mov->id == $movement->id)
+            {
+                if($movement->movement_concept->type == "INGRESO"){
+                    $movement->delete();
+                    DB::commit();
+                    $message['message'] = "movimiento eliminado";
+                    $message['movement'] = $movement;
+                }
+                else{
+                    $loan = Loan::whereId($movement->loan_id)->first();
+                    $loan->disbursement_date = null;
+                    $loan->validated = false;
+                    $loan->user_id = null;
+                    $loan->update();
+                    LoanPlanPayment::where('loan_id', $loan->id)->delete();
+                    $movement->delete();
+                    DB::commit();
+                    $message['message'] = "movimiento eliminado";
+                    $message['movement'] = $movement;
+                }
+            }
+            else{
+                $message['message'] = "no es el ultimo registro";
+                $message['movement'] = $movement;
+            }
+            return $message;
+        }catch (\Exception $e){
+                DB::rollback();
+                return $e;
+        }
+    }
 }
