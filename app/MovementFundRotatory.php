@@ -5,7 +5,7 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class MovementFundRotatories extends Model
+class MovementFundRotatory extends Model
 {
     use Traits\EloquentGetTableNameTrait;
     use SoftDeletes;
