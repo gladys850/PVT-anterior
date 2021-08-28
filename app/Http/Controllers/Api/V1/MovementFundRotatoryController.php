@@ -395,4 +395,54 @@ class MovementFundRotatoryController extends Controller
         }
     }
 
+    /**
+    * Cierre de gestion mov fondo rotatorio.
+    * @bodyParam description string required descripcion del movimiento. Example: Cierre gestion
+    * @bodyParam role_id integer required Role con el cual es registrado. Example: 92
+    * @authenticated
+    * @responseFile responses/movements/closing_movements.200.json
+    */
+    public function closing_movements(Request $request)
+    {
+        $request->validate([
+            'description' => 'required|string',
+            'role_id' => 'required|exists:roles,id',
+
+        ]);
+
+        DB::beginTransaction();
+        try{
+            $last_mov = MovementFundRotatory::orderBy('id')->get();
+            $last_mov = $last_mov->last();
+
+            $closing_concept = MovementConcept::whereName('CIERRE DE FONDO ROTATORIO')->first();
+
+            if($last_mov->balance > 0){
+                $movement_fund_rotatory = new MovementFundRotatory;
+                $movement_fund_rotatory->user_id = Auth::id();
+                $movement_fund_rotatory->role_id = $request->role_id;
+                $movement_fund_rotatory->description = $request->description;
+                $movement_fund_rotatory->output_amount = $last_mov->balance;
+                $movement_fund_rotatory->balance = $last_mov->balance - $last_mov->balance;
+                $movement_fund_rotatory->movement_concept_id = $closing_concept->id;
+
+
+                $count_closing = count(MovementFundRotatory::where('movement_concept_id','=',$closing_concept->id)->get());
+                $code_count = $count_closing+1;
+
+                $movement_fund_rotatory->movement_concept_code = $closing_concept->abbreviated_supporting_document.'-'.$code_count.'/'.Carbon::now()->year;
+
+                $movement_fund_rotatory = MovementFundRotatory::create($movement_fund_rotatory->toArray());
+                DB::commit();
+                return $movement_fund_rotatory;
+            }else{
+                abort(409, 'Ya tiene saldo 0 no puede realizar un cierre ');
+            }
+            return $message;
+        }catch (\Exception $e){
+            DB::rollback();
+            return $e;
+        }
+    }
+
 }

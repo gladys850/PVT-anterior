@@ -1,0 +1,12 @@
+{
+    "user_id": 181,
+    "role_id": 92,
+    "description": "cierre de gestión",
+    "output_amount": "48000",
+    "balance": 0,
+    "movement_concept_id": 7,
+    "movement_concept_code": "C-1/2021",
+    "updated_at": "2021-08-28T05:27:25.000000Z",
+    "created_at": "2021-08-28T05:27:25.000000Z",
+    "id": 3
+}

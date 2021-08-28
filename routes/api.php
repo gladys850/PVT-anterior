@@ -122,6 +122,7 @@ Route::group([
         //Route::apiResource('fund_rotatory_entry', 'Api\V1\FundRotatoryController')->only('index', 'show');//Fondo rotatorio
         Route::apiResource('movement_concept', 'Api\V1\MovementConceptController')->only('index', 'show', 'store', 'update', 'destroy');
         Route::get('list_movements_fund_rotatory', 'Api\V1\MovementFundRotatoryController@list_movements_fund_rotatory');
+        Route::post('closing_movements', 'Api\V1\MovementFundRotatoryController@closing_movements');
         // Afiliados
         Route::group([
             'middleware' => 'permission:show-affiliate'
