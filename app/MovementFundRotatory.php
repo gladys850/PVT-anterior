@@ -49,6 +49,14 @@ class MovementFundRotatory extends Model
     {
         return $this->belongsTo(MovementConcept::class);
     }
+    public function is_last()
+    {
+        $is_last = false;
+        $last_mov = MovementFundRotatory::orderBy('id')->get();
+        $movement_last = $last_mov->last();
+        if($movement_last->id == $this->id) $is_last = true;
+        return $is_last;
+    }
     public static function register_advance_fund($loan_id,$role_id,$moviment_concept_disbursement_id)
     {
         $loan = Loan::find($loan_id);

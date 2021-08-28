@@ -321,4 +321,78 @@ class MovementFundRotatoryController extends Controller
                 return $e;
         }
     }
+
+    /**
+    * Lista de movimientos de fondo rotatorio
+    * Devuelve el listado de los movimientos de fondo rotatorio con intervalo de fechas
+    * @queryParam initial_date Fecha inicial. Example: 2021-01-01
+    * @queryParam final_date Fecha Final. Example: 2021-05-01
+    * @queryParam per_page Cantidad de datos por pagina. Example:10
+    * @queryParam pdf Descargar PDF si(true) o no(false) . Example:true
+    * @authenticated
+    * @responseFile responses/movements/list_movements_fund_rotatory.200.json
+    */
+    public function list_movements_fund_rotatory(Request $request)
+    {
+        $initial_date = request('initial_date') ?? '';
+        $final_date = request('final_date') ?? '';
+        $total_entry_amount = 0; $total_output_amount = 0;
+        $per_page = $request->per_page ?? 10;
+        $print_pdf = request('pdf') ?? false;
+        if($request->has('pdf') && $request->pdf || $request->has('pdf') && !$request->pdf)
+            $print_pdf= $request->boolean('pdf');
+        else
+            $print_pdf = false;
+
+        if(!$print_pdf){
+            if ($initial_date != '' && $final_date != '') {
+                $date_ini = $request->initial_date.' 00:00:00';
+                $date_fin = $request->final_date.' 23:59:59';
+                $total_entry_amount = MovementFundRotatory::whereBetween('created_at', [$date_ini, $date_fin])->orderBy('id')->get()->sum('entry_amount');
+                $total_output_amount = MovementFundRotatory::whereBetween('created_at', [$date_ini, $date_fin])->orderBy('id')->get()->sum('output_amount');
+                $movement_concepts = MovementFundRotatory::whereBetween('created_at', [$date_ini, $date_fin])->orderBy('id')->paginate($per_page);
+
+             } else {
+                if ($final_date != '') {
+                    $date_fin = $request->final_date.' 23:59:59';
+                    $total_entry_amount = MovementFundRotatory::where('created_at',  "<=", $date_fin)->orderBy('id')->get()->sum('entry_amount');
+                    $total_output_amount = MovementFundRotatory::where('created_at',  "<=", $date_fin)->orderBy('id')->get()->sum('output_amount');
+                    $movement_concepts = MovementFundRotatory::where('created_at',  "<=", $date_fin)->orderBy('created_at')->paginate($per_page);
+
+                } else {
+                    $date_fin = Carbon::now();
+                    if ($initial_date != '') {
+                        $date_ini = $request->initial_date.' 00:00:00';
+                        $total_entry_amount = MovementFundRotatory::where('created_at', ">=", $date_ini)->orderBy('id')->get()->sum('entry_amount');
+                        $total_output_amount = MovementFundRotatory::where('created_at', ">=", $date_ini)->orderBy('id')->get()->sum('output_amount');
+                        $movement_concepts = MovementFundRotatory::where('created_at', ">=", $date_ini)->orderBy('id')->paginate($per_page);
+                    } else {
+                        $total_entry_amount = MovementFundRotatory::orderBy('id')->get()->sum('entry_amount');
+                        $total_output_amount = MovementFundRotatory::orderBy('id')->get()->sum('output_amount');
+                        $movement_concepts = MovementFundRotatory::orderBy('id')->paginate($per_page);
+                    }
+                }
+            }
+
+            $last_mov = MovementFundRotatory::orderBy('id')->get();
+            $last_mov = $last_mov->last();
+            $last_mov_balance = $last_mov->balance;
+
+            foreach ($movement_concepts as $movement_concept){
+                $movement_concept->is_last =$movement_concept->is_last();
+                $movement_concept->type_movement_fund_rotatory = $movement_concept->movement_concept->type ;
+            }
+
+            return response()->json([
+                'total_entry_amount' => $total_entry_amount,
+                'total_output_amount' => $total_output_amount,
+                'final balance'=>$last_mov_balance,
+                'movement_concepts' =>  $movement_concepts
+            ]);
+
+        }else{
+            abort(409, 'Descargar pdf... aun no disponible :-(');
+        }
+    }
+
 }
