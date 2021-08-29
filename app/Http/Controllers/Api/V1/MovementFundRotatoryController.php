@@ -119,8 +119,44 @@ class MovementFundRotatoryController extends Controller
         return FundRotatoryOutput::create($request->all());
     }*/
 
-    public function store_input()
-    {}
+       /**
+    * Nuevo Ingreso del fondo rotatorio
+    * Inserta nuevo Nuevo fondo rotatorio
+    * @bodyParam movement_concept_code string required Numero de cheque. Example: 44534
+    * @bodyParam date_check_delivery date required fecha de cheque. Example: 31-07-2021
+    * @bodyParam entry_amount numeric  Monto ingresado del cheque Example: 1052.26
+    * @bodyParam description string required Texto de descripción. Example: segundo ingreso del fondo rotatorio
+    * @bodyParam movement_concept_id integer required Ingresar ID de la tabla concepto de movimientos. Example: 2
+    * @bodyParam role_id integer required role con el que el registro fue creado. Example: 90
+    * @responseFile responses/movements/print_output_fund_rotatory.200.json
+    */
+    public function store_input(MovementFundRotatoryForm $request)
+    {
+        DB::beginTransaction();
+        try {
+            $movement_concept= MovementConcept::whereIsValid(true)->whereType("INGRESO")->whereShortened("FON-ROT-IN")->first();
+            $fundRotatory = new MovementFundRotatory;
+            $fundRotatory->user_id = Auth::id();
+            $fundRotatory->movement_concept_code =$movement_concept->abbreviated_supporting_document."-".$request->input('movement_concept_code').'/'.Carbon::now()->year;
+            $fundRotatory->date_check_delivery = $request->input('date_check_delivery');
+            $fundRotatory->entry_amount = $request->input('entry_amount');
+            $fundRotatory->description = $request->input('description');
+            $fundRotatory->movement_concept_id = $movement_concept->id;
+            $fundRotatory->role_id = $request->input('role_id');  
+            $fund_rotatory_last = MovementFundRotatory::orderBy('id')->get()->last();    
+            if($fund_rotatory_last== null){
+                $fundRotatory->balance = $request->input('entry_amount');
+            }else{
+                $fundRotatory->balance = $request->input('entry_amount')+$fund_rotatory_last->balance;
+            }
+            $fundRotatory_return = MovementFundRotatory::create($fundRotatory->toArray());
+            DB::commit();
+            return $fundRotatory_return;
+        } catch (\Exception $e) {
+            DB::rollback();
+            throw $e;
+        }
+    }
 
     public function store_output()
     {}
@@ -131,7 +167,7 @@ class MovementFundRotatoryController extends Controller
     * @urlParam loan_id required ID del prestamo. Example: 1
     * @queryParam copies Número de copias del documento. Example: 2
     * @authenticated
-    * @responseFile responses/movements/print_output_fund_rotatory.200.json
+    * @responseFile responses/movements/store_input.200.json
     */
     public function print_fund_rotary(Request $request,$loan_id, $standalone = true)
 
