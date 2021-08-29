@@ -24,11 +24,10 @@ class MovementFundRotatoryForm extends FormRequest
     public function rules()
     {
         $rules = [
-            'loan_id'=>'integer|exists:loans,id|nullable',
-            'fund_rotatory_id'=>'integer|exists:fund_rotatories,id|nullable',
-            'movement_concept_id'=>'integer|exists:fund_rotatories,id',
+            'description'=>'string',
             'role_id'=>'integer|exists:roles,id',
             'user_id'=>'integer|exists:users,id|nullable',
+            'loan_id'=>'integer|exists:loans,id|nullable',
         ];
         switch ($this->method()) {
             case 'POST': {

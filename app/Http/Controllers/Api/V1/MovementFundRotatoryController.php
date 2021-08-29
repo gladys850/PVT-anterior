@@ -130,18 +130,18 @@ class MovementFundRotatoryController extends Controller
     * @bodyParam role_id integer required role con el que el registro fue creado. Example: 90
     * @responseFile responses/movements/print_output_fund_rotatory.200.json
     */
-    public function store_input(Request $request)
+    public function store_input(MovementFundRotatoryForm $request)
     {
         DB::beginTransaction();
         try {
-            $abbreviated_supporting_document = MovementConcept::find($request->input('movement_concept_id'))->abbreviated_supporting_document;
+            $movement_concept= MovementConcept::whereIsValid(true)->whereType("INGRESO")->whereShortened("FON-ROT-IN")->first();
             $fundRotatory = new MovementFundRotatory;
             $fundRotatory->user_id = Auth::id();
-            $fundRotatory->movement_concept_code =$abbreviated_supporting_document."-".$request->input('movement_concept_code').'/'.Carbon::now()->year;
+            $fundRotatory->movement_concept_code =$movement_concept->abbreviated_supporting_document."-".$request->input('movement_concept_code').'/'.Carbon::now()->year;
             $fundRotatory->date_check_delivery = $request->input('date_check_delivery');
             $fundRotatory->entry_amount = $request->input('entry_amount');
             $fundRotatory->description = $request->input('description');
-            $fundRotatory->movement_concept_id = $request->input('movement_concept_id');
+            $fundRotatory->movement_concept_id = $movement_concept->id;
             $fundRotatory->role_id = $request->input('role_id');  
             $fund_rotatory_last = MovementFundRotatory::orderBy('id')->get()->last();    
             if($fund_rotatory_last== null){
