@@ -123,6 +123,7 @@ Route::group([
         Route::apiResource('movement_concept', 'Api\V1\MovementConceptController')->only('index', 'show', 'store', 'update', 'destroy');
         Route::get('list_movements_fund_rotatory', 'Api\V1\MovementFundRotatoryController@list_movements_fund_rotatory');
         Route::post('closing_movements', 'Api\V1\MovementFundRotatoryController@closing_movements');
+        Route::post('fund_rotatory_entry/store_input', 'Api\V1\MovementFundRotatoryController@store_input');
         // Afiliados
         Route::group([
             'middleware' => 'permission:show-affiliate'
