@@ -588,22 +588,22 @@ export default {
     },
     itemRowBackground: function (item) {
       if(item.type_movement_fund_rotatory == 'INGRESO'){
-        return 'style-1'
+        return 'style-4'
       }
       else if(item.movement_concept.name == 'CIERRE DE FONDO ROTATORIO'){
-        return 'style-2'
+        return 'style-5'
       }else{
-        return 'style-3'
+        return 'style-6'
       }
     }
   },
 }
 </script>
 <style>
-.style-1 {
+.style-4 {
   background-color: #B2EBF2
 }
-.style-2 {
+.style-5 {
   background-color: #26C6DA
 }
 </style>
