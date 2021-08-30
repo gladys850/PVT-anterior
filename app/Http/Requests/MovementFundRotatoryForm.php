@@ -28,6 +28,9 @@ class MovementFundRotatoryForm extends FormRequest
             'role_id'=>'integer|exists:roles,id',
             'user_id'=>'integer|exists:users,id|nullable',
             'loan_id'=>'integer|exists:loans,id|nullable',
+            'entry_amount'=>'numeric|nullable',
+            'output_amount'=>'numeric|nullable',
+            'date_check_delivery' => 'date_format:"Y-m-d|nullable',
         ];
         switch ($this->method()) {
             case 'POST': {
