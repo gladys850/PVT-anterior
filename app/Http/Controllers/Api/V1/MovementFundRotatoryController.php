@@ -344,8 +344,8 @@ class MovementFundRotatoryController extends Controller
                         $loan->validated = false;
                         $loan->user_id = null;
                         $loan->update();
+                        LoanPlanPayment::where('loan_id', $loan->id)->delete();
                     }
-                    LoanPlanPayment::where('loan_id', $loan->id)->delete();
                     $movement->delete();
                     DB::commit();
                     $message['message'] = "movimiento eliminado";
