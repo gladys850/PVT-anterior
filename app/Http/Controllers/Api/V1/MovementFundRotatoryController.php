@@ -410,8 +410,8 @@ class MovementFundRotatoryController extends Controller
                 }
             }
 
-            $last_mov = MovementFundRotatory::orderBy('id')->get();
-            $last_mov = $last_mov->last();
+           // $last_mov = MovementFundRotatory::orderBy('id')->get();
+            $last_mov = $movement_concepts->last();
             $last_mov_balance = $last_mov->balance;
 
             foreach ($movement_concepts as $movement_concept){
@@ -543,7 +543,7 @@ class MovementFundRotatoryController extends Controller
                 "description" => $loan->description,
                 "entry_amount" => $loan->entry_amount,
                 "output_amount" => $loan->output_amount,
-                "balance" => $loan->balance,          
+                "balance" => $loan->balance,
                 ]);
             }
             //return Carbon::parse($loans_array[0]['disbursement_date_loan'])->format('d-m-Y');
