@@ -450,8 +450,8 @@ export default {
         this.loading = true;
         let res = await axios.get(`list_movements_fund_rotatory` , {
           params: {
-            initial_date: this.fund_rotatory_item.initial_date,
-            final_date: this.fund_rotatory_item.final_date,
+            initial_date: this.initial_date,
+            final_date: this.final_date,
             page: this.options.page,
             per_page: this.options.itemsPerPage,
           },
