@@ -8,6 +8,7 @@
               <v-toolbar-title>REPORTES</v-toolbar-title>
             </v-toolbar>
           </v-card-title>
+          <pre></pre>
           <v-card-text>
             <v-tabs dark active-class="secondary" v-model="tab">
               <v-tab v-for="item in actions" :key="item.nameTab">{{item.nameTab}} </v-tab>
@@ -390,20 +391,25 @@ export default {
     },
 
     computedReportsItems() {
-      let reports_items
-      reports_items = this.reports_items.filter((item) => item.tab == this.tab)
+      let reports_items =[]
+      let reports_items_collections =[]
+      let reports_items_treasury =[]
+      let reports_items_others =[]
       if (this.permissionSimpleSelected.includes("show-report-collections")){
-         reports_items = reports_items.filter((item) => item.permissions == 'show-report-collections');
+         reports_items_collections = this.reports_items.filter((item) => item.permissions == 'show-report-collections');
       }
-      else if (this.permissionSimpleSelected.includes("show-report-treasury")){
-         reports_items = reports_items.filter((item) => item.permissions == 'show-report-treasury');
-      }
-      else if (this.permissionSimpleSelected.includes("show-report-others")){
-         reports_items = reports_items.filter((item) => item.permissions == 'show-report-others');
+      if (this.permissionSimpleSelected.includes("show-report-treasury")){
+         reports_items_treasury = this.reports_items.filter((item) => item.permissions == 'show-report-treasury');
+       }
+      if (this.permissionSimpleSelected.includes("show-report-others")){
+         reports_items_others = this.reports_items.filter((item) => item.permissions == 'show-report-others');
       }else{
-        reports_items= []
+        reports_items
       }
+      reports_items = reports_items_collections.concat(reports_items_treasury.concat(reports_items_others))
+      reports_items = reports_items.filter((item) => item.tab == this.tab)
       return reports_items
+       
     },
   },
 };

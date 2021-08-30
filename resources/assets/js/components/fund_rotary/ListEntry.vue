@@ -8,15 +8,70 @@
               <v-toolbar-title>FONDO ROTATORIO</v-toolbar-title>
             </v-toolbar>
           </v-card-title>
+    
+          <v-row align="center" no-gutters class="ma-0 pa-0">
+            <v-col cols="3" class="pa-2">
+              <v-text-field
+                dense
+                v-model="initial_date"
+                label="Desde fecha"
+                hint="Día/Mes/Año"
+                type="date"
+                :max="$moment(Date.now()).format('YYYY-MM-DD')"
+                outlined
+                clearable
+              ></v-text-field>
+            </v-col>
+
+            <v-col cols="3" class="pa-2">
+              <v-text-field
+                dense
+                v-model="final_date"
+                label="Hasta fecha"
+                hint="Día/Mes/Año"
+                type="date"
+                :min="initial_date"
+                :max="$moment(Date.now()).format('YYYY-MM-DD')"
+                outlined
+                clearable
+              ></v-text-field>
+            </v-col>
+
+            <v-col cols="1" class="pa-0">
+            <v-btn
+            fab
+              color="info"
+              x-small
+              @click.stop="getFundRotary()"
+              :loading="loading"
+              style="margin-top: -30px"
+            >
+              <v-icon>mdi-magnify</v-icon>
+            </v-btn>
+            </v-col>
+
+            <v-col cols="3" class="pa-0">
+            </v-col>
+
+            <v-col cols="2" class="pa-0 caption" style="margin-top: -30px">
+              <strong>TOTAL INGRESOS BS.:</strong> {{fund_rotatory_totals.total_entry_amount | money}}<br>
+              <strong>TOTAL SALIDAS BS.:</strong> {{fund_rotatory_totals.total_output_amount | money}}<br>
+              <strong>SALDO FINAL BS.:</strong> {{fund_rotatory_totals.final_balance | money}}
+            </v-col>
+          </v-row>
+       
           <v-data-table
             :headers="headers"
             :items="fund_rotatory_list"
             :loading="loading"
             :options.sync="options"
-            :server-items-length="totalFundRotatoryEntry"
+            :server-items-length="total_items"
             :footer-props="{ itemsPerPageOptions: [8, 15, 30] }"
             multi-sort
             :key="refreshFoundRotatoryTable"
+            dense
+            :item-class="itemRowBackground"
+            class="ma-0 pa-0"
           >
             <!--Modal-->
             <template v-slot:top>
@@ -30,7 +85,7 @@
                     v-on="on"
                     right
                     absolute
-                    style="margin-top: -62px; margin-right:40px"
+                    style="margin-top: -135px; margin-right:120px"
                     @click="getFundRotary()"
                   >
                     <v-icon>mdi-refresh</v-icon>
@@ -49,7 +104,7 @@
                     v-on="on"
                     right
                     absolute
-                    style="margin-top: -62px"
+                    style="margin-top: -135px; margin-right:80px"
                   >
                     <v-icon>mdi-plus</v-icon>
                   </v-btn>
@@ -65,7 +120,7 @@
                       <v-row>
                         <v-col cols="12" sm="6" md="6">
                           <v-text-field
-                            v-model="fund_rotatory_item.check_number"
+                            v-model="fund_rotatory_item.movement_concept_code"
                             label="Nro Cheque"
                           ></v-text-field>
                         </v-col>
@@ -78,14 +133,14 @@
                         </v-col>
                         <v-col cols="12" sm="6" md="12">
                           <v-text-field
-                            v-model="fund_rotatory_item.amount"
+                            v-model="fund_rotatory_item.entry_amount"
                             label="Monto"
                           ></v-text-field>
                         </v-col>
                         <v-col cols="12" sm="6" md="12">
                           <v-text-field
                             v-model="fund_rotatory_item.description"
-                            label="Descripción"
+                            label="Concepto"
                           ></v-text-field>
                         </v-col>
                       </v-row>
@@ -103,6 +158,72 @@
                   </v-card-actions>
                 </v-card>
               </v-dialog>
+
+              <v-tooltip top>
+                <template v-slot:activator="{ on }">
+                  <v-btn
+                    fab
+                    @click="download_report()"
+                    color="error"
+                    v-on="on"
+                    x-small
+                    absolute
+                    right
+                    style="margin-top: -135px; margin-right:40px"
+                    :loading="loading_button" 
+                  >
+                    <v-icon> mdi-file-pdf</v-icon>
+                  </v-btn>
+                </template>
+                <span class="caption">Descargar reporte</span>
+              </v-tooltip>
+
+              <v-dialog v-model="dialog_closing_movements" max-width="600px">
+                <template v-slot:activator="{ on }">
+                  <v-btn
+                    fab
+                    x-small
+                    color="info"
+                    dark
+                    v-on="on"
+                    right
+                    absolute
+                    style="margin-top: -135px"
+                  >
+                    <v-icon>mdi-calendar-remove-outline</v-icon>
+                  </v-btn>
+                </template>
+
+                <v-card>
+                  <v-card-title>
+                    <span class="text-h5">Cierre de Gestión</span>
+                  </v-card-title>
+
+                  <v-card-text>
+                    <v-container>
+                      <v-row>
+                        <v-col cols="12" sm="12" md="12">
+                          <v-text-field
+                            v-model="fund_rotatory_item.description_close"
+                            label="Concepto"
+                          ></v-text-field>
+                        </v-col>
+                      </v-row>
+                    </v-container>
+                  </v-card-text>
+
+                  <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn color="error" text @click="close_closing_movements()">
+                      CANCELAR
+                    </v-btn>
+                    <v-btn color="success" text @click="closing_movements()">
+                      GUARDAR
+                    </v-btn>
+                  </v-card-actions>
+                </v-card>
+              </v-dialog>
+
               <!--<v-dialog v-model="dialogDelete" max-width="500px">
                 <v-card>
                   <v-card-title class="text-h5"
@@ -110,10 +231,10 @@
                   >
                   <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn color="blue darken-1" text @click="closeDelete"
+                    <v-btn color="blue darken-1" text 
                       >Cancel</v-btn
                     >
-                    <v-btn color="blue darken-1" text @click="deleteItemConfirm"
+                    <v-btn color="blue darken-1" text 
                       >OK</v-btn
                     >
                     <v-spacer></v-spacer>
@@ -121,107 +242,73 @@
                 </v-card>
               </v-dialog>-->
             </template>
-            <!--Encabezados y registro de egresos-->
-            <template v-slot:item="props">
-              <tr :class="props.isExpanded ? 'info white--text' : ''">
-                <td @click.stop="props.expand(!props.isExpanded)">
-                  {{ props.item.code_entry | uppercase }}
-                </td>
-                <td @click.stop="props.expand(!props.isExpanded)">
-                  {{ props.item.check_number }}
-                </td>
-                <td @click.stop="props.expand(!props.isExpanded)">
-                  {{ props.item.date_check_delivery | date }}
-                </td>
-                <td @click.stop="props.expand(!props.isExpanded)">
-                  {{ props.item.amount | money }}
-                </td>
-                <td @click.stop="props.expand(!props.isExpanded)">
-                  {{ props.item.balance_previous | money }}
-                </td>
-                <td @click.stop="props.expand(!props.isExpanded)" :class="props.isExpanded ? 'warning black--text font-weight-bold' : ''">
-                  {{ parseFloat(props.item.amount) + parseFloat(props.item.balance_previous) - parseFloat(props.item.balance) | money }}
-                </td>
-                <td @click.stop="props.expand(!props.isExpanded)">
-                  {{ props.item.balance | money }}
-                </td>
-
-                <!--Acciones-->
-                <td>
-                  <v-tooltip bottom v-if="props.item.fund_rotatory_outputs.length == 0 || props.item.fund_rotatory_outputs.length == 0">
-                    <template v-slot:activator="{ on }">
-                      <v-btn
-                        v-if="last(props.item)"
-                        icon
-                        small
-                        v-on="on"
-                        color="warning"
-                        @click="editItem(props.item)"
-                      >
-                        <v-icon>mdi-pencil</v-icon>
-                      </v-btn>
-                    </template>
-                    <span>Editar registro </span>
-                  </v-tooltip>
-
-                  <!--<v-tooltip bottom>
-                    <template v-slot:activator="{ on }">
-                      <v-btn 
-                        v-if="last(props.item)"
-                        icon small v-on="on" color="error" 
-                        @click.stop="deleteItem(props.item)"
-                      >
-                        <v-icon>mdi-delete</v-icon>
-                      </v-btn>
-                    </template>
-                    <span>Anular registro</span>
-                  </v-tooltip>-->
-                </td>
-              </tr>
+            <!--Encabezados-->
+            <template v-slot:[`item.date_check_delivery`]="{ item }">
+              {{ item.date_check_delivery | date}}
             </template>
-            <!--Expanded-->
-            <template v-slot:expanded-item="{ headers, item }">
-              <tr >
-                <td :colspan="headers.length" class="pa-0 pl-10 pb-1 pr-1" style=" background-color:#0288D1" >
-                  <v-data-table
-                    :headers="headersOutput"
-                    :items="item.fund_rotatory_outputs"
-                    :loading="loading"
-                    dense
-                    hide-default-footer
-                  >
-
-                  <template v-slot:[`item.affiliate`]="{ item }">
-                    {{$options.filters.fullName(item.loan.affiliate, true) }}
-                  </template>
-                  <template v-slot:[`item.loan.disbursement_date`]="{ item }">
-                    {{ item.loan.disbursement_date | datetimeshorted }}
-                  </template>
-                  <template v-slot:[`item.loan.amount_requested`]="{ item }">
-                    {{ item.loan.amount_requested | money }}
-                  </template>
-                  <template v-slot:[`item.loan.modality`]="{ item }">
-                    {{ item.loan.modality.name }}
-                  </template>
-
-                  <template v-slot:[`item.actions`]="{ item }">
-                    <v-tooltip bottom>
-                      <template v-slot:activator="{ on }">
-                        <v-btn
-                          icon
-                          x-small
-                          v-on="on"
-                          color="primary"
-                          @click="printReceipt(item.loan.id)"
-                        ><v-icon>mdi-printer</v-icon>
-                        </v-btn>
-                      </template>
-                      <span>Imnprimir recibo de pago</span>
-                    </v-tooltip>
-                  </template>
-                  </v-data-table>
-                </td>
-              </tr>
+            <template v-slot:[`item.created_at`]="{ item }">
+              {{ item.created_at | datetimeshorted}}
+            </template>
+            <template v-slot:[`item.movement_concept`]="{ item }">
+              <v-tooltip top>
+                <template v-slot:activator="{ on }">
+                  <span v-on="on">{{item.movement_concept.name}}  - {{item.description | uppercase}}</span>
+                </template>
+                <span>{{ item.movement_concept.description}}</span>
+              </v-tooltip>
+            </template>
+                <template v-slot:[`item.entry_amount`]="{ item }">
+              {{ item.entry_amount | money}}
+            </template>
+                <template v-slot:[`item.output_amount`]="{ item }">
+              {{ item.output_amount | money}}
+            </template>
+                <template v-slot:[`item.balance`]="{ item }">
+              {{ item.balance | money}}
+            </template>
+            <template v-slot:[`item.actions`]="{ item }">
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on }">
+                  <v-btn
+                    v-if="item.type_movement_fund_rotatory == 'EGRESO' &&  item.movement_concept.name != 'CIERRE DE FONDO ROTATORIO'"
+                    icon
+                    x-small
+                    v-on="on"
+                    color="primary"
+                    @click="printReceipt(item.loan_id)"
+                  ><v-icon>mdi-printer</v-icon>
+                  </v-btn>
+                </template>
+                <span>Imnprimir recibo de pago</span>
+              </v-tooltip>
+              <v-tooltip bottom v-if="true">
+              <template v-slot:activator="{ on }">
+                <v-btn
+                  v-if="item.is_last==true && item.type_movement_fund_rotatory == 'INGRESO'"
+                  icon
+                  small
+                  v-on="on"
+                  color="warning"
+                  @click="editItem(item)"
+                ><v-icon>mdi-pencil</v-icon>
+                </v-btn>
+              </template>
+              <span>Editar registro </span>
+              </v-tooltip>
+              <v-tooltip bottom>
+              <template v-slot:activator="{ on }">
+                <v-btn 
+                  v-if="item.is_last==true"
+                  icon 
+                  small 
+                  v-on="on" 
+                  color="error" 
+                  @click.stop="bus.$emit('openRemoveDialog', `delete_movement/${item.id}`)"
+                ><v-icon>mdi-delete</v-icon>
+                </v-btn>
+              </template>
+              <span>Anular registro</span>
+              </v-tooltip>
             </template>
           </v-data-table>
           <RemoveItem :bus="bus" />
@@ -241,6 +328,7 @@ export default {
   data: () => ({
     bus: new Vue(),
     loading: true,
+    loading_button: false,
     search: "",
     options: {
       page: 1,
@@ -249,126 +337,90 @@ export default {
       //sortDesc: [false],
     },
     fund_rotatory_list: [],
-    totalFundRotatoryEntry: 0,
+    fund_rotatory_totals: [],
+    total_items: 0,
     headers: [
-
       {
-        text: "Código de Ingreso",
-        value: "code_entry",
+        text: "id",
+        value: "id",
         class: ["normal", "white--text"],
-        width: "15%",
+        width: "5%",
         sortable: true,
       },
-      {
-        text: "Número de Cheque",
-        value: "check_number",
+            {
+        text: "Fecha-Hora registro",
+        value: "created_at",
         class: ["normal", "white--text"],
-        width: "15%",
+        width: "10%",
         sortable: false,
       },
       {
-        text: "Fecha Entrega Cheque",
+        text: "Fecha entrega cheque",
         value: "date_check_delivery",
         class: ["normal", "white--text"],
-        width: "15%",
+        width: "5%",
         sortable: false,
       },
       {
-        text: "Monto Ingreso (+)[Bs]",
-        value: "amount",
+        text: "Documento",
+        value: "movement_concept_code",
         class: ["normal", "white--text"],
         width: "10%",
         sortable: false,
       },
       {
-        text: "Saldo Anterior (+)[Bs]",
-        value: "balance_previous",
+        text: "Concepto",
+        value: "movement_concept",
+        class: ["normal", "white--text"],
+        width: "30%",
+        sortable: false,
+      },
+      /*{
+        text: "Descripción",
+        value: "movement_concept",
+        class: ["normal", "white--text"],
+        width: "10%",
+        sortable: false,
+      },*/
+      {
+        text: "Ingreso [Bs]",
+        value: "entry_amount",
         class: ["normal", "white--text"],
         width: "10%",
         sortable: false,
       },
       {
-        text: "Egreso (-)[Bs]",
-        value: "salidas",
+        text: "Salida [Bs]",
+        value: "output_amount",
         class: ["normal", "white--text"],
         width: "10%",
         sortable: false,
       },
       {
-        text: "Saldo Actual [Bs]",
+        text: "Saldo [Bs]",
         value: "balance",
         class: ["normal", "white--text"],
         width: "10%",
         sortable: false,
       },
-
       {
         text: "Acción",
         value: "actions",
         class: ["normal", "white--text"],
         sortable: false,
-        width: "15%",
+        width: "20%",
         sortable: false,
       },
     ],
-    headersOutput: [
-
-      {
-        text: "Cód. Recibo",
-        value: "code",
-        class: ["white", "black--text"],
-        width: "5%",
-        sortable: false,
-      },
-      {
-        text: "Nro Contrato",
-        value: "loan.code",
-        class: ["white", "black--text"],
-        width: "20%",
-        sortable: false,
-      },
-      {
-        text: "Fecha Desembolso",
-        value: "loan.disbursement_date",
-        class: ["white", "black--text"],
-        width: "15%",
-        sortable: false,
-      },
-      {
-        text: "Prestatario",
-        value: "affiliate",
-        class: ["white", "black--text"],
-        width: "20%",
-        sortable: false,
-      },
-      {
-        text: "Monto [Bs]",
-        value: "loan.amount_requested",
-        class: ["white", "black--text"],
-        width: "10%",
-        sortable: false,
-      },
-
-      {
-        text: "Concepto",
-        value: "loan.modality",
-        class: ["white", "black--text"],
-        width: "20%",
-        sortable: false,
-      },
-      {
-        text: "Acción",
-        value: "actions",
-        class: ["white", "black--text"],
-        sortable: false,
-        width: "10%",
-        sortable: false,
-      },
-    ],
+ 
     fund_rotatory_item: {},
     dialog: false,
+    dialog_closing_movements: false,
     defaultItem: {},
     refreshFoundRotatoryTable: 0,
+    editedIndex: -1,
+    initial_date: null,
+    final_date: null
   }),
   computed: {
     //Metodo para obtener Permisos por rol
@@ -396,24 +448,23 @@ export default {
     async getFundRotary() {
       try {
         this.loading = true;
-        let res = await axios.get(`fund_rotatory_entry_output` , {
+        let res = await axios.get(`list_movements_fund_rotatory` , {
           params: {
+            initial_date: this.fund_rotatory_item.initial_date,
+            final_date: this.fund_rotatory_item.final_date,
             page: this.options.page,
             per_page: this.options.itemsPerPage,
-            //sortBy: this.options.sortBy,
-            //sortDesc: this.options.sortDesc,
-            //search: this.search
           },
         }
-        );
-
-        this.fund_rotatory_list = res.data.data;
+        )
+        this.fund_rotatory_list = res.data.movement_concepts.data;
+        this.fund_rotatory_totals = res.data
         console.log(this.fund_rotatory_list);
-        this.totalFundRotatoryEntry = res.data.total;
+        this.total_items = res.data.movement_concepts.total;
         delete res.data["data"];
-        this.options.page = res.data.current_page;
-        this.options.itemsPerPage = parseInt(res.data.per_page);
-        this.totalItems = res.data.total;
+        this.options.page = res.data.movement_concepts.current_page;
+        this.options.itemsPerPage = parseInt(res.data.movement_concepts.per_page);
+        this.totalItems = res.data.movement_concepts.total;
         this.refreshFoundRotatoryTable++
       } catch (e) {
         console.log(e);
@@ -421,39 +472,63 @@ export default {
         this.loading = false;
       }
     },
+      async download_report(){
+        try {
+          this.loading_button = true
+          let res = await axios.get(`list_movements_fund_rotatory`, {
+            params: {
+              initial_date: this.initial_date,
+              final_date: this.final_date,
+              pdf: true
+            },
+          });
+          printJS({
+            printable: res.data.content,
+            type: res.data.type,
+            file_name: res.data.file_name,
+            base64: true,
+          });
+          this.loading_button = false
+        } catch (e) {
+          this.loading_button = false
+          this.toastr.error("Ocurrió un error en la impresión, seleecione los criterios de búsqueda.");
+          console.log(e);
+        }
+      },
 
     async saveFundRotary() {
       try {
         if (this.fund_rotatory_item.id) {
-          let res = await axios.patch(`fund_rotatory_entry/${this.fund_rotatory_item.id}`,
-            {
-              check_number: this.fund_rotatory_item.check_number,
-              amount: this.fund_rotatory_item.amount,
-              balance: parseFloat(this.fund_rotatory_item.amount) + parseFloat(this.fund_rotatory_item.balance_previous),
+          let res = await axios.patch(`fund_rotatory_entry/${this.fund_rotatory_item.id}`,{           
               date_check_delivery: this.$moment(this.fund_rotatory_item.date_check_delivery).format("YYYY-MM-DD"),
+              entry_amount: this.fund_rotatory_item.entry_amount,
               description: this.fund_rotatory_item.description,
               role_id: this.$store.getters.rolePermissionSelected.id,
             }
           );
-        } else {
-          let res = await axios.post(`fund_rotatory_entry`, {
-            check_number: this.fund_rotatory_item.check_number,
-            amount: this.fund_rotatory_item.amount,
+        }else {
+          let res = await axios.post(`fund_rotatory_entry/store_input`, {
+            movement_concept_code: this.fund_rotatory_item.movement_concept_code,
             date_check_delivery: this.fund_rotatory_item.date_check_delivery,
+            entry_amount: this.fund_rotatory_item.entry_amount,
             description: this.fund_rotatory_item.description,
+            movement_concept_id: '2',
             role_id: this.$store.getters.rolePermissionSelected.id,
           });
         }
 
-        this.dialog = false;
+        this.close();
         this.getFundRotary();
+        this.toastr.success('Registro guardado correctamente.')
       } catch (e) {
         console.log(e);
+        this.toastr.error('Ocurrio un error.')
       } finally {
         this.loading = false;
       }
     },
     editItem(item) {
+      console.log(item)
       this.fund_rotatory_item = item;
       this.fund_rotatory_item.date_check_delivery= this.$moment(this.fund_rotatory_item.date_check_delivery).format('YYYY-MM-DD')
       console.log("edit");
@@ -473,6 +548,13 @@ export default {
         this.editedIndex = -1;
       });
     },
+    close_closing_movements() {
+      this.dialog_closing_movements = false;
+      this.$nextTick(() => {
+        this.fund_rotatory_item = Object.assign({}, this.defaultItem);
+        this.editedIndex = -1;
+      });
+    },
         async printReceipt(item) {
       try {
           let res = await axios.get(`print_fund_rotary_output/${item}`)
@@ -487,15 +569,42 @@ export default {
         console.log(e)
       }
     },
-    last(item){
-      if(item.id == this.fund_rotatory_list[this.fund_rotatory_list.length -1].id ){
-        return true
-      }else{
-        return false
+    async closing_movements(){
+      try {
+          let res = await axios.post(`closing_movements`,{
+              description: this.fund_rotatory_item.description_close,
+              role_id: this.$store.getters.rolePermissionSelected.id,
+            }
+          );
+        this.close_closing_movements();
+        this.toastr.success('Registro guardado correctamente.')
+        this.getFundRotary();
+      } catch (e) {
+        console.log(e);
+        this.toastr.error('Ocurrio un error en el guardado.')
+      } finally {
+        this.loading = false;
       }
     },
-
+    itemRowBackground: function (item) {
+      if(item.type_movement_fund_rotatory == 'INGRESO'){
+        return 'style-1'
+      }
+      else if(item.movement_concept.name == 'CIERRE DE FONDO ROTATORIO'){
+        return 'style-2'
+      }else{
+        return 'style-3'
+      }
+    }
   },
-};
+}
 </script>
+<style>
+.style-1 {
+  background-color: #B2EBF2
+}
+.style-2 {
+  background-color: #26C6DA
+}
+</style>
 

@@ -422,7 +422,7 @@ class MovementFundRotatoryController extends Controller
             return response()->json([
                 'total_entry_amount' => $total_entry_amount,
                 'total_output_amount' => $total_output_amount,
-                'final balance'=>$last_mov_balance,
+                'final_balance'=>$last_mov_balance,
                 'movement_concepts' =>  $movement_concepts
             ]);
 
