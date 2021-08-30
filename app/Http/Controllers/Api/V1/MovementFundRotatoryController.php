@@ -475,9 +475,8 @@ class MovementFundRotatoryController extends Controller
                 $movement_fund_rotatory->movement_concept_id = $closing_concept->id;
 
 
-                $count_closing = count(MovementFundRotatory::where('movement_concept_id','=',$closing_concept->id)->get());
-                $code_count = $count_closing+1;
-
+                 $count_closing = MovementFundRotatory::where('movement_concept_id','=',$closing_concept->id)->withTrashed()->count();
+                 $code_count = $count_closing+1;
                 $movement_fund_rotatory->movement_concept_code = $closing_concept->abbreviated_supporting_document.'-'.$code_count.'/'.Carbon::now()->year;
 
                 $movement_fund_rotatory = MovementFundRotatory::create($movement_fund_rotatory->toArray());
