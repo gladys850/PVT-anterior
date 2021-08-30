@@ -475,10 +475,9 @@ class MovementFundRotatoryController extends Controller
             }else{
                 abort(409, 'Ya tiene saldo 0 no puede realizar un cierre ');
             }
-            return $message;
         }catch (\Exception $e){
             DB::rollback();
-            return $e;
+          throw $e;
         }
     }
     /**
