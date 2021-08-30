@@ -17,12 +17,15 @@ Route::group([
     // INDEFINIDO (TODO)
     Route::get('document/{affiliate_id}', 'Api\V1\ScannedDocumentController@create_document');
     Route::get('generate_plans', 'Api\V1\LoanController@generate_plans');
-    Route::delete('delete_movement/{movement}', 'Api\V1\MovementFundRotatoryController@delete_movement');
 
     // Autenticado con token
     Route::group([
         'middleware' => 'auth'
     ], function () {
+        Route::delete('delete_movement/{movement}', 'Api\V1\MovementFundRotatoryController@delete_movement');
+        Route::apiResource('movements', 'Api\V1\MovementFundRotatoryController')->only('update');
+        Route::apiResource('movements', 'Api\V1\MovementFundRotatoryController')->only('index');
+        Route::apiResource('movements', 'Api\V1\MovementFundRotatoryController')->only('show');
         Route::apiResource('user', 'Api\V1\UserController');//->only('index', 'show', 'update');
         if (!env("LDAP_AUTHENTICATION")) Route::apiResource('user', 'Api\V1\UserController')->only('update');
         Route::get('user/{user}/role', 'Api\V1\UserController@get_roles');
@@ -232,7 +235,7 @@ Route::group([
             Route::patch('loan/{loan}/update_refinancing_balance','Api\V1\LoanController@update_balance_refinancing');
         });
         //fondo rotatorio
-        Route::group([
+        /*Route::group([
             'middleware' => 'permission:create-fund_rotatory'
         ], function () {
             Route::apiResource('fund_rotatory_entry', 'Api\V1\FundRotatoryController')->only('store');
@@ -248,7 +251,7 @@ Route::group([
             Route::apiResource('fund_rotatory_entry', 'Api\V1\FundRotatoryController')->only('destroy');
         });
         //movimientos del fondo rotatorio
-        Route::group([
+        /*Route::group([
             'middleware' => 'permission:index-movement_fund_rotatory'
         ], function () {
         Route::apiResource('movements', 'Api\V1\MovementFundRotatoryController')->only('index');
@@ -258,11 +261,11 @@ Route::group([
         ], function () {
         Route::apiResource('movements', 'Api\V1\MovementFundRotatoryController')->only('show');
         });
-        Route::group([
+        /*Route::group([
             'middleware' => 'permission:update-movement_fund_rotatory'
         ], function () {
         Route::apiResource('movements', 'Api\V1\MovementFundRotatoryController')->only('update');
-        });
+        });*/
         // payments
         Route::group([
             'middleware' => 'permission:show-payment-loan|show-all-payment-loan'

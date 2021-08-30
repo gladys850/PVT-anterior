@@ -337,11 +337,14 @@ class MovementFundRotatoryController extends Controller
                     $message['movement'] = $movement;
                 }
                 else{
-                    $loan = Loan::whereId($movement->loan_id)->first();
-                    $loan->disbursement_date = null;
-                    $loan->validated = false;
-                    $loan->user_id = null;
-                    $loan->update();
+                    if($movement->loan_id != null)
+                    {
+                        $loan = Loan::whereId($movement->loan_id)->first();
+                        $loan->disbursement_date = null;
+                        $loan->validated = false;
+                        $loan->user_id = null;
+                        $loan->update();
+                    }
                     LoanPlanPayment::where('loan_id', $loan->id)->delete();
                     $movement->delete();
                     DB::commit();
