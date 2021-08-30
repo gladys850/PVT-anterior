@@ -135,9 +135,11 @@ class MovementFundRotatoryController extends Controller
         DB::beginTransaction();
         try {
             $movement_concept= MovementConcept::whereIsValid(true)->whereType("INGRESO")->whereShortened("FON-ROT-IN")->first();
+            $abbreviated_supporting_document = $movement_concept->abbreviated_supporting_document;
+            $movement_concept_code = MovementFundRotatory::where('movement_concept_id',$movement_concept->id)->withTrashed()->count()+1;       
             $fundRotatory = new MovementFundRotatory;
             $fundRotatory->user_id = Auth::id();
-            $fundRotatory->movement_concept_code =$movement_concept->abbreviated_supporting_document."-".$request->input('movement_concept_code').'/'.Carbon::now()->year;
+            $fundRotatory->movement_concept_code = $movement_concept->abbreviated_supporting_document."-".$movement_concept_code.'/'.Carbon::now()->year;
             $fundRotatory->date_check_delivery = $request->input('date_check_delivery');
             $fundRotatory->entry_amount = $request->input('entry_amount');
             $fundRotatory->description = $request->input('description');
