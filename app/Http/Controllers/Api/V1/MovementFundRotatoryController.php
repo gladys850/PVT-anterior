@@ -427,7 +427,8 @@ class MovementFundRotatoryController extends Controller
             ]);
 
         }else{
-            abort(409, 'Descargar pdf... aun no disponible :-(');
+           // abort(409, 'Descargar pdf... aun no disponible :-(');
+           return $this->print_cash_report($request);
         }
     }
 
@@ -480,5 +481,96 @@ class MovementFundRotatoryController extends Controller
             return $e;
         }
     }
+    /**
+     * Reporte de cajas fondo rotatorio
+     * @queryParam initial_date Fecha inicial. Example: 2021-01-01
+     * @queryParam final_date Fecha Final. Example: 2021-05-01
+     * @responseFile responses/movements/cash_report.200.json
+     * @authenticated
+     */ 
+    public function print_cash_report(request $request, $standalone = true)
+    {
+        $movement_concept = MovementConcept::whereName('DESEMBOLSO ANTICIPO')->first();
+        $initial_date = request('initial_date') ?? '';
+        $final_date = request('final_date') ?? '';
+        $state_vigente='Vigente';
+        $conditions = [];
+        //desde aqui
+        if ($initial_date != '' && $final_date != '') {
+            $date_ini = $request->initial_date.' 00:00:00';
+            $date_fin = $request->final_date.' 23:59:59';
+
+            $loans = DB::table('movement_fund_rotatories')
+              ->whereBetween('movement_fund_rotatories.created_at', [$date_ini, $date_fin])
+              ->whereNull("movement_fund_rotatories.deleted_at")
+              ->select('*')
+              ->orderBy('movement_fund_rotatories.id')
+              ->get();
+        } else {
+            if ($final_date != '') {
+                $date_fin = $request->final_date.' 23:59:59';   
+            $loans = DB::table('movement_fund_rotatories')
+                ->where('movement_fund_rotatories.created_at',  "<=", $date_fin)
+                ->whereNull("movement_fund_rotatories.deleted_at")
+                ->select('*')
+                ->orderBy('movement_fund_rotatories.id')
+                ->get();
+            } else {
+                $date_fin = Carbon::now();
+                if ($initial_date != '') {
+                    $date_ini = $request->initial_date.' 00:00:00';
+
+                    $loans = DB::table('movement_fund_rotatories')
+                    ->where('movement_fund_rotatories.created_at', ">=", $date_ini)
+                    ->whereNull("movement_fund_rotatories.deleted_at")
+                    ->select('*')
+                    ->orderBy('movement_fund_rotatories.id')
+                    ->get();
+                } else {
+                    $loans = DB::table('movement_fund_rotatories')
+                    ->whereNull("movement_fund_rotatories.deleted_at")
+                    ->select('*')
+                    ->orderBy('movement_fund_rotatories.id')
+                    ->get();
+                }
+            }
+        }
+            $loans_array = collect([]);
+            foreach ($loans as $loan) {
+                $loans_array->push([
+                "movement_concept_code" => $loan->movement_concept_code,
+                "disbursement_date_loan" => $loan->created_at,
+                "description" => $loan->description,
+                "entry_amount" => $loan->entry_amount,
+                "output_amount" => $loan->output_amount,
+                "balance" => $loan->balance,          
+                ]);
+            }
+            //return Carbon::parse($loans_array[0]['disbursement_date_loan'])->format('d-m-Y');
+            $data = [
+            'header' => [
+                'direction' => 'DIRECCIÓN DE ASUNTOS ADMINISTRATIVOS',
+                'unity' => '',
+                'table' => [
+                    ['Fecha', Carbon::now()->format('d-m-Y')],
+                    ['Hora', Carbon::now()->format('H:i:s')],
+                    ['Usuario', Auth::user()->username]
+                ]
+            ],
+            'title' => 'REPORTE DIARIO DE CAJA',
+            'initial_date' => $initial_date? $initial_date: Carbon::parse($loans_array[0]['disbursement_date_loan'])->format('d-m-Y'),
+            'final_date' => $final_date,
+            'loans' => $loans_array,
+            'file_title' => 'reporte de desembolsos',
+        ];
+            $file_name = 'Reporte salidas fondo rotatorio.pdf';
+            $view = view()->make('loan.reports_tesoreria.cash_report')->with($data)->render();
+            if ($standalone) {
+                return Util::pdf_to_treasury_receipt([$view],'letter', $request->copies ?? 1);
+            }
+            return $view;
+    }
+
+
 
 }
