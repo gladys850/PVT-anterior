@@ -70,7 +70,7 @@
                 Impresión de Refrendo y Sello de Tesorería:
                 </td>
                 <td class="uppercase" colspan="3">
-
+                    
                 </td>
             </tr>
         </table>

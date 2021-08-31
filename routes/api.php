@@ -7,25 +7,14 @@ Route::group([
     // Rutas abiertas
     Route::get('config', 'Api\V1\ConfigController');
     Route::apiResource('auth', 'Api\V1\AuthController')->only('store');
-    //Route::post('command_senasir_save_payment', 'Api\V1\LoanPaymentController@command_senasir_save_payment');
-    //Route::get('senasir_save_payment', 'Api\V1\LoanPaymentController@senasir_save_payment');
-    //Route::get('excel', 'Api\V1\LoanPaymentController@download');    
-    //sismu
-    //Route::get('prueba', 'Api\V1\AffiliateController@get_mixed_guarantees');
     Route::patch('edit_loan/{loan}/qualification', 'Api\V1\LoanController@edit_amounts_loan_term');
-    //Route::get('depuracion', 'Api\V1\AffiliateController@eliminacion');
     // INDEFINIDO (TODO)
     Route::get('document/{affiliate_id}', 'Api\V1\ScannedDocumentController@create_document');
     Route::get('generate_plans', 'Api\V1\LoanController@generate_plans');
-
     // Autenticado con token
     Route::group([
         'middleware' => 'auth'
     ], function () {
-        Route::delete('delete_movement/{movement}', 'Api\V1\MovementFundRotatoryController@delete_movement');
-        Route::apiResource('movements', 'Api\V1\MovementFundRotatoryController')->only('update');
-        Route::apiResource('movements', 'Api\V1\MovementFundRotatoryController')->only('index');
-        Route::apiResource('movements', 'Api\V1\MovementFundRotatoryController')->only('show');
         Route::apiResource('user', 'Api\V1\UserController');//->only('index', 'show', 'update');
         if (!env("LDAP_AUTHENTICATION")) Route::apiResource('user', 'Api\V1\UserController')->only('update');
         Route::get('user/{user}/role', 'Api\V1\UserController@get_roles');
@@ -54,7 +43,6 @@ Route::group([
         Route::get('procedure_type/{procedure_type}/modality', 'Api\V1\ProcedureTypeController@get_modality');
         Route::get('procedure_type/{procedure_type}/flow', 'Api\V1\ProcedureTypeController@get_flow');
         Route::apiResource('payment_type', 'Api\V1\PaymentTypeController')->only('index', 'show');
-       // Route::apiResource('amortization_type', 'Api\V1\AmortizationTypeController')->only('index', 'show');
         Route::apiResource('procedure_modality', 'Api\V1\ProcedureModalityController')->only('index', 'show');
         Route::get('procedure_modality/{procedure_modality}/loan_modality_parameter', 'Api\V1\ProcedureModalityController@get_loan_modality_parameter');
         Route::apiResource('module', 'Api\V1\ModuleController')->only('index', 'show');
@@ -71,61 +59,89 @@ Route::group([
         Route::apiResource('voucher_type', 'Api\V1\VoucherTypeController')->only('index', 'show');
         Route::apiResource('financial_entity', 'Api\V1\FinancialEntityController')->only('index', 'show');
         Route::post('evaluate_garantor', 'Api\V1\CalculatorController@evaluate_guarantor');
-        Route::apiResource('aid_contribution', 'Api\V1\AidContributionController')->only('index', 'show', 'store', 'update', 'destroy');
-        Route::post('aid_contribution/updateOrCreate', 'Api\V1\AidContributionController@updateOrCreate');
-        Route::post('search_loan','Api\V1\AffiliateController@search_loan');
-        Route::apiResource('contributions_affiliate', 'Api\V1\ContributionController')->only('index', 'show', 'store', 'update', 'destroy');
-        Route::get('affiliate/{affiliate}/contributions_affiliate', 'Api\V1\ContributionController@get_all_contribution_affiliate');
-        Route::get('list_loan_generate', 'Api\V1\LoanReportController@list_loan_generate');
-        Route::get('list_loan_payments_generate', 'Api\V1\LoanPaymentReportController@list_loan_payments_generate');
-        Route::get('report_amortization_discount_months', 'Api\V1\LoanPaymentReportController@report_amortization_discount_months');//1
-        Route::get('report_amortization_cash_deposit', 'Api\V1\LoanPaymentReportController@report_amortization_cash_deposit');//2
-        Route::get('report_amortization_ajust', 'Api\V1\LoanPaymentReportController@report_amortization_ajust');//3
-        Route::get('report_amortization_pending_confirmation', 'Api\V1\LoanPaymentReportController@report_amortization_pending_confirmation');//4
-        Route::get('report_amortization_fondo_complement', 'Api\V1\LoanPaymentReportController@report_amortization_fondo_complement');//5
-        Route::get('report_loan_vigent', 'Api\V1\LoanReportController@report_loan_vigent');//6
-        Route::get('report_loan_state_cartera', 'Api\V1\LoanReportController@report_loan_state_cartera');//7
-        Route::get('report_loans_mora', 'Api\V1\LoanReportController@report_loans_mora');//8
-        Route::get('loan_information', 'Api\V1\LoanReportController@loan_information');//reporte de nuevos prestamos desembolsados
-        Route::get('loan_defaulted_guarantor', 'Api\V1\LoanReportController@loan_defaulted_guarantor');//reporte de nuevos prestamos desembolsados
-        Route::apiResource('periods', 'Api\V1\LoanPaymentPeriodController')->only('index', 'show', 'store', 'update', 'destroy');//cambiar a cobranzas
-        Route::apiResource('fundRotatoryOutput', 'Api\V1\FundRotatoryOutputController');
-        Route::get('fund_rotatory_entry_output', 'Api\V1\FundRotatoryController@get_fund_rotatori_entry_output');//listadosentradas y salidas
-        Route::get('verify_fund_rotatory_disbursements', 'Api\V1\FundRotatoryController@verify_fund_rotatory_disbursements');//Verificar fondo rotatorio desembolsos
-        Route::get('get_list_month', 'Api\V1\LoanPaymentPeriodController@get_list_month');//listado de meses por gestion
-        Route::get('get_list_year', 'Api\V1\LoanPaymentPeriodController@get_list_year');//listado de meses por gestion
-        Route::get('loan_pvt_sismu_report', 'Api\V1\LoanReportController@loan_pvt_sismu_report');//reporte de prestamos PVT y sismu simultaneos
-
-        Route::get('get_categorie_user', 'Api\V1\LoanPaymentCategorieController@get_categorie_user');//listado de meses por gestion
-
-        Route::get('loan_tracking', 'Api\V1\LoanReportController@loan_tracking');//seguimiento de prestamos
-
-        Route::get('print_fund_rotary_output/{loan_id}', 'Api\V1\MovementFundRotatoryController@print_fund_rotary');
-        //import payments
-        Route::get('agruped_payments', 'Api\V1\ImportationController@agruped_payments');
-        Route::get('importation_payments_senasir', 'Api\V1\ImportationController@importation_payment_senasir');//senasir pagos
-
-        Route::get('upload_fail_validated_group', 'Api\V1\ImportationController@upload_fail_validated_group');
-
-        Route::get('copy_payments', 'Api\V1\ImportationController@copy_payments');
-        Route::get('create_payments_command', 'Api\V1\ImportationController@create_payments_command');
-
-        Route::get('rollback_copy_groups_payments', 'Api\V1\ImportationController@rollback_copy_groups_payments');
-
-        Route::get('report_amortization_importation_payments', 'Api\V1\ImportationReportController@report_amortization_importation_payments');
-
-        Route::get('report_request_institution', 'Api\V1\ImportationReportController@report_request_institution');
-        Route::get('report_request_command_payments', 'Api\V1\ImportationReportController@report_rquest_command_payments');
-
-        Route::get('request_state_report', 'Api\V1\LoanReportController@request_state_report');
-        Route::get('disbursements_fund_rotatory_outputs_report', 'Api\V1\MovementFundRotatoryController@disbursements_fund_rotatory_outputs_report'); //report de desembolsos anticipo 
-        Route::get('treasury_report', 'Api\V1\LoanPaymentReportController@treasury_report');
         Route::get('affiliate_record', 'Api\V1\AffiliateController@affiliate_record');
         Route::post('affiliate_guarantor', 'Api\V1\AffiliateController@test_guarantor');
-        //Route::apiResource('fund_rotatory_entry', 'Api\V1\FundRotatoryController')->only('index', 'show');//Fondo rotatorio
+        //Categorias de tipo "USUARIO"
+        Route::get('get_categorie_user', 'Api\V1\LoanPaymentCategorieController@get_categorie_user');
+        //Evaluacion de prestamos afiliado
+        Route::post('search_loan','Api\V1\AffiliateController@search_loan');
+        //contribuciones afiliado
+        Route::apiResource('aid_contribution', 'Api\V1\AidContributionController')->only('index', 'show', 'store', 'update', 'destroy');
+        Route::post('aid_contribution/updateOrCreate', 'Api\V1\AidContributionController@updateOrCreate');
+        Route::apiResource('contributions_affiliate', 'Api\V1\ContributionController')->only('index', 'show', 'store', 'update', 'destroy');
+        Route::get('affiliate/{affiliate}/contributions_affiliate', 'Api\V1\ContributionController@get_all_contribution_affiliate');
+        //Conceptos de movimientos
         Route::apiResource('movement_concept', 'Api\V1\MovementConceptController')->only('index', 'show', 'store', 'update', 'destroy');
-        Route::get('list_movements_fund_rotatory', 'Api\V1\MovementFundRotatoryController@list_movements_fund_rotatory');
-        Route::post('closing_movements', 'Api\V1\MovementFundRotatoryController@closing_movements');
+        //REPORTS
+            //loanReport
+        Route::get('loan_tracking', 'Api\V1\LoanReportController@loan_tracking');//seguimiento de prestamos
+        Route::get('list_loan_generate', 'Api\V1\LoanReportController@list_loan_generate');
+        Route::get('report_loan_vigent', 'Api\V1\LoanReportController@report_loan_vigent');
+        Route::get('report_loan_state_cartera', 'Api\V1\LoanReportController@report_loan_state_cartera');
+        Route::get('report_loans_mora', 'Api\V1\LoanReportController@report_loans_mora');
+        Route::get('loan_information', 'Api\V1\LoanReportController@loan_information');//reporte de nuevos prestamos desembolsados
+        Route::get('loan_defaulted_guarantor', 'Api\V1\LoanReportController@loan_defaulted_guarantor');//reporte de nuevos prestamos desembolsados
+        Route::get('loan_pvt_sismu_report', 'Api\V1\LoanReportController@loan_pvt_sismu_report');//reporte de prestamos PVT y sismu simultaneos
+        Route::get('request_state_report', 'Api\V1\LoanReportController@request_state_report');
+            //loanPaymentReport
+        Route::get('list_loan_payments_generate', 'Api\V1\LoanPaymentReportController@list_loan_payments_generate');
+        Route::get('report_amortization_discount_months', 'Api\V1\LoanPaymentReportController@report_amortization_discount_months');
+        Route::get('report_amortization_cash_deposit', 'Api\V1\LoanPaymentReportController@report_amortization_cash_deposit');
+        Route::get('report_amortization_ajust', 'Api\V1\LoanPaymentReportController@report_amortization_ajust');
+        Route::get('report_amortization_pending_confirmation', 'Api\V1\LoanPaymentReportController@report_amortization_pending_confirmation');
+        Route::get('report_amortization_fondo_complement', 'Api\V1\LoanPaymentReportController@report_amortization_fondo_complement');
+        Route::get('treasury_report', 'Api\V1\LoanPaymentReportController@treasury_report');
+            //ImportationReport
+        Route::get('report_amortization_importation_payments', 'Api\V1\ImportationReportController@report_amortization_importation_payments');
+        Route::get('report_request_institution', 'Api\V1\ImportationReportController@report_request_institution');
+        Route::get('report_request_command_payments', 'Api\V1\ImportationReportController@report_rquest_command_payments');
+            //movementFundRotatory_Report
+        Route::get('disbursements_fund_rotatory_outputs_report', 'Api\V1\MovementFundRotatoryController@disbursements_fund_rotatory_outputs_report'); //report de desembolsos anticipo 
+        //IMPORTACION
+        Route::get('agruped_payments', 'Api\V1\ImportationController@agruped_payments');
+        Route::get('importation_payments_senasir', 'Api\V1\ImportationController@importation_payment_senasir');//senasir pagos
+        Route::get('upload_fail_validated_group', 'Api\V1\ImportationController@upload_fail_validated_group');
+        Route::get('copy_payments', 'Api\V1\ImportationController@copy_payments');
+        Route::get('create_payments_command', 'Api\V1\ImportationController@create_payments_command');
+        Route::get('rollback_copy_groups_payments', 'Api\V1\ImportationController@rollback_copy_groups_payments');
+        //PERIODOS DE IMPORTACION
+        Route::get('get_list_month', 'Api\V1\LoanPaymentPeriodController@get_list_month');//listado de meses por gestion
+        Route::get('get_list_year', 'Api\V1\LoanPaymentPeriodController@get_list_year');//listado de meses por gestion
+        Route::apiResource('periods', 'Api\V1\LoanPaymentPeriodController')->only('index', 'show', 'store', 'update', 'destroy');//cambiar a cobranzas
+        //Movimientos de fondo Rotatorio
+        Route::group([
+            'middleware' => 'permission:closing-movement-fund-rotatory'
+        ], function () {
+            Route::post('closing_movements', 'Api\V1\MovementFundRotatoryController@closing_movements');
+        });
+        Route::group([
+            'middleware' => 'permission:show-movement-fund-rotatory'
+        ], function () {
+            Route::get('list_movements_fund_rotatory', 'Api\V1\MovementFundRotatoryController@list_movements_fund_rotatory');
+            Route::apiResource('movements', 'Api\V1\MovementFundRotatoryController')->only('index');
+            Route::apiResource('movements', 'Api\V1\MovementFundRotatoryController')->only('show');
+        });
+        Route::group([
+            'middleware' => 'permission:delete-movement-fund-rotatory'
+        ], function () {
+            Route::delete('delete_movement/{movement}', 'Api\V1\MovementFundRotatoryController@delete_movement');
+        });
+        Route::group([
+            'middleware' => 'permission:update-movement-fund-rotatory'
+        ], function () {
+            Route::apiResource('movements', 'Api\V1\MovementFundRotatoryController')->only('update');
+        });
+
+        Route::group([
+            'middleware' => 'permission:print-disbursement-receipt'
+        ], function () {
+            Route::get('print_fund_rotary_output/{loan_id}', 'Api\V1\MovementFundRotatoryController@print_fund_rotary');
+        });
+        Route::group([
+            'middleware' => 'permission:create-entry-fund-rotatory'
+        ], function () {
+            Route::post('movement_fund_rotatory_entry/store_input', 'Api\V1\MovementFundRotatoryController@store_input');
+        });
         // Afiliados
         Route::group([
             'middleware' => 'permission:show-affiliate'
@@ -233,45 +249,6 @@ Route::group([
         ], function () {
             Route::patch('loan/{loan}/update_refinancing_balance','Api\V1\LoanController@update_balance_refinancing');
         });
-        //Registro de un nuevo fondo rotatorio
-        Route::group([
-            'middleware' => 'permission:create-entry-fund-rotatory'
-        ], function () {
-        Route::post('movement_fund_rotatory_entry/store_input', 'Api\V1\MovementFundRotatoryController@store_input');
-        });
-        //fondo rotatorio
-
-        /*Route::group([
-            'middleware' => 'permission:create-fund_rotatory'
-        ], function () {
-            Route::apiResource('fund_rotatory_entry', 'Api\V1\FundRotatoryController')->only('store');
-        });
-        Route::group([
-            'middleware' => 'permission:update-fund_rotatory'
-        ], function () {
-            Route::apiResource('fund_rotatory_entry', 'Api\V1\FundRotatoryController')->only('update');
-        });
-        Route::group([
-            'middleware' => 'permission:delete-fund_rotatory'
-        ], function () {
-            Route::apiResource('fund_rotatory_entry', 'Api\V1\FundRotatoryController')->only('destroy');
-        });
-        //movimientos del fondo rotatorio
-        /*Route::group([
-            'middleware' => 'permission:index-movement_fund_rotatory'
-        ], function () {
-        Route::apiResource('movements', 'Api\V1\MovementFundRotatoryController')->only('index');
-        });
-        Route::group([
-            'middleware' => 'permission:show-movement_fund_rotatory'
-        ], function () {
-        Route::apiResource('movements', 'Api\V1\MovementFundRotatoryController')->only('show');
-        });
-        /*Route::group([
-            'middleware' => 'permission:update-movement_fund_rotatory'
-        ], function () {
-        Route::apiResource('movements', 'Api\V1\MovementFundRotatoryController')->only('update');
-        });*/
         // payments
         Route::group([
             'middleware' => 'permission:show-payment-loan|show-all-payment-loan'
