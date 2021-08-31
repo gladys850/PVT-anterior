@@ -281,8 +281,8 @@
                 offset-y
                 close-on-content-click
                 v-if="permissionSimpleSelected.includes('print-contract-loan') || 
-                (permissionSimpleSelected.includes('print-payment-plan') && item.state_loan == 'Vigente') || 
-                (permissionSimpleSelected.includes('print-payment-kardex-loan') && item.state_loan == 'Vigente')"
+                (permissionSimpleSelected.includes('print-payment-plan') && item.state_loan != 'En Proceso') || 
+                (permissionSimpleSelected.includes('print-payment-kardex-loan') && item.state_loan != 'En Proceso')"
               >
                 <template v-slot:activator="{ on }">
                   <v-btn
