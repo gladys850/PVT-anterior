@@ -439,7 +439,9 @@ class MovementFundRotatoryController extends Controller
 
         }else{
            // abort(409, 'Descargar pdf... aun no disponible :-(');
+           if($print_pdf){
            return $this->print_cash_report($request);
+           }
         }
     }
 
@@ -509,53 +511,48 @@ class MovementFundRotatoryController extends Controller
             $date_ini = $request->initial_date.' 00:00:00';
             $date_fin = $request->final_date.' 23:59:59';
 
-            $loans = DB::table('movement_fund_rotatories')
+            $movement_lists = DB::table('movement_fund_rotatories')
               ->whereBetween('movement_fund_rotatories.created_at', [$date_ini, $date_fin])
+              ->join('movement_concepts as mc','mc.id','=','movement_fund_rotatories.movement_concept_id')
               ->whereNull("movement_fund_rotatories.deleted_at")
-              ->select('*')
+              ->select('movement_fund_rotatories.created_at as disbursement_date_loan','movement_fund_rotatories.description as concept','*')
               ->orderBy('movement_fund_rotatories.id')
               ->get();
         } else {
             if ($final_date != '') {
                 $date_fin = $request->final_date.' 23:59:59';   
-            $loans = DB::table('movement_fund_rotatories')
+            $movement_lists = DB::table('movement_fund_rotatories')
                 ->where('movement_fund_rotatories.created_at',  "<=", $date_fin)
+                ->join('movement_concepts as mc','mc.id','=','movement_fund_rotatories.movement_concept_id')
                 ->whereNull("movement_fund_rotatories.deleted_at")
-                ->select('*')
+                ->select('movement_fund_rotatories.created_at as disbursement_date_loan','movement_fund_rotatories.description as concept','*')
                 ->orderBy('movement_fund_rotatories.id')
                 ->get();
             } else {
                 $date_fin = Carbon::now();
                 if ($initial_date != '') {
                     $date_ini = $request->initial_date.' 00:00:00';
-
-                    $loans = DB::table('movement_fund_rotatories')
+                    $movement_lists = DB::table('movement_fund_rotatories')
                     ->where('movement_fund_rotatories.created_at', ">=", $date_ini)
+                    ->join('movement_concepts as mc','mc.id','=','movement_fund_rotatories.movement_concept_id')
                     ->whereNull("movement_fund_rotatories.deleted_at")
-                    ->select('*')
+                    ->select('movement_fund_rotatories.created_at as disbursement_date_loan','movement_fund_rotatories.description as concept','*')
                     ->orderBy('movement_fund_rotatories.id')
                     ->get();
                 } else {
-                    $loans = DB::table('movement_fund_rotatories')
+                    $movement_lists = DB::table('movement_fund_rotatories')
+                    ->join('movement_concepts as mc','mc.id','=','movement_fund_rotatories.movement_concept_id')
                     ->whereNull("movement_fund_rotatories.deleted_at")
-                    ->select('*')
+                    ->select('movement_fund_rotatories.created_at as disbursement_date_loan','movement_fund_rotatories.description as concept','*')
                     ->orderBy('movement_fund_rotatories.id')
                     ->get();
                 }
             }
         }
-            $loans_array = collect([]);
-            foreach ($loans as $loan) {
-                $loans_array->push([
-                "movement_concept_code" => $loan->movement_concept_code,
-                "disbursement_date_loan" => $loan->created_at,
-                "description" => $loan->description,
-                "entry_amount" => $loan->entry_amount,
-                "output_amount" => $loan->output_amount,
-                "balance" => $loan->balance,
-                ]);
+            $movement_list_array = collect([]);
+            foreach ($movement_lists as $movement_list) {
+                $movement_list_array->push($movement_list);
             }
-            //return Carbon::parse($loans_array[0]['disbursement_date_loan'])->format('d-m-Y');
             $data = [
             'header' => [
                 'direction' => 'DIRECCIÓN DE ASUNTOS ADMINISTRATIVOS',
@@ -567,9 +564,9 @@ class MovementFundRotatoryController extends Controller
                 ]
             ],
             'title' => 'REPORTE DIARIO DE CAJA',
-            'initial_date' => $initial_date? $initial_date: Carbon::parse($loans_array[0]['disbursement_date_loan'])->format('d-m-Y'),
+            'initial_date' => $initial_date? $initial_date: Carbon::parse($movement_list_array[0]->disbursement_date_loan)->format('d-m-Y'),
             'final_date' => $final_date,
-            'loans' => $loans_array,
+            'movement_lists' => $movement_list_array,
             'file_title' => 'reporte de desembolsos',
         ];
             $file_name = 'Reporte salidas fondo rotatorio.pdf';
