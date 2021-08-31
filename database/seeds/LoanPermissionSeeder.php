@@ -134,9 +134,6 @@ class LoanPermissionSeeder extends Seeder
                 'name' => 'show-list-voucher',
                 'display_name' => 'Ver listado de comprobantes en tesorería'
             ],[
-                'name' => 'show-fund-rotatory',
-                'display_name' => 'Ver fondo rotatorio'
-            ],[
                 'name' => 'importation_payments',
                 'display_name' => 'Importación de cobros Comando Senasir'
             ],[
@@ -148,7 +145,25 @@ class LoanPermissionSeeder extends Seeder
             ],[
                 'name' => 'show-report-others',
                 'display_name' => 'Ver otros reportes'
-            ],
+            ],[
+                'name' => 'show-movement-fund-rotatory',
+                'display_name' => 'Ver movimientos fondo rotatorio'
+            ],[
+                'name' => 'create-entry-fund-rotatory',
+                'display_name' => 'Crear ingreso de movimientos fondo rotatorio'
+            ],[
+                'name' => 'update-movement-fund-rotatory',
+                'display_name' => 'Actualizar movimientos del fondo rotatorio'
+            ],[
+                'name' => 'delete-movement-fund-rotatory',
+                'display_name' => 'Eliminar movimientos de fondo rotatorio'
+            ],[
+                'name' => 'closing-movement-fund-rotatory',
+                'display_name' => 'Cierre de movimientos fondo rotatorio'
+            ],[
+                'name' => 'print-disbursement-receipt',
+                'display_name' => 'Imprimir recibo de desembolso anticipos'
+            ]
         ];
         foreach ($permissions as $permission) {
             Permission::firstOrCreate($permission);
