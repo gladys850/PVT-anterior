@@ -128,32 +128,35 @@ class MovementFundRotatoryController extends Controller
     * @bodyParam description string required Texto de descripción. Example: segundo ingreso del fondo rotatorio
     * @bodyParam movement_concept_id integer required Ingresar ID de la tabla concepto de movimientos. Example: 2
     * @bodyParam role_id integer required role con el que el registro fue creado. Example: 90
-    * @responseFile responses/movements/print_output_fund_rotatory.200.json
+    * @responseFile responses/movements/store_input.200.json
     */
     public function store_input(MovementFundRotatoryForm $request)
-    {
+    {    $request->validate([ 
+        'entry_amount'=> 'required',
+        'date_check_delivery'=> 'required'
+        ]);
         DB::beginTransaction();
         try {
             $movement_concept= MovementConcept::whereIsValid(true)->whereType("INGRESO")->whereShortened("FON-ROT-IN")->first();
             $abbreviated_supporting_document = $movement_concept->abbreviated_supporting_document;
             $movement_concept_code = MovementFundRotatory::where('movement_concept_id',$movement_concept->id)->withTrashed()->count()+1;       
-            $fundRotatory = new MovementFundRotatory;
-            $fundRotatory->user_id = Auth::id();
-            $fundRotatory->movement_concept_code = $movement_concept->abbreviated_supporting_document."-".$movement_concept_code.'/'.Carbon::now()->year;
-            $fundRotatory->date_check_delivery = $request->input('date_check_delivery');
-            $fundRotatory->entry_amount = $request->input('entry_amount');
-            $fundRotatory->description = $request->input('description');
-            $fundRotatory->movement_concept_id = $movement_concept->id;
-            $fundRotatory->role_id = $request->input('role_id');  
-            $fund_rotatory_last = MovementFundRotatory::orderBy('id')->get()->last();    
-            if($fund_rotatory_last== null){
-                $fundRotatory->balance = $request->input('entry_amount');
+            $movement_fund_rotatory = new MovementFundRotatory;
+            $movement_fund_rotatory->user_id = Auth::id();
+            $movement_fund_rotatory->movement_concept_code = $movement_concept->abbreviated_supporting_document."-".$movement_concept_code.'/'.Carbon::now()->year;
+            $movement_fund_rotatory->date_check_delivery = $request->input('date_check_delivery');
+            $movement_fund_rotatory->entry_amount = $request->input('entry_amount');
+            $movement_fund_rotatory->description = $request->input('description');
+            $movement_fund_rotatory->movement_concept_id = $movement_concept->id;
+            $movement_fund_rotatory->role_id = $request->input('role_id');  
+            $movement_fund_rotatory_last = MovementFundRotatory::orderBy('id')->get()->last();    
+            if($movement_fund_rotatory_last == null){
+                $movement_fund_rotatory->balance = $request->input('entry_amount');
             }else{
-                $fundRotatory->balance = $request->input('entry_amount')+$fund_rotatory_last->balance;
+                $movement_fund_rotatory->balance = $request->input('entry_amount') + $movement_fund_rotatory_last->balance;
             }
-            $fundRotatory_return = MovementFundRotatory::create($fundRotatory->toArray());
+            $movement_fund_rotatory_return = MovementFundRotatory::create($movement_fund_rotatory->toArray());
             DB::commit();
-            return $fundRotatory_return;
+            return $movement_fund_rotatory_return;
         } catch (\Exception $e) {
             DB::rollback();
             throw $e;
