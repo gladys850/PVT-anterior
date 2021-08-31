@@ -29,21 +29,21 @@
             <td style="font-size:80%;">IMPORTE (SALIDA)</td>
             <td style="font-size:80%;">SALDO</td>
         </tr>
-        @foreach ( $loans as $movement_list )
+        @foreach ( $movement_lists as $movement_list )
         @php ($number += 1)
         <tr>
             <td style="font-size:60%;">{{$number}}</td>
-            <td style="font-size:60%;">{{ Carbon::parse($movement_list['disbursement_date_loan'])->format('H:i:s') }}</td>
-            <td style="font-size:60%;">{{ $movement_list['movement_concept_code']}}</td>
-            <td style="font-size:60%;">{{ Carbon::parse($movement_list['disbursement_date_loan'])->format('d/m/Y') }}</td>
-            <td style="font-size:60%;">{{ $movement_list['description']}}</td>
-            <td style="font-size:60%;">{{ $movement_list['entry_amount']}}</td>
-            <td style="font-size:60%;">{{ $movement_list['output_amount']}}</td>
-            <td style="font-size:60%;">{{ $movement_list['balance']}}</td>
+            <td style="font-size:60%;">{{ Carbon::parse($movement_list->disbursement_date_loan)->format('H:i:s') }}</td>
+            <td style="font-size:60%;">{{ $movement_list->movement_concept_code}}</td>
+            <td style="font-size:60%;">{{ Carbon::parse($movement_list->disbursement_date_loan)->format('d/m/Y') }}</td>
+            <td style="font-size:60%;">{{$movement_list->name}}-{{ $movement_list->concept}}</td>
+            <td style="font-size:60%;">{{ $movement_list->entry_amount}}</td>
+            <td style="font-size:60%;">{{ $movement_list->output_amount}}</td>
+            <td style="font-size:60%;">{{ $movement_list->balance}}</td>
         </tr>
-        @php ($total_entry_amount += $movement_list['entry_amount'])
-        @php ($total_output_amount += $movement_list['output_amount'])
-        @php ($last_balance = $movement_list['balance'])
+        @php ($total_entry_amount += $movement_list->entry_amount)
+        @php ($total_output_amount += $movement_list->output_amount)
+        @php ($last_balance = $movement_list->balance)
         @endforeach
         <tr class="bg-grey-darker text-s text-white">
                     <td style="font-size:60%;" colspan="5">TOTAL (Bs.)</td>

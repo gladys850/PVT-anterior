@@ -49,7 +49,12 @@
                     Por Concepto de:
                 </td>
                 <td class="uppercase" colspan="3">
-                    {{ $voucher->description }}
+                    @if($loan_payment->description)
+                        {{ $loan_payment->description }}
+                    @endif
+                   <!-- @if($voucher->description)
+                        {{ $voucher->description }}
+                    @endif-->
                 </td>
             </tr>
             <tr>
@@ -65,7 +70,7 @@
                 Impresión de Refrendo y Sello de Tesorería:
                 </td>
                 <td class="uppercase" colspan="3">
-                  
+
                 </td>
             </tr>
         </table>

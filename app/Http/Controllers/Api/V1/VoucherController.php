@@ -171,7 +171,8 @@ class VoucherController extends Controller
             ],
             'title' => 'RECIBO OFICIAL',
             'voucher' => $voucher,
-            'lenders' => collect($lenders)
+            'lenders' => collect($lenders),
+            'loan_payment'=>$loan_payment
         ];
         $information= $this->get_information_loan($voucher);
         $file_name = implode('_', ['voucher', $voucher->code]) . '.pdf';
