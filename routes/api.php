@@ -126,7 +126,6 @@ Route::group([
         Route::apiResource('movement_concept', 'Api\V1\MovementConceptController')->only('index', 'show', 'store', 'update', 'destroy');
         Route::get('list_movements_fund_rotatory', 'Api\V1\MovementFundRotatoryController@list_movements_fund_rotatory');
         Route::post('closing_movements', 'Api\V1\MovementFundRotatoryController@closing_movements');
-        Route::post('fund_rotatory_entry/store_input', 'Api\V1\MovementFundRotatoryController@store_input');
         // Afiliados
         Route::group([
             'middleware' => 'permission:show-affiliate'
@@ -234,7 +233,14 @@ Route::group([
         ], function () {
             Route::patch('loan/{loan}/update_refinancing_balance','Api\V1\LoanController@update_balance_refinancing');
         });
+        //Registro de un nuevo fondo rotatorio
+        Route::group([
+            'middleware' => 'permission:create-entry-fund-rotatory'
+        ], function () {
+        Route::post('movement_fund_rotatory_entry/store_input', 'Api\V1\MovementFundRotatoryController@store_input');
+        });
         //fondo rotatorio
+
         /*Route::group([
             'middleware' => 'permission:create-fund_rotatory'
         ], function () {
