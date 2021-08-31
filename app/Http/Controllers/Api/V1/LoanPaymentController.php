@@ -366,12 +366,13 @@ class LoanPaymentController extends Controller
             try {
                 $payment = new Voucher;
                 $payment->user_id = auth()->id();
-                //$payment->affiliate_id = $loanPayment->loan->disbursable_id;
                 $payment->voucher_type_id = $request->input('voucher_type_id');
                 $payment->total = $request->input('voucher_amount_total');
-                $payment->payment_date = $request->input('voucher_payment_date');
-                //$payment->paid_amount = $loanPayment->estimated_quota;
-                //$payment->payment_type_id = $request->payment_type_id;
+                if($request->has('voucher_payment_date') && $request->voucher_payment_date != null) {
+                    $payment->payment_date = $request->input('voucher_payment_date');//fecha del comprobante bancario de voucher
+                }else{
+                    $payment->payment_date = Carbon::now()->format('Y-m-d');//fecha del comprobante bancario
+                }
                 $payment->description = $request->input('description', null);
                 $payment->bank_pay_number = $request->input('bank_pay_number', null);
                 $bank_pay_number=$request->input('bank_pay_number', null);
@@ -379,11 +380,6 @@ class LoanPaymentController extends Controller
                 $loanPayment->update(['state_id' => $Pagado,'user_id' => $payment->user_id,'validated'=>true,'loan_payment_date'=>Carbon::now(),'voucher'=>$bank_pay_number]);
                 if($loanPayment->loan->payments->count() == 1 && $loanPayment->loan->payments->first()->state_id == $Pagado){
                     $user = User::whereUsername('admin')->first();
-                   /* $amortizing_tag = Tag::whereSlug('amortizando')->first();
-                    $loanPayment->loan->tags()->attach([$amortizing_tag->id => [
-                        'user_id' => $user->id,
-                        'date' => Carbon::now()
-                    ]]);*/
                 }
                 $loan=Loan::find($loanPayment->loan_id);
                  //generar PDF

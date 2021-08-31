@@ -27,7 +27,7 @@ class VoucherForm extends FormRequest
             $rules = [
                 'voucher_type_id' => 'exists:voucher_types,id',
                 'voucher_amount_total'=>'nullable|numeric|min:1',
-                'voucher_payment_date'=>'date_format:"Y-m-d"',
+                'voucher_payment_date'=>'date_format:"Y-m-d"|required_if:voucher_type_id,3',
                 'bank_pay_number' => 'nullable|required_if:voucher_type_id,3|integer|min:1',
                 'description' => 'min:3|nullable'
             ];
@@ -49,7 +49,8 @@ class VoucherForm extends FormRequest
     {
         return [
             'voucher_type_id.required' => 'El tipo de voucher es requerido',
-            'bank_pay_number.required_if' => 'El número de voucher es requerido si realizó deposito bancario',
+            'bank_pay_number.required_if' => 'El número de voucher es requerido',
+            'voucher_payment_date.required_if' => 'La fecha de deposito bancario es requerido',
             'voucher_amount_total.required'=>'El monto del voucher es requerido',
             'voucher_payment_date.required'=>'Fecha del pago'
         ];
