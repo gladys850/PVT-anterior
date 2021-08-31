@@ -122,7 +122,6 @@ class MovementFundRotatoryController extends Controller
        /**
     * Nuevo Ingreso del fondo rotatorio
     * Inserta nuevo Nuevo fondo rotatorio
-    * @bodyParam movement_concept_code string required Numero de cheque. Example: 44534
     * @bodyParam date_check_delivery date required fecha de cheque. Example: 31-07-2021
     * @bodyParam entry_amount numeric  Monto ingresado del cheque Example: 1052.26
     * @bodyParam description string required Texto de descripción. Example: segundo ingreso del fondo rotatorio
