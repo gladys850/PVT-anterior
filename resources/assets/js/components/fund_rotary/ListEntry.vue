@@ -5,7 +5,7 @@
         <v-card flat>
           <v-card-title class="pa-0 pb-3">
             <v-toolbar dense color="tertiary" class="font-weight-regular">
-              <v-toolbar-title>FONDO ROTATORIO{{min_amount_fund_rotary}}</v-toolbar-title>
+              <v-toolbar-title>FONDO ROTATORIO</v-toolbar-title>
             </v-toolbar>
           </v-card-title>
           <!--Buscador por fecha-->
@@ -421,6 +421,8 @@ export default {
     },
   },
   mounted() {
+    this.initial_date=this.$moment(Date.now()).format('YYYY-MM-DD')
+    this.final_date=this.$moment(Date.now()).format('YYYY-MM-DD')
     this.getGlobalParameters()
     this.bus.$on("removed", (val) => {
       this.getFundRotary();
