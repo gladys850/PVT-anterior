@@ -299,7 +299,7 @@ class MovementFundRotatoryController extends Controller
                 if($initial_date!= '')
                     $initial = $initial_date;
                 else
-                    $initial = Carbon::parse($loans_array[0]->disbursement_date_loan)->format('d-m-Y');
+                    $initial = Carbon::parse($loans_array[0]['disbursement_date_loan'])->format('d-m-Y');
             }
             $data = [
             'header' => [
