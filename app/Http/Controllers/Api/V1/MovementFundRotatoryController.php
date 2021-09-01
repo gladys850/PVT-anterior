@@ -290,7 +290,17 @@ class MovementFundRotatoryController extends Controller
                 "amount_approved_loan" => $loan->output_amount,
                 ]);
             }
-            //return Carbon::parse($loans_array[0]['disbursement_date_loan'])->format('d-m-Y');
+            if(sizeof($loans_array) == 0){
+                if($initial_date!= '')
+                    $initial = $initial_date;
+                else
+                    $initial = Carbon::now()->format('d-m-Y');
+            }else{
+                if($initial_date!= '')
+                    $initial = $initial_date;
+                else
+                    $initial = Carbon::parse($loans_array[0]['disbursement_date_loan'])->format('d-m-Y');
+            }
             $data = [
             'header' => [
                 'direction' => 'DIRECCIÓN DE ASUNTOS ADMINISTRATIVOS',
@@ -302,7 +312,7 @@ class MovementFundRotatoryController extends Controller
                 ]
             ],
             'title' => 'REPORTE DE DESEMBOLSOS',
-            'initial_date' => $initial_date? $initial_date: Carbon::parse($loans_array[0]['disbursement_date_loan'])->format('d-m-Y'),
+            'initial_date' => $initial,
             'final_date' => $final_date,
             'loans' => $loans_array,
             'file_title' => 'reporte de desembolsos',
