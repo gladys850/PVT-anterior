@@ -1834,12 +1834,13 @@ class LoanReportController extends Controller
             }
             $loans_array->push([
                 "code" => $loan->code,
-                "request_date" => Carbon::parse($loan->request_date)->format('d-m-Y'),
+                "request_date" => Carbon::parse($loan->request_date)->format('d/m/Y H:i:s'),
                 "lenders" => $loan->lenders,
                 "role" => $loan->role->display_name,
-                "update_date" => Carbon::parse($date)->format('d-m-Y'),
+                "update_date" => Carbon::parse($date)->format('d/m/Y H:i:s'),
                 "user" => $loan->user ? $loan->user->username : "",
                 "amount" => $loan->amount_approved,
+                "amount_dirbursement" => $loan->refinancing_balance == 0? $loan->amount_approved:$loan->refinancing_balance,
             ]);
             //$loans_array->push($data);
         }/*foreach ($loans_array as $loan_array)
