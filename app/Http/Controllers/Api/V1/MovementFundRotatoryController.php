@@ -221,6 +221,8 @@ class MovementFundRotatoryController extends Controller
      */ 
     public function disbursements_fund_rotatory_outputs_report(request $request, $standalone = true)
     {
+        DB::beginTransaction();
+        try {
         $movement_concept = MovementConcept::whereName('DESEMBOLSO ANTICIPO')->first();
         $initial_date = request('initial_date') ?? '';
         $final_date = request('final_date') ?? '';
@@ -237,7 +239,7 @@ class MovementFundRotatoryController extends Controller
               ->where("view_loan_borrower.state_loan", "Vigente")
               ->where("movement_fund_rotatories.movement_concept_id",'=',$movement_concept->id)
               ->whereNull("movement_fund_rotatories.deleted_at")
-              ->select('*')
+              ->select('movement_fund_rotatories.created_at as disbursement_date_loan','movement_fund_rotatories.*','view_loan_borrower.*')
               ->orderBy('movement_fund_rotatories.id')
               ->get();
 
@@ -251,7 +253,7 @@ class MovementFundRotatoryController extends Controller
                 ->where("view_loan_borrower.state_loan", "Vigente")
                 ->where("movement_fund_rotatories.movement_concept_id",'=',$movement_concept->id)
                 ->whereNull("movement_fund_rotatories.deleted_at")
-                ->select('*')
+                ->select('movement_fund_rotatories.created_at as disbursement_date_loan','movement_fund_rotatories.*','view_loan_borrower.*')
                 ->orderBy('movement_fund_rotatories.id')
                 ->get();
             } else {
@@ -265,7 +267,7 @@ class MovementFundRotatoryController extends Controller
                     ->where("view_loan_borrower.state_loan", "Vigente")
                     ->where("movement_fund_rotatories.movement_concept_id",'=',$movement_concept->id)
                     ->whereNull("movement_fund_rotatories.deleted_at")
-                    ->select('*')
+                    ->select('movement_fund_rotatories.created_at as disbursement_date_loan','movement_fund_rotatories.*','view_loan_borrower.*')
                     ->orderBy('movement_fund_rotatories.id')
                     ->get();
                 } else {
@@ -274,7 +276,7 @@ class MovementFundRotatoryController extends Controller
                     ->where("view_loan_borrower.state_loan", "Vigente")
                     ->where("movement_fund_rotatories.movement_concept_id",'=',$movement_concept->id)
                     ->whereNull("movement_fund_rotatories.deleted_at")
-                    ->select('*')
+                    ->select('movement_fund_rotatories.created_at as disbursement_date_loan','movement_fund_rotatories.*','view_loan_borrower.*')
                     ->orderBy('movement_fund_rotatories.id')
                     ->get();
                 }
@@ -284,7 +286,7 @@ class MovementFundRotatoryController extends Controller
             foreach ($loans as $loan) {
                 $loans_array->push([
                 "code" => $loan->movement_concept_code,
-                "disbursement_date_loan" => $loan->created_at,
+                "disbursement_date_loan" => $loan->disbursement_date_loan,
                 "code_loan" => $loan->code_loan,
                 "full_name_borrower" => $loan->full_name_borrower,
                 "amount_approved_loan" => $loan->output_amount,
@@ -298,8 +300,10 @@ class MovementFundRotatoryController extends Controller
             }else{
                 if($initial_date!= '')
                     $initial = $initial_date;
-                else
-                    $initial = Carbon::parse($loans_array[0]['disbursement_date_loan'])->format('d-m-Y');
+                else{
+                    $initial = $loans_array->first()['disbursement_date_loan'];
+                    $initial = Carbon::parse($initial)->format('d-m-Y');
+                }
             }
             $data = [
             'header' => [
@@ -323,6 +327,10 @@ class MovementFundRotatoryController extends Controller
                 return Util::pdf_to_treasury_receipt([$view],'letter', $request->copies ?? 1);
             }
             return $view;
+        }catch (\Exception $e){
+            DB::rollback();
+            return $e;
+        }
     }
 
 
