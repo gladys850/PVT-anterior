@@ -5,7 +5,7 @@
         <v-card flat>
           <v-card-title class="pa-0 pb-3">
             <v-toolbar dense color="tertiary" class="font-weight-regular">
-              <v-toolbar-title>FONDO ROTATORIO</v-toolbar-title>
+              <v-toolbar-title>FONDO ROTATORIO{{min_amount_fund_rotary}}</v-toolbar-title>
             </v-toolbar>
           </v-card-title>
           <!--Buscador por fecha-->
@@ -241,14 +241,16 @@
                 <span>{{ item.movement_concept.description}}</span>
               </v-tooltip>
             </template>
-                <template v-slot:[`item.entry_amount`]="{ item }">
+            <template v-slot:[`item.entry_amount`]="{ item }">
               {{ item.entry_amount | money}}
             </template>
-                <template v-slot:[`item.output_amount`]="{ item }">
+            <template v-slot:[`item.output_amount`]="{ item }">
               {{ item.output_amount | money}}
             </template>
-                <template v-slot:[`item.balance`]="{ item }">
+            <template v-slot:[`item.balance`]="{ item }">
+              <span :class="item.balance < min_amount_fund_rotary && item.is_last ? 'warning black--text font-weight-bold' : ''">
               {{ item.balance | money}}
+              </span>
             </template>
             <template v-slot:[`item.actions`]="{ item }">
               <v-tooltip bottom v-if="permissionSimpleSelected.includes('print-disbursement-receipt')">
@@ -399,7 +401,8 @@ export default {
     refreshFoundRotatoryTable: 0,
     editedIndex: -1,
     initial_date: null,
-    final_date: null
+    final_date: null,
+    min_amount_fund_rotary: null
   }),
   computed: {
     //Metodo para obtener Permisos por rol
@@ -418,6 +421,7 @@ export default {
     },
   },
   mounted() {
+    this.getGlobalParameters()
     this.bus.$on("removed", (val) => {
       this.getFundRotary();
     });
@@ -573,7 +577,16 @@ export default {
       }else{
         return 'style-6'
       }
-    }
+    },
+    async getGlobalParameters(){
+      try {
+        let res = await axios.get(`loan_global_parameter`)
+        let global_parameters = res.data.data[0]
+        this.min_amount_fund_rotary = global_parameters.min_amount_fund_rotary
+      } catch (e) {
+        console.log(e)
+      }
+    },
   },
 }
 </script>
