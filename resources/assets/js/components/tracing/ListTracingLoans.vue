@@ -595,7 +595,6 @@ export default {
       }else if(item.validated_loan === false && item.user_loan != null && item.state_loan != 'Anulado'){
         return 'style-2'
       }else if(item.state_loan == 'Anulado'){
-        console.log(item.state_loan)
         return 'style-3'
       }else{
         return 'style-4'
@@ -640,6 +639,9 @@ th.text-start {
   background-color: yellow
 }
 .style-3 {
-  background-color: pink
+  background-color: yellow
+}
+.style-4 {
+  background-color: white
 }
 </style>
