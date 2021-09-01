@@ -62,9 +62,9 @@
           <span  v-if="!affiliate.dead  && !affiliate.dead_spouse">
               **Se tiene el registro datos del conyugue. Verifique el estado del afiliado/a
           </span>
-          <span  v-if="(affiliate.death_certificate_number != null && affiliate.death_certificate_number.trim() != '') ||
-                    (affiliate.date_death != null && affiliate.date_death.trim() != '') ||
-                    (affiliate.reason_death != null && affiliate.reason_death.trim() != '')">
+          <span  v-if="(cleanSpace(affiliate.death_certificate_number) != null ||
+                    cleanSpace(affiliate.date_death) != null  ||
+                    cleanSpace(affiliate.reason_death) != null) && affiliate.affiliate_state.name != 'Fallecido' ">
               *** Se tiene registrado datos de fallecimiento del afiliado, cambie el estado del afiliado a Fallecido.
           </span>
         </div>
@@ -272,14 +272,6 @@ export default {
     affiliate: {
       type: Object,
       required: true
-    },
-    state_id: {
-      type: Number,
-      required: true,
-    },
-    has_registered_spouse: {
-      type: Boolean,
-      required: true,
     },
   },
   data: () => ({
