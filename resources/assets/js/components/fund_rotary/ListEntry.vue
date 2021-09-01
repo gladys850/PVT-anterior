@@ -572,12 +572,12 @@ export default {
     },
     itemRowBackground: function (item) {
       if(item.type_movement_fund_rotatory == 'INGRESO'){
-        return 'style-4'
+        return 'style-5'
       }
       else if(item.movement_concept.name == 'CIERRE DE FONDO ROTATORIO'){
-        return 'style-5'
-      }else{
         return 'style-6'
+      }else{
+        return 'style-4'
       }
     },
     async getGlobalParameters(){
@@ -593,10 +593,10 @@ export default {
 }
 </script>
 <style>
-.style-4 {
+.style-5 {
   background-color: #B2EBF2
 }
-.style-5 {
+.style-6 {
   background-color: #26C6DA
 }
 </style>

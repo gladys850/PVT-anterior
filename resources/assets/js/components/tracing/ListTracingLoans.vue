@@ -595,9 +595,9 @@ export default {
       }else if(item.validated_loan === false && item.user_loan != null && item.state_loan != 'Anulado'){
         return 'style-2'
       }else if(item.state_loan == 'Anulado'){
-        return 'style-3'
-      }else{
         return 'style-4'
+      }else{
+        return 'style-3'
       }
     },
 
@@ -620,7 +620,7 @@ export default {
   },
 }
 </script>
-<style scoped>
+<style>
 .v-text-field {
   background-color: white;
   width: 200px;
@@ -639,9 +639,9 @@ th.text-start {
   background-color: yellow
 }
 .style-3 {
-  background-color: yellow
+  background-color: white
 }
 .style-4 {
-  background-color: white
+  background-color: pink
 }
 </style>
