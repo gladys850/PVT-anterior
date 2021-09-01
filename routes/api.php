@@ -94,7 +94,6 @@ Route::group([
             //ImportationReport
         Route::get('report_amortization_importation_payments', 'Api\V1\ImportationReportController@report_amortization_importation_payments');
         Route::get('report_request_institution', 'Api\V1\ImportationReportController@report_request_institution');
-        Route::get('report_request_command_payments', 'Api\V1\ImportationReportController@report_rquest_command_payments');
             //movementFundRotatory_Report
         Route::get('disbursements_fund_rotatory_outputs_report', 'Api\V1\MovementFundRotatoryController@disbursements_fund_rotatory_outputs_report'); //report de desembolsos anticipo 
         //IMPORTACION

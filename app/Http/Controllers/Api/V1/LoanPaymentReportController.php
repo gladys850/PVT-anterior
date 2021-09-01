@@ -867,7 +867,7 @@ class LoanPaymentReportController extends Controller
   {
     try{
       if($request->initial_date == null)
-        $initial_date = Carbon::now();
+        $initial_date = Carbon::parse('1900-01-01');
       else
         $initial_date = $request->initial_date;
       if($request->final_date == null)
@@ -877,6 +877,10 @@ class LoanPaymentReportController extends Controller
       $payments = DB::table('view_loan_amortizations')
       ->where('date_loan_payment', '>=', Carbon::parse($initial_date)->startOfDay())
       ->where('date_loan_payment', '<=', Carbon::parse($final_date)->endOfDay())
+      ->where('voucher_type_loan_payment', 'Efectivo')
+      ->orWhere('date_loan_payment', '>=', Carbon::parse($initial_date)->startOfDay())
+      ->where('date_loan_payment', '<=', Carbon::parse($final_date)->endOfDay())
+      ->where('voucher_type_loan_payment', 'Depósito Bancario')
       ->orderBy('procedure_type_loan')
       ->get();
       $data = [
