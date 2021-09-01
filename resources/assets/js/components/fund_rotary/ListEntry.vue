@@ -577,7 +577,7 @@ export default {
       else if(item.movement_concept.name == 'CIERRE DE FONDO ROTATORIO'){
         return 'style-6'
       }else{
-        return 'style-4'
+        return 'style-3'
       }
     },
     async getGlobalParameters(){
