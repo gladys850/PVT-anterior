@@ -362,9 +362,11 @@
                             Calcular
                           </v-btn>
                         </v-col>
+                         <v-expand-transition>
                         <AddPayment
                           v-show="payment_detail.show_detail_payment"
                           :payment_detail.sync="payment_detail"/>
+                          </v-expand-transition>
                         </v-row>
                         </template>
                       </fieldset>
@@ -487,7 +489,15 @@ export default {
   },
    watch: {
     'data_payment.payment_date': function(date) {
-      this.formatDate('paymentDate', date)
+      this.formatDate('paymentDate', date);
+      this.data_payment.pago=''
+    },
+    data_payment:{
+      deep:true,
+      handler(){
+        this.payment_detail.show_detail_payment=false;
+        this.$emit("isCalculate",true);
+      }
     }
   },
   methods: {
@@ -650,6 +660,7 @@ export default {
     //Metodo para sacar las amortizaciones
     async getTypeAmortization(id) {
       try {
+        this.data_payment.procedure_modality_id='';
         this.loading = true
         let res = await axios.get(`procedure_type/${id}/modality`)
         this.type_amortizacion = res.data
@@ -748,6 +759,7 @@ export default {
           this.payment_detail.show_detail_payment=true
           this.payment_detail.now_date= new Date().toISOString().substr(0, 10),
           this.$forceUpdate()
+          this.$emit("isCalculate",false);
       }catch (e) {
         console.log(e)
       }finally {
