@@ -58,7 +58,7 @@
                 outlined
                 style="cursor: pointer;border: thin solid rgba(0, 0, 0, 0.5);"
                 elevation="2">
-              <div class="teal--text font-weight-bold  text-center">
+              <div class="teal--text font-weight-bold  text-center py-1">
                 <strong>TOTAL INGRESOS BS.:</strong> {{fund_rotatory_totals.total_entry_amount | money}}<br>
                 <strong>TOTAL SALIDAS BS.:</strong> {{fund_rotatory_totals.total_output_amount | money}}<br>
                 <strong>SALDO FINAL BS.:</strong> {{fund_rotatory_totals.final_balance | money}}
@@ -329,7 +329,7 @@ export default {
     total_items: 0,
     headers: [
       {
-        text: "id",
+        text: "Nro",
         value: "id",
         class: ["normal", "white--text"],
         width: "5%",
@@ -484,7 +484,7 @@ export default {
     async saveFundRotary() {
       try {
         if (this.fund_rotatory_item.id) {
-          let res = await axios.patch(`fund_rotatory_entry/${this.fund_rotatory_item.id}`,{
+          let res = await axios.patch(`movements/${this.fund_rotatory_item.id}`,{
               date_check_delivery: this.$moment(this.fund_rotatory_item.date_check_delivery).format("YYYY-MM-DD"),
               entry_amount: this.fund_rotatory_item.entry_amount,
               description: this.fund_rotatory_item.description,

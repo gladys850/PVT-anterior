@@ -3,7 +3,7 @@
     <ValidationObserver>
       <v-form>
         <v-card flat>
-          <v-card-title class="pa-0 pb-3">
+          <v-card-title class="pa-0">
             <v-toolbar dense color="tertiary" class="font-weight-regular">
               <v-toolbar-title>REPORTES</v-toolbar-title>
             </v-toolbar>
@@ -17,6 +17,7 @@
               <v-tab-item v-for="item in actions" :key="item.nameTab">
                 <v-row align="center" no-gutters>
                   <v-col cols="4" class="pa-2">
+                    <v-card class="ma-0 pa-3">
                     <v-toolbar-title>
                       <b>Seleccione un reporte</b>
                     </v-toolbar-title>
@@ -91,6 +92,7 @@
                         @click.stop="downloadReport()"
                         >Descargar reporte</v-btn>
                     </template>
+                    </v-card>
                   </v-col>
                 </v-row>
               </v-tab-item>
