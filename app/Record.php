@@ -59,6 +59,9 @@ class Record extends Model
                     break;
                 case 'App\MovementFundRotatory':
                     $action .= $this->recordable->id;
+                    break;
+                case 'App\MovementConcept':
+                    $action .= $this->recordable->id;
                 break;
 
             }
