@@ -3,9 +3,11 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Waavi\Sanitizer\Laravel\SanitizesInput;
 
 class MovementFundRotatoryForm extends FormRequest
 {
+    use SanitizesInput;
     /**
      * Determine if the user is authorized to make this request.
      *
@@ -45,6 +47,11 @@ class MovementFundRotatoryForm extends FormRequest
                 return $rules;
             }
         }
-    
+    }
+    public function filters()
+    {
+        return [
+            'description' => 'trim|uppercase'
+        ];
     }
 }

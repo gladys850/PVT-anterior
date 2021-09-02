@@ -3,11 +3,11 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use App\FundRotatory;
-use App\Observers\FundRotatoryObserver;
+use App\MovementFundRotatory;
+use App\Observers\MovementFundRotatoryObserver;
 use Illuminate\Support\Facades\Schema;
 
-class FundRotatoryServiceProvider extends ServiceProvider
+class MovementFundRotatoryServiceProvider extends ServiceProvider
 {
     /**
      * Register services.
@@ -26,6 +26,6 @@ class FundRotatoryServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        if (Schema::connection('platform')->hasTable('records')) FundRotatory::observe(FundRotatoryObserver::class);
+        if (Schema::connection('platform')->hasTable('records')) MovementFundRotatory::observe(MovementFundRotatoryObserver::class);
     }
 }

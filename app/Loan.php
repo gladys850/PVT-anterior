@@ -953,24 +953,90 @@ class Loan extends Model
             $ballots=json_decode($contributions);
             $ballot = collect();
             $adjusts = collect();
+            $ballot_adjust = collect();
+            $average_ballot_adjust = collect();
+            $mount_adjust = 0;
+            $sum_payable_liquid = 0;
+            $sum_mount_adjust = 0;
+            $sum_border_bonus = 0;
+            $sum_position_bonus = 0;
+            $sum_east_bonus = 0;
+            $sum_public_security_bonus = 0;
+            $sum_dignity_rent = 0;
+            $sum_rent = 0;
+            $count_records = 0;
+            $contribution_type = null;
                 if($contributions_type == "contributions"){ 
+                    $contribution_type = "contributions";
                     foreach($ballots as $is_ballot_id){
                         if(Contribution::find($is_ballot_id))
                         $ballot->push(Contribution::find($is_ballot_id));
                         if(LoanContributionAdjust::where('adjustable_id', $is_ballot_id)->where('loan_id',$this->id)->first()){
                         $adjusts->push(LoanContributionAdjust::where('adjustable_id', $is_ballot_id)->where('loan_id',$this->id)->first());
                         }  
-                    }                  
+                    }    
+                    $count_records = count($ballot);               
+                    foreach($ballot as $list_ballot){
+                        foreach($adjusts as $list_adjust){
+                                if  ($list_ballot->id == $list_adjust->adjustable_id)
+                                    $mount_adjust = $list_adjust->amount;                  
+                        }
+                        $ballot_adjust->push([
+                            'month_year' => $list_ballot->month_year,
+                            'payable_liquid' => $list_ballot->payable_liquid,
+                            'mount_adjust' => $mount_adjust,
+                            'border_bonus' => $list_ballot->border_bonus,
+                            'position_bonus' => $list_ballot->position_bonus,
+                            'east_bonus' => $list_ballot->east_bonus,
+                            'public_security_bonus' => $list_ballot->public_security_bonus,                                
+                        ]);    
+                          $sum_payable_liquid = $sum_payable_liquid + $list_ballot->payable_liquid;
+                          $sum_mount_adjust = $sum_mount_adjust + $mount_adjust;
+                          $sum_border_bonus = $sum_border_bonus + $list_ballot->border_bonus;  
+                          $sum_position_bonus = $sum_position_bonus + $list_ballot->position_bonus;
+                          $sum_east_bonus = $sum_east_bonus + $list_ballot->east_bonu;
+                          $sum_public_security_bonus = $sum_public_security_bonus + $list_ballot->public_security_bonus;     
+                    }                              
+                    $average_ballot_adjust->push([
+                        'average_payable_liquid' => $sum_payable_liquid/$count_records,
+                        'average_mount_adjust' => $sum_mount_adjust/$count_records,
+                        'average_border_bonus' => $sum_position_bonus/$count_records,
+                        'average_east_bonus' => $sum_east_bonus/$count_records,
+                        'average_public_security_bonus' => $sum_public_security_bonus/$count_records,
+                    ]);  
                 }
                 if($contributions_type == "aid_contributions"){
+                    $contribution_type = "aid_contributions";
                     foreach($ballots as $is_ballot_id){
                         if(AidContribution::find($is_ballot_id))
                         $ballot->push(AidContribution::find($is_ballot_id));
                         if(LoanContributionAdjust::where('adjustable_id', $is_ballot_id)->where('loan_id',$this->id)->first())
                         $adjusts->push(LoanContributionAdjust::where('adjustable_id', $is_ballot_id)->where('loan_id',$this->id)->first());
                     }
+                    $count_records = count($ballot);               
+                    foreach($ballot as $list_ballot){
+                        foreach($adjusts as $list_adjust){
+                            if($ballot->id == $adjust->adjustable_id)
+                            $mount_adjust = $adjust->amount;
+                        }
+                        $ballot_adjust->push([
+                            'month_year' => $list_ballot->month_year,
+                            'rent' => $list_ballot->rent,
+                            'mount_adjust' => $mount_adjust,
+                            'dignity_rent' => $list_ballot->dignity_rent,                              
+                        ]); 
+                        $sum_rent = $sum_rent + $list_ballot->rent; 
+                        $sum_mount_adjust = $sum_mount_adjust + $mount_adjust; 
+                        $sum_dignity_rent = $sum_dignity_rent + $list_ballot->dignity_rent;
+                    }
+                    $average_ballot_adjust->push([
+                        'average_rent' => $sum_rent/$count_records,
+                        'average_mount_adjust' => $sum_mount_adjust/$count_records,
+                        'average_dignity_rent' => $sum_dignity_rent/$count_records,
+                    ]);                     
                 }
                 if($contributions_type == "loan_contribution_adjusts"){
+                    $contribution_type = "loan_contribution_adjusts";
                     $liquid_ids= LoanContributionAdjust::where('loan_id',$this->id)->where('type_adjust',"liquid")->get()->pluck('id');
                     $adjust_ids= LoanContributionAdjust::where('loan_id',$this->id)->where('type_adjust',"adjust")->get()->pluck('id');
                     foreach($liquid_ids as $liquid_id){  
@@ -978,16 +1044,37 @@ class Loan extends Model
                     }
                     foreach($adjust_ids as $adjust_id){  
                         $adjusts->push( LoanContributionAdjust::find($adjust_id));
-                    }      
-                }
-
+                    } 
+                    $count_records = count($ballot);    
+                    foreach($ballot as $list_ballot)
+                    {
+                        foreach($adjusts as $list_adjust){
+                        if($list_ballot->period_date == $list_adjust->period_date)
+                           $mount_adjust = $list_adjust->amount;
+                        }
+                        $ballot_adjust->push([
+                            'month_year' => $list_ballot->period_date,
+                            'payable_liquid' => $list_ballot->amount,
+                            'mount_adjust' => $mount_adjust,                              
+                        ]); 
+                        $sum_payable_liquid = $sum_payable_liquid + $list_ballot->amount;
+                        $sum_mount_adjust = $sum_mount_adjust + $mount_adjust; 
+                    }            
+                    $average_ballot_adjust->push([
+                     'average_payable_liquid' => $sum_payable_liquid/$count_records,
+                     'average_mount_adjust' => $sum_mount_adjust/$count_records,
+                     ]);         
+                }       
             }      
         }
         $data = [
             'ballot' => $ballot->sortBy('month_year'),   
-            'adjusts' => $adjusts 
+            'adjusts' => $adjusts,
+            'contribution_type' =>$contribution_type,
+            'average_ballot_adjust'=>$average_ballot_adjust,
+            'ballot_adjust'=>$ballot_adjust->sortBy('month_year'),
         ];
-          return (object)$data; 
+        return (object)$data; 
     }
 
     public function getPlanAttribute()

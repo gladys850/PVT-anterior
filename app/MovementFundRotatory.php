@@ -49,6 +49,11 @@ class MovementFundRotatory extends Model
     {
         return $this->belongsTo(MovementConcept::class);
     }
+    // add records
+    public function records()
+    {
+      return $this->morphMany(Record::class, 'recordable');
+    }
     public function is_last()
     {
         $is_last = false;
