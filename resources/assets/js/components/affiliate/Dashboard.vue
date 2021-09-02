@@ -2,7 +2,7 @@
   <v-container class="ma-0 pa-0">
     <v-row>
       <v-col cols="4" class="ma-0 pa-2 pt-0">
-        <v-card color="#EDF2F4">
+        <v-card color="info_card">
           <v-card-title class="ma-0 pa-0">
             <v-col cols="5" md="5">
               <v-row>
@@ -45,7 +45,7 @@
             </v-col>
           </v-card-title>
           <v-card-text class="ma-0 pa-0 pl-3 pb-3" v-if="affiliate.dead && !affiliate.dead_spouse">
-              <v-col cols="12" color="#EDF2F4" class="text--lighten-5 ma-0 pa-0">
+              <v-col cols="12" color="info_card" class="text--lighten-5 ma-0 pa-0">
                 <strong>Conyugue:</strong> {{$options.filters.fullName(affiliate.spouse, true) }}
                 <br />
                 <strong>C.I.:</strong> {{affiliate.spouse.identity_card}}
@@ -71,7 +71,7 @@
       </v-col>
 
       <v-col cols="8" class="text-center pt-0">
-        <v-card color="#EDF2F4" shaped class="mx-5">
+        <v-card color="info_card" shaped class="mx-5">
           <v-card-title>Préstamos</v-card-title>
           <v-card-text>
             <div>
@@ -121,7 +121,7 @@
                             color="error"
                             bottom
                             right
-                            v-on="on" 
+                            v-on="on"
                             @click.stop="validateRemakeLoan(affiliate.id, item.id)"
                           >
                             <v-icon>mdi-redo-variant</v-icon>
@@ -133,7 +133,7 @@
 
                     <span v-if="item.state.name == 'Vigente'">
                     <v-tooltip
-                    left  
+                    left
                     v-if="item.modality.procedure_type.name != 'Préstamo Anticipo' && permissionSimpleSelected.includes('create-loan')"
                     >
                     <template v-slot:activator="{ on }">
@@ -144,7 +144,7 @@
                         color="success"
                         bottom
                         right
-                        v-on="on" 
+                        v-on="on"
                         @click.stop="validateRefinancingLoan(affiliate.id, item.id)"
                       >
                       <v-icon>mdi-cash-multiple</v-icon>
@@ -156,8 +156,8 @@
 
                     <span v-if="item.state.name == 'Vigente'">
                     <v-tooltip
-                    left   
-                    v-if="(item.modality.procedure_type.name == 'Préstamo a Largo Plazo' || item.modality.procedure_type.name == 'Préstamo Hipotecario') 
+                    left
+                    v-if="(item.modality.procedure_type.name == 'Préstamo a Largo Plazo' || item.modality.procedure_type.name == 'Préstamo Hipotecario')
                           && permissionSimpleSelected.includes('create-loan') "
                     >
                       <template v-slot:activator="{ on }">
@@ -168,7 +168,7 @@
                           color="info"
                           bottom
                           right
-                          v-on="on" 
+                          v-on="on"
                           @click.stop="validateReprogrammingLoan(affiliate.id, item.id)"
                         >
                         <v-icon>mdi-calendar-clock</v-icon>
@@ -294,13 +294,14 @@ export default {
     validate_affiliate: false
   }),
   created() {
-    this.randomColor = common.randomColor;
+    this.randomColor = common.randomColor
+    this.cleanSpace = common.cleanSpace
   },
   computed: {
     //Metodo para obtener Permisos por rol
     permissionSimpleSelected () {
       return this.$store.getters.permissionSimpleSelected
-    },    
+    },
     isNew() {
       return this.$route.params.id == "new";
     }
@@ -417,18 +418,8 @@ export default {
         console.log(e)
       }
     },
-    cleanSpace(text){
-      if(text != null){
-        if(text.trim() != '')
-          return text
-        else 
-          return null
-      }else{
-        return null
-      }
-    },
+
     async validateRefinancingLoan(a_id, l_id){
-      //this.$router.push({ name: 'loanAdd',  params: { hash: 'refinancing'}, query:{ affiliate_id: a_id, loan_id: l_id } })
       try {
           let res = await axios.post(`loan/${l_id}/validate_re_loan`,{
             type_procedure: true
@@ -459,7 +450,7 @@ export default {
         console.log(e)
       }
     },
-    async validateReprogrammingLoan(a_id, l_id){     
+    async validateReprogrammingLoan(a_id, l_id){
       try {
           let res = await axios.post(`loan/${l_id}/validate_re_loan`,{
             type_procedure: false
@@ -475,13 +466,13 @@ export default {
                 }
               }else{
                 this.toastr.error("Tiene pendiente menos de CUATRO pagos para finalizar la deuda")
-              } 
+              }
             }else{
               this.toastr.error("El afiliado no puede tener más de "+ this.global_parameters.max_loans_active +" préstamos vigentes. Actualemnte ya tiene "+ this.loan_affiliate.disbursement_loans+ " préstamos vigentes.")
             }
           }else{
             this.toastr.error("El afiliado no puede tener más de "+ this.global_parameters.max_loans_process +" trámite en proceso. Actualmente ya tiene "+ this.loan_affiliate.process_loans+ " préstamos en proceso.")
-          }         
+          }
       } catch (e) {
         console.log(e)
       }
@@ -494,7 +485,6 @@ export default {
       try {
         let res = await axios.get(`affiliate/${id}/maximum_loans`)
         this.loan_affiliate = res.data
-        console.log(this.loan_affiliate)
       } catch (e) {
         console.log(e)
       }
@@ -504,7 +494,7 @@ export default {
       let res
       try {
         res = await axios.post(`loan/${id}/validate_affiliate`)
-        this.validate_affiliate = res.data.validate  
+        this.validate_affiliate = res.data.validate
         if(this.validate_affiliate == true){
           if(type_procedure == "is_new"){
             this.$router.push({ name: 'loanAdd',  params: { hash: 'new'},  query: { affiliate_id: id}})
@@ -512,13 +502,12 @@ export default {
             this.$router.push({ name: 'loanAdd', params: { hash: 'refinancing'}, query: { affiliate_id: id, type_sismu: true}})
           } if(type_procedure == "is_reprogramming"){
             this.$router.push({ name: 'loanAdd', params: { hash: 'reprogramming'}, query: { affiliate_id: id, type_sismu: true}})
-          } 
+          }
         }else{
           this.toastr.error(this.validate_affiliate)
         }
       } catch (e) {
         console.log(e)
-        //this.toastr.error(e.type)
       }
     },
 
