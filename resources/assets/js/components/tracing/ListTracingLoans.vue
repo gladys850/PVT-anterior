@@ -629,6 +629,8 @@ export default {
   font-size: 0.8em;
   border-color: teal;
 }
+</style>
+<style scoped>
 th.text-start {
   background-color: #757575;
 }
