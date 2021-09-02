@@ -43,7 +43,7 @@ class AppServiceProvider extends ServiceProvider
             'aid_contributions' => 'App\AidContribution',
             'loan_contribution_adjusts'=>'App\LoanContributionAdjust',
             'sismus' => 'App\Sismu',
-            'fund_rotatories'=>'App\FundRotatory',
+            'movement_fund_rotatories'=>'App\MovementFundRotatory',
 
         ]);
 

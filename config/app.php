@@ -150,7 +150,7 @@ return [
         App\Providers\AidContributionServiceProvider::class,
         App\Providers\LoanContributionAdjustModelServiceProvider::class,
         App\Providers\SismuServiceProvider::class,
-        App\Providers\FundRotatoryServiceProvider::class,
+        App\Providers\MovementFundRotatoryServiceProvider::class,
 
         /*
         * Application Service Providers...
