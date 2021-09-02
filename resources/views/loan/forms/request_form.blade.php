@@ -106,16 +106,18 @@
                 @if ($pasivo  != "Pasivo" )
                     <td colspan="2">Unidad</td>
                     <td >Categoría</td>
-                @else             
-                    <td colspan="3">Tipo de Renta</td>
+                @else
+                    <td colspan="1">Tipo de Renta</td>
+                    <td colspan="2">MATRÍCULA</td>
                 @endif
             </tr>
             <tr>
                 @if ($pasivo  != "Pasivo")
                     <td class="data-row py-5" colspan="2">{{ $lender->full_unit}}</td>
                     <td class="data-row py-5">{{ $lender->category ? $lender->category->name : '' }}</td>
-                @else       
-                    <td colspan="3" class="data-row py-5">{{ $lender->pension_entity ? $lender->pension_entity->name : $lender->affiliate->pension_entity->name}}</td>
+                @else
+                    <td colspan="1" class="data-row py-5">{{ $lender->pension_entity ? $lender->pension_entity->name : $lender->affiliate->pension_entity->name}}</td>
+                    <td colspan="2" class="data-row py-5">{{ $lender->registration }}</td>
                 @endif
             </tr>   
                 @if(count($lender->loans_balance)>0)
