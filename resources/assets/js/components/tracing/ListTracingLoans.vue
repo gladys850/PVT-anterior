@@ -620,7 +620,7 @@ export default {
   },
 }
 </script>
-<style>
+<style scoped>
 .v-text-field {
   background-color: white;
   width: 200px;
@@ -630,7 +630,7 @@ export default {
   border-color: teal;
 }
 </style>
-<style scoped>
+<style>
 th.text-start {
   background-color: #757575;
 }
