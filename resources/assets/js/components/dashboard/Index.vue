@@ -8,8 +8,6 @@
     <v-card-text v-if="permissionSimpleSelected.includes('show-history-loan')">
       <v-container class="py-0 px-0">
         <ValidationObserver ref="observer">
-          <v-form>
-            <!--v-card-->
             <v-row justify="center">
               <v-col cols="12" md="4">
                 <v-card>
@@ -281,8 +279,6 @@
               </v-container>
             </v-col>
             </v-row>
-            <!--/v-card-->
-          </v-form>
         </ValidationObserver>
       </v-container>
     </v-card-text>
