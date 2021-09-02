@@ -48,78 +48,78 @@
           <template>
             <v-container fluid class="px-2 pt-0">
               <v-row justify="center" class="py-0">
-                <v-col cols="12" md="4" class="py-0"
+                  <v-col cols="12" sm="6" md="4" lg="3" class="py-0"
                   v-for="(item, i) in month"
                   :key="i">
-                  <v-card color="#454545" class="headline font-weight-bold"  max-width="90%" max-height="500" >
-                    <v-card-text >
+                  <v-card class="headline font-weight-bold"  max-width="100%" max-height="500" >
+                    <v-card-title class="teal text-center"> <v-row justify="center"> <h2 class="white--text"> {{meses[item.month - 1]}}</h2></v-row></v-card-title>
+                    <v-card-text class="blue-grey lighten-5" >
                       <v-row>
-                        <v-col cols="4" md="12" class="py-0">
-                          <center><b><h1 style="color:white">
-                            {{meses[item.month - 1]}}
-                          </h1></b></center>
-                        </v-col>
                         <v-progress-linear color="white"></v-progress-linear>
                         <br>
-                        <v-col cols="6" md="6" class="py-0">
-                          <b style="color:white">Solicitud Comando/Senasir</b>
+                        <v-divider inset class="my-2"></v-divider>
+                        <v-col cols="12" md="12" class="py-0">
+                          <b>SOLICITUD <v-icon small>mdi-arrow-down</v-icon></b>
                         </v-col>
-                        <v-col cols="6" md="6" class="py-0">
-                          <b style="color:white">Importaciones Comando/Senasir</b>
+                        <v-col cols="12" md="12" class="py-0">
+                           <v-row align="center" justify="space-around">
+                              <v-tooltip top>
+                                <template v-slot:activator="{ on }">
+                                  <v-btn
+                                    class="ma-2 teal white--text"
+                                    small
+                                    bottom
+                                    right
+                                    v-on="on"
+                                    :disabled="item.import_command"
+                                    :loading="loading_sc && i == l_index"
+                                    @click.stop="l_index=i;solicitudComando('C', item.id)"
+                                  >
+                                  <v-icon dark left>mdi-city-variant-outline</v-icon> Comando
+                                  </v-btn>
+                                </template>
+                                <div>
+                                  <span>Descargar Solicitud Comando</span>
+                                </div>
+                              </v-tooltip>
+                              <v-tooltip top>
+                                <template v-slot:activator="{ on}">
+                                  <v-btn
+                                    class="ma-2 teal white--text"
+                                    small
+                                    right
+                                    v-on="on"
+                                    :loading="loading_ss && i == l_index"
+                                    :disabled="item.import_senasir"
+                                    @click.stop="l_index = i;solicitudSenasir('S', item.id)"
+                                  >
+                                    <v-icon  dark left>mdi-city</v-icon>Senasir
+                                  </v-btn>
+                                </template>
+                                <div>
+                                  <span>Solicitud Senasir</span>
+                                </div>
+                              </v-tooltip>
+                           </v-row>                     
                         </v-col>
-                        <v-col cols="6" md="6" class="py-0">
-                          <v-tooltip top>
-                            <template v-slot:activator="{ on }">
-                              <v-btn
-                                fab
-                                dark
-                                small
-                                :color="'info'"
-                                bottom
-                                right
-                                v-on="on"
-                                @click.stop="solicitudComando('C', item.id)"
-                               >
-                                <v-icon style="color:white">mdi-city-variant-outline</v-icon>
-                              </v-btn>
-                            </template>
-                            <div>
-                              <span>Solicitud Comando</span>
-                            </div>
-                          </v-tooltip>
-                          <v-tooltip top>
-                            <template v-slot:activator="{ on}">
-                              <v-btn
-                                fab
-                                dark
-                                small
-                                :color="'info'"
-                                right
-                                v-on="on"
-                                 @click.stop="solicitudSenasir('S', item.id)"
-                              >
-                                <v-icon  style="color:white" >mdi-city</v-icon>
-                              </v-btn>
-                            </template>
-                            <div>
-                              <span>Solicitud Senasir</span>
-                            </div>
-                          </v-tooltip>
+                        <v-divider inset class="my-2"></v-divider>
+                        <v-col cols="12" md="12" class="py-0">
+                          <b>IMPORTACION <v-icon small>mdi-arrow-up</v-icon></b>
                         </v-col>
-                        <v-col cols="6" md="6" class="py-0">
+                        <v-col cols="12" md="12" class="py-0">
+                          <v-row align="center" justify="space-around">
                            <v-tooltip top>
                             <template v-slot:activator="{ on }">
                               <v-btn
-                                fab
-                                dark
+                                class="ma-2 info white--text"
                                 small
-                                :color="'info'"
                                 bottom
                                 right
                                 v-on="on"
+                                :disabled="item.import_command"
                                 @click.stop="importacionComando(item.month, item.id)"
                                >
-                                <v-icon style="color:white">mdi-warehouse</v-icon>
+                                <v-icon dark left>mdi-warehouse</v-icon>Comando
                               </v-btn>
                             </template>
                             <div>
@@ -129,71 +129,76 @@
                            <v-tooltip top>
                             <template v-slot:activator="{ on}">
                               <v-btn
-                                fab
-                                dark
+                                class="ma-2 info white--text"
                                 small
-                                :color="'info'"
                                 right
                                 v-on="on"
+                                :disabled="item.import_senasir"
                                  @click.stop="importacionSenasir(item.month, item.id)"
                               >
-                                <v-icon  style="color:white" >mdi-home-analytics</v-icon>
+                                <v-icon dark left >mdi-home-analytics</v-icon>Senasir
                               </v-btn>
                             </template>
                             <div>
                               <span>Importación Senasir</span>
                             </div>
                           </v-tooltip>
+                          </v-row>
                         </v-col>
                       </v-row>
                     </v-card-text>
                     <v-progress-linear color="white"></v-progress-linear>
-                    <v-card-actions>
-                      <v-col cols="4" md="8" class="py-0">
-                        <b style="color:white" class="caption">Reportes Comando/Senasir</b>
-                      </v-col>
-                      <v-tooltip top>
-                        <template v-slot:activator="{ on }">
-                          <v-btn
-                            fab
-                            dark
-                            small
-                            :color="'#454545'"
-                            bottom
-                            right
-                            v-on="on"
-                            :v-model="report_button_command[i]"
-                            :loading="report_loading_command[i]"
-                            @click.stop="reporteComandoSenasir(item.id,'C', i)"
-                          >
-                            <v-icon>mdi-warehouse</v-icon>
-                          </v-btn>
-                        </template>
-                        <div>
-                          <span>Reporte Pago Comando</span>
-                        </div>
-                      </v-tooltip>
-                      <v-tooltip top>
-                        <template v-slot:activator="{ on }">
-                          <v-btn
-                            fab
-                            dark
-                            small
-                            :color="'#454545'"
-                            bottom
-                            right
-                            v-on="on"
-                             v-model="report_button_senasir[i]"
-                            :loading="report_loading_senasir[i]"
-                            @click.stop="reporteComandoSenasir(item.id,'S',i)"
-                          >
-                            <v-icon >mdi-home-analytics</v-icon>
-                          </v-btn>
-                        </template>
-                        <div>
-                          <span>Reporte Pago Senasir</span>
-                        </div>
-                      </v-tooltip>
+                    <v-card-actions v-show="item.import_senasir && item.import_command" class="text-center blue-grey lighten-5">
+                      <v-row justify="center">
+                        <v-col cols="12" class="py-0">
+                          <h3  class="caption">REPORTES</h3>
+                          <h3  class="caption">Comando/Senasir</h3>
+                        </v-col>
+                        <v-col cols="12">
+                          <v-tooltip top>
+                            <template v-slot:activator="{ on }">
+                              <v-btn
+                                fab
+                                dark
+                                small
+                                :color="'primary'"
+                                bottom
+                                right
+                                v-on="on"
+                                :v-model="report_button_command[i]"
+                                :loading="report_loading_command[i]"
+                                @click.stop="reporteComandoSenasir(item.id,'C', i)"
+                              >
+                                <v-icon>mdi-warehouse</v-icon>
+                              </v-btn>
+                            </template>
+                            <div>
+                              <span>Reporte Pago Comando</span>
+                            </div>
+                          </v-tooltip>
+                            <v-tooltip top>
+                          <template v-slot:activator="{ on }">
+                            <v-btn
+                              fab
+                              dark
+                              small
+                              :color="'primary'"
+                              bottom
+                              right
+                              v-on="on"
+                              v-model="report_button_senasir[i]"
+                              :loading="report_loading_senasir[i]"
+                              @click.stop="reporteComandoSenasir(item.id,'S',i)"
+                            >
+                              <v-icon >mdi-home-analytics</v-icon>
+                            </v-btn>
+                          </template>
+                          <div>
+                            <span>Reporte Pago Senasir</span>
+                          </div>
+                        </v-tooltip>
+                        </v-col>
+                      </v-row>
                     </v-card-actions>
                   </v-card>
                   <br>
@@ -367,6 +372,9 @@
                                     <v-col cols="2" md="2" class="py-0">
                                       <v-btn
                                         color="success"
+                                        dark
+                                        :loading="loading_uf"
+                                        :disabled="import_export.file?false:true"
                                         @click.stop="uploadFilePayment()"
                                       > Subir Archivo
                                       </v-btn>
@@ -437,6 +445,7 @@
                                   </v-col>
                                   <v-col cols="3" v-show="validate_data" >
                                     <v-btn
+                                      :loading="loading_uf"
                                       color="success"
                                       @click.stop="validateFilePayment()"
                                       >Validar Datos
@@ -662,7 +671,12 @@ export default {
   mes:null,
   year:[],
   month:[],
-  percentage:0
+  percentage:0,
+  //variables para el uso de los loadings
+  l_index: -1,
+  loading_sc: false,
+  loading_ss: false,
+  loading_uf: false
   }),
   watch: {
     steps (val) {
@@ -700,6 +714,7 @@ export default {
       this.import_export.file_name = null
       this.import_export.reg_copy = 0
       this.import_export.reg_group = 0
+      this.show_import=false
     },
     //Metodo para obtener el nombre del Archivo.
     //Verificamos si el backend nos envio el nombre del archivo, caso contrario lo hacemos desde el frontend
@@ -714,6 +729,7 @@ export default {
     },
     //Metodo para subir el archivo
     async uploadFilePayment() {
+      this.loading_uf=true;
       const formData = new FormData();
       formData.append("file", this.import_export.file);
       formData.append("state", this.import_export.state_affiliate);
@@ -732,6 +748,7 @@ export default {
            else{
             this.toastr.error(response.data.message)
            }
+           this.loading_uf=false;
         })
         .catch((e) => {
           console.log(e);
@@ -900,7 +917,7 @@ export default {
     //Metodo para realizar la validacion del archivo a importar
     async validateFilePayment(){
     try {
-
+      this.loading_uf=true
       let res = await axios.get(`agruped_payments`,{
         params:{
         origin: this.import_export.state_affiliate,
@@ -945,6 +962,7 @@ export default {
         console.log(e);
       } finally {
         this.loading = false;
+        this.loading_uf=false;
       }
     },
     //Metodo para realizar la importacion
@@ -995,6 +1013,7 @@ export default {
         console.log(e);
       } finally {
         this.loading = false;
+        this.getMonthYear();
       }
     },
     //Metodo para reiniciar el proceso de importacion realizando el rollback
@@ -1088,6 +1107,7 @@ export default {
     //Metodo para sacar la solicitud de pago de comando
     async solicitudComando(tipo, id){
       try {
+        this.loading_sc=true;
         const formData = new FormData();
 
          await axios({
@@ -1117,11 +1137,14 @@ export default {
         console.log(e);
       } finally {
         this.loading = false;
+        this.loading_sc=false;
+        this.l_index=-1;
       }
     },
     //Metodo para sacar la solicitud de pago de senasir
        async solicitudSenasir(tipo, id){
         try {
+        this.loading_ss=true;
         const formData = new FormData();
 
          await axios({
@@ -1149,6 +1172,8 @@ export default {
         console.log(e);
       } finally {
         this.loading = false;
+        this.loading_ss=false;
+        this.l_index=-1;
       }
     },
   },

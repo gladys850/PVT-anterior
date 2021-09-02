@@ -7,7 +7,8 @@
     <v-card color="grey lighten-1">
       <AddAmortization
         :data_payment.sync="data_payment"
-        :payment.sync="payment"/>
+        :payment.sync="payment"
+        @isCalculate="isCalculate"/>
         <v-container class="py-0">
           <v-row>
             <v-spacer></v-spacer> <v-spacer></v-spacer>
@@ -19,6 +20,7 @@
               <v-btn
                 color="primary"
                 :loading="status_click"
+                :disabled="isNew?disabled_save:false"
                 @click="validatedStepOne()" v-show="!show">
                 Guardar
               </v-btn>
@@ -43,6 +45,7 @@ export default {
         current:null
       }
     },
+    disabled_save:true,
     status_click:false, //Variable que activa el loading al momento de crear una amortizacion
     data_payment:{
       payment_date:new Date().toISOString().substr(0, 10),
@@ -81,6 +84,7 @@ export default {
     //Metodo para el creado del voucher
     async savePaymentTreasury() {
       try {
+        this.status_click=true;
             let res1 = await axios.patch(`loan_payment/${this.$route.query.loan_payment}`,{
             validated:true
           })
@@ -102,11 +106,13 @@ export default {
         console.log(e)
       }finally {
         this.loading = false
+        this.status_click=false;
       }
     },
     //Validar Pago
       async validatePayment() {
       try {
+        this.status_click=true;
             let res1 = await axios.patch(`loan_payment/${this.$route.query.loan_payment}`,{
             validated:this.data_payment.validated,
             description:this.data_payment.glosa,
@@ -118,11 +124,13 @@ export default {
         console.log(e)
       }finally {
         this.loading = false
+        this.status_click=false;
       }
     },
     //Editar pago
      async editPayment() {
       try {
+        this.status_click=true;
             let res1 = await axios.patch(`loan_payment/${this.$route.query.loan_payment}`,{
               description:this.data_payment.glosa,
               voucher:this.data_payment.voucher
@@ -133,6 +141,7 @@ export default {
         console.log(e)
       }finally {
         this.loading = false
+        this.status_click=false;
       }
     },
     //Metodo para crear el Pago
@@ -170,6 +179,7 @@ export default {
         console.log(e)
       }finally {
         this.loading = false
+        this.status_click = false
       }
     },
      //Metodo para sacar datos del pago
@@ -275,6 +285,9 @@ export default {
       }finally {
         this.loading = false
       }
+    },
+    isCalculate(emit){
+      this.disabled_save=emit;
     }
   },
 }
