@@ -309,9 +309,15 @@ export default {
   watch: {
     affiliate(newVal, oldVal) {
       if (oldVal != newVal) {
-        if (newVal.hasOwnProperty('category_id')) this.getCategory_name(newVal.category_id)
-        if (newVal.hasOwnProperty('degree_id')) this.getDegree_name(newVal.degree_id)
-        if (newVal.hasOwnProperty('unit_id')) this.getUnit_name(newVal.unit_id)
+        if (newVal.hasOwnProperty('category_id') && this.affiliate.category_id != null){
+          this.getCategory_name(newVal.category_id)
+        }
+        if (newVal.hasOwnProperty('degree_id') && this.affiliate.degree_id != null){
+          this.getDegree_name(newVal.degree_id)
+        }
+        if (newVal.hasOwnProperty('unit_id') && this.affiliate.unit_id != null){
+          this.getUnit_name(newVal.unit_id)
+        }
       }
     }
   },
