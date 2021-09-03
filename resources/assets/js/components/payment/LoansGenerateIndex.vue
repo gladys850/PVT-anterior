@@ -34,6 +34,7 @@
                                         absolute
                                         right
                                         style="margin-right: 40px; margin-top: -50px"
+                                        :loading_download=loading_download
                                       >
                                         <v-icon> mdi-file-excel </v-icon>
                                       </v-btn>
@@ -365,6 +366,7 @@ export default {
         sortDesc: [false],
       },
       totalLoans: 0,
+      loading_download: false
   }),
 
   computed: {
@@ -425,6 +427,7 @@ export default {
     },
 
     async download_loans() {
+      this.loading_download = true
       await axios({
         url: "/list_loan_generate",
         method: "GET",
@@ -449,9 +452,11 @@ export default {
           link.setAttribute("download", "ReportePrestamo.xls")
           document.body.appendChild(link)
           link.click()
+          this.loading_download = false
         })
         .catch((e) => {
           console.log(e)
+          this.loading_download = false
         })
     },
 

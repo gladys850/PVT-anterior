@@ -261,8 +261,6 @@
               <Profile
                 v-if="!reload"
                 :affiliate.sync="affiliate"
-                :borrower.sync="borrower"
-                :addresses.sync="addresses"
                 :editable.sync="editable"
                 :permission="permission"
               />
@@ -288,7 +286,6 @@
               <AdditionalInformation
                 v-if="!reload"
                 :affiliate.sync="affiliate"
-                :borrower.sync="borrower"
                 :addresses.sync="addresses"
                 :editable.sync="editable"
                 :permission="permission"
@@ -635,9 +632,6 @@ export default {
             this.loan_refinancing.amount_approved = this.loan.amount_approved
             this.loan_refinancing.refinancing_balance = this.loan.refinancing_balance
 
-
-
-        console.log("este es el loan" + this.loan)
         let res1 = await axios.get(`affiliate/${this.loan.lenders[0].id}`)
         this.affiliate = res1.data
         if (this.loan.property_id != null) {
@@ -652,8 +646,9 @@ export default {
         this.getAddress(this.affiliate.id)
 
         this.role(this.loan.role_id)
-        this.user(this.loan.user_id)
-        console.log(this.loan)
+        if(this.loan.user_id != null){
+          this.user(this.loan.user_id)
+        }
       } catch (e) {
         console.log(e)
       } finally {
@@ -797,7 +792,6 @@ export default {
       try {
         let res = await axios.get(`role/${role_id}`)
         this.role_name = res.data.display_name
-        console.log(this.role_name)
       } catch (e) {
         console.log(e)
       }
@@ -806,7 +800,7 @@ export default {
       try {
         let res = await axios.get(`user/${user_id}`)
         this.user_name = res.data.username
-        console.log(this.user_name)
+        //console.log(this.user_name)
       } catch (e) {
         console.log(e)
       }
@@ -917,7 +911,6 @@ export default {
         }
       }
     },
- 
 
     async getAddress(id) {
       try {

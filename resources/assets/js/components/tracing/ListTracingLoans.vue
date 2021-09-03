@@ -527,7 +527,7 @@ export default {
         },
       })
         .then((response) => {
-          console.log(response)
+          //console.log(response)
           const url = window.URL.createObjectURL(new Blob([response.data]))
           const link = document.createElement("a")
           link.href = url
@@ -587,7 +587,6 @@ export default {
           { id: 4, title: "Kardex", icon: "mdi-view-list" }
         )
       this.printDocs = docs
-      console.log(this.printDocs)
     },
     itemRowBackground: function (item) {
       if(item.validated_loan === true && item.user_loan != null && item.state_loan != 'Anulado'){

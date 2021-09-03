@@ -8,7 +8,7 @@
         <v-toolbar-title v-show="!observation.edit && observation.accion=='devolver'">Devolver trámite</v-toolbar-title>
         <v-toolbar-title v-show="!observation.edit && observation.accion=='anular'">Anular trámite</v-toolbar-title>
         <v-toolbar-title v-show="!observation.edit && observation.accion=='validar'">Validar trámite</v-toolbar-title>
-        <v-toolbar-title v-show="observation.edit">Editar Observacion</v-toolbar-title>         
+        <v-toolbar-title v-show="observation.edit">Editar Observacion</v-toolbar-title>
         <v-spacer></v-spacer>
       </v-toolbar>
       <v-divider></v-divider>
@@ -191,7 +191,6 @@ export default {
         this.loading = true
         let res = await axios.get(`module/${6}/observation_type`)
         this.observation_type = res.data
-        console.log('estas son las observaciones'+this.observation_type)
       } catch (e) {
         console.log(e)
       } finally {
@@ -211,7 +210,7 @@ export default {
       }
     },
     async getUser(id) {
-      try{ 
+      try{
         let user
         let res = await axios.get(`user/${id}`)
         user = res.data
@@ -225,9 +224,9 @@ export default {
       for(let i = 0; i< this.flow.previous.length; i++){
         if(this.flow.previous[i] == this.valArea){
           this.user_id_previous = this.flow.previous_user[i]
-          this.getUser(this.user_id_previous) 
+          this.getUser(this.user_id_previous)
         }
-      }      
+      }
     },
 
   }
