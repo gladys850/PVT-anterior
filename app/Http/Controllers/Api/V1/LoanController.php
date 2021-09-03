@@ -1237,6 +1237,10 @@ class LoanController extends Controller
         foreach ($loan->lenders as $lender) {
             $lenders[] = self::verify_loan_affiliates($lender,$loan);
         }
+        $guarantors = [];
+        foreach ($loan->guarantors as $guarantor) {
+            $guarantors[] = self::verify_loan_affiliates($guarantor,$loan);
+        }
         $data = [
            'header' => [
                'direction' => 'DIRECCIÓN DE ESTRATEGIAS SOCIALES E INVERSIONES',
@@ -1248,7 +1252,8 @@ class LoanController extends Controller
                ]
            ],
            'loan' => $loan,
-           'lenders' => collect($lenders), 
+           'lenders' => collect($lenders),
+           'guarantors' => collect($guarantors),
            'Loan_type_title' => $loan_type_title, 
            'estimated' => $estimated,
            'file_title' => $file_title
