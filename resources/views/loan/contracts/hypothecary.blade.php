@@ -8,7 +8,7 @@
 @include('partials.header', $header)
 <body>
 <div class="block">
-    <div class="font-semibold leading-tight text-center m-b-10 text-xs">
+    <div class="font-semibold leading-tight text-center m-b-10 text-base">
         CONTRATO DE <font style="text-transform: uppercase;">{{ $title }}</font>
         <div>Nº {{ $loan->code }}</div>
     </div>
@@ -602,7 +602,7 @@ if(($modality->name == 'Refinanciamiento de Préstamo con Garantía Hipotecaria 
     </div>
     <div></div>
 </div>
-<div class = "m-t-100">
+<div>
     <div>
         @if (count($lenders) == 1)
         <table>
@@ -667,7 +667,7 @@ if(($modality->name == 'Refinanciamiento de Préstamo con Garantía Hipotecaria 
     </div>
 
 
-    <div class = "m-t-100">
+    <div>
         @if (count($loan->cosigners) == 1)
         <table>
             <tr>
@@ -705,7 +705,7 @@ if(($modality->name == 'Refinanciamiento de Préstamo con Garantía Hipotecaria 
         </table>
         @endif
     </div>
-    <div class="m-t-75">
+    <div>
         <table>
             <tr>
                 @foreach ($employees as $key => $employee)

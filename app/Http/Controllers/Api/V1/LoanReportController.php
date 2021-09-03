@@ -1862,7 +1862,7 @@ class LoanReportController extends Controller
         ];
         $file_name = 'Solicitudes de Prestamos.pdf';
         $view = view()->make('loan.reports.request_state_report')->with($data)->render();
-        if ($standalone) return Util::pdf_to_base64([$view], $file_name, $request->copies ?? 1);
+        if ($standalone) return Util::pdf_to_base64([$view], $file_name,'Reporte Estado de Solicitudes de Prestamos','letter', $request->copies ?? 1);
         return $view;
     }
   /**
