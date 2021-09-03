@@ -261,26 +261,26 @@
         <div class="font-semibold leading-tight text-left m-b-10 text-sm">{{ $n++ }}. DATOS DE EVALUACIÓN DE{{ $plural ? ' LOS' : 'L' }} GARANTE{{ $plural ? 'S' : ''}}</div>
     </div>
     <div class="block ">
-        @foreach ($loan->guarantors as $guarantor)
+        @foreach ($guarantors as $guarantor)
         <table style="font-size:12px;" class="table-info w-100 text-center uppercase my-10">
             <tr class="bg-grey-darker text-white">
                     <td class="w-100" colspan="2">Garante {{ $num_gar++ }}</td>               
             </tr>
             <tr class="w-100">
                 <td class="w-50 text-left px-10">NOMBRES</td>
-                <td class="w-50 text-left px-10">{{ $guarantor->full_name }}</td> 
+                <td class="w-50 text-left px-10">{{ $guarantor->disbursable->full_name }}</td> 
             </tr>
             <tr class="w-100">
                 <td class="w-50 text-left px-10">LÍQUIDO PARA CALIFICACIÓN</td>
-                <td class="w-50 text-left px-10">{{ Util::money_format($guarantor->pivot->liquid_qualification_calculated) }}</td> 
+                <td class="w-50 text-left px-10">{{ Util::money_format($guarantor->affiliate->pivot->liquid_qualification_calculated) }}</td> 
             </tr>
             <tr class="w-100">
                 <td class="w-50 text-left px-10">ÍNDICE DE ENDEUDAMIENTO</td>
-                <td class="w-50 text-left px-10">{{ Util::money_format($guarantor->pivot->indebtedness_calculated) }} %</td> 
+                <td class="w-50 text-left px-10">{{ Util::money_format($guarantor->affiliate->pivot->indebtedness_calculated) }} %</td> 
             </tr>
             <tr class="w-100">
                 <td class="w-50 text-left px-10">PORCENTAJE DE PAGO</td>
-                <td class="w-50 text-left px-10">{{ $guarantor->pivot->payment_percentage }} %</td> 
+                <td class="w-50 text-left px-10">{{ $guarantor->affiliate->pivot->payment_percentage }} %</td> 
             </tr>
         </table>
         @endforeach
