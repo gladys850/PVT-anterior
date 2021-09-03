@@ -963,7 +963,6 @@ class Loan extends Model
             $sum_east_bonus = 0;
             $sum_public_security_bonus = 0;
             $sum_dignity_rent = 0;
-            $sum_rent = 0;
             $count_records = 0;
             $contribution_type = null;
                 if($contributions_type == "contributions"){ 
@@ -1022,16 +1021,16 @@ class Loan extends Model
                         }
                         $ballot_adjust->push([
                             'month_year' => $list_ballot->month_year,
-                            'rent' => $list_ballot->rent,
+                            'payable_liquid' => $list_ballot->rent,
                             'mount_adjust' => $mount_adjust,
                             'dignity_rent' => $list_ballot->dignity_rent,                              
                         ]); 
-                        $sum_rent = $sum_rent + $list_ballot->rent; 
+                        $sum_payable_liquid = $sum_payable_liquid + $list_ballot->rent; 
                         $sum_mount_adjust = $sum_mount_adjust + $mount_adjust; 
                         $sum_dignity_rent = $sum_dignity_rent + $list_ballot->dignity_rent;
                     }
                     $average_ballot_adjust->push([
-                        'average_rent' => $sum_rent/$count_records,
+                        'average_payable_liquid' => $sum_payable_liquid/$count_records,
                         'average_mount_adjust' => $sum_mount_adjust/$count_records,
                         'average_dignity_rent' => $sum_dignity_rent/$count_records,
                     ]);                     
