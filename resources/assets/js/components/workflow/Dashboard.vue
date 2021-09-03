@@ -92,7 +92,7 @@
 </template>
 
 <script>
-import common from "@/plugins/common"
+
 export default {
   name: "flow-dashboard",
   props: {
@@ -121,7 +121,6 @@ export default {
     mothers_last_name: null,
     last_name:null,
     first_name:null,
-    //identity_card: null,
     procedure_modality_name: ""
   }),
   computed: {
@@ -129,15 +128,6 @@ export default {
       return this.$route.params.id == "new"
     },
 
-    /*spouseNombre: function() {
-      return (
-        this.spouse.mothers_last_name +
-        " " +
-        this.spouse.last_name +
-        " " +
-        this.spouse.first_name
-      );
-    }*/
   },
   watch: {
     affiliate(newVal, oldVal) {
@@ -150,7 +140,7 @@ export default {
     loan(newVal, oldVal) {
       if (oldVal != newVal) {
         if (newVal.hasOwnProperty("procedure_modality_id"))
-          this.getProcedureModalityName(newVal.procedure_modality_id);
+          this.getProcedureModalityName(newVal.procedure_modality_id)
       }
     }
   },
@@ -159,11 +149,11 @@ export default {
       try {
         this.loading = true
         let res = await axios.get(`degree/${id}`)
-        this.degree_name = res.data.name;
+        this.degree_name = res.data.name
       } catch (e) {
-        console.log(e);
+        console.log(e)
       } finally {
-        this.loading = false;
+        this.loading = false
       }
     },
     async getUnit_name(id) {
@@ -172,9 +162,9 @@ export default {
         let res = await axios.get(`unit/${id}`)
         this.unit_name = res.data.name;
       } catch (e) {
-        console.log(e);
+        console.log(e)
       } finally {
-        this.loading = false;
+        this.loading = false
       }
     },
     async getProcedureModalityName(id) {
@@ -182,7 +172,6 @@ export default {
         this.loading = true;
         let res = await axios.get(`procedure_modality/${id}`)
         this.procedure_modality_name = res.data.name
-        console.log(this.procedure_modality_name)
       } catch (e) {
         console.log(e)
       } finally {

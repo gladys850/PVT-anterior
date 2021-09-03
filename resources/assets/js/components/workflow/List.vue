@@ -342,7 +342,6 @@ export default {
         console.log("Se ha producido un error durante la generación de la impresión")
       }
       this.printDocs=docs
-      console.log(this.printDocs)
     },
 
     async freeLoan(id, code){

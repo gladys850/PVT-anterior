@@ -327,11 +327,11 @@ export default {
             type: res.data.type,
             documentTitle: res.data.file_name,
             base64: true
-        })  
+        })
       } catch (e) {
         this.toastr.error("Ocurrió un error en la impresión.")
         console.log(e)
-      }      
+      }
     },
     updateHeader() {
       if (this.tray != 'all') {
@@ -368,7 +368,6 @@ export default {
         console.log("Se ha producido un error durante la generación de la impresión");
       }
       this.printDocs = docs;
-      console.log(this.printDocs);
     }
   }
 }
