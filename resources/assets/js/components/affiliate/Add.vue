@@ -71,7 +71,7 @@
         >
         <v-tooltip bottom>
         <template v-slot:activator="{ on, attrs }">
-          <v-icon 
+          <v-icon
           v-if="icons"
           v-bind="attrs"
           v-on="on"
@@ -86,7 +86,7 @@
         >
         <v-tooltip bottom>
         <template v-slot:activator="{ on, attrs }">
-          <v-icon 
+          <v-icon
           v-if="icons"
           v-bind="attrs"
           v-on="on"
@@ -102,7 +102,7 @@
         >
         <v-tooltip bottom>
         <template v-slot:activator="{ on, attrs }">
-          <v-icon 
+          <v-icon
           v-if="icons"
           v-bind="attrs"
           v-on="on"
@@ -117,8 +117,8 @@
         >
         <v-tooltip bottom>
         <template v-slot:activator="{ on, attrs }">
-          <v-icon 
-          v-if="icons" 
+          <v-icon
+          v-if="icons"
           v-bind="attrs"
           v-on="on"
           >mdi-file-account
@@ -158,7 +158,7 @@
           >mdi-fingerprint
           </v-icon>
           </template>
-        <span><b>INFORMACION DEL BIOMETRICO</b></span>
+        <span><b>INFORMACIÓN DEL BIOMÉTRICO</b></span>
         </v-tooltip>
         </v-tab>
 
@@ -180,32 +180,12 @@
               <Profile
                 v-if="!reload"
                 :affiliate.sync="affiliate"
-                :addresses.sync="addresses"
                 :editable.sync="editable"
                 :permission="permission"
-                :id_street.sync="id_street"
-                 :has_registered_spouse="has_registered_spouse"
               />
             </v-card-text>
           </v-card>
         </v-tab-item>
-
-
-        <!--<v-tab-item
-          :value="'tab-3'"
-        >
-          <v-card flat tile >
-            <v-card-text>
-              <PoliceData
-                v-if="!reload"
-                :affiliate.sync="affiliate"
-                :editable.sync="editable"
-                :permission="permission"
-                :has_registered_spouse="has_registered_spouse"
-              />
-            </v-card-text>
-          </v-card>
-        </v-tab-item>-->
           <v-tab-item
           :value="'tab-3'"
         >
@@ -247,11 +227,6 @@
             <Contributions
               :affiliate.sync="affiliate"
             />
-            <!-- <Document
-              :permission="permission"
-              :affiliate.sync="affiliate"
-              :editable.sync="editable"
-            /> -->
             </v-card-text>
           </v-card>
         </v-tab-item>
@@ -274,12 +249,12 @@
   </v-card>
 </template>
 <script>
+
+import common from '@/plugins/common'
 import Breadcrumbs from '@/components/shared/Breadcrumbs'
 import Profile from '@/components/affiliate/Profile'
-//import PoliceData from '@/components/affiliate/PoliceData'
 import Spouse from '@/components/affiliate/Spouse'
 import Fingerprint from '@/components/affiliate/Fingerprint'
-//import Document from '@/components/affiliate/Document'
 import Dashboard from '@/components/affiliate/Dashboard'
 import AdditionalInformation from '@/components/affiliate/AdditionalInformation'
 import Contributions from '@/components/affiliate/Contributions'
@@ -289,10 +264,8 @@ export default {
   components: {
     Breadcrumbs,
     Profile,
-    //PoliceData,
     Spouse,
     Fingerprint,
-    //Document,
     Dashboard,
     AdditionalInformation,
     Contributions
@@ -347,12 +320,15 @@ export default {
     bus: new Vue(),
     id_street: 0,
   }),
+  created(){
+    this.cleanSpace = common.cleanSpace
+  },
   computed: {
     //permisos del selector global por rol
     permissionSimpleSelected () {
       return this.$store.getters.permissionSimpleSelected
     },
-    
+
     isNew() {
       return this.$route.params.id == 'new'
           },
@@ -378,10 +354,7 @@ export default {
     }
   },
   watch:{
-    'spouse.id': function(newVal, oldVal){
-      if(newVal != oldVal)
-      this.getAffiliate(this.$route.params.id)
-    }
+
   },
   mounted() {
     if (!this.isNew) {
@@ -391,7 +364,7 @@ export default {
       this.editable = true
       this.setBreadcrumbs()
     }
-    
+
   },
   methods: {
     resetForm() {
@@ -424,8 +397,8 @@ export default {
               addresses: this.addresses.map(o => o.id),
               addresses_valid: this.id_street
             })
-            
-            //Preguntar si afiliado esta fallecido 
+
+            //Preguntar si afiliado esta fallecido
             if(this.affiliate.affiliate_state_id == 4){
               if(this.spouse.id){
                 await axios.patch(`spouse/${this.spouse.id}`, this.spouse)
@@ -433,7 +406,7 @@ export default {
                 this.spouse.affiliate_id=this.affiliate.id
                 let res = await axios.post(`spouse`, this.spouse)
                 this.getAffiliate(this.$route.params.id)
-              } else if(Object.entries(this.spouse).length === 0){ 
+              } else if(Object.entries(this.spouse).length === 0){
                 this.toastr.success("Se Actualizó los datos del afiliado...")
               } else {
                 this.toastr.error("Solo puede registrar a la conyugue si el estado del afilaidos es 'Fallecido'")
@@ -443,7 +416,7 @@ export default {
             }
             this.editable = false
           }
-                
+
         }
       } catch (e) {
         console.log(e)
@@ -478,9 +451,7 @@ export default {
         this.affiliate = res.data
         this.setBreadcrumbs()
         this.getAddress(id)
-        //if (this.affiliate.dead) {
-          this.getSpouse(this.affiliate.id)
-        //}
+        this.getSpouse(id)
       } catch (e) {
         console.log(e)
       } finally {
@@ -495,12 +466,7 @@ export default {
         if(Object.entries(this.spouse).length === 0){
           this.has_registered_spouse = false
         }else{
-          if(cleanSpace(affiliate.spouse.date_death) == null  &&
-              cleanSpace(affiliate.spouse.death_certificate_number) == null &&
-              cleanSpace(affiliate.spouse.reason_death) == null)
-            this.has_registered_spouse = true
-          else
-            this.has_registered_spouse = false
+          this.has_registered_spouse = true
         }
       } catch (e) {
         console.log(e)
@@ -508,24 +474,17 @@ export default {
         this.loading = false
       }
     },
-    cleanSpace(text){
-      if(text != null){
-        if(text.trim() != '')
-          return text
-        else 
-          return null
-      }else{
-        return null
-      }
-    },
+
     async getAddress(id) {
       try {
         this.loading = true
         let res = await axios.get(`affiliate/${id}/address`)
         this.addresses = res.data
-        // Seteando el valor del address
-        let address = this.addresses.find(item => item.pivot.validated)
-        this.id_street = address.id
+        if(this.addresses.length > 0){ //Verificar si existe información de dirección
+          // Seteando el valor del address
+          let address = this.addresses.find(item => item.pivot.validated)
+          this.id_street = address.id
+        }
       } catch (e) {
         console.log(e)
       } finally {

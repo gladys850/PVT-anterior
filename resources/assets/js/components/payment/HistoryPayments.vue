@@ -361,7 +361,7 @@ export default {
         newVal.sortBy != oldVal.sortBy ||
         newVal.sortDesc != oldVal.sortDesc
       ) {
-        this.getPayments();
+        this.getPayments()
       }
     },
 
@@ -370,8 +370,7 @@ export default {
   this.bus.$on('removed', val => {
       this.getPayments()
     })
-    this.getPayments();
-    this.docsLoans();
+    this.getPayments()
   },
   methods: {
     async getPayments() {
@@ -381,14 +380,16 @@ export default {
           params: {
             loan_id: this.$route.params.id,
           },
-        });
-        this.payments = res.data.payments;
-        console.log(this.payments);
+        })
+        this.payments = res.data.payments
+        if(this.payments.length > 0){
+          this.docsLoans()
+        }
         this.refreshKardexTable++
       } catch (e) {
-        console.log(e);
+        console.log(e)
       } finally {
-        this.loading = false;
+        this.loading = false
       }
     },
     createPayment(){
@@ -418,7 +419,7 @@ export default {
         });
       } catch (e) {
         this.toastr.error("Ocurrió un error en la impresión.");
-        console.log(e);
+        console.log(e)
       }
     },
 
@@ -434,7 +435,6 @@ export default {
         console.log("Se ha producido un error durante la generación de la impresión");
       }
       this.printDocs = docs;
-      console.log(this.printDocs);
     },
 
     async imprimirK(item, folded) {
@@ -463,7 +463,6 @@ export default {
         return false
       }
     },
-  
 
   },
 };

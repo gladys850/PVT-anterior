@@ -502,15 +502,6 @@ export default {
       type: Object,
       required: true,
     },
-    id_street: {
-      type: Number,
-      required: true,
-      default: 0,
-    },
-    has_registered_spouse: {
-      type: Boolean,
-      required: true,
-    },
   },
   components: {
     AddStreet,

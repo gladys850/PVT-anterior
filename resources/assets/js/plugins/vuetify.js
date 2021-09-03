@@ -21,6 +21,7 @@ export default new Vuetify({
         danger: '#ff6d00',
         normal: '#757575',
         teal:'#29617b',
+        info_card: '#EDF2F4'
       }
     }
   },

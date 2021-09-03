@@ -410,14 +410,6 @@ export default {
         width: "5%",
         filterable: false,
       },
-      /*{
-        text: "Saldo capital",
-        value: "balance",
-        class: ["normal", "white--text"],
-        align: "center",
-        sortable: false,
-        width: "5%",
-      },*/
       {
         text: "Comprobante",
         value: "voucher",
@@ -502,8 +494,7 @@ export default {
   this.bus.$on('removed', val => {
       this.getPayments()
     })
-    this.getPayments();
-    this.docsLoans();
+    this.getPayments()
   },
   methods: {
     async getPayments() {
@@ -514,8 +505,10 @@ export default {
             loan_id: this.$route.params.id,
           },
         });
-        this.payments = res.data.payments;
-        console.log(this.payments);
+        this.payments = res.data.payments
+        if(this.payments.length > 0){
+          this.docsLoans()
+        }
         this.refreshKardexTable++
       } catch (e) {
         console.log(e);
@@ -535,22 +528,7 @@ export default {
         this.toastr.error("El trámite tiene estado LIQUIDADO, no puede realizar mas pagos.")
       }
     },
-    /*async deletePayment(id) {
-      try {
-        this.loading = true;
-        let res = await axios.delete(`loan_payment/${id}`);
-        this.payments = res.data;
-        for (i = 0; i < this.payments.length; i++) {
-          res1 = await axios.get(`loan_payment/${this.payments[i].id}/state`);
-          console.log(res1.data.name);
-          this.payments[i].name = res1.data.name;
-        }
-      } catch (e) {
-        console.log(e);
-      } finally {
-        this.loading = false;
-      }
-    },*/
+
     async imprimir(id, item) {
       try {
         let res;
@@ -581,7 +559,6 @@ export default {
         console.log("Se ha producido un error durante la generación de la impresión");
       }
       this.printDocs = docs;
-      console.log(this.printDocs);
     },
 
     async imprimirK(item, folded) {
