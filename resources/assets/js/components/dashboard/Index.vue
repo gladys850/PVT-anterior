@@ -222,7 +222,7 @@
                         {{ item.PadFechaRegistro | date }}
                       </template>   
                       <template v-slot:[`item.fullname`]="{ item }">
-                        {{ item.PadPaterno + " "+ item.PadPaterno +" "+ item.PadNombres}}
+                        {{ item.PadPaterno + " "+ item.PadMaterno +" "+ item.PadNombres}}
                       </template> 
                     </v-data-table>
                   </v-card>
@@ -242,7 +242,7 @@
                         {{ item.PadFechaRegistro | date }}
                       </template>   
                       <template v-slot:[`item.fullname`]="{ item }">
-                        {{ item.PadPaterno + " "+ item.PadPaterno +" "+ item.PadNombres}}
+                        {{ item.PadPaterno + " "+ item.PadMaterno +" "+ item.PadNombres}}
                       </template> 
                     </v-data-table>
                   </v-card>
@@ -324,50 +324,42 @@ export default {
         class: ["normal", "white--text"],
         align: "left",
         value: "IdPadron",
-     
       },
       {
         text: "CI",
         class: ["normal", "white--text"],
         align: "left",
         value: "PadCedulaIdentidad",
-  
-      },  
+      },
       {
         text: "Expedición",
         class: ["normal", "white--text"],
         align: "left",
         value: "PadExpCedula",
-
-      },    
+      },
       {
         text: "Matrícula",
         class: ["normal", "white--text"],
         align: "left",
         value: "PadMatricula",
-
       },
       {
-        text: "Mombre",
+        text: "Nombre",
         class: ["normal", "white--text"],
         align: "left",
         value: "fullname",
-
       },
       {
         text: "Tipo",
         class: ["normal", "white--text"],
         align: "left",
         value: "PadTipo",
-
       },
-
       {
         text: "Fecha de registro",
         class: ["normal", "white--text"],
         align: "left",
         value: "PadFechaRegistro",
-
       },
 
     ],
@@ -397,9 +389,7 @@ export default {
 
     async validar() {
       if (await this.$refs.observer.validate()) {
-
         this.getHistoryAffiliate()
-
       }
   },
     //obtener los afiliados u observables

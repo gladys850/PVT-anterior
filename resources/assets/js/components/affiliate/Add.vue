@@ -182,8 +182,6 @@
                 :affiliate.sync="affiliate"
                 :editable.sync="editable"
                 :permission="permission"
-                :id_street.sync="id_street"
-                 :has_registered_spouse="has_registered_spouse"
               />
             </v-card-text>
           </v-card>
