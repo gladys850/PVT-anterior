@@ -596,12 +596,12 @@ class LoanPaymentController extends Controller
             $lenders[] = LoanController::verify_loan_affiliates($lender,$loan)->disbursable;
         }
         foreach ($lenders as $lender) {
-            $lend=$lend.'*'.' ' . $lender->first_name .' '. $lender->second_name .' '. $lender->last_name.' '. $lender->mothers_last_name;
+            $lend=$lend.'*'.' ' . $lender->full_name;
         }
-        
+
         $loan_affiliates= $loan->loan_affiliates[0]->first_name;
         $file_name =implode(' ', ['Información:',$loan->code,$loan->modality->name,$lend]); 
-    
+
         return $file_name;
     }
 

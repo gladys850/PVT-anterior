@@ -382,7 +382,7 @@ class Util
 
     public static function pdf_to_base64($views, $file_name, $informationqr, $size = 'letter', $copies = 1, $portrait = true)
     {
-        $footerHtml = view()->make('partials.footer')->with(array('paginator' => true, 'print_date' => true, 'date' => Carbon::now()->ISOFormat('L H:m'),'informationqr'=>$informationqr))->render();
+        $footerHtml = view()->make('partials.footer')->with(array('paginator' => true, 'print_date' => true, 'date' => Carbon::now()->ISOFormat('L HH:mm a'),'informationqr'=>$informationqr))->render();
         $options = [
             'copies' => $copies ?? 1,
             'footer-html' => $footerHtml,
@@ -405,20 +405,23 @@ class Util
     }
 
     
-    public static function pdf_to_base64contract($views, $file_name,$informationqr, $size = 'letter', $copies = 1, $portrait = true)
+    public static function pdf_to_base64contract($views, $file_name,$informationqr,$object, $size = 'letter', $copies = 1, $portrait = true)
     {
-        $footerHtml = view()->make('partials.footer')->with(array('paginator' => true, 'print_date' => true, 'date' => Carbon::now()->ISOFormat('L H:m'),'informationqr'=>$informationqr))->render();
+        if(empty($informationqr)|| empty($object))
+        $footerHtml = view()->make('partials.footer')->with(array('paginator' => true, 'print_date' => true, 'date' => Carbon::now()->ISOFormat('L HH:mm a')))->render();
+        else
+        $footerHtml = view()->make('partials.footer')->with(array('paginator' => true, 'print_date' => true, 'date' => Carbon::now()->ISOFormat('L HH:mm a'),'informationqr'=>$informationqr,'object'=>$object))->render();
         $options = [
             'copies' => $copies ?? 1,
             'footer-html' => $footerHtml,
             'user-style-sheet' => public_path('css/report-print.min.css'),
             'orientation' => $portrait ? 'portrait' : 'landscape',
             'margin-top' => '15',
-            'margin-right' => '20',
-            'margin-left' => '13', 
-            'margin-bottom' => '15',
+            'margin-bottom' => '16',
+            'margin-left' => '15',
+            'margin-right' => '15',
             'encoding' => 'UTF-8',
-            'page-width' => '216'  
+            'page-width' => '216'
         ];
         $options['page-height'] = $size == 'letter' ? '279' : '330';
         $content = base64_encode(\PDF::getOutputFromHtml($views, $options));
