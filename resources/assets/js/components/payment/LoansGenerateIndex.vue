@@ -34,7 +34,7 @@
                                         absolute
                                         right
                                         style="margin-right: 40px; margin-top: -50px"
-                                        :loading_download=loading_download
+                                        :loading= loading_download
                                       >
                                         <v-icon> mdi-file-excel </v-icon>
                                       </v-btn>
@@ -65,6 +65,7 @@
                                     :options.sync="options"
                                     :server-items-length="totalLoans"
                                     :footer-props="{ itemsPerPageOptions: [8, 15, 30] }"
+                                    :loading= loading_table
                                   >
                                     <template v-slot:[`header.code_loan`]="{ header }">
                                       {{ header.text }}<br />
@@ -366,7 +367,8 @@ export default {
         sortDesc: [false],
       },
       totalLoans: 0,
-      loading_download: false
+      loading_download: false,
+      loading_table: false
   }),
 
   computed: {
@@ -387,6 +389,7 @@ export default {
     },
     tab: function(newVal, oldVal){
       if(newVal!= oldVal){
+        this.loans= []
         this.search_loans()
       }
     }
@@ -399,6 +402,7 @@ export default {
 
   methods: {
     async search_loans() {
+      this.loading_table = true
       try {
         let res = await axios.get(`list_loan_generate`, {
           params: {
@@ -421,6 +425,7 @@ export default {
         delete res.data["data"]
         this.options.page = res.data.current_page
         this.options.itemsPerPage = parseInt(res.data.per_page)
+        this.loading_table = false
       } catch (e) {
         console.log(e)
       }
