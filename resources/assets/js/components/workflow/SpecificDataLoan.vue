@@ -702,7 +702,7 @@
                                 :items="loan.personal_references"
                                 >
                                 <template v-slot:top>
-                                  <v-dialog v-model="dialog" max-width="500px" >
+                                  <v-dialog v-model="dialog_edit" max-width="500px" >
                                     <v-card>
                                       <v-card-title>
                                         <span style="color:teal" class="headline">EDITAR PERSONA DE REFERENCIA</span>
@@ -1125,7 +1125,8 @@ export default {
         value: "M"
       }
     ],
-      dialog: false, //dialog para editar persona de referencia
+      dialog: false, //dialog de confirmacion de corte del prestamo
+      dialog_edit: false, //dialog para editar los datos de la persona de referencia
       dialog_codeptor: false, //dialog para editar codeudor no afiliado
 
       //Variables que sirven para habilitar los imputs y editarlos
@@ -1191,7 +1192,7 @@ export default {
     }
   },
   watch: {
-      dialog (val) {
+      dialog_edit (val) {
         val || this.close()
       },
     },
@@ -1237,7 +1238,7 @@ export default {
     //Metodo para obtener los datos para el guardado de persona de referencia
       editItem (item) {
         this.editedItem =  item
-        this.dialog = true
+        this.dialog_edit = true
       },
     //Metodo para cerrar el modal del guardado del codeudor
       closeCodeptor() {
@@ -1249,7 +1250,7 @@ export default {
       },
     //Metodo para cerrar el modal del guardado de persona de referencia
       close () {
-        this.dialog = false
+        this.dialog_edit = false
         this.$nextTick(() => {
           this.editedItem = Object.assign({}, this.defaultItem)
           this.editedIndex = -1
