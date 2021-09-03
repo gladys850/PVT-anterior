@@ -19,7 +19,7 @@
               absolute
               right
               style="margin-right: 40px; margin-top: -50px"
-              :loading= loading
+              :loading_download= loading
             >
               <v-icon>mdi-file-excel</v-icon>
             </v-btn>
@@ -363,7 +363,8 @@ data () {
       sortDesc: [false],
     },
     totalPayments: 0,
-    excel: false
+    excel: false,
+    loading: false
   }
 },
 
@@ -385,7 +386,7 @@ data () {
     },
 
   },
-    mounted(){
+    created(){
       this.search_payments()
       this.docsLoans()
     },
@@ -421,6 +422,7 @@ data () {
     },
 
     async dowload_payments() {
+      this.loading_download = true
       await axios({
         url: "/list_loan_payments_generate",
         method: "GET",
@@ -447,9 +449,11 @@ data () {
           link.setAttribute("download", "ReporteAmortizaciones.xls")
           document.body.appendChild(link)
           link.click()
+          this.loading_download = false
         })
         .catch(e => {
           console.log(e)
+          this.loading_download = false
         })
     },
 
