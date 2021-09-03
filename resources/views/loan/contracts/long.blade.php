@@ -8,7 +8,7 @@
 @include('partials.header', $header)
 <body>
 <div class="block">
-    <div class="font-semibold leading-tight text-center m-b-10 text-xs">
+    <div class="font-semibold leading-tight text-center m-b-10 text-base">
         CONTRATO DE PRÉSTAMO <font style="text-transform: uppercase;">{{ $title }}</font>
         <div>Nº {{ $loan->code }}</div>
     </div>
@@ -163,7 +163,7 @@ if(($modality->name == 'Refinanciamiento de Préstamo a Largo Plazo Sector Activ
         </p>
     </div>
 </div>
-<div class = "m-t-100">
+<div>
     <div>
         @if (count($guarantors) == 1)
         @php ($guarantor = $guarantors[0])
@@ -196,7 +196,7 @@ if(($modality->name == 'Refinanciamiento de Préstamo a Largo Plazo Sector Activ
         ])
     </div>
     <div class = "no-page-break">
-        <div class = "m-t-100">
+        <div>
             <table>
                 <tr>
                     @foreach ($guarantors as $guarantor)
@@ -213,7 +213,7 @@ if(($modality->name == 'Refinanciamiento de Préstamo a Largo Plazo Sector Activ
         </div>
     </div>
     @endif
-    <div class="m-t-75">
+    <div>
         <table>
             <tr>
                 @foreach ($employees as $key => $employee)
@@ -373,7 +373,7 @@ if(($modality->name == 'Refinanciamiento de Préstamo a Largo Plazo Sector Activ
         </p>
     </div>
 </div>
-<div class = "m-t-100">
+<div>
     <div>
         @if (count($guarantors) == 1)
         @php ($guarantor = $guarantors[0])
@@ -406,7 +406,7 @@ if(($modality->name == 'Refinanciamiento de Préstamo a Largo Plazo Sector Activ
         ])
     </div>
     <div class = "no-page-break">
-        <div class = "m-t-100">
+        <div>
             <table>
                 <tr>
                     @foreach ($guarantors as $guarantor)
@@ -423,7 +423,7 @@ if(($modality->name == 'Refinanciamiento de Préstamo a Largo Plazo Sector Activ
         </div>
     </div>
     @endif
-    <div class="m-t-75">
+    <div>
         <table>
             <tr>
                 @foreach ($employees as $key => $employee)

@@ -1000,9 +1000,10 @@ class Loan extends Model
                     $average_ballot_adjust->push([
                         'average_payable_liquid' => $sum_payable_liquid/$count_records,
                         'average_mount_adjust' => $sum_mount_adjust/$count_records,
-                        'average_border_bonus' => $sum_position_bonus/$count_records,
+                        'average_border_bonus' => $sum_border_bonus/$count_records,
+                        'average_position_bonus' => $sum_position_bonus/$count_records,
                         'average_east_bonus' => $sum_east_bonus/$count_records,
-                        'average_public_security_bonus' => $sum_public_security_bonus/$count_records,
+                        'average_public_security_bonus' => $sum_public_security_bonus/$count_records,                       
                     ]);  
                 }
                 if($contributions_type == "aid_contributions"){
@@ -1061,17 +1062,15 @@ class Loan extends Model
                         $sum_mount_adjust = $sum_mount_adjust + $mount_adjust; 
                     }            
                     $average_ballot_adjust->push([
-                     'average_payable_liquid' => $sum_payable_liquid/$count_records,
-                     'average_mount_adjust' => $sum_mount_adjust/$count_records,
-                     ]);         
+                        'average_payable_liquid' => $sum_payable_liquid/$count_records,
+                        'average_mount_adjust' => $sum_mount_adjust/$count_records,
+                    ]);         
                 }       
             }      
         }
         $data = [
-            'ballot' => $ballot->sortBy('month_year'),   
-            'adjusts' => $adjusts,
             'contribution_type' =>$contribution_type,
-            'average_ballot_adjust'=>$average_ballot_adjust,
+            'average_ballot_adjust'=> $average_ballot_adjust,
             'ballot_adjust'=>$ballot_adjust->sortBy('month_year'),
         ];
         return (object)$data; 

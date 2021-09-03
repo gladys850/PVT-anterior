@@ -8,7 +8,7 @@
 @include('partials.header', $header)
 <body>
 <div class="block">
-    <div class="font-semibold leading-tight text-center m-b-10 text-xs">
+    <div class="font-semibold leading-tight text-center m-b-10 text-base">
         CONTRATO DE PRÉSTAMO <font style="text-transform: uppercase;">{{ $title }}</font>
         <div>Nº {{ $loan->code }}</div>
     </div>
@@ -147,7 +147,7 @@
             'position' => 'PRESTATARIO'
         ])
     </div>
-    <div class="m-t-75 w-100">
+    <div>
         <table>
            <!-- <tr>
                 @foreach ($employees as $key => $employee)

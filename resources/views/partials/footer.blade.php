@@ -37,11 +37,21 @@
     <div class="parent" style="padding-top: {{ isset($footer_margin) ? $footer_margin : 0 }}; border:0;">
         <div class="child" align="left" style="border:0;">
         @if (env("APP_ENV") != "production")
+        @if (isset($object))
+                @if (!is_null($object))
+                    <div class="font-semibold" >{{$object->code}} </div>
+                @endif
+            @endif
             VERSIÓN DE PRUEBAS
         @else
             @if (isset($print_message))
                 @if ($print_message)
                     {{ $print_message }}
+                @endif
+            @endif
+            @if (isset($object))
+                @if (!is_null($object))
+                    <div class="font-semibold">{{$object->code}} </div>
                 @endif
             @endif
             @if (isset($print_date))
@@ -69,7 +79,7 @@
         @if (isset($informationqr))
             @if ($informationqr)
             <div class="title m-b-md">
-            {!!QrCode::size(30)->generate(bcrypt($informationqr)) !!}
+            {!!QrCode::size(40)->generate($informationqr) !!}
             </div>
             @endif
         @endif
