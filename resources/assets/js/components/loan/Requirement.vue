@@ -285,7 +285,7 @@ export default {
           this.status_click = true
           if(this.status_click==true){
             let res = await axios.post(`loan`, {
-              copies: 2,
+              copies: 1,
               procedure_modality_id:this.modalidad.id,
               amount_requested: this.loan_detail.amount_requested,
               city_id: this.$store.getters.cityId,
