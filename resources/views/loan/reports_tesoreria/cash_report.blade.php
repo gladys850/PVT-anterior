@@ -37,9 +37,9 @@
             <td style="font-size:60%;">{{ $movement_list->movement_concept_code}}</td>
             <td style="font-size:60%;">{{ Carbon::parse($movement_list->disbursement_date_loan)->format('d/m/Y') }}</td>
             <td style="font-size:60%;">{{$movement_list->name}}-{{ $movement_list->concept}}</td>
-            <td style="font-size:60%;">{{ $movement_list->entry_amount}}</td>
-            <td style="font-size:60%;">{{ $movement_list->output_amount}}</td>
-            <td style="font-size:60%;">{{ $movement_list->balance}}</td>
+            <td style="font-size:60%;">{{ Util::money_format($movement_list->entry_amount)}}</td>
+            <td style="font-size:60%;">{{ Util::money_format($movement_list->output_amount)}}</td>
+            <td style="font-size:60%;">{{ Util::money_format($movement_list->balance)}}</td>
         </tr>
         @php ($total_entry_amount += $movement_list->entry_amount)
         @php ($total_output_amount += $movement_list->output_amount)
