@@ -982,18 +982,18 @@ class Loan extends Model
                         }
                         $ballot_adjust->push([
                             'month_year' => $ballot->month_year,
-                            'payable_liquid' => $ballot->payable_liquid,
-                            'mount_adjust' => $mount_adjust,
-                            'border_bonus' => $ballot->border_bonus,
-                            'position_bonus' => $ballot->position_bonus,
-                            'east_bonus' => $ballot->east_bonus,
-                            'public_security_bonus' => $ballot->public_security_bonus,                                
+                            'payable_liquid' => (float)$ballot->payable_liquid,
+                            'mount_adjust' => (float)$mount_adjust,
+                            'border_bonus' => (float)$ballot->border_bonus,
+                            'position_bonus' => (float)$ballot->position_bonus,
+                            'east_bonus' => (float)$ballot->east_bonus,
+                            'public_security_bonus' => (float)$ballot->public_security_bonus,                                
                         ]);    
                           $sum_payable_liquid = $sum_payable_liquid + $ballot->payable_liquid;
                           $sum_mount_adjust = $sum_mount_adjust + $mount_adjust;
                           $sum_border_bonus = $sum_border_bonus + $ballot->border_bonus;  
                           $sum_position_bonus = $sum_position_bonus + $ballot->position_bonus;
-                          $sum_east_bonus = $sum_east_bonus + $ballot->east_bonu;
+                          $sum_east_bonus = $sum_east_bonus + $ballot->east_bonus;
                           $sum_public_security_bonus = $sum_public_security_bonus + $ballot->public_security_bonus;     
                     }                              
                     $average_ballot_adjust->push([
@@ -1021,9 +1021,9 @@ class Loan extends Model
                         }
                         $ballot_adjust->push([
                             'month_year' => $ballot->month_year,
-                            'payable_liquid' => $ballot->rent,
-                            'mount_adjust' => $mount_adjust,
-                            'dignity_rent' => $ballot->dignity_rent,                              
+                            'payable_liquid' => (float)$ballot->rent,
+                            'mount_adjust' => (float)$mount_adjust,
+                            'dignity_rent' => (float)$ballot->dignity_rent,                              
                         ]); 
                         $sum_payable_liquid = $sum_payable_liquid + $ballot->rent; 
                         $sum_mount_adjust = $sum_mount_adjust + $mount_adjust; 
@@ -1054,8 +1054,8 @@ class Loan extends Model
                         }
                         $ballot_adjust->push([
                             'month_year' => $ballot->period_date,
-                            'payable_liquid' => $ballot->amount,
-                            'mount_adjust' => $mount_adjust,                              
+                            'payable_liquid' => (float)$ballot->amount,
+                            'mount_adjust' => (float)$mount_adjust,                              
                         ]); 
                         $sum_payable_liquid = $sum_payable_liquid + $ballot->amount;
                         $sum_mount_adjust = $sum_mount_adjust + $mount_adjust; 
