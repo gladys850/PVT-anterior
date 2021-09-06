@@ -130,32 +130,35 @@ class MovementFundRotatoryController extends Controller
     * @responseFile responses/movements/store_input.200.json
     */
     public function store_input(MovementFundRotatoryForm $request)
-    {    $request->validate([ 
-        'entry_amount'=> 'required',
-        'date_check_delivery'=> 'required'
-        ]);
+    {  
         DB::beginTransaction();
         try {
-            $movement_concept= MovementConcept::whereIsValid(true)->whereType("INGRESO")->whereShortened("FON-ROT-IN")->first();
-            $abbreviated_supporting_document = $movement_concept->abbreviated_supporting_document;
-            $movement_concept_code = MovementFundRotatory::where('movement_concept_id',$movement_concept->id)->withTrashed()->count()+1;       
-            $movement_fund_rotatory = new MovementFundRotatory;
-            $movement_fund_rotatory->user_id = Auth::id();
-            $movement_fund_rotatory->movement_concept_code = $movement_concept->abbreviated_supporting_document."-".$movement_concept_code.'/'.Carbon::now()->year;
-            $movement_fund_rotatory->date_check_delivery = $request->input('date_check_delivery');
-            $movement_fund_rotatory->entry_amount = $request->input('entry_amount');
-            $movement_fund_rotatory->description = $request->input('description');
-            $movement_fund_rotatory->movement_concept_id = $movement_concept->id;
-            $movement_fund_rotatory->role_id = $request->input('role_id');  
-            $movement_fund_rotatory_last = MovementFundRotatory::orderBy('id')->get()->last();    
-            if($movement_fund_rotatory_last == null){
-                $movement_fund_rotatory->balance = $request->input('entry_amount');
-            }else{
-                $movement_fund_rotatory->balance = $request->input('entry_amount') + $movement_fund_rotatory_last->balance;
-            }
-            $movement_fund_rotatory_return = MovementFundRotatory::create($movement_fund_rotatory->toArray());
-            DB::commit();
-            return $movement_fund_rotatory_return;
+            if($request->has('entry_amount')){
+                if($request->has('date_check_delivery')){
+                    $movement_concept= MovementConcept::whereIsValid(true)->whereType("INGRESO")->whereShortened("FON-ROT-IN")->first();
+                    $abbreviated_supporting_document = $movement_concept->abbreviated_supporting_document;
+                    $movement_concept_code = MovementFundRotatory::where('movement_concept_id',$movement_concept->id)->withTrashed()->count()+1;
+                    $movement_fund_rotatory = new MovementFundRotatory;
+                    $movement_fund_rotatory->user_id = Auth::id();
+                    $movement_fund_rotatory->movement_concept_code = $movement_concept->abbreviated_supporting_document."-".$movement_concept_code.'/'.Carbon::now()->year;
+                    $movement_fund_rotatory->date_check_delivery = $request->input('date_check_delivery');
+                    $movement_fund_rotatory->entry_amount = $request->input('entry_amount');
+                    $movement_fund_rotatory->description = $request->input('description');
+                    $movement_fund_rotatory->movement_concept_id = $movement_concept->id;
+                    $movement_fund_rotatory->role_id = $request->input('role_id');  
+                    $movement_fund_rotatory_last = MovementFundRotatory::orderBy('id')->get()->last();    
+                    if($movement_fund_rotatory_last == null){
+                        $movement_fund_rotatory->balance = $request->input('entry_amount');
+                    }else{
+                        $movement_fund_rotatory->balance = $request->input('entry_amount') + $movement_fund_rotatory_last->balance;
+                    }
+                    $movement_fund_rotatory_return = MovementFundRotatory::create($movement_fund_rotatory->toArray());
+                    DB::commit();
+                    return $movement_fund_rotatory_return;
+                }
+                return abort(409, "El campo fecha de entrega de cheque es requerido");
+            }  
+        return abort(409, "El campo monto es requerido ");
         } catch (\Exception $e) {
             DB::rollback();
             throw $e;
