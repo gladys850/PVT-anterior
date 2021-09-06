@@ -111,7 +111,7 @@
                 <td class="bg-grey-darker text-white">Bono Oriente</td>
                 <td class="bg-grey-darker text-white">Bono Seguridad Ciudadana</td>       
            </tr>        
-         @foreach($loan->ballot_affiliate($lender_affiliate->id)->ballot_adjust as $ballot)      
+         @foreach($loan->ballot_affiliate($lender_affiliate->id)->ballot_adjusts as $ballot)      
            <tr>
                 <td>{{Carbon::parse($ballot['month_year'])->format('d/m/y')}}</td>
                 <td> {{Util::money_format($ballot['payable_liquid'])}}</td>
@@ -147,10 +147,10 @@
                 <td class="bg-grey-darker text-white">Monto de Ajuste</td>
                 <td class="bg-grey-darker text-white">Bono Renta Dignidad</td>          
            </tr>
-            @foreach($loan->ballot_affiliate($lender_affiliate->id)->ballot_adjust as $ballot)
+            @foreach($loan->ballot_affiliate($lender_affiliate->id)->ballot_adjusts as $ballot)
             <tr>
                 <td> {{Carbon::parse($ballot['month_year'])->format('d/m/y')}}</td> 
-                <td> {{Util::money_format($ballot['rent'])}}</td> 
+                <td> {{Util::money_format($ballot['payable_liquid'])}}</td> 
                 <td> {{Util::money_format($ballot['mount_adjust'])}}</td>  
                 <td> {{Util::money_format($ballot['dignity_rent'])}}</td>                 
             </tr >      
@@ -158,7 +158,7 @@
             @foreach($loan->ballot_affiliate($lender_affiliate->id)->average_ballot_adjust as $average_ballot)
             <tr>
                 <td>Total Promedio</td>
-                <td> {{Util::money_format($average_ballot['average_rent'])}}</td>
+                <td> {{Util::money_format($average_ballot['average_payable_liquid'])}}</td>
                 <td> {{Util::money_format($average_ballot['average_mount_adjust'])}}</td>
                 <td> {{Util::money_format($average_ballot['average_dignity_rent'])}}</td>             
              </tr>
@@ -170,7 +170,7 @@
                 <td class="bg-grey-darker text-white">Liquido</td>
                 <td class="bg-grey-darker text-white">Monto de Ajuste</td>
            </tr>
-            @foreach($loan->ballot_affiliate($lender_affiliate->id)->ballot_adjust as $ballot)        
+            @foreach($loan->ballot_affiliate($lender_affiliate->id)->ballot_adjusts as $ballot)        
             <tr>
                 <td>{{Carbon::parse($ballot['month_year'])->format('d/m/y')}}</td>  
                 <td>{{Util::money_format($ballot['payable_liquid'])}}</td> 
