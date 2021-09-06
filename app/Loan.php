@@ -950,8 +950,8 @@ class Loan extends Model
             if( $affiliate->id == $affiliate_id){
             $contributions = $affiliate->pivot->contributionable_ids;
             $contributions_type = $affiliate->pivot->contributionable_type;
-            $ballots=json_decode($contributions);
-            $ballot = collect();
+            $ballots_ids = json_decode($contributions);
+            $ballots = collect();
             $adjusts = collect();
             $ballot_adjust = collect();
             $average_ballot_adjust = collect();
@@ -967,15 +967,14 @@ class Loan extends Model
             $contribution_type = null;
                 if($contributions_type == "contributions"){ 
                     $contribution_type = "contributions";
-                    foreach($ballots as $is_ballot_id){
+                    foreach($ballots_ids as $is_ballot_id){
                         if(Contribution::find($is_ballot_id))
-                        $ballot->push(Contribution::find($is_ballot_id));
+                        $ballots->push(Contribution::find($is_ballot_id));
                         if(LoanContributionAdjust::where('adjustable_id', $is_ballot_id)->where('loan_id',$this->id)->first()){
                         $adjusts->push(LoanContributionAdjust::where('adjustable_id', $is_ballot_id)->where('loan_id',$this->id)->first());
                         }  
                     }    
-                    $count_records = count($ballot);
-                    $ballots = $ballot->sortBy('month_year');               
+                    $count_records = count($ballots);               
                     foreach($ballots as $ballot){
                         foreach($adjusts as $adjust){
                                 if  ($ballot->id == $adjust->adjustable_id)
@@ -983,18 +982,18 @@ class Loan extends Model
                         }
                         $ballot_adjust->push([
                             'month_year' => $ballot->month_year,
-                            'payable_liquid' => $ballot->payable_liquid,
-                            'mount_adjust' => $mount_adjust,
-                            'border_bonus' => $ballot->border_bonus,
-                            'position_bonus' => $ballot->position_bonus,
-                            'east_bonus' => $ballot->east_bonus,
-                            'public_security_bonus' => $ballot->public_security_bonus,                                
+                            'payable_liquid' => (float)$ballot->payable_liquid,
+                            'mount_adjust' => (float)$mount_adjust,
+                            'border_bonus' => (float)$ballot->border_bonus,
+                            'position_bonus' => (float)$ballot->position_bonus,
+                            'east_bonus' => (float)$ballot->east_bonus,
+                            'public_security_bonus' => (float)$ballot->public_security_bonus,                                
                         ]);    
                           $sum_payable_liquid = $sum_payable_liquid + $ballot->payable_liquid;
                           $sum_mount_adjust = $sum_mount_adjust + $mount_adjust;
                           $sum_border_bonus = $sum_border_bonus + $ballot->border_bonus;  
                           $sum_position_bonus = $sum_position_bonus + $ballot->position_bonus;
-                          $sum_east_bonus = $sum_east_bonus + $ballot->east_bonu;
+                          $sum_east_bonus = $sum_east_bonus + $ballot->east_bonus;
                           $sum_public_security_bonus = $sum_public_security_bonus + $ballot->public_security_bonus;     
                     }                              
                     $average_ballot_adjust->push([
@@ -1008,14 +1007,13 @@ class Loan extends Model
                 }
                 if($contributions_type == "aid_contributions"){
                     $contribution_type = "aid_contributions";
-                    foreach($ballots as $is_ballot_id){
+                    foreach($ballots_ids as $is_ballot_id){
                         if(AidContribution::find($is_ballot_id))
-                        $ballot->push(AidContribution::find($is_ballot_id));
+                        $ballots->push(AidContribution::find($is_ballot_id));
                         if(LoanContributionAdjust::where('adjustable_id', $is_ballot_id)->where('loan_id',$this->id)->first())
                         $adjusts->push(LoanContributionAdjust::where('adjustable_id', $is_ballot_id)->where('loan_id',$this->id)->first());
                     }
-                    $count_records = count($ballot); 
-                    $ballots = $ballot->sortBy('month_year');                
+                    $count_records = count($ballots);                
                     foreach($ballots as $ballot){
                         foreach($adjusts as $adjust){
                             if($ballot->id == $adjust->adjustable_id)
@@ -1023,9 +1021,9 @@ class Loan extends Model
                         }
                         $ballot_adjust->push([
                             'month_year' => $ballot->month_year,
-                            'payable_liquid' => $ballot->rent,
-                            'mount_adjust' => $mount_adjust,
-                            'dignity_rent' => $ballot->dignity_rent,                              
+                            'payable_liquid' => (float)$ballot->rent,
+                            'mount_adjust' => (float)$mount_adjust,
+                            'dignity_rent' => (float)$ballot->dignity_rent,                              
                         ]); 
                         $sum_payable_liquid = $sum_payable_liquid + $ballot->rent; 
                         $sum_mount_adjust = $sum_mount_adjust + $mount_adjust; 
@@ -1042,13 +1040,12 @@ class Loan extends Model
                     $liquid_ids= LoanContributionAdjust::where('loan_id',$this->id)->where('type_adjust',"liquid")->get()->pluck('id');
                     $adjust_ids= LoanContributionAdjust::where('loan_id',$this->id)->where('type_adjust',"adjust")->get()->pluck('id');
                     foreach($liquid_ids as $liquid_id){  
-                        $ballot->push(LoanContributionAdjust::find($liquid_id));
+                        $ballots->push(LoanContributionAdjust::find($liquid_id));
                     }
                     foreach($adjust_ids as $adjust_id){  
                         $adjusts->push( LoanContributionAdjust::find($adjust_id));
                     } 
-                    $count_records = count($ballot);   
-                    $ballots = $ballot->sortBy('month_year');    
+                    $count_records = count($ballots);      
                     foreach($ballots as $ballot)
                     {
                         foreach($adjusts as $adjust){
@@ -1057,8 +1054,8 @@ class Loan extends Model
                         }
                         $ballot_adjust->push([
                             'month_year' => $ballot->period_date,
-                            'payable_liquid' => $ballot->amount,
-                            'mount_adjust' => $mount_adjust,                              
+                            'payable_liquid' => (float)$ballot->amount,
+                            'mount_adjust' => (float)$mount_adjust,                              
                         ]); 
                         $sum_payable_liquid = $sum_payable_liquid + $ballot->amount;
                         $sum_mount_adjust = $sum_mount_adjust + $mount_adjust; 
@@ -1073,7 +1070,7 @@ class Loan extends Model
         $data = [
             'contribution_type' =>$contribution_type,
             'average_ballot_adjust'=> $average_ballot_adjust,
-            'ballot_adjusts'=> $ballot_adjust,
+            'ballot_adjusts'=> $ballot_adjust->sortBy('month_year')->values()->toArray(),
         ];
         return (object)$data; 
     }

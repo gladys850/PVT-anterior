@@ -11,7 +11,7 @@
                     <v-container class="py-0 my-0 teal--text">
                       <v-row>
                         <v-col cols="12" :md="window_size" class="py-0 my-0 text-center">
-                          <strong>MODALIDAD DEL PRÉSTAMO</strong><br><!--{{loanTypeSelected.id}}-->
+                          <strong>MODALIDAD DEL PRÉSTAMO</strong><br>
                           <v-row>
                             <v-col cols="12" md="10" class="py-0 -my-0">
                           <v-select
@@ -249,7 +249,7 @@
                         </ValidationProvider>
                       </v-col>
                     </v-row>
-                  </v-col>        
+                  </v-col>
                 </v-row>
                 <template >
                   <v-col cols="12" class="py-0 my-0" v-if="type_sismu || (remake && data_loan.data_loan != null)"> DATOS SISMU </v-col>
@@ -296,8 +296,6 @@ export default {
     editar:true,
     monto:null,
     plazo:null,
-    //interval:[],
-    //loanTypeSelected:null,
     visible:false,
     hipotecario:false,
     window_size:4,
@@ -319,18 +317,6 @@ export default {
       type: Object,
       required: true
     },
-    /*bonos: {
-      type: Array,
-      required: true
-    },
-    period: {
-      type: Array,
-      required: true
-    },
-    payable_liquid: {
-      type: Array,
-      required: true
-    },*/
     modalities: {
       type: Array,
       required: true
@@ -375,20 +361,18 @@ export default {
       type: Object,
       required: true
     },
-    
+
   },
   components: {
     BallotsHipotecary,
   },
   mounted() {
-    //this.getLoanIntervals()
     this.getModalityLoan()
   },
   watch: {
     'loanTypeSelected.id': function(newVal, oldVal){
       if(newVal!= oldVal)
         this.Onchange()
-        //alert ('ballot' + this.loanTypeSelected.id)
     }
   },
   computed: {
@@ -425,19 +409,7 @@ export default {
     }
   },
   methods: {
-    //Intervalos de Plazo y Meses de una modalidad
-    /*async getLoanIntervals() {
-      try {
-        let res = await axios.get(`loan_interval`)
-        this.interval = res.data
-        console.log(this.interval)
-        if(this.reprogramming){
-          this.Onchange()
-        }
-       }catch (e) {
-        console.log(e)
-      }
-    },*/
+
     async getModalityLoan() {
       try {
         let res = await axios.get(`module/6/modality_loan`)
@@ -466,19 +438,9 @@ export default {
             this.window_size=4
             this.see_field=false
           }
-          /*this.monto= this.interval[i].minimum_amount+' - '+this.interval[i].maximum_amount,
-          this.plazo= this.interval[i].minimum_term+' - '+this.interval[i].maximum_term
-          //intervalos es el monto, plazo y modalidad y id de una modalidad
-          this.intervalos.maximun_amoun=this.interval[i].maximum_amount
-          this.intervalos.maximum_term= this.interval[i].maximum_term
-          this.intervalos.minimun_amoun=this.interval[i].minimum_amount
-          this.intervalos.minimum_term= this.interval[i].minimum_term
-          this.intervalos.procedure_type_id= this.loanTypeSelected.id*/
 
           this.getLoanModalityAffiliate(this.$route.query.affiliate_id)
-        } /*else{
-        console.log('NO ES IGUAL A MODALIDAD INTERVALS'+this.interval[i].procedure_type_id +"=="+this.loanTypeSelected.id )
-        }*/
+        } 
       }
     },
 
@@ -524,11 +486,7 @@ export default {
 
           this.loan_detail.min_guarantor_category = this.loan_modality.loan_modality_parameter.min_guarantor_category
           this.loan_detail.max_guarantor_category = this.loan_modality.loan_modality_parameter.max_guarantor_category
-          /*if(this.loan_modality.loan_modality_parameter.quantity_ballots > 1){
-            this.visible = true
-          }else{
-            this.visible = false
-          }*/
+
           this.getBallots(id)
           this.generateContributions()
         }
@@ -587,7 +545,7 @@ export default {
               this.contribution[i].public_security_bonus = 0
               this.contribution[i].period = this.$moment(this.lender_contribution.current_tiket).subtract(this.modalidad.quantity_ballots-1-i,'months').format('YYYY-MM-DD')
               this.contribution[i].month = this.$moment(this.lender_contribution.current_tiket).subtract(this.modalidad.quantity_ballots-1-i,'months').format('MMMM')
-              
+
           } else if(this.lender_contribution.valid && this.lender_contribution.state_affiliate =='Pasivo'){
               this.enabled = true
               this.editar = true
@@ -613,13 +571,13 @@ export default {
               this.contribution[i].dignity_rent = 0
               this.contribution[i].period = this.$moment(this.lender_contribution.current_tiket).subtract(this.modalidad.quantity_ballots-1-i,'months').format('YYYY-MM-DD')
               this.contribution[i].month = this.$moment(this.lender_contribution.current_tiket).subtract(this.modalidad.quantity_ballots-1-i,'months').format('MMMM')
-          
+
           } else if(!this.lender_contribution.valid && this.lender_contribution.state_affiliate =='Comisión'){
               this.contribution[i].contributionable_id = 0
               this.contribution[i].payable_liquid = 0
               this.contribution[i].period = this.$moment(this.lender_contribution.current_tiket).subtract(this.modalidad.quantity_ballots-1-i,'months').format('YYYY-MM-DD')
               this.contribution[i].month = this.$moment(this.lender_contribution.current_tiket).subtract(this.modalidad.quantity_ballots-1-i,'months').format('MMMM')
-          
+
           } else {
             this.toastr.error("Ocurrio caso especial de afiliado que no fue considerado.")}
         }
@@ -664,6 +622,6 @@ export default {
         this.getBallots(this.$route.query.affiliate_id)
       }
     },
-  }  
-}  
+  }
+}
 </script>

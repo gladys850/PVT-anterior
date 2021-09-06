@@ -16,7 +16,7 @@ class MovementConceptObserver
      */
     public function created(MovementConcept $movementConcept)
     {
-        Util::save_record($movementConcept, 'datos-de-un-tramite', 'Registró Concepto de movimientos: '.$movementConcept->name);
+       // Util::save_record($movementConcept, 'datos-de-un-tramite', 'Registró Concepto de movimientos: '.$movementConcept->name);
     }
 
     /**
