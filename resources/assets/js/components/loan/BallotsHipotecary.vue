@@ -32,10 +32,9 @@
                     </v-btn>
                   </template>
                 </v-tooltip>
-               
+
               </v-col>
               <v-col>
-                <!--{{contrib_codebtor}}-->
                 <v-data-table
                   dense
                   :headers="headers1"
@@ -62,12 +61,12 @@
                                 <h3>NOMBRE: {{editedItem.full_name}} </h3>
                               </v-col>
                             </v-row>
-                            <v-row class="py-0 my-0">              
+                            <v-row class="py-0 my-0">
                               <v-col cols="12" md="2" class="py-0 my-0">
                                 <v-text-field
                                   dense
                                   v-model="number_diff_month"
-                                  label="Número de meses"                    
+                                  label="Número de meses"
                                   color="info"
                                   append-icon="mdi-plus-box"
                                   prepend-icon="mdi-minus-box"
@@ -75,12 +74,12 @@
                                   @click:prepend="prependIconCallback"
                                   readonly
                                 ></v-text-field>
-                              </v-col>           
+                              </v-col>
                             </v-row>
                             <!--boleta 1--->
 
                             <v-row v-for="(contrib,i) in editedItem.contribution" :key="i" class="py-0 my-0">
-                            
+
                               <v-col cols="12" md="7" class="py-0 my-0">
                                 <v-row>
                                   <v-col cols="12" md="12" class="py-0 my-0 pb-1 uppercase"> BOLETAS DE PAGO <b>{{editedItem.contribution[i].month}}</b></v-col>
@@ -102,27 +101,7 @@
                                       ></v-text-field>
                                     </ValidationProvider>
                                   </v-col>
-                                  <!--<v-col cols="12" md="1" class="py-0">
-                                    <span>
-                                      <v-tooltip top>
-                                        <template v-slot:activator="{ on }">
-                                          <v-btn
-                                            icon
-                                            dark
-                                            small
-                                            color="success"
-                                            bottom
-                                            right
-                                            v-on="on"
-                                            @click="saveAdjustment(i)"
-                                          >
-                                            <v-icon>mdi-calculator</v-icon>
-                                          </v-btn>
-                                        </template>
-                                        <span>Ajuste</span>
-                                      </v-tooltip>
-                                    </span>                        
-                                  </v-col>-->
+
                                   <v-col cols="12" class="py-0 my-0"  :md="lender_contribution.state_affiliate == 'Comisión' ? 4 : 2">
                                     <ValidationProvider
                                       v-slot="{ errors }"
@@ -158,7 +137,7 @@
                                           v-model="editedItem.contribution[i].adjustment_description"
                                           label="Descripción ajuste"
                                           outlined
-                                          rows="1"                              
+                                          rows="1"
                                         ></v-textarea>
                                       </ValidationProvider>
                                     </v-col>
@@ -238,7 +217,7 @@
                                         ></v-text-field>
                                       </ValidationProvider>
                                     </v-col>
-                                 </template> 
+                                 </template>
                                   <v-col cols="12" :md="lender_contribution.state_affiliate == 'Pasivo' ? 4 : 3" class="py-0 my-0" v-if="lender_contribution.state_affiliate == 'Pasivo'">
                                     <ValidationProvider
                                       v-slot="{ errors }"
@@ -292,7 +271,7 @@
                     <v-icon small color="error" @click="deleteItem(item)">X</v-icon>
                   </template>
                   <template v-slot:no-data>
-                    <!--<v-btn color="primary" @click=" initialize">Reset</v-btn>-->
+
                   </template>
                 </v-data-table>
               </v-col>
@@ -434,10 +413,7 @@ export default {
       val || this.close()
     }
   },
-  beforeMount() {
-    //this.getBallots(this.$route.query.affiliate_id)
-    //alert(this.$route.query.affiliate_id)
-  },
+
   methods: {
     //Metodo para sacar boleta de un afiliado
     async getBallots(id) {
@@ -458,7 +434,7 @@ export default {
         this.affiliate_contribution.valid = this.lender_contribution.valid
         this.affiliate_contribution.state_affiliate = this.lender_contribution.state_affiliate
         this.affiliate_contribution.name_table_contribution = this.lender_contribution.name_table_contribution
-        //console.log(res)
+
         this.data_ballots = res.data.data
         if (res.data.valid) {
           this.editar = false
@@ -483,7 +459,7 @@ export default {
             this.editedItem.p_east_bonus = this.editedItem.p_east_bonus +  parseFloat(this.data_ballots[i].east_bonus != null ? this.data_ballots[i].east_bonus : 0)
             this.editedItem.p_position_bonus = this.editedItem.p_position_bonus + parseFloat(this.data_ballots[i].position_bonus != null ? this.data_ballots[i].position_bonus : 0)
             this.editedItem.p_public_security_bonus = this.editedItem.p_public_security_bonus +  parseFloat(this.data_ballots[i].public_security_bonus != null ? this.data_ballots[i].public_security_bonus : 0)
-        
+
         } else if(!this.lender_contribution.valid && this.lender_contribution.state_affiliate =='Activo'){
             this.enabled = false
             this.editar=false
@@ -496,10 +472,10 @@ export default {
             this.editedItem.contribution[i].public_security_bonus = 0
             this.editedItem.contribution[i].period = this.$moment(this.lender_contribution.current_tiket).subtract(this.modalidad.quantity_ballots-1-i,'months').format('YYYY-MM-DD')
             this.editedItem.contribution[i].month = this.$moment(this.lender_contribution.current_tiket).subtract(this.modalidad.quantity_ballots-1-i,'months').format('MMMM')
-         
+
         } else{
           this.toastr.error("el afiliado no es activo")
-        }   
+        }
 
         }
         this.editedItem.p_payable_liquid = (this.editedItem.p_payable_liquid / this.modalidad.quantity_ballots)
@@ -507,7 +483,7 @@ export default {
         this.editedItem.p_east_bonus = (this.editedItem.p_east_bonus / this.modalidad.quantity_ballots)
         this.editedItem.p_position_bonus = (this.editedItem.p_position_bonus / this.modalidad.quantity_ballots)
         this.editedItem.p_public_security_bonus = (this.editedItem.p_public_security_bonus / this.modalidad.quantity_ballots)
-      
+
       }
       } catch (e) {
         console.log(e)
@@ -537,13 +513,13 @@ export default {
 
     async save() {
       console.log(this.contrib_codebtor)
-      await this.saveAdjustment()      
+      await this.saveAdjustment()
       if (this.editedIndex > -1) {
         Object.assign(this.contrib_codebtor[this.editedIndex], this.editedItem)
       } else {
         this.contrib_codebtor.push(this.editedItem)
-      }         
-      this.close()      
+      }
+      this.close()
     },
 
     async searchCodebtor() {
@@ -624,7 +600,7 @@ export default {
         loan_contributions_adjust_id: 0,
       })
     }
-   
+
   },
  getContributions() {
     return this.editedItem.contribution
@@ -634,23 +610,23 @@ export default {
   async saveAdjustment(){
     this.editedItem.contributionable_ids = []
     this.editedItem.loan_contributions_adjust_ids = []
- 
+
     try {
 
       let loan_contributions_adjust_ids = []
       let loan_contributions_adjust_id = 0
-      
-      this.editedItem.contribution.forEach(async (item, i) => { //introducir su contribución        
+
+      this.editedItem.contribution.forEach(async (item, i) => { //introducir su contribución
         if(this.affiliate_contribution.state_affiliate == 'Activo') {
             if (this.editedItem.contributionable_ids.indexOf(this.editedItem.contribution[i].contributionable_id) === -1) {
                 this.editedItem.contributionable_ids.push(this.editedItem.contribution[i].contributionable_id)
           }
           this.editedItem.contributionable_type = 'contributions'
-        } 
+        }
         //Para el ajuste
         if(this.editedItem.contribution[i].adjustment_amount > 0){ //aqui se debe colocar la edicion del ajuste, hacer condicional
           //guardar el ajuste
- 
+
           let res = await axios.post(`loan_contribution_adjust/updateOrCreate`, {
             affiliate_id: this.affiliate_codebtor.affiliate.id,
             adjustable_id: this.editedItem.contribution[i].contributionable_id,
@@ -663,18 +639,17 @@ export default {
           })
 
           loan_contributions_adjust_id  = res.data.id
-         
+
           if ( loan_contributions_adjust_ids.indexOf( loan_contributions_adjust_id) === -1) {
               loan_contributions_adjust_ids.push( loan_contributions_adjust_id)
           }
 
         }else{
           console.log('no tiene ajuste')
-        }    
+        }
       })
-        this.editedItem.loan_contributions_adjust_ids = loan_contributions_adjust_ids   
-     //debugger
-      //alert(this.editedItem.loan_contributions_adjust_ids)
+        this.editedItem.loan_contributions_adjust_ids = loan_contributions_adjust_ids
+
     }  catch (e) {
       console.log(e)
     }
@@ -687,7 +662,6 @@ export default {
     }
   },
   prependIconCallback () {
-
       if(this.number_diff_month > 1){
       this.number_diff_month--
       this.choose_diff_month = true
