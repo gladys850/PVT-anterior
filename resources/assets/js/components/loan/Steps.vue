@@ -197,25 +197,6 @@
             :personal_codebtor="personal_codebtor"
             :modalidad_max_cosigner.sync="modalidad.max_cosigner"
           />
-         <!-- <CoDebtor
-            v-show="this.modalidad.max_cosigner > 0"
-            :personal_codebtor="personal_codebtor"
-            :modalidad.sync="modalidad"
-          />-->
-          <v-container class="py-0">
-           <!-- <v-row>
-            <v-spacer></v-spacer><v-spacer></v-spacer><v-spacer></v-spacer>
-              <v-col class="py-0">
-                <v-btn text
-                @click="beforeStep(5)">Atras</v-btn>
-                <v-btn
-                color="primary"
-                @click="validateStepsFive()">
-                Siguiente
-                </v-btn>
-              </v-col>
-            </v-row>-->
-          </v-container>
         </v-card>
       </v-stepper-content>
       <v-stepper-content :key="`${6}-content`" :step="6" >
@@ -290,9 +271,9 @@ export default {
     bus: new Vue(),
     e1: 1,
     loan_detail:{
-    maximum_suggested_valid:true,
-    net_realizable_value:0,
-    not_exist_modality: false
+      maximum_suggested_valid:true,
+      net_realizable_value:0,
+      not_exist_modality: false
     },
     data_loan:{},
     calculator_result:{},
@@ -300,14 +281,10 @@ export default {
     modalities: [],
     guarantors: [],
     lenders:[],
-    //lenders_aux:[],
     data_loan_parent_aux:{},
     data_loan_parent:[],
     modalidad:{},
     procedureLoan:{},
-    //payable_liquid:[0,0,0],
-    //bonos:[0,0,0,0],
-    //period:[],
     personal_codebtor:[],
     contrib_codebtor: [],
     contributions_aux: [],
@@ -319,7 +296,6 @@ export default {
     loan_property: {},
     destino:[],
     //Variables reprogramacion y refinanciamiento
-    //data_loan: {},
     data_loan_aux:{},
     data_loan_parent_sismu:{},
     amount_requested:0,
@@ -336,7 +312,7 @@ export default {
     contributions: [],
     affiliate_contribution: {},
     fecha: new Date(),
-    ///variables step1    
+    ///variables step1
     contributionable_type: null,
     loan_contributions_adjust_ids: [],
     contributionable_ids: [],
@@ -369,11 +345,6 @@ export default {
         this.e1 = val
       }
     },
-    /*'loanTypeSelected.id': function(newVal, oldVal){
-      if(newVal!= oldVal)
-      this.loanTypeSelected.id = this.modalidad_refi_repro_remake
-      //alert ('steps' + this.loanTypeSelected.id)
-    },*/
   },
   beforeMount(){
     this.getProcedureType()
@@ -597,7 +568,7 @@ export default {
         }
       }
       //concatenar array del titular y codeudores
-      this.contributions_aux = array_lender.concat(array_codebtors)    
+      this.contributions_aux = array_lender.concat(array_codebtors)
     },
 
     //TAB1 Obtener liquido para calificación
@@ -728,7 +699,7 @@ export default {
         this.loading = false
       }
     },
-    async getLoan(id) {  
+    async getLoan(id) {
       try {
         this.loading = true
         let res = await axios.get(`loan/${id}`)
@@ -789,7 +760,6 @@ export default {
       try {
         let res = await axios.get(`loan_global_parameter`)
         this.global_parameters = res.data.data[0]
-        //console.log(this.global_parameters)
         this.livelihood_amount = this.global_parameters.livelihood_amount
       } catch (e) {
         console.log(e)
@@ -797,26 +767,21 @@ export default {
     },
     async getLenders(){
 
-       // this.toastr.success(this.lenders.length)
-      
         for(let i = 0; i < this.lenders.length; i++ ){
                 //Armar el nombre de los lenders
                 let res4 = await axios.get(`affiliate/${this.lenders[i].affiliate_id}`)
                 this.lenders_aux[i] =res4.data.full_name
         }
-        
+
     },
 
     validateStepsOne(){
-      //this.contributions = []
       let continuar = false
       //llama al a funcion getContributions del componente Ballots
-      //this.contributions = this.$refs.ballotsComponent.getLoanModalityAffiliate(this.$route.query.affiliate_id) //TODO REVISAR LA LLAMDA A ESTA LINEA, A DETALLE
       if(this.$refs.ballotsComponent) {
         this.contributions = this.$refs.ballotsComponent.getContributions()
       }
-      //this.saveAdjustment()
-      //this.liquidCalificated()
+
       if(this.loanTypeSelected.id > 0){
         if(this.loan_detail.not_exist_modality==false){
           //validaciones de todas las contribuciones
