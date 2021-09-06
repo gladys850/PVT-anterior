@@ -974,27 +974,28 @@ class Loan extends Model
                         $adjusts->push(LoanContributionAdjust::where('adjustable_id', $is_ballot_id)->where('loan_id',$this->id)->first());
                         }  
                     }    
-                    $count_records = count($ballot);               
-                    foreach($ballot as $list_ballot){
-                        foreach($adjusts as $list_adjust){
-                                if  ($list_ballot->id == $list_adjust->adjustable_id)
-                                    $mount_adjust = $list_adjust->amount;                  
+                    $count_records = count($ballot);
+                    $ballots = $ballot->sortBy('month_year');               
+                    foreach($ballots as $ballot){
+                        foreach($adjusts as $adjust){
+                                if  ($ballot->id == $adjust->adjustable_id)
+                                    $mount_adjust = $adjust->amount;                  
                         }
                         $ballot_adjust->push([
-                            'month_year' => $list_ballot->month_year,
-                            'payable_liquid' => $list_ballot->payable_liquid,
+                            'month_year' => $ballot->month_year,
+                            'payable_liquid' => $ballot->payable_liquid,
                             'mount_adjust' => $mount_adjust,
-                            'border_bonus' => $list_ballot->border_bonus,
-                            'position_bonus' => $list_ballot->position_bonus,
-                            'east_bonus' => $list_ballot->east_bonus,
-                            'public_security_bonus' => $list_ballot->public_security_bonus,                                
+                            'border_bonus' => $ballot->border_bonus,
+                            'position_bonus' => $ballot->position_bonus,
+                            'east_bonus' => $ballot->east_bonus,
+                            'public_security_bonus' => $ballot->public_security_bonus,                                
                         ]);    
-                          $sum_payable_liquid = $sum_payable_liquid + $list_ballot->payable_liquid;
+                          $sum_payable_liquid = $sum_payable_liquid + $ballot->payable_liquid;
                           $sum_mount_adjust = $sum_mount_adjust + $mount_adjust;
-                          $sum_border_bonus = $sum_border_bonus + $list_ballot->border_bonus;  
-                          $sum_position_bonus = $sum_position_bonus + $list_ballot->position_bonus;
-                          $sum_east_bonus = $sum_east_bonus + $list_ballot->east_bonu;
-                          $sum_public_security_bonus = $sum_public_security_bonus + $list_ballot->public_security_bonus;     
+                          $sum_border_bonus = $sum_border_bonus + $ballot->border_bonus;  
+                          $sum_position_bonus = $sum_position_bonus + $ballot->position_bonus;
+                          $sum_east_bonus = $sum_east_bonus + $ballot->east_bonu;
+                          $sum_public_security_bonus = $sum_public_security_bonus + $ballot->public_security_bonus;     
                     }                              
                     $average_ballot_adjust->push([
                         'average_payable_liquid' => $sum_payable_liquid/$count_records,
@@ -1013,21 +1014,22 @@ class Loan extends Model
                         if(LoanContributionAdjust::where('adjustable_id', $is_ballot_id)->where('loan_id',$this->id)->first())
                         $adjusts->push(LoanContributionAdjust::where('adjustable_id', $is_ballot_id)->where('loan_id',$this->id)->first());
                     }
-                    $count_records = count($ballot);               
-                    foreach($ballot as $list_ballot){
-                        foreach($adjusts as $list_adjust){
+                    $count_records = count($ballot); 
+                    $ballots = $ballot->sortBy('month_year');                
+                    foreach($ballots as $ballot){
+                        foreach($adjusts as $adjust){
                             if($ballot->id == $adjust->adjustable_id)
                             $mount_adjust = $adjust->amount;
                         }
                         $ballot_adjust->push([
-                            'month_year' => $list_ballot->month_year,
-                            'payable_liquid' => $list_ballot->rent,
+                            'month_year' => $ballot->month_year,
+                            'payable_liquid' => $ballot->rent,
                             'mount_adjust' => $mount_adjust,
-                            'dignity_rent' => $list_ballot->dignity_rent,                              
+                            'dignity_rent' => $ballot->dignity_rent,                              
                         ]); 
-                        $sum_payable_liquid = $sum_payable_liquid + $list_ballot->rent; 
+                        $sum_payable_liquid = $sum_payable_liquid + $ballot->rent; 
                         $sum_mount_adjust = $sum_mount_adjust + $mount_adjust; 
-                        $sum_dignity_rent = $sum_dignity_rent + $list_ballot->dignity_rent;
+                        $sum_dignity_rent = $sum_dignity_rent + $ballot->dignity_rent;
                     }
                     $average_ballot_adjust->push([
                         'average_payable_liquid' => $sum_payable_liquid/$count_records,
@@ -1045,19 +1047,20 @@ class Loan extends Model
                     foreach($adjust_ids as $adjust_id){  
                         $adjusts->push( LoanContributionAdjust::find($adjust_id));
                     } 
-                    $count_records = count($ballot);    
-                    foreach($ballot as $list_ballot)
+                    $count_records = count($ballot);   
+                    $ballots = $ballot->sortBy('month_year');    
+                    foreach($ballots as $ballot)
                     {
-                        foreach($adjusts as $list_adjust){
-                        if($list_ballot->period_date == $list_adjust->period_date)
-                           $mount_adjust = $list_adjust->amount;
+                        foreach($adjusts as $adjust){
+                        if($list_ballot->period_date == $adjust->period_date)
+                           $mount_adjust = $adjust->amount;
                         }
                         $ballot_adjust->push([
-                            'month_year' => $list_ballot->period_date,
-                            'payable_liquid' => $list_ballot->amount,
+                            'month_year' => $ballot->period_date,
+                            'payable_liquid' => $ballot->amount,
                             'mount_adjust' => $mount_adjust,                              
                         ]); 
-                        $sum_payable_liquid = $sum_payable_liquid + $list_ballot->amount;
+                        $sum_payable_liquid = $sum_payable_liquid + $ballot->amount;
                         $sum_mount_adjust = $sum_mount_adjust + $mount_adjust; 
                     }            
                     $average_ballot_adjust->push([
@@ -1070,7 +1073,7 @@ class Loan extends Model
         $data = [
             'contribution_type' =>$contribution_type,
             'average_ballot_adjust'=> $average_ballot_adjust,
-            'ballot_adjust'=>$ballot_adjust->sortBy('month_year'),
+            'ballot_adjusts'=> $ballot_adjust,
         ];
         return (object)$data; 
     }
