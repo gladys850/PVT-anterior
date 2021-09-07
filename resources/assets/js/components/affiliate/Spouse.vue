@@ -6,7 +6,7 @@
           <v-col cols="12" md="6" class="v-card-profile">
             <v-row>
               <v-col cols="12">
-                <v-toolbar-title>INFORMACION CONYUGE {{spouse.due_date}}</v-toolbar-title>
+                <v-toolbar-title>INFORMACION CONYUGE</v-toolbar-title>
               </v-col>
               <v-col cols="12" md="6">
                 <ValidationProvider
