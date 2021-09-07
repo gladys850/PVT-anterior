@@ -271,6 +271,15 @@ export default {
         type: "pdf",
         permissions: 'show-report-treasury'
       },
+      {
+        id: 16,
+        name: "Rep. Solicitudes de Préstamos",
+        tab: 2,
+        criterios: ["initial_date","final_date"],
+        service: "/loan_application_status",
+        type: "pdf",
+        permissions: 'show-report-others'
+      },
     ],
     this.type_institution= [
       { value:"C", name:"Comando" },
