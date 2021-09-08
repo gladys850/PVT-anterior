@@ -85,9 +85,9 @@
                           </template>
                           <span>Ver datos del afiliado</span>
                         </v-tooltip>
-                        </h2></v-col
-                      >
-                      <v-progress-linear></v-progress-linear>
+                        </h2>
+                        <v-progress-linear></v-progress-linear>
+                        </v-col>
                       <v-col cols="12" md="3" class="ma-0 pb-0">
                         <div>C.I: {{ history_affiliate.identity_card }}</div>
                         <div>MATRÍCULA: {{ history_affiliate.registration }} </div>
@@ -139,8 +139,8 @@
                           <span>Ver datos del afiliado</span>
                         </v-tooltip>
                         </h2>
+                        <v-progress-linear></v-progress-linear>
                       </v-col>
-                      <v-progress-linear></v-progress-linear>
                       <v-col cols="12" md="3" class="ma-0 pb-0">
                         <div>C.I: {{ history_spouse.identity_card }}</div>
                         <div>MATRÍCULA: {{ history_spouse.registration }} </div>
