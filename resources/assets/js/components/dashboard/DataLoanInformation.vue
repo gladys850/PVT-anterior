@@ -14,7 +14,7 @@
                     <v-data-table
                       class="text-uppercase"
                       dense
-                      :headers="headers_loans"
+                      :headers="_headers_loans"
                       :items="loans_lender.loans"
                       :loading="loading"
                       :items-per-page="10"
@@ -162,7 +162,7 @@
                     <v-data-table
                       class="text-uppercase"
                       dense
-                      :headers="headers_loans"
+                      :headers="_headers_loans"
                       :items="loans_spouse.loans"
                       :loading="loading"
                       :items-per-page="10"
@@ -339,6 +339,30 @@ export default {
         sortable: true
       },
       {
+        text: "Titular",
+        class: ["normal", "white--text"],
+        align: "left",
+        value: "full_name",
+        width: "5%",
+        sortable: false
+      },
+      {
+        text: "CI",
+        class: ["normal", "white--text"],
+        align: "left",
+        value: "identity_card",
+        width: "5%",
+        sortable: false
+      },
+      {
+        text: "Matricula",
+        class: ["normal", "white--text"],
+        align: "left",
+        value: "registration",
+        width: "5%",
+        sortable: false
+      },
+      {
         text: "Modalidad",
         class: ["normal", "white--text"],
         align: "left",
@@ -376,7 +400,7 @@ export default {
         class: ["normal", "white--text"],
         align: "left",
         value: "loan_term",
-        width: "10%",
+        width: "5%",
         sortable: false
       },
       {
@@ -501,6 +525,11 @@ export default {
       return item.state === false ? "style-1" : "style-2";
     },
   },
+  computed:{
+    _headers_loans(){
+        return this.headers_loans.filter((x)=>x.value!=='full_name'&&x.value!=='identity_card'&&x.value!=='registration')
+    }
+  }
 };
 </script>
 <style>
