@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>{{$file_title}}</title>
+    <link rel="stylesheet" href="{{ public_path("/css/report-print.min.css") }}" media="all"/>
+</head>
+<body>
+    @include('partials.header', $header)
+<div class="block">
+        <div class="font-semibold leading-tight text-center m-b-10 text-lg">{{ $title }}</div>
+        <div class="font-semibold leading-tight text-center m-b-10 text-lg">De {{ Carbon::parse($initial_date)->format('d/m/Y') }} a {{ Carbon::parse($final_date)->format('d/m/Y') }}</div>
+</div>
+<div class="block">
+    @php ( $count_loans = $loans->count() )
+    @php ( $c = 0 )
+    @php ( $total_amount = 0 )
+    @php ( $total_amount2 = 0 )
+    @for ($i = 0 ; $i < sizeof($roles) ; $i++)
+    @php ($count = json_encode($roles[$i]->count))
+    <div class="darker text-s">{{ $loans[$c]['role'] }}</div>
+        <table style="font-size:12px;" class="table-info w-100 text-center uppercase my-10">
+            <tr class="bg-grey-darker text-s text-white">
+                <td style="font-size:80%;">Nro</td>
+                <td style="font-size:80%;">Nro de Tramite</td>
+                <td style="font-size:80%;">Fecha de Solicitud</td>
+                <td style="font-size:80%;">Modalidad</td>
+                <td style="font-size:80%;">Sub Modalidad</td>
+                <td style="font-size:80%;">Nombre Completo</td>
+                <td style="font-size:80%;">C. I.</td>
+                <td style="font-size:80%;">Usuario</td>
+                <td style="font-size:80%;">Regional</td>
+                <td style="font-size:80%;">Fecha de Derivación</td>
+                <td style="font-size:80%;">Monto Solicitado</td>
+                <td style="font-size:80%;">Ref.</td>
+                <td style="font-size:80%;">Liquido Desembolsado</td>
+            </tr>
+            @for ($j = 0 ; $j < $count ; $j++)
+                <tr>
+                    <td>{{ $j+1 }}</td>
+                    <td>{{ $loans[$c]['code'] }}</td>
+                    <td>{{ Carbon::parse($loans[$c]['request_date'])->format('d-m-Y') }}</td>
+                    <td>{{ $loans[$c]['modality'] }}</td>
+                    <td>{{ $loans[$c]['sub_modality'] }}</td>
+                    <td>{{ $loans[$c]['borrower'] }}</td>
+                    <td>{{ $loans[$c]['ci_borrower'] }}</td>
+                    <td>{{ $loans[$c]['user'] }}</td>
+                    <td>{{ $loans[$c]['city'] }}</td>
+                    <td>{{ $loans[$c]['derivation_date'] }}</td>
+                    <td>{{ Util::money_format($loans[$c]['request_amount']) }}</td>
+                    <td>{{ $loans[$c]['ref'] }}</td>
+                    <td>{{ Util::money_format($loans[$c]['disbursed_amount']) }}</td>
+                    @php ( $total_amount = $total_amount + $loans[$c]['request_amount'] )
+                    @php ( $total_amount2 = $total_amount2 + $loans[$c]['disbursed_amount'] )
+                    @php ( $c++ )
+                </tr>
+            @endfor
+                <tr class="bg-grey-darker text-s text-white">
+                    <td colspan="10"></td>
+                    <td>{{ Util::money_format($total_amount) }}</td>
+                    <td></td>
+                    <td>{{ Util::money_format($total_amount2) }}</td>
+                </tr>
+                @php ( $total_amount = 0 )
+                @php ( $total_amount2 = 0 )
+        </table>
+    @endfor
+</div>
+</body>
+</html>

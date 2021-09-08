@@ -83,6 +83,7 @@ Route::group([
         Route::get('loan_defaulted_guarantor', 'Api\V1\LoanReportController@loan_defaulted_guarantor');//reporte de nuevos prestamos desembolsados
         Route::get('loan_pvt_sismu_report', 'Api\V1\LoanReportController@loan_pvt_sismu_report');//reporte de prestamos PVT y sismu simultaneos
         Route::get('request_state_report', 'Api\V1\LoanReportController@request_state_report');
+        Route::get('loan_application_status', 'Api\V1\LoanReportController@loan_application_status');
             //loanPaymentReport
         Route::get('list_loan_payments_generate', 'Api\V1\LoanPaymentReportController@list_loan_payments_generate');
         Route::get('report_amortization_discount_months', 'Api\V1\LoanPaymentReportController@report_amortization_discount_months');

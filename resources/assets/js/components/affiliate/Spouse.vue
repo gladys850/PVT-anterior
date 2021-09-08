@@ -153,7 +153,7 @@
               >
                 <v-text-field
                   dense
-                  v-model="dates.due_date"
+                  v-model="spouse.due_date"
                   label="Fecha Vencimiento CI"
                   hint="Día/Mes/Año"
                   class="purple-input"

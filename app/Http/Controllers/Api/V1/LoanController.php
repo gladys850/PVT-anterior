@@ -576,9 +576,9 @@ class LoanController extends Controller
             }
         $this->get_plan_payments($loan, $loan['disbursement_date']);
         }
-    else{
+   /* else{
         abort(409, "El usuario no tiene los permisos para realizar el desembolso");
-    }
+    }*/
     $saved = $this->save_loan($request, $loan);
     DB::commit();
     return $saved->loan;

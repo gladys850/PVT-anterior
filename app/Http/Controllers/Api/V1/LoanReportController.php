@@ -2094,4 +2094,89 @@ class LoanReportController extends Controller
            return $list_loan;
       }
    }
+
+   /** @group Reportes de Prestamos
+   * Reporte de solicitudes de prestamos
+   * @queryParam initial_date Fecha inicial. Example: 2021-01-01
+   * @queryParam final_date Fecha Final. Example: 2021-05-01
+   * @authenticated
+   * @responseFile responses/loan/list_tracing.200.json
+   */
+  public function loan_application_status(request $request, $standalone = true)
+  {
+       if($request->initial_date == null)
+           $initial_date = Carbon::parse('1900-01-01');
+       else
+           $initial_date = $request->initial_date;
+       if($request->final_date == null)
+           $final_date = Carbon::now();
+       else
+           $final_date = $request->final_date;
+       $initial_date = Carbon::parse($initial_date)->startOfDay();
+       $final_date = Carbon::parse($final_date)->endOfDay();
+
+       $loans = Loan::where('request_date', '>=', $initial_date)
+               ->where('request_date', '<=', $final_date)
+               ->where('deleted_at', null)
+               ->orderBy('role_id')->get();
+       $loans_collect = collect([]);
+       $query = "SELECT role_id, count(*)
+               from loans l
+               where l.request_date >= '$initial_date'
+               and l.request_date <= '$final_date'
+               and l.deleted_at is null 
+               group by role_id
+               order by role_id";
+       $roles = DB::select($query);
+       foreach($loans as $loan)
+       {
+           $ubication = $loan->role->display_name;
+           $query_derivation = "SELECT *
+                               from records r 
+                               where r.recordable_type = 'loans'
+                               and r.record_type_id = 3
+                               and r.recordable_id = $loan->id
+                               and r.action like '%$ubication'
+                               order by r.created_at";
+           $derivation = DB::select($query_derivation);
+           $loans_collect->push([
+               'code' => $loan->code,
+               'request_date' => $loan->request_date,
+               'modality' => $loan->modality->procedure_type->name,
+               'sub_modality' => $loan->modality->name,
+               'type' => $loan->borrower->first()->state->affiliate_state_type->name,
+               'borrower' => $loan->borrower->first()->full_name,
+               'ci_borrower' => $loan->borrower->first()->identity_card,
+               'user' => $loan->user ? $loan->user->username : '',
+               'role' => $loan->role->display_name,
+               'city' => $loan->city->name,
+               'derivation_date' => sizeof($derivation) == 0 ? '' : Carbon::parse($derivation[0]->created_at)->format('d-m-Y H:m:s'),
+               'request_amount' => $loan->amount_approved,
+               'ref' => $loan->parent_reason == "REFINANCIAMIENTO" ? "S" : "N",
+               'disbursed_amount' => $loan->refinancing_balance == 0 ? $loan->amount_approved : $loan->refinancing_balance
+           ]);
+       }
+      
+      $data = [
+       'header' => [
+           'direction' => 'DIRECCIÓN DE ESTRATEGIAS SOCIALES E INVERSIONES',
+           'unity' => 'UNIDAD DE JEFATURA DE PRESTAMOS',
+           'table' => [
+               ['Fecha', Carbon::now()->format('d-m-Y')],
+               ['Hora', Carbon::now()->format('H:m:s')],
+               ['Usuario', Auth::user()->username]
+           ]
+       ],
+       'title' => 'ESTADOS DE SOLICITUDES DE PRESTAMOS',
+       'initial_date' => $request->initial_date,
+       'final_date' => $request->final_date,
+       'loans' => $loans_collect,
+       'roles' => $roles,
+       'file_title' => 'Estado de Solicitud de Prestamos',
+   ];
+   $file_name = 'Ingresos Depositados en Tesoreria.pdf';
+   $view = view()->make('loan.reports.loan_state_request_report')->with($data)->render();
+   if ($standalone) return Util::pdf_to_base64([$view], $file_name, 'Depositos en Tesoreria' ,'letter', $request->copies ?? 1, false);
+   return $view;
+  }
 }
