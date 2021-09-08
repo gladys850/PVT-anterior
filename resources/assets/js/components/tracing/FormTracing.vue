@@ -103,7 +103,26 @@
                                           <v-col cols="12" md="12" class="pa-0">
                                             <v-row class="pa-2">
                                               <v-col cols="12" md="12" class="py-0">
-                                                <p style="color:teal"><b>GARANTE </b></p>
+                                                <p style="color:teal"><b>GARANTE
+                                                  <v-tooltip top v-if="permissionSimpleSelected.includes('show-affiliate')">
+                                                    <template v-slot:activator="{ on }">
+                                                      <v-btn
+                                                        icon
+                                                        dark
+                                                        small
+                                                        color="warning"
+                                                        bottom
+                                                        right
+                                                        v-on="on"
+                                                        :to="{name: 'affiliateAdd', params: { id: guarantor.id}}"
+                                                        target="_blank"
+                                                      >
+                                                        <v-icon>mdi-eye</v-icon>
+                                                      </v-btn>
+                                                    </template>
+                                                    <span>Ver datos del afiliado</span>
+                                                  </v-tooltip>
+                                                </b></p>
                                               </v-col>
                                               <v-progress-linear></v-progress-linear><br>
                                               <v-col cols="12" md="3">
@@ -133,10 +152,7 @@
                                             </v-row>
                                           </v-col>
                                         </li>
-                                        <v-col cols="12" md="12" class="py-0" >
-                                          <p style="color:teal"><b>GARANTES</b></p>
-                                        </v-col>
-                                        <v-progress-linear></v-progress-linear>
+
                                         <br>
                                         <p v-if="loan.guarantors.length==0" ><b> NO TIENE GARANTES </b></p>
                                       </ul>
@@ -481,6 +497,9 @@ export default {
     this.getEntity()
   },
   computed: {
+    permissionSimpleSelected () {
+      return this.$store.getters.permissionSimpleSelected
+    },
       cuenta() {
        for (this.i = 0; this.i< this.entity.length; this.i++) {
         if(this.loan.lenders[0].financial_entity_id==this.entity[this.i].id)
