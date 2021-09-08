@@ -87,7 +87,7 @@ class Affiliate extends Model
         if ($this->city_identity_card && $this->city_identity_card != 'NINGUNO'){
           $data .= ' ' . $this->city_identity_card->first_shortened;
         } 
-        return $data;
+        return rtrim($data);
     }
 
     public function getExpeditionCardAttribute()
@@ -129,7 +129,7 @@ class Affiliate extends Model
 
     public function getFullNameAttribute()
     {
-      return preg_replace('/[[:blank:]]+/', ' ', join(' ', [$this->first_name, $this->second_name, $this->last_name, $this->mothers_last_name,$this->surname_husband]));
+      return rtrim(preg_replace('/[[:blank:]]+/', ' ', join(' ', [$this->first_name, $this->second_name, $this->last_name, $this->mothers_last_name,$this->surname_husband])));
     }
 
     public function getDeadAttribute()
@@ -300,7 +300,7 @@ class Affiliate extends Model
     //
     public function affiliate_fullName()
     {
-        return $this->first_name.' '.$this->second_name.' '.$this->last_name.' '.$this->mothers_last_name.' '.$this->surname_husband;
+        return rtrim($this->first_name.' '.$this->second_name.' '.$this->last_name.' '.$this->mothers_last_name.' '.$this->surname_husband);
     }
 
     private function verify_balance($loans)
