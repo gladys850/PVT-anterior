@@ -1098,8 +1098,9 @@ class AffiliateController extends Controller
                 );
                 array_push($data, $data_loan);
         }
-        $query = "SELECT Prestamos.IdPrestamo, trim(Prestamos.PresNumero) as PresNumero, Prestamos.PresFechaPrestamo, Prestamos.PresFechaDesembolso, Prestamos.PresCuotaMensual, Prestamos.PresMeses, trim(EstadoPrestamo.PresEstDsc) as PresEstDsc, Prestamos.PresMntDesembolso, Prestamos.PresSaldoAct, trim(Producto.PrdDsc) as PrdDsc, trim(Padron.PadCedulaIdentidad) as PadCedulaIdentidad, trim(Padron.PadMatricula) as PadMatricula, trim(Padron.PadMatriculaTit) as PadMatriculaTit
+        $query = "SELECT Prestamos.IdPrestamo, trim(p.PadPaterno) as tit_paterno, trim(p.PadMaterno) as tit_materno, trim(p.PadNombres) as tit_nombres, trim(p.PadApellidoCasada) as tit_ape_casada, trim(p.PadCedulaIdentidad) as ci_titular, trim(p.PadMatricula) as mat_titular,trim(Prestamos.PresNumero) as PresNumero, Prestamos.PresFechaPrestamo, Prestamos.PresFechaDesembolso, Prestamos.PresCuotaMensual, Prestamos.PresMeses, trim(EstadoPrestamo.PresEstDsc) as PresEstDsc, Prestamos.PresMntDesembolso, Prestamos.PresSaldoAct, trim(Producto.PrdDsc) as PrdDsc, trim(Padron.PadCedulaIdentidad) as PadCedulaIdentidad, trim(Padron.PadMatricula) as PadMatricula, trim(Padron.PadMatriculaTit) as PadMatriculaTit
                     FROM Prestamos
+                    join Padron p ON p.IdPadron = Prestamos.IdPadron
                     join PrestamosLevel1 ON Prestamos.IdPrestamo = PrestamosLevel1.IdPrestamo
                     join Padron ON Padron.IdPadron = PrestamosLevel1.IdPadronGar
                     join Producto ON Prestamos.PrdCod = Producto.PrdCod
@@ -1115,6 +1116,9 @@ class AffiliateController extends Controller
             $data_prestamos = array(
                 "id" => $loan->IdPrestamo,
                 "code" => $loan->PresNumero,
+                "full_name" => $loan->tit_paterno." ".$loan->tit_materno." ".$loan->tit_nombres." ".$loan->tit_ape_casada,
+                "identity_card" => $loan->ci_titular,
+                "registration" => $loan->mat_titular,
                 "request_date" => $loan->PresFechaPrestamo,
                 "disbursement_date" => $loan->PresFechaDesembolso,
                 "estimated_quota" => $loan->PresCuotaMensual,
