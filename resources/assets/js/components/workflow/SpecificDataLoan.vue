@@ -65,7 +65,7 @@
                                   </v-tooltip>
                                   </div>
                                   </v-col>
-                                  <v-progress-linear></v-progress-linear>
+                                  <v-progress-linear color="blue-grey lighten-3"></v-progress-linear>
                                   <v-col cols="12" md="4" v-show="!qualification_edit" class="pb-0">
                                     <p><b>MONTO SOLICITADO: </b> {{loan.amount_approved | moneyString}} Bs.</p>
                                   </v-col>
@@ -130,6 +130,8 @@
                                       </div>
                                     </div>
                                   </v-col>
+                                  <v-progress-linear></v-progress-linear>
+                                  <BallotsAdjust :loan_ballots="loan.lenders[0].ballots"/>
                                   <v-progress-linear v-show="loan_refinancing.refinancing"></v-progress-linear>
                                     <v-col cols="12" md="6" class="pb-0" v-show="loan_refinancing.refinancing">
                                     <p style="color:teal"><b>DATOS DEL PRÉSTAMO A REFINANCIAR{{' => '+ loan_refinancing.description}}</b></p>
@@ -179,7 +181,7 @@
                                   </v-tooltip>
                                   </div>
                                   </v-col>
-                                  <v-progress-linear v-show="loan_refinancing.refinancing"></v-progress-linear  >
+                                  <v-progress-linear v-show="loan_refinancing.refinancing" color="blue-grey lighten-3"></v-progress-linear  >
                                   <v-row v-show="loan_refinancing.refinancing">
                                   <v-col cols="12" md="3" class="py-2">
                                     <p><b>Codigo Ptmo Padre:</b>{{' '+loan_refinancing.code}}</p>
@@ -234,7 +236,7 @@
                                   <v-col cols="12" md="12" class="pb-0" >
                                     <p style="color:teal"><b>DATOS DEL CONTRATO</b></p>
                                   </v-col>
-                                  <v-progress-linear></v-progress-linear>
+                                  <v-progress-linear color="blue-grey lighten-3"></v-progress-linear>
                                     <v-col cols="12" md="3">
                                       <v-text-field
                                         dense
@@ -1084,8 +1086,12 @@
   </v-container>
 </template>
 <script>
+import BallotsAdjust from "@/components/workflow/BallotsAdjust"
 export default {
   name: "specific-data-loan",
+  components:{
+    BallotsAdjust
+  },
   props: {
     loan_refinancing: {
       type: Object,
