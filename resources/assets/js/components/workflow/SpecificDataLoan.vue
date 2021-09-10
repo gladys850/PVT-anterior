@@ -498,7 +498,26 @@
                                         <v-col cols="12" md="12" class="pa-0">
                                           <v-row class="pa-2">
                                             <v-col cols="12" md="12" class="py-0">
-                                              <p style="color:teal"><b>GARANTE </b></p>
+                                              <p style="color:teal"><b>GARANTE
+                                                <v-tooltip top v-if="permissionSimpleSelected.includes('show-affiliate')">
+                                                  <template v-slot:activator="{ on }">
+                                                    <v-btn
+                                                      icon
+                                                      dark
+                                                      small
+                                                      color="warning"
+                                                      bottom
+                                                      right
+                                                      v-on="on"
+                                                      :to="{name: 'affiliateAdd', params: { id: guarantor.id}}"
+                                                      target="_blank"
+                                                    >
+                                                      <v-icon>mdi-eye</v-icon>
+                                                    </v-btn>
+                                                  </template>
+                                                  <span>Ver datos del afiliado</span>
+                                                </v-tooltip>
+                                              </b></p>
                                             </v-col>
                                             <v-progress-linear></v-progress-linear><br>
                                             <v-col cols="12" md="3">
