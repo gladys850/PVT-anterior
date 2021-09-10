@@ -699,6 +699,7 @@ export default {
         this.loading = false
       }
     },
+    //Obtener información del trámite en el caso que se refinanciamiento, reporgramación y rehacer
     async getLoan(id) {
       try {
         this.loading = true
@@ -706,12 +707,10 @@ export default {
         this.data_loan = res.data
 
          this.data_loan_parent_aux.guarantors=res.data.guarantors
-
-         this.data_loan_parent_aux.parent_loan_id = res.data.parent_loan_id
-         //alert(this.data_loan_parent_aux.parent_loan_id )
          this.data_loan_parent_aux.parent_reason = res.data.parent_reason
 
         if(this.refinancing || this.reprogramming){//Casos nuevo de refi repro
+          this.data_loan_parent_aux.parent_loan_id = res.data.id
           this.data_loan_parent_aux.code= res.data.code
           this.data_loan_parent_aux.disbursement_date= this.$moment(res.data.disbursement_date).format('YYYY-MM-DD')
           this.data_loan_parent_aux.amount_approved= res.data.amount_approved
@@ -720,6 +719,7 @@ export default {
           this.data_loan_parent_aux.estimated_quota= res.data.estimated_quota
 
         } else if(this.remake && res.data.parent_loan != null && res.data.data_loan == null){//Para PVT
+          this.data_loan_parent_aux.parent_loan_id = res.data.parent_loan_id
           this.data_loan_parent_aux.code = res.data.parent_loan.code
           this.data_loan_parent_aux.disbursement_date= this.$moment(res.data.parent_loan.disbursement_date).format('YYYY-MM-DD')
           this.data_loan_parent_aux.amount_approved = res.data.parent_loan.amount_approved
@@ -728,6 +728,7 @@ export default {
           this.data_loan_parent_aux.estimated_quota = res.data.parent_loan.estimated_quota
 
         } else if(this.remake && res.data.parent_loan == null && res.data.data_loan != null){//Para sismu
+          this.data_loan_parent_aux.parent_loan_id = res.data.parent_loan_id
           this.data_loan_parent_aux.code = res.data.data_loan.code
           this.data_loan_parent_aux.disbursement_date = this.$moment(res.data.data_loan.disbursement_date).format('YYYY-MM-DD')
           this.data_loan_parent_aux.amount_approved = res.data.data_loan.amount_approved
@@ -735,7 +736,8 @@ export default {
           this.data_loan_parent_aux.balance = res.data.data_loan.balance
           this.data_loan_parent_aux.estimated_quota = res.data.data_loan.estimated_quota
         }
-         if(this.refinancing){
+          //Si es refinanciamiento existe un cambio en el id de modalidad
+        if(this.refinancing){
           let res3 = await axios.post(`procedure_brother`,{
             id_loan: id
           })
@@ -745,6 +747,8 @@ export default {
         }
         this.loanTypeSelected.id =this.modalidad_refi_repro_remake
         this.edit_refi_repro = true
+
+        //En el caso de rehacer hipotecario recuperar el VNR
         if(this.data_loan.property_id != null){
           let res3 = await axios.get(`loan_property/${this.data_loan.property_id}`)
           this.loan_detail.net_realizable_value = res3.data.net_realizable_value
@@ -765,15 +769,6 @@ export default {
         console.log(e)
       }
     },
-    async getLenders(){
-
-        for(let i = 0; i < this.lenders.length; i++ ){
-                //Armar el nombre de los lenders
-                let res4 = await axios.get(`affiliate/${this.lenders[i].affiliate_id}`)
-                this.lenders_aux[i] =res4.data.full_name
-        }
-
-    },
 
     validateStepsOne(){
       let continuar = false
@@ -788,16 +783,16 @@ export default {
           for(let i = 0; i < this.contributions.length; i++){
             if((parseFloat(this.contributions[i].payable_liquid) + parseFloat(this.contributions[i].adjustment_amount)) >= this.global_parameters.livelihood_amount){
               continuar = true
-              if( continuar == true && (parseFloat(this.contributions[i].position_bonus)+ 
-              parseFloat(this.contributions[i].border_bonus)+ 
-              parseFloat(this.contributions[i].public_security_bonus)+ 
-              parseFloat(this.contributions[i].east_bonus)) < 
-              (parseFloat(this.contributions[i].payable_liquid) + 
+              if( continuar == true && (parseFloat(this.contributions[i].position_bonus)+
+              parseFloat(this.contributions[i].border_bonus)+
+              parseFloat(this.contributions[i].public_security_bonus)+
+              parseFloat(this.contributions[i].east_bonus)) <
+              (parseFloat(this.contributions[i].payable_liquid) +
               parseFloat(this.contributions[i].adjustment_amount))){
                 continuar = true
-                if(continuar == true && 
-                !(this.contributions[i].adjustment_amount > 0 && 
-                (this.contributions[i].adjustment_description == null || this.contributions[i].adjustment_description == '') && 
+                if(continuar == true &&
+                !(this.contributions[i].adjustment_amount > 0 &&
+                (this.contributions[i].adjustment_description == null || this.contributions[i].adjustment_description == '') &&
                 (this.affiliate_contribution.state_affiliate == 'Pasivo' || this.affiliate_contribution.state_affiliate == 'Activo'))){
                     continuar = true
                 }else{
@@ -818,7 +813,7 @@ export default {
             }
           }
           //validar otros casos
-          if(continuar == true && !this.type_sismu){
+          if(continuar && !this.type_sismu){
             if(this.modalidad.procedure_type_name == 'Préstamo Hipotecario' || this.modalidad.procedure_type_name == 'Refinanciamiento Préstamo Hipotecario'){
               if(this.loan_detail.net_realizable_value >= this.modalidad.minimun_amoun){
                  this.saveAdjustment()
@@ -830,12 +825,18 @@ export default {
             }else{
                 if(this.remake){
                   if(this.modalidad.procedure_type_name== 'Refinanciamiento Préstamo a Corto Plazo' || this.modalidad.procedure_type_name== 'Refinanciamiento Préstamo a Largo Plazo' ||  this.modalidad.procedure_type_name== 'Refinanciamiento Préstamo Hipotecario'){
-                    if(this.data_sismu.quota_sismu > 0 ){
+                    if(this.data_sismu.quota_sismu > 0 && this.data_loan.data_loan != null ){
                       this.saveAdjustment()
                       this.liquidCalificated()
                       this.nextStep(1)
                     }else{
-                      this.toastr.error("Introduzca la CUOTA del SISMU")
+                      if(this.data_loan.data_loan == null ){
+                        this.saveAdjustment()
+                        this.liquidCalificated()
+                        this.nextStep(1)
+                      }else{
+                         this.toastr.error("Introduzca la CUOTA del SISMU")
+                      }
                     }
                   }else{
                     this.saveAdjustment()
@@ -848,7 +849,7 @@ export default {
                   this.nextStep(1)
                 }
             }
-          }else if(continuar == true && this.type_sismu){
+          }else if(continuar && this.type_sismu){
             if(this.modalidad.procedure_type_name == 'Préstamo Hipotecario' || this.modalidad.procedure_type_name == 'Refinanciamiento Préstamo Hipotecario'){
               if(this.loan_detail.net_realizable_value >= this.modalidad.minimun_amoun){
                 if(this.data_sismu.quota_sismu > 0){
