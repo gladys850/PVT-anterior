@@ -291,16 +291,16 @@ class Loan extends Model
     // Saldo capital
     public function getBalanceAttribute()
     {
-      /* $balance = $this->amount_approved;
+       $balance = $this->amount_approved;
         $loan_states = LoanPaymentState::where('name', 'Pagado')->orWhere('name', 'Pendiente por confirmar')->get();
         if ($this->payments()->count() > 0) {
             $balance -= $this->payments()->where('state_id', $loan_states->first()->id)->sum('capital_payment');
             $balance -= $this->payments()->where('state_id', $loan_states->last()->id)->sum('capital_payment');
         }
-        return Util::round($balance);*/
+        return Util::round($balance);
 
-      $balance = DB::select('select balance_loan('.$this->id.')');
-        return Util::round($balance[0]->balance_loan);
+     /*$balance = DB::select('select balance_loan('.$this->id.')');
+        return Util::round($balance[0]->balance_loan);*/
 
     }
 
