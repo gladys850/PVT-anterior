@@ -1084,6 +1084,9 @@ class AffiliateController extends Controller
                 $data_loan = array(
                     "id" => $loan->id,
                     "code" => $loan->code,
+                    "full_name" => $loan->getBorrowers()[0]->full_name_borrower,
+                    "identity_card" => $loan->getBorrowers()[0]->identity_card_borrower,
+                    "registration" => $loan->getBorrowers()[0]->registration_borrower,
                     "disbursement_date" => $loan->disbursement_date,
                     "request_date" => $loan->request_date,
                     "estimated_quota" => $loan->estimated_quota,
