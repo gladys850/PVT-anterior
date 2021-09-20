@@ -73,6 +73,8 @@ class AffiliateController extends Controller
     {
         $affiliate->full_name = $affiliate->full_name;
         $affiliate->civil_status_gender = $affiliate->civil_status_gender;
+        $affiliate->picture_saved = $affiliate->picture_saved;
+        $affiliate->fingerprint_saved = $affiliate->fingerprint_saved;
         if($affiliate->affiliate_state !=null) $affiliate->dead = $affiliate->dead;
         $affiliate->identity_card_ext = $affiliate->identity_card_ext;
         if($affiliate->affiliate_state !=null) $affiliate->affiliate_state;
