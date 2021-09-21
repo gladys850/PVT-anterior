@@ -389,8 +389,16 @@ export default {
     },
     tab: function(newVal, oldVal){
       if(newVal!= oldVal){
+        this.options.page=1
+        this.clearAll()
         this.loans= []
         this.search_loans()
+      }
+    },
+    searching: {
+      deep: true,
+      handler(val) {
+        this.options.page=1
       }
     }
   },

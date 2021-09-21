@@ -384,7 +384,12 @@ data () {
           this.search_payments()
       }
     },
-
+    searching: {
+      deep: true,
+      handler(val) {
+        this.options.page=1
+      }
+    }
   },
     created(){
       this.search_payments()
