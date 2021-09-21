@@ -73,6 +73,8 @@ class AffiliateController extends Controller
     {
         $affiliate->full_name = $affiliate->full_name;
         $affiliate->civil_status_gender = $affiliate->civil_status_gender;
+        $affiliate->picture_saved = $affiliate->picture_saved;
+        $affiliate->fingerprint_saved = $affiliate->fingerprint_saved;
         if($affiliate->affiliate_state !=null) $affiliate->dead = $affiliate->dead;
         $affiliate->identity_card_ext = $affiliate->identity_card_ext;
         if($affiliate->affiliate_state !=null) $affiliate->affiliate_state;
@@ -1084,6 +1086,9 @@ class AffiliateController extends Controller
                 $data_loan = array(
                     "id" => $loan->id,
                     "code" => $loan->code,
+                    "full_name" => $loan->getBorrowers()[0]->full_name_borrower,
+                    "identity_card" => $loan->getBorrowers()[0]->identity_card_borrower,
+                    "registration" => $loan->getBorrowers()[0]->registration_borrower,
                     "disbursement_date" => $loan->disbursement_date,
                     "request_date" => $loan->request_date,
                     "estimated_quota" => $loan->estimated_quota,

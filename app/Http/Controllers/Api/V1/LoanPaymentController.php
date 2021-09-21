@@ -51,7 +51,10 @@ class LoanPaymentController extends Controller
     {
         $loanPayment->loan = $loanPayment->loan;
         $loanPayment->affiliate = $loanPayment->affiliate;
-        $loanPayment->borrower = $loanPayment->loan->getBorrowers()->where('id_affiliate', $loanPayment->affiliate->id);
+        if($loanPayment->paid_by == 'T')
+            $loanPayment->borrower = $loanPayment->loan->getBorrowers()->where('id_affiliate', $loanPayment->affiliate->id);
+        else
+            $loanPayment->borrower = $loanPayment->loan->getGuarantors()->where('id_affiliate', $loanPayment->affiliate->id);
         if ($with_state) $loanPayment->state = $loanPayment->state;
         $loanPayment->modality->procedure_type = $loanPayment->modality->procedure_type;
         return $loanPayment;
