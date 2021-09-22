@@ -274,10 +274,10 @@
                 <td class="w-50 text-left px-10">LÍQUIDO PARA CALIFICACIÓN</td>
                 <td class="w-50 text-left px-10">{{ Util::money_format($guarantor->affiliate->pivot->liquid_qualification_calculated) }}</td> 
             </tr>
-            <tr class="w-100">
+            <!--<tr class="w-100">
                 <td class="w-50 text-left px-10">ÍNDICE DE ENDEUDAMIENTO</td>
                 <td class="w-50 text-left px-10">{{ Util::money_format($guarantor->affiliate->pivot->indebtedness_calculated) }} %</td> 
-            </tr>
+            </tr>-->
             <tr class="w-100">
                 <td class="w-50 text-left px-10">PORCENTAJE DE PAGO</td>
                 <td class="w-50 text-left px-10">{{ $guarantor->affiliate->pivot->payment_percentage }} %</td> 
