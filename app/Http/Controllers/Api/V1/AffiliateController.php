@@ -1013,7 +1013,7 @@ class AffiliateController extends Controller
             $ci=Affiliate::whereId($id)->first()->identity_card;
         }
         else{
-            $loans = Affiliate::whereId($id)->first()->spouse->spouse_loans();
+            $loans = Spouse::find($id)->spouse_loans;
             //$loans = Loan::where('disbursable_id', $id)->where('disbursable_type', 'spouses')->get();
             $ci=Spouse::whereId($id)->first()->identity_card;
         }
